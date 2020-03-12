@@ -274,6 +274,8 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
     return code
   }
 
+  // swiftlint:disable function_body_length
+
   /// Push new scope (and generate a new code object to emit to).
   ///
   /// compiler_enter_scope(struct compiler *c, identifier name, ...)
@@ -281,6 +283,8 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
                                       type: CodeObjectType,
                                       argCount: Int,
                                       kwOnlyArgCount: Int) {
+    // swiftlint:enable function_body_length
+
     guard let scope = self.symbolTable.scopeByNode[node] else {
       trap("[BUG] Compiler: Entering scope that is not present in symbol table.")
     }
@@ -291,9 +295,19 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
     let qualifiedName = self.createQualifiedName(for: name, type: type)
     let flags = self.createFlags(type: type, scope: scope)
 
-    let varNames = self.getSymbols(scope, withAnyOf: .srcLocal)
-    let freeVars = self.getSymbols(scope, withAnyOf: [.srcFree, .defFreeClass])
-    var cellVars = self.getSymbols(scope, withAnyOf: .cell)
+    // In 'variableNames' we have to put parameters before locals.
+    let paramNames = self.filterSymbols(scope, accepting: .defParam)
+    let localNames = self.filterSymbols(scope,
+                                        accepting: .srcLocal,
+                                        skipping: .defParam,
+                                        sorted: true)
+    let variableNames = paramNames + localNames
+    assert(paramNames == scope.parameterNames)
+
+    let freeFlags: SymbolFlags = [.srcFree, .defFreeClass]
+    let freeVars = self.filterSymbols(scope, accepting: freeFlags, sorted: true)
+
+    var cellVars = self.filterSymbols(scope, accepting: .cell, sorted: true)
 
     // append implicit __class__ cell.
     if scope.needsClassClosure {
@@ -306,7 +320,7 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
                             filename: self.filename,
                             type: type,
                             flags: flags,
-                            variableNames: varNames,
+                            variableNames: variableNames,
                             freeVariableNames: freeVars,
                             cellVariableNames: cellVars,
                             argCount: argCount,
@@ -418,21 +432,34 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
 
   /// dictbytype(PyObject *src, int scope_type, int flag, Py_ssize_t offset)
   ///
-  /// If the scope of a name contains given flag add it to result.
-  private func getSymbols(_ scope: SymbolScope,
-                          withAnyOf flags: SymbolFlags) -> [MangledName] {
-    // Sort the keys so that we have a deterministic order on the indexes
-    // saved in the returned dictionary.
+  /// If the symbol contains any of the given flags add it to result.
+  ///
+  /// Sort the keys so that we have a deterministic order on the indexes
+  /// saved in the returned dictionary.
+  private func filterSymbols(
+    _ scope: SymbolScope,
+    accepting: SymbolFlags,
+    skipping: SymbolFlags = [],
+    sorted: Bool = false
+  ) -> [MangledName] {
+    let symbols: [SymbolByNameDictionary.Element] = {
+      guard sorted else {
+        return Array(scope.symbols)
+      }
 
-    let sortedSymbols = scope.symbols.sorted { lhs, rhs in
-      let lhsName = lhs.key
-      let rhsName = rhs.key
-      return lhsName.value < rhsName.value
-    }
+      return scope.symbols.sorted { lhs, rhs in
+        let lhsName = lhs.key
+        let rhsName = rhs.key
+        return lhsName.value < rhsName.value
+      }
+    }()
 
     var result = [MangledName]()
-    for (name, info) in sortedSymbols {
-      if info.flags.containsAny(flags) {
+    for (name, info) in symbols {
+      let isAccepted = info.flags.containsAny(accepting)
+      let isSkipped = info.flags.containsAny(skipping)
+
+      if isAccepted && !isSkipped {
         result.append(name)
       }
     }

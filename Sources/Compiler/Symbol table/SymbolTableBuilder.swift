@@ -75,7 +75,7 @@ public final class SymbolTableBuilder: ASTVisitor, StatementVisitor, ExpressionV
 
     let scope = SymbolScope(name: name, type: type, isNested: isNested)
     self.scopeStack.push(scope)
-    self.scopeByNode.insert(node, value: scope)
+    self.scopeByNode[node] = scope
     previous?.children.append(scope)
   }
 
@@ -120,7 +120,7 @@ public final class SymbolTableBuilder: ASTVisitor, StatementVisitor, ExpressionV
     self.currentScope.symbols[mangled] = info
 
     if flags.contains(.defParam) {
-      self.currentScope.varNames.append(mangled)
+      self.currentScope.parameterNames.append(mangled)
     } else if flags.contains(.defGlobal) {
       var globalsToSet = flagsToSet
       if let currentGlobal = self.topScope.symbols[mangled] {

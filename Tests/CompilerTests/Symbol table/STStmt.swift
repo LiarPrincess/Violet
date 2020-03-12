@@ -22,7 +22,7 @@ class STStmt: SymbolTableTestCase {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -37,7 +37,7 @@ class STStmt: SymbolTableTestCase {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -50,7 +50,7 @@ class STStmt: SymbolTableTestCase {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -87,7 +87,7 @@ class STStmt: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -104,7 +104,7 @@ class STStmt: SymbolTableTestCase {
                      flags: [.hasReturnValue, .isNested])
       XCTAssert(bodyScope.children.isEmpty)
 
-      XCTAssertEqual(bodyScope.varNames.count, 1)
+      XCTAssertEqual(bodyScope.parameterNames.count, 1)
       XCTAssertContainsParameter(bodyScope, name: "elsa")
 
       // We have '.use' flag, which means that return value was visited
@@ -138,7 +138,7 @@ class STStmt: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
@@ -173,7 +173,7 @@ class STStmt: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
@@ -216,7 +216,7 @@ class STStmt: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 3)
@@ -261,7 +261,7 @@ class STStmt: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 3)
@@ -302,7 +302,7 @@ class STStmt: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 3)
@@ -349,7 +349,7 @@ class STStmt: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
@@ -384,7 +384,7 @@ class STStmt: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
@@ -434,7 +434,7 @@ class STStmt: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 5)

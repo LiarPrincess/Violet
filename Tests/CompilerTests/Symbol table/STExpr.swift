@@ -19,7 +19,7 @@ class STExpr: SymbolTableTestCase {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -34,7 +34,7 @@ class STExpr: SymbolTableTestCase {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -47,7 +47,7 @@ class STExpr: SymbolTableTestCase {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -62,7 +62,7 @@ class STExpr: SymbolTableTestCase {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -77,7 +77,7 @@ class STExpr: SymbolTableTestCase {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -92,7 +92,7 @@ class STExpr: SymbolTableTestCase {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -107,7 +107,7 @@ class STExpr: SymbolTableTestCase {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -122,7 +122,7 @@ class STExpr: SymbolTableTestCase {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -137,7 +137,7 @@ class STExpr: SymbolTableTestCase {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -153,7 +153,7 @@ class STExpr: SymbolTableTestCase {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -168,7 +168,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -193,7 +193,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -219,7 +219,7 @@ class STExpr: SymbolTableTestCase {
         let top = table.top
         XCTAssertScope(top, name: "top", type: .module, flags: [])
         XCTAssert(top.children.isEmpty)
-        XCTAssert(top.varNames.isEmpty)
+        XCTAssert(top.parameterNames.isEmpty)
 
         XCTAssertEqual(top.symbols.count, 1)
         XCTAssertContainsSymbol(top,
@@ -249,7 +249,7 @@ class STExpr: SymbolTableTestCase {
         let top = table.top
         XCTAssertScope(top, name: "top", type: .module, flags: [])
         XCTAssert(top.children.isEmpty)
-        XCTAssert(top.varNames.isEmpty)
+        XCTAssert(top.parameterNames.isEmpty)
 
         XCTAssertEqual(top.symbols.count, 2)
         XCTAssertContainsSymbol(top,
@@ -279,7 +279,7 @@ class STExpr: SymbolTableTestCase {
         let top = table.top
         XCTAssertScope(top, name: "top", type: .module, flags: [])
         XCTAssert(top.children.isEmpty)
-        XCTAssert(top.varNames.isEmpty)
+        XCTAssert(top.parameterNames.isEmpty)
 
         XCTAssertEqual(top.symbols.count, 2)
         XCTAssertContainsSymbol(top,
@@ -317,7 +317,7 @@ class STExpr: SymbolTableTestCase {
         let top = table.top
         XCTAssertScope(top, name: "top", type: .module, flags: [])
         XCTAssert(top.children.isEmpty)
-        XCTAssert(top.varNames.isEmpty)
+        XCTAssert(top.parameterNames.isEmpty)
 
         XCTAssertEqual(top.symbols.count, 2)
         XCTAssertContainsSymbol(top,
@@ -347,7 +347,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
       XCTAssertContainsSymbol(top,
@@ -374,7 +374,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
       XCTAssertContainsSymbol(top,
@@ -401,7 +401,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
       XCTAssertContainsSymbol(top,
@@ -433,7 +433,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 3)
       XCTAssertContainsSymbol(top,
@@ -462,7 +462,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -485,7 +485,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
       XCTAssertContainsSymbol(top,
@@ -516,7 +516,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 4)
       XCTAssertContainsSymbol(top,
@@ -550,7 +550,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -571,7 +571,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [.isCoroutine])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -591,7 +591,7 @@ class STExpr: SymbolTableTestCase {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -604,7 +604,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [.isGenerator])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -623,7 +623,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [.isGenerator])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -647,7 +647,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 3)
       XCTAssertContainsSymbol(top,
@@ -695,7 +695,7 @@ class STExpr: SymbolTableTestCase {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 3)
       XCTAssertContainsSymbol(top,

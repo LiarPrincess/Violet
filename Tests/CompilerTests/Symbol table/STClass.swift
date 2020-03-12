@@ -68,7 +68,7 @@ class STClass: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -85,7 +85,7 @@ class STClass: SymbolTableTestCase {
                      type: .class,
                      flags: [])
 
-      XCTAssert(cls.varNames.isEmpty)
+      XCTAssert(cls.parameterNames.isEmpty)
 
       XCTAssertEqual(cls.symbols.count, 1)
       XCTAssertContainsSymbol(cls,
@@ -104,7 +104,7 @@ class STClass: SymbolTableTestCase {
 
       XCTAssert(__init__.children.isEmpty)
 
-      XCTAssertEqual(__init__.varNames.count, 2)
+      XCTAssertEqual(__init__.parameterNames.count, 2)
       XCTAssertContainsParameter(__init__, name: "self")
       XCTAssertContainsParameter(__init__, name: "name")
 

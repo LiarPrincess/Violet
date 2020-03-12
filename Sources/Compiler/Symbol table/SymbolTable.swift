@@ -5,6 +5,7 @@ import Parser
 // In CPython:
 // Include -> symtable.h
 
+/// Container that holds multiple 'SymbolScopes'.
 public final class SymbolTable {
 
   /// Top scope in symbol table, corresponds to top scope in AST.
@@ -34,15 +35,7 @@ public struct ScopeByNodeDictionary {
   internal init() { }
 
   public internal(set) subscript<N: ASTNode>(key: N) -> SymbolScope? {
-    get { return self.get(key) }
-    set { self.insert(key, value: newValue) }
-  }
-
-  public func get<N: ASTNode>(_ key: N) -> SymbolScope? {
-    return self.inner[key.id]
-  }
-
-  internal mutating func insert<N: ASTNode>(_ key: N, value: SymbolScope?) {
-    self.inner[key.id] = value
+    get { return self.inner[key.id] }
+    set { self.inner[key.id] = newValue }
   }
 }

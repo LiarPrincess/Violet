@@ -50,7 +50,7 @@ class STFunction: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
       XCTAssertContainsSymbol(top,
@@ -69,7 +69,7 @@ class STFunction: SymbolTableTestCase {
       XCTAssertScope(nested, name: "let_it_go", type: .function, flags: [.isNested])
       XCTAssert(nested.children.isEmpty)
 
-      XCTAssertEqual(nested.varNames.count, 2)
+      XCTAssertEqual(nested.parameterNames.count, 2)
       XCTAssertContainsParameter(nested, name: "elsa")
       XCTAssertContainsParameter(nested, name: "anna")
 
@@ -124,7 +124,7 @@ class STFunction: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
       XCTAssertContainsSymbol(top,
@@ -143,7 +143,7 @@ class STFunction: SymbolTableTestCase {
       XCTAssertScope(nested, name: "let_it_go", type: .function, flags: [.isNested, .hasVarargs])
       XCTAssert(nested.children.isEmpty)
 
-      XCTAssertEqual(nested.varNames.count, 2)
+      XCTAssertEqual(nested.parameterNames.count, 2)
       XCTAssertContainsParameter(nested, name: "elsa")
       XCTAssertContainsParameter(nested, name: "anna")
 
@@ -189,7 +189,7 @@ class STFunction: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -207,7 +207,7 @@ class STFunction: SymbolTableTestCase {
                      flags: [.isNested, .hasVarKeywords])
       XCTAssert(nested.children.isEmpty)
 
-      XCTAssertEqual(nested.varNames.count, 1)
+      XCTAssertEqual(nested.parameterNames.count, 1)
       XCTAssertContainsParameter(nested, name: "elsa")
 
       XCTAssertEqual(nested.symbols.count, 1)
@@ -245,7 +245,7 @@ class STFunction: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -262,7 +262,7 @@ class STFunction: SymbolTableTestCase {
                      type: .function,
                      flags: [.isNested, .isCoroutine])
       XCTAssert(nested.children.isEmpty)
-      XCTAssert(nested.varNames.isEmpty)
+      XCTAssert(nested.parameterNames.isEmpty)
       XCTAssert(nested.symbols.isEmpty)
     }
   }
@@ -304,7 +304,7 @@ class STFunction: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
       XCTAssertEqual(top.children.count, 1)
 
       XCTAssertEqual(top.symbols.count, 2)
@@ -373,7 +373,7 @@ class STFunction: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: outer) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -387,7 +387,7 @@ class STFunction: SymbolTableTestCase {
 
       let letItGo = top.children[0]
       XCTAssertScope(letItGo, name: "let_it_go", type: .function, flags: [.isNested])
-      XCTAssert(letItGo.varNames.isEmpty)
+      XCTAssert(letItGo.parameterNames.isEmpty)
 
       XCTAssertEqual(letItGo.symbols.count, 2)
       XCTAssertContainsSymbol(letItGo,
@@ -405,7 +405,7 @@ class STFunction: SymbolTableTestCase {
 
       let sing = letItGo.children[0]
       XCTAssertScope(sing, name: "sing", type: .function, flags: [.isNested])
-      XCTAssert(sing.varNames.isEmpty)
+      XCTAssert(sing.parameterNames.isEmpty)
       XCTAssert(sing.children.isEmpty)
 
       XCTAssertEqual(sing.symbols.count, 1)
@@ -611,7 +611,7 @@ class STFunction: SymbolTableTestCase {
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -624,7 +624,7 @@ class STFunction: SymbolTableTestCase {
 
       let letItGo = top.children[0]
       XCTAssertScope(letItGo, name: "let_it_go", type: .function, flags: [.isNested])
-      XCTAssert(letItGo.varNames.isEmpty)
+      XCTAssert(letItGo.parameterNames.isEmpty)
       XCTAssertEqual(letItGo.children.count, 0)
 
       XCTAssertEqual(letItGo.symbols.count, 1)

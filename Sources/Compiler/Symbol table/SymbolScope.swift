@@ -33,13 +33,15 @@ public final class SymbolScope {
   public let type: ScopeType
 
   /// A set of symbols present on this scope level
-  public internal(set) var symbols = [MangledName: SymbolInfo]()
+  public internal(set) var symbols = SymbolByNameDictionary()
 
   /// A list of subscopes in the order as found in the AST
   public internal(set) var children = [SymbolScope]()
 
   /// List of function parameters
-  public internal(set) var varNames = [MangledName]()
+  ///
+  /// CPython: `varNames`.
+  public internal(set) var parameterNames = [MangledName]()
 
   /// Block is a nested class or function.
   public let isNested: Bool

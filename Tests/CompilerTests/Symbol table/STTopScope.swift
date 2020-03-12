@@ -23,7 +23,7 @@ class STTopScope: SymbolTableTestCase {
                               location: loc1)
 
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -43,7 +43,7 @@ class STTopScope: SymbolTableTestCase {
                               location: loc1)
 
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
@@ -64,7 +64,7 @@ class STTopScope: SymbolTableTestCase {
                               location: loc1)
 
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varNames.isEmpty)
+      XCTAssert(top.parameterNames.isEmpty)
     }
   }
 
