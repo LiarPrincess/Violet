@@ -54,10 +54,6 @@ public struct BlockStack {
     return self.elements.last
   }
 
-  public var last: Block? {
-    return self.elements.last
-  }
-
   public var isEmpty: Bool {
     return self.elements.isEmpty
   }

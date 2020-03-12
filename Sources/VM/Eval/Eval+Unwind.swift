@@ -49,7 +49,7 @@ extension Eval {
   internal func unwind(reason: UnwindReason) -> UnwindResult {
     // swiftlint:disable:previous function_body_length
 
-    while let block = self.blocks.last {
+    while let block = self.blocks.current {
       switch block.type {
       case let .setupLoop(endLabel):
         if case let .continue(loopStartLabel) = reason {

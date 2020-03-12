@@ -58,6 +58,8 @@ extension Eval {
 
   // MARK: - Cleanup start
 
+  // swiftlint:disable function_body_length
+
   /// Cleans up the stack when a `with` statement block exits.
   ///
   /// TOS is the context manager’s `__exit__()` bound method.
@@ -70,18 +72,20 @@ extension Eval {
   /// otherwise `TOS(None, None, None)`.
   /// Pushes `SECOND` and result of the call to the stack.
   internal func withCleanupStart() -> InstructionResult {
-    let __exit__: PyObject
-    let exceptionType = self.stack.top
-    let exception: PyObject = Py.none
-    let traceback: PyObject = Py.none
+    // swiftlint:enable function_body_length
 
-    let exc = self.stack.top
+    let __exit__: PyObject
+    var exceptionType = self.stack.top
+    var exception: PyObject = Py.none
+    var traceback: PyObject = Py.none
+
+    let marker = self.stack.top // 'exc' in CPython
 
     switch PushFinallyReason.pop(from: &self.stack) {
     case .none:
       // nothing unusual happened
       __exit__ = self.stack.top
-      self.stack.top = exc
+      self.stack.top = marker
 
     case let .return(value):
       // we were returning
@@ -97,10 +101,31 @@ extension Eval {
       __exit__ = self.stack.pop()
       PushFinallyReason.push(.break, on: &self.stack)
 
-    case .exception, // (e)
-         .invalid,
-         .silenced:
-      fatalError()
+    case let .exception(e):
+      exceptionType = e.type
+      exception = e
+      traceback = e.getTraceback()
+
+      let previousException = self.stack.pop() // may also be 'None'
+      __exit__ = self.stack.pop()
+      self.stack.push(previousException)
+
+      guard let block = self.blocks.pop() else {
+        let e = Py.newSystemError(msg: "XXX block stack underflow")
+        return .unwind(.exception(e))
+      }
+
+      assert(block.isExceptHandler)
+      let newLevel = block.stackLevel - 1
+      self.blocks.push(block: Block(type: .exceptHandler, stackLevel: newLevel))
+
+    case .silenced:
+      __exit__ = self.stack.pop()
+      PushFinallyReason.push(.silenced, on: &self.stack)
+
+    case .invalid:
+      let e = Py.newSystemError(msg: "'finally' pops bad exception")
+      return .unwind(.exception(e))
     }
 
     let args = [exceptionType, exception, traceback]

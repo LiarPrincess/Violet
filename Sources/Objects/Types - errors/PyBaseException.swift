@@ -210,8 +210,8 @@ public class PyBaseException: PyObject {
   // MARK: - Traceback
 
   // sourcery: pyproperty = __traceback__, setter = setTraceback
-  public func getTraceback() -> PyObject? {
-    return self.traceback
+  public func getTraceback() -> PyObject {
+    return self.traceback ?? Py.none
   }
 
   public func setTraceback(_ value: PyObject?) -> PyResult<()> {
