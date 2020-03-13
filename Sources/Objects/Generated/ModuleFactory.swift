@@ -207,8 +207,8 @@ internal enum ModuleFactory {
 
 
 
-    insert(module: module, name: "is_builtin", value: PyBuiltinFunction.wrap(name: "is_builtin", doc: nil, fn: object.isBuiltin, module: module))
-    insert(module: module, name: "create_builtin", value: PyBuiltinFunction.wrap(name: "create_builtin", doc: nil, fn: object.createBuiltin, module: module))
+    insert(module: module, name: "is_builtin", value: PyBuiltinFunction.wrap(name: "is_builtin", doc: nil, fn: object.isBuiltin(name:), module: module))
+    insert(module: module, name: "create_builtin", value: PyBuiltinFunction.wrap(name: "create_builtin", doc: nil, fn: object.createBuiltin(spec:), module: module))
     insert(module: module, name: "exec_builtin", value: PyBuiltinFunction.wrap(name: "exec_builtin", doc: nil, fn: object.execBuiltin, module: module))
     insert(module: module, name: "is_frozen", value: PyBuiltinFunction.wrap(name: "is_frozen", doc: nil, fn: object.isFrozen, module: module))
     insert(module: module, name: "get_frozen_object", value: PyBuiltinFunction.wrap(name: "get_frozen_object", doc: nil, fn: object.getFrozenObject, module: module))

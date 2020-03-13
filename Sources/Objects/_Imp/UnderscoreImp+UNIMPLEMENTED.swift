@@ -1,51 +1,9 @@
+import Core
+
 // In CPython:
 // Python -> import.c
 
 extension UnderscoreImp {
-
-  // MARK: - Builtin
-
-  internal static var isBuiltinDoc: String {
-    return """
-    is_builtin($module, name, /)
-    --
-
-    Returns True if the module name corresponds to a built-in module.
-    """
-  }
-
-  // sourcery: pymethod = is_builtin, doc = isBuiltinDoc
-  public func isBuiltin() -> PyObject {
-    return self.unimplemented
-  }
-
-  internal static var createBuiltinDoc: String {
-    return """
-    create_builtin($module, spec, /)
-    --
-
-    Create an extension module.
-    """
-  }
-
-  // sourcery: pymethod = create_builtin, doc = createBuiltinDoc
-  public func createBuiltin() -> PyObject {
-    return self.unimplemented
-  }
-
-  internal static var execBuiltinDoc: String {
-    return """
-    exec_builtin($module, mod, /)
-    --
-
-    Initialize a built-in module.
-    """
-  }
-
-  // sourcery: pymethod = exec_builtin, doc = execBuiltinDoc
-  public func execBuiltin() -> PyObject {
-    return self.unimplemented
-  }
 
   // MARK: - Frozen
 
@@ -60,7 +18,7 @@ extension UnderscoreImp {
 
   // sourcery: pymethod = is_frozen, doc = isFrozenDoc
   public func isFrozen() -> PyObject {
-    return self.unimplemented
+    self.unimplemented()
   }
 
   internal static var getFrozenObjectDoc: String {
@@ -74,7 +32,7 @@ extension UnderscoreImp {
 
   // sourcery: pymethod = get_frozen_object, doc = getFrozenObjectDoc
   public func getFrozenObject() -> PyObject {
-    return self.unimplemented
+    self.unimplemented()
   }
 
   internal static var initFrozenDoc: String {
@@ -88,7 +46,7 @@ extension UnderscoreImp {
 
   // sourcery: pymethod = init_frozen, doc = initFrozenDoc
   public func initFrozen() -> PyObject {
-    return self.unimplemented
+    self.unimplemented()
   }
 
   internal static var isFrozenPackageDoc: String {
@@ -102,7 +60,7 @@ extension UnderscoreImp {
 
   // sourcery: pymethod = is_frozen_package, doc = isFrozenPackageDoc
   public func isFrozenPackage() -> PyObject {
-    return self.unimplemented
+    self.unimplemented()
   }
 
   // MARK: - Dynamic
@@ -118,7 +76,7 @@ extension UnderscoreImp {
 
   // sourcery: pymethod = create_dynamic, doc = createDynamicDoc
   public func createDynamic() -> PyObject {
-    return self.unimplemented
+    self.unimplemented()
   }
 
   internal static var execDynamicDoc: String {
@@ -132,7 +90,7 @@ extension UnderscoreImp {
 
   // sourcery: pymethod = exec_dynamic, doc = execDynamicDoc
   public func execDynamic() -> PyObject {
-    return self.unimplemented
+    self.unimplemented()
   }
 
   // MARK: - Lock
@@ -150,7 +108,7 @@ extension UnderscoreImp {
 
   // sourcery: pymethod = lock_held, doc = lockHeldDoc
   public func lockHeld() -> PyObject {
-    return self.unimplemented
+    self.unimplemented()
   }
 
   internal static var acquireLockDoc: String {
@@ -167,7 +125,7 @@ extension UnderscoreImp {
 
   // sourcery: pymethod = acquire_lock, doc = acquireLockDoc
   public func acquireLock() -> PyObject {
-    return self.unimplemented
+    self.unimplemented()
   }
 
   internal static var releaseLockDoc: String {
@@ -183,7 +141,7 @@ extension UnderscoreImp {
 
   // sourcery: pymethod = release_lock, doc = releaseLockDoc
   public func releaseLock() -> PyObject {
-    return self.unimplemented
+    self.unimplemented()
   }
 
   // MARK: - Hash
@@ -197,7 +155,7 @@ extension UnderscoreImp {
 
   // sourcery: pymethod = source_hash, doc = sourceHashDoc
   public func sourceHash() -> PyObject {
-    return self.unimplemented
+    self.unimplemented()
   }
 
   internal static var checkHashBasedPycsDoc: String {
@@ -206,7 +164,7 @@ extension UnderscoreImp {
 
   // sourcery: pymethod = check_hash_based_pycs, doc = checkHashBasedPycsDoc
   public func checkHashBasedPycs() -> PyObject {
-    return self.unimplemented
+    self.unimplemented()
   }
 
   // MARK: - Other
@@ -227,7 +185,7 @@ extension UnderscoreImp {
 
   // sourcery: pymethod = _fix_co_filename, doc = fixCoFilenameDoc
   public func fixCoFilename() -> PyObject {
-    return self.unimplemented
+    self.unimplemented()
   }
 
   internal static var extensionSuffixesDoc: String {
@@ -241,12 +199,12 @@ extension UnderscoreImp {
 
   // sourcery: pymethod = extension_suffixes, doc = extensionSuffixesDoc
   public func extensionSuffixes() -> PyObject {
-    return self.unimplemented
+    self.unimplemented()
   }
 
   // MARK: - Unimplemented
 
-  internal var unimplemented: PyObject {
-    return Py.none
+  private func unimplemented(fn: String = #function) -> Never {
+    trap("'\(fn)' is not implemented")
   }
 }
