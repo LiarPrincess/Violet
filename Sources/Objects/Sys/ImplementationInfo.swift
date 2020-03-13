@@ -1,7 +1,7 @@
 import Core
 
 /// Internal helper for `sys.implementation`.
-public class ImplementationInfo {
+public final class ImplementationInfo {
 
   public let name: String
   public let version: VersionInfo

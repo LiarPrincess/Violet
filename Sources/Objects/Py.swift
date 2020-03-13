@@ -128,8 +128,9 @@ public class PyInstance: BuiltinFunctions {
     self.errorTypes.fill__dict__()
 
     // Now finish modules:
-    self.sys.modules.set(id: .sys, to: self.sysModule)
-    self.sys.modules.set(id: .builtins, to: self.builtinsModule)
+    self.sys.modules.insert(name: .builtins, module: self.builtinsModule)
+    self.sys.modules.insert(name: .sys, module: self.sysModule)
+    self.sys.modules.insert(name: ._imp, module: self._impModule)
   }
 
   private func ensureInitialized() {

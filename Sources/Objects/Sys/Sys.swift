@@ -101,7 +101,7 @@ public final class Sys {
 
   // MARK: - Modules
 
-  public lazy var modules = PyDict()
+  public lazy var modules = Modules()
 
   public lazy var builtinModules = BuiltinModules()
 

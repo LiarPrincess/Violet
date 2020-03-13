@@ -55,7 +55,7 @@ extension Sys {
   /// This is a dictionary that maps module names to modules
   /// which have already been loaded.
   internal func getModules() -> PyDict {
-    return self.modules
+    return self.modules.object
   }
 
   // MARK: - Platform

@@ -18,7 +18,7 @@ import Core
 /// >>> sys.version_info
 /// sys.version_info(major=3, minor=7, micro=2, releaselevel='final', serial=0)
 /// ```
-public class VersionInfo {
+public final class VersionInfo {
 
   public enum ReleaseLevel: CustomStringConvertible {
     case alpha

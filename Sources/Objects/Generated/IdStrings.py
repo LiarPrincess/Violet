@@ -125,6 +125,7 @@ ids = [
   '__truediv__',
   '__trunc__',
   '__xor__',
+  '_imp',
   '_slotnames',
   'big',
   'builtins',

@@ -1,7 +1,7 @@
 import Core
 
 /// Separate class for visibility.
-public class BuiltinModules {
+public final class BuiltinModules {
 
   // Do not make it a stored property!
   // It would hold reference to 'sys' which would cause cycle.

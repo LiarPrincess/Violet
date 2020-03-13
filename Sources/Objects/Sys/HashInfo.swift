@@ -1,6 +1,6 @@
 import Core
 
-public class HashInfo {
+public final class HashInfo {
 
   /// Name of the algorithm for hashing of str, bytes, and memoryview
   public let algorithm = Hasher.algorithm
