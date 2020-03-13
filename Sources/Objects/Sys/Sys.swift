@@ -103,6 +103,8 @@ public final class Sys {
 
   public lazy var modules = PyDict()
 
+  public lazy var builtinModules = BuiltinModules()
+
   // MARK: - Platform
 
   public lazy var platform: String = {

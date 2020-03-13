@@ -187,6 +187,7 @@ internal enum ModuleFactory {
     insert(module: module, name: "__stderr__", value: PyProperty.wrap(name: "__stderr__", doc: nil, get: object.get__stderr__))
     insert(module: module, name: "ps1", value: PyProperty.wrap(name: "ps1", doc: nil, get: object.getPS1, set: object.setPS1))
     insert(module: module, name: "ps2", value: PyProperty.wrap(name: "ps2", doc: nil, get: object.getPS2, set: object.setPS2))
+    insert(module: module, name: "builtin_module_names", value: PyProperty.wrap(name: "builtin_module_names", doc: nil, get: object.getBuiltinModuleNames))
     insert(module: module, name: "modules", value: PyProperty.wrap(name: "modules", doc: nil, get: object.getModules))
     insert(module: module, name: "platform", value: PyProperty.wrap(name: "platform", doc: nil, get: object.getPlatform))
     insert(module: module, name: "copyright", value: PyProperty.wrap(name: "copyright", doc: nil, get: object.getCopyright))

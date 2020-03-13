@@ -32,16 +32,6 @@ extension Sys {
     return self.unimplemented
   }
 
-  // sourcery: pyproperty = builtin_module_names
-  /// sys.builtin_module_names
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.builtin_module_names).
-  ///
-  /// A tuple of strings giving the names of all modules that are compiled
-  /// into this Python interpreter.
-  internal func getBuiltinModuleNames() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pyproperty = executable
   /// sys.executable
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.executable).
