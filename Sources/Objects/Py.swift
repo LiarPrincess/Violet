@@ -31,6 +31,12 @@ public class PyInstance: BuiltinFunctions {
     return Sys()
   }()
 
+  /// Python `_imp` module.
+  public private(set) lazy var _imp: UnderscoreImp = {
+    self.ensureInitialized()
+    return UnderscoreImp()
+  }()
+
   /// `self.builtins` but as a Python module (`PyModule`).
   public private(set) lazy var builtinsModule =
     ModuleFactory.createBuiltins(from: self.builtins)
@@ -38,6 +44,10 @@ public class PyInstance: BuiltinFunctions {
   /// `self.sys` but as a Python module (`PyModule`).
   public private(set) lazy var sysModule =
     ModuleFactory.createSys(from: self.sys)
+
+  /// `self._imp` but as a Python module (`PyModule`).
+  public private(set) lazy var _impModule =
+    ModuleFactory.createUnderscoreImp(from: self._imp)
 
   // MARK: - Types
 
