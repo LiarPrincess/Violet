@@ -7,6 +7,13 @@ internal enum Unimplemented {
   /// static PyObject* create_stdio(PyObject* io, ...)
   internal static let stdioErrors = PyStringErrorHandler.strict
 
+  /// In every place that assumes no threads we will assert on this variable.
+  ///
+  /// 1. Remove it to get compiler errors.
+  /// 2. Fix errors.
+  /// 3. Profit (everything works).
+  internal static let weDontHaveThreads = true
+
   /// Python `locale` module.
   internal enum locale { // swiftlint:disable:this type_name
 

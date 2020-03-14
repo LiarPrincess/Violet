@@ -1,5 +1,3 @@
-import Core
-
 extension UnderscoreImp {
 
   // MARK: - Is
@@ -53,13 +51,13 @@ extension UnderscoreImp {
     case .error(let e): return .error(e)
     }
 
-    guard let nameStr = name as? PyString else {
-      return .typeError("Module name must be a str, not \(name.typeName).")
-    }
+//    guard let nameStr = name as? PyString else {
+//      return .typeError("Module name must be a str, not \(name.typeName).")
+//    }
 
     // Currently we only have 'builtins', 'sys' and '_impl' modules.
     // We do not support any other.
-    trap("'create_builtin' is not implemented (module: \(nameStr.value)).")
+    self.unimplemented()
   }
 
   // MARK: - Exec
@@ -81,11 +79,5 @@ extension UnderscoreImp {
     }
 
     return self.execBuiltinOrDynamic(module: mod)
-  }
-
-  /// static int
-  /// exec_builtin_or_dynamic(PyObject *mod)
-  internal func execBuiltinOrDynamic(module: PyModule) -> PyResult<PyNone> {
-    trap("'exec_builtin_or_dynamic' is not implemented (module \(module))")
   }
 }
