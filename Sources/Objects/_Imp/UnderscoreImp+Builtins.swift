@@ -12,7 +12,9 @@ extension UnderscoreImp {
   }
 
   // sourcery: pymethod = is_builtin, doc = isBuiltinDoc
-  public func isBuiltin(name nameRaw: PyObject) -> PyResult<PyObject> {
+  /// static PyObject *
+  /// _imp_is_builtin_impl(PyObject *module, PyObject *name)
+  public func isBuiltin(name nameRaw: PyObject) -> PyResult<PyInt> {
     guard let name = nameRaw as? PyString else {
       let msg = "is_builtin() argument must be str, not \(nameRaw.typeName)"
       return .typeError(msg)
@@ -37,6 +39,8 @@ extension UnderscoreImp {
   }
 
   // sourcery: pymethod = create_builtin, doc = createBuiltinDoc
+  /// static PyObject *
+  /// _imp_create_builtin(PyObject *module, PyObject *spec)
   public func createBuiltin(spec: PyObject) -> PyResult<PyObject> {
     let name: PyObject
     switch Py.getAttribute(spec, name: .name) {
@@ -72,6 +76,8 @@ extension UnderscoreImp {
   }
 
   // sourcery: pymethod = exec_builtin, doc = execBuiltinDoc
+  /// static int
+  /// _imp_exec_builtin_impl(PyObject *module, PyObject *mod)
   public func execBuiltin(module: PyObject) -> PyResult<PyNone> {
     guard let mod = module as? PyModule else {
       let msg = "exec_builtin() argument must be module, not \(module.typeName)"

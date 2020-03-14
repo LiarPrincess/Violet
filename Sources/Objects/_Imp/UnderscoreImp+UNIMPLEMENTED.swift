@@ -1,65 +1,9 @@
+import Core
+
 // In CPython:
 // Python -> import.c
 
 extension UnderscoreImp {
-
-  // MARK: - Frozen
-
-  internal static var isFrozenDoc: String {
-    return """
-    is_frozen($module, name, /)
-    --
-
-    Returns True if the module name corresponds to a frozen module.
-    """
-  }
-
-  // sourcery: pymethod = is_frozen, doc = isFrozenDoc
-  public func isFrozen() -> PyObject {
-    self.unimplemented()
-  }
-
-  internal static var getFrozenObjectDoc: String {
-    return """
-    get_frozen_object($module, name, /)
-    --
-
-    Create a code object for a frozen module.
-    """
-  }
-
-  // sourcery: pymethod = get_frozen_object, doc = getFrozenObjectDoc
-  public func getFrozenObject() -> PyObject {
-    self.unimplemented()
-  }
-
-  internal static var initFrozenDoc: String {
-    return """
-    init_frozen($module, name, /)
-    --
-
-    Initializes a frozen module.
-    """
-  }
-
-  // sourcery: pymethod = init_frozen, doc = initFrozenDoc
-  public func initFrozen() -> PyObject {
-    self.unimplemented()
-  }
-
-  internal static var isFrozenPackageDoc: String {
-    return """
-    is_frozen_package($module, name, /)
-    --
-
-    Returns True if the module name is of a frozen package.
-    """
-  }
-
-  // sourcery: pymethod = is_frozen_package, doc = isFrozenPackageDoc
-  public func isFrozenPackage() -> PyObject {
-    self.unimplemented()
-  }
 
   // MARK: - Dynamic
 
@@ -73,6 +17,8 @@ extension UnderscoreImp {
   }
 
   // sourcery: pymethod = create_dynamic, doc = createDynamicDoc
+  /// static PyObject *
+  /// _imp_create_dynamic_impl(PyObject *module, PyObject *spec, PyObject *file)
   public func createDynamic() -> PyObject {
     self.unimplemented()
   }
@@ -87,6 +33,8 @@ extension UnderscoreImp {
   }
 
   // sourcery: pymethod = exec_dynamic, doc = execDynamicDoc
+  /// static int
+  /// _imp_exec_dynamic_impl(PyObject *module, PyObject *mod)
   public func execDynamic() -> PyObject {
     self.unimplemented()
   }
@@ -101,6 +49,8 @@ extension UnderscoreImp {
   }
 
   // sourcery: pymethod = source_hash, doc = sourceHashDoc
+  /// static PyObject *
+  /// _imp_source_hash_impl(PyObject *module, long key, Py_buffer *source)
   public func sourceHash() -> PyObject {
     self.unimplemented()
   }
@@ -145,7 +95,17 @@ extension UnderscoreImp {
   }
 
   // sourcery: pymethod = extension_suffixes, doc = extensionSuffixesDoc
+  /// static PyObject *
+  /// _imp_extension_suffixes_impl(PyObject *module)
   public func extensionSuffixes() -> PyObject {
     self.unimplemented()
+  }
+
+  // MARK: - Unimplemented
+
+  /// Some methods are implemented partially
+  /// In such cases they will call this method.
+  internal func unimplemented(fn: String = #function) -> Never {
+    trap("'\(fn)' is not implemented")
   }
 }
