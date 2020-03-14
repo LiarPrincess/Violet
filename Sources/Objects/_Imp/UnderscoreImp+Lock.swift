@@ -1,6 +1,10 @@
 // In CPython:
 // Python -> import.c
 
+// Docs:
+// https://docs.python.org/3.7/reference/import.html
+// https://docs.python.org/3.7/library/importlib.html
+
 extension UnderscoreImp {
 
   // MARK: - Is held

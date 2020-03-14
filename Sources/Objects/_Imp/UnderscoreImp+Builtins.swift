@@ -1,6 +1,10 @@
 // In CPython:
 // Python -> import.c
 
+// Docs:
+// https://docs.python.org/3.7/reference/import.html
+// https://docs.python.org/3.7/library/importlib.html
+
 extension UnderscoreImp {
 
   // MARK: - Is
@@ -89,10 +93,10 @@ extension UnderscoreImp {
   /// static int
   /// _imp_exec_builtin_impl(PyObject *module, PyObject *mod)
   public func execBuiltin(module: PyObject) -> PyResult<PyNone> {
-    guard let mod = module as? PyModule else {
-      let msg = "exec_builtin() argument must be module, not \(module.typeName)"
-      return .typeError(msg)
-    }
+//    guard let mod = module as? PyModule else {
+//      let msg = "exec_builtin() argument must be module, not \(module.typeName)"
+//      return .typeError(msg)
+//    }
 
     self.unimplemented()
   }
