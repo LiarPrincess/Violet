@@ -10,11 +10,33 @@ public final class UnderscoreImp {
     (Extremely) low-level import machinery bits as used by importlib and imp.
     """
 
-  // MARK: - Exec
+  // MARK: - Spec helpers
 
-  /// static int
-  /// exec_builtin_or_dynamic(PyObject *mod)
-  internal func execBuiltinOrDynamic(module: PyModule) -> PyResult<PyNone> {
-    self.unimplemented()
+  internal func getName(spec: PyObject) -> PyResult<PyString> {
+    switch Py.getAttribute(spec, name: .name) {
+    case let .value(object):
+      guard let str = object as? PyString else {
+        return .typeError("Module name must be a str, not \(object.typeName)")
+      }
+
+      return .value(str)
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal func getPath(spec: PyObject) -> PyResult<PyString> {
+    switch Py.getAttribute(spec, name: .origin) {
+    case let .value(object):
+      guard let str = object as? PyString else {
+        return .typeError("Module origin must be a str, not \(object.typeName)")
+      }
+
+      return .value(str)
+
+    case let .error(e):
+      return .error(e)
+    }
   }
 }

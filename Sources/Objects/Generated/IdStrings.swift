@@ -182,6 +182,7 @@ public struct IdString {
   public static let n_unnamed_fields = Self.impl.n_unnamed_fields
   public static let name = Self.impl.name
   public static let open = Self.impl.open
+  public static let origin = Self.impl.origin
   public static let path = Self.impl.path
   public static let Py_Repr = Self.impl.Py_Repr
   public static let readline = Self.impl.readline
@@ -343,6 +344,7 @@ private struct IdStringImpl {
   fileprivate let n_unnamed_fields = IdString(value: "n_unnamed_fields")
   fileprivate let name = IdString(value: "name")
   fileprivate let open = IdString(value: "open")
+  fileprivate let origin = IdString(value: "origin")
   fileprivate let path = IdString(value: "path")
   fileprivate let Py_Repr = IdString(value: "Py_Repr")
   fileprivate let readline = IdString(value: "readline")

@@ -148,6 +148,7 @@ ids = [
   'n_unnamed_fields',
   'name',
   'open',
+  'origin',
   'path',
   'Py_Repr',
   'readline',

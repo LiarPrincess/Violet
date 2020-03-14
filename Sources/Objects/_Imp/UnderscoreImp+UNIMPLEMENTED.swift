@@ -5,40 +5,6 @@ import Core
 
 extension UnderscoreImp {
 
-  // MARK: - Dynamic
-
-  internal static var createDynamicDoc: String {
-    return """
-    create_dynamic($module, spec, file=None, /)
-    --
-
-    Create an extension module.
-    """
-  }
-
-  // sourcery: pymethod = create_dynamic, doc = createDynamicDoc
-  /// static PyObject *
-  /// _imp_create_dynamic_impl(PyObject *module, PyObject *spec, PyObject *file)
-  public func createDynamic() -> PyObject {
-    self.unimplemented()
-  }
-
-  internal static var execDynamicDoc: String {
-    return """
-    exec_dynamic($module, mod, /)
-    --
-
-    Initialize an extension module.
-    """
-  }
-
-  // sourcery: pymethod = exec_dynamic, doc = execDynamicDoc
-  /// static int
-  /// _imp_exec_dynamic_impl(PyObject *module, PyObject *mod)
-  public func execDynamic() -> PyObject {
-    self.unimplemented()
-  }
-
   // MARK: - Hash
 
   internal static var sourceHashDoc: String {

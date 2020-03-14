@@ -1,3 +1,6 @@
+// In CPython:
+// Python -> import.c
+
 extension UnderscoreImp {
 
   // MARK: - Is

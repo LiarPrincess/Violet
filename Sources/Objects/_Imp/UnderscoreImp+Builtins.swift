@@ -1,3 +1,6 @@
+// In CPython:
+// Python -> import.c
+
 extension UnderscoreImp {
 
   // MARK: - Is
@@ -42,26 +45,33 @@ extension UnderscoreImp {
   /// static PyObject *
   /// _imp_create_builtin(PyObject *module, PyObject *spec)
   public func createBuiltin(spec: PyObject) -> PyResult<PyObject> {
-    let name: PyObject
-    switch Py.getAttribute(spec, name: .name) {
+    let name: PyString
+    switch self.getName(spec: spec) {
     case let .value(n): name = n
     case let .error(e): return .error(e)
     }
 
-    let modules = Py.sys.modules
-    switch modules.get(name: name) {
+    // Check if we already have this module.
+    switch Py.sys.modules.get(name: name) {
     case .value(let m): return .value(m)
     case .notFound: break // Try other
     case .error(let e): return .error(e)
     }
 
-//    guard let nameStr = name as? PyString else {
-//      return .typeError("Module name must be a str, not \(name.typeName).")
-//    }
+    // Get builtin definition.
+    // Note that we do not have to 'create' new module here,
+    // because we initialized all of builtin modules (all 3 of them: builtins,
+    // sys and _imp) in 'Py.initialize'.
+    let builtinModules = Py.sys.builtinModules
+    assert(builtinModules.names.count == builtinModules.modules.count)
 
-    // Currently we only have 'builtins', 'sys' and '_impl' modules.
-    // We do not support any other.
-    self.unimplemented()
+    let moduleIndexOrNil = builtinModules.names.firstIndex { $0 == name.value }
+    guard let moduleIndex = moduleIndexOrNil else {
+      return .value(Py.none)
+    }
+
+    let module = builtinModules.modules[moduleIndex]
+    return .value(module)
   }
 
   // MARK: - Exec
@@ -84,6 +94,6 @@ extension UnderscoreImp {
       return .typeError(msg)
     }
 
-    return self.execBuiltinOrDynamic(module: mod)
+    self.unimplemented()
   }
 }
