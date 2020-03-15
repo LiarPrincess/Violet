@@ -3,7 +3,7 @@ import Core
 
 // https://docs.python.org/3/reference/lexical_analysis.html
 
-public class Lexer: LexerType {
+public final class Lexer: LexerType {
 
   /// Text input to lex.
   /// Scalars because 'Python reads program text as Unicode code points' (quote

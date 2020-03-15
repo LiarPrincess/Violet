@@ -22,7 +22,7 @@ private enum ParserState {
   case error(Error)
 }
 
-public class Parser {
+public final class Parser {
 
   /// Token source.
   internal var lexer: LexerAdapter

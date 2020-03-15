@@ -18,7 +18,7 @@ internal protocol CoreConfigurationDeps {
   func fileExists(atPath path: String) -> Bool
 }
 
-private class CoreConfigurationDepsImpl: CoreConfigurationDeps {
+private final class CoreConfigurationDepsImpl: CoreConfigurationDeps {
 
   fileprivate var bundleURL: URL {
     return Bundle.main.bundleURL
@@ -33,7 +33,7 @@ private class CoreConfigurationDepsImpl: CoreConfigurationDeps {
   }
 }
 
-internal class CoreConfiguration {
+internal final class CoreConfiguration {
 
   /// `argv[0]` or ""
   internal var programName: String

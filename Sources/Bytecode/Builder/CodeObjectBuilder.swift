@@ -3,7 +3,7 @@ import Core
 /// Helper for adding new instructions to `CodeObject`.
 /// It will store reference to `codeObject`,
 /// it is acceptable to have multiple builders to a single `CodeObject`.
-public class CodeObjectBuilder {
+public final class CodeObjectBuilder {
 
   /// `CodeObject` that we are adding instructions to.
   internal let code: CodeObject

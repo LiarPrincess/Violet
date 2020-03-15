@@ -1,6 +1,6 @@
 import Core
 
-internal class SetLoadExpressionContext: ExpressionVisitor {
+internal final class SetLoadExpressionContext: ExpressionVisitor {
 
   internal typealias ExpressionResult = ()
   internal typealias ExpressionPayload = ()

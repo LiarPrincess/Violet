@@ -11,7 +11,7 @@ import Objects
 /// Dummy namespace for `eval` function, just so we don't pollute `VM` with all
 /// of that nonsense (but don't worry, we use `VM` as a 'catch them all'
 /// for all of the code that does not fit anywhere else, so it is still a mess).
-internal class Eval {
+internal final class Eval {
 
   // MARK: - Properties
 

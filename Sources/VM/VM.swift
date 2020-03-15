@@ -7,7 +7,7 @@ import Objects
 import Rapunzel
 
 // swiftlint:disable:next type_name
-public class VM: PyDelegate {
+public final class VM: PyDelegate {
 
   internal var frames = [PyFrame]()
   internal let fileManager = FileManager.default

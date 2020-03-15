@@ -1,7 +1,7 @@
 import Core
 import Rapunzel
 
-public class ASTPrinter: ASTVisitor, StatementVisitor, ExpressionVisitor {
+public final class ASTPrinter: ASTVisitor, StatementVisitor, ExpressionVisitor {
 
   public typealias ASTResult = Doc
   public typealias StatementResult = Doc

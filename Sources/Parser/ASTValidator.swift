@@ -7,7 +7,7 @@ import Lexer
 // In CPython:
 // Python -> ast.c
 
-public class ASTValidator {
+public final class ASTValidator {
 
   public init() { }
 
@@ -17,7 +17,7 @@ public class ASTValidator {
   }
 }
 
-internal class ASTValidatorPass:
+internal final class ASTValidatorPass:
   ASTVisitor, StatementVisitor, ExpressionVisitorWithPayload {
 
   internal typealias ASTResult = Void
