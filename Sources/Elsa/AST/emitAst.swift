@@ -20,17 +20,37 @@ private func emitAst(inputFile: URL) {
   print("// swiftlint:disable vertical_whitespace_closing_braces")
   print("")
 
-  for entity in parse(url: inputFile) {
+  let entities = parse(url: inputFile)
+  for entity in entities {
     switch entity {
     case let .enum(e):
       printEnum(e)
     case let .struct(s):
       printProduct(keyword: "struct", def: s)
     case let .class(c):
-      printProduct(keyword: "class", def: c)
+      let keyword = hasSubclass(class: c, in: entities) ? "class" : "final class"
+      printProduct(keyword: keyword, def: c)
       printEquatable(c)
     }
   }
+}
+
+private func hasSubclass(class: ClassDef, in other: [Entity]) -> Bool {
+  let className = `class`.name
+
+  for entity in other {
+    switch entity {
+    case let .class(c):
+      if c.bases.contains(className) {
+        return true
+      }
+    case .enum,
+         .struct:
+      break
+    }
+  }
+
+  return false
 }
 
 // MARK: - Enum

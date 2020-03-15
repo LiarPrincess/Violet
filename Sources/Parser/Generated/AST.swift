@@ -64,7 +64,7 @@ public class AST: ASTNode, CustomStringConvertible {
 /// Used for input in interactive mode (REPL).
 /// 
 /// `interactive_input ::= [stmt_list] NEWLINE | compound_stmt NEWLINE`
-public class InteractiveAST: AST {
+public final class InteractiveAST: AST {
 
   public var statements: [Statement]
 
@@ -103,7 +103,7 @@ public class InteractiveAST: AST {
 /// - when parsing a string passed to the `exec()` function;
 /// 
 /// `file_input ::=  (NEWLINE | statement)*`
-public class ModuleAST: AST {
+public final class ModuleAST: AST {
 
   public var statements: [Statement]
 
@@ -137,7 +137,7 @@ public class ModuleAST: AST {
 /// Used for `eval()`.
 /// It ignores leading whitespace.
 /// `eval_input ::= expression_list NEWLINE*`
-public class ExpressionAST: AST {
+public final class ExpressionAST: AST {
 
   public var expression: Expression
 
@@ -217,7 +217,7 @@ public class Statement: ASTNode, CustomStringConvertible {
 // MARK: - FunctionDefStmt
 
 /// A function definition.
-public class FunctionDefStmt: Statement {
+public final class FunctionDefStmt: Statement {
 
   /// `name` is a raw string of the function name.
   public var name: String
@@ -267,7 +267,7 @@ public class FunctionDefStmt: Statement {
 // MARK: - AsyncFunctionDefStmt
 
 /// An async def function definition.
-public class AsyncFunctionDefStmt: Statement {
+public final class AsyncFunctionDefStmt: Statement {
 
   /// `name` is a raw string of the function name.
   public var name: String
@@ -317,7 +317,7 @@ public class AsyncFunctionDefStmt: Statement {
 // MARK: - ClassDefStmt
 
 /// A class definition.
-public class ClassDefStmt: Statement {
+public final class ClassDefStmt: Statement {
 
   /// `name` is a raw string for the class name
   public var name: String
@@ -370,7 +370,7 @@ public class ClassDefStmt: Statement {
 // MARK: - ReturnStmt
 
 /// A `return` statement.
-public class ReturnStmt: Statement {
+public final class ReturnStmt: Statement {
 
   public var value: Expression?
 
@@ -402,7 +402,7 @@ public class ReturnStmt: Statement {
 // MARK: - DeleteStmt
 
 /// Represents a `del` statement.
-public class DeleteStmt: Statement {
+public final class DeleteStmt: Statement {
 
   /// Contains a list of nodes, such as Name, Attribute or Subscript nodes.
   public var values: NonEmptyArray<Expression>
@@ -438,7 +438,7 @@ public class DeleteStmt: Statement {
 /// 
 /// Multiple nodes in `targets` represents assigning the same value to each.
 /// Unpacking is represented by putting a Tuple or List within targets.
-public class AssignStmt: Statement {
+public final class AssignStmt: Statement {
 
   public var targets: NonEmptyArray<Expression>
   public var value: Expression
@@ -476,7 +476,7 @@ public class AssignStmt: Statement {
 /// 
 /// Target can be Name, Subscript or Attribute, but not a Tuple or List
 /// (unlike the targets of `Assign`).
-public class AugAssignStmt: Statement {
+public final class AugAssignStmt: Statement {
 
   public var target: Expression
   public var op: BinaryOperator
@@ -514,7 +514,7 @@ public class AugAssignStmt: Statement {
 // MARK: - AnnAssignStmt
 
 /// An assignment with a type annotation.
-public class AnnAssignStmt: Statement {
+public final class AnnAssignStmt: Statement {
 
   public var target: Expression
   public var annotation: Expression
@@ -558,7 +558,7 @@ public class AnnAssignStmt: Statement {
 // MARK: - ForStmt
 
 /// A `for` loop.
-public class ForStmt: Statement {
+public final class ForStmt: Statement {
 
   /// `target` holds the variable(s) the loop assigns to,
   /// as a single Name, Tuple or List node.
@@ -605,7 +605,7 @@ public class ForStmt: Statement {
 // MARK: - AsyncForStmt
 
 /// An `async for` definition.
-public class AsyncForStmt: Statement {
+public final class AsyncForStmt: Statement {
 
   /// `target` holds the variable(s) the loop assigns to,
   /// as a single Name, Tuple or List node.
@@ -652,7 +652,7 @@ public class AsyncForStmt: Statement {
 // MARK: - WhileStmt
 
 /// A `while` loop.
-public class WhileStmt: Statement {
+public final class WhileStmt: Statement {
 
   /// Holds the condition, such as a Compare node.
   public var test: Expression
@@ -698,7 +698,7 @@ public class WhileStmt: Statement {
 /// - `elif` clauses don’t have a special representation in the AST,
 /// but rather appear as extra `If` nodes within the `orElse` section
 /// of the previous one.
-public class IfStmt: Statement {
+public final class IfStmt: Statement {
 
   /// Holds a single node, such as a Compare node.
   public var test: Expression
@@ -739,7 +739,7 @@ public class IfStmt: Statement {
 // MARK: - WithStmt
 
 /// A `with` block.
-public class WithStmt: Statement {
+public final class WithStmt: Statement {
 
   /// List of `Withitem` nodes representing the context managers.
   public var items: NonEmptyArray<WithItem>
@@ -776,7 +776,7 @@ public class WithStmt: Statement {
 // MARK: - AsyncWithStmt
 
 /// An `async with` definition.
-public class AsyncWithStmt: Statement {
+public final class AsyncWithStmt: Statement {
 
   /// List of `Withitem` nodes representing the context managers.
   public var items: NonEmptyArray<WithItem>
@@ -813,7 +813,7 @@ public class AsyncWithStmt: Statement {
 // MARK: - RaiseStmt
 
 /// Raising an exception.
-public class RaiseStmt: Statement {
+public final class RaiseStmt: Statement {
 
   /// Object to be raised, normally a `Call` or `Name` or `None` for a standalone raise.
   public var exception: Expression?
@@ -853,7 +853,7 @@ public class RaiseStmt: Statement {
 /// 
 /// All attributes are list of nodes to execute, except for handlers,
 /// which is a list of ExceptHandler nodes.
-public class TryStmt: Statement {
+public final class TryStmt: Statement {
 
   public var body: NonEmptyArray<Statement>
   public var handlers: [ExceptHandler]
@@ -894,7 +894,7 @@ public class TryStmt: Statement {
 // MARK: - AssertStmt
 
 /// An assertion.
-public class AssertStmt: Statement {
+public final class AssertStmt: Statement {
 
   /// Holds the condition, such as a `Compare` node.
   public var test: Expression
@@ -931,7 +931,7 @@ public class AssertStmt: Statement {
 // MARK: - ImportStmt
 
 /// An import statement.
-public class ImportStmt: Statement {
+public final class ImportStmt: Statement {
 
   public var names: NonEmptyArray<Alias>
 
@@ -963,7 +963,7 @@ public class ImportStmt: Statement {
 // MARK: - ImportFromStmt
 
 /// Represents `from x import y`.
-public class ImportFromStmt: Statement {
+public final class ImportFromStmt: Statement {
 
   /// Raw string of the ‘from’ name, without any leading dots
   /// or `None` for statements such as `from . import foo`.
@@ -1008,7 +1008,7 @@ public class ImportFromStmt: Statement {
 /// or None for statements such as `from . import foo`.
 /// - `level` is an integer holding the level of the relative import
 /// (0 means absolute import).
-public class ImportFromStarStmt: Statement {
+public final class ImportFromStarStmt: Statement {
 
   public var moduleName: String?
   /// Integer holding the level of the relative import (0 means absolute import).
@@ -1044,7 +1044,7 @@ public class ImportFromStarStmt: Statement {
 // MARK: - GlobalStmt
 
 /// `global` statement.
-public class GlobalStmt: Statement {
+public final class GlobalStmt: Statement {
 
   public var identifiers: NonEmptyArray<String>
 
@@ -1076,7 +1076,7 @@ public class GlobalStmt: Statement {
 // MARK: - NonlocalStmt
 
 /// `nonlocal` statement.
-public class NonlocalStmt: Statement {
+public final class NonlocalStmt: Statement {
 
   public var identifiers: NonEmptyArray<String>
 
@@ -1108,7 +1108,7 @@ public class NonlocalStmt: Statement {
 // MARK: - ExprStmt
 
 /// `Expression` statement.
-public class ExprStmt: Statement {
+public final class ExprStmt: Statement {
 
   public var expression: Expression
 
@@ -1140,7 +1140,7 @@ public class ExprStmt: Statement {
 // MARK: - PassStmt
 
 /// A `pass` statement.
-public class PassStmt: Statement {
+public final class PassStmt: Statement {
 
 
   override public func accept<V: StatementVisitor>(
@@ -1161,7 +1161,7 @@ public class PassStmt: Statement {
 // MARK: - BreakStmt
 
 /// `break` statement.
-public class BreakStmt: Statement {
+public final class BreakStmt: Statement {
 
 
   override public func accept<V: StatementVisitor>(
@@ -1182,7 +1182,7 @@ public class BreakStmt: Statement {
 // MARK: - ContinueStmt
 
 /// `continue` statement.
-public class ContinueStmt: Statement {
+public final class ContinueStmt: Statement {
 
 
   override public func accept<V: StatementVisitor>(
@@ -1402,7 +1402,7 @@ public enum ExpressionContext: Equatable, CustomStringConvertible {
 
 // MARK: - TrueExpr
 
-public class TrueExpr: Expression {
+public final class TrueExpr: Expression {
 
 
   override public func accept<V: ExpressionVisitor>(
@@ -1422,7 +1422,7 @@ public class TrueExpr: Expression {
 
 // MARK: - FalseExpr
 
-public class FalseExpr: Expression {
+public final class FalseExpr: Expression {
 
 
   override public func accept<V: ExpressionVisitor>(
@@ -1442,7 +1442,7 @@ public class FalseExpr: Expression {
 
 // MARK: - NoneExpr
 
-public class NoneExpr: Expression {
+public final class NoneExpr: Expression {
 
 
   override public func accept<V: ExpressionVisitor>(
@@ -1462,7 +1462,7 @@ public class NoneExpr: Expression {
 
 // MARK: - EllipsisExpr
 
-public class EllipsisExpr: Expression {
+public final class EllipsisExpr: Expression {
 
 
   override public func accept<V: ExpressionVisitor>(
@@ -1482,7 +1482,7 @@ public class EllipsisExpr: Expression {
 
 // MARK: - IdentifierExpr
 
-public class IdentifierExpr: Expression {
+public final class IdentifierExpr: Expression {
 
   public var value: String
 
@@ -1514,7 +1514,7 @@ public class IdentifierExpr: Expression {
 
 // MARK: - StringExpr
 
-public class StringExpr: Expression {
+public final class StringExpr: Expression {
 
   public var value: StringGroup
 
@@ -1546,7 +1546,7 @@ public class StringExpr: Expression {
 
 // MARK: - IntExpr
 
-public class IntExpr: Expression {
+public final class IntExpr: Expression {
 
   public var value: BigInt
 
@@ -1578,7 +1578,7 @@ public class IntExpr: Expression {
 
 // MARK: - FloatExpr
 
-public class FloatExpr: Expression {
+public final class FloatExpr: Expression {
 
   public var value: Double
 
@@ -1610,7 +1610,7 @@ public class FloatExpr: Expression {
 
 // MARK: - ComplexExpr
 
-public class ComplexExpr: Expression {
+public final class ComplexExpr: Expression {
 
   public var real: Double
   public var imag: Double
@@ -1645,7 +1645,7 @@ public class ComplexExpr: Expression {
 
 // MARK: - BytesExpr
 
-public class BytesExpr: Expression {
+public final class BytesExpr: Expression {
 
   public var value: Data
 
@@ -1678,7 +1678,7 @@ public class BytesExpr: Expression {
 // MARK: - UnaryOpExpr
 
 /// Operation with single operand.
-public class UnaryOpExpr: Expression {
+public final class UnaryOpExpr: Expression {
 
   public var op: UnaryOperator
   public var right: Expression
@@ -1714,7 +1714,7 @@ public class UnaryOpExpr: Expression {
 // MARK: - BinaryOpExpr
 
 /// Operation with 2 operands.
-public class BinaryOpExpr: Expression {
+public final class BinaryOpExpr: Expression {
 
   public var op: BinaryOperator
   public var left: Expression
@@ -1761,7 +1761,7 @@ public class BinaryOpExpr: Expression {
 /// - numeric zero
 /// - empty strings
 /// - empty containers
-public class BoolOpExpr: Expression {
+public final class BoolOpExpr: Expression {
 
   public var op: BooleanOperator
   public var left: Expression
@@ -1799,7 +1799,7 @@ public class BoolOpExpr: Expression {
 
 // MARK: - CompareExpr
 
-public class CompareExpr: Expression {
+public final class CompareExpr: Expression {
 
   public var left: Expression
   public var elements: NonEmptyArray<ComparisonElement>
@@ -1835,7 +1835,7 @@ public class CompareExpr: Expression {
 // MARK: - TupleExpr
 
 /// Values separated by commas (sometimes between parentheses): (a,b).
-public class TupleExpr: Expression {
+public final class TupleExpr: Expression {
 
   public var elements: [Expression]
 
@@ -1868,7 +1868,7 @@ public class TupleExpr: Expression {
 // MARK: - ListExpr
 
 /// List of comma-separated values between square brackets: [a,b].
-public class ListExpr: Expression {
+public final class ListExpr: Expression {
 
   public var elements: [Expression]
 
@@ -1901,7 +1901,7 @@ public class ListExpr: Expression {
 // MARK: - DictionaryExpr
 
 /// Set of `key: value` pairs between braces: {a: b}. Keys are unique.
-public class DictionaryExpr: Expression {
+public final class DictionaryExpr: Expression {
 
   public var elements: [DictionaryElement]
 
@@ -1934,7 +1934,7 @@ public class DictionaryExpr: Expression {
 // MARK: - SetExpr
 
 /// List of comma-separated values between braces: {a}. Unordered with no duplicates.
-public class SetExpr: Expression {
+public final class SetExpr: Expression {
 
   public var elements: [Expression]
 
@@ -1968,7 +1968,7 @@ public class SetExpr: Expression {
 
 /// Brackets containing an expression followed by a for clause and then
 /// zero or more for or if clauses.
-public class ListComprehensionExpr: Expression {
+public final class ListComprehensionExpr: Expression {
 
   /// Expression that will be evaluated for each item
   public var element: Expression
@@ -2006,7 +2006,7 @@ public class ListComprehensionExpr: Expression {
 
 /// Brackets containing an expression followed by a for clause and then
 /// zero or more for or if clauses.
-public class SetComprehensionExpr: Expression {
+public final class SetComprehensionExpr: Expression {
 
   /// Expression that will be evaluated for each item
   public var element: Expression
@@ -2044,7 +2044,7 @@ public class SetComprehensionExpr: Expression {
 
 /// Brackets containing an expression followed by a for clause and then
 /// zero or more for or if clauses.
-public class DictionaryComprehensionExpr: Expression {
+public final class DictionaryComprehensionExpr: Expression {
 
   /// Expression that will be evaluated for each item
   public var key: Expression
@@ -2086,7 +2086,7 @@ public class DictionaryComprehensionExpr: Expression {
 
 /// Expression followed by a for clause and then
 /// zero or more for or if clauses.
-public class GeneratorExpr: Expression {
+public final class GeneratorExpr: Expression {
 
   /// Expression that will be evaluated for each item
   public var element: Expression
@@ -2126,7 +2126,7 @@ public class GeneratorExpr: Expression {
 /// `value` is what it waits for.
 /// 
 /// Only valid in the body of an AsyncFunctionDef.
-public class AwaitExpr: Expression {
+public final class AwaitExpr: Expression {
 
   public var value: Expression
 
@@ -2161,7 +2161,7 @@ public class AwaitExpr: Expression {
 /// A `yield` or `yield from` expression.
 /// Because these are expressions, they must be wrapped in a `Expr` node
 /// if the value sent back is not used.
-public class YieldExpr: Expression {
+public final class YieldExpr: Expression {
 
   public var value: Expression?
 
@@ -2196,7 +2196,7 @@ public class YieldExpr: Expression {
 /// A `yield` or `yield from` expression.
 /// Because these are expressions, they must be wrapped in a `Expr` node
 /// if the value sent back is not used.
-public class YieldFromExpr: Expression {
+public final class YieldFromExpr: Expression {
 
   public var value: Expression
 
@@ -2230,7 +2230,7 @@ public class YieldFromExpr: Expression {
 
 /// Minimal function definition that can be used inside an expression.
 /// Unlike `FunctionDef`, body holds a single node.
-public class LambdaExpr: Expression {
+public final class LambdaExpr: Expression {
 
   public var args: Arguments
   public var body: Expression
@@ -2269,7 +2269,7 @@ public class LambdaExpr: Expression {
 /// - `func` - function to call
 /// - `args` - arguments passed by position
 /// - `keywords` - keyword objects representing arguments passed by keyword
-public class CallExpr: Expression {
+public final class CallExpr: Expression {
 
   public var function: Expression
   public var args: [Expression]
@@ -2308,7 +2308,7 @@ public class CallExpr: Expression {
 // MARK: - IfExpr
 
 /// For example: `1 if True else 2`
-public class IfExpr: Expression {
+public final class IfExpr: Expression {
 
   public var test: Expression
   public var body: Expression
@@ -2347,7 +2347,7 @@ public class IfExpr: Expression {
 // MARK: - AttributeExpr
 
 /// For example `apple.juice = poison`.
-public class AttributeExpr: Expression {
+public final class AttributeExpr: Expression {
 
   public var object: Expression
   public var name: String
@@ -2383,7 +2383,7 @@ public class AttributeExpr: Expression {
 // MARK: - SubscriptExpr
 
 /// For example `apple[juice] = poison`.
-public class SubscriptExpr: Expression {
+public final class SubscriptExpr: Expression {
 
   public var object: Expression
   public var slice: Slice
@@ -2421,7 +2421,7 @@ public class SubscriptExpr: Expression {
 /// For example:
 /// `dwarfs = ["Doc", "Grumpy", "Happy", "Sleepy", "Bashful", "Sneezy", "Dopey"]`
 /// `singSong(*dwarfs)`
-public class StarredExpr: Expression {
+public final class StarredExpr: Expression {
 
   public var expression: Expression
 
