@@ -33,7 +33,7 @@ extension Parser {
     // consume new line (we will also accept eof)
     switch self.peek.kind {
     case .eof: break
-    case .newLine: try self.lexer.consumeNewLines()
+    case .newLine: try self.consumeNewLines()
     default: throw self.unexpectedToken(expected: [.newLine, .eof])
     }
 
@@ -45,7 +45,7 @@ extension Parser {
     if try self.consumeIf(.newLine) {
       // Consume additional new lines (we can have more than 1).
       // It will also handle the case when we have comment as 1st line.
-      try self.lexer.consumeNewLines()
+      try self.consumeNewLines()
 
       try self.consumeOrThrow(.indent)
 

@@ -4,7 +4,7 @@ import Lexer
 ///
 /// By that we mean:
 /// - Take only the 1st new line if we have subsequent ones
-/// - Remove lines that contain only the comment
+/// - Treat lines that contain only the comment as just new lines
 ///
 /// Mostly because this is how grammar is defined.
 internal struct LexerAdapter {
@@ -60,8 +60,9 @@ internal struct LexerAdapter {
   }
 
   /// Token that we have already lexed, but is still waiting for processing.
+  /// Basically 1 token buffer.
   ///
-  /// Most of the time it will be `nil`, but sometimes (for example when we
+  /// Most of the time it will be `nil`, but sometimes (for example if we
   /// were checking for subsequent new lines) we will fill it.
   private var pendingToken: Token?
 
@@ -71,7 +72,7 @@ internal struct LexerAdapter {
       return pending
     }
 
-    var result = try self.getNextNonCommentToken()
+    let result = try self.getNextNonCommentToken()
 
     let checkForSubsequentNewLines = self.isNewLine(result)
     guard checkForSubsequentNewLines else {
@@ -83,7 +84,7 @@ internal struct LexerAdapter {
 
     var after = try self.getNextNonCommentToken()
     while self.isNewLine(after) {
-      result = after
+      // Do not set 'result = after' we will take only the 1st 'new line'!
       after = try self.getNextNonCommentToken()
     }
 
@@ -125,14 +126,5 @@ internal struct LexerAdapter {
   private func isNewLine(_ token: Token) -> Bool {
     if case TokenKind.newLine = token.kind { return true }
     return false
-  }
-
-  // MARK: - New lines
-
-  /// We can have multiple new lines, it should not matter
-  internal mutating func consumeNewLines() throws {
-    while self.peek.kind == .newLine {
-      try self.advance()
-    }
   }
 }

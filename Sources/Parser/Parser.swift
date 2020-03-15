@@ -145,7 +145,7 @@ public final class Parser {
     let start = self.peek.start
     let list = try self.testList(context: .load, closingTokens: [.newLine, .eof])
 
-    try self.lexer.consumeNewLines()
+    try self.consumeNewLines()
 
     let end = self.peek.end
     guard self.peek.kind == .eof else {
@@ -195,6 +195,13 @@ public final class Parser {
     }
 
     return false
+  }
+
+  /// We can have multiple new lines, it should not matter
+  internal func consumeNewLines() throws {
+    while self.peek.kind == .newLine {
+      try self.advance()
+    }
   }
 
   // MARK: - Create
