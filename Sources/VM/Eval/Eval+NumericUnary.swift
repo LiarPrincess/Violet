@@ -13,7 +13,7 @@ extension Eval {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -27,7 +27,7 @@ extension Eval {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -42,7 +42,7 @@ extension Eval {
       self.stack.top = not
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -56,7 +56,7 @@ extension Eval {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 }

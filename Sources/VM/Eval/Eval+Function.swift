@@ -26,14 +26,14 @@ extension Eval {
     let fn: PyFunction
     switch Py.newFunction(qualname: qualname, code: code, globals: globals) {
     case let .value(f): fn = f
-    case let .error(e): return .unwind(.exception(e))
+    case let .error(e): return .exception(e)
     }
 
     if flags.contains(.hasFreeVariables) {
       let value = self.stack.pop()
       switch fn.setClosure(value) {
       case .value: break
-      case .error(let e): return .unwind(.exception(e))
+      case .error(let e): return .exception(e)
       }
     }
 
@@ -41,7 +41,7 @@ extension Eval {
       let value = self.stack.pop()
       switch fn.setAnnotations(value) {
       case .value: break
-      case .error(let e): return .unwind(.exception(e))
+      case .error(let e): return .exception(e)
       }
     }
 
@@ -49,7 +49,7 @@ extension Eval {
       let value = self.stack.pop()
       switch fn.setKeywordDefaults(value) {
       case .value: break
-      case .error(let e): return .unwind(.exception(e))
+      case .error(let e): return .exception(e)
       }
     }
 
@@ -57,7 +57,7 @@ extension Eval {
       let value = self.stack.pop()
       switch fn.setDefaults(value) {
       case .value: break
-      case .error(let e): return .unwind(.exception(e))
+      case .error(let e): return .exception(e)
       }
     }
 
@@ -70,7 +70,7 @@ extension Eval {
   /// Returns with TOS to the caller of the function.
   internal func doReturn() -> InstructionResult {
     let value = self.stack.pop()
-    return .unwind(.return(value))
+    return .return(value)
   }
 
   // MARK: - Call function
@@ -103,7 +103,7 @@ extension Eval {
       return .ok
     case let .error(e),
          let .notCallable(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -126,7 +126,7 @@ extension Eval {
     guard let kwNames = kwNamesObject as? PyTuple else {
       let t = kwNamesObject.typeName
       let msg = "Keyword argument names should to be a tuple, not \(t)."
-      return .unwind(.exception(Py.newSystemError(msg: msg)))
+      return .exception(Py.newSystemError(msg: msg))
     }
 
     let level = self.stackLevel
@@ -143,7 +143,7 @@ extension Eval {
       return .ok
     case let .error(e),
          let .notCallable(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -221,7 +221,7 @@ extension Eval {
       let kwargsObject = self.stack.pop()
       switch self.extractKwargs(from: kwargsObject) {
       case let .value(d): kwargs = d
-      case let .error(e): return .unwind(.exception(e))
+      case let .error(e): return .exception(e)
       }
     }
 
@@ -231,7 +231,7 @@ extension Eval {
     let args: [PyObject]
     switch self.extractArgs(fn: fn, args: argsObject) {
     case let .value(a): args = a
-    case let .error(e): return .unwind(.exception(e))
+    case let .error(e): return .exception(e)
     }
 
     let level = self.stackLevel
@@ -244,7 +244,7 @@ extension Eval {
       return .ok
     case let .error(e),
          let .notCallable(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -294,7 +294,7 @@ extension Eval {
       return .ok
     case let .error(e),
          let .notFound(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -325,7 +325,7 @@ extension Eval {
       return .ok
     case let .error(e),
          let .notCallable(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 }

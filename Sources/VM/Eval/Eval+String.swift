@@ -14,7 +14,7 @@ extension Eval {
     let value: PyObject
     switch self.convert(value: rawValue, conversion: conversion) {
     case let .value(o): value = o
-    case let .error(e): return .unwind(.exception(e))
+    case let .error(e): return .exception(e)
     }
 
     if value is PyString && format == nil {
@@ -55,7 +55,7 @@ extension Eval {
       self.stack.push(r)
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 }

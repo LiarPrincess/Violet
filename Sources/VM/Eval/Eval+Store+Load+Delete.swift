@@ -53,7 +53,7 @@ extension Eval {
     case .value:
       return .ok
     case .error(let e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -67,7 +67,7 @@ extension Eval {
       self.stack.top = r
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -80,7 +80,7 @@ extension Eval {
     case .value:
       return .ok
     case .error(let e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -96,7 +96,7 @@ extension Eval {
       self.stack.top = r
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -110,7 +110,7 @@ extension Eval {
     case .value:
       return .ok
     case .error(let e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -123,7 +123,7 @@ extension Eval {
     case .value:
       return .ok
     case .error(let e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -186,7 +186,7 @@ extension Eval {
 
     let mangled = self.code.variableNames[index]
     let e = Py.newUnboundLocalError(variableName: mangled.value)
-    return .unwind(.exception(e))
+    return .exception(e)
   }
 
   // MARK: - Deref
@@ -251,7 +251,7 @@ extension Eval {
       case .none: return self.unboundDerefError(index: cellOrFreeIndex)
       }
     case .error(let e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
 
     self.stack.push(value)
@@ -271,7 +271,7 @@ extension Eval {
               "in enclosing scope"
 
     let e = Py.newNameError(msg: msg)
-    return .unwind(.exception(e))
+    return .exception(e)
   }
 
   private func getDerefName(index: Int) -> MangledName {
@@ -302,7 +302,7 @@ extension Eval {
     case .ok:
       return .ok
     case .error(let e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -315,7 +315,7 @@ extension Eval {
       case .notFound:
         break // try in the next 'dict'
       case .error(let e):
-        return .unwind(.exception(e))
+        return .exception(e)
       }
     }
 
@@ -329,13 +329,13 @@ extension Eval {
     case .notFound:
       return self.nameError(name)
     case .error(let e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
   private func nameError(_ name: PyString) -> InstructionResult {
     let repr = Py.reprOrGeneric(name)
     let e = Py.newNameError(msg: "name '\(repr)' is not defined")
-    return .unwind(.exception(e))
+    return .exception(e)
   }
 }

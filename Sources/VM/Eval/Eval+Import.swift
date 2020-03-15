@@ -19,7 +19,7 @@ extension Eval {
       self.stack.top = module
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 

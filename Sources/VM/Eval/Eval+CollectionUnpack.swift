@@ -14,7 +14,7 @@ extension Eval {
       self.stack.push(Py.newTuple(elements))
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -26,7 +26,7 @@ extension Eval {
       self.stack.push(Py.newList(elements))
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -59,7 +59,7 @@ extension Eval {
       case let .error(e):
         // Try to be a bit more precise in the error message.
         let e2 = self.tupleUnpackWithCallError(iterable: iterable, error: e) ?? e
-        return .unwind(.exception(e2))
+        return .exception(e2)
       }
     }
 
@@ -111,7 +111,7 @@ extension Eval {
       case .value:
         break // just go to the next element
       case .error(let e):
-        return .unwind(.exception(e))
+        return .exception(e)
       }
     }
 
@@ -135,10 +135,10 @@ extension Eval {
       case .error(let e):
         if e.isAttributeError {
           let msg = "'\(object.typeName)' object is not a mapping"
-          return .unwind(.exception(Py.newTypeError(msg: msg)))
+          return .exception(Py.newTypeError(msg: msg))
         }
 
-        return .unwind(.exception(e))
+        return .exception(e)
       }
     }
 
@@ -159,7 +159,7 @@ extension Eval {
       case .error(let e):
         // Try to be a bit more precise in the error message.
         let e2 = self.mapUnpackWithCallError(iterable: object, error: e) ?? e
-        return .unwind(.exception(e2))
+        return .exception(e2)
       }
     }
 
@@ -211,18 +211,18 @@ extension Eval {
     case let .error(e):
       // Try to be a bit more precise in the error message.
       let e2 = self.notIterableUnpackError(iterable: iterable) ?? e
-      return .unwind(.exception(e2))
+      return .exception(e2)
     }
 
     if elements.count < elementCount {
       let got = elements.count
       let msg = "not enough values to unpack (expected \(elementCount), got \(got))"
-      return .unwind(.exception(Py.newValueError(msg: msg)))
+      return .exception(Py.newValueError(msg: msg))
     }
 
     if elements.count > elementCount {
       let msg = "too many values to unpack (expected \(elementCount))"
-      return .unwind(.exception(Py.newValueError(msg: msg)))
+      return .exception(Py.newValueError(msg: msg))
     }
 
     assert(elements.count == elementCount)
@@ -253,14 +253,14 @@ extension Eval {
     case let .error(e):
       // Try to be a bit more precise in the error message.
       let e2 = self.notIterableUnpackError(iterable: iterable) ?? e
-      return .unwind(.exception(e2))
+      return .exception(e2)
     }
 
     let minCount = arg.countBefore + arg.countAfter
     if elements.count < minCount {
       let got = elements.count
       let msg = "not enough values to unpack (expected at least \(minCount), got \(got))"
-      return .unwind(.exception(Py.newValueError(msg: msg)))
+      return .exception(Py.newValueError(msg: msg))
     }
 
     let afterStartsAtIndex = elements.count - arg.countAfter

@@ -36,7 +36,7 @@ extension Eval {
     guard let block = self.blocks.pop(), block.isExceptHandler else {
       let msg = "popped block is not an except handler"
       let e = Py.newSystemError(msg: msg)
-      return .unwind(.exception(e))
+      return .exception(e)
     }
 
     self.unwindExceptHandler(block: block)
@@ -52,16 +52,16 @@ extension Eval {
     // See 'PushFinallyReason' type for comment about what this is.
     switch PushFinallyReason.pop(from: &self.stack) {
     case let .return(value):
-      return .unwind(.return(value)) // We are still returning value
+      return .return(value) // We are still returning value
 
     case .break:
-      return .unwind(.break) // We are still 'breaking'
+      return .break // We are still 'breaking'
 
     case let .continue(loopStartLabel: label, asObject: _):
-      return .unwind(.continue(loopStartLabel: label))
+      return .continue(loopStartLabel: label)
 
     case let .exception(e):
-      return .unwind(.exception(e)) // We are still handling the same exception
+      return .exception(e) // We are still handling the same exception
 
     case .silenced:
       // An exception was silenced by 'with', we must manually unwind the
@@ -69,7 +69,7 @@ extension Eval {
       // otherwise the stack will be in an inconsistent state.
       guard let block = self.blocks.pop() else {
         let e = Py.newSystemError(msg: "XXX block stack underflow")
-        return .unwind(.exception(e))
+        return .exception(e)
       }
 
       assert(block.isExceptHandler)
@@ -81,7 +81,7 @@ extension Eval {
 
     case .invalid:
       let e = Py.newSystemError(msg: "'finally' pops bad exception")
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -106,7 +106,7 @@ extension Eval {
       fallthrough // swiftlint:disable:this fallthrough
     case .reRaise:
       let e = self.createException(value: value, cause: cause)
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 

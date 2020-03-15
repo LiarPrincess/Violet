@@ -22,14 +22,14 @@ extension Eval {
     switch Py.lookup(on: manager, name: .__enter__) {
     case .value(let o): __enter__ = o
     case .notFound: return self.notFound(manager: manager, attribute: "__enter__")
-    case .error(let e): return .unwind(.exception(e))
+    case .error(let e): return .exception(e)
     }
 
     let __exit__: PyObject
     switch Py.lookup(on: manager, name: .__exit__) {
     case .value(let o): __exit__ = o
     case .notFound: return self.notFound(manager: manager, attribute: "__exit__")
-    case .error(let e): return .unwind(.exception(e))
+    case .error(let e): return .exception(e)
     }
 
     self.stack.top = __exit__
@@ -46,14 +46,14 @@ extension Eval {
       return .ok
     case let .notCallable(e),
          let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
   private func notFound(manager: PyObject,
                         attribute: String) -> InstructionResult {
     let e = Py.newAttributeError(object: manager, hasNoAttribute: attribute)
-    return .unwind(.exception(e))
+    return .exception(e)
   }
 
   // MARK: - Cleanup start
@@ -112,7 +112,7 @@ extension Eval {
 
       guard let block = self.blocks.pop() else {
         let e = Py.newSystemError(msg: "XXX block stack underflow")
-        return .unwind(.exception(e))
+        return .exception(e)
       }
 
       assert(block.isExceptHandler)
@@ -125,7 +125,7 @@ extension Eval {
 
     case .invalid:
       let e = Py.newSystemError(msg: "'finally' pops bad exception")
-      return .unwind(.exception(e))
+      return .exception(e)
     }
 
     let args = [exceptionType, exception, traceback]
@@ -136,7 +136,7 @@ extension Eval {
       return .ok
     case let .notCallable(e),
          let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -158,7 +158,7 @@ extension Eval {
       case let .value(value):
         err = value
       case let .error(e):
-        return .unwind(.exception(e))
+        return .exception(e)
       }
     }
 

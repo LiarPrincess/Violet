@@ -26,7 +26,7 @@ extension Eval {
     }
 
     let e = Py.newSystemError(msg: "XXX block stack underflow")
-    return .unwind(.exception(e))
+    return .exception(e)
   }
 
   // MARK: - Rot
@@ -83,7 +83,7 @@ extension Eval {
     case .value:
       return .ok
     case .error(let e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 }

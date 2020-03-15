@@ -8,7 +8,7 @@ extension Eval {
   internal func loadBuildClass() -> InstructionResult {
     guard let buildClass = self.builtinSymbols.get(id: .__build_class__) else {
       let e = Py.newNameError(msg: "__build_class__ not found")
-      return .unwind(.exception(e))
+      return .exception(e)
     }
 
     self.stack.push(buildClass)

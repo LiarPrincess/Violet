@@ -36,7 +36,7 @@ extension Eval {
     case .value:
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -51,7 +51,7 @@ extension Eval {
       self.stack.push(collection)
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -66,7 +66,7 @@ extension Eval {
     case .value:
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -82,7 +82,7 @@ extension Eval {
       self.stack.push(collection)
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -94,7 +94,7 @@ extension Eval {
 
     guard let keysTuple = keys as? PyTuple else {
       let msg = "bad BUILD_CONST_KEY_MAP keys argument"
-      return .unwind(.exception(Py.newSystemError(msg: msg)))
+      return .exception(Py.newSystemError(msg: msg))
     }
 
     let count = Py.lengthInt(tuple: keysTuple)
@@ -105,7 +105,7 @@ extension Eval {
       self.stack.push(collection)
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
@@ -133,7 +133,7 @@ extension Eval {
     case .value:
       return .ok
     case let .error(e):
-      return .unwind(.exception(e))
+      return .exception(e)
     }
   }
 
