@@ -25,7 +25,7 @@ private enum ParserState {
 public class Parser {
 
   /// Token source.
-  internal var lexer: LexerType
+  internal var lexer: LexerAdapter
 
   /// What are we parsing? Expression? Statement?
   private var mode: ParserMode
@@ -39,69 +39,21 @@ public class Parser {
 
   public init(mode: ParserMode, tokenSource lexer: LexerType) {
     self.mode = mode
-    self.lexer = lexer
+    self.lexer = LexerAdapter(lexer: lexer)
   }
 
   // MARK: - Traversal
 
   /// Current token.
-  internal var peek = Token(.eof, start: .start, end: .start)
+  internal var peek: Token { return self.lexer.peek }
 
   /// Token after `self.peek`.
-  internal var peekNext = Token(.eof, start: .start, end: .start)
+  internal var peekNext: Token { return self.lexer.peekNext }
 
   @discardableResult
   internal func advance() throws -> Token? {
-    // EOF should be handled before we ask for next token.
-    // Consuming 'EOF' should not be a thing.
-    assert(self.peek.kind != .eof)
-
-    // We know that 'self.peekNext' is not a comment
-    // because we used 'self.getNextNonCommentToken'
-    self.peek = self.peekNext
-    self.peekNext = try self.getNextNonCommentToken()
-
-    return self.peek
-  }
-
-  private func populatePeeks() throws {
-    self.peek = try self.getNextToken()
-
-    // Advance 'self.peek' until first not comment or new line
-    while self.isComment(self.peek) || self.isNewLine(self.peek) {
-      self.peek = try self.getNextToken()
-    }
-
-    // If we have empty source -> both eof
-    if case TokenKind.eof = self.peek.kind {
-      self.peekNext = self.peek
-      return
-    }
-
-    self.peekNext = try self.getNextNonCommentToken()
-  }
-
-  private func getNextNonCommentToken() throws -> Token {
-    var result = try self.getNextToken()
-    while self.isComment(result) {
-      result = try self.getNextToken()
-    }
-
+    let result = try self.lexer.advance()
     return result
-  }
-
-  private func getNextToken() throws -> Token {
-    return try self.lexer.getToken()
-  }
-
-  private func isComment(_ token: Token) -> Bool {
-    if case TokenKind.comment = token.kind { return true }
-    return false
-  }
-
-  private func isNewLine(_ token: Token) -> Bool {
-    if case TokenKind.newLine = token.kind { return true }
-    return false
   }
 
   // MARK: - Parse
@@ -110,7 +62,7 @@ public class Parser {
     switch self.state {
     case .notStarted:
       do {
-        try self.populatePeeks()
+        try self.lexer.populatePeeks()
 
         let ast = try self.parseByMode()
         try self.validate(ast)
@@ -193,7 +145,7 @@ public class Parser {
     let start = self.peek.start
     let list = try self.testList(context: .load, closingTokens: [.newLine, .eof])
 
-    try self.consumeNewLines()
+    try self.lexer.consumeNewLines()
 
     let end = self.peek.end
     guard self.peek.kind == .eof else {
@@ -243,13 +195,6 @@ public class Parser {
     }
 
     return false
-  }
-
-  /// We can have multiple new lines, it should not matter
-  internal func consumeNewLines() throws {
-    while self.peek.kind == .newLine {
-      try self.advance()
-    }
   }
 
   // MARK: - Create
