@@ -51,7 +51,7 @@ public class Parser {
   internal var peekNext: Token { return self.lexer.peekNext }
 
   @discardableResult
-  internal func advance() throws -> Token? {
+  internal func advance() throws -> Token {
     let result = try self.lexer.advance()
     return result
   }

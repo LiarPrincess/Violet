@@ -3,8 +3,10 @@ import Lexer
 /// Minor pre-processing of provided lexer.
 ///
 /// By that we mean:
-/// - Take only the 1st new line if we have multiple subsequent ones
+/// - Take only the 1st new line if we have subsequent ones
 /// - Remove lines that contain only the comment
+///
+/// Mostly because this is how grammar is defined.
 internal struct LexerAdapter {
 
   /// Current token.
@@ -37,7 +39,60 @@ internal struct LexerAdapter {
       return
     }
 
-    self.peekNext = try self.getNextNonCommentToken()
+    self.peekNext = try self.getPeekNextToken()
+  }
+
+  // MARK: - Advance
+
+  @discardableResult
+  internal mutating func advance() throws -> Token {
+    // 'EOF' should be handled before we ask for next token.
+    // Consuming 'EOF' should not be a thing.
+    // It may also be a case that we forgot to call 'self.populatePeeks'.
+    assert(self.peek.kind != .eof)
+
+    // We know that 'self.peekNext' is valid (non-comment etc.) token
+    // because we used 'self.getPeekNextToken' to obtain it.
+    self.peek = self.peekNext
+    self.peekNext = try self.getPeekNextToken()
+
+    return self.peek
+  }
+
+  /// Token that we have already lexed, but is still waiting for processing.
+  ///
+  /// Most of the time it will be `nil`, but sometimes (for example when we
+  /// were checking for subsequent new lines) we will fill it.
+  private var pendingToken: Token?
+
+  private mutating func getPeekNextToken() throws -> Token {
+    if let pending = self.pendingToken {
+      self.pendingToken = nil
+      return pending
+    }
+
+    var result = try self.getNextNonCommentToken()
+
+    let checkForSubsequentNewLines = self.isNewLine(result)
+    guard checkForSubsequentNewLines else {
+      // Just an ordinary token, nothing to do here...
+      return result
+    }
+
+    // We have a new line, we need to consume subsequent new lines as well.
+
+    var after = try self.getNextNonCommentToken()
+    while self.isNewLine(after) {
+      result = after
+      after = try self.getNextNonCommentToken()
+    }
+
+    // 'after' is not a comment or new line, we have to remember it
+    // and return as 'peekNext' on next 'advance'.
+    assert(self.pendingToken == nil)
+    self.pendingToken = after
+
+    return result
   }
 
   private func getNextNonCommentToken() throws -> Token {
@@ -47,22 +102,6 @@ internal struct LexerAdapter {
     }
 
     return result
-  }
-
-  // MARK: - Advance
-
-  @discardableResult
-  internal mutating func advance() throws -> Token? {
-    // EOF should be handled before we ask for next token.
-    // Consuming 'EOF' should not be a thing.
-    assert(self.peek.kind != .eof)
-
-    // We know that 'self.peekNext' is not a comment
-    // because we used 'self.getNextNonCommentToken'
-    self.peek = self.peekNext
-    self.peekNext = try self.getNextNonCommentToken()
-
-    return self.peek
   }
 
   // MARK: - Get next token
