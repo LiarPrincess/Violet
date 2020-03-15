@@ -7,20 +7,22 @@ extension Lexer {
         self.isAtBeginOfLine = false
 
         // Multi-line tuple/array/dict/set declaration does not change indent
-        let isTupleArrayDict = self.nesting > 0
-        if !isTupleArrayDict {
+        let isTupleArrayDictEtc = self.nesting > 0
+        if !isTupleArrayDictEtc {
           try self.calculateIndent()
         }
       }
 
-      if let indentToken = self.indents.pendingTokens.popLast() {
+      // Do we need to produce some indent/dedent tokens?
+      if let indentToken = self.getPendingIndentTokens() {
         return indentToken
       }
 
       let start = self.location
 
       guard let peek = self.peek else {
-        return self.token(.eof, start: start, end: start.next)
+        return self.getEOFDedentToken() ??
+          self.token(.eof, start: start, end: start.next)
       }
 
       switch peek {

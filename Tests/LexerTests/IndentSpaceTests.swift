@@ -5,9 +5,10 @@ import Core
 /// Use 'python3 -m tokenize -e file.py' for python reference
 class IndentSpaceTests: XCTestCase, Common {
 
-  /// py (lex correct, grammar incorrect):
+  /// Not valid Python code, but it does not matter for lexer:
   ///    Beauty | indent (3 spaces)
   ///    Beast  | equal
+  /// (artificial new line + dedent, before EOF)
   func test_indent_equal() {
     let s = """
        Beauty
@@ -27,10 +28,18 @@ class IndentSpaceTests: XCTestCase, Common {
 
     // no indent
     self.getIdentifier(&lexer, value: "Beast")
+    self.getNewLine(&lexer) // artificial new line
+
+    if let dedent = self.getToken(&lexer) {
+      XCTAssertEqual(dedent.kind, .dedent)
+      XCTAssertEqual(dedent.start, SourceLocation(line: 2, column: 8))
+      XCTAssertEqual(dedent.end,   SourceLocation(line: 2, column: 8))
+    }
+
     self.getEOF(&lexer)
   }
 
-  /// py (lex correct, grammar incorrect):
+  /// Not valid Python code, but it does not matter for lexer:
   ///   Little | indent (2 spaces)
   /// Mermaid  | dedent
   func test_indent_dedent() {
@@ -60,7 +69,7 @@ class IndentSpaceTests: XCTestCase, Common {
     self.getEOF(&lexer)
   }
 
-  /// py (lex correct, grammar incorrect):
+  /// Not valid Python code, but it does not matter for lexer:
   ///   Gaston    | indent1 (2 spaces)
   ///        Best | indent2 (7 spaces)
   /// Waifu       | dedent1 dedent2
