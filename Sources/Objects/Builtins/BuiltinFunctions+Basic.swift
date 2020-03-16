@@ -91,7 +91,7 @@ extension BuiltinFunctions {
   /// ```
   /// This is actually `dict` stored as '\_\_dict\_\_' in real '\_\_dict\_\_'.
   /// In such situation we return real '\_\_dict\_\_' (not the user property!).
-  public func get__dict__(object: PyObject) -> PyDict? {
+  internal func get__dict__(object: PyObject) -> PyDict? {
     if let owner = object as? __dict__GetterOwner {
       let result = owner.getDict()
       return result

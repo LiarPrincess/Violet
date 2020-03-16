@@ -39,6 +39,7 @@ public struct IdString {
   public static let __abstractmethods__ = Self.impl.__abstractmethods__
   public static let __add__ = Self.impl.__add__
   public static let __aiter__ = Self.impl.__aiter__
+  public static let __all__ = Self.impl.__all__
   public static let __and__ = Self.impl.__and__
   public static let __anext__ = Self.impl.__anext__
   public static let __await__ = Self.impl.__await__
@@ -201,6 +202,7 @@ private struct IdStringImpl {
   fileprivate let __abstractmethods__ = IdString(value: "__abstractmethods__")
   fileprivate let __add__ = IdString(value: "__add__")
   fileprivate let __aiter__ = IdString(value: "__aiter__")
+  fileprivate let __all__ = IdString(value: "__all__")
   fileprivate let __and__ = IdString(value: "__and__")
   fileprivate let __anext__ = IdString(value: "__anext__")
   fileprivate let __await__ = IdString(value: "__await__")

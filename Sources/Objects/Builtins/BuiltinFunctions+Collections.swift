@@ -190,6 +190,15 @@ extension BuiltinFunctions {
     }
   }
 
+  public func getKeys(dict object: PyObject) -> PyResult<PyObject> {
+    if let owner = object as? keysOwner {
+      let result = owner.keys()
+      return .value(result)
+    }
+
+    return self.getAttribute(object, name: .keys)
+  }
+
   // MARK: - Range
 
   public func newRange(stop: BigInt) -> PyResult<PyRange> {

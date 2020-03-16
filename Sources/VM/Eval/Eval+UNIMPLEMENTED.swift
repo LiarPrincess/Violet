@@ -55,25 +55,6 @@ extension Eval {
     return self.unimplemented()
   }
 
-  // MARK: - Import
-
-  /// Loads all symbols not starting with '_' directly from the module TOS
-  /// to the local namespace.
-  ///
-  /// The module is popped after loading all names.
-  /// This opcode implements `from module import *`.
-  internal func importStar() -> InstructionResult {
-    return self.unimplemented()
-  }
-
-  /// Loads the attribute `name` from the module found in TOS.
-  ///
-  /// The resulting object is pushed onto the stack,
-  /// to be subsequently stored by a `StoreFast` instruction.
-  internal func importFrom(nameIndex: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
   // MARK: - With
 
   /// Resolves `AEnter` and `AExit` from the object on top of the stack.

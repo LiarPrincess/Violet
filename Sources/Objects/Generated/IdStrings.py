@@ -5,6 +5,7 @@ ids = [
   '__abstractmethods__',
   '__add__',
   '__aiter__',
+  '__all__',
   '__and__',
   '__anext__',
   '__await__',
