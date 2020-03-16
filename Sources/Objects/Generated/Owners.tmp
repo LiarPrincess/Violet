@@ -916,7 +916,7 @@ PyBaseException|PyObject|get|__dict__|getDict() -> PyDict
 PyBaseException|PyObject|get|__class__|getClass() -> PyType
 PyBaseException|PyObject|get|args|getArgs() -> PyTuple
 PyBaseException|PyObject|set|args|setArgs(_ value: PyObject?) -> PyResult<()>
-PyBaseException|PyObject|get|__traceback__|getTraceback() -> PyObject?
+PyBaseException|PyObject|get|__traceback__|getTraceback() -> PyObject
 PyBaseException|PyObject|set|__traceback__|setTraceback(_ value: PyObject?) -> PyResult<()>
 PyBaseException|PyObject|get|__cause__|getCause() -> PyObject?
 PyBaseException|PyObject|set|__cause__|setCause(_ value: PyObject?) -> PyResult<()>

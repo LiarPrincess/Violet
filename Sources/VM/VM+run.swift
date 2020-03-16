@@ -9,6 +9,9 @@ extension VM {
 
   /// static void
   /// pymain_run_python(_PyMain *pymain)
+  ///
+  /// This method was not intended to be called multiple times,
+  /// but it is not like we can stop you.
   public func run() throws {
     if self.arguments.help {
       print(self.arguments.usage)

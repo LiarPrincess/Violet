@@ -1,4 +1,10 @@
-// swiftlint:disable file_length
+// In CPython:
+// Python -> builtinmodule.c
+// https://docs.python.org/3/library/functions.html
+
+// Docs:
+// https://docs.python.org/3.7/reference/import.html
+// https://docs.python.org/3.7/library/importlib.html
 
 private let importArguments = ArgumentParser.createOrTrap(
   arguments: ["name", "globals", "locals", "fromlist", "level"],
@@ -30,34 +36,33 @@ extension BuiltinFunctions {
   // sourcery: pymethod = __import__, doc = importDoc
   /// __import__(name, globals=None, locals=None, fromlist=(), level=0)
   /// See [this](https://docs.python.org/3/library/functions.html#__import__)
-  public func __import__(args: [PyObject],
-                         kwargs: PyDict?) -> PyResult<PyObject> {
-    fatalError()
-//    switch importArguments.bind(args: args, kwargs: kwargs) {
-//    case let .value(binding):
-//      assert(binding.requiredCount == 1, "Invalid required argument count.")
-//      assert(binding.optionalCount == 4, "Invalid optional argument count.")
-//
-//      let name = binding.required(at: 0)
-//      let globals = binding.optional(at: 1)
-//      let locals = binding.optional(at: 2)
-//      let fromlist = binding.optional(at: 3)
-//      let level = binding.optional(at: 3)
-//
-//      return self.__import__(name: name,
-//                             globals: globals,
-//                             locals: locals,
-//                             fromlist: fromlist,
-//                             level: level)
-//
-//    case let .error(e):
-//      return .error(e)
-//    }
+  public func __import__(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    switch importArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 1, "Invalid required argument count.")
+      assert(binding.optionalCount == 4, "Invalid optional argument count.")
+
+      let name = binding.required(at: 0)
+      let globals = binding.optional(at: 1)
+      let locals = binding.optional(at: 2)
+      let fromlist = binding.optional(at: 3)
+      let level = binding.optional(at: 4)
+
+      return self.__import__(name: name,
+                             globals: globals,
+                             locals: locals,
+                             fromlist: fromlist,
+                             level: level)
+
+    case let .error(e):
+      return .error(e)
+    }
   }
-/*
+
   /// PyImport_ImportModuleLevelObject(PyObject *name, PyObject *globals,
   ///                                  PyObject *locals, PyObject *fromlist,
   ///                                  int level)
+  // swiftlint:disable:next function_body_length
   public func __import__(name nameRaw: PyObject,
                          globals globalsRaw: PyObject? = nil,
                          locals localsRaw: PyObject? = nil,
@@ -89,17 +94,54 @@ extension BuiltinFunctions {
     }
 
     let module: PyObject
-    switch self.getModule(name: absName) {
-    case .module(let m):
-      module = m
-    case .notFound:
-
-      break
-    case .error(let e):
-      return .error(e)
+    switch self.getModule(absName: absName) {
+    case let .value(m): module = m
+    case let .error(e): return .error(e)
     }
 
-    fatalError()
+    var hasFrom = false
+    if let fromlist = fromlistRaw, !fromlist.isNone {
+      switch Py.isTrueBool(fromlist) {
+      case let .value(b): hasFrom = b
+      case let .error(e): return .error(e)
+      }
+    }
+
+    var finalMod: PyObject = Py.none
+    if !hasFrom { // TODO: Reverse this
+      let nameScalars = name.value.unicodeScalars
+      if level.value == 0 || nameScalars.any {
+        if let dotIndex = nameScalars.firstIndex(of: ".") {
+          if level.value == 0 {
+            let front = nameScalars[..<dotIndex]
+//            self.__import__(name: String(front),
+//                            globals: nil,
+//                            locals: nil,
+//                            fromlist: nil,
+//                            level: nil)
+            fatalError()
+          } else {
+//            let cutOff = nameScalars.count - dotIndex
+//            let absNameLen = absName.value.unicodeScalars.count
+            fatalError()
+          }
+        } else {
+          // No dot in module name, simple exit
+          finalMod = module
+        }
+      } else {
+        finalMod = module
+      }
+    } else {
+      // final_mod = _PyObject_CallMethodIdObjArgs(interp->importlib,
+      //                                           &PyId__handle_fromlist, mod,
+      //                                           fromlist, interp->import_func,
+      //                                           NULL);
+      fatalError()
+    }
+
+    // TODO: if (final_mod == NULL) remove_importlib_frames();
+    return .value(finalMod)
   }
 
   // MARK: - Parse level
@@ -165,19 +207,9 @@ extension BuiltinFunctions {
   }
 
   private func getPackageName(globals: PyDict) -> PyResult<String> {
-    let package: PyObject?
-    switch self.get__package__(from: globals) {
-    case let .value(o): package = o
-    case let .error(e): return .error(e)
-    }
+    let spec = globals.get(id: .__spec__)
 
-    let spec: PyObject?
-    switch self.get__spec__(from: globals) {
-    case let .value(o): spec = o
-    case let .error(e): return .error(e)
-    }
-
-    if let package = package {
+    if let package = globals.get(id: .__package__) {
       guard let string = package as? PyString else {
         return .typeError("package must be a string")
       }
@@ -206,16 +238,11 @@ extension BuiltinFunctions {
     case let .error(e): return .error(e)
     }
 
-    let path: PyObject?
-    switch self.get__path__(from: globals) {
-    case let .value(p): path = p
-    case let .error(e): return .error(e)
-    }
+    let path = globals.get(id: .__path__)
 
     if path == nil {
-      let nameScalars = name.value.unicodeScalars
-      if let dot = nameScalars.lastIndex(of: ".") {
-        let substring = nameScalars[..<dot]
+      if let dot = name.value.lastIndex(of: ".") {
+        let substring = name.value[..<dot]
         return .value(String(substring))
       }
     }
@@ -223,39 +250,16 @@ extension BuiltinFunctions {
     return .value(name.value)
   }
 
-  private func get__package__(from globals: PyDict) -> PyResult<PyObject?> {
-    switch globals.getItem(id: .__package__) {
-    case let .value(o):
-      let isNone = o?.isNone ?? true
-      return .value(isNone ? nil : o)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
   private func get__name__(from globals: PyDict) -> PyResult<PyString> {
-    switch globals.getItem(id: .__name__) {
-    case let .value(o):
-      guard let object = o else {
-        return .keyError("'__name__' not in globals")
-      }
-
-      guard let str = object as? PyString else {
-        return .typeError("__name__ must be a string")
-      }
-
-      return .value(str)
-    case let .error(e):
-      return .error(e)
+    guard let object = globals.get(id: .__name__) else {
+      return .keyError("'__name__' not in globals")
     }
-  }
 
-  private func get__spec__(from globals: PyDict) -> PyResult<PyObject?> {
-    return globals.getItem(id: .__spec__)
-  }
+    guard let str = object as? PyString else {
+      return .typeError("__name__ must be a string")
+    }
 
-  private func get__path__(from globals: PyDict) -> PyResult<PyObject?> {
-    return globals.getItem(id: .__path__)
+    return .value(str)
   }
 
   private func guaranteeSpecParentIsEqualToPackage(
@@ -301,40 +305,34 @@ extension BuiltinFunctions {
       return .error(e)
     }
   }
-}
 
-// MARK: - Get module
-
-private enum GetModuleResult {
-  case module(PyObject)
-  case notFound
-  case error(PyBaseException)
-}
-
-extension BuiltinFunctions {
+  // MARK: - Get module
 
   /// PyObject *
   /// PyImport_GetModule(PyObject *name)
-  private func getModule(name: PyString) -> GetModuleResult {
-    let modules = self.getModulesDict()
-
-    switch modules.getItem(at: name) {
+  private func getModule(absName: PyString) -> PyResult<PyObject> {
+    switch Py.sys.modules.get(name: absName) {
     case let .value(m):
-      return .module(m)
+      if m.isNone {
+        return self.loadModule(absName: absName)
+      }
+
+      return .value(m)
+
+    case .notFound:
+      return self.loadModule(absName: absName)
+
     case let .error(e):
       if e is PyKeyError {
-        return .notFound
+        return self.loadModule(absName: absName)
       }
 
       return .error(e)
     }
   }
 
-  // TODO: Implement this (as property - 'sys.modules')
-  /// PyObject *
-  /// PyImport_GetModuleDict(void)
-  private func getModulesDict() -> PyDict {
+  /// mod = import_find_and_load(abs_name);
+  private func loadModule(absName: PyString) -> PyResult<PyObject> {
     fatalError()
   }
- */
 }
