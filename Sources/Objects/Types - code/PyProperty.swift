@@ -149,9 +149,9 @@ public class PyProperty: PyObject {
     return self.getter ?? Py.none
   }
 
-  public func setGetter(value: PyObject) -> PyNone {
+  public func setGetter(value: PyObject) -> PyResult<()> {
     self._getter = value
-    return Py.none
+    return .value()
   }
 
   // MARK: - Set
@@ -181,9 +181,9 @@ public class PyProperty: PyObject {
     return self.setter ?? Py.none
   }
 
-  public func setSetter(value: PyObject) -> PyNone {
+  public func setSetter(value: PyObject) -> PyResult<()> {
     self._setter = value
-    return Py.none
+    return .value()
   }
 
   // MARK: - Del
@@ -200,9 +200,9 @@ public class PyProperty: PyObject {
     return self.deleter ?? Py.none
   }
 
-  public func setDeleter(value: PyObject) -> PyNone {
+  public func setDeleter(value: PyObject) -> PyResult<()> {
     self._deleter = value
-    return Py.none
+    return .value()
   }
 
   // MARK: - Python new
