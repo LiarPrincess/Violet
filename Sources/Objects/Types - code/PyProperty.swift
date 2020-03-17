@@ -142,6 +142,18 @@ public class PyProperty: PyObject {
     }
   }
 
+  // MARK: - Getter
+
+  // sourcery: pyproperty = getter, setter = setGetter
+  public func getGetter() -> PyObject {
+    return self.getter ?? Py.none
+  }
+
+  public func setGetter(value: PyObject) -> PyNone {
+    self._getter = value
+    return Py.none
+  }
+
   // MARK: - Set
 
   // sourcery: pymethod = __set__
@@ -162,11 +174,35 @@ public class PyProperty: PyObject {
     }
   }
 
+  // MARK: - Setter
+
+  // sourcery: pyproperty = setter, setter = setSetter
+  public func getSetter() -> PyObject {
+    return self.setter ?? Py.none
+  }
+
+  public func setSetter(value: PyObject) -> PyNone {
+    self._setter = value
+    return Py.none
+  }
+
   // MARK: - Del
 
   // sourcery: pymethod = __delete__
   public func del(object: PyObject) -> PyResult<PyObject> {
     self.set(object: object, value: Py.none)
+  }
+
+  // MARK: - Deleter
+
+  // sourcery: pyproperty = deleter, deleter = setDeleter
+  public func getDeleter() -> PyObject {
+    return self.deleter ?? Py.none
+  }
+
+  public func setDeleter(value: PyObject) -> PyNone {
+    self._deleter = value
+    return Py.none
   }
 
   // MARK: - Python new

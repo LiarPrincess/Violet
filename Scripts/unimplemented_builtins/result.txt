@@ -131,9 +131,6 @@ NoneType
 property
   Unimplemented:
     __isabstractmethod__
-    deleter
-    getter
-    setter
 
 set
   Unimplemented:

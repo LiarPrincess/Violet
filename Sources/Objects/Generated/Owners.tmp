@@ -668,6 +668,11 @@ PyProperty|PyObject|get|__class__|getClass() -> PyType
 PyProperty|PyObject|get|fget|getFGet() -> PyObject
 PyProperty|PyObject|get|fset|getFSet() -> PyObject
 PyProperty|PyObject|get|fdel|getFDel() -> PyObject
+PyProperty|PyObject|get|getter|getGetter() -> PyObject
+PyProperty|PyObject|set|getter|setGetter(_ value: PyObject?) -> PyResult<()>
+PyProperty|PyObject|get|setter|getSetter() -> PyObject
+PyProperty|PyObject|set|setter|setSetter(_ value: PyObject?) -> PyResult<()>
+PyProperty|PyObject|get|deleter|getDeleter() -> PyObject
 
 PyProperty|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>

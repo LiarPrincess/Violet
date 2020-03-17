@@ -1190,6 +1190,9 @@ internal enum FillTypes {
     insert(type: type, name: "fget", value: PyProperty.wrap(name: "fget", doc: nil, get: PyProperty.getFGet, castSelf: Cast.asPyProperty))
     insert(type: type, name: "fset", value: PyProperty.wrap(name: "fset", doc: nil, get: PyProperty.getFSet, castSelf: Cast.asPyProperty))
     insert(type: type, name: "fdel", value: PyProperty.wrap(name: "fdel", doc: nil, get: PyProperty.getFDel, castSelf: Cast.asPyProperty))
+    insert(type: type, name: "getter", value: PyProperty.wrap(name: "getter", doc: nil, get: PyProperty.getGetter, set: PyProperty.setGetter, castSelf: Cast.asPyProperty))
+    insert(type: type, name: "setter", value: PyProperty.wrap(name: "setter", doc: nil, get: PyProperty.getSetter, set: PyProperty.setSetter, castSelf: Cast.asPyProperty))
+    insert(type: type, name: "deleter", value: PyProperty.wrap(name: "deleter", doc: nil, get: PyProperty.getDeleter, castSelf: Cast.asPyProperty))
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyProperty.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyProperty.pyInit(zelf:args:kwargs:)))
