@@ -52,14 +52,46 @@ internal enum Debug {
     print("\(byte): \(dump)")
   }
 
+  internal static func frameStart(frame: PyFrame) {
+    guard isEnabled else { return }
+    print("--- Frame start: \(frame.code.name.value) ---")
+  }
+
+  internal static func frameEnd(frame: PyFrame) {
+    guard isEnabled else { return }
+    print("--- Frame end: \(frame.code.name.value) ---")
+  }
+
   internal static func stack(stack: ObjectStack) {
     guard isEnabled else { return }
-    print("  \(stack)")
+
+    if stack.isEmpty {
+      print("  Stack: (empty)")
+      return
+    }
+
+    print("  Stack:")
+    for index in 0..<stack.count {
+      let peekIndex = stack.count - index - 1
+      let value = stack.peek(peekIndex)
+      print("    \(value)")
+    }
   }
 
   internal static func stack(stack: BlockStack) {
     guard isEnabled else { return }
-    print("  \(stack)")
+
+    if stack.isEmpty {
+      print("  Blocks: (empty)")
+      return
+    }
+
+    print("  Blocks:")
+    for index in 0..<stack.count {
+      let peekIndex = stack.count - index - 1
+      let value = stack.peek(peekIndex)
+      print("    \(value)")
+    }
   }
 
   // MARK: - Compare

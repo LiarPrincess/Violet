@@ -67,10 +67,14 @@ extension VM {
     // TODO: Everything below following line:
     /* Handle generator/coroutine/asynchronous generator */
 
+    Debug.frameStart(frame: frame)
+
     self.frames.push(frame)
     let result = Eval(frame: frame).run()
     let poppedFrame = self.frames.popLast()
     assert(poppedFrame === frame)
+
+    Debug.frameEnd(frame: frame)
 
     return result
   }

@@ -54,6 +54,10 @@ public struct BlockStack {
     return self.elements.last
   }
 
+  public var count: Int {
+    return self.elements.count
+  }
+
   public var isEmpty: Bool {
     return self.elements.isEmpty
   }
@@ -63,6 +67,15 @@ public struct BlockStack {
   }
 
   public init() { }
+
+  public func peek(_ n: Int) -> Block {
+    let count = self.elements.count
+    assert(
+      0 <= n && n < count,
+      "Stack peek out of bounds (peek: \(n), count: \(count))."
+    )
+    return self.elements[count - n - 1]
+  }
 
   /// void
   /// PyFrame_BlockSetup(PyFrameObject *f, int type, int handler, int level)

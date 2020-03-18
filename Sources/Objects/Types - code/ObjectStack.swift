@@ -3,23 +3,23 @@ public struct ObjectStack {
   private var elements = [PyObject]()
 
   public var top: PyObject {
+    get { return self.peek(0) }
+    set { self.set(0, to: newValue) }
+  }
+
+  public var second: PyObject {
     get { return self.peek(1) }
     set { self.set(1, to: newValue) }
   }
 
-  public var second: PyObject {
+  public var third: PyObject {
     get { return self.peek(2) }
     set { self.set(2, to: newValue) }
   }
 
-  public var third: PyObject {
+  public var fourth: PyObject {
     get { return self.peek(3) }
     set { self.set(3, to: newValue) }
-  }
-
-  public var fourth: PyObject {
-    get { return self.peek(4) }
-    set { self.set(4, to: newValue) }
   }
 
   public var isEmpty: Bool {
@@ -37,16 +37,22 @@ public struct ObjectStack {
 
   public func peek(_ n: Int) -> PyObject {
     let count = self.elements.count
-    assert(count >= n, "Stack peek out of bounds (peek: \(n), count: \(count)).")
-    return self.elements[count - n]
+    assert(
+      0 <= n && n < count,
+      "Stack peek out of bounds (peek: \(n), count: \(count))."
+    )
+    return self.elements[count - n - 1]
   }
 
   // MARK: - Set
 
   public mutating func set(_ n: Int, to value: PyObject) {
     let count = self.elements.count
-    assert(count >= n, "Stack set out of bounds (set: \(n), count: \(count)).")
-    self.elements[count - n] = value
+    assert(
+      0 <= n && n < count,
+      "Stack set out of bounds (set: \(n), count: \(count))."
+    )
+    self.elements[count - n - 1] = value
   }
 
   // MARK: - Push

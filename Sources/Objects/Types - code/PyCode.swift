@@ -217,8 +217,10 @@ public class PyCode: PyObject {
   // MARK: - Description
 
   override public var description: String {
-    let firstLine = self.codeObject.firstLine
-    return "PyCode(filename: \(self.filename), line: \(firstLine))"
+    let name = self.qualifiedName
+    let file = self.filename
+    let line = self.codeObject.firstLine
+    return "PyCode(qualifiedName: '\(name)', file: \(file), line: \(line))"
   }
 
   // MARK: - Init
