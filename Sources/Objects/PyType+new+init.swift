@@ -29,11 +29,16 @@ extension PyType {
     format: "OOO:type.__new__"
   )
 
+// swiftlint:disable function_body_length
+
   // sourcery: pymethod = __new__
-  // swiftlint:disable:next function_body_length
+  /// static PyObject *
+  /// type_new(PyTypeObject *metatype, PyObject *args, PyObject *kwds)
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyObject> {
+    // swiftlint:enable function_body_length
+
     // Special case: type(x) should return x->ob_type
     if type === Py.types.type {
       let noKwargs = kwargs?.data.isEmpty ?? true
@@ -151,14 +156,11 @@ extension PyType {
     type.setDict(value: dict)
 
     // Set __module__ in the dict
-    let globals = Py.getGlobals()
 
     if dict.get(id: .__module__) == nil {
-      if let module = globals.get(id: .__name__) {
-        switch type.setModule(module) {
-        case .value: break
-        case .error(let e): return .error(e)
-        }
+      switch self.setModuleFromCurrentFrameGlobals(type: type) {
+      case .value: break
+      case .error(let e): return .error(e)
       }
     }
 
@@ -264,6 +266,24 @@ extension PyType {
     // It should be used if anything else fails.
     let name = type.getName()
     trap("'\(name)' type does not derieve from 'object'.")
+  }
+
+  // MARK: - Module
+
+  private static func setModuleFromCurrentFrameGlobals(
+    type: PyType
+  ) -> PyResult<()> {
+    switch Py.getGlobals() {
+    case let .value(globals):
+      if let module = globals.get(id: .__name__) {
+        return type.setModule(module)
+      }
+
+      return .value()
+
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Python init

@@ -1,8 +1,8 @@
+import Core
+
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
-
-private let globals = Py.newDict()
 
 extension BuiltinFunctions {
 
@@ -55,21 +55,9 @@ extension BuiltinFunctions {
   }
 */
 
-  // MARK: - Locals, globals
+  // MARK: - Locals, globals, Vars
 /*
-  // sourcery: pymethod = locals
-  /// locals()
-  /// See [this](https://docs.python.org/3/library/functions.html#locals)
-  public func locals() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod = globals
-  /// globals()
-  /// See [this](https://docs.python.org/3/library/functions.html#globals)
-  public func globals() -> PyObject {
-    return self.unimplemented
-  }
+  // Put this into 'BuiltinFunctions+Locals+Globals+Vars' file.
 
   // sourcery: pymethod = vars
   /// vars([object])
@@ -123,20 +111,16 @@ extension BuiltinFunctions {
   // MARK: - Other
 
   internal func callDir(_ fn: PyObject, args: [PyObject?]) -> DirResult {
-    return DirResult()
+    self.unimplemented()
   }
 
   public func PyObject_Format(value: PyObject, format: PyObject?) -> PyObject {
-    return Py.none
+    self.unimplemented()
   }
 
-  internal func getGlobals() -> PyDict {
-    return globals
-  }
+  // MARK: - Unimplemented
 
-  // MARK: - Helpers
-
-  internal var unimplemented: PyObject {
-    return Py.none
+  private func unimplemented(fn: StaticString = #function) -> Never {
+    trap("'\(fn)' is not implemented")
   }
 }
