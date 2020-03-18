@@ -12,9 +12,9 @@ extension PyProperty {
     get: @escaping () -> R) -> PyProperty {
 
     return PyProperty(
-      getter: wrapGetter(get: get),
-      setter: nil,
-      deleter: nil
+      get: wrapGetter(get: get),
+      set: nil,
+      del: nil
     )
   }
 
@@ -25,9 +25,9 @@ extension PyProperty {
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyProperty {
 
     return PyProperty(
-      getter: wrapGetter(get: get, castSelf: castSelf),
-      setter: nil,
-      deleter: nil
+      get: wrapGetter(get: get, castSelf: castSelf),
+      set: nil,
+      del: nil
     )
   }
 
@@ -40,9 +40,9 @@ extension PyProperty {
     set: @escaping (PyObject) -> PyResult<()>) -> PyProperty {
 
     return PyProperty(
-      getter: wrapGetter(get: get),
-      setter: wrapSetter(set: set),
-      deleter: nil
+      get: wrapGetter(get: get),
+      set: wrapSetter(set: set),
+      del: nil
     )
   }
 
@@ -54,9 +54,9 @@ extension PyProperty {
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyProperty {
 
     return PyProperty(
-      getter: wrapGetter(get: get, castSelf: castSelf),
-      setter: wrapSetter(set: set, castSelf: castSelf),
-      deleter: nil
+      get: wrapGetter(get: get, castSelf: castSelf),
+      set: wrapSetter(set: set, castSelf: castSelf),
+      del: nil
     )
   }
 

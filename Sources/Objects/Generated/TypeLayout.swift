@@ -176,9 +176,9 @@ internal class TypeLayout: Equatable {
   internal static let PyNone = TypeLayout.PyObject
   /// `PyNotImplemented` uses the same layout as it s base type (`PyObject`).
   internal static let PyNotImplemented = TypeLayout.PyObject
-  /// - `_getter: PyObject?`
-  /// - `_setter: PyObject?`
-  /// - `_deleter: PyObject?`
+  /// - `_get: PyObject?`
+  /// - `_set: PyObject?`
+  /// - `_del: PyObject?`
   /// - `doc: PyObject?`
   internal static let PyProperty = TypeLayout(base: TypeLayout.PyObject)
   /// - `start: PyInt`

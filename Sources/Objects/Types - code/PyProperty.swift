@@ -43,36 +43,55 @@ public class PyProperty: PyObject {
             del self._x
     """
 
-  private var _getter: PyObject?
-  internal var getter: PyObject? {
-    get { return self._getter is PyNone ? nil : self._getter }
-    set { self._getter = newValue }
+  private var _get: PyObject?
+  internal var get: PyObject? {
+    get { return self.isNilOrNone(object: self._get) ? nil : self._get }
+    set { self._get = newValue }
   }
 
-  private var _setter: PyObject?
-  internal var setter: PyObject? {
-    get { return self._getter is PyNone ? nil : self._getter }
-    set { self._getter = newValue }
+  private var _set: PyObject?
+  internal var set: PyObject? {
+    get { return self.isNilOrNone(object: self._set) ? nil : self._set }
+    set { self._set = newValue }
   }
 
-  private var _deleter: PyObject?
-  internal var deleter: PyObject? {
-    get { return self._getter is PyNone ? nil : self._getter }
-    set { self._getter = newValue }
+  private var _del: PyObject?
+  internal var del: PyObject? {
+    get { return self.isNilOrNone(object: self._del) ? nil : self._del }
+    set { self._del = newValue }
+  }
+
+  private func isNilOrNone(object: PyObject?) -> Bool {
+    return object?.isNone ?? true
   }
 
   internal private(set) var doc: PyObject?
 
   override public var description: String {
-    return "PyProperty()"
+    var properties = [String]()
+
+    if let o = self.get {
+      properties.append("get: \(String(describing: o))")
+    }
+
+    if let o = self.set {
+      properties.append("set: \(String(describing: o))")
+    }
+
+    if let o = self.del {
+      properties.append("del: \(String(describing: o))")
+    }
+
+    let p = properties.joined(separator: ", ")
+    return "PyProperty(\(p))"
   }
 
-  internal init(getter: PyObject?,
-                setter: PyObject?,
-                deleter: PyObject?) {
-    self._getter = getter
-    self._setter = setter
-    self._deleter = deleter
+  internal init(get: PyObject?,
+                set: PyObject?,
+                del: PyObject?) {
+    self._get = get
+    self._set = set
+    self._del = del
     self.doc = nil
 
     super.init(type: Py.types.property)
@@ -80,9 +99,9 @@ public class PyProperty: PyObject {
 
   /// Use only in `__new__`!
   override internal init(type: PyType) {
-    self._getter = nil
-    self._setter = nil
-    self._deleter = nil
+    self._get = nil
+    self._set = nil
+    self._del = nil
     self.doc = nil
     super.init(type: type)
   }
@@ -105,17 +124,17 @@ public class PyProperty: PyObject {
 
   // sourcery: pyproperty = fget
   public func getFGet() -> PyObject {
-    return self.getter ?? Py.none
+    return self.get ?? Py.none
   }
 
   // sourcery: pyproperty = fset
   public func getFSet() -> PyObject {
-    return self.setter ?? Py.none
+    return self.set ?? Py.none
   }
 
   // sourcery: pyproperty = fdel
   public func getFDel() -> PyObject {
-    return self.deleter ?? Py.none
+    return self.del ?? Py.none
   }
 
   // MARK: - Get
@@ -130,7 +149,7 @@ public class PyProperty: PyObject {
   }
 
   public func bind(to object: PyObject) -> PyResult<PyObject> {
-    guard let propGet = self.getter else {
+    guard let propGet = self.get else {
       return .attributeError("unreadable attribute")
     }
 
@@ -142,24 +161,12 @@ public class PyProperty: PyObject {
     }
   }
 
-  // MARK: - Getter
-
-  // sourcery: pyproperty = getter, setter = setGetter
-  public func getGetter() -> PyObject {
-    return self.getter ?? Py.none
-  }
-
-  public func setGetter(value: PyObject) -> PyResult<()> {
-    self._getter = value
-    return .value()
-  }
-
   // MARK: - Set
 
   // sourcery: pymethod = __set__
   public func set(object: PyObject, value: PyObject) -> PyResult<PyObject> {
     let isDelete = value is PyNone
-    let fnOrNil = isDelete ? self.deleter : self.setter
+    let fnOrNil = isDelete ? self.del : self.set
 
     guard let fn = fnOrNil else {
       let msg = isDelete ? "can't delete attribute" : "can't set attribute"
@@ -169,21 +176,10 @@ public class PyProperty: PyObject {
     switch Py.call(callable: fn, args: [object, value]) {
     case .value(let r):
       return .value(r)
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
-  }
-
-  // MARK: - Setter
-
-  // sourcery: pyproperty = setter, setter = setSetter
-  public func getSetter() -> PyObject {
-    return self.setter ?? Py.none
-  }
-
-  public func setSetter(value: PyObject) -> PyResult<()> {
-    self._setter = value
-    return .value()
   }
 
   // MARK: - Del
@@ -193,16 +189,58 @@ public class PyProperty: PyObject {
     self.set(object: object, value: Py.none)
   }
 
-  // MARK: - Deleter
+  // MARK: - Getter, setter, deleter
 
-  // sourcery: pyproperty = deleter, deleter = setDeleter
-  public func getDeleter() -> PyObject {
-    return self.deleter ?? Py.none
+  internal static let getterDoc = "Descriptor to change the getter on a property."
+
+  // sourcery: pymethod = getter, doc = getterDoc
+  public func getter(value: PyObject) -> PyResult<PyObject> {
+    return self.copy(get: value, set: nil, del: nil)
   }
 
-  public func setDeleter(value: PyObject) -> PyResult<()> {
-    self._deleter = value
-    return .value()
+  internal static let setterDoc = "Descriptor to change the setter on a property."
+
+  // sourcery: pymethod = setter
+  public func setter(value: PyObject) -> PyResult<PyObject> {
+    return self.copy(get: nil, set: value, del: nil)
+  }
+
+  internal static let deleterDoc = "Descriptor to change the deleter on a property."
+
+  // sourcery: pymethod = deleter
+  public func deleter(value: PyObject) -> PyResult<PyObject> {
+    return self.copy(get: nil, set: nil, del: value)
+  }
+
+  /// static PyObject *
+  /// property_copy(PyObject *old, PyObject *get, PyObject *set, PyObject *del)
+  private func copy(get: PyObject?,
+                    set: PyObject?,
+                    del: PyObject?) -> PyResult<PyObject> {
+    func arg(selfProperty: PyObject?, override: PyObject?) -> PyObject {
+      if let o = override, !o.isNone {
+        return o
+      }
+
+      return selfProperty ?? Py.none
+    }
+
+    let getArg = arg(selfProperty: self.get, override: get)
+    let setArg = arg(selfProperty: self.set, override: set)
+    let delArg = arg(selfProperty: self.del, override: del)
+
+    let docArg: PyObject
+    if let d = self.doc, !d.isNone {
+      // make _init use __doc__ from getter
+      docArg = Py.none
+    } else {
+      docArg = self.doc ?? Py.none
+    }
+
+    let type = self.type
+    let args = [getArg, setArg, delArg, docArg]
+    let callResult = Py.call(callable: type, args: args)
+    return callResult.asResult
   }
 
   // MARK: - Python new
@@ -229,9 +267,9 @@ public class PyProperty: PyObject {
                               kwargs: PyDict?) -> PyResult<PyNone> {
     switch PyProperty.initArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
-      zelf.getter = binding.optional(at: 0)
-      zelf.setter = binding.optional(at: 1)
-      zelf.deleter = binding.optional(at: 2)
+      zelf.get = binding.optional(at: 0)
+      zelf.set = binding.optional(at: 1)
+      zelf.del = binding.optional(at: 2)
       zelf.doc = binding.optional(at: 3)
       return .value(Py.none)
 

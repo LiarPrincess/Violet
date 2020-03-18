@@ -142,9 +142,9 @@ PyNamespace|PyObject
 PyNone|PyObject
 PyNotImplemented|PyObject
 PyProperty|PyObject
-- _getter|PyObject?
-- _setter|PyObject?
-- _deleter|PyObject?
+- _get|PyObject?
+- _set|PyObject?
+- _del|PyObject?
 - doc|PyObject?
 PyRange|PyObject
 - start|PyInt
