@@ -78,61 +78,16 @@ public final class Sys {
     settrace() -- set the global debug tracing function
     """
 
-  // MARK: - Prompts
+  // MARK: - Dict
 
-  public lazy var ps1: PyObject = Py.newString(">>> ")
-  public lazy var ps2: PyObject = Py.newString("... ")
-
-  /// String that should be printed in interactive mode.
-  public var ps1String: String {
-    switch Py.strValue(self.ps1) {
-    case .value(let s): return s
-    case .error: return ""
-    }
-  }
-
-  /// String that should be printed in interactive mode.
-  public var ps2String: String {
-    switch Py.strValue(self.ps2) {
-    case .value(let s): return s
-    case .error: return ""
-    }
-  }
+  /// This dict will be used inside our `PyModule` instance.
+  internal private(set) lazy var __dict__ = Py.newDict()
 
   // MARK: - Modules
 
-  public lazy var modules = Modules()
-
-  public lazy var builtinModules = BuiltinModules()
-
-  // MARK: - Platform
-
-  public lazy var platform: String = {
-    #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
-    return "darwin"
-    #elseif os(Linux) || os(Android)
-    return "linux"
-    #elseif os(Cygwin) // Is this even a thing?
-    return "cygwin"
-    #elseif os(Windows)
-    return "win32"
-    #else
-    return "unknown"
-    #endif
-  }()
-
-  public lazy var platformObject = Py.newString(self.platform)
+  public internal(set) var builtinModuleNames = [String]()
 
   // MARK: - Version
-
-  public lazy var version: String = {
-    let p = self.versionInfo
-    let v = self.implementationInfo.version
-    return "Python \(p.major).\(p.minor).\(p.micro) " +
-           "(Violet \(v.major).\(v.minor).\(v.micro))"
-  }()
-
-  public lazy var versionObject = Py.newString(self.version)
 
   /// `sys.version_info`
   ///
@@ -164,29 +119,28 @@ public final class Sys {
 
   public lazy var hashInfo = HashInfo()
 
-  // MARK: - Copyright
-
-  public lazy var copyright = Lyrics.letItGo
-
-  public lazy var copyrightObject = Py.newString(self.copyright)
-
   // MARK: - Streams
 
-  internal lazy var __stdin__ = self.createStdio(name: "<stdin>",
-                                                 fd: Py.config.standardInput,
-                                                 mode: .read)
+  // sourcery: pyproperty = __stdin__
+  /// sys.__stdin__
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
+  public lazy var __stdin__ = self.createStdio(name: "<stdin>",
+                                               fd: Py.config.standardInput,
+                                               mode: .read)
 
-  internal lazy var __stdout__ = self.createStdio(name: "<stdout>",
-                                                  fd: Py.config.standardOutput,
-                                                  mode: .write)
+  // sourcery: pyproperty = __stdout__
+  /// sys.__stdout__
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
+  public lazy var __stdout__ = self.createStdio(name: "<stdout>",
+                                                fd: Py.config.standardOutput,
+                                                mode: .write)
 
-  internal lazy var __stderr__ = self.createStdio(name: "<stderr>",
-                                                  fd: Py.config.standardError,
-                                                  mode: .write)
-
-  internal lazy var stdin = self.__stdin__
-  internal lazy var stdout = self.__stdout__
-  internal lazy var stderr = self.__stderr__
+  // sourcery: pyproperty = __stderr__
+  /// sys.__stderr__
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
+  public lazy var __stderr__ = self.createStdio(name: "<stderr>",
+                                                fd: Py.config.standardError,
+                                                mode: .write)
 
   /// static PyObject*
   /// create_stdio(PyObject* io,
@@ -199,5 +153,15 @@ public final class Sys {
                       encoding: Unimplemented.stdioEncoding,
                       errors: Unimplemented.stdioErrors,
                       closeOnDealloc: false)
+  }
+
+  // MARK: - Get/set
+
+  internal func get(key: IdString) -> PyObject? {
+    return self.__dict__.get(id: key)
+  }
+
+  internal func set(key: IdString, value: PyObject) {
+    self.__dict__.set(id: key, to: value)
   }
 }

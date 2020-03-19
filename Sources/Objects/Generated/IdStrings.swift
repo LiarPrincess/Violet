@@ -162,7 +162,9 @@ public struct IdString {
   public static let __xor__ = Self.impl.__xor__
   public static let _imp = Self.impl._imp
   public static let _slotnames = Self.impl._slotnames
+  public static let argv = Self.impl.argv
   public static let big = Self.impl.big
+  public static let builtin_module_names = Self.impl.builtin_module_names
   public static let builtins = Self.impl.builtins
   public static let close = Self.impl.close
   public static let copy = Self.impl.copy
@@ -177,6 +179,7 @@ public struct IdString {
   public static let keys = Self.impl.keys
   public static let little = Self.impl.little
   public static let metaclass = Self.impl.metaclass
+  public static let modules = Self.impl.modules
   public static let mro = Self.impl.mro
   public static let n_fields = Self.impl.n_fields
   public static let n_sequence_fields = Self.impl.n_sequence_fields
@@ -185,10 +188,15 @@ public struct IdString {
   public static let open = Self.impl.open
   public static let origin = Self.impl.origin
   public static let path = Self.impl.path
+  public static let ps1 = Self.impl.ps1
+  public static let ps2 = Self.impl.ps2
   public static let Py_Repr = Self.impl.Py_Repr
   public static let readline = Self.impl.readline
   public static let sorted = Self.impl.sorted
   public static let special = Self.impl.special
+  public static let stderr = Self.impl.stderr
+  public static let stdin = Self.impl.stdin
+  public static let stdout = Self.impl.stdout
   public static let symmetric_difference_update = Self.impl.symmetric_difference_update
   public static let sys = Self.impl.sys
   public static let `throw` = Self.impl.`throw`
@@ -325,7 +333,9 @@ private struct IdStringImpl {
   fileprivate let __xor__ = IdString(value: "__xor__")
   fileprivate let _imp = IdString(value: "_imp")
   fileprivate let _slotnames = IdString(value: "_slotnames")
+  fileprivate let argv = IdString(value: "argv")
   fileprivate let big = IdString(value: "big")
+  fileprivate let builtin_module_names = IdString(value: "builtin_module_names")
   fileprivate let builtins = IdString(value: "builtins")
   fileprivate let close = IdString(value: "close")
   fileprivate let copy = IdString(value: "copy")
@@ -340,6 +350,7 @@ private struct IdStringImpl {
   fileprivate let keys = IdString(value: "keys")
   fileprivate let little = IdString(value: "little")
   fileprivate let metaclass = IdString(value: "metaclass")
+  fileprivate let modules = IdString(value: "modules")
   fileprivate let mro = IdString(value: "mro")
   fileprivate let n_fields = IdString(value: "n_fields")
   fileprivate let n_sequence_fields = IdString(value: "n_sequence_fields")
@@ -348,10 +359,15 @@ private struct IdStringImpl {
   fileprivate let open = IdString(value: "open")
   fileprivate let origin = IdString(value: "origin")
   fileprivate let path = IdString(value: "path")
+  fileprivate let ps1 = IdString(value: "ps1")
+  fileprivate let ps2 = IdString(value: "ps2")
   fileprivate let Py_Repr = IdString(value: "Py_Repr")
   fileprivate let readline = IdString(value: "readline")
   fileprivate let sorted = IdString(value: "sorted")
   fileprivate let special = IdString(value: "special")
+  fileprivate let stderr = IdString(value: "stderr")
+  fileprivate let stdin = IdString(value: "stdin")
+  fileprivate let stdout = IdString(value: "stdout")
   fileprivate let symmetric_difference_update = IdString(value: "symmetric_difference_update")
   fileprivate let sys = IdString(value: "sys")
   fileprivate let `throw` = IdString(value: "throw")

@@ -14,6 +14,11 @@ public final class UnderscoreImp {
     (Extremely) low-level import machinery bits as used by importlib and imp.
     """
 
+  // MARK: - Dict
+
+  /// This dict will be used inside our `PyModule` instance.
+  internal private(set) lazy var __dict__ = Py.newDict()
+
   // MARK: - Spec helpers
 
   internal func getName(spec: PyObject) -> PyResult<PyString> {

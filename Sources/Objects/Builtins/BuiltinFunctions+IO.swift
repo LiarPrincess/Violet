@@ -14,10 +14,6 @@ private let printArguments = ArgumentParser.createOrTrap(
 
 extension BuiltinFunctions {
 
-  private var stdout: PyTextFile {
-    return Py.sys.stdout
-  }
-
   // sourcery: pymethod = print
   /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
   /// See [this](https://docs.python.org/3/library/functions.html#print)
@@ -75,9 +71,13 @@ extension BuiltinFunctions {
   public func print(args: [PyObject],
                     sep: PyString? = nil,
                     end: PyString? = nil,
-                    file: PyTextFile? = nil,
+                    file fileRaw: PyTextFile? = nil,
                     flush: PyObject? = nil) -> PyResult<PyNone> {
-    let file = file ?? self.stdout
+    let file: PyTextFile
+    switch self.getTextFile(file: fileRaw) {
+    case let .value(f): file = f
+    case let .error(e): return .error(e)
+    }
 
     for (index, object) in args.enumerated() {
       if index > 0 {
@@ -107,11 +107,11 @@ extension BuiltinFunctions {
 
   private func getTextFile(file: PyObject?) -> PyResult<PyTextFile> {
     guard let file = file else {
-      return .value(self.stdout)
+      return self.getStdoutTextFile()
     }
 
     if file.isNone {
-      return .value(self.stdout)
+      return self.getStdoutTextFile()
     }
 
     guard let textFile = file as? PyTextFile else {
@@ -120,6 +120,17 @@ extension BuiltinFunctions {
     }
 
     return .value(textFile)
+  }
+
+  private func getStdoutTextFile() -> PyResult<PyTextFile> {
+    let object = Py.sys.stdout
+
+    guard let file = object as? PyTextFile else {
+      let t = object.typeName
+      return .attributeError("'\(t)' object has no attribute 'write'")
+    }
+
+    return .value(file)
   }
 
   private func getSeparator(argName: String,

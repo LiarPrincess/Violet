@@ -1,3 +1,5 @@
+import Core
+
 // In CPython:
 // Python -> import.c
 
@@ -27,8 +29,8 @@ extension UnderscoreImp {
       return .typeError(msg)
     }
 
-    let modules = Py.sys.builtinModules
-    let result = modules.names.contains(name.value)
+    let builtinNames = Py.sys.builtinModuleNames
+    let result = builtinNames.contains(name.value)
 
     let int = Py.newInt(result ? 1 : 0)
     return .value(int)
@@ -49,33 +51,25 @@ extension UnderscoreImp {
   /// static PyObject *
   /// _imp_create_builtin(PyObject *module, PyObject *spec)
   public func createBuiltin(spec: PyObject) -> PyResult<PyObject> {
+    // Note that we do not have to 'create' new module here!
+    // We already did that in 'Py.initialize'.
+
     let name: PyString
     switch self.getName(spec: spec) {
     case let .value(n): name = n
     case let .error(e): return .error(e)
     }
 
-    // Check if we already have this module.
-    switch Py.sys.modules.get(name: name) {
-    case .value(let m): return .value(m)
-    case .notFound: break // Try other
-    case .error(let e): return .error(e)
+    // Check if we already have this module (we will not check if it is builtin).
+    switch Py.sys.getModule(name: name) {
+    case .value(let m):
+      return .value(m)
+    case .notFound:
+      let msg = "'\(name.value)' module is not a correct builtin module."
+      return .error(Py.newRuntimeError(msg: msg))
+    case .error(let e):
+      return .error(e)
     }
-
-    // Get builtin definition.
-    // Note that we do not have to 'create' new module here,
-    // because we initialized all of builtin modules (all 3 of them: builtins,
-    // sys and _imp) in 'Py.initialize'.
-    let builtinModules = Py.sys.builtinModules
-    assert(builtinModules.names.count == builtinModules.modules.count)
-
-    let moduleIndexOrNil = builtinModules.names.firstIndex { $0 == name.value }
-    guard let moduleIndex = moduleIndexOrNil else {
-      return .value(Py.none)
-    }
-
-    let module = builtinModules.modules[moduleIndex]
-    return .value(module)
   }
 
   // MARK: - Exec

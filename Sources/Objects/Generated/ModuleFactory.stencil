@@ -19,6 +19,14 @@
 
 import Core
 
+private func createModule(name: String,
+                          doc: String?,
+                          dict: PyDict) -> PyModule {
+  let n = Py.getInterned(name)
+  let d = doc.map(Py.getInterned(_:))
+  return PyModule(name: n, doc: d, dict: dict)
+}
+
 private func insert(module: PyModule, name: String, value: PyObject) {
   let dict = module.getDict()
   let interned = Py.getInterned(name)
@@ -37,7 +45,7 @@ internal enum ModuleFactory {
   // MARK: - {{ type.name }}
 
   internal static func create{{ type.name }}(from object: {{ type.name }}) -> PyModule {
-    let module = PyModule(name: "{{ type.annotations.pymodule }}", doc: nil)
+    let module = createModule(name: "{{ type.annotations.pymodule }}", doc: nil, dict: object.__dict__)
 
   {% for prop in type.allVariables|annotated:"pyproperty" %}
     {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}

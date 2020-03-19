@@ -19,6 +19,14 @@
 
 import Core
 
+private func createModule(name: String,
+                          doc: String?,
+                          dict: PyDict) -> PyModule {
+  let n = Py.getInterned(name)
+  let d = doc.map(Py.getInterned(_:))
+  return PyModule(name: n, doc: d, dict: dict)
+}
+
 private func insert(module: PyModule, name: String, value: PyObject) {
   let dict = module.getDict()
   let interned = Py.getInterned(name)
@@ -36,7 +44,7 @@ internal enum ModuleFactory {
   // MARK: - Builtins
 
   internal static func createBuiltins(from object: Builtins) -> PyModule {
-    let module = PyModule(name: "builtins", doc: nil)
+    let module = createModule(name: "builtins", doc: nil, dict: object.__dict__)
 
     insert(module: module, name: "None", value: object.none)
     insert(module: module, name: "Ellipsis", value: object.ellipsis)
@@ -139,6 +147,8 @@ internal enum ModuleFactory {
     insert(module: module, name: "any", value: PyBuiltinFunction.wrap(name: "any", doc: nil, fn: object.any(iterable:), module: module))
     insert(module: module, name: "all", value: PyBuiltinFunction.wrap(name: "all", doc: nil, fn: object.all(iterable:), module: module))
     insert(module: module, name: "sum", value: PyBuiltinFunction.wrap(name: "sum", doc: nil, fn: object.sum(args:kwargs:), module: module))
+    insert(module: module, name: "globals", value: PyBuiltinFunction.wrap(name: "globals", doc: nil, fn: object.getGlobals, module: module))
+    insert(module: module, name: "locals", value: PyBuiltinFunction.wrap(name: "locals", doc: nil, fn: object.locals, module: module))
     insert(module: module, name: "isinstance", value: PyBuiltinFunction.wrap(name: "isinstance", doc: nil, fn: object.isInstance(object:of:), module: module))
     insert(module: module, name: "issubclass", value: PyBuiltinFunction.wrap(name: "issubclass", doc: nil, fn: object.isSubclass(object:of:), module: module))
     insert(module: module, name: "next", value: PyBuiltinFunction.wrap(name: "next", doc: nil, fn: object.next(iterator:default:), module: module))
@@ -176,25 +186,25 @@ internal enum ModuleFactory {
   // MARK: - Sys
 
   internal static func createSys(from object: Sys) -> PyModule {
-    let module = PyModule(name: "sys", doc: nil)
+    let module = createModule(name: "sys", doc: nil, dict: object.__dict__)
 
+    insert(module: module, name: "__stdin__", value: object.__stdin__)
+    insert(module: module, name: "__stdout__", value: object.__stdout__)
+    insert(module: module, name: "__stderr__", value: object.__stderr__)
+    insert(module: module, name: "ps1", value: object.ps1Object)
+    insert(module: module, name: "ps2", value: object.ps2Object)
+    insert(module: module, name: "stdin", value: object.stdin)
+    insert(module: module, name: "stdout", value: object.stdout)
+    insert(module: module, name: "stderr", value: object.stderr)
+    insert(module: module, name: "builtin_module_names", value: object.builtinModuleNamesObject)
+    insert(module: module, name: "modules", value: object.modules)
+    insert(module: module, name: "platform", value: object.platformObject)
+    insert(module: module, name: "copyright", value: object.copyrightObject)
+    insert(module: module, name: "version", value: object.versionObject)
+    insert(module: module, name: "version_info", value: object.versionInfoObject)
+    insert(module: module, name: "implementation", value: object.implementationObject)
+    insert(module: module, name: "hash_info", value: object.hashInfoObject)
 
-    insert(module: module, name: "stdin", value: PyProperty.wrap(name: "stdin", doc: nil, get: object.getStdin, set: object.setStdin))
-    insert(module: module, name: "__stdin__", value: PyProperty.wrap(name: "__stdin__", doc: nil, get: object.get__stdin__))
-    insert(module: module, name: "stdout", value: PyProperty.wrap(name: "stdout", doc: nil, get: object.getStdout, set: object.setStdout))
-    insert(module: module, name: "__stdout__", value: PyProperty.wrap(name: "__stdout__", doc: nil, get: object.get__stdout__))
-    insert(module: module, name: "stderr", value: PyProperty.wrap(name: "stderr", doc: nil, get: object.getStderr, set: object.setStderr))
-    insert(module: module, name: "__stderr__", value: PyProperty.wrap(name: "__stderr__", doc: nil, get: object.get__stderr__))
-    insert(module: module, name: "ps1", value: PyProperty.wrap(name: "ps1", doc: nil, get: object.getPS1, set: object.setPS1))
-    insert(module: module, name: "ps2", value: PyProperty.wrap(name: "ps2", doc: nil, get: object.getPS2, set: object.setPS2))
-    insert(module: module, name: "builtin_module_names", value: PyProperty.wrap(name: "builtin_module_names", doc: nil, get: object.getBuiltinModuleNames))
-    insert(module: module, name: "modules", value: PyProperty.wrap(name: "modules", doc: nil, get: object.getModules))
-    insert(module: module, name: "platform", value: PyProperty.wrap(name: "platform", doc: nil, get: object.getPlatform))
-    insert(module: module, name: "copyright", value: PyProperty.wrap(name: "copyright", doc: nil, get: object.getCopyright))
-    insert(module: module, name: "version", value: PyProperty.wrap(name: "version", doc: nil, get: object.getVersion))
-    insert(module: module, name: "version_info", value: PyProperty.wrap(name: "version_info", doc: nil, get: object.getVersionInfo))
-    insert(module: module, name: "implementation", value: PyProperty.wrap(name: "implementation", doc: nil, get: object.getImplementation))
-    insert(module: module, name: "hash_info", value: PyProperty.wrap(name: "hash_info", doc: nil, get: object.getHashInfo))
 
 
     return module
@@ -203,7 +213,7 @@ internal enum ModuleFactory {
   // MARK: - UnderscoreImp
 
   internal static func createUnderscoreImp(from object: UnderscoreImp) -> PyModule {
-    let module = PyModule(name: "_imp", doc: nil)
+    let module = createModule(name: "_imp", doc: nil, dict: object.__dict__)
 
 
 

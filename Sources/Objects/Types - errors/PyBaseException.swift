@@ -113,6 +113,10 @@ public class PyBaseException: PyObject {
     return self is PyTypeError
   }
 
+  public var isKeyError: Bool {
+    return self is PyKeyError
+  }
+
   // MARK: - String
 
   // sourcery: pymethod = __repr__

@@ -12,7 +12,7 @@ public class PyModule: PyObject {
     The name must be a string; the optional doc argument can have any type.
     """
 
-  internal let __dict__ = Py.newDict()
+  internal let __dict__: PyDict
 
   /// PyObject*
   /// PyModule_GetNameObject(PyObject *m)
@@ -35,25 +35,26 @@ public class PyModule: PyObject {
 
   // MARK: - Init
 
-  internal convenience init(name: String, doc: String?) {
-    let n = Py.newString(name)
-    let d = doc.map(Py.newString(_:))
-    self.init(name: n, doc: d)
-  }
-
-  internal init(name: PyObject, doc: PyObject?) {
+  internal init(name: PyObject, doc: PyObject?, dict: PyDict? = nil) {
+    self.__dict__ = dict ?? Py.newDict()
     super.init(type: Py.types.module)
 
+    self.initDictContent(name: name, doc: doc)
+  }
+
+  /// Use only in `__new__`!
+  override internal init(type: PyType) {
+    self.__dict__ = Py.newDict()
+    super.init(type: type)
+  }
+
+  /// This method is called in Swift `init` and also in Python `__init__`.
+  private func initDictContent(name: PyObject, doc: PyObject?) {
     self.__dict__.set(id: .__name__, to: name)
     self.__dict__.set(id: .__doc__, to: doc ?? Py.none)
     self.__dict__.set(id: .__package__, to: Py.none)
     self.__dict__.set(id: .__loader__, to: Py.none)
     self.__dict__.set(id: .__spec__, to: Py.none)
-  }
-
-  /// Use only in `__new__`!
-  override internal init(type: PyType) {
-    super.init(type: type)
   }
 
   // MARK: - Dict
@@ -83,6 +84,8 @@ public class PyModule: PyObject {
       .flatMap(self.getAttribute(name:))
   }
 
+  /// static PyObject*
+  /// module_getattro(PyModuleObject *m, PyObject *name)
   private func getAttribute(name: PyString) -> PyResult<PyObject> {
     let attr = AttributeHelper.getAttribute(from: self, name: name)
 
@@ -176,12 +179,8 @@ public class PyModule: PyObject {
 
       let name = binding.required(at: 0)
       let doc = binding.optional(at: 1) ?? Py.none
+      zelf.initDictContent(name: name, doc: doc)
 
-      zelf.__dict__.set(id: .__name__, to: name)
-      zelf.__dict__.set(id: .__doc__, to: doc)
-      zelf.__dict__.set(id: .__package__, to: Py.none)
-      zelf.__dict__.set(id: .__loader__, to: Py.none)
-      zelf.__dict__.set(id: .__spec__, to: Py.none)
       return .value(Py.none)
 
     case let .error(e):

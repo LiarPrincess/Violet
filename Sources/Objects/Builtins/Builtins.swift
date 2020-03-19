@@ -26,4 +26,9 @@ public final class Builtins: BuiltinFunctions {
   public var `true`: PyBool { return Py.`true` }
   // sourcery: pyproperty = False
   public var `false`: PyBool { return Py.`false` }
+
+  // MARK: - Dict
+
+  /// This dict will be used inside our `PyModule` instance.
+  internal private(set) lazy var __dict__ = Py.newDict()
 }

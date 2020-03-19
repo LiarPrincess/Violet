@@ -105,11 +105,14 @@ public class PyInstance: BuiltinFunctions {
     // And also modules:
     self.builtinsModule.gcClean()
     self.sysModule.gcClean()
+    self._impModule.gcClean()
   }
 
   // MARK: - Initialize
 
-  private var isInitialized = false
+  private var isInitialized: Bool {
+    return self._config != nil && self._delegate != nil
+  }
 
   /// Configure `Py` instance.
   ///
@@ -119,7 +122,6 @@ public class PyInstance: BuiltinFunctions {
 
     self._config = config
     self._delegate = delegate
-    self.isInitialized = true
 
     // At this point everything should be initialized,
     // which means that from now on we are able to create PyObjects.
@@ -128,9 +130,11 @@ public class PyInstance: BuiltinFunctions {
     self.errorTypes.fill__dict__()
 
     // Now finish modules:
-    self.sys.modules.insert(name: .builtins, module: self.builtinsModule)
-    self.sys.modules.insert(name: .sys, module: self.sysModule)
-    self.sys.modules.insert(name: ._imp, module: self._impModule)
+    self.sys.setBuiltinModules(modules:
+      self.builtinsModule,
+      self.sysModule,
+      self._impModule
+    )
   }
 
   private func ensureInitialized() {
