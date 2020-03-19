@@ -246,7 +246,7 @@ extension BuiltinFunctions {
       return .value(p)
     }
 
-    let msg = "'\(object.typeName)' object has no attribute '\(selector)'"
+    let msg = "'\(object.typeName)' object has no attribute '\(selector.value)'"
     return .notFound(Py.newAttributeError(msg: msg))
   }
 

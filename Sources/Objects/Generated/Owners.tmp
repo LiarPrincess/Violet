@@ -673,9 +673,9 @@ PyProperty|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResu
 PyProperty|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|func|__set__|set(object: PyObject, value: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|func|__delete__|del(object: PyObject) -> PyResult<PyObject>
-PyProperty|PyObject|func|getter|getter(value: PyObject) -> PyProperty
-PyProperty|PyObject|func|setter|setter(value: PyObject) -> PyProperty
-PyProperty|PyObject|func|deleter|deleter(value: PyObject) -> PyProperty
+PyProperty|PyObject|func|getter|getter(value: PyObject) -> PyResult<PyObject>
+PyProperty|PyObject|func|setter|setter(value: PyObject) -> PyResult<PyObject>
+PyProperty|PyObject|func|deleter|deleter(value: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?) -> PyResult<PyObject>
 PyProperty|PyObject|static_func|__init__|pyInit(zelf: PyProperty,                              args: [PyObject],                              kwargs: PyDict?) -> PyResult<PyNone>
 PyRange|PyObject|get|__class__|getClass() -> PyType

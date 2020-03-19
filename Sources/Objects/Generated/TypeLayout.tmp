@@ -136,7 +136,7 @@ PyMethod|PyObject
 - function|PyFunction
 - object|PyObject
 PyModule|PyObject
-- __dict__|Py
+- __dict__|PyDict
 PyNamespace|PyObject
 - __dict__|PyDict
 PyNone|PyObject

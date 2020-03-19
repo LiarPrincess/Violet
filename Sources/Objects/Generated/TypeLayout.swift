@@ -168,7 +168,7 @@ internal class TypeLayout: Equatable {
   /// - `function: PyFunction`
   /// - `object: PyObject`
   internal static let PyMethod = TypeLayout(base: TypeLayout.PyObject)
-  /// - `__dict__: Py`
+  /// - `__dict__: PyDict`
   internal static let PyModule = TypeLayout(base: TypeLayout.PyObject)
   /// - `__dict__: PyDict`
   internal static let PyNamespace = TypeLayout(base: TypeLayout.PyObject)
