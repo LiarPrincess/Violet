@@ -13,9 +13,13 @@ import Bytecode
 internal struct FillFastLocals {
 
   private let frame: PyFrame
+  /// Positional arguments as given by the user.
   private let args: [PyObject]
+  /// Kwargs as given by the user.
   private let kwargs: PyDict?
+  /// Default positional values to use if don't have this arg.
   private let defaults: [PyObject]
+  /// Default keyword values, used when we don't have this kwarg.
   private let kwDefaults: PyDict?
 
   private var varKwargs: PyDict?
@@ -100,20 +104,19 @@ internal struct FillFastLocals {
 
   // MARK: - Args
 
-  private var n: Int {
-    return Swift.min(self.args.count, self.code.argCount)
-  }
-
   private func fillFromArgs() {
+    // Name taken from `CPython`...
+    let n = Swift.min(self.args.count, self.code.argCount)
+
     // Copy positional arguments into local variables
-    for index in 0..<self.n {
+    for index in 0..<n {
       let value = self.args[index]
       self.set(index: index, value: value)
     }
 
     // Pack other positional arguments into the *args argument
     if self.hasVarArgs {
-      let value = Array(self.args[self.n...])
+      let value = Array(self.args[n...])
       self.setVarArgs(value: value)
     }
   }
@@ -128,8 +131,8 @@ internal struct FillFastLocals {
     // Create a dictionary for keyword parameters (**kwags)
     if self.hasVarKeywords {
       let dict = Py.newDict()
-      self.setVarKwargs(value: dict)
       self.varKwargs = dict
+      self.setVarKwargs(value: dict)
     }
 
     // Handle keyword arguments
@@ -174,47 +177,54 @@ internal struct FillFastLocals {
 
   // MARK: - Args defaults
 
-  private func fillFromArgsDefaults() -> PyBaseException? {
-    // Add missing positional arguments (copy default values from defs)
+  /// CPython: `m`
+  private var argsWithoutDefault: Int {
+    return self.code.argCount - self.defaults.count
+  }
 
-    // It can be '>' because of *args
+  /// Add missing positional arguments (copy default values from defs)
+  private func fillFromArgsDefaults() -> PyBaseException? {
+    // It can be '>' because of '*args'
     let hasAllArgs = self.args.count >= self.code.argCount
     if hasAllArgs {
       return nil
     }
 
-    /// CPython: `m`
-    let argsWithoutDefault = self.code.argCount - self.defaults.count
-
-    var missing = 0
-    for index in self.args.count..<argsWithoutDefault {
-      if !self.isSet(index: index) {
-        missing += 1
-      }
+    if let e = self.checkNotFilledArgWithoutDefault() {
+      return e
     }
 
-    if missing > 0 {
-      return self.missingArguments(missing: missing, mode: .positional)
-    }
-
-    let iStart = self.n > argsWithoutDefault ? self.n - argsWithoutDefault : 0
-
-    for i in iStart..<self.defaults.count {
-      let index = argsWithoutDefault + i
-      if !self.isSet(index: index) {
-        let value = self.defaults[i]
-        self.set(index: index, value: value)
+    for defaultIndex in 0..<self.defaults.count {
+      let argumentIndex = self.argsWithoutDefault + defaultIndex
+      if !self.isSet(index: argumentIndex) {
+        let value = self.defaults[defaultIndex]
+        self.set(index: argumentIndex, value: value)
       }
     }
 
     return nil
   }
 
+  private func checkNotFilledArgWithoutDefault() -> PyBaseException? {
+    var missingCount = 0
+
+    for index in 0..<self.argsWithoutDefault {
+      if !self.isSet(index: index) {
+        missingCount += 1
+      }
+    }
+
+    if missingCount == 0 {
+      return nil
+    }
+
+    return self.missingArguments(count: missingCount, mode: .positional)
+  }
+
   // MARK: - Kwargs defaults
 
+  /// Add missing keyword arguments (copy default values from kwdefs).
   private func fillFromKwArgsDefaults() -> PyBaseException? {
-    // Add missing keyword arguments (copy default values from kwdefs)
-
     guard let kwDefaults = kwDefaults else {
       return nil
     }
@@ -243,7 +253,7 @@ internal struct FillFastLocals {
     }
 
     if missing > 0 {
-      return self.missingArguments(missing: missing, mode: .kwarg)
+      return self.missingArguments(count: missing, mode: .kwarg)
     }
 
     return nil
@@ -254,7 +264,8 @@ internal struct FillFastLocals {
   /// static void
   /// too_many_positional(PyCodeObject *co, Py_ssize_t given, ...)
   private func checkPositionalCount() -> PyBaseException? {
-    guard self.args.count > self.code.argCount && !self.hasVarArgs else {
+    let hasTooMuchArgs = self.args.count > self.code.argCount
+    guard hasTooMuchArgs && !self.hasVarArgs else {
       return nil
     }
 
@@ -302,7 +313,7 @@ internal struct FillFastLocals {
 
   /// static void
   /// missing_arguments(PyCodeObject *co, Py_ssize_t missing, ...)
-  private func missingArguments(missing: Int,
+  private func missingArguments(count: Int,
                                 mode: MissingArguments) -> PyBaseException {
     let start: Int
     let end: Int
@@ -327,7 +338,7 @@ internal struct FillFastLocals {
       missingNames.append(name)
     }
 
-    assert(missingNames.count == missing)
+    assert(missingNames.count == count)
 
     let name = self.code.name
     let count = missingNames.count
