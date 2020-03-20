@@ -2,6 +2,7 @@ import Lexer
 import Parser
 import Foundation
 import Objects
+import Core
 
 extension VM {
 
@@ -85,12 +86,21 @@ extension VM {
 // let sys_path = vm.get_attribute(sys_module, "path")
 // vm.call_method(&sys_path, "insert", vec![vm.new_int(0), vm.new_str(dir)])?;
 
-    let main = Py.newModule(name: "__main__")
+    let main = self.add__main__Module()
     let mainDict = main.getDict()
     mainDict.set(id: .__file__, to: Py.getInterned(file))
 
     _ = self.eval(code: code, globals: mainDict, locals: mainDict)
     _ = mainDict.del(id: .__file__)
+  }
+
+  private func add__main__Module() -> PyModule {
+    switch Py.sys.addModule(name: "__main__") {
+    case let .value(m):
+      return m
+    case let .error(e):
+      trap("Unable to add '__main__' module: \(e)")
+    }
   }
 
   private func getScriptURL(_ file: String) throws -> URL {

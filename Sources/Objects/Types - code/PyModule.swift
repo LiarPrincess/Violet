@@ -68,12 +68,7 @@ public class PyModule: PyObject {
 
   // sourcery: pymethod = __repr__
   public func repr() -> PyResult<String> {
-    switch self.name {
-    case let .value(s):
-      return .value("'\(s)'")
-    case let .error(e):
-      return .error(e)
-    }
+    return self.name.map { "<module \($0)>" }
   }
 
   // MARK: - Attributes

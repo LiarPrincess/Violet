@@ -157,10 +157,12 @@ public final class Sys {
 
   // MARK: - Get/set
 
+  /// Get value from `self.__dict__`.
   internal func get(key: IdString) -> PyObject? {
     return self.__dict__.get(id: key)
   }
 
+  /// Set value in `self.__dict__`.
   internal func set(key: IdString, value: PyObject) {
     self.__dict__.set(id: key, to: value)
   }
