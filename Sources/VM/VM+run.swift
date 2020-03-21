@@ -132,13 +132,13 @@ extension VM {
   }
 
   private func readScript(from url: URL) throws -> String {
-    let encoding = String.Encoding.utf8
+    let encoding = self.defaultEncoding
 
-    do {
-      return try String(contentsOf: url, encoding: encoding)
-    } catch {
-      throw VMError.scriptIsNotReadable(url: url, encoding: encoding)
+    if let result = self.read(url: url, encoding: encoding) {
+      return result
     }
+
+    throw VMError.scriptIsNotReadable(url: url, encoding: encoding)
   }
 
   // MARK: - Run REPL

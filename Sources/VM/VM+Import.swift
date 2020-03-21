@@ -9,6 +9,7 @@ extension VM {
 
   // MARK: - Importlib
 
+  /// `importlib` is the module used for importing other modules.
   internal func initImportlibIfNeeded() throws -> PyModule {
     let interned = Py.getInterned(importlib)
 
@@ -26,7 +27,7 @@ extension VM {
     }
 
     let url = try self.findImportlib()
-    let source = try self.read(url: url)
+    let source = try self.readImportLib(url: url)
     let code = try self.compile(filename: importlibFilename,
                                 source: source,
                                 mode: .fileInput)
@@ -71,14 +72,14 @@ extension VM {
     throw VMError.importlibNotFound(triedPaths: triedPaths)
   }
 
-  private func read(url: URL) throws -> String {
-    let encoding = String.Encoding.utf8
+  private func readImportLib(url: URL) throws -> String {
+    let encoding = self.defaultEncoding
 
-    do {
-      return try String(contentsOf: url, encoding: encoding)
-    } catch {
-      throw VMError.importlibIsNotReadable(url: url, encoding: encoding)
+    if let result = self.read(url: url, encoding: encoding) {
+      return result
     }
+
+    throw VMError.importlibIsNotReadable(url: url, encoding: encoding)
   }
 
   /// Call the `_install` function from `importlib` module.
