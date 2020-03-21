@@ -124,6 +124,13 @@ extension Sys {
     return Py.getInterned(self.platform)
   }
 
+  // MARK: - Path
+
+  // sourcery: pyproperty = meta_path
+  internal var metaPath: PyObject {
+    return self.get(key: .meta_path) ?? Py.newList()
+  }
+
   // MARK: - Copyright
 
   public var copyright: String {

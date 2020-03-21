@@ -144,6 +144,7 @@ ids = [
   'items',
   'keys',
   'little',
+  'meta_path',
   'metaclass',
   'modules',
   'mro',

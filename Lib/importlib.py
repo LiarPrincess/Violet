@@ -1,13 +1,17 @@
-"""A pure Python implementation of import."""
-__all__ = ['__import__', 'import_module']
-
-import _imp
-import sys
-
 # Setup ######################################################################
 
-# CPython: 'def _setup(sys_module, _imp_module):'
-def _setup():
+def _setup(sys_module, _imp_module):
+    """Setup importlib by importing needed built-in modules and injecting them
+    into the global namespace.
+
+    As sys is needed for sys.modules access and _imp is needed to load built-in
+    modules, those two modules must be explicitly passed in.
+
+    """
+    global _imp, sys
+    _imp = _imp_module
+    sys = sys_module
+
     # Set up the spec for existing builtin/frozen modules.
     module_type = type(sys)
     for name, module in sys.modules.items():
@@ -256,4 +260,8 @@ class BuiltinImporter:
 
 # Main ########################################################################
 
-_setup()
+def _install(sys_module, _imp_module):
+    """Install importers for builtin modules"""
+    _setup(sys_module, _imp_module)
+
+    sys.meta_path.append(BuiltinImporter)

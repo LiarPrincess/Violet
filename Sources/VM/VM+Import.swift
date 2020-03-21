@@ -42,12 +42,12 @@ extension VM {
     case .error(let e): throw VMError.importlibCreationFailed(e)
     }
 
-    let locals = Py.newDict()
-    switch eval(code: code, globals: moduleDict, locals: locals) {
+    switch self.eval(code: code, globals: moduleDict, locals: moduleDict) {
     case .value: break
     case .error(let e): throw VMError.importlibCreationFailed(e)
     }
 
+    try self.installImportlib(module: module)
     return module
   }
 
@@ -78,6 +78,24 @@ extension VM {
       return try String(contentsOf: url, encoding: encoding)
     } catch {
       throw VMError.importlibIsNotReadable(url: url, encoding: encoding)
+    }
+  }
+
+  /// Call the `_install` function from `importlib` module.
+  private func installImportlib(module: PyModule) throws {
+    switch Py.getAttribute(module, name: "_install") {
+    case let .value(install):
+      let args = [Py.sysModule, Py._impModule]
+      switch Py.call(callable: install, args: args, kwargs: nil) {
+      case .value:
+        return
+      case .notCallable(let e),
+           .error(let e):
+        throw VMError.importlibInstallError(e)
+      }
+
+    case let .error(e):
+      throw VMError.importlibInstallError(e)
     }
   }
 }

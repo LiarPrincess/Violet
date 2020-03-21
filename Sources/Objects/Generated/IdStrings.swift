@@ -178,6 +178,7 @@ public struct IdString {
   public static let items = Self.impl.items
   public static let keys = Self.impl.keys
   public static let little = Self.impl.little
+  public static let meta_path = Self.impl.meta_path
   public static let metaclass = Self.impl.metaclass
   public static let modules = Self.impl.modules
   public static let mro = Self.impl.mro
@@ -349,6 +350,7 @@ private struct IdStringImpl {
   fileprivate let items = IdString(value: "items")
   fileprivate let keys = IdString(value: "keys")
   fileprivate let little = IdString(value: "little")
+  fileprivate let meta_path = IdString(value: "meta_path")
   fileprivate let metaclass = IdString(value: "metaclass")
   fileprivate let modules = IdString(value: "modules")
   fileprivate let mro = IdString(value: "mro")

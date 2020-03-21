@@ -9,6 +9,7 @@ public enum VMError: Error, CustomStringConvertible {
   case importlibNotFound(triedPaths: [URL])
   case importlibIsNotReadable(url: URL, encoding: String.Encoding)
   case importlibCreationFailed(PyBaseException)
+  case importlibInstallError(PyBaseException)
 
   // MARK: - Script
 
@@ -32,6 +33,9 @@ public enum VMError: Error, CustomStringConvertible {
     case let .importlibCreationFailed(e):
       let details = e.message.map { ": '\($0)'." } ?? "."
       return "Can't create 'importlib' module\(details)."
+    case let .importlibInstallError(e):
+      let details = e.message.map { ": '\($0)'." } ?? "."
+      return "Can't install 'importlib' module\(details)."
 
     case let .scriptDoesNotExist(path):
       return "Can't open file '\(path)': No such file or directory."
