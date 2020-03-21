@@ -174,6 +174,12 @@ extension BuiltinFunctions {
   }
 
   public func add(dict object: PyObject,
+                  key: IdString,
+                  value: PyObject) -> PyResult<PyNone> {
+    return self.add(dict: object, key: key.value, value: value)
+  }
+
+  public func add(dict object: PyObject,
                   key: PyObject,
                   value: PyObject) -> PyResult<PyNone> {
     switch self.cast(object, as: PyDict.self, typeName: "dict") {

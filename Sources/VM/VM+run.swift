@@ -24,6 +24,8 @@ extension VM {
       return
     }
 
+    _ = try self.initImportlibIfNeeded()
+
     var runRepl = true
 
     if let command = self.arguments.command {
@@ -95,10 +97,13 @@ extension VM {
   }
 
   private func add__main__Module() -> PyModule {
-    switch Py.sys.addModule(name: "__main__") {
-    case let .value(m):
-      return m
-    case let .error(e):
+    let name = Py.getInterned("__main__")
+    let module = Py.newModule(name: name)
+
+    switch Py.sys.addModule(name: name, module: module) {
+    case .value:
+      return module
+    case .error(let e):
       trap("Unable to add '__main__' module: \(e)")
     }
   }
@@ -132,7 +137,7 @@ extension VM {
     do {
       return try String(contentsOf: url, encoding: encoding)
     } catch {
-      throw VMError.scriptIsNotReadable(path: url.path, encoding: encoding)
+      throw VMError.scriptIsNotReadable(url: url, encoding: encoding)
     }
   }
 

@@ -17,9 +17,11 @@ public final class VM: PyDelegate {
     return self.configuration.arguments
   }
 
-  public init(arguments: Arguments, environment: Environment = Environment()) {
-    self.configuration = CoreConfiguration(arguments: arguments,
-                                           environment: environment)
+  public init(arguments: Arguments, environment: Environment) {
+    self.configuration = CoreConfiguration(
+      arguments: arguments,
+      environment: environment
+    )
 
     let config = PyConfig()
     Py.initialize(config: config, delegate: self)

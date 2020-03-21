@@ -106,30 +106,17 @@ extension Sys {
     }
   }
 
-  /// PyObject *
-  /// PyImport_AddModule(const char *name)
-  public func addModule(name: String) -> PyResult<PyModule> {
-    let nameObject = Py.getInterned(name)
-    switch self.getModule(name: nameObject) {
-    case .value(let o):
-      if let m = o as? PyModule {
-        return .value(m)
-      }
-      // else: override whatever we have there
-
-    case .notFound:
-      break // add new module
-
-    case .error(let e):
+  public func addModule(module: PyModule) -> PyResult<PyNone> {
+    switch module.name {
+    case let .value(name):
+      let nameObject = Py.getInterned(name)
+      return self.addModule(name: nameObject, module: module)
+    case let .error(e):
       return .error(e)
     }
+  }
 
-    let module = Py.newModule(name: nameObject)
-    switch Py.add(dict: self.modules, key: nameObject, value: module) {
-    case .value:
-      return .value(module)
-    case .error(let e):
-      return .error(e)
-    }
+  public func addModule(name: PyString, module: PyModule) -> PyResult<PyNone> {
+    return Py.add(dict: self.modules, key: name, value: module)
   }
 }
