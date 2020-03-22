@@ -130,7 +130,7 @@ public class PyInstance: BuiltinFunctions {
     self.errorTypes.fill__dict__()
 
     // Now finish modules:
-    self.sys.setBuiltinModules(modules:
+    self.sys.setBuiltinModules(
       self.builtinsModule,
       self.sysModule,
       self._impModule
@@ -159,8 +159,17 @@ public class PyInstance: BuiltinFunctions {
   /// You can use this to reinitialize `Py` (note that you will have to call
   /// `Py.initialize(config:,delegate:)` again).
   public func destroy() {
+    // TODO: Uncomment this when we have GC.
+    // weak var old = Py
+    // weak var builtins = Py.builtinsModule
+    // weak var sys = Py.sysModule
+
     // Assigning new instance will 'deinit' old one.
     Py = PyInstance()
+
+    // assert(old == nil, "Memory leak!")
+    // assert(builtins == nil, "Memory leak!")
+    // assert(sys == nil, "Memory leak!")
   }
 
   // MARK: - Intern integers
@@ -170,6 +179,8 @@ public class PyInstance: BuiltinFunctions {
   private lazy var smallInts = PyInstance.smallIntRange.map { PyInt(value: $0) }
 
   /// Get cached `int`.
+  /// Note that not all of the `ints` are interned.
+  /// Only some of them, from a verry narrow range.
   internal func getInterned(_ value: BigInt) -> PyInt? {
     guard let int = Int(exactly: value) else {
       return nil
@@ -179,6 +190,8 @@ public class PyInstance: BuiltinFunctions {
   }
 
   /// Get cached `int`.
+  /// Note that not all of the `ints` are interned.
+  /// Only some of them, from a verry narrow range.
   internal func getInterned(_ value: Int) -> PyInt? {
     guard PyInstance.smallIntRange.contains(value) else {
       return nil
@@ -190,15 +203,16 @@ public class PyInstance: BuiltinFunctions {
 
   // MARK: - Intern strings
 
-  private var internedString = [String:PyString]()
+  private var internedStrings = [String:PyString]()
 
+  /// Cached, frequently used strings.
   public func getInterned(_ value: String) -> PyString {
-    if let interned = self.internedString[value] {
+    if let interned = self.internedStrings[value] {
       return interned
     }
 
     let str = self.newString(value)
-    internedString[value] = str
+    internedStrings[value] = str
     return str
   }
 }

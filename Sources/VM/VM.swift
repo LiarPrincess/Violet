@@ -12,7 +12,6 @@ public final class VM: PyDelegate {
   internal var frames = [PyFrame]()
   internal let fileManager = FileManager.default
   internal let configuration: CoreConfiguration
-  internal let defaultEncoding = String.Encoding.utf8
 
   internal var arguments: Arguments {
     return self.configuration.arguments
@@ -34,11 +33,17 @@ public final class VM: PyDelegate {
 
   // MARK: - Helpers
 
-  internal func read(url: URL, encoding: String.Encoding) -> String? {
-    guard let data = self.fileManager.contents(atPath: url.path) else {
-      return nil
+  internal func read(
+    url: URL,
+    onError: (URL, String.Encoding) -> Error
+  ) throws -> String {
+    let encoding = String.Encoding.utf8
+
+    if let data = self.fileManager.contents(atPath: url.path),
+       let result = String(data: data, encoding: encoding) {
+      return result
     }
 
-    return String(data: data, encoding: encoding)
+    throw onError(url, encoding)
   }
 }

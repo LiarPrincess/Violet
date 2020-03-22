@@ -27,8 +27,8 @@ extension VM {
     }
 
     let url = try self.findImportlib()
-    let source = try self.readImportLib(url: url)
-    let code = try self.compile(filename: importlibFilename,
+    let source = try self.read(url: url, onError: VMError.importlibIsNotReadable)
+    let code = try self.compile(filename: url.lastPathComponent,
                                 source: source,
                                 mode: .fileInput)
 
@@ -70,16 +70,6 @@ extension VM {
     }
 
     throw VMError.importlibNotFound(triedPaths: triedPaths)
-  }
-
-  private func readImportLib(url: URL) throws -> String {
-    let encoding = self.defaultEncoding
-
-    if let result = self.read(url: url, encoding: encoding) {
-      return result
-    }
-
-    throw VMError.importlibIsNotReadable(url: url, encoding: encoding)
   }
 
   /// Call the `_install` function from `importlib` module.

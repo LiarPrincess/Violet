@@ -23,7 +23,7 @@ extension Sys {
     return .value()
   }
 
-  internal func setBuiltinModules(modules: PyModule...) {
+  internal func setBuiltinModules(_ modules: PyModule...) {
     assert(
       self.builtinModuleNames.isEmpty,
       "This function should be called in 'Py.initialize(config:delegate:)'."

@@ -78,8 +78,7 @@ extension VM {
     // We don't support 'PYTHONSTARTUP'!
 
     let url = try self.getScriptURL(file)
-    let source = try self.readScript(from: url)
-
+    let source = try self.read(url: url, onError: VMError.scriptIsNotReadable)
     let code = try self.compile(filename: url.lastPathComponent,
                                 source: source,
                                 mode: .fileInput)
@@ -129,16 +128,6 @@ extension VM {
     }
 
     return mainFileUrl
-  }
-
-  private func readScript(from url: URL) throws -> String {
-    let encoding = self.defaultEncoding
-
-    if let result = self.read(url: url, encoding: encoding) {
-      return result
-    }
-
-    throw VMError.scriptIsNotReadable(url: url, encoding: encoding)
   }
 
   // MARK: - Run REPL
