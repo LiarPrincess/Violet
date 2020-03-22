@@ -24,19 +24,21 @@ extension VM {
       return
     }
 
-    _ = try self.initImportlibIfNeeded()
+    // Oh no... we will be running code! Let's prepare for this.
+    // (For some reason importing stuff seems to be important in programming...)
+    let importlib = try self.initImportlibIfNeeded()
+    _ = try self.initImportlibExternalIfNeeded(importlib: importlib)
 
-    var runRepl = true
+    var runRepl = false
 
     if let command = self.arguments.command {
-      runRepl = false
       try self.runCommand(command)
     } else if let module = self.arguments.module {
-      runRepl = false
       try self.runModule(module)
     } else if let script = self.arguments.script {
-      runRepl = false
       try self.runScript(script)
+    } else {
+      runRepl = true
     }
 
     if runRepl || self.configuration.inspectInteractively {
@@ -83,9 +85,9 @@ extension VM {
                                 source: source,
                                 mode: .fileInput)
 
-// TODO: This or RustPython main.rs -> line 410:
-// let sys_path = vm.get_attribute(sys_module, "path")
-// vm.call_method(&sys_path, "insert", vec![vm.new_int(0), vm.new_str(dir)])?;
+    // TODO: This or RustPython main.rs -> line 410:
+    // let sys_path = vm.get_attribute(sys_module, "path")
+    // vm.call_method(&sys_path, "insert", vec![vm.new_int(0), vm.new_str(dir)])?;
 
     let main = self.add__main__Module()
     let mainDict = main.getDict()

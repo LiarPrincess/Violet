@@ -580,3 +580,13 @@ def _install(sys_module, _imp_module):
     _setup(sys_module, _imp_module)
 
     sys.meta_path.append(BuiltinImporter)
+
+# THIS IS NOT USED!
+# WE DO IT IN SWIFT!
+def _install_external_importers():
+    """Install importers that require external filesystem access"""
+    global _bootstrap_external
+    import _frozen_importlib_external
+
+    _bootstrap_external = _frozen_importlib_external
+    _frozen_importlib_external._install(sys.modules[__name__])

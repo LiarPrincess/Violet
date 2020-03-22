@@ -2,91 +2,223 @@ import Core
 import Objects
 import Foundation
 
-private let importlib = "importlib"
-private let importlibFilename = "importlib.py"
-
 extension VM {
 
   // MARK: - Importlib
 
   /// `importlib` is the module used for importing other modules.
   internal func initImportlibIfNeeded() throws -> PyModule {
-    let interned = Py.getInterned(importlib)
+    let interned = Py.getInterned("importlib")
 
-    switch Py.sys.getModule(name: interned) {
-    case .value(let o):
-      if let m = o as? PyModule {
-        return m // Already initialized. Nothing to do...
-      }
-      // else: override whatever we have there
-
-    case .notFound:
-      break // We have to initialize it
-    case .error(let e):
-      throw VMError.importlibAlreadyInitializedCheckFailed(e)
+    switch self.getModuleFromSys(name: interned) {
+    case .value(let m): return m
+    case .notFound: break
+    case .error(let e): throw VMError.importlibCheckInSysFailed(e)
     }
 
-    let url = try self.findImportlib()
-    let source = try self.read(url: url, onError: VMError.importlibIsNotReadable)
-    let code = try self.compile(filename: url.lastPathComponent,
-                                source: source,
-                                mode: .fileInput)
+    let url = try self.findModuleOnDisc(
+      filename: "importlib.py",
+      onError: VMError.importlibNotFound
+    )
 
-    let module = Py.newModule(name: interned)
+    let source = try self.read(
+      url: url,
+      onError: VMError.importlibIsNotReadable
+    )
 
-    let moduleDict = module.getDict()
-    moduleDict.set(id: .__name__, to: interned)
-    moduleDict.set(id: .__file__, to: code.filename)
+    let code = try self.compile(
+      filename: url.lastPathComponent,
+      source: source,
+      mode: .fileInput
+    )
 
-    switch Py.sys.addModule(name: interned, module: module) {
-    case .value: break
-    case .error(let e): throw VMError.importlibCreationFailed(e)
-    }
+    let module = try self.createModule(
+      name: interned,
+      code: code,
+      onError: VMError.importlibCreationFailed
+    )
 
-    switch self.eval(code: code, globals: moduleDict, locals: moduleDict) {
-    case .value: break
-    case .error(let e): throw VMError.importlibCreationFailed(e)
-    }
+    try self.callInstall(
+      module: module,
+      args: [Py.sysModule, Py._impModule],
+      onError: VMError.importlibInstallError
+    )
 
-    try self.installImportlib(module: module)
     return module
   }
 
-  private func findImportlib() throws -> URL {
+  // MARK: - Importlib external
+
+  /// `importlib_external` is a part of `importlib` that allows us to import
+  /// modules that require external filesystem access.
+  /// For example: `import elsa`, where `elsa` is a file on disc.
+  ///
+  /// It also allows us to do a few other things, but we don't care about those.
+  ///
+  /// Normally this would be done in `importlib._install_external_importers`,
+  /// but we will do it in Swift.
+  internal func initImportlibExternalIfNeeded(
+    importlib: PyModule
+  ) throws -> PyModule {
+    let interned = Py.getInterned("importlib_external")
+
+    switch self.getModuleFromSys(name: interned) {
+    case .value(let m): return m
+    case .notFound: break
+    case .error(let e): throw VMError.importlibExternalCheckInSysFailed(e)
+    }
+
+    let url = try self.findModuleOnDisc(
+      filename: "importlib_external.py",
+      onError: VMError.importlibExternalNotFound
+    )
+
+    let source = try self.read(
+      url: url,
+      onError: VMError.importlibExternalIsNotReadable
+    )
+
+    let code = try self.compile(
+      filename: url.lastPathComponent,
+      source: source,
+      mode: .fileInput
+    )
+
+    let module = try self.createModule(
+      name: interned,
+      code: code,
+      onError: VMError.importlibExternalCreationFailed
+    )
+
+    try self.callInstall(
+      module: module,
+      args: [importlib],
+      onError: VMError.importlibExternalInstallError
+    )
+
+    try self.registerImportlib(importlib: importlib, external: module)
+    return module
+  }
+
+  /// Add `importlib_external` as `_bootstrap_external` in `importlib`.
+  private func registerImportlib(importlib: PyModule,
+                                 external: PyModule) throws {
+    let dict = importlib.getDict()
+    let name = Py.newString("_bootstrap_external")
+
+    switch dict.set(key: name, to: external) {
+    case .ok:
+      return
+    case .error(let e):
+      throw VMError.importlibExternalInstallError(e)
+    }
+  }
+}
+
+// MARK: - Helpers
+
+private enum GetModuleFromSysResult {
+  case value(PyModule)
+  case notFound
+  case error(PyBaseException)
+}
+
+extension VM {
+
+  private func getModuleFromSys(name: PyString) -> GetModuleFromSysResult {
+    switch Py.sys.getModule(name: name) {
+    case .value(let o):
+      if let m = o as? PyModule {
+        return .value(m) // Already initialized. Nothing to do...
+      }
+
+      // override whatever we have there
+      return .notFound
+
+    case .notFound:
+      // We have to initialize it
+      return .notFound
+
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  private func findModuleOnDisc(
+    filename: String,
+    onError: ([URL]) -> Error
+  ) throws -> URL {
     let paths = self.configuration.moduleSearchPaths
     var triedPaths = [URL]()
 
     for path in paths {
-      // TODO: Finish this thingie
-      let url = URL(fileURLWithPath: path)
-        .appendingPathComponent("Lib")
-        .appendingPathComponent(importlibFilename)
+      // Try 'path/filename'
+      let urlPath = URL(fileURLWithPath: path)
+        .appendingPathComponent(filename)
 
-      if self.fileManager.fileExists(atPath: url.path) {
-        return url
+      if self.fileManager.fileExists(atPath: urlPath.path) {
+        return urlPath
       }
 
-      triedPaths.append(url)
+      // Same as above but 'path/Lib/file'
+      let urlLibPath = URL(fileURLWithPath: path)
+        .appendingPathComponent("Lib")
+        .appendingPathComponent(filename)
+
+      if self.fileManager.fileExists(atPath: urlLibPath.path) {
+        return urlLibPath
+      }
+
+      triedPaths.append(urlPath)
+      triedPaths.append(urlLibPath)
     }
 
-    throw VMError.importlibNotFound(triedPaths: triedPaths)
+    throw onError(triedPaths)
   }
 
-  /// Call the `_install` function from `importlib` module.
-  private func installImportlib(module: PyModule) throws {
+  private func createModule(
+    name: PyString,
+    code: PyCode,
+    onError: (PyBaseException) -> Error
+  ) throws -> PyModule {
+    let module = Py.newModule(name: name)
+
+    let moduleDict = module.getDict()
+    moduleDict.set(id: .__name__, to: name)
+    moduleDict.set(id: .__file__, to: code.filename)
+
+    switch Py.sys.addModule(name: name, module: module) {
+    case .value: break
+    case .error(let e): throw onError(e)
+    }
+
+    switch self.eval(code: code, globals: moduleDict, locals: moduleDict) {
+    case .value: break
+    case .error(let e): throw onError(e)
+    }
+
+    return module
+  }
+
+  /// Call the `_install` function from given module with sepcified `args`.
+  private func callInstall(
+    module: PyModule,
+    args: [PyObject],
+    onError: (PyBaseException) -> Error
+  ) throws {
     switch Py.getAttribute(module, name: "_install") {
-    case let .value(install):
-      let args = [Py.sysModule, Py._impModule]
-      switch Py.call(callable: install, args: args, kwargs: nil) {
+    case let .value(fn):
+      switch Py.call(callable: fn, args: args, kwargs: nil) {
       case .value:
         return
+
       case .notCallable(let e),
            .error(let e):
-        throw VMError.importlibInstallError(e)
+        throw onError(e)
       }
 
     case let .error(e):
-      throw VMError.importlibInstallError(e)
+      throw onError(e)
     }
   }
 }

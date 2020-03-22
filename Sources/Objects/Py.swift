@@ -140,7 +140,9 @@ public class PyInstance: BuiltinFunctions {
     self.types.fill__dict__()
     self.errorTypes.fill__dict__()
 
-    // Now finish modules:
+    // Now finish modules.
+    // Note that property getter will call 'ModuleFactory'
+    // which will fill '__dict__' of each module.
     self.sys.setBuiltinModules(
       self.builtinsModule,
       self.sysModule,
