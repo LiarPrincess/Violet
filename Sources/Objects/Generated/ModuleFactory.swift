@@ -237,4 +237,15 @@ internal enum ModuleFactory {
 
     return module
   }
+
+  // MARK: - UnderscoreWarnings
+
+  internal static func createUnderscoreWarnings(from object: UnderscoreWarnings) -> PyModule {
+    let module = createModule(name: "_warnings", doc: nil, dict: object.__dict__)
+
+
+
+
+    return module
+  }
 }

@@ -26,9 +26,19 @@ def _setup(sys_module, _imp_module):
 
     # Directly load built-in modules needed during bootstrap.
     self_module = sys.modules[__name__]
-    for builtin_name in ('_thread', '_warnings', '_weakref'):
-        builtin_module = None
+    for builtin_name in ['_warnings']:
+        if builtin_name not in sys.modules:
+            builtin_module = _builtin_from_name(builtin_name)
+        else:
+            builtin_module = sys.modules[builtin_name]
         setattr(self_module, builtin_name, builtin_module)
+
+def _builtin_from_name(name):
+    spec = BuiltinImporter.find_spec(name)
+    if spec is None:
+        raise ImportError('no built-in module named ' + name)
+
+    return _load_unlocked(spec)
 
 # Bootstrap-related code ######################################################
 
@@ -65,6 +75,40 @@ def _requires_builtin(fxn):
     return _requires_builtin_wrapper
 
 # Module specifications #######################################################
+
+def _verbose_message(message, verbosity=1):
+    """Print the message to stderr if -v/PYTHONVERBOSE is turned on."""
+    if sys.flags.verbose >= verbosity:
+        if not message.startswith(('#', 'import ')):
+            message = '# ' + message
+
+        print(message, file=sys.stderr)
+
+class _installed_safely:
+
+    def __init__(self, module):
+        self._module = module
+        self._spec = module.__spec__
+
+    def __enter__(self):
+        # This must be done before putting the module in sys.modules
+        # (otherwise an optimization shortcut in import.c becomes wrong)
+        self._spec._initializing = True
+        sys.modules[self._spec.name] = self._module
+
+    def __exit__(self, *args):
+        try:
+            spec = self._spec
+            # This was changed because Violet does not support comprehension
+            if any(map(lambda arg: arg is not None, args)):
+                try:
+                    del sys.modules[spec.name]
+                except KeyError:
+                    pass
+            else:
+                _verbose_message(f'import {spec.name!r} # {spec.loader!r}')
+        finally:
+            self._spec._initializing = False
 
 class ModuleSpec:
     """The specification for a module, used for loading.
@@ -246,6 +290,78 @@ def _init_module_attrs(spec, module, *, override=False):
 
     return module
 
+def module_from_spec(spec):
+    """Create a module based on the provided spec."""
+    # Typically loaders will not implement create_module().
+    module = None
+
+    if hasattr(spec.loader, 'create_module'):
+        # If create_module() returns `None` then it means default
+        # module creation should be used.
+        module = spec.loader.create_module(spec)
+    elif hasattr(spec.loader, 'exec_module'):
+        raise ImportError('loaders that define exec_module() must also define create_module()')
+
+    if module is None:
+        module = _new_module(spec.name)
+
+    _init_module_attrs(spec, module)
+    return module
+
+def _load_backward_compatible(spec):
+    # (issue19713) Once BuiltinImporter and ExtensionFileLoader
+    # have exec_module() implemented, we can add a deprecation
+    # warning here.
+    spec.loader.load_module(spec.name)
+
+    # The module must be in sys.modules at this point!
+    module = sys.modules[spec.name]
+    if getattr(module, '__loader__', None) is None:
+        try:
+            module.__loader__ = spec.loader
+        except AttributeError:
+            pass
+
+    if getattr(module, '__package__', None) is None:
+        try:
+            # Since module.__path__ may not line up with
+            # spec.submodule_search_paths, we can't necessarily rely
+            # on spec.parent here.
+            module.__package__ = module.__name__
+            if not hasattr(module, '__path__'):
+                module.__package__ = spec.name.rpartition('.')[0]
+        except AttributeError:
+            pass
+
+    if getattr(module, '__spec__', None) is None:
+        try:
+            module.__spec__ = spec
+        except AttributeError:
+            pass
+
+    return module
+
+def _load_unlocked(spec):
+    # A helper for direct use by the import system.
+    if spec.loader is not None:
+        # not a namespace package
+        if not hasattr(spec.loader, 'exec_module'):
+            return _load_backward_compatible(spec)
+
+    module = module_from_spec(spec)
+    with _installed_safely(module):
+        if spec.loader is None:
+            if spec.submodule_search_locations is None:
+                raise ImportError('missing loader', name=spec.name)
+            # A namespace package so do nothing.
+        else:
+            spec.loader.exec_module(module)
+
+    # We don't ensure that the import-related module attributes get
+    # set in the sys.modules replacement case.  Such modules are on
+    # their own.
+    return sys.modules[spec.name]
+
 # Loaders #####################################################################
 
 class BuiltinImporter:
@@ -256,7 +372,206 @@ class BuiltinImporter:
     instantiate the class.
 
     """
-    pass
+
+    @classmethod
+    def find_spec(cls, fullname, path=None, target=None):
+        if path is not None:
+            return None
+
+        if _imp.is_builtin(fullname):
+            return spec_from_loader(fullname, cls, origin='built-in')
+        else:
+            return None
+
+    @classmethod
+    def create_module(self, spec):
+        """Create a built-in module"""
+        if spec.name not in sys.builtin_module_names:
+            raise ImportError(f'{spec.name!r} is not a built-in module', name=spec.name)
+        return _call_with_frames_removed(_imp.create_builtin, spec)
+
+    @classmethod
+    def exec_module(self, module):
+        """Exec a built-in module"""
+        _call_with_frames_removed(_imp.exec_builtin, module)
+
+def spec_from_loader(name, loader, *, origin=None, is_package=None):
+    """Return a module spec based on various loader methods."""
+    if hasattr(loader, 'get_filename'):
+        if _bootstrap_external is None:
+            raise NotImplementedError
+        spec_from_file_location = _bootstrap_external.spec_from_file_location
+
+        if is_package is None:
+            return spec_from_file_location(name, loader=loader)
+
+        search = [] if is_package else None
+        return spec_from_file_location(name, loader=loader,
+                                       submodule_search_locations=search)
+
+    if is_package is None:
+        if hasattr(loader, 'is_package'):
+            try:
+                is_package = loader.is_package(name)
+            except ImportError:
+                is_package = None  # aka, undefined
+        else:
+            # the default
+            is_package = False
+
+    return ModuleSpec(name, loader, origin=origin, is_package=is_package)
+
+# Import itself ###############################################################
+
+def import_module(name, package=None):
+    """Import a module.
+
+    The 'package' argument is required when performing a relative import. It
+    specifies the package to use as the anchor point from which to resolve the
+    relative import to an absolute import.
+
+    """
+    level = 0
+    if name.startswith('.'):
+        if not package:
+            msg = f"the 'package' argument is required to perform a relative import for {name!r}"
+            raise TypeError(msg)
+
+        for character in name:
+            if character != '.':
+                break
+            level += 1
+
+    return _gcd_import(name[level:], package, level)
+
+def _resolve_name(name, package, level):
+    """Resolve a relative module name to an absolute one."""
+    bits = package.rsplit('.', level - 1)
+    if len(bits) < level:
+        raise ValueError('attempted relative import beyond top-level package')
+
+    base = bits[0]
+    return f'{base}.{name}' if name else base
+
+def _find_spec(name, path, target=None):
+    """Find a module's spec."""
+    meta_path = sys.meta_path
+    if meta_path is None:
+        # PyImport_Cleanup() is running or has been called.
+        raise ImportError("sys.meta_path is None, Python is likely shutting down")
+
+    if not meta_path:
+        _warnings.warn('sys.meta_path is empty', ImportWarning)
+
+    # We check sys.modules here for the reload case.  While a passed-in
+    # target will usually indicate a reload there is no guarantee, whereas
+    # sys.modules provides one.
+    is_reload = name in sys.modules
+    for finder in meta_path:
+        try:
+            find_spec = finder.find_spec
+        except AttributeError:
+            continue
+        else:
+            spec = find_spec(name, path, target)
+
+        if spec is not None:
+            # The parent import may have already imported this module.
+            if not is_reload and name in sys.modules:
+                module = sys.modules[name]
+                try:
+                    __spec__ = module.__spec__
+                except AttributeError:
+                    # We use the found spec since that is the one that
+                    # we would have used if the parent module hadn't
+                    # beaten us to the punch.
+                    return spec
+                else:
+                    if __spec__ is None:
+                        return spec
+                    else:
+                        return __spec__
+            else:
+                return spec
+    else:
+        return None
+
+def _sanity_check(name, package, level):
+    """Verify arguments are "sane"."""
+    if not isinstance(name, str):
+        raise TypeError(f'module name must be str, not {type(name)}')
+
+    if level < 0:
+        raise ValueError('level must be >= 0')
+
+    if level > 0:
+        if not isinstance(package, str):
+            raise TypeError('__package__ not set to a string')
+        elif not package:
+            raise ImportError('attempted relative import with no known parent package')
+
+    if not name and level == 0:
+        raise ValueError('Empty module name')
+
+def _find_and_load_unlocked(name, import_):
+    path = None
+    parent = name.rpartition('.')[0]
+
+    if parent:
+        if parent not in sys.modules:
+            _call_with_frames_removed(import_, parent)
+
+        # Crazy side-effects!
+        if name in sys.modules:
+            return sys.modules[name]
+
+        parent_module = sys.modules[parent]
+        try:
+            path = parent_module.__path__
+        except AttributeError:
+            msg = f"No module named '{name!r}'; {parent!r} is not a package"
+            raise ModuleNotFoundError(msg, name=name) from None
+
+    spec = _find_spec(name, path)
+    if spec is None:
+        raise ModuleNotFoundError(f"No module named '{name}'", name=name)
+    else:
+        module = _load_unlocked(spec)
+
+    if parent:
+        # Set the module as an attribute on its parent.
+        parent_module = sys.modules[parent]
+        setattr(parent_module, name.rpartition('.')[2], module)
+
+    return module
+
+_NEEDS_LOADING = object()
+
+def _find_and_load(name, import_):
+    """Find and load the module."""
+    module = sys.modules.get(name, _NEEDS_LOADING)
+    if module is _NEEDS_LOADING:
+        return _find_and_load_unlocked(name, import_)
+
+    if module is None:
+        message = (f'import of {name} halted; None in sys.modules')
+        raise ModuleNotFoundError(message, name=name)
+
+    return module
+
+def _gcd_import(name, package=None, level=0):
+    """Import and return the module based on its name, the package the call is
+    being made from, and the level adjustment.
+
+    This function represents the greatest common denominator of functionality
+    between import_module and __import__. This includes setting __package__ if
+    the loader did not.
+
+    """
+    _sanity_check(name, package, level)
+    if level > 0:
+        name = _resolve_name(name, package, level)
+    return _find_and_load(name, _gcd_import)
 
 # Main ########################################################################
 

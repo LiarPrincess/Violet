@@ -37,6 +37,12 @@ public class PyInstance: BuiltinFunctions {
     return UnderscoreImp()
   }()
 
+  /// Python `_warnings` module.
+  public private(set) lazy var _warnings: UnderscoreWarnings = {
+    self.ensureInitialized()
+    return UnderscoreWarnings()
+  }()
+
   /// `self.builtins` but as a Python module (`PyModule`).
   public private(set) lazy var builtinsModule =
     ModuleFactory.createBuiltins(from: self.builtins)
@@ -48,6 +54,10 @@ public class PyInstance: BuiltinFunctions {
   /// `self._imp` but as a Python module (`PyModule`).
   public private(set) lazy var _impModule =
     ModuleFactory.createUnderscoreImp(from: self._imp)
+
+  /// `self._warnings` but as a Python module (`PyModule`).
+  public private(set) lazy var _warningsModule =
+    ModuleFactory.createUnderscoreWarnings(from: self._warnings)
 
   // MARK: - Types
 
@@ -106,6 +116,7 @@ public class PyInstance: BuiltinFunctions {
     self.builtinsModule.gcClean()
     self.sysModule.gcClean()
     self._impModule.gcClean()
+    self._warningsModule.gcClean()
   }
 
   // MARK: - Initialize
@@ -133,7 +144,8 @@ public class PyInstance: BuiltinFunctions {
     self.sys.setBuiltinModules(
       self.builtinsModule,
       self.sysModule,
-      self._impModule
+      self._impModule,
+      self._warningsModule
     )
   }
 
