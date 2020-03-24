@@ -1,3 +1,4 @@
+import Core
 import Foundation
 
 // In CPython:
@@ -132,6 +133,36 @@ extension BuiltinFunctions {
   /// Import failed.
   public func newPyImportError(msg: String) -> PyImportError {
     return PyImportError(msg: msg)
+  }
+
+  public func newSyntaxError(filename: String,
+                             location: SourceLocation,
+                             text: String) -> PySyntaxError {
+    return self.newSyntaxError(filename: filename,
+                               line: location.line,
+                               offset: location.column,
+                               text: String(describing: text))
+  }
+
+  public func newSyntaxError(filename: String,
+                             line: SourceLine,
+                             offset: SourceColumn,
+                             text: String) -> PySyntaxError {
+    let filenameObject = Py.newString(filename)
+    let lineObject = Py.newInt(Int(line))
+    let offsetObject = Py.newInt(Int(offset))
+    let textObject = Py.newString(text)
+
+    let args = Py.newTuple([filenameObject, lineObject, offsetObject, textObject])
+    let e = PySyntaxError(args: args)
+
+    let dict = e.__dict__
+    dict.set(id: .filename, to: filenameObject)
+    dict.set(id: .lineno, to: lineObject)
+    dict.set(id: .offset, to: offsetObject)
+    dict.set(id: .text, to: textObject)
+
+    return e
   }
 
   /// static PyObject*

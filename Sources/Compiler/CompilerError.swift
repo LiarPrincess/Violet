@@ -115,6 +115,8 @@ public enum CompilerErrorKind: Equatable {
   case awaitOutsideAsyncFunction
 }
 
+// MARK: - CustomStringConvertible
+
 extension CompilerErrorKind: CustomStringConvertible {
   public var description: String {
     switch self {
@@ -174,7 +176,6 @@ extension CompilerErrorKind: CustomStringConvertible {
       return "future feature '\(name)' is not defined"
     case .lateFuture:
       return "`from __future__ imports` must occur at the beginning of the file"
-      // MARK: - Compiler
 
     case .multipleStarredInAssignmentExpressions:
       return "Two starred expressions in assignment"

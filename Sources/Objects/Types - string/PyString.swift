@@ -69,7 +69,8 @@ public class PyString: PyObject {
       return .value(true)
     }
 
-    return CompareResult(self.compare(other).map { $0 == .equal })
+    return CompareResult(self.compare(with: other)
+      .map { $0 == .equal })
   }
 
   // sourcery: pymethod = __ne__
@@ -81,30 +82,43 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    return CompareResult(self.compare(other).map { $0 == .less })
+    return CompareResult(self.compare(with: other)
+      .map { $0 == .less })
   }
 
   // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return CompareResult(self.compare(other).map { $0 == .less || $0 == .equal })
+    return CompareResult(self.compare(with: other)
+      .map { $0 == .less || $0 == .equal })
   }
 
   // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> CompareResult {
-    return CompareResult(self.compare(other).map { $0 == .greater })
+    return CompareResult(self.compare(with: other)
+      .map { $0 == .greater })
   }
 
   // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return CompareResult(self.compare(other).map { $0 == .greater || $0 == .equal })
+    return CompareResult(self.compare(with: other)
+      .map { $0 == .greater || $0 == .equal })
   }
 
-  private func compare(_ other: PyObject) -> StringCompareResult? {
+  private func compare(with other: PyObject) -> StringCompareResult? {
     guard let other = other as? PyString else {
       return nil
     }
 
-    return self.data.compare(to: other.data)
+    return self.compare(with: other.data)
+  }
+
+  internal func compare(with other: PyStringData) -> StringCompareResult {
+    return self.data.compare(to: other)
+  }
+
+  internal func compare(with other: String) -> StringCompareResult {
+    let otherData = PyStringData(other)
+    return self.compare(with: otherData)
   }
 
   // MARK: - Hashable

@@ -4,7 +4,10 @@ import Compiler
 import Bytecode
 import Objects
 
+// TODO: Use Objects.Py.compile
+
 extension VM {
+
   internal func compile(filename: String,
                         source: String,
                         mode: ParserMode) throws -> PyCode {
@@ -16,6 +19,7 @@ extension VM {
 
     let optimizationLevel = self.configuration.optimization
     let compilerOptions = CompilerOptions(optimizationLevel: optimizationLevel)
+
     let compiler = try Compiler(ast: ast,
                                 filename: filename,
                                 options: compilerOptions)

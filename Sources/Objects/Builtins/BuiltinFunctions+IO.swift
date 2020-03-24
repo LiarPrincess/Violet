@@ -17,8 +17,7 @@ extension BuiltinFunctions {
   // sourcery: pymethod = print
   /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
   /// See [this](https://docs.python.org/3/library/functions.html#print)
-  internal func print(args: [PyObject],
-                      kwargs: PyDict?) -> PyResult<PyNone> {
+  internal func print(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
     // 'args' contains objects to print
     // 'kwargs' contains options
 

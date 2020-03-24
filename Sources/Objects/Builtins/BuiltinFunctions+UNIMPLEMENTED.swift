@@ -8,14 +8,6 @@ extension BuiltinFunctions {
 
   // MARK: - Code
 /*
-
-  // sourcery: pymethod = compile
-  /// compile(source, filename, mode, flags=0, dont_inherit=False, optimize=-1)
-  /// See [this](https://docs.python.org/3/library/functions.html#compile)
-  public func compile() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod = eval
   /// eval(expression[, globals[, locals]])
   /// See [this](https://docs.python.org/3/library/functions.html#eval)
@@ -34,23 +26,6 @@ extension BuiltinFunctions {
   /// breakpoint(*args, **kws)
   /// See [this](https://docs.python.org/3/library/functions.html#breakpoint)
   public func breakpoint() -> PyObject {
-    return self.unimplemented
-  }
-*/
-
-  // MARK: - Static, class method
-/*
-  // sourcery: pymethod = @staticmethod
-  /// @staticmethod
-  /// See [this](https://docs.python.org/3/library/functions.html#staticmethod)
-  public func staticmethod() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod = @classmethod
-  /// @classmethod
-  /// See [this](https://docs.python.org/3/library/functions.html#classmethod)
-  public func classmethod() -> PyObject {
     return self.unimplemented
   }
 */
@@ -97,13 +72,6 @@ extension BuiltinFunctions {
   /// memoryview(obj)
   /// See [this](https://docs.python.org/3/library/functions.html)
   public func memoryview() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod = super
-  /// super([type[, object-or-type]])
-  /// See [this](https://docs.python.org/3/library/functions.html#super)
-  public func `super`() -> PyObject {
     return self.unimplemented
   }
 */

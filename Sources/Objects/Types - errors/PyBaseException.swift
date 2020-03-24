@@ -88,6 +88,11 @@ public class PyBaseException: PyObject {
       return nil
     }
 
+    // Even when we start with 'string', it may not be a message if we have other.
+    guard self.args.elements.count == 1 else {
+      return nil
+    }
+
     guard let string = firstArg as? PyString else {
       return nil
     }

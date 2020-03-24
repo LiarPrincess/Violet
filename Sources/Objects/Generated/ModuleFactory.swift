@@ -171,6 +171,7 @@ internal enum ModuleFactory {
     insert(module: module, name: "round", value: PyBuiltinFunction.wrap(name: "round", doc: nil, fn: object.round(number:nDigits:), module: module))
     insert(module: module, name: "divmod", value: PyBuiltinFunction.wrap(name: "divmod", doc: nil, fn: object.divmod(left:right:), module: module))
     insert(module: module, name: "pow", value: PyBuiltinFunction.wrap(name: "pow", doc: nil, fn: object.pow(base:exp:mod:), module: module))
+    insert(module: module, name: "compile", value: PyBuiltinFunction.wrap(name: "compile", doc: nil, fn: object.compile(args:kwargs:), module: module))
     insert(module: module, name: "print", value: PyBuiltinFunction.wrap(name: "print", doc: nil, fn: object.print(args:kwargs:), module: module))
     insert(module: module, name: "open", value: PyBuiltinFunction.wrap(name: "open", doc: nil, fn: object.open(args:kwargs:), module: module))
     insert(module: module, name: "getattr", value: PyBuiltinFunction.wrap(name: "getattr", doc: nil, fn: object.getAttribute(_:name:default:), module: module))

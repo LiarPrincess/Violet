@@ -170,6 +170,7 @@ public struct IdString {
   public static let copy = Self.impl.copy
   public static let copyreg = Self.impl.copyreg
   public static let difference_update = Self.impl.difference_update
+  public static let filename = Self.impl.filename
   public static let fileno = Self.impl.fileno
   public static let foo = Self.impl.foo
   public static let get = Self.impl.get
@@ -177,6 +178,7 @@ public struct IdString {
   public static let intersection_update = Self.impl.intersection_update
   public static let items = Self.impl.items
   public static let keys = Self.impl.keys
+  public static let lineno = Self.impl.lineno
   public static let little = Self.impl.little
   public static let meta_path = Self.impl.meta_path
   public static let metaclass = Self.impl.metaclass
@@ -186,6 +188,7 @@ public struct IdString {
   public static let n_sequence_fields = Self.impl.n_sequence_fields
   public static let n_unnamed_fields = Self.impl.n_unnamed_fields
   public static let name = Self.impl.name
+  public static let offset = Self.impl.offset
   public static let open = Self.impl.open
   public static let origin = Self.impl.origin
   public static let path = Self.impl.path
@@ -200,6 +203,7 @@ public struct IdString {
   public static let stdout = Self.impl.stdout
   public static let symmetric_difference_update = Self.impl.symmetric_difference_update
   public static let sys = Self.impl.sys
+  public static let text = Self.impl.text
   public static let `throw` = Self.impl.`throw`
   public static let update = Self.impl.update
   public static let values = Self.impl.values
@@ -342,6 +346,7 @@ private struct IdStringImpl {
   fileprivate let copy = IdString(value: "copy")
   fileprivate let copyreg = IdString(value: "copyreg")
   fileprivate let difference_update = IdString(value: "difference_update")
+  fileprivate let filename = IdString(value: "filename")
   fileprivate let fileno = IdString(value: "fileno")
   fileprivate let foo = IdString(value: "foo")
   fileprivate let get = IdString(value: "get")
@@ -349,6 +354,7 @@ private struct IdStringImpl {
   fileprivate let intersection_update = IdString(value: "intersection_update")
   fileprivate let items = IdString(value: "items")
   fileprivate let keys = IdString(value: "keys")
+  fileprivate let lineno = IdString(value: "lineno")
   fileprivate let little = IdString(value: "little")
   fileprivate let meta_path = IdString(value: "meta_path")
   fileprivate let metaclass = IdString(value: "metaclass")
@@ -358,6 +364,7 @@ private struct IdStringImpl {
   fileprivate let n_sequence_fields = IdString(value: "n_sequence_fields")
   fileprivate let n_unnamed_fields = IdString(value: "n_unnamed_fields")
   fileprivate let name = IdString(value: "name")
+  fileprivate let offset = IdString(value: "offset")
   fileprivate let open = IdString(value: "open")
   fileprivate let origin = IdString(value: "origin")
   fileprivate let path = IdString(value: "path")
@@ -372,6 +379,7 @@ private struct IdStringImpl {
   fileprivate let stdout = IdString(value: "stdout")
   fileprivate let symmetric_difference_update = IdString(value: "symmetric_difference_update")
   fileprivate let sys = IdString(value: "sys")
+  fileprivate let text = IdString(value: "text")
   fileprivate let `throw` = IdString(value: "throw")
   fileprivate let update = IdString(value: "update")
   fileprivate let values = IdString(value: "values")

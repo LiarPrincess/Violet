@@ -14,6 +14,12 @@ public enum ParserMode {
   case fileInput
   /// Used for `eval()`.
   case eval
+
+  /// The same as `fileInput`.
+  public static var exec: ParserMode { return .fileInput }
+
+  /// The same as `interactive`.
+  public static var single: ParserMode { return .interactive }
 }
 
 private enum ParserState {
