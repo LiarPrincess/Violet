@@ -8,13 +8,6 @@ extension BuiltinFunctions {
 
   // MARK: - Code
 /*
-  // sourcery: pymethod = eval
-  /// eval(expression[, globals[, locals]])
-  /// See [this](https://docs.python.org/3/library/functions.html#eval)
-  public func eval() -> PyObject {
-    return self.unimplemented
-  }
-
    // sourcery: pymethod = breakpoint
   /// breakpoint(*args, **kws)
   /// See [this](https://docs.python.org/3/library/functions.html#breakpoint)

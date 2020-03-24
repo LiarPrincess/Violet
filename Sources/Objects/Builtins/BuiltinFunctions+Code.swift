@@ -310,6 +310,27 @@ private let execArguments = ArgumentParser.createOrTrap(
   format: "O|OO:exec"
 )
 
+private enum DictOrNone {
+  case dict(PyDict)
+  case none
+  case somethingElse(typeName: String)
+}
+
+private enum ExecEvalEnv {
+  case env(globals: PyDict, locals: PyDict)
+  case globalsNotDict(globalsType: String)
+  case localsNotDict(localsType: String)
+  case error(PyBaseException)
+}
+
+private enum ExecEvalSource {
+  case code(PyCode)
+  case codeWithFreeVariables
+  case byteDecodingError
+  case notStringOrBytes
+  case error(PyBaseException)
+}
+
 extension BuiltinFunctions {
 
   // sourcery: pymethod = exec
@@ -339,9 +360,15 @@ extension BuiltinFunctions {
                    globals: PyObject?,
                    locals: PyObject?) -> PyResult<PyNone> {
     let env: Env
-    switch self.parseExecEnv(globals: globals, locals: locals) {
-    case let .value(e): env = e
-    case let .error(e): return .error(e)
+    switch self.parseExecEvalEnv(globals: globals, locals: locals) {
+    case let .env(globals: g, locals: l):
+      env = (globals: g, locals: l)
+    case let .globalsNotDict(globalsType: t):
+      return .typeError("exec() globals must be a dict, not \(t)")
+    case let .localsNotDict(localsType: t):
+      return .typeError("exec() locals must be a dict, not \(t)")
+    case let .error(e):
+      return .error(e)
     }
 
     if env.globals.get(id: .builtins) == nil {
@@ -349,12 +376,114 @@ extension BuiltinFunctions {
     }
 
     let code: PyCode
-    switch self.parseExecSource(arg: source) {
-    case let .value(c): code = c
-    case let .error(e): return .error(e)
+    switch self.parseExecEvalSource(arg: source, filename: "exec", mode: .fileInput) {
+    case .code(let c):
+      code = c
+    case .codeWithFreeVariables:
+      return .typeError("code object passed to exec() may not contain free variables")
+    case .byteDecodingError:
+      return .typeError("exec(): cannot decode arg 1 as string")
+    case .notStringOrBytes:
+      return .typeError("exec(): arg 1 must be a string, bytes or code object")
+    case .error(let e):
+      return .error(e)
     }
 
-    let result = Py.delegate.eval(
+    let result = self.run(code: code, env: env)
+    return result.map { _ in Py.none }
+  }
+
+  private typealias Env = (globals: PyDict, locals: PyDict)
+
+  private func parseExecEvalEnv(globals: PyObject?,
+                                locals: PyObject?) -> ExecEvalEnv {
+    switch self.parseDictOrNone(object: globals) {
+    case .dict(let g):
+      switch self.parseDictOrNone(object: locals) {
+      case .dict(let l):
+        return .env(globals: g, locals: l)
+      case .none:
+        return .env(globals: g, locals: g)
+      case .somethingElse(let typeName):
+        return .localsNotDict(localsType: typeName)
+      }
+
+    case .none:
+      switch Py.getGlobals() {
+      case let .value(g):
+        switch self.parseDictOrNone(object: locals) {
+        case .dict(let l):
+          return .env(globals: g, locals: l)
+        case .none:
+          switch Py.getLocals() {
+          case let .value(l):
+            return .env(globals: g, locals: l)
+          case let .error(e):
+            return .error(e)
+          }
+        case .somethingElse(let typeName):
+          return .localsNotDict(localsType: typeName)
+        }
+
+      case let .error(e):
+        return .error(e)
+      }
+
+    case .somethingElse(let typeName):
+      return .globalsNotDict(globalsType: typeName)
+    }
+  }
+
+  private func parseDictOrNone(object: PyObject?) -> DictOrNone {
+    guard let obj = object else {
+      return .none
+    }
+
+    if let dict = obj as? PyDict {
+      return .dict(dict)
+    }
+
+    if obj.isNone {
+      return .none
+    }
+
+    return .somethingElse(typeName: obj.typeName)
+  }
+
+  private func parseExecEvalSource(arg: PyObject,
+                                   filename: String,
+                                   mode: ParserMode) -> ExecEvalSource {
+    if let code = arg as? PyCode {
+      if code.freeVariableCount > 0 {
+        return .codeWithFreeVariables
+      }
+
+      return .code(code)
+    }
+
+    switch self.parseString(object: arg) {
+    case .value(let source):
+      let code = self.compile(source: source,
+                              filename: filename,
+                              mode: mode,
+                              optimize: .none)
+
+      switch code {
+      case let .value(c):
+        return .code(c)
+      case let .error(e):
+        return .error(e)
+      }
+
+    case .byteDecodingError:
+      return .byteDecodingError
+    case .notStringOrBytes:
+      return .notStringOrBytes
+    }
+  }
+
+  private func run(code: PyCode, env: Env) -> PyResult<PyObject> {
+    return Py.delegate.eval(
       name: nil,
       qualname: nil,
       code: code,
@@ -368,82 +497,72 @@ extension BuiltinFunctions {
       locals: env.locals,
       closure: nil
     )
-
-    return result.map { _ in Py.none }
   }
+}
 
-  private func parseExecSource(arg: PyObject) -> PyResult<PyCode> {
-    if let code = arg as? PyCode {
-      if code.freeVariableCount > 0 {
-        let e = "code object passed to exec() may not contain free variables"
-        return .typeError(e)
-      }
+// MARK: - Eval
 
-      return .value(code)
-    }
+private let evalArguments = ArgumentParser.createOrTrap(
+  arguments: ["source", "globals", "locals"],
+  format: "O|OO:exec"
+)
 
-    switch self.parseString(object: arg) {
-    case .value(let source):
-      return self.compile(source: source,
-                          filename: "exec",
-                          mode: .fileInput,
-                          optimize: .none)
-    case .byteDecodingError:
-      return .typeError("compile(): cannot decode arg 1 as string")
-    case .notStringOrBytes:
-      return .typeError("compile(): arg 1 must be a string, bytes or code object")
-    }
-  }
+extension BuiltinFunctions {
 
-  private typealias Env = (globals: PyDict, locals: PyDict)
-  private typealias EnvObjects = (globals: PyObject, locals: PyObject)
+  // sourcery: pymethod = eval
+  /// eval(expression[, globals[, locals]])
+  /// See [this](https://docs.python.org/3/library/functions.html#eval)
+  public func eval(args: [PyObject],
+                   kwargs: PyDict?) -> PyResult<PyObject> {
+    switch execArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 1, "Invalid required argument count.")
+      assert(binding.optionalCount == 2, "Invalid optional argument count.")
 
-  private func parseExecEnv(globals: PyObject?,
-                            locals: PyObject?) -> PyResult<Env> {
-    let env: EnvObjects
-    switch self.parseExecEnvObjects(globals: globals, locals: locals) {
-    case let .value(e): env = e
-    case let .error(e): return .error(e)
-    }
-
-    guard let g = env.globals as? PyDict else {
-      let t = env.globals.typeName
-      return .typeError("exec() globals must be a dict, not \(t)")
-    }
-
-    guard let l = env.locals as? PyDict else {
-      let t = env.locals.typeName
-      return .typeError("exec() locals must be a dict or None, not \(t)")
-    }
-
-    return .value((globals: g, locals: l))
-  }
-
-  private func parseExecEnvObjects(globals: PyObject?,
-                                   locals: PyObject?) -> PyResult<EnvObjects> {
-    if let g = globals, !g.isNone {
-      if let l = locals, !l.isNone {
-        return .value((globals: g, locals: l))
-      }
-
-      return .value((globals: g, locals: g))
-    }
-
-    switch Py.getGlobals() {
-    case let .value(g):
-      if let l = locals, !l.isNone {
-        return .value((globals: g, locals: l))
-      }
-
-      switch Py.getLocals() {
-      case let .value(l):
-        return .value((globals: g, locals: l))
-      case let .error(e):
-        return .error(e)
-      }
+      let source = binding.required(at: 0)
+      let globals = binding.optional(at: 1)
+      let locals = binding.optional(at: 2)
+      return self.eval(source: source, globals: globals, locals: locals)
 
     case let .error(e):
       return .error(e)
     }
+  }
+
+  public func eval(source: PyObject,
+                   globals: PyObject?,
+                   locals: PyObject?) -> PyResult<PyObject> {
+    let env: Env
+    switch self.parseExecEvalEnv(globals: globals, locals: locals) {
+    case let .env(globals: g, locals: l):
+      env = (globals: g, locals: l)
+    case .globalsNotDict:
+      return .typeError("globals must be a dict")
+    case .localsNotDict:
+      return .typeError("locals must be a mapping")
+    case .error(let e):
+      return .error(e)
+    }
+
+    if env.globals.get(id: .builtins) == nil {
+      env.globals.set(id: .builtins, to: Py.builtinsModule)
+    }
+
+    let code: PyCode
+    switch self.parseExecEvalSource(arg: source, filename: "eval", mode: .eval) {
+    case .code(let c):
+      code = c
+    case .codeWithFreeVariables:
+      return .typeError("code object passed to eval() may not contain free variables")
+    case .byteDecodingError:
+      return .typeError("eval(): cannot decode arg 1 as string")
+    case .notStringOrBytes:
+      return .typeError("eval(): arg 1 must be a string, bytes or code object")
+    case .error(let e):
+      return .error(e)
+    }
+
+    let result = self.run(code: code, env: env)
+    return result
   }
 }
