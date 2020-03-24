@@ -21,7 +21,7 @@ extension BuiltinFunctions {
   // sourcery: pymethod = locals
   /// locals()
   /// See [this](https://docs.python.org/3/library/functions.html#locals)
-  public func locals() -> PyResult<PyDict> {
+  public func getLocals() -> PyResult<PyDict> {
     guard let frame = Py.delegate.frame else {
       return .runtimeError("locals(): no current frame")
     }

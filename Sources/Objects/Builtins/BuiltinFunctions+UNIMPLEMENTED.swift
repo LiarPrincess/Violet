@@ -15,14 +15,7 @@ extension BuiltinFunctions {
     return self.unimplemented
   }
 
-  // sourcery: pymethod = exec
-  /// exec(object[, globals[, locals]])
-  /// See [this](https://docs.python.org/3/library/functions.html#exec)
-  public func exec() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod = breakpoint
+   // sourcery: pymethod = breakpoint
   /// breakpoint(*args, **kws)
   /// See [this](https://docs.python.org/3/library/functions.html#breakpoint)
   public func breakpoint() -> PyObject {
