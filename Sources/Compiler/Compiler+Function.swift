@@ -75,7 +75,7 @@ extension Compiler {
       self.builder.appendCallFunction(argumentCount: 1)
     }
 
-    self.builder.appendStoreName(node.name)
+    self.visitName(name: node.name, context: .store)
   }
 
   // MARK: - Decorators
