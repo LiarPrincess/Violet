@@ -157,6 +157,7 @@ ids = [
   'offset',
   'open',
   'origin',
+  'path_hooks',
   'path',
   'ps1',
   'ps2',

@@ -191,6 +191,7 @@ public struct IdString {
   public static let offset = Self.impl.offset
   public static let open = Self.impl.open
   public static let origin = Self.impl.origin
+  public static let path_hooks = Self.impl.path_hooks
   public static let path = Self.impl.path
   public static let ps1 = Self.impl.ps1
   public static let ps2 = Self.impl.ps2
@@ -367,6 +368,7 @@ private struct IdStringImpl {
   fileprivate let offset = IdString(value: "offset")
   fileprivate let open = IdString(value: "open")
   fileprivate let origin = IdString(value: "origin")
+  fileprivate let path_hooks = IdString(value: "path_hooks")
   fileprivate let path = IdString(value: "path")
   fileprivate let ps1 = IdString(value: "ps1")
   fileprivate let ps2 = IdString(value: "ps2")

@@ -131,6 +131,11 @@ extension Sys {
     return self.get(key: .meta_path) ?? Py.newList()
   }
 
+  // sourcery: pyproperty = path_hooks
+  internal var pathHooks: PyObject {
+    return self.get(key: .path_hooks) ?? Py.newList()
+  }
+
   // MARK: - Copyright
 
   public var copyright: String {

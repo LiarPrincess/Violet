@@ -203,6 +203,7 @@ internal enum ModuleFactory {
     insert(module: module, name: "stderr", value: object.stderr)
     insert(module: module, name: "platform", value: object.platformObject)
     insert(module: module, name: "meta_path", value: object.metaPath)
+    insert(module: module, name: "path_hooks", value: object.pathHooks)
     insert(module: module, name: "copyright", value: object.copyrightObject)
     insert(module: module, name: "version", value: object.versionObject)
     insert(module: module, name: "version_info", value: object.versionInfoObject)
