@@ -173,6 +173,7 @@ internal enum ModuleFactory {
     insert(module: module, name: "pow", value: PyBuiltinFunction.wrap(name: "pow", doc: nil, fn: object.pow(base:exp:mod:), module: module))
     insert(module: module, name: "compile", value: PyBuiltinFunction.wrap(name: "compile", doc: nil, fn: object.compile(args:kwargs:), module: module))
     insert(module: module, name: "exec", value: PyBuiltinFunction.wrap(name: "exec", doc: nil, fn: object.exec(args:kwargs:), module: module))
+    insert(module: module, name: "eval", value: PyBuiltinFunction.wrap(name: "eval", doc: nil, fn: object.eval(args:kwargs:), module: module))
     insert(module: module, name: "print", value: PyBuiltinFunction.wrap(name: "print", doc: nil, fn: object.print(args:kwargs:), module: module))
     insert(module: module, name: "open", value: PyBuiltinFunction.wrap(name: "open", doc: nil, fn: object.open(args:kwargs:), module: module))
     insert(module: module, name: "getattr", value: PyBuiltinFunction.wrap(name: "getattr", doc: nil, fn: object.getAttribute(_:name:default:), module: module))
@@ -236,6 +237,17 @@ internal enum ModuleFactory {
     insert(module: module, name: "check_hash_based_pycs", value: PyBuiltinFunction.wrap(name: "check_hash_based_pycs", doc: nil, fn: object.checkHashBasedPycs, module: module))
     insert(module: module, name: "_fix_co_filename", value: PyBuiltinFunction.wrap(name: "_fix_co_filename", doc: nil, fn: object.fixCoFilename, module: module))
     insert(module: module, name: "extension_suffixes", value: PyBuiltinFunction.wrap(name: "extension_suffixes", doc: nil, fn: object.extensionSuffixes, module: module))
+
+    return module
+  }
+
+  // MARK: - UnderscoreOS
+
+  internal static func createUnderscoreOS(from object: UnderscoreOS) -> PyModule {
+    let module = createModule(name: "_os", doc: nil, dict: object.__dict__)
+
+
+
 
     return module
   }
