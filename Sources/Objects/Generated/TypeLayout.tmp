@@ -108,7 +108,6 @@ PyFunction|PyObject
 - name|PyString
 - qualname|PyString
 - doc|PyString?
-- __dict__|PyDict
 - module|PyObject
 - code|PyCode
 - globals|PyDict
@@ -116,6 +115,7 @@ PyFunction|PyObject
 - kwDefaults|PyDict?
 - closure|PyTuple?
 - annotations|PyDict?
+- __dict__|PyDict
 PyInt|PyObject
 - value|BigInt
 PyIterator|PyObject

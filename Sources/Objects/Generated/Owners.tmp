@@ -485,13 +485,21 @@ PyFunction|PyObject|set|__name__|setName(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__qualname__|getQualname() -> PyString
 PyFunction|PyObject|set|__qualname__|setQualname(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__defaults__|getDefaults() -> PyObject
+PyFunction|PyObject|set|__defaults__|setDefaults(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__kwdefaults__|getKeywordDefaults() -> PyObject
+PyFunction|PyObject|set|__kwdefaults__|setKeywordDefaults(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__closure__|getClosure() -> PyObject
+PyFunction|PyObject|set|__closure__|setClosure(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__globals__|getGlobals() -> PyDict
+PyFunction|PyObject|set|__globals__|setGlobals(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__annotations__|getAnnotations() -> PyObject
+PyFunction|PyObject|set|__annotations__|setAnnotations(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__code__|getCode() -> PyCode
+PyFunction|PyObject|set|__code__|setCode(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__doc__|getDoc() -> PyResult<PyObject>
+PyFunction|PyObject|set|__doc__|setDoc(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__module__|getModule() -> PyResult<String>
+PyFunction|PyObject|set|__module__|setModule(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__dict__|getDict() -> PyDict
 
 PyFunction|PyObject|func|__repr__|repr() -> PyResult<String>

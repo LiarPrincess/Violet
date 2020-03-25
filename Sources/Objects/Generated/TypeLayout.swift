@@ -140,7 +140,6 @@ internal class TypeLayout: Equatable {
   /// - `name: PyString`
   /// - `qualname: PyString`
   /// - `doc: PyString?`
-  /// - `__dict__: PyDict`
   /// - `module: PyObject`
   /// - `code: PyCode`
   /// - `globals: PyDict`
@@ -148,6 +147,7 @@ internal class TypeLayout: Equatable {
   /// - `kwDefaults: PyDict?`
   /// - `closure: PyTuple?`
   /// - `annotations: PyDict?`
+  /// - `__dict__: PyDict`
   internal static let PyFunction = TypeLayout(base: TypeLayout.PyObject)
   /// - `value: BigInt`
   internal static let PyInt = TypeLayout(base: TypeLayout.PyObject)

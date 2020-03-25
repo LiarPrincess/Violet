@@ -30,14 +30,12 @@ public class PyFunction: PyObject {
   internal private(set) var name: PyString
   /// The qualified name
   internal private(set) var qualname: PyString
-  /// The `__doc__` attribute, can be anything
-  internal let doc: PyString?
-  /// The `__dict__` attribute, a dict or NULL
-  internal let __dict__ = PyDict()
+  /// The `__doc__` attribute
+  internal private(set) var doc: PyString?
   /// The `__module__` attribute, can be anything
-  internal let module: PyObject
+  internal private(set) var module: PyObject
   /// A code object, the `__code__` attribute
-  internal let code: PyCode
+  internal private(set) var code: PyCode
 
   internal private(set) var globals: PyDict
   internal private(set) var defaults: PyTuple?
@@ -45,8 +43,13 @@ public class PyFunction: PyObject {
   internal private(set) var closure: PyTuple?
   internal private(set) var annotations: PyDict?
 
+  /// The `__dict__` attribute, a dict or NULL
+  internal let __dict__ = PyDict()
+
   override public var description: String {
-    return "PyFunction(name: \(self.name), qualname: \(self.qualname))"
+    let name = self.name.value
+    let qualname = self.qualname.value
+    return "PyFunction(name: '\(name)', qualname: '\(qualname)')"
   }
 
   // MARK: - Init
@@ -130,20 +133,20 @@ public class PyFunction: PyObject {
 
   // MARK: - Defaults
 
-  // sourcery: pyproperty = __defaults__
+  // sourcery: pyproperty = __defaults__, setter = setDefaults
   public func getDefaults() -> PyObject {
     return self.defaults ?? Py.none
   }
 
-  public func setDefaults(_ object: PyObject) -> PyResult<PyNone> {
+  public func setDefaults(_ object: PyObject) -> PyResult<()> {
     if object.isNone {
       self.defaults = nil
-      return .value(Py.none)
+      return .value()
     }
 
     if let tuple = object as? PyTuple {
       self.defaults = tuple
-      return .value(Py.none)
+      return .value()
     }
 
     return .systemError("non-tuple default args")
@@ -151,15 +154,15 @@ public class PyFunction: PyObject {
 
   // MARK: - Keyword defaults
 
-  // sourcery: pyproperty = __kwdefaults__
+  // sourcery: pyproperty = __kwdefaults__, setter = setKeywordDefaults
   public func getKeywordDefaults() -> PyObject {
     return self.kwDefaults ?? Py.none
   }
 
-  public func setKeywordDefaults(_ object: PyObject) -> PyResult<PyNone> {
+  public func setKeywordDefaults(_ object: PyObject) -> PyResult<()> {
     if object.isNone {
       self.kwDefaults = nil
-      return .value(Py.none)
+      return .value()
     }
 
     guard let dict = object as? PyDict else {
@@ -167,27 +170,27 @@ public class PyFunction: PyObject {
     }
 
     self.kwDefaults = dict
-    return .value(Py.none)
+    return .value()
   }
 
   // MARK: - Closure
 
-  // sourcery: pyproperty = __closure__
+  // sourcery: pyproperty = __closure__, setter = setClosure
   public func getClosure() -> PyObject {
     return self.closure ?? Py.none
   }
 
   /// Note that there is not `Python` setter for closure.
   /// It can be only set from `Swift`.
-  public func setClosure(_ object: PyObject) -> PyResult<PyNone> {
+  public func setClosure(_ object: PyObject) -> PyResult<()> {
     if object.isNone {
       self.closure = nil
-      return .value(Py.none)
+      return .value()
     }
 
     if let tuple = object as? PyTuple {
       self.closure = tuple
-      return .value(Py.none)
+      return .value()
     }
 
     return .systemError("expected tuple for closure, got '\(object.typeName)'")
@@ -195,27 +198,36 @@ public class PyFunction: PyObject {
 
   // MARK: - Globals
 
-  // sourcery: pyproperty = __globals__
+  // sourcery: pyproperty = __globals__, setter = setGlobals
   public func getGlobals() -> PyDict {
     return self.globals
   }
 
+  public func setGlobals(_ object: PyObject) -> PyResult<()> {
+    if let dict = object as? PyDict {
+      self.globals = dict
+      return .value()
+    }
+
+    return .systemError("non-dict globals")
+  }
+
   // MARK: - Annotations
 
-  // sourcery: pyproperty = __annotations__
+  // sourcery: pyproperty = __annotations__, setter = setAnnotations
   public func getAnnotations() -> PyObject {
     return self.closure ?? Py.none
   }
 
-  public func setAnnotations(_ object: PyObject) -> PyResult<PyNone> {
+  public func setAnnotations(_ object: PyObject) -> PyResult<()> {
     if object.isNone {
       self.annotations = nil
-      return .value(Py.none)
+      return .value()
     }
 
     if let dict = object as? PyDict {
       self.annotations = dict
-      return .value(Py.none)
+      return .value()
     }
 
     return .systemError("non-dict annotations")
@@ -223,14 +235,32 @@ public class PyFunction: PyObject {
 
   // MARK: - Code
 
-  // sourcery: pyproperty = __code__
+  // sourcery: pyproperty = __code__, setter = setCode
   public func getCode() -> PyCode {
     return self.code
   }
 
+  public func setCode(_ object: PyObject) -> PyResult<()> {
+    guard let code = object as? PyCode else {
+      return .typeError("__code__ must be set to a code object")
+    }
+
+    let nFree = code.freeVariableCount
+    let nClosure = self.closure?.data.count ?? 0
+
+    if nClosure != nFree {
+      let name = self.name.value
+      let msg = "\(name)() requires a code object with \(nClosure) free vars, not \(nFree)"
+      return .valueError(msg)
+    }
+
+    self.code = code
+    return .value()
+  }
+
   // MARK: - Doc
 
-  // sourcery: pyproperty = __doc__
+  // sourcery: pyproperty = __doc__, setter = setDoc
   public func getDoc() -> PyResult<PyObject> {
     guard let doc = self.doc else {
       return .value(Py.none)
@@ -239,15 +269,35 @@ public class PyFunction: PyObject {
     return .value(doc)
   }
 
+  public func setDoc(_ object: PyObject) -> PyResult<()> {
+    if object.isNone {
+      self.doc = nil
+      return .value()
+    }
+
+    if let str = object as? PyString {
+      self.doc = str
+      return .value()
+    }
+
+    let t = object.typeName
+    return .typeError("'__doc__' must be a str not \(t)")
+  }
+
   // MARK: - Module
 
-  // sourcery: pyproperty = __module__
+  // sourcery: pyproperty = __module__, setter = setModule
   public func getModule() -> PyResult<String> {
     if let module = self.module as? PyModule {
       return module.name
     }
 
     return Py.strValue(self.module)
+  }
+
+  public func setModule(_ object: PyObject) -> PyResult<()> {
+    self.module = object
+    return .value()
   }
 
   // MARK: - Dict
