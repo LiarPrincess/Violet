@@ -103,9 +103,9 @@ private func _CFOpenFileWithMode(_ path: UnsafePointer<CChar>,
 
 // MARK: - FileDescriptor
 
-public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
+internal class FileDescriptor: CustomStringConvertible {
 
-  public enum ErrorType {
+  internal enum ErrorType {
     case fileReadTooLarge
     case fileReadNoSuchFile
     case fileReadNoPermission
@@ -120,17 +120,17 @@ public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
     case fileWriteUnknown
   }
 
-  public enum Operation {
+  internal enum Operation {
     case read
     case write
   }
 
-  public struct Error: Swift.Error {
+  internal struct Error: Swift.Error {
 
-    public let errno: Int32
-    public let operation: Operation
+    internal let errno: Int32
+    internal let operation: Operation
 
-    public var type: ErrorType {
+    internal var type: ErrorType {
       switch self.operation {
       case .read:
         switch self.errno {
@@ -153,7 +153,7 @@ public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
       }
     }
 
-    public var str: String {
+    internal var str: String {
       guard let cStr = strerror(self.errno) else {
         return "unknown IO error"
       }
@@ -173,11 +173,11 @@ public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
   private var _fd: Int32
   private var _closeOnDealloc: Bool
 
-  public var raw: Int32 {
+  internal var raw: Int32 {
     return self._fd
   }
 
-  public var description: String {
+  internal var description: String {
     // We could also switch on value of 'self._fd' (0, 1 or 2),
     // but we want to differentiate user-created stdio and ours.
 
@@ -314,16 +314,16 @@ public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
 
   // MARK: - Init
 
-  public init(fileDescriptor fd: Int32, closeOnDealloc closeopt: Bool) {
+  internal init(fileDescriptor fd: Int32, closeOnDealloc closeopt: Bool) {
     self._fd = fd
     self._closeOnDealloc = closeopt
   }
 
-  public convenience init(fileDescriptor fd: Int32) {
+  internal convenience init(fileDescriptor fd: Int32) {
     self.init(fileDescriptor: fd, closeOnDealloc: false)
   }
 
-  public init?(path: String, flags: Int32, createMode: Int) {
+  internal init?(path: String, flags: Int32, createMode: Int) {
     self._fd = _CFOpenFileWithMode(path, flags, mode_t(createMode))
     self._closeOnDealloc = true
 
@@ -340,11 +340,11 @@ public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
 
   // MARK: - Read
 
-  public func readToEnd() throws -> Data {
+  internal func readToEnd() throws -> Data {
     return try self.read(upToCount: Int.max)
   }
 
-  public func read(upToCount count: Int) throws -> Data {
+  internal func read(upToCount count: Int) throws -> Data {
     guard self !== FileDescriptor._nulldeviceFileDescriptor else {
       return Data()
     }
@@ -354,7 +354,7 @@ public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
 
   // MARK: - Write
 
-  public func write<T: DataProtocol>(contentsOf data: T) throws {
+  internal func write<T: DataProtocol>(contentsOf data: T) throws {
     guard self !== FileDescriptor._nulldeviceFileDescriptor else { return }
 
     guard self._isValid else { throw Error.fileWriteUnknown }
@@ -371,7 +371,7 @@ public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
 
   // MARK: - Offset
 
-  public func offset() throws -> UInt64 {
+  internal func offset() throws -> UInt64 {
     guard self !== FileDescriptor._nulldeviceFileDescriptor else { return 0 }
 
     guard self._isValid else { throw Error.fileReadUnknown }
@@ -384,7 +384,7 @@ public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
   // MARK: - Seek
 
   @discardableResult
-  public func seekToEnd() throws -> UInt64 {
+  internal func seekToEnd() throws -> UInt64 {
     guard self !== FileDescriptor._nulldeviceFileDescriptor else { return 0 }
 
     guard self._isValid else { throw Error.fileReadUnknown }
@@ -394,7 +394,7 @@ public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
     return UInt64(offset)
   }
 
-  public func seek(toOffset offset: UInt64) throws {
+  internal func seek(toOffset offset: UInt64) throws {
     guard self !== FileDescriptor._nulldeviceFileDescriptor else { return }
 
     guard self._isValid else { throw Error.fileReadUnknown }
@@ -404,7 +404,7 @@ public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
     }
   }
 
-  public func truncate(atOffset offset: UInt64) throws {
+  internal func truncate(atOffset offset: UInt64) throws {
     guard self !== FileDescriptor._nulldeviceFileDescriptor else { return }
 
     guard self._isValid else { throw Error.fileWriteUnknown }
@@ -420,7 +420,7 @@ public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
 
   // MARK: - Synchronize
 
-  public func synchronize() throws {
+  internal func synchronize() throws {
     guard self !== FileDescriptor._nulldeviceFileDescriptor else { return }
 
     guard fsync(self._fd) >= 0 else {
@@ -430,7 +430,7 @@ public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
 
   // MARK: - Close
 
-  public func close() throws {
+  internal func close() throws {
     try self._immediatelyClose()
   }
 
@@ -450,14 +450,20 @@ public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
 
 extension FileDescriptor {
 
-  public static let standardInput = FileDescriptor(fileDescriptor: STDIN_FILENO,
-                                                   closeOnDealloc: false)
+  internal static let standardInput = FileDescriptor(
+    fileDescriptor: STDIN_FILENO,
+    closeOnDealloc: false
+  )
 
-  public static let standardOutput = FileDescriptor(fileDescriptor: STDOUT_FILENO,
-                                                    closeOnDealloc: false)
+  internal static let standardOutput = FileDescriptor(
+    fileDescriptor: STDOUT_FILENO,
+    closeOnDealloc: false
+  )
 
-  public static let standardError = FileDescriptor(fileDescriptor: STDERR_FILENO,
-                                                   closeOnDealloc: false)
+  internal static let standardError = FileDescriptor(
+    fileDescriptor: STDERR_FILENO,
+    closeOnDealloc: false
+  )
 
   private static var _nulldeviceFileDescriptor: FileDescriptor = {
     class NullDevice: FileDescriptor {
@@ -480,22 +486,22 @@ extension FileDescriptor {
     return NullDevice(fileDescriptor: -1, closeOnDealloc: false)
   }()
 
-  public static let nullDevice = _nulldeviceFileDescriptor
+  internal static let nullDevice = _nulldeviceFileDescriptor
 }
 
 // MARK: - Convenience inits
 
 extension FileDescriptor {
 
-  public convenience init?(forReadingAtPath path: String) {
+  internal convenience init?(forReadingAtPath path: String) {
     self.init(path: path, flags: O_RDONLY, createMode: 0)
   }
 
-  public convenience init?(forWritingAtPath path: String) {
+  internal convenience init?(forWritingAtPath path: String) {
     self.init(path: path, flags: O_WRONLY, createMode: 0)
   }
 
-  public convenience init?(forUpdatingAtPath path: String) {
+  internal convenience init?(forUpdatingAtPath path: String) {
     self.init(path: path, flags: O_RDWR, createMode: 0)
   }
 
@@ -514,21 +520,21 @@ extension FileDescriptor {
     return fd
   }
 
-  public convenience init(forReadingFrom url: URL) throws {
+  internal convenience init(forReadingFrom url: URL) throws {
     let fd = try FileDescriptor._openFileDescriptorForURL(url,
                                                           flags: O_RDONLY,
                                                           reading: true)
     self.init(fileDescriptor: fd, closeOnDealloc: true)
   }
 
-  public convenience init(forWritingTo url: URL) throws {
+  internal convenience init(forWritingTo url: URL) throws {
     let fd = try FileDescriptor._openFileDescriptorForURL(url,
                                                           flags: O_WRONLY,
                                                           reading: false)
     self.init(fileDescriptor: fd, closeOnDealloc: true)
   }
 
-  public convenience init(forUpdating url: URL) throws {
+  internal convenience init(forUpdating url: URL) throws {
     let fd = try FileDescriptor._openFileDescriptorForURL(url,
                                                           flags: O_RDWR,
                                                           reading: false)

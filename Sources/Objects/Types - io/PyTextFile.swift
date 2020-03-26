@@ -80,11 +80,7 @@ public class PyTextFile: PyObject {
 
     if self.closeOnDealloc {
       // Regardles of whether it succeded/failed we will ignore result.
-      // (we could use '_ = self.closeRaw()', but we want to be explicit)
-      switch self.closeRaw() {
-      case .ok: break
-      case .error: break
-      }
+      _ = self.closeIfNotAlreadyClosed()
     }
   }
 
@@ -164,15 +160,15 @@ public class PyTextFile: PyObject {
       return .value("")
     }
 
-    do {
-      let data = size > 0 ?
-        try self.fd.read(upToCount: size) :
-        try self.fd.readToEnd()
+    let data = size > 0 ?
+      self.fd.read(upToCount: size) :
+      self.fd.readToEnd()
 
-      return self.encoding.decode(data: data, errors: self.errors)
-    } catch {
-      return .error(self.osError(from: error))
+    let string = data.flatMap {
+      self.encoding.decode(data: $0, errors: self.errors)
     }
+
+    return string
   }
 
   // MARK: - Write
@@ -208,18 +204,9 @@ public class PyTextFile: PyObject {
       return .error(self.modeError("not writable"))
     }
 
-    switch self.encoding.encode(string: string, errors: self.errors) {
-    case let .value(data):
-      do {
-        try self.fd.write(contentsOf: data)
-        return .value(Py.none)
-      } catch {
-        return .error(self.osError(from: error))
-      }
-
-    case let .error(e):
-      return .error(e)
-    }
+    let data = self.encoding.encode(string: string, errors: self.errors)
+    let result = data.flatMap(self.fd.write(contentsOf:))
+    return result
   }
 
   // MARK: - Close
@@ -232,30 +219,15 @@ public class PyTextFile: PyObject {
   // sourcery: pymethod = close
   /// Idempotent
   internal func close() -> PyResult<PyNone> {
-    switch self.closeRaw() {
-    case .ok:
-      return .value(Py.none)
-    case .error(let e):
-      return .error(self.osError(from: e))
-    }
+    return self.closeIfNotAlreadyClosed()
   }
 
-  private enum CloseRawResult {
-    case ok
-    case error(Error)
-  }
-
-  private func closeRaw() -> CloseRawResult {
+  private func closeIfNotAlreadyClosed() -> PyResult<PyNone> {
     guard !self.isClosed() else {
-      return .ok
+      return .value(Py.none)
     }
 
-    do {
-      try self.fd.close()
-      return .ok
-    } catch {
-      return .error(error)
-    }
+    return self.fd.close()
   }
 
   // MARK: - Del
@@ -283,13 +255,6 @@ public class PyTextFile: PyObject {
   }
 
   // MARK: - Helpers
-
-  private func osError(from error: Error) -> PyBaseException {
-    let descriptorError = error as? FileDescriptor.Error
-    let msg = descriptorError?.str ?? "unknown IO error"
-
-    return Py.newOSError(msg: msg)
-  }
 
   private func modeError(_ msg: String) -> PyBaseException {
     // It should be 'io.UnsupportedOperation', but we don't have it,

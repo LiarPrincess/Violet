@@ -94,10 +94,6 @@ public class PyInstance: BuiltinFunctions {
     self.trapUninitialized()
   }
 
-  internal var fileSystem: FileSystemType {
-    return self.config.fileSystem
-  }
-
   private weak var _delegate: PyDelegate?
   internal var delegate: PyDelegate {
     if let d = self._delegate { return d }

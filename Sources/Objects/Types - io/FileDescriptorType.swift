@@ -6,17 +6,17 @@ public protocol FileDescriptorType {
   /// It should be set to `-1` when file is closed.
   var raw: Int32 { get }
 
-  func readToEnd() throws -> Data
-  func read(upToCount count: Int) throws -> Data
+  func readToEnd() -> PyResult<Data>
+  func read(upToCount count: Int) -> PyResult<Data>
 
-  func write<T: DataProtocol>(contentsOf data: T) throws
-  func synchronize() throws
+  func write<T: DataProtocol>(contentsOf data: T) -> PyResult<PyNone>
+  func synchronize() -> PyResult<PyNone>
 
-  func offset() throws -> UInt64
+  func offset() -> PyResult<UInt64>
 
   @discardableResult
-  func seekToEnd() throws -> UInt64
-  func seek(toOffset offset: UInt64) throws
+  func seekToEnd() -> PyResult<UInt64>
+  func seek(toOffset offset: UInt64) -> PyResult<PyNone>
 
-  func close() throws
+  func close() -> PyResult<PyNone>
 }

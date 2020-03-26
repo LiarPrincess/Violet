@@ -8,6 +8,11 @@ public protocol PyDelegate: AnyObject {
   /// Currently executing frame.
   var frame: PyFrame? { get }
 
+  /// Open file with given `fileno`.
+  func open(fileno: Int32, mode: FileMode) -> PyResult<FileDescriptorType>
+  /// Open file at given `path`.
+  func open(file: String, mode: FileMode) -> PyResult<FileDescriptorType>
+
   /// Evaluate given code object.
   func eval(name: PyString?,
             qualname: PyString?,

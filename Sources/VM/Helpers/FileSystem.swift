@@ -1,7 +1,7 @@
 import Objects
 import Foundation
 
-internal struct FileSystem: FileSystemType {
+internal struct FileSystem {
 
   private let fileManager: FileManager
 
@@ -28,18 +28,16 @@ internal struct FileSystem: FileSystemType {
 
   // MARK: - Open
 
-  internal func open(fileno: Int32,
-                     mode: FileMode) -> PyResult<FileDescriptorType> {
+  internal func open(fileno: Int32, mode: FileMode) -> PyResult<FileDescriptorType> {
     // When we get raw descriptor we assume that the user knows what they
     // are doing, which means that we can ignore 'mode'.
     let result = FileDescriptor(fileDescriptor: fileno, closeOnDealloc: false)
-    return .value(result)
+    return .value(FileDescriptorAdapter(for: result))
   }
 
   /// static int
   /// _io_FileIO___init___impl(fileio *self, PyObject *nameobj, ... )
-  internal func open(file: String,
-                     mode: FileMode) -> PyResult<FileDescriptorType> {
+  internal func open(file: String, mode: FileMode) -> PyResult<FileDescriptorType> {
     var flags: Int32 = 0
     let createMode: Int = 0o666
 
@@ -54,7 +52,7 @@ internal struct FileSystem: FileSystemType {
     if let fd = FileDescriptor(path: file,
                                flags: flags,
                                createMode: createMode) {
-      return .value(fd)
+      return .value(FileDescriptorAdapter(for: fd))
     }
 
     return .osError("unable to open '\(file)' (mode: \(mode))")

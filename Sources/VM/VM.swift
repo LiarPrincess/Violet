@@ -30,12 +30,26 @@ public final class VM: PyDelegate {
       environment: environment
     )
 
-    let config = PyConfig(fileSystem: self.fileSystem)
+    let config = PyConfig(
+      standardInput: FileDescriptorAdapter(for: .standardInput),
+      standardOutput: FileDescriptorAdapter(for: .standardOutput),
+      standardError: FileDescriptorAdapter(for: .standardError)
+    )
     Py.initialize(config: config, delegate: self)
   }
 
   deinit {
     Py.destroy()
+  }
+
+  // MARK: - PyDelegate
+
+  public func open(fileno: Int32, mode: FileMode) -> PyResult<FileDescriptorType> {
+    return self.fileSystem.open(fileno: fileno, mode: mode)
+  }
+
+  public func open(file: String, mode: FileMode) -> PyResult<FileDescriptorType> {
+    return self.fileSystem.open(file: file, mode: mode)
   }
 
   // MARK: - Helpers
