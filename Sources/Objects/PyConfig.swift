@@ -1,3 +1,11 @@
+public protocol FileSystemType {
+
+  /// Open file with given `fileno`.
+  func open(fileno: Int32, mode: FileMode) -> PyResult<FileDescriptorType>
+  /// Open file at given `path`.
+  func open(file: String, mode: FileMode) -> PyResult<FileDescriptorType>
+}
+
 public struct PyConfig {
 
   /// First part of 128 bit SipHash key.
@@ -11,5 +19,9 @@ public struct PyConfig {
   public var standardOutput: FileDescriptorType = FileDescriptor.standardOutput
   public var standardError: FileDescriptorType = FileDescriptor.standardError
 
-  public init() { }
+  public var fileSystem: FileSystemType
+
+  public init(fileSystem: FileSystemType) {
+    self.fileSystem = fileSystem
+  }
 }

@@ -2,15 +2,11 @@ import Bytecode
 
 // swiftlint:disable function_parameter_count
 
+/// Access to dynamic (runtime-dependent) data.
 public protocol PyDelegate: AnyObject {
 
   /// Currently executing frame.
   var frame: PyFrame? { get }
-
-  /// Extension point for opening files.
-  func open(fileno: Int32, mode: FileMode) -> PyResult<FileDescriptorType>
-  /// Extension point for opening files.
-  func open(file: String, mode: FileMode) -> PyResult<FileDescriptorType>
 
   /// Evaluate given code object.
   func eval(name: PyString?,

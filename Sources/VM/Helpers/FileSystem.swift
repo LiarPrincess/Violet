@@ -1,0 +1,69 @@
+import Objects
+import Foundation
+
+internal struct FileSystem: FileSystemType {
+
+  private let fileManager: FileManager
+
+  internal init(manager: FileManager) {
+    self.fileManager = manager
+  }
+
+  // MARK: - Exists
+
+  /// Check if the file at given path exists.
+  internal func fileExists(path: String) -> Bool {
+    var isDir = false
+    return self.fileExists(path: path, isDirectory: &isDir)
+  }
+
+  internal func fileExists(path: String, isDirectory: inout Bool) -> Bool {
+    var isDirResult: ObjCBool = false
+    let existsResult = self.fileManager.fileExists(atPath: path,
+                                                   isDirectory: &isDirResult)
+
+    isDirectory = isDirResult.boolValue
+    return existsResult
+  }
+
+  // MARK: - Open
+
+  internal func open(fileno: Int32,
+                     mode: FileMode) -> PyResult<FileDescriptorType> {
+    // When we get raw descriptor we assume that the user knows what they
+    // are doing, which means that we can ignore 'mode'.
+    let result = FileDescriptor(fileDescriptor: fileno, closeOnDealloc: false)
+    return .value(result)
+  }
+
+  /// static int
+  /// _io_FileIO___init___impl(fileio *self, PyObject *nameobj, ... )
+  internal func open(file: String,
+                     mode: FileMode) -> PyResult<FileDescriptorType> {
+    var flags: Int32 = 0
+    let createMode: Int = 0o666
+
+    switch mode {
+    case .read: flags |= O_RDONLY
+    case .write: flags |= O_WRONLY | O_CREAT | O_TRUNC
+    case .create: flags |= O_WRONLY | O_EXCL | O_CREAT
+    case .append: flags |= O_WRONLY | O_APPEND | O_CREAT
+    case .update: flags |= O_RDWR
+    }
+
+    if let fd = FileDescriptor(path: file,
+                               flags: flags,
+                               createMode: createMode) {
+      return .value(fd)
+    }
+
+    return .osError("unable to open '\(file)' (mode: \(mode))")
+  }
+
+  // MARK: - Contents
+
+  /// Read the whole file at specified `path`.
+  internal func contents(path: String) -> Data? {
+    return self.fileManager.contents(atPath: path)
+  }
+}

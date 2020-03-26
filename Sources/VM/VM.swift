@@ -10,11 +10,18 @@ import Rapunzel
 public final class VM: PyDelegate {
 
   internal var frames = [PyFrame]()
-  internal let fileManager = FileManager.default
+  internal let fileSystem = FileSystem(manager: FileManager.default)
   internal let configuration: CoreConfiguration
 
   internal var arguments: Arguments {
     return self.configuration.arguments
+  }
+
+  /// Currently executed frame.
+  ///
+  /// Required by `PyDelegate`.
+  public var frame: PyFrame? {
+    return self.frames.last
   }
 
   public init(arguments: Arguments, environment: Environment) {
@@ -23,7 +30,7 @@ public final class VM: PyDelegate {
       environment: environment
     )
 
-    let config = PyConfig()
+    let config = PyConfig(fileSystem: self.fileSystem)
     Py.initialize(config: config, delegate: self)
   }
 
@@ -39,7 +46,7 @@ public final class VM: PyDelegate {
   ) throws -> String {
     let encoding = String.Encoding.utf8
 
-    if let data = self.fileManager.contents(atPath: url.path),
+    if let data = self.fileSystem.contents(path: url.path),
        let result = String(data: data, encoding: encoding) {
       return result
     }

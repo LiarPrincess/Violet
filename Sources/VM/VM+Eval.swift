@@ -4,6 +4,9 @@ import Bytecode
 
 extension VM {
 
+  /// Run given code object using specified environment.
+  ///
+  /// CPython:
   /// PyObject *
   /// PyEval_EvalCode(PyObject *co, PyObject *globals, PyObject *locals)
   public func eval(code: PyCode,
@@ -27,6 +30,11 @@ extension VM {
 
 // swiftlint:disable function_parameter_count
 
+  /// Run given code object using specified environment.
+  ///
+  /// Required by `PyDelegate`.
+  ///
+  /// CPython:
   /// PyObject *
   /// _PyEval_EvalCodeWithName(PyObject *_co, PyObject *globals, PyObject *locals...)
   public func eval(name: PyString?,

@@ -110,22 +110,22 @@ extension VM {
   }
 
   private func getScriptURL(_ file: String) throws -> URL {
-    var isDir: ObjCBool = false
-    guard self.fileManager.fileExists(atPath: file, isDirectory: &isDir) else {
+    var isDir = false
+    guard self.fileSystem.fileExists(path: file, isDirectory: &isDir) else {
       throw VMError.scriptDoesNotExist(path: file)
     }
 
-    let fileUrl = URL(fileURLWithPath: file, isDirectory: isDir.boolValue)
+    let fileUrl = URL(fileURLWithPath: file, isDirectory: isDir)
 
     // If it is just a file then return this URL,
     // otherwise try '__main_._py' inside this dir.
-    guard isDir.boolValue else {
+    guard isDir else {
       return fileUrl
     }
 
     let mainFileUrl = fileUrl.appendingPathComponent("__main__.py")
-    guard self.fileManager.fileExists(atPath: mainFileUrl.path, isDirectory: &isDir),
-          !isDir.boolValue else {
+    guard self.fileSystem.fileExists(path: mainFileUrl.path, isDirectory: &isDir),
+          !isDir else {
       throw VMError.scriptDirDoesNotContain__main__(dir: file)
     }
 
