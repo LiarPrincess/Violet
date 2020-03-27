@@ -10,11 +10,7 @@ extension BuiltinFunctions {
 
   // MARK: - Int
 
-  public func newInt(_ value: UInt8) -> PyInt {
-    return self.newInt(Int(value))
-  }
-
-  public func newInt(_ value: UInt32) -> PyInt {
+  public func newInt<I: BinaryInteger>(_ value: I) -> PyInt {
     return self.newInt(BigInt(value))
   }
 

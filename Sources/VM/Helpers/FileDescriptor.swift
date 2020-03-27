@@ -1,6 +1,4 @@
-import Core
-
-// So, we are going to write a custom wrapper for 'file descriptors'.
+// So, we are going to write a custom file descriptor.
 // .
 // ..
 // ...
@@ -18,16 +16,15 @@ import Core
 //    But they are not usable on 10.14.
 //
 // === Problems to solve ===
-// 1) Error handling
-//  - It is acceptable for Violet to crash when some core invariant (for example
-//    using type after its context was deallocated) is not satisfied.
+// 1) Error handling - when can we crash?
+//  - It is acceptable for Violet to crash when some core invariant is not satisfied.
 //    Working with invalid state while having access to effects (for example IO)
 //    may end badly.
 //  - It is NOT acceptable for Violet to crash because of user error
 //    (for example writing to file after closing it).
 //
 // === Solutions ===
-// 1) Use 'macOS 10.15' version of foundation.
+// 1) Use 'macOS 10.15' version of 'Foundation'.
 //    But that forces everyone to upgrade, so NOPE.
 // 2) Link against 'https://github.com/apple/swift-corelibs-foundation'.
 //    But then we have to describe it in our README and that may seem like
@@ -48,13 +45,14 @@ import Core
 // - we are no longer NSObject
 // - no queues/barriers
 
+import Core
 import Foundation.NSData
 
 // swiftlint:disable force_unwrapping
 // swiftlint:disable file_length
 
-// FileHandle has a .read(upToCount:) method. Just invoking read() will cause
-// an ambiguity warning. Use _read instead.
+// FileHandle has a .read(upToCount:) method.
+// Just invoking read() will cause an ambiguity warning. Use _read instead.
 #if canImport(Darwin)
 import Darwin
 private let _read = Darwin.read(_:_:_:)
@@ -67,7 +65,7 @@ private let _write = Glibc.write(_:_:_:)
 private let _close = Glibc.close(_:)
 #endif
 
-// MARK: - Polyfills
+// MARK: - Polyfills (because we JS now)
 
 private func _NSErrorWithErrno(_ posixErrno: Int32,
                                reading: Bool,
@@ -111,7 +109,7 @@ internal class FileDescriptor: CustomStringConvertible {
     case fileReadNoPermission
     case fileReadUnknown
 
-    case fileNoSuchFile
+    case noSuchFile
     case fileWriteNoPermission
     case fileWriteOutOfSpace
     case fileWriteInvalidFileName
@@ -142,7 +140,7 @@ internal class FileDescriptor: CustomStringConvertible {
         }
       case .write:
         switch self.errno {
-        case ENOENT: return .fileNoSuchFile
+        case ENOENT: return .noSuchFile
         case EPERM, EACCES: return .fileWriteNoPermission
         case ENAMETOOLONG: return .fileWriteInvalidFileName
         case EDQUOT, ENOSPC: return .fileWriteOutOfSpace
@@ -166,7 +164,7 @@ internal class FileDescriptor: CustomStringConvertible {
     }
 
     fileprivate static var fileWriteUnknown: Error {
-      return Error(errno: -1, operation: .read)
+      return Error(errno: -1, operation: .write)
     }
   }
 

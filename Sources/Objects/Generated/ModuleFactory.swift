@@ -249,6 +249,9 @@ internal enum ModuleFactory {
 
 
 
+    insert(module: module, name: "getcwd", value: PyBuiltinFunction.wrap(name: "getcwd", doc: nil, fn: object.getCwd, module: module))
+    insert(module: module, name: "fspath", value: PyBuiltinFunction.wrap(name: "fspath", doc: nil, fn: object.getFSPath(path:), module: module))
+    insert(module: module, name: "stat", value: PyBuiltinFunction.wrap(name: "stat", doc: nil, fn: object.getStat(path:), module: module))
 
     return module
   }

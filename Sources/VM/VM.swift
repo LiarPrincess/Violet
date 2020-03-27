@@ -44,12 +44,20 @@ public final class VM: PyDelegate {
 
   // MARK: - PyDelegate
 
-  public func open(fileno: Int32, mode: FileMode) -> PyResult<FileDescriptorType> {
-    return self.fileSystem.open(fileno: fileno, mode: mode)
+  public var currentWorkingDirectory: String {
+    return self.fileSystem.currentWorkingDirectory
   }
 
-  public func open(file: String, mode: FileMode) -> PyResult<FileDescriptorType> {
-    return self.fileSystem.open(file: file, mode: mode)
+  public func open(fd: Int32, mode: FileMode) -> PyResult<FileDescriptorType> {
+    return self.fileSystem.open(fd: fd, mode: mode)
+  }
+
+  public func open(path: String, mode: FileMode) -> PyResult<FileDescriptorType> {
+    return self.fileSystem.open(path: path, mode: mode)
+  }
+
+  public func stat(path: String) -> PyResult<FileStat> {
+    return self.fileSystem.stat(path: path)
   }
 
   // MARK: - Helpers
@@ -60,7 +68,7 @@ public final class VM: PyDelegate {
   ) throws -> String {
     let encoding = String.Encoding.utf8
 
-    if let data = self.fileSystem.contents(path: url.path),
+    if let data = self.fileSystem.read(path: url.path),
        let result = String(data: data, encoding: encoding) {
       return result
     }
