@@ -9,32 +9,24 @@ import Compiler
 
 public struct Environment {
 
-  /// `PATH`
-  public var path = [String]()
+  /// VIOLETHOME
+  ///
+  /// Change the location of the standard Python libraries.
+  /// By default (when `violetHome` is empty), Violet will traverse from
+  /// `currentWorkingDirectory` to file system root looking for `lib` directory.
+  public var violetHome = ""
 
-  /// VIOLETPATH (has precedence over `PYTHONPATH`)
+  /// VIOLETPATH
   ///
   /// Augment the default search path for module files.
   ///
-  /// The format is the same as the shell’s PATH: one or more directory
+  /// The format is the same as the shell’s `PATH`: one or more directory
   /// pathnames separated by `os.pathsep` (e.g. colons on Unix or semicolons on Windows).
   ///
   /// Non-existent directories are silently ignored.
   /// The search path can be manipulated from within a Python program
   /// as the variable `sys.path`.
   public var violetPath = [String]()
-
-  /// PYTHONPATH
-  ///
-  /// Augment the default search path for module files.
-  ///
-  /// The format is the same as the shell’s PATH: one or more directory
-  /// pathnames separated by `os.pathsep` (e.g. colons on Unix or semicolons on Windows).
-  ///
-  /// Non-existent directories are silently ignored.
-  /// The search path can be manipulated from within a Python program
-  /// as the variable `sys.path`.
-  public var pythonPath = [String]()
 
   /// PYTHONOPTIMIZE
   ///
@@ -51,12 +43,6 @@ public struct Environment {
   /// multiple times, with filters later in the list taking precedence over
   /// those earlier in the list.
   public var warnings = [WarningOption]()
-
-  /// PYTHONNOUSERSITE
-  ///
-  /// Don’t add the user site-packages directory to `sys.path`.
-  /// See also 'PEP 370 – Per user site-packages directory'.
-  public var noUserSite = false
 
   /// PYTHONDEBUG
   ///
@@ -86,7 +72,7 @@ public struct Environment {
   /// Create environment parsed from given dictionary.
   ///
   /// - Parameter pathSeparator: Separator used for `PATH`.
-  ///   (e.g. colons on Unix or semicolons on Windows).
+  ///   By default colon on Unix and semicolon on Windows.
   public init(from environment: [String: String],
               pathSeparator: Character? = nil) {
     let pathSep = pathSeparator ?? defaultPathSeparator
@@ -97,12 +83,10 @@ public struct Environment {
       }
 
       switch key {
-      case "PATH":
-        self.path = splitPath(value, pathSep: pathSep)
+      case "VIOLETHOME":
+        self.violetHome = value
       case "VIOLETPATH":
         self.violetPath = splitPath(value, pathSep: pathSep)
-      case "PYTHONPATH":
-        self.pythonPath = splitPath(value, pathSep: pathSep)
       case "PYTHONOPTIMIZE":
         let isInt = asInt(value) != nil
         self.optimize = isInt ? .OO : .O
@@ -112,8 +96,6 @@ public struct Environment {
         self.debug = true
       case "PYTHONINSPECT":
         self.inspectInteractively = true
-      case "PYTHONNOUSERSITE":
-        self.noUserSite = true
       case "PYTHONVERBOSE":
         let int = asInt(value) ?? 1
         self.verbose = Swift.max(int, 1)

@@ -161,7 +161,7 @@ class CoreConfigurationTests: XCTestCase {
       env.pythonOptimize = value
       let conf = CoreConfiguration(arguments: args, environment: env, dependencies: deps)
 
-      XCTAssertEqual(conf.optimization, value)
+      XCTAssertEqual(conf.optimize, value)
     }
   }
 
@@ -178,7 +178,7 @@ class CoreConfigurationTests: XCTestCase {
       env.pythonOptimize = value
       let conf = CoreConfiguration(arguments: args, environment: env, dependencies: deps)
 
-      XCTAssertEqual(conf.optimization, .O)
+      XCTAssertEqual(conf.optimize, .O)
     }
   }
 
@@ -192,7 +192,7 @@ class CoreConfigurationTests: XCTestCase {
     env.pythonOptimize = .OO
     let conf = CoreConfiguration(arguments: args, environment: env, dependencies: deps)
 
-    XCTAssertEqual(conf.optimization, .OO)
+    XCTAssertEqual(conf.optimize, .OO)
   }
 
   func test_optimizations_arg_setToOO_isAlwaysOO() {
@@ -208,7 +208,7 @@ class CoreConfigurationTests: XCTestCase {
       env.pythonOptimize = value
       let conf = CoreConfiguration(arguments: args, environment: env, dependencies: deps)
 
-      XCTAssertEqual(conf.optimization, .OO)
+      XCTAssertEqual(conf.optimize, .OO)
     }
   }
 
@@ -224,7 +224,7 @@ class CoreConfigurationTests: XCTestCase {
       args.optimization = value
       let conf = CoreConfiguration(arguments: args, environment: env, dependencies: deps)
 
-      XCTAssertEqual(conf.optimization, value)
+      XCTAssertEqual(conf.optimize, value)
     }
   }
 

@@ -89,13 +89,13 @@ public class PyInstance: BuiltinFunctions {
   // MARK: - Config & delegate
 
   private var _config: PyConfig?
-  internal var config: PyConfig {
+  public var config: PyConfig {
     if let c = self._config { return c }
     self.trapUninitialized()
   }
 
   private weak var _delegate: PyDelegate?
-  internal var delegate: PyDelegate {
+  public var delegate: PyDelegate {
     if let d = self._delegate { return d }
     if self.isInitialized { trap("Py.delegate was deallocated!") }
     self.trapUninitialized()

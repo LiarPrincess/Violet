@@ -26,10 +26,13 @@ public final class VM: PyDelegate {
     )
 
     let config = PyConfig(
+      arguments: arguments,
+      environment: environment,
       standardInput: FileDescriptorAdapter(for: .standardInput),
       standardOutput: FileDescriptorAdapter(for: .standardOutput),
       standardError: FileDescriptorAdapter(for: .standardError)
     )
+
     Py.initialize(config: config, delegate: self)
   }
 

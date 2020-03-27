@@ -38,12 +38,15 @@ internal struct ArgumentBinding: ParsableCommand {
   )
   internal var help: Bool
 
-  /// `--version`
+  /// `-V --version`
   ///
   /// Print the `Violet` version number and exit.
   /// Example output could be: `Violet 1.0`.
   @Flag(
-    name: NameSpecification.long,
+    name: [
+      NameSpecification.Element.customShort("V"),
+      NameSpecification.Element.long
+    ],
     help: "print the Python version number and exit (also --version)"
   )
   internal var version: Bool
@@ -103,28 +106,6 @@ internal struct ArgumentBinding: ParsableCommand {
   )
   internal var isolated: Bool
 
-  /// `-S`
-  ///
-  /// Disable the import of the module site and the site-dependent manipulations
-  /// of `sys.path` that it entails.
-  /// Also disable these manipulations if site is explicitly imported later
-  /// (call `site.main()` if you want them to be triggered).
-  @Flag(
-    name: NameSpecification.customShort("S"),
-    help: "don't imply 'import site' on initialization"
-  )
-  internal var noSite: Bool
-
-  /// `-s`
-  ///
-  /// Don’t add the user site-packages directory to `sys.path`.
-  /// See also 'PEP 370 – Per user site-packages directory'.
-  @Flag(
-    name: NameSpecification.customShort("s"),
-    help: "don't add user site directory to sys.path; also PYTHONNOUSERSITE"
-  )
-  internal var noUserSite: Bool
-
   @Flag(
     name: NameSpecification.short,
     help: concat(
@@ -144,14 +125,14 @@ internal struct ArgumentBinding: ParsableCommand {
     name: NameSpecification.customShort("O"),
     help: "remove assert and __debug__-dependent statements; also PYTHONOPTIMIZE=x"
   )
-  internal var optimization1: Bool // Do not use 'Int'. '-O and -OO' are separate options
+  internal var optimize1: Bool // Do not use 'Int'. '-O and -OO' are separate options
 
   /// `-OO`
   @Flag(
     name: NameSpecification.customLong("OO", withSingleDash: true),
     help: "do -O changes and also discard docstrings (overrides '-O' if it is also set)"
   )
-  internal var optimization2: Bool // Do not use 'Int'. '-O and -OO' are separate options
+  internal var optimize2: Bool // Do not use 'Int'. '-O and -OO' are separate options
 
   // MARK: - Warnings
 

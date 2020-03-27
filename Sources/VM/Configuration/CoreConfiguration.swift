@@ -46,7 +46,7 @@ internal final class CoreConfiguration {
   internal var executable: String
 
   /// A list of strings that specifies the search path for modules.
-  /// Initialized from the environment variables `VIOLETPATH` and `PYTHONPATH`,
+  /// Initialized from the environment variables `VIOLETPATH`,
   /// plus an installation-dependent default.
   ///
   /// As initialized upon program startup, the first item of this list,
@@ -85,7 +85,7 @@ internal final class CoreConfiguration {
   internal var bytesWarning: BytesWarningOption
 
   /// `-O -OO` command line argument and `PYTHONOPTIMIZE` environment variable.
-  internal var optimization: OptimizationLevel = .none
+  internal var optimize: OptimizationLevel = .none
 
   /// `sys.argv`
   internal var arguments: Arguments
@@ -121,20 +121,6 @@ internal final class CoreConfiguration {
   /// All `PYTHON*` environment variables are ignored, too.
   internal var isolated: Bool
 
-  /// `-S` command line argument.
-  ///
-  /// Disable the import of the module site and the site-dependent manipulations
-  /// of `sys.path` that it entails.
-  /// Also disable these manipulations if site is explicitly imported later
-  /// (call `site.main()` if you want them to be triggered).
-  internal var noSite: Bool
-
-  /// `-s` command line argument and `PYTHONNOUSERSITE` environment variable.
-  ///
-  /// Don’t add the user site-packages directory to `sys.path`.
-  /// See also 'PEP 370 – Per user site-packages directory'.
-  internal var noUserSite: Bool
-
   // TODO: Verbose
 
   internal init(
@@ -149,7 +135,7 @@ internal final class CoreConfiguration {
     self.programName = programName
     self.executable = dependencies.executablePath ?? programName
 
-    self.moduleSearchPathsEnv = (env?.violetPath ?? []) + (env?.pythonPath ?? [])
+    self.moduleSearchPathsEnv = env?.violetPath ?? []
     self.moduleSearchPaths = getModuleSearchPaths(
       environment: env,
       dependencies: dependencies
@@ -159,8 +145,8 @@ internal final class CoreConfiguration {
     // - the BytesWarning filter, if needed ('-b', '-bb')
     // - any '-W' command line options; then
     // - the 'PYTHONWARNINGS' environment variable;
-    self.warnings = (env?.warnings ?? []) + arguments.warnings
     self.bytesWarning = arguments.bytesWarning
+    self.warnings = arguments.warnings + (env?.warnings ?? [])
 
     self.debug = arguments.debug || (env?.debug ?? false)
     self.quiet = arguments.quiet
@@ -168,24 +154,19 @@ internal final class CoreConfiguration {
                              || (env?.inspectInteractively ?? false)
     self.ignoreEnvironment = arguments.ignoreEnvironment
     self.isolated = arguments.isolated
-    self.noSite = arguments.noSite
-    self.noUserSite = arguments.noUserSite || (env?.noUserSite ?? false)
 
-    self.optimization = mergeOptimization(
-      arguments: arguments.optimization,
-      environment: env?.optimize
-    )
+    self.optimize = Swift.max(arguments.optimize, env?.optimize ?? .none)
   }
 }
 
-private func getModuleSearchPaths(environment: Environment?,
-                                  dependencies: CoreConfigurationDeps) -> [String] {
+private func getModuleSearchPaths(
+  environment: Environment?,
+  dependencies: CoreConfigurationDeps
+) -> [String] {
   var result = [String]()
 
   if let env = environment {
-    // $VIOLETPATH goes first and then $PYTHONPATH
     result.append(contentsOf: env.violetPath)
-    result.append(contentsOf: env.pythonPath)
   }
 
   // Search from bundleURL (this will add 'Lib' directory in our repository
@@ -202,25 +183,4 @@ private func getModuleSearchPaths(environment: Environment?,
   }
 
   return result
-}
-
-private func mergeOptimization(
-  arguments: OptimizationLevel,
-  environment: OptimizationLevel?
-) -> OptimizationLevel {
-  // TODO: Use comparable.
-
-  guard let env = environment else {
-    return arguments
-  }
-
-  if arguments == .OO || env == .OO {
-    return .OO
-  }
-
-  if arguments == .O || env == .O {
-    return .O
-  }
-
-  return .none
 }

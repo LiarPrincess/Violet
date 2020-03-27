@@ -17,7 +17,7 @@ extension VM {
 
     Debug.ast(ast)
 
-    let optimizationLevel = self.configuration.optimization
+    let optimizationLevel = self.configuration.optimize
     let compilerOptions = CompilerOptions(optimizationLevel: optimizationLevel)
 
     let compiler = try Compiler(ast: ast,

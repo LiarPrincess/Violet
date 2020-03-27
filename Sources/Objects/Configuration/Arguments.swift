@@ -55,20 +55,6 @@ public struct Arguments {
   /// All `PYTHON*` environment variables are ignored, too.
   public var isolated = false
 
-  /// `-S`
-  ///
-  /// Disable the import of the module site and the site-dependent manipulations
-  /// of `sys.path` that it entails.
-  /// Also disable these manipulations if site is explicitly imported later
-  /// (call `site.main()` if you want them to be triggered).
-  public var noSite = false
-
-  /// `-s`
-  ///
-  /// Don’t add the user site-packages directory to `sys.path`.
-  /// See also 'PEP 370 – Per user site-packages directory'.
-  public var noUserSite = false
-
   /// `-v`
   ///
   /// Print a message each time a module is initialized,
@@ -84,7 +70,7 @@ public struct Arguments {
   // MARK: - Optimization
 
   /// `-O -OO`
-  public var optimization = OptimizationLevel.none
+  public var optimize = OptimizationLevel.none
 
   // MARK: - Warnings
 
@@ -153,17 +139,15 @@ public struct Arguments {
     self.inspectInteractively = binding.inspectInteractively
     self.ignoreEnvironment = binding.ignoreEnvironment
     self.isolated = binding.isolated
-    self.noSite = binding.noSite
-    self.noUserSite = binding.noUserSite
     self.verbose = binding.verbose
 
     // Isolated implies some other flags set to 'true'
     if self.isolated {
       self.ignoreEnvironment = true
-      self.noUserSite = true
+      // self.noUserSite = true // when we add this flag
     }
 
-    self.optimization = self.getOptimization(binding: binding)
+    self.optimize = self.getOptimization(binding: binding)
     self.bytesWarning = self.getBytesWarning(binding: binding)
 
     self.appendWarning(flag: binding.wDefault, warning: .default)
@@ -186,11 +170,11 @@ public struct Arguments {
    }
 
   private func getOptimization(binding: ArgumentBinding) -> OptimizationLevel {
-    if binding.optimization2 {
+    if binding.optimize2 {
       return .OO
     }
 
-    if binding.optimization1 {
+    if binding.optimize1 {
       return .O
     }
 
