@@ -6,6 +6,8 @@
 // https://docs.python.org/3.7/reference/import.html
 // https://docs.python.org/3.7/library/importlib.html
 
+// swiftlint:disable file_length
+
 private let importArguments = ArgumentParser.createOrTrap(
   arguments: ["name", "globals", "locals", "fromlist", "level"],
   format: "U|OOOi:__import__"
@@ -209,7 +211,7 @@ extension BuiltinFunctions {
   private func getPackageName(globals: PyDict) -> PyResult<String> {
     let spec = globals.get(id: .__spec__)
 
-    if let package = globals.get(id: .__package__) {
+    if let package = globals.get(id: .__package__), !package.isNone {
       guard let string = package as? PyString else {
         return .typeError("package must be a string")
       }
@@ -311,7 +313,7 @@ extension BuiltinFunctions {
   /// PyObject *
   /// PyImport_GetModule(PyObject *name)
   private func getModule(absName: PyString) -> PyResult<PyObject> {
-    switch Py.sys.modules.get(name: absName) {
+    switch Py.sys.getModule(name: absName) {
     case let .value(m):
       if m.isNone {
         return self.loadModule(absName: absName)
@@ -333,6 +335,10 @@ extension BuiltinFunctions {
 
   /// mod = import_find_and_load(abs_name);
   private func loadModule(absName: PyString) -> PyResult<PyObject> {
+    // mod = _PyObject_CallMethodIdObjArgs(interp->importlib,
+    //                                     &PyId__find_and_load, abs_name,
+    //                                     interp->import_func, NULL);
+
     fatalError()
   }
 }
