@@ -56,6 +56,55 @@ extension Sys {
     }
   }
 
+  // MARK: - Argv
+
+  // sourcery: pyproperty = argv, setter = setArgv
+  /// sys.argv
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.argv).
+  ///
+  /// The list of command line arguments passed to a Python script.
+  /// `argv[0]` is the script name.
+  /// If the command was executed using the `-c` command line option,
+  /// `argv[0]` is set to the string `'-c'`.
+  /// If no script name was passed to the Python interpreter,
+  /// `argv[0]` is the empty string.
+  internal func getArgv() -> PyObject {
+    if let value = self.get(key: .argv) {
+      return value
+    }
+
+    let strings = self.createDefaultArgv()
+    let objects = strings.map(Py.newString(_:))
+    return Py.newList(objects)
+  }
+
+  internal func setArgv(to value: PyObject) -> PyResult<()> {
+    self.set(key: .argv, value: value)
+    return .value()
+  }
+
+  /// pymain_init_core_argv(_PyMain *pymain, _PyCoreConfig *config, ...)
+  private func createDefaultArgv() -> [String] {
+    let arguments = Py.config.arguments
+    let argumentsWithoutProgramName = arguments.raw.dropFirst()
+
+    var result = Array(argumentsWithoutProgramName)
+
+    if result.isEmpty {
+      result = [""]
+    }
+
+    assert(result.any)
+
+    if arguments.command != nil {
+      result[0] = "-c"
+    } else if arguments.module != nil {
+      result[0] = "-m"
+    }
+
+    return result
+  }
+
   // MARK: - Stdin
 
   // sourcery: pyproperty = stdin, setter = setStdin

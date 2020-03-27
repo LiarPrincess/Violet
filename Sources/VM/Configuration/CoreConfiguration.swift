@@ -9,7 +9,6 @@ import Objects
 //   config_read_env_vars(_PyCoreConfig *config) <- env path
 //   config_init_path_config(_PyCoreConfig *config) <- path
 //   config_init_warnoptions(_PyCoreConfig *config, ...) <- warnings
-//   pymain_init_core_argv(_PyMain *pymain, _PyCoreConfig *config, ...) <- arg0
 // Modules -> getpath.c
 //   calculate_program_full_path(const _PyCoreConfig *core_config, ...)  <- executable
 

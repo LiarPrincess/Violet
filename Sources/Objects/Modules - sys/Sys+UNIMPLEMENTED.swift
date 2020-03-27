@@ -2,20 +2,6 @@ extension Sys {
 /*
   // MARK: - Properties
 
-  // sourcery: pyproperty = argv
-  /// sys.argv
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.argv).
-  ///
-  /// The list of command line arguments passed to a Python script.
-  /// `argv[0]` is the script name.
-  /// If the command was executed using the `-c` command line option,
-  /// `argv[0]` is set to the string `'-c'`.
-  /// If no script name was passed to the Python interpreter,
-  /// `argv[0]` is the empty string.
-  internal func getArgv() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pyproperty = path
   /// sys.path
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.path).
@@ -55,54 +41,6 @@ extension Sys {
     return self.unimplemented
   }
 
-  // MARK: - Breakpointhook
-
-  // sourcery: pymethod = breakpointhook
-  /// sys.breakpointhook()
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.breakpointhook).
-  internal func breakpointHook() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pyproperty = __breakpointhook__
-  /// sys.__breakpointhook__
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__breakpointhook__).
-  internal func get__breakpointhook__() -> PyObject {
-    return self.unimplemented
-  }
-
-  // MARK: - Displayhook
-
-  // sourcery: pymethod = displayhook
-  /// sys.displayhook(value)
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.displayhook).
-  internal func displayHook() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pyproperty = __displayhook__
-  /// sys.__displayhook__
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__displayhook__).
-  internal func get__displayhook__() -> PyObject {
-    return self.unimplemented
-  }
-
-  // MARK: - Excepthook
-
-  // sourcery: pymethod = excepthook
-  /// sys.excepthook(type, value, traceback)
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.excepthook).
-  internal func excepthook() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pyproperty = __excepthook__
-  /// sys.__excepthook__
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__excepthook__).
-  internal func get__excepthook__() -> PyObject {
-    return self.unimplemented
-  }
-
   // MARK: - Exit
 
   // sourcery: pymethod = exit
@@ -113,13 +51,6 @@ extension Sys {
   }
 
   // MARK: - Other
-
-  // sourcery: pyproperty = byteorder
-  /// sys.byteorder
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.byteorder).
-  internal func getByteOrder() -> PyObject {
-    return self.unimplemented
-  }
 
   // sourcery: pymethod = exc_info
   /// sys.exc_info()
