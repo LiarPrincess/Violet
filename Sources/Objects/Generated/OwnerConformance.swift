@@ -8,8 +8,8 @@
 
 // MARK: - BaseObject
 
-// PyBaseObject does not own anything.
-extension PyBaseObject { }
+// PyObjectType does not own anything.
+extension PyObjectType { }
 
 // MARK: - Type
 

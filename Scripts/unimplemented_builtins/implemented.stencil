@@ -53,7 +53,7 @@ TextFile = _io.TextIOWrapper
 {% endmacro %}
 
 types = {
-{% for type in types.enums where type.name == "PyBaseObject" %}
+{% for type in types.enums where type.name == "PyObjectType" %}
   object: [
     {% call printProperties type.staticMethods %}
     {% call printMethods type.staticMethods %}

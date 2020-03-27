@@ -235,8 +235,8 @@ def print_conformance():
 
 // MARK: - BaseObject
 
-// PyBaseObject does not own anything.
-extension PyBaseObject {{ }}
+// PyObjectType does not own anything.
+extension PyObjectType {{ }}
 ''')
 
   # type_name pointing to ConformanceEntry

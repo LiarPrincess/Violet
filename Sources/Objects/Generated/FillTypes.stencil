@@ -100,7 +100,7 @@ private func insert(type: PyType, name: String, value: PyObject) {
 
 internal enum FillTypes {
 
-{% for type in types.enums where type.name == "PyBaseObject" %}
+{% for type in types.enums where type.name == "PyObjectType" %}
 
   // MARK: - Base object
 

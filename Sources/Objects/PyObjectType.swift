@@ -5,8 +5,9 @@ import Core
 // Objects -> typeobject.c
 
 // sourcery: default, baseType
-/// Root of the Python object hierarchy (kind of important thingie).
-internal enum PyBaseObject {
+/// Container for things attached to `object` type
+/// (root of `Python` type hierarchy).
+internal enum PyObjectType {
 
   internal static let doc: String = """
     object()
@@ -30,7 +31,7 @@ internal enum PyBaseObject {
   // sourcery: pymethod = __ne__
   internal static func isNotEqual(zelf: PyObject,
                                   other: PyObject) -> CompareResult {
-    return PyBaseObject.isEqual(zelf: zelf, other: other).not
+    return PyObjectType.isEqual(zelf: zelf, other: other).not
   }
 
   // MARK: - Comparable
@@ -90,7 +91,7 @@ internal enum PyBaseObject {
   // sourcery: pymethod = __format__
   internal static func format(zelf: PyObject, spec: PyObject) -> PyResult<String> {
     if let spec = spec as? PyString, spec.value.isEmpty {
-      return PyBaseObject.str(zelf: zelf)
+      return PyObjectType.str(zelf: zelf)
     }
 
     let msg = "unsupported format string passed to \(zelf.typeName).__format__"

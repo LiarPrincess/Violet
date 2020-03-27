@@ -1,3 +1,5 @@
+/// Some places refer to modules that we do not have implemented.
+/// We will pout all of the assumed values here.
 internal enum Unimplemented {
 
   /// For proper implementation see:

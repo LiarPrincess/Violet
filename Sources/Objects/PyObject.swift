@@ -4,7 +4,7 @@ import Core
 
 internal struct PyObjectFlags: OptionSet {
 
-  let rawValue: UInt8
+  internal let rawValue: UInt8
 
   /// This flag is used to control infinite recursion
   /// in `repr`, `str`, `print` etc.
@@ -70,7 +70,7 @@ public class PyObject: CustomStringConvertible {
   /// Object address.
   ///
   /// It should be used only for error messages
-  /// (it is there mainly for CPython programmers for debugging).
+  /// (it is there mainly for debugging).
   internal var ptrString: String {
     return String(describing: Unmanaged.passUnretained(self).toOpaque())
   }
@@ -101,7 +101,7 @@ public class PyObject: CustomStringConvertible {
 
   // MARK: - Helpers
 
-  /// Is this `none`?
+  /// Is this `None`?
   public var isNone: Bool {
     return self is PyNone
   }

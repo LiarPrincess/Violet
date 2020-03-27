@@ -52,7 +52,7 @@ internal final class {{ swift_type }}Heap: {{ swift_type }}, HeapType {
 
 // MARK: - Object
 
-{% for type in types.enums where type.name == "PyBaseObject" %}
+{% for type in types.enums where type.name == "PyObjectType" %}
 {% call printHeapType "PyObject" "object" %}
 {% endfor %}
 

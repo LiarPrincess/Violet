@@ -303,6 +303,6 @@ extension PyType {
     }
 
     // Call object.__init__(self) now.
-    return PyBaseObject.pyInit(zelf: zelf, args: [], kwargs: nil)
+    return PyObjectType.pyInit(zelf: zelf, args: [], kwargs: nil)
   }
 }
