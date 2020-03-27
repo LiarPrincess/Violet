@@ -10,7 +10,7 @@ import Compiler
 public struct Environment {
 
   /// `PATH`
-  public var path: [String] = []
+  public var path = [String]()
 
   /// VIOLETPATH (has precedence over `PYTHONPATH`)
   ///
@@ -22,7 +22,7 @@ public struct Environment {
   /// Non-existent directories are silently ignored.
   /// The search path can be manipulated from within a Python program
   /// as the variable `sys.path`.
-  public var violetPath: [String] = []
+  public var violetPath = [String]()
 
   /// PYTHONPATH
   ///
@@ -34,14 +34,14 @@ public struct Environment {
   /// Non-existent directories are silently ignored.
   /// The search path can be manipulated from within a Python program
   /// as the variable `sys.path`.
-  public var pythonPath: [String] = []
+  public var pythonPath = [String]()
 
   /// PYTHONOPTIMIZE
   ///
   /// If this is set to a non-empty string it is equivalent to specifying
   /// the `-O` option.
   /// If set to an integer, it is equivalent to specifying `-O` multiple times.
-  public var pythonOptimize: OptimizationLevel = .none
+  public var optimize = OptimizationLevel.none
 
   /// PYTHONWARNINGS
   ///
@@ -50,19 +50,19 @@ public struct Environment {
   /// If set to a comma separated string, it is equivalent to specifying `-W`
   /// multiple times, with filters later in the list taking precedence over
   /// those earlier in the list.
-  public var pythonWarnings: [WarningOption] = []
+  public var warnings = [WarningOption]()
 
   /// PYTHONNOUSERSITE
   ///
   /// Don’t add the user site-packages directory to `sys.path`.
   /// See also 'PEP 370 – Per user site-packages directory'.
-  public var pythonNoUserSite: Bool = false
+  public var noUserSite = false
 
   /// PYTHONDEBUG
   ///
   /// If this is set to a non-empty string it is equivalent to specifying
   /// the `-d` option.
-  public var pythonDebug: Bool = false
+  public var debug = false
 
   /// PYTHONINSPECT
   ///
@@ -71,13 +71,26 @@ public struct Environment {
   ///
   /// This variable can also be modified by Python code using `os.environ` to
   /// force inspect mode on program termination.
-  public var pythonInspectInteractively: Bool = false
+  public var inspectInteractively = false
+
+  /// PYTHONVERBOSE
+  ///
+  /// If this is set to a non-empty string it is equivalent to specifying
+  /// the `-v` option.
+  /// If set to an integer, it is equivalent to specifying -v multiple times.
+  public var verbose = 0
 
   /// Use default environment.
   public init() { }
 
   /// Create environment parsed from given dictionary.
-  public init(from environment: [String: String]) {
+  ///
+  /// - Parameter pathSeparator: Separator used for `PATH`.
+  ///   (e.g. colons on Unix or semicolons on Windows).
+  public init(from environment: [String: String],
+              pathSeparator: Character? = nil) {
+    let pathSep = pathSeparator ?? defaultPathSeparator
+
     for (key, value) in environment {
       if value.isEmpty {
         continue
@@ -85,22 +98,25 @@ public struct Environment {
 
       switch key {
       case "PATH":
-        self.path = splitPath(value)
+        self.path = splitPath(value, pathSep: pathSep)
       case "VIOLETPATH":
-        self.violetPath = splitPath(value)
+        self.violetPath = splitPath(value, pathSep: pathSep)
       case "PYTHONPATH":
-        self.pythonPath = splitPath(value)
+        self.pythonPath = splitPath(value, pathSep: pathSep)
       case "PYTHONOPTIMIZE":
-        let isInt = Int(value) != nil
-        self.pythonOptimize = isInt ? .OO : .O
+        let isInt = asInt(value) != nil
+        self.optimize = isInt ? .OO : .O
       case "PYTHONWARNINGS":
-        self.pythonWarnings = parseWarnings(value)
+        self.warnings = parseWarnings(value)
       case "PYTHONDEBUG":
-        self.pythonDebug = true
+        self.debug = true
       case "PYTHONINSPECT":
-        self.pythonInspectInteractively = true
+        self.inspectInteractively = true
       case "PYTHONNOUSERSITE":
-        self.pythonNoUserSite = true
+        self.noUserSite = true
+      case "PYTHONVERBOSE":
+        let int = asInt(value) ?? 1
+        self.verbose = Swift.max(int, 1)
       default:
         break
       }
@@ -108,24 +124,36 @@ public struct Environment {
   }
 }
 
-private func splitPath(_ path: String) -> [String] {
+private var defaultPathSeparator: Character {
+  #if os(Windows)
+  return ";"
+  #else
+  return ":"
+  #endif
+}
+
+private func splitPath(_ path: String, pathSep: Character) -> [String] {
   return path
-    .split(separator: Constants.PATHSep)
+    .split(separator: pathSep)
     .map { String($0) }
 }
 
-private func parseWarnings(_ arg: String) -> [WarningOption] {
-  return arg
+private func parseWarnings(_ value: String) -> [WarningOption] {
+  return value
     .split(separator: ",")
     .compactMap { split in
       switch split {
-      case "default":  return .default
-      case "error":    return .error
-      case "always":   return .always
-      case "module":   return .module
-      case "once":     return .once
-      case "ignore":   return .ignore
+      case "default": return .default
+      case "error":   return .error
+      case "always":  return .always
+      case "module":  return .module
+      case "once":    return .once
+      case "ignore":  return .ignore
       default: return nil
       }
     }
+}
+
+private func asInt(_ value: String) -> Int? {
+  return Int(value)
 }

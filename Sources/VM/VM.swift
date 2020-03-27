@@ -1,10 +1,5 @@
 import Foundation
-import Lexer
-import Parser
-import Compiler
-import Bytecode
 import Objects
-import Rapunzel
 
 // swiftlint:disable:next type_name
 public final class VM: PyDelegate {
@@ -43,6 +38,7 @@ public final class VM: PyDelegate {
   }
 
   // MARK: - PyDelegate
+  // There is also 'eval', but it is in a different file.
 
   public var currentWorkingDirectory: String {
     return self.fileSystem.currentWorkingDirectory
@@ -62,6 +58,7 @@ public final class VM: PyDelegate {
 
   // MARK: - Helpers
 
+  /// Read a file or produce an error using given factory method.
   internal func read(
     url: URL,
     onError: (URL, String.Encoding) -> Error

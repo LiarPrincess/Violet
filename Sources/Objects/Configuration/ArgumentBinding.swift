@@ -38,12 +38,12 @@ internal struct ArgumentBinding: ParsableCommand {
   )
   internal var help: Bool
 
-  /// `-v --version`
+  /// `--version`
   ///
   /// Print the `Violet` version number and exit.
   /// Example output could be: `Violet 1.0`.
   @Flag(
-    name: NameSpecification.shortAndLong,
+    name: NameSpecification.long,
     help: "print the Python version number and exit (also --version)"
   )
   internal var version: Bool
@@ -124,6 +124,18 @@ internal struct ArgumentBinding: ParsableCommand {
     help: "don't add user site directory to sys.path; also PYTHONNOUSERSITE"
   )
   internal var noUserSite: Bool
+
+  @Flag(
+    name: NameSpecification.short,
+    help: concat(
+      "Print a message each time a module is initialized, ",
+      "showing the place (filename or built-in module) from which it is loaded. ",
+      "When given twice (-vv), print a message for each file that is checked ",
+      "for when searching for a module. Also provides information on module ",
+      "cleanup at exit. See also PYTHONVERBOSE."
+    )
+  )
+  internal var verbose: Int
 
   // MARK: - Optimization
 

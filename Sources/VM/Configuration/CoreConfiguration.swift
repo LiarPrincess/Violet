@@ -1,5 +1,6 @@
 import Foundation
 import Compiler
+import Objects
 
 // In CPython:
 // Python -> pystate.h
@@ -134,9 +135,13 @@ internal final class CoreConfiguration {
   /// See also 'PEP 370 – Per user site-packages directory'.
   internal var noUserSite: Bool
 
-  internal init(arguments: Arguments,
-                environment: Environment = Environment(),
-                dependencies: CoreConfigurationDeps = CoreConfigurationDepsImpl()) {
+  // TODO: Verbose
+
+  internal init(
+    arguments: Arguments,
+    environment: Environment,
+    dependencies: CoreConfigurationDeps = CoreConfigurationDepsImpl()
+  ) {
     let env: Environment? = arguments.ignoreEnvironment ? nil : environment
 
     let programName = arguments.raw.first ?? ""
@@ -154,57 +159,22 @@ internal final class CoreConfiguration {
     // - the BytesWarning filter, if needed ('-b', '-bb')
     // - any '-W' command line options; then
     // - the 'PYTHONWARNINGS' environment variable;
-    self.warnings = (env?.pythonWarnings ?? []) + arguments.warnings
+    self.warnings = (env?.warnings ?? []) + arguments.warnings
     self.bytesWarning = arguments.bytesWarning
 
-    self.debug = arguments.debug || (env?.pythonDebug ?? false)
+    self.debug = arguments.debug || (env?.debug ?? false)
     self.quiet = arguments.quiet
     self.inspectInteractively = arguments.inspectInteractively
-                             || (env?.pythonInspectInteractively ?? false)
+                             || (env?.inspectInteractively ?? false)
     self.ignoreEnvironment = arguments.ignoreEnvironment
     self.isolated = arguments.isolated
     self.noSite = arguments.noSite
-    self.noUserSite = arguments.noUserSite || (env?.pythonNoUserSite ?? false)
+    self.noUserSite = arguments.noUserSite || (env?.noUserSite ?? false)
 
     self.optimization = mergeOptimization(
       arguments: arguments.optimization,
-      environment: env?.pythonOptimize
+      environment: env?.optimize
     )
-  }
-
-  internal func dump() {
-    print("CoreConfiguration")
-    print("  programName:", programName)
-    print("  executable:", executable)
-
-    print("  moduleSearchPaths:")
-    if self.moduleSearchPaths.any {
-      for path in self.moduleSearchPaths {
-        print("    \(path)")
-      }
-    } else {
-      print("    (empty)")
-    }
-
-    print("  moduleSearchPathsEnv:")
-    if self.moduleSearchPathsEnv.any {
-      for path in self.moduleSearchPathsEnv {
-        print("    \(path)")
-      }
-    } else {
-      print("    (empty)")
-    }
-
-    print("  warnings:", warnings)
-    print("  bytesWarning:", bytesWarning)
-    print("  optimization:", optimization)
-    print("  debug:", debug)
-    print("  quiet:", quiet)
-    print("  inspectInteractively:", inspectInteractively)
-    print("  ignoreEnvironment:", ignoreEnvironment)
-    print("  isolated:", isolated)
-    print("  noSite:", noSite)
-    print("  noUserSite:", noUserSite)
   }
 }
 
@@ -238,6 +208,7 @@ private func mergeOptimization(
   arguments: OptimizationLevel,
   environment: OptimizationLevel?
 ) -> OptimizationLevel {
+  // TODO: Use comparable.
 
   guard let env = environment else {
     return arguments

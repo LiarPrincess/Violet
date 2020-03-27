@@ -18,7 +18,7 @@ public struct Arguments {
   /// Display available options.
   public var help = false
 
-  /// `-v --version`
+  /// `--version`
   ///
   /// Print the `Violet` version number and exit.
   /// Example output could be: `Violet 1.0`.
@@ -68,6 +68,18 @@ public struct Arguments {
   /// Don’t add the user site-packages directory to `sys.path`.
   /// See also 'PEP 370 – Per user site-packages directory'.
   public var noUserSite = false
+
+  /// `-v`
+  ///
+  /// Print a message each time a module is initialized,
+  /// showing the place (filename or built-in module) from which it is loaded.
+  ///
+  /// When given twice (-vv), print a message for each file that is checked
+  /// for when searching for a module.
+  ///
+  /// Also provides information on module cleanup at exit.
+  /// See also PYTHONVERBOSE.
+  public var verbose = 0
 
   // MARK: - Optimization
 
@@ -143,6 +155,7 @@ public struct Arguments {
     self.isolated = binding.isolated
     self.noSite = binding.noSite
     self.noUserSite = binding.noUserSite
+    self.verbose = binding.verbose
 
     // Isolated implies some other flags set to 'true'
     if self.isolated {
@@ -194,7 +207,8 @@ public struct Arguments {
 
   // MARK: - Usage
 
-  internal var usage: String {
+  /// Message printed after providing help flag (`-h -help --help`).
+  public var helpMessage: String {
     do {
       let binding = ArgumentBinding()
       _ = try binding.run()

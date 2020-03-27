@@ -26,7 +26,7 @@ let package = Package(
 
     // String -> Tokens
     .target(name: "Lexer", dependencies: ["Core"]),
-    .testTarget(name: "LexerTests", dependencies: ["Core", "Lexer"]),
+    .testTarget(name: "LexerTests", dependencies: ["Lexer"]),
 
     // Tokens -> AST
     .target(name: "Parser", dependencies: ["Lexer", "Rapunzel"]),
@@ -41,11 +41,11 @@ let package = Package(
     .testTarget(name: "BytecodeTests", dependencies: ["Bytecode"]),
 
     // Python objects
-    .target(name: "Objects", dependencies: ["Bytecode"]),
+    .target(name: "Objects", dependencies: ["Compiler", "ArgumentParser"]),
     .testTarget(name: "ObjectsTests", dependencies: ["Objects"]),
 
     // Python runtime + bytecode interpretation
-    .target(name: "VM", dependencies: ["Compiler", "Objects", "ArgumentParser"]),
+    .target(name: "VM", dependencies: ["Objects"]),
     .testTarget(name: "VMTests", dependencies: ["VM"]),
 
     // Main executable

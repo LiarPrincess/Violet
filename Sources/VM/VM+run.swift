@@ -15,7 +15,7 @@ extension VM {
   /// but it is not like we can stop you.
   public func run() throws {
     if self.arguments.help {
-      print(self.arguments.usage)
+      print(self.arguments.helpMessage)
       return
     }
 
