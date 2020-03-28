@@ -106,16 +106,9 @@ internal struct FileDescriptorAdapter:
   private func osError(from error: Error) -> PyBaseException {
     if let descriptorError = error as? FileDescriptor.Error {
       let errno = descriptorError.errno
-
-      if let e = Py.newOSError(errno: errno) {
-        return e
-      }
-
-      let msg = "unknown IO error (errno: \(errno))"
-      return Py.newOSError(msg: msg)
+      return Py.newOSError(errno: errno)
     }
 
-    let msg = "unknown IO error"
-    return Py.newOSError(msg: msg)
+    return Py.newOSError(msg: "unknown IO error")
   }
 }

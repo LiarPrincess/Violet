@@ -5,7 +5,7 @@ import Objects
 public final class VM: PyDelegate {
 
   internal var frames = [PyFrame]()
-  internal let fileSystem = FileSystem(manager: FileManager.default)
+  internal let fileSystem = FileSystemImpl(manager: FileManager.default)
   internal let configuration: CoreConfiguration
 
   internal var arguments: Arguments {
@@ -33,7 +33,11 @@ public final class VM: PyDelegate {
       standardError: FileDescriptorAdapter(for: .standardError)
     )
 
-    Py.initialize(config: config, delegate: self)
+    Py.initialize(
+      config: config,
+      delegate: self,
+      fileSystem: self.fileSystem
+    )
   }
 
   deinit {
@@ -55,7 +59,11 @@ public final class VM: PyDelegate {
     return self.fileSystem.open(path: path, mode: mode)
   }
 
-  public func stat(path: String) -> PyResult<FileStat> {
+  public func stat(fd: Int32) -> FileStatResult {
+    return self.fileSystem.stat(fd: fd)
+  }
+
+  public func stat(path: String) -> FileStatResult {
     return self.fileSystem.stat(path: path)
   }
 
@@ -68,11 +76,16 @@ public final class VM: PyDelegate {
   ) throws -> String {
     let encoding = String.Encoding.utf8
 
-    if let data = self.fileSystem.read(path: url.path),
-       let result = String(data: data, encoding: encoding) {
-      return result
+    switch self.fileSystem.read(path: url.path) {
+    case let .value(data):
+      if let result = String(data: data, encoding: encoding) {
+        return result
+      }
+    case .error:
+      break
     }
 
-    throw onError(url, encoding)
+    // TODO: Move VM to PyResult, from exceptions.
+    fatalError()
   }
 }

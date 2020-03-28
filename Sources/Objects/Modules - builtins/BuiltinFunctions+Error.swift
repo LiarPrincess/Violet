@@ -6,24 +6,32 @@ import Foundation
 // Python -> errors.c
 // https://docs.python.org/3.7/library/exceptions.html
 
+// swiftlint:disable file_length
+
 extension BuiltinFunctions {
 
-  // MARK: - New
+  // MARK: - Type error
 
   /// Inappropriate argument type.
   public func newTypeError(msg: String) -> PyTypeError {
     return PyTypeError(msg: msg)
   }
 
+  // MARK: - Value error
+
   /// Inappropriate argument value (of correct type).
   public func newValueError(msg: String) -> PyValueError {
     return PyValueError(msg: msg)
   }
 
+  // MARK: - Index error
+
   /// Sequence index out of range.
   public func newIndexError(msg: String) -> PyIndexError {
     return PyIndexError(msg: msg)
   }
+
+  // MARK: - Attribute error
 
   /// Attribute not found.
   public func newAttributeError(msg: String) -> PyAttributeError {
@@ -48,6 +56,8 @@ extension BuiltinFunctions {
     return self.newAttributeError(msg: msg)
   }
 
+  // MARK: - Numeric errors
+
   /// Second argument to a division or modulo operation was zero.
   public func newZeroDivisionError(msg: String) -> PyZeroDivisionError {
     return PyZeroDivisionError(msg: msg)
@@ -58,35 +68,73 @@ extension BuiltinFunctions {
     return PyOverflowError(msg: msg)
   }
 
+  // MARK: - System error
+
   /// Internal error in the Python interpreter.
   public func newSystemError(msg: String) -> PySystemError {
     return PySystemError(msg: msg)
   }
-
-  /// Name not found globally.
-  public func newNameError(msg: String) -> PyNameError {
-    return PyNameError(msg: msg)
-  }
+  // MARK: - Runtime error
 
   /// Unspecified run-time error.
   public func newRuntimeError(msg: String) -> PyRuntimeError {
     return PyRuntimeError(msg: msg)
   }
 
-  /// Base class for warnings about deprecated features.
-  public func newDeprecationWarning(msg: String) -> PyDeprecationWarning {
-    return PyDeprecationWarning(msg: msg)
-  }
-
-  /// Base class for lookup errors.
-  public func newLookupError(msg: String) -> PyLookupError {
-    return PyLookupError(msg: msg)
-  }
+  // MARK: - OS error
 
   /// Base class for I/O related errors.
+  ///
+  /// https://docs.python.org/3/library/exceptions.html#OSError
   public func newOSError(msg: String) -> PyOSError {
     return PyOSError(msg: msg)
   }
+
+  public func newOSError(errno: Int32) -> PyOSError {
+    let args = self.createOSErrorArgs(errno: errno, filename: nil)
+    let tuple = Py.newTuple(args)
+    return PyOSError(args: tuple)
+  }
+
+  /// Base class for I/O related errors.
+  public func newOSError(errno: Int32, filename: String) -> PyOSError {
+    let args = self.createOSErrorArgs(errno: errno, filename: filename)
+    let tuple = Py.newTuple(args)
+    return PyOSError(args: tuple)
+  }
+
+  /// Base class for I/O related errors.
+  public func newOSError(errno: Int32, path: String) -> PyOSError {
+    // If we can't get filename then we will use full path.
+    // It is still better than not providing anything.
+    let filename = self.getFilename(path: path) ?? path
+    return self.newOSError(errno: errno, filename: filename)
+  }
+
+  /// https://docs.python.org/3/library/exceptions.html#OSError
+  private func createOSErrorArgs(errno: Int32, filename: String?) -> [PyObject] {
+    var result = [PyObject]()
+    result.append(Py.newInt(errno))
+
+    let str = String(errno: errno) ?? "unknown OS error (errno: \(errno))"
+    result.append(Py.newString(str))
+
+    if let filename = filename {
+      result.append(Py.newString(filename))
+    }
+
+    return result
+  }
+
+  /// If this string represents file path then try to obtain
+  /// name of the file/directory.
+  private func getFilename(path: String) -> String? {
+    let url = URL(fileURLWithPath: path)
+    let filename = url.lastPathComponent
+    return filename.isEmpty ? nil : filename
+  }
+
+  // MARK: - Key error
 
   /// Mapping key not found.
   public func newKeyError(msg: String) -> PyKeyError {
@@ -99,10 +147,26 @@ extension BuiltinFunctions {
     return PyKeyError(args: args)
   }
 
+  // MARK: - Lookup error
+
+  /// Base class for lookup errors.
+  public func newLookupError(msg: String) -> PyLookupError {
+    return PyLookupError(msg: msg)
+  }
+
+  // MARK: - Stop iteration
+
   /// Signal the end from iterator.__next__().
   public func newStopIteration(value: PyObject? = nil) -> PyStopIteration {
     let args = self.newTuple(value ?? Py.none)
     return PyStopIteration(args: args)
+  }
+
+  // MARK: - Name errors
+
+  /// Name not found globally.
+  public func newNameError(msg: String) -> PyNameError {
+    return PyNameError(msg: msg)
   }
 
   /// Local name referenced but not bound to a value.
@@ -110,6 +174,8 @@ extension BuiltinFunctions {
     let msg = "local variable '\(variableName)' referenced before assignment"
     return PyUnboundLocalError(msg: msg)
   }
+
+  // MARK: - Unicode encoding
 
   /// Unicode decoding error.
   public func newUnicodeDecodeError(encoding: PyStringEncoding,
@@ -125,15 +191,21 @@ extension BuiltinFunctions {
     return PyUnicodeEncodeError(msg: msg)
   }
 
+  // MARK: - Assertion error
+
   /// Assertion failed.
   public func newAssertionError(msg: String) -> PyAssertionError {
     return PyAssertionError(msg: msg)
   }
 
+  // MARK: - Import error
+
   /// Import failed.
   public func newPyImportError(msg: String) -> PyImportError {
     return PyImportError(msg: msg)
   }
+
+  // MARK: - Syntax error
 
   public func newSyntaxError(filename: String,
                              location: SourceLocation,
@@ -164,6 +236,8 @@ extension BuiltinFunctions {
 
     return e
   }
+
+  // MARK: - Factory from type
 
   /// static PyObject*
   /// _PyErr_CreateException(PyObject *exception, PyObject *value)
@@ -205,7 +279,7 @@ extension BuiltinFunctions {
   }
 }
 
-// MARK: - Warn
+// MARK: - Warnings
 
 public enum WarningType {
   case `import`
@@ -213,6 +287,11 @@ public enum WarningType {
 }
 
 extension BuiltinFunctions {
+
+  /// Base class for warnings about deprecated features.
+  public func newDeprecationWarning(msg: String) -> PyDeprecationWarning {
+    return PyDeprecationWarning(msg: msg)
+  }
 
   public func warn(type: WarningType, msg: String) -> PyBaseException? {
     // TODO: Finish warnings

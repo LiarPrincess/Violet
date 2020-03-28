@@ -276,17 +276,17 @@ extension BuiltinFunctions {
 
     switch source {
     case let .fileDescriptor(fd):
-      return Py.delegate.open(fd: fd, mode: mode)
+      return Py.fileSystem.open(fd: fd, mode: mode)
 
     case let .string(path):
-      return Py.delegate.open(path: path, mode: mode)
+      return Py.fileSystem.open(path: path, mode: mode)
 
     case let .bytes(bytes):
       guard let path = self.toString(bytes: bytes) else {
         return .valueError("bytes cannot interpreted as path")
       }
 
-      return Py.delegate.open(path: path, mode: mode)
+      return Py.fileSystem.open(path: path, mode: mode)
     }
   }
 

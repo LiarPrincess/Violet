@@ -9,7 +9,7 @@ import Glibc
 private let _stat = Darwin.stat(_:_:)
 #endif
 
-internal struct FileSystem {
+internal class FileSystemImpl: PyFileSystem {
 
   private let fileManager: FileManager
 
@@ -31,6 +31,7 @@ internal struct FileSystem {
     return self.exists(path: path, isDirectory: &isDir)
   }
 
+  /// Check if the file at given path exists.
   internal func exists(path: String, isDirectory: inout Bool) -> Bool {
     var isDirResult: ObjCBool = false
     let existsResult = self.fileManager.fileExists(atPath: path,
@@ -38,13 +39,6 @@ internal struct FileSystem {
 
     isDirectory = isDirResult.boolValue
     return existsResult
-  }
-
-  // MARK: - Read
-
-  /// Read the whole file at specified `path`.
-  internal func read(path: String) -> Data? {
-    return self.fileManager.contents(atPath: path)
   }
 
   // MARK: - Open
@@ -81,53 +75,55 @@ internal struct FileSystem {
 
   // MARK: - Stat
 
-  /// static PyObject *
-  /// os_stat_impl(PyObject *module, path_t *path, int dir_fd, int follow_symlinks)
-  internal func stat(path: String) -> PyResult<FileStat> {
-    do {
-      let res = try self.withFileSystemRepresentation(path: path, self.stat(fsRep:))
-      return .value(res)
-    } catch let StatError.errno(errno) {
-      if let e = Py.newOSError(errno: errno) {
-        return .error(e)
+  internal func stat(fd: Int32) -> FileStatResult {
+    var info = Foundation.stat()
+    guard fstat(fd, &info) == 0 else {
+      return self.handleStatError(path: nil)
+    }
+
+    let result = self.createStat(from: info)
+    return .value(result)
+  }
+
+  internal func stat(path: String) -> FileStatResult {
+    return self.withFileSystemRepresentation(path: path) { fsRep in
+      var info = Foundation.stat()
+      guard _stat(fsRep, &info) == 0 else {
+        return self.handleStatError(path: path)
       }
 
-      let msg = "unknown stat error (errno: \(errno))"
-      return .error(Py.newOSError(msg: msg))
-    } catch {
-      let msg = "unknown stat error"
-      return .error(Py.newOSError(msg: msg))
+      let result = self.createStat(from: info)
+      return .value(result)
     }
   }
 
-  private enum StatError: Error {
-    case errno(Int32)
+  private func createStat(from stat: stat) -> FileStat {
+    return FileStat(
+      st_mode: stat.st_mode,
+      st_mtime: stat.st_mtimespec
+    )
   }
 
-  private func stat(fsRep: UnsafePointer<Int8>) throws -> FileStat {
-    // By default we will follow symlinks.
-
-    var info = Foundation.stat()
-    guard _stat(fsRep, &info) == 0 else {
-      throw StatError.errno(errno)
+  private func handleStatError(path: String?) -> FileStatResult {
+    if errno == ENOENT {
+      return .enoent
     }
 
-    let st_mode = info.st_mode
+    if let p = path {
+      return .error(Py.newOSError(errno: errno, path: p))
+    }
 
-    let time = info.st_mtimespec
-    let sec = time.tv_sec
-    let nsec = time.tv_nsec
-    let st_mtime = Double(sec) + 1e-9 * Double(nsec)
-
-    return FileStat(st_mode: st_mode, st_mtime: st_mtime)
+    return .error(Py.newOSError(errno: errno))
   }
+
+  // MARK: - Helpers
 
   private func withFileSystemRepresentation<ResultType>(
     path: String,
-    _ body: (UnsafePointer<Int8>) throws -> ResultType
-  ) rethrows -> ResultType {
+    _ body: (UnsafePointer<Int8>) -> ResultType
+  ) -> ResultType {
     let fsRep = self.fileManager.fileSystemRepresentation(withPath: path)
     defer { fsRep.deallocate() }
-    return try body(fsRep)
+    return body(fsRep)
   }
 }

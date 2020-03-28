@@ -1,3 +1,5 @@
+import Foundation
+
 // MARK: - Array
 
 extension Array {
@@ -172,6 +174,15 @@ private func takeExisting<Value>(_ existing: Value, _ new: Value) -> Value {
 // MARK: - String
 
 extension String {
+
+  /// Use `strerror` to describe given error.
+  public init?(errno: Int32) {
+    guard let cStr = strerror(errno) else {
+      return nil
+    }
+
+    self = String(cString: cStr)
+  }
 
   /// Create String instance from given scalars.
   /// It can produce broken strings such as '\u{0301}' (COMBINING ACUTE ACCENT).

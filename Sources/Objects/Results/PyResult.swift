@@ -109,10 +109,6 @@ extension PyResult {
     return PyResult.error(Py.newUnboundLocalError(variableName: variableName))
   }
 
-  public static func deprecationWarning(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newDeprecationWarning(msg: msg))
-  }
-
   public static func lookupError(_ msg: String) -> PyResult<Wrapped> {
     return PyResult.error(Py.newLookupError(msg: msg))
   }

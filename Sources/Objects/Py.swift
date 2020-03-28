@@ -101,6 +101,13 @@ public class PyInstance: BuiltinFunctions {
     self.trapUninitialized()
   }
 
+  private weak var _fileSystem: PyFileSystem?
+  public var fileSystem: PyFileSystem {
+    if let c = self._fileSystem { return c }
+    if self.isInitialized { trap("Py.fileSystem was deallocated!") }
+    self.trapUninitialized()
+  }
+
   // MARK: - Init/deinit
 
   fileprivate init() { }
@@ -139,11 +146,16 @@ public class PyInstance: BuiltinFunctions {
   /// Configure `Py` instance.
   ///
   /// This function **has** to be called before any other call!
-  public func initialize(config: PyConfig, delegate: PyDelegate) {
+  public func initialize(
+    config: PyConfig,
+    delegate: PyDelegate,
+    fileSystem: PyFileSystem
+  ) {
     precondition(!self.isInitialized, "Py was already initialized.")
 
     self._config = config
     self._delegate = delegate
+    self._fileSystem = fileSystem
 
     // At this point everything should be initialized,
     // which means that from now on we are able to create PyObjects.

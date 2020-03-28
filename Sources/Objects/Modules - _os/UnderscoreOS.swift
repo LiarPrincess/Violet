@@ -19,7 +19,7 @@ public final class UnderscoreOS {
   /// static PyObject *
   /// posix_getcwd(int use_bytes)
   public func getCwd() -> PyString {
-    let value = Py.delegate.currentWorkingDirectory
+    let value = Py.fileSystem.currentWorkingDirectory
 
     // 'cwd' tend not to change during the program runtime, so we can cache it.
     return Py.getInterned(value)
@@ -40,25 +40,7 @@ public final class UnderscoreOS {
   /// PyObject *
   /// PyOS_FSPath(PyObject *path)
   public func getFSPath(path: PyObject) -> PyResult<PyString> {
-    return self.parsePath(path: path)
-  }
-
-  private func parsePath(path: PyObject) -> PyResult<PyString> {
-    if let str = path as? PyString {
-       return .value(str)
-     }
-
-     if let bytes = path as? PyBytesType {
-       if let str = bytes.data.string {
-         let result = Py.newString(str)
-         return .value(result)
-       }
-
-       return .valueError("cannot decode byte path as string")
-     }
-
-     let msg = "expected str or bytes object, not \(path.typeName)"
-     return .typeError(msg)
+    return self.parsePath(object: path)
   }
 
   // MARK: - Stat
@@ -69,21 +51,40 @@ public final class UnderscoreOS {
   ///
   /// static int
   /// _io_FileIO___init___impl(fileio *self, PyObject *nameobj, ... )
-  public func getStat(path pathArg: PyObject) -> PyResult<PyObject> {
-    let path: PyString
-    switch self.parsePath(path: pathArg) {
-    case let .value(p): path = p
-    case let .error(e): return .error(e)
-    }
+  public func getStat(path: PyObject) -> PyResult<PyObject> {
+    switch self.parsePathOrDescriptor(object: path) {
+    case let .descriptor(fd):
+      let stat = Py.fileSystem.stat(fd: fd)
+      return self.createStat(from: stat)
 
-    let stat: FileStat
-    switch Py.delegate.stat(path: path.value) {
-    case let .value(s): stat = s
-    case let .error(e): return .error(e)
-    }
+    case let .path(path):
+      let stat = Py.fileSystem.stat(path: path)
+      return self.createStat(from: stat, path: path)
 
-    let result = self.createStat(from: stat)
-    return result.map { $0 as PyObject }
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func createStat(from stat: FileStatResult,
+                          path: String? = nil) -> PyResult<PyObject> {
+    switch stat {
+    case .value(let stat):
+      let result = self.createStat(from: stat)
+      return result.map { $0 as PyObject }
+
+    case .enoent:
+      let errno = ENOENT
+
+      if let p = path {
+        return .error(Py.newOSError(errno: errno, path: p))
+      }
+
+      return .error(Py.newOSError(errno: errno))
+
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   private func createStat(from stat: FileStat) -> PyResult<PyNamespace> {
@@ -95,13 +96,72 @@ public final class UnderscoreOS {
     case .error(let e): return .error(e)
     }
 
+    // Store mtime as 'seconds[.]nanoseconds'
+    let mtime = stat.st_mtimespec
+    let mtimeValue = Double(mtime.tv_sec) + 1e-9 * Double(mtime.tv_nsec)
     let mtimeKey = Py.getInterned("st_mtime")
-    switch dict.set(key: mtimeKey, to: Py.newFloat(stat.st_mtime)) {
+
+    switch dict.set(key: mtimeKey, to: Py.newFloat(mtimeValue)) {
     case .ok: break
     case .error(let e): return .error(e)
     }
 
     let result = Py.newNamespace(dict: dict)
     return .value(result)
+  }
+
+  // MARK: - Helpers
+
+  private func parsePath(object: PyObject) -> PyResult<PyString> {
+    if let str = object as? PyString {
+      return .value(str)
+    }
+
+    if let bytes = object as? PyBytesType {
+      if let str = bytes.data.string {
+        let result = Py.newString(str)
+        return .value(result)
+      }
+
+      return .valueError("cannot decode byte path as string")
+    }
+
+    let msg = "path should be string or bytes, not \(object.typeName)"
+    return .typeError(msg)
+  }
+
+  private enum ParsePathOrDescriptorResult {
+    case descriptor(Int32)
+    case path(String)
+    case error(PyBaseException)
+  }
+
+  private func parsePathOrDescriptor(
+    object: PyObject
+  ) -> ParsePathOrDescriptorResult {
+    if let pyInt = object as? PyInt {
+      if let fd = Int32(exactly: pyInt.value) {
+        return .descriptor(fd)
+      }
+
+      let msg = "fd is greater than maximum"
+      return .error(Py.newOverflowError(msg: msg))
+    }
+
+    if let str = object as? PyString {
+      return .path(str.value)
+    }
+
+    if let bytes = object as? PyBytesType {
+      if let str = bytes.data.string {
+        return .path(str)
+      }
+
+      let msg = "cannot decode byte path as string"
+      return .error(Py.newValueError(msg: msg))
+    }
+
+    let msg = "path should be string, bytes or integer, not \(object.typeName)"
+    return .error(Py.newTypeError(msg: msg))
   }
 }

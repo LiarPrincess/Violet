@@ -96,13 +96,13 @@ extension VM {
       onError: VMError.importlibExternalInstallError
     )
 
-    try self.registerImportlib(importlib: importlib, external: module)
+    try self.addExternalToImportlib(importlib: importlib, external: module)
     return module
   }
 
   /// Add `importlib_external` as `_bootstrap_external` in `importlib`.
-  private func registerImportlib(importlib: PyModule,
-                                 external: PyModule) throws {
+  private func addExternalToImportlib(importlib: PyModule,
+                                      external: PyModule) throws {
     let dict = importlib.getDict()
     let name = Py.newString("_bootstrap_external")
 
@@ -156,7 +156,7 @@ extension VM {
       let urlPath = URL(fileURLWithPath: path)
         .appendingPathComponent(filename)
 
-      if self.fileManager.fileExists(atPath: urlPath.path) {
+      if self.fileSystem.exists(path: urlPath.path) {
         return urlPath
       }
 
@@ -165,7 +165,7 @@ extension VM {
         .appendingPathComponent("Lib")
         .appendingPathComponent(filename)
 
-      if self.fileManager.fileExists(atPath: urlLibPath.path) {
+      if self.fileSystem.exists(path: urlLibPath.path) {
         return urlLibPath
       }
 

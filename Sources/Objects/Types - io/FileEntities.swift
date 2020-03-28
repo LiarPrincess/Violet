@@ -1,5 +1,21 @@
 import Foundation
 
+// MARK: - Stat
+
+/// Basically a `stat`, but with only the stuff we need.
+public struct FileStat {
+
+  /// Permissions.
+  let st_mode: mode_t
+  /// Modification time.
+  let st_mtimespec: timespec
+
+  public init(st_mode: mode_t, st_mtime: timespec) {
+    self.st_mode = st_mode
+    self.st_mtimespec = st_mtime
+  }
+}
+
 // MARK: - File source
 
 /// Where to find file?
@@ -30,7 +46,7 @@ internal enum FileSource {
   }
 }
 
-// MARK: - File mode, type
+// MARK: - File mode
 
 /// What are we going to do with file?
 public enum FileMode: CustomStringConvertible {
@@ -68,6 +84,8 @@ public enum FileMode: CustomStringConvertible {
   }
 }
 
+// MARK: - File type
+
 /// Binary or text.
 public enum FileType {
   /// `b` - binary mode
@@ -77,6 +95,8 @@ public enum FileType {
 
   internal static let `default` = FileType.text
 }
+
+// MARK: - File mode/type parser
 
 /// Parser for `xrwa+tb` string (2nd argument of `open`).
 internal struct FileModeParser {
@@ -120,7 +140,9 @@ internal struct FileModeParser {
       case "+": if let e = result.setMode(.update) { return .error(e) }
       case "t": if let e = result.setType(.text) { return .error(e) }
       case "b": if let e = result.setType(.binary) { return .error(e) }
-      case "U": return .deprecationWarning("'U' mode is deprecated")
+      case "U":
+        // TODO: Deprecation warning: "'U' mode is deprecated"
+        break
       default: return .valueError("invalid mode: '\(string)'")
       }
     }
