@@ -153,6 +153,9 @@ public struct IdString {
   public static let __slotnames__ = Self.impl.__slotnames__
   public static let __slots__ = Self.impl.__slots__
   public static let __spec__ = Self.impl.__spec__
+  public static let __stderr__ = Self.impl.__stderr__
+  public static let __stdin__ = Self.impl.__stdin__
+  public static let __stdout__ = Self.impl.__stdout__
   public static let __str__ = Self.impl.__str__
   public static let __sub__ = Self.impl.__sub__
   public static let __subclasscheck__ = Self.impl.__subclasscheck__
@@ -335,6 +338,9 @@ private struct IdStringImpl {
   fileprivate let __slotnames__ = IdString(value: "__slotnames__")
   fileprivate let __slots__ = IdString(value: "__slots__")
   fileprivate let __spec__ = IdString(value: "__spec__")
+  fileprivate let __stderr__ = IdString(value: "__stderr__")
+  fileprivate let __stdin__ = IdString(value: "__stdin__")
+  fileprivate let __stdout__ = IdString(value: "__stdout__")
   fileprivate let __str__ = IdString(value: "__str__")
   fileprivate let __sub__ = IdString(value: "__sub__")
   fileprivate let __subclasscheck__ = IdString(value: "__subclasscheck__")

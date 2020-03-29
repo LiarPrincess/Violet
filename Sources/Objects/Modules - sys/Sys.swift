@@ -83,49 +83,11 @@ public final class Sys {
   /// This dict will be used inside our `PyModule` instance.
   internal private(set) lazy var __dict__ = Py.newDict()
 
-  // MARK: - Modules
+  // MARK: - Properties
 
   public internal(set) var builtinModuleNames = [String]()
 
-  // MARK: - Hash
-
-  public lazy var hashInfo = HashInfo()
-
-  // MARK: - Streams
-
-  // sourcery: pyproperty = __stdin__
-  /// sys.__stdin__
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  public lazy var __stdin__ = self.createStdio(name: "<stdin>",
-                                               fd: Py.config.standardInput,
-                                               mode: .read)
-
-  // sourcery: pyproperty = __stdout__
-  /// sys.__stdout__
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  public lazy var __stdout__ = self.createStdio(name: "<stdout>",
-                                                fd: Py.config.standardOutput,
-                                                mode: .write)
-
-  // sourcery: pyproperty = __stderr__
-  /// sys.__stderr__
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  public lazy var __stderr__ = self.createStdio(name: "<stderr>",
-                                                fd: Py.config.standardError,
-                                                mode: .write)
-
-  /// static PyObject*
-  /// create_stdio(PyObject* io,
-  private func createStdio(name: String,
-                           fd: FileDescriptorType,
-                           mode: FileMode) -> PyTextFile {
-    return PyTextFile(name: name,
-                      fd: fd,
-                      mode: mode,
-                      encoding: Unimplemented.stdioEncoding,
-                      errors: Unimplemented.stdioErrors,
-                      closeOnDealloc: false)
-  }
+  public private(set) lazy var hashInfo = HashInfo()
 
   // MARK: - Get/set
 
