@@ -143,6 +143,7 @@ ids = [
   'foo',
   'get',
   'getattr',
+  'implementation',
   'intersection_update',
   'items',
   'keys',
@@ -178,6 +179,7 @@ ids = [
   'update',
   'values',
   'varname',
+  'version_info',
   'write'
 ]
 

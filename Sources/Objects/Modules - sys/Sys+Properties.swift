@@ -212,41 +212,6 @@ extension Sys {
     return Py.getInterned(self.copyright)
   }
 
-  // MARK: - Version
-
-  public var version: String {
-    let p = self.versionInfo
-    let v = self.implementationInfo.version
-    return "Python \(p.major).\(p.minor).\(p.micro) " +
-           "(Violet \(v.major).\(v.minor).\(v.micro))"
-  }
-
-  // sourcery: pyproperty = version
-  /// sys.version
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.version).
-  internal var versionObject: PyString {
-    return Py.getInterned(self.version)
-  }
-
-  // sourcery: pyproperty = version_info
-  /// sys.version_info
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.version_info).
-  ///
-  /// A tuple containing the five components of the version number:
-  /// major, minor, micro, releaselevel, and serial.
-  /// All values except releaselevel are integers;
-  /// the release level is 'alpha', 'beta', 'candidate', or 'final'.
-  internal var versionInfoObject: PyObject {
-    return self.versionInfo.object
-  }
-
-  // sourcery: pyproperty = implementation
-  /// sys.implementation
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.implementation).
-  internal var implementationObject: PyObject {
-    return self.implementationInfo.object
-  }
-
   // MARK: - Hash
 
   // sourcery: pyproperty = hash_info

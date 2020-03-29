@@ -200,19 +200,19 @@ internal enum ModuleFactory {
     insert(module: module, name: "prefix", value: object.prefix)
     insert(module: module, name: "builtin_module_names", value: object.builtinModuleNamesObject)
     insert(module: module, name: "modules", value: object.modules)
-    insert(module: module, name: "ps1", value: object.ps1Object)
-    insert(module: module, name: "ps2", value: object.ps2Object)
     insert(module: module, name: "stdin", value: object.stdin)
     insert(module: module, name: "stdout", value: object.stdout)
     insert(module: module, name: "stderr", value: object.stderr)
+    insert(module: module, name: "ps1", value: object.ps1Object)
+    insert(module: module, name: "ps2", value: object.ps2Object)
     insert(module: module, name: "argv", value: object.argv)
     insert(module: module, name: "executable", value: object.executable)
     insert(module: module, name: "platform", value: object.platformObject)
     insert(module: module, name: "copyright", value: object.copyrightObject)
+    insert(module: module, name: "hash_info", value: object.hashInfoObject)
     insert(module: module, name: "version", value: object.versionObject)
     insert(module: module, name: "version_info", value: object.versionInfoObject)
     insert(module: module, name: "implementation", value: object.implementationObject)
-    insert(module: module, name: "hash_info", value: object.hashInfoObject)
 
 
 

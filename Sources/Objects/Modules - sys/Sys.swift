@@ -87,28 +87,6 @@ public final class Sys {
 
   public internal(set) var builtinModuleNames = [String]()
 
-  // MARK: - Version
-
-  /// `sys.version_info`
-  ///
-  /// ```
-  /// >>> sys.version_info
-  /// sys.version_info(major=3, minor=7, micro=2, releaselevel='final', serial=0)
-  /// ```
-  public lazy var versionInfo = Configure.version
-
-  public lazy var implementationInfo = ImplementationInfo(
-    name: "violet",
-    version: VersionInfo(
-      major: 0,
-      minor: 3,
-      micro: 0,
-      releaseLevel: .beta,
-      serial: 0
-    ),
-    cacheTag: nil
-  )
-
   // MARK: - Hash
 
   public lazy var hashInfo = HashInfo()

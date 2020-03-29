@@ -1,6 +1,6 @@
 import Core
 
-/// Internal helper for `version_info`.
+/// Internal helper for `sys.version_info`.
 ///
 /// A tuple containing the five components of the version number:
 /// `major`, `minor`, `micro`, `releaselevel`, and `serial`.
@@ -18,7 +18,7 @@ import Core
 /// >>> sys.version_info
 /// sys.version_info(major=3, minor=7, micro=2, releaselevel='final', serial=0)
 /// ```
-public final class VersionInfo {
+public struct VersionInfo {
 
   public enum ReleaseLevel: CustomStringConvertible {
     case alpha
@@ -51,30 +51,7 @@ public final class VersionInfo {
   public let releaseLevel: ReleaseLevel
   public let serial: UInt8
 
-  public lazy var object: PyNamespace = {
-    let dict = PyDict()
-
-    func set(name: String, value: PyObject) {
-      let interned = Py.getInterned(name)
-      switch dict.set(key: interned, to: value) {
-      case .ok:
-        break
-      case .error(let e):
-        trap("Error when creating 'version_info' namespace: \(e)")
-      }
-    }
-
-    set(name: "major", value: Py.newInt(self.major))
-    set(name: "minor", value: Py.newInt(self.minor))
-    set(name: "micro", value: Py.newInt(self.micro))
-    set(name: "releaseLevel", value: Py.newString(self.releaseLevel.description))
-    set(name: "serial", value: Py.newInt(self.serial))
-    return Py.newNamespace(dict: dict)
-  }()
-
   public let hexVersion: UInt32
-
-  public lazy var hexVersionObject = Py.newInt(self.hexVersion)
 
   public init(major: UInt8,
               minor: UInt8,

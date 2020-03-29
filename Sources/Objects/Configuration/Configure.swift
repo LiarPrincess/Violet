@@ -21,16 +21,23 @@ internal enum Configure {
     return Configure.prefix
   }
 
-  // Do not make it stored property!
-  // It contains Python object responsible for 'sys.version'.
-  // We don't want to leak memory!
-  internal static var version: VersionInfo {
-    return VersionInfo(
-      major: 3,
-      minor: 7,
-      micro: 2,
-      releaseLevel: .final,
+  internal static var versionInfo = VersionInfo(
+    major: 3,
+    minor: 7,
+    micro: 2,
+    releaseLevel: .final,
+    serial: 0
+  )
+
+  internal static var implementationInfo = ImplementationInfo(
+    name: "Violet",
+    version: VersionInfo(
+      major: 0,
+      minor: 0,
+      micro: 1,
+      releaseLevel: .beta,
       serial: 0
-    )
-  }
+    ),
+    cacheTag: nil
+  )
 }

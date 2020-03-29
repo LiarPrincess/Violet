@@ -177,6 +177,7 @@ public struct IdString {
   public static let foo = Self.impl.foo
   public static let get = Self.impl.get
   public static let getattr = Self.impl.getattr
+  public static let implementation = Self.impl.implementation
   public static let intersection_update = Self.impl.intersection_update
   public static let items = Self.impl.items
   public static let keys = Self.impl.keys
@@ -212,6 +213,7 @@ public struct IdString {
   public static let update = Self.impl.update
   public static let values = Self.impl.values
   public static let varname = Self.impl.varname
+  public static let version_info = Self.impl.version_info
   public static let write = Self.impl.write
 }
 private struct IdStringImpl {
@@ -357,6 +359,7 @@ private struct IdStringImpl {
   fileprivate let foo = IdString(value: "foo")
   fileprivate let get = IdString(value: "get")
   fileprivate let getattr = IdString(value: "getattr")
+  fileprivate let implementation = IdString(value: "implementation")
   fileprivate let intersection_update = IdString(value: "intersection_update")
   fileprivate let items = IdString(value: "items")
   fileprivate let keys = IdString(value: "keys")
@@ -392,5 +395,6 @@ private struct IdStringImpl {
   fileprivate let update = IdString(value: "update")
   fileprivate let values = IdString(value: "values")
   fileprivate let varname = IdString(value: "varname")
+  fileprivate let version_info = IdString(value: "version_info")
   fileprivate let write = IdString(value: "write")
 }
