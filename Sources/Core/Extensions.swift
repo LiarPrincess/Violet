@@ -40,6 +40,9 @@ extension BidirectionalCollection {
 
   /// Returns a Boolean value indicating whether the ending elements of the
   /// collection are the same as the elements in another collection.
+  ///
+  /// - Complexity: O(*n*), where *n* is the length of the shorter collection
+  /// from `self`, `suffix` pair.
   public func ends<Suffix>(with suffix: Suffix) -> Bool
     where Suffix: BidirectionalCollection,
           Suffix.Element == Element,
@@ -79,8 +82,8 @@ extension BidirectionalCollection {
       return false
     }
 
-    // If it is the suffix that was shorter then it is OK.
-    return suffixIndex == suffix.startIndex
+    let areEqualLengthOrSuffixIsShorter = suffixIndex == suffix.startIndex
+    return areEqualLengthOrSuffixIsShorter
   }
 
   /// Returns a subsequence by skipping elements (starting from last) while
@@ -122,6 +125,30 @@ extension BidirectionalCollection {
 
   private var emptySubSequence: SubSequence {
     return self[self.startIndex..<self.startIndex]
+  }
+}
+
+// MARK: - [Mutable/RangeReplaceable]Collection
+
+extension MutableCollection
+  where Self: RangeReplaceableCollection, Element: Hashable {
+  /// Remove elements, so that at the end all of our elements are unique.
+  /// Stable.
+  ///
+  /// - Complexity: O(*n*), where *n* is the length of the collection.
+  public mutating func removeDuplicates() {
+    // If you want to write this yourself then remember that 'self.partition'
+    // is not guaranteed to be stable (don't ask me how I know this...).
+    var alreadyProcessed = Set<Self.Element>()
+
+    self.removeAll { element in
+      if alreadyProcessed.contains(element) {
+        return true
+      }
+
+      alreadyProcessed.insert(element)
+      return false
+    }
   }
 }
 
@@ -185,6 +212,7 @@ extension String {
   }
 
   /// Create String instance from given scalars.
+  ///
   /// It can produce broken strings such as '\u{0301}' (COMBINING ACUTE ACCENT).
   /// Even if string does look correct it may not have sense, e.g. ' \u{0301}'.
   public init<Scalars: Collection>(_ scalars: Scalars)
@@ -233,6 +261,7 @@ public enum IsValidIdentifierResult {
 }
 
 extension Collection where Element == UnicodeScalar {
+
   public var isValidIdentifier: IsValidIdentifierResult {
     // Returning single scalar does not make sense (scalars don't have meaning).
     // We include its index, but not very precise.
