@@ -28,7 +28,7 @@ public protocol PyFileSystem: AnyObject {
   /// - relative path: reports/info.txt
   /// - resulting full path: /tmp/reports/info.txt
   ///
-  /// (Docs taken from `FileManager.currentDirectoryPath`.)
+  /// (Docs taken from `Foundation.FileManager.currentDirectoryPath`.)
   var currentWorkingDirectory: String { get }
 
   /// Open file with given `fd`.
@@ -44,6 +44,15 @@ public protocol PyFileSystem: AnyObject {
   ///
   /// Always chase the link.
   func stat(path: String) -> FileStatResult
+
+  /// Read the whole file.
+  ///
+  /// Default implementation available.
+  func read(fd: Int32) -> PyResult<Data>
+  /// Read the whole file.
+  ///
+  /// Default implementation available.
+  func read(path: String) -> PyResult<Data>
 }
 
 extension PyFileSystem {

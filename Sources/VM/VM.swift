@@ -28,6 +28,7 @@ public final class VM: PyDelegate {
     let config = PyConfig(
       arguments: arguments,
       environment: environment,
+      executablePath: self.configuration.executable,
       standardInput: FileDescriptorAdapter(for: .standardInput),
       standardOutput: FileDescriptorAdapter(for: .standardOutput),
       standardError: FileDescriptorAdapter(for: .standardError)

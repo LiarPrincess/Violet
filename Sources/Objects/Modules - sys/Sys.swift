@@ -95,13 +95,7 @@ public final class Sys {
   /// >>> sys.version_info
   /// sys.version_info(major=3, minor=7, micro=2, releaselevel='final', serial=0)
   /// ```
-  public lazy var versionInfo = VersionInfo(
-    major: 3,
-    minor: 7,
-    micro: 2,
-    releaseLevel: .final,
-    serial: 0
-  )
+  public lazy var versionInfo = Configure.version
 
   public lazy var implementationInfo = ImplementationInfo(
     name: "violet",

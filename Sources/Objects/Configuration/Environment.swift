@@ -9,12 +9,22 @@ import Compiler
 
 public struct Environment {
 
+  /// Separator for PATH environment variable.
+  /// CPython: `DELIM`
+  internal static var pathSeparator: Character {
+    #if os(Windows)
+    return ";"
+    #else
+    return ":"
+    #endif
+  }
+
   /// VIOLETHOME
   ///
   /// Change the location of the standard Python libraries.
   /// By default (when `violetHome` is empty), Violet will traverse from
   /// `currentWorkingDirectory` to file system root looking for `lib` directory.
-  public var violetHome = ""
+  public var violetHome: String?
 
   /// VIOLETPATH
   ///
@@ -26,7 +36,7 @@ public struct Environment {
   /// Non-existent directories are silently ignored.
   /// The search path can be manipulated from within a Python program
   /// as the variable `sys.path`.
-  public var violetPath = [String]()
+  public var violetPath = Configure.pythonPath
 
   /// PYTHONOPTIMIZE
   ///
@@ -73,20 +83,13 @@ public struct Environment {
   ///
   /// - Parameter pathSeparator: Separator used for `PATH`.
   ///   By default colon on Unix and semicolon on Windows.
-  public init(from environment: [String: String],
-              pathSeparator: Character? = nil) {
-    let pathSep = pathSeparator ?? defaultPathSeparator
-
+  public init(from environment: [String: String]) {
     for (key, value) in environment {
-      if value.isEmpty {
-        continue
-      }
-
       switch key {
       case "VIOLETHOME":
         self.violetHome = value
       case "VIOLETPATH":
-        self.violetPath = splitPath(value, pathSep: pathSep)
+        self.violetPath = splitPath(value)
       case "PYTHONOPTIMIZE":
         let isInt = asInt(value) != nil
         self.optimize = isInt ? .OO : .O
@@ -106,17 +109,9 @@ public struct Environment {
   }
 }
 
-private var defaultPathSeparator: Character {
-  #if os(Windows)
-  return ";"
-  #else
-  return ":"
-  #endif
-}
-
-private func splitPath(_ path: String, pathSep: Character) -> [String] {
+private func splitPath(_ path: String) -> [String] {
   return path
-    .split(separator: pathSep)
+    .split(separator: Environment.pathSeparator)
     .map { String($0) }
 }
 

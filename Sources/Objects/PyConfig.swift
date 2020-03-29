@@ -16,6 +16,12 @@ public struct PyConfig {
   /// where there is a conflict.
   public var environment: Environment
 
+  /// A string giving the absolute path of the executable binary for the Python
+  /// interpreter.
+  ///
+  /// Used for `sys.executable` and `sys.path`.
+  public var executablePath: String
+
   /// Default stream to read from.
   public var standardInput: FileDescriptorType
   /// Default stream to print to.
@@ -26,12 +32,14 @@ public struct PyConfig {
   public init(
     arguments: Arguments,
     environment: Environment,
+    executablePath: String,
     standardInput: FileDescriptorType,
     standardOutput: FileDescriptorType,
     standardError: FileDescriptorType
   ) {
     self.arguments = arguments
     self.environment = environment
+    self.executablePath = executablePath
     self.standardInput = standardInput
     self.standardOutput = standardOutput
     self.standardError = standardError

@@ -170,6 +170,8 @@ public struct IdString {
   public static let copy = Self.impl.copy
   public static let copyreg = Self.impl.copyreg
   public static let difference_update = Self.impl.difference_update
+  public static let exec_prefix = Self.impl.exec_prefix
+  public static let executable = Self.impl.executable
   public static let filename = Self.impl.filename
   public static let fileno = Self.impl.fileno
   public static let foo = Self.impl.foo
@@ -193,6 +195,7 @@ public struct IdString {
   public static let origin = Self.impl.origin
   public static let path_hooks = Self.impl.path_hooks
   public static let path = Self.impl.path
+  public static let prefix = Self.impl.prefix
   public static let ps1 = Self.impl.ps1
   public static let ps2 = Self.impl.ps2
   public static let Py_Repr = Self.impl.Py_Repr
@@ -347,6 +350,8 @@ private struct IdStringImpl {
   fileprivate let copy = IdString(value: "copy")
   fileprivate let copyreg = IdString(value: "copyreg")
   fileprivate let difference_update = IdString(value: "difference_update")
+  fileprivate let exec_prefix = IdString(value: "exec_prefix")
+  fileprivate let executable = IdString(value: "executable")
   fileprivate let filename = IdString(value: "filename")
   fileprivate let fileno = IdString(value: "fileno")
   fileprivate let foo = IdString(value: "foo")
@@ -370,6 +375,7 @@ private struct IdStringImpl {
   fileprivate let origin = IdString(value: "origin")
   fileprivate let path_hooks = IdString(value: "path_hooks")
   fileprivate let path = IdString(value: "path")
+  fileprivate let prefix = IdString(value: "prefix")
   fileprivate let ps1 = IdString(value: "ps1")
   fileprivate let ps2 = IdString(value: "ps2")
   fileprivate let Py_Repr = IdString(value: "Py_Repr")
