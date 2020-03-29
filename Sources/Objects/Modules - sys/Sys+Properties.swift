@@ -60,6 +60,66 @@ extension Sys {
     return result
   }
 
+  // MARK: - Flags
+
+  // sourcery: pyproperty = flags
+  /// sys.flags
+  /// See [this](https://docs.python.org/3/library/sys.html#sys.flags).
+  ///
+  /// The named tuple flags exposes the status of command line flags.
+  /// The attributes are read only.
+  internal var flagsObject: PyObject {
+    if let value = self.get(key: .flags) {
+      return value
+    }
+
+    return self.createFlagsObject()
+  }
+
+  private func createFlagsObject() -> PyNamespace {
+    let dict = PyDict()
+
+    func insertOrTrap(name: String, value: PyObject) {
+      let key = Py.newString(name)
+      switch dict.set(key: key, to: value) {
+      case .ok:
+        break
+      case .error(let e):
+        trap("Error when inserting '\(name)' to 'sys.flags': \(e)")
+      }
+    }
+
+    let ignoreEnvironment = Py.newBool(self.flags.ignoreEnvironment)
+
+    let optimize: PyInt = {
+      switch self.flags.optimize {
+      case .none: return Py.newInt(0)
+      case .O: return Py.newInt(1)
+      case .OO: return Py.newInt(2)
+      }
+    }()
+
+    let bytesWarning: PyInt = {
+      switch self.flags.bytesWarning {
+      case .ignore: return Py.newInt(0)
+      case .warning: return Py.newInt(1)
+      case .error: return Py.newInt(2)
+      }
+    }()
+
+    insertOrTrap(name: "debug", value: Py.newBool(self.flags.debug))
+    insertOrTrap(name: "inspect", value: Py.newBool(self.flags.inspect))
+    insertOrTrap(name: "interactive", value: Py.newBool(self.flags.interactive))
+    insertOrTrap(name: "optimize", value: optimize)
+    insertOrTrap(name: "ignore_environment", value: ignoreEnvironment)
+    insertOrTrap(name: "verbose", value: Py.newInt(self.flags.verbose))
+    insertOrTrap(name: "bytes_warning", value: bytesWarning)
+    insertOrTrap(name: "quiet", value: Py.newBool(self.flags.quiet))
+    insertOrTrap(name: "isolated", value: Py.newBool(self.flags.isolated))
+
+    return Py.newNamespace(dict: dict)
+  }
+
   // MARK: - Executable
 
   // sourcery: pyproperty = executable

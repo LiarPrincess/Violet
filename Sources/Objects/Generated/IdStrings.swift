@@ -177,6 +177,7 @@ public struct IdString {
   public static let executable = Self.impl.executable
   public static let filename = Self.impl.filename
   public static let fileno = Self.impl.fileno
+  public static let flags = Self.impl.flags
   public static let foo = Self.impl.foo
   public static let get = Self.impl.get
   public static let getattr = Self.impl.getattr
@@ -362,6 +363,7 @@ private struct IdStringImpl {
   fileprivate let executable = IdString(value: "executable")
   fileprivate let filename = IdString(value: "filename")
   fileprivate let fileno = IdString(value: "fileno")
+  fileprivate let flags = IdString(value: "flags")
   fileprivate let foo = IdString(value: "foo")
   fileprivate let get = IdString(value: "get")
   fileprivate let getattr = IdString(value: "getattr")

@@ -206,6 +206,7 @@ internal enum ModuleFactory {
     insert(module: module, name: "ps1", value: object.ps1Object)
     insert(module: module, name: "ps2", value: object.ps2Object)
     insert(module: module, name: "argv", value: object.argv)
+    insert(module: module, name: "flags", value: object.flagsObject)
     insert(module: module, name: "executable", value: object.executable)
     insert(module: module, name: "platform", value: object.platformObject)
     insert(module: module, name: "copyright", value: object.copyrightObject)

@@ -85,9 +85,10 @@ public final class Sys {
 
   // MARK: - Properties
 
-  public internal(set) var builtinModuleNames = [String]()
-
+  public private(set) lazy var flags = SysFlags()
   public private(set) lazy var hashInfo = HashInfo()
+
+  public internal(set) var builtinModuleNames = [String]()
 
   // MARK: - Get/set
 

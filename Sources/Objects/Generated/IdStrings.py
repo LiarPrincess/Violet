@@ -143,6 +143,7 @@ ids = [
   'executable',
   'filename',
   'fileno',
+  'flags',
   'foo',
   'get',
   'getattr',
