@@ -25,7 +25,7 @@ public enum PyStringEncoding: CustomStringConvertible {
 
   internal static let `default` = Unimplemented.locale.getpreferredencoding
 
-  internal var swift: String.Encoding {
+  public var swift: String.Encoding {
     switch self {
     case .ascii: return .ascii
     case .isoLatin1: return .isoLatin1

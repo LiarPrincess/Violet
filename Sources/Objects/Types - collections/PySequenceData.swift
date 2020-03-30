@@ -480,9 +480,14 @@ internal struct PySequenceData {
 
   // MARK: - Append
 
-  internal mutating func append(_ element: PyObject) -> PyResult<PyNone> {
+  internal mutating func append(_ element: PyObject) {
     self.elements.append(element)
-    return .value(Py.none)
+  }
+
+  // MARK: - Prepend
+
+  internal mutating func prepend(_ element: PyObject) {
+    self.elements.insert(element, at: 0)
   }
 
   // MARK: - Insert
@@ -495,19 +500,25 @@ internal struct PySequenceData {
     case let .error(e): return .error(e)
     }
 
-    if parsedIndex < 0 {
-      parsedIndex += self.elements.count
-      if parsedIndex < 0 {
-        parsedIndex = 0
+    self.insert(at: parsedIndex, item: item)
+    return .value(Py.none)
+  }
+
+  internal mutating func insert(at index: Int, item: PyObject) {
+    var index = index
+
+    if index < 0 {
+      index += self.elements.count
+      if index < 0 {
+        index = 0
       }
     }
 
-    if parsedIndex > self.elements.count {
-      parsedIndex = self.elements.count
+    if index > self.elements.count {
+      index = self.elements.count
     }
 
-    self.elements.insert(item, at: parsedIndex)
-    return .value(Py.none)
+    self.elements.insert(item, at: index)
   }
 
   // MARK: - Remove

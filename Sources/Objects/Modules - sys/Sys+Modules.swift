@@ -83,7 +83,7 @@ extension Sys {
   ///
   /// This is a dictionary that maps module names to modules
   /// which have already been loaded.
-  public var modules: PyObject {
+  internal var modules: PyObject {
     return self.get(key: .modules) ?? PyDict()
   }
 

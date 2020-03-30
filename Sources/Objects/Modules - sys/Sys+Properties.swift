@@ -36,6 +36,8 @@ extension Sys {
   /// pymain_init_core_argv(_PyMain *pymain, _PyCoreConfig *config, ...)
   /// And then modified using:
   /// https://docs.python.org/3.8/using/cmdline.html
+  ///
+  /// Please note that `VM` will also modify `argv` using `setArgv0`.
   private func createDefaultArgv() -> [String] {
     let arguments = Py.config.arguments
     let argumentsWithoutProgramName = arguments.raw.dropFirst()
@@ -47,17 +49,23 @@ extension Sys {
     }
 
     assert(result.any)
+    return result
+  }
 
-    if arguments.command != nil {
-      result[0] = "-c"
-    } else if let module = arguments.module {
-      // Technically we should put here the full path, but whatever...
-      result[0] = module
-    } else if let script = arguments.script {
-      result[0] = script
+  public func setArgv0(value: String) -> PyResult<PyNone> {
+    guard let list = self.argv as? PyList else {
+      let t = self.argv.typeName
+      let pikachu = "<surprised Pikachu face>"
+      return .typeError("expected 'sys.argv' to be a list not \(t) \(pikachu)")
     }
 
-    return result
+    let object = Py.newString(value)
+    if list.data.isEmpty {
+      list.data.append(object)
+      return .value(Py.none)
+    }
+
+    return list.data.setItem(at: 0, to: object)
   }
 
   // MARK: - Flags

@@ -8,6 +8,8 @@ public final class VM: PyDelegate {
   internal let fileSystem = FileSystemImpl(manager: FileManager.default)
   internal let configuration: CoreConfiguration
 
+  internal let defaultEncoding = PyStringEncoding.utf8
+
   internal var arguments: Arguments {
     return self.configuration.arguments
   }

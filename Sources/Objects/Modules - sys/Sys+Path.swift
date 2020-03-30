@@ -68,6 +68,18 @@ extension Sys {
     return .value()
   }
 
+  public func prependPath(value: String) -> PyResult<PyNone> {
+    guard let list = self.path as? PyList else {
+      let t = self.argv.typeName
+      let pikachu = "<surprised Pikachu face>"
+      return .typeError("expected 'sys.path' to be a list not \(t) \(pikachu)")
+    }
+
+    let object = Py.newString(value)
+    list.data.prepend(object)
+    return .value(Py.none)
+  }
+
   /// static _PyInitError
   /// calculate_module_search_path(const _PyCoreConfig *core_config,
   ///                              PyCalculatePath *calculate,
