@@ -17,7 +17,7 @@ extension VM {
   /// but it is not like we can stop you.
   public func run() throws {
     if self.arguments.help {
-      print(self.arguments.helpMessage)
+      print(Objects.Arguments.helpMessage)
       return
     }
 
@@ -47,7 +47,7 @@ extension VM {
       _ = self.prepareForInteractiveWithoutArgs()
     }
 
-    if runRepl || self.configuration.inspectInteractively {
+    if runRepl || Py.sys.flags.inspect {
       try self.runRepl()
     }
   }

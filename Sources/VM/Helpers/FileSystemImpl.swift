@@ -11,10 +11,18 @@ private let _stat = Darwin.stat(_:_:)
 
 internal class FileSystemImpl: PyFileSystem {
 
+  private let bundle: Bundle
   private let fileManager: FileManager
 
-  internal init(manager: FileManager) {
-    self.fileManager = manager
+  internal init(bundle: Bundle, fileManager: FileManager) {
+    self.bundle = bundle
+    self.fileManager = fileManager
+  }
+
+  // MARK: - Executable
+
+  internal var executablePath: String? {
+    return self.bundle.executablePath
   }
 
   // MARK: - Cwd

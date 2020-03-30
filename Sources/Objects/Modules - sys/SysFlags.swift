@@ -2,6 +2,14 @@ import Compiler
 
 // In CPython:
 // Python -> sysmodule.c
+// Python -> pystate.h
+// Modules -> main.c
+//   config_init_program_name(_PyCoreConfig *config) <- program name
+//   config_init_warnoptions(_PyCoreConfig *config, ...) <- warnings
+// Modules -> getpath.c
+//   calculate_program_full_path(const _PyCoreConfig *core_config, ...)  <- executable
+
+// Doc:
 // https://docs.python.org/3/library/sys.html#sys.flags
 
 public struct SysFlags {

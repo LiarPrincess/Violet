@@ -192,7 +192,7 @@ public struct Arguments {
   // MARK: - Usage
 
   /// Message printed after providing help flag (`-h -help --help`).
-  public var helpMessage: String {
+  public static var helpMessage: String {
     do {
       let binding = ArgumentBinding()
       _ = try binding.run()
@@ -203,7 +203,7 @@ public struct Arguments {
 
       trap(msg)
     } catch {
-      assert(self.isCleanExit_HelpRequest(error: error))
+      assert(Self.isCleanExit_HelpRequest(error: error))
 
       var result = ArgumentBinding.fullMessage(for: error)
 
@@ -218,7 +218,7 @@ public struct Arguments {
     }
   }
 
-  private func isCleanExit_HelpRequest(error: Error) -> Bool {
+  private static func isCleanExit_HelpRequest(error: Error) -> Bool {
     if case CleanExit.helpRequest = error {
       return true
     }

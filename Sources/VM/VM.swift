@@ -5,14 +5,9 @@ import Objects
 public final class VM: PyDelegate {
 
   internal var frames = [PyFrame]()
-  internal let fileSystem = FileSystemImpl(manager: FileManager.default)
-  internal let configuration: CoreConfiguration
+  internal let fileSystem = FileSystemImpl(bundle: .main, fileManager: .default)
 
-  internal let defaultEncoding = PyStringEncoding.utf8
-
-  internal var arguments: Arguments {
-    return self.configuration.arguments
-  }
+  internal let arguments: Arguments
 
   /// Currently executed frame.
   ///
@@ -22,15 +17,16 @@ public final class VM: PyDelegate {
   }
 
   public init(arguments: Arguments, environment: Environment) {
-    self.configuration = CoreConfiguration(
-      arguments: arguments,
-      environment: environment
-    )
+    self.arguments = arguments
+
+    let executablePath = self.fileSystem.executablePath ??
+        arguments.raw.first ??
+        "Violet"
 
     let config = PyConfig(
       arguments: arguments,
       environment: environment,
-      executablePath: self.configuration.executable,
+      executablePath: executablePath,
       standardInput: FileDescriptorAdapter(for: .standardInput),
       standardOutput: FileDescriptorAdapter(for: .standardOutput),
       standardError: FileDescriptorAdapter(for: .standardError)
