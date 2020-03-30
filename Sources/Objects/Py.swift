@@ -7,14 +7,23 @@ public class PyInstance: BuiltinFunctions {
 
   // MARK: - Builtins
 
+  /// Interned `true` value.
   public private(set) lazy var `true`  = PyBool(value: true)
+  /// Interned `false` value.
   public private(set) lazy var `false` = PyBool(value: false)
+  /// Interned `None` value.
   public private(set) lazy var none  = PyNone()
+  /// Interned `ellipsis (...)` value.
   public private(set) lazy var ellipsis = PyEllipsis()
+  /// Interned empty `tuple` value (because `tuple` is immutable).
   public private(set) lazy var emptyTuple = PyTuple(elements: [])
+  /// Interned empty `str` value (because `str` is immutable).
   public private(set) lazy var emptyString = PyString(value: "")
+  /// Interned empty `bytes` value (because `bytes` are immutable).
   public private(set) lazy var emptyBytes = PyBytes(value: Data())
+  /// Interned empty `frozenset` value (because `frozenset` is immutable).
   public private(set) lazy var emptyFrozenSet = PyFrozenSet()
+  /// Interned `NotImplemented` value.
   public private(set) lazy var notImplemented = PyNotImplemented()
 
   // MARK: - Modules

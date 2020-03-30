@@ -230,7 +230,8 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = append
   internal func append(_ element: PyObject) -> PyResult<PyNone> {
-    return self.data.append(element)
+    self.data.append(element)
+    return .value(Py.none)
   }
 
   // MARK: - Insert

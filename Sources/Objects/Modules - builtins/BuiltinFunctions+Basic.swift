@@ -52,6 +52,11 @@ extension BuiltinFunctions {
       PyString(value: value)
   }
 
+  public func newString(_ value: CustomStringConvertible) -> PyString {
+    let string = String(describing: value)
+    return self.newString(string)
+  }
+
   public func newBytes(_ value: Data) -> PyBytes {
     return PyBytes(value: value)
   }

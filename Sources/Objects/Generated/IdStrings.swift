@@ -173,6 +173,7 @@ public struct IdString {
   public static let copy = Self.impl.copy
   public static let copyreg = Self.impl.copyreg
   public static let difference_update = Self.impl.difference_update
+  public static let encoding = Self.impl.encoding
   public static let exec_prefix = Self.impl.exec_prefix
   public static let executable = Self.impl.executable
   public static let filename = Self.impl.filename
@@ -195,6 +196,7 @@ public struct IdString {
   public static let n_sequence_fields = Self.impl.n_sequence_fields
   public static let n_unnamed_fields = Self.impl.n_unnamed_fields
   public static let name = Self.impl.name
+  public static let object = Self.impl.object
   public static let offset = Self.impl.offset
   public static let open = Self.impl.open
   public static let origin = Self.impl.origin
@@ -359,6 +361,7 @@ private struct IdStringImpl {
   fileprivate let copy = IdString(value: "copy")
   fileprivate let copyreg = IdString(value: "copyreg")
   fileprivate let difference_update = IdString(value: "difference_update")
+  fileprivate let encoding = IdString(value: "encoding")
   fileprivate let exec_prefix = IdString(value: "exec_prefix")
   fileprivate let executable = IdString(value: "executable")
   fileprivate let filename = IdString(value: "filename")
@@ -381,6 +384,7 @@ private struct IdStringImpl {
   fileprivate let n_sequence_fields = IdString(value: "n_sequence_fields")
   fileprivate let n_unnamed_fields = IdString(value: "n_unnamed_fields")
   fileprivate let name = IdString(value: "name")
+  fileprivate let object = IdString(value: "object")
   fileprivate let offset = IdString(value: "offset")
   fileprivate let open = IdString(value: "open")
   fileprivate let origin = IdString(value: "origin")

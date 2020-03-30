@@ -1,4 +1,7 @@
 import Core
+import Lexer
+import Parser
+import Compiler
 import Foundation
 
 // In CPython:
@@ -178,17 +181,51 @@ extension BuiltinFunctions {
   // MARK: - Unicode encoding
 
   /// Unicode decoding error.
-  public func newUnicodeDecodeError(encoding: PyStringEncoding,
-                                    data: Data) -> PyUnicodeDecodeError {
+  public func newUnicodeDecodeError(
+    data: Data,
+    encoding: PyStringEncoding
+  ) -> PyUnicodeDecodeError {
+    let bytes = Py.newBytes(data)
+    return self.newUnicodeDecodeError(data: bytes, encoding: encoding)
+  }
+
+  /// Unicode decoding error.
+  internal func newUnicodeDecodeError(
+    data: PyBytesType,
+    encoding: PyStringEncoding
+  ) -> PyUnicodeDecodeError {
     let msg = "'\(encoding)' codec can't decode data"
-    return PyUnicodeDecodeError(msg: msg)
+    let error = PyUnicodeDecodeError(msg: msg)
+
+    let dict = error.__dict__
+    dict.set(id: .object, to: data)
+    dict.set(id: .encoding, to: Py.newString(encoding))
+
+    return error
   }
 
   /// Unicode encoding error.
-  public func newUnicodeEncodeError(encoding: PyStringEncoding,
-                                    string: String) -> PyUnicodeEncodeError {
+  public func newUnicodeEncodeError(
+    string: String,
+    encoding: PyStringEncoding
+  ) -> PyUnicodeEncodeError {
+    let str = Py.newString(string)
+    return self.newUnicodeEncodeError(string: str, encoding: encoding)
+  }
+
+  /// Unicode encoding error.
+  public func newUnicodeEncodeError(
+    string: PyString,
+    encoding: PyStringEncoding
+  ) -> PyUnicodeEncodeError {
     let msg = "'\(encoding)' codec can't encode data"
-    return PyUnicodeEncodeError(msg: msg)
+    let error = PyUnicodeEncodeError(msg: msg)
+
+    let dict = error.__dict__
+    dict.set(id: .object, to: string)
+    dict.set(id: .encoding, to: Py.newString(encoding))
+
+    return error
   }
 
   // MARK: - Assertion error
@@ -208,21 +245,42 @@ extension BuiltinFunctions {
   // MARK: - Syntax error
 
   public func newSyntaxError(filename: String,
-                             location: SourceLocation,
-                             text: String) -> PySyntaxError {
-    return self.newSyntaxError(filename: filename,
-                               line: location.line,
-                               offset: location.column,
-                               text: String(describing: text))
+                             error: LexerError) -> PySyntaxError {
+   return Py.newSyntaxError(
+    filename: filename,
+    line: error.location.line,
+    column: error.location.column,
+    text: String(describing: error)
+    )
+  }
+
+  public func newSyntaxError(filename: String,
+                             error: ParserError) -> PySyntaxError {
+   return Py.newSyntaxError(
+    filename: filename,
+    line: error.location.line,
+    column: error.location.column,
+    text: String(describing: error)
+    )
+  }
+
+  public func newSyntaxError(filename: String,
+                             error: CompilerError) -> PySyntaxError {
+   return Py.newSyntaxError(
+    filename: filename,
+    line: error.location.line,
+    column: error.location.column,
+    text: String(describing: error)
+    )
   }
 
   public func newSyntaxError(filename: String,
                              line: SourceLine,
-                             offset: SourceColumn,
+                             column: SourceColumn,
                              text: String) -> PySyntaxError {
     let filenameObject = Py.newString(filename)
     let lineObject = Py.newInt(Int(line))
-    let offsetObject = Py.newInt(Int(offset))
+    let offsetObject = Py.newInt(Int(column))
     let textObject = Py.newString(text)
 
     let args = Py.newTuple([filenameObject, lineObject, offsetObject, textObject])

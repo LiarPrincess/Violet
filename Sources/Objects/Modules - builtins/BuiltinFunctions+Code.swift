@@ -188,10 +188,10 @@ extension BuiltinFunctions {
                         optimize: optimize)
   }
 
-  private func compile(source: String,
-                       filename: String,
-                       mode: ParserMode,
-                       optimize: OptimizationLevel) -> PyResult<PyCode> {
+  public func compile(source: String,
+                      filename: String,
+                      mode: ParserMode,
+                      optimize: OptimizationLevel) -> PyResult<PyCode> {
     do {
       let lexer = Lexer(for: source)
       let parser = Parser(mode: mode, tokenSource: lexer)
@@ -202,29 +202,20 @@ extension BuiltinFunctions {
                                   filename: filename,
                                   options: compilerOptions)
 
-      let codeObject = try compiler.run()
-      let code = self.newCode(code: codeObject)
-      return .value(code)
+      let code = try compiler.run()
+      let codeObject = self.newCode(code: code)
+      return .value(codeObject)
     } catch {
       if let e = error as? LexerError {
-        let e = Py.newSyntaxError(filename: filename,
-                                  location: e.location,
-                                  text: String(describing: e.kind))
-        return .error(e)
+        return .error(Py.newSyntaxError(filename: filename, error: e))
       }
 
       if let e = error as? ParserError {
-        let e = Py.newSyntaxError(filename: filename,
-                                  location: e.location,
-                                  text: String(describing: e.kind))
-        return .error(e)
+        return .error(Py.newSyntaxError(filename: filename, error: e))
       }
 
       if let e = error as? CompilerError {
-        let e = Py.newSyntaxError(filename: filename,
-                                  location: e.location,
-                                  text: String(describing: e.kind))
-        return .error(e)
+        return .error(Py.newSyntaxError(filename: filename, error: e))
       }
 
       let msg = String(describing: error)

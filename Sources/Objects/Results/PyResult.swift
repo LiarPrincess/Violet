@@ -115,13 +115,13 @@ extension PyResult {
 
   public static func unicodeDecodeError(encoding: PyStringEncoding,
                                         data: Data) -> PyResult<Wrapped> {
-    let error = Py.newUnicodeDecodeError(encoding: encoding, data: data)
+    let error = Py.newUnicodeDecodeError(data: data, encoding: encoding)
     return PyResult.error(error)
   }
 
   public static func unicodeEncodeError(encoding: PyStringEncoding,
                                         string: String) -> PyResult<Wrapped> {
-    let error = Py.newUnicodeEncodeError(encoding: encoding, string: string)
+    let error = Py.newUnicodeEncodeError(string: string, encoding: encoding)
     return PyResult.error(error)
   }
 
