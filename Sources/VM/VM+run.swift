@@ -28,8 +28,10 @@ extension VM {
 
     // Oh no... we will be running code! Let's prepare for this.
     // (For some reason importing stuff seems to be important in programming...)
-    let importlib = try self.initImportlibIfNeeded()
-    _ = try self.initImportlibExternalIfNeeded(importlib: importlib)
+    switch self.initImportlibIfNeeded() {
+    case .value: break
+    case .error: self.unimplemented()
+    }
 
     // TODO: Handle errors
     var runRepl = false
@@ -47,6 +49,19 @@ extension VM {
 
     if runRepl || self.configuration.inspectInteractively {
       try self.runRepl()
+    }
+  }
+
+  private func initImportlibIfNeeded() -> PyResult<PyNone> {
+    let importlib: PyModule
+    switch Py.initImportlibIfNeeded() {
+    case let .value(m): importlib = m
+    case let .error(e): return .error(e)
+    }
+
+    switch Py.initImportlibExternalIfNeeded(importlib: importlib) {
+    case .value: return .value(Py.none)
+    case .error(let e): return .error(e)
     }
   }
 
@@ -100,7 +115,7 @@ extension VM {
     }
 
     let code: PyCode
-    switch self.compile(url: script.__main__) {
+    switch Py.compile(url: script.__main__, mode: .fileInput) {
     case let .value(c): code = c
     case let .error(e): return .error(e)
     }
@@ -277,30 +292,6 @@ extension VM {
 //  }
 
   // MARK: - Helpers
-
-  /// Compile object at a given `url`.
-  private func compile(url: URL) -> PyResult<PyCode> {
-    let data: Data
-    switch self.fileSystem.read(path: url.path) {
-    case let .value(d):
-      data = d
-    case let .error(e):
-      return .error(e)
-    }
-
-    let encoding = self.defaultEncoding
-    guard let source = String(data: data, encoding: encoding.swift) else {
-      let e = Py.newUnicodeDecodeError(data: data, encoding: encoding)
-      return .error(e)
-    }
-
-    return Py.compile(
-      source: source,
-      filename: url.lastPathComponent,
-      mode: .fileInput,
-      optimize: Py.sys.flags.optimize
-    )
-  }
 
   /// Set given value as `sys.argv[0]`.
   private func setArgv0(value: String) -> PyBaseException? {

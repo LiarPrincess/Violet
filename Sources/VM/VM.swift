@@ -69,26 +69,4 @@ public final class VM: PyDelegate {
   public func stat(path: String) -> FileStatResult {
     return self.fileSystem.stat(path: path)
   }
-
-  // MARK: - Helpers
-
-  /// Read a file or produce an error using given factory method.
-  internal func read(
-    url: URL,
-    onError: (URL, String.Encoding) -> Error
-  ) throws -> String {
-    let encoding = String.Encoding.utf8
-
-    switch self.fileSystem.read(path: url.path) {
-    case let .value(data):
-      if let result = String(data: data, encoding: encoding) {
-        return result
-      }
-    case .error:
-      break
-    }
-
-    // TODO: Move VM to PyResult, from exceptions.
-    fatalError()
-  }
 }

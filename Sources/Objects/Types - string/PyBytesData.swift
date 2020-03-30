@@ -274,14 +274,13 @@ internal struct PyBytesData: PyStringImpl {
 
   // MARK: - String conversion
 
-  private static let encoding = String.Encoding.ascii
-
   /// Decode `self` as string.
   ///
   /// Return `valueError` with following message if this fails:
   /// '\(fnName) bytes '\(bytes.ptrString)' cannot be interpreted as str'.
   internal var string: String? {
-    return String(data: self.values, encoding: PyBytesData.encoding)
+    let encoding = PyStringEncoding.default
+    return String(data: self.values, encoding: encoding.swift)
   }
 
   private var stringOrFatal: String {
@@ -296,7 +295,8 @@ internal struct PyBytesData: PyStringImpl {
   }
 
   private func encode(_ string: String) -> Data {
-    if let result = string.data(using: PyBytesData.encoding) {
+    let encoding = PyStringEncoding.default
+    if let result = string.data(using: encoding.swift) {
       return result
     }
 

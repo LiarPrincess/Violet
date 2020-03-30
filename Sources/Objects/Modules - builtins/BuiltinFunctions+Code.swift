@@ -188,16 +188,45 @@ extension BuiltinFunctions {
                         optimize: optimize)
   }
 
+  /// Compile object at a given `url`.
+  public func compile(url: URL,
+                      mode: ParserMode,
+                      optimize: OptimizationLevel? = nil) -> PyResult<PyCode> {
+    let data: Data
+    switch Py.fileSystem.read(path: url.path) {
+    case let .value(d):
+      data = d
+    case let .error(e):
+      return .error(e)
+    }
+
+    let encoding = PyStringEncoding.default
+    guard let source = String(data: data, encoding: encoding.swift) else {
+      let e = Py.newUnicodeDecodeError(data: data, encoding: encoding)
+      return .error(e)
+    }
+
+    return Py.compile(
+      source: source,
+      filename: url.lastPathComponent,
+      mode: mode,
+      optimize: optimize
+    )
+  }
+
   public func compile(source: String,
                       filename: String,
                       mode: ParserMode,
-                      optimize: OptimizationLevel) -> PyResult<PyCode> {
+                      optimize: OptimizationLevel? = nil) -> PyResult<PyCode> {
     do {
       let lexer = Lexer(for: source)
       let parser = Parser(mode: mode, tokenSource: lexer)
       let ast = try parser.parse()
 
-      let compilerOptions = CompilerOptions(optimizationLevel: optimize)
+      let compilerOptions = CompilerOptions(
+        optimizationLevel: optimize ?? Py.sys.flags.optimize
+      )
+
       let compiler = try Compiler(ast: ast,
                                   filename: filename,
                                   options: compilerOptions)
