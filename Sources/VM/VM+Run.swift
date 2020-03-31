@@ -15,59 +15,67 @@ extension VM {
   ///
   /// This method was not intended to be called multiple times,
   /// but it is not like we can stop you.
-  public func run() throws {
+  public func run() -> PyBaseException? {
     if self.arguments.help {
       print(Objects.Arguments.helpMessage)
-      return
+      return nil
     }
 
     if self.arguments.version {
-      print("Python \(Py.sys.version)")
-      return
+      print(Py.sys.version)
+      return nil
     }
 
     // Oh no... we will be running code! Let's prepare for this.
     // (For some reason importing stuff seems to be important in programming...)
-    switch self.initImportlibIfNeeded() {
-    case .value: break
-    case .error: self.unimplemented()
+    if let e = self.initImportlibIfNeeded() {
+      return e
     }
 
-    // TODO: Handle errors
     var runRepl = false
+    var result: PyResult<PyObject>
 
     if let command = self.arguments.command {
-      try self.run(command: command)
+      result = self.run(command: command)
     } else if let module = self.arguments.module {
-      try self.run(modulePath: module)
+      result = self.run(modulePath: module)
     } else if let script = self.arguments.script {
-      _ = self.run(scriptPath: script)
+      result = self.run(scriptPath: script)
     } else {
       runRepl = true
-      _ = self.prepareForInteractiveWithoutArgs()
+      result = self.prepareForInteractiveWithoutArgs()
+    }
+
+    switch result {
+    case .value: break // Let's ignore this thingie
+    case .error(let e): return e // TODO: Handle 'sys.exit()'
     }
 
     if runRepl || Py.sys.flags.inspect {
-      try self.runRepl()
+      self.runRepl()
     }
+
+    return nil
   }
 
-  private func initImportlibIfNeeded() -> PyResult<PyNone> {
+  private func initImportlibIfNeeded() -> PyBaseException? {
     let importlib: PyModule
     switch Py.initImportlibIfNeeded() {
     case let .value(m): importlib = m
-    case let .error(e): return .error(e)
+    case let .error(e): return e
     }
 
     switch Py.initImportlibExternalIfNeeded(importlib: importlib) {
-    case .value: return .value(Py.none)
-    case .error(let e): return .error(e)
+    case .value: break
+    case .error(let e): return e
     }
+
+    return nil
   }
 
   // MARK: - Run command
 
-  private func run(command: String) throws {
+  private func run(command: String) -> PyResult<PyObject> {
     // From: https://docs.python.org/3.7/using/cmdline.html#cmdoption-c
     // Execute the Python code in 'command'.
     // 'command' can be one or more statements separated by newlines
@@ -79,7 +87,7 @@ extension VM {
 
   // MARK: - Run module
 
-  private func run(modulePath: String) throws {
+  private func run(modulePath: String) -> PyResult<PyObject> {
     // From: https://docs.python.org/3.7/using/cmdline.html#cmdoption-m
     // Search sys.path for the named module and execute its contents
     // as the __main__ module.
@@ -218,7 +226,7 @@ extension VM {
 
   // MARK: - Run REPL
 
-  private func runRepl() throws {
+  private func runRepl() {
 //    var input = ""
 //    var isContinuing = false
 //
