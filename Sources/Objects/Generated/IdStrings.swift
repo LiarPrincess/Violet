@@ -163,6 +163,8 @@ public struct IdString {
   public static let __truediv__ = Self.impl.__truediv__
   public static let __trunc__ = Self.impl.__trunc__
   public static let __xor__ = Self.impl.__xor__
+  public static let _find_and_load = Self.impl._find_and_load
+  public static let _handle_fromlist = Self.impl._handle_fromlist
   public static let _imp = Self.impl._imp
   public static let _slotnames = Self.impl._slotnames
   public static let argv = Self.impl.argv
@@ -351,6 +353,8 @@ private struct IdStringImpl {
   fileprivate let __truediv__ = IdString(value: "__truediv__")
   fileprivate let __trunc__ = IdString(value: "__trunc__")
   fileprivate let __xor__ = IdString(value: "__xor__")
+  fileprivate let _find_and_load = IdString(value: "_find_and_load")
+  fileprivate let _handle_fromlist = IdString(value: "_handle_fromlist")
   fileprivate let _imp = IdString(value: "_imp")
   fileprivate let _slotnames = IdString(value: "_slotnames")
   fileprivate let argv = IdString(value: "argv")

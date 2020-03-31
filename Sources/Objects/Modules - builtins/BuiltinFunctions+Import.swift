@@ -47,13 +47,13 @@ extension BuiltinFunctions {
       let name = binding.required(at: 0)
       let globals = binding.optional(at: 1)
       let locals = binding.optional(at: 2)
-      let fromlist = binding.optional(at: 3)
+      let fromList = binding.optional(at: 3)
       let level = binding.optional(at: 4)
 
       return self.__import__(name: name,
                              globals: globals,
                              locals: locals,
-                             fromlist: fromlist,
+                             fromList: fromList,
                              level: level)
 
     case let .error(e):
@@ -64,86 +64,58 @@ extension BuiltinFunctions {
   /// PyImport_ImportModuleLevelObject(PyObject *name, PyObject *globals,
   ///                                  PyObject *locals, PyObject *fromlist,
   ///                                  int level)
-  // swiftlint:disable:next function_body_length
-  public func __import__(name nameRaw: PyObject,
-                         globals globalsRaw: PyObject? = nil,
-                         locals localsRaw: PyObject? = nil,
-                         fromlist fromlistRaw: PyObject? = nil,
-                         level levelRaw: PyObject? = nil) -> PyResult<PyObject> {
-    guard let name = nameRaw as? PyString else {
+  public func __import__(name nameArg: PyObject,
+                         globals: PyObject? = nil,
+                         locals: PyObject? = nil,
+                         fromList: PyObject? = nil,
+                         level levelArg: PyObject? = nil) -> PyResult<PyObject> {
+    guard let name = nameArg as? PyString else {
       return .typeError("module name must be a string")
     }
 
     let level: PyInt
-    switch self.parseLevel(from: levelRaw) {
+    switch self.parseLevel(from: levelArg) {
     case let .value(l): level = l
     case let .error(e): return .error(e)
     }
 
     assert(level.value >= 0)
 
+    // 'level' specifies whether to use absolute or relative imports.
+    // - 0 (default) - absolute import - module or package from 'sys.path'
+    // - positive value - relative import - number of parent directories to search
+    //   relative to the directory of the module calling __import__()
+    // (see PEP 328 for the details).
+    //
+    // Example:
+    // name = frozen.elsa
+    // level = 1
+    //
+    // importing from = disney.tangled.rapunzel <-- owner of 'globals'
+    // globals.package = disney.tangled
+    // globals.package adjusted by level (which is 1) = disney
+    //
+    // absName = (globals.package adjusted by level) + name = disney.frozen.elsa
+
     let absName: PyString
-    if level.value == 0 {
-      if name.value.isEmpty {
-        return .valueError("Empty module name")
-      }
-      absName = Py.getInterned(name.value)
-    } else {
-      switch self.resolveName(name: name, globals: globalsRaw, level: level) {
-      case let .value(s): absName = Py.getInterned(s)
-      case let .error(e): return .error(e)
-      }
+    switch self.resolveLevel(name: name, level: level, globals: globals) {
+    case let .value(s): absName = Py.getInterned(s)
+    case let .error(e): return .error(e)
     }
 
     let module: PyObject
-    switch self.getModule(absName: absName) {
+    switch self.getExistingOrLoadModule(absName: absName) {
     case let .value(m): module = m
     case let .error(e): return .error(e)
     }
 
-    var hasFrom = false
-    if let fromlist = fromlistRaw, !fromlist.isNone {
-      switch Py.isTrueBool(fromlist) {
-      case let .value(b): hasFrom = b
-      case let .error(e): return .error(e)
-      }
-    }
-
-    var finalMod: PyObject = Py.none
-    if !hasFrom { // TODO: Reverse this
-      let nameScalars = name.value.unicodeScalars
-      if level.value == 0 || nameScalars.any {
-        if let dotIndex = nameScalars.firstIndex(of: ".") {
-          if level.value == 0 {
-            let front = nameScalars[..<dotIndex]
-//            self.__import__(name: String(front),
-//                            globals: nil,
-//                            locals: nil,
-//                            fromlist: nil,
-//                            level: nil)
-            fatalError()
-          } else {
-//            let cutOff = nameScalars.count - dotIndex
-//            let absNameLen = absName.value.unicodeScalars.count
-            fatalError()
-          }
-        } else {
-          // No dot in module name, simple exit
-          finalMod = module
-        }
-      } else {
-        finalMod = module
-      }
-    } else {
-      // final_mod = _PyObject_CallMethodIdObjArgs(interp->importlib,
-      //                                           &PyId__handle_fromlist, mod,
-      //                                           fromlist, interp->import_func,
-      //                                           NULL);
-      fatalError()
-    }
-
-    // TODO: if (final_mod == NULL) remove_importlib_frames();
-    return .value(finalMod)
+    return self.handleFromList(
+      name: name,
+      absName: absName,
+      level: level,
+      module: module,
+      fromList: fromList
+    )
   }
 
   // MARK: - Parse level
@@ -164,23 +136,30 @@ extension BuiltinFunctions {
     return .value(int)
   }
 
-  // MARK: - Resolve name
+  // MARK: - Handle level
 
+  /// Get `name` after resolving `level`.
+  /// `globals` will be used for package name (but only if we have `level`).
+  ///
+  /// Mostly based on:
   /// static PyObject *
   /// resolve_name(PyObject *name, PyObject *globals, int level)
-  private func resolveName(name: PyString,
-                           globals globalsRaw: PyObject?,
-                           level: PyInt) -> PyResult<String> {
-    guard let globalsRaw = globalsRaw else {
-      return .keyError("'__name__' not in globals")
+  private func resolveLevel(name: PyString,
+                            level: PyInt,
+                            globals: PyObject?) -> PyResult<String> {
+    if level.value == 0 {
+      if name.value.isEmpty {
+        return .valueError("Empty module name")
+      }
+
+      return .value(name.value)
     }
 
-    guard let globals = globalsRaw as? PyDict else {
-      return .typeError("globals must be a dict")
-    }
+    // Oh no... we have 'level'
+    // We need to find package and then 'go up' a few 'levels'
 
-    let package: String
-    switch self.getPackageName(globals: globals) {
+    let package: String // In example: package = 'disney.tangled'
+    switch self.getPackage(globals: globals) {
     case let .value(s): package = s
     case let .error(e): return .error(e)
     }
@@ -189,57 +168,63 @@ extension BuiltinFunctions {
       return .importError("attempted relative import with no known parent package")
     }
 
-    let scalars = package.unicodeScalars
-    var baseScalars = scalars[..<scalars.endIndex]
+    var base = package[package.startIndex...]
 
+    // Go up a few levels. In example: base = disney
     for _ in 1..<level.value {
-      guard let index = baseScalars.lastIndex(of: ".") else {
+      guard let index = base.lastIndex(of: ".") else {
         return .valueError("attempted relative import beyond top-level package")
       }
 
-      baseScalars = scalars[..<index]
+      base = base[..<index]
     }
 
-    let base = String(baseScalars)
-    if base.isEmpty || name.value.isEmpty {
-      return .value(base)
-    }
+    let result = base.isEmpty || name.value.isEmpty ?
+      "\(base)" :
+      "\(base).\(name.value)" // In example: 'disney' + '.' + 'frozen.elsa'
 
-    return .value("\(base).\(name.value)")
+    return .value(result)
   }
 
-  private func getPackageName(globals: PyDict) -> PyResult<String> {
-    let spec = globals.get(id: .__spec__)
+  private func getPackage(globals globalsArg: PyObject?) -> PyResult<String> {
+    // 'globals' represent 'module.__dict__'
+    guard let globalsObject = globalsArg else {
+      return .keyError("'__name__' not in globals")
+    }
 
+    guard let globals = globalsObject as? PyDict else {
+      return .typeError("globals must be a dict")
+    }
+
+    // Try to get 'globals.__package__':
     if let package = globals.get(id: .__package__), !package.isNone {
-      guard let string = package as? PyString else {
+      guard let result = package as? PyString else {
         return .typeError("package must be a string")
       }
 
-      if let e = self.guaranteeSpecParentIsEqualToPackage(spec: spec,
-                                                          package: string) {
-        return .error(e)
-      }
-
-      return .value(string.value)
+      // We should compare if string == __spec__.parent, but we are lazy
+      return .value(result.value)
     }
 
-    if let spec = spec, !spec.isNone {
+    // Try to get 'globals.__spec__.parent':
+    if let spec = globals.get(id: .__spec__), !spec.isNone {
       return self.getParent(spec: spec).map { $0.value }
     }
 
+    // Last resort '__name__' and '__path__':
     let msg = "can't resolve package from __spec__ or __package__, " +
-              "falling back on __name__ and __path__"
+    "falling back on __name__ and __path__"
     if let e = Py.warn(type: .import, msg: msg) {
       return .error(e)
     }
 
     let name: PyString
-    switch self.get__name__(from: globals) {
+    switch self.get__name__(globals: globals) {
     case let .value(n): name = n
     case let .error(e): return .error(e)
     }
 
+    // If we don't have '__path__' then we will just slice last component:
     let path = globals.get(id: .__path__)
 
     if path == nil {
@@ -250,49 +235,6 @@ extension BuiltinFunctions {
     }
 
     return .value(name.value)
-  }
-
-  private func get__name__(from globals: PyDict) -> PyResult<PyString> {
-    guard let object = globals.get(id: .__name__) else {
-      return .keyError("'__name__' not in globals")
-    }
-
-    guard let str = object as? PyString else {
-      return .typeError("__name__ must be a string")
-    }
-
-    return .value(str)
-  }
-
-  private func guaranteeSpecParentIsEqualToPackage(
-    spec: PyObject?,
-    package: PyString
-  ) -> PyBaseException? {
-    // We allow no spec or None spec
-    guard let spec = spec, !spec.isNone else {
-      return nil
-    }
-
-    let parent: PyString
-    switch self.getParent(spec: spec) {
-    case let .value(o): parent = o
-    case let .error(e): return e
-    }
-
-    let parentData = parent.data
-    let packageData = package.data
-
-    switch parentData.compare(to: packageData) {
-    case .equal:
-      return nil
-    case .less,
-         .greater:
-      if let w = Py.warn(type: .import, msg: "__package__ != __spec__.parent") {
-        return w
-      }
-
-      return nil
-    }
   }
 
   private func getParent(spec: PyObject) -> PyResult<PyString> {
@@ -308,37 +250,188 @@ extension BuiltinFunctions {
     }
   }
 
-  // MARK: - Get module
+  private func get__name__(globals: PyDict) -> PyResult<PyString> {
+    guard let object = globals.get(id: .__name__) else {
+      return .keyError("'__name__' not in globals")
+    }
+
+    guard let str = object as? PyString else {
+      return .typeError("__name__ must be a string")
+    }
+
+    return .value(str)
+  }
+
+  // MARK: - Get/load module
 
   /// PyObject *
   /// PyImport_GetModule(PyObject *name)
-  private func getModule(absName: PyString) -> PyResult<PyObject> {
+  private func getExistingOrLoadModule(absName: PyString) -> PyResult<PyObject> {
     switch Py.sys.getModule(name: absName) {
     case let .value(m):
       if m.isNone {
-        return self.loadModule(absName: absName)
+        return self.call_find_and_load(absName: absName)
       }
 
       return .value(m)
 
     case .notFound:
-      return self.loadModule(absName: absName)
+      return self.call_find_and_load(absName: absName)
 
     case let .error(e):
-      if e is PyKeyError {
-        return self.loadModule(absName: absName)
-      }
-
+      assert(!e.isKeyError, "KeyError means not found")
       return .error(e)
     }
   }
 
-  /// mod = import_find_and_load(abs_name);
-  private func loadModule(absName: PyString) -> PyResult<PyObject> {
-    // mod = _PyObject_CallMethodIdObjArgs(interp->importlib,
-    //                                     &PyId__find_and_load, abs_name,
-    //                                     interp->import_func, NULL);
+  /// static PyObject *
+  /// import_find_and_load(PyObject *abs_name)
+  private func call_find_and_load(absName: PyString) -> PyResult<PyObject> {
+    let importlib: PyModule
+    switch Py.getImportlib() {
+    case let .value(m): importlib = m
+    case let .error(e): return .error(e)
+    }
 
-    fatalError()
+    let __import__: PyObject
+    switch self.get__import__() {
+    case let .value(i): __import__ = i
+    case let .error(e): return .error(e)
+    }
+
+    let callResult = Py.callMethod(
+      on: importlib,
+      selector: ._find_and_load,
+      args: [absName, __import__],
+      kwargs: nil
+    )
+
+    return callResult.asResult
+  }
+
+  /// In CPython: interp->import_func
+  ///
+  /// This value is set in:
+  /// 'initimport(PyInterpreterState *interp, PyObject *sysmod)'
+  private func get__import__() -> PyResult<PyObject> {
+    let dict = Py.builtinsModule.__dict__
+
+    if let fn = dict.get(id: .__import__) {
+      return .value(fn)
+    }
+
+    let msg = "'__import__' function not found inside builtins module"
+    return .error(Py.newKeyError(msg: msg))
+  }
+
+  // MARK: - Handle 'from'
+
+  private func handleFromList(name: PyString,
+                              absName: PyString,
+                              level: PyInt,
+                              module: PyObject,
+                              fromList: PyObject?) -> PyResult<PyObject> {
+    // If we have 'fromList' then call '_handle_fromlist' from 'importlib'
+    if let fl = fromList, !fl.isNone {
+      switch Py.isTrueBool(fl) {
+      case .value(true):
+        return self.call_handle_fromlist(module: module, fromList: fl)
+      case .value(false):
+        break // We do not have 'fromList'
+      case .error(let e):
+        return .error(e)
+      }
+    }
+
+    // No dot in module name, simple exit.
+    // It will also handle case of empty name.
+    let nameScalars = name.value.unicodeScalars
+    guard let nameDotIndex = nameScalars.firstIndex(of: ".") else {
+      return .value(module)
+    }
+
+    // Absolute import, this is easy, we don't have to do anything special
+    // to extract 'toplevel' name.
+    if level.value == 0 {
+      let front = String(nameScalars[..<nameDotIndex])
+      return self.__import__(name: Py.newString(front),
+                             globals: nil,
+                             locals: nil,
+                             fromList: nil,
+                             level: Py.newInt(0))
+    }
+
+    // Extract toplevel module (the one that is bound by the import statement)
+    // name = frozen.elsa
+    // absName = disney.frozen.elsa
+    // absTopLevel = disney.frozen
+    let absTopLevel = self.getTopLevelModuleAbsName(name: name.value,
+                                                    nameDotIndex: nameDotIndex,
+                                                    absName: absName.value)
+
+    let interned = Py.getInterned(absTopLevel)
+    switch Py.sys.getModule(name: interned) {
+    case .value(let m):
+      return .value(m)
+    case .notFound:
+      let msg = "\(absTopLevel) not in sys.modules as expected"
+      return .error(Py.newKeyError(msg: msg))
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  private func call_handle_fromlist(module: PyObject,
+                                    fromList: PyObject) -> PyResult<PyObject> {
+     let importlib: PyModule
+     switch Py.getImportlib() {
+     case let .value(m): importlib = m
+     case let .error(e): return .error(e)
+     }
+
+     let __import__: PyObject
+     switch self.get__import__() {
+     case let .value(i): __import__ = i
+     case let .error(e): return .error(e)
+     }
+
+     let callResult = Py.callMethod(
+       on: importlib,
+       selector: ._handle_fromlist,
+       args: [module, fromList, __import__],
+       kwargs: nil
+     )
+
+     return callResult.asResult
+  }
+
+  private func getTopLevelModuleAbsName(name: String,
+                                        nameDotIndex: String.Index,
+                                        absName: String) -> String {
+    // Example:
+    // name = frozen.elsa
+    // level = 1
+    //
+    // importingFrom = disney.tangled.rapunzel
+    // importingFrom package = disney.tangled
+    // importingFrom package including level = disney
+    //
+    // absName = (importingFrom package withLevel) + name = disney.frozen.elsa
+
+    // --- code --
+
+    // Extract toplevel module (the one that is bound by the import statement)
+    // frozen.elsa
+    //       ^ cutOff - we take only 'frozen'
+    let cutOff = name.distance(from: nameDotIndex, to: name.endIndex)
+
+    // Now we take 'absName' and cut off the 'cutOff'
+    // disney.frozen.elsa
+    //              ^ absWithoutCutOffIndex - we take 'disney.frozen'
+    let topLevelAbsEnd = absName.index(absName.endIndex, offsetBy: -cutOff)
+
+    // result = disney.frozen
+    let topLevelAbs = absName[..<topLevelAbsEnd]
+    return String(topLevelAbs)
   }
 }

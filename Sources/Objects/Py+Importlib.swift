@@ -1,6 +1,8 @@
 import Core
 import Foundation
 
+// swiftlint:disable file_length
+
 /// Importlib module spec, so that we can share code between
 /// `importlib` and `importlib_external`.
 private struct ModuleSpec {
@@ -25,6 +27,14 @@ private enum ImportlibResult<Wrapped> {
 extension PyInstance {
 
   // MARK: - Importlib
+
+  /// `importlib` is the module used for importing other modules.
+  public func getImportlib() -> PyResult<PyModule> {
+    // 'self.initImportlibIfNeeded' is idempotent:
+    // - if it was never called it will intitialize it
+    // - if we already called it then it will return module from 'sys'
+    return self.initImportlibIfNeeded()
+  }
 
   /// `importlib` is the module used for importing other modules.
   public func initImportlibIfNeeded() -> PyResult<PyModule> {

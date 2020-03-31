@@ -129,6 +129,8 @@ ids = [
   '__truediv__',
   '__trunc__',
   '__xor__',
+  '_find_and_load',
+  '_handle_fromlist',
   '_imp',
   '_slotnames',
   'argv',

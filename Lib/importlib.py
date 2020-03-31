@@ -573,6 +573,42 @@ def _gcd_import(name, package=None, level=0):
         name = _resolve_name(name, package, level)
     return _find_and_load(name, _gcd_import)
 
+def _handle_fromlist(module, fromlist, import_, *, recursive=False):
+    """Figure out what __import__ should return.
+
+    The import_ parameter is a callable which takes the name of module to
+    import. It is required to decouple the function from assuming importlib's
+    import implementation is desired.
+
+    """
+    # The hell that is fromlist ...
+    # If a package was imported, try to import stuff from fromlist.
+    if hasattr(module, '__path__'):
+        for x in fromlist:
+            if not isinstance(x, str):
+                if recursive:
+                    where = module.__name__ + '.__all__'
+                else:
+                    where = "``from list''"
+                raise TypeError(f"Item in {where} must be str, not {type(x).__name__}")
+
+            elif x == '*':
+                if not recursive and hasattr(module, '__all__'):
+                    _handle_fromlist(module, module.__all__, import_, recursive=True)
+
+            elif not hasattr(module, x):
+                from_name = f'{module.__name__}.{x}'
+                try:
+                    _call_with_frames_removed(import_, from_name)
+                except ModuleNotFoundError as exc:
+                    # Backwards-compatibility dictates we ignore failed
+                    # imports triggered by fromlist for modules that don't exist.
+                    if (exc.name == from_name and sys.modules.get(from_name, _NEEDS_LOADING) is not None):
+                        continue
+                    raise
+
+    return module
+
 # Main ########################################################################
 
 def _install(sys_module, _imp_module):
@@ -581,9 +617,9 @@ def _install(sys_module, _imp_module):
 
     sys.meta_path.append(BuiltinImporter)
 
-# THIS IS NOT USED!
-# WE DO IT IN SWIFT!
 def _install_external_importers():
+    assert False, "'_install_external_importers' should not be called. We do it in Swift!"
+
     """Install importers that require external filesystem access"""
     global _bootstrap_external
     import _frozen_importlib_external
