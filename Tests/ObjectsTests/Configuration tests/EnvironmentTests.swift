@@ -1,41 +1,43 @@
 import Foundation
 import XCTest
-@testable import VM
+@testable import Objects
 
 // Song reference: https://youtu.be/40kfRj_ZUHY?t=36
 class EnvironmentTests: XCTestCase {
 
-  // MARK: - PATH
+  // MARK: - Violet home
 
-  func test_PATH_single() {
+  func test_violetHome_prefix() {
     let env = Environment(from: [
-      "PATH": "All those days, chasing down a daydream"
+      "VIOLETHOME": "All those days, chasing down a daydream"
     ])
 
     var expected = Environment()
-    expected.path = ["All those days, chasing down a daydream"]
+    expected.violetHome = "All those days, chasing down a daydream"
     self.assertEqual(env, expected)
   }
 
-  func test_PATH_multiple() {
+  func test_violetHome_prefix_colon_execPrefix() {
+    // We don't support 'prefix:exec_prefix' notation, we only have prefix.
     let env = Environment(from: [
-      "PATH": "All those years:living in a blur"
+      "VIOLETHOME": "All those years:living in a blur"
     ])
 
     var expected = Environment()
-    expected.path = ["All those years", "living in a blur"]
+    expected.violetHome = "All those years"
     self.assertEqual(env, expected)
   }
 
-  func test_PATH_multiple_endingWithColon() {
+  func test_violetHome_prefix_colon_execPrefix_withAnotherColon() {
+    // We don't support 'prefix:exec_prefix' notation, we only have prefix.
     let dict = [
-      "PATH": "All that time:never truly seeing:"
+      "VIOLETHOME": "All that time:never truly seeing:"
     ]
 
     let env = Environment(from: dict)
 
     var expected = Environment()
-    expected.path = ["All that time", "never truly seeing"]
+    expected.violetHome = "All that time"
     self.assertEqual(env, expected)
   }
 
@@ -71,37 +73,11 @@ class EnvironmentTests: XCTestCase {
     self.assertEqual(env, expected)
   }
 
-  // MARK: - PYTHONPATH
-
-  func test_pythonPath_single() {
-    let env = Environment(from: [
-      "PYTHONPATH": "If she's here, it's crystal clear"
-    ])
-
-    var expected = Environment()
-    expected.pythonPath = ["If she's here, it's crystal clear"]
-    self.assertEqual(env, expected)
-  }
-
-  func test_pythonPath_multiple() {
-    let env = Environment(from: [
-      "PYTHONPATH": "I'm where:I'm meant to go"
-    ])
-
-    var expected = Environment()
-    expected.pythonPath = ["I'm where", "I'm meant to go"]
-    self.assertEqual(env, expected)
-  }
-
-  func test_pythonPath_multiple_endingWithColon() {
-    let env = Environment(from: [
-      "PYTHONPATH": "And at last:I see the light:"
-    ])
-
-    var expected = Environment()
-    expected.pythonPath = ["And at last", "I see the light"]
-    self.assertEqual(env, expected)
-  }
+  // There is a gap in the lyrics here, because at some point we supported PATH.
+  // Anyway, here are the verses that we are missing:
+  // If she's here, it's crystal clear
+  // I'm where I'm meant to go
+  // And at last I see the light
 
   // MARK: - Optimize
 
@@ -111,7 +87,7 @@ class EnvironmentTests: XCTestCase {
     ])
 
     var expected = Environment()
-    expected.pythonOptimize = .O
+    expected.optimize = .O
     self.assertEqual(env, expected)
   }
 
@@ -121,7 +97,7 @@ class EnvironmentTests: XCTestCase {
     ])
 
     var expected = Environment()
-    expected.pythonOptimize = .OO
+    expected.optimize = .OO
     self.assertEqual(env, expected)
   }
 
@@ -143,7 +119,7 @@ class EnvironmentTests: XCTestCase {
       ])
 
       var expected = Environment()
-      expected.pythonWarnings = [warning]
+      expected.warnings = [warning]
       self.assertEqual(env, expected)
     }
   }
@@ -154,7 +130,7 @@ class EnvironmentTests: XCTestCase {
     ])
 
     var expected = Environment()
-    expected.pythonWarnings = [.default, .error, .always, .module, .once, .ignore]
+    expected.warnings = [.default, .error, .always, .module, .once, .ignore]
     self.assertEqual(env, expected)
   }
 
@@ -164,7 +140,7 @@ class EnvironmentTests: XCTestCase {
     ])
 
     var expected = Environment()
-    expected.pythonWarnings = []
+    expected.warnings = []
     self.assertEqual(env, expected)
   }
 
@@ -176,7 +152,7 @@ class EnvironmentTests: XCTestCase {
     ])
 
     var expected = Environment()
-    expected.pythonDebug = true
+    expected.debug = true
     self.assertEqual(env, expected)
   }
 
@@ -186,17 +162,7 @@ class EnvironmentTests: XCTestCase {
     ])
 
     var expected = Environment()
-    expected.pythonInspectInteractively = true
-    self.assertEqual(env, expected)
-  }
-
-  func test_noUserSite() {
-    let env = Environment(from: [
-      "PYTHONNOUSERSITE": "And it's warm and real and bright"
-    ])
-
-    var expected = Environment()
-    expected.pythonNoUserSite = true
+    expected.inspectInteractively = true
     self.assertEqual(env, expected)
   }
 
@@ -204,7 +170,7 @@ class EnvironmentTests: XCTestCase {
 
   func test_other_isIgnored() {
     let env = Environment(from: [
-      "TANGLED": "I'm where I'm meant to be"
+      "TANGLED": "And it's warm and real and bright"
     ])
 
     let expected = Environment()
@@ -217,21 +183,15 @@ class EnvironmentTests: XCTestCase {
                            _ rhs: Environment,
                            file:  StaticString = #file,
                            line:  UInt         = #line) {
-    XCTAssertEqual(lhs.path, rhs.path, "PATH", file: file, line: line)
+    XCTAssertEqual(lhs.violetHome, rhs.violetHome, "violetHome", file: file, line: line)
     XCTAssertEqual(lhs.violetPath, rhs.violetPath, "violetPath", file: file, line: line)
-    XCTAssertEqual(lhs.pythonPath, rhs.pythonPath, "pythonPath", file: file, line: line)
-    XCTAssertEqual(lhs.pythonOptimize, rhs.pythonOptimize, "pythonOptimize", file: file, line: line)
-    XCTAssertEqual(lhs.pythonWarnings, rhs.pythonWarnings, "pythonWarnings", file: file, line: line)
-    XCTAssertEqual(lhs.pythonDebug, rhs.pythonDebug, "pythonDebug", file: file, line: line)
+    XCTAssertEqual(lhs.optimize, rhs.optimize, "optimize", file: file, line: line)
+    XCTAssertEqual(lhs.warnings, rhs.warnings, "warnings", file: file, line: line)
+    XCTAssertEqual(lhs.debug, rhs.debug, "debug", file: file, line: line)
 
-    XCTAssertEqual(lhs.pythonNoUserSite,
-                   rhs.pythonNoUserSite,
-                   "pythonNoUserSite",
-                   file: file,
-                   line: line)
-    XCTAssertEqual(lhs.pythonInspectInteractively,
-                   rhs.pythonInspectInteractively,
-                   "pythonInspectInteractively",
+    XCTAssertEqual(lhs.inspectInteractively,
+                   rhs.inspectInteractively,
+                   "inspectInteractively",
                    file: file,
                    line: line)
   }

@@ -42,6 +42,9 @@ internal struct ArgumentBinding: ParsableCommand {
   ///
   /// Print the `Violet` version number and exit.
   /// Example output could be: `Violet 1.0`.
+  ///
+  /// Please note that `-v` is for `verbose`!
+  /// Version uses `-V`!
   @Flag(
     name: [
       NameSpecification.Element.customShort("V"),
@@ -106,6 +109,7 @@ internal struct ArgumentBinding: ParsableCommand {
   )
   internal var isolated: Bool
 
+  /// `-v`
   @Flag(
     name: NameSpecification.short,
     help: concat(

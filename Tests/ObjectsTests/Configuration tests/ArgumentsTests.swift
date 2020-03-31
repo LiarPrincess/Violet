@@ -1,7 +1,7 @@
 import Foundation
 import XCTest
 import Compiler
-@testable import VM
+@testable import Objects
 
 // swiftlint:disable file_length
 
@@ -9,10 +9,20 @@ class ArgumentsTests: XCTestCase {
 
   private let programName = "Violet"
 
-  // MARK: - Version, debug, quiet, interactive
+  // MARK: - Flags
+
+  func test_help() {
+    for cmd in ["-h", "-help", "--help"] {
+      if let parsed = self.parse(cmd) {
+        var expected = Arguments()
+        expected.help = true
+        assertEqual(parsed, expected)
+      }
+    }
+  }
 
   func test_version() {
-    for cmd in ["-v", "--version"] {
+    for cmd in ["-V", "--version"] {
       if let parsed = self.parse(cmd) {
         var expected = Arguments()
         expected.version = true
@@ -45,8 +55,6 @@ class ArgumentsTests: XCTestCase {
     }
   }
 
-  // MARK: - Isolate
-
   func test_ignoreEnvironment() {
     if let parsed = self.parse("-E") {
       var expected = Arguments()
@@ -60,24 +68,19 @@ class ArgumentsTests: XCTestCase {
       var expected = Arguments()
       expected.isolated = true
       expected.ignoreEnvironment = true
-      expected.noUserSite = true
       assertEqual(parsed, expected)
     }
   }
 
-  func test_noSite() {
-    if let parsed = self.parse("-S") {
-      var expected = Arguments()
-      expected.noSite = true
-      assertEqual(parsed, expected)
-    }
-  }
+  func test_verbose() {
+    for i in 1..<5 {
+      let flag = "-" + String(repeating: "v", count: i)
 
-  func test_noUserSite() {
-    if let parsed = self.parse("-s") {
-      var expected = Arguments()
-      expected.noUserSite = true
-      assertEqual(parsed, expected)
+      if let parsed = self.parse(flag) {
+        var expected = Arguments()
+        expected.verbose = i
+        assertEqual(parsed, expected)
+      }
     }
   }
 
@@ -114,10 +117,10 @@ class ArgumentsTests: XCTestCase {
       "-OO": .OO
     ]
 
-    for (cmd, optimization) in values {
+    for (cmd, optimize) in values {
       if let parsed = self.parse(cmd) {
         var expected = Arguments()
-        expected.optimization = optimization
+        expected.optimize = optimize
         assertEqual(parsed, expected)
       }
     }
@@ -126,7 +129,7 @@ class ArgumentsTests: XCTestCase {
   func test_optimization_O_doesNotOverrideOO() {
     if let parsed = self.parse("-OO -O") {
       var expected = Arguments()
-      expected.optimization = .OO
+      expected.optimize = .OO
       assertEqual(parsed, expected)
     }
   }
@@ -168,7 +171,7 @@ class ArgumentsTests: XCTestCase {
   // MARK: - Flag ordering
 
   func test_flagsOrder_doesNotMatter() {
-    let flags = ["-v", "-d", "-q", "-b", "-O"]
+    let flags = ["-V", "-d", "-q", "-b", "-O"]
     let values = [
       flags.joined(separator: " "),
       flags.reversed().joined(separator: " ")
@@ -181,7 +184,7 @@ class ArgumentsTests: XCTestCase {
         expected.debug = true
         expected.quiet = true
         expected.bytesWarning = .warning
-        expected.optimization = .O
+        expected.optimize = .O
         assertEqual(parsed, expected)
       }
     }
@@ -202,7 +205,7 @@ class ArgumentsTests: XCTestCase {
 
   func test_command_withFlags() {
     let fn = "rapunzel()"
-    let cmd = "-v -d -q -b -O -c \(fn)"
+    let cmd = "-V -d -q -b -O -c \(fn)"
 
     if let parsed = self.parse(cmd) {
       var expected = Arguments()
@@ -210,7 +213,7 @@ class ArgumentsTests: XCTestCase {
       expected.debug = true
       expected.quiet = true
       expected.bytesWarning = .warning
-      expected.optimization = .O
+      expected.optimize = .O
       expected.command = fn + "\n"
       assertEqual(parsed, expected)
     }
@@ -229,7 +232,7 @@ class ArgumentsTests: XCTestCase {
 
   func test_module_withFlags() {
     let file = "tangled.py"
-    let cmd = "-v -d -q -b -O -m \(file)"
+    let cmd = "-V -d -q -b -O -m \(file)"
 
     if let parsed = self.parse(cmd) {
       var expected = Arguments()
@@ -237,7 +240,7 @@ class ArgumentsTests: XCTestCase {
       expected.debug = true
       expected.quiet = true
       expected.bytesWarning = .warning
-      expected.optimization = .O
+      expected.optimize = .O
       expected.module = file
       assertEqual(parsed, expected)
     }
@@ -256,7 +259,7 @@ class ArgumentsTests: XCTestCase {
 
   func test_script_withFlags() {
     let file = "tangled.py"
-    let cmd = "-v -d -q -b -O " + file
+    let cmd = "-V -d -q -b -O " + file
 
     if let parsed = self.parse(cmd) {
       var expected = Arguments()
@@ -264,7 +267,7 @@ class ArgumentsTests: XCTestCase {
       expected.debug = true
       expected.quiet = true
       expected.bytesWarning = .warning
-      expected.optimization = .O
+      expected.optimize = .O
       expected.script = file
       assertEqual(parsed, expected)
     }
@@ -283,7 +286,7 @@ class ArgumentsTests: XCTestCase {
   }
 
   func test_interactive_withFlags() {
-    let cmd = "-v -d -q -b -O"
+    let cmd = "-V -d -q -b -O"
 
     if let parsed = self.parse(cmd) {
       var expected = Arguments()
@@ -291,7 +294,7 @@ class ArgumentsTests: XCTestCase {
       expected.debug = true
       expected.quiet = true
       expected.bytesWarning = .warning
-      expected.optimization = .O
+      expected.optimize = .O
       expected.command = nil
       expected.module = nil
       expected.script = nil
@@ -299,24 +302,11 @@ class ArgumentsTests: XCTestCase {
     }
   }
 
-  // MARK: - Help
-
-  func test_help() {
-    for cmd in ["-h", "-help", "--help"] {
-      if let parsed = self.parse(cmd) {
-        var expected = Arguments()
-        expected.help = true
-        assertEqual(parsed, expected)
-      }
-    }
-  }
-
   // MARK: - Usage
 
   // swiftlint:disable:next function_body_length
   func test_usage() {
-    let arguments = Arguments()
-    XCTAssertEqual(arguments.usage, """
+    XCTAssertEqual(Arguments.helpMessage, """
 USAGE: argument-binding <options>
 
 ARGUMENTS:
@@ -325,7 +315,7 @@ ARGUMENTS:
 
 OPTIONS:
   -help, -h, --help       print this help message and exit (also --help)
-  -v, --version           print the Python version number and exit (also
+  -V, --version           print the Python version number and exit (also
                           --version)
   -d                      debug output messages; also PYTHONDEBUG=x
   -q                      don't print version and copyright messages on
@@ -337,9 +327,12 @@ OPTIONS:
                           PYTHONPATH)
   -I                      isolate Violet from the user's environment (implies
                           -E)
-  -S                      don't imply 'import site' on initialization
-  -s                      don't add user site directory to sys.path; also
-                          PYTHONNOUSERSITE
+  -v                      Print a message each time a module is initialized,
+                          showing the place (filename or built-in module) from
+                          which it is loaded. When given twice (-vv), print a
+                          message for each file that is checked for when
+                          searching for a module. Also provides information on
+                          module cleanup at exit. See also PYTHONVERBOSE.
   -O                      remove assert and __debug__-dependent statements;
                           also PYTHONOPTIMIZE=x
   -OO                     do -O changes and also discard docstrings (overrides
@@ -375,9 +368,7 @@ OPTIONS:
     XCTAssertEqual(lhs.debug, rhs.debug, "debug", file: file, line: line)
     XCTAssertEqual(lhs.quiet, rhs.quiet, "quiet", file: file, line: line)
     XCTAssertEqual(lhs.isolated, rhs.isolated, "isolated", file: file, line: line)
-    XCTAssertEqual(lhs.noSite, rhs.noSite, "noSite", file: file, line: line)
-    XCTAssertEqual(lhs.noUserSite, rhs.noUserSite, "noUserSite", file: file, line: line)
-    XCTAssertEqual(lhs.optimization, rhs.optimization, "optimization", file: file, line: line)
+    XCTAssertEqual(lhs.optimize, rhs.optimize, "optimization", file: file, line: line)
     XCTAssertEqual(lhs.warnings, rhs.warnings, "warnings", file: file, line: line)
     XCTAssertEqual(lhs.bytesWarning, rhs.bytesWarning, "bytesWarning", file: file, line: line)
     XCTAssertEqual(lhs.command, rhs.command, "command", file: file, line: line)

@@ -4,7 +4,7 @@ import Core
 
 // swiftlint:disable file_length
 
-class ArgumentParserTests: PyTestCaseOtherwiseItWillTrap {
+class ArgumentParserTests: PyTestCase {
 
   // MARK: - Init - name
 

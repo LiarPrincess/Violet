@@ -42,27 +42,4 @@ public final class VM: PyDelegate {
   deinit {
     Py.destroy()
   }
-
-  // MARK: - PyDelegate
-  // There is also 'eval', but it is in a different file.
-
-  public var currentWorkingDirectory: String {
-    return self.fileSystem.currentWorkingDirectory
-  }
-
-  public func open(fd: Int32, mode: FileMode) -> PyResult<FileDescriptorType> {
-    return self.fileSystem.open(fd: fd, mode: mode)
-  }
-
-  public func open(path: String, mode: FileMode) -> PyResult<FileDescriptorType> {
-    return self.fileSystem.open(path: path, mode: mode)
-  }
-
-  public func stat(fd: Int32) -> FileStatResult {
-    return self.fileSystem.stat(fd: fd)
-  }
-
-  public func stat(path: String) -> FileStatResult {
-    return self.fileSystem.stat(path: path)
-  }
 }

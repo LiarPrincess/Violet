@@ -87,7 +87,8 @@ public struct Environment {
     for (key, value) in environment {
       switch key {
       case "VIOLETHOME":
-        self.violetHome = value
+        // We don't support 'prefix:exec_prefix' notation, we only have prefix.
+        self.violetHome = splitPath(value).first
       case "VIOLETPATH":
         self.violetPath = splitPath(value)
       case "PYTHONOPTIMIZE":

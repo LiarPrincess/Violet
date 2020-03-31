@@ -40,7 +40,7 @@ private let moduleDoc = """
   The name must be a string; the optional doc argument can have any type.
   """
 
-class DocHelper: XCTestCase {
+class DocHelperTests: XCTestCase {
 
   // MARK: - Signature
 

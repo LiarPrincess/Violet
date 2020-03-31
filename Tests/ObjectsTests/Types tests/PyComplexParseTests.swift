@@ -2,7 +2,7 @@ import XCTest
 import Core
 @testable import Objects
 
-class PyComplexParse: PyTestCaseOtherwiseItWillTrap {
+class PyComplexParseTests: PyTestCase {
 
   // MARK: - Empty
 

@@ -14,16 +14,20 @@ import Compiler
 
 public struct SysFlags {
 
-  private var arguments: Arguments {
-    return Py.config.arguments
-  }
+  private let arguments: Arguments
+  private let _environment: Environment
 
   private var environment: Environment? {
     if self.ignoreEnvironment {
       return nil
     }
 
-    return Py.config.environment
+    return self._environment
+  }
+
+  internal init(arguments: Arguments, environment: Environment) {
+    self.arguments = arguments
+    self._environment = environment
   }
 
   // MARK: - Debug
@@ -67,7 +71,12 @@ public struct SysFlags {
     return Swift.max(self.arguments.verbose, env)
   }
 
-  // MARK: - Bytes warning
+  // MARK: - Warnings
+
+  public var warnings: [WarningOption] {
+    let env = (self.environment?.warnings ?? [])
+    return env + self.arguments.warnings
+  }
 
   public var bytesWarning: BytesWarningOption {
     return self.arguments.bytesWarning
@@ -76,12 +85,12 @@ public struct SysFlags {
   // MARK: - Quiet
 
   public var quiet: Bool {
-    return false
+    return self.arguments.quiet
   }
 
   // MARK: - Isolated
 
   public var isolated: Bool {
-    return self.arguments.quiet
+    return self.arguments.isolated
   }
 }

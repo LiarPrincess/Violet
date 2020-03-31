@@ -85,7 +85,11 @@ public final class Sys {
 
   // MARK: - Properties
 
-  public private(set) lazy var flags = SysFlags()
+  public private(set) lazy var flags = SysFlags(
+    arguments: Py.config.arguments,
+    environment: Py.config.environment
+  )
+
   public private(set) lazy var hashInfo = HashInfo()
 
   public internal(set) var builtinModuleNames = [String]()
