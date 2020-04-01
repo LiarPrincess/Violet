@@ -278,19 +278,26 @@ extension BuiltinFunctions {
                              line: SourceLine,
                              column: SourceColumn,
                              text: String) -> PySyntaxError {
-    let filenameObject = Py.newString(filename)
-    let lineObject = Py.newInt(Int(line))
-    let offsetObject = Py.newInt(Int(column))
-    let textObject = Py.newString(text)
+    return self.newSyntaxError(
+      filename: Py.newString(filename),
+      line: Py.newInt(Int(line)),
+      column: Py.newInt(Int(column)),
+      text: Py.newString(text)
+    )
+  }
 
-    let args = Py.newTuple([filenameObject, lineObject, offsetObject, textObject])
+  public func newSyntaxError(filename: PyString,
+                             line: PyInt,
+                             column: PyInt,
+                             text: PyString) -> PySyntaxError {
+    let args = Py.newTuple([filename, line, column, text])
     let e = PySyntaxError(args: args)
 
     let dict = e.__dict__
-    dict.set(id: .filename, to: filenameObject)
-    dict.set(id: .lineno, to: lineObject)
-    dict.set(id: .offset, to: offsetObject)
-    dict.set(id: .text, to: textObject)
+    dict.set(id: .filename, to: filename)
+    dict.set(id: .lineno, to: line)
+    dict.set(id: .offset, to: column)
+    dict.set(id: .text, to: text)
 
     return e
   }

@@ -382,18 +382,23 @@ public class PyBaseException: PyObject {
   internal static func pyInitShared(zelf: PyBaseException,
                                     args: [PyObject],
                                     kwargs: PyDict?) -> PyResult<PyNone> {
-    if let e = ArgumentParser.noKwargsOrError(fnName: zelf.typeName,
-                                              kwargs: kwargs) {
-      return .error(e)
-    }
-
+    // Copy args if needed
     let zelfArgs = zelf.args.elements
-    let argsAreEqual = zelfArgs.count == args.count
+    let hasAssignedArgsIn__new__ = zelfArgs.count == args.count
         && zip(zelfArgs, args).allSatisfy { $0.0 === $0.1 }
 
-    if !argsAreEqual {
+    if !hasAssignedArgsIn__new__ {
       let argsTuple = Py.newTuple(args)
       switch zelf.setArgs(argsTuple) {
+      case .value: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    // Copy kwargs
+    if let kwargs = kwargs {
+      let zelfDict = zelf.__dict__
+      switch zelfDict.update(from: kwargs.data) {
       case .value: break
       case .error(let e): return .error(e)
       }
