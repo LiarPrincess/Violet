@@ -35,6 +35,8 @@ internal enum UnwindResult {
   /// We popped all of the blocks, which means
   /// that we can finally return value to caller.
   case `return`(PyObject)
+  /// Let parent frame deal with it.
+  case reportExceptionToParentFrame(PyBaseException)
 }
 
 // MARK: - Eval
@@ -102,21 +104,30 @@ extension Eval {
     switch reason {
     case .return(let value):
       return .return(value)
+
     case .break:
       // We popped top level loop, we can continue execution
       return .continueCodeExecution
-    case .continue, // Continue outside of loop?
-         .exception, // Let parent frame deal with it.
-         .yield,
-         .silenced:
-      let pc = self.frame.instructionIndex ?? 0
-      let line = self.code.getLine(instructionIndex: pc)
 
+    case .continue:
+      let e = Py.newSyntaxError(
+        filename: self.code.filename,
+        line: Py.newInt(self.frame.currentLine),
+        column: Py.newInt(0),
+        text: Py.newString("'continue' not properly in loop")
+      )
+      return .reportExceptionToParentFrame(e)
+
+    case .exception(let e):
+      return .reportExceptionToParentFrame(e)
+
+    case .yield,
+         .silenced:
       print()
       print("===")
       print("Popped all blocks, but this still remains: '\(reason)'")
-      print("Instruction:", pc)
-      print("Line:", line)
+      print("Instruction:", self.frame.instructionIndex ?? 0)
+      print("Line:", self.frame.currentLine)
       exit(1)
     }
   }

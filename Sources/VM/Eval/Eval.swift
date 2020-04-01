@@ -129,6 +129,8 @@ internal final class Eval {
           break
         case .return(let value):
           return .value(value)
+        case .reportExceptionToParentFrame(let e):
+          return .error(e)
         }
       }
     }
