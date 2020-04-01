@@ -6,6 +6,6 @@ import XCTest
 class EmptyTests: XCTestCase {
 
   func test_dummy() {
+    XCTAssert(true)
   }
 }
-

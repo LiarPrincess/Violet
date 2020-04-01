@@ -486,7 +486,7 @@ extension BuiltinFunctions {
       let code = self.compile(source: source,
                               filename: filename,
                               mode: mode,
-                              optimize: .none)
+                              optimize: OptimizationLevel.none)
 
       switch code {
       case let .value(c):
