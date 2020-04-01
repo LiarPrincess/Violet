@@ -8,6 +8,28 @@
 
 // swiftlint:disable file_length
 
+// MARK: - Get import
+
+extension BuiltinFunctions {
+
+  /// In CPython: interp->import_func
+  ///
+  /// This value is set in:
+  /// 'initimport(PyInterpreterState *interp, PyObject *sysmod)'
+  public func get__import__() -> PyResult<PyObject> {
+    let dict = Py.builtinsModule.__dict__
+
+    if let fn = dict.get(id: .__import__) {
+      return .value(fn)
+    }
+
+    let msg = "'__import__' function not found inside builtins module"
+    return .error(Py.newAttributeError(msg: msg))
+  }
+}
+
+// MARK: - __import__
+
 private let importArguments = ArgumentParser.createOrTrap(
   arguments: ["name", "globals", "locals", "fromlist", "level"],
   format: "U|OOOi:__import__"
@@ -287,41 +309,38 @@ extension BuiltinFunctions {
   /// static PyObject *
   /// import_find_and_load(PyObject *abs_name)
   private func call_find_and_load(absName: PyString) -> PyResult<PyObject> {
-    let importlib: PyModule
-    switch Py.getImportlib() {
-    case let .value(m): importlib = m
-    case let .error(e): return .error(e)
-    }
-
     let __import__: PyObject
     switch self.get__import__() {
     case let .value(i): __import__ = i
     case let .error(e): return .error(e)
     }
 
-    let callResult = Py.callMethod(
-      on: importlib,
-      selector: ._find_and_load,
-      args: [absName, __import__],
-      kwargs: nil
-    )
-
+    let args = [absName, __import__]
+    let callResult = self.callImportlibMethod(selector: ._find_and_load, args: args)
     return callResult.asResult
   }
 
-  /// In CPython: interp->import_func
-  ///
-  /// This value is set in:
-  /// 'initimport(PyInterpreterState *interp, PyObject *sysmod)'
-  private func get__import__() -> PyResult<PyObject> {
-    let dict = Py.builtinsModule.__dict__
-
-    if let fn = dict.get(id: .__import__) {
-      return .value(fn)
+  private func callImportlibMethod(selector: IdString,
+                                   args: [PyObject]) -> CallResult {
+    let importlib: PyModule
+    switch Py.getImportlib() {
+    case let .value(m): importlib = m
+    case let .error(e): return .error(e)
     }
 
-    let msg = "'__import__' function not found inside builtins module"
-    return .error(Py.newKeyError(msg: msg))
+    // We need to 'allowsCallableFromDict' because we don't want to call
+    // PyModule method, but our own 'def'.
+
+    switch Py.getMethod(object: importlib,
+                        selector: selector.value,
+                        allowsCallableFromDict: true) {
+    case let .value(method):
+      let x = Py.call(callable: method, args: args, kwargs: nil)
+      fatalError()
+    case let .notFound(e),
+         let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Handle 'from'
@@ -383,26 +402,15 @@ extension BuiltinFunctions {
 
   private func call_handle_fromlist(module: PyObject,
                                     fromList: PyObject) -> PyResult<PyObject> {
-     let importlib: PyModule
-     switch Py.getImportlib() {
-     case let .value(m): importlib = m
-     case let .error(e): return .error(e)
-     }
-
      let __import__: PyObject
      switch self.get__import__() {
      case let .value(i): __import__ = i
      case let .error(e): return .error(e)
      }
 
-     let callResult = Py.callMethod(
-       on: importlib,
-       selector: ._handle_fromlist,
-       args: [module, fromList, __import__],
-       kwargs: nil
-     )
-
-     return callResult.asResult
+    let args = [module, fromList, __import__]
+    let callResult = self.callImportlibMethod(selector: ._handle_fromlist, args: args)
+    return callResult.asResult
   }
 
   private func getTopLevelModuleAbsName(name: String,

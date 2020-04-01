@@ -30,16 +30,18 @@ extension Eval {
   private func importName(name: PyString,
                           fromList: PyObject,
                           level: PyObject) -> PyResult<PyObject> {
-    guard let importFn = self.builtinSymbols.get(id: .__import__) else {
-      return .error(Py.newPyImportError(msg: "__import__ not found"))
-    }
-
     let globals = self.globalSymbols
     let locals = self.localSymbols
 
-    let args = [name, globals, locals, fromList, level]
-    let result = Py.call(callable: importFn, args: args, kwargs: nil)
-    return result.asResult
+    let result = Py.__import__(
+      name: name,
+      globals: globals,
+      locals: locals,
+      fromList: fromList,
+      level: level
+    )
+
+    return result
   }
 
   // MARK: - Import star
