@@ -320,7 +320,7 @@ public class PyDict: PyObject {
     case .error(let e): return .error(e)
     }
 
-    switch Py.callMethod(on: self, selector: .__missing__, arg: index) {
+    switch Py.callMethod(object: self, selector: .__missing__, arg: index) {
     case .value(let o):
       return .value(o)
     case .missingMethod:
@@ -587,7 +587,7 @@ public class PyDict: PyObject {
       return .value(owner.keys())
     }
 
-    switch Py.callMethod(on: object, selector: .keys) {
+    switch Py.callMethod(object: object, selector: .keys) {
     case .value(let o):
       return .value(o)
     case .missingMethod:

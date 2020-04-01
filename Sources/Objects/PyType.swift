@@ -676,7 +676,7 @@ public class PyType: PyObject {
   private func call__init__(object: PyObject,
                             args: [PyObject],
                             kwargs: PyDict?) -> PyResult<PyNone> {
-    let result = Py.callMethod(on: object,
+    let result = Py.callMethod(object: object,
                                selector: .__init__,
                                args: args,
                                kwargs: kwargs)

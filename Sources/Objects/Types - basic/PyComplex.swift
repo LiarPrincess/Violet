@@ -608,7 +608,7 @@ public class PyComplex: PyObject {
       return .value(owner.asComplex())
     }
 
-    return Py.callMethod(on: object, selector: .__complex__)
+    return Py.callMethod(object: object, selector: .__complex__)
   }
 
   // MARK: - Helpers

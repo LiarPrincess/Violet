@@ -40,7 +40,7 @@ extension BuiltinFunctions {
       return .value(boolOwner.asBool())
     }
 
-    switch self.callMethod(on: object, selector: .__bool__) {
+    switch self.callMethod(object: object, selector: .__bool__) {
     case .value(let result):
       if let pyBool = result as? PyBool {
         return .value(pyBool.value.isTrue)
@@ -60,7 +60,7 @@ extension BuiltinFunctions {
       return .value(len.isTrue)
     }
 
-    switch self.callMethod(on: object, selector: .__len__) {
+    switch self.callMethod(object: object, selector: .__len__) {
     case .value(let result):
       return self.isTrueBool(result)
     case .missingMethod:

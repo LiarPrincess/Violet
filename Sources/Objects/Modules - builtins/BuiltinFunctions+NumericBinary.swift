@@ -185,7 +185,7 @@ extension BinaryOp {
     }
 
     // Try standard Python dispatch
-    switch Py.callMethod(on: left, selector: selector, arg: right) {
+    switch Py.callMethod(object: left, selector: selector, arg: right) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
@@ -208,7 +208,7 @@ extension BinaryOp {
     }
 
     // Try standard Python dispatch
-    switch Py.callMethod(on: right, selector: reflectedSelector, arg: left) {
+    switch Py.callMethod(object: right, selector: reflectedSelector, arg: left) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
@@ -231,7 +231,7 @@ extension BinaryOp {
     }
 
     // Try standard Python dispatch
-    switch Py.callMethod(on: left, selector: inPlaceSelector, arg: right) {
+    switch Py.callMethod(object: left, selector: inPlaceSelector, arg: right) {
     case .value(let result):
       return .value(result)
     case .missingMethod:

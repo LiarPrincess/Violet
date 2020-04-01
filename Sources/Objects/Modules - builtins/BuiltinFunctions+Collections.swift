@@ -329,7 +329,7 @@ extension BuiltinFunctions {
       return .value(self.newInt(bigInt))
     }
 
-    switch self.callMethod(on: iterable, selector: .__len__) {
+    switch self.callMethod(object: iterable, selector: .__len__) {
     case .value(let o):
       return .value(o)
     case .missingMethod:
@@ -385,7 +385,7 @@ extension BuiltinFunctions {
       return owner.contains(element)
     }
 
-    switch self.callMethod(on: iterable, selector: .__contains__, arg: element) {
+    switch self.callMethod(object: iterable, selector: .__contains__, arg: element) {
     case .value(let o):
       return self.isTrueBool(o)
     case .missingMethod:

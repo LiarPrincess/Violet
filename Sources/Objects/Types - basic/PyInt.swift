@@ -850,7 +850,7 @@ public class PyInt: PyObject {
       return .value(owner.trunc())
     }
 
-    return Py.callMethod(on: object, selector: .__trunc__)
+    return Py.callMethod(object: object, selector: .__trunc__)
   }
 
   private enum IntFromString {

@@ -110,7 +110,7 @@ extension TernaryOp {
     }
 
     // Try standard Python dispatch
-    switch Py.callMethod(on: left, selector: selector, args: [middle, right]) {
+    switch Py.callMethod(object: left, selector: selector, args: [middle, right]) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
@@ -134,7 +134,7 @@ extension TernaryOp {
     }
 
     // Try standard Python dispatch
-    switch Py.callMethod(on: middle, selector: reflectedSelector, args: [left, right]) {
+    switch Py.callMethod(object: middle, selector: reflectedSelector, args: [left, right]) {
     case .value(let result):
       return .value(result)
     case .missingMethod:

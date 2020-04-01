@@ -34,7 +34,7 @@ extension BuiltinFunctions {
       return owner.next()
     }
 
-    switch self.callMethod(on: iterator, selector: .__next__) {
+    switch self.callMethod(object: iterator, selector: .__next__) {
     case .value(let o):
       return .value(o)
     case .missingMethod:
@@ -72,7 +72,7 @@ extension BuiltinFunctions {
       return .value(result)
     }
 
-    switch self.callMethod(on: object, selector: .__iter__) {
+    switch self.callMethod(object: object, selector: .__iter__) {
     case .value(let o):
       return .value(o)
     case .missingMethod:

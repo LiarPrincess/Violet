@@ -65,7 +65,7 @@ extension BuiltinFunctions {
   private func callUnaryMethod(on value: PyObject,
                                selector: IdString,
                                operation: String) -> PyResult<PyObject> {
-    switch self.callMethod(on: value, selector: selector) {
+    switch self.callMethod(object: value, selector: selector) {
     case .value(let result):
       return .value(result)
     case .missingMethod:

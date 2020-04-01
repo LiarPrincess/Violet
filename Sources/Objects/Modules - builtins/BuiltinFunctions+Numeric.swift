@@ -17,7 +17,7 @@ extension BuiltinFunctions {
 
     let args = self.get__round__Args(nDigits: nDigits)
 
-    let result = self.callMethod(on: number, selector: .__round__, args: args)
+    let result = self.callMethod(object: number, selector: .__round__, args: args)
     switch result {
     case .value(let o):
       return .value(o)

@@ -148,7 +148,7 @@ extension BuiltinFunctions {
       return result.asFunctionResult
     }
 
-    switch self.callMethod(on: object, selector: .__dir__) {
+    switch self.callMethod(object: object, selector: .__dir__) {
     case .value(let o):
       return .value(o)
     case .missingMethod:

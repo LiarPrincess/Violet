@@ -20,7 +20,7 @@ extension BuiltinFunctions {
     }
 
     let result: PyObject
-    switch self.callMethod(on: object, selector: .__hash__) {
+    switch self.callMethod(object: object, selector: .__hash__) {
     case .value(let o):
       result = o
     case .missingMethod:
