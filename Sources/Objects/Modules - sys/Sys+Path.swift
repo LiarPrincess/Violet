@@ -39,6 +39,13 @@ extension Sys {
     return self.get(key: .path_hooks) ?? Py.newList()
   }
 
+  // MARK: - Path importer cache
+
+  // sourcery: pyproperty = path_importer_cache
+  internal var pathImporterCache: PyObject {
+    return self.get(key: .path_importer_cache) ?? Py.newDict()
+  }
+
   // MARK: - Path
 
   // sourcery: pyproperty = path, setter = setPath

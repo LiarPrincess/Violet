@@ -169,6 +169,7 @@ ids = [
   'open',
   'origin',
   'path_hooks',
+  'path_importer_cache',
   'path',
   'prefix',
   'ps1',

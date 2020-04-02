@@ -193,6 +193,7 @@ internal enum ModuleFactory {
 
     insert(module: module, name: "meta_path", value: object.metaPath)
     insert(module: module, name: "path_hooks", value: object.pathHooks)
+    insert(module: module, name: "path_importer_cache", value: object.pathImporterCache)
     insert(module: module, name: "path", value: object.path)
     insert(module: module, name: "prefix", value: object.prefix)
     insert(module: module, name: "builtin_module_names", value: object.builtinModuleNamesObject)
