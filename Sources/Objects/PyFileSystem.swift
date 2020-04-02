@@ -10,6 +10,15 @@ public enum FileStatResult {
   case error(PyOSError)
 }
 
+public enum ListDirResult {
+  /// List containing names of the entries
+  case entries([String])
+  /// No such file or directory
+  case enoent
+  /// Ooopps...
+  case error(PyOSError)
+}
+
 /// Delegate for all of the file-related needs.
 ///
 /// You can use dictionary-backed mock for tests.
@@ -44,6 +53,11 @@ public protocol PyFileSystem: AnyObject {
   ///
   /// Always chase the link.
   func stat(path: String) -> FileStatResult
+
+  /// List containing the names of the entries in the directory given by `fd`.
+  func listDir(fd: Int32) -> ListDirResult
+  /// List containing the names of the entries in the directory given by `path`.
+  func listDir(path: String) -> ListDirResult
 
   /// Read the whole file.
   ///

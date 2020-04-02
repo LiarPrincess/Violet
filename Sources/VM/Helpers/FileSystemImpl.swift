@@ -1,6 +1,10 @@
 import Objects
 import Foundation
 
+// A lot of this code was based on:
+// https://github.com/apple/swift-corelibs-foundation/blob/master/Sources/
+//    Foundation/FileManager%2BPOSIX.swift
+
 #if canImport(Darwin)
 import Darwin
 private let _stat = Darwin.stat(_:_:)
@@ -93,6 +97,8 @@ internal class FileSystemImpl: PyFileSystem {
     return .value(result)
   }
 
+  /// Foundation:
+  /// func _fileExists(atPath path: String, , isDirectory: UnsafeMutablePointer<ObjCBool>?)
   internal func stat(path: String) -> FileStatResult {
     return self.withFileSystemRepresentation(path: path) { fsRep in
       var info = Foundation.stat()
@@ -122,6 +128,73 @@ internal class FileSystemImpl: PyFileSystem {
     }
 
     return .error(Py.newOSError(errno: errno))
+  }
+
+  // MARK: - List dir
+
+  internal func listDir(fd: Int32) -> ListDirResult {
+    guard let dir = fdopendir(fd) else {
+      return .enoent
+    }
+    defer { closedir(dir) }
+
+    switch self.listDir(dir: dir) {
+    case let .entries(e):
+      return .entries(e)
+    case let .error(errno: e):
+      return .error(Py.newOSError(errno: e))
+    }
+  }
+
+  /// Foundation:
+  /// func _contentsOfDir(atPath path: String, _ closure: (String, Int32) throws -> ())
+  internal func listDir(path: String) -> ListDirResult {
+    return  self.withFileSystemRepresentation(path: path) { fsRep in
+      guard let dir = opendir(fsRep) else {
+        return .enoent
+      }
+      defer { closedir(dir) }
+
+      switch self.listDir(dir: dir) {
+      case let .entries(e):
+        return .entries(e)
+      case let .error(errno: e):
+        return .error(Py.newOSError(errno: e, path: path))
+      }
+    }
+  }
+
+  private enum ListDirInnerResult {
+    case entries([String])
+    case error(errno: Int32)
+  }
+
+  private func listDir(dir: UnsafeMutablePointer<DIR>) -> ListDirInnerResult {
+    // readdir returns NULL on EOF and error so set errno to 0 to check for errors
+    var result = [String]()
+    errno = 0
+
+    while let entry = readdir(dir) {
+      let name = withUnsafePointer(to: entry.pointee.d_name) { ptr -> String in
+        let namePtr = UnsafeRawPointer(ptr)
+        let nameLen = entry.pointee.d_namlen
+        let data = Data(bytes: namePtr, count: Int(nameLen))
+        return String(data: data, encoding: .utf8)!
+        // swiftlint:disable:previous force_unwrapping
+      }
+
+      if name != "." && name != ".." {
+        result.append(name)
+      }
+
+      errno = 0
+    }
+
+    guard errno == 0 else {
+      return .error(errno: errno)
+    }
+
+    return .entries(result)
   }
 
   // MARK: - Helpers

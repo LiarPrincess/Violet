@@ -74,14 +74,7 @@ public final class UnderscoreOS {
       return result.map { $0 as PyObject }
 
     case .enoent:
-      let errno = ENOENT
-
-      if let p = path {
-        return .error(Py.newOSError(errno: errno, path: p))
-      }
-
-      return .error(Py.newOSError(errno: errno))
-
+      return .error(Py.newFileNotFoundError())
     case .error(let e):
       return .error(e)
     }
@@ -108,6 +101,50 @@ public final class UnderscoreOS {
 
     let result = Py.newNamespace(dict: dict)
     return .value(result)
+  }
+
+  // MARK: - Listdir
+
+  // sourcery: pymethod = listdir
+  /// Doc:
+  /// https://docs.python.org/3/library/os.html#os.listdir
+  ///
+  /// static PyObject *
+  /// os_listdir_impl(PyObject *module, path_t *path)
+  public func listDir(path: PyObject? = nil) -> PyResult<PyObject> {
+    switch self.parseListDirPath(path: path) {
+    case let .descriptor(fd):
+      let result = Py.fileSystem.listDir(fd: fd)
+      return self.handleListDirResult(result: result)
+
+    case let .path(path):
+      let result = Py.fileSystem.listDir(path: path)
+      return self.handleListDirResult(result: result)
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func parseListDirPath(path: PyObject?) -> ParsePathOrDescriptorResult {
+    guard let path = path else {
+      return .path(".")
+    }
+
+    return self.parsePathOrDescriptor(object: path)
+  }
+
+  private func handleListDirResult(result: ListDirResult) -> PyResult<PyObject> {
+    switch result {
+    case .entries(let entries):
+      let elements = entries.map(Py.newString(_:))
+      let list = Py.newList(elements)
+      return .value(list)
+    case .enoent:
+      return .error(Py.newFileNotFoundError())
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // MARK: - Helpers

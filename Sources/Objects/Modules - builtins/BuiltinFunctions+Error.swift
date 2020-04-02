@@ -137,6 +137,13 @@ extension BuiltinFunctions {
     return filename.isEmpty ? nil : filename
   }
 
+  // MARK: - File not found
+
+  public func newFileNotFoundError() -> PyFileNotFoundError {
+    let result = PyFileNotFoundError(msg: "No such file or directory")
+    return result
+  }
+
   // MARK: - Key error
 
   /// Mapping key not found.
