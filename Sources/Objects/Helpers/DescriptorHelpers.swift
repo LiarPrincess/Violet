@@ -38,7 +38,9 @@ extension PyObject {
   /// If descriptor is called on a class/type then this value will be used
   /// as a `object/instance` parameter.
   internal var isDescriptorStaticMarker: Bool {
-    return self is PyNone
+    // This should be faster than doing Swift runtime check 'is PyNone'.
+    // Also 'Py' is already in cache anyway...
+    return self === Py.none
   }
 }
 
@@ -53,6 +55,8 @@ internal class GetDescriptor {
 
   /// Object on which this descriptor should be called.
   private let object: PyObject
+  /// Type to use when calling descriptor
+  private let type: PyType
   /// Descriptor object (the one with get/set/del methods).
   private let descriptor: PyObject
 
@@ -66,7 +70,32 @@ internal class GetDescriptor {
     return self.set != nil
   }
 
-  internal init?(object: PyObject, attribute: PyObject) {
+  /// Create (potential) descriptor for static property.
+  ///
+  /// Most of the time this is not what you want to use!
+  /// You probably want `init?(object:attribute:)`.
+  internal convenience init?(type: PyType, attribute: PyObject) {
+    // - 'object: None' - to provide static binding
+    //   ('__get__' will be called with 'None' as 2nd arg)
+    // - 'type: type' - so we know the actual desired type
+    //   (because we can't get it from object - it is 'None')
+    self.init(
+      object: descriptorStaticMarker,
+      type: type,
+      attribute: attribute
+    )
+  }
+
+  /// Create (potential) descriptor for instance property.
+  internal convenience init?(object: PyObject, attribute: PyObject) {
+    self.init(object: object, type: object.type, attribute: attribute)
+  }
+
+  /// Create (potential) descriptor.
+  ///
+  /// Most of the time this is not what you want to use!
+  /// You probably want `init?(object:attribute:)`.
+  internal init?(object: PyObject, type: PyType, attribute: PyObject) {
     // No getter -> no descriptor
     guard let get = attribute.type.lookup(name: .__get__) else {
       return nil
@@ -74,17 +103,13 @@ internal class GetDescriptor {
 
     // We found ourselves a fully functioning descriptor!
     self.object = object
+    self.type = type
     self.descriptor = attribute
     self.get = get
   }
 
-  /// Most of the time `withObject` set to false means static binding.
-  internal func call(withObject: Bool = true,
-                     overrideType: PyType? = nil) -> PyResult<PyObject> {
-    let owner = withObject ? self.object : descriptorStaticMarker
-    let type = overrideType ?? self.object.type
-    let args = [self.descriptor, owner, type]
-
+  internal func call() -> PyResult<PyObject> {
+    let args = [self.descriptor, self.object, self.type]
     switch Py.call(callable: self.get, args: args) {
     case .value(let r):
       return .value(r)

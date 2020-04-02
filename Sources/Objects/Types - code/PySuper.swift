@@ -118,8 +118,8 @@ public class PySuper: PyObject, HasCustomGetMethod {
 
       switch dict.get(key: name) {
       case .value(let res):
-        if let descr = GetDescriptor(object: suObj, attribute: res) {
-          return descr.call(overrideType: startType)
+        if let descr = GetDescriptor(object: suObj, type: startType, attribute: res) {
+          return descr.call()
         }
 
         return .value(res)

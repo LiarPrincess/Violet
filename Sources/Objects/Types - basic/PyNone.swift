@@ -75,7 +75,7 @@ public class PyNone: PyObject {
       // When we call it with 'None' as a 'object' it will return unbinded 'self'.
       // Then we will try to bind it manually.
 
-      let unbinded = descr.call(withObject: false)
+      let unbinded = descr.call()
       return unbinded.flatMap(self.bindToSelf(object:))
     }
 

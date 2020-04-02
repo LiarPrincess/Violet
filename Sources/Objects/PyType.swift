@@ -478,11 +478,8 @@ public class PyType: PyObject {
     // Look in __dict__ of this type and its bases
     switch self.lookup(name: name) {
     case .value(let attribute):
-      if let descr = GetDescriptor(object: self, attribute: attribute) {
-        // 'Without owner' means that we will call '__get__' with 'None' object
-        // This will result in static binding.
-        // For example: 'int.__eq__' will not bind 'self' to any number!
-        return descr.call(withObject: false)
+      if let descr = GetDescriptor(type: self, attribute: attribute) {
+        return descr.call()
       }
 
       return .value(attribute)
