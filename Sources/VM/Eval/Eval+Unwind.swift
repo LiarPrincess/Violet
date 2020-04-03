@@ -24,6 +24,8 @@ internal enum UnwindReason {
   /// 'yield' operator
   case yield
   /// Exception silenced by 'with'
+  ///
+  /// It happens when '__exit__' returns 'truthy' value.
   case silenced
 }
 

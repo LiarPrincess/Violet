@@ -42,7 +42,9 @@ internal enum PushFinallyReason {
     case exception(PyBaseException)
     /// 'yield' operator
     case yield
-    /// Exception silenced by 'with'
+    /// Exception silenced by 'with'.
+    ///
+    /// It happens when '__exit__' returns 'truthy' value.
     case silenced
   }
 
