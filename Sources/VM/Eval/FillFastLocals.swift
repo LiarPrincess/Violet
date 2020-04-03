@@ -124,15 +124,16 @@ internal struct FillFastLocals {
   // MARK: - Kwargs
 
   private mutating func fillFromKwargs() -> PyBaseException? {
-    guard let kwargs = self.kwargs else {
-      return nil
-    }
-
     // Create a dictionary for keyword parameters (**kwags)
+    // We have to do this even if we were not called with **kwargs.
     if self.hasVarKeywords {
       let dict = Py.newDict()
       self.varKwargs = dict
       self.setVarKwargs(value: dict)
+    }
+
+    guard let kwargs = self.kwargs else {
+      return nil
     }
 
     // Handle keyword arguments
