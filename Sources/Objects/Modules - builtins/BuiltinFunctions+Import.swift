@@ -335,8 +335,7 @@ extension BuiltinFunctions {
                         selector: selector.value,
                         allowsCallableFromDict: true) {
     case let .value(method):
-      let x = Py.call(callable: method, args: args, kwargs: nil)
-      fatalError()
+      return Py.call(callable: method, args: args, kwargs: nil)
     case let .notFound(e),
          let .error(e):
       return .error(e)

@@ -301,9 +301,17 @@ extension BuiltinFunctions {
     return .typeError("compile() mode must be 'exec', 'eval' or 'single'")
   }
 
+  private var optimizeFromArgumentsOrEnvironment: OptimizationLevel {
+    return Py.sys.flags.optimize
+  }
+
   private func parseCompileOptimize(arg: PyObject?) -> PyResult<OptimizationLevel> {
+    // The argument optimize specifies the optimization level of the compiler;
+    // the default value of -1 selects the optimization level of the interpreter
+    // as given by -O options.
+
     guard let arg = arg else {
-      return .value(.none)
+      return .value(self.optimizeFromArgumentsOrEnvironment)
     }
 
     guard let int = arg as? PyInt else {
@@ -311,6 +319,8 @@ extension BuiltinFunctions {
     }
 
     switch int.value {
+    case -1:
+      return .value(self.optimizeFromArgumentsOrEnvironment)
     case 0:
       return .value(.none)
     case 1:
