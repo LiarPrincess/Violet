@@ -209,8 +209,9 @@ class SourceFileLoader:
 
     def get_data(self, path):
         """Return the data from path as raw bytes."""
-        with _io.FileIO(path, 'r') as file:
-            return file.read()
+        # VIOLET: We do not have '_io.FileIO', so we will use 'builtins.open'
+        with open(path, 'r') as file:
+            return file.read()beca
 
     def source_to_code(self, data, path, *, _optimize=-1):
         """Return the code object compiled from source.
@@ -367,6 +368,7 @@ class PathFinder:
 
         The search is based on sys.path_hooks and sys.path_importer_cache.
         """
+
         if path is None:
             path = sys.path
 
@@ -402,7 +404,7 @@ class FileFinder:
         recognizes."""
         loaders = []
         for loader, suffixes in loader_details:
-          # Manual loop since Violet does not support comprehensions
+          # VIOLET: Manual loop since we do not support comprehensions
           for suffix in suffixes:
             loaders.append((suffix, loader))
 
