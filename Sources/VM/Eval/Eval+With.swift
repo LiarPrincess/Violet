@@ -63,24 +63,34 @@ extension Eval {
   /// Cleans up the stack when a `with` statement block exits.
   ///
   /// TOS is the context manager’s `__exit__()` bound method.
-  /// Below TOS are 1–3 values indicating how/why the finally clause was entered:
-  /// - `SECOND = None`
-  /// - `(SECOND, THIRD) = (WHY_{RETURN,CONTINUE}), retval`
-  /// - `SECOND = WHY_*; no retval below it`
-  /// - `(SECOND, THIRD, FOURTH) = exc_info()`
-  /// In the last case, `TOS(SECOND, THIRD, FOURTH)` is called,
-  /// otherwise `TOS(None, None, None)`.
+  /// At the top of the stack are 1–2 values indicating how/why the finally
+  /// clause was entered:
+  /// - `(None)` - nothing unusual happened
+  /// - `(Int, Value)` where Int is either `PushFinallyReason.retutn` or
+  ///    `PushFinallyReason.continue` - we were retutning/continuing
+  /// - `(Int)` where Int is other `PushFinallyReason` marker; no retval below it
+  /// - `(PyBaseException, PyBaseException or None)`
+  ///    where 1st exception is the exception that we are currently handling
+  ///    and the 2nd exception is optional previous exception.
+  ///
+  /// And then there is an `__exit__` bound method.
+  ///
+  /// Normally we will call `__exit__(None, None, None)`, but in the last case
+  /// (the one with exception) we will call `__exit__(e.type, e, e.traceback)`.
+  ///
   /// Pushes `SECOND` and result of the call to the stack.
   internal func withCleanupStart() -> InstructionResult {
     // swiftlint:enable function_body_length
 
     let __exit__: PyObject
-    var exceptionType = self.stack.top
+    var exceptionType: PyObject = Py.none
     var exception: PyObject = Py.none
     var traceback: PyObject = Py.none
 
-    let marker = self.stack.top // 'exc' in CPython
+    let marker = self.stack.top
 
+    // In general: Pop as many objects as needed to get to '__exit__'
+    // and then push them back again.
     switch PushFinallyReason.pop(from: &self.stack) {
     case .none:
       // nothing unusual happened
@@ -109,6 +119,7 @@ extension Eval {
       let previousException = self.stack.pop() // may also be 'None'
       __exit__ = self.stack.pop()
       self.stack.push(previousException)
+      self.stack.push(exception)
 
       guard let block = self.blocks.pop() else {
         let e = Py.newSystemError(msg: "XXX block stack underflow")
@@ -116,8 +127,8 @@ extension Eval {
       }
 
       assert(block.isExceptHandler)
-      let newLevel = block.stackLevel - 1
-      self.blocks.push(block: Block(type: .exceptHandler, stackLevel: newLevel))
+      let levelWithoutExit = block.stackLevel - 1
+      self.blocks.push(block: Block(type: .exceptHandler, stackLevel: levelWithoutExit))
 
     case .silenced:
       __exit__ = self.stack.pop()
@@ -130,9 +141,9 @@ extension Eval {
 
     let args = [exceptionType, exception, traceback]
     switch Py.call(callable: __exit__, args: args, kwargs: nil) {
-    case let .value(res):
-      self.stack.push(exceptionType)
-      self.stack.push(res)
+    case let .value(result):
+      self.stack.push(exception) // Duplicating the exception on the stack
+      self.stack.push(result)
       return .ok
     case let .notCallable(e),
          let .error(e):
@@ -149,20 +160,26 @@ extension Eval {
   /// to prevent EndFinally from re-raising the exception.
   /// (But non-local gotos will still be resumed.)
   internal func withCleanupFinish() -> InstructionResult {
-    let res = self.stack.pop()
-    let exc = self.stack.pop()
+    // Most of the time 'result' is the result of calling '__exit__'.
+    let result = self.stack.pop()
+    let exception = self.stack.pop()
 
-    var err = false
-    if !exc.isNone {
-      switch Py.isTrueBool(res) {
+    // From https://docs.python.org/3/reference/datamodel.html#object.__exit__:
+    // If an exception is supplied, and the method wishes to suppress the exception
+    // (i.e., prevent it from being propagated), it should return a true value.
+    // Otherwise, the exception will be processed normally upon exit from this method.
+
+    var isExceptionSuppressed = false
+    if !exception.isNone {
+      switch Py.isTrueBool(result) {
       case let .value(value):
-        err = value
+        isExceptionSuppressed = value
       case let .error(e):
         return .exception(e)
       }
     }
 
-    if err {
+    if isExceptionSuppressed {
       // There was an exception and a True return
       PushFinallyReason.push(.silenced, on: &self.stack)
     }

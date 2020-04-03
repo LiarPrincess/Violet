@@ -48,7 +48,10 @@ extension VM {
 
     switch result {
     case .value: break // Let's ignore this thingie
-    case .error(let e): return e // TODO: Handle 'sys.exit()'
+    case .error(let e):
+      print("=== Error ===")
+      print(e)
+      trap("") // TODO: Handle 'sys.exit()'
     }
 
     if runRepl || Py.sys.flags.inspect {
@@ -165,7 +168,7 @@ extension VM {
     case .value(let s):
       stat = s
     case .enoent:
-      return .error(Py.newOSError(errno: ENOENT, path: path))
+      return .error(Py.newFileNotFoundError())
     case .error(let e):
       return .error(e)
     }
@@ -197,7 +200,7 @@ extension VM {
       return .error(Py.newOSError(msg: msg))
 
     case .enoent:
-      return .error(Py.newOSError(errno: ENOENT, path: main.path))
+      return .error(Py.newFileNotFoundError())
     case .error(let e):
       return .error(e)
     }
