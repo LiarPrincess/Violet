@@ -2,6 +2,7 @@ import Foundation
 
 // In CPython:
 // Modules -> _io -> textio.c
+// Modules -> _io -> iobase.c
 // Python -> codecs.c
 // https://docs.python.org/3.7/library/io.html
 
@@ -130,7 +131,11 @@ public class PyTextFile: PyObject {
   // sourcery: pymethod = read
   /// static PyObject *
   /// _io_TextIOWrapper_read_impl(textio *self, Py_ssize_t n)
-  internal func read(size: PyObject) -> PyResult<PyString> {
+  internal func read(size: PyObject? = nil) -> PyResult<PyString> {
+    guard let size = size else {
+      return self.read(size: -1)
+    }
+
     if size is PyNone {
       return self.read(size: -1)
     }
@@ -252,6 +257,29 @@ public class PyTextFile: PyObject {
 
     // 'self.close' is (or at least should be) idempotent
     return self.close()
+  }
+
+  // MARK: - Context manager
+
+  // This things are defined in IOBase
+
+  // sourcery: pymethod = __enter__
+  internal func enter() -> PyResult<PyObject> {
+    // 'FileDescriptorType' is responsible for actually opening file.
+    // Also: we need to return self because result of '__enter__' will be binded
+    // to 'f' in 'open('elsa') as f'.
+    return .value(self)
+  }
+
+  // sourcery: pymethod = __exit__
+  internal func exit(exceptionType: PyObject,
+                     exception: PyObject,
+                     traceback: PyObject) -> PyResult<PyObject> {
+    // Remember that if we return 'truthy' value (yes, we JavasScript now)
+    // then the exception will be suspressed (and we dont wan't this).
+    // So we return 'None' which is 'falsy'.
+    let result = self.closeIfNotAlreadyClosed()
+    return result.map { $0 as PyObject }
   }
 
   // MARK: - Helpers

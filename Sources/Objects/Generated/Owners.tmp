@@ -868,12 +868,14 @@ PyTextFile|PyObject|get|__class__|getClass() -> PyType
 
 PyTextFile|PyObject|func|__repr__|repr() -> PyResult<String>
 PyTextFile|PyObject|func|readable|isReadable() -> Bool
-PyTextFile|PyObject|func|read|read(size: PyObject) -> PyResult<PyString>
+PyTextFile|PyObject|func|read|read(size: PyObject? = nil) -> PyResult<PyString>
 PyTextFile|PyObject|func|writable|isWritable() -> Bool
 PyTextFile|PyObject|func|write|write(object: PyObject) -> PyResult<PyNone>
 PyTextFile|PyObject|func|closed|isClosed() -> Bool
 PyTextFile|PyObject|func|close|close() -> PyResult<PyNone>
 PyTextFile|PyObject|func|__del__|del() -> PyResult<PyNone>
+PyTextFile|PyObject|func|__enter__|enter() -> PyResult<PyObject>
+PyTextFile|PyObject|func|__exit__|exit(exceptionType: PyObject,                     exception: PyObject,                     traceback: PyObject) -> PyResult<PyObject>
 PyTuple|PyObject|get|__class__|getClass() -> PyType
 
 PyTuple|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult

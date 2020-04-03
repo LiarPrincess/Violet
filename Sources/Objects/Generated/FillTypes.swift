@@ -1526,6 +1526,8 @@ internal enum FillTypes {
     insert(type: type, name: "closed", value: PyBuiltinFunction.wrap(name: "closed", doc: nil, fn: PyTextFile.isClosed, castSelf: Cast.asPyTextFile))
     insert(type: type, name: "close", value: PyBuiltinFunction.wrap(name: "close", doc: nil, fn: PyTextFile.close, castSelf: Cast.asPyTextFile))
     insert(type: type, name: "__del__", value: PyBuiltinFunction.wrap(name: "__del__", doc: nil, fn: PyTextFile.del, castSelf: Cast.asPyTextFile))
+    insert(type: type, name: "__enter__", value: PyBuiltinFunction.wrap(name: "__enter__", doc: nil, fn: PyTextFile.enter, castSelf: Cast.asPyTextFile))
+    insert(type: type, name: "__exit__", value: PyBuiltinFunction.wrap(name: "__exit__", doc: nil, fn: PyTextFile.exit(exceptionType:exception:traceback:), castSelf: Cast.asPyTextFile))
   }
 
   // MARK: - Tuple
