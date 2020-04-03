@@ -211,7 +211,7 @@ class SourceFileLoader:
         """Return the data from path as raw bytes."""
         # VIOLET: We do not have '_io.FileIO', so we will use 'builtins.open'
         with open(path, 'r') as file:
-            return file.read()beca
+            return file.read()
 
     def source_to_code(self, data, path, *, _optimize=-1):
         """Return the code object compiled from source.
@@ -576,6 +576,11 @@ def _setup(_bootstrap_module):
 
     # Constants
     setattr(self_module, '_relax_case', _make_relax_case())
+
+    # VIOLET: Inject this module as '_bootstrap_external' in 'importlib'.
+    # CPython does this in in 'importlib._install_external_importers'
+    # But since we don't support forzen modules we have to do it here:
+    _bootstrap._bootstrap_external = self_module
 
 def _install(_bootstrap_module):
     """Install the path-based import components."""

@@ -1,8 +1,6 @@
 import Core
 import Foundation
 
-// swiftlint:disable file_length
-
 /// Importlib module spec, so that we can share code between
 /// `importlib` and `importlib_external`.
 private struct ModuleSpec {
@@ -22,6 +20,15 @@ private struct ModuleSpec {
 private enum ImportlibResult<Wrapped> {
   case value(Wrapped)
   case error(PyImportError)
+
+  fileprivate var asResult: PyResult<Wrapped> {
+    switch self {
+    case let .value(w):
+      return .value(w)
+    case let .error(e):
+      return .error(e)
+    }
+  }
 }
 
 extension PyInstance {
@@ -44,12 +51,8 @@ extension PyInstance {
     )
 
     let args = [self.sysModule, self._impModule]
-    switch self.initImportlibModule(spec: spec, installArgs: args) {
-    case let .value(module):
-      return .value(module)
-    case let .error(e):
-      return .error(e)
-    }
+    let module = self.initImportlibModule(spec: spec, installArgs: args)
+    return module.asResult
   }
 
   // MARK: - Importlib external
@@ -70,34 +73,9 @@ extension PyInstance {
       filename: "importlib_external.py"
     )
 
-    switch self.initImportlibModule(spec: spec, installArgs: [importlib]) {
-    case let .value(module):
-      if let e = self.addExternalToImportlib(importlib: importlib, external: module) {
-        return .error(e)
-      }
-
-      return .value(module)
-
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  /// Add `importlib_external` as `_bootstrap_external` in `importlib`.
-  private func addExternalToImportlib(importlib: PyModule,
-                                      external: PyModule) -> PyImportError? {
-    let dict = importlib.getDict()
-    let name = Py.newString("_bootstrap_external")
-
-    switch dict.set(key: name, to: external) {
-    case .ok:
-      return nil
-    case .error(let e):
-      return self.newPyImportError(
-        msg: "can't inject '_bootstrap_external' to importlib",
-        cause: e
-      )
-    }
+    let args = [importlib]
+    let module = self.initImportlibModule(spec: spec, installArgs: args)
+    return module.asResult
   }
 
   // MARK: - Shared
