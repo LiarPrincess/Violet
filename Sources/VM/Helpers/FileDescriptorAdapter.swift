@@ -2,6 +2,9 @@ import Objects
 import Foundation
 
 /// Adapter between `FileDescriptor` and `FileDescriptorType`.
+///
+/// Basically it will call a method on provided `FileDescriptor`
+/// and then in case of exception it will convert it to Python error.
 internal struct FileDescriptorAdapter:
   CustomStringConvertible, FileDescriptorType {
 

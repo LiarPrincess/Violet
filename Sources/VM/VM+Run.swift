@@ -1,8 +1,6 @@
-import Lexer
-import Parser
-import Foundation
-import Objects
 import Core
+import Objects
+import Foundation
 
 // swiftlint:disable file_length
 
@@ -27,7 +25,8 @@ extension VM {
     }
 
     // Oh no... we will be running code! Let's prepare for this.
-    // (For some reason importing stuff seems to be important in programming...)
+    // For some reason importing stuff seems to be important* in programming...
+    // * Pun intended (sorry!)
     if let e = self.initImportlibIfNeeded() {
       return e
     }
@@ -47,11 +46,12 @@ extension VM {
     }
 
     switch result {
-    case .value: break // Let's ignore this thingie
+    case .value:
+      break // Let's ignore the returned value
+    case .error(let e) where e.isSystemExit:
+      return nil // Everything is fine
     case .error(let e):
-      print("=== Error ===")
-      print(e)
-      trap("") // TODO: Handle 'sys.exit()'
+      return e
     }
 
     if runRepl || Py.sys.flags.inspect {
@@ -62,6 +62,15 @@ extension VM {
   }
 
   private func initImportlibIfNeeded() -> PyBaseException? {
+    // This is probably the first time you see our error handling approach.
+    // So... we are using 'enums' instead of Swift 'throw'.
+    // There is a long comment about this in 'README' for 'Objects' module.
+
+    // Also, both 'initImportlibIfNeeded' and 'initImportlibExternalIfNeeded'
+    // are idempotent, so we can call them as many times as we want.
+    // Unless you do something like 'sys.modules['importlib'] = "let it go"',
+    // in such case we will reinitialize the whole thing.
+
     let importlib: PyModule
     switch Py.initImportlibIfNeeded() {
     case let .value(m): importlib = m
@@ -325,7 +334,7 @@ extension VM {
   }
 
   private func add__main__Module() -> PyResult<PyModule> {
-    let name = Py.newString("__main__")
+    let name = Py.getInterned("__main__")
     let module = Py.newModule(name: name)
 
     switch Py.sys.addModule(name: name, module: module) {

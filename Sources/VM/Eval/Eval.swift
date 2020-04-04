@@ -138,6 +138,7 @@ internal final class Eval {
 
   /// Context - another exception during whose handling this exception was raised.
   private func addExceptionContextIfNeeded(_ reason: UnwindReason) {
+    // TODO: This should no be here, but in 'Objects'
     guard case let UnwindReason.exception(exception) = reason else {
       return
     }

@@ -122,6 +122,10 @@ public class PyBaseException: PyObject {
     return self is PyKeyError
   }
 
+  public var isSystemExit: Bool {
+    return self is PySystemExit
+  }
+
   // MARK: - String
 
   // sourcery: pymethod = __repr__

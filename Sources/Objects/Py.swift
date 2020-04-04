@@ -3,7 +3,7 @@ import Foundation
 
 public private(set) var Py = PyInstance()
 
-public class PyInstance: BuiltinFunctions {
+public final class PyInstance: BuiltinFunctions {
 
   // MARK: - Builtins
 

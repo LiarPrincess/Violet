@@ -40,6 +40,10 @@ extension PyInstance {
     // 'self.initImportlibIfNeeded' is idempotent:
     // - if it was never called it will intitialize it
     // - if we already called it then it will return module from 'sys'
+    //
+    // Unless you do something like 'sys.modules['importlib'] = "let it go"',
+    // in such case we will reinitialize the whole thing.
+
     return self.initImportlibIfNeeded()
   }
 
