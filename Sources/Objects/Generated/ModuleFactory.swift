@@ -268,8 +268,12 @@ internal enum ModuleFactory {
   internal static func createUnderscoreWarnings(from object: UnderscoreWarnings) -> PyModule {
     let module = createModule(name: "_warnings", doc: nil, dict: object.__dict__)
 
+    insert(module: module, name: "filters", value: object.filters)
+    insert(module: module, name: "_defaultaction", value: object.defaultAction)
+    insert(module: module, name: "_onceregistry", value: object.onceRegistry)
 
 
+    insert(module: module, name: "warn", value: PyBuiltinFunction.wrap(name: "warn", doc: nil, fn: object.warn(args:kwargs:), module: module))
 
     return module
   }

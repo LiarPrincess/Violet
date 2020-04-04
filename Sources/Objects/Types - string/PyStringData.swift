@@ -104,4 +104,12 @@ internal struct PyStringData: PyStringImpl, CustomStringConvertible {
   internal func capitalize() -> String {
     return self.capitalizeString()
   }
+
+  // MARK: - Helpers
+
+  /// Helper for commonly used path.
+  internal func contains(_ value: String) -> Bool {
+    let data = PyStringData(value)
+    return self.contains(data)
+  }
 }
