@@ -29,12 +29,19 @@ extension UnderscoreWarnings {
     // >>> warnings.formatwarning('message', UserWarning, 'file', 1)
     // 'file:1: UserWarning: message\n'
 
+    // Or you can do this:
+    // >>> import _warnings
+    // >>> _warnings.warn('Elsa')
+    // __main__:1: UserWarning: Elsa
+    // >>> _warnings.warn(ImportWarning)
+    // __main__:1: UserWarning: <class 'ImportWarning'>
+
     let filename = warning.filename.value
     let lineNo = warning.lineNo.value
     let type = warning.category.getName()
 
     let content: String
-    switch Py.strValue(warning.message) {
+    switch Py.strValue(warning.text) {
     case let .value(c): content = c
     case let .error(e): return .error(e)
     }

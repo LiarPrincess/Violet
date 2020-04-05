@@ -48,8 +48,8 @@ extension UnderscoreWarnings {
 
   public func warn(message: PyObject,
                    category categoryArg: PyObject?,
-                   stackLevel stackLevelArg: PyObject?,
-                   source: PyObject?) -> PyResult<PyNone> {
+                   stackLevel stackLevelArg: PyObject? = nil,
+                   source: PyObject? = nil) -> PyResult<PyNone> {
     let category: PyType
     switch self.parseCategory(message: message, category: categoryArg) {
     case let .value(c): category = c

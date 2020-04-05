@@ -17,7 +17,9 @@ extension UnderscoreWarnings {
   // MARK: - Warning
 
   internal struct Warning {
+    /// Message as passed by the user
     let message: PyObject
+    /// Text to print (most of the time it will be `str(self.message)`)
     let text: PyObject
     let category: PyType
     let filename: PyString
@@ -89,7 +91,7 @@ extension UnderscoreWarnings {
     }
 
     if filename.value.hasSuffix(".py") {
-      let module = String(filename.value.dropLast(2))
+      let module = String(filename.value.dropLast(3))
       return Py.getInterned(module)
     }
 

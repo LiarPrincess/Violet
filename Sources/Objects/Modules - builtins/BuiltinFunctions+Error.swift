@@ -351,24 +351,7 @@ extension BuiltinFunctions {
   }
 }
 
-// MARK: - Warnings
-
-public enum WarningType {
-  case `import`
-  case deprecation
-}
-
 extension BuiltinFunctions {
-
-  /// Base class for warnings about deprecated features.
-  public func newDeprecationWarning(msg: String) -> PyDeprecationWarning {
-    return PyDeprecationWarning(msg: msg)
-  }
-
-  public func warn(type: WarningType, msg: String) -> PyBaseException? {
-    // TODO: Finish warnings
-    return nil
-  }
 
   // MARK: - Exception matches
 
