@@ -180,6 +180,36 @@ extension BuiltinFunctions {
 
     return .value(result)
   }
+}
+  // MARK: - Decode string
+
+internal enum ExtractStringResult {
+  case string(PyString, String)
+  case bytes(PyBytesType, String)
+  case byteDecodingError
+  case notStringOrBytes
+}
+
+extension BuiltinFunctions {
+
+  /// Extract `String` from this object (if possible).
+  ///
+  /// Mostly targeted torwards 'str', `bytes` and `bytearray`.
+  internal func extractString(object: PyObject) -> ExtractStringResult {
+    if let str = object as? PyString {
+      return .string(str, str.value)
+    }
+
+    if let bytes = object as? PyBytesType {
+      if let string = bytes.data.string {
+        return .bytes(bytes, string)
+      }
+
+      return .byteDecodingError
+    }
+
+    return .notStringOrBytes
+  }
 
   // MARK: - Helpers
 

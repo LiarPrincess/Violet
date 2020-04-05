@@ -61,6 +61,25 @@ public enum PyWarningEnum {
 
 extension BuiltinFunctions {
 
+  // MARK: - Factory
+
+  public func warn(warning: LexerWarning) -> PyBaseException? {
+    let msg = String(describing: warning)
+    return self.warn(type: .syntax, msg: msg)
+  }
+
+  public func warn(warning: ParserWarning) -> PyBaseException? {
+    let msg = String(describing: warning)
+    return self.warn(type: .syntax, msg: msg)
+  }
+
+  public func warn(warning: CompilerWarning) -> PyBaseException? {
+    let msg = String(describing: warning)
+    return self.warn(type: .syntax, msg: msg)
+  }
+
+  // MARK: - Warn
+
   public func warn(type: PyWarningEnum, msg: String) -> PyBaseException? {
     return self.warn(type: type.py, msg: msg)
   }
