@@ -55,7 +55,7 @@ public class PyByteArray: PyObject, PyBytesType {
       return .value(true)
     }
 
-    return CompareResult(self.compare(other).map { $0 == .equal })
+    return self.data.isEqual(other)
   }
 
   // sourcery: pymethod = __ne__
@@ -67,30 +67,22 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    return CompareResult(self.compare(other).map { $0 == .less })
+    return self.data.isLess(other)
   }
 
   // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return CompareResult(self.compare(other).map { $0 == .less || $0 == .equal })
+    return self.data.isLessEqual(other)
   }
 
   // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> CompareResult {
-    return CompareResult(self.compare(other).map { $0 == .greater })
+    return self.data.isGreater(other)
   }
 
   // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return CompareResult(self.compare(other).map { $0 == .greater || $0 == .equal })
-  }
-
-  private func compare(_ other: PyObject) -> StringCompareResult? {
-    guard let other = other as? PyBytesType else {
-      return nil
-    }
-
-    return self.data.compare(to: other.data)
+    return self.data.isGreaterEqual(other)
   }
 
   // MARK: - Hashable
@@ -110,6 +102,9 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = __str__
   internal func str() -> PyResult<String> {
+    if let e = self.data.strWarnIfNeeded() {
+      return .error(e)
+    }
     return self.repr()
   }
 

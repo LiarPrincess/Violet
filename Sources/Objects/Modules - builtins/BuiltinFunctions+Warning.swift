@@ -40,7 +40,7 @@ public enum PyWarningEnum {
   /// Base class for warnings about resource usage.
   case resource
 
-  fileprivate var py: PyType {
+  fileprivate var asPyType: PyType {
     switch self {
     case .warning: return Py.errorTypes.warning
     case .deprecation: return Py.errorTypes.deprecationWarning
@@ -61,7 +61,7 @@ public enum PyWarningEnum {
 
 extension BuiltinFunctions {
 
-  // MARK: - Factory
+  // MARK: - Common usage
 
   public func warn(warning: LexerWarning) -> PyBaseException? {
     let msg = String(describing: warning)
@@ -78,17 +78,42 @@ extension BuiltinFunctions {
     return self.warn(type: .syntax, msg: msg)
   }
 
+  public func warnBytesIfEnabled(msg: String) -> PyBaseException? {
+    // We will call 'getInterned' because messages tend to be repeated.
+    switch Py.sys.flags.bytesWarning {
+    case .ignore:
+      return nil
+
+    case .warning:
+      let msgObject = Py.getInterned(msg)
+      return self.warn(type: .bytes, msg: msgObject)
+
+    case .error:
+      let msgObject = Py.getInterned(msg)
+      let args = Py.newTuple(msgObject)
+      let error = PyBytesWarning(args: args)
+      return error
+    }
+  }
+
   // MARK: - Warn
 
   public func warn(type: PyWarningEnum, msg: String) -> PyBaseException? {
-    return self.warn(type: type.py, msg: msg)
+    return self.warn(type: type.asPyType, msg: msg)
+  }
+
+  public func warn(type: PyWarningEnum, msg: PyString) -> PyBaseException? {
+    return self.warn(type: type.asPyType, msg: msg)
   }
 
   public func warn(type: PyType, msg: String) -> PyBaseException? {
-    assert(type.isSubtype(of: Py.errorTypes.warning))
+    let object = Py.newString(msg)
+    return self.warn(type: type, msg: object)
+  }
 
-    let msgObject = Py.newString(msg)
-    switch Py._warnings.warn(message: msgObject, category: type) {
+  public func warn(type: PyType, msg: PyString) -> PyBaseException? {
+    assert(type.isSubtype(of: Py.errorTypes.warning))
+    switch Py._warnings.warn(message: msg, category: type) {
     case .value:
       return nil
     case .error(let e):

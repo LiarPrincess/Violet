@@ -79,6 +79,77 @@ internal struct PyBytesData: PyStringImpl {
     return bytes?.data
   }
 
+  // MARK: - Equatable
+
+  internal func isEqual(_ other: PyObject) -> CompareResult {
+    // Homo
+    if let homo = self.compare(other) {
+      return CompareResult(homo == .equal)
+    }
+
+    // Hetero
+    // static PyObject*
+    // bytes_richcompare(PyBytesObject *a, PyBytesObject *b, int op)
+
+    if other is PyInt {
+      let msg = "Comparison between bytes and int"
+      if let e = Py.warnBytesIfEnabled(msg: msg) {
+        return .error(e)
+      }
+    }
+
+    if other is PyString {
+      let msg = "Comparison between bytes and string"
+      if let e = Py.warnBytesIfEnabled(msg: msg) {
+        return .error(e)
+      }
+    }
+
+    return .notImplemented
+  }
+
+  // MARK: - Comparable
+
+  internal func isLess(_ other: PyObject) -> CompareResult {
+    let raw = self.compare(other)
+    let result = raw.map { $0 == .less }
+    return CompareResult(result)
+  }
+
+  internal func isLessEqual(_ other: PyObject) -> CompareResult {
+    let raw = self.compare(other)
+    let result = raw.map { $0 == .less || $0 == .equal }
+    return CompareResult(result)
+  }
+
+  internal func isGreater(_ other: PyObject) -> CompareResult {
+    let raw = self.compare(other)
+    let result = raw.map { $0 == .greater }
+    return CompareResult(result)
+  }
+
+  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+    let raw = self.compare(other)
+    let result = raw.map { $0 == .greater || $0 == .equal }
+    return CompareResult(result)
+  }
+
+  private func compare(_ other: PyObject) -> StringCompareResult? {
+    if let bytes = other as? PyBytesType {
+      return self.compare(to: bytes.data)
+    }
+
+    return nil
+  }
+
+  // MARK: - String
+
+  /// static PyObject *
+  /// bytes_str(PyObject *op)
+  internal func strWarnIfNeeded() -> PyBaseException? {
+    return Py.warnBytesIfEnabled(msg: "str() on a bytes instance")
+  }
+
   // MARK: - Case
 
   internal func lowerCased() -> Data {
