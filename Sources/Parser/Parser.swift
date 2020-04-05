@@ -43,9 +43,17 @@ public final class Parser {
   /// Helper for creating AST nodes.
   public var builder = ASTBuilder()
 
-  public init(mode: ParserMode, tokenSource lexer: LexerType) {
+  internal weak var delegate: ParserDelegate?
+  internal weak var lexerDelegate: LexerDelegate?
+
+  /// - Parameters:
+  ///   - lexerDelegate: mostly for `fstrings` when we have to lex expression
+  public init(mode: ParserMode,
+              tokenSource: LexerType,
+              delegate: ParserDelegate?,
+              lexerDelegate: LexerDelegate?) {
     self.mode = mode
-    self.lexer = LexerAdapter(lexer: lexer)
+    self.lexer = LexerAdapter(lexer: tokenSource)
   }
 
   // MARK: - Traversal
@@ -212,9 +220,11 @@ public final class Parser {
 
   // MARK: - Create
 
-  /// Create parser warning
-  internal func warn(_ warning: ParserWarning, location:  SourceLocation? = nil) {
-    // uh... oh... well that's embarrassing...
+  /// Report parser warning
+  internal func warn(_ kind: ParserWarningKind,
+                     location:  SourceLocation? = nil) {
+    let warning = ParserWarning(kind, location: location ?? self.peek.start)
+    self.delegate?.warn(warning: warning)
   }
 
   /// Create parser error

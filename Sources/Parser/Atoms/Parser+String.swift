@@ -44,7 +44,8 @@ extension Parser {
 
     let start = self.peek.start
     var end   = self.peek.end
-    var string = FString()
+    var string = FString(parserDelegate: self.delegate,
+                         lexerDelegate: self.lexerDelegate)
 
     while self.isString(self.peek) || self.isFormatString(self.peek) {
       switch self.peek.kind {

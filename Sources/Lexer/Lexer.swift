@@ -30,10 +30,13 @@ public final class Lexer: LexerType {
     return self.sourceIndex == self.source.endIndex
   }
 
+  internal weak var delegate: LexerDelegate?
+
   /// Create lexer that will produce tokens from the source.
-  public init(for source: String) {
+  public init(for source: String, delegate: LexerDelegate?) {
     self.source = source.unicodeScalars
     self.sourceIndex = self.source.startIndex
+    self.delegate = delegate
   }
 
   // MARK: - Traversal
@@ -104,13 +107,15 @@ public final class Lexer: LexerType {
     return Token(kind, start: s, end: e)
   }
 
-  /// Create lexer warning
-  internal func warn(_ warning: LexerWarning, location:  SourceLocation? = nil) {
-    // uh... oh... well that's embarrassing...
+  /// Report lexer warning
+  internal func warn(_ kind: LexerWarningKind,
+                     location: SourceLocation? = nil) {
+    let warning = LexerWarning(kind, location: location ?? self.location)
+    self.delegate?.warn(warning: warning)
   }
 
   /// Create lexer error
-  internal func error(_ kind:   LexerErrorKind,
+  internal func error(_ kind: LexerErrorKind,
                       location: SourceLocation? = nil) -> LexerError {
     return LexerError(kind, location: location ?? self.location)
   }

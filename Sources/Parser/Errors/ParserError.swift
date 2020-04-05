@@ -1,7 +1,7 @@
 import Core
 import Lexer
 
-public struct ParserError: Error, Equatable {
+public struct ParserError: Error, Equatable, CustomStringConvertible {
 
   /// Type of the error.
   public let kind: ParserErrorKind
@@ -9,16 +9,12 @@ public struct ParserError: Error, Equatable {
   /// Location of the error in the code.
   public let location: SourceLocation
 
-  public init(_ kind:   ParserErrorKind,
-              location: SourceLocation) {
-
-    self.kind = kind
-    self.location = location
-  }
-}
-
-extension ParserError: CustomStringConvertible {
   public var description: String {
     return "\(self.location): \(self.kind)"
+  }
+
+  public init(_ kind: ParserErrorKind, location: SourceLocation) {
+    self.kind = kind
+    self.location = location
   }
 }

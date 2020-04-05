@@ -17,6 +17,8 @@ public final class SymbolTableBuilder: ASTVisitor, StatementVisitor, ExpressionV
 
   private var scopeByNode = ScopeByNodeDictionary()
 
+  internal weak var delegate: CompilerDelegate?
+
   /// Scope that we are currently filling (top of the `self.scopeStack`).
   internal var currentScope: SymbolScope {
     if let last = self.scopeStack.last { return last }
@@ -31,6 +33,12 @@ public final class SymbolTableBuilder: ASTVisitor, StatementVisitor, ExpressionV
   /// Name of the class that we are currently filling (if any).
   /// Mostly used for mangling.
   internal var className: String?
+
+  // MARK: - Init
+
+  public init(delegate: CompilerDelegate?) {
+    self.delegate = delegate
+  }
 
   // MARK: - Pass
 
@@ -204,10 +212,10 @@ public final class SymbolTableBuilder: ASTVisitor, StatementVisitor, ExpressionV
 
   // MARK: - Error/warning
 
-  /// Create parser warning
-  internal func warn(_ warning: CompilerWarning,
-                     location:  SourceLocation) {
-    // uh... oh... well that's embarrassing...
+  /// Report compiler warning
+  internal func warn(_ kind: CompilerWarningKind, location:  SourceLocation) {
+    let warning = CompilerWarning(kind, location: location)
+    self.delegate?.warn(warning: warning)
   }
 
   /// Create compiler error

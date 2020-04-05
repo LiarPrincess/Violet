@@ -2,7 +2,7 @@ import Core
 
 // MARK: - Error
 
-public struct CompilerError: Error, Equatable {
+public struct CompilerError: Error, Equatable, CustomStringConvertible {
 
   /// Type of the error.
   public let kind: CompilerErrorKind
@@ -10,15 +10,13 @@ public struct CompilerError: Error, Equatable {
   /// Location of the error in the code.
   public let location: SourceLocation
 
+  public var description: String {
+    return "\(self.location): \(self.kind)"
+  }
+
   public init(_ kind: CompilerErrorKind, location: SourceLocation) {
     self.kind = kind
     self.location = location
-  }
-}
-
-extension CompilerError: CustomStringConvertible {
-  public var description: String {
-    return "\(self.location): \(self.kind)"
   }
 }
 

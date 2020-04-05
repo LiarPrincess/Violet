@@ -37,6 +37,15 @@ internal struct FString {
   /// If we did not append any fragments the it is just an ordinary string.
   private var fragments = [FStringFragment]()
 
+  private weak var parserDelegate: ParserDelegate?
+  private weak var lexerDelegate: LexerDelegate?
+
+  internal init(parserDelegate: ParserDelegate?,
+                lexerDelegate: LexerDelegate?) {
+    self.parserDelegate = parserDelegate
+    self.lexerDelegate = lexerDelegate
+  }
+
   // MARK: - FString
 
   /// Literal text not contained in braces, it will be copied to the output.
@@ -215,8 +224,11 @@ internal struct FString {
     }
 
     do {
-      let lexer = Lexer(for: s)
-      let parser = Parser(mode: .eval, tokenSource: lexer)
+      let lexer = Lexer(for: s, delegate: self.lexerDelegate)
+      let parser = Parser(mode: .eval,
+                          tokenSource: lexer,
+                          delegate: self.parserDelegate,
+                          lexerDelegate: self.lexerDelegate)
       let ast = try parser.parse()
 
       guard let exprAST = ast as? ExpressionAST else {

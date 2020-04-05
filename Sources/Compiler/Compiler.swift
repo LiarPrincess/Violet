@@ -20,6 +20,8 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
   /// Compilation options.
   internal let options: CompilerOptions
 
+  internal weak var delegate: CompilerDelegate?
+
   /// We have to scan `__future__` (as weird as it sounds), to block any
   /// potential `__future__` imports that occur later in file.
   internal let future: FutureFeatures
@@ -77,12 +79,16 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
     return self.blockStack.contains { $0.isLoop }
   }
 
-  public init(ast: AST, filename: String, options: CompilerOptions) throws {
+  public init(filename: String,
+              ast: AST,
+              options: CompilerOptions,
+              delegate: CompilerDelegate?) throws {
     self.ast = ast
     self.filename = filename
     self.options = options
+    self.delegate = delegate
 
-    let symbolTableBuilder = SymbolTableBuilder()
+    let symbolTableBuilder = SymbolTableBuilder(delegate: delegate)
     self.symbolTable = try symbolTableBuilder.visit(ast)
 
     let futureBuilder = FutureBuilder()
@@ -548,9 +554,10 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
 
   // MARK: - Error/warning
 
-  /// Create parser warning
-  internal func warn(_ warning: CompilerWarning) {
-    // uh... oh... well that's embarrassing...
+  /// Report compiler warning
+  internal func warn(_ kind: CompilerWarningKind) {
+    let warning = CompilerWarning(kind, location: self.appendLocation)
+    self.delegate?.warn(warning: warning)
   }
 
   /// Create compiler error

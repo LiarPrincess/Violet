@@ -1,6 +1,28 @@
 import Core
 
-public enum CompilerWarning: Warning {
+// MARK: - Warning
+
+public struct CompilerWarning: CustomStringConvertible {
+
+  /// Type of the warning.
+  public let kind: CompilerWarningKind
+
+  /// Location of the warning in the code.
+  public let location: SourceLocation
+
+  public var description: String {
+    return "\(self.location): \(self.kind)"
+  }
+
+  public init(_ kind: CompilerWarningKind, location: SourceLocation) {
+    self.kind = kind
+    self.location = location
+  }
+}
+
+// MARK: - Warning kind
+
+public enum CompilerWarningKind: CustomStringConvertible {
 
   /// 'yield' inside 'kind' comprehension
   ///
@@ -15,9 +37,7 @@ public enum CompilerWarning: Warning {
 
   /// Assertion is always true, perhaps remove parentheses?
   case assertionWithTuple
-}
 
-extension CompilerWarning: CustomStringConvertible {
   public var description: String {
     switch self {
     case let .yieldInsideComprehension(kind):
@@ -30,14 +50,12 @@ extension CompilerWarning: CustomStringConvertible {
 
 // MARK: - ComprehensionKind
 
-public enum ComprehensionKind: Equatable {
+public enum ComprehensionKind: Equatable, CustomStringConvertible {
   case list
   case set
   case dictionary
   case generator
-}
 
-extension ComprehensionKind: CustomStringConvertible {
   public var description: String {
     switch self {
     case .list: return "list"
