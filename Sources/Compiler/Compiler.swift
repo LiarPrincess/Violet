@@ -517,8 +517,8 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
 
     var result = [MangledName]()
     for (name, info) in symbols {
-      let isAccepted = info.flags.containsAny(accepting)
-      let isSkipped = info.flags.containsAny(skipping)
+      let isAccepted = info.flags.contains(anyOf: accepting)
+      let isSkipped = info.flags.contains(anyOf: skipping)
 
       if isAccepted && !isSkipped {
         result.append(name)

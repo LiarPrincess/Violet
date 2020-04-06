@@ -162,11 +162,8 @@ extension OptionSet {
   }
 
   /// Returns a Boolean value that indicates whether
-  /// the set contains any of the specified elements.
-  ///
-  /// `contains(anyOf:)` would be a better name, but this one comes up faster
-  /// in intelisense.
-  public func containsAny(_ other: Self) -> Bool {
+  /// the set has any intersction with specified elements.
+  public func contains(anyOf other: Self) -> Bool {
     return self.intersection(other).any
   }
 }
