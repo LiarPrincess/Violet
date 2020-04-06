@@ -19,9 +19,14 @@ private let compileArguments = ArgumentParser.createOrTrap(
 private class WarningsHandler:
 LexerDelegate, ParserDelegate, CompilerDelegate {
 
+  fileprivate let filename: String
   fileprivate private(set) var lexerWarnings = [LexerWarning]()
   fileprivate private(set) var parserWarnings = [ParserWarning]()
   fileprivate private(set) var compilerWarnings = [CompilerWarning]()
+
+  fileprivate init(filename: String) {
+    self.filename = filename
+  }
 
   fileprivate func warn(warning: LexerWarning) {
     self.lexerWarnings.append(warning)
@@ -37,13 +42,13 @@ LexerDelegate, ParserDelegate, CompilerDelegate {
 
   fileprivate func printParserWarnings() -> PyBaseException? {
     for warning in self.lexerWarnings {
-      if let e = Py.warn(warning: warning) {
+      if let e = Py.warn(filename: self.filename, warning: warning) {
         return e
       }
     }
 
     for warning in self.parserWarnings {
-      if let e = Py.warn(warning: warning) {
+      if let e = Py.warn(filename: self.filename, warning: warning) {
         return e
       }
     }
@@ -53,7 +58,7 @@ LexerDelegate, ParserDelegate, CompilerDelegate {
 
   fileprivate func printCompilerWarnings() -> PyBaseException? {
     for warning in self.compilerWarnings {
-      if let e = Py.warn(warning: warning) {
+      if let e = Py.warn(filename: self.filename, warning: warning) {
         return e
       }
     }
@@ -166,7 +171,7 @@ extension BuiltinFunctions {
                       mode: ParserMode,
                       optimize: OptimizationLevel? = nil) -> PyResult<PyCode> {
     do {
-      let delegate = WarningsHandler()
+      let delegate = WarningsHandler(filename: filename)
 
       let lexer = Lexer(for: source, delegate: delegate)
       let parser = Parser(mode: mode,

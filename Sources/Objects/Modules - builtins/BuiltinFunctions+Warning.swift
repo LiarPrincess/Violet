@@ -63,22 +63,96 @@ public enum PyWarningEnum {
 
 extension BuiltinFunctions {
 
-  // MARK: - Common usage
+  // MARK: - Syntax
 
-  public func warn(warning: LexerWarning) -> PyBaseException? {
-    let msg = String(describing: warning)
-    return self.warn(type: .syntax, msg: msg)
+  public func warn(filename: String,
+                   warning: LexerWarning) -> PyBaseException? {
+    return self.warnSyntax(
+      filename: filename,
+      line: warning.location.line,
+      column: warning.location.column,
+      text: String(describing: warning)
+    )
   }
 
-  public func warn(warning: ParserWarning) -> PyBaseException? {
-    let msg = String(describing: warning)
-    return self.warn(type: .syntax, msg: msg)
+  public func warn(filename: String,
+                   warning: ParserWarning) -> PyBaseException? {
+    return self.warnSyntax(
+      filename: filename,
+      line: warning.location.line,
+      column: warning.location.column,
+      text: String(describing: warning)
+    )
   }
 
-  public func warn(warning: CompilerWarning) -> PyBaseException? {
-    let msg = String(describing: warning)
-    return self.warn(type: .syntax, msg: msg)
+  public func warn(filename: String,
+                   warning: CompilerWarning) -> PyBaseException? {
+    return self.warnSyntax(
+      filename: filename,
+      line: warning.location.line,
+      column: warning.location.column,
+      text: String(describing: warning)
+    )
   }
+
+  public func warnSyntax(filename: String,
+                         line: SourceLine,
+                         column: SourceColumn,
+                         text: String) -> PyBaseException? {
+    return self.warnSyntax(
+      filename: Py.getInterned(filename),
+      line: Py.newInt(Int(line)),
+      column: Py.newInt(Int(column)),
+      text: Py.newString(text)
+    )
+  }
+
+  public func warnSyntax(filename: PyString,
+                         line: PyInt,
+                         column: PyInt,
+                         text: PyString) -> PyBaseException? {
+    let e = self.newSyntaxWarning(
+      filename: filename,
+      line: line,
+      column: column,
+      text: text
+    )
+
+    switch Py._warnings.warn(message: e) {
+    case .value:
+      return nil
+    case .error(let e):
+      return e
+    }
+  }
+
+  public func newSyntaxWarning(filename: String,
+                         line: SourceLine,
+                         column: SourceColumn,
+                         text: String) -> PySyntaxWarning {
+    return self.newSyntaxWarning(
+      filename: Py.getInterned(filename),
+      line: Py.newInt(Int(line)),
+      column: Py.newInt(Int(column)),
+      text: Py.newString(text)
+    )
+  }
+
+  public func newSyntaxWarning(filename: PyString,
+                               line: PyInt,
+                               column: PyInt,
+                               text: PyString) -> PySyntaxWarning {
+    let args = Py.newTuple(text)
+    let e = PySyntaxWarning(args: args)
+    self.fillSyntaxErrorDict(error: e,
+                             filename: filename,
+                             line: line,
+                             column: column,
+                             text: text)
+    return e
+  }
+
+  // MARK: - Bytes
 
   public func warnBytesIfEnabled(msg: String) -> PyBaseException? {
     // We will call 'getInterned' because messages tend to be repeated.

@@ -219,9 +219,8 @@ public class PyBaseException: PyObject {
     }
   }
 
-  public func setArgs(_ value: PyTuple) -> PyResult<()> {
+  public func setArgs(_ value: PyTuple) {
     self.args = value
-    return .value()
   }
 
   // MARK: - Traceback
@@ -397,10 +396,7 @@ public class PyBaseException: PyObject {
 
     if !hasAssignedArgsIn__new__ {
       let argsTuple = Py.newTuple(args)
-      switch zelf.setArgs(argsTuple) {
-      case .value: break
-      case .error(let e): return .error(e)
-      }
+      zelf.setArgs(argsTuple)
     }
 
     // Copy kwargs

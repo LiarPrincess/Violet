@@ -253,31 +253,31 @@ extension BuiltinFunctions {
 
   public func newSyntaxError(filename: String,
                              error: LexerError) -> PySyntaxError {
-   return Py.newSyntaxError(
-    filename: filename,
-    line: error.location.line,
-    column: error.location.column,
-    text: String(describing: error)
+    return Py.newSyntaxError(
+      filename: filename,
+      line: error.location.line,
+      column: error.location.column,
+      text: String(describing: error)
     )
   }
 
   public func newSyntaxError(filename: String,
                              error: ParserError) -> PySyntaxError {
-   return Py.newSyntaxError(
-    filename: filename,
-    line: error.location.line,
-    column: error.location.column,
-    text: String(describing: error)
+    return Py.newSyntaxError(
+      filename: filename,
+      line: error.location.line,
+      column: error.location.column,
+      text: String(describing: error)
     )
   }
 
   public func newSyntaxError(filename: String,
                              error: CompilerError) -> PySyntaxError {
-   return Py.newSyntaxError(
-    filename: filename,
-    line: error.location.line,
-    column: error.location.column,
-    text: String(describing: error)
+    return Py.newSyntaxError(
+      filename: filename,
+      line: error.location.line,
+      column: error.location.column,
+      text: String(describing: error)
     )
   }
 
@@ -286,7 +286,7 @@ extension BuiltinFunctions {
                              column: SourceColumn,
                              text: String) -> PySyntaxError {
     return self.newSyntaxError(
-      filename: Py.newString(filename),
+      filename: Py.getInterned(filename),
       line: Py.newInt(Int(line)),
       column: Py.newInt(Int(column)),
       text: Py.newString(text)
@@ -299,14 +299,24 @@ extension BuiltinFunctions {
                              text: PyString) -> PySyntaxError {
     let args = Py.newTuple([filename, line, column, text])
     let e = PySyntaxError(args: args)
+    self.fillSyntaxErrorDict(error: e,
+                             filename: filename,
+                             line: line,
+                             column: column,
+                             text: text)
+    return e
+  }
 
-    let dict = e.__dict__
+  internal func fillSyntaxErrorDict(error: PyBaseException,
+                                    filename: PyString,
+                                    line: PyInt,
+                                    column: PyInt,
+                                    text: PyString) {
+    let dict = error.__dict__
     dict.set(id: .filename, to: filename)
     dict.set(id: .lineno, to: line)
     dict.set(id: .offset, to: column)
     dict.set(id: .text, to: text)
-
-    return e
   }
 
   // MARK: - Factory from type

@@ -47,7 +47,7 @@ extension UnderscoreWarnings {
   }
 
   public func warn(message: PyObject,
-                   category categoryArg: PyObject?,
+                   category categoryArg: PyObject? = nil,
                    stackLevel stackLevelArg: PyObject? = nil,
                    source: PyObject? = nil) -> PyResult<PyNone> {
     let category: PyType
