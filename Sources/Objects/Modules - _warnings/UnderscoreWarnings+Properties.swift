@@ -25,29 +25,47 @@ extension UnderscoreWarnings {
   /// static PyObject *
   /// init_filters(void)
   private func getDefaultFilters() -> PyList {
-    #if DEBUG
-    // builds show all warnings by default
-    return Py.newList()
-    #else
-    // Other builds ignore a number of warning categories by default
-    let result = Py.newList()
+    var elements = [PyObject]()
 
-    func append(category: PyType, action: String, module: String?) {
-      let filter = self.createFilter(category: category,
+    func append(category: PyWarningEnum, action: String, module: String?) {
+      let filter = self.createFilter(category: category.asPyType,
                                      action: action,
                                      module: module)
-      result.elements.append(filter)
+      elements.append(filter)
     }
 
-    let t = Py.errorTypes
-    append(category: t.DeprecationWarning, action: "default", module: "__main__")
-    append(category: t.DeprecationWarning, action: "ignore", module: nil)
-    append(category: t.PendingDeprecationWarning, action: "ignore", module: nil)
-    append(category: t.ImportWarning, action: "ignore", module: nil)
-    append(category: t.ResourceWarning, action: "ignore", module: nil)
+    // python3 -b -Wd -Wignore
+    // >>> import _warnings
+    // >>> _warnings.filters
+    // [Thingies...]
 
-    return result
+    switch Py.sys.flags.bytesWarning {
+    case .ignore:
+      break
+    case .warning:
+      append(category: .bytes, action: "default", module: nil)
+    case .error:
+      append(category: .bytes, action: "error", module: nil)
+    }
+
+    // We have to reverse it, because the LATER options have bigger priority.
+    for option in Py.sys.flags.warnings.reversed() {
+      let action = String(describing: option)
+      append(category: .warning, action: action, module: nil)
+    }
+
+    #if DEBUG
+    // DEBUG builds show all warnings by default
+    #else
+    // Other builds ignore a number of warning categories by default
+    append(category: .deprecationWarning, action: "default", module: "__main__")
+    append(category: .deprecationWarning, action: "ignore", module: nil)
+    append(category: .pendingDeprecationWarning, action: "ignore", module: nil)
+    append(category: .importWarning, action: "ignore", module: nil)
+    append(category: .resourceWarning, action: "ignore", module: nil)
     #endif
+
+    return Py.newList(elements)
   }
 
   private func createFilter(category: PyType,

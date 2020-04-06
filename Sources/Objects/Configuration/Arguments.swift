@@ -203,7 +203,7 @@ public struct Arguments {
 
       trap(msg)
     } catch {
-      assert(Self.isCleanExit_HelpRequest(error: error))
+      assert(Self.isCleanExit_helpRequest(error: error))
 
       var result = ArgumentBinding.fullMessage(for: error)
 
@@ -218,7 +218,7 @@ public struct Arguments {
     }
   }
 
-  private static func isCleanExit_HelpRequest(error: Error) -> Bool {
+  private static func isCleanExit_helpRequest(error: Error) -> Bool {
     if case CleanExit.helpRequest = error {
       return true
     }

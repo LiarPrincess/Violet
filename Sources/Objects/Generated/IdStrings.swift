@@ -227,6 +227,7 @@ public struct IdString {
   public static let values = Self.impl.values
   public static let varname = Self.impl.varname
   public static let version_info = Self.impl.version_info
+  public static let warnoptions = Self.impl.warnoptions
   public static let write = Self.impl.write
 }
 private struct IdStringImpl {
@@ -422,5 +423,6 @@ private struct IdStringImpl {
   fileprivate let values = IdString(value: "values")
   fileprivate let varname = IdString(value: "varname")
   fileprivate let version_info = IdString(value: "version_info")
+  fileprivate let warnoptions = IdString(value: "warnoptions")
   fileprivate let write = IdString(value: "write")
 }

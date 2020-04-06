@@ -2,6 +2,9 @@ import Core
 import Objects
 import Foundation
 
+// In CPython:
+// Python -> main.c
+
 // swiftlint:disable file_length
 
 extension VM {
@@ -13,6 +16,10 @@ extension VM {
   ///
   /// This method was not intended to be called multiple times,
   /// but it is not like we can stop you.
+  ///
+  /// CPython (somewhere around):
+  /// static int
+  /// pymain_cmdline_impl(_PyMain *pymain, _PyCoreConfig *config, ...)
   public func run() -> PyBaseException? {
     if self.arguments.help {
       print(Objects.Arguments.helpMessage)

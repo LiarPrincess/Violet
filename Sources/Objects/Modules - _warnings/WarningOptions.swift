@@ -1,4 +1,4 @@
-public enum WarningOption: Equatable {
+public enum WarningOption: Equatable, CustomStringConvertible {
   /// `-Wdefault` - Warn once per call location
   case `default`
   /// `-Werror` - Convert to exceptions
@@ -11,6 +11,17 @@ public enum WarningOption: Equatable {
   case once
   /// `-Wignore` - Never warn
   case ignore
+
+  public var description: String {
+    switch self {
+    case .default: return "default"
+    case .error: return "error"
+    case .always: return "always"
+    case .module: return "module"
+    case .once: return "once"
+    case .ignore: return "ignore"
+    }
+  }
 }
 
 public enum BytesWarningOption: Equatable {

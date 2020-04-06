@@ -1,4 +1,4 @@
-# Use this command: grep -r "_Py_IDENTIFIER" .
+# Use this command: grep -r "_Py_IDENTIFIER".
 # We also added unary, binary and ternary operators.
 ids = [
   '__abs__',
@@ -193,6 +193,7 @@ ids = [
   'values',
   'varname',
   'version_info',
+  'warnoptions',
   'write'
 ]
 

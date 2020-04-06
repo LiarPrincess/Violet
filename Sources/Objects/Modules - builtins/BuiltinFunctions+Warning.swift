@@ -10,6 +10,8 @@ import Foundation
 
 // MARK: - PyWarningEnum
 
+/// Warning typesm but as an enum.
+///
 /// Helper for `Py.warn` method.
 public enum PyWarningEnum {
 
@@ -40,7 +42,7 @@ public enum PyWarningEnum {
   /// Base class for warnings about resource usage.
   case resource
 
-  fileprivate var asPyType: PyType {
+  internal var asPyType: PyType {
     switch self {
     case .warning: return Py.errorTypes.warning
     case .deprecation: return Py.errorTypes.deprecationWarning

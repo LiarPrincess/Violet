@@ -73,7 +73,20 @@ public struct SysFlags {
 
   // MARK: - Warnings
 
+  /// Warning options.
+  ///
+  /// Order: the LATER in the list the bigger the priority.
   public var warnings: [WarningOption] {
+    // Comment from CPython 'config_init_warnoptions':
+    //
+    // The priority order for warnings configuration is (highest first):
+    // - any '-W' command line options; then
+    // - the 'PYTHONWARNINGS' environment variable;
+    //
+    // Since the warnings module works on the basis of
+    // "the most recently added filter will be checked first", we add
+    // the lowest precedence entries first so that later entries override them.
+
     let env = (self.environment?.warnings ?? [])
     return env + self.arguments.warnings
   }

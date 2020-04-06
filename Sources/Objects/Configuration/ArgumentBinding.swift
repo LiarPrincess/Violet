@@ -79,7 +79,6 @@ internal struct ArgumentBinding: ParsableCommand {
   /// even when `sys.stdin` does not appear to be a terminal.
   @Flag(
     name: NameSpecification.short,
-
     help: concat(
       "inspect interactively after running script; forces a prompt even ",
       "if stdin does not appear to be a terminal; also PYTHONINSPECT=x"
@@ -142,42 +141,60 @@ internal struct ArgumentBinding: ParsableCommand {
 
   /// Warning control.
   @Flag(
-    name: NameSpecification.customLong("Wdefault", withSingleDash: true),
+    name: [
+      NameSpecification.Element.customLong("Wdefault", withSingleDash: true),
+      NameSpecification.Element.customLong("Wd", withSingleDash: true)
+    ],
     help: "warning control; warn once per call location; also PYTHONWARNINGS=arg"
   )
   internal var wDefault: Bool
 
   /// Warning control.
   @Flag(
-    name: NameSpecification.customLong("Werror", withSingleDash: true),
+    name: [
+      NameSpecification.Element.customLong("Werror", withSingleDash: true),
+      NameSpecification.Element.customLong("We", withSingleDash: true)
+    ],
     help: "warning control; convert to exceptions; also PYTHONWARNINGS=arg"
   )
   internal var wError: Bool
 
   /// Warning control.
   @Flag(
-    name: NameSpecification.customLong("Walways", withSingleDash: true),
+    name: [
+      NameSpecification.Element.customLong("Walways", withSingleDash: true),
+      NameSpecification.Element.customLong("Wa", withSingleDash: true)
+    ],
     help: "warning control; warn every time; also PYTHONWARNINGS=arg"
   )
   internal var wAlways: Bool
 
   /// Warning control.
   @Flag(
-    name: NameSpecification.customLong("Wmodule", withSingleDash: true),
+    name: [
+      NameSpecification.Element.customLong("Wmodule", withSingleDash: true),
+      NameSpecification.Element.customLong("Wm", withSingleDash: true)
+    ],
     help: "warning control; warn once per calling module; also PYTHONWARNINGS=arg"
   )
   internal var wModule: Bool
 
   /// Warning control.
   @Flag(
-    name: NameSpecification.customLong("Wonce", withSingleDash: true),
+    name: [
+      NameSpecification.Element.customLong("Wonce", withSingleDash: true),
+      NameSpecification.Element.customLong("Wo", withSingleDash: true)
+    ],
     help: "warning control; warn once per Python process; also PYTHONWARNINGS=arg"
   )
   internal var wOnce: Bool
 
   /// Warning control.
   @Flag(
-    name: NameSpecification.customLong("Wignore", withSingleDash: true),
+    name: [
+      NameSpecification.Element.customLong("Wignore", withSingleDash: true),
+      NameSpecification.Element.customLong("Wi", withSingleDash: true)
+    ],
     help: "warning control; never warn; also PYTHONWARNINGS=arg"
   )
   internal var wIgnore: Bool
