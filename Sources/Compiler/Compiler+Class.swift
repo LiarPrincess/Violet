@@ -6,7 +6,7 @@ import Bytecode
 // In CPython:
 // Python -> compile.c
 
-extension Compiler {
+extension CompilerImpl {
 
   /// compiler_class(struct compiler *c, stmt_ty s)
   ///

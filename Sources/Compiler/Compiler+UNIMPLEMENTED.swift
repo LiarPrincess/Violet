@@ -10,7 +10,7 @@ import Bytecode
 
 internal typealias Comprehensions = NonEmptyArray<Comprehension>
 
-extension Compiler {
+extension CompilerImpl {
 
   // MARK: - Comprehension
   // Remember about self.setAppendLocation(ASTNode)!

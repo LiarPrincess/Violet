@@ -6,7 +6,7 @@ import Bytecode
 // In CPython:
 // Python -> compile.c
 
-extension Compiler {
+extension CompilerImpl {
 
   // MARK: - Import
 

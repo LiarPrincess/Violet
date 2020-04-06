@@ -8,7 +8,7 @@ import Bytecode
 
 // swiftlint:disable file_length
 
-extension Compiler {
+extension CompilerImpl {
 
   internal func visit(_ node: Expression) throws {
     self.setAppendLocation(node)
@@ -63,7 +63,7 @@ extension Compiler {
 
   /// compiler_nameop(struct compiler *c, identifier name, expr_context_ty ctx)
   internal func visitName(name: String, context: ExpressionContext) {
-    let mangled = self.mangleName(name)
+    let mangled = self.mangle(name: name)
     let info = self.currentScope.symbols[mangled]
 
     // TODO: Leave assert here, but handle __doc__ and the like better
@@ -352,7 +352,7 @@ extension Compiler {
                                name:   String,
                                context: ExpressionContext,
                                isAugumented: Bool = false) throws {
-    let mangled = self.mangleName(name)
+    let mangled = self.mangle(name: name)
 
     let isAugumentedStore = isAugumented && context == .store
     if !isAugumentedStore {

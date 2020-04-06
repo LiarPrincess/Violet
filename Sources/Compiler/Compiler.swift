@@ -7,16 +7,65 @@ import Bytecode
 
 // swiftlint:disable file_length
 
-public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
+public final class Compiler {
 
-  public typealias ASTResult = Void
-  public typealias StatementResult = Void
-  public typealias ExpressionResult = Void
+  private let impl: CompilerImpl
+
+  public init(filename: String,
+              ast: AST,
+              options: CompilerOptions,
+              delegate: CompilerDelegate?) {
+    self.impl = CompilerImpl(filename: filename,
+                             ast: ast,
+                             options: options,
+                             delegate: delegate)
+  }
+
+  public func run() throws -> CodeObject {
+    return try self.impl.run()
+  }
+}
+
+/// Compiler implementation.
+///
+/// Why do we have separate class? Why not just use `Compiler`?
+///
+/// `Compiler` is public and it needs to implement `ASTVisitor`
+/// which would require us to mark all of those methods as `public`.
+/// This would expose a lot of unnecessary details.
+///
+/// Why can't we specify that `Compiler` implements `ASTVisitor` on `internal`
+/// level (syntax would be `class Compiler: internal ASTVisitor`)?
+/// Think about this: what if someone from outside of the module decides
+/// to add conformance to `ASTVisitor` again?
+/// Both `Compiler` and `ASTVisitor` are public, so technically they should
+/// be able to do so.
+/// In such case we can't just say 'You can't do this because internally (yada-yada)'.
+///
+/// It also has some problems on a conceptual level:
+/// http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf
+///
+/// In theory it should be possible to create 'access modified' INHERITANCE
+/// (hello `C++`).
+///
+/// I think that idiomatic Swift prefers to create wrapper types
+/// (for this and other use-cases).
+/// For example:
+///   dictionaries/sets do not allow you to provide `Comparer`
+///   (`C#` does this) which means that you have to create 'wrapper type'
+///   if you want to use different notion of 'equality'.
+///
+/// Anyway: we have `Compiler` wrapper for `CompilerImpl`.
+internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisitor {
+
+  internal typealias ASTResult = Void
+  internal typealias StatementResult = Void
+  internal typealias ExpressionResult = Void
 
   /// Program that we are compiling.
   private let ast: AST
   /// Name of the file that this code object was loaded from.
-  public let filename: String
+  internal let filename: String
   /// Compilation options.
   internal let options: CompilerOptions
 
@@ -24,10 +73,12 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
 
   /// We have to scan `__future__` (as weird as it sounds), to block any
   /// potential `__future__` imports that occur later in file.
-  internal let future: FutureFeatures
+  internal private(set) var future: FutureFeatures!
+  // swiftlint:disable:previous implicitly_unwrapped_optional
 
   /// Symbol table assiciated with `self.ast`.
-  private let symbolTable: SymbolTable
+  internal private(set) var symbolTable: SymbolTable!
+  // swiftlint:disable:previous implicitly_unwrapped_optional
 
   /// Compiler unit stack.
   /// Current unit (the one that we are emmiting to) is at the top,
@@ -79,40 +130,40 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
     return self.blockStack.contains { $0.isLoop }
   }
 
-  public init(filename: String,
-              ast: AST,
-              options: CompilerOptions,
-              delegate: CompilerDelegate?) throws {
+  internal init(filename: String,
+                ast: AST,
+                options: CompilerOptions,
+                delegate: CompilerDelegate?) {
     self.ast = ast
     self.filename = filename
     self.options = options
     self.delegate = delegate
-
-    let symbolTableBuilder = SymbolTableBuilder(delegate: delegate)
-    self.symbolTable = try symbolTableBuilder.visit(ast)
-
-    let futureBuilder = FutureBuilder()
-    self.future = try futureBuilder.parse(ast: ast)
   }
 
   // MARK: - Run
 
   /// PyAST_CompileObject(mod_ty mod, PyObject *filename, PyCompilerFlags ...)
   /// compiler_mod(struct compiler *c, mod_ty mod)
-  public func run() throws -> CodeObject {
+  internal func run() throws -> CodeObject {
     // Have we already compiled?
     if self.unitStack.count == 1 {
       return self.codeObject
     }
 
-    self.enterScope(node: ast, type: .module, argCount: 0, kwOnlyArgCount: 0)
-    self.setAppendLocation(ast)
+    let symbolTableBuilder = SymbolTableBuilder(delegate: self.delegate)
+    self.symbolTable = try symbolTableBuilder.visit(self.ast)
 
-    try self.visit(ast)
+    let futureBuilder = FutureBuilder()
+    self.future = try futureBuilder.parse(ast: self.ast)
+
+    self.enterScope(node: self.ast, type: .module, argCount: 0, kwOnlyArgCount: 0)
+    self.setAppendLocation(self.ast)
+
+    try self.visit(self.ast)
 
     // Emit epilog (because we may be a jump target).
     if !self.currentScope.hasReturnValue {
-      let isExpression = ast is ExpressionAST
+      let isExpression = self.ast is ExpressionAST
       if !isExpression {
         self.builder.appendNone()
       }
@@ -123,26 +174,28 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
     return self.codeObject
   }
 
+  // MARK: - Visit
+
   internal func visit(_ node: AST) throws {
     self.setAppendLocation(node)
     try node.accept(self)
   }
 
-  public func visit(_ node: InteractiveAST) throws {
-    if self.hasAnnotations(node.statements) {
-      self.builder.appendSetupAnnotations()
-    }
+  internal func visit(_ node: InteractiveAST) throws {
+    try self.setupAnnotationsIfNeeded(body: node.statements)
     try self.visit(node.statements)
   }
 
-  public func visit(_ node: ModuleAST) throws {
+  internal func visit(_ node: ModuleAST) throws {
     try self.setupAnnotationsIfNeeded(body: node.statements)
     try self.visitBody(body: node.statements, onDoc: .storeAs__doc__)
   }
 
-  public func visit(_ node: ExpressionAST) throws {
+  internal func visit(_ node: ExpressionAST) throws {
     try self.visit(node.expression)
   }
+
+  // MARK: - Visit body
 
   /// What to do when we have doc?
   internal enum DocHandling {
@@ -178,6 +231,8 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
       try self.visit(body)
     }
   }
+
+  // MARK: - Annotations
 
   internal func setupAnnotationsIfNeeded<C: Collection>(
     body: C
@@ -528,12 +583,14 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
     _ = self.blockStack.popLast()
   }
 
-  // MARK: - Helpers
+  // MARK: - Mangle
 
-  internal func mangleName(_ name: String) -> MangledName {
+  internal func mangle(name: String) -> MangledName {
     let unit = self.unitStack.last { $0.className != nil }
     return MangledName(className: unit?.className, name: name)
   }
+
+  // MARK: - Append location
 
   private var appendLocation = SourceLocation.start
 

@@ -8,7 +8,7 @@ import Bytecode
 
 // swiftlint:disable function_body_length
 
-extension Compiler {
+extension CompilerImpl {
 
   // MARK: - Raise
 

@@ -8,7 +8,7 @@ import Bytecode
 
 // swiftlint:disable file_length
 
-extension Compiler {
+extension CompilerImpl {
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
 

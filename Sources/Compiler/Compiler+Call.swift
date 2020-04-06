@@ -10,7 +10,7 @@ import Bytecode
 // swiftlint:disable cyclomatic_complexity
 // TODO: ^ Remove this
 
-extension Compiler {
+extension CompilerImpl {
 
   /// compiler_call(struct compiler *c, expr_ty e)
   public func visit(_ node: CallExpr) throws {

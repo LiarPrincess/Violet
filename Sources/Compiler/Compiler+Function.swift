@@ -6,7 +6,7 @@ import Bytecode
 // In CPython:
 // Python -> compile.c
 
-extension Compiler {
+extension CompilerImpl {
 
   // MARK: - Lambda
 
@@ -120,7 +120,7 @@ extension Compiler {
         continue
       }
 
-      names.append(self.mangleName(arg.name))
+      names.append(self.mangle(name: arg.name))
       try self.visit(def)
     }
 
@@ -202,7 +202,7 @@ extension Compiler {
       try self.visit(ann)
     }
 
-    names.append(self.mangleName(name))
+    names.append(self.mangle(name: name))
   }
 
   // MARK: - Closure

@@ -6,7 +6,7 @@ import Bytecode
 // In CPython:
 // Python -> compile.c
 
-extension Compiler {
+extension CompilerImpl {
 
   // MARK: - Assign
 
@@ -51,7 +51,7 @@ extension Compiler {
   /// ```
   public func visit(_ node: AugAssignStmt) throws {
     if let identifier = node.target as? IdentifierExpr {
-      let mangled = self.mangleName(identifier.value)
+      let mangled = self.mangle(name: identifier.value)
       self.builder.appendLoadName(mangled)
 
       try self.visit(node.value)
@@ -142,7 +142,7 @@ extension Compiler {
         try self.visit(node.annotation)
       }
 
-      let mangled = self.mangleName(identifier.value)
+      let mangled = self.mangle(name: identifier.value)
       self.builder.appendLoadName(SpecialIdentifiers.__annotations__)
       self.builder.appendString(mangled)
       self.builder.appendStoreSubscr()

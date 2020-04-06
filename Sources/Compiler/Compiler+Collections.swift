@@ -26,7 +26,7 @@ private protocol CollectionLoadAdapter {
   func emitBuildUnpackCollection(count: Int) throws
 }
 
-extension Compiler {
+extension CompilerImpl {
 
   // MARK: - Tuple
 

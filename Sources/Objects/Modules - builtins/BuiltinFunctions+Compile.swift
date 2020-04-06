@@ -183,10 +183,10 @@ extension BuiltinFunctions {
         optimizationLevel: optimize ?? Py.sys.flags.optimize
       )
 
-      let compiler = try Compiler(filename: filename,
-                                  ast: ast,
-                                  options: compilerOptions,
-                                  delegate: delegate)
+      let compiler = Compiler(filename: filename,
+                              ast: ast,
+                              options: compilerOptions,
+                              delegate: delegate)
       let code = try compiler.run()
 
       if let e = delegate.printCompilerWarnings() {
