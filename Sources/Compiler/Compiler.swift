@@ -130,10 +130,10 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     return self.blockStack.contains { $0.isLoop }
   }
 
-  internal init(filename: String,
-                ast: AST,
-                options: CompilerOptions,
-                delegate: CompilerDelegate?) {
+  fileprivate init(filename: String,
+                   ast: AST,
+                   options: CompilerOptions,
+                   delegate: CompilerDelegate?) {
     self.ast = ast
     self.filename = filename
     self.options = options

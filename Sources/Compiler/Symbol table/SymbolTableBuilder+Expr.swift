@@ -6,7 +6,7 @@ import Parser
 
 // swiftlint:disable file_length
 
-extension SymbolTableBuilder {
+extension SymbolTableBuilderImpl {
 
   internal func visit(_ node: Expression) throws {
     try node.accept(self)

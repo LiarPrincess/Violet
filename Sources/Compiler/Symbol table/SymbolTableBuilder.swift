@@ -5,11 +5,29 @@ import Parser
 // In CPython:
 // Python -> symtable.c
 
-public final class SymbolTableBuilder: ASTVisitor, StatementVisitor, ExpressionVisitor {
+public final class SymbolTableBuilder {
 
-  public typealias ASTResult = Void
-  public typealias StatementResult = Void
-  public typealias ExpressionResult = Void
+  private let impl: SymbolTableBuilderImpl
+
+  public init(delegate: CompilerDelegate?) {
+    self.impl = SymbolTableBuilderImpl(delegate: delegate)
+  }
+
+  public func visit(_ ast: AST) throws -> SymbolTable {
+    return try self.impl.visit(ast)
+  }
+}
+
+/// Just like `Compiler` is a wrapper for `CompilerImpl`,
+/// we have `SymbolTableBuilder` as a wrapper for `SymbolTableBuilderImpl`.
+///
+/// See comment above `CompilerImpl` for details.
+internal final class SymbolTableBuilderImpl:
+  ASTVisitor, StatementVisitor, ExpressionVisitor {
+
+  internal typealias ASTResult = Void
+  internal typealias StatementResult = Void
+  internal typealias ExpressionResult = Void
 
   /// Scope stack.
   /// Current scope is at the top, top scope is at the bottom.
@@ -36,14 +54,14 @@ public final class SymbolTableBuilder: ASTVisitor, StatementVisitor, ExpressionV
 
   // MARK: - Init
 
-  public init(delegate: CompilerDelegate?) {
+  fileprivate init(delegate: CompilerDelegate?) {
     self.delegate = delegate
   }
 
   // MARK: - Pass
 
   /// PySymtable_BuildObject(mod_ty mod, ...)
-  public func visit(_ ast: AST) throws -> SymbolTable {
+  internal func visit(_ ast: AST) throws -> SymbolTable {
     self.enterScope(name: SymbolScopeNames.top, type: .module, node: ast)
 
     try ast.accept(self)
@@ -58,15 +76,15 @@ public final class SymbolTableBuilder: ASTVisitor, StatementVisitor, ExpressionV
     return table
   }
 
-  public func visit(_ node: InteractiveAST) throws {
+  internal func visit(_ node: InteractiveAST) throws {
     try self.visit(node.statements)
   }
 
-  public func visit(_ node: ModuleAST) throws {
+  internal func visit(_ node: ModuleAST) throws {
     try self.visit(node.statements)
   }
 
-  public func visit(_ node: ExpressionAST) throws {
+  internal func visit(_ node: ExpressionAST) throws {
     try self.visit(node.expression)
   }
 

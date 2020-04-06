@@ -11,6 +11,8 @@ import Bytecode
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
+// MARK: - Outer context
+
 /// Structure that represents outer scope
 /// (basically everything OUTSIDE of the currently analyzed function).
 private final class OuterContext {
@@ -37,6 +39,8 @@ private final class OuterContext {
   }
 }
 
+// MARK: - Scope context
+
 /// Structure that represents current scope
 /// (basically everything INSIDE of the function).
 private final class ScopeContext {
@@ -59,6 +63,8 @@ private final class ScopeContext {
   /// Free vaiabled that should be resolved by parent scope.
   fileprivate var newFree = [MangledName: SymbolInfo]()
 }
+
+// MARK: - Variable source pass
 
 /// For each variable adds variable source (local, global, free) flag.
 /// It will also mark sources for free variables (called 'cells').
