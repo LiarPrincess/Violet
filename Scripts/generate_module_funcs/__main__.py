@@ -99,7 +99,7 @@ def print_module_functions(config: Config):
 
       # property
       if dl['class'] == ['data']:
-        print(f'// sourcery: pyproperty: {name}')
+        print(f'// sourcery: pyproperty = {name}')
         print(f'/// {signature}')
         if link:
           link = config.property_url_prefix + link['href']
@@ -112,7 +112,7 @@ def print_module_functions(config: Config):
 
       # function
       elif dl['class'] == ['function']:
-        print(f'// sourcery: pymethod: {name}')
+        print(f'// sourcery: pymethod = {name}')
         print(f'/// {signature}')
         if link:
           link = config.function_url_prefix + link['href']
@@ -124,7 +124,7 @@ def print_module_functions(config: Config):
 
       # class
       elif dl['class'] == ['class']:
-        print(f'// sourcery: pytype: {name}')
+        print(f'// sourcery: pytype = {name}')
         print(f'/// {signature}')
         print(f'internal let {name}: PyType')
 
