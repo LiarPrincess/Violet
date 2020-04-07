@@ -175,7 +175,7 @@ extension Lexer {
       return .escaped(try self.readHex(quoteType, count: 8))
 
     case "N": // Character named name in the Unicode database
-      throw NotImplemented.stringNamedEscape
+      self.trapNamedUnicodeEscape()
 
     default:
       self.advance() // backslash

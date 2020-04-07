@@ -144,7 +144,7 @@ extension Lexer {
       // After we add proper ints:
       // let kind = LexerErrorKind.unableToParseInteger(base.type, string)
       // throw self.error(kind, location: start)
-      throw NotImplemented.unlimitedInteger
+      self.trapUnlimitedInteger(valueToParse: string)
     }
 
     return value
