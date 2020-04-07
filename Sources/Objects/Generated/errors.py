@@ -77,6 +77,19 @@ data = [
 # Shared
 # ------
 
+generated_warning = '''\
+// Please note that this file was automatically generated. DO NOT EDIT!
+// The same goes for other files in 'Generated' directory.
+'''
+
+where_to_find_it_in_cpython = '''\
+// In CPython:
+// Objects -> exceptions.c
+// Lib->test->exception_hierarchy.txt <-- this is amazing
+// https://docs.python.org/3.7/library/exceptions.html
+// https://docs.python.org/3.7/c-api/exceptions.html
+'''
+
 def is_final(name):
   'If there exists any exception with us as base then we are not final'
 
@@ -86,33 +99,19 @@ def is_final(name):
 
   return True
 
-def print_cpython_info():
-  print('''\
-// In CPython:
-// Objects -> exceptions.c
-// Lib->test->exception_hierarchy.txt <-- this is amazing
-// https://docs.python.org/3.7/library/exceptions.html
-// https://docs.python.org/3.7/c-api/exceptions.html
-''')
-
-def print_generated_info():
-  print('''\
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
-''')
-
 # -----------------
 # Class definitions
 # -----------------
 
 def print_class_definitions():
-  print('''\
+  print(f'''\
 // swiftlint:disable file_length
 // swiftlint:disable line_length
 // swiftlint:disable trailing_newline
+
+{generated_warning}
+{where_to_find_it_in_cpython}
 ''')
-  print_generated_info()
-  print_cpython_info()
 
   for name, base, doc in data:
     if name == 'BaseException':
@@ -173,13 +172,14 @@ public {final}class Py{name}: Py{base} {{
 # ----------------
 
 def print_type_definitions():
-  print('''\
+  print(f'''\
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 // swiftlint:disable trailing_comma
+
+{generated_warning}
+{where_to_find_it_in_cpython}
 ''')
-  print_generated_info()
-  print_cpython_info()
 
   print('public final class BuiltinErrorTypes {')
 
