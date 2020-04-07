@@ -130,7 +130,6 @@ def print_module_functions(config: Config):
 
       else:
         print('Missing:', dl['class'])
-        sys.exit(-1)
 
       print()
       count += 1

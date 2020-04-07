@@ -7,70 +7,60 @@ import Core
 extension BuiltinFunctions {
 
   // MARK: - Code
-/*
-   // sourcery: pymethod = breakpoint
+
+  // sourcery: pymethod = breakpoint
   /// breakpoint(*args, **kws)
   /// See [this](https://docs.python.org/3/library/functions.html#breakpoint)
   public func breakpoint() -> PyObject {
-    return self.unimplemented
+    self.unimplemented(name: "breakpoint")
   }
-*/
 
   // MARK: - Locals, globals, Vars
-/*
+
   // Put this into 'BuiltinFunctions+Locals+Globals+Vars' file.
 
   // sourcery: pymethod = vars
   /// vars([object])
   /// See [this](https://docs.python.org/3/library/functions.html#vars)
   public func vars() -> PyObject {
-    return self.unimplemented
+    self.unimplemented(name: "vars")
   }
-*/
 
   // MARK: - IO
-/*
+
   // sourcery: pymethod = input
   /// input([prompt])
   /// See [this](https://docs.python.org/3/library/functions.html#input)
   public func input() -> PyObject {
-    return self.unimplemented
+    self.unimplemented(name: "input")
   }
-*/
 
   // MARK: - Other
-/*
+
   // sourcery: pymethod = format
   /// format(value[, format_spec])
   /// See [this](https://docs.python.org/3/library/functions.html#format)
-  public func format() -> PyObject {
-    return self.unimplemented
+  public func format(value: PyObject, format: PyObject?) -> PyObject {
+    self.unimplemented(name: "format")
   }
 
   // sourcery: pymethod = help
   /// help([object])
   /// See [this](https://docs.python.org/3/library/functions.html#help)
   public func help() -> PyObject {
-    return self.unimplemented
+    self.unimplemented(name: "help")
   }
 
   // sourcery: pymethod = memoryview
   /// memoryview(obj)
   /// See [this](https://docs.python.org/3/library/functions.html)
   public func memoryview() -> PyObject {
-    return self.unimplemented
-  }
-*/
-
-  // MARK: - Other
-
-  public func PyObject_Format(value: PyObject, format: PyObject?) -> PyObject {
-    self.unimplemented()
+    self.unimplemented(name: "memoryview")
   }
 
   // MARK: - Unimplemented
 
-  private func unimplemented(fn: StaticString = #function) -> Never {
-    trap("'\(fn)' is not implemented")
+  private func unimplemented(name: String) -> Never {
+    trap("'builtins.\(name)' is not implemented")
   }
 }

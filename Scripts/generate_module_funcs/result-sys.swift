@@ -370,3 +370,197 @@ public func getMeta_path() -> PyObject {
 }
 
 Missing: ['simple']
+
+// sourcery: pyproperty: modules
+/// sys.modules
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.modules).
+public func getModules() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: path
+/// sys.path
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.path).
+public func getPath() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: path_hooks
+/// sys.path_hooks
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.path_hooks).
+public func getPath_hooks() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: path_importer_cache
+/// sys.path_importer_cache
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.path_importer_cache).
+public func getPath_importer_cache() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: platform
+/// sys.platform
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.platform).
+public func getPlatform() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: prefix
+/// sys.prefix
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.prefix).
+public func getPrefix() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: ps1
+/// sys.ps1
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.ps1).
+public func getPs1() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pymethod: setcheckinterval
+/// sys.setcheckinterval(interval)
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.setcheckinterval).
+public func setcheckinterval() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pymethod: setdlopenflags
+/// sys.setdlopenflags(n)
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.setdlopenflags).
+public func setdlopenflags() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pymethod: setprofile
+/// sys.setprofile(profilefunc)
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.setprofile).
+public func setprofile() -> PyObject {
+  return self.unimplemented
+}
+
+Missing: ['simple']
+
+// sourcery: pymethod: setrecursionlimit
+/// sys.setrecursionlimit(limit)
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.setrecursionlimit).
+public func setrecursionlimit() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pymethod: setswitchinterval
+/// sys.setswitchinterval(interval)
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.setswitchinterval).
+public func setswitchinterval() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pymethod: settrace
+/// sys.settrace(tracefunc)
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.settrace).
+public func settrace() -> PyObject {
+  return self.unimplemented
+}
+
+Missing: ['simple']
+
+// sourcery: pymethod: set_asyncgen_hooks
+/// sys.set_asyncgen_hooks(firstiter, finalizer)
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.set_asyncgen_hooks).
+public func set_asyncgen_hooks() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pymethod: set_coroutine_origin_tracking_depth
+/// sys.set_coroutine_origin_tracking_depth(depth)
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.set_coroutine_origin_tracking_depth).
+public func set_coroutine_origin_tracking_depth() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pymethod: set_coroutine_wrapper
+/// sys.set_coroutine_wrapper(wrapper)
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.set_coroutine_wrapper).
+public func set_coroutine_wrapper() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pymethod: _enablelegacywindowsfsencoding
+/// sys._enablelegacywindowsfsencoding()
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys._enablelegacywindowsfsencoding).
+public func _enablelegacywindowsfsencoding() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: stdin
+/// sys.stdin
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
+public func getStdin() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: __stdin__
+/// sys.__stdin__
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
+public func get__stdin__() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: thread_info
+/// sys.thread_info
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.thread_info).
+public func getThread_info() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: tracebacklimit
+/// sys.tracebacklimit
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.tracebacklimit).
+public func getTracebacklimit() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: version
+/// sys.version
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.version).
+public func getVersion() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: api_version
+/// sys.api_version
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.api_version).
+public func getApi_version() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: version_info
+/// sys.version_info
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.version_info).
+public func getVersion_info() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: warnoptions
+/// sys.warnoptions
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.warnoptions).
+public func getWarnoptions() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: winver
+/// sys.winver
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys.winver).
+public func getWinver() -> PyObject {
+  return self.unimplemented
+}
+
+// sourcery: pyproperty: _xoptions
+/// sys._xoptions
+/// See [this](https://docs.python.org/3.7/library/sys.html#sys._xoptions).
+public func get_xoptions() -> PyObject {
+  return self.unimplemented
+}
+

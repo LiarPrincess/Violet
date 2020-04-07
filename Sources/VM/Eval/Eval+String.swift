@@ -22,7 +22,7 @@ extension Eval {
       return .ok
     }
 
-    let formatted = Py.PyObject_Format(value: value, format: format)
+    let formatted = Py.format(value: value, format: format)
     self.stack.push(formatted)
 
     return .ok
