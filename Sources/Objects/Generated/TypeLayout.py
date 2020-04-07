@@ -64,6 +64,11 @@ def read_input_file() -> [SwiftType]:
 
 def print_layouts():
   print('''\
+// swiftlint:disable file_length
+
+// Please note that this file was automatically generated. DO NOT EDIT!
+// The same goes for other files in 'Generated' directory.
+
 // When creating new class we will check if all of the base classes have
 // the same layout.
 // So, for example we will allow this:
@@ -71,8 +76,6 @@ def print_layouts():
 // but do not allow this:
 //   >>> class C(int, str): pass
 //   TypeError: multiple bases have instance lay-out conflict
-
-// swiftlint:disable file_length
 
 internal class TypeLayout: Equatable {
 

@@ -1,6 +1,9 @@
 // swiftlint:disable file_length
 // swiftlint:disable vertical_whitespace
 
+// Please note that this file was automatically generated. DO NOT EDIT!
+// The same goes for other files in 'Generated' directory.
+
 // This file will add type properties to 'Builtins', so that they are exposed
 // to Python runtime.
 // Later 'ModuleFactory' script will pick those properties and add them to module

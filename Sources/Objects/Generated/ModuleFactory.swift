@@ -2,6 +2,9 @@
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 
+// Please note that this file was automatically generated. DO NOT EDIT!
+// The same goes for other files in 'Generated' directory.
+
 // ModuleFactory is based on pre-specialization (partial application)
 // of function to module object and then wrapping remaining function.
 //

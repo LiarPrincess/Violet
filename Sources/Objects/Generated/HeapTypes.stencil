@@ -1,6 +1,9 @@
 // swiftlint:disable vertical_whitespace
 // swiftlint:disable file_length
 
+// Please note that this file was automatically generated. DO NOT EDIT!
+// The same goes for other files in 'Generated' directory.
+
 // Types used when we subclass one of the builtin types.
 //
 // Normally most builtin types (like int, float etc.) do not have '__dict__'.

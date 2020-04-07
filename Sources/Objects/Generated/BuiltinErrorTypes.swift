@@ -1,15 +1,17 @@
+// swiftlint:disable line_length
+// swiftlint:disable function_body_length
+// swiftlint:disable trailing_comma
+
+// Please note that this file was automatically generated. DO NOT EDIT!
+// The same goes for other files in 'Generated' directory.
+
 // In CPython:
 // Objects -> exceptions.c
 // Lib->test->exception_hierarchy.txt <-- this is amazing
 // https://docs.python.org/3.7/library/exceptions.html
 // https://docs.python.org/3.7/c-api/exceptions.html
 
-// swiftlint:disable line_length
-// swiftlint:disable function_body_length
-// swiftlint:disable trailing_comma
-
 public final class BuiltinErrorTypes {
-
   public let baseException: PyType
   public let systemExit: PyType
   public let keyboardInterrupt: PyType

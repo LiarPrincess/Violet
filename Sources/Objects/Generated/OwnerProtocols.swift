@@ -1,10 +1,13 @@
+// swiftlint:disable line_length
+
+// Please note that this file was automatically generated. DO NOT EDIT!
+// The same goes for other files in 'Generated' directory.
+
 import Core
 
 // Sometimes instead of doing slow Python dispatch we will use Swift protocols.
 // Feel free to add new protocols if you need them (just modify the script
 // responsible for generating the code).
-
-// swiftlint:disable line_length
 
 protocol __new__Owner {
   static func pyNew(type: PyType, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>

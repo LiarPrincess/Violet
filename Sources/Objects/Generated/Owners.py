@@ -151,11 +151,14 @@ def print_protocols():
   lines = read_input_file()
 
   print(f'''\
+// swiftlint:disable line_length
+
+// Please note that this file was automatically generated. DO NOT EDIT!
+// The same goes for other files in 'Generated' directory.
+
 import Core
 
 {doc}
-
-// swiftlint:disable line_length
 
 protocol __new__Owner {{
   static func pyNew(type: PyType, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
@@ -227,11 +230,14 @@ def print_conformance():
   lines = read_input_file()
 
   print(f'''\
-{doc}
-
 // swiftlint:disable file_length
 // swiftlint:disable opening_brace
 // swiftlint:disable trailing_newline
+
+// Please note that this file was automatically generated. DO NOT EDIT!
+// The same goes for other files in 'Generated' directory.
+
+{doc}
 
 // MARK: - BaseObject
 

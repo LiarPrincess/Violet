@@ -86,7 +86,7 @@ def is_final(name):
 
   return True
 
-def print_header():
+def print_cpython_info():
   print('''\
 // In CPython:
 // Objects -> exceptions.c
@@ -95,17 +95,24 @@ def print_header():
 // https://docs.python.org/3.7/c-api/exceptions.html
 ''')
 
+def print_generated_info():
+  print('''\
+// Please note that this file was automatically generated. DO NOT EDIT!
+// The same goes for other files in 'Generated' directory.
+''')
+
 # -----------------
 # Class definitions
 # -----------------
 
 def print_class_definitions():
-  print_header()
   print('''\
 // swiftlint:disable file_length
 // swiftlint:disable line_length
 // swiftlint:disable trailing_newline
 ''')
+  print_generated_info()
+  print_cpython_info()
 
   for name, base, doc in data:
     if name == 'BaseException':
@@ -166,14 +173,15 @@ public {final}class Py{name}: Py{base} {{
 # ----------------
 
 def print_type_definitions():
-  print_header()
   print('''\
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 // swiftlint:disable trailing_comma
-
-public final class BuiltinErrorTypes {
 ''')
+  print_generated_info()
+  print_cpython_info()
+
+  print('public final class BuiltinErrorTypes {')
 
   for name, base, doc in data:
     property_name = get_builtins_type_property_name(name)

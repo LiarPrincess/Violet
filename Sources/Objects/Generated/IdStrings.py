@@ -208,6 +208,9 @@ if __name__ == '__main__':
   print('''\
 // swiftlint:disable file_length
 
+// Please note that this file was automatically generated. DO NOT EDIT!
+// The same goes for other files in 'Generated' directory.
+
 /// Predefined commonly used `__dict__` keys.
 /// Similiar to `_Py_IDENTIFIER` in `CPython`.
 ///

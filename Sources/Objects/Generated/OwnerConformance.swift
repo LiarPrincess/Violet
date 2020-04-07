@@ -1,10 +1,13 @@
-// Sometimes instead of doing slow Python dispatch we will use Swift protocols.
-// Feel free to add new protocols if you need them (just modify the script
-// responsible for generating the code).
-
 // swiftlint:disable file_length
 // swiftlint:disable opening_brace
 // swiftlint:disable trailing_newline
+
+// Please note that this file was automatically generated. DO NOT EDIT!
+// The same goes for other files in 'Generated' directory.
+
+// Sometimes instead of doing slow Python dispatch we will use Swift protocols.
+// Feel free to add new protocols if you need them (just modify the script
+// responsible for generating the code).
 
 // MARK: - BaseObject
 

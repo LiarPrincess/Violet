@@ -4,6 +4,9 @@
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
+// Please note that this file was automatically generated. DO NOT EDIT!
+// The same goes for other files in 'Generated' directory.
+
 /// Add all of boring stuff to 'PyType'.
 ///
 /// For example it will:

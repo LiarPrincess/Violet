@@ -2,6 +2,9 @@
 // swiftlint:disable line_length
 // swiftlint:disable file_length
 
+// Please note that this file was automatically generated. DO NOT EDIT!
+// The same goes for other files in 'Generated' directory.
+
 // Basically:
 // We hold 'PyObjects' on stack.
 // We need to call Swift method that needs specific 'self' type.
