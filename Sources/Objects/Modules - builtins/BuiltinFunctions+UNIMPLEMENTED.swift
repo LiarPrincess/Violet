@@ -64,10 +64,6 @@ extension BuiltinFunctions {
 
   // MARK: - Other
 
-  internal func callDir(_ fn: PyObject, args: [PyObject?]) -> DirResult {
-    self.unimplemented()
-  }
-
   public func PyObject_Format(value: PyObject, format: PyObject?) -> PyObject {
     self.unimplemented()
   }

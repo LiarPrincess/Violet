@@ -541,10 +541,16 @@ public class PyType: PyObject {
   ///
   /// We deliberately don't suck up its __class__, as methods belonging to the
   /// metaclass would probably be more confusing than helpful.
-  public func dir() -> DirResult {
-    return self.mro.reduce(into: DirResult()) { acc, base in
-      acc.append(contentsOf: base.__dict__)
+  public func dir() -> PyResult<DirResult> {
+    let result = DirResult()
+
+    for base in self.mro {
+      if let e = result.append(keysFrom: base.__dict__) {
+        return .error(e)
+      }
     }
+
+    return .value(result)
   }
 
   // MARK: - Lookup

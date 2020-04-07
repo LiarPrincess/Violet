@@ -133,16 +133,20 @@ extension BuiltinFunctions {
   // sourcery: pymethod = dir
   /// dir([object])
   /// See [this](https://docs.python.org/3/library/functions.html#dir)
+  ///
+  /// PyObject *
+  /// PyObject_Dir(PyObject *obj)
   public func dir(_ object: PyObject?) -> PyResult<PyObject> {
     if let object = object {
-      return self.call__dir__(on: object)
+      return self.objectDir(object: object)
     }
 
-    // TODO: Add '_dir_locals(void)' from 'PyObject_Dir(PyObject *obj)'
-    trap("'dir()' is not implemented")
+    return self.localsDir()
   }
 
-  private func call__dir__(on object: PyObject) -> PyFunctionResult {
+  ///static PyObject *
+  ///_dir_object(PyObject *obj)
+  private func objectDir(object: PyObject) -> PyResult<PyObject> {
     if let owner = object as? __dir__Owner {
       let result = owner.dir()
       return result.asFunctionResult
@@ -156,6 +160,21 @@ extension BuiltinFunctions {
     case .error(let e), .notCallable(let e):
       return .error(e)
     }
+  }
+
+  /// static PyObject *
+  /// _dir_locals(void)
+  private func localsDir() -> PyResult<PyObject> {
+    guard let frame = Py.delegate.frame else {
+      return .systemError("frame does not exist")
+    }
+
+    let dir = DirResult()
+    if let e = dir.append(keysFrom: frame.locals) {
+      return .error(e)
+    }
+
+    return dir.asFunctionResult
   }
 
   // MARK: - Is abstract method

@@ -108,22 +108,39 @@ internal enum PyObjectType {
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
-  internal static func dir(zelf: PyObject) -> DirResult {
-    var result = DirResult()
+  internal static func dir(zelf: PyObject) -> PyResult<DirResult> {
+    let result = DirResult()
 
-    if let attribOwner = zelf as? __dict__GetterOwner {
-      let dict = attribOwner.getDict()
-
-      if let dirFunc = dict.get(id: .__dir__) {
-        let dir = Py.callDir(dirFunc, args: [])
-        result.append(contentsOf: dir)
+    // If we have dict then use it to fill 'dir'
+    var error: PyBaseException?
+    if let dict = Py.get__dict__(object: zelf) {
+      if let dirFn = dict.get(id: .__dir__) {
+        switch Py.call(callable: dirFn) {
+        case .value(let o):
+          error = result.append(elementsFrom: o)
+        case let .notCallable(e),
+             let .error(e):
+          error = e
+        }
       } else {
-        result.append(contentsOf: dict)
+        // Otherwise just fill it with keys
+        error = result.append(keysFrom: dict)
       }
     }
 
-    result.append(contentsOf: zelf.type.dir())
-    return result
+    if let e = error {
+      return .error(e)
+    }
+
+    // 'Dir' from our type
+    switch zelf.type.dir() {
+    case let .value(dir):
+      result.append(contentsOf: dir)
+    case let .error(e):
+      return .error(e)
+    }
+
+    return .value(result)
   }
 
   // MARK: - Attributes

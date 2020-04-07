@@ -128,15 +128,32 @@ public class PyModule: PyObject {
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
-  public func dir() -> DirResult {
+  public func dir() -> PyResult<DirResult> {
     // Do not add 'self.type' dir!
+    // We are only interested in functions in this module!
+
+    let result = DirResult()
+    let error: PyBaseException?
+
+    // If we have our own '__dir__' method then call it.
     if let dirFunc = self.__dict__.get(id: .__dir__) {
-      return Py.callDir(dirFunc, args: [])
+      switch Py.call(callable: dirFunc) {
+      case .value(let o):
+        error = result.append(elementsFrom: o)
+      case let .notCallable(e),
+           let .error(e):
+        error = e
+      }
+    } else {
+      // Otherwise just fill it with our keys
+      error = result.append(keysFrom: self.__dict__)
     }
 
-    var result = DirResult()
-    result.append(contentsOf: self.__dict__)
-    return result
+    if let e = error {
+      return .error(e)
+    }
+
+    return .value(result)
   }
 
   // MARK: - GC

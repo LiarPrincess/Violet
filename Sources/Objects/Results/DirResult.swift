@@ -1,45 +1,81 @@
-public struct DirResult {
+import Core
 
-  private var values = Set<String>()
+public class DirResult: PyFunctionResultConvertible {
 
-  internal var sortedValues: [String] {
-    return self.values.sorted()
-  }
+  private var elements = [PyObject]()
+  private var cachedResult: PyFunctionResult?
+
+  // MARK: - Init
 
   internal init() { }
 
-  internal init<S: Sequence>(_ elements: S) where S.Element == String {
+  internal init<S: Sequence>(_ elements: S) where S.Element == PyObject {
     self.append(contentsOf: elements)
   }
 
-  internal mutating func append(_ element: String) {
-    self.values.insert(element)
+  // MARK: - Append
+
+  internal func append(_ element: PyObject) {
+    self.cachedResult = nil // invalidate cache
+    self.elements.append(element)
   }
 
-  internal mutating func append<S: Sequence>(contentsOf newElements: S)
-    where S.Element == String {
+  internal func append<S: Sequence>(contentsOf newElements: S)
+    where S.Element == PyObject {
 
     for element in newElements {
       self.append(element)
     }
   }
 
-  internal mutating func append(contentsOf dict: PyDict) {
-    for entry in dict.data {
-      if let str = entry.key.object as? PyString {
-        self.append(str.value)
-      }
+  internal func append(contentsOf newElements: DirResult) {
+    self.append(contentsOf: newElements.elements)
+  }
+
+  // MARK: - Append object
+
+  internal func append(keysFrom dict: PyDict) -> PyBaseException? {
+    let keysObject = dict.keys()
+
+    guard let keys = keysObject as? PySequenceType else {
+      let t = keysObject.typeName
+      let msg = "dir(): expected keys() to be a list, not '\(t)'"
+      return Py.newTypeError(msg: msg)
+    }
+
+    self.append(contentsOf: keys.data.elements)
+    return nil
+  }
+
+  internal func append(elementsFrom object: PyObject) -> PyBaseException? {
+    switch Py.toArray(iterable: object) {
+    case let .value(elements):
+      self.append(contentsOf: elements)
+      return nil
+    case let .error(e):
+      return e
     }
   }
 
-  internal mutating func append(contentsOf newElements: DirResult) {
-    self.append(contentsOf: newElements.values)
-  }
-}
+  // MARK: - PyFunctionResultConvertible
 
-extension DirResult: PyFunctionResultConvertible {
+  // 'DirResult' can be used as a return type in python functions.
   internal var asFunctionResult: PyFunctionResult {
-    let elements = self.sortedValues.map { Py.newString($0) }
-    return .value(Py.newList(elements))
+    if let cached = self.cachedResult {
+      return cached
+    }
+
+    let result: PyFunctionResult
+    let list = Py.newList(self.elements)
+
+    switch list.sort(key: nil, isReverse: false) {
+    case .value:
+      result = PyFunctionResult.value(list)
+    case .error(let e):
+      result = PyFunctionResult.error(e)
+    }
+
+    self.cachedResult = result
+    return result
   }
 }

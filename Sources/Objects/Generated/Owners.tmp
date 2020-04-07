@@ -33,7 +33,7 @@ PyType|PyObject|func|__subclasses__|getSubclasses() -> [PyType]
 PyType|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyType|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
 PyType|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
-PyType|PyObject|func|__dir__|dir() -> DirResult
+PyType|PyObject|func|__dir__|dir() -> PyResult<DirResult>
 PyType|PyObject|func|__call__|call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
 PyType|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?) -> PyResult<PyObject>
 PyType|PyObject|static_func|__init__|pyInit(zelf: PyType,                              args: [PyObject],                              kwargs: PyDict?) -> PyResult<PyNone>
@@ -646,7 +646,7 @@ PyModule|PyObject|func|__repr__|repr() -> PyResult<String>
 PyModule|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyModule|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
 PyModule|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
-PyModule|PyObject|func|__dir__|dir() -> DirResult
+PyModule|PyObject|func|__dir__|dir() -> PyResult<DirResult>
 PyModule|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?) -> PyResult<PyObject>
 PyModule|PyObject|static_func|__init__|pyInit(zelf: PyModule,                              args: [PyObject],                              kwargs: PyDict?) -> PyResult<PyNone>
 PyNamespace|PyObject|get|__dict__|getDict() -> PyDict

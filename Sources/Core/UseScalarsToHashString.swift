@@ -13,9 +13,13 @@
 /// assert len("é") == 1
 /// assert len("e\u0301") == 2 <-- it would say 1, because it would use cached 'é'.
 /// ```
-public struct UseScalarsToHashString: Equatable, Hashable {
+public struct UseScalarsToHashString: Equatable, Hashable, CustomStringConvertible {
 
   private let value: String
+
+  public var description: String {
+    return self.value
+  }
 
   public init(_ value: String) {
     self.value = value

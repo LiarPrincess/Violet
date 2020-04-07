@@ -28,7 +28,7 @@ protocol __contains__Owner { func contains(_ element: PyObject) -> PyResult<Bool
 protocol __del__Owner { func del() -> PyResult<PyNone> }
 protocol __delitem__Owner { func delItem(at index: PyObject) -> PyResult<PyNone> }
 protocol __dict__GetterOwner { func getDict() -> PyDict }
-protocol __dir__Owner { func dir() -> DirResult }
+protocol __dir__Owner { func dir() -> PyResult<DirResult> }
 protocol __divmod__Owner { func divmod(_ other: PyObject) -> PyResult<PyObject> }
 protocol __eq__Owner { func isEqual(_ other: PyObject) -> CompareResult }
 protocol __float__Owner { func asFloat() -> PyResult<PyFloat> }
