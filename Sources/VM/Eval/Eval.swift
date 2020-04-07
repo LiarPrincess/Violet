@@ -11,9 +11,20 @@ import Objects
 /// Dummy namespace for `eval` function, just so we don't pollute `VM` with all
 /// of that nonsense (but don't worry, we use `VM` as a 'catch them all'
 /// for all of the code that does not fit anywhere else, so it is still a mess).
+///
+/// Technically `Eval` should be a `struct`.
+/// But then we would have to mark tons of methods as `mutating`
+/// (and we are way too lazy for that).
+///
+/// But wait a sec, it gets even worse:
+/// It will hold strong reference to `VM`!
+/// So... just do not store `Eval` as property.
 internal final class Eval {
 
   // MARK: - Properties
+
+  /// Only here so that we can manage 'vm.currentlyHandledException'
+  internal let vm: VM
 
   /// You know the thing that we are evaluating...
   internal let frame: PyFrame
@@ -85,8 +96,10 @@ internal final class Eval {
     set { self.frame.instructionIndex = newValue }
   }
 
-  /// Stack of exceptions.
-  internal var exceptions = ExceptionStack()
+  internal var currentlyHandledException: PyBaseException? {
+    get { return self.vm.currentlyHandledException }
+    set { self.vm.currentlyHandledException = newValue }
+  }
 
   // MARK: - Code object getters
 
@@ -110,7 +123,8 @@ internal final class Eval {
 
   // MARK: - Init
 
-  internal init(frame: PyFrame) {
+  internal init(vm: VM, frame: PyFrame) {
+    self.vm = vm
     self.frame = frame
   }
 
@@ -138,21 +152,14 @@ internal final class Eval {
 
   /// Context - another exception during whose handling this exception was raised.
   private func addExceptionContextIfNeeded(_ reason: UnwindReason) {
-    // TODO: This should no be here, but in 'Objects'
     guard case let UnwindReason.exception(exception) = reason else {
       return
     }
 
-    let hasEmptyContext = exception.getContext()?.isNone ?? true
-    guard hasEmptyContext else {
-      return
-    }
-
-    guard let currentException = self.exceptions.current else {
-      return
-    }
-
-    exception.setContext(currentException)
+    Py.setContextUsingCurrentlyHandledExceptionFromDelegate(
+      on: exception,
+      overrideCurrentContext: false
+    )
   }
 
   /// Fetch instruction at `self.frame.instructionIndex`.

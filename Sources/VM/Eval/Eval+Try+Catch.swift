@@ -123,7 +123,7 @@ extension Eval {
       // Reraise
       assert(cause == nil)
 
-      guard let current = self.exceptions.current else {
+      guard let current = self.currentlyHandledException else {
         return Py.newRuntimeError(msg: "No active exception to reraise")
       }
 

@@ -78,7 +78,7 @@ extension VM {
     Debug.frameStart(frame: frame)
 
     self.frames.push(frame)
-    let result = Eval(frame: frame).run()
+    let result = Eval(vm: self, frame: frame).run()
     let poppedFrame = self.frames.popLast()
     assert(poppedFrame === frame)
 

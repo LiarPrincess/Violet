@@ -260,7 +260,7 @@ public class PyBaseException: PyObject {
 
   public func setCause(_ value: PyObject?) -> PyResult<()> {
     guard let value = value else {
-      return .typeError("__cause__ may not be deleted")
+      return .typeError("__cause__ may not be deleted") // use 'None'
     }
 
     if value is PyNone {
@@ -298,7 +298,7 @@ public class PyBaseException: PyObject {
 
   public func setContext(_ value: PyObject?) -> PyResult<()> {
     guard let value = value else {
-      return .typeError("__context__ may not be deleted")
+      return .typeError("__context__ may not be deleted") // use 'None'
     }
 
     if value is PyNone {
@@ -316,22 +316,100 @@ public class PyBaseException: PyObject {
   }
 
   public func setContext(_ value: PyBaseException) {
-    self.avoidCycleInContexts(with: value)
-    self.context = value
+    // When we are just setting the '__context__' property we are allowed
+    // to have cycles:
+    //
+    //  elsa = NotImplementedError('elsa')
+    //  anna = NotImplementedError('anna')
+    //
+    //  elsa.__context__ = anna # Just setting the property, nothing fancy
+    //  anna.__context__ = elsa
+    //
+    //  assert elsa.__context__ == anna
+    //  assert anna.__context__ == elsa
+
+    self.setContext(value, checkAndPossiblyBreakCycle: false)
   }
 
-  // When we want to set exception as 'context',
-  // we have to check if this exception is already in exception stack.
-  // Otherwise we would create cycle.
+  /// What are those `cycles` and where can I (not) get one?
+  ///
+  /// So, when we want to set exception as `__context__`, it is possible
+  /// that this exception is already in an exception stack.
+  /// For example: `e1.__context__` is `e2` and we try to set
+  /// `e2.__context__` to `e1`.
+  ///
+  /// Note that for just an ordinary assignment (`elsa.__context__ = anna`)
+  /// cycles are allowed, so here we are just talking about `raise/except`.
+  ///
+  /// Run this:
+  /// ``` py
+  /// elsa = NotImplementedError('elsa')
+  /// anna = NotImplementedError('anna')
+  ///
+  /// try:
+  ///   try:
+  ///     try:
+  ///       raise elsa
+  ///     except:
+  ///       # this will set: anna.__context__ = elsa
+  ///       raise anna
+  ///   except:
+  ///     # this will set: elsa.__context__ = anna
+  ///     # but we can't do that because: anna.__context__ = elsa
+  ///     # we have to clear: anna.__context__ = None
+  ///     raise elsa
+  /// except:
+  ///   assert elsa.__context__ == anna
+  ///   assert anna.__context__ == None # Yep, it is 'None'!
+  /// ```
+  ///
+  /// Also, setting itself as a `__context__` should not work:
+  ///
+  /// ```py
+  /// try:
+  ///   try:
+  ///     raise elsa
+  ///   except:
+  ///     raise elsa
+  /// except:
+  ///   assert elsa.__context__ == None
+  /// ```
+  public func setContext(
+    _ value: PyBaseException,
+    checkAndPossiblyBreakCycle: Bool
+  ) {
+    if checkAndPossiblyBreakCycle {
+      if value === self {
+        // Setting itself as a '__context__' should not change existing context.
+        // try:
+        //   try:
+        //     elsa.__context__ = anna # Change 'anna' -> 'elsa' to get infinite loop
+        //     raise elsa
+        //   except:
+        //     # Normally this should set 'elsa.__context__ = elsa'
+        //     # But it will not do this, because that would be a cycle.
+        //     raise elsa
+        // except:
+        //   assert elsa.__context__ == anna # Context is still 'anna'
+        return
+      }
+
+      self.avoidCycleInContexts(with: value)
+    }
+
+    self.context = value // quite boring, compared to all of the fanciness above
+  }
+
   private func avoidCycleInContexts(with other: PyBaseException) {
     var current = other
 
-    // Traverse context down looking for 'self'.
+    // Traverse contexts down/up (however you want to call it) looking for 'self'.
     while let context = current.getContext() {
       if context === self {
         // Clear context
         // We can return, because when setting 'context' exception
-        // we also ran 'avoidCycleInContext'.
+        // we also ran 'avoidCycleInContext'
+        // (or the user tempered with context manually, so all bets are off).
         current.delContext()
         return
       }

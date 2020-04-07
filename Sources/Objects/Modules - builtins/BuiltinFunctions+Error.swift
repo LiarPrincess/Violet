@@ -420,4 +420,24 @@ extension BuiltinFunctions {
 
     return error.isSubtype(of: exceptionType)
   }
+
+  // MARK: - Context
+
+  /// Context - another exception during whose handling this exception was raised.
+  public func setContextUsingCurrentlyHandledExceptionFromDelegate(
+    on exception: PyBaseException,
+    overrideCurrentContext: Bool
+  ) {
+    // No current -> nothing to do
+    guard let current = Py.delegate.currentlyHandledException else {
+      return
+    }
+
+    let hasEmptyContext = exception.getContext()?.isNone ?? true
+    guard hasEmptyContext || overrideCurrentContext else {
+      return
+    }
+
+    exception.setContext(current, checkAndPossiblyBreakCycle: true)
+  }
 }

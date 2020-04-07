@@ -125,12 +125,11 @@ extension Eval {
 
     case .yield,
          .silenced:
-      print()
-      print("===")
-      print("Popped all blocks, but this still remains: '\(reason)'")
-      print("Instruction:", self.frame.instructionIndex ?? 0)
-      print("Line:", self.frame.currentLine)
-      exit(1)
+      let instruction = self.frame.instructionIndex ?? 0
+      let line = self.frame.currentLine
+      let details = "(instruction: \(instruction), line: \(line))"
+      let msg = "Popped all blocks, but this still remains: '\(reason)' \(details)"
+      trap(msg)
     }
   }
 
@@ -138,12 +137,12 @@ extension Eval {
     let exceptHandler = Block(type: .exceptHandler, stackLevel: self.stackLevel)
     self.blocks.push(block: exceptHandler)
 
-    // Remember 'current' on stack
-    let current = self.exceptions.current
-    PushExceptionBeforeExcept.push(current, on: &self.stack)
+    // Remember current exception on stack
+    let currentOrNil = self.currentlyHandledException
+    PushExceptionBeforeExcept.push(currentOrNil, on: &self.stack)
 
     // Make 'exception' current
-    self.exceptions.current = exception
+    self.currentlyHandledException = exception
     self.stack.push(exception)
   }
 
@@ -164,9 +163,9 @@ extension Eval {
     // Pop new 'current' exception
     switch PushExceptionBeforeExcept.pop(from: &self.stack) {
     case .exception(let e):
-      self.exceptions.current = e
+      self.currentlyHandledException = e
     case .noException:
-      self.exceptions.current = nil
+      self.currentlyHandledException = nil
     case .invalidValue(let o):
       assert(false, "Expected to pop exception (or None), but popped '\(o)'.")
     }

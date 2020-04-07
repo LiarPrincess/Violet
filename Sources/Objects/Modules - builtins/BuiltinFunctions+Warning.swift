@@ -127,9 +127,9 @@ extension BuiltinFunctions {
   }
 
   public func newSyntaxWarning(filename: String,
-                         line: SourceLine,
-                         column: SourceColumn,
-                         text: String) -> PySyntaxWarning {
+                               line: SourceLine,
+                               column: SourceColumn,
+                               text: String) -> PySyntaxWarning {
     return self.newSyntaxWarning(
       filename: Py.getInterned(filename),
       line: Py.newInt(Int(line)),
