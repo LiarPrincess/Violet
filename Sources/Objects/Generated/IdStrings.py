@@ -154,6 +154,8 @@ ids = [
   'foo',
   'get',
   'getattr',
+  'getdefaultencoding',
+  'hexversion',
   'implementation',
   'intersection_update',
   'items',

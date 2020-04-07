@@ -71,12 +71,23 @@ extension BuiltinFunctions {
     return PyOverflowError(msg: msg)
   }
 
-  // MARK: - System error
+  // MARK: - System
 
   /// Internal error in the Python interpreter.
   public func newSystemError(msg: String) -> PySystemError {
     return PySystemError(msg: msg)
   }
+
+  /// Request to exit from the interpreter.
+  public func newSystemExit(status: PyObject?) -> PySystemExit {
+    var args = [PyObject]()
+    if let status = status {
+      args.append(status)
+    }
+
+    return PySystemExit(args: Py.newTuple(args))
+  }
+
   // MARK: - Runtime error
 
   /// Unspecified run-time error.

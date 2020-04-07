@@ -117,13 +117,6 @@ extension Sys {
     self.unimplemented(name: "exec_prefix")
   }
 
-  // sourcery: pymethod: exit
-  /// sys.exit([arg])
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.exit).
-  internal func exit() -> PyObject {
-    self.unimplemented(name: "exit")
-  }
-
   // sourcery: pyproperty = float_info
   /// sys.float_info
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.float_info).
@@ -157,13 +150,6 @@ extension Sys {
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.getcheckinterval).
   internal func getCheckInterval() -> PyObject {
     self.unimplemented(name: "getcheckinterval")
-  }
-
-  // sourcery: pymethod: getdefaultencoding
-  /// sys.getdefaultencoding()
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.getdefaultencoding).
-  internal func getDefaultEncoding() -> PyObject {
-    self.unimplemented(name: "getdefaultencoding")
   }
 
   // sourcery: pymethod = getdlopenflags
@@ -264,13 +250,6 @@ extension Sys {
     self.unimplemented(name: "get_coroutine_wrapper")
   }
 
-  // sourcery: pyproperty: hexversion
-  /// sys.hexversion
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.hexversion).
-  internal var hexVersion: PyObject {
-    self.unimplemented(name: "hexversion")
-  }
-
   // sourcery: pyproperty = int_info
   /// sys.int_info
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.int_info).
@@ -283,13 +262,6 @@ extension Sys {
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__interactivehook__).
   internal var __interactivehook__: PyObject {
     self.unimplemented(name: "__interactivehook__")
-  }
-
-  // sourcery: pymethod: intern
-  /// sys.intern(string)
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.intern).
-  internal func intern() -> PyObject {
-    self.unimplemented(name: "intern")
   }
 
   // sourcery: pymethod = is_finalizing

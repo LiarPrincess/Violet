@@ -191,6 +191,8 @@ public struct IdString {
   public static let foo = Self.impl.foo
   public static let get = Self.impl.get
   public static let getattr = Self.impl.getattr
+  public static let getdefaultencoding = Self.impl.getdefaultencoding
+  public static let hexversion = Self.impl.hexversion
   public static let implementation = Self.impl.implementation
   public static let intersection_update = Self.impl.intersection_update
   public static let items = Self.impl.items
@@ -387,6 +389,8 @@ private struct IdStringImpl {
   fileprivate let foo = IdString(value: "foo")
   fileprivate let get = IdString(value: "get")
   fileprivate let getattr = IdString(value: "getattr")
+  fileprivate let getdefaultencoding = IdString(value: "getdefaultencoding")
+  fileprivate let hexversion = IdString(value: "hexversion")
   fileprivate let implementation = IdString(value: "implementation")
   fileprivate let intersection_update = IdString(value: "intersection_update")
   fileprivate let items = IdString(value: "items")

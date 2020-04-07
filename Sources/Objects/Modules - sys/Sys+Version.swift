@@ -128,6 +128,21 @@ extension Sys {
     return Py.newNamespace(dict: dict)
   }
 
+  // MARK: - Hex
+
+  // sourcery: pyproperty = hexversion
+  /// sys.hexversion
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.hexversion).
+  internal var hexVersion: PyObject {
+    if let value = self.get(key: .hexversion) {
+      return value
+    }
+
+    let uint32 = Configure.versionInfo.hexVersion
+    let object = Py.newInt(uint32)
+    return object
+  }
+
   // MARK: - Helpers
 
   private func insertOrTrap(
