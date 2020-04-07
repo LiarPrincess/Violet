@@ -25,14 +25,14 @@ import Core
 private func createModule(name: String,
                           doc: String?,
                           dict: PyDict) -> PyModule {
-  let n = Py.getInterned(name)
-  let d = doc.map(Py.getInterned(_:))
+  let n = Py.intern(name)
+  let d = doc.map(Py.intern(_:))
   return PyModule(name: n, doc: d, dict: dict)
 }
 
 private func insert(module: PyModule, name: String, value: PyObject) {
   let dict = module.getDict()
-  let interned = Py.getInterned(name)
+  let interned = Py.intern(name)
 
   switch dict.set(key: interned, to: value) {
   case .ok:

@@ -6,8 +6,6 @@ import Foundation
 // In CPython:
 // Python -> compile.c
 
-// swiftlint:disable unavailable_function
-
 internal typealias Comprehensions = NonEmptyArray<Comprehension>
 
 extension CompilerImpl {

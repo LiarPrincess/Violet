@@ -3,15 +3,7 @@ import Objects
 
 extension VM {
 
-  /// PyImport_ImportModule
-  internal func importModule(_ name: String) -> PyModule {
-    return Py.builtinsModule
-  }
-
-  internal func unhandled(error: PyBaseException) -> Never {
-    trap("Unhandled: \(error)")
-  }
-
+  /// Call this method if given funcionality is not implemented.
   internal func unimplemented(fn: StaticString = #function) -> Never {
     trap("Unimplemented '\(fn)'.")
   }

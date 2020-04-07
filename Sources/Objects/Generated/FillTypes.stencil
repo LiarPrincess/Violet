@@ -18,7 +18,7 @@ import Core
 
 private func insert(type: PyType, name: String, value: PyObject) {
   let dict = type.getDict()
-  let interned = Py.getInterned(name)
+  let interned = Py.intern(name)
 
   switch dict.set(key: interned, to: value) {
   case .ok:

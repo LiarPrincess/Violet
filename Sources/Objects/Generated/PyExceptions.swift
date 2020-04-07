@@ -1,6 +1,7 @@
 // swiftlint:disable file_length
 // swiftlint:disable line_length
 // swiftlint:disable trailing_newline
+// swiftlint:disable vertical_whitespace
 
 // Please note that this file was automatically generated. DO NOT EDIT!
 // The same goes for other files in 'Generated' directory.

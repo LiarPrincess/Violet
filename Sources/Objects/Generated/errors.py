@@ -108,6 +108,7 @@ def print_class_definitions():
 // swiftlint:disable file_length
 // swiftlint:disable line_length
 // swiftlint:disable trailing_newline
+// swiftlint:disable vertical_whitespace
 
 {generated_warning}
 {where_to_find_it_in_cpython}
