@@ -309,7 +309,7 @@ internal struct FString {
         }
 
       case quote?.type.scalar: // string end
-        guard let q = quote else { fatalError("?") }
+        guard let q = quote else { trap("?") }
 
         let isEnd = try self.isQuoteEnd(quote: q, view: view, startingFrom: index)
         if isEnd {

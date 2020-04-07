@@ -250,6 +250,6 @@ extension CompilerImpl {
       return scope.flags
     }
 
-    fatalError("[BUG] Compiler: Unknown scope for '\(name)' inside '\(qualifiedName)'.")
+    trap("[BUG] Compiler: Unknown scope for '\(name)' inside '\(qualifiedName)'.")
   }
 }

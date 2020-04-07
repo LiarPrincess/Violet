@@ -97,19 +97,19 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   /// Code object that we are currently filling.
   internal var codeObject: CodeObject {
     if let last = self.unitStack.last { return last.codeObject }
-    fatalError("[BUG] Compiler: Using `codeObject` with empty `unitStack`.")
+    trap("[BUG] Compiler: Using `codeObject` with empty `unitStack`.")
   }
 
   /// Code object builder for `self.codeObject`.
   internal var builder: CodeObjectBuilder {
     if let last = self.unitStack.last { return last.builder }
-    fatalError("[BUG] Compiler: Using `builder` with empty `unitStack`.")
+    trap("[BUG] Compiler: Using `builder` with empty `unitStack`.")
   }
 
   /// Scope that we are currently filling.
   internal var currentScope: SymbolScope {
     if let last = self.unitStack.last { return last.scope }
-    fatalError("[BUG] Compiler: Using `currentScope` with empty `unitStack`.")
+    trap("[BUG] Compiler: Using `currentScope` with empty `unitStack`.")
   }
 
   /// How far are we inside module/class/function scopes.
@@ -398,7 +398,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   /// compiler_exit_scope(struct compiler *c)
   private func leaveScope() throws {
     guard let unit = self.unitStack.popLast() else {
-      fatalError("[BUG] Compiler: Attempting to pop non-existing unit.")
+      trap("[BUG] Compiler: Attempting to pop non-existing unit.")
     }
 
     assert(self.unitStack.any, "Popped top scope.")

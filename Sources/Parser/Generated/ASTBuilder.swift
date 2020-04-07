@@ -17,7 +17,7 @@ public struct ASTBuilder {
   private mutating func getNextId() -> ASTNodeId {
     let max = ASTNodeId.max
     guard self.nextId != max else {
-      fatalError("ASTBuilder: Reached maximim number of AST nodes: (\(max)).")
+      trap("ASTBuilder: Reached maximim number of AST nodes: (\(max)).")
     }
 
     let result = self.nextId

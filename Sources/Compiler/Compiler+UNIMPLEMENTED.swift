@@ -1,7 +1,7 @@
-import Foundation
 import Core
 import Parser
 import Bytecode
+import Foundation
 
 // In CPython:
 // Python -> compile.c
@@ -48,10 +48,10 @@ extension CompilerImpl {
   // MARK: - Helpers
 
   private func notImplementedAsync() -> Error {
-    fatalError("[Compiler] 'async' is currently not implemented.")
+    trap("[Compiler] 'async' is currently not implemented.")
   }
 
   private func notImplementedComprehension() -> Error {
-    fatalError("[Compiler] 'comprehensions' are currently not implemented.")
+    trap("[Compiler] 'comprehensions' are currently not implemented.")
   }
 }

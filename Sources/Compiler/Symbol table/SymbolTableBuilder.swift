@@ -40,12 +40,12 @@ internal final class SymbolTableBuilderImpl:
   /// Scope that we are currently filling (top of the `self.scopeStack`).
   internal var currentScope: SymbolScope {
     if let last = self.scopeStack.last { return last }
-    fatalError("[BUG] SymbolTableBuilder: Using nil current scope.")
+    trap("[BUG] SymbolTableBuilder: Using nil current scope.")
   }
 
   internal var topScope: SymbolScope {
     if let first = self.scopeStack.first { return first }
-    fatalError("[BUG] SymbolTableBuilder: Using nil top scope.")
+    trap("[BUG] SymbolTableBuilder: Using nil top scope.")
   }
 
   /// Name of the class that we are currently filling (if any).

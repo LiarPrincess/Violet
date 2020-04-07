@@ -173,7 +173,7 @@ extension CompilerImpl {
       let keyword = keywords.first!
 
       guard case let KeywordKind.named(name) = keyword.kind else {
-        fatalError("[BUG] Compiler: VisitSubkwargs should not be called for unpack.")
+        trap("[BUG] Compiler: VisitSubkwargs should not be called for unpack.")
       }
 
       self.builder.appendString(name)
@@ -183,7 +183,7 @@ extension CompilerImpl {
       var names = [Constant]()
       for keyword in keywords {
         guard case let KeywordKind.named(name) = keyword.kind else {
-          fatalError("[BUG] Compiler: VisitSubkwargs should not be called for unpack.")
+          trap("[BUG] Compiler: VisitSubkwargs should not be called for unpack.")
         }
 
         try self.visit(keyword.value)
