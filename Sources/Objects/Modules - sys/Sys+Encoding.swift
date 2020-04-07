@@ -6,8 +6,8 @@ import Core
 
 extension Sys {
 
-  public var defaultEncoding: PyStringEncoding {
-    return .utf8
+  public var defaultEncoding: String {
+    return "utf-8"
   }
 
   internal var getDefaultEncodingDoc: String {
@@ -27,6 +27,7 @@ extension Sys {
       return value
     }
 
-    return Py.newString(self.defaultEncoding)
+    let value = Py.newString(self.defaultEncoding)
+    return value
   }
 }
