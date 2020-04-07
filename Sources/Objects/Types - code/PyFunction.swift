@@ -59,7 +59,7 @@ public class PyFunction: PyObject {
                 code: PyCode,
                 globals: PyDict) {
     self.name = code.name
-    self.qualname = qualname.map(Py.getInterned) ?? code.name
+    self.qualname = qualname.map(Py.intern) ?? code.name
     self.code = code
     self.module = module
 

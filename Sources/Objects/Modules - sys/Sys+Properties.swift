@@ -170,7 +170,7 @@ extension Sys {
   /// This string contains a platform identifier that can be used to append
   /// platform-specific components to `sys.path`, for instance.
   internal var platformObject: PyString {
-    return Py.getInterned(self.platform)
+    return Py.intern(self.platform)
   }
 
   // MARK: - Copyright
@@ -185,7 +185,7 @@ extension Sys {
   ///
   /// A string containing the copyright pertaining to the Python interpreter.
   internal var copyrightObject: PyString {
-    return Py.getInterned(self.copyright)
+    return Py.intern(self.copyright)
   }
 
   // MARK: - Hash

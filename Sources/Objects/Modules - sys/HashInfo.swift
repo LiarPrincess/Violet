@@ -25,7 +25,7 @@ public final class HashInfo {
     let dict = PyDict()
 
     func set(name: String, value: PyObject) {
-      let interned = Py.getInterned(name)
+      let interned = Py.intern(name)
       switch dict.set(key: interned, to: value) {
       case .ok:
         break

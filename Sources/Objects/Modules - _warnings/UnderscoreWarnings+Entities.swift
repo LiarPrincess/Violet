@@ -87,12 +87,12 @@ extension UnderscoreWarnings {
   /// normalize_module(PyObject *filename)
   private func createModuleName(filename: PyString) -> PyString {
     if filename.value.isEmpty {
-      return Py.getInterned("<unknown>")
+      return Py.intern("<unknown>")
     }
 
     if filename.value.hasSuffix(".py") {
       let module = String(filename.value.dropLast(3))
-      return Py.getInterned(module)
+      return Py.intern(module)
     }
 
     return filename

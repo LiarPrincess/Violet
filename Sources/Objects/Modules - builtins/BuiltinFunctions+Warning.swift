@@ -100,7 +100,7 @@ extension BuiltinFunctions {
                          column: SourceColumn,
                          text: String) -> PyBaseException? {
     return self.warnSyntax(
-      filename: Py.getInterned(filename),
+      filename: Py.intern(filename),
       line: Py.newInt(Int(line)),
       column: Py.newInt(Int(column)),
       text: Py.newString(text)
@@ -131,7 +131,7 @@ extension BuiltinFunctions {
                                column: SourceColumn,
                                text: String) -> PySyntaxWarning {
     return self.newSyntaxWarning(
-      filename: Py.getInterned(filename),
+      filename: Py.intern(filename),
       line: Py.newInt(Int(line)),
       column: Py.newInt(Int(column)),
       text: Py.newString(text)
@@ -161,11 +161,11 @@ extension BuiltinFunctions {
       return nil
 
     case .warning:
-      let msgObject = Py.getInterned(msg)
+      let msgObject = Py.intern(msg)
       return self.warn(type: .bytes, msg: msgObject)
 
     case .error:
-      let msgObject = Py.getInterned(msg)
+      let msgObject = Py.intern(msg)
       let args = Py.newTuple(msgObject)
       let error = PyBytesWarning(args: args)
       return error

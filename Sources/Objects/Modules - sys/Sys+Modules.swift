@@ -42,7 +42,7 @@ extension Sys {
         }
       }()
 
-      let interned = Py.getInterned(name)
+      let interned = Py.intern(name)
       names.append(interned)
 
       // sys.modules
@@ -109,7 +109,7 @@ extension Sys {
   public func addModule(module: PyModule) -> PyResult<PyNone> {
     switch module.name {
     case let .value(name):
-      let nameObject = Py.getInterned(name)
+      let nameObject = Py.intern(name)
       return self.addModule(name: nameObject, module: module)
     case let .error(e):
       return .error(e)

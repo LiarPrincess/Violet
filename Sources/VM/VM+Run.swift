@@ -341,7 +341,7 @@ extension VM {
   }
 
   private func add__main__Module() -> PyResult<PyModule> {
-    let name = Py.getInterned("__main__")
+    let name = Py.intern("__main__")
     let module = Py.newModule(name: name)
 
     switch Py.sys.addModule(name: name, module: module) {

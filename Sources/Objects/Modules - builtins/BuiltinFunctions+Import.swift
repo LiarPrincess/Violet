@@ -121,7 +121,7 @@ extension BuiltinFunctions {
 
     let absName: PyString
     switch self.resolveLevel(name: name, level: level, globals: globals) {
-    case let .value(s): absName = Py.getInterned(s)
+    case let .value(s): absName = Py.intern(s)
     case let .error(e): return .error(e)
     }
 
@@ -387,7 +387,7 @@ extension BuiltinFunctions {
                                                     nameDotIndex: nameDotIndex,
                                                     absName: absName.value)
 
-    let interned = Py.getInterned(absTopLevel)
+    let interned = Py.intern(absTopLevel)
     switch Py.sys.getModule(name: interned) {
     case .value(let m):
       return .value(m)

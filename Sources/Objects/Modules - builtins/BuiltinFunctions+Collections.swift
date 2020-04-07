@@ -597,7 +597,7 @@ extension BuiltinFunctions {
 
     if let string = iterable as? PyString {
       let scalars = string.data.scalars
-      let characterObjects = scalars.map { Py.getInterned(String($0)) }
+      let characterObjects = scalars.map { Py.intern(String($0)) }
       return .value(characterObjects)
     }
 

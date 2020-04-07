@@ -250,16 +250,22 @@ public final class PyInstance: BuiltinFunctions {
 
   // MARK: - Intern strings
 
-  private var internedStrings = [String:PyString]()
+  private var internedStrings = [UseScalarsToHashString:PyString]()
+
+  public func getInterned(_ value: String) -> PyString? {
+    let key = UseScalarsToHashString(value)
+    return self.internedStrings[key]
+  }
 
   /// Cached, frequently used strings.
-  public func getInterned(_ value: String) -> PyString {
-    if let interned = self.internedStrings[value] {
+  public func intern(_ value: String) -> PyString {
+    if let interned = self.getInterned(value) {
       return interned
     }
 
     let str = self.newString(value)
-    internedStrings[value] = str
+    let key = UseScalarsToHashString(value)
+    internedStrings[key] = str
     return str
   }
 }

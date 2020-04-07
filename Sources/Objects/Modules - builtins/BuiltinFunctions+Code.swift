@@ -69,7 +69,7 @@ extension BuiltinFunctions {
   // MARK: - Module
 
   public func newModule(name: String, doc: String? = nil) -> PyModule {
-    let n = Py.getInterned(name)
+    let n = Py.intern(name)
     let d = doc.map(self.newString)
     return self.newModule(name: n, doc: d)
   }

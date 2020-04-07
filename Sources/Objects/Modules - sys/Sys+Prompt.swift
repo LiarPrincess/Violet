@@ -15,7 +15,7 @@ extension Sys {
   /// Strings specifying the primary and secondary prompt of the interpreter.
   /// These are only defined if the interpreter is in interactive mode.
   internal var ps1Object: PyObject {
-    return self.get(key: .ps1) ?? Py.getInterned(">>> ")
+    return self.get(key: .ps1) ?? Py.intern(">>> ")
   }
 
   internal func setPS1(to value: PyObject) -> PyResult<()> {
@@ -40,7 +40,7 @@ extension Sys {
   /// Strings specifying the primary and secondary prompt of the interpreter.
   /// These are only defined if the interpreter is in interactive mode.
   internal var ps2Object: PyObject {
-    return self.get(key: .ps2) ?? Py.getInterned("... ")
+    return self.get(key: .ps2) ?? Py.intern("... ")
   }
 
   internal func setPS2(to value: PyObject) -> PyResult<()> {

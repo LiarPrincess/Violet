@@ -230,15 +230,15 @@ public class PyCode: PyObject {
     assert(code.variableNames.count >= totalArgs)
 
     self.codeObject = code
-    self.name = Py.getInterned(code.name)
-    self.qualifiedName = Py.getInterned(code.qualifiedName)
-    self.filename = Py.getInterned(code.filename)
+    self.name = Py.intern(code.name)
+    self.qualifiedName = Py.intern(code.qualifiedName)
+    self.filename = Py.intern(code.filename)
 
     // We will convert constants and names here.
     // Otherwise we would have to convert them (`O(1)` + massive constants)
     // on each use.
     self.constants = code.constants.map(PyCode.intern(constant:))
-    self.names = code.names.map(Py.getInterned)
+    self.names = code.names.map(Py.intern)
 
     super.init(type: Py.types.code)
   }

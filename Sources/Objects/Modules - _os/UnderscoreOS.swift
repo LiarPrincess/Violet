@@ -22,7 +22,7 @@ public final class UnderscoreOS {
     let value = Py.fileSystem.currentWorkingDirectory
 
     // 'cwd' tend not to change during the program runtime, so we can cache it.
-    return Py.getInterned(value)
+    return Py.intern(value)
   }
 
   // MARK: - FSPath
@@ -83,7 +83,7 @@ public final class UnderscoreOS {
   private func createStat(from stat: FileStat) -> PyResult<PyNamespace> {
     let dict = Py.newDict()
 
-    let modeKey = Py.getInterned("st_mode")
+    let modeKey = Py.intern("st_mode")
     switch dict.set(key: modeKey, to: Py.newInt(stat.st_mode)) {
     case .ok: break
     case .error(let e): return .error(e)
@@ -92,7 +92,7 @@ public final class UnderscoreOS {
     // Store mtime as 'seconds[.]nanoseconds'
     let mtime = stat.st_mtimespec
     let mtimeValue = Double(mtime.tv_sec) + 1e-9 * Double(mtime.tv_nsec)
-    let mtimeKey = Py.getInterned("st_mtime")
+    let mtimeKey = Py.intern("st_mtime")
 
     switch dict.set(key: mtimeKey, to: Py.newFloat(mtimeValue)) {
     case .ok: break

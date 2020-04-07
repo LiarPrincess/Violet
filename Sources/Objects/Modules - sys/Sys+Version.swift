@@ -19,7 +19,7 @@ extension Sys {
   /// sys.version
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.version).
   internal var versionObject: PyString {
-    return Py.getInterned(self.version)
+    return Py.intern(self.version)
   }
 
   // MARK: - Version info
@@ -104,7 +104,7 @@ extension Sys {
       self.insertOrTrap(dict: dict, name: name, value: value, for: property)
     }
 
-    let name = Py.getInterned(implementation.name)
+    let name = Py.intern(implementation.name)
     let hexversion = Py.newInt(implementation.version.hexVersion)
 
     let version = self.createObject(

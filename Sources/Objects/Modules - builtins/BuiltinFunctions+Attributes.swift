@@ -252,6 +252,6 @@ extension BuiltinFunctions {
 
   /// We will intern attribute names, because they tend to be repeated a lot.
   private func interned(name: String) -> PyString {
-    return Py.getInterned(name)
+    return Py.intern(name)
   }
 }

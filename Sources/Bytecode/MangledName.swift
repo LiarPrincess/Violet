@@ -1,3 +1,5 @@
+import Core
+
 // In CPython:
 // Python -> compile.c
 //   _Py_Mangle(PyObject *privateobj, PyObject *ident)
@@ -28,11 +30,11 @@ public struct MangledName: Equatable, Hashable {
   }
 
   public func hash(into hasher: inout Hasher) {
-    hashScalars(value: self.value, into: &hasher)
+    UseScalarsToHashString.hash(value: self.value, into: &hasher)
   }
 
   public static func == (lhs: MangledName, rhs: MangledName) -> Bool {
-    return compareScalars(lhs: lhs.value, rhs: rhs.value)
+    return UseScalarsToHashString.isEqual(lhs: lhs.value, rhs: rhs.value)
   }
 }
 

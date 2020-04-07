@@ -286,7 +286,7 @@ extension BuiltinFunctions {
                              column: SourceColumn,
                              text: String) -> PySyntaxError {
     return self.newSyntaxError(
-      filename: Py.getInterned(filename),
+      filename: Py.intern(filename),
       line: Py.newInt(Int(line)),
       column: Py.newInt(Int(column)),
       text: Py.newString(text)
