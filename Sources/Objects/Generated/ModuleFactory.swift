@@ -38,7 +38,7 @@ private func insert(module: PyModule, name: String, value: PyObject) {
   case .ok:
     break
   case .error(let e):
-    trap("Error when inserting '\(name)' to '\(module)' module: \(e)")
+    trap("Error when inserting '\(name)' to '\(module)': \(e)")
   }
 }
 
@@ -145,7 +145,6 @@ internal enum ModuleFactory {
     insert(module: module, name: "Warning", value: object.type_warning)
     insert(module: module, name: "ZeroDivisionError", value: object.type_zeroDivisionError)
 
-
     insert(module: module, name: "abs", value: PyBuiltinFunction.wrap(name: "abs", doc: nil, fn: object.abs(_:), module: module))
     insert(module: module, name: "any", value: PyBuiltinFunction.wrap(name: "any", doc: nil, fn: object.any(iterable:), module: module))
     insert(module: module, name: "all", value: PyBuiltinFunction.wrap(name: "all", doc: nil, fn: object.all(iterable:), module: module))
@@ -247,7 +246,6 @@ internal enum ModuleFactory {
     insert(module: module, name: "implementation", value: object.implementationObject)
     insert(module: module, name: "hexversion", value: object.hexVersion)
 
-
     insert(module: module, name: "exit", value: PyBuiltinFunction.wrap(name: "exit", doc: nil, fn: object.exit(status:), module: module))
     insert(module: module, name: "intern", value: PyBuiltinFunction.wrap(name: "intern", doc: nil, fn: object.intern(value:), module: module))
     insert(module: module, name: "getdefaultencoding", value: PyBuiltinFunction.wrap(name: "getdefaultencoding", doc: nil, fn: object.getDefaultEncoding, module: module))
@@ -296,8 +294,6 @@ internal enum ModuleFactory {
   internal static func createUnderscoreImp(from object: UnderscoreImp) -> PyModule {
     let module = createModule(name: "_imp", doc: UnderscoreImp.doc, dict: object.__dict__)
 
-
-
     insert(module: module, name: "lock_held", value: PyBuiltinFunction.wrap(name: "lock_held", doc: nil, fn: object.lockHeld, module: module))
     insert(module: module, name: "acquire_lock", value: PyBuiltinFunction.wrap(name: "acquire_lock", doc: nil, fn: object.acquireLock, module: module))
     insert(module: module, name: "release_lock", value: PyBuiltinFunction.wrap(name: "release_lock", doc: nil, fn: object.releaseLock, module: module))
@@ -323,8 +319,6 @@ internal enum ModuleFactory {
   internal static func createUnderscoreOS(from object: UnderscoreOS) -> PyModule {
     let module = createModule(name: "_os", doc: nil, dict: object.__dict__)
 
-
-
     insert(module: module, name: "getcwd", value: PyBuiltinFunction.wrap(name: "getcwd", doc: nil, fn: object.getCwd, module: module))
     insert(module: module, name: "fspath", value: PyBuiltinFunction.wrap(name: "fspath", doc: nil, fn: object.getFSPath(path:), module: module))
     insert(module: module, name: "stat", value: PyBuiltinFunction.wrap(name: "stat", doc: nil, fn: object.getStat(path:), module: module))
@@ -341,7 +335,6 @@ internal enum ModuleFactory {
     insert(module: module, name: "filters", value: object.filters)
     insert(module: module, name: "_defaultaction", value: object.defaultAction)
     insert(module: module, name: "_onceregistry", value: object.onceRegistry)
-
 
     insert(module: module, name: "warn", value: PyBuiltinFunction.wrap(name: "warn", doc: nil, fn: object.warn(args:kwargs:), module: module))
 
