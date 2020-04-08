@@ -1,0 +1,375 @@
+
+# TODO: Add 'Object'
+# TODO: Add Errors
+
+############
+# bool
+############
+
+# Type|python_type|swift_type
+Type|bool|PyBool
+
+############
+# builtinFunction
+############
+
+# Type|python_type|swift_type
+Type|builtinFunction|PyBuiltinFunction
+
+############
+# builtinMethod
+############
+
+# Type|python_type|swift_type
+Type|builtinMethod|PyBuiltinMethod
+
+############
+# bytearray
+############
+
+# Type|python_type|swift_type
+Type|bytearray|PyByteArray
+
+############
+# bytearray_iterator
+############
+
+# Type|python_type|swift_type
+Type|bytearray_iterator|PyByteArrayIterator
+
+############
+# bytes
+############
+
+# Type|python_type|swift_type
+Type|bytes|PyBytes
+
+############
+# bytes_iterator
+############
+
+# Type|python_type|swift_type
+Type|bytes_iterator|PyBytesIterator
+
+############
+# callable_iterator
+############
+
+# Type|python_type|swift_type
+Type|callable_iterator|PyCallableIterator
+
+############
+# cell
+############
+
+# Type|python_type|swift_type
+Type|cell|PyCell
+
+############
+# classmethod
+############
+
+# Type|python_type|swift_type
+Type|classmethod|PyClassMethod
+
+############
+# code
+############
+
+# Type|python_type|swift_type
+Type|code|PyCode
+
+############
+# complex
+############
+
+# Type|python_type|swift_type
+Type|complex|PyComplex
+
+############
+# dict
+############
+
+# Type|python_type|swift_type
+Type|dict|PyDict
+
+############
+# dict_itemiterator
+############
+
+# Type|python_type|swift_type
+Type|dict_itemiterator|PyDictItemIterator
+
+############
+# dict_items
+############
+
+# Type|python_type|swift_type
+Type|dict_items|PyDictItems
+
+############
+# dict_keyiterator
+############
+
+# Type|python_type|swift_type
+Type|dict_keyiterator|PyDictKeyIterator
+
+############
+# dict_keys
+############
+
+# Type|python_type|swift_type
+Type|dict_keys|PyDictKeys
+
+############
+# dict_valueiterator
+############
+
+# Type|python_type|swift_type
+Type|dict_valueiterator|PyDictValueIterator
+
+############
+# dict_values
+############
+
+# Type|python_type|swift_type
+Type|dict_values|PyDictValues
+
+############
+# ellipsis
+############
+
+# Type|python_type|swift_type
+Type|ellipsis|PyEllipsis
+
+############
+# enumerate
+############
+
+# Type|python_type|swift_type
+Type|enumerate|PyEnumerate
+
+############
+# filter
+############
+
+# Type|python_type|swift_type
+Type|filter|PyFilter
+
+############
+# float
+############
+
+# Type|python_type|swift_type
+Type|float|PyFloat
+
+############
+# frame
+############
+
+# Type|python_type|swift_type
+Type|frame|PyFrame
+
+############
+# frozenset
+############
+
+# Type|python_type|swift_type
+Type|frozenset|PyFrozenSet
+
+############
+# function
+############
+
+# Type|python_type|swift_type
+Type|function|PyFunction
+
+############
+# int
+############
+
+# Type|python_type|swift_type
+Type|int|PyInt
+
+############
+# iterator
+############
+
+# Type|python_type|swift_type
+Type|iterator|PyIterator
+
+############
+# list
+############
+
+# Type|python_type|swift_type
+Type|list|PyList
+
+############
+# list_iterator
+############
+
+# Type|python_type|swift_type
+Type|list_iterator|PyListIterator
+
+############
+# list_reverseiterator
+############
+
+# Type|python_type|swift_type
+Type|list_reverseiterator|PyListReverseIterator
+
+############
+# map
+############
+
+# Type|python_type|swift_type
+Type|map|PyMap
+
+############
+# method
+############
+
+# Type|python_type|swift_type
+Type|method|PyMethod
+
+############
+# module
+############
+
+# Type|python_type|swift_type
+Type|module|PyModule
+
+############
+# types.SimpleNamespace
+############
+
+# Type|python_type|swift_type
+Type|types.SimpleNamespace|PyNamespace
+
+############
+# NoneType
+############
+
+# Type|python_type|swift_type
+Type|NoneType|PyNone
+
+############
+# NotImplementedType
+############
+
+# Type|python_type|swift_type
+Type|NotImplementedType|PyNotImplemented
+
+############
+# property
+############
+
+# Type|python_type|swift_type
+Type|property|PyProperty
+
+############
+# range
+############
+
+# Type|python_type|swift_type
+Type|range|PyRange
+
+############
+# range_iterator
+############
+
+# Type|python_type|swift_type
+Type|range_iterator|PyRangeIterator
+
+############
+# reversed
+############
+
+# Type|python_type|swift_type
+Type|reversed|PyReversed
+
+############
+# set
+############
+
+# Type|python_type|swift_type
+Type|set|PySet
+
+############
+# set_iterator
+############
+
+# Type|python_type|swift_type
+Type|set_iterator|PySetIterator
+
+############
+# slice
+############
+
+# Type|python_type|swift_type
+Type|slice|PySlice
+
+############
+# staticmethod
+############
+
+# Type|python_type|swift_type
+Type|staticmethod|PyStaticMethod
+
+############
+# str
+############
+
+# Type|python_type|swift_type
+Type|str|PyString
+
+############
+# str_iterator
+############
+
+# Type|python_type|swift_type
+Type|str_iterator|PyStringIterator
+
+############
+# super
+############
+
+# Type|python_type|swift_type
+Type|super|PySuper
+
+############
+# TextFile
+############
+
+# Type|python_type|swift_type
+Type|TextFile|PyTextFile
+
+############
+# tuple
+############
+
+# Type|python_type|swift_type
+Type|tuple|PyTuple
+
+############
+# tuple_iterator
+############
+
+# Type|python_type|swift_type
+Type|tuple_iterator|PyTupleIterator
+
+############
+# type
+############
+
+# Type|python_type|swift_type
+Type|type|PyType
+
+############
+# zip
+############
+
+# Type|python_type|swift_type
+Type|zip|PyZip
+

@@ -18,10 +18,8 @@
 // Stage 2: Fill type objects ('fill__dict__()' method)
 // When all of the types are initalized we can finally fill dictionaries.
 
-
 public final class BuiltinTypes {
 
-  /// Root of the type hierarchy
   public let object: PyType
   public let bool: PyType
   public let builtinFunction: PyType
@@ -88,7 +86,6 @@ public final class BuiltinTypes {
     self.object.setType(to: self.type)
     self.type.setType(to: self.type)
 
-    // 'self.type' was initialized already
     // 'self.bool' has to be last because it uses 'self.int' as base!
     self.builtinFunction = PyType.initBuiltinType(name: "builtinFunction", type: self.type, base: self.object)
     self.builtinMethod = PyType.initBuiltinType(name: "builtinMethod", type: self.type, base: self.object)

@@ -68,7 +68,7 @@ def get_modules() -> [ModuleInfo]:
         continue
 
       split = line.split('|')
-      assert len(split) > 1
+      assert len(split) >= 1
 
       line_type = split[0]
       if line_type == 'Module':
@@ -117,9 +117,9 @@ def get_modules() -> [ModuleInfo]:
 
   return result
 
-# ----
-# Main
-# ----
+# ------------------
+# Main (for testing)
+# ------------------
 
 if __name__ == '__main__':
   for mod in get_modules():

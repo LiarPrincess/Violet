@@ -62,10 +62,10 @@ python3 $GENERATED/remove-sourcery-header.py Builtins+ExposeTypes.swift
 # This will generate a class with references to all of the builtin 'PyTypes'.
 sourcery \
   --sources ./Sources/Objects \
-  --templates $GENERATED/BuiltinTypes.stencil \
-  --output $GENERATED/BuiltinTypes.swift
+  --templates $GENERATED/Data/types.stencil \
+  --output $GENERATED/Data/types.txt
 
-python3 $GENERATED/remove-sourcery-header.py BuiltinTypes.swift
+python3 $GENERATED/BuiltinTypes.py > $GENERATED/BuiltinTypes.swift
 
 # === Type fill ===
 # This will generate a giant file responsible for filling PyTypes '__dict__'.

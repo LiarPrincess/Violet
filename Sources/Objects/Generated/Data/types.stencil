@@ -1,0 +1,13 @@
+# TODO: Add 'Object'
+# TODO: Add Errors
+
+{% for type in types.classes|annotated:"pytype" %}
+{% set python_name %}{{ type.annotations.pytype }}{% endset %}
+############
+# {{ python_name }}
+############
+
+# Type|python_type|swift_type
+Type|{{ python_name }}|{{ type.name }}
+
+{% endfor %}

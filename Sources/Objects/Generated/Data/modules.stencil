@@ -1,10 +1,11 @@
 {% for type in types.classes|annotated:"pymodule" %}
+{% set python_name %}{{ type.annotations.pymodule }}{% endset %}
 ############
-# {{ type.annotations.pymodule }}
+# {{ python_name }}
 ############
 
 # Module|python_type|swift_type
-Module|{{ type.annotations.pymodule }}|{{ type.name }}
+Module|{{ python_name }}|{{ type.name }}
 
 {# Find doc #}
 {% for variable in type.staticVariables where variable.name == "doc" %}
