@@ -39,8 +39,8 @@ class FunctionInfo:
 
   In Swift:
   ```Swift
-  // sourcery: pyproperty = warnoptions
-  internal var warnOptions: PyObject { ... }
+  // sourcery: pymethod = warnoptions
+  internal func warnOptions() -> PyObject { ... }
   ```
   '''
   def __init__(self, python_name: str, swift_function_name: str, swift_selector: str, swift_static_doc_property: str):
@@ -110,7 +110,7 @@ def get_modules() -> [ModuleInfo]:
         current_module.functions.append(fn)
 
       else:
-        assert False, line_type
+        assert False, f"Unknown line type: '{line_type}'"
 
   if current_module:
     result.append(current_module)

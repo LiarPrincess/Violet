@@ -3,12 +3,43 @@
 
 
 
+
+
+
+
+
 ############
 # object
 ############
 
 # Type|python_type|swift_type
-Type|object|PyObject
+Type|object|PyObjectType
+# Annotation|value
+Annotation|baseType
+Annotation|default
+# Doc|swift_static_doc_property
+Doc|doc
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__eq__|isEqual|isEqual(zelf:other:)|
+StaticFunction|__ne__|isNotEqual|isNotEqual(zelf:other:)|
+StaticFunction|__lt__|isLess|isLess(zelf:other:)|
+StaticFunction|__le__|isLessEqual|isLessEqual(zelf:other:)|
+StaticFunction|__gt__|isGreater|isGreater(zelf:other:)|
+StaticFunction|__ge__|isGreaterEqual|isGreaterEqual(zelf:other:)|
+StaticFunction|__hash__|hash|hash(zelf:)|
+StaticFunction|__repr__|repr|repr(zelf:)|
+StaticFunction|__str__|str|str(zelf:)|
+StaticFunction|__format__|format|format(zelf:spec:)|
+StaticFunction|__class__|getClass|getClass(zelf:)|
+StaticFunction|__dir__|dir|dir(zelf:)|
+StaticFunction|__getattribute__|getAttribute|getAttribute(zelf:name:)|
+StaticFunction|__setattr__|setAttribute|setAttribute(zelf:name:value:)|
+StaticFunction|__delattr__|delAttribute|delAttribute(zelf:name:)|
+StaticFunction|__subclasshook__|subclasshook|subclasshook(zelf:)|
+StaticFunction|__init_subclass__|initSubclass|initSubclass(zelf:)|
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 
 
@@ -18,6 +49,25 @@ Type|object|PyObject
 
 # Type|python_type|swift_type
 Type|bool|PyBool
+# Annotation|value
+Annotation|pytype
+Annotation|default
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__repr__|repr|repr|
+Method|__str__|str|str|
+Method|__and__|and|and(_:)|
+Method|__rand__|rand|rand(_:)|
+Method|__or__|or|or(_:)|
+Method|__ror__|ror|ror(_:)|
+Method|__xor__|xor|xor(_:)|
+Method|__rxor__|rxor|rxor(_:)|
 
 ############
 # builtinFunction
@@ -25,6 +75,31 @@ Type|bool|PyBool
 
 # Type|python_type|swift_type
 Type|builtinFunction|PyBuiltinFunction
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__name__|getName||
+Property|__qualname__|getQualname||
+Property|__text_signature__|getTextSignature||
+Property|__module__|getModule||
+Property|__self__|getSelf||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__get__|get|get(object:type:)|
+Method|__call__|call|call(args:kwargs:)|
 
 ############
 # builtinMethod
@@ -32,6 +107,30 @@ Type|builtinFunction|PyBuiltinFunction
 
 # Type|python_type|swift_type
 Type|builtinMethod|PyBuiltinMethod
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__name__|getName||
+Property|__qualname__|getQualname||
+Property|__text_signature__|getTextSignature||
+Property|__module__|getModule||
+Property|__self__|getSelf||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__get__|get|get(object:type:)|
+Method|__call__|call|call(args:kwargs:)|
 
 ############
 # bytearray
@@ -39,6 +138,81 @@ Type|builtinMethod|PyBuiltinMethod
 
 # Type|python_type|swift_type
 Type|bytearray|PyByteArray
+# Annotation|value
+Annotation|baseType
+Annotation|pytype
+Annotation|default
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__str__|str|str|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__len__|getLength|getLength|
+Method|__contains__|contains|contains(_:)|
+Method|__getitem__|getItem|getItem(at:)|
+Method|isalnum|isAlphaNumeric|isAlphaNumeric|isalnumDoc
+Method|isalpha|isAlpha|isAlpha|isalphaDoc
+Method|isascii|isAscii|isAscii|isasciiDoc
+Method|isdigit|isDigit|isDigit|isdigitDoc
+Method|islower|isLower|isLower|islowerDoc
+Method|isspace|isSpace|isSpace|isspaceDoc
+Method|istitle|isTitle|isTitle|istitleDoc
+Method|isupper|isUpper|isUpper|isupperDoc
+Method|startswith|startsWith|startsWith(_:start:end:)|startswithDoc
+Method|endswith|endsWith|endsWith(_:start:end:)|endswithDoc
+Method|strip|strip|strip(_:)|stripDoc
+Method|lstrip|lstrip|lstrip(_:)|lstripDoc
+Method|rstrip|rstrip|rstrip(_:)|rstripDoc
+Method|find|find|find(_:start:end:)|findDoc
+Method|rfind|rfind|rfind(_:start:end:)|rfindDoc
+Method|index|index|index(of:start:end:)|indexDoc
+Method|rindex|rindex|rindex(_:start:end:)|rindexDoc
+Method|lower|lower|lower|
+Method|upper|upper|upper|
+Method|title|title|title|
+Method|swapcase|swapcase|swapcase|
+Method|capitalize|capitalize|capitalize|
+Method|center|center|center(width:fillChar:)|
+Method|ljust|ljust|ljust(width:fillChar:)|
+Method|rjust|rjust|rjust(width:fillChar:)|
+Method|split|split|split(args:kwargs:)|
+Method|rsplit|rsplit|rsplit(args:kwargs:)|
+Method|splitlines|splitLines|splitLines(args:kwargs:)|
+Method|partition|partition|partition(separator:)|
+Method|rpartition|rpartition|rpartition(separator:)|
+Method|expandtabs|expandTabs|expandTabs(tabSize:)|
+Method|count|count|count(_:start:end:)|countDoc
+Method|join|join|join(iterable:)|
+Method|replace|replace|replace(old:new:count:)|
+Method|zfill|zfill|zfill(width:)|
+Method|__add__|add|add(_:)|
+Method|__mul__|mul|mul(_:)|
+Method|__rmul__|rmul|rmul(_:)|
+Method|__iter__|iter|iter|
+Method|append|append|append(_:)|appendDoc
+Method|extend|extend|extend(iterable:)|
+Method|insert|insert|insert(at:item:)|insertDoc
+Method|remove|remove|remove(_:)|removeDoc
+Method|pop|pop|pop(index:)|popDoc
+Method|__setitem__|setItem|setItem(at:to:)|
+Method|__delitem__|delItem|delItem(at:)|
+Method|clear|clear|clear|clearDoc
+Method|reverse|reverse|reverse|reverseDoc
+Method|copy|copy|copy|copyDoc
 
 ############
 # bytearray_iterator
@@ -46,6 +220,19 @@ Type|bytearray|PyByteArray
 
 # Type|python_type|swift_type
 Type|bytearray_iterator|PyByteArrayIterator
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # bytes
@@ -53,6 +240,71 @@ Type|bytearray_iterator|PyByteArrayIterator
 
 # Type|python_type|swift_type
 Type|bytes|PyBytes
+# Annotation|value
+Annotation|baseType
+Annotation|bytesSubclass
+Annotation|pytype
+Annotation|default
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__str__|str|str|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__len__|getLength|getLength|
+Method|__contains__|contains|contains(_:)|
+Method|__getitem__|getItem|getItem(at:)|
+Method|isalnum|isAlphaNumeric|isAlphaNumeric|isalnumDoc
+Method|isalpha|isAlpha|isAlpha|isalphaDoc
+Method|isascii|isAscii|isAscii|isasciiDoc
+Method|isdigit|isDigit|isDigit|isdigitDoc
+Method|islower|isLower|isLower|islowerDoc
+Method|isspace|isSpace|isSpace|isspaceDoc
+Method|istitle|isTitle|isTitle|istitleDoc
+Method|isupper|isUpper|isUpper|isupperDoc
+Method|startswith|startsWith|startsWith(_:start:end:)|startswithDoc
+Method|endswith|endsWith|endsWith(_:start:end:)|endswithDoc
+Method|strip|strip|strip(_:)|stripDoc
+Method|lstrip|lstrip|lstrip(_:)|lstripDoc
+Method|rstrip|rstrip|rstrip(_:)|rstripDoc
+Method|find|find|find(_:start:end:)|findDoc
+Method|rfind|rfind|rfind(_:start:end:)|rfindDoc
+Method|index|index|index(of:start:end:)|indexDoc
+Method|rindex|rindex|rindex(_:start:end:)|rindexDoc
+Method|lower|lower|lower|
+Method|upper|upper|upper|
+Method|title|title|title|
+Method|swapcase|swapcase|swapcase|
+Method|capitalize|capitalize|capitalize|
+Method|center|center|center(width:fillChar:)|
+Method|ljust|ljust|ljust(width:fillChar:)|
+Method|rjust|rjust|rjust(width:fillChar:)|
+Method|split|split|split(args:kwargs:)|
+Method|rsplit|rsplit|rsplit(args:kwargs:)|
+Method|splitlines|splitLines|splitLines(args:kwargs:)|
+Method|partition|partition|partition(separator:)|
+Method|rpartition|rpartition|rpartition(separator:)|
+Method|expandtabs|expandTabs|expandTabs(tabSize:)|
+Method|count|count|count(_:start:end:)|countDoc
+Method|join|join|join(iterable:)|
+Method|replace|replace|replace(old:new:count:)|
+Method|zfill|zfill|zfill(width:)|
+Method|__add__|add|add(_:)|
+Method|__mul__|mul|mul(_:)|
+Method|__rmul__|rmul|rmul(_:)|
+Method|__iter__|iter|iter|
 
 ############
 # bytes_iterator
@@ -60,6 +312,19 @@ Type|bytes|PyBytes
 
 # Type|python_type|swift_type
 Type|bytes_iterator|PyBytesIterator
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # callable_iterator
@@ -67,6 +332,18 @@ Type|bytes_iterator|PyBytesIterator
 
 # Type|python_type|swift_type
 Type|callable_iterator|PyCallableIterator
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # cell
@@ -74,6 +351,22 @@ Type|callable_iterator|PyCallableIterator
 
 # Type|python_type|swift_type
 Type|cell|PyCell
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
 
 ############
 # classmethod
@@ -81,6 +374,24 @@ Type|cell|PyCell
 
 # Type|python_type|swift_type
 Type|classmethod|PyClassMethod
+# Annotation|value
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+Property|__func__|getFunc||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__get__|get|get(object:type:)|
+Method|__isabstractmethod__|isAbstractMethod|isAbstractMethod|
 
 ############
 # code
@@ -88,6 +399,31 @@ Type|classmethod|PyClassMethod
 
 # Type|python_type|swift_type
 Type|code|PyCode
+# Annotation|value
+Annotation|pytype
+Annotation|default
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|co_name|getName||
+Property|co_filename|getFilename||
+Property|co_firstlineno|getFirstLineNo||
+Property|co_argcount|getArgCount||
+Property|co_kwonlyargcount|getKwOnlyArgCount||
+Property|co_nlocals|getNLocals||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
 
 ############
 # complex
@@ -95,6 +431,53 @@ Type|code|PyCode
 
 # Type|python_type|swift_type
 Type|complex|PyComplex
+# Annotation|value
+Annotation|baseType
+Annotation|pytype
+Annotation|default
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|real|asReal||
+Property|imag|asImag||
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__str__|str|str|
+Method|__bool__|asBool|asBool|
+Method|__int__|asInt|asInt|
+Method|__float__|asFloat|asFloat|
+Method|conjugate|conjugate|conjugate|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__pos__|positive|positive|
+Method|__neg__|negative|negative|
+Method|__abs__|abs|abs|
+Method|__add__|add|add(_:)|
+Method|__radd__|radd|radd(_:)|
+Method|__sub__|sub|sub(_:)|
+Method|__rsub__|rsub|rsub(_:)|
+Method|__mul__|mul|mul(_:)|
+Method|__rmul__|rmul|rmul(_:)|
+Method|__pow__|pow|pow(exp:mod:)|
+Method|__rpow__|rpow|rpow(base:mod:)|
+Method|__truediv__|truediv|truediv(_:)|
+Method|__rtruediv__|rtruediv|rtruediv(_:)|
+Method|__floordiv__|floordiv|floordiv(_:)|
+Method|__rfloordiv__|rfloordiv|rfloordiv(_:)|
+Method|__mod__|mod|mod(_:)|
+Method|__rmod__|rmod|rmod(_:)|
+Method|__divmod__|divmod|divmod(_:)|
+Method|__rdivmod__|rdivmod|rdivmod(_:)|
 
 ############
 # dict
@@ -102,6 +485,46 @@ Type|complex|PyComplex
 
 # Type|python_type|swift_type
 Type|dict|PyDict
+# Annotation|value
+Annotation|dictSubclass
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__len__|getLength|getLength|
+Method|__getitem__|getItem|getItem(at:)|
+Method|__setitem__|setItem|setItem(at:to:)|
+Method|__delitem__|delItem|delItem(at:)|
+Method|get|getWithDefault|getWithDefault(args:kwargs:)|getWithDefaultDoc
+Method|setdefault|setWithDefault|setWithDefault(args:kwargs:)|setWithDefaultDoc
+Method|__contains__|contains|contains(_:)|
+Method|__iter__|iter|iter|
+Method|clear|clear|clear|clearDoc
+Method|update|update|update(args:kwargs:)|
+Method|copy|copy|copy|copyDoc
+Method|pop|pop|pop(_:default:)|popDoc
+Method|popitem|popItem|popItem|popitemDoc
+Method|keys|keys|keys|
+Method|items|items|items|
+Method|values|values|values|
 
 ############
 # dict_itemiterator
@@ -109,6 +532,19 @@ Type|dict|PyDict
 
 # Type|python_type|swift_type
 Type|dict_itemiterator|PyDictItemIterator
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # dict_items
@@ -116,6 +552,28 @@ Type|dict_itemiterator|PyDictItemIterator
 
 # Type|python_type|swift_type
 Type|dict_items|PyDictItems
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__len__|getLength|getLength|
+Method|__contains__|contains|contains(_:)|
+Method|__iter__|iter|iter|
 
 ############
 # dict_keyiterator
@@ -123,6 +581,19 @@ Type|dict_items|PyDictItems
 
 # Type|python_type|swift_type
 Type|dict_keyiterator|PyDictKeyIterator
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # dict_keys
@@ -130,6 +601,28 @@ Type|dict_keyiterator|PyDictKeyIterator
 
 # Type|python_type|swift_type
 Type|dict_keys|PyDictKeys
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__len__|getLength|getLength|
+Method|__contains__|contains|contains(_:)|
+Method|__iter__|iter|iter|
 
 ############
 # dict_valueiterator
@@ -137,6 +630,19 @@ Type|dict_keys|PyDictKeys
 
 # Type|python_type|swift_type
 Type|dict_valueiterator|PyDictValueIterator
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # dict_values
@@ -144,6 +650,18 @@ Type|dict_valueiterator|PyDictValueIterator
 
 # Type|python_type|swift_type
 Type|dict_values|PyDictValues
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__len__|getLength|getLength|
+Method|__iter__|iter|iter|
 
 ############
 # ellipsis
@@ -151,6 +669,18 @@ Type|dict_values|PyDictValues
 
 # Type|python_type|swift_type
 Type|ellipsis|PyEllipsis
+# Annotation|value
+Annotation|pytype
+Annotation|default
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__repr__|repr|repr|
+Method|__reduce__|reduce|reduce|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
 
 ############
 # enumerate
@@ -158,6 +688,22 @@ Type|ellipsis|PyEllipsis
 
 # Type|python_type|swift_type
 Type|enumerate|PyEnumerate
+# Annotation|value
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # filter
@@ -165,6 +711,22 @@ Type|enumerate|PyEnumerate
 
 # Type|python_type|swift_type
 Type|filter|PyFilter
+# Annotation|value
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # float
@@ -172,6 +734,56 @@ Type|filter|PyFilter
 
 # Type|python_type|swift_type
 Type|float|PyFloat
+# Annotation|value
+Annotation|baseType
+Annotation|pytype
+Annotation|default
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|real|asReal||
+Property|imag|asImag||
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__str__|str|str|
+Method|__bool__|asBool|asBool|
+Method|__int__|asInt|asInt|
+Method|__float__|asFloat|asFloat|
+Method|conjugate|conjugate|conjugate|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__pos__|positive|positive|
+Method|__neg__|negative|negative|
+Method|__abs__|abs|abs|
+Method|is_integer|isInteger|isInteger|isIntegerDoc
+Method|__add__|add|add(_:)|
+Method|__radd__|radd|radd(_:)|
+Method|__sub__|sub|sub(_:)|
+Method|__rsub__|rsub|rsub(_:)|
+Method|__mul__|mul|mul(_:)|
+Method|__rmul__|rmul|rmul(_:)|
+Method|__pow__|pow|pow(exp:mod:)|
+Method|__rpow__|rpow|rpow(base:mod:)|
+Method|__truediv__|truediv|truediv(_:)|
+Method|__rtruediv__|rtruediv|rtruediv(_:)|
+Method|__floordiv__|floordiv|floordiv(_:)|
+Method|__rfloordiv__|rfloordiv|rfloordiv(_:)|
+Method|__mod__|mod|mod(_:)|
+Method|__rmod__|rmod|rmod(_:)|
+Method|__divmod__|divmod|divmod(_:)|
+Method|__rdivmod__|rdivmod|rdivmod(_:)|
+Method|__round__|round|round(nDigits:)|
+Method|__trunc__|trunc|trunc|
 
 ############
 # frame
@@ -179,6 +791,26 @@ Type|float|PyFloat
 
 # Type|python_type|swift_type
 Type|frame|PyFrame
+# Annotation|value
+Annotation|hasGC
+Annotation|pytype
+Annotation|default
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|f_back|getBack||
+Property|f_builtins|getBuiltins||
+Property|f_globals|getGlobals||
+Property|f_locals|getLocals||
+Property|f_code|getCode||
+Property|f_lasti|getLasti||
+Property|f_lineno|getLineno||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__setattr__|setAttribute|setAttribute(name:value:)|
+Method|__delattr__|delAttribute|delAttribute(name:)|
 
 ############
 # frozenset
@@ -186,6 +818,47 @@ Type|frame|PyFrame
 
 # Type|python_type|swift_type
 Type|frozenset|PyFrozenSet
+# Annotation|value
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__len__|getLength|getLength|
+Method|__contains__|contains|contains(_:)|
+Method|__and__|and|and(_:)|
+Method|__rand__|rand|rand(_:)|
+Method|__or__|or|or(_:)|
+Method|__ror__|ror|ror(_:)|
+Method|__xor__|xor|xor(_:)|
+Method|__rxor__|rxor|rxor(_:)|
+Method|__sub__|sub|sub(_:)|
+Method|__rsub__|rsub|rsub(_:)|
+Method|issubset|isSubset|isSubset(of:)|isSubsetDoc
+Method|issuperset|isSuperset|isSuperset(of:)|isSupersetDoc
+Method|intersection|intersection|intersection(with:)|intersectionDoc
+Method|union|union|union(with:)|unionDoc
+Method|difference|difference|difference(with:)|differenceDoc
+Method|symmetric_difference|symmetricDifference|symmetricDifference(with:)|symmetricDifferenceDoc
+Method|isdisjoint|isDisjoint|isDisjoint(with:)|isDisjointDoc
+Method|copy|copy|copy|copyDoc
+Method|__iter__|iter|iter|
 
 ############
 # function
@@ -193,6 +866,31 @@ Type|frozenset|PyFrozenSet
 
 # Type|python_type|swift_type
 Type|function|PyFunction
+# Annotation|value
+Annotation|hasGC
+Annotation|pytype
+Annotation|default
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__name__|getName|setName|
+Property|__qualname__|getQualname|setQualname|
+Property|__defaults__|getDefaults|setDefaults|
+Property|__kwdefaults__|getKeywordDefaults|setKeywordDefaults|
+Property|__closure__|getClosure|setClosure|
+Property|__globals__|getGlobals|setGlobals|
+Property|__annotations__|getAnnotations|setAnnotations|
+Property|__code__|getCode|setCode|
+Property|__doc__|getDoc|setDoc|
+Property|__module__|getModule|setModule|
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__repr__|repr|repr|
+Method|__get__|get|get(object:type:)|
+Method|__call__|call|call(args:kwargs:)|
 
 ############
 # int
@@ -200,6 +898,73 @@ Type|function|PyFunction
 
 # Type|python_type|swift_type
 Type|int|PyInt
+# Annotation|value
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|longSubclass
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|real|asReal||
+Property|imag|asImag||
+Property|numerator|numerator||
+Property|denominator|denominator||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__str__|str|str|
+Method|__bool__|asBool|asBool|
+Method|__int__|asInt|asInt|
+Method|__float__|asFloat|asFloat|
+Method|__index__|asIndex|asIndex|
+Method|conjugate|conjugate|conjugate|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__pos__|positive|positive|
+Method|__neg__|negative|negative|
+Method|__abs__|abs|abs|
+Method|__trunc__|trunc|trunc|truncDoc
+Method|__floor__|floor|floor|floorDoc
+Method|__ceil__|ceil|ceil|ceilDoc
+Method|bit_length|bitLength|bitLength|bitLengthDoc
+Method|__add__|add|add(_:)|
+Method|__radd__|radd|radd(_:)|
+Method|__sub__|sub|sub(_:)|
+Method|__rsub__|rsub|rsub(_:)|
+Method|__mul__|mul|mul(_:)|
+Method|__rmul__|rmul|rmul(_:)|
+Method|__pow__|pow|pow(exp:mod:)|
+Method|__rpow__|rpow|rpow(base:mod:)|
+Method|__truediv__|truediv|truediv(_:)|
+Method|__rtruediv__|rtruediv|rtruediv(_:)|
+Method|__floordiv__|floordiv|floordiv(_:)|
+Method|__rfloordiv__|rfloordiv|rfloordiv(_:)|
+Method|__mod__|mod|mod(_:)|
+Method|__rmod__|rmod|rmod(_:)|
+Method|__divmod__|divmod|divmod(_:)|
+Method|__rdivmod__|rdivmod|rdivmod(_:)|
+Method|__lshift__|lshift|lshift(_:)|
+Method|__rlshift__|rlshift|rlshift(_:)|
+Method|__rshift__|rshift|rshift(_:)|
+Method|__rrshift__|rrshift|rrshift(_:)|
+Method|__and__|and|and(_:)|
+Method|__rand__|rand|rand(_:)|
+Method|__or__|or|or(_:)|
+Method|__ror__|ror|ror(_:)|
+Method|__xor__|xor|xor(_:)|
+Method|__rxor__|rxor|rxor(_:)|
+Method|__invert__|invert|invert|
+Method|__round__|round|round(nDigits:)|
 
 ############
 # iterator
@@ -207,6 +972,18 @@ Type|int|PyInt
 
 # Type|python_type|swift_type
 Type|iterator|PyIterator
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # list
@@ -214,6 +991,53 @@ Type|iterator|PyIterator
 
 # Type|python_type|swift_type
 Type|list|PyList
+# Annotation|value
+Annotation|baseType
+Annotation|listSubclass
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__len__|getLength|getLength|
+Method|__contains__|contains|contains(_:)|
+Method|__getitem__|getItem|getItem(at:)|
+Method|__setitem__|setItem|setItem(at:to:)|
+Method|__delitem__|delItem|delItem(at:)|
+Method|count|count|count(_:)|
+Method|index|index|index(of:start:end:)|
+Method|__iter__|iter|iter|
+Method|__reversed__|reversed|reversed|
+Method|append|append|append(_:)|
+Method|insert|insert|insert(at:item:)|insertDoc
+Method|extend|extend|extend(iterable:)|
+Method|remove|remove|remove(_:)|removeDoc
+Method|pop|pop|pop(index:)|
+Method|sort|sort|sort(args:kwargs:)|sortDoc
+Method|reverse|reverse|reverse|reverseDoc
+Method|clear|clear|clear|
+Method|copy|copy|copy|
+Method|__add__|add|add(_:)|
+Method|__iadd__|iadd|iadd(_:)|
+Method|__mul__|mul|mul(_:)|
+Method|__rmul__|rmul|rmul(_:)|
+Method|__imul__|imul|imul(_:)|
 
 ############
 # list_iterator
@@ -221,6 +1045,19 @@ Type|list|PyList
 
 # Type|python_type|swift_type
 Type|list_iterator|PyListIterator
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # list_reverseiterator
@@ -228,6 +1065,19 @@ Type|list_iterator|PyListIterator
 
 # Type|python_type|swift_type
 Type|list_reverseiterator|PyListReverseIterator
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # map
@@ -235,6 +1085,22 @@ Type|list_reverseiterator|PyListReverseIterator
 
 # Type|python_type|swift_type
 Type|map|PyMap
+# Annotation|value
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # method
@@ -242,6 +1108,33 @@ Type|map|PyMap
 
 # Type|python_type|swift_type
 Type|method|PyMethod
+# Annotation|value
+Annotation|hasGC
+Annotation|pytype
+Annotation|default
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__doc__|getDoc||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__repr__|repr|repr|
+Method|__hash__|hash|hash|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__setattr__|setAttribute|setAttribute(name:value:)|
+Method|__delattr__|delAttribute|delAttribute(name:)|
+Method|__func__|getFunc|getFunc|
+Method|__self__|getSelf|getSelf|
+Method|__get__|get|get(object:type:)|
+Method|__call__|call|call(args:kwargs:)|
 
 ############
 # module
@@ -249,6 +1142,26 @@ Type|method|PyMethod
 
 # Type|python_type|swift_type
 Type|module|PyModule
+# Annotation|value
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__dict__|getDict||
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__setattr__|setAttribute|setAttribute(name:value:)|
+Method|__delattr__|delAttribute|delAttribute(name:)|
+Method|__dir__|dir|dir|
 
 ############
 # types.SimpleNamespace
@@ -256,6 +1169,29 @@ Type|module|PyModule
 
 # Type|python_type|swift_type
 Type|types.SimpleNamespace|PyNamespace
+# Annotation|value
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__setattr__|setAttribute|setAttribute(name:value:)|
+Method|__delattr__|delAttribute|delAttribute(name:)|
 
 ############
 # NoneType
@@ -263,6 +1199,18 @@ Type|types.SimpleNamespace|PyNamespace
 
 # Type|python_type|swift_type
 Type|NoneType|PyNone
+# Annotation|value
+Annotation|pytype
+Annotation|default
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__repr__|repr|repr|
+Method|__bool__|asBool|asBool|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
 
 ############
 # NotImplementedType
@@ -270,6 +1218,16 @@ Type|NoneType|PyNone
 
 # Type|python_type|swift_type
 Type|NotImplementedType|PyNotImplemented
+# Annotation|value
+Annotation|pytype
+Annotation|default
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__repr__|repr|repr|
 
 ############
 # property
@@ -277,6 +1235,30 @@ Type|NotImplementedType|PyNotImplemented
 
 # Type|python_type|swift_type
 Type|property|PyProperty
+# Annotation|value
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|fget|getFGet||
+Property|fset|getFSet||
+Property|fdel|getFDel||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__get__|get|get(object:type:)|
+Method|__set__|set|set(object:value:)|
+Method|__delete__|del|del(object:)|
+Method|getter|getter|getter(value:)|getterDoc
+Method|setter|setter|setter(value:)|
+Method|deleter|deleter|deleter(value:)|
 
 ############
 # range
@@ -284,6 +1266,37 @@ Type|property|PyProperty
 
 # Type|python_type|swift_type
 Type|range|PyRange
+# Annotation|value
+Annotation|pytype
+Annotation|default
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|start|getStart||
+Property|stop|getStop||
+Property|step|getStep||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__bool__|asBool|asBool|
+Method|__len__|getLength|getLength|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__contains__|contains|contains(_:)|
+Method|__getitem__|getItem|getItem(at:)|
+Method|__reversed__|reversed|reversed|
+Method|__iter__|iter|iter|
+Method|count|count|count(_:)|
+Method|index|index|index(of:)|
 
 ############
 # range_iterator
@@ -291,6 +1304,18 @@ Type|range|PyRange
 
 # Type|python_type|swift_type
 Type|range_iterator|PyRangeIterator
+# Annotation|value
+Annotation|pytype
+Annotation|default
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # reversed
@@ -298,6 +1323,22 @@ Type|range_iterator|PyRangeIterator
 
 # Type|python_type|swift_type
 Type|reversed|PyReversed
+# Annotation|value
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # set
@@ -305,6 +1346,54 @@ Type|reversed|PyReversed
 
 # Type|python_type|swift_type
 Type|set|PySet
+# Annotation|value
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__len__|getLength|getLength|
+Method|__contains__|contains|contains(_:)|
+Method|__and__|and|and(_:)|
+Method|__rand__|rand|rand(_:)|
+Method|__or__|or|or(_:)|
+Method|__ror__|ror|ror(_:)|
+Method|__xor__|xor|xor(_:)|
+Method|__rxor__|rxor|rxor(_:)|
+Method|__sub__|sub|sub(_:)|
+Method|__rsub__|rsub|rsub(_:)|
+Method|issubset|isSubset|isSubset(of:)|isSubsetDoc
+Method|issuperset|isSuperset|isSuperset(of:)|isSupersetDoc
+Method|intersection|intersection|intersection(with:)|intersectionDoc
+Method|union|union|union(with:)|unionDoc
+Method|difference|difference|difference(with:)|differenceDoc
+Method|symmetric_difference|symmetricDifference|symmetricDifference(with:)|symmetricDifferenceDoc
+Method|isdisjoint|isDisjoint|isDisjoint(with:)|isDisjointDoc
+Method|add|add|add(_:)|addDoc
+Method|update|update|update(from:)|updateDoc
+Method|remove|remove|remove(_:)|removeDoc
+Method|discard|discard|discard(_:)|discardDoc
+Method|clear|clear|clear|clearDoc
+Method|copy|copy|copy|copyDoc
+Method|pop|pop|pop|popDoc
+Method|__iter__|iter|iter|
 
 ############
 # set_iterator
@@ -312,6 +1401,19 @@ Type|set|PySet
 
 # Type|python_type|swift_type
 Type|set_iterator|PySetIterator
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # slice
@@ -319,6 +1421,31 @@ Type|set_iterator|PySetIterator
 
 # Type|python_type|swift_type
 Type|slice|PySlice
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|start|getStart||
+Property|stop|getStop||
+Property|step|getStep||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|indices|indicesInSequence|indicesInSequence(length:)|
 
 ############
 # staticmethod
@@ -326,6 +1453,24 @@ Type|slice|PySlice
 
 # Type|python_type|swift_type
 Type|staticmethod|PyStaticMethod
+# Annotation|value
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+Property|__func__|getFunc||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__get__|get|get(object:type:)|
+Method|__isabstractmethod__|isAbstractMethod|isAbstractMethod|
 
 ############
 # str
@@ -333,6 +1478,76 @@ Type|staticmethod|PyStaticMethod
 
 # Type|python_type|swift_type
 Type|str|PyString
+# Annotation|value
+Annotation|unicodeSubclass
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__str__|str|str|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__len__|getLength|getLength|
+Method|__contains__|contains|contains(_:)|
+Method|__getitem__|getItem|getItem(at:)|
+Method|isalnum|isAlphaNumeric|isAlphaNumeric|isalnumDoc
+Method|isalpha|isAlpha|isAlpha|isalphaDoc
+Method|isascii|isAscii|isAscii|isasciiDoc
+Method|isdecimal|isDecimal|isDecimal|isdecimalDoc
+Method|isdigit|isDigit|isDigit|isdigitDoc
+Method|isidentifier|isIdentifier|isIdentifier|isidentifierDoc
+Method|islower|isLower|isLower|islowerDoc
+Method|isnumeric|isNumeric|isNumeric|isnumericDoc
+Method|isprintable|isPrintable|isPrintable|isprintableDoc
+Method|isspace|isSpace|isSpace|isspaceDoc
+Method|istitle|isTitle|isTitle|istitleDoc
+Method|isupper|isUpper|isUpper|isupperDoc
+Method|startswith|startsWith|startsWith(_:start:end:)|startswithDoc
+Method|endswith|endsWith|endsWith(_:start:end:)|endswithDoc
+Method|strip|strip|strip(_:)|stripDoc
+Method|lstrip|lstrip|lstrip(_:)|lstripDoc
+Method|rstrip|rstrip|rstrip(_:)|rstripDoc
+Method|find|find|find(_:start:end:)|findDoc
+Method|rfind|rfind|rfind(_:start:end:)|rfindDoc
+Method|index|index|index(of:start:end:)|indexDoc
+Method|rindex|rindex|rindex(_:start:end:)|rindexDoc
+Method|lower|lower|lower|
+Method|upper|upper|upper|
+Method|title|title|title|
+Method|swapcase|swapcase|swapcase|
+Method|casefold|casefold|casefold|
+Method|capitalize|capitalize|capitalize|
+Method|center|center|center(width:fillChar:)|
+Method|ljust|ljust|ljust(width:fillChar:)|
+Method|rjust|rjust|rjust(width:fillChar:)|
+Method|split|split|split(args:kwargs:)|
+Method|rsplit|rsplit|rsplit(args:kwargs:)|
+Method|splitlines|splitLines|splitLines(args:kwargs:)|
+Method|partition|partition|partition(separator:)|
+Method|rpartition|rpartition|rpartition(separator:)|
+Method|expandtabs|expandTabs|expandTabs(tabSize:)|
+Method|count|count|count(_:start:end:)|countDoc
+Method|join|join|join(iterable:)|
+Method|replace|replace|replace(old:new:count:)|
+Method|zfill|zfill|zfill(width:)|
+Method|__add__|add|add(_:)|
+Method|__mul__|mul|mul(_:)|
+Method|__rmul__|rmul|rmul(_:)|
+Method|__iter__|iter|iter|
 
 ############
 # str_iterator
@@ -340,6 +1555,19 @@ Type|str|PyString
 
 # Type|python_type|swift_type
 Type|str_iterator|PyStringIterator
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # super
@@ -347,6 +1575,25 @@ Type|str_iterator|PyStringIterator
 
 # Type|python_type|swift_type
 Type|super|PySuper
+# Annotation|value
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__thisclass__|getThisClass||thisClassDoc
+Property|__self__|getSelf||selfDoc
+Property|__self_class__|getSelfClass||selfClassDoc
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__get__|get|get(object:type:)|
 
 ############
 # TextFile
@@ -354,6 +1601,28 @@ Type|super|PySuper
 
 # Type|python_type|swift_type
 Type|TextFile|PyTextFile
+# Annotation|value
+Annotation|hasFinalize
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__repr__|repr|repr|
+Method|readable|isReadable|isReadable|
+Method|read|read|read(size:)|
+Method|writable|isWritable|isWritable|
+Method|write|write|write(object:)|
+Method|closed|isClosed|isClosed|
+Method|close|close|close|
+Method|__del__|del|del|
+Method|__enter__|enter|enter|
+Method|__exit__|exit|exit(exceptionType:exception:traceback:)|
 
 ############
 # tuple
@@ -361,6 +1630,38 @@ Type|TextFile|PyTextFile
 
 # Type|python_type|swift_type
 Type|tuple|PyTuple
+# Annotation|value
+Annotation|tupleSubclass
+Annotation|pytype
+Annotation|default
+Annotation|baseType
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__eq__|isEqual|isEqual(_:)|
+Method|__ne__|isNotEqual|isNotEqual(_:)|
+Method|__lt__|isLess|isLess(_:)|
+Method|__le__|isLessEqual|isLessEqual(_:)|
+Method|__gt__|isGreater|isGreater(_:)|
+Method|__ge__|isGreaterEqual|isGreaterEqual(_:)|
+Method|__hash__|hash|hash|
+Method|__repr__|repr|repr|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__len__|getLength|getLength|
+Method|__contains__|contains|contains(_:)|
+Method|__getitem__|getItem|getItem(at:)|
+Method|count|count|count(_:)|
+Method|index|index|index(of:start:end:)|
+Method|__iter__|iter|iter|
+Method|__add__|add|add(_:)|
+Method|__mul__|mul|mul(_:)|
+Method|__rmul__|rmul|rmul(_:)|
 
 ############
 # tuple_iterator
@@ -368,6 +1669,19 @@ Type|tuple|PyTuple
 
 # Type|python_type|swift_type
 Type|tuple_iterator|PyTupleIterator
+# Annotation|value
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 ############
 # type
@@ -375,6 +1689,38 @@ Type|tuple_iterator|PyTupleIterator
 
 # Type|python_type|swift_type
 Type|type|PyType
+# Annotation|value
+Annotation|typeSubclass
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__name__|getName|setName|
+Property|__qualname__|getQualname|setQualname|
+Property|__doc__|getDoc|setDoc|
+Property|__module__|getModule|setModule|
+Property|__bases__|getBases|setBases|
+Property|__dict__|getDict||
+Property|__class__|getClass||
+Property|__base__|getBase||
+Property|__mro__|getMRO||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__repr__|repr|repr|
+Method|__subclasscheck__|isSubtype|isSubtype(of:)|
+Method|__instancecheck__|isType|isType(of:)|
+Method|__subclasses__|getSubclasses|getSubclasses|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__setattr__|setAttribute|setAttribute(name:value:)|
+Method|__delattr__|delAttribute|delAttribute(name:)|
+Method|__dir__|dir|dir|
+Method|__call__|call|call(args:kwargs:)|
 
 ############
 # zip
@@ -382,6 +1728,22 @@ Type|type|PyType
 
 # Type|python_type|swift_type
 Type|zip|PyZip
+# Annotation|value
+Annotation|baseType
+Annotation|default
+Annotation|pytype
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__iter__|iter|iter|
+Method|__next__|next|next|
 
 
 
@@ -391,6 +1753,22 @@ Type|zip|PyZip
 
 # ErrorType|python_type|swift_type
 ErrorType|ArithmeticError|PyArithmeticError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # AssertionError
@@ -398,6 +1776,22 @@ ErrorType|ArithmeticError|PyArithmeticError
 
 # ErrorType|python_type|swift_type
 ErrorType|AssertionError|PyAssertionError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # AttributeError
@@ -405,6 +1799,22 @@ ErrorType|AssertionError|PyAssertionError
 
 # ErrorType|python_type|swift_type
 ErrorType|AttributeError|PyAttributeError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # BaseException
@@ -412,6 +1822,32 @@ ErrorType|AttributeError|PyAttributeError
 
 # ErrorType|python_type|swift_type
 ErrorType|BaseException|PyBaseException
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__dict__|getDict||
+Property|__class__|getClass||
+Property|args|getArgs|setArgs|
+Property|__traceback__|getTraceback|setTraceback|
+Property|__cause__|getCause|setCause|getCauseDoc
+Property|__context__|getContext|setContext|getContextDoc
+Property|__suppress_context__|getSuppressContext|setSuppressContext|
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+Method|__repr__|repr|repr|
+Method|__str__|str|str|
+Method|__getattribute__|getAttribute|getAttribute(name:)|
+Method|__setattr__|setAttribute|setAttribute(name:value:)|
+Method|__delattr__|delAttribute|delAttribute(name:)|
 
 ############
 # BlockingIOError
@@ -419,6 +1855,22 @@ ErrorType|BaseException|PyBaseException
 
 # ErrorType|python_type|swift_type
 ErrorType|BlockingIOError|PyBlockingIOError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # BrokenPipeError
@@ -426,6 +1878,22 @@ ErrorType|BlockingIOError|PyBlockingIOError
 
 # ErrorType|python_type|swift_type
 ErrorType|BrokenPipeError|PyBrokenPipeError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # BufferError
@@ -433,6 +1901,22 @@ ErrorType|BrokenPipeError|PyBrokenPipeError
 
 # ErrorType|python_type|swift_type
 ErrorType|BufferError|PyBufferError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # BytesWarning
@@ -440,6 +1924,22 @@ ErrorType|BufferError|PyBufferError
 
 # ErrorType|python_type|swift_type
 ErrorType|BytesWarning|PyBytesWarning
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # ChildProcessError
@@ -447,6 +1947,22 @@ ErrorType|BytesWarning|PyBytesWarning
 
 # ErrorType|python_type|swift_type
 ErrorType|ChildProcessError|PyChildProcessError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # ConnectionAbortedError
@@ -454,6 +1970,22 @@ ErrorType|ChildProcessError|PyChildProcessError
 
 # ErrorType|python_type|swift_type
 ErrorType|ConnectionAbortedError|PyConnectionAbortedError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # ConnectionError
@@ -461,6 +1993,22 @@ ErrorType|ConnectionAbortedError|PyConnectionAbortedError
 
 # ErrorType|python_type|swift_type
 ErrorType|ConnectionError|PyConnectionError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # ConnectionRefusedError
@@ -468,6 +2016,22 @@ ErrorType|ConnectionError|PyConnectionError
 
 # ErrorType|python_type|swift_type
 ErrorType|ConnectionRefusedError|PyConnectionRefusedError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # ConnectionResetError
@@ -475,6 +2039,22 @@ ErrorType|ConnectionRefusedError|PyConnectionRefusedError
 
 # ErrorType|python_type|swift_type
 ErrorType|ConnectionResetError|PyConnectionResetError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # DeprecationWarning
@@ -482,6 +2062,22 @@ ErrorType|ConnectionResetError|PyConnectionResetError
 
 # ErrorType|python_type|swift_type
 ErrorType|DeprecationWarning|PyDeprecationWarning
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # EOFError
@@ -489,6 +2085,22 @@ ErrorType|DeprecationWarning|PyDeprecationWarning
 
 # ErrorType|python_type|swift_type
 ErrorType|EOFError|PyEOFError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # Exception
@@ -496,6 +2108,22 @@ ErrorType|EOFError|PyEOFError
 
 # ErrorType|python_type|swift_type
 ErrorType|Exception|PyException
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # FileExistsError
@@ -503,6 +2131,22 @@ ErrorType|Exception|PyException
 
 # ErrorType|python_type|swift_type
 ErrorType|FileExistsError|PyFileExistsError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # FileNotFoundError
@@ -510,6 +2154,22 @@ ErrorType|FileExistsError|PyFileExistsError
 
 # ErrorType|python_type|swift_type
 ErrorType|FileNotFoundError|PyFileNotFoundError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # FloatingPointError
@@ -517,6 +2177,22 @@ ErrorType|FileNotFoundError|PyFileNotFoundError
 
 # ErrorType|python_type|swift_type
 ErrorType|FloatingPointError|PyFloatingPointError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # FutureWarning
@@ -524,6 +2200,22 @@ ErrorType|FloatingPointError|PyFloatingPointError
 
 # ErrorType|python_type|swift_type
 ErrorType|FutureWarning|PyFutureWarning
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # GeneratorExit
@@ -531,6 +2223,22 @@ ErrorType|FutureWarning|PyFutureWarning
 
 # ErrorType|python_type|swift_type
 ErrorType|GeneratorExit|PyGeneratorExit
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # ImportError
@@ -538,6 +2246,22 @@ ErrorType|GeneratorExit|PyGeneratorExit
 
 # ErrorType|python_type|swift_type
 ErrorType|ImportError|PyImportError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # ImportWarning
@@ -545,6 +2269,22 @@ ErrorType|ImportError|PyImportError
 
 # ErrorType|python_type|swift_type
 ErrorType|ImportWarning|PyImportWarning
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # IndentationError
@@ -552,6 +2292,22 @@ ErrorType|ImportWarning|PyImportWarning
 
 # ErrorType|python_type|swift_type
 ErrorType|IndentationError|PyIndentationError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # IndexError
@@ -559,6 +2315,22 @@ ErrorType|IndentationError|PyIndentationError
 
 # ErrorType|python_type|swift_type
 ErrorType|IndexError|PyIndexError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # InterruptedError
@@ -566,6 +2338,22 @@ ErrorType|IndexError|PyIndexError
 
 # ErrorType|python_type|swift_type
 ErrorType|InterruptedError|PyInterruptedError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # IsADirectoryError
@@ -573,6 +2361,22 @@ ErrorType|InterruptedError|PyInterruptedError
 
 # ErrorType|python_type|swift_type
 ErrorType|IsADirectoryError|PyIsADirectoryError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # KeyError
@@ -580,6 +2384,22 @@ ErrorType|IsADirectoryError|PyIsADirectoryError
 
 # ErrorType|python_type|swift_type
 ErrorType|KeyError|PyKeyError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # KeyboardInterrupt
@@ -587,6 +2407,22 @@ ErrorType|KeyError|PyKeyError
 
 # ErrorType|python_type|swift_type
 ErrorType|KeyboardInterrupt|PyKeyboardInterrupt
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # LookupError
@@ -594,6 +2430,22 @@ ErrorType|KeyboardInterrupt|PyKeyboardInterrupt
 
 # ErrorType|python_type|swift_type
 ErrorType|LookupError|PyLookupError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # MemoryError
@@ -601,6 +2453,22 @@ ErrorType|LookupError|PyLookupError
 
 # ErrorType|python_type|swift_type
 ErrorType|MemoryError|PyMemoryError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # ModuleNotFoundError
@@ -608,6 +2476,22 @@ ErrorType|MemoryError|PyMemoryError
 
 # ErrorType|python_type|swift_type
 ErrorType|ModuleNotFoundError|PyModuleNotFoundError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # NameError
@@ -615,6 +2499,22 @@ ErrorType|ModuleNotFoundError|PyModuleNotFoundError
 
 # ErrorType|python_type|swift_type
 ErrorType|NameError|PyNameError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # NotADirectoryError
@@ -622,6 +2522,22 @@ ErrorType|NameError|PyNameError
 
 # ErrorType|python_type|swift_type
 ErrorType|NotADirectoryError|PyNotADirectoryError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # NotImplementedError
@@ -629,6 +2545,22 @@ ErrorType|NotADirectoryError|PyNotADirectoryError
 
 # ErrorType|python_type|swift_type
 ErrorType|NotImplementedError|PyNotImplementedError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # OSError
@@ -636,6 +2568,22 @@ ErrorType|NotImplementedError|PyNotImplementedError
 
 # ErrorType|python_type|swift_type
 ErrorType|OSError|PyOSError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # OverflowError
@@ -643,6 +2591,22 @@ ErrorType|OSError|PyOSError
 
 # ErrorType|python_type|swift_type
 ErrorType|OverflowError|PyOverflowError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # PendingDeprecationWarning
@@ -650,6 +2614,22 @@ ErrorType|OverflowError|PyOverflowError
 
 # ErrorType|python_type|swift_type
 ErrorType|PendingDeprecationWarning|PyPendingDeprecationWarning
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # PermissionError
@@ -657,6 +2637,22 @@ ErrorType|PendingDeprecationWarning|PyPendingDeprecationWarning
 
 # ErrorType|python_type|swift_type
 ErrorType|PermissionError|PyPermissionError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # ProcessLookupError
@@ -664,6 +2660,22 @@ ErrorType|PermissionError|PyPermissionError
 
 # ErrorType|python_type|swift_type
 ErrorType|ProcessLookupError|PyProcessLookupError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # RecursionError
@@ -671,6 +2683,22 @@ ErrorType|ProcessLookupError|PyProcessLookupError
 
 # ErrorType|python_type|swift_type
 ErrorType|RecursionError|PyRecursionError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # ReferenceError
@@ -678,6 +2706,22 @@ ErrorType|RecursionError|PyRecursionError
 
 # ErrorType|python_type|swift_type
 ErrorType|ReferenceError|PyReferenceError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # ResourceWarning
@@ -685,6 +2729,22 @@ ErrorType|ReferenceError|PyReferenceError
 
 # ErrorType|python_type|swift_type
 ErrorType|ResourceWarning|PyResourceWarning
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # RuntimeError
@@ -692,6 +2752,22 @@ ErrorType|ResourceWarning|PyResourceWarning
 
 # ErrorType|python_type|swift_type
 ErrorType|RuntimeError|PyRuntimeError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # RuntimeWarning
@@ -699,6 +2775,22 @@ ErrorType|RuntimeError|PyRuntimeError
 
 # ErrorType|python_type|swift_type
 ErrorType|RuntimeWarning|PyRuntimeWarning
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # StopAsyncIteration
@@ -706,6 +2798,22 @@ ErrorType|RuntimeWarning|PyRuntimeWarning
 
 # ErrorType|python_type|swift_type
 ErrorType|StopAsyncIteration|PyStopAsyncIteration
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # StopIteration
@@ -713,6 +2821,22 @@ ErrorType|StopAsyncIteration|PyStopAsyncIteration
 
 # ErrorType|python_type|swift_type
 ErrorType|StopIteration|PyStopIteration
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # SyntaxError
@@ -720,6 +2844,22 @@ ErrorType|StopIteration|PyStopIteration
 
 # ErrorType|python_type|swift_type
 ErrorType|SyntaxError|PySyntaxError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # SyntaxWarning
@@ -727,6 +2867,22 @@ ErrorType|SyntaxError|PySyntaxError
 
 # ErrorType|python_type|swift_type
 ErrorType|SyntaxWarning|PySyntaxWarning
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # SystemError
@@ -734,6 +2890,22 @@ ErrorType|SyntaxWarning|PySyntaxWarning
 
 # ErrorType|python_type|swift_type
 ErrorType|SystemError|PySystemError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # SystemExit
@@ -741,6 +2913,22 @@ ErrorType|SystemError|PySystemError
 
 # ErrorType|python_type|swift_type
 ErrorType|SystemExit|PySystemExit
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # TabError
@@ -748,6 +2936,22 @@ ErrorType|SystemExit|PySystemExit
 
 # ErrorType|python_type|swift_type
 ErrorType|TabError|PyTabError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # TimeoutError
@@ -755,6 +2959,22 @@ ErrorType|TabError|PyTabError
 
 # ErrorType|python_type|swift_type
 ErrorType|TimeoutError|PyTimeoutError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # TypeError
@@ -762,6 +2982,22 @@ ErrorType|TimeoutError|PyTimeoutError
 
 # ErrorType|python_type|swift_type
 ErrorType|TypeError|PyTypeError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # UnboundLocalError
@@ -769,6 +3005,22 @@ ErrorType|TypeError|PyTypeError
 
 # ErrorType|python_type|swift_type
 ErrorType|UnboundLocalError|PyUnboundLocalError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # UnicodeDecodeError
@@ -776,6 +3028,22 @@ ErrorType|UnboundLocalError|PyUnboundLocalError
 
 # ErrorType|python_type|swift_type
 ErrorType|UnicodeDecodeError|PyUnicodeDecodeError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # UnicodeEncodeError
@@ -783,6 +3051,22 @@ ErrorType|UnicodeDecodeError|PyUnicodeDecodeError
 
 # ErrorType|python_type|swift_type
 ErrorType|UnicodeEncodeError|PyUnicodeEncodeError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # UnicodeError
@@ -790,6 +3074,22 @@ ErrorType|UnicodeEncodeError|PyUnicodeEncodeError
 
 # ErrorType|python_type|swift_type
 ErrorType|UnicodeError|PyUnicodeError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # UnicodeTranslateError
@@ -797,6 +3097,22 @@ ErrorType|UnicodeError|PyUnicodeError
 
 # ErrorType|python_type|swift_type
 ErrorType|UnicodeTranslateError|PyUnicodeTranslateError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # UnicodeWarning
@@ -804,6 +3120,22 @@ ErrorType|UnicodeTranslateError|PyUnicodeTranslateError
 
 # ErrorType|python_type|swift_type
 ErrorType|UnicodeWarning|PyUnicodeWarning
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # UserWarning
@@ -811,6 +3143,22 @@ ErrorType|UnicodeWarning|PyUnicodeWarning
 
 # ErrorType|python_type|swift_type
 ErrorType|UserWarning|PyUserWarning
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # ValueError
@@ -818,6 +3166,22 @@ ErrorType|UserWarning|PyUserWarning
 
 # ErrorType|python_type|swift_type
 ErrorType|ValueError|PyValueError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # Warning
@@ -825,6 +3189,22 @@ ErrorType|ValueError|PyValueError
 
 # ErrorType|python_type|swift_type
 ErrorType|Warning|PyWarning
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
 
 ############
 # ZeroDivisionError
@@ -832,3 +3212,19 @@ ErrorType|Warning|PyWarning
 
 # ErrorType|python_type|swift_type
 ErrorType|ZeroDivisionError|PyZeroDivisionError
+# Annotation|value
+Annotation|baseExceptionSubclass
+Annotation|pyerrortype
+Annotation|baseType
+Annotation|default
+Annotation|hasGC
+# Doc|swift_static_doc_property
+Doc|doc
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+Property|__class__|getClass||
+Property|__dict__|getDict||
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+StaticFunction|__new__|pyNew|pyNew(type:args:kwargs:)|
+StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property

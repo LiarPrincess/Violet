@@ -11,11 +11,64 @@
 {{ marker }}|{{ python_name }}|{{ swift_name }}
 {% endmacro %}
 
+{% macro print_annotations type %}
+# Annotation|value
+{% for name in type.annotations %}
+Annotation|{{ name }}
+{% endfor %}
+{% endmacro %}
+
+{% macro print_doc type %}
+{% for variable in type.staticVariables where variable.name == "doc" %}
+# Doc|swift_static_doc_property
+Doc|doc
+{% endfor %}
+{% endmacro %}
+
+{% macro print_properties type %}
+# Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
+{% for prop in type.instanceMethods|annotated:"pyproperty" %}
+{% set python_name %}{{ prop.annotations.pyproperty }}{% endset %}
+{% set swift_getter_fn %}{{ prop.selectorName }}{% endset %}
+{% set swift_setter_fn %}{{ prop.annotations.setter }}{% endset %}
+{% set swift_static_doc_property %}{{ prop.annotations.doc }}{% endset %}
+Property|{{ python_name }}|{{ swift_getter_fn }}|{{ swift_setter_fn }}|{{ swift_static_doc_property }}
+{% endfor %}
+{% endmacro %}
+
+{% macro print_static_methods methods %}
+# StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
+{% for method in methods|annotated:"pymethod" %}
+{% set python_name %}{{ method.annotations.pymethod }}{% endset %}
+{% set swift_function_name %}{{ method.shortName }}{% endset %}
+{% set swift_selector %}{{ method.selectorName }}{% endset %}
+{% set swift_static_doc_property %}{{ method.annotations.doc }}{% endset %}
+StaticFunction|{{ python_name }}|{{ swift_function_name }}|{{ swift_selector }}|{{ swift_static_doc_property }}
+{% endfor %}
+{% endmacro %}
+
+{% macro print_methods type %}
+# Method|python_name|swift_function_name|swift_selector|swift_static_doc_property
+{% for method in type.instanceMethods|annotated:"pymethod" %}
+{% set python_name %}{{ method.annotations.pymethod }}{% endset %}
+{% set swift_function_name %}{{ method.shortName }}{% endset %}
+{% set swift_selector %}{{ method.selectorName }}{% endset %}
+{% set swift_static_doc_property %}{{ method.annotations.doc }}{% endset %}
+Method|{{ python_name }}|{{ swift_function_name }}|{{ swift_selector }}|{{ swift_static_doc_property }}
+{% endfor %}
+{% endmacro %}
+
 {# ============== #}
 {# === Object === #}
 {# ============== #}
 
-{% call start_new_type "Type" "object" "PyObject" %}
+{% call start_new_type "Type" "object" "PyObjectType" %}
+{% for type in types.enums where type.name == "PyObjectType" %}
+{% call print_annotations type %}
+{% call print_doc type %}
+{% call print_static_methods type.staticMethods %}
+{% call print_static_methods type.classMethods %}
+{% endfor %}
 
 {# ============= #}
 {# === Types === #}
@@ -26,6 +79,12 @@
 {% set swift_name %}{{ type.name }}{% endset %}
 
 {% call start_new_type "Type" python_name swift_name %}
+{% call print_annotations type %}
+{% call print_doc type %}
+{% call print_properties type %}
+{% call print_static_methods type.staticMethods %}
+{% call print_static_methods type.classMethods %}
+{% call print_methods type %}
 {% endfor %}
 
 {# =================== #}
@@ -37,4 +96,10 @@
 {% set swift_name %}{{ type.name }}{% endset %}
 
 {% call start_new_type "ErrorType" python_name swift_name %}
+{% call print_annotations type %}
+{% call print_doc type %}
+{% call print_properties type %}
+{% call print_static_methods type.staticMethods %}
+{% call print_static_methods type.classMethods %}
+{% call print_methods type %}
 {% endfor %}

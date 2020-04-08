@@ -7,12 +7,10 @@
 // Please note that this file was automatically generated. DO NOT EDIT!
 // The same goes for other files in 'Generated' directory.
 
-/// Add all of boring stuff to 'PyType'.
-///
-/// For example it will:
-/// - set type flags
-/// - add `__doc__`
-/// - fill `__dict__`
+// Do all of boring stuff to finish 'PyType':
+// - set type flags
+// - add `__doc__`
+// - fill `__dict__`
 
 import Core
 
@@ -28,21 +26,15 @@ private func insert(type: PyType, name: String, value: PyObject) {
   }
 }
 
-
-
-
-
 internal enum FillTypes {
 
+  // MARK: - object
 
-  // MARK: - Base object
-
-  internal static func object(_ type: PyType) {
+  internal static func objectType(_ type: PyType) {
     type.setBuiltinTypeDoc(PyObjectType.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
-    type.setLayout(.PyObject)
-
+    type.setFlag(.default)
+    type.setLayout(.PyObjectType)
 
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyObjectType.isEqual(zelf:other:)))
     insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyObjectType.isNotEqual(zelf:other:)))
@@ -63,12 +55,9 @@ internal enum FillTypes {
     insert(type: type, name: "__init_subclass__", value: PyBuiltinFunction.wrap(name: "__init_subclass__", doc: nil, fn: PyObjectType.initSubclass(zelf:)))
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyObjectType.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyObjectType.pyInit(zelf:args:kwargs:)))
-
-
   }
 
-
-  // MARK: - Bool
+  // MARK: - bool
 
   internal static func bool(_ type: PyType) {
     type.setBuiltinTypeDoc(PyBool.doc)
@@ -76,7 +65,6 @@ internal enum FillTypes {
     type.setLayout(.PyBool)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBool.getClass, castSelf: Cast.asPyBool))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBool.pyNew(type:args:kwargs:)))
 
@@ -90,7 +78,7 @@ internal enum FillTypes {
     insert(type: type, name: "__rxor__", value: PyBuiltinFunction.wrap(name: "__rxor__", doc: nil, fn: PyBool.rxor(_:), castSelf: Cast.asPyBool))
   }
 
-  // MARK: - BuiltinFunction
+  // MARK: - builtinFunction
 
   internal static func builtinFunction(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
@@ -104,9 +92,6 @@ internal enum FillTypes {
     insert(type: type, name: "__text_signature__", value: PyProperty.wrap(name: "__text_signature__", doc: nil, get: PyBuiltinFunction.getTextSignature, castSelf: Cast.asPyBuiltinFunction))
     insert(type: type, name: "__module__", value: PyProperty.wrap(name: "__module__", doc: nil, get: PyBuiltinFunction.getModule, castSelf: Cast.asPyBuiltinFunction))
     insert(type: type, name: "__self__", value: PyProperty.wrap(name: "__self__", doc: nil, get: PyBuiltinFunction.getSelf, castSelf: Cast.asPyBuiltinFunction))
-
-
-
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyBuiltinFunction.isEqual(_:), castSelf: Cast.asPyBuiltinFunction))
     insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyBuiltinFunction.isNotEqual(_:), castSelf: Cast.asPyBuiltinFunction))
     insert(type: type, name: "__lt__", value: PyBuiltinFunction.wrap(name: "__lt__", doc: nil, fn: PyBuiltinFunction.isLess(_:), castSelf: Cast.asPyBuiltinFunction))
@@ -120,7 +105,7 @@ internal enum FillTypes {
     insert(type: type, name: "__call__", value: PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyBuiltinFunction.call(args:kwargs:), castSelf: Cast.asPyBuiltinFunction))
   }
 
-  // MARK: - BuiltinMethod
+  // MARK: - builtinMethod
 
   internal static func builtinMethod(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
@@ -133,9 +118,6 @@ internal enum FillTypes {
     insert(type: type, name: "__text_signature__", value: PyProperty.wrap(name: "__text_signature__", doc: nil, get: PyBuiltinMethod.getTextSignature, castSelf: Cast.asPyBuiltinMethod))
     insert(type: type, name: "__module__", value: PyProperty.wrap(name: "__module__", doc: nil, get: PyBuiltinMethod.getModule, castSelf: Cast.asPyBuiltinMethod))
     insert(type: type, name: "__self__", value: PyProperty.wrap(name: "__self__", doc: nil, get: PyBuiltinMethod.getSelf, castSelf: Cast.asPyBuiltinMethod))
-
-
-
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyBuiltinMethod.isEqual(_:), castSelf: Cast.asPyBuiltinMethod))
     insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyBuiltinMethod.isNotEqual(_:), castSelf: Cast.asPyBuiltinMethod))
     insert(type: type, name: "__lt__", value: PyBuiltinFunction.wrap(name: "__lt__", doc: nil, fn: PyBuiltinMethod.isLess(_:), castSelf: Cast.asPyBuiltinMethod))
@@ -149,18 +131,17 @@ internal enum FillTypes {
     insert(type: type, name: "__call__", value: PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyBuiltinMethod.call(args:kwargs:), castSelf: Cast.asPyBuiltinMethod))
   }
 
-  // MARK: - ByteArray
+  // MARK: - bytearray
 
-  internal static func bytearray(_ type: PyType) {
+  internal static func byteArray(_ type: PyType) {
     type.setBuiltinTypeDoc(PyByteArray.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setLayout(.PyByteArray)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyByteArray.getClass, castSelf: Cast.asPyByteArray))
 
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyByteArray.pyInit(zelf:args:kwargs:)))
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyByteArray.pyNew(type:args:kwargs:)))
 
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyByteArray.isEqual(_:), castSelf: Cast.asPyByteArray))
@@ -227,16 +208,15 @@ internal enum FillTypes {
     insert(type: type, name: "copy", value: PyBuiltinFunction.wrap(name: "copy", doc: nil, fn: PyByteArray.copy, castSelf: Cast.asPyByteArray))
   }
 
-  // MARK: - ByteArrayIterator
+  // MARK: - bytearray_iterator
 
-  internal static func bytearray_iterator(_ type: PyType) {
+  internal static func byteArrayIterator(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyByteArrayIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyByteArrayIterator.getClass, castSelf: Cast.asPyByteArrayIterator))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyByteArrayIterator.pyNew(type:args:kwargs:)))
 
@@ -245,17 +225,16 @@ internal enum FillTypes {
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyByteArrayIterator.next, castSelf: Cast.asPyByteArrayIterator))
   }
 
-  // MARK: - Bytes
+  // MARK: - bytes
 
   internal static func bytes(_ type: PyType) {
     type.setBuiltinTypeDoc(PyBytes.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.bytesSubclass)
+    type.setFlag(.default)
     type.setLayout(.PyBytes)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBytes.getClass, castSelf: Cast.asPyBytes))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBytes.pyNew(type:args:kwargs:)))
 
@@ -313,16 +292,15 @@ internal enum FillTypes {
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyBytes.iter, castSelf: Cast.asPyBytes))
   }
 
-  // MARK: - BytesIterator
+  // MARK: - bytes_iterator
 
-  internal static func bytes_iterator(_ type: PyType) {
+  internal static func bytesIterator(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyBytesIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBytesIterator.getClass, castSelf: Cast.asPyBytesIterator))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBytesIterator.pyNew(type:args:kwargs:)))
 
@@ -331,33 +309,27 @@ internal enum FillTypes {
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyBytesIterator.next, castSelf: Cast.asPyBytesIterator))
   }
 
-  // MARK: - CallableIterator
+  // MARK: - callable_iterator
 
-  internal static func callable_iterator(_ type: PyType) {
+  internal static func callableIterator(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyCallableIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyCallableIterator.getClass, castSelf: Cast.asPyCallableIterator))
-
-
-
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyCallableIterator.getAttribute(name:), castSelf: Cast.asPyCallableIterator))
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyCallableIterator.iter, castSelf: Cast.asPyCallableIterator))
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyCallableIterator.next, castSelf: Cast.asPyCallableIterator))
   }
 
-  // MARK: - Cell
+  // MARK: - cell
 
   internal static func cell(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyCell)
-
-
-
 
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyCell.isEqual(_:), castSelf: Cast.asPyCell))
     insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyCell.isNotEqual(_:), castSelf: Cast.asPyCell))
@@ -369,12 +341,12 @@ internal enum FillTypes {
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyCell.getAttribute(name:), castSelf: Cast.asPyCell))
   }
 
-  // MARK: - ClassMethod
+  // MARK: - classmethod
 
-  internal static func classmethod(_ type: PyType) {
+  internal static func classMethod(_ type: PyType) {
     type.setBuiltinTypeDoc(PyClassMethod.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyClassMethod)
 
@@ -383,14 +355,13 @@ internal enum FillTypes {
     insert(type: type, name: "__func__", value: PyProperty.wrap(name: "__func__", doc: nil, get: PyClassMethod.getFunc, castSelf: Cast.asPyClassMethod))
 
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyClassMethod.pyInit(zelf:args:kwargs:)))
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyClassMethod.pyNew(type:args:kwargs:)))
 
     insert(type: type, name: "__get__", value: PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyClassMethod.get(object:type:), castSelf: Cast.asPyClassMethod))
     insert(type: type, name: "__isabstractmethod__", value: PyBuiltinFunction.wrap(name: "__isabstractmethod__", doc: nil, fn: PyClassMethod.isAbstractMethod, castSelf: Cast.asPyClassMethod))
   }
 
-  // MARK: - Code
+  // MARK: - code
 
   internal static func code(_ type: PyType) {
     type.setBuiltinTypeDoc(PyCode.doc)
@@ -404,9 +375,6 @@ internal enum FillTypes {
     insert(type: type, name: "co_argcount", value: PyProperty.wrap(name: "co_argcount", doc: nil, get: PyCode.getArgCount, castSelf: Cast.asPyCode))
     insert(type: type, name: "co_kwonlyargcount", value: PyProperty.wrap(name: "co_kwonlyargcount", doc: nil, get: PyCode.getKwOnlyArgCount, castSelf: Cast.asPyCode))
     insert(type: type, name: "co_nlocals", value: PyProperty.wrap(name: "co_nlocals", doc: nil, get: PyCode.getNLocals, castSelf: Cast.asPyCode))
-
-
-
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyCode.isEqual(_:), castSelf: Cast.asPyCode))
     insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyCode.isNotEqual(_:), castSelf: Cast.asPyCode))
     insert(type: type, name: "__lt__", value: PyBuiltinFunction.wrap(name: "__lt__", doc: nil, fn: PyCode.isLess(_:), castSelf: Cast.asPyCode))
@@ -418,18 +386,17 @@ internal enum FillTypes {
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyCode.getAttribute(name:), castSelf: Cast.asPyCode))
   }
 
-  // MARK: - Complex
+  // MARK: - complex
 
   internal static func complex(_ type: PyType) {
     type.setBuiltinTypeDoc(PyComplex.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setLayout(.PyComplex)
 
     insert(type: type, name: "real", value: PyProperty.wrap(name: "real", doc: nil, get: PyComplex.asReal, castSelf: Cast.asPyComplex))
     insert(type: type, name: "imag", value: PyProperty.wrap(name: "imag", doc: nil, get: PyComplex.asImag, castSelf: Cast.asPyComplex))
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyComplex.getClass, castSelf: Cast.asPyComplex))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyComplex.pyNew(type:args:kwargs:)))
 
@@ -468,21 +435,20 @@ internal enum FillTypes {
     insert(type: type, name: "__rdivmod__", value: PyBuiltinFunction.wrap(name: "__rdivmod__", doc: nil, fn: PyComplex.rdivmod(_:), castSelf: Cast.asPyComplex))
   }
 
-  // MARK: - Dict
+  // MARK: - dict
 
   internal static func dict(_ type: PyType) {
     type.setBuiltinTypeDoc(PyDict.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.dictSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyDict)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDict.getClass, castSelf: Cast.asPyDict))
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDict.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyDict.pyInit(zelf:args:kwargs:)))
-
 
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyDict.isEqual(_:), castSelf: Cast.asPyDict))
     insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyDict.isNotEqual(_:), castSelf: Cast.asPyDict))
@@ -511,16 +477,15 @@ internal enum FillTypes {
     insert(type: type, name: "values", value: PyBuiltinFunction.wrap(name: "values", doc: nil, fn: PyDict.values, castSelf: Cast.asPyDict))
   }
 
-  // MARK: - DictItemIterator
+  // MARK: - dict_itemiterator
 
-  internal static func dict_itemiterator(_ type: PyType) {
+  internal static func dictItemIterator(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyDictItemIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictItemIterator.getClass, castSelf: Cast.asPyDictItemIterator))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDictItemIterator.pyNew(type:args:kwargs:)))
 
@@ -529,16 +494,15 @@ internal enum FillTypes {
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyDictItemIterator.next, castSelf: Cast.asPyDictItemIterator))
   }
 
-  // MARK: - DictItems
+  // MARK: - dict_items
 
-  internal static func dict_items(_ type: PyType) {
+  internal static func dictItems(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyDictItems)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictItems.getClass, castSelf: Cast.asPyDictItems))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDictItems.pyNew(type:args:kwargs:)))
 
@@ -556,16 +520,15 @@ internal enum FillTypes {
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyDictItems.iter, castSelf: Cast.asPyDictItems))
   }
 
-  // MARK: - DictKeyIterator
+  // MARK: - dict_keyiterator
 
-  internal static func dict_keyiterator(_ type: PyType) {
+  internal static func dictKeyIterator(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyDictKeyIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictKeyIterator.getClass, castSelf: Cast.asPyDictKeyIterator))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDictKeyIterator.pyNew(type:args:kwargs:)))
 
@@ -574,16 +537,15 @@ internal enum FillTypes {
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyDictKeyIterator.next, castSelf: Cast.asPyDictKeyIterator))
   }
 
-  // MARK: - DictKeys
+  // MARK: - dict_keys
 
-  internal static func dict_keys(_ type: PyType) {
+  internal static func dictKeys(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyDictKeys)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictKeys.getClass, castSelf: Cast.asPyDictKeys))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDictKeys.pyNew(type:args:kwargs:)))
 
@@ -601,16 +563,15 @@ internal enum FillTypes {
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyDictKeys.iter, castSelf: Cast.asPyDictKeys))
   }
 
-  // MARK: - DictValueIterator
+  // MARK: - dict_valueiterator
 
-  internal static func dict_valueiterator(_ type: PyType) {
+  internal static func dictValueIterator(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyDictValueIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictValueIterator.getClass, castSelf: Cast.asPyDictValueIterator))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDictValueIterator.pyNew(type:args:kwargs:)))
 
@@ -619,16 +580,13 @@ internal enum FillTypes {
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyDictValueIterator.next, castSelf: Cast.asPyDictValueIterator))
   }
 
-  // MARK: - DictValues
+  // MARK: - dict_values
 
-  internal static func dict_values(_ type: PyType) {
+  internal static func dictValues(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyDictValues)
-
-
-
 
     insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyDictValues.repr, castSelf: Cast.asPyDictValues))
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyDictValues.getAttribute(name:), castSelf: Cast.asPyDictValues))
@@ -636,7 +594,7 @@ internal enum FillTypes {
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyDictValues.iter, castSelf: Cast.asPyDictValues))
   }
 
-  // MARK: - Ellipsis
+  // MARK: - ellipsis
 
   internal static func ellipsis(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
@@ -647,18 +605,17 @@ internal enum FillTypes {
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyEllipsis.pyNew(type:args:kwargs:)))
 
-
     insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyEllipsis.repr, castSelf: Cast.asPyEllipsis))
     insert(type: type, name: "__reduce__", value: PyBuiltinFunction.wrap(name: "__reduce__", doc: nil, fn: PyEllipsis.reduce, castSelf: Cast.asPyEllipsis))
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyEllipsis.getAttribute(name:), castSelf: Cast.asPyEllipsis))
   }
 
-  // MARK: - Enumerate
+  // MARK: - enumerate
 
   internal static func enumerate(_ type: PyType) {
     type.setBuiltinTypeDoc(PyEnumerate.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyEnumerate)
 
@@ -666,18 +623,17 @@ internal enum FillTypes {
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyEnumerate.pyNew(type:args:kwargs:)))
 
-
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyEnumerate.getAttribute(name:), castSelf: Cast.asPyEnumerate))
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyEnumerate.iter, castSelf: Cast.asPyEnumerate))
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyEnumerate.next, castSelf: Cast.asPyEnumerate))
   }
 
-  // MARK: - Filter
+  // MARK: - filter
 
   internal static func filter(_ type: PyType) {
     type.setBuiltinTypeDoc(PyFilter.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyFilter)
 
@@ -685,24 +641,22 @@ internal enum FillTypes {
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFilter.pyNew(type:args:kwargs:)))
 
-
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyFilter.getAttribute(name:), castSelf: Cast.asPyFilter))
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyFilter.iter, castSelf: Cast.asPyFilter))
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyFilter.next, castSelf: Cast.asPyFilter))
   }
 
-  // MARK: - Float
+  // MARK: - float
 
   internal static func float(_ type: PyType) {
     type.setBuiltinTypeDoc(PyFloat.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setLayout(.PyFloat)
 
     insert(type: type, name: "real", value: PyProperty.wrap(name: "real", doc: nil, get: PyFloat.asReal, castSelf: Cast.asPyFloat))
     insert(type: type, name: "imag", value: PyProperty.wrap(name: "imag", doc: nil, get: PyFloat.asImag, castSelf: Cast.asPyFloat))
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFloat.getClass, castSelf: Cast.asPyFloat))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFloat.pyNew(type:args:kwargs:)))
 
@@ -744,12 +698,12 @@ internal enum FillTypes {
     insert(type: type, name: "__trunc__", value: PyBuiltinFunction.wrap(name: "__trunc__", doc: nil, fn: PyFloat.trunc, castSelf: Cast.asPyFloat))
   }
 
-  // MARK: - Frame
+  // MARK: - frame
 
   internal static func frame(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
-    type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setFlag(.default)
     type.setLayout(.PyFrame)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFrame.getClass, castSelf: Cast.asPyFrame))
@@ -760,26 +714,22 @@ internal enum FillTypes {
     insert(type: type, name: "f_code", value: PyProperty.wrap(name: "f_code", doc: nil, get: PyFrame.getCode, castSelf: Cast.asPyFrame))
     insert(type: type, name: "f_lasti", value: PyProperty.wrap(name: "f_lasti", doc: nil, get: PyFrame.getLasti, castSelf: Cast.asPyFrame))
     insert(type: type, name: "f_lineno", value: PyProperty.wrap(name: "f_lineno", doc: nil, get: PyFrame.getLineno, castSelf: Cast.asPyFrame))
-
-
-
     insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyFrame.repr, castSelf: Cast.asPyFrame))
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyFrame.getAttribute(name:), castSelf: Cast.asPyFrame))
     insert(type: type, name: "__setattr__", value: PyBuiltinFunction.wrap(name: "__setattr__", doc: nil, fn: PyFrame.setAttribute(name:value:), castSelf: Cast.asPyFrame))
     insert(type: type, name: "__delattr__", value: PyBuiltinFunction.wrap(name: "__delattr__", doc: nil, fn: PyFrame.delAttribute(name:), castSelf: Cast.asPyFrame))
   }
 
-  // MARK: - FrozenSet
+  // MARK: - frozenset
 
-  internal static func frozenset(_ type: PyType) {
+  internal static func frozenSet(_ type: PyType) {
     type.setBuiltinTypeDoc(PyFrozenSet.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyFrozenSet)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFrozenSet.getClass, castSelf: Cast.asPyFrozenSet))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFrozenSet.pyNew(type:args:kwargs:)))
 
@@ -813,12 +763,12 @@ internal enum FillTypes {
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyFrozenSet.iter, castSelf: Cast.asPyFrozenSet))
   }
 
-  // MARK: - Function
+  // MARK: - function
 
   internal static func function(_ type: PyType) {
     type.setBuiltinTypeDoc(PyFunction.doc)
-    type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setFlag(.default)
     type.setLayout(.PyFunction)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFunction.getClass, castSelf: Cast.asPyFunction))
@@ -833,20 +783,17 @@ internal enum FillTypes {
     insert(type: type, name: "__doc__", value: PyProperty.wrap(name: "__doc__", doc: nil, get: PyFunction.getDoc, set: PyFunction.setDoc, castSelf: Cast.asPyFunction))
     insert(type: type, name: "__module__", value: PyProperty.wrap(name: "__module__", doc: nil, get: PyFunction.getModule, set: PyFunction.setModule, castSelf: Cast.asPyFunction))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFunction.getDict, castSelf: Cast.asPyFunction))
-
-
-
     insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyFunction.repr, castSelf: Cast.asPyFunction))
     insert(type: type, name: "__get__", value: PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyFunction.get(object:type:), castSelf: Cast.asPyFunction))
     insert(type: type, name: "__call__", value: PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyFunction.call(args:kwargs:), castSelf: Cast.asPyFunction))
   }
 
-  // MARK: - Int
+  // MARK: - int
 
   internal static func int(_ type: PyType) {
     type.setBuiltinTypeDoc(PyInt.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.longSubclass)
     type.setLayout(.PyInt)
 
@@ -855,7 +802,6 @@ internal enum FillTypes {
     insert(type: type, name: "imag", value: PyProperty.wrap(name: "imag", doc: nil, get: PyInt.asImag, castSelf: Cast.asPyInt))
     insert(type: type, name: "numerator", value: PyProperty.wrap(name: "numerator", doc: nil, get: PyInt.numerator, castSelf: Cast.asPyInt))
     insert(type: type, name: "denominator", value: PyProperty.wrap(name: "denominator", doc: nil, get: PyInt.denominator, castSelf: Cast.asPyInt))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyInt.pyNew(type:args:kwargs:)))
 
@@ -911,7 +857,7 @@ internal enum FillTypes {
     insert(type: type, name: "__round__", value: PyBuiltinFunction.wrap(name: "__round__", doc: nil, fn: PyInt.round(nDigits:), castSelf: Cast.asPyInt))
   }
 
-  // MARK: - Iterator
+  // MARK: - iterator
 
   internal static func iterator(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
@@ -920,29 +866,25 @@ internal enum FillTypes {
     type.setLayout(.PyIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIterator.getClass, castSelf: Cast.asPyIterator))
-
-
-
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyIterator.getAttribute(name:), castSelf: Cast.asPyIterator))
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyIterator.iter, castSelf: Cast.asPyIterator))
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyIterator.next, castSelf: Cast.asPyIterator))
   }
 
-  // MARK: - List
+  // MARK: - list
 
   internal static func list(_ type: PyType) {
     type.setBuiltinTypeDoc(PyList.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.listSubclass)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyList)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyList.getClass, castSelf: Cast.asPyList))
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyList.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyList.pyInit(zelf:args:kwargs:)))
-
 
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyList.isEqual(_:), castSelf: Cast.asPyList))
     insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyList.isNotEqual(_:), castSelf: Cast.asPyList))
@@ -978,9 +920,9 @@ internal enum FillTypes {
     insert(type: type, name: "__imul__", value: PyBuiltinFunction.wrap(name: "__imul__", doc: nil, fn: PyList.imul(_:), castSelf: Cast.asPyList))
   }
 
-  // MARK: - ListIterator
+  // MARK: - list_iterator
 
-  internal static func list_iterator(_ type: PyType) {
+  internal static func listIterator(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
@@ -990,15 +932,14 @@ internal enum FillTypes {
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyListIterator.pyNew(type:args:kwargs:)))
 
-
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyListIterator.getAttribute(name:), castSelf: Cast.asPyListIterator))
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyListIterator.iter, castSelf: Cast.asPyListIterator))
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyListIterator.next, castSelf: Cast.asPyListIterator))
   }
 
-  // MARK: - ListReverseIterator
+  // MARK: - list_reverseiterator
 
-  internal static func list_reverseiterator(_ type: PyType) {
+  internal static func listReverseIterator(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
@@ -1008,18 +949,17 @@ internal enum FillTypes {
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyListReverseIterator.pyNew(type:args:kwargs:)))
 
-
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyListReverseIterator.getAttribute(name:), castSelf: Cast.asPyListReverseIterator))
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyListReverseIterator.iter, castSelf: Cast.asPyListReverseIterator))
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyListReverseIterator.next, castSelf: Cast.asPyListReverseIterator))
   }
 
-  // MARK: - Map
+  // MARK: - map
 
   internal static func map(_ type: PyType) {
     type.setBuiltinTypeDoc(PyMap.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyMap)
 
@@ -1027,25 +967,21 @@ internal enum FillTypes {
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyMap.pyNew(type:args:kwargs:)))
 
-
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyMap.getAttribute(name:), castSelf: Cast.asPyMap))
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyMap.iter, castSelf: Cast.asPyMap))
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyMap.next, castSelf: Cast.asPyMap))
   }
 
-  // MARK: - Method
+  // MARK: - method
 
   internal static func method(_ type: PyType) {
     type.setBuiltinTypeDoc(PyMethod.doc)
-    type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setFlag(.default)
     type.setLayout(.PyMethod)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMethod.getClass, castSelf: Cast.asPyMethod))
     insert(type: type, name: "__doc__", value: PyProperty.wrap(name: "__doc__", doc: nil, get: PyMethod.getDoc, castSelf: Cast.asPyMethod))
-
-
-
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyMethod.isEqual(_:), castSelf: Cast.asPyMethod))
     insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyMethod.isNotEqual(_:), castSelf: Cast.asPyMethod))
     insert(type: type, name: "__lt__", value: PyBuiltinFunction.wrap(name: "__lt__", doc: nil, fn: PyMethod.isLess(_:), castSelf: Cast.asPyMethod))
@@ -1063,12 +999,12 @@ internal enum FillTypes {
     insert(type: type, name: "__call__", value: PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyMethod.call(args:kwargs:), castSelf: Cast.asPyMethod))
   }
 
-  // MARK: - Module
+  // MARK: - module
 
   internal static func module(_ type: PyType) {
     type.setBuiltinTypeDoc(PyModule.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyModule)
 
@@ -1078,7 +1014,6 @@ internal enum FillTypes {
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyModule.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyModule.pyInit(zelf:args:kwargs:)))
 
-
     insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyModule.repr, castSelf: Cast.asPyModule))
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyModule.getAttribute(name:), castSelf: Cast.asPyModule))
     insert(type: type, name: "__setattr__", value: PyBuiltinFunction.wrap(name: "__setattr__", doc: nil, fn: PyModule.setAttribute(name:value:), castSelf: Cast.asPyModule))
@@ -1086,19 +1021,18 @@ internal enum FillTypes {
     insert(type: type, name: "__dir__", value: PyBuiltinFunction.wrap(name: "__dir__", doc: nil, fn: PyModule.dir, castSelf: Cast.asPyModule))
   }
 
-  // MARK: - Namespace
+  // MARK: - types.SimpleNamespace
 
-  internal static func simpleNamespace(_ type: PyType) {
+  internal static func namespace(_ type: PyType) {
     type.setBuiltinTypeDoc(PyNamespace.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyNamespace)
 
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNamespace.getDict, castSelf: Cast.asPyNamespace))
 
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNamespace.pyInit(zelf:args:kwargs:)))
-
 
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyNamespace.isEqual(_:), castSelf: Cast.asPyNamespace))
     insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyNamespace.isNotEqual(_:), castSelf: Cast.asPyNamespace))
@@ -1112,7 +1046,7 @@ internal enum FillTypes {
     insert(type: type, name: "__delattr__", value: PyBuiltinFunction.wrap(name: "__delattr__", doc: nil, fn: PyNamespace.delAttribute(name:), castSelf: Cast.asPyNamespace))
   }
 
-  // MARK: - None
+  // MARK: - NoneType
 
   internal static func none(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
@@ -1123,13 +1057,12 @@ internal enum FillTypes {
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyNone.pyNew(type:args:kwargs:)))
 
-
     insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyNone.repr, castSelf: Cast.asPyNone))
     insert(type: type, name: "__bool__", value: PyBuiltinFunction.wrap(name: "__bool__", doc: nil, fn: PyNone.asBool, castSelf: Cast.asPyNone))
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyNone.getAttribute(name:), castSelf: Cast.asPyNone))
   }
 
-  // MARK: - NotImplemented
+  // MARK: - NotImplementedType
 
   internal static func notImplemented(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
@@ -1140,16 +1073,15 @@ internal enum FillTypes {
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyNotImplemented.pyNew(type:args:kwargs:)))
 
-
     insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyNotImplemented.repr, castSelf: Cast.asPyNotImplemented))
   }
 
-  // MARK: - Property
+  // MARK: - property
 
   internal static func property(_ type: PyType) {
     type.setBuiltinTypeDoc(PyProperty.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyProperty)
 
@@ -1161,7 +1093,6 @@ internal enum FillTypes {
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyProperty.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyProperty.pyInit(zelf:args:kwargs:)))
 
-
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyProperty.getAttribute(name:), castSelf: Cast.asPyProperty))
     insert(type: type, name: "__get__", value: PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyProperty.get(object:type:), castSelf: Cast.asPyProperty))
     insert(type: type, name: "__set__", value: PyBuiltinFunction.wrap(name: "__set__", doc: nil, fn: PyProperty.set(object:value:), castSelf: Cast.asPyProperty))
@@ -1171,7 +1102,7 @@ internal enum FillTypes {
     insert(type: type, name: "deleter", value: PyBuiltinFunction.wrap(name: "deleter", doc: nil, fn: PyProperty.deleter(value:), castSelf: Cast.asPyProperty))
   }
 
-  // MARK: - Range
+  // MARK: - range
 
   internal static func range(_ type: PyType) {
     type.setBuiltinTypeDoc(PyRange.doc)
@@ -1184,7 +1115,6 @@ internal enum FillTypes {
     insert(type: type, name: "step", value: PyProperty.wrap(name: "step", doc: nil, get: PyRange.getStep, castSelf: Cast.asPyRange))
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyRange.pyNew(type:args:kwargs:)))
-
 
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyRange.isEqual(_:), castSelf: Cast.asPyRange))
     insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyRange.isNotEqual(_:), castSelf: Cast.asPyRange))
@@ -1205,9 +1135,9 @@ internal enum FillTypes {
     insert(type: type, name: "index", value: PyBuiltinFunction.wrap(name: "index", doc: nil, fn: PyRange.index(of:), castSelf: Cast.asPyRange))
   }
 
-  // MARK: - RangeIterator
+  // MARK: - range_iterator
 
-  internal static func range_iterator(_ type: PyType) {
+  internal static func rangeIterator(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setLayout(.PyRangeIterator)
@@ -1216,18 +1146,17 @@ internal enum FillTypes {
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyRangeIterator.pyNew(type:args:kwargs:)))
 
-
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyRangeIterator.getAttribute(name:), castSelf: Cast.asPyRangeIterator))
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyRangeIterator.iter, castSelf: Cast.asPyRangeIterator))
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyRangeIterator.next, castSelf: Cast.asPyRangeIterator))
   }
 
-  // MARK: - Reversed
+  // MARK: - reversed
 
   internal static func reversed(_ type: PyType) {
     type.setBuiltinTypeDoc(PyReversed.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyReversed)
 
@@ -1235,18 +1164,17 @@ internal enum FillTypes {
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyReversed.pyNew(type:args:kwargs:)))
 
-
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyReversed.getAttribute(name:), castSelf: Cast.asPyReversed))
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyReversed.iter, castSelf: Cast.asPyReversed))
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyReversed.next, castSelf: Cast.asPyReversed))
   }
 
-  // MARK: - Set
+  // MARK: - set
 
   internal static func set(_ type: PyType) {
     type.setBuiltinTypeDoc(PySet.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PySet)
 
@@ -1254,7 +1182,6 @@ internal enum FillTypes {
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySet.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySet.pyInit(zelf:args:kwargs:)))
-
 
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PySet.isEqual(_:), castSelf: Cast.asPySet))
     insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PySet.isNotEqual(_:), castSelf: Cast.asPySet))
@@ -1292,16 +1219,15 @@ internal enum FillTypes {
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PySet.iter, castSelf: Cast.asPySet))
   }
 
-  // MARK: - SetIterator
+  // MARK: - set_iterator
 
-  internal static func set_iterator(_ type: PyType) {
+  internal static func setIterator(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PySetIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySetIterator.getClass, castSelf: Cast.asPySetIterator))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySetIterator.pyNew(type:args:kwargs:)))
 
@@ -1310,7 +1236,7 @@ internal enum FillTypes {
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PySetIterator.next, castSelf: Cast.asPySetIterator))
   }
 
-  // MARK: - Slice
+  // MARK: - slice
 
   internal static func slice(_ type: PyType) {
     type.setBuiltinTypeDoc(PySlice.doc)
@@ -1325,7 +1251,6 @@ internal enum FillTypes {
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySlice.pyNew(type:args:kwargs:)))
 
-
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PySlice.isEqual(_:), castSelf: Cast.asPySlice))
     insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PySlice.isNotEqual(_:), castSelf: Cast.asPySlice))
     insert(type: type, name: "__lt__", value: PyBuiltinFunction.wrap(name: "__lt__", doc: nil, fn: PySlice.isLess(_:), castSelf: Cast.asPySlice))
@@ -1338,12 +1263,12 @@ internal enum FillTypes {
     insert(type: type, name: "indices", value: PyBuiltinFunction.wrap(name: "indices", doc: nil, fn: PySlice.indicesInSequence(length:), castSelf: Cast.asPySlice))
   }
 
-  // MARK: - StaticMethod
+  // MARK: - staticmethod
 
-  internal static func staticmethod(_ type: PyType) {
+  internal static func staticMethod(_ type: PyType) {
     type.setBuiltinTypeDoc(PyStaticMethod.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyStaticMethod)
 
@@ -1352,24 +1277,22 @@ internal enum FillTypes {
     insert(type: type, name: "__func__", value: PyProperty.wrap(name: "__func__", doc: nil, get: PyStaticMethod.getFunc, castSelf: Cast.asPyStaticMethod))
 
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStaticMethod.pyInit(zelf:args:kwargs:)))
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyStaticMethod.pyNew(type:args:kwargs:)))
 
     insert(type: type, name: "__get__", value: PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyStaticMethod.get(object:type:), castSelf: Cast.asPyStaticMethod))
     insert(type: type, name: "__isabstractmethod__", value: PyBuiltinFunction.wrap(name: "__isabstractmethod__", doc: nil, fn: PyStaticMethod.isAbstractMethod, castSelf: Cast.asPyStaticMethod))
   }
 
-  // MARK: - String
+  // MARK: - str
 
-  internal static func str(_ type: PyType) {
+  internal static func string(_ type: PyType) {
     type.setBuiltinTypeDoc(PyString.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
     type.setFlag(.unicodeSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setLayout(.PyString)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyString.getClass, castSelf: Cast.asPyString))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyString.pyNew(type:args:kwargs:)))
 
@@ -1432,16 +1355,15 @@ internal enum FillTypes {
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyString.iter, castSelf: Cast.asPyString))
   }
 
-  // MARK: - StringIterator
+  // MARK: - str_iterator
 
-  internal static func str_iterator(_ type: PyType) {
+  internal static func stringIterator(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyStringIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStringIterator.getClass, castSelf: Cast.asPyStringIterator))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyStringIterator.pyNew(type:args:kwargs:)))
 
@@ -1450,12 +1372,12 @@ internal enum FillTypes {
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyStringIterator.next, castSelf: Cast.asPyStringIterator))
   }
 
-  // MARK: - Super
+  // MARK: - super
 
-  internal static func `super`(_ type: PyType) {
+  internal static func super(_ type: PyType) {
     type.setBuiltinTypeDoc(PySuper.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PySuper)
 
@@ -1464,7 +1386,6 @@ internal enum FillTypes {
     insert(type: type, name: "__self_class__", value: PyProperty.wrap(name: "__self_class__", doc: nil, get: PySuper.getSelfClass, castSelf: Cast.asPySuper))
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySuper.pyNew(type:args:kwargs:)))
-
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySuper.pyInit(zelf:args:kwargs:)))
 
     insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PySuper.repr, castSelf: Cast.asPySuper))
@@ -1476,15 +1397,12 @@ internal enum FillTypes {
 
   internal static func textFile(_ type: PyType) {
     type.setBuiltinTypeDoc(PyTextFile.doc)
+    type.setFlag(.hasFinalize)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setFlag(.hasFinalize)
     type.setLayout(.PyTextFile)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTextFile.getClass, castSelf: Cast.asPyTextFile))
-
-
-
     insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyTextFile.repr, castSelf: Cast.asPyTextFile))
     insert(type: type, name: "readable", value: PyBuiltinFunction.wrap(name: "readable", doc: nil, fn: PyTextFile.isReadable, castSelf: Cast.asPyTextFile))
     insert(type: type, name: "read", value: PyBuiltinFunction.wrap(name: "read", doc: nil, fn: PyTextFile.read(size:), castSelf: Cast.asPyTextFile))
@@ -1497,20 +1415,19 @@ internal enum FillTypes {
     insert(type: type, name: "__exit__", value: PyBuiltinFunction.wrap(name: "__exit__", doc: nil, fn: PyTextFile.exit(exceptionType:exception:traceback:), castSelf: Cast.asPyTextFile))
   }
 
-  // MARK: - Tuple
+  // MARK: - tuple
 
   internal static func tuple(_ type: PyType) {
     type.setBuiltinTypeDoc(PyTuple.doc)
+    type.setFlag(.tupleSubclass)
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
-    type.setFlag(.tupleSubclass)
     type.setLayout(.PyTuple)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTuple.getClass, castSelf: Cast.asPyTuple))
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyTuple.pyNew(type:args:kwargs:)))
-
 
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyTuple.isEqual(_:), castSelf: Cast.asPyTuple))
     insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyTuple.isNotEqual(_:), castSelf: Cast.asPyTuple))
@@ -1532,9 +1449,9 @@ internal enum FillTypes {
     insert(type: type, name: "__rmul__", value: PyBuiltinFunction.wrap(name: "__rmul__", doc: nil, fn: PyTuple.rmul(_:), castSelf: Cast.asPyTuple))
   }
 
-  // MARK: - TupleIterator
+  // MARK: - tuple_iterator
 
-  internal static func tuple_iterator(_ type: PyType) {
+  internal static func tupleIterator(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
@@ -1544,20 +1461,19 @@ internal enum FillTypes {
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyTupleIterator.pyNew(type:args:kwargs:)))
 
-
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyTupleIterator.getAttribute(name:), castSelf: Cast.asPyTupleIterator))
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyTupleIterator.iter, castSelf: Cast.asPyTupleIterator))
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyTupleIterator.next, castSelf: Cast.asPyTupleIterator))
   }
 
-  // MARK: - Type
+  // MARK: - type
 
   internal static func type(_ type: PyType) {
     type.setBuiltinTypeDoc(PyType.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.typeSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyType)
 
     insert(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyType.getName, set: PyType.setName, castSelf: Cast.asPyType))
@@ -1573,7 +1489,6 @@ internal enum FillTypes {
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyType.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyType.pyInit(zelf:args:kwargs:)))
 
-
     insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyType.repr, castSelf: Cast.asPyType))
     insert(type: type, name: "__subclasscheck__", value: PyBuiltinFunction.wrap(name: "__subclasscheck__", doc: nil, fn: PyType.isSubtype(of:), castSelf: Cast.asPyType))
     insert(type: type, name: "__instancecheck__", value: PyBuiltinFunction.wrap(name: "__instancecheck__", doc: nil, fn: PyType.isType(of:), castSelf: Cast.asPyType))
@@ -1585,19 +1500,18 @@ internal enum FillTypes {
     insert(type: type, name: "__call__", value: PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyType.call(args:kwargs:), castSelf: Cast.asPyType))
   }
 
-  // MARK: - Zip
+  // MARK: - zip
 
   internal static func zip(_ type: PyType) {
     type.setBuiltinTypeDoc(PyZip.doc)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setLayout(.PyZip)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyZip.getClass, castSelf: Cast.asPyZip))
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyZip.pyNew(type:args:kwargs:)))
-
 
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyZip.getAttribute(name:), castSelf: Cast.asPyZip))
     insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyZip.iter, castSelf: Cast.asPyZip))
@@ -1608,67 +1522,61 @@ internal enum FillTypes {
 
   internal static func arithmeticError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyArithmeticError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyArithmeticError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyArithmeticError.getClass, castSelf: Cast.asPyArithmeticError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyArithmeticError.getDict, castSelf: Cast.asPyArithmeticError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyArithmeticError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyArithmeticError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - AssertionError
 
   internal static func assertionError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyAssertionError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyAssertionError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyAssertionError.getClass, castSelf: Cast.asPyAssertionError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyAssertionError.getDict, castSelf: Cast.asPyAssertionError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyAssertionError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyAssertionError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - AttributeError
 
   internal static func attributeError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyAttributeError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyAttributeError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyAttributeError.getClass, castSelf: Cast.asPyAttributeError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyAttributeError.getDict, castSelf: Cast.asPyAttributeError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyAttributeError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyAttributeError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - BaseException
 
   internal static func baseException(_ type: PyType) {
     type.setBuiltinTypeDoc(PyBaseException.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyBaseException)
 
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBaseException.getDict, castSelf: Cast.asPyBaseException))
@@ -1678,7 +1586,6 @@ internal enum FillTypes {
     insert(type: type, name: "__cause__", value: PyProperty.wrap(name: "__cause__", doc: nil, get: PyBaseException.getCause, set: PyBaseException.setCause, castSelf: Cast.asPyBaseException))
     insert(type: type, name: "__context__", value: PyProperty.wrap(name: "__context__", doc: nil, get: PyBaseException.getContext, set: PyBaseException.setContext, castSelf: Cast.asPyBaseException))
     insert(type: type, name: "__suppress_context__", value: PyProperty.wrap(name: "__suppress_context__", doc: nil, get: PyBaseException.getSuppressContext, set: PyBaseException.setSuppressContext, castSelf: Cast.asPyBaseException))
-
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBaseException.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBaseException.pyInit(zelf:args:kwargs:)))
@@ -1694,1139 +1601,1021 @@ internal enum FillTypes {
 
   internal static func blockingIOError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyBlockingIOError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyBlockingIOError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBlockingIOError.getClass, castSelf: Cast.asPyBlockingIOError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBlockingIOError.getDict, castSelf: Cast.asPyBlockingIOError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBlockingIOError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBlockingIOError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - BrokenPipeError
 
   internal static func brokenPipeError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyBrokenPipeError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyBrokenPipeError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBrokenPipeError.getClass, castSelf: Cast.asPyBrokenPipeError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBrokenPipeError.getDict, castSelf: Cast.asPyBrokenPipeError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBrokenPipeError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBrokenPipeError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - BufferError
 
   internal static func bufferError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyBufferError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyBufferError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBufferError.getClass, castSelf: Cast.asPyBufferError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBufferError.getDict, castSelf: Cast.asPyBufferError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBufferError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBufferError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - BytesWarning
 
   internal static func bytesWarning(_ type: PyType) {
     type.setBuiltinTypeDoc(PyBytesWarning.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyBytesWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBytesWarning.getClass, castSelf: Cast.asPyBytesWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBytesWarning.getDict, castSelf: Cast.asPyBytesWarning))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBytesWarning.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBytesWarning.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - ChildProcessError
 
   internal static func childProcessError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyChildProcessError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyChildProcessError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyChildProcessError.getClass, castSelf: Cast.asPyChildProcessError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyChildProcessError.getDict, castSelf: Cast.asPyChildProcessError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyChildProcessError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyChildProcessError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - ConnectionAbortedError
 
   internal static func connectionAbortedError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyConnectionAbortedError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyConnectionAbortedError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionAbortedError.getClass, castSelf: Cast.asPyConnectionAbortedError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionAbortedError.getDict, castSelf: Cast.asPyConnectionAbortedError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyConnectionAbortedError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionAbortedError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - ConnectionError
 
   internal static func connectionError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyConnectionError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyConnectionError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionError.getClass, castSelf: Cast.asPyConnectionError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionError.getDict, castSelf: Cast.asPyConnectionError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyConnectionError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - ConnectionRefusedError
 
   internal static func connectionRefusedError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyConnectionRefusedError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyConnectionRefusedError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionRefusedError.getClass, castSelf: Cast.asPyConnectionRefusedError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionRefusedError.getDict, castSelf: Cast.asPyConnectionRefusedError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyConnectionRefusedError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionRefusedError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - ConnectionResetError
 
   internal static func connectionResetError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyConnectionResetError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyConnectionResetError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionResetError.getClass, castSelf: Cast.asPyConnectionResetError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionResetError.getDict, castSelf: Cast.asPyConnectionResetError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyConnectionResetError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionResetError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - DeprecationWarning
 
   internal static func deprecationWarning(_ type: PyType) {
     type.setBuiltinTypeDoc(PyDeprecationWarning.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyDeprecationWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDeprecationWarning.getClass, castSelf: Cast.asPyDeprecationWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyDeprecationWarning.getDict, castSelf: Cast.asPyDeprecationWarning))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDeprecationWarning.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyDeprecationWarning.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - EOFError
 
-  internal static func eofError(_ type: PyType) {
+  internal static func eOFError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyEOFError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyEOFError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyEOFError.getClass, castSelf: Cast.asPyEOFError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyEOFError.getDict, castSelf: Cast.asPyEOFError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyEOFError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyEOFError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - Exception
 
   internal static func exception(_ type: PyType) {
     type.setBuiltinTypeDoc(PyException.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyException)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyException.getClass, castSelf: Cast.asPyException))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyException.getDict, castSelf: Cast.asPyException))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyException.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyException.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - FileExistsError
 
   internal static func fileExistsError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyFileExistsError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyFileExistsError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFileExistsError.getClass, castSelf: Cast.asPyFileExistsError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFileExistsError.getDict, castSelf: Cast.asPyFileExistsError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFileExistsError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFileExistsError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - FileNotFoundError
 
   internal static func fileNotFoundError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyFileNotFoundError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyFileNotFoundError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFileNotFoundError.getClass, castSelf: Cast.asPyFileNotFoundError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFileNotFoundError.getDict, castSelf: Cast.asPyFileNotFoundError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFileNotFoundError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFileNotFoundError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - FloatingPointError
 
   internal static func floatingPointError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyFloatingPointError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyFloatingPointError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFloatingPointError.getClass, castSelf: Cast.asPyFloatingPointError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFloatingPointError.getDict, castSelf: Cast.asPyFloatingPointError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFloatingPointError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFloatingPointError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - FutureWarning
 
   internal static func futureWarning(_ type: PyType) {
     type.setBuiltinTypeDoc(PyFutureWarning.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyFutureWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFutureWarning.getClass, castSelf: Cast.asPyFutureWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFutureWarning.getDict, castSelf: Cast.asPyFutureWarning))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFutureWarning.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFutureWarning.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - GeneratorExit
 
   internal static func generatorExit(_ type: PyType) {
     type.setBuiltinTypeDoc(PyGeneratorExit.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyGeneratorExit)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyGeneratorExit.getClass, castSelf: Cast.asPyGeneratorExit))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyGeneratorExit.getDict, castSelf: Cast.asPyGeneratorExit))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyGeneratorExit.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyGeneratorExit.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - ImportError
 
   internal static func importError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyImportError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyImportError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyImportError.getClass, castSelf: Cast.asPyImportError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyImportError.getDict, castSelf: Cast.asPyImportError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyImportError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyImportError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - ImportWarning
 
   internal static func importWarning(_ type: PyType) {
     type.setBuiltinTypeDoc(PyImportWarning.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyImportWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyImportWarning.getClass, castSelf: Cast.asPyImportWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyImportWarning.getDict, castSelf: Cast.asPyImportWarning))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyImportWarning.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyImportWarning.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - IndentationError
 
   internal static func indentationError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyIndentationError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyIndentationError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIndentationError.getClass, castSelf: Cast.asPyIndentationError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyIndentationError.getDict, castSelf: Cast.asPyIndentationError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyIndentationError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyIndentationError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - IndexError
 
   internal static func indexError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyIndexError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyIndexError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIndexError.getClass, castSelf: Cast.asPyIndexError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyIndexError.getDict, castSelf: Cast.asPyIndexError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyIndexError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyIndexError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - InterruptedError
 
   internal static func interruptedError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyInterruptedError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyInterruptedError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyInterruptedError.getClass, castSelf: Cast.asPyInterruptedError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyInterruptedError.getDict, castSelf: Cast.asPyInterruptedError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyInterruptedError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyInterruptedError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - IsADirectoryError
 
   internal static func isADirectoryError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyIsADirectoryError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyIsADirectoryError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIsADirectoryError.getClass, castSelf: Cast.asPyIsADirectoryError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyIsADirectoryError.getDict, castSelf: Cast.asPyIsADirectoryError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyIsADirectoryError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyIsADirectoryError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - KeyError
 
   internal static func keyError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyKeyError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyKeyError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyKeyError.getClass, castSelf: Cast.asPyKeyError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyKeyError.getDict, castSelf: Cast.asPyKeyError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyKeyError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyKeyError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - KeyboardInterrupt
 
   internal static func keyboardInterrupt(_ type: PyType) {
     type.setBuiltinTypeDoc(PyKeyboardInterrupt.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyKeyboardInterrupt)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyKeyboardInterrupt.getClass, castSelf: Cast.asPyKeyboardInterrupt))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyKeyboardInterrupt.getDict, castSelf: Cast.asPyKeyboardInterrupt))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyKeyboardInterrupt.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyKeyboardInterrupt.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - LookupError
 
   internal static func lookupError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyLookupError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyLookupError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyLookupError.getClass, castSelf: Cast.asPyLookupError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyLookupError.getDict, castSelf: Cast.asPyLookupError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyLookupError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyLookupError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - MemoryError
 
   internal static func memoryError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyMemoryError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyMemoryError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMemoryError.getClass, castSelf: Cast.asPyMemoryError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyMemoryError.getDict, castSelf: Cast.asPyMemoryError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyMemoryError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyMemoryError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - ModuleNotFoundError
 
   internal static func moduleNotFoundError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyModuleNotFoundError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyModuleNotFoundError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyModuleNotFoundError.getClass, castSelf: Cast.asPyModuleNotFoundError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyModuleNotFoundError.getDict, castSelf: Cast.asPyModuleNotFoundError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyModuleNotFoundError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyModuleNotFoundError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - NameError
 
   internal static func nameError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyNameError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyNameError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNameError.getClass, castSelf: Cast.asPyNameError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNameError.getDict, castSelf: Cast.asPyNameError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyNameError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNameError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - NotADirectoryError
 
   internal static func notADirectoryError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyNotADirectoryError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyNotADirectoryError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNotADirectoryError.getClass, castSelf: Cast.asPyNotADirectoryError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNotADirectoryError.getDict, castSelf: Cast.asPyNotADirectoryError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyNotADirectoryError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNotADirectoryError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - NotImplementedError
 
   internal static func notImplementedError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyNotImplementedError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyNotImplementedError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNotImplementedError.getClass, castSelf: Cast.asPyNotImplementedError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNotImplementedError.getDict, castSelf: Cast.asPyNotImplementedError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyNotImplementedError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNotImplementedError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - OSError
 
-  internal static func osError(_ type: PyType) {
+  internal static func oSError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyOSError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyOSError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyOSError.getClass, castSelf: Cast.asPyOSError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyOSError.getDict, castSelf: Cast.asPyOSError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyOSError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyOSError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - OverflowError
 
   internal static func overflowError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyOverflowError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyOverflowError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyOverflowError.getClass, castSelf: Cast.asPyOverflowError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyOverflowError.getDict, castSelf: Cast.asPyOverflowError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyOverflowError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyOverflowError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - PendingDeprecationWarning
 
   internal static func pendingDeprecationWarning(_ type: PyType) {
     type.setBuiltinTypeDoc(PyPendingDeprecationWarning.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyPendingDeprecationWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyPendingDeprecationWarning.getClass, castSelf: Cast.asPyPendingDeprecationWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyPendingDeprecationWarning.getDict, castSelf: Cast.asPyPendingDeprecationWarning))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyPendingDeprecationWarning.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyPendingDeprecationWarning.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - PermissionError
 
   internal static func permissionError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyPermissionError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyPermissionError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyPermissionError.getClass, castSelf: Cast.asPyPermissionError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyPermissionError.getDict, castSelf: Cast.asPyPermissionError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyPermissionError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyPermissionError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - ProcessLookupError
 
   internal static func processLookupError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyProcessLookupError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyProcessLookupError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyProcessLookupError.getClass, castSelf: Cast.asPyProcessLookupError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyProcessLookupError.getDict, castSelf: Cast.asPyProcessLookupError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyProcessLookupError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyProcessLookupError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - RecursionError
 
   internal static func recursionError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyRecursionError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyRecursionError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRecursionError.getClass, castSelf: Cast.asPyRecursionError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyRecursionError.getDict, castSelf: Cast.asPyRecursionError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyRecursionError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyRecursionError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - ReferenceError
 
   internal static func referenceError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyReferenceError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyReferenceError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyReferenceError.getClass, castSelf: Cast.asPyReferenceError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyReferenceError.getDict, castSelf: Cast.asPyReferenceError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyReferenceError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyReferenceError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - ResourceWarning
 
   internal static func resourceWarning(_ type: PyType) {
     type.setBuiltinTypeDoc(PyResourceWarning.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyResourceWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyResourceWarning.getClass, castSelf: Cast.asPyResourceWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyResourceWarning.getDict, castSelf: Cast.asPyResourceWarning))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyResourceWarning.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyResourceWarning.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - RuntimeError
 
   internal static func runtimeError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyRuntimeError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyRuntimeError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRuntimeError.getClass, castSelf: Cast.asPyRuntimeError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyRuntimeError.getDict, castSelf: Cast.asPyRuntimeError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyRuntimeError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyRuntimeError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - RuntimeWarning
 
   internal static func runtimeWarning(_ type: PyType) {
     type.setBuiltinTypeDoc(PyRuntimeWarning.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyRuntimeWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRuntimeWarning.getClass, castSelf: Cast.asPyRuntimeWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyRuntimeWarning.getDict, castSelf: Cast.asPyRuntimeWarning))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyRuntimeWarning.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyRuntimeWarning.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - StopAsyncIteration
 
   internal static func stopAsyncIteration(_ type: PyType) {
     type.setBuiltinTypeDoc(PyStopAsyncIteration.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyStopAsyncIteration)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStopAsyncIteration.getClass, castSelf: Cast.asPyStopAsyncIteration))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyStopAsyncIteration.getDict, castSelf: Cast.asPyStopAsyncIteration))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyStopAsyncIteration.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStopAsyncIteration.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - StopIteration
 
   internal static func stopIteration(_ type: PyType) {
     type.setBuiltinTypeDoc(PyStopIteration.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyStopIteration)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStopIteration.getClass, castSelf: Cast.asPyStopIteration))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyStopIteration.getDict, castSelf: Cast.asPyStopIteration))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyStopIteration.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStopIteration.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - SyntaxError
 
   internal static func syntaxError(_ type: PyType) {
     type.setBuiltinTypeDoc(PySyntaxError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PySyntaxError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySyntaxError.getClass, castSelf: Cast.asPySyntaxError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySyntaxError.getDict, castSelf: Cast.asPySyntaxError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySyntaxError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySyntaxError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - SyntaxWarning
 
   internal static func syntaxWarning(_ type: PyType) {
     type.setBuiltinTypeDoc(PySyntaxWarning.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PySyntaxWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySyntaxWarning.getClass, castSelf: Cast.asPySyntaxWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySyntaxWarning.getDict, castSelf: Cast.asPySyntaxWarning))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySyntaxWarning.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySyntaxWarning.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - SystemError
 
   internal static func systemError(_ type: PyType) {
     type.setBuiltinTypeDoc(PySystemError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PySystemError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySystemError.getClass, castSelf: Cast.asPySystemError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySystemError.getDict, castSelf: Cast.asPySystemError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySystemError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySystemError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - SystemExit
 
   internal static func systemExit(_ type: PyType) {
     type.setBuiltinTypeDoc(PySystemExit.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PySystemExit)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySystemExit.getClass, castSelf: Cast.asPySystemExit))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySystemExit.getDict, castSelf: Cast.asPySystemExit))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySystemExit.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySystemExit.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - TabError
 
   internal static func tabError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyTabError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyTabError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTabError.getClass, castSelf: Cast.asPyTabError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyTabError.getDict, castSelf: Cast.asPyTabError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyTabError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyTabError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - TimeoutError
 
   internal static func timeoutError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyTimeoutError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyTimeoutError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTimeoutError.getClass, castSelf: Cast.asPyTimeoutError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyTimeoutError.getDict, castSelf: Cast.asPyTimeoutError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyTimeoutError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyTimeoutError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - TypeError
 
   internal static func typeError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyTypeError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyTypeError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTypeError.getClass, castSelf: Cast.asPyTypeError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyTypeError.getDict, castSelf: Cast.asPyTypeError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyTypeError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyTypeError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - UnboundLocalError
 
   internal static func unboundLocalError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyUnboundLocalError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyUnboundLocalError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnboundLocalError.getClass, castSelf: Cast.asPyUnboundLocalError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnboundLocalError.getDict, castSelf: Cast.asPyUnboundLocalError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyUnboundLocalError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnboundLocalError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - UnicodeDecodeError
 
   internal static func unicodeDecodeError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyUnicodeDecodeError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyUnicodeDecodeError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeDecodeError.getClass, castSelf: Cast.asPyUnicodeDecodeError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeDecodeError.getDict, castSelf: Cast.asPyUnicodeDecodeError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyUnicodeDecodeError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeDecodeError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - UnicodeEncodeError
 
   internal static func unicodeEncodeError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyUnicodeEncodeError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyUnicodeEncodeError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeEncodeError.getClass, castSelf: Cast.asPyUnicodeEncodeError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeEncodeError.getDict, castSelf: Cast.asPyUnicodeEncodeError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyUnicodeEncodeError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeEncodeError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - UnicodeError
 
   internal static func unicodeError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyUnicodeError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyUnicodeError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeError.getClass, castSelf: Cast.asPyUnicodeError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeError.getDict, castSelf: Cast.asPyUnicodeError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyUnicodeError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - UnicodeTranslateError
 
   internal static func unicodeTranslateError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyUnicodeTranslateError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyUnicodeTranslateError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeTranslateError.getClass, castSelf: Cast.asPyUnicodeTranslateError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeTranslateError.getDict, castSelf: Cast.asPyUnicodeTranslateError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyUnicodeTranslateError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeTranslateError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - UnicodeWarning
 
   internal static func unicodeWarning(_ type: PyType) {
     type.setBuiltinTypeDoc(PyUnicodeWarning.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyUnicodeWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeWarning.getClass, castSelf: Cast.asPyUnicodeWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeWarning.getDict, castSelf: Cast.asPyUnicodeWarning))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyUnicodeWarning.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeWarning.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - UserWarning
 
   internal static func userWarning(_ type: PyType) {
     type.setBuiltinTypeDoc(PyUserWarning.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyUserWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUserWarning.getClass, castSelf: Cast.asPyUserWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUserWarning.getDict, castSelf: Cast.asPyUserWarning))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyUserWarning.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUserWarning.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - ValueError
 
   internal static func valueError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyValueError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyValueError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyValueError.getClass, castSelf: Cast.asPyValueError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyValueError.getDict, castSelf: Cast.asPyValueError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyValueError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyValueError.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - Warning
 
   internal static func warning(_ type: PyType) {
     type.setBuiltinTypeDoc(PyWarning.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyWarning.getClass, castSelf: Cast.asPyWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyWarning.getDict, castSelf: Cast.asPyWarning))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyWarning.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyWarning.pyInit(zelf:args:kwargs:)))
-
   }
 
   // MARK: - ZeroDivisionError
 
   internal static func zeroDivisionError(_ type: PyType) {
     type.setBuiltinTypeDoc(PyZeroDivisionError.doc)
-    type.setFlag(.default)
-    type.setFlag(.baseType)
-    type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setFlag(.baseType)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyZeroDivisionError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyZeroDivisionError.getClass, castSelf: Cast.asPyZeroDivisionError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyZeroDivisionError.getDict, castSelf: Cast.asPyZeroDivisionError))
 
-
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyZeroDivisionError.pyNew(type:args:kwargs:)))
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyZeroDivisionError.pyInit(zelf:args:kwargs:)))
-
   }
+
 }
+
