@@ -85,12 +85,11 @@ private func insert(type: PyType, name: String, value: PyObject) {
 
       static_doc_property = prop.swift_static_doc_property
       doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
-      # TODO: ^^^
 
       if not swift_setter_fn:
-        print(f'    insert(type: type, name: "{python_name}", value: PyProperty.wrap(name: "{python_name}", doc: nil, get: {swift_type}.{swift_getter_fn}, castSelf: {castSelf}))')
+        print(f'    insert(type: type, name: "{python_name}", value: PyProperty.wrap(name: "{python_name}", doc: {doc}, get: {swift_type}.{swift_getter_fn}, castSelf: {castSelf}))')
       else:
-        print(f'    insert(type: type, name: "{python_name}", value: PyProperty.wrap(name: "{python_name}", doc: nil, get: {swift_type}.{swift_getter_fn}, set: {swift_type}.{swift_setter_fn}, castSelf: {castSelf}))')
+        print(f'    insert(type: type, name: "{python_name}", value: PyProperty.wrap(name: "{python_name}", doc: {doc}, get: {swift_type}.{swift_getter_fn}, set: {swift_type}.{swift_setter_fn}, castSelf: {castSelf}))')
 
     if t.properties and t.static_functions:
       print()
@@ -106,14 +105,13 @@ private func insert(type: PyType, name: String, value: PyObject) {
 
       static_doc_property = fn.swift_static_doc_property
       doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
-      # TODO: ^^^
 
       if python_name == '__new__':
-        print(f'    insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: {swift_type}.{swift_selector}))')
+        print(f'    insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: {doc}, fn: {swift_type}.{swift_selector}))')
       elif python_name == '__init__':
-        print(f'    insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: {swift_type}.{swift_selector}))')
+        print(f'    insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: {doc}, fn: {swift_type}.{swift_selector}))')
       else:
-        print(f'    insert(type: type, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: nil, fn: {swift_type}.{swift_selector}))')
+        print(f'    insert(type: type, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: {doc}, fn: {swift_type}.{swift_selector}))')
 
     if t.static_functions and t.methods:
       print()
@@ -129,9 +127,8 @@ private func insert(type: PyType, name: String, value: PyObject) {
 
       static_doc_property = meth.swift_static_doc_property
       doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
-      # TODO: ^^^
 
-      print(f'    insert(type: type, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: nil, fn: {swift_type}.{swift_selector}, castSelf: {castSelf}))')
+      print(f'    insert(type: type, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: {doc}, fn: {swift_type}.{swift_selector}, castSelf: {castSelf}))')
 
     print('  }')
     print()
