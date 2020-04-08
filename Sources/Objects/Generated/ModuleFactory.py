@@ -1,17 +1,17 @@
 from Data.modules import get_modules
+from Common.strings import generated_warning
 
 # ----
 # Main
 # ----
 
 if __name__ == '__main__':
-  print('''\
+  print(f'''\
 // swiftlint:disable file_length
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
+{generated_warning}
 
 // ModuleFactory is based on pre-specialization (partial application)
 // of function to module object and then wrapping remaining function.

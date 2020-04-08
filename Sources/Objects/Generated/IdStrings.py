@@ -1,4 +1,6 @@
-# Use this command: grep -r "_Py_IDENTIFIER".
+from Common.strings import generated_warning
+
+# Use: grep -r "_Py_IDENTIFIER".
 # We also added unary, binary and ternary operators.
 ids = [
   '__abs__',
@@ -207,11 +209,10 @@ def escaped(s):
   return '`throw`' if id == 'throw' else id
 
 if __name__ == '__main__':
-  print('''\
+  print(f'''\
 // swiftlint:disable file_length
 
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
+{generated_warning}
 
 /// Predefined commonly used `__dict__` keys.
 /// Similiar to `_Py_IDENTIFIER` in `CPython`.
@@ -224,29 +225,29 @@ if __name__ == '__main__':
 /// 'it will be inlined anyway' and 'hello cache, my old friend'.
 ///
 /// We also need to support cleaning for when `Py` gets destroyed.
-public struct IdString {
+public struct IdString {{
 
   internal let value: PyString
   internal let hash: PyHash
 
-  fileprivate init(value: String) {
+  fileprivate init(value: String) {{
     self.value = Py.newString(value)
     self.hash = self.value.hashRaw()
-  }
+  }}
 
   private static var _impl: IdStringImpl?
-  private static var impl: IdStringImpl {
-    if let i = Self._impl { return i }
+  private static var impl: IdStringImpl {{
+    if let i = Self._impl {{ return i }}
 
     let i = IdStringImpl()
     Self._impl = i
     return i
-  }
+  }}
 
   /// Clean when `Py` gets destroyed.
-  internal static func gcClean() {
+  internal static func gcClean() {{
     Self._impl = nil
-  }
+  }}
 ''')
 
   for id in ids:

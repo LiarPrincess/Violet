@@ -11,7 +11,6 @@
 // https://docs.python.org/3.7/library/exceptions.html
 // https://docs.python.org/3.7/c-api/exceptions.html
 
-
 public final class BuiltinErrorTypes {
   public let baseException: PyType
   public let systemExit: PyType

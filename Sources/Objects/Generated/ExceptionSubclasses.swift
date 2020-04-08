@@ -12,7 +12,6 @@
 // https://docs.python.org/3.7/library/exceptions.html
 // https://docs.python.org/3.7/c-api/exceptions.html
 
-
 // MARK: - SystemExit
 
 // sourcery: pyerrortype = SystemExit, default, baseType, hasGC, baseExceptionSubclass
