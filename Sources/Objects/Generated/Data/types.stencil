@@ -1,13 +1,36 @@
 # TODO: Add 'Object'
-# TODO: Add Errors
 
-{% for type in types.classes|annotated:"pytype" %}
-{% set python_name %}{{ type.annotations.pytype }}{% endset %}
+{# ============== #}
+{# === Macros === #}
+{# ============== #}
+
+{% macro start_new_type marker python_name swift_name %}
 ############
 # {{ python_name }}
 ############
 
-# Type|python_type|swift_type
-Type|{{ python_name }}|{{ type.name }}
+# {{ marker }}|python_type|swift_type
+{{ marker }}|{{ python_name }}|{{ type.name }}
+{% endmacro %}
 
+{# ============= #}
+{# === Types === #}
+{# ============= #}
+
+{% for type in types.classes|annotated:"pytype" %}
+{% set python_name %}{{ type.annotations.pytype }}{% endset %}
+{% set swift_name %}{{ type.name }}{% endset %}
+
+{% call start_new_type "Type" python_name swift_name %}
+{% endfor %}
+
+{# =================== #}
+{# === Error types === #}
+{# =================== #}
+
+{% for type in types.classes|annotated:"pyerrortype" %}
+{% set python_name %}{{ type.annotations.pyerrortype }}{% endset %}
+{% set swift_name %}{{ type.name }}{% endset %}
+
+{% call start_new_type "ErrorType" python_name swift_name %}
 {% endfor %}

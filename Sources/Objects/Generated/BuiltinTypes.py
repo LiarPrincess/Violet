@@ -1,27 +1,8 @@
 from Data.types import get_types
+from Common.builtin_types import get_property_name, get_property_name_escaped
 
-def get_property_name(python_type):
-  if python_type == 'NoneType':
-    return 'none'
-
-  if python_type == 'NotImplementedType':
-    return 'notImplemented'
-
-  if python_type == 'types.SimpleNamespace':
-    return 'simpleNamespace'
-
-  if python_type == 'TextFile':
-    return 'textFile'
-
-  return python_type
-
-def get_property_name_escaped(python_type):
-  property_name = get_property_name(python_type)
-
-  if property_name == 'super':
-    return '`super`'
-
-  return property_name
+all_types = get_types()
+builtin_types = list(filter(lambda t: not t.is_error_type, all_types))
 
 if __name__ == '__main__':
   print('''\
@@ -54,7 +35,7 @@ if __name__ == '__main__':
   # ==================
 
   print('  public let object: PyType')# TODO: Object
-  for t in get_types():
+  for t in builtin_types:
     python_type = t.python_type
     property_name_escaped = get_property_name_escaped(python_type)
     print(f'  public let {property_name_escaped}: PyType')
@@ -78,7 +59,7 @@ if __name__ == '__main__':
     // 'self.bool' has to be last because it uses 'self.int' as base!\
 ''')
 
-  for t in get_types():
+  for t in builtin_types:
     python_type = t.python_type
     swift_type = t.swift_type
     property_name_escaped = get_property_name_escaped(python_type)
@@ -111,7 +92,7 @@ if __name__ == '__main__':
 ''')
 
   print('    FillTypes.object(self.object)') # TODO: Object
-  for t in get_types():
+  for t in builtin_types:
     python_type = t.python_type
     property_name_escaped = get_property_name_escaped(python_type)
     print(f'    FillTypes.{property_name_escaped}(self.{property_name_escaped})')
@@ -129,7 +110,7 @@ if __name__ == '__main__':
 ''')
 
   print('      self.object,') # TODO: Object
-  for t in get_types():
+  for t in builtin_types:
     python_type = t.python_type
     property_name_escaped = get_property_name_escaped(python_type)
     print(f'      self.{property_name_escaped},')

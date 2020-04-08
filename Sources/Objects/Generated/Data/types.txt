@@ -1,6 +1,9 @@
 
 # TODO: Add 'Object'
-# TODO: Add Errors
+
+
+
+
 
 ############
 # bool
@@ -373,3 +376,452 @@ Type|type|PyType
 # Type|python_type|swift_type
 Type|zip|PyZip
 
+
+
+############
+# ArithmeticError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|ArithmeticError|PyArithmeticError
+
+############
+# AssertionError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|AssertionError|PyAssertionError
+
+############
+# AttributeError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|AttributeError|PyAttributeError
+
+############
+# BaseException
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|BaseException|PyBaseException
+
+############
+# BlockingIOError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|BlockingIOError|PyBlockingIOError
+
+############
+# BrokenPipeError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|BrokenPipeError|PyBrokenPipeError
+
+############
+# BufferError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|BufferError|PyBufferError
+
+############
+# BytesWarning
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|BytesWarning|PyBytesWarning
+
+############
+# ChildProcessError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|ChildProcessError|PyChildProcessError
+
+############
+# ConnectionAbortedError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|ConnectionAbortedError|PyConnectionAbortedError
+
+############
+# ConnectionError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|ConnectionError|PyConnectionError
+
+############
+# ConnectionRefusedError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|ConnectionRefusedError|PyConnectionRefusedError
+
+############
+# ConnectionResetError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|ConnectionResetError|PyConnectionResetError
+
+############
+# DeprecationWarning
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|DeprecationWarning|PyDeprecationWarning
+
+############
+# EOFError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|EOFError|PyEOFError
+
+############
+# Exception
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|Exception|PyException
+
+############
+# FileExistsError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|FileExistsError|PyFileExistsError
+
+############
+# FileNotFoundError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|FileNotFoundError|PyFileNotFoundError
+
+############
+# FloatingPointError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|FloatingPointError|PyFloatingPointError
+
+############
+# FutureWarning
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|FutureWarning|PyFutureWarning
+
+############
+# GeneratorExit
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|GeneratorExit|PyGeneratorExit
+
+############
+# ImportError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|ImportError|PyImportError
+
+############
+# ImportWarning
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|ImportWarning|PyImportWarning
+
+############
+# IndentationError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|IndentationError|PyIndentationError
+
+############
+# IndexError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|IndexError|PyIndexError
+
+############
+# InterruptedError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|InterruptedError|PyInterruptedError
+
+############
+# IsADirectoryError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|IsADirectoryError|PyIsADirectoryError
+
+############
+# KeyError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|KeyError|PyKeyError
+
+############
+# KeyboardInterrupt
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|KeyboardInterrupt|PyKeyboardInterrupt
+
+############
+# LookupError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|LookupError|PyLookupError
+
+############
+# MemoryError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|MemoryError|PyMemoryError
+
+############
+# ModuleNotFoundError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|ModuleNotFoundError|PyModuleNotFoundError
+
+############
+# NameError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|NameError|PyNameError
+
+############
+# NotADirectoryError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|NotADirectoryError|PyNotADirectoryError
+
+############
+# NotImplementedError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|NotImplementedError|PyNotImplementedError
+
+############
+# OSError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|OSError|PyOSError
+
+############
+# OverflowError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|OverflowError|PyOverflowError
+
+############
+# PendingDeprecationWarning
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|PendingDeprecationWarning|PyPendingDeprecationWarning
+
+############
+# PermissionError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|PermissionError|PyPermissionError
+
+############
+# ProcessLookupError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|ProcessLookupError|PyProcessLookupError
+
+############
+# RecursionError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|RecursionError|PyRecursionError
+
+############
+# ReferenceError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|ReferenceError|PyReferenceError
+
+############
+# ResourceWarning
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|ResourceWarning|PyResourceWarning
+
+############
+# RuntimeError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|RuntimeError|PyRuntimeError
+
+############
+# RuntimeWarning
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|RuntimeWarning|PyRuntimeWarning
+
+############
+# StopAsyncIteration
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|StopAsyncIteration|PyStopAsyncIteration
+
+############
+# StopIteration
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|StopIteration|PyStopIteration
+
+############
+# SyntaxError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|SyntaxError|PySyntaxError
+
+############
+# SyntaxWarning
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|SyntaxWarning|PySyntaxWarning
+
+############
+# SystemError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|SystemError|PySystemError
+
+############
+# SystemExit
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|SystemExit|PySystemExit
+
+############
+# TabError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|TabError|PyTabError
+
+############
+# TimeoutError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|TimeoutError|PyTimeoutError
+
+############
+# TypeError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|TypeError|PyTypeError
+
+############
+# UnboundLocalError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|UnboundLocalError|PyUnboundLocalError
+
+############
+# UnicodeDecodeError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|UnicodeDecodeError|PyUnicodeDecodeError
+
+############
+# UnicodeEncodeError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|UnicodeEncodeError|PyUnicodeEncodeError
+
+############
+# UnicodeError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|UnicodeError|PyUnicodeError
+
+############
+# UnicodeTranslateError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|UnicodeTranslateError|PyUnicodeTranslateError
+
+############
+# UnicodeWarning
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|UnicodeWarning|PyUnicodeWarning
+
+############
+# UserWarning
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|UserWarning|PyUserWarning
+
+############
+# ValueError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|ValueError|PyValueError
+
+############
+# Warning
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|Warning|PyWarning
+
+############
+# ZeroDivisionError
+############
+
+# ErrorType|python_type|swift_type
+ErrorType|ZeroDivisionError|PyZeroDivisionError
