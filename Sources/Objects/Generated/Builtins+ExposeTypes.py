@@ -2,31 +2,32 @@ from Data.types import get_types
 from Common.builtin_types import get_property_name, get_property_name_escaped
 
 exposed_builtin_type_names = set([
-  "bool",
-  "bytearray",
-  "bytes",
-  "classmethod",
-  "complex",
-  "dict",
-  "enumerate",
-  "filter",
-  "float",
-  "frozenset",
-  "int",
-  "list",
-  "map",
-  "memoryview",
-  "property",
-  "range",
-  "reversed",
-  "set",
-  "slice",
-  "staticmethod",
-  "str",
-  "super",
-  "tuple",
-  "type",
-  "zip",
+  'bool',
+  'bytearray',
+  'bytes',
+  'classmethod',
+  'complex',
+  'dict',
+  'enumerate',
+  'filter',
+  'float',
+  'frozenset',
+  'int',
+  'list',
+  'map',
+  'memoryview',
+  'object',
+  'property',
+  'range',
+  'reversed',
+  'set',
+  'slice',
+  'staticmethod',
+  'str',
+  'super',
+  'tuple',
+  'type',
+  'zip',
 ])
 
 def is_exposed(t):
@@ -60,18 +61,8 @@ if __name__ == '__main__':
 // we will expose them from builtins.
 ''')
 
-  # TODO: Object
-  print('''\
-extension Builtins {
-
-  // MARK: - Types
-
-  // sourcery: pyproperty = object
-  internal var type_object: PyType {
-    return Py.types.object
-  }
-
-''')
+  print('extension Builtins {')
+  print()
 
   for t in types:
     python_type = t.python_type

@@ -34,7 +34,6 @@ if __name__ == '__main__':
   # === Properties ===
   # ==================
 
-  print('  public let object: PyType')# TODO: Object
   for t in builtin_types:
     python_type = t.python_type
     property_name_escaped = get_property_name_escaped(python_type)
@@ -64,14 +63,17 @@ if __name__ == '__main__':
     swift_type = t.swift_type
     property_name_escaped = get_property_name_escaped(python_type)
 
-    # 'self.type' was initialized already
+    # 'self.object' and 'self.type' are already initialized
+    if python_type == 'object' or python_type == 'type':
+      continue
+
     # 'self.bool' has to be last because it uses 'self.int' as base!
-    if python_type == 'type' or python_type == 'bool':
+    if python_type == 'bool':
       continue
 
     print(f'    self.{property_name_escaped} = PyType.initBuiltinType(name: "{python_type}", type: self.type, base: self.object)')
 
-  # And now add 'bool' because we already have 'self.int'
+  # And now add 'bool'
   print('    self.bool = PyType.initBuiltinType(name: "bool", type: self.type, base: self.int)')
   print('  }')
   print()
@@ -91,7 +93,6 @@ if __name__ == '__main__':
   internal func fill__dict__() {\
 ''')
 
-  print('    FillTypes.object(self.object)') # TODO: Object
   for t in builtin_types:
     python_type = t.python_type
     property_name_escaped = get_property_name_escaped(python_type)
@@ -109,7 +110,6 @@ if __name__ == '__main__':
     return [\
 ''')
 
-  print('      self.object,') # TODO: Object
   for t in builtin_types:
     python_type = t.python_type
     property_name_escaped = get_property_name_escaped(python_type)

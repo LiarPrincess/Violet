@@ -1,7 +1,14 @@
 
-# TODO: Add 'Object'
 
 
+
+
+############
+# object
+############
+
+# Type|python_type|swift_type
+Type|object|PyObject
 
 
 

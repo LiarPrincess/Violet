@@ -15,13 +15,10 @@
 
 extension Builtins {
 
-  // MARK: - Types
-
   // sourcery: pyproperty = object
   internal var type_object: PyType {
     return Py.types.object
   }
-
 
   // sourcery: pyproperty = bool
   internal var type_bool: PyType {

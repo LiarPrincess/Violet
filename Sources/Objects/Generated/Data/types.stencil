@@ -1,5 +1,3 @@
-# TODO: Add 'Object'
-
 {# ============== #}
 {# === Macros === #}
 {# ============== #}
@@ -10,8 +8,14 @@
 ############
 
 # {{ marker }}|python_type|swift_type
-{{ marker }}|{{ python_name }}|{{ type.name }}
+{{ marker }}|{{ python_name }}|{{ swift_name }}
 {% endmacro %}
+
+{# ============== #}
+{# === Object === #}
+{# ============== #}
+
+{% call start_new_type "Type" "object" "PyObject" %}
 
 {# ============= #}
 {# === Types === #}
