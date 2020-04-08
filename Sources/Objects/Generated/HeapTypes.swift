@@ -27,8 +27,6 @@ extension HeapType {
   }
 }
 
-
-
 // MARK: - Object
 
 /// Type used when we subclass builtin `object` class.
@@ -38,7 +36,6 @@ internal final class PyObjectHeap: PyObject, HeapType {
   /// Python `__dict__` property.
   internal lazy var __dict__ = PyDict()
 }
-
 
 // MARK: - Bool
 
@@ -360,7 +357,6 @@ internal final class PyZipHeap: PyZip, HeapType {
   internal lazy var __dict__ = PyDict()
 }
 
-
 // MARK: - ArithmeticError
 
 // PyArithmeticError already has everything we need.
@@ -616,3 +612,4 @@ internal final class PyZipHeap: PyZip, HeapType {
 // MARK: - ZeroDivisionError
 
 // PyZeroDivisionError already has everything we need.
+

@@ -62,7 +62,7 @@ Method|{{ python_name }}|{{ swift_function_name }}|{{ swift_selector }}|{{ swift
 {# === Object === #}
 {# ============== #}
 
-{% call start_new_type "Type" "object" "PyObjectType" %}
+{% call start_new_type "Type" "object" "PyObject" %}
 {% for type in types.enums where type.name == "PyObjectType" %}
 {% call print_annotations type %}
 {% call print_doc type %}

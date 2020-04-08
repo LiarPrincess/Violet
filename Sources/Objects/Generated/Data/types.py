@@ -65,6 +65,10 @@ def get_types() -> [TypeInfo]:
 
   result: [TypeInfo] = []
   current_type: Union[TypeInfo, None] = None
+  def commit_current_type():
+    if current_type:
+      current_type.sourcery_flags.sort()
+      result.append(current_type)
 
   with open(input_file, 'r') as reader:
     for line in reader:
@@ -78,8 +82,7 @@ def get_types() -> [TypeInfo]:
 
       line_type = split[0]
       if line_type == 'Type' or line_type == 'ErrorType':
-        if current_type:
-          result.append(current_type)
+        commit_current_type()
 
         assert len(split) == 3
         python_type = split[1]
@@ -136,9 +139,7 @@ def get_types() -> [TypeInfo]:
       else:
         assert False, f"Unknown line type: '{line_type}'"
 
-  if current_type:
-    result.append(current_type)
-
+  commit_current_type()
   return result
 
 # ------------------

@@ -34,7 +34,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(PyObjectType.doc)
     type.setFlag(.baseType)
     type.setFlag(.default)
-    type.setLayout(.PyObjectType)
+    type.setLayout(.PyObject)
 
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyObjectType.isEqual(zelf:other:)))
     insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyObjectType.isNotEqual(zelf:other:)))
@@ -439,9 +439,9 @@ internal enum FillTypes {
 
   internal static func dict(_ type: PyType) {
     type.setBuiltinTypeDoc(PyDict.doc)
-    type.setFlag(.dictSubclass)
     type.setFlag(.baseType)
     type.setFlag(.default)
+    type.setFlag(.dictSubclass)
     type.setFlag(.hasGC)
     type.setLayout(.PyDict)
 
@@ -702,8 +702,8 @@ internal enum FillTypes {
 
   internal static func frame(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
-    type.setFlag(.hasGC)
     type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyFrame)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFrame.getClass, castSelf: Cast.asPyFrame))
@@ -767,8 +767,8 @@ internal enum FillTypes {
 
   internal static func function(_ type: PyType) {
     type.setBuiltinTypeDoc(PyFunction.doc)
-    type.setFlag(.hasGC)
     type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyFunction)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFunction.getClass, castSelf: Cast.asPyFunction))
@@ -876,9 +876,9 @@ internal enum FillTypes {
   internal static func list(_ type: PyType) {
     type.setBuiltinTypeDoc(PyList.doc)
     type.setFlag(.baseType)
-    type.setFlag(.listSubclass)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setFlag(.listSubclass)
     type.setLayout(.PyList)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyList.getClass, castSelf: Cast.asPyList))
@@ -976,8 +976,8 @@ internal enum FillTypes {
 
   internal static func method(_ type: PyType) {
     type.setBuiltinTypeDoc(PyMethod.doc)
-    type.setFlag(.hasGC)
     type.setFlag(.default)
+    type.setFlag(.hasGC)
     type.setLayout(.PyMethod)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMethod.getClass, castSelf: Cast.asPyMethod))
@@ -1287,9 +1287,9 @@ internal enum FillTypes {
 
   internal static func string(_ type: PyType) {
     type.setBuiltinTypeDoc(PyString.doc)
-    type.setFlag(.unicodeSubclass)
     type.setFlag(.baseType)
     type.setFlag(.default)
+    type.setFlag(.unicodeSubclass)
     type.setLayout(.PyString)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyString.getClass, castSelf: Cast.asPyString))
@@ -1397,8 +1397,8 @@ internal enum FillTypes {
 
   internal static func textFile(_ type: PyType) {
     type.setBuiltinTypeDoc(PyTextFile.doc)
-    type.setFlag(.hasFinalize)
     type.setFlag(.default)
+    type.setFlag(.hasFinalize)
     type.setFlag(.hasGC)
     type.setLayout(.PyTextFile)
 
@@ -1419,10 +1419,10 @@ internal enum FillTypes {
 
   internal static func tuple(_ type: PyType) {
     type.setBuiltinTypeDoc(PyTuple.doc)
-    type.setFlag(.tupleSubclass)
-    type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setFlag(.tupleSubclass)
     type.setLayout(.PyTuple)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTuple.getClass, castSelf: Cast.asPyTuple))
@@ -1470,10 +1470,10 @@ internal enum FillTypes {
 
   internal static func type(_ type: PyType) {
     type.setBuiltinTypeDoc(PyType.doc)
-    type.setFlag(.typeSubclass)
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setFlag(.typeSubclass)
     type.setLayout(.PyType)
 
     insert(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyType.getName, set: PyType.setName, castSelf: Cast.asPyType))

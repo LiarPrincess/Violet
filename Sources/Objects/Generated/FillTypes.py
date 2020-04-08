@@ -4,7 +4,6 @@ from Common.strings import generated_warning
 types = get_types()
 
 def get_layout_name(t):
-  # TODO: Layouts should be named after python_type
   return t.swift_type
 
 def get_function_name(t):
@@ -48,11 +47,13 @@ private func insert(type: PyType, name: String, value: PyObject) {
 
   for t in types:
     python_type = t.python_type
-    swift_type = t.swift_type
     static_doc_property = t.swift_static_doc_property
     is_error_type = t.is_error_type
     sourcery_flags = t.sourcery_flags
 
+    # For 'object': 'PyObject' holds data, but 'PyObjectType' holds methods, doc etc.
+    swift_type = t.swift_type
+    swift_type = 'PyObjectType' if swift_type == 'PyObject' else swift_type
     castSelf = f'Cast.as{swift_type}'
 
     print(f'  // MARK: - {python_type}')
