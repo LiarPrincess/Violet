@@ -24,9 +24,6 @@ public final class BuiltinTypes {
 
   /// Root of the type hierarchy
   public let object: PyType
-  /// Type which is set as `type` on all of the `PyType` objects
-  public let type: PyType
-
 {% for type in types.classes|annotated:"pytype" %}
   {% set name %}{% call getName type %}{% endset %}
   public let {{ name }}: PyType
@@ -43,8 +40,9 @@ public final class BuiltinTypes {
     self.object.setType(to: self.type)
     self.type.setType(to: self.type)
 
+    // 'self.type' was initialized already
     // 'self.bool' has to be last because it uses 'self.int' as base!
-    {% for type in types.classes|annotated:"pytype" where type.name != "PyBool" %}
+    {% for type in types.classes|annotated:"pytype" where type.name != "PyType"  and type.name != "PyBool" %}
     {% set name %}{% call getName type %}{% endset %}
     self.{{ name }} = PyType.initBuiltinType(name: "{{ type.annotations.pytype }}", type: self.type, base: self.object)
     {% endfor %}
@@ -60,7 +58,6 @@ public final class BuiltinTypes {
   /// - fill `__dict__`
   internal func fill__dict__() {
     FillTypes.object(self.object)
-    FillTypes.type(self.type)
     {% for type in types.classes|annotated:"pytype" %}
     {% set name %}{% call getName type %}{% endset %}
     FillTypes.{{ name }}(self.{{ name }})
@@ -70,7 +67,6 @@ public final class BuiltinTypes {
   internal var all: [PyType] {
     return [
       self.object,
-      self.type,
     {% for type in types.classes|annotated:"pytype" %}
     {% set name %}{% call getName type %}{% endset %}
       self.{{ name }},

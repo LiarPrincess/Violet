@@ -27,12 +27,6 @@ private func cast<T>(_ object: PyObject,
 
 internal enum Cast {
 
-  // MARK: - Type type
-
-  internal static func asPyType(_ object: PyObject, methodName: String) -> PyResult<PyType> {
-    return cast(object, as: PyType.self, typeName: "type", methodName: methodName)
-  }
-
   // MARK: - Bool
 
   internal static func asPyBool(_ object: PyObject, methodName: String) -> PyResult<PyBool> {
@@ -337,6 +331,12 @@ internal enum Cast {
 
   internal static func asPyTupleIterator(_ object: PyObject, methodName: String) -> PyResult<PyTupleIterator> {
     return cast(object, as: PyTupleIterator.self, typeName: "tuple_iterator", methodName: methodName)
+  }
+
+  // MARK: - Type
+
+  internal static func asPyType(_ object: PyObject, methodName: String) -> PyResult<PyType> {
+    return cast(object, as: PyType.self, typeName: "type", methodName: methodName)
   }
 
   // MARK: - Zip

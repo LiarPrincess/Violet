@@ -11,33 +11,6 @@
 
 
 
-PyType|PyObject|get|__name__|getName() -> String
-PyType|PyObject|set|__name__|setName(_ value: PyObject?) -> PyResult<()>
-PyType|PyObject|get|__qualname__|getQualname() -> String
-PyType|PyObject|set|__qualname__|setQualname(_ value: PyObject?) -> PyResult<()>
-PyType|PyObject|get|__doc__|getDoc() -> PyResult<PyObject>
-PyType|PyObject|set|__doc__|setDoc(_ value: PyObject?) -> PyResult<()>
-PyType|PyObject|get|__module__|getModule() -> PyResult<String>
-PyType|PyObject|set|__module__|setModule(_ value: PyObject?) -> PyResult<()>
-PyType|PyObject|get|__bases__|getBases() -> PyTuple
-PyType|PyObject|set|__bases__|setBases(_ value: PyObject?) -> PyResult<()>
-PyType|PyObject|get|__dict__|getDict() -> PyDict
-PyType|PyObject|get|__class__|getClass() -> PyType
-PyType|PyObject|get|__base__|getBase() -> PyType?
-PyType|PyObject|get|__mro__|getMRO() -> PyTuple
-
-PyType|PyObject|func|__repr__|repr() -> PyResult<String>
-PyType|PyObject|func|__subclasscheck__|isSubtype(of object: PyObject) -> PyResult<Bool>
-PyType|PyObject|func|__instancecheck__|isType(of object: PyObject) -> Bool
-PyType|PyObject|func|__subclasses__|getSubclasses() -> [PyType]
-PyType|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
-PyType|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
-PyType|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
-PyType|PyObject|func|__dir__|dir() -> PyResult<DirResult>
-PyType|PyObject|func|__call__|call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
-PyType|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?) -> PyResult<PyObject>
-PyType|PyObject|static_func|__init__|pyInit(zelf: PyType,                              args: [PyObject],                              kwargs: PyDict?) -> PyResult<PyNone>
-
 PyBool|PyInt|get|__class__|getClass() -> PyType
 
 PyBool|PyInt|func|__repr__|repr() -> PyResult<String>
@@ -903,6 +876,32 @@ PyTupleIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> P
 PyTupleIterator|PyObject|func|__iter__|iter() -> PyObject
 PyTupleIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
 PyTupleIterator|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?) -> PyResult<PyObject>
+PyType|PyObject|get|__name__|getName() -> String
+PyType|PyObject|set|__name__|setName(_ value: PyObject?) -> PyResult<()>
+PyType|PyObject|get|__qualname__|getQualname() -> String
+PyType|PyObject|set|__qualname__|setQualname(_ value: PyObject?) -> PyResult<()>
+PyType|PyObject|get|__doc__|getDoc() -> PyResult<PyObject>
+PyType|PyObject|set|__doc__|setDoc(_ value: PyObject?) -> PyResult<()>
+PyType|PyObject|get|__module__|getModule() -> PyResult<String>
+PyType|PyObject|set|__module__|setModule(_ value: PyObject?) -> PyResult<()>
+PyType|PyObject|get|__bases__|getBases() -> PyTuple
+PyType|PyObject|set|__bases__|setBases(_ value: PyObject?) -> PyResult<()>
+PyType|PyObject|get|__dict__|getDict() -> PyDict
+PyType|PyObject|get|__class__|getClass() -> PyType
+PyType|PyObject|get|__base__|getBase() -> PyType?
+PyType|PyObject|get|__mro__|getMRO() -> PyTuple
+
+PyType|PyObject|func|__repr__|repr() -> PyResult<String>
+PyType|PyObject|func|__subclasscheck__|isSubtype(of object: PyObject) -> PyResult<Bool>
+PyType|PyObject|func|__instancecheck__|isType(of object: PyObject) -> Bool
+PyType|PyObject|func|__subclasses__|getSubclasses() -> [PyType]
+PyType|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyType|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
+PyType|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
+PyType|PyObject|func|__dir__|dir() -> PyResult<DirResult>
+PyType|PyObject|func|__call__|call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
+PyType|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?) -> PyResult<PyObject>
+PyType|PyObject|static_func|__init__|pyInit(zelf: PyType,                              args: [PyObject],                              kwargs: PyDict?) -> PyResult<PyNone>
 PyZip|PyObject|get|__class__|getClass() -> PyType
 
 PyZip|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>

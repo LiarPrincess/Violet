@@ -39,10 +39,6 @@ internal final class PyObjectHeap: PyObject, HeapType {
   internal lazy var __dict__ = PyDict()
 }
 
-// MARK: - Type type
-
-// PyType already has everything we need.
-
 
 // MARK: - Bool
 
@@ -349,6 +345,10 @@ internal final class PyTupleHeap: PyTuple, HeapType {
 // MARK: - TupleIterator
 
 // PyTupleIterator is not a base type.
+
+// MARK: - Type
+
+// PyType already has everything we need.
 
 // MARK: - Zip
 

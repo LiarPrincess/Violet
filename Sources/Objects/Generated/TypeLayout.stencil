@@ -18,10 +18,6 @@
 {% call printProperties type %}
 {% endfor %}
 
-{% for type in types.classes where type.name == "PyType" %}
-{% call printProperties type %}
-{% endfor %}
-
 {% for type in types.classes|annotated:"pytype" %}
 {% call printProperties type %}
 {% endfor %}

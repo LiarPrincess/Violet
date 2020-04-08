@@ -31,12 +31,6 @@ private func cast<T>(_ object: PyObject,
 {% endmacro %}
 
 internal enum Cast {
-{% for type in types.classes where type.name == "PyType" %}
-
-  // MARK: - Type type
-
-  {% call printCast type.name "type" %}
-{% endfor %}
 {% for type in types.classes|annotated:"pytype" %}
 
   // MARK: - {{ type.name|replace:"Py","" }}

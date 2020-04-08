@@ -48,16 +48,6 @@ internal class TypeLayout: Equatable {
   /// - `_type: PyType!`
   /// - `flags: PyObjectFlags`
   internal static let PyObject = TypeLayout()
-  /// - `name: String`
-  /// - `qualname: String`
-  /// - `base: PyType?`
-  /// - `bases: [PyType]`
-  /// - `mro: [PyType]`
-  /// - `subclasses: [PyTypeWeakRef]`
-  /// - `__dict__: PyDict`
-  /// - `layout: TypeLayout?`
-  /// - `typeFlags: PyTypeFlags`
-  internal static let PyType = TypeLayout(base: TypeLayout.PyObject)
   /// `PyBool` uses the same layout as it s base type (`PyInt`).
   internal static let PyBool = TypeLayout.PyInt
   /// - `function: FunctionWrapper`
@@ -232,6 +222,16 @@ internal class TypeLayout: Equatable {
   /// - `tuple: PyTuple`
   /// - `index: Int`
   internal static let PyTupleIterator = TypeLayout(base: TypeLayout.PyObject)
+  /// - `name: String`
+  /// - `qualname: String`
+  /// - `base: PyType?`
+  /// - `bases: [PyType]`
+  /// - `mro: [PyType]`
+  /// - `subclasses: [PyTypeWeakRef]`
+  /// - `__dict__: PyDict`
+  /// - `layout: TypeLayout?`
+  /// - `typeFlags: PyTypeFlags`
+  internal static let PyType = TypeLayout(base: TypeLayout.PyObject)
   /// - `iterators: [PyObject]`
   internal static let PyZip = TypeLayout(base: TypeLayout.PyObject)
   /// `PyArithmeticError` uses the same layout as it s base type (`PyException`).

@@ -23,9 +23,6 @@ public final class BuiltinTypes {
 
   /// Root of the type hierarchy
   public let object: PyType
-  /// Type which is set as `type` on all of the `PyType` objects
-  public let type: PyType
-
   public let bool: PyType
   public let builtinFunction: PyType
   public let builtinMethod: PyType
@@ -77,6 +74,7 @@ public final class BuiltinTypes {
   public let textFile: PyType
   public let tuple: PyType
   public let tuple_iterator: PyType
+  public let type: PyType
   public let zip: PyType
 
   /// Init that will only initialize properties.
@@ -90,6 +88,7 @@ public final class BuiltinTypes {
     self.object.setType(to: self.type)
     self.type.setType(to: self.type)
 
+    // 'self.type' was initialized already
     // 'self.bool' has to be last because it uses 'self.int' as base!
     self.builtinFunction = PyType.initBuiltinType(name: "builtinFunction", type: self.type, base: self.object)
     self.builtinMethod = PyType.initBuiltinType(name: "builtinMethod", type: self.type, base: self.object)
@@ -154,7 +153,6 @@ public final class BuiltinTypes {
   /// - fill `__dict__`
   internal func fill__dict__() {
     FillTypes.object(self.object)
-    FillTypes.type(self.type)
     FillTypes.bool(self.bool)
     FillTypes.builtinFunction(self.builtinFunction)
     FillTypes.builtinMethod(self.builtinMethod)
@@ -206,13 +204,13 @@ public final class BuiltinTypes {
     FillTypes.textFile(self.textFile)
     FillTypes.tuple(self.tuple)
     FillTypes.tuple_iterator(self.tuple_iterator)
+    FillTypes.type(self.type)
     FillTypes.zip(self.zip)
   }
 
   internal var all: [PyType] {
     return [
       self.object,
-      self.type,
       self.bool,
       self.builtinFunction,
       self.builtinMethod,
@@ -264,6 +262,7 @@ public final class BuiltinTypes {
       self.textFile,
       self.tuple,
       self.tuple_iterator,
+      self.type,
       self.zip,
     ]
   }

@@ -115,18 +115,6 @@ internal enum FillTypes {
   }
 {% endfor %}
 
-{% for type in types.classes where type.name == "PyType" %}
-
-  // MARK: - Type type
-
-  internal static func type(_ type: PyType) {
-    {% call addDoc type %}
-    {% call addFlags type %}
-    {% call addLayout type.name %}
-    {% call fillDict type "type" %}
-  }
-{% endfor %}
-
 {% for type in types.classes|annotated:"pytype" %}
 
   // MARK: - {{ type.name|replace:"Py","" }}

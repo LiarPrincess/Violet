@@ -67,7 +67,7 @@ internal struct PyTypeWeakRef {
 
 // MARK: - Type
 
-// sourcery: default, hasGC, baseType, typeSubclass
+// sourcery: pytype = type, default, hasGC, baseType, typeSubclass
 public class PyType: PyObject {
 
   internal static let doc: String = """

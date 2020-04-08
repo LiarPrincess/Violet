@@ -59,10 +59,6 @@ internal final class {{ swift_type }}Heap: {{ swift_type }}, HeapType {
 {% call printHeapType "PyObject" "object" %}
 {% endfor %}
 
-// MARK: - Type type
-
-// PyType already has everything we need.
-
 {# Normal types #}
 {% for type in types.classes|annotated:"pytype" %}
 {% call tryHeapType type %}

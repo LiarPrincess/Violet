@@ -14,20 +14,6 @@
 // PyObjectType does not own anything.
 extension PyObjectType { }
 
-// MARK: - Type
-
-extension PyType:
-  __dict__GetterOwner,
-  __repr__Owner,
-  __subclasscheck__Owner,
-  __instancecheck__Owner,
-  __getattribute__Owner,
-  __setattr__Owner,
-  __dir__Owner,
-  __call__Owner,
-  __init__Owner
-{ }
-
 // MARK: - Bool
 
 // PyBool does not add any new protocols to PyInt
@@ -732,6 +718,20 @@ extension PyTupleIterator:
   __getattribute__Owner,
   __iter__Owner,
   __next__Owner
+{ }
+
+// MARK: - Type
+
+extension PyType:
+  __dict__GetterOwner,
+  __repr__Owner,
+  __subclasscheck__Owner,
+  __instancecheck__Owner,
+  __getattribute__Owner,
+  __setattr__Owner,
+  __dir__Owner,
+  __call__Owner,
+  __init__Owner
 { }
 
 // MARK: - Zip

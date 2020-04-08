@@ -32,10 +32,6 @@
   {% endfor %}
 {% endmacro %}
 
-{% for type in types.classes where type.name == "PyType" %}
-{% call printConformance type %}
-{% endfor %}
-
 {% for type in types.classes|annotated:"pytype" %}
 {% call printConformance type %}
 {% endfor %}

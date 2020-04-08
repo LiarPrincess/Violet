@@ -13,17 +13,6 @@ PyObject|
 - _type|PyType!
 - flags|PyObjectFlags
 
-PyType|PyObject
-- name|String
-- qualname|String
-- base|PyType?
-- bases|[PyType]
-- mro|[PyType]
-- subclasses|[PyTypeWeakRef]
-- __dict__|PyDict
-- layout|TypeLayout?
-- typeFlags|PyTypeFlags
-
 PyBool|PyInt
 PyBuiltinFunction|PyObject
 - function|FunctionWrapper
@@ -194,6 +183,16 @@ PyTuple|PyObject
 PyTupleIterator|PyObject
 - tuple|PyTuple
 - index|Int
+PyType|PyObject
+- name|String
+- qualname|String
+- base|PyType?
+- bases|[PyType]
+- mro|[PyType]
+- subclasses|[PyTypeWeakRef]
+- __dict__|PyDict
+- layout|TypeLayout?
+- typeFlags|PyTypeFlags
 PyZip|PyObject
 - iterators|[PyObject]
 
