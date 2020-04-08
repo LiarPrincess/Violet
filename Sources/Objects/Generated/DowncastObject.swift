@@ -24,7 +24,6 @@ private func cast<T>(_ object: PyObject,
   )
 }
 
-
 internal enum Cast {
 
   // MARK: - Bool
@@ -728,4 +727,5 @@ internal enum Cast {
   internal static func asPyZeroDivisionError(_ object: PyObject, methodName: String) -> PyResult<PyZeroDivisionError> {
     return cast(object, as: PyZeroDivisionError.self, typeName: "ZeroDivisionError", methodName: methodName)
   }
+
 }
