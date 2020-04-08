@@ -47,7 +47,7 @@ internal enum ModuleFactory {
   // MARK: - Builtins
 
   internal static func createBuiltins(from object: Builtins) -> PyModule {
-    let module = createModule(name: "builtins", doc: nil, dict: object.__dict__)
+    let module = createModule(name: "builtins", doc: Builtins.doc, dict: object.__dict__)
 
     insert(module: module, name: "None", value: object.none)
     insert(module: module, name: "Ellipsis", value: object.ellipsis)
@@ -198,7 +198,7 @@ internal enum ModuleFactory {
   // MARK: - Sys
 
   internal static func createSys(from object: Sys) -> PyModule {
-    let module = createModule(name: "sys", doc: nil, dict: object.__dict__)
+    let module = createModule(name: "sys", doc: Sys.doc, dict: object.__dict__)
 
     insert(module: module, name: "meta_path", value: object.metaPath)
     insert(module: module, name: "path_hooks", value: object.pathHooks)
@@ -294,7 +294,7 @@ internal enum ModuleFactory {
   // MARK: - UnderscoreImp
 
   internal static func createUnderscoreImp(from object: UnderscoreImp) -> PyModule {
-    let module = createModule(name: "_imp", doc: nil, dict: object.__dict__)
+    let module = createModule(name: "_imp", doc: UnderscoreImp.doc, dict: object.__dict__)
 
 
 
@@ -336,7 +336,7 @@ internal enum ModuleFactory {
   // MARK: - UnderscoreWarnings
 
   internal static func createUnderscoreWarnings(from object: UnderscoreWarnings) -> PyModule {
-    let module = createModule(name: "_warnings", doc: nil, dict: object.__dict__)
+    let module = createModule(name: "_warnings", doc: UnderscoreWarnings.doc, dict: object.__dict__)
 
     insert(module: module, name: "filters", value: object.filters)
     insert(module: module, name: "_defaultaction", value: object.defaultAction)

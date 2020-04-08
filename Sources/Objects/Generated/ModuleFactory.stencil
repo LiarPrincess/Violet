@@ -48,7 +48,10 @@ internal enum ModuleFactory {
   // MARK: - {{ type.name }}
 
   internal static func create{{ type.name }}(from object: {{ type.name }}) -> PyModule {
-    let module = createModule(name: "{{ type.annotations.pymodule }}", doc: nil, dict: object.__dict__)
+    {# To find 'doc' we iterate all static variables looking for 'doc', if that fails then assign 'nil' #}
+    {% set doc %}{% for variable in type.staticVariables where variable.name == "doc" %}{{ type.name }}.doc{% endfor %}{% endset %}
+    {% set docOrNil %}{% if doc == "" %}nil{% else %}{{ doc }}{% endif %}{% endset %}
+    let module = createModule(name: "{{ type.annotations.pymodule }}", doc: {{ docOrNil }}, dict: object.__dict__)
 
   {% for prop in type.allVariables|annotated:"pyproperty" %}
     {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
