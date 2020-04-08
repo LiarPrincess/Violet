@@ -10,7 +10,7 @@ extension Sys {
     return .utf8
   }
 
-  internal var getDefaultEncodingDoc: String {
+  internal static var getDefaultEncodingDoc: String {
     return """
     getdefaultencoding() -> string
 

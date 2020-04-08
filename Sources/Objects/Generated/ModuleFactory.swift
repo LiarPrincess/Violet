@@ -1,4 +1,4 @@
-// swiftlint:disable vertical_whitespace
+// swiftlint:disable file_length
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 
@@ -151,16 +151,16 @@ internal enum ModuleFactory {
     insert(module: module, name: "sum", value: PyBuiltinFunction.wrap(name: "sum", doc: nil, fn: object.sum(args:kwargs:), module: module))
     insert(module: module, name: "globals", value: PyBuiltinFunction.wrap(name: "globals", doc: nil, fn: object.getGlobals, module: module))
     insert(module: module, name: "locals", value: PyBuiltinFunction.wrap(name: "locals", doc: nil, fn: object.getLocals, module: module))
-    insert(module: module, name: "isinstance", value: PyBuiltinFunction.wrap(name: "isinstance", doc: nil, fn: object.isInstance(object:of:), module: module))
-    insert(module: module, name: "issubclass", value: PyBuiltinFunction.wrap(name: "issubclass", doc: nil, fn: object.isSubclass(object:of:), module: module))
-    insert(module: module, name: "next", value: PyBuiltinFunction.wrap(name: "next", doc: nil, fn: object.next(iterator:default:), module: module))
-    insert(module: module, name: "iter", value: PyBuiltinFunction.wrap(name: "iter", doc: nil, fn: object.iter(from:sentinel:), module: module))
+    insert(module: module, name: "isinstance", value: PyBuiltinFunction.wrap(name: "isinstance", doc: Builtins.isInstanceDoc, fn: object.isInstance(object:of:), module: module))
+    insert(module: module, name: "issubclass", value: PyBuiltinFunction.wrap(name: "issubclass", doc: Builtins.isSubclassDoc, fn: object.isSubclass(object:of:), module: module))
+    insert(module: module, name: "next", value: PyBuiltinFunction.wrap(name: "next", doc: Builtins.nextDoc, fn: object.next(iterator:default:), module: module))
+    insert(module: module, name: "iter", value: PyBuiltinFunction.wrap(name: "iter", doc: Builtins.iterDoc, fn: object.iter(from:sentinel:), module: module))
     insert(module: module, name: "bin", value: PyBuiltinFunction.wrap(name: "bin", doc: nil, fn: object.bin(_:), module: module))
     insert(module: module, name: "oct", value: PyBuiltinFunction.wrap(name: "oct", doc: nil, fn: object.oct(_:), module: module))
     insert(module: module, name: "hex", value: PyBuiltinFunction.wrap(name: "hex", doc: nil, fn: object.hex(_:), module: module))
     insert(module: module, name: "chr", value: PyBuiltinFunction.wrap(name: "chr", doc: nil, fn: object.chr(_:), module: module))
     insert(module: module, name: "ord", value: PyBuiltinFunction.wrap(name: "ord", doc: nil, fn: object.ord(_:), module: module))
-    insert(module: module, name: "__build_class__", value: PyBuiltinFunction.wrap(name: "__build_class__", doc: nil, fn: object.buildClass(args:kwargs:), module: module))
+    insert(module: module, name: "__build_class__", value: PyBuiltinFunction.wrap(name: "__build_class__", doc: Builtins.buildClassDoc, fn: object.buildClass(args:kwargs:), module: module))
     insert(module: module, name: "hash", value: PyBuiltinFunction.wrap(name: "hash", doc: nil, fn: object.hash(_:), module: module))
     insert(module: module, name: "id", value: PyBuiltinFunction.wrap(name: "id", doc: nil, fn: object.id(_:), module: module))
     insert(module: module, name: "dir", value: PyBuiltinFunction.wrap(name: "dir", doc: nil, fn: object.dir(_:), module: module))
@@ -177,19 +177,19 @@ internal enum ModuleFactory {
     insert(module: module, name: "len", value: PyBuiltinFunction.wrap(name: "len", doc: nil, fn: object.length(iterable:), module: module))
     insert(module: module, name: "sorted", value: PyBuiltinFunction.wrap(name: "sorted", doc: nil, fn: object.sorted(args:kwargs:), module: module))
     insert(module: module, name: "callable", value: PyBuiltinFunction.wrap(name: "callable", doc: nil, fn: object.isCallable(_:), module: module))
-    insert(module: module, name: "__import__", value: PyBuiltinFunction.wrap(name: "__import__", doc: nil, fn: object.__import__(args:kwargs:), module: module))
+    insert(module: module, name: "__import__", value: PyBuiltinFunction.wrap(name: "__import__", doc: Builtins.importDoc, fn: object.__import__(args:kwargs:), module: module))
     insert(module: module, name: "compile", value: PyBuiltinFunction.wrap(name: "compile", doc: nil, fn: object.compile(args:kwargs:), module: module))
     insert(module: module, name: "round", value: PyBuiltinFunction.wrap(name: "round", doc: nil, fn: object.round(number:nDigits:), module: module))
     insert(module: module, name: "divmod", value: PyBuiltinFunction.wrap(name: "divmod", doc: nil, fn: object.divmod(left:right:), module: module))
     insert(module: module, name: "pow", value: PyBuiltinFunction.wrap(name: "pow", doc: nil, fn: object.pow(base:exp:mod:), module: module))
     insert(module: module, name: "print", value: PyBuiltinFunction.wrap(name: "print", doc: nil, fn: object.print(args:kwargs:), module: module))
     insert(module: module, name: "open", value: PyBuiltinFunction.wrap(name: "open", doc: nil, fn: object.open(args:kwargs:), module: module))
-    insert(module: module, name: "getattr", value: PyBuiltinFunction.wrap(name: "getattr", doc: nil, fn: object.getAttribute(_:name:default:), module: module))
+    insert(module: module, name: "getattr", value: PyBuiltinFunction.wrap(name: "getattr", doc: Builtins.getAttributeDoc, fn: object.getAttribute(_:name:default:), module: module))
     insert(module: module, name: "hasattr", value: PyBuiltinFunction.wrap(name: "hasattr", doc: nil, fn: object.hasAttribute(_:name:), module: module))
     insert(module: module, name: "setattr", value: PyBuiltinFunction.wrap(name: "setattr", doc: nil, fn: object.setAttribute(_:name:value:), module: module))
     insert(module: module, name: "delattr", value: PyBuiltinFunction.wrap(name: "delattr", doc: nil, fn: object.deleteAttribute(_:name:), module: module))
-    insert(module: module, name: "min", value: PyBuiltinFunction.wrap(name: "min", doc: nil, fn: object.min(args:kwargs:), module: module))
-    insert(module: module, name: "max", value: PyBuiltinFunction.wrap(name: "max", doc: nil, fn: object.max(args:kwargs:), module: module))
+    insert(module: module, name: "min", value: PyBuiltinFunction.wrap(name: "min", doc: Builtins.minDoc, fn: object.min(args:kwargs:), module: module))
+    insert(module: module, name: "max", value: PyBuiltinFunction.wrap(name: "max", doc: Builtins.maxDoc, fn: object.max(args:kwargs:), module: module))
 
     return module
   }
@@ -246,9 +246,9 @@ internal enum ModuleFactory {
     insert(module: module, name: "implementation", value: object.implementationObject)
     insert(module: module, name: "hexversion", value: object.hexVersion)
 
-    insert(module: module, name: "exit", value: PyBuiltinFunction.wrap(name: "exit", doc: nil, fn: object.exit(status:), module: module))
+    insert(module: module, name: "exit", value: PyBuiltinFunction.wrap(name: "exit", doc: Sys.exitDoc, fn: object.exit(status:), module: module))
     insert(module: module, name: "intern", value: PyBuiltinFunction.wrap(name: "intern", doc: nil, fn: object.intern(value:), module: module))
-    insert(module: module, name: "getdefaultencoding", value: PyBuiltinFunction.wrap(name: "getdefaultencoding", doc: nil, fn: object.getDefaultEncoding, module: module))
+    insert(module: module, name: "getdefaultencoding", value: PyBuiltinFunction.wrap(name: "getdefaultencoding", doc: Sys.getDefaultEncodingDoc, fn: object.getDefaultEncoding, module: module))
     insert(module: module, name: "call_tracing", value: PyBuiltinFunction.wrap(name: "call_tracing", doc: nil, fn: object.callTracing, module: module))
     insert(module: module, name: "_clear_type_cache", value: PyBuiltinFunction.wrap(name: "_clear_type_cache", doc: nil, fn: object._clearTypeCache, module: module))
     insert(module: module, name: "_current_frames", value: PyBuiltinFunction.wrap(name: "_current_frames", doc: nil, fn: object._currentFrames, module: module))
@@ -294,22 +294,22 @@ internal enum ModuleFactory {
   internal static func createUnderscoreImp(from object: UnderscoreImp) -> PyModule {
     let module = createModule(name: "_imp", doc: UnderscoreImp.doc, dict: object.__dict__)
 
-    insert(module: module, name: "lock_held", value: PyBuiltinFunction.wrap(name: "lock_held", doc: nil, fn: object.lockHeld, module: module))
-    insert(module: module, name: "acquire_lock", value: PyBuiltinFunction.wrap(name: "acquire_lock", doc: nil, fn: object.acquireLock, module: module))
-    insert(module: module, name: "release_lock", value: PyBuiltinFunction.wrap(name: "release_lock", doc: nil, fn: object.releaseLock, module: module))
-    insert(module: module, name: "is_builtin", value: PyBuiltinFunction.wrap(name: "is_builtin", doc: nil, fn: object.isBuiltin(name:), module: module))
-    insert(module: module, name: "create_builtin", value: PyBuiltinFunction.wrap(name: "create_builtin", doc: nil, fn: object.createBuiltin(spec:), module: module))
-    insert(module: module, name: "exec_builtin", value: PyBuiltinFunction.wrap(name: "exec_builtin", doc: nil, fn: object.execBuiltin(module:), module: module))
-    insert(module: module, name: "is_frozen", value: PyBuiltinFunction.wrap(name: "is_frozen", doc: nil, fn: object.isFrozen, module: module))
-    insert(module: module, name: "is_frozen_package", value: PyBuiltinFunction.wrap(name: "is_frozen_package", doc: nil, fn: object.isFrozenPackage, module: module))
-    insert(module: module, name: "get_frozen_object", value: PyBuiltinFunction.wrap(name: "get_frozen_object", doc: nil, fn: object.getFrozenObject, module: module))
-    insert(module: module, name: "init_frozen", value: PyBuiltinFunction.wrap(name: "init_frozen", doc: nil, fn: object.initFrozen, module: module))
-    insert(module: module, name: "create_dynamic", value: PyBuiltinFunction.wrap(name: "create_dynamic", doc: nil, fn: object.createDynamic(spec:file:), module: module))
-    insert(module: module, name: "exec_dynamic", value: PyBuiltinFunction.wrap(name: "exec_dynamic", doc: nil, fn: object.execDynamic(module:), module: module))
-    insert(module: module, name: "source_hash", value: PyBuiltinFunction.wrap(name: "source_hash", doc: nil, fn: object.sourceHash, module: module))
-    insert(module: module, name: "check_hash_based_pycs", value: PyBuiltinFunction.wrap(name: "check_hash_based_pycs", doc: nil, fn: object.checkHashBasedPycs, module: module))
-    insert(module: module, name: "_fix_co_filename", value: PyBuiltinFunction.wrap(name: "_fix_co_filename", doc: nil, fn: object.fixCoFilename, module: module))
-    insert(module: module, name: "extension_suffixes", value: PyBuiltinFunction.wrap(name: "extension_suffixes", doc: nil, fn: object.extensionSuffixes, module: module))
+    insert(module: module, name: "lock_held", value: PyBuiltinFunction.wrap(name: "lock_held", doc: UnderscoreImp.lockHeldDoc, fn: object.lockHeld, module: module))
+    insert(module: module, name: "acquire_lock", value: PyBuiltinFunction.wrap(name: "acquire_lock", doc: UnderscoreImp.acquireLockDoc, fn: object.acquireLock, module: module))
+    insert(module: module, name: "release_lock", value: PyBuiltinFunction.wrap(name: "release_lock", doc: UnderscoreImp.releaseLockDoc, fn: object.releaseLock, module: module))
+    insert(module: module, name: "is_builtin", value: PyBuiltinFunction.wrap(name: "is_builtin", doc: UnderscoreImp.isBuiltinDoc, fn: object.isBuiltin(name:), module: module))
+    insert(module: module, name: "create_builtin", value: PyBuiltinFunction.wrap(name: "create_builtin", doc: UnderscoreImp.createBuiltinDoc, fn: object.createBuiltin(spec:), module: module))
+    insert(module: module, name: "exec_builtin", value: PyBuiltinFunction.wrap(name: "exec_builtin", doc: UnderscoreImp.execBuiltinDoc, fn: object.execBuiltin(module:), module: module))
+    insert(module: module, name: "is_frozen", value: PyBuiltinFunction.wrap(name: "is_frozen", doc: UnderscoreImp.isFrozenDoc, fn: object.isFrozen, module: module))
+    insert(module: module, name: "is_frozen_package", value: PyBuiltinFunction.wrap(name: "is_frozen_package", doc: UnderscoreImp.isFrozenPackageDoc, fn: object.isFrozenPackage, module: module))
+    insert(module: module, name: "get_frozen_object", value: PyBuiltinFunction.wrap(name: "get_frozen_object", doc: UnderscoreImp.getFrozenObjectDoc, fn: object.getFrozenObject, module: module))
+    insert(module: module, name: "init_frozen", value: PyBuiltinFunction.wrap(name: "init_frozen", doc: UnderscoreImp.initFrozenDoc, fn: object.initFrozen, module: module))
+    insert(module: module, name: "create_dynamic", value: PyBuiltinFunction.wrap(name: "create_dynamic", doc: UnderscoreImp.createDynamicDoc, fn: object.createDynamic(spec:file:), module: module))
+    insert(module: module, name: "exec_dynamic", value: PyBuiltinFunction.wrap(name: "exec_dynamic", doc: UnderscoreImp.execDynamicDoc, fn: object.execDynamic(module:), module: module))
+    insert(module: module, name: "source_hash", value: PyBuiltinFunction.wrap(name: "source_hash", doc: UnderscoreImp.sourceHashDoc, fn: object.sourceHash, module: module))
+    insert(module: module, name: "check_hash_based_pycs", value: PyBuiltinFunction.wrap(name: "check_hash_based_pycs", doc: UnderscoreImp.checkHashBasedPycsDoc, fn: object.checkHashBasedPycs, module: module))
+    insert(module: module, name: "_fix_co_filename", value: PyBuiltinFunction.wrap(name: "_fix_co_filename", doc: UnderscoreImp.fixCoFilenameDoc, fn: object.fixCoFilename, module: module))
+    insert(module: module, name: "extension_suffixes", value: PyBuiltinFunction.wrap(name: "extension_suffixes", doc: UnderscoreImp.extensionSuffixesDoc, fn: object.extensionSuffixes, module: module))
 
     return module
   }
@@ -336,7 +336,7 @@ internal enum ModuleFactory {
     insert(module: module, name: "_defaultaction", value: object.defaultAction)
     insert(module: module, name: "_onceregistry", value: object.onceRegistry)
 
-    insert(module: module, name: "warn", value: PyBuiltinFunction.wrap(name: "warn", doc: nil, fn: object.warn(args:kwargs:), module: module))
+    insert(module: module, name: "warn", value: PyBuiltinFunction.wrap(name: "warn", doc: UnderscoreWarnings.warnDoc, fn: object.warn(args:kwargs:), module: module))
 
     return module
   }

@@ -6,7 +6,7 @@ import Core
 
 extension Sys {
 
-  internal var exitDoc: String {
+  internal static var exitDoc: String {
     return """
     exit([status])
 

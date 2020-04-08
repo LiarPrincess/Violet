@@ -6,7 +6,7 @@ from Data.modules import get_modules
 
 if __name__ == '__main__':
   print('''\
-// swiftlint:disable vertical_whitespace
+// swiftlint:disable file_length
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 
@@ -86,9 +86,8 @@ private func insert(module: PyModule, name: String, value: PyObject) {
 
       static_doc_property = fn.swift_static_doc_property
       doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
-      # TODO: add function doc
 
-      print(f'    insert(module: module, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: nil, fn: object.{swift_selector}, module: module))')
+      print(f'    insert(module: module, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: {doc}, fn: object.{swift_selector}, module: module))')
 
     if mod.functions:
       print()
