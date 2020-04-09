@@ -1,5 +1,6 @@
-import os
 import sys
+from Data.types import get_types
+from Common.strings import generated_warning
 
 # All of the operations for which protocols will be generated
 # (Feel free to add new ones.)
@@ -70,44 +71,15 @@ generated_protocols = set([
   "keys",
 ])
 
-# ----
-# File
-# ----
+def get_properties(t):
+  return filter(lambda prop: prop.python_name in generated_protocols, t.properties)
 
-class Line:
-  def __init__(self, type_name, base_type_name, operation, python_name, swift_signature):
-    self.type_name = type_name
-    self.base_type_name = base_type_name
-    self.operation = operation
-    self.python_name = python_name
-    self.swift_signature = clean_signature(swift_signature)
+def get_methods(t):
+  return filter(lambda prop: prop.python_name in generated_protocols, t.methods)
 
-def read_input_file() -> [Line]:
-  dir_path = os.path.dirname(__file__)
-  input_file = os.path.join(dir_path, 'Owners.tmp')
-
-  result = []
-  with open(input_file, 'r') as reader:
-    for line in reader:
-      line = line.strip()
-
-      if not line or line.startswith('#'):
-        continue
-
-      line_split = line.split('|')
-      assert len(line_split) == 5
-
-      type_name = line_split[0]
-      base_type_name = line_split[1]
-      operation = line_split[2]
-      python_name = line_split[3]
-      swift_signature = line_split[4]
-
-      if python_name in generated_protocols:
-        entry = Line(type_name, base_type_name, operation, python_name, swift_signature)
-        result.append(entry)
-
-  return result
+# ------
+# Shared
+# ------
 
 def clean_signature(sig):
   ''' If signature spans multiple lines then Sourcery will ignore new lines, but
@@ -121,10 +93,6 @@ def clean_signature(sig):
     sig = sig.replace('  ', ' ')
 
   return sig
-
-# ------
-# Shared
-# ------
 
 def getter_protocol_name(name):
   name = name if name.startswith('__') else name.title()
@@ -143,18 +111,17 @@ doc = '''\
 // responsible for generating the code).\
 '''
 
+types = get_types()
+
 # ---------
 # Protocols
 # ---------
 
 def print_protocols():
-  lines = read_input_file()
-
   print(f'''\
 // swiftlint:disable line_length
 
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
+{generated_warning}
 
 import Core
 
@@ -171,30 +138,27 @@ protocol __init__Owner {{
 ''')
 
   protocols = set()
-  for line in lines:
-    python_name = line.python_name
-    signature = line.swift_signature
+  for t in types:
+    for prop in get_properties(t):
+      python_name = prop.python_name
+      swift_getter_fn = prop.swift_getter_fn
+      swift_type = prop.swift_type
 
-    # We hand-written '__new__' and '__init__'.
-    if python_name in ['__new__', '__init__']:
-      continue
-
-    elif line.operation == 'get':
       protocol_name = getter_protocol_name(python_name)
-      protocols.add(f'protocol {protocol_name} {{ func {signature} }}')
+      protocols.add(f'protocol {protocol_name} {{ func {swift_getter_fn}() -> {swift_type} }}')
 
-    elif line.operation == 'set':
-      protocol_name = setter_protocol_name(python_name)
-      protocols.add(f'protocol {protocol_name} {{ func {signature} }}')
+      # Setters are not supported
 
-    elif line.operation == 'func' or line.operation == 'static_func':
-      static = 'static ' if line.operation == 'static_func' else ''
+    for meth in get_methods(t):
+      python_name = meth.python_name
+      swift_name_full = clean_signature(meth.swift_name_full)
+      swift_return_type = meth.swift_return_type
 
       protocol_name = func_protocol_name(python_name)
-      protocols.add(f'protocol {protocol_name} {{ {static}func {signature} }}')
+      protocols.add(f'protocol {protocol_name} {{ func {swift_name_full} -> {swift_return_type} }}')
 
-    else:
-      assert False
+    # From static methods we have hand-written '__new__' and '__init__'.
+    # We ignore other.
 
   # Additional protocols (none of the builtin types implement them)
   protocols.add('protocol __matmul__Owner { func matmul(_ other: PyObject) -> PyResult<PyObject> }')
@@ -221,67 +185,68 @@ protocol __init__Owner {{
 # -----------
 
 class ConformanceEntry:
-  def __init__(self, type_name, base_type_name, protocols):
-    self.type_name = type_name
-    self.base_type_name = base_type_name
-    self.protocols = protocols
+  def __init__(self, swift_type, swift_base_type):
+    self.swift_type = swift_type
+    self.swift_base_type = swift_base_type
+    self.protocols = []
 
 def print_conformance():
-  lines = read_input_file()
-
   print(f'''\
 // swiftlint:disable file_length
 // swiftlint:disable opening_brace
 // swiftlint:disable trailing_newline
 
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
+{generated_warning}
 
 {doc}
-
-// MARK: - BaseObject
-
-// PyObjectType does not own anything.
-extension PyObjectType {{ }}
 ''')
 
-  # type_name pointing to ConformanceEntry
-  entries_by_type_name = { }
+  # swift_type name pointing to ConformanceEntry
+  entries_by_swift_type = { }
 
-  for line in lines:
-    type_name = line.type_name
-    base_type_name = line.base_type_name
-    signature = line.swift_signature
-    python_name = line.python_name
+  for t in types:
+    python_name = t.python_type
+    swift_type = t.swift_type
+    swift_base_type = t.swift_base_type
 
-    entry = entries_by_type_name.get(type_name)
+    if t.swift_type == 'PyObject':
+      continue
+
+    entry = entries_by_swift_type.get(swift_type)
     if not entry:
-      entry = ConformanceEntry(type_name, base_type_name, [])
-      entries_by_type_name[type_name] = entry
+      entry = ConformanceEntry(swift_type, swift_base_type)
+      entries_by_swift_type[swift_type] = entry
 
-    protocols = entry.protocols
+    for prop in get_properties(t):
+      python_name = prop.python_name
+      protocol_name = getter_protocol_name(python_name)
+      entry.protocols.append(protocol_name)
 
-    if line.operation == 'get':
-      protocols.append(getter_protocol_name(python_name))
-    elif line.operation == 'set':
-      protocols.append(setter_protocol_name(python_name))
-    elif line.operation == 'func' or line.operation == 'static_func':
-      protocols.append(func_protocol_name(python_name))
-    else:
-      assert False
+    for meth in get_methods(t):
+      python_name = meth.python_name
+      protocol_name = func_protocol_name(python_name)
+      entry.protocols.append(protocol_name)
 
-  for entry in entries_by_type_name.values():
-    type_name = entry.type_name
-    base_type_name = entry.base_type_name
+    # From static funcions we have only '__new__' and '__init__'.
+    for meth in t.static_functions:
+      python_name = meth.python_name
+
+      if python_name in ['__new__', '__init__']:
+        protocol_name = func_protocol_name(python_name)
+        entry.protocols.append(protocol_name)
+
+  for entry in entries_by_swift_type.values():
+    swift_type = entry.swift_type
+    swift_base_type = entry.swift_base_type
     self_protocols = entry.protocols
 
-    print(f'// MARK: - {type_name.replace("Py", "")}')
+    print(f'// MARK: - {swift_type.replace("Py", "")}')
     print()
 
     # Remove parent conformances
-    base = base_type_name
+    base = swift_base_type
     while base:
-      base_entry = entries_by_type_name.get(base)
+      base_entry = entries_by_swift_type.get(base)
       if not base_entry:
         base = None
         continue
@@ -290,14 +255,14 @@ extension PyObjectType {{ }}
         if base_protocol in self_protocols:
           self_protocols.remove(base_protocol)
 
-      base = base_entry.base_type_name
+      base = base_entry.swift_base_type
 
     # Print extension
     if not self_protocols:
-      print(f'// {type_name} does not add any new protocols to {base_type_name}')
-      print(f'extension {type_name} {{ }}')
+      print(f'// {swift_type} does not add any new protocols to {swift_base_type}')
+      print(f'extension {swift_type} {{ }}')
     else:
-      print(f'extension {type_name}:')
+      print(f'extension {swift_type}:')
       for protocol in self_protocols:
         comma = '' if protocol == self_protocols[-1] else ','
         print(f'  {protocol}{comma}')

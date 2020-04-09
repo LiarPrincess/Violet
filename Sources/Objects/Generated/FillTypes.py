@@ -98,7 +98,7 @@ private func insert(type: PyType, name: String, value: PyObject) {
 
     for fn in t.static_functions:
       python_name = fn.python_name
-      swift_function_name = fn.swift_function_name
+      swift_name = fn.swift_name
       swift_selector = fn.swift_selector
 
       static_doc_property = fn.swift_static_doc_property
@@ -120,7 +120,7 @@ private func insert(type: PyType, name: String, value: PyObject) {
 
     for meth in t.methods:
       python_name = meth.python_name
-      swift_function_name = meth.swift_function_name
+      swift_name = meth.swift_name
       swift_selector = meth.swift_selector
 
       static_doc_property = meth.swift_static_doc_property

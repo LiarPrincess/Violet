@@ -40,10 +40,11 @@ class PropertyInfo:
   internal var argv: PyObject { ... }
   ```
   '''
-  def __init__(self, python_name: str, swift_getter_fn: str, swift_setter_fn: str, swift_static_doc_property: str):
+  def __init__(self, python_name: str, swift_getter_fn: str, swift_setter_fn: str, swift_type:str, swift_static_doc_property: str):
     self.python_name = python_name
     self.swift_getter_fn = swift_getter_fn
     self.swift_setter_fn = swift_setter_fn or None
+    self.swift_type = swift_type
     self.swift_static_doc_property = swift_static_doc_property or None
 
 class FunctionInfo:
@@ -56,10 +57,15 @@ class FunctionInfo:
   internal func warnOptions() -> PyObject { ... }
   ```
   '''
-  def __init__(self, python_name: str, swift_function_name: str, swift_selector: str, swift_static_doc_property: str):
+  def __init__(self, python_name: str, swift_name: str, swift_name_full:str, swift_selector: str, swift_return_type: str, swift_static_doc_property: str):
     self.python_name = python_name
-    self.swift_function_name = swift_function_name
+    # Method name without arguments names, parenthesis and generic types, i.e. foo
+    self.swift_name = swift_name
+    # Full method name, including generic constraints, i.e. foo<T>(bar: T)
+    self.swift_name_full = swift_name_full
+    # Method name including arguments names, i.e. foo(bar:)
     self.swift_selector = swift_selector
+    self.swift_return_type = swift_return_type
     self.swift_static_doc_property = swift_static_doc_property or None
 
 # Functions and methods have exactly the same properties.
@@ -127,34 +133,32 @@ def get_types() -> [TypeInfo]:
 
       elif line_type == 'Property':
         assert current_type
-        assert len(split) == 5
+        assert len(split) == 6
         python_name = split[1]
         swift_getter_fn = split[2]
         swift_setter_fn = split[3]
-        swift_static_doc_property = split[4]
+        swift_type = split[4]
+        swift_static_doc_property = split[5]
 
-        prop = PropertyInfo(python_name, swift_getter_fn, swift_setter_fn, swift_static_doc_property)
+        prop = PropertyInfo(python_name, swift_getter_fn, swift_setter_fn, swift_type, swift_static_doc_property)
         current_type.properties.append(prop)
 
-      elif line_type == 'StaticFunction':
+      elif line_type == 'StaticFunction' or line_type == 'Method':
         assert current_type
-        assert len(split) == 5
+        assert len(split) == 7
         python_name = split[1]
-        swift_function_name = split[2]
-        swift_selector = split[3]
-        swift_static_doc_property = split[4]
-        fn = FunctionInfo(python_name, swift_function_name, swift_selector, swift_static_doc_property)
-        current_type.static_functions.append(fn)
+        swift_name = split[2]
+        swift_name_full = split[3]
+        swift_selector = split[4]
+        swift_return_type = split[5]
+        swift_static_doc_property = split[6]
 
-      elif line_type == 'Method':
-        assert current_type
-        assert len(split) == 5
-        python_name = split[1]
-        swift_function_name = split[2]
-        swift_selector = split[3]
-        swift_static_doc_property = split[4]
-        fn = MethodInfo(python_name, swift_function_name, swift_selector, swift_static_doc_property)
-        current_type.methods.append(fn)
+        if line_type == 'StaticFunction':
+          fn = FunctionInfo(python_name, swift_name, swift_name_full, swift_selector, swift_return_type, swift_static_doc_property)
+          current_type.static_functions.append(fn)
+        else:
+          fn = MethodInfo(python_name, swift_name, swift_name_full, swift_selector, swift_return_type, swift_static_doc_property)
+          current_type.methods.append(fn)
 
       else:
         assert False, f"Unknown line type: '{line_type}'"
