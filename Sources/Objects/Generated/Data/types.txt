@@ -8,12 +8,16 @@
 
 
 
+
 ############
 # object
 ############
 
 # Type|python_type|swift_type
-Type|object|PyObject
+Type|object|PyObject|
+# Field|swift_filed_name|swift_filed_type
+Field|_type|PyType!
+Field|flags|PyObjectFlags
 # Annotation|value
 Annotation|default
 Annotation|baseType
@@ -48,12 +52,13 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # Type|python_type|swift_type
-Type|bool|PyBool
+Type|bool|PyBool|PyInt
 # Annotation|value
 Annotation|pytype
 Annotation|default
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -74,11 +79,15 @@ Method|__rxor__|rxor|rxor(_:)|
 ############
 
 # Type|python_type|swift_type
-Type|builtinFunction|PyBuiltinFunction
+Type|builtinFunction|PyBuiltinFunction|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|function|FunctionWrapper
+Field|module|PyObject?
+Field|doc|String?
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__name__|getName||
@@ -106,11 +115,16 @@ Method|__call__|call|call(args:kwargs:)|
 ############
 
 # Type|python_type|swift_type
-Type|builtinMethod|PyBuiltinMethod
+Type|builtinMethod|PyBuiltinMethod|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|function|FunctionWrapper
+Field|object|PyObject
+Field|module|PyObject?
+Field|doc|String?
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__name__|getName||
 Property|__qualname__|getQualname||
@@ -137,13 +151,15 @@ Method|__call__|call|call(args:kwargs:)|
 ############
 
 # Type|python_type|swift_type
-Type|bytearray|PyByteArray
+Type|bytearray|PyByteArray|PyObject
 # Annotation|value
-Annotation|pytype
 Annotation|default
+Annotation|pytype
 Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|data|PyBytesData
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -219,11 +235,14 @@ Method|copy|copy|copy|copyDoc
 ############
 
 # Type|python_type|swift_type
-Type|bytearray_iterator|PyByteArrayIterator
+Type|bytearray_iterator|PyByteArrayIterator|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|bytes|PyByteArray
+Field|index|Int
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -239,14 +258,16 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|bytes|PyBytes
+Type|bytes|PyBytes|PyObject
 # Annotation|value
-Annotation|baseType
 Annotation|pytype
+Annotation|baseType
 Annotation|default
 Annotation|bytesSubclass
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|data|PyBytesData
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -311,11 +332,14 @@ Method|__iter__|iter|iter|
 ############
 
 # Type|python_type|swift_type
-Type|bytes_iterator|PyBytesIterator
+Type|bytes_iterator|PyBytesIterator|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|bytes|PyBytes
+Field|index|Int
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -331,11 +355,14 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|callable_iterator|PyCallableIterator
+Type|callable_iterator|PyCallableIterator|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|callable|PyObject
+Field|sentinel|PyObject
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -350,11 +377,13 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|cell|PyCell
+Type|cell|PyCell|PyObject
 # Annotation|value
 Annotation|pytype
-Annotation|default
 Annotation|hasGC
+Annotation|default
+# Field|swift_filed_name|swift_filed_type
+Field|content|PyObject?
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -373,14 +402,17 @@ Method|__getattribute__|getAttribute|getAttribute(name:)|
 ############
 
 # Type|python_type|swift_type
-Type|classmethod|PyClassMethod
+Type|classmethod|PyClassMethod|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
 Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|callable|PyObject?
+Field|__dict__|PyDict
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -398,12 +430,19 @@ Method|__isabstractmethod__|isAbstractMethod|isAbstractMethod|
 ############
 
 # Type|python_type|swift_type
-Type|code|PyCode
+Type|code|PyCode|PyObject
 # Annotation|value
 Annotation|pytype
 Annotation|default
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|codeObject|CodeObject
+Field|name|PyString
+Field|qualifiedName|PyString
+Field|filename|PyString
+Field|constants|[Constant]
+Field|names|[PyString]
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|co_name|getName||
@@ -430,13 +469,16 @@ Method|__getattribute__|getAttribute|getAttribute(name:)|
 ############
 
 # Type|python_type|swift_type
-Type|complex|PyComplex
+Type|complex|PyComplex|PyObject
 # Annotation|value
-Annotation|pytype
 Annotation|default
+Annotation|pytype
 Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|real|Double
+Field|imag|Double
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|real|asReal||
 Property|imag|asImag||
@@ -484,15 +526,17 @@ Method|__rdivmod__|rdivmod|rdivmod(_:)|
 ############
 
 # Type|python_type|swift_type
-Type|dict|PyDict
+Type|dict|PyDict|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
-Annotation|hasGC
 Annotation|pytype
 Annotation|dictSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|data|PyDictData
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -531,11 +575,15 @@ Method|values|values|values|
 ############
 
 # Type|python_type|swift_type
-Type|dict_itemiterator|PyDictItemIterator
+Type|dict_itemiterator|PyDictItemIterator|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|object|PyDict
+Field|index|Int
+Field|initCount|Int
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -551,11 +599,13 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|dict_items|PyDictItems
+Type|dict_items|PyDictItems|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|dict|PyDict
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -580,11 +630,15 @@ Method|__iter__|iter|iter|
 ############
 
 # Type|python_type|swift_type
-Type|dict_keyiterator|PyDictKeyIterator
+Type|dict_keyiterator|PyDictKeyIterator|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|object|PyDict
+Field|index|Int
+Field|initCount|Int
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -600,11 +654,13 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|dict_keys|PyDictKeys
+Type|dict_keys|PyDictKeys|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|dict|PyDict
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -629,11 +685,15 @@ Method|__iter__|iter|iter|
 ############
 
 # Type|python_type|swift_type
-Type|dict_valueiterator|PyDictValueIterator
+Type|dict_valueiterator|PyDictValueIterator|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|object|PyDict
+Field|index|Int
+Field|initCount|Int
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -649,11 +709,13 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|dict_values|PyDictValues
+Type|dict_values|PyDictValues|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|dict|PyDict
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -668,10 +730,11 @@ Method|__iter__|iter|iter|
 ############
 
 # Type|python_type|swift_type
-Type|ellipsis|PyEllipsis
+Type|ellipsis|PyEllipsis|PyObject
 # Annotation|value
 Annotation|pytype
 Annotation|default
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -687,14 +750,17 @@ Method|__getattribute__|getAttribute|getAttribute(name:)|
 ############
 
 # Type|python_type|swift_type
-Type|enumerate|PyEnumerate
+Type|enumerate|PyEnumerate|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
 Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|iterator|PyObject
+Field|nextIndex|BigInt
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -710,14 +776,17 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|filter|PyFilter
+Type|filter|PyFilter|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
 Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|fn|PyObject
+Field|iterator|PyObject
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -733,13 +802,15 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|float|PyFloat
+Type|float|PyFloat|PyObject
 # Annotation|value
-Annotation|pytype
 Annotation|default
+Annotation|pytype
 Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|value|Double
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|real|asReal||
 Property|imag|asImag||
@@ -790,11 +861,22 @@ Method|__trunc__|trunc|trunc|
 ############
 
 # Type|python_type|swift_type
-Type|frame|PyFrame
+Type|frame|PyFrame|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|code|PyCode
+Field|parent|PyFrame?
+Field|stack|ObjectStack
+Field|blocks|BlockStack
+Field|locals|PyDict
+Field|globals|PyDict
+Field|builtins|PyDict
+Field|fastLocals|[PyObject?]
+Field|cellsAndFreeVariables|[PyCell]
+Field|instructionIndex|Int?
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|f_back|getBack||
@@ -817,14 +899,16 @@ Method|__delattr__|delAttribute|delAttribute(name:)|
 ############
 
 # Type|python_type|swift_type
-Type|frozenset|PyFrozenSet
+Type|frozenset|PyFrozenSet|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
 Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|data|PySetData
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -865,13 +949,25 @@ Method|__iter__|iter|iter|
 ############
 
 # Type|python_type|swift_type
-Type|function|PyFunction
+Type|function|PyFunction|PyObject
 # Annotation|value
 Annotation|pytype
-Annotation|default
 Annotation|hasGC
+Annotation|default
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|name|PyString
+Field|qualname|PyString
+Field|doc|PyString?
+Field|module|PyObject
+Field|code|PyCode
+Field|globals|PyDict
+Field|defaults|PyTuple?
+Field|kwDefaults|PyDict?
+Field|closure|PyTuple?
+Field|annotations|PyDict?
+Field|__dict__|PyDict
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__name__|getName|setName|
@@ -897,14 +993,16 @@ Method|__call__|call|call(args:kwargs:)|
 ############
 
 # Type|python_type|swift_type
-Type|int|PyInt
+Type|int|PyInt|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
 Annotation|longSubclass
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|value|BigInt
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|real|asReal||
@@ -971,11 +1069,14 @@ Method|__round__|round|round(nDigits:)|
 ############
 
 # Type|python_type|swift_type
-Type|iterator|PyIterator
+Type|iterator|PyIterator|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|sequence|PyObject
+Field|index|Int
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -990,15 +1091,17 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|list|PyList
+Type|list|PyList|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
-Annotation|hasGC
 Annotation|listSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|data|PySequenceData
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1044,11 +1147,14 @@ Method|__imul__|imul|imul(_:)|
 ############
 
 # Type|python_type|swift_type
-Type|list_iterator|PyListIterator
+Type|list_iterator|PyListIterator|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|list|PyList
+Field|index|Int
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1064,11 +1170,14 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|list_reverseiterator|PyListReverseIterator
+Type|list_reverseiterator|PyListReverseIterator|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|list|PyList
+Field|index|Int
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1084,14 +1193,17 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|map|PyMap
+Type|map|PyMap|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
 Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|fn|PyObject
+Field|iterators|[PyObject]
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1107,13 +1219,16 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|method|PyMethod
+Type|method|PyMethod|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|function|PyFunction
+Field|object|PyObject
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__doc__|getDoc||
@@ -1141,14 +1256,16 @@ Method|__call__|call|call(args:kwargs:)|
 ############
 
 # Type|python_type|swift_type
-Type|module|PyModule
+Type|module|PyModule|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
 Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|__dict__|PyDict
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__dict__|getDict||
 Property|__class__|getClass||
@@ -1168,14 +1285,16 @@ Method|__dir__|dir|dir|
 ############
 
 # Type|python_type|swift_type
-Type|types.SimpleNamespace|PyNamespace
+Type|types.SimpleNamespace|PyNamespace|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
 Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|__dict__|PyDict
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__dict__|getDict||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1198,10 +1317,11 @@ Method|__delattr__|delAttribute|delAttribute(name:)|
 ############
 
 # Type|python_type|swift_type
-Type|NoneType|PyNone
+Type|NoneType|PyNone|PyObject
 # Annotation|value
 Annotation|pytype
 Annotation|default
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1217,10 +1337,11 @@ Method|__getattribute__|getAttribute|getAttribute(name:)|
 ############
 
 # Type|python_type|swift_type
-Type|NotImplementedType|PyNotImplemented
+Type|NotImplementedType|PyNotImplemented|PyObject
 # Annotation|value
 Annotation|pytype
 Annotation|default
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1234,14 +1355,19 @@ Method|__repr__|repr|repr|
 ############
 
 # Type|python_type|swift_type
-Type|property|PyProperty
+Type|property|PyProperty|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
 Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|_get|PyObject?
+Field|_set|PyObject?
+Field|_del|PyObject?
+Field|doc|PyObject?
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|fget|getFGet||
@@ -1265,12 +1391,18 @@ Method|deleter|deleter|deleter(value:)|
 ############
 
 # Type|python_type|swift_type
-Type|range|PyRange
+Type|range|PyRange|PyObject
 # Annotation|value
 Annotation|pytype
 Annotation|default
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|start|PyInt
+Field|stop|PyInt
+Field|step|PyInt
+Field|length|PyInt
+Field|stepType|StepType
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|start|getStart||
@@ -1303,10 +1435,15 @@ Method|index|index|index(of:)|
 ############
 
 # Type|python_type|swift_type
-Type|range_iterator|PyRangeIterator
+Type|range_iterator|PyRangeIterator|PyObject
 # Annotation|value
 Annotation|pytype
 Annotation|default
+# Field|swift_filed_name|swift_filed_type
+Field|start|BigInt
+Field|step|BigInt
+Field|length|BigInt
+Field|index|BigInt
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1322,14 +1459,17 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|reversed|PyReversed
+Type|reversed|PyReversed|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
 Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|sequence|PyObject
+Field|index|Int
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1345,14 +1485,16 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|set|PySet
+Type|set|PySet|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
 Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|data|PySetData
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1400,11 +1542,15 @@ Method|__iter__|iter|iter|
 ############
 
 # Type|python_type|swift_type
-Type|set_iterator|PySetIterator
+Type|set_iterator|PySetIterator|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|set|PySetType
+Field|index|Int
+Field|initCount|Int
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1420,13 +1566,17 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|slice|PySlice
+Type|slice|PySlice|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|start|PyObject
+Field|stop|PyObject
+Field|step|PyObject
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|start|getStart||
@@ -1452,14 +1602,17 @@ Method|indices|indicesInSequence|indicesInSequence(length:)|
 ############
 
 # Type|python_type|swift_type
-Type|staticmethod|PyStaticMethod
+Type|staticmethod|PyStaticMethod|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
 Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|callable|PyObject?
+Field|__dict__|PyDict
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -1477,14 +1630,16 @@ Method|__isabstractmethod__|isAbstractMethod|isAbstractMethod|
 ############
 
 # Type|python_type|swift_type
-Type|str|PyString
+Type|str|PyString|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
+Annotation|baseType
 Annotation|unicodeSubclass
+Annotation|default
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|data|PyStringData
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1554,11 +1709,14 @@ Method|__iter__|iter|iter|
 ############
 
 # Type|python_type|swift_type
-Type|str_iterator|PyStringIterator
+Type|str_iterator|PyStringIterator|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|string|PyString
+Field|index|Int
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1574,14 +1732,18 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|super|PySuper
+Type|super|PySuper|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
 Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|thisClass|PyType?
+Field|object|PyObject?
+Field|objectType|PyType?
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__thisclass__|getThisClass||thisClassDoc
 Property|__self__|getSelf||selfDoc
@@ -1600,14 +1762,21 @@ Method|__get__|get|get(object:type:)|
 ############
 
 # Type|python_type|swift_type
-Type|TextFile|PyTextFile
+Type|TextFile|PyTextFile|PyObject
 # Annotation|value
-Annotation|default
-Annotation|hasFinalize
 Annotation|pytype
+Annotation|hasFinalize
 Annotation|hasGC
+Annotation|default
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|name|String?
+Field|fd|FileDescriptorType
+Field|encoding|PyStringEncoding
+Field|errors|PyStringErrorHandler
+Field|mode|FileMode
+Field|closeOnDealloc|Bool
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1629,15 +1798,17 @@ Method|__exit__|exit|exit(exceptionType:exception:traceback:)|
 ############
 
 # Type|python_type|swift_type
-Type|tuple|PyTuple
+Type|tuple|PyTuple|PyObject
 # Annotation|value
-Annotation|default
-Annotation|tupleSubclass
 Annotation|pytype
-Annotation|baseType
+Annotation|tupleSubclass
 Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|data|PySequenceData
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1668,11 +1839,14 @@ Method|__rmul__|rmul|rmul(_:)|
 ############
 
 # Type|python_type|swift_type
-Type|tuple_iterator|PyTupleIterator
+Type|tuple_iterator|PyTupleIterator|PyObject
 # Annotation|value
+Annotation|hasGC
 Annotation|pytype
 Annotation|default
-Annotation|hasGC
+# Field|swift_filed_name|swift_filed_type
+Field|tuple|PyTuple
+Field|index|Int
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1688,15 +1862,25 @@ Method|__next__|next|next|
 ############
 
 # Type|python_type|swift_type
-Type|type|PyType
+Type|type|PyType|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
-Annotation|hasGC
 Annotation|typeSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|name|String
+Field|qualname|String
+Field|base|PyType?
+Field|bases|[PyType]
+Field|mro|[PyType]
+Field|subclasses|[PyTypeWeakRef]
+Field|__dict__|PyDict
+Field|layout|TypeLayout?
+Field|typeFlags|PyTypeFlags
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__name__|getName|setName|
 Property|__qualname__|getQualname|setQualname|
@@ -1727,14 +1911,16 @@ Method|__call__|call|call(args:kwargs:)|
 ############
 
 # Type|python_type|swift_type
-Type|zip|PyZip
+Type|zip|PyZip|PyObject
 # Annotation|value
-Annotation|baseType
-Annotation|default
 Annotation|pytype
 Annotation|hasGC
+Annotation|default
+Annotation|baseType
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|iterators|[PyObject]
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 # StaticFunction|python_name|swift_function_name|swift_selector|swift_static_doc_property
@@ -1752,15 +1938,16 @@ Method|__next__|next|next|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|ArithmeticError|PyArithmeticError
+ErrorType|ArithmeticError|PyArithmeticError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -1775,15 +1962,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|AssertionError|PyAssertionError
+ErrorType|AssertionError|PyAssertionError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -1798,15 +1986,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|AttributeError|PyAttributeError
+ErrorType|AttributeError|PyAttributeError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -1821,15 +2010,22 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|BaseException|PyBaseException
+ErrorType|BaseException|PyBaseException|PyObject
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
+Field|args|PyTuple
+Field|traceback|PyObject?
+Field|cause|PyObject?
+Field|__dict__|Py
+Field|context|PyBaseException?
+Field|suppressContext|Bool
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__dict__|getDict||
 Property|__class__|getClass||
@@ -1854,15 +2050,16 @@ Method|__delattr__|delAttribute|delAttribute(name:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|BlockingIOError|PyBlockingIOError
+ErrorType|BlockingIOError|PyBlockingIOError|PyOSError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -1877,15 +2074,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|BrokenPipeError|PyBrokenPipeError
+ErrorType|BrokenPipeError|PyBrokenPipeError|PyConnectionError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -1900,15 +2098,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|BufferError|PyBufferError
+ErrorType|BufferError|PyBufferError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -1923,15 +2122,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|BytesWarning|PyBytesWarning
+ErrorType|BytesWarning|PyBytesWarning|PyWarning
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -1946,15 +2146,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|ChildProcessError|PyChildProcessError
+ErrorType|ChildProcessError|PyChildProcessError|PyOSError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -1969,15 +2170,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|ConnectionAbortedError|PyConnectionAbortedError
+ErrorType|ConnectionAbortedError|PyConnectionAbortedError|PyConnectionError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -1992,15 +2194,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|ConnectionError|PyConnectionError
+ErrorType|ConnectionError|PyConnectionError|PyOSError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2015,15 +2218,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|ConnectionRefusedError|PyConnectionRefusedError
+ErrorType|ConnectionRefusedError|PyConnectionRefusedError|PyConnectionError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2038,15 +2242,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|ConnectionResetError|PyConnectionResetError
+ErrorType|ConnectionResetError|PyConnectionResetError|PyConnectionError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2061,15 +2266,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|DeprecationWarning|PyDeprecationWarning
+ErrorType|DeprecationWarning|PyDeprecationWarning|PyWarning
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2084,15 +2290,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|EOFError|PyEOFError
+ErrorType|EOFError|PyEOFError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2107,15 +2314,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|Exception|PyException
+ErrorType|Exception|PyException|PyBaseException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2130,15 +2338,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|FileExistsError|PyFileExistsError
+ErrorType|FileExistsError|PyFileExistsError|PyOSError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2153,15 +2362,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|FileNotFoundError|PyFileNotFoundError
+ErrorType|FileNotFoundError|PyFileNotFoundError|PyOSError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2176,15 +2386,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|FloatingPointError|PyFloatingPointError
+ErrorType|FloatingPointError|PyFloatingPointError|PyArithmeticError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2199,15 +2410,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|FutureWarning|PyFutureWarning
+ErrorType|FutureWarning|PyFutureWarning|PyWarning
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2222,15 +2434,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|GeneratorExit|PyGeneratorExit
+ErrorType|GeneratorExit|PyGeneratorExit|PyBaseException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2245,15 +2458,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|ImportError|PyImportError
+ErrorType|ImportError|PyImportError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2268,15 +2482,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|ImportWarning|PyImportWarning
+ErrorType|ImportWarning|PyImportWarning|PyWarning
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2291,15 +2506,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|IndentationError|PyIndentationError
+ErrorType|IndentationError|PyIndentationError|PySyntaxError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2314,15 +2530,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|IndexError|PyIndexError
+ErrorType|IndexError|PyIndexError|PyLookupError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2337,15 +2554,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|InterruptedError|PyInterruptedError
+ErrorType|InterruptedError|PyInterruptedError|PyOSError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2360,15 +2578,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|IsADirectoryError|PyIsADirectoryError
+ErrorType|IsADirectoryError|PyIsADirectoryError|PyOSError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2383,15 +2602,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|KeyError|PyKeyError
+ErrorType|KeyError|PyKeyError|PyLookupError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2406,15 +2626,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|KeyboardInterrupt|PyKeyboardInterrupt
+ErrorType|KeyboardInterrupt|PyKeyboardInterrupt|PyBaseException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2429,15 +2650,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|LookupError|PyLookupError
+ErrorType|LookupError|PyLookupError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2452,15 +2674,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|MemoryError|PyMemoryError
+ErrorType|MemoryError|PyMemoryError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2475,15 +2698,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|ModuleNotFoundError|PyModuleNotFoundError
+ErrorType|ModuleNotFoundError|PyModuleNotFoundError|PyImportError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2498,15 +2722,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|NameError|PyNameError
+ErrorType|NameError|PyNameError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2521,15 +2746,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|NotADirectoryError|PyNotADirectoryError
+ErrorType|NotADirectoryError|PyNotADirectoryError|PyOSError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2544,15 +2770,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|NotImplementedError|PyNotImplementedError
+ErrorType|NotImplementedError|PyNotImplementedError|PyRuntimeError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2567,15 +2794,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|OSError|PyOSError
+ErrorType|OSError|PyOSError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2590,15 +2818,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|OverflowError|PyOverflowError
+ErrorType|OverflowError|PyOverflowError|PyArithmeticError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2613,15 +2842,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|PendingDeprecationWarning|PyPendingDeprecationWarning
+ErrorType|PendingDeprecationWarning|PyPendingDeprecationWarning|PyWarning
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2636,15 +2866,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|PermissionError|PyPermissionError
+ErrorType|PermissionError|PyPermissionError|PyOSError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2659,15 +2890,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|ProcessLookupError|PyProcessLookupError
+ErrorType|ProcessLookupError|PyProcessLookupError|PyOSError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2682,15 +2914,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|RecursionError|PyRecursionError
+ErrorType|RecursionError|PyRecursionError|PyRuntimeError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2705,15 +2938,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|ReferenceError|PyReferenceError
+ErrorType|ReferenceError|PyReferenceError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2728,15 +2962,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|ResourceWarning|PyResourceWarning
+ErrorType|ResourceWarning|PyResourceWarning|PyWarning
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2751,15 +2986,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|RuntimeError|PyRuntimeError
+ErrorType|RuntimeError|PyRuntimeError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2774,15 +3010,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|RuntimeWarning|PyRuntimeWarning
+ErrorType|RuntimeWarning|PyRuntimeWarning|PyWarning
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2797,15 +3034,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|StopAsyncIteration|PyStopAsyncIteration
+ErrorType|StopAsyncIteration|PyStopAsyncIteration|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2820,15 +3058,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|StopIteration|PyStopIteration
+ErrorType|StopIteration|PyStopIteration|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2843,15 +3082,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|SyntaxError|PySyntaxError
+ErrorType|SyntaxError|PySyntaxError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2866,15 +3106,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|SyntaxWarning|PySyntaxWarning
+ErrorType|SyntaxWarning|PySyntaxWarning|PyWarning
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2889,15 +3130,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|SystemError|PySystemError
+ErrorType|SystemError|PySystemError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2912,15 +3154,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|SystemExit|PySystemExit
+ErrorType|SystemExit|PySystemExit|PyBaseException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2935,15 +3178,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|TabError|PyTabError
+ErrorType|TabError|PyTabError|PyIndentationError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2958,15 +3202,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|TimeoutError|PyTimeoutError
+ErrorType|TimeoutError|PyTimeoutError|PyOSError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -2981,15 +3226,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|TypeError|PyTypeError
+ErrorType|TypeError|PyTypeError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -3004,15 +3250,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|UnboundLocalError|PyUnboundLocalError
+ErrorType|UnboundLocalError|PyUnboundLocalError|PyNameError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -3027,15 +3274,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|UnicodeDecodeError|PyUnicodeDecodeError
+ErrorType|UnicodeDecodeError|PyUnicodeDecodeError|PyUnicodeError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -3050,15 +3298,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|UnicodeEncodeError|PyUnicodeEncodeError
+ErrorType|UnicodeEncodeError|PyUnicodeEncodeError|PyUnicodeError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -3073,15 +3322,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|UnicodeError|PyUnicodeError
+ErrorType|UnicodeError|PyUnicodeError|PyValueError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -3096,15 +3346,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|UnicodeTranslateError|PyUnicodeTranslateError
+ErrorType|UnicodeTranslateError|PyUnicodeTranslateError|PyUnicodeError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -3119,15 +3370,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|UnicodeWarning|PyUnicodeWarning
+ErrorType|UnicodeWarning|PyUnicodeWarning|PyWarning
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -3142,15 +3394,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|UserWarning|PyUserWarning
+ErrorType|UserWarning|PyUserWarning|PyWarning
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -3165,15 +3418,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|ValueError|PyValueError
+ErrorType|ValueError|PyValueError|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -3188,15 +3442,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|Warning|PyWarning
+ErrorType|Warning|PyWarning|PyException
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||
@@ -3211,15 +3466,16 @@ StaticFunction|__init__|pyInit|pyInit(zelf:args:kwargs:)|
 ############
 
 # ErrorType|python_type|swift_type
-ErrorType|ZeroDivisionError|PyZeroDivisionError
+ErrorType|ZeroDivisionError|PyZeroDivisionError|PyArithmeticError
 # Annotation|value
 Annotation|baseType
-Annotation|default
-Annotation|hasGC
-Annotation|pyerrortype
 Annotation|baseExceptionSubclass
+Annotation|hasGC
+Annotation|default
+Annotation|pyerrortype
 # Doc|swift_static_doc_property
 Doc|doc
+# Field|swift_filed_name|swift_filed_type
 # Property|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
 Property|__class__|getClass||
 Property|__dict__|getDict||

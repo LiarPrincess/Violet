@@ -9,16 +9,26 @@ class TypeInfo:
   '''
   Python type.
   '''
-  def __init__(self, python_type: str, swift_type: str, is_error_type: bool):
+  def __init__(self, python_type: str, swift_type: str, swift_base_type:str, is_error_type: bool):
     self.python_type = python_type
     self.swift_type = swift_type
+    self.swift_base_type = swift_base_type
     self.is_error_type = is_error_type
     self.swift_static_doc_property = None
     self.sourcery_flags = []
 
+    self.fields = []
     self.properties = []
     self.static_functions = []
     self.methods = []
+
+class FieldInfo:
+  '''
+  Swift field.
+  '''
+  def __init__(self, swift_field_name: str, swift_field_type: str):
+    self.swift_field_name = swift_field_name
+    self.swift_field_type = swift_field_type
 
 class PropertyInfo:
   '''
@@ -84,11 +94,12 @@ def get_types() -> [TypeInfo]:
       if line_type == 'Type' or line_type == 'ErrorType':
         commit_current_type()
 
-        assert len(split) == 3
+        assert len(split) == 4
         python_type = split[1]
         swift_type = split[2]
+        swift_base_type = split[3]
         is_error_type = line_type == 'ErrorType'
-        current_type = TypeInfo(python_type, swift_type, is_error_type)
+        current_type = TypeInfo(python_type, swift_type, swift_base_type, is_error_type)
 
       elif line_type == 'Annotation':
         assert current_type
@@ -104,6 +115,15 @@ def get_types() -> [TypeInfo]:
         assert current_type
         assert len(split) == 2
         current_type.swift_static_doc_property = split[1]
+
+      elif line_type == 'Field':
+        assert current_type
+        assert len(split) == 3
+        swift_field_name = split[1]
+        swift_field_type = split[2]
+
+        field = FieldInfo(swift_field_name, swift_field_type)
+        current_type.fields.append(field)
 
       elif line_type == 'Property':
         assert current_type

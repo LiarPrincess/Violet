@@ -1,73 +1,16 @@
-import os
-import sys
+from Data.types import get_types
+from Common.strings import generated_warning
 
-# ----
-# File
-# ----
+types = get_types()
 
-class SwiftType:
-  def __init__(self, name, base_name):
-    self.name = name
-    self.base_name = base_name
-    self.properties = []
+def get_layout_name(t):
+  return t.swift_type
 
-class SwiftProperty:
-  def __init__(self, name, type):
-    self.name = name
-    self.type = type
-
-def read_input_file() -> [SwiftType]:
-  dir_path = os.path.dirname(__file__)
-  input_file = os.path.join(dir_path, 'TypeLayout.tmp')
-
-  result = []
-  current_type = None
-
-  with open(input_file, 'r') as reader:
-    for line in reader:
-      line = line.strip()
-
-      if not line or line.startswith('#'):
-        continue
-
-      is_property = line.startswith('-')
-      if is_property:
-        assert current_type
-
-        line_without_minus = line[1:].strip()
-        split = line_without_minus.split('|')
-        assert len(split) == 2
-
-        prop_name = split[0]
-        prop_type = split[1]
-
-        # Description does not matter for layout
-        if prop_name == 'description' and prop_type == 'String':
-          continue
-
-        prop = SwiftProperty(split[0], split[1])
-        current_type.properties.append(prop)
-
-      else:
-        # Starting new type
-        split = line.split('|')
-        assert len(split) == 2
-
-        current_type = SwiftType(split[0], split[1])
-        result.append(current_type)
-
-  return result
-
-# -----
-# Print
-# -----
-
-def print_layouts():
-  print('''\
+if __name__ == '__main__':
+  print(f'''\
 // swiftlint:disable file_length
 
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
+{generated_warning}
 
 // When creating new class we will check if all of the base classes have
 // the same layout.
@@ -76,7 +19,9 @@ def print_layouts():
 // but do not allow this:
 //   >>> class C(int, str): pass
 //   TypeError: multiple bases have instance lay-out conflict
+''')
 
+  print('''\
 internal class TypeLayout: Equatable {
 
   private let base: TypeLayout?
@@ -112,27 +57,29 @@ internal class TypeLayout: Equatable {
   }
 ''')
 
-  for t in read_input_file():
-    has_properties = len(t.properties) > 0
-    if has_properties:
-      for p in t.properties:
-        print(f'  /// - `{p.name}: {p.type}`')
+  for t in types:
+    swift_type = t.swift_type
+    base_type = t.swift_base_type
+    fields = t.fields
 
-      if t.base_name:
-        print(f'  internal static let {t.name} = TypeLayout(base: TypeLayout.{t.base_name})')
+    layout_name = get_layout_name(t)
+    base_layout_name = base_type
+
+    has_fields = len(fields) > 0
+    if not has_fields:
+      print(f'  /// `{swift_type}` uses the same layout as it s base type (`{base_type}`).')
+      print(f'  internal static let {layout_name} = TypeLayout.{base_layout_name}')
+
+    if has_fields:
+      for f in fields:
+        field_name = f.swift_field_name
+        field_type = f.swift_field_type
+        print(f'  /// - `{field_name}: {field_type}`')
+
+      if base_type:
+        print(f'  internal static let {layout_name} = TypeLayout(base: TypeLayout.{base_type})')
       else:
-        assert t.name == 'PyObject'
-        print(f'  internal static let {t.name} = TypeLayout()')
-
-    else:
-      print(f'  /// `{t.name}` uses the same layout as it s base type (`{t.base_name}`).')
-      print(f'  internal static let {t.name} = TypeLayout.{t.base_name}')
+        assert swift_type == 'PyObject'
+        print(f'  internal static let {layout_name} = TypeLayout()')
 
   print('}')
-
-# ----
-# Main
-# ----
-
-if __name__ == '__main__':
-  print_layouts()

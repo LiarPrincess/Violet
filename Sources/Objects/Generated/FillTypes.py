@@ -1,10 +1,8 @@
 from Data.types import get_types
 from Common.strings import generated_warning
+from TypeLayout import get_layout_name
 
 types = get_types()
-
-def get_layout_name(t):
-  return t.swift_type
 
 def get_function_name(t):
   swift_type_without_py = swift_type.replace('Py', '')
