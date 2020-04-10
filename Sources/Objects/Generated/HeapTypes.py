@@ -12,7 +12,6 @@ def get_heap_type_name(t):
 
 if __name__ == '__main__':
   print(f'''\
-// swiftlint:disable vertical_whitespace
 // swiftlint:disable file_length
 
 {generated_warning}

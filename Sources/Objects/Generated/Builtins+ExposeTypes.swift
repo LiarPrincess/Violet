@@ -1,5 +1,5 @@
+// swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable file_length
-// swiftlint:disable vertical_whitespace
 
 // Please note that this file was automatically generated. DO NOT EDIT!
 // The same goes for other files in 'Generated' directory.
@@ -142,322 +142,322 @@ extension Builtins {
 
   // sourcery: pyproperty = ArithmeticError
   internal var type_arithmeticError: PyType {
-    return Py.types.arithmeticError
+    return Py.errorTypes.arithmeticError
   }
 
   // sourcery: pyproperty = AssertionError
   internal var type_assertionError: PyType {
-    return Py.types.assertionError
+    return Py.errorTypes.assertionError
   }
 
   // sourcery: pyproperty = AttributeError
   internal var type_attributeError: PyType {
-    return Py.types.attributeError
+    return Py.errorTypes.attributeError
   }
 
   // sourcery: pyproperty = BaseException
   internal var type_baseException: PyType {
-    return Py.types.baseException
+    return Py.errorTypes.baseException
   }
 
   // sourcery: pyproperty = BlockingIOError
   internal var type_blockingIOError: PyType {
-    return Py.types.blockingIOError
+    return Py.errorTypes.blockingIOError
   }
 
   // sourcery: pyproperty = BrokenPipeError
   internal var type_brokenPipeError: PyType {
-    return Py.types.brokenPipeError
+    return Py.errorTypes.brokenPipeError
   }
 
   // sourcery: pyproperty = BufferError
   internal var type_bufferError: PyType {
-    return Py.types.bufferError
+    return Py.errorTypes.bufferError
   }
 
   // sourcery: pyproperty = BytesWarning
   internal var type_bytesWarning: PyType {
-    return Py.types.bytesWarning
+    return Py.errorTypes.bytesWarning
   }
 
   // sourcery: pyproperty = ChildProcessError
   internal var type_childProcessError: PyType {
-    return Py.types.childProcessError
+    return Py.errorTypes.childProcessError
   }
 
   // sourcery: pyproperty = ConnectionAbortedError
   internal var type_connectionAbortedError: PyType {
-    return Py.types.connectionAbortedError
+    return Py.errorTypes.connectionAbortedError
   }
 
   // sourcery: pyproperty = ConnectionError
   internal var type_connectionError: PyType {
-    return Py.types.connectionError
+    return Py.errorTypes.connectionError
   }
 
   // sourcery: pyproperty = ConnectionRefusedError
   internal var type_connectionRefusedError: PyType {
-    return Py.types.connectionRefusedError
+    return Py.errorTypes.connectionRefusedError
   }
 
   // sourcery: pyproperty = ConnectionResetError
   internal var type_connectionResetError: PyType {
-    return Py.types.connectionResetError
+    return Py.errorTypes.connectionResetError
   }
 
   // sourcery: pyproperty = DeprecationWarning
   internal var type_deprecationWarning: PyType {
-    return Py.types.deprecationWarning
+    return Py.errorTypes.deprecationWarning
   }
 
   // sourcery: pyproperty = EOFError
   internal var type_eofError: PyType {
-    return Py.types.eofError
+    return Py.errorTypes.eofError
   }
 
   // sourcery: pyproperty = Exception
   internal var type_exception: PyType {
-    return Py.types.exception
+    return Py.errorTypes.exception
   }
 
   // sourcery: pyproperty = FileExistsError
   internal var type_fileExistsError: PyType {
-    return Py.types.fileExistsError
+    return Py.errorTypes.fileExistsError
   }
 
   // sourcery: pyproperty = FileNotFoundError
   internal var type_fileNotFoundError: PyType {
-    return Py.types.fileNotFoundError
+    return Py.errorTypes.fileNotFoundError
   }
 
   // sourcery: pyproperty = FloatingPointError
   internal var type_floatingPointError: PyType {
-    return Py.types.floatingPointError
+    return Py.errorTypes.floatingPointError
   }
 
   // sourcery: pyproperty = FutureWarning
   internal var type_futureWarning: PyType {
-    return Py.types.futureWarning
+    return Py.errorTypes.futureWarning
   }
 
   // sourcery: pyproperty = GeneratorExit
   internal var type_generatorExit: PyType {
-    return Py.types.generatorExit
+    return Py.errorTypes.generatorExit
   }
 
   // sourcery: pyproperty = ImportError
   internal var type_importError: PyType {
-    return Py.types.importError
+    return Py.errorTypes.importError
   }
 
   // sourcery: pyproperty = ImportWarning
   internal var type_importWarning: PyType {
-    return Py.types.importWarning
+    return Py.errorTypes.importWarning
   }
 
   // sourcery: pyproperty = IndentationError
   internal var type_indentationError: PyType {
-    return Py.types.indentationError
+    return Py.errorTypes.indentationError
   }
 
   // sourcery: pyproperty = IndexError
   internal var type_indexError: PyType {
-    return Py.types.indexError
+    return Py.errorTypes.indexError
   }
 
   // sourcery: pyproperty = InterruptedError
   internal var type_interruptedError: PyType {
-    return Py.types.interruptedError
+    return Py.errorTypes.interruptedError
   }
 
   // sourcery: pyproperty = IsADirectoryError
   internal var type_isADirectoryError: PyType {
-    return Py.types.isADirectoryError
+    return Py.errorTypes.isADirectoryError
   }
 
   // sourcery: pyproperty = KeyError
   internal var type_keyError: PyType {
-    return Py.types.keyError
+    return Py.errorTypes.keyError
   }
 
   // sourcery: pyproperty = KeyboardInterrupt
   internal var type_keyboardInterrupt: PyType {
-    return Py.types.keyboardInterrupt
+    return Py.errorTypes.keyboardInterrupt
   }
 
   // sourcery: pyproperty = LookupError
   internal var type_lookupError: PyType {
-    return Py.types.lookupError
+    return Py.errorTypes.lookupError
   }
 
   // sourcery: pyproperty = MemoryError
   internal var type_memoryError: PyType {
-    return Py.types.memoryError
+    return Py.errorTypes.memoryError
   }
 
   // sourcery: pyproperty = ModuleNotFoundError
   internal var type_moduleNotFoundError: PyType {
-    return Py.types.moduleNotFoundError
+    return Py.errorTypes.moduleNotFoundError
   }
 
   // sourcery: pyproperty = NameError
   internal var type_nameError: PyType {
-    return Py.types.nameError
+    return Py.errorTypes.nameError
   }
 
   // sourcery: pyproperty = NotADirectoryError
   internal var type_notADirectoryError: PyType {
-    return Py.types.notADirectoryError
+    return Py.errorTypes.notADirectoryError
   }
 
   // sourcery: pyproperty = NotImplementedError
   internal var type_notImplementedError: PyType {
-    return Py.types.notImplementedError
+    return Py.errorTypes.notImplementedError
   }
 
   // sourcery: pyproperty = OSError
   internal var type_osError: PyType {
-    return Py.types.osError
+    return Py.errorTypes.osError
   }
 
   // sourcery: pyproperty = OverflowError
   internal var type_overflowError: PyType {
-    return Py.types.overflowError
+    return Py.errorTypes.overflowError
   }
 
   // sourcery: pyproperty = PendingDeprecationWarning
   internal var type_pendingDeprecationWarning: PyType {
-    return Py.types.pendingDeprecationWarning
+    return Py.errorTypes.pendingDeprecationWarning
   }
 
   // sourcery: pyproperty = PermissionError
   internal var type_permissionError: PyType {
-    return Py.types.permissionError
+    return Py.errorTypes.permissionError
   }
 
   // sourcery: pyproperty = ProcessLookupError
   internal var type_processLookupError: PyType {
-    return Py.types.processLookupError
+    return Py.errorTypes.processLookupError
   }
 
   // sourcery: pyproperty = RecursionError
   internal var type_recursionError: PyType {
-    return Py.types.recursionError
+    return Py.errorTypes.recursionError
   }
 
   // sourcery: pyproperty = ReferenceError
   internal var type_referenceError: PyType {
-    return Py.types.referenceError
+    return Py.errorTypes.referenceError
   }
 
   // sourcery: pyproperty = ResourceWarning
   internal var type_resourceWarning: PyType {
-    return Py.types.resourceWarning
+    return Py.errorTypes.resourceWarning
   }
 
   // sourcery: pyproperty = RuntimeError
   internal var type_runtimeError: PyType {
-    return Py.types.runtimeError
+    return Py.errorTypes.runtimeError
   }
 
   // sourcery: pyproperty = RuntimeWarning
   internal var type_runtimeWarning: PyType {
-    return Py.types.runtimeWarning
+    return Py.errorTypes.runtimeWarning
   }
 
   // sourcery: pyproperty = StopAsyncIteration
   internal var type_stopAsyncIteration: PyType {
-    return Py.types.stopAsyncIteration
+    return Py.errorTypes.stopAsyncIteration
   }
 
   // sourcery: pyproperty = StopIteration
   internal var type_stopIteration: PyType {
-    return Py.types.stopIteration
+    return Py.errorTypes.stopIteration
   }
 
   // sourcery: pyproperty = SyntaxError
   internal var type_syntaxError: PyType {
-    return Py.types.syntaxError
+    return Py.errorTypes.syntaxError
   }
 
   // sourcery: pyproperty = SyntaxWarning
   internal var type_syntaxWarning: PyType {
-    return Py.types.syntaxWarning
+    return Py.errorTypes.syntaxWarning
   }
 
   // sourcery: pyproperty = SystemError
   internal var type_systemError: PyType {
-    return Py.types.systemError
+    return Py.errorTypes.systemError
   }
 
   // sourcery: pyproperty = SystemExit
   internal var type_systemExit: PyType {
-    return Py.types.systemExit
+    return Py.errorTypes.systemExit
   }
 
   // sourcery: pyproperty = TabError
   internal var type_tabError: PyType {
-    return Py.types.tabError
+    return Py.errorTypes.tabError
   }
 
   // sourcery: pyproperty = TimeoutError
   internal var type_timeoutError: PyType {
-    return Py.types.timeoutError
+    return Py.errorTypes.timeoutError
   }
 
   // sourcery: pyproperty = TypeError
   internal var type_typeError: PyType {
-    return Py.types.typeError
+    return Py.errorTypes.typeError
   }
 
   // sourcery: pyproperty = UnboundLocalError
   internal var type_unboundLocalError: PyType {
-    return Py.types.unboundLocalError
+    return Py.errorTypes.unboundLocalError
   }
 
   // sourcery: pyproperty = UnicodeDecodeError
   internal var type_unicodeDecodeError: PyType {
-    return Py.types.unicodeDecodeError
+    return Py.errorTypes.unicodeDecodeError
   }
 
   // sourcery: pyproperty = UnicodeEncodeError
   internal var type_unicodeEncodeError: PyType {
-    return Py.types.unicodeEncodeError
+    return Py.errorTypes.unicodeEncodeError
   }
 
   // sourcery: pyproperty = UnicodeError
   internal var type_unicodeError: PyType {
-    return Py.types.unicodeError
+    return Py.errorTypes.unicodeError
   }
 
   // sourcery: pyproperty = UnicodeTranslateError
   internal var type_unicodeTranslateError: PyType {
-    return Py.types.unicodeTranslateError
+    return Py.errorTypes.unicodeTranslateError
   }
 
   // sourcery: pyproperty = UnicodeWarning
   internal var type_unicodeWarning: PyType {
-    return Py.types.unicodeWarning
+    return Py.errorTypes.unicodeWarning
   }
 
   // sourcery: pyproperty = UserWarning
   internal var type_userWarning: PyType {
-    return Py.types.userWarning
+    return Py.errorTypes.userWarning
   }
 
   // sourcery: pyproperty = ValueError
   internal var type_valueError: PyType {
-    return Py.types.valueError
+    return Py.errorTypes.valueError
   }
 
   // sourcery: pyproperty = Warning
   internal var type_warning: PyType {
-    return Py.types.warning
+    return Py.errorTypes.warning
   }
 
   // sourcery: pyproperty = ZeroDivisionError
   internal var type_zeroDivisionError: PyType {
-    return Py.types.zeroDivisionError
+    return Py.errorTypes.zeroDivisionError
   }
 
 }

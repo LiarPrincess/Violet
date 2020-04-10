@@ -5,7 +5,7 @@ from Common.errors import where_to_find_it_in_cpython
 from Common.builtin_types import (
   get_property_name_escaped,
   get_fill_function_name, print_fill_type_method,
-  print_downcast_helper, get_downcast_function_name, print_downcast_function
+  print_fill_helpers, get_downcast_function_name, print_downcast_function
 )
 
 all_types = get_types()
@@ -30,9 +30,13 @@ def get_base_type(t):
 
 if __name__ == '__main__':
   print(f'''\
+import Core
+
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 // swiftlint:disable trailing_comma
+// swiftlint:disable vertical_whitespace_closing_braces
+// swiftlint:disable file_length
 
 {generated_warning}
 
@@ -135,7 +139,7 @@ if __name__ == '__main__':
   # === fill__dict__ methods ===
   # ============================
 
-  print_downcast_helper()
+  print_fill_helpers()
 
   for t in types:
     print_fill_type_method(t)

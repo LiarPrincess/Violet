@@ -14,10 +14,9 @@ def is_final(name):
 
 if __name__ == '__main__':
   print(f'''\
-// swiftlint:disable file_length
 // swiftlint:disable line_length
 // swiftlint:disable trailing_newline
-// swiftlint:disable vertical_whitespace
+// swiftlint:disable file_length
 
 {generated_warning}
 

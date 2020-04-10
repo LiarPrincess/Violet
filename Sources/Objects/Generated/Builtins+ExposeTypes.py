@@ -45,8 +45,8 @@ types = filter(is_exposed, all_types)
 
 if __name__ == '__main__':
   print('''\
+// swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable file_length
-// swiftlint:disable vertical_whitespace
 
 // Please note that this file was automatically generated. DO NOT EDIT!
 // The same goes for other files in 'Generated' directory.
@@ -68,10 +68,12 @@ if __name__ == '__main__':
     python_type = t.python_type
     property_name = get_property_name(python_type)
 
+    owner = 'Py.errorTypes' if t.is_error else 'Py.types'
+
     print(f'''\
   // sourcery: pyproperty = {python_type}
   internal var type_{property_name}: PyType {{
-    return Py.types.{property_name}
+    return {owner}.{property_name}
   }}
 ''')
 

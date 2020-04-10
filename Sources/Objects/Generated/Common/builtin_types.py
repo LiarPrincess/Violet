@@ -34,6 +34,46 @@ def get_property_name_escaped(python_type):
 
   return property_name
 
+# =======
+# Helpers
+# =======
+
+def print_fill_helpers():
+  print('''\
+  // MARK: - Helpers
+
+  /// Insert value to type '__dict__'.
+  private func insert(type: PyType, name: String, value: PyObject) {
+    let dict = type.getDict()
+    let interned = Py.intern(name)
+
+    switch dict.set(key: interned, to: value) {
+    case .ok:
+      break
+    case .error(let e):
+      trap("Error when inserting '\(name)' to '\(type.getName())' type: \(e)")
+    }
+  }
+
+  /// Basically:
+  /// We hold 'PyObjects' on stack.
+  /// We need to call Swift method that needs specific 'self' type.
+  /// This method is responsible for downcasting 'PyObject' -> specific Swift type.
+  private static func cast<T>(_ object: PyObject,
+                              as type: T.Type,
+                              typeName: String,
+                              methodName: String) -> PyResult<T> {
+    if let v = object as? T {
+      return .value(v)
+    }
+
+    return .typeError(
+      "descriptor '\(methodName)' requires a '\(typeName)' object " +
+      "but received a '\(object.typeName)'"
+    )
+  }
+''')
+
 # ====
 # Fill
 # ====
@@ -85,9 +125,9 @@ def print_fill_type_method(t):
     doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
 
     if not swift_setter_fn:
-      print(f'    insert(type: type, name: "{python_name}", value: PyProperty.wrap(name: "{python_name}", doc: {doc}, get: {swift_type}.{swift_getter_fn}, castSelf: {castSelf}))')
+      print(f'    self.insert(type: type, name: "{python_name}", value: PyProperty.wrap(name: "{python_name}", doc: {doc}, get: {swift_type}.{swift_getter_fn}, castSelf: {castSelf}))')
     else:
-      print(f'    insert(type: type, name: "{python_name}", value: PyProperty.wrap(name: "{python_name}", doc: {doc}, get: {swift_type}.{swift_getter_fn}, set: {swift_type}.{swift_setter_fn}, castSelf: {castSelf}))')
+      print(f'    self.insert(type: type, name: "{python_name}", value: PyProperty.wrap(name: "{python_name}", doc: {doc}, get: {swift_type}.{swift_getter_fn}, set: {swift_type}.{swift_setter_fn}, castSelf: {castSelf}))')
 
   if t.properties and t.static_functions:
     print()
@@ -104,11 +144,11 @@ def print_fill_type_method(t):
     doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
 
     if python_name == '__new__':
-      print(f'    insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: {doc}, fn: {swift_type}.{swift_selector}))')
+      print(f'    self.insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: {doc}, fn: {swift_type}.{swift_selector}))')
     elif python_name == '__init__':
-      print(f'    insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: {doc}, fn: {swift_type}.{swift_selector}))')
+      print(f'    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: {doc}, fn: {swift_type}.{swift_selector}))')
     else:
-      print(f'    insert(type: type, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: {doc}, fn: {swift_type}.{swift_selector}))')
+      print(f'    self.insert(type: type, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: {doc}, fn: {swift_type}.{swift_selector}))')
 
   if t.static_functions and t.methods:
     print()
@@ -124,7 +164,7 @@ def print_fill_type_method(t):
     static_doc_property = meth.swift_static_doc_property
     doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
 
-    print(f'    insert(type: type, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: {doc}, fn: {swift_type}.{swift_selector}, castSelf: {castSelf}))')
+    print(f'    self.insert(type: type, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: {doc}, fn: {swift_type}.{swift_selector}, castSelf: {castSelf}))')
 
   print('  }')
   print()
@@ -132,29 +172,6 @@ def print_fill_type_method(t):
 # ==============
 # Cast as 'type'
 # ==============
-
-def print_downcast_helper():
-  print('''\
-  // MARK: - Cast helper
-
-  /// Basically:
-  /// We hold 'PyObjects' on stack.
-  /// We need to call Swift method that needs specific 'self' type.
-  /// This method is responsible for downcasting 'PyObject' -> specific Swift type.
-  private static func cast<T>(_ object: PyObject,
-                              as type: T.Type,
-                              typeName: String,
-                              methodName: String) -> PyResult<T> {
-    if let v = object as? T {
-      return .value(v)
-    }
-
-    return .typeError(
-      "descriptor '\(methodName)' requires a '\(typeName)' object " +
-      "but received a '\(object.typeName)'"
-    )
-  }
-''')
 
 def get_downcast_function_name(t):
   swift_type = t.swift_type

@@ -3,7 +3,7 @@ from Common.strings import generated_warning
 from Common.builtin_types import (
   get_property_name_escaped,
   get_fill_function_name, print_fill_type_method,
-  print_downcast_helper, get_downcast_function_name, print_downcast_function
+  print_fill_helpers, get_downcast_function_name, print_downcast_function
 )
 
 all_types = get_types()
@@ -11,10 +11,13 @@ types = list(filter(lambda t: not t.is_error, all_types))
 
 if __name__ == '__main__':
   print(f'''\
-// swiftlint:disable function_body_length
+import Core
+
 // swiftlint:disable line_length
+// swiftlint:disable function_body_length
 // swiftlint:disable trailing_comma
-// swiftlint:disable vertical_whitespace
+// swiftlint:disable vertical_whitespace_closing_braces
+// swiftlint:disable file_length
 
 {generated_warning}
 
@@ -140,7 +143,7 @@ if __name__ == '__main__':
   # === fill__dict__ methods ===
   # ============================
 
-  print_downcast_helper()
+  print_fill_helpers()
 
   for t in types:
     print_fill_type_method(t)

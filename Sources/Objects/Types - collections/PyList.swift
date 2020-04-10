@@ -293,7 +293,7 @@ public class PyList: PyObject, PySequenceType {
 
   // MARK: - Sort
 
-  private static let sortDoc = """
+  internal static let sortDoc = """
     sort($self, /, *, key=None, reverse=False)
     --
 

@@ -15,6 +15,8 @@ python3 $GENERATED/ExceptionSubclasses.py > $GENERATED/ExceptionSubclasses.swift
 # builtin types (for example 'class Rapunzel(int): pass' is a subclass
 # of builtin 'int' class).
 # It is mainly there to add '__dict__'.
+# We use CPython naming convention where user generated types are 'heap' types,
+# even though in Violet all of the types are technically 'heap' types.
 python3 $GENERATED/HeapTypes.py > $GENERATED/HeapTypes.swift
 
 # =====================================
