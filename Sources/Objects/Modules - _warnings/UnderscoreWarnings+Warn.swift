@@ -99,6 +99,8 @@ extension UnderscoreWarnings {
 
   // MARK: - Category
 
+  /// static PyObject *
+  /// get_category(PyObject *message, PyObject *category)
   private func parseCategory(message: PyObject,
                              category: PyObject?) -> PyResult<PyType> {
     if self.isWarningSubtype(type: message.type) {
@@ -117,11 +119,15 @@ extension UnderscoreWarnings {
       return .value(userWarning)
     }
 
+    if let type = category as? PyType, self.isWarningSubtype(type: type) {
+      return .value(type)
+    }
+
     let t = category.typeName
     return .typeError("category must be a Warning subclass, not '\(t)'")
   }
 
-  private func isWarningSubtype(type: PyType) -> Bool {
+  internal func isWarningSubtype(type: PyType) -> Bool {
     return type.isSubtype(of: Py.errorTypes.warning)
   }
 

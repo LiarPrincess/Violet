@@ -17,9 +17,14 @@ extension UnderscoreWarnings {
   // MARK: - Warning
 
   internal struct Warning {
-    /// Message as passed by the user
+    /// Message as passed by the user.
+    ///
+    /// It may be `str`, or `Warning` subclass or anything else.
     let message: PyObject
-    /// Text to print (most of the time it will be `str(self.message)`)
+    /// Text to print.
+    ///
+    /// Most of the time (but not always) it will be something similiar
+    /// to `str(self.message)`.
     let text: PyObject
     let category: PyType
     let filename: PyString
@@ -45,8 +50,9 @@ extension UnderscoreWarnings {
     let message: PyObject
     let category: PyType
 
-    if messageArg.type.isSubtype(of: Py.errorTypes.warning) {
-      // We have to artificially create message based on the type.
+    let messageIsWarning = self.isWarningSubtype(type: messageArg.type)
+    if messageIsWarning {
+      // 'message' is 'Warning' subclass, as a 'text' we will just use 'str(message)'
       switch Py.types.str.call(args: [messageArg], kwargs: nil) {
       case let .value(t): text = t
       case let .error(e): return .error(e)
@@ -55,6 +61,8 @@ extension UnderscoreWarnings {
       message = messageArg
       category = messageArg.type
     } else {
+      // 'message' is probably 'str', we will just display it: 'text' = 'message'
+      // 'category' is probably warning type -> 'message' = its instance
       text = messageArg
 
       switch Py.call(callable: categoryArg, arg: messageArg) {
