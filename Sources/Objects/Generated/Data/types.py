@@ -9,11 +9,11 @@ class TypeInfo:
   '''
   Python type.
   '''
-  def __init__(self, python_type: str, swift_type: str, swift_base_type:str, is_error_type: bool):
+  def __init__(self, python_type: str, swift_type: str, swift_base_type:str, is_error: bool):
     self.python_type = python_type
     self.swift_type = swift_type
     self.swift_base_type = swift_base_type
-    self.is_error_type = is_error_type
+    self.is_error = is_error
     self.swift_static_doc_property = None
     self.sourcery_flags = []
 
@@ -104,8 +104,8 @@ def get_types() -> [TypeInfo]:
         python_type = split[1]
         swift_type = split[2]
         swift_base_type = split[3]
-        is_error_type = line_type == 'ErrorType'
-        current_type = TypeInfo(python_type, swift_type, swift_base_type, is_error_type)
+        is_error = line_type == 'ErrorType'
+        current_type = TypeInfo(python_type, swift_type, swift_base_type, is_error)
 
       elif line_type == 'Annotation':
         assert current_type

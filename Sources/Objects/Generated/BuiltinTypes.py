@@ -1,18 +1,18 @@
 from Data.types import get_types
-from Common.builtin_types import get_property_name, get_property_name_escaped
+from Common.strings import generated_warning
+from Common.builtin_types import get_property_name_escaped, get_fill_function_name, print_fill_type_method
 
 all_types = get_types()
-builtin_types = list(filter(lambda t: not t.is_error_type, all_types))
+types = list(filter(lambda t: not t.is_error, all_types))
 
 if __name__ == '__main__':
-  print('''\
+  print(f'''\
 // swiftlint:disable function_body_length
 // swiftlint:disable line_length
 // swiftlint:disable trailing_comma
 // swiftlint:disable vertical_whitespace
 
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
+{generated_warning}
 
 // Type initialization order:
 //
@@ -20,7 +20,7 @@ if __name__ == '__main__':
 // Just instantiate all of the 'PyType' properties.
 // At this point we can't fill '__dict__', because for this we would need other
 // types to be already initialized (which would be circular).
-// For example we can't fill '__doc__' because for this we would need 'str' type,
+// For example we can't insert '__doc__' because for this we would need 'str' type,
 // which may not yet exist.
 //
 // Stage 2: Fill type objects ('fill__dict__()' method)
@@ -34,16 +34,24 @@ if __name__ == '__main__':
   # === Properties ===
   # ==================
 
-  for t in builtin_types:
+  print('  // MARK: - Properties')
+  print()
+
+  for t in types:
     python_type = t.python_type
     property_name_escaped = get_property_name_escaped(python_type)
     print(f'  public let {property_name_escaped}: PyType')
+
+  print()
 
   # ============
   # === Init ===
   # ============
 
-  print('''
+  print('  // MARK: - Stage 1 - init')
+  print()
+
+  print('''\
   /// Init that will only initialize properties.
   /// (see comment at the top of this file)
   internal init() {
@@ -58,9 +66,8 @@ if __name__ == '__main__':
     // 'self.bool' has to be last because it uses 'self.int' as base!\
 ''')
 
-  for t in builtin_types:
+  for t in types:
     python_type = t.python_type
-    swift_type = t.swift_type
     property_name_escaped = get_property_name_escaped(python_type)
 
     # 'self.object' and 'self.type' are already initialized
@@ -82,6 +89,9 @@ if __name__ == '__main__':
   # === fill__dict__ ===
   # ====================
 
+  print('  // MARK: - Stage 2 - fill __dict__')
+  print()
+
   print('''\
   /// This function finalizes init of all of the stored types.
   /// (see comment at the top of this file)
@@ -93,10 +103,10 @@ if __name__ == '__main__':
   internal func fill__dict__() {\
 ''')
 
-  for t in builtin_types:
+  for t in types:
     python_type = t.python_type
-    property_name_escaped = get_property_name_escaped(python_type)
-    print(f'    FillTypes.{property_name_escaped}(self.{property_name_escaped})')
+    fill_function = get_fill_function_name(t)
+    print(f'    self.{fill_function}()')
 
   print('  }')
   print()
@@ -105,17 +115,28 @@ if __name__ == '__main__':
   # === all ===
   # ===========
 
+  print('  // MARK: - All')
+  print()
+
   print('''\
   internal var all: [PyType] {
     return [\
 ''')
 
-  for t in builtin_types:
+  for t in types:
     python_type = t.python_type
     property_name_escaped = get_property_name_escaped(python_type)
     print(f'      self.{property_name_escaped},')
 
   print('    ]')
   print('  }')
+  print()
+
+  # ============================
+  # === fill__dict__ methods ===
+  # ============================
+
+  for t in types:
+    print_fill_type_method(t)
 
   print('}')

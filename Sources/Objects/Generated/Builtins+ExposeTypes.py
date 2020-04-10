@@ -1,5 +1,5 @@
 from Data.types import get_types
-from Common.builtin_types import get_property_name, get_property_name_escaped
+from Common.builtin_types import get_property_name
 
 exposed_builtin_type_names = set([
   'bool',
@@ -32,7 +32,7 @@ exposed_builtin_type_names = set([
 
 def is_exposed(t):
   # We expose all errors
-  if t.is_error_type:
+  if t.is_error:
     return True
 
   if t.python_type in exposed_builtin_type_names:
@@ -66,7 +66,6 @@ if __name__ == '__main__':
 
   for t in types:
     python_type = t.python_type
-    swift_type = t.swift_type
     property_name = get_property_name(python_type)
 
     print(f'''\

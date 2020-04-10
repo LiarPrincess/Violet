@@ -1,6 +1,7 @@
 from Data.errors import data
 from Common.strings import generated_warning
-from Common.errors import where_to_find_it_in_cpython, get_builtins_type_property_name
+from Common.errors import where_to_find_it_in_cpython
+from Common.builtin_types import get_property_name_escaped as get_builtins_type_property_name
 
 def is_final(name):
   'If there exists any exception with us as base then we are not final'
