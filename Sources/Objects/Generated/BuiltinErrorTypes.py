@@ -2,7 +2,11 @@ from Data.errors import data
 from Data.types import get_types
 from Common.strings import generated_warning
 from Common.errors import where_to_find_it_in_cpython
-from Common.builtin_types import get_property_name_escaped, get_fill_function_name, print_fill_type_method
+from Common.builtin_types import (
+  get_property_name_escaped,
+  get_fill_function_name, print_fill_type_method,
+  print_downcast_helper, get_downcast_function_name, print_downcast_function
+)
 
 all_types = get_types()
 def get_type(e):
@@ -131,7 +135,10 @@ if __name__ == '__main__':
   # === fill__dict__ methods ===
   # ============================
 
+  print_downcast_helper()
+
   for t in types:
     print_fill_type_method(t)
+    print_downcast_function(t)
 
   print('}')

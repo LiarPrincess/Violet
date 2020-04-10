@@ -1,3 +1,4 @@
+}
 // swiftlint:disable file_length
 // swiftlint:disable vertical_whitespace
 

@@ -50,7 +50,6 @@ def print_fill_type_method(t):
   # For 'object': 'PyObject' holds data, but 'PyObjectType' holds methods, doc etc.
   swift_type = t.swift_type
   swift_type = 'PyObjectType' if swift_type == 'PyObject' else swift_type
-  castSelf = f'Cast.as{swift_type}'
 
   print(f'  // MARK: - {t.swift_type.replace("Py", "")}')
   print()
@@ -75,6 +74,8 @@ def print_fill_type_method(t):
   # === Properties ===
   # ==================
 
+  castSelf = f'Self.{get_downcast_function_name(t)}'
+
   for prop in t.properties:
     python_name = prop.python_name
     swift_getter_fn = prop.swift_getter_fn
@@ -97,7 +98,6 @@ def print_fill_type_method(t):
 
   for fn in t.static_functions:
     python_name = fn.python_name
-    swift_name = fn.swift_name
     swift_selector = fn.swift_selector
 
     static_doc_property = fn.swift_static_doc_property
@@ -119,7 +119,6 @@ def print_fill_type_method(t):
 
   for meth in t.methods:
     python_name = meth.python_name
-    swift_name = meth.swift_name
     swift_selector = meth.swift_selector
 
     static_doc_property = meth.swift_static_doc_property
@@ -129,3 +128,54 @@ def print_fill_type_method(t):
 
   print('  }')
   print()
+
+# ==============
+# Cast as 'type'
+# ==============
+
+def print_downcast_helper():
+  print('''\
+  // MARK: - Cast helper
+
+  /// Basically:
+  /// We hold 'PyObjects' on stack.
+  /// We need to call Swift method that needs specific 'self' type.
+  /// This method is responsible for downcasting 'PyObject' -> specific Swift type.
+  private static func cast<T>(_ object: PyObject,
+                              as type: T.Type,
+                              typeName: String,
+                              methodName: String) -> PyResult<T> {
+    if let v = object as? T {
+      return .value(v)
+    }
+
+    return .typeError(
+      "descriptor '\(methodName)' requires a '\(typeName)' object " +
+      "but received a '\(object.typeName)'"
+    )
+  }
+''')
+
+def get_downcast_function_name(t):
+  swift_type = t.swift_type
+  swift_type_without_py = swift_type.replace('Py', '')
+  return f'as{swift_type_without_py}'
+
+def print_downcast_function(t):
+  python_type = t.python_type
+  swift_type = t.swift_type
+
+  function_name = get_downcast_function_name(t)
+
+  print(f'''\
+  private static func {function_name}(_ object: PyObject, methodName: String) -> PyResult<{swift_type}> {{
+    return Self.cast(
+      object,
+      as: {swift_type}.self,
+      typeName: "{python_type}",
+      methodName: methodName
+    )
+  }}
+''')
+
+print('}')

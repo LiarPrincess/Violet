@@ -38,7 +38,7 @@ Property|set|type_set||
 Property|slice|type_slice||
 Property|staticmethod|type_staticmethod||
 Property|str|type_str||
-Property|super|type_||
+Property|super|type_super||
 Property|tuple|type_tuple||
 Property|type|type_type||
 Property|zip|type_zip||

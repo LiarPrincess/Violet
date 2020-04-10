@@ -76,7 +76,7 @@ internal enum ModuleFactory {
     insert(module: module, name: "slice", value: object.type_slice)
     insert(module: module, name: "staticmethod", value: object.type_staticmethod)
     insert(module: module, name: "str", value: object.type_str)
-    insert(module: module, name: "super", value: object.type_)
+    insert(module: module, name: "super", value: object.type_super)
     insert(module: module, name: "tuple", value: object.type_tuple)
     insert(module: module, name: "type", value: object.type_type)
     insert(module: module, name: "zip", value: object.type_zip)
