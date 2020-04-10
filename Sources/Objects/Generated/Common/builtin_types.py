@@ -177,5 +177,3 @@ def print_downcast_function(t):
     )
   }}
 ''')
-
-print('}')

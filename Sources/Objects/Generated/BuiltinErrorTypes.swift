@@ -1,4 +1,3 @@
-}
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 // swiftlint:disable trailing_comma
