@@ -19,9 +19,8 @@ public enum SipHash {
   public static func hash(key0: UInt64,
                           key1: UInt64,
                           bytes: UnsafeBufferPointer<UInt8>) -> UInt64 {
-    return bytes.withUnsafeBytes { rawBufferPointer in
-      SipHash.hash(key0: key0, key1: key1, bytes: rawBufferPointer)
-    }
+    let rawBufferPointer = UnsafeRawBufferPointer(bytes)
+    return SipHash.hash(key0: key0, key1: key1, bytes: rawBufferPointer)
   }
 
   /// Hash given buffer using [SipHash-2-4](https://131002.net/siphash/).

@@ -93,36 +93,42 @@ internal struct Hasher {
       }
     }
 
-    var e: Int32 = 0
-    var m = frexp(value, &e)
+    // Complicated stuff incoming, basically 1:1 from CPython:
+    // Note that 'var (m, e) = frexp(value)' will give you incorrect result,
+    // because 'e' will be 'Int' which changes things down the line.
+    var exponent: Int32 = 0
+    var mantissa = frexp(value, &exponent)
 
     var sign: PyHash = 1
-    if m < 0 {
+    if mantissa < 0 {
       sign = -1
-      m = -m
+      mantissa = -mantissa
     }
 
-    // process 28 bits at a time;
-    // this should work well both for binary and hexadecimal floating point.
-    var x: PyHash = 0
-    while m > 0 {
-      x = ((x << 28) & Hasher.modulus) | x >> (Hasher.bits - 28)
-      m *= 268_435_456.0  // 2**28
-      e -= 28
-      let y = PyHash(m)  // pull out integer part
-      m -= Double(y)
-      x += y
-      if x >= Hasher.modulus {
-        x -= Hasher.modulus
+    // process 28 bits at a time
+    var result: PyHash = 0
+    while mantissa > 0 {
+      result = ((result << 28) & Hasher.modulus) | result >> (Hasher.bits - 28)
+      mantissa *= 268_435_456.0  // 2**28
+      exponent -= 28
+
+      let mantissaInt = PyHash(mantissa) // pull out integer part
+      mantissa -= Double(mantissaInt)
+      result += mantissaInt
+
+      if result >= Hasher.modulus {
+        result -= Hasher.modulus
       }
     }
 
     // adjust for the exponent; first reduce it modulo BITS
     let bits32 = Int32(Hasher.bits)
-    e = e >= 0 ? e % bits32 : bits32 - 1 - ((-1 - e) % bits32)
-    x = ((x << e) & Hasher.modulus) | x >> (bits32 - e)
+    exponent = exponent >= 0 ?
+      exponent % bits32 :
+      bits32 - 1 - ((-1 - exponent) % bits32)
+    result = ((result << exponent) & Hasher.modulus) | result >> (bits32 - exponent)
 
-    return sign * x
+    return sign * result
   }
 
   // MARK: - String
@@ -132,13 +138,13 @@ internal struct Hasher {
       return 0
     }
 
-    let hashOrNil = value.utf8.withContiguousStorageIfAvailable { ptr -> UInt64 in
+    // If I understand this correctly then for native strings (our typical case)
+    // it will not mutate which will prevent allocation
+    // (native strings already have contiguous storage).
+    // But I don't really have time to look at this more closely.
+    var fingersCrosedForNoAllocation = value
+    let hash = fingersCrosedForNoAllocation.withUTF8 { ptr in
       SipHash.hash(key0: self.key0, key1: self.key1, bytes: ptr)
-    }
-
-    guard let hash = hashOrNil else {
-      let method = "utf8.withContiguousStorageIfAvailable"
-      trap("Error when hashing '\(value)', unable to obtain '\(method)'")
     }
 
     return self.toPyHash(hash)
@@ -149,7 +155,9 @@ internal struct Hasher {
       return 0
     }
 
-    // This is also how Foundation hashes Data.
+    // This is based on how Foundation hashes Data (at least in 'LargeSlice'
+    // representation, and also they use only the first 80 bytes).
+    //
     // Note that 'withContiguousStorageIfAvailable' will always fail.
     let hash = value.withUnsafeBytes { ptr in
       SipHash.hash(key0: self.key0, key1: self.key1, bytes: ptr)
@@ -172,7 +180,7 @@ internal struct Hasher {
   // MARK: - Pointer
 
   internal func hash(_ value: ObjectIdentifier) -> PyHash {
-    // In Swift we dont really have access to pointers
+    // In Swift we don't really have access to pointers
     // (we could if we really had to but the language does not guarantee that
     // it will work in all cases).
     // So we will use Swift hash.
