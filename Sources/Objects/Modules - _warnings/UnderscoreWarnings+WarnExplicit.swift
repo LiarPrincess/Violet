@@ -7,6 +7,33 @@ import Core
 
 extension UnderscoreWarnings {
 
+  // swiftlint:disable function_parameter_count
+  public func warnExplicit(message: PyObject,
+                           category: PyType,
+                           filename: PyString,
+                           lineNo: PyInt,
+                           module: PyString?,
+                           source: PyObject?,
+                           registry: WarningRegistry) -> PyResult<PyNone> {
+    // swiftlint:enable function_parameter_count
+
+    let warning = self.createWarning(
+      message: message,
+      category: category,
+      filename: filename,
+      lineNo: lineNo,
+      module: module,
+      source: source
+    )
+
+    switch warning {
+    case let .value(w):
+      return self.warnExplicit(warning: w, registry: registry)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
   /// static PyObject *
   /// warn_explicit(PyObject *category, PyObject *message, ...)
   internal func warnExplicit(warning: Warning,
@@ -164,7 +191,7 @@ extension UnderscoreWarnings {
                                 key: PyTuple) -> PyResult<Bool> {
     assert(key.elements.count == 3, "It should be: text, category, line")
     switch registry {
-    case .value(let dict):
+    case .dict(let dict):
       switch dict.get(key: key) {
       case .value(let o):
         return Py.isTrueBool(o)
@@ -184,7 +211,7 @@ extension UnderscoreWarnings {
                                filter: Filter) -> PyBaseException? {
     assert(key.elements.count == 3, "It should be: text, category, line")
     switch registry {
-    case .value(let dict):
+    case .dict(let dict):
       return self.storeInRegistry(registry: dict, key: key, filter: filter)
     case .none:
       return nil

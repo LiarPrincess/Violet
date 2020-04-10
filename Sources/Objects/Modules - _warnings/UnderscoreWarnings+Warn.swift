@@ -65,31 +65,36 @@ extension UnderscoreWarnings {
     let frame: PyFrame?
     switch self.getFrame(level: stackLevel) {
     case .value(let f): frame = f
+    case .none: frame = nil
     case .levelTooBig: frame = nil
     case .error(let e): return .error(e)
     }
 
-    let globals = frame?.globals ?? Py.sysModule.__dict__
+    let globals = self.getGlobals(frame: frame)
     let lineNo = Py.newInt(frame?.currentLine ?? 1)
 
     let registry: WarningRegistry
     switch self.getWarningRegistry(globals: globals) {
-    case .value(let d): registry = .value(d)
-    case .none: registry = .none
-    case .error(let e): return .error(e)
+    case let .value(r): registry = r
+    case let .error(e): return .error(e)
     }
 
     let module = self.getModuleName(globals: globals)
     let filename = self.getFilename(globals: globals, module: module)
 
-    let warning = self.createWarning(message: message,
-                                     category: category,
-                                     filename: filename,
-                                     lineNo: lineNo,
-                                     module: module,
-                                     source: source)
+    return self.warnExplicit(
+      message: message,
+      category: category,
+      filename: filename,
+      lineNo: lineNo,
+      module: module,
+      source: source,
+      registry: registry
+    )
+  }
 
-    return warning.flatMap { self.warnExplicit(warning: $0, registry: registry) }
+  private func getGlobals(frame: PyFrame?) -> PyDict {
+    return frame?.globals ?? Py.sysModule.__dict__
   }
 
   // MARK: - Category
@@ -142,14 +147,14 @@ extension UnderscoreWarnings {
 
   private enum GetFrameResult {
     case value(PyFrame)
+    case none
     case levelTooBig
     case error(PyBaseException)
   }
 
   private func getFrame(level levelArg: Int) -> GetFrameResult {
     guard let topFrame = Py.delegate.frame else {
-      let e = Py.newRuntimeError(msg: "warn(): not able to optain current frame")
-      return .error(e)
+      return .none
     }
 
     var frame = topFrame
@@ -194,21 +199,19 @@ extension UnderscoreWarnings {
 
   // MARK: - Warning registry
 
-  private enum GetWarningRegistryResult {
-    case value(PyDict)
-    /// Python `None`, not `nil` from `Swift.Optional`.
-    case none
-    case error(PyBaseException)
+  public func getWarningRegistry(frame: PyFrame?) -> PyResult<WarningRegistry> {
+    let globals = self.getGlobals(frame: frame)
+    return self.getWarningRegistry(globals: globals)
   }
 
-  private func getWarningRegistry(globals: PyDict) -> GetWarningRegistryResult {
+  public func getWarningRegistry(globals: PyDict) -> PyResult<WarningRegistry> {
     if let object = globals.get(id: .__warningregistry__) {
       if object.isNone {
-        return .none
+        return .value(.none)
       }
 
       if let dict = object as? PyDict {
-        return .value(dict)
+        return .value(.dict(dict))
       }
 
       let e = Py.newTypeError(msg: "'registry' must be a dict or None")
@@ -217,7 +220,7 @@ extension UnderscoreWarnings {
 
     let registry = Py.newDict()
     globals.set(id: .__warningregistry__, to: registry)
-    return .value(registry)
+    return .value(.dict(registry))
   }
 
   // MARK: - Module name

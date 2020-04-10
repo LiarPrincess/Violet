@@ -111,14 +111,33 @@ extension BuiltinFunctions {
                          line: PyInt,
                          column: PyInt,
                          text: PyString) -> PyBaseException? {
-    let e = self.newSyntaxWarning(
+    let message = self.newSyntaxWarning(
       filename: filename,
       line: line,
       column: column,
       text: text
     )
 
-    switch Py._warnings.warn(message: e) {
+    let frame = Py.delegate.frame
+    let registry: UnderscoreWarnings.WarningRegistry
+    switch Py._warnings.getWarningRegistry(frame: frame) {
+    case let .value(r): registry = r
+    case let .error(e): return e
+    }
+
+    // We cannot use generic 'warn' as this time we have to point to specific
+    // file/line.
+    let result = Py._warnings.warnExplicit(
+      message: message,
+      category: Py.errorTypes.syntaxWarning,
+      filename: filename,
+      lineNo: line,
+      module: nil,
+      source: nil,
+      registry: registry
+    )
+
+    switch result {
     case .value:
       return nil
     case .error(let e):

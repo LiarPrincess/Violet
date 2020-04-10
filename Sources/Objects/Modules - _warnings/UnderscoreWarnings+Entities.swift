@@ -8,8 +8,8 @@ extension UnderscoreWarnings {
 
   // MARK: - Registry
 
-  internal enum WarningRegistry {
-    case value(PyDict)
+  public enum WarningRegistry {
+    case dict(PyDict)
     /// Python `None`, not `nil` from `Swift.Optional`.
     case none
   }
