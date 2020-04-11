@@ -125,7 +125,13 @@ extension FloatCompare {
     // Exponent is the # of bits in 'left' before the radix point;
     // we know that nBits (the # of bits in 'right') > 48 at this point
     // https://en.wikipedia.org/wiki/Radix_point
-    let (_, exponent) = Foundation.frexp(left)
+
+    // IMPORTANT:
+    // Do not use 'var (m, e) = frexp(value)' here, it will give you incorrect result!
+    // For 'value = -1.0' you will get 'm = 0.5', but it should be '-0.5'!
+    // We do not care about mantissa, but still... there is something going on.
+    var exponent: Int32 = 0
+    _ = frexp(left, &exponent)
 
     if exponent < 0 || exponent < nBits {
       let result = Self.compare(left: 1.0, right: 2.0)

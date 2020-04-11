@@ -94,8 +94,10 @@ internal struct Hasher {
     }
 
     // Complicated stuff incoming, basically 1:1 from CPython:
-    // Note that 'var (m, e) = frexp(value)' will give you incorrect result,
-    // because 'e' will be 'Int' which changes things down the line.
+    //
+    // IMPORTANT:
+    // 'var (m, e) = frexp(value)' will give you incorrect result!
+    // For 'value = -1.0' you will get 'm = 0.5', but it should be '-0.5'!
     var exponent: Int32 = 0
     var mantissa = frexp(value, &exponent)
 
