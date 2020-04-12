@@ -3,9 +3,9 @@ import Core
 // Module implementation is based on pre-specialization (partial application)
 // of function to module object and then wrapping remaining function.
 //
-// So, for example:
+// For example:
 //   Builtins.add :: (self: Builtins) -> (left: PyObject, right: PyObject) -> Result
-// would be specialized to 'Builtins' instance giving us:
+// would be specialized to 'Builtins' instance leaving us with:
 //   add :: (left: PyObject, right: PyObject) -> Result
 // which would be wrapped and exposed to Python runtime.
 //
@@ -15,8 +15,8 @@ import Core
 // (and we would have gotten away with it without you meddling kids!)
 // https://www.youtube.com/watch?v=b4JLLv1lE7A
 
-/// Class that will be used as a `Python` module implementation.
-internal protocol PyModuleImplementation {
+/// Helper for classes that will be used as a `Python` module implementation.
+internal protocol PyModuleImplementation: AnyObject {
 
   /// For each module we will create helper type with restricted set of values
   /// representing all of the properties.
@@ -25,9 +25,17 @@ internal protocol PyModuleImplementation {
   /// (otherwise we would have to use strings and you know how great those are).
   associatedtype Properties: CustomStringConvertible
 
+  /// Module name. 'nuff said.
   static var moduleName: String { get }
+
+  /// Module documentation.
+  ///
+  /// Required. Because why not.
   static var doc: String { get }
 
+  /// Module dictionary.
+  ///
+  /// Shared between this object and `PyModule`.
   var __dict__: PyDict { get }
 }
 
@@ -35,6 +43,7 @@ extension PyModuleImplementation {
 
   // MARK: - Create module
 
+  /// Create `Python` module based on this object.
   internal func createModule() -> PyModule {
     return Py.newModule(
       name: Self.moduleName,
@@ -43,7 +52,7 @@ extension PyModuleImplementation {
     )
   }
 
-  // MARK: - Get from __dict__
+  // MARK: - Get
 
   /// Get value from `self.__dict__`.
   internal func get(_ name: Properties) -> PyResult<PyObject> {
@@ -111,7 +120,7 @@ extension PyModuleImplementation {
     return .typeError(msg)
   }
 
-  // MARK: - Set in __dict__
+  // MARK: - Set
 
   /// Set value in `self.__dict__`.
   internal func set(_ name: Properties, to value: PyObject) -> PyBaseException? {

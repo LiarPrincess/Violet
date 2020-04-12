@@ -33,14 +33,10 @@ sourcery \
   --output $GENERATED/Data/types.txt
 
 # === Builtin types ===
-# This will generate class that will create 'PyType' objects
+# This will generate class that will create 'PyType' object
 # for each of the builtin types.
 python3 $GENERATED/BuiltinTypes.py > $GENERATED/BuiltinTypes.swift
 python3 $GENERATED/BuiltinErrorTypes.py > $GENERATED/BuiltinErrorTypes.swift
-
-# === Expose types ===
-# Expose all of the types to Python runtime (make them properties on builtins).
-python3 $GENERATED/Builtins+ExposeTypes.py > $GENERATED/Builtins+ExposeTypes.swift
 
 # === TypeLayout ===
 # When creating new class we will check if all of the base classes have
@@ -56,17 +52,6 @@ python3 $GENERATED/TypeLayout.py > $GENERATED/TypeLayout.swift
 # Stage 3: Other
 # ==============
 # This stage does not really depend on type definitions.
-
-# === Dump modules ===
-# This will generate a giant file wile with of all of the Python modules.
-sourcery \
-  --sources ./Sources/Objects \
-  --templates $GENERATED/Data/modules.stencil \
-  --output $GENERATED/Data/modules.txt
-
-# === Modules ===
-# Generate type that will create 'PyModule' instances.
-python3 $GENERATED/ModuleFactory.py > $GENERATED/ModuleFactory.swift
 
 # === Owner protocols ===
 # Sometimes instead of doing slow Python dispatch we will use Swift protocols.

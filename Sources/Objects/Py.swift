@@ -59,8 +59,7 @@ public final class PyInstance: BuiltinFunctions {
   }()
 
   /// `self.builtins` but as a Python module (`PyModule`).
-  public private(set) lazy var builtinsModule =
-    ModuleFactory.createBuiltins(from: self.builtins)
+  public private(set) lazy var builtinsModule = self.builtins.createModule()
 
   /// `self.sys` but as a Python module (`PyModule`).
   public private(set) lazy var sysModule = self.sys.createModule()
