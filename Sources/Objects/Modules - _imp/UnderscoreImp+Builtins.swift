@@ -20,7 +20,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = is_builtin, doc = isBuiltinDoc
   /// static PyObject *
   /// _imp_is_builtin_impl(PyObject *module, PyObject *name)
   public func isBuiltin(name nameRaw: PyObject) -> PyResult<PyInt> {
@@ -47,7 +46,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = create_builtin, doc = createBuiltinDoc
   /// static PyObject *
   /// _imp_create_builtin(PyObject *module, PyObject *spec)
   public func createBuiltin(spec: PyObject) -> PyResult<PyObject> {
@@ -83,7 +81,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = exec_builtin, doc = execBuiltinDoc
   /// static int
   /// _imp_exec_builtin_impl(PyObject *module, PyObject *mod)
   public func execBuiltin(module: PyObject) -> PyResult<PyNone> {

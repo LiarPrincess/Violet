@@ -61,27 +61,27 @@ extension PyModuleImplementation {
     }
   }
 
-  /// Get value from `self.__dict__` and try to convert it to `string`.
+  /// Get value from `self.__dict__` and cast it to `str`.
   internal func getString(_ name: Properties) -> PyResult<PyString> {
     return self.get(name, andCastAs: PyString.self, typeName: "str")
   }
 
-  /// Get value from `self.__dict__` and try to convert it to `list`.
+  /// Get value from `self.__dict__` and cast it to `list`.
   internal func getList(_ name: Properties) -> PyResult<PyList> {
     return self.get(name, andCastAs: PyList.self, typeName: "list")
   }
 
-  /// Get value from `self.__dict__` and try to convert it to `tuple`.
+  /// Get value from `self.__dict__` and cast it to `tuple`.
   internal func getTuple(_ name: Properties) -> PyResult<PyTuple> {
     return self.get(name, andCastAs: PyTuple.self, typeName: "tuple")
   }
 
-  /// Get value from `self.__dict__` and try to convert it to `dict`.
+  /// Get value from `self.__dict__` and cast it to `dict`.
   internal func getDict(_ name: Properties) -> PyResult<PyDict> {
     return self.get(name, andCastAs: PyDict.self, typeName: "dict")
   }
 
-  /// Get value from `self.__dict__` and try to convert it to `text file`.
+  /// Get value from `self.__dict__` and cast it to `text file`.
   internal func getTextFile(_ name: Properties) -> PyResult<PyTextFile> {
     return self.get(name, andCastAs: PyTextFile.self, typeName: "textFile")
   }
@@ -92,6 +92,10 @@ extension PyModuleImplementation {
     andCastAs type: T.Type,
     typeName: String
   ) -> PyResult<T> {
+    // Technically we don't need 'type' argument
+    // (because Swift can infer it from return type)
+    // but we want to be extra explicit.
+
     let object: PyObject
     switch self.get(name) {
     case let .value(o): object = o
@@ -122,16 +126,63 @@ extension PyModuleImplementation {
     }
   }
 
+  // MARK: - Helpers
+
+  private var moduleToSetInFunctions: PyString {
+    return Py.intern(Self.moduleName)
+  }
+
+  private func intern(_ name: Properties) -> PyString {
+    let value = String(describing: name)
+    return Py.intern(value)
+  }
+
+  // MARK: - Set property
+
   internal func setOrTrap(_ name: Properties, to value: PyObject) {
     if let e = self.set(name, to: value) {
       trap("Error when inserting '\(name)' to '\(Self.moduleName)': \(e)")
     }
   }
 
+  // MARK: - Set args kwargs
+
+  internal func setOrTrap<R: PyFunctionResultConvertible>(
+    _ name: Properties,
+    doc: String?,
+    fn: @escaping ([PyObject], PyDict?) -> R
+  ) {
+    let object = PyBuiltinFunction.wrap(
+      name: String(describing: name),
+      doc: doc,
+      fn: fn,
+      module: self.moduleToSetInFunctions
+    )
+    self.setOrTrap(name, to: object)
+  }
+
+  // MARK: - Set positional nullary
+
   internal func setOrTrap<R: PyFunctionResultConvertible>(
     _ name: Properties,
     doc: String?,
     fn: @escaping () -> R
+  ) {
+    let object = PyBuiltinFunction.wrap(
+      name: String(describing: name),
+      doc: doc,
+      fn: fn,
+      module: self.moduleToSetInFunctions
+    )
+    self.setOrTrap(name, to: object)
+  }
+
+  // MARK: - Set positional unary
+
+  internal func setOrTrap<R: PyFunctionResultConvertible>(
+    _ name: Properties,
+    doc: String?,
+    fn: @escaping (PyObject) -> R
   ) {
     let object = PyBuiltinFunction.wrap(
       name: String(describing: name),
@@ -156,10 +207,12 @@ extension PyModuleImplementation {
     self.setOrTrap(name, to: object)
   }
 
+  // MARK: - Set positional binary
+
   internal func setOrTrap<R: PyFunctionResultConvertible>(
     _ name: Properties,
     doc: String?,
-    fn: @escaping (PyObject) -> R
+    fn: @escaping (PyObject, PyObject) -> R
   ) {
     let object = PyBuiltinFunction.wrap(
       name: String(describing: name),
@@ -173,7 +226,7 @@ extension PyModuleImplementation {
   internal func setOrTrap<R: PyFunctionResultConvertible>(
     _ name: Properties,
     doc: String?,
-    fn: @escaping ([PyObject], PyDict?) -> R
+    fn: @escaping (PyObject, PyObject?) -> R
   ) {
     let object = PyBuiltinFunction.wrap(
       name: String(describing: name),
@@ -184,14 +237,47 @@ extension PyModuleImplementation {
     self.setOrTrap(name, to: object)
   }
 
-  private var moduleToSetInFunctions: PyString {
-    return Py.intern(Self.moduleName)
+  // MARK: - Set positional ternary
+
+  internal func setOrTrap<R: PyFunctionResultConvertible>(
+    _ name: Properties,
+    doc: String?,
+    fn: @escaping (PyObject, PyObject, PyObject) -> R
+  ) {
+    let object = PyBuiltinFunction.wrap(
+      name: String(describing: name),
+      doc: doc,
+      fn: fn,
+      module: self.moduleToSetInFunctions
+    )
+    self.setOrTrap(name, to: object)
   }
 
-  // MARK: - Helpers
+  internal func setOrTrap<R: PyFunctionResultConvertible>(
+    _ name: Properties,
+    doc: String?,
+    fn: @escaping (PyObject, PyObject, PyObject?) -> R
+  ) {
+    let object = PyBuiltinFunction.wrap(
+      name: String(describing: name),
+      doc: doc,
+      fn: fn,
+      module: self.moduleToSetInFunctions
+    )
+    self.setOrTrap(name, to: object)
+  }
 
-  private func intern(_ name: Properties) -> PyString {
-    let value = String(describing: name)
-    return Py.intern(value)
+  internal func setOrTrap<R: PyFunctionResultConvertible>(
+    _ name: Properties,
+    doc: String?,
+    fn: @escaping (PyObject, PyObject?, PyObject?) -> R
+  ) {
+    let object = PyBuiltinFunction.wrap(
+      name: String(describing: name),
+      doc: doc,
+      fn: fn,
+      module: self.moduleToSetInFunctions
+    )
+    self.setOrTrap(name, to: object)
   }
 }

@@ -20,7 +20,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = lock_held, doc = lockHeldDoc
   /// static PyObject *
   /// _imp_lock_held_impl(PyObject *module)
   public func lockHeld() -> PyBool {
@@ -42,7 +41,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = acquire_lock, doc = acquireLockDoc
   /// static PyObject *
   /// _imp_acquire_lock_impl(PyObject *module)
   public func acquireLock() -> PyObject {
@@ -63,7 +61,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = release_lock, doc = releaseLockDoc
   /// static PyObject *
   /// _imp_release_lock_impl(PyObject *module)
   public func releaseLock() -> PyObject {

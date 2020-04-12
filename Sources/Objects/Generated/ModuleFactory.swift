@@ -193,30 +193,4 @@ internal enum ModuleFactory {
 
     return module
   }
-
-  // MARK: - UnderscoreImp
-
-  internal static func createUnderscoreImp(from object: UnderscoreImp) -> PyModule {
-    let name = Py.intern("_imp")
-    let module = createModule(name: "_imp", doc: UnderscoreImp.doc, dict: object.__dict__)
-
-    insert(module: module, name: "lock_held", value: PyBuiltinFunction.wrap(name: "lock_held", doc: UnderscoreImp.lockHeldDoc, fn: object.lockHeld, module: name))
-    insert(module: module, name: "acquire_lock", value: PyBuiltinFunction.wrap(name: "acquire_lock", doc: UnderscoreImp.acquireLockDoc, fn: object.acquireLock, module: name))
-    insert(module: module, name: "release_lock", value: PyBuiltinFunction.wrap(name: "release_lock", doc: UnderscoreImp.releaseLockDoc, fn: object.releaseLock, module: name))
-    insert(module: module, name: "is_builtin", value: PyBuiltinFunction.wrap(name: "is_builtin", doc: UnderscoreImp.isBuiltinDoc, fn: object.isBuiltin(name:), module: name))
-    insert(module: module, name: "create_builtin", value: PyBuiltinFunction.wrap(name: "create_builtin", doc: UnderscoreImp.createBuiltinDoc, fn: object.createBuiltin(spec:), module: name))
-    insert(module: module, name: "exec_builtin", value: PyBuiltinFunction.wrap(name: "exec_builtin", doc: UnderscoreImp.execBuiltinDoc, fn: object.execBuiltin(module:), module: name))
-    insert(module: module, name: "is_frozen", value: PyBuiltinFunction.wrap(name: "is_frozen", doc: UnderscoreImp.isFrozenDoc, fn: object.isFrozen, module: name))
-    insert(module: module, name: "is_frozen_package", value: PyBuiltinFunction.wrap(name: "is_frozen_package", doc: UnderscoreImp.isFrozenPackageDoc, fn: object.isFrozenPackage, module: name))
-    insert(module: module, name: "get_frozen_object", value: PyBuiltinFunction.wrap(name: "get_frozen_object", doc: UnderscoreImp.getFrozenObjectDoc, fn: object.getFrozenObject, module: name))
-    insert(module: module, name: "init_frozen", value: PyBuiltinFunction.wrap(name: "init_frozen", doc: UnderscoreImp.initFrozenDoc, fn: object.initFrozen, module: name))
-    insert(module: module, name: "create_dynamic", value: PyBuiltinFunction.wrap(name: "create_dynamic", doc: UnderscoreImp.createDynamicDoc, fn: object.createDynamic(spec:file:), module: name))
-    insert(module: module, name: "exec_dynamic", value: PyBuiltinFunction.wrap(name: "exec_dynamic", doc: UnderscoreImp.execDynamicDoc, fn: object.execDynamic(module:), module: name))
-    insert(module: module, name: "source_hash", value: PyBuiltinFunction.wrap(name: "source_hash", doc: UnderscoreImp.sourceHashDoc, fn: object.sourceHash, module: name))
-    insert(module: module, name: "check_hash_based_pycs", value: PyBuiltinFunction.wrap(name: "check_hash_based_pycs", doc: UnderscoreImp.checkHashBasedPycsDoc, fn: object.checkHashBasedPycs, module: name))
-    insert(module: module, name: "_fix_co_filename", value: PyBuiltinFunction.wrap(name: "_fix_co_filename", doc: UnderscoreImp.fixCoFilenameDoc, fn: object.fixCoFilename, module: name))
-    insert(module: module, name: "extension_suffixes", value: PyBuiltinFunction.wrap(name: "extension_suffixes", doc: UnderscoreImp.extensionSuffixesDoc, fn: object.extensionSuffixes, module: name))
-
-    return module
-  }
 }

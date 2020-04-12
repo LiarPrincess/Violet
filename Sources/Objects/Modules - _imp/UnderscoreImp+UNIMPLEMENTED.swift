@@ -20,7 +20,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = is_frozen, doc = isFrozenDoc
   /// static PyObject *
   /// _imp_is_frozen_impl(PyObject *module, PyObject *name)
   public func isFrozen() -> PyObject {
@@ -36,7 +35,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = is_frozen_package, doc = isFrozenPackageDoc
   /// static PyObject *
   /// _imp_is_frozen_package_impl(PyObject *module, PyObject *name)
   public func isFrozenPackage() -> PyObject {
@@ -52,7 +50,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = get_frozen_object, doc = getFrozenObjectDoc
   /// static PyObject *
   /// _imp_get_frozen_object_impl(PyObject *module, PyObject *name)
   public func getFrozenObject() -> PyObject {
@@ -68,7 +65,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = init_frozen, doc = initFrozenDoc
   /// static PyObject *
   /// _imp_init_frozen_impl(PyObject *module, PyObject *name)
   public func initFrozen() -> PyObject {
@@ -87,7 +83,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = create_dynamic, doc = createDynamicDoc
   /// static PyObject *
   /// _imp_create_dynamic_impl(PyObject *module, PyObject *spec, PyObject *file)
   public func createDynamic(spec: PyObject, file: PyObject) -> PyResult<PyObject> {
@@ -103,7 +98,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = exec_dynamic, doc = execDynamicDoc
   /// static int
   /// _imp_exec_dynamic_impl(PyObject *module, PyObject *mod)
   public func execDynamic(module: PyObject) -> PyResult<PyNone> {
@@ -124,7 +118,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = source_hash, doc = sourceHashDoc
   /// static PyObject *
   /// _imp_source_hash_impl(PyObject *module, long key, Py_buffer *source)
   public func sourceHash() -> PyObject {
@@ -137,7 +130,6 @@ extension UnderscoreImp {
     return ""
   }
 
-  // sourcery: pymethod = check_hash_based_pycs, doc = checkHashBasedPycsDoc
   public func checkHashBasedPycs() -> PyObject {
     // Used for frozen modules, see:
     // https://docs.python.org/3.7/reference/import.html#cached-bytecode-invalidation
@@ -160,7 +152,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = _fix_co_filename, doc = fixCoFilenameDoc
   public func fixCoFilename() -> PyObject {
     self.unimplemented()
   }
@@ -174,7 +165,6 @@ extension UnderscoreImp {
     """
   }
 
-  // sourcery: pymethod = extension_suffixes, doc = extensionSuffixesDoc
   /// static PyObject *
   /// _imp_extension_suffixes_impl(PyObject *module)
   public func extensionSuffixes() -> PyObject {

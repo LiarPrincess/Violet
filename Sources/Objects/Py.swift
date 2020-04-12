@@ -66,8 +66,7 @@ public final class PyInstance: BuiltinFunctions {
   public private(set) lazy var sysModule = self.sys.createModule()
 
   /// `self._imp` but as a Python module (`PyModule`).
-  public private(set) lazy var _impModule =
-    ModuleFactory.createUnderscoreImp(from: self._imp)
+  public private(set) lazy var _impModule = self._imp.createModule()
 
   /// `self._warnings` but as a Python module (`PyModule`).
   public private(set) lazy var _warningsModule = self._warnings.createModule()
