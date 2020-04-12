@@ -73,8 +73,7 @@ public final class PyInstance: BuiltinFunctions {
   public private(set) lazy var _warningsModule = self._warnings.createModule()
 
   /// `self._os` but as a Python module (`PyModule`).
-  public private(set) lazy var _osModule =
-    ModuleFactory.createUnderscoreOS(from: self._os)
+  public private(set) lazy var _osModule = self._os.createModule()
 
   // MARK: - Types
 

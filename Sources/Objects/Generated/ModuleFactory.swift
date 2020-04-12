@@ -219,18 +219,4 @@ internal enum ModuleFactory {
 
     return module
   }
-
-  // MARK: - UnderscoreOS
-
-  internal static func createUnderscoreOS(from object: UnderscoreOS) -> PyModule {
-    let name = Py.intern("_os")
-    let module = createModule(name: "_os", doc: nil, dict: object.__dict__)
-
-    insert(module: module, name: "getcwd", value: PyBuiltinFunction.wrap(name: "getcwd", doc: nil, fn: object.getCwd, module: name))
-    insert(module: module, name: "fspath", value: PyBuiltinFunction.wrap(name: "fspath", doc: nil, fn: object.getFSPath(path:), module: name))
-    insert(module: module, name: "stat", value: PyBuiltinFunction.wrap(name: "stat", doc: nil, fn: object.getStat(path:), module: name))
-    insert(module: module, name: "listdir", value: PyBuiltinFunction.wrap(name: "listdir", doc: nil, fn: object.listDir(path:), module: name))
-
-    return module
-  }
 }

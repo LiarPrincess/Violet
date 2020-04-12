@@ -3,31 +3,53 @@ import Foundation
 // In CPython:
 // Python -> Modules -> posixmodule.c
 
-// sourcery: pymodule = _os
 /// Please note that this is not a full implementation of `_os`.
 /// We implement just enough to make `importlib` work.
-public final class UnderscoreOS {
+public final class UnderscoreOS: PyModuleImplementation {
+
+  internal static let moduleName = "_os"
+
+  internal static let doc = """
+    Low level os module.
+    It is a helper module to speed up interpreter start-up.
+    """
 
   // MARK: - Dict
 
   /// This dict will be used inside our `PyModule` instance.
-  internal private(set) lazy var __dict__ = Py.newDict()
+  public let __dict__ = Py.newDict()
+
+  // MARK: - Init
+
+  internal init() {
+    self.fill__dict__()
+  }
+
+  // MARK: - Fill dict
+
+  private func fill__dict__() {
+    // Not that capturing 'self' is intended.
+    // See comment at the top of 'PyModuleImplementation' for details.
+    self.setOrTrap(.getcwd, doc: nil, fn: self.getCwd)
+    self.setOrTrap(.fspath, doc: nil, fn: self.getFSPath(path:))
+    self.setOrTrap(.stat, doc: nil, fn: self.getStat(path:))
+    self.setOrTrap(.listdir, doc: nil, fn: self.listDir(path:))
+  }
 
   // MARK: - Cwd
 
-  // sourcery: pymethod = getcwd
   /// static PyObject *
   /// posix_getcwd(int use_bytes)
   public func getCwd() -> PyString {
     let value = Py.fileSystem.currentWorkingDirectory
 
     // 'cwd' tend not to change during the program runtime, so we can cache it.
+    // If we ever get different value from fileSystem we will re-intern it.
     return Py.intern(value)
   }
 
   // MARK: - FSPath
 
-  // sourcery: pymethod = fspath
   /// Return the file system representation of the path.
   ///
   /// If str or bytes is passed in, it is returned unchanged.
@@ -45,7 +67,6 @@ public final class UnderscoreOS {
 
   // MARK: - Stat
 
-  // sourcery: pymethod = stat
   /// Doc:
   /// https://docs.python.org/3/library/os.html#os.DirEntry.stat
   ///
@@ -105,7 +126,6 @@ public final class UnderscoreOS {
 
   // MARK: - Listdir
 
-  // sourcery: pymethod = listdir
   /// Doc:
   /// https://docs.python.org/3/library/os.html#os.listdir
   ///
@@ -144,6 +164,26 @@ public final class UnderscoreOS {
       return .error(Py.newFileNotFoundError())
     case .error(let e):
       return .error(e)
+    }
+  }
+
+  // MARK: - Properties
+
+  internal struct Properties: CustomStringConvertible {
+    internal static let getcwd = Properties(value: "getcwd")
+    internal static let fspath = Properties(value: "fspath")
+    internal static let stat = Properties(value: "stat")
+    internal static let listdir = Properties(value: "listdir")
+
+    private let value: String
+
+    internal var description: String {
+      return self.value
+    }
+
+    // Private so we can't create new values from the outside.
+    private init(value: String) {
+      self.value = value
     }
   }
 
