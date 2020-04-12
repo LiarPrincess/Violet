@@ -20,7 +20,6 @@ extension UnderscoreWarnings {
       """
   }
 
-  // sourcery: pymethod = warn, doc = warnDoc
   /// Doc:
   /// https://docs.python.org/3/library/warnings.html#warnings.warn
   ///

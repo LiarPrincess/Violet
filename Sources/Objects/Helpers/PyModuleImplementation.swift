@@ -170,6 +170,20 @@ extension PyModuleImplementation {
     self.setOrTrap(name, to: object)
   }
 
+  internal func setOrTrap<R: PyFunctionResultConvertible>(
+    _ name: Properties,
+    doc: String?,
+    fn: @escaping ([PyObject], PyDict?) -> R
+  ) {
+    let object = PyBuiltinFunction.wrap(
+      name: String(describing: name),
+      doc: doc,
+      fn: fn,
+      module: self.moduleToSetInFunctions
+    )
+    self.setOrTrap(name, to: object)
+  }
+
   private var moduleToSetInFunctions: PyString {
     return Py.intern(Self.moduleName)
   }

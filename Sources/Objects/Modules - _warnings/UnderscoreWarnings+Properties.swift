@@ -12,19 +12,17 @@ extension UnderscoreWarnings {
 
   // MARK: - Filters
 
-  // sourcery: pyproperty = filters, setter = setFilters
-  public var filters: PyObject {
-    if let value = self.get(key: .filters) {
-      return value
-    }
+  public func getFilters() -> PyResult<PyList> {
+    return self.getList(.filters)
+  }
 
-    let list = self.getDefaultFilters()
-    return list
+  public func setFilters(to value: PyObject) -> PyBaseException? {
+    return self.set(.filters, to: value)
   }
 
   /// static PyObject *
   /// init_filters(void)
-  private func getDefaultFilters() -> PyList {
+  internal func createInitialFilters() -> PyList {
     var elements = [PyObject]()
 
     func append(category: PyWarningEnum, action: String, module: String?) {
@@ -78,84 +76,23 @@ extension UnderscoreWarnings {
     return Py.newTuple([action, msg, category, module, line])
   }
 
-  public func setFilters(to value: PyObject) -> PyResult<()> {
-    self.set(key: .filters, value: value)
-    return .value()
-  }
-
-  internal func getFiltersList() -> PyResult<PyList> {
-    let object = self.filters
-
-    guard let list = object as? PyList else {
-      return .valueError("_warnings.filters must be a list")
-    }
-
-    return .value(list)
-  }
-
   // MARK: - Default action
 
-  // sourcery: pyproperty = _defaultaction, setter = setDefaultAction
-  public var defaultAction: PyObject {
-    if let value = self.get(key: .defaultaction) {
-      return value
-    }
-
-    return Py.newString("default")
+  public func getDefaultAction() -> PyResult<PyString> {
+    return self.getString(._defaultaction)
   }
 
-  public func setDefaultAction(to value: PyObject) -> PyResult<()> {
-    self.set(key: .defaultaction, value: value)
-    return .value()
-  }
-
-  internal func getDefaultActionString() -> PyResult<PyString> {
-    let object = self.defaultAction
-
-    guard let string = object as? PyString else {
-      let t = object.typeName
-      return .typeError("_warnings._defaultaction must be a string, not '\(t)'")
-    }
-
-    return .value(string)
+  public func setDefaultAction(to value: PyObject) -> PyBaseException? {
+    return self.set(._defaultaction, to: value)
   }
 
   // MARK: - Once registry
 
-  // sourcery: pyproperty = _onceregistry, setter = setOnceRegistry
-  public var onceRegistry: PyObject {
-    if let value = self.get(key: ._onceregistry) {
-      return value
-    }
-
-    return Py.newDict()
+  public func getOnceRegistry() -> PyResult<PyDict> {
+    return self.getDict(._onceregistry)
   }
 
-  public func setOnceRegistry(to value: PyObject) -> PyResult<()> {
-    self.set(key: ._onceregistry, value: value)
-    return .value()
-  }
-
-  internal func getOnceRegistryDict() -> PyResult<PyDict> {
-    let object = self.onceRegistry
-
-    guard let dict = object as? PyDict else {
-      let t = object.typeName
-      return .typeError("_warnings._onceregistry must be a dict, not '\(t)'")
-    }
-
-    return .value(dict)
-  }
-
-  // MARK: - Helpers
-
-  /// Get value from `self.__dict__`.
-  internal func get(key: IdString) -> PyObject? {
-    return self.__dict__.get(id: key)
-  }
-
-  /// Set value in `self.__dict__`.
-  internal func set(key: IdString, value: PyObject) {
-    self.__dict__.set(id: key, to: value)
+  public func setOnceRegistry(to value: PyObject) -> PyBaseException? {
+    return self.set(._onceregistry, to: value)
   }
 }

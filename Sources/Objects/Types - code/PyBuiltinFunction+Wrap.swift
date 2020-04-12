@@ -59,7 +59,7 @@ extension PyBuiltinFunction {
     )
   }
 
-  // MARK: - Args kwargs feunction
+  // MARK: - Args kwargs function
 
   internal static func wrap<R: PyFunctionResultConvertible>(
     name: String,

@@ -70,8 +70,7 @@ public final class PyInstance: BuiltinFunctions {
     ModuleFactory.createUnderscoreImp(from: self._imp)
 
   /// `self._warnings` but as a Python module (`PyModule`).
-  public private(set) lazy var _warningsModule =
-    ModuleFactory.createUnderscoreWarnings(from: self._warnings)
+  public private(set) lazy var _warningsModule = self._warnings.createModule()
 
   /// `self._os` but as a Python module (`PyModule`).
   public private(set) lazy var _osModule =

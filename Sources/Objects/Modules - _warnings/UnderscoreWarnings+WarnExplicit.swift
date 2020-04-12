@@ -87,7 +87,7 @@ extension UnderscoreWarnings {
   /// get_filter(PyObject *category, PyObject *text, Py_ssize_t lineno,
   private func getFilter(warning: Warning) -> PyResult<Filter> {
     let filters: PyList
-    switch self.getFiltersList() {
+    switch self.getFilters() {
     case let .value(f): filters = f
     case let .error(e): return .error(e)
     }
@@ -111,7 +111,7 @@ extension UnderscoreWarnings {
       }
     }
 
-    let defaultAction = self.getDefaultActionString()
+    let defaultAction = self.getDefaultAction()
     return defaultAction.map { Filter(action: $0, object: .none) }
   }
 
@@ -229,7 +229,7 @@ extension UnderscoreWarnings {
     switch filter.action {
     case .once:
       // once_registry[(text, category)] = 1
-      switch self.getOnceRegistryDict() {
+      switch self.getOnceRegistry() {
       case let .value(dict):
         return self.storeInHelperRegistry(registry: dict, key: key, addZero: false)
       case let .error(e):
