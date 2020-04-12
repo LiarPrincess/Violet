@@ -7,7 +7,6 @@ from Common.strings import generated_warning
 
 if __name__ == '__main__':
   print(f'''\
-// swiftlint:disable file_length
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 
@@ -66,6 +65,7 @@ private func insert(module: PyModule, name: String, value: PyObject) {
     print()
 
     print(f'  internal static func create{swift_type}(from object: {swift_type}) -> PyModule {{')
+    print(f'    let name = Py.intern("{python_type}")')
     print(f'    let module = createModule(name: "{python_type}", doc: {doc}, dict: object.__dict__)')
     print()
 
@@ -87,7 +87,7 @@ private func insert(module: PyModule, name: String, value: PyObject) {
       static_doc_property = fn.swift_static_doc_property
       doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
 
-      print(f'    insert(module: module, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: {doc}, fn: object.{swift_selector}, module: module))')
+      print(f'    insert(module: module, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: {doc}, fn: object.{swift_selector}, module: name))')
 
     if mod.functions:
       print()

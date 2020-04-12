@@ -27,28 +27,36 @@ extension Sys {
 
   // MARK: - Meta path
 
-  // sourcery: pyproperty = meta_path
-  internal var metaPath: PyObject {
-    return self.get(key: .meta_path) ?? Py.newList()
+  public func getMetaPath() -> PyResult<PyList> {
+    return self.getList(.meta_path)
+  }
+
+  public func setMetaPath(to value: PyObject) -> PyBaseException? {
+    return self.set(.meta_path, to: value)
   }
 
   // MARK: - Path hooks
 
-  // sourcery: pyproperty = path_hooks
-  internal var pathHooks: PyObject {
-    return self.get(key: .path_hooks) ?? Py.newList()
+  public func getPathHooks() -> PyResult<PyList> {
+    return self.getList(.path_hooks)
+  }
+
+  public func setPathHooks(to value: PyObject) -> PyBaseException? {
+    return self.set(.path_hooks, to: value)
   }
 
   // MARK: - Path importer cache
 
-  // sourcery: pyproperty = path_importer_cache
-  internal var pathImporterCache: PyObject {
-    return self.get(key: .path_importer_cache) ?? Py.newDict()
+  public func getPathImporterCache() -> PyResult<PyDict> {
+    return self.getDict(.path_importer_cache)
+  }
+
+  public func setPathImporterCache(to value: PyObject) -> PyBaseException? {
+    return self.set(.path_importer_cache, to: value)
   }
 
   // MARK: - Path
 
-  // sourcery: pyproperty = path, setter = setPath
   /// sys.path
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.path).
   ///
@@ -60,40 +68,43 @@ extension Sys {
   /// the Python interpreter.
   /// If the script directory is not available, `path[0]` is the empty string,
   /// which directs Python to search modules in the current directory first.
-  internal var path: PyObject {
-    if let value = self.get(key: .path) {
-      return value
+  public func getPath() -> PyResult<PyList> {
+    return self.getList(.path)
+  }
+
+  public func setPath(to value: PyObject) -> PyBaseException? {
+    return self.set(.path, to: value)
+  }
+
+  /// Prepend given value to `sys.path`.
+  public func prependPath(value: String) -> PyBaseException? {
+    let path = self.getPath()
+
+    switch path {
+    case let .value(list):
+      let object = Py.newString(value)
+      list.data.prepend(object)
+      return nil
+    case let .error(e):
+      return e
     }
-
-    let strings = self.createDefaultPath()
-    let objects = strings.map(Py.newString(_:))
-    return Py.newList(objects)
   }
 
-  internal func setPath(to value: PyObject) -> PyResult<()> {
-    self.set(key: .path, value: value)
-    return .value()
+  // MARK: - Prefix
+
+  public func getPrefix() -> PyResult<PyString> {
+    return self.getString(.prefix)
   }
 
-  public func prependPath(value: String) -> PyResult<PyNone> {
-    guard let list = self.path as? PyList else {
-      let t = self.argv.typeName
-      let pikachu = "<surprised Pikachu face>"
-      return .typeError("expected 'sys.path' to be a list not \(t) \(pikachu)")
-    }
-
-    let object = Py.newString(value)
-    list.data.prepend(object)
-    return .value(Py.none)
+  public func setPrefix(to value: PyObject) -> PyBaseException? {
+    return self.set(.prefix, to: value)
   }
+
+  // MARK: - Initial
 
   /// static _PyInitError
-  /// calculate_module_search_path(const _PyCoreConfig *core_config,
-  ///                              PyCalculatePath *calculate,
-  ///                              const wchar_t *prefix,
-  ///                              const wchar_t *exec_prefix,
-  ///                              _PyPathConfig *config)
-  private func createDefaultPath() -> [String] {
+  /// calculate_module_search_path(const _PyCoreConfig *core_config, ...)
+  internal func createInitialPath(prefix: PyString) -> PyList {
     var result = [String]()
 
     // Run-time value of $VIOLETPATH goes first
@@ -101,7 +112,6 @@ extension Sys {
     result.append(contentsOf: envPaths)
 
     // Next goes merge of compile-time $VIOLETPATH with dynamically located prefix.
-    let prefix = self.getPrefixAsStringOrTrap()
     let prefixUrl = URL(fileURLWithPath: prefix.value)
 
     for suffix in Configure.pythonPath {
@@ -115,35 +125,17 @@ extension Sys {
     result.append(prefixUrl.appendingPathComponent(lib).path)
 
     result.removeDuplicates()
-    return result
-  }
 
-  // MARK: - Prefix
-
-  // sourcery: pyproperty = prefix
-  internal var prefix: PyObject {
-    if let value = self.get(key: .prefix) {
-      return value
-    }
-
-    let result = self.createDefaultPrefix()
-    return Py.newString(result)
-  }
-
-  private func getPrefixAsStringOrTrap() -> PyString {
-    if let str = self.prefix as? PyString {
-      return str
-    }
-
-    trap("Expected 'sys.prefix' to be a str.")
+    let strings = result.map(Py.newString(_:))
+    return Py.newList(strings)
   }
 
   /// static int
   /// search_for_prefix(const _PyCoreConfig *core_config, ...)
-  private func createDefaultPrefix() -> String {
+  internal func createInitialPrefix() -> PyString {
     // If $VIOLETHOME is set, we believe it unconditionally
     if let home = Py.config.environment.violetHome {
-      return home
+      return Py.newString(home)
     }
 
     // CPython: Search from argv0_path, until root.
@@ -160,17 +152,15 @@ extension Sys {
         .appendingPathComponent(landmark)
 
       if self.isFile(path: landmarkUrl.path) {
-        return candidate.path
+        return Py.newString(candidate.path)
       }
 
       candidate.deleteLastPathComponent()
       depth += 1
     }
 
-    return Configure.prefix
+    return Py.newString(Configure.prefix)
   }
-
-  // MARK: - Helpers
 
   private func isFile(path: String) -> Bool {
     switch Py.fileSystem.stat(path: path) {

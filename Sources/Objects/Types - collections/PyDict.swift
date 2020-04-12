@@ -175,6 +175,9 @@ public class PyDict: PyObject {
     case error(PyBaseException)
   }
 
+  /// Get value from a dictionary.
+  ///
+  /// It will trap on fail.
   public func get(id: IdString) -> PyObject? {
     let key = self.createKey(from: id)
 
@@ -188,6 +191,9 @@ public class PyDict: PyObject {
     }
   }
 
+  /// Get value from a dictionary.
+  ///
+  /// It may fail if hashing or actuall storage access fails.
   public func get(key: PyObject) -> GetResult {
     switch self.createKey(from: key) {
     case let .value(key):
@@ -197,6 +203,9 @@ public class PyDict: PyObject {
     }
   }
 
+  /// Get value from a dictionary.
+  ///
+  /// It may fail.
   internal func get(key: PyDictKey) -> GetResult {
     switch self.data.get(key: key) {
     case .value(let o):
@@ -289,12 +298,14 @@ public class PyDict: PyObject {
 
   /// Errors can happen when the value is not-hashable.
   /// Strings are always hashable, so we don't expect errors.
+  ///
+  /// This may still fail when we:
+  /// 1. insert to `__dict__` value that will always throw on compare
+  /// 2. have hash collision with that value
+  /// We will ignore this for now.
   private func idErrorNotHandled(operation: String,
                                  error: PyBaseException) -> Never {
     // TODO: PyDict.idErrorNotHandled
-    // This may still fail when we insert to '__dict__' value that will
-    // always throw on compare. We will ignore this for now.
-
     let repr = Py.reprOrGeneric(error)
     trap("Dict operation '\(operation)' returned an error: '\(repr)'")
   }
@@ -302,6 +313,7 @@ public class PyDict: PyObject {
   // MARK: - Get - subscript
 
   // sourcery: pymethod = __getitem__
+  /// Implementation of `Python` subscript.
   public func getItem(at index: PyObject) -> PyResult<PyObject> {
     switch Py.hash(index) {
     case let .value(hash):
@@ -311,6 +323,7 @@ public class PyDict: PyObject {
     }
   }
 
+  /// Implementation of `Python` subscript.
   public func getItem(at index: PyObject, hash: PyHash) -> PyResult<PyObject> {
     let key = PyDictKey(hash: hash, object: index)
 
@@ -333,6 +346,7 @@ public class PyDict: PyObject {
   // MARK: - Set - subscript
 
   // sourcery: pymethod = __setitem__
+  /// Implementation of `Python` subscript.
   public func setItem(at index: PyObject,
                       to value: PyObject) -> PyResult<PyNone> {
     switch Py.hash(index) {
@@ -343,6 +357,7 @@ public class PyDict: PyObject {
     }
   }
 
+  /// Implementation of `Python` subscript.
   public func setItem(at index: PyObject,
                       hash: PyHash,
                       to value: PyObject) -> PyResult<PyNone> {
@@ -359,6 +374,7 @@ public class PyDict: PyObject {
   // MARK: - Del - subscript
 
   // sourcery: pymethod = __delitem__
+  /// Implementation of `Python` subscript.
   public func delItem(at index: PyObject) -> PyResult<PyNone> {
     switch Py.hash(index) {
     case let .value(hash):
@@ -368,6 +384,7 @@ public class PyDict: PyObject {
     }
   }
 
+  /// Implementation of `Python` subscript.
   public func delItem(at index: PyObject,
                       hash: PyHash) -> PyResult<PyNone> {
     let key = PyDictKey(hash: hash, object: index)

@@ -4,66 +4,21 @@ import Core
 // Python -> sysmodule.c
 // https://docs.python.org/3.7/library/sys.html
 
-// MARK: - Builtin
+// MARK: - Builtin module names
 
 extension Sys {
 
-  // sourcery: pyproperty = builtin_module_names
   /// sys.builtin_module_names
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.builtin_module_names).
   ///
   /// A tuple of strings giving the names of all modules that are compiled
   /// into this Python interpreter.
-  internal var builtinModuleNamesObject: PyObject {
-    return self.get(key: .builtin_module_names) ?? Py.newTuple()
+  public func getBuiltinModuleNames() -> PyResult<PyTuple> {
+    return self.getTuple(.builtin_module_names)
   }
 
-  internal func setBuiltinModules(to value: PyObject) -> PyResult<()> {
-    self.set(key: .builtin_module_names, value: value)
-    return .value()
-  }
-
-  internal func setBuiltinModules(_ modules: PyModule...) {
-    assert(
-      self.builtinModuleNames.isEmpty,
-      "This function should be called in 'Py.initialize(config:delegate:)'."
-    )
-
-    var names = [PyString]()
-
-    for module in modules {
-      let name: String = {
-        switch module.name {
-        case .value(let s):
-          return s
-        case .error:
-          trap("Error when inserting '\(module)' to 'sys.builtin_module_names': " +
-            "unable to extract module name.")
-        }
-      }()
-
-      let interned = Py.intern(name)
-      names.append(interned)
-
-      // sys.modules
-      switch Py.add(dict: self.modules, key: interned, value: module) {
-      case .value:
-        break
-      case .error(let e):
-        trap("Error when inserting '\(name)' module to 'sys.modules': \(e)")
-      }
-    }
-
-    // sys.builtin_module_names
-    self.builtinModuleNames = names.map { $0.value }
-
-    let tuple = Py.newTuple(names)
-    switch self.setBuiltinModules(to: tuple) {
-    case .value:
-      break
-    case .error(let e):
-      trap("Error when setting 'sys.builtin_module_names': \(e)")
-    }
+  public func setBuiltinModuleNames(to value: PyObject) -> PyBaseException? {
+    return self.set(.builtin_module_names, to: value)
   }
 }
 
@@ -77,46 +32,101 @@ public enum GetModuleResult {
 
 extension Sys {
 
-  // sourcery: pyproperty = modules, setter = setModules
   /// sys.modules
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.modules).
   ///
   /// This is a dictionary that maps module names to modules
   /// which have already been loaded.
-  internal var modules: PyObject {
-    return self.get(key: .modules) ?? PyDict()
+  public func getModules() -> PyResult<PyDict> {
+    return self.getDict(.modules)
   }
 
-  internal func setModules(to value: PyObject) -> PyResult<()> {
-    self.set(key: .modules, value: value)
-    return .value()
+  public func setModules(to value: PyObject) -> PyBaseException? {
+    return self.set(.modules, to: value)
   }
 
   public func getModule(name: PyObject) -> GetModuleResult {
-    switch Py.getItem(self.modules, at: name) {
-    case let .value(o):
+    let modules: PyDict
+    switch self.getModules() {
+    case let .value(d): modules = d
+    case let .error(e): return .error(e)
+    }
+
+    switch modules.get(key: name) {
+    case .value(let o):
       return .value(o)
-
-    case let .error(e):
-      if e.isKeyError {
-        return .notFound(e)
-      }
-
+    case .notFound:
+      let e = Py.newKeyError(key: name)
+      return .notFound(e)
+    case .error(let e):
       return .error(e)
     }
   }
 
-  public func addModule(module: PyModule) -> PyResult<PyNone> {
+  public func addModule(module: PyModule) -> PyBaseException? {
+    let name: String
     switch module.name {
-    case let .value(name):
-      let nameObject = Py.intern(name)
-      return self.addModule(name: nameObject, module: module)
-    case let .error(e):
-      return .error(e)
+    case let .value(n): name = n
+    case let .error(e): return e
+    }
+
+    let interned = Py.intern(name)
+
+    let modulesDict: PyDict
+    switch self.getModules() {
+    case let .value(d): modulesDict = d
+    case let .error(e): return e
+    }
+
+    switch modulesDict.set(key: interned, to: module) {
+    case .ok: return nil
+    case .error(let e): return e
     }
   }
 
-  public func addModule(name: PyString, module: PyModule) -> PyResult<PyNone> {
-    return Py.add(dict: self.modules, key: name, value: module)
+  // MARK: - Builtin modules
+
+  internal func setBuiltinModules(_ modules: PyModule...) {
+    assert(!self.hasAlreadyCalled_setBuiltinModules)
+
+    var names = [PyString]()
+
+    for module in modules {
+      let name: String = {
+        switch module.name {
+        case .value(let s):
+          return s
+        case .error(let e):
+          trap("Error when inserting '\(module)' to 'sys.builtin_module_names': " +
+            "unable to extract module name: \(e).")
+        }
+      }()
+
+      let interned = Py.intern(name)
+      names.append(interned)
+
+      // sys.modules
+      if let e = self.addModule(module: module) {
+        trap("Error when inserting '\(name)' module to 'sys.modules': \(e)")
+      }
+    }
+
+    // sys.builtin_module_names
+    self.builtinModuleNames = names.map { $0.value }
+
+    let tuple = Py.newTuple(names)
+    if let e = self.setBuiltinModuleNames(to: tuple) {
+      trap("Error when setting 'sys.builtin_module_names': \(e)")
+    }
+  }
+
+  private var hasAlreadyCalled_setBuiltinModules: Bool {
+    switch self.getBuiltinModuleNames() {
+    case let .value(t):
+      // If we have any elements -> we called it before.
+      return t.elements.any
+    case let .error(e):
+      trap("Error when checking if 'builtin_module_names' was already filled: \(e)")
+    }
   }
 }

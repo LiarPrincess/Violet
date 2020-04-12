@@ -8,33 +8,14 @@ extension Sys {
 
   // MARK: - Version
 
-  public var version: String {
-    let v = self.versionInfo
-    let i = self.implementation.version
-    return "Python \(v.major).\(v.minor).\(v.micro) " +
-    "(Violet \(i.major).\(i.minor).\(i.micro))"
-  }
-
-  // sourcery: pyproperty = version
   /// sys.version
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.version).
-  internal var versionObject: PyString {
-    return Py.intern(self.version)
+  public func getVersion() -> PyResult<PyObject> {
+    return self.get(.version)
   }
 
   // MARK: - Version info
 
-  /// `sys.version_info`
-  ///
-  /// ```
-  /// >>> sys.version_info
-  /// sys.version_info(major=3, minor=7, micro=2, releaselevel='final', serial=0)
-  /// ```
-  public var versionInfo: VersionInfo {
-    return Configure.versionInfo
-  }
-
-  // sourcery: pyproperty = version_info
   /// sys.version_info
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.version_info).
   ///
@@ -42,20 +23,45 @@ extension Sys {
   /// major, minor, micro, releaselevel, and serial.
   /// All values except releaselevel are integers;
   /// the release level is 'alpha', 'beta', 'candidate', or 'final'.
-  internal var versionInfoObject: PyObject {
-    if let value = self.get(key: .version_info) {
-      return value
-    }
+  public func getVersionInfo() -> PyResult<PyObject> {
+    return self.get(.version_info)
+  }
 
-    return self.createObject(
-      versionInfo: self.versionInfo,
-      property: "version_info"
+  // MARK: - Implementation
+
+  /// sys.implementation
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.implementation).
+  public func getImplementation() -> PyResult<PyObject> {
+    return self.get(.implementation)
+  }
+
+  // MARK: - Hex version
+
+  /// sys.hexversion
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.hexversion).
+  public func getHexVersion() -> PyResult<PyObject> {
+    return self.get(.hexversion)
+  }
+
+  // MARK: - Initial
+
+  internal func createInitialVersionInfo() -> PyObject {
+    return self.createVersionObject(
+      property: "version_info",
+      versionInfo: self.versionInfo
     )
   }
 
-  private func createObject(
-    versionInfo: VersionInfo,
-    property: String
+  internal func createInitialImplementation() -> PyObject {
+    return self.createImplementationObject(
+      property: "implementation",
+      implementation: self.implementation
+    )
+  }
+
+  private func createVersionObject(
+    property: String,
+    versionInfo: VersionInfo
   ) -> PyNamespace {
     let dict = PyDict()
 
@@ -74,29 +80,9 @@ extension Sys {
     return Py.newNamespace(dict: dict)
   }
 
-  // MARK: - Implementation
-
-  public var implementation: ImplementationInfo {
-    return Configure.implementationInfo
-  }
-
-  // sourcery: pyproperty = implementation
-  /// sys.implementation
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.implementation).
-  internal var implementationObject: PyObject {
-    if let value = self.get(key: .implementation) {
-      return value
-    }
-
-    return self.createObject(
-      implementation: self.implementation,
-      property: "implementation"
-    )
-  }
-
-  private func createObject(
-    implementation: ImplementationInfo,
-    property: String
+  private func createImplementationObject(
+    property: String,
+    implementation: ImplementationInfo
   ) -> PyNamespace {
     let dict = PyDict()
 
@@ -107,9 +93,9 @@ extension Sys {
     let name = Py.intern(implementation.name)
     let hexversion = Py.newInt(implementation.version.hexVersion)
 
-    let version = self.createObject(
-      versionInfo: implementation.version,
-      property: property
+    let version = self.createVersionObject(
+      property: property,
+      versionInfo: implementation.version
     )
 
     let cacheTag: PyObject = {
@@ -127,23 +113,6 @@ extension Sys {
 
     return Py.newNamespace(dict: dict)
   }
-
-  // MARK: - Hex
-
-  // sourcery: pyproperty = hexversion
-  /// sys.hexversion
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.hexversion).
-  internal var hexVersion: PyObject {
-    if let value = self.get(key: .hexversion) {
-      return value
-    }
-
-    let uint32 = Configure.versionInfo.hexVersion
-    let object = Py.newInt(uint32)
-    return object
-  }
-
-  // MARK: - Helpers
 
   private func insertOrTrap(
     dict: PyDict,

@@ -8,7 +8,6 @@ extension Sys {
 
   // MARK: - Argv
 
-  // sourcery: pyproperty = argv, setter = setArgv
   /// sys.argv
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.argv).
   ///
@@ -18,19 +17,12 @@ extension Sys {
   /// `argv[0]` is set to the string `'-c'`.
   /// If no script name was passed to the Python interpreter,
   /// `argv[0]` is the empty string.
-  internal var argv: PyObject {
-    if let value = self.get(key: .argv) {
-      return value
-    }
-
-    let strings = self.createDefaultArgv()
-    let objects = strings.map(Py.newString(_:))
-    return Py.newList(objects)
+  public func getArgv() -> PyResult<PyList> {
+    return self.getList(.argv)
   }
 
-  internal func setArgv(to value: PyObject) -> PyResult<()> {
-    self.set(key: .argv, value: value)
-    return .value()
+  public func setArgv(to value: PyObject) -> PyBaseException? {
+    return self.set(.argv, to: value)
   }
 
   /// pymain_init_core_argv(_PyMain *pymain, _PyCoreConfig *config, ...)
@@ -38,7 +30,7 @@ extension Sys {
   /// https://docs.python.org/3.8/using/cmdline.html
   ///
   /// Please note that `VM` will also modify `argv` using `setArgv0`.
-  private func createDefaultArgv() -> [String] {
+  internal func createInitialArgv() -> PyList {
     let arguments = Py.config.arguments
     let argumentsWithoutProgramName = arguments.raw.dropFirst()
 
@@ -49,17 +41,42 @@ extension Sys {
     }
 
     assert(result.any)
-    return result
+    let objects = result.map(Py.newString(_:))
+    return Py.newList(objects)
+  }
+
+  // MARK: - Argv0
+
+  public func getArgv0() -> PyResult<PyString> {
+    let list: PyList
+    switch self.getArgv() {
+    case let .value(l): list = l
+    case let .error(e): return .error(e)
+    }
+
+    guard let first = list.elements.first else {
+      let msg = "'sys.argv' is empty"
+      return .valueError(msg)
+    }
+
+    guard let result = first as? PyString else {
+      let t = first.typeName
+      let msg = "Expected first element of 'sys.argv' to be a str, but got \(t)"
+      return .typeError(msg)
+    }
+
+    return .value(result)
   }
 
   public func setArgv0(value: String) -> PyResult<PyNone> {
-    guard let list = self.argv as? PyList else {
-      let t = self.argv.typeName
-      let pikachu = "<surprised Pikachu face>"
-      return .typeError("expected 'sys.argv' to be a list not \(t) \(pikachu)")
+    let list: PyList
+    switch self.getArgv() {
+    case let .value(l): list = l
+    case let .error(e): return .error(e)
     }
 
     let object = Py.newString(value)
+
     if list.data.isEmpty {
       list.data.append(object)
       return .value(Py.none)
@@ -70,21 +87,16 @@ extension Sys {
 
   // MARK: - Flags
 
-  // sourcery: pyproperty = flags
   /// sys.flags
   /// See [this](https://docs.python.org/3/library/sys.html#sys.flags).
   ///
   /// The named tuple flags exposes the status of command line flags.
   /// The attributes are read only.
-  internal var flagsObject: PyObject {
-    if let value = self.get(key: .flags) {
-      return value
-    }
-
-    return self.createFlagsObject()
+  public func getFlags() -> PyResult<PyObject> {
+    return self.get(.flags)
   }
 
-  private func createFlagsObject() -> PyNamespace {
+  internal func createInitialFlags() -> PyNamespace {
     let dict = PyDict()
 
     func insertOrTrap(name: String, value: PyObject) {
@@ -128,9 +140,42 @@ extension Sys {
     return Py.newNamespace(dict: dict)
   }
 
+  // MARK: - Warn options
+
+  /// sys.warnoptions
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.warnoptions).
+  public func getWarnOptions() -> PyResult<PyList> {
+    return self.getList(.warnoptions)
+  }
+
+  /// static _PyInitError
+  /// config_init_warnoptions(_PyCoreConfig *config, _PyCmdline *cmdline)
+  ///
+  /// Then:
+  /// 1. It is moved to '_PyMainInterpreterConfig' (in '_PyMainInterpreterConfig_Read')
+  /// 2. Set as 'sys.warnoptions' (in _PySys_EndInit)
+  internal func createInitialWarnOptions() -> PyList {
+    var result = [String]()
+
+    let options = self.flags.warnings
+    let filters = options.map(String.init(describing:))
+    result.append(contentsOf: filters)
+
+    switch self.flags.bytesWarning {
+    case .ignore:
+      break
+    case .warning:
+      result.append("default::BytesWarning")
+    case .error:
+      result.append("error::BytesWarning")
+    }
+
+    let strings = result.map(Py.newString(_:))
+    return Py.newList(strings)
+  }
+
   // MARK: - Executable
 
-  // sourcery: pyproperty = executable
   /// sys.executable
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.executable).
   ///
@@ -138,62 +183,61 @@ extension Sys {
   /// the Python interpreter, on systems where this makes sense.
   /// If Python is unable to retrieve the real path to its executable,
   /// `sys.executable` will be an empty string or `None`.
-  internal var executable: PyObject {
-    if let value = self.get(key: .executable) {
-      return value
-    }
-
-    let result = Py.config.executablePath
-    return Py.newString(result)
+  public func getExecutable() -> PyResult<PyString> {
+    return self.getString(.executable)
   }
 
   // MARK: - Platform
 
-  public var platform: String {
-    #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
-    return "darwin"
-    #elseif os(Linux) || os(Android)
-    return "linux"
-    #elseif os(Cygwin) // Is this even a thing?
-    return "cygwin"
-    #elseif os(Windows)
-    return "win32"
-    #else
-    return "unknown"
-    #endif
-  }
-
-  // sourcery: pyproperty = platform
   /// sys.platform
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.platform).
   ///
   /// This string contains a platform identifier that can be used to append
   /// platform-specific components to `sys.path`, for instance.
-  internal var platformObject: PyString {
-    return Py.intern(self.platform)
+  public func getPlatform() -> PyResult<PyString> {
+    return self.getString(.platform)
   }
 
   // MARK: - Copyright
 
-  public var copyright: String {
-    return Lyrics.letItGo
-  }
-
-  // sourcery: pyproperty = copyright
   /// sys.copyright
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.copyright).
   ///
   /// A string containing the copyright pertaining to the Python interpreter.
-  internal var copyrightObject: PyString {
-    return Py.intern(self.copyright)
+  public func getCopyright() -> PyResult<PyString> {
+    return self.getString(.copyright)
   }
 
   // MARK: - Hash
 
-  // sourcery: pyproperty = hash_info
   /// sys.hash_info
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.hash_info).
-  internal var hashInfoObject: PyObject {
-    return self.hashInfo.object
+  internal func getHashInfo() -> PyResult<PyObject> {
+    return self.get(.hash_info)
+  }
+
+  internal func createInitialHashInfo() -> PyNamespace {
+    let dict = PyDict()
+
+    func set(name: String, value: PyObject) {
+      let interned = Py.intern(name)
+      switch dict.set(key: interned, to: value) {
+      case .ok:
+        break
+      case .error(let e):
+        trap("Error when creating 'hash_info' namespace: \(e)")
+      }
+    }
+
+    set(name: "width", value: Py.newInt(self.hashInfo.width))
+    set(name: "modulus", value: Py.newInt(self.hashInfo.modulus))
+    set(name: "inf", value: Py.newInt(self.hashInfo.inf))
+    set(name: "nan", value: Py.newInt(self.hashInfo.nan))
+    set(name: "imag", value: Py.newInt(self.hashInfo.imag))
+    set(name: "algorithm", value: Py.newString(self.hashInfo.algorithm))
+    set(name: "hash_bits", value: Py.newInt(self.hashInfo.hashBits))
+    set(name: "seed_bits", value: Py.newInt(self.hashInfo.seedBits))
+
+    return Py.newNamespace(dict: dict)
   }
 }

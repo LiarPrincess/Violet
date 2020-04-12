@@ -6,10 +6,10 @@ extension UnderscoreWarnings {
 
   /// https://docs.python.org/3.8/library/warnings.html#warnings.showwarning
   internal func show(warning: Warning) -> PyResult<PyNone> {
-    let streamObject = Py.sys.stderr
-    guard let stream = streamObject as? PyTextFile else {
-      let msg = "'\(streamObject.typeName)' object has no attribute 'write'"
-      return .attributeError(msg)
+    let stream: PyTextFile
+    switch Py.sys.getStderr() {
+    case let .value(s): stream = s
+    case let .error(e): return .error(e)
     }
 
     let content: String

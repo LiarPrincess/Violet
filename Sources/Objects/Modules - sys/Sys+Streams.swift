@@ -8,14 +8,61 @@ extension Sys {
 
   // MARK: - Stdin
 
-  // sourcery: pyproperty = __stdin__
   /// sys.__stdin__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  public var __stdin__: PyObject {
-    if let value = self.get(key: .__stdin__) {
-      return value
-    }
+  public func get__stdin__() -> PyResult<PyTextFile> {
+    return self.getTextFile(.__stdin__)
+  }
 
+  /// sys.stdin
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
+  public func getStdin() -> PyResult<PyTextFile> {
+    return self.getTextFile(.stdin)
+  }
+
+  public func setStdin(to value: PyObject) -> PyBaseException? {
+    return self.set(.stdin, to: value)
+  }
+
+  // MARK: - Stdout
+
+  /// sys.__stdout__
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
+  public func get__stdout__() -> PyResult<PyTextFile> {
+    return self.getTextFile(.__stdout__)
+  }
+
+  /// sys.stdout
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
+  public func getStdout() -> PyResult<PyTextFile> {
+    return self.getTextFile(.stdout)
+  }
+
+  public func setStdout(to value: PyObject) -> PyBaseException? {
+    return self.set(.stdout, to: value)
+  }
+
+  // MARK: - Stderr
+
+  /// sys.__stderr__
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
+  public func get__stderr__() -> PyResult<PyTextFile> {
+    return self.getTextFile(.__stderr__)
+  }
+
+  /// sys.stderr
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
+  public func getStderr() -> PyResult<PyTextFile> {
+    return self.getTextFile(.stderr)
+  }
+
+  public func setStderr(to value: PyObject) -> PyBaseException? {
+    return self.set(.stderr, to: value)
+  }
+
+  // MARK: - Initial
+
+  internal func createInitialStdin() -> PyTextFile {
     return self.createStdio(
       name: "<stdin>",
       fd: Py.config.standardInput,
@@ -23,28 +70,7 @@ extension Sys {
     )
   }
 
-  // sourcery: pyproperty = stdin, setter = setStdin
-  /// sys.stdin
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
-  internal var stdin: PyObject {
-    return self.get(key: .stdin) ?? self.__stdin__
-  }
-
-  internal func setStdin(to value: PyObject) -> PyResult<()> {
-    self.set(key: .stdin, value: value)
-    return .value()
-  }
-
-  // MARK: - Stdout
-
-  // sourcery: pyproperty = __stdout__
-  /// sys.__stdout__
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  public var __stdout__: PyObject {
-    if let value = self.get(key: .__stdout__) {
-      return value
-    }
-
+  internal func createInitialStdout() -> PyTextFile {
     return self.createStdio(
       name: "<stdout>",
       fd: Py.config.standardOutput,
@@ -52,48 +78,13 @@ extension Sys {
     )
   }
 
-  // sourcery: pyproperty = stdout, setter = setStdout
-  /// sys.stdout
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
-  internal var stdout: PyObject {
-    return self.get(key: .stdout) ?? self.__stdout__
-  }
-
-  internal func setStdout(to value: PyObject) -> PyResult<()> {
-    self.set(key: .stdout, value: value)
-    return .value()
-  }
-
-  // MARK: - Stderr
-
-  // sourcery: pyproperty = __stderr__
-  /// sys.__stderr__
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  public var __stderr__: PyObject {
-    if let value = self.get(key: .__stderr__) {
-      return value
-    }
-
+  internal func createInitialStderr() -> PyTextFile {
     return self.createStdio(
       name: "<stderr>",
       fd: Py.config.standardError,
       mode: .write
     )
   }
-
-  // sourcery: pyproperty = stderr, setter = setStderr
-  /// sys.stderr
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
-  internal var stderr: PyObject {
-    return self.get(key: .stderr) ?? self.__stderr__
-  }
-
-  internal func setStderr(to value: PyObject) -> PyResult<()> {
-    self.set(key: .stderr, value: value)
-    return .value()
-  }
-
-  // MARK: - Helpers
 
   /// static PyObject*
   /// create_stdio(PyObject* io,

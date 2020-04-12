@@ -8,51 +8,55 @@ extension Sys {
 
   // MARK: - PS1
 
-  // sourcery: pyproperty = ps1, setter = setPS1
   /// sys.ps1
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.ps1).
   ///
-  /// Strings specifying the primary and secondary prompt of the interpreter.
-  /// These are only defined if the interpreter is in interactive mode.
-  internal var ps1Object: PyObject {
-    return self.get(key: .ps1) ?? Py.intern(">>> ")
+  /// String specifying the primary prompt of the interpreter.
+  public func getPS1() -> PyResult<PyObject> {
+    return self.get(.ps1)
   }
 
-  internal func setPS1(to value: PyObject) -> PyResult<()> {
-    self.set(key: .ps1, value: value)
-    return .value()
+  public func getPS1ToDisplayInInteractive() -> String {
+    let ps1 = self.getPS1()
+    return self.asStringToDisplayInInteractive(value: ps1)
   }
 
-  /// String that should be printed in interactive mode.
-  public var ps1: String {
-    switch Py.strValue(self.ps1Object) {
-    case .value(let s): return s
-    case .error: return ""
-    }
+  public func setPS1(to value: PyObject) -> PyBaseException? {
+    return self.set(.ps1, to: value)
   }
 
   // MARK: - PS2
 
-  // sourcery: pyproperty = ps2, setter = setPS2
   /// sys.ps2
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.ps1).
   ///
-  /// Strings specifying the primary and secondary prompt of the interpreter.
-  /// These are only defined if the interpreter is in interactive mode.
-  internal var ps2Object: PyObject {
-    return self.get(key: .ps2) ?? Py.intern("... ")
-  }
-
-  internal func setPS2(to value: PyObject) -> PyResult<()> {
-    self.set(key: .ps2, value: value)
-    return .value()
+  /// Strings specifying the secondary prompt of the interpreter.
+  public func getPS2() -> PyResult<PyObject> {
+    return self.get(.ps2)
   }
 
   /// String that should be printed in interactive mode.
-  public var ps2: String {
-    switch Py.strValue(self.ps2Object) {
-    case .value(let s): return s
-    case .error: return ""
+  public func getPS2ToDisplayInInteractive() -> String {
+    let ps2 = self.getPS2()
+    return self.asStringToDisplayInInteractive(value: ps2)
+  }
+
+  public func setPS2(to value: PyObject) -> PyBaseException? {
+    return self.set(.ps2, to: value)
+  }
+
+  // MARK: - Helpers
+
+  private func asStringToDisplayInInteractive(
+    value: PyResult<PyObject>
+  ) -> String {
+    let string = value.flatMap(Py.strValue)
+
+    switch string {
+    case .value(let s):
+      return s
+    case .error:
+      return ""
     }
   }
 }

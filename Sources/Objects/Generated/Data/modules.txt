@@ -157,51 +157,6 @@ Function|min|min|min(args:kwargs:)|minDoc
 Function|max|max|max(args:kwargs:)|maxDoc
 
 ############
-# sys
-############
-
-# Module|python_type|swift_type
-Module|sys|Sys
-
-# Doc|swift_static_doc_property
-Doc|doc
-
-# Property|python_name|swift_property_name|swift_setter_fn|swift_static_doc_property
-Property|meta_path|metaPath||
-Property|path_hooks|pathHooks||
-Property|path_importer_cache|pathImporterCache||
-Property|path|path|setPath|
-Property|prefix|prefix||
-Property|builtin_module_names|builtinModuleNamesObject||
-Property|modules|modules|setModules|
-Property|__stdin__|__stdin__||
-Property|stdin|stdin|setStdin|
-Property|__stdout__|__stdout__||
-Property|stdout|stdout|setStdout|
-Property|__stderr__|__stderr__||
-Property|stderr|stderr|setStderr|
-Property|warnoptions|warnOptions||
-Property|ps1|ps1Object|setPS1|
-Property|ps2|ps2Object|setPS2|
-Property|argv|argv|setArgv|
-Property|flags|flagsObject||
-Property|executable|executable||
-Property|platform|platformObject||
-Property|copyright|copyrightObject||
-Property|hash_info|hashInfoObject||
-Property|version|versionObject||
-Property|version_info|versionInfoObject||
-Property|implementation|implementationObject||
-Property|hexversion|hexVersion||
-
-# PropertyFn|python_name|swift_getter_fn|swift_setter_fn|swift_static_doc_property
-
-# Function|python_name|swift_function_name|swift_selector|swift_static_doc_property
-Function|exit|exit|exit(status:)|exitDoc
-Function|intern|intern|intern(value:)|
-Function|getdefaultencoding|getDefaultEncoding|getDefaultEncoding|getDefaultEncodingDoc
-
-############
 # _imp
 ############
 

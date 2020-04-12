@@ -155,22 +155,16 @@ extension PyInstance {
   }
 
   private func findModuleOnDisc(spec: ModuleSpec) -> ImportlibResult<URL> {
-    let moduleSearchPaths: [PyObject]
-
-    switch self.toArray(iterable: self.sys.path) {
-    case let .value(p):
-      moduleSearchPaths = p
+    let moduleSearchPaths: PyList
+    switch Py.sys.getPath() {
+    case let .value(l): moduleSearchPaths = l
     case let .error(e):
-      let e = self.newPyImportError(
-        msg: "expected 'sys.path' to be a list of str, got \(self.sys.path.typeName)",
-        cause: e
-      )
-
+      let e = self.newPyImportError(msg: "Unable to obtain 'sys.path'", cause: e)
       return .error(e)
     }
 
     var triedPaths = [URL]()
-    for object in moduleSearchPaths {
+    for object in moduleSearchPaths.elements {
       // If this is not 'str' then ignore
       guard let path = object as? PyString else {
         continue
@@ -215,10 +209,7 @@ extension PyInstance {
     moduleDict.set(id: .__name__, to: spec.nameObject)
     moduleDict.set(id: .__file__, to: code.filename)
 
-    switch Py.sys.addModule(name: spec.nameObject, module: module) {
-    case .value:
-      break
-    case .error(let e):
+    if let e = Py.sys.addModule(module: module) {
       return .error(self.createModuleError(spec: spec, cause: e))
     }
 

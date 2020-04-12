@@ -251,9 +251,12 @@ extension UnderscoreWarnings {
     // If we are in '__main__' module, then we have to take filename
     // from arg0.
     if module.compare(with: "__main__") == .equal {
-      if let argv = Py.sys.argv as? PyList,
-         let first = argv.elements.first as? PyString, !first.data.isEmpty {
-        return first
+      switch Py.sys.getArgv0() {
+      case .value(let s) where s.data.any:
+        return s
+      case .value,
+           .error:
+        break // whatever, just use default
       }
     }
 

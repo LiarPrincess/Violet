@@ -63,8 +63,7 @@ public final class PyInstance: BuiltinFunctions {
     ModuleFactory.createBuiltins(from: self.builtins)
 
   /// `self.sys` but as a Python module (`PyModule`).
-  public private(set) lazy var sysModule =
-    ModuleFactory.createSys(from: self.sys)
+  public private(set) lazy var sysModule = self.sys.createModule()
 
   /// `self._imp` but as a Python module (`PyModule`).
   public private(set) lazy var _impModule =
@@ -172,9 +171,9 @@ public final class PyInstance: BuiltinFunctions {
     self.types.fill__dict__()
     self.errorTypes.fill__dict__()
 
-    // Now finish modules.
-    // Note that property getter will call 'ModuleFactory'
-    // which will fill '__dict__' of each module.
+    // And now modules.
+    // Note that property getter will create module which will also fill '__dict__'
+    // (because we now can - we have basic types).
     self.sys.setBuiltinModules(
       self.builtinsModule,
       self.sysModule,
@@ -252,12 +251,21 @@ public final class PyInstance: BuiltinFunctions {
 
   private var internedStrings = [UseScalarsToHashString:PyString]()
 
+  /// Get cached `PySString` value for given `String`.
   public func getInterned(_ value: String) -> PyString? {
+    // Note that most of the time when it is invoked in the code (by us)
+    // it is called on SHORT string.
+    // So, even if later it has to be hashed again
+    // (first for Swift dict, and then later to be used as key in 'PyDict')
+    // the performance hit should be negligible
+    // (also the whole string will already be in CPU cache, maybe, probably...).
     let key = UseScalarsToHashString(value)
     return self.internedStrings[key]
   }
 
-  /// Cached, frequently used strings.
+  /// Cache given string and return it.
+  ///
+  /// If it is already in cache then it will return interned value.
   public func intern(_ value: String) -> PyString {
     if let interned = self.getInterned(value) {
       return interned

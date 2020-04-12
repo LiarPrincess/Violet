@@ -20,7 +20,7 @@ public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
   // MARK: - Init
 
   internal init(fn: FunctionWrapper,
-                module: PyObject? = nil,
+                module: PyString? = nil,
                 doc: String? = nil) {
     self.function = fn
     self.module = module

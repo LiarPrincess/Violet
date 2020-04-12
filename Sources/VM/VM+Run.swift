@@ -332,23 +332,17 @@ extension VM {
 
   /// Prepend given value to `sys.path`.
   private func prependPath(value: String) -> PyBaseException? {
-    switch Py.sys.prependPath(value: value) {
-    case .value:
-      return nil
-    case .error(let e):
-      return e
-    }
+    return Py.sys.prependPath(value: value)
   }
 
   private func add__main__Module() -> PyResult<PyModule> {
     let name = Py.intern("__main__")
     let module = Py.newModule(name: name)
 
-    switch Py.sys.addModule(name: name, module: module) {
-    case .value:
-      return .value(module)
-    case .error(let e):
+    if let e = Py.sys.addModule(module: module) {
       return .error(e)
     }
+
+    return .value(module)
   }
 }

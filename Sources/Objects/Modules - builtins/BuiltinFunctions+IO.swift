@@ -106,11 +106,11 @@ extension BuiltinFunctions {
 
   private func getTextFile(file: PyObject?) -> PyResult<PyTextFile> {
     guard let file = file else {
-      return self.getStdoutTextFile()
+      return Py.sys.getStdout()
     }
 
     if file.isNone {
-      return self.getStdoutTextFile()
+      return Py.sys.getStdout()
     }
 
     guard let textFile = file as? PyTextFile else {
@@ -119,17 +119,6 @@ extension BuiltinFunctions {
     }
 
     return .value(textFile)
-  }
-
-  private func getStdoutTextFile() -> PyResult<PyTextFile> {
-    let object = Py.sys.stdout
-
-    guard let file = object as? PyTextFile else {
-      let t = object.typeName
-      return .attributeError("'\(t)' object has no attribute 'write'")
-    }
-
-    return .value(file)
   }
 
   private func getSeparator(argName: String,

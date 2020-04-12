@@ -4,8 +4,9 @@ import Core
 // Python -> sysmodule.c
 // https://docs.python.org/3.7/library/sys.html
 
-// sourcery: pymodule = sys
-public final class Sys {
+public final class Sys: PyModuleImplementation {
+
+  internal static let moduleName = "sys"
 
   internal static let doc = """
     This module provides access to some objects used or maintained by the
@@ -78,31 +79,183 @@ public final class Sys {
     settrace() -- set the global debug tracing function
     """
 
-  // MARK: - Dict
-
-  /// This dict will be used inside our `PyModule` instance.
-  internal private(set) lazy var __dict__ = Py.newDict()
-
   // MARK: - Properties
 
-  public private(set) lazy var flags = SysFlags(
+  /// This dict will be used inside our `PyModule` instance.
+  public let __dict__ = Py.newDict()
+
+  /// Initial value for `sys.flags`.
+  public let flags = SysFlags(
     arguments: Py.config.arguments,
     environment: Py.config.environment
   )
 
-  public private(set) lazy var hashInfo = HashInfo()
-
-  public internal(set) var builtinModuleNames = [String]()
-
-  // MARK: - Get/set
-
-  /// Get value from `self.__dict__`.
-  internal func get(key: IdString) -> PyObject? {
-    return self.__dict__.get(id: key)
+  /// Initial value for `sys.version_info`.
+  public var versionInfo: VersionInfo {
+    return Configure.versionInfo
   }
 
-  /// Set value in `self.__dict__`.
-  internal func set(key: IdString, value: PyObject) {
-    self.__dict__.set(id: key, to: value)
+  /// Initial value for `sys.hex_version`.
+  public var hexVersion: UInt32 {
+    return self.versionInfo.hexVersion
+  }
+
+  /// Initial value for `sys.implementation`.
+  public var implementation: ImplementationInfo {
+    return Configure.implementationInfo
+  }
+
+  /// Initial value for `sys.version`.
+  public private(set) lazy var version: String = {
+    let v = self.versionInfo
+    let i = self.implementation.version
+    return "Python \(v.major).\(v.minor).\(v.micro) " +
+           "(Violet \(i.major).\(i.minor).\(i.micro))"
+  }()
+
+  /// Initial value for `sys.hash_info`.
+  public let hashInfo = HashInfo()
+
+  /// This value will be returned in `sys.getdefaultencoding`.
+  public var defaultEncoding: PyStringEncoding {
+    return .utf8
+  }
+
+  /// Initial value for `sys.builtin_module_names`.
+  public internal(set) var builtinModuleNames = [String]()
+
+  /// Initial value for `sys.platform`.
+  private var platform: String {
+    #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
+    return "darwin"
+    #elseif os(Linux) || os(Android)
+    return "linux"
+    #elseif os(Cygwin) // Is this even a thing?
+    return "cygwin"
+    #elseif os(Windows)
+    return "win32"
+    #else
+    return "unknown"
+    #endif
+  }
+
+  /// Initial value for `sys.copyright`.
+  public var copyright: String {
+    return Lyrics.galavant // Very important...
+  }
+
+  // MARK: - Init
+
+  internal init() {
+    self.fill__dict__()
+  }
+
+  // MARK: - Fill dict
+
+  // swiftlint:disable:next function_body_length
+  private func fill__dict__() {
+    self.setOrTrap(.ps1, to: Py.newString(">>> "))
+    self.setOrTrap(.ps2, to: Py.newString("... "))
+
+    self.setOrTrap(.argv, to: self.createInitialArgv())
+    self.setOrTrap(.flags, to: self.createInitialFlags())
+    self.setOrTrap(.executable, to: Py.newString(Py.config.executablePath))
+    self.setOrTrap(.platform, to: Py.newString(self.platform))
+    self.setOrTrap(.copyright, to: Py.newString(self.copyright))
+    self.setOrTrap(.hash_info, to: self.createInitialHashInfo())
+
+    self.setOrTrap(.modules, to: Py.newDict())
+    self.setOrTrap(.builtin_module_names, to: Py.emptyTuple)
+
+    let prefix = self.createInitialPrefix()
+    let path = self.createInitialPath(prefix: prefix)
+    self.setOrTrap(.meta_path, to: Py.newList())
+    self.setOrTrap(.path_hooks, to: Py.newList())
+    self.setOrTrap(.path_importer_cache, to: Py.newDict())
+    self.setOrTrap(.path, to: path)
+    self.setOrTrap(.prefix, to: prefix)
+
+    let stdin = self.createInitialStdin()
+    let stdout = self.createInitialStdout()
+    let stderr = self.createInitialStderr()
+    self.setOrTrap(.__stdin__, to: stdin)
+    self.setOrTrap(.__stdout__, to: stdout)
+    self.setOrTrap(.__stderr__, to: stderr)
+    self.setOrTrap(.stdin, to: stdin)
+    self.setOrTrap(.stdout, to: stdout)
+    self.setOrTrap(.stderr, to: stderr)
+
+    self.setOrTrap(.version, to: Py.newString(self.version))
+    self.setOrTrap(.version_info, to: self.createInitialVersionInfo())
+    self.setOrTrap(.implementation, to: self.createInitialImplementation())
+    self.setOrTrap(.hexversion, to: Py.newInt(self.hexVersion))
+
+    self.setOrTrap(.warnoptions, to: self.createInitialWarnOptions())
+
+    // Not that capturing 'self' is intended.
+    // See comment at the top of 'PyModuleImplementation' for details.
+    self.setOrTrap(.exit,
+                   doc: Sys.exitDoc,
+                   fn: self.exit(status:))
+    self.setOrTrap(.intern,
+                   doc: Sys.internDoc,
+                   fn: self.intern(value:))
+    self.setOrTrap(.getdefaultencoding,
+                   doc: Sys.getDefaultEncodingDoc,
+                   fn: self.getDefaultEncoding)
+  }
+
+  // MARK: - Properties
+
+  internal struct Properties: CustomStringConvertible {
+
+    internal static let ps1 = Properties(value: "ps1")
+    internal static let ps2 = Properties(value: "ps2")
+
+    internal static let argv = Properties(value: "argv")
+    internal static let flags = Properties(value: "flags")
+    internal static let executable = Properties(value: "executable")
+    internal static let platform = Properties(value: "platform")
+    internal static let copyright = Properties(value: "copyright")
+    internal static let hash_info = Properties(value: "hash_info")
+
+    internal static let modules = Properties(value: "modules")
+    internal static let builtin_module_names =
+      Properties(value: "builtin_module_names")
+
+    internal static let meta_path = Properties(value: "meta_path")
+    internal static let path_hooks = Properties(value: "path_hooks")
+    internal static let path_importer_cache = Properties(value: "path_importer_cache")
+    internal static let path = Properties(value: "path")
+    internal static let prefix = Properties(value: "prefix")
+
+    internal static let __stdin__ = Properties(value: "__stdin__")
+    internal static let __stdout__ = Properties(value: "__stdout__")
+    internal static let __stderr__ = Properties(value: "__stderr__")
+    internal static let stdin = Properties(value: "stdin")
+    internal static let stdout = Properties(value: "stdout")
+    internal static let stderr = Properties(value: "stderr")
+
+    internal static let version = Properties(value: "version")
+    internal static let version_info = Properties(value: "version_info")
+    internal static let implementation = Properties(value: "implementation")
+    internal static let hexversion = Properties(value: "hexversion")
+
+    internal static let warnoptions = Properties(value: "warnoptions")
+
+    internal static let exit = Properties(value: "exit")
+    internal static let intern = Properties(value: "intern")
+    internal static let getdefaultencoding = Properties(value: "getdefaultencoding")
+
+    private let value: String
+
+    internal var description: String {
+      return self.value
+    }
+
+    // Private so we can't create new values from the outside.
+    private init(value: String) {
+      self.value = value
+    }
   }
 }

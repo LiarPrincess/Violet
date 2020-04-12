@@ -68,14 +68,18 @@ extension BuiltinFunctions {
 
   // MARK: - Module
 
-  public func newModule(name: String, doc: String? = nil) -> PyModule {
-    let n = Py.intern(name)
-    let d = doc.map(self.newString)
-    return self.newModule(name: n, doc: d)
+  public func newModule(name: String,
+                        doc: String? = nil,
+                        dict: PyDict? = nil) -> PyModule {
+    let nameObject = Py.intern(name)
+    let docObject = doc.map(self.newString)
+    return self.newModule(name: nameObject, doc: docObject, dict: dict)
   }
 
-  public func newModule(name: PyObject, doc: PyObject? = nil) -> PyModule {
-    return PyModule(name: name, doc: doc)
+  public func newModule(name: PyObject,
+                        doc: PyObject? = nil,
+                        dict: PyDict? = nil) -> PyModule {
+    return PyModule(name: name, doc: doc, dict: dict)
   }
 
   // MARK: - Code
