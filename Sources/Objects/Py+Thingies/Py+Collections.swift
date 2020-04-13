@@ -376,6 +376,8 @@ extension PyInstance {
 
   // MARK: - Contains
 
+  /// Does this `iterable` contain this element?
+  ///
   /// int
   /// PySequence_Contains(PyObject *seq, PyObject *ob)
   public func contains(iterable: PyObject,
@@ -409,6 +411,7 @@ extension PyInstance {
     }
   }
 
+  /// Does this `iterable` contain all of the elments from other iterable?
   public func contains(iterable: PyObject,
                        allFrom subset: PyObject) -> PyResult<Bool> {
     // Iterate 'subset' and check if every element is in 'iterable'.
@@ -425,17 +428,8 @@ extension PyInstance {
 
   /// sorted(iterable, *, key=None, reverse=False)
   /// See [this](https://docs.python.org/3/library/functions.html#sorted)
-  internal func sorted(args: [PyObject],
+  internal func sorted(iterable: PyObject,
                        kwargs: PyDict?) -> PyResult<PyList> {
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "sorted",
-                                                        args: args,
-                                                        min: 1,
-                                                        max: 1) {
-      return .error(e)
-    }
-
-    let iterable = args[0]
-
     switch self.newList(iterable: iterable) {
     case let .value(list):
       switch list.sort(args: [], kwargs: kwargs) {
@@ -595,6 +589,8 @@ extension PyInstance {
     }
   }
 
+  /// In various places (for example: `min`, `max`, `list.sort`) we need to
+  /// 'select given key'.
   internal func selectKey(object: PyObject, key: PyObject?) -> PyResult<PyObject> {
     guard let key = key else {
       return .value(object)
