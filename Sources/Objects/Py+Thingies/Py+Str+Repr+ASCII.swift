@@ -6,7 +6,7 @@ import Core
 
 // MARK: - Repr
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // sourcery: pymethod = repr
   /// repr(object)
@@ -43,7 +43,7 @@ extension BuiltinFunctions {
 
 // MARK: - Str
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   /// class str(object='')
   /// class str(object=b'', encoding='utf-8', errors='strict')
@@ -190,7 +190,7 @@ internal enum ExtractStringResult {
   case notStringOrBytes
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   /// Extract `String` from this object (if possible).
   ///

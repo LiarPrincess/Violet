@@ -69,7 +69,7 @@ LexerDelegate, ParserDelegate, CompilerDelegate {
 
 // MARK: - BuiltinFunctions
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // sourcery: pymethod = compile
   /// compile(source, filename, mode, flags=0, dont_inherit=False, optimize=-1)

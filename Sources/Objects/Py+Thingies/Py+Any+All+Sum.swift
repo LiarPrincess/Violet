@@ -2,7 +2,7 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // MARK: - Any
 
@@ -42,7 +42,7 @@ private let sumArguments = ArgumentParser.createOrTrap(
   format: "O|O:sum"
 )
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // sourcery: pymethod = sum
   /// sum(iterable, /, start=0)

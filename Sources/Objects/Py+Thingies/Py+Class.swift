@@ -1,6 +1,6 @@
 import Core
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   internal static var buildClassDoc: String {
     return """
@@ -97,7 +97,7 @@ extension BuiltinFunctions {
 
 // MARK: - Metaclass
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   private func calculateMetaclass(bases: PyTuple,
                                   kwargs: PyDict?) -> PyResult<PyObject> {
@@ -135,7 +135,7 @@ private enum PrepareCallResult {
   case error(PyBaseException)
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   private func createNamespace(name: PyString,
                                bases: PyTuple,
@@ -184,7 +184,7 @@ extension BuiltinFunctions {
 
 // MARK: - Cell
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   private func createCell(fn: PyFunction,
                           namespace: PyDict) -> PyResult<PyObject> {

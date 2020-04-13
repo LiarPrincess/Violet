@@ -148,7 +148,7 @@ private enum EqualCompare: CompareOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func isEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     // Quick result when objects are the same.
@@ -191,7 +191,7 @@ private enum NotEqualCompare: CompareOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func isNotEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     // Quick result when objects are the same.
@@ -233,7 +233,7 @@ private enum LessCompare: CompareOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func isLess(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     switch LessCompare.compare(left: left, right: right) {
@@ -270,7 +270,7 @@ private enum LessEqualCompare: CompareOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func isLessEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     switch LessEqualCompare.compare(left: left, right: right) {
@@ -307,7 +307,7 @@ private enum GreaterCompare: CompareOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func isGreater(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     switch GreaterCompare.compare(left: left, right: right) {
@@ -344,7 +344,7 @@ private enum GreaterEqualCompare: CompareOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func isGreaterEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     switch GreaterEqualCompare.compare(left: left, right: right) {
@@ -366,7 +366,7 @@ extension BuiltinFunctions {
 
 // MARK: - Helpers
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   private func notSupported(_ op: String,
                             left: PyObject,

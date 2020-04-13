@@ -12,7 +12,7 @@ private let execArguments = ArgumentParser.createOrTrap(
   format: "O|OO:exec"
 )
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // sourcery: pymethod = exec
   /// exec(object[, globals[, locals]])
@@ -82,7 +82,7 @@ private let evalArguments = ArgumentParser.createOrTrap(
   format: "O|OO:exec"
 )
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // sourcery: pymethod = eval
   /// eval(expression[, globals[, locals]])
@@ -159,7 +159,7 @@ private enum DictOrNone {
   case somethingElse(typeName: String)
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   private func parseEnv(globals: PyObject?, locals: PyObject?) -> ParseEnvResult {
     // Omg! This code looks soooooo... bad.
@@ -229,7 +229,7 @@ private enum Source {
   case error(PyBaseException)
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   private func parseSource(arg: PyObject,
                            filename: String,

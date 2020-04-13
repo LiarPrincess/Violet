@@ -277,7 +277,7 @@ private struct AddOp: BinaryOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func add(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return AddOp.call(left: left, right: right)
@@ -323,7 +323,7 @@ private struct SubOp: BinaryOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func sub(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return SubOp.call(left: left, right: right)
@@ -369,7 +369,7 @@ private struct MulOp: BinaryOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func mul(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return MulOp.call(left: left, right: right)
@@ -415,7 +415,7 @@ private struct MatmulOp: BinaryOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func matmul(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return MatmulOp.call(left: left, right: right)
@@ -461,7 +461,7 @@ private struct TruedivOp: BinaryOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func truediv(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return TruedivOp.call(left: left, right: right)
@@ -507,7 +507,7 @@ private struct FloordivOp: BinaryOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func floordiv(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return FloordivOp.call(left: left, right: right)
@@ -553,7 +553,7 @@ private struct ModOp: BinaryOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func mod(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return ModOp.call(left: left, right: right)
@@ -596,7 +596,7 @@ private struct DivmodOp: BinaryOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // sourcery: pymethod = divmod
   /// divmod(a, b)
@@ -644,7 +644,7 @@ private struct LshiftOp: BinaryOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func lshift(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return LshiftOp.call(left: left, right: right)
@@ -690,7 +690,7 @@ private struct RshiftOp: BinaryOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func rshift(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return RshiftOp.call(left: left, right: right)
@@ -736,7 +736,7 @@ private struct AndOp: BinaryOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func and(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return AndOp.call(left: left, right: right)
@@ -782,7 +782,7 @@ private struct OrOp: BinaryOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func or(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return OrOp.call(left: left, right: right)
@@ -828,7 +828,7 @@ private struct XorOp: BinaryOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func xor(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return XorOp.call(left: left, right: right)

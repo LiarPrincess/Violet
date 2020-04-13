@@ -2,7 +2,7 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // MARK: - Get
 
@@ -228,7 +228,7 @@ public enum LookupResult {
   case error(PyBaseException)
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   /// Look for a name through the MRO.
   ///

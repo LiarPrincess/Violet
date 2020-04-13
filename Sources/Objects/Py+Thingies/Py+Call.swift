@@ -26,7 +26,7 @@ public enum CallResult {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   /// Call `callable` with single positional argument.
   public func call(callable: PyObject, arg: PyObject) -> CallResult {
@@ -95,7 +95,7 @@ extension BuiltinFunctions {
 
 // MARK: - Is callable
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // sourcery: pymethod = callable
   /// callable(object)
@@ -144,7 +144,7 @@ private enum CallableFromDict {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func hasMethod(object: PyObject,
                         selector: IdString) -> PyResult<Bool> {
@@ -307,7 +307,7 @@ public enum CallMethodResult {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   /// Call method with single positional argument.
   public func callMethod(object: PyObject,

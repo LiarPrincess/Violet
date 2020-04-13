@@ -1,4 +1,4 @@
-extension BuiltinFunctions {
+extension PyInstance {
 
   // MARK: - Get
 

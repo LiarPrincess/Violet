@@ -160,7 +160,7 @@ private enum MinImpl: MinMaxImpl {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   internal static var minDoc: String {
     return """
@@ -204,7 +204,7 @@ private enum MaxImpl: MinMaxImpl {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   internal static var maxDoc: String {
     return """

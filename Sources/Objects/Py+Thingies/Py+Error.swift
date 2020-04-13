@@ -11,7 +11,7 @@ import Foundation
 
 // swiftlint:disable file_length
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // MARK: - Type error
 
@@ -372,7 +372,7 @@ extension BuiltinFunctions {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // MARK: - Exception matches
 

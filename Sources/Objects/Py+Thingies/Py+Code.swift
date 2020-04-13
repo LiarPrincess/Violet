@@ -9,7 +9,7 @@ import Foundation
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // MARK: - Function
 

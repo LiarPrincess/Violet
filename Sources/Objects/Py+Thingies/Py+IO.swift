@@ -12,7 +12,7 @@ private let printArguments = ArgumentParser.createOrTrap(
   format: "|OOOO:print"
 )
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // sourcery: pymethod = print
   /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
@@ -151,7 +151,7 @@ private let openArguments = ArgumentParser.createOrTrap(
   format: "O|sizzziO:open"
 )
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public func open(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
     return ArgumentParser.unpackKwargsDict(kwargs: kwargs)

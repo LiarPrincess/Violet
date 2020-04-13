@@ -6,7 +6,7 @@ import Core
 
 // swiftlint:disable file_length
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // MARK: - Tuple
 
@@ -121,7 +121,7 @@ public class CreateDictionaryArg {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // MARK: - Dictionary
 
@@ -488,7 +488,7 @@ public enum ReduceIntoStep<Acc> {
   case error(PyBaseException)
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   public typealias ReduceFn<Acc> = (Acc, PyObject) -> ReduceStep<Acc>
 

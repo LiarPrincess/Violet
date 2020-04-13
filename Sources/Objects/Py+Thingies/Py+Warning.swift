@@ -61,7 +61,7 @@ public enum PyWarningEnum {
 
 // MARK: - BuiltinFunctions
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // MARK: - Syntax
 

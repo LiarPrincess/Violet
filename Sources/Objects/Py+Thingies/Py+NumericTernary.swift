@@ -171,7 +171,7 @@ private enum PowOp: TernaryOp {
   }
 }
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   // sourcery: pymethod = pow
   /// pow(base, exp[, mod])

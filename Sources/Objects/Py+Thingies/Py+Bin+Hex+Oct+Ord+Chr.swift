@@ -2,7 +2,7 @@ import Core
 
 // We will group all those functions in a single file just because
 // they all have 3-letter names.
-extension BuiltinFunctions {
+extension PyInstance {
 
   // MARK: - Bin, Hex, Oct
 

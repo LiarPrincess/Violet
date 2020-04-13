@@ -10,7 +10,7 @@
 
 // MARK: - Get import
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   /// In CPython: interp->import_func
   ///
@@ -35,7 +35,7 @@ private let importArguments = ArgumentParser.createOrTrap(
   format: "U|OOOi:__import__"
 )
 
-extension BuiltinFunctions {
+extension PyInstance {
 
   internal static var importDoc: String {
     return """
