@@ -18,7 +18,7 @@ public class PyModule: PyObject {
   /// PyModule_GetNameObject(PyObject *m)
   internal var name: PyResult<String> {
     if let name = self.__dict__.get(id: .__name__) {
-      return Py.strValue(name)
+      return Py.strValue(object: name)
     }
 
     return .systemError("nameless module")

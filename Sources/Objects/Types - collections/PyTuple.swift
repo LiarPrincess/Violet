@@ -117,7 +117,7 @@ public class PyTuple: PyObject, PySequenceType {
         result += ", " // so that we don't have ', )'.
       }
 
-      switch Py.repr(element) {
+      switch Py.repr(object: element) {
       case let .value(s): result += s
       case let .error(e): return .error(e)
       }

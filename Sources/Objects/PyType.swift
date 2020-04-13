@@ -306,7 +306,7 @@ public class PyType: PyObject {
       }
 
       guard let module = object as? PyModule else {
-        switch Py.strValue(object) {
+        switch Py.strValue(object: object) {
         case let .value(s):
           return .module(s)
         case let .error(e):

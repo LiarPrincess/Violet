@@ -756,7 +756,7 @@ public class PyString: PyObject {
 
     // Fast path when we don't have encoding and kwargs
     if encodingObj == nil && errorObj == nil {
-      return Py.strValue(object).map { alloca(type, $0) }
+      return Py.strValue(object: object).map { alloca(type, $0) }
     }
 
     let encoding: PyStringEncoding

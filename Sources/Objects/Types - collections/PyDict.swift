@@ -128,14 +128,14 @@ public class PyDict: PyObject {
           result += ", " // so that we don't have ugly ', }'.
         }
 
-        switch Py.repr(element.key.object) {
+        switch Py.repr(object: element.key.object) {
         case let .value(s): result += s
         case let .error(e): return .error(e)
         }
 
         result += ": "
 
-        switch Py.repr(element.value) {
+        switch Py.repr(object: element.value) {
         case let .value(s): result += s
         case let .error(e): return .error(e)
         }
@@ -306,7 +306,7 @@ public class PyDict: PyObject {
   private func idErrorNotHandled(operation: String,
                                  error: PyBaseException) -> Never {
     // TODO: PyDict.idErrorNotHandled
-    let repr = Py.reprOrGeneric(error)
+    let repr = Py.reprOrGeneric(object: error)
     trap("Dict operation '\(operation)' returned an error: '\(repr)'")
   }
 

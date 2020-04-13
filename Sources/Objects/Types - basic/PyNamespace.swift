@@ -83,7 +83,7 @@ public class PyNamespace: PyObject {
       var list = [String]()
 
       for entry in self.__dict__.data {
-        switch Py.repr(entry.value) {
+        switch Py.repr(object: entry.value) {
         case let .value(o): list.append("\(entry.key)=\(o)")
         case let .error(e): return .error(e)
         }

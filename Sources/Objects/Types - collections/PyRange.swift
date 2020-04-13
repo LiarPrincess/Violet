@@ -386,7 +386,7 @@ public class PyRange: PyObject {
   // sourcery: pymethod = index
   internal func index(of element: PyObject) -> PyResult<BigInt> {
     guard let int = element as? PyInt, self.contains(int) else {
-      switch Py.strValue(element) {
+      switch Py.strValue(object: element) {
       case .value(let str):
         return .valueError("\(str) is not in range")
       case .error:

@@ -85,7 +85,7 @@ internal enum PyObjectType {
   // sourcery: pymethod = __str__
   internal static func str(zelf: PyObject) -> PyResult<String> {
     // If '__str__' is not implemented then we will use '__repr__'.
-    return Py.repr(zelf)
+    return Py.repr(object: zelf)
   }
 
   // sourcery: pymethod = __format__

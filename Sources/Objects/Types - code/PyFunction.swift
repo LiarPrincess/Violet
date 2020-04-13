@@ -292,7 +292,7 @@ public class PyFunction: PyObject {
       return module.name
     }
 
-    return Py.strValue(self.module)
+    return Py.strValue(object: self.module)
   }
 
   public func setModule(_ object: PyObject) -> PyResult<()> {

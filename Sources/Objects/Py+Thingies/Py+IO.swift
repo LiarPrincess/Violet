@@ -64,7 +64,7 @@ extension PyInstance {
         }
       }
 
-      let raw = Py.strValue(object)
+      let raw = Py.strValue(object: object)
       switch raw.flatMap(file.write(string:)) {
       case .value: break
       case .error(let e): return .error(e)

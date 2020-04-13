@@ -152,7 +152,7 @@ public class PyBaseException: PyObject {
     case 1:
       // BaseException('Elsa')
       let first = args.elements[0]
-      return Py.repr(first).map { name + "(" + $0 + ")" }
+      return Py.repr(object: first).map { name + "(" + $0 + ")" }
     default:
       // BaseException('Elsa', 'Anna')
       let argsRepr = args.repr()
@@ -169,9 +169,9 @@ public class PyBaseException: PyObject {
       return .value("")
     case 1:
       let first = args.elements[0]
-      return Py.repr(first)
+      return Py.repr(object: first)
     default:
-      return Py.repr(args)
+      return Py.repr(object: args)
     }
   }
 

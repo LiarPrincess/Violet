@@ -76,6 +76,6 @@ extension PyBuiltinFunctionShared where Self: PyObject {
       return module.name
     }
 
-    return Py.strValue(moduleObject)
+    return Py.strValue(object: moduleObject)
   }
 }

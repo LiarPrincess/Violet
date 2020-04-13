@@ -56,8 +56,8 @@ extension PyInstance {
 
     // If we already have content that is not our class -> throw
     if let content = cell.content, content !== cls {
-      let cntRepr = Py.reprOrGeneric(content)
-      let clsRepr = Py.reprOrGeneric(cls)
+      let cntRepr = Py.reprOrGeneric(object: content)
+      let clsRepr = Py.reprOrGeneric(object: cls)
       let msg = "__class__ set to \(cntRepr) defining \(name.value) as \(clsRepr)"
       return Py.newTypeError(msg: msg)
     }

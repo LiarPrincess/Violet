@@ -191,8 +191,15 @@ extension Builtins {
   /// See [this](https://docs.python.org/3/library/functions.html#sorted)
   internal static func sorted(args: [PyObject],
                               kwargs: PyDict?) -> PyResult<PyList> {
-    // TODO: This
-    return Py.sorted(args: args, kwargs: kwargs)
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "sorted",
+                                                        args: args,
+                                                        min: 1,
+                                                        max: 1) {
+      return .error(e)
+    }
+
+    let iterable = args[0]
+    return Py.sorted(iterable: iterable, kwargs: kwargs)
   }
 }
 
@@ -513,15 +520,13 @@ extension Builtins {
   /// repr(object)
   /// See [this](https://docs.python.org/3/library/functions.html#repr)
   internal static func repr(object: PyObject) -> PyResult<String> {
-    // TODO: This
-    return Py.repr(object)
+    return Py.repr(object: object)
   }
 
   /// ascii(object)
   /// See [this](https://docs.python.org/3/library/functions.html#ascii)
   internal static func ascii(object: PyObject) -> PyResult<String> {
-    // TODO: This
-    return Py.ascii(object)
+    return Py.ascii(object: object)
   }
 }
 

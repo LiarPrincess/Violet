@@ -106,19 +106,19 @@ public class PySlice: PyObject {
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
     let start: String
-    switch Py.repr(self.start) {
+    switch Py.repr(object: self.start) {
     case let .value(s): start = s
     case let .error(e): return .error(e)
     }
 
     let stop: String
-    switch Py.repr(self.stop) {
+    switch Py.repr(object: self.stop) {
     case let .value(s): stop = s
     case let .error(e): return .error(e)
     }
 
     let step: String
-    switch Py.repr(self.step) {
+    switch Py.repr(object: self.step) {
     case let .value(s): step = s
     case let .error(e): return .error(e)
     }

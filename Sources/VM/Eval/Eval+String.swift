@@ -34,11 +34,11 @@ extension Eval {
     case .none:
       return .value(value)
     case .str:
-      return Py.strValue(value).map(Py.newString)
+      return Py.strValue(object: value).map(Py.newString)
     case .repr:
-      return Py.repr(value).map(Py.newString)
+      return Py.repr(object: value).map(Py.newString)
     case .ascii:
-      return Py.ascii(value).map(Py.newString)
+      return Py.ascii(object: value).map(Py.newString)
     }
   }
 

@@ -155,7 +155,7 @@ internal struct PySetData {
         result += ", " // so that we don't have ', )'.
       }
 
-      switch Py.repr(element.key.object) {
+      switch Py.repr(object: element.key.object) {
       case let .value(s): result += s
       case let .error(e): return .error(e)
       }
