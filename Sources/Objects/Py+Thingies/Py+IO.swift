@@ -7,36 +7,13 @@ import Foundation
 
 // MARK: - Print
 
-private let printArguments = ArgumentParser.createOrTrap(
-  arguments: ["sep", "end", "file", "flush"],
-  format: "|OOOO:print"
-)
-
 extension PyInstance {
 
-  // sourcery: pymethod = print
   /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
   /// See [this](https://docs.python.org/3/library/functions.html#print)
-  internal func print(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    // 'args' contains objects to print
-    // 'kwargs' contains options
-
-    switch printArguments.bind(args: [], kwargs: kwargs) {
-    case let .value(binding):
-      assert(binding.requiredCount == 0, "Invalid required argument count.")
-      assert(binding.optionalCount == 4, "Invalid optional argument count.")
-
-      let sep = binding.optional(at: 0)
-      let end = binding.optional(at: 1)
-      let file = binding.optional(at: 2)
-      let flush = binding.optional(at: 3)
-      return self.print(args: args, sep: sep, end: end, file: file, flush: flush)
-
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
+  ///
+  /// - Parameters:
+  ///   - args: Objects to print
   public func print(args: [PyObject] = [],
                     sep: PyObject? = nil,
                     end: PyObject? = nil,
@@ -142,55 +119,12 @@ extension PyInstance {
 
 // MARK: - Open
 
-private let openArguments = ArgumentParser.createOrTrap(
-  arguments: [
-    "file", "mode", "buffering",
-    "encoding", "errors", "newline",
-    "closefd", "opener"
-  ],
-  format: "O|sizzziO:open"
-)
-
 extension PyInstance {
 
-  public func open(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
-    return ArgumentParser.unpackKwargsDict(kwargs: kwargs)
-      .flatMap { self.open(args: args, kwargs: $0) }
-  }
-
-  // sourcery: pymethod = open
+  // swiftlint:disable function_body_length
   /// open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None,
   ///            closefd=True, opener=None)
   /// See [this](https://docs.python.org/3/library/functions.html#open)
-  internal func open(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
-    switch openArguments.bind(args: args, kwargs: kwargs) {
-    case let .value(binding):
-      assert(binding.requiredCount == 1, "Invalid required argument count.")
-      assert(binding.optionalCount == 7, "Invalid optional argument count.")
-
-      let file = binding.required(at: 0)
-      let mode = binding.optional(at: 1)
-      let buffering = binding.optional(at: 2)
-      let encoding = binding.optional(at: 3)
-      let errors = binding.optional(at: 4)
-      let newline = binding.optional(at: 5)
-      let closefd = binding.optional(at: 6)
-      let opener = binding.optional(at: 7)
-
-      return self.open(file: file,
-                       mode: mode,
-                       buffering: buffering,
-                       encoding: encoding,
-                       errors: errors,
-                       newline: newline,
-                       closefd: closefd,
-                       opener: opener)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  // swiftlint:disable:next function_body_length
   public func open(file fileArg: PyObject,
                    mode modeArg: PyObject? = nil,
                    buffering bufferingArg: PyObject? = nil,
@@ -199,6 +133,7 @@ extension PyInstance {
                    newline newlineArg: PyObject? = nil,
                    closefd closefdArg: PyObject? = nil,
                    opener openerArg: PyObject? = nil) -> PyResult<PyObject> {
+    // swiftlint:enable function_body_length
     // We will ignore 'buffering', 'newline', and 'opener' because we are lazy.
 
     let source: FileSource

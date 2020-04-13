@@ -6,7 +6,6 @@ extension PyInstance {
 
   // MARK: - Any
 
-  // sourcery: pymethod = any
   /// any(iterable)
   /// See [this](https://docs.python.org/3/library/functions.html#any)
   public func any(iterable: PyObject) -> PyResult<Bool> {
@@ -21,7 +20,6 @@ extension PyInstance {
 
   // MARK: - All
 
-  // sourcery: pymethod = all
   /// all(iterable)
   /// See [this](https://docs.python.org/3/library/functions.html#all)
   public func all(iterable: PyObject) -> PyResult<Bool> {
@@ -33,34 +31,11 @@ extension PyInstance {
       }
     }
   }
-}
+
   // MARK: - Sum
 
-// CPython does this differently.
-private let sumArguments = ArgumentParser.createOrTrap(
-  arguments: ["", "start"],
-  format: "O|O:sum"
-)
-
-extension PyInstance {
-
-  // sourcery: pymethod = sum
   /// sum(iterable, /, start=0)
   /// See [this](https://docs.python.org/3/library/functions.html#sum)
-  internal func sum(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
-    switch sumArguments.bind(args: args, kwargs: kwargs) {
-    case let .value(binding):
-      assert(binding.requiredCount == 1, "Invalid required argument count.")
-      assert(binding.optionalCount == 1, "Invalid optional argument count.")
-
-      let iterable = binding.required(at: 0)
-      let start = binding.optional(at: 1)
-      return self.sum(iterable: iterable, start: start)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
   public func sum(iterable: PyObject, start: PyObject?) -> PyResult<PyObject> {
     if start is PyString {
       return .typeError("sum() can't sum strings [use ''.join(seq) instead]")

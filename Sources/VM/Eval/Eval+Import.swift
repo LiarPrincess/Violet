@@ -95,7 +95,7 @@ extension Eval {
         continue
       }
 
-      switch Py.getAttribute(module, name: name) {
+      switch Py.getAttribute(object: module, name: name) {
       case let .value(value):
         switch locals.setItem(at: name, to: value) {
         case .value: break
@@ -154,7 +154,7 @@ extension Eval {
   }
 
   private func getAttribute(module: PyObject, name: IdString) -> GetAttribute {
-    switch Py.getAttribute(module, name: name) {
+    switch Py.getAttribute(object: module, name: name) {
     case let .value(o):
       if o.isNone {
         return .notFound
@@ -181,7 +181,7 @@ extension Eval {
     let module = self.stack.top // Leave it at top
 
     // CPython does this differently, but we are going for 'close enough'.
-    switch Py.getAttribute(module, name: name) {
+    switch Py.getAttribute(object: module, name: name) {
     case let .value(o):
       self.stack.push(o)
       return .ok

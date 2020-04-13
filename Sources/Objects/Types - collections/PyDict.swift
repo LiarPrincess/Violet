@@ -315,7 +315,7 @@ public class PyDict: PyObject {
   // sourcery: pymethod = __getitem__
   /// Implementation of `Python` subscript.
   public func getItem(at index: PyObject) -> PyResult<PyObject> {
-    switch Py.hash(index) {
+    switch Py.hash(object: index) {
     case let .value(hash):
       return self.getItem(at: index, hash: hash)
     case let .error(e):
@@ -349,7 +349,7 @@ public class PyDict: PyObject {
   /// Implementation of `Python` subscript.
   public func setItem(at index: PyObject,
                       to value: PyObject) -> PyResult<PyNone> {
-    switch Py.hash(index) {
+    switch Py.hash(object: index) {
     case let .value(hash):
       return self.setItem(at: index, hash: hash, to: value)
     case let .error(e):
@@ -376,7 +376,7 @@ public class PyDict: PyObject {
   // sourcery: pymethod = __delitem__
   /// Implementation of `Python` subscript.
   public func delItem(at index: PyObject) -> PyResult<PyNone> {
-    switch Py.hash(index) {
+    switch Py.hash(object: index) {
     case let .value(hash):
       return self.delItem(at: index, hash: hash)
     case let .error(e):
@@ -835,7 +835,7 @@ public class PyDict: PyObject {
   }
 
   private func createKey(from object: PyObject) -> PyResult<PyDictKey> {
-    switch Py.hash(object) {
+    switch Py.hash(object: object) {
     case let .value(hash):
       return .value(PyDictKey(hash: hash, object: object))
     case let .error(e):

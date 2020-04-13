@@ -136,7 +136,7 @@ extension PyInstance {
   public func newDict(elements: [CreateDictionaryArg]) -> PyResult<PyDict> {
     var data = PyDictData()
     for arg in elements {
-      switch self.hash(arg.key) {
+      switch self.hash(object: arg.key) {
       case let .value(hash):
         let key = PyDictKey(hash: hash, object: arg.key)
         switch data.insert(key: key, value: arg.value) {
@@ -158,7 +158,7 @@ extension PyInstance {
 
     var data = PyDictData()
     for (keyObject, value) in Swift.zip(keys.elements, elements) {
-      switch self.hash(keyObject) {
+      switch self.hash(object: keyObject) {
       case let .value(hash):
         let key = PyDictKey(hash: hash, object: keyObject)
         switch data.insert(key: key, value: value) {
@@ -202,7 +202,7 @@ extension PyInstance {
       return .value(result)
     }
 
-    return self.getAttribute(object, name: .keys)
+    return self.getAttribute(object: object, name: .keys)
   }
 
   // MARK: - Range
@@ -320,7 +320,6 @@ extension PyInstance {
 
   // MARK: - Length
 
-  // sourcery: pymethod = len
   /// len(s)
   /// See [this](https://docs.python.org/3/library/functions.html#len)
   public func length(iterable: PyObject) -> PyResult<PyObject> {
@@ -424,19 +423,6 @@ extension PyInstance {
 
   // MARK: - Sort
 
-  internal static var sortedDoc: String {
-    return """
-    sorted($module, iterable, /, *, key=None, reverse=False)
-    --
-
-    Return a new list containing all items from the iterable in ascending order.
-
-    A custom key function can be supplied to customize the sort order, and the
-    reverse flag can be set to request the result in descending order.
-    """
-  }
-
-  // sourcery: pymethod = sorted
   /// sorted(iterable, *, key=None, reverse=False)
   /// See [this](https://docs.python.org/3/library/functions.html#sorted)
   internal func sorted(args: [PyObject],

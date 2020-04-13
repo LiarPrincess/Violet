@@ -6,7 +6,6 @@ extension PyInstance {
 
   // MARK: - Round
 
-  // sourcery: pymethod = round
   /// round(number[, ndigits])
   /// See [this](https://docs.python.org/3/library/functions.html#round)
   public func round(number: PyObject,

@@ -11,11 +11,6 @@ import Foundation
 
 // MARK: - Helpers
 
-private let compileArguments = ArgumentParser.createOrTrap(
-  arguments: ["source", "filename", "mode", "flags", "dont_inherit", "optimize"],
-  format: "OOO|OOO:compile"
-)
-
 private class WarningsHandler:
 LexerDelegate, ParserDelegate, CompilerDelegate {
 
@@ -71,37 +66,11 @@ LexerDelegate, ParserDelegate, CompilerDelegate {
 
 extension PyInstance {
 
-  // sourcery: pymethod = compile
   /// compile(source, filename, mode, flags=0, dont_inherit=False, optimize=-1)
   /// See [this](https://docs.python.org/3/library/functions.html#compile)
   ///
   /// static PyObject *
-  /// builtin_compile_impl(PyObject *module, PyObject *source, PyObject *filename,
-  internal func compile(args: [PyObject],
-                        kwargs: PyDict?) -> PyResult<PyCode> {
-    switch compileArguments.bind(args: args, kwargs: kwargs) {
-    case let .value(binding):
-      assert(binding.requiredCount == 3, "Invalid required argument count.")
-      assert(binding.optionalCount == 3, "Invalid optional argument count.")
-
-      let source = binding.required(at: 0)
-      let filename = binding.required(at: 1)
-      let mode = binding.required(at: 2)
-      let flags = binding.optional(at: 3)
-      let dontInherit = binding.optional(at: 4)
-      let optimize = binding.optional(at: 5)
-      return self.compile(source: source,
-                          filename: filename,
-                          mode: mode,
-                          flags: flags,
-                          dontInherit: dontInherit,
-                          optimize: optimize)
-
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
+  /// builtin_compile_impl(PyObject *module, PyObject *source, ...)
   public func compile(source sourceArg: PyObject,
                       filename filenameArg: PyObject,
                       mode modeArg: PyObject,

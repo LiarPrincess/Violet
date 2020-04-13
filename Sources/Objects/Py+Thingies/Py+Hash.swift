@@ -4,13 +4,12 @@
 
 extension PyInstance {
 
-  // sourcery: pymethod = hash
   /// hash(object)
   /// See [this](https://docs.python.org/3/library/functions.html#hash)
   ///
   /// Py_hash_t PyObject_Hash(PyObject *v)
   /// slot_tp_hash(PyObject *self)
-  public func hash(_ object: PyObject) -> PyResult<PyHash> {
+  public func hash(object: PyObject) -> PyResult<PyHash> {
     if let hashOwner = object as? __hash__Owner {
       switch hashOwner.hash() {
       case .value(let hash): return .value(hash)

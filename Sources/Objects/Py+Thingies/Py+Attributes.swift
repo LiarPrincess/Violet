@@ -6,34 +6,27 @@ extension PyInstance {
 
   // MARK: - Get
 
-  internal static var getAttributeDoc: String {
-    return """
-    getattr(object, name[, default]) -> value
-
-    Get a named attribute from an object; getattr(x, 'y') is equivalent to x.y.
-    When a default argument is given, it is returned when the attribute doesn't
-    exist; without it, an exception is raised in that case.
-    """
-  }
-
   /// getattr(object, name[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#getattr)
-  public func getAttribute(_ object: PyObject,
+  public func getAttribute(object: PyObject,
                            name: String,
                            default: PyObject? = nil) -> PyResult<PyObject> {
     let interned = self.interned(name: name)
-    return self.getAttribute(object,
+    return self.getAttribute(object: object,
                              name: interned,
                              default: `default`)
   }
 
-  public func getAttribute(_ object: PyObject,
+  /// getattr(object, name[, default])
+  /// See [this](https://docs.python.org/3/library/functions.html#getattr)
+  public func getAttribute(object: PyObject,
                            name: IdString,
                            default: PyObject? = nil) -> PyResult<PyObject> {
-    return self.getAttribute(object, name: name.value, default: `default`)
+    return self.getAttribute(object: object,
+                             name: name.value,
+                             default: `default`)
   }
 
-  // sourcery: pymethod = getattr, doc = getAttributeDoc
   /// getattr(object, name[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#getattr)
   ///
@@ -43,7 +36,7 @@ extension PyInstance {
   /// slot_tp_getattr_hook(PyObject *self, PyObject *name)
   /// int
   /// _PyObject_LookupAttr(PyObject *v, PyObject *name, PyObject **result)
-  public func getAttribute(_ object: PyObject,
+  public func getAttribute(object: PyObject,
                            name: PyObject,
                            default: PyObject? = nil) -> PyResult<PyObject> {
     guard let name = name as? PyString else {
@@ -107,27 +100,27 @@ extension PyInstance {
 
   // MARK: - Has
 
-  public func hasAttribute(_ object: PyObject,
-                           name: String) -> PyResult<Bool> {
-    let interned = self.interned(name: name)
-    return self.hasAttribute(object, name: interned)
-  }
-
-  public func hasAttribute(_ object: PyObject,
-                           name: IdString) -> PyResult<Bool> {
-    return self.hasAttribute(object, name: name.value)
-  }
-
-  // sourcery: pymethod = hasattr
   /// hasattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
-  public func hasAttribute(_ object: PyObject,
-                           name: PyObject) -> PyResult<Bool> {
+  public func hasAttribute(object: PyObject, name: String) -> PyResult<Bool> {
+    let interned = self.interned(name: name)
+    return self.hasAttribute(object: object, name: interned)
+  }
+
+  /// hasattr(object, name)
+  /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
+  public func hasAttribute(object: PyObject, name: IdString) -> PyResult<Bool> {
+    return self.hasAttribute(object: object, name: name.value)
+  }
+
+  /// hasattr(object, name)
+  /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
+  public func hasAttribute(object: PyObject, name: PyObject) -> PyResult<Bool> {
     guard let name = name as? PyString else {
       return .typeError("hasattr(): attribute name must be string")
     }
 
-    switch self.getAttribute(object, name: name, default: nil) {
+    switch self.getAttribute(object: object, name: name, default: nil) {
     case .value:
       return .value(true)
 
@@ -144,23 +137,24 @@ extension PyInstance {
 
   /// setattr(object, name, value)
   /// See [this](https://docs.python.org/3/library/functions.html#setattr)
-  public func setAttribute(_ object: PyObject,
+  public func setAttribute(object: PyObject,
                            name: String,
                            value: PyObject) -> PyResult<PyNone> {
     let interned = self.interned(name: name)
-    return self.setAttribute(object, name: interned, value: value)
+    return self.setAttribute(object: object, name: interned, value: value)
   }
 
-  public func setAttribute(_ object: PyObject,
-                           name: IdString,
-                           value: PyObject) -> PyResult<PyNone> {
-    return self.setAttribute(object, name: name.value, value: value)
-  }
-
-  // sourcery: pymethod = setattr
   /// setattr(object, name, value)
   /// See [this](https://docs.python.org/3/library/functions.html#setattr)
-  public func setAttribute(_ object: PyObject,
+  public func setAttribute(object: PyObject,
+                           name: IdString,
+                           value: PyObject) -> PyResult<PyNone> {
+    return self.setAttribute(object: object, name: name.value, value: value)
+  }
+
+  /// setattr(object, name, value)
+  /// See [this](https://docs.python.org/3/library/functions.html#setattr)
+  public func setAttribute(object: PyObject,
                            name: PyObject,
                            value: PyObject) -> PyResult<PyNone> {
     guard let name = name as? PyString else {
@@ -179,7 +173,7 @@ extension PyInstance {
       let operation = value is PyNone ? "del" : "assign to"
       let details = "(\(operation) \(name.reprRaw()))"
 
-      switch self.hasAttribute(object, name: name) {
+      switch self.hasAttribute(object: object, name: name) {
       case .value(true):
         return .typeError("'\(typeName)' object has only read-only attributes \(details)")
       case .value(false):
@@ -196,27 +190,28 @@ extension PyInstance {
 
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
-  public func deleteAttribute(_ object: PyObject,
+  public func deleteAttribute(object: PyObject,
                               name: String) -> PyResult<PyNone> {
     let interned = self.interned(name: name)
-    return self.deleteAttribute(object, name: interned)
+    return self.deleteAttribute(object: object, name: interned)
   }
 
-  public func deleteAttribute(_ object: PyObject,
-                              name: IdString) -> PyResult<PyNone> {
-    return self.deleteAttribute(object, name: name.value)
-  }
-
-  // sourcery: pymethod = delattr
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
-  public func deleteAttribute(_ object: PyObject,
+  public func deleteAttribute(object: PyObject,
+                              name: IdString) -> PyResult<PyNone> {
+    return self.deleteAttribute(object: object, name: name.value)
+  }
+
+  /// delattr(object, name)
+  /// See [this](https://docs.python.org/3/library/functions.html#delattr)
+  public func deleteAttribute(object: PyObject,
                               name: PyObject) -> PyResult<PyNone> {
     guard let name = name as? PyString else {
       return .typeError("delattr(): attribute name must be string")
     }
 
-    return self.setAttribute(object, name: name, value: Py.none)
+    return self.setAttribute(object: object, name: name, value: Py.none)
   }
 }
 
@@ -233,8 +228,9 @@ extension PyInstance {
   /// Look for a name through the MRO.
   ///
   /// _PyObject_LookupSpecial(PyObject *self, _Py_Identifier *attrid)
-  public func lookup(on object: PyObject, name: IdString) -> LookupResult {
-    guard let attribute = object.type.lookup(name: name) else {
+  public func lookupInMro(object: PyObject, name: IdString) -> LookupResult {
+    let type = object.type
+    guard let attribute = type.lookup(name: name) else {
       return .notFound
     }
 

@@ -49,7 +49,7 @@ extension Eval {
     let object = self.stack.pop()
     let value = self.stack.pop()
 
-    switch Py.setAttribute(object, name: name, value: value) {
+    switch Py.setAttribute(object: object, name: name, value: value) {
     case .value:
       return .ok
     case .error(let e):
@@ -62,7 +62,7 @@ extension Eval {
     let name = self.getName(index: nameIndex)
     let object = self.stack.top
 
-    switch Py.getAttribute(object, name: name) {
+    switch Py.getAttribute(object: object, name: name) {
     case let .value(r):
       self.stack.top = r
       return .ok
@@ -76,7 +76,7 @@ extension Eval {
     let name = self.getName(index: nameIndex)
     let object = self.stack.pop()
 
-    switch Py.deleteAttribute(object, name: name) {
+    switch Py.deleteAttribute(object: object, name: name) {
     case .value:
       return .ok
     case .error(let e):

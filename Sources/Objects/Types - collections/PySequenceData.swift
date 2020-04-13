@@ -117,7 +117,7 @@ internal struct PySequenceData {
     var mult = Hasher.multiplier
 
     for e in self.elements {
-      switch Py.hash(e) {
+      switch Py.hash(object: e) {
       case let .value(y):
         x = (x ^ y) &* mult
         mult &+= 82_520 + PyHash(2 * self.elements.count)

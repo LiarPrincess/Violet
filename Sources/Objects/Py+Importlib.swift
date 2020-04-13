@@ -245,7 +245,7 @@ extension PyInstance {
   private func callInstall(spec: ModuleSpec,
                            module: PyModule,
                            args: [PyObject]) -> PyImportError? {
-    switch Py.getAttribute(module, name: "_install") {
+    switch Py.getAttribute(object: module, name: "_install") {
     case let .value(fn):
       switch Py.call(callable: fn, args: args, kwargs: nil) {
       case .value:

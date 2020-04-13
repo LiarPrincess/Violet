@@ -6,20 +6,6 @@ extension PyInstance {
 
   // MARK: - Is instance
 
-  internal static var isInstanceDoc: String {
-    return """
-    isinstance($module, obj, class_or_tuple, /)
-    --
-
-    Return whether an object is an instance of a class or of a subclass thereof.
-
-    A tuple, as in ``isinstance(x, (A, B, ...))``, may be given as the target to
-    check against. This is equivalent to ``isinstance(x, A) or isinstance(x, B)
-    or ...`` etc.
-    """
-  }
-
-  // sourcery: pymethod = isinstance, doc = isInstanceDoc
   /// isinstance(object, classinfo)
   /// See [this](https://docs.python.org/3/library/functions.html#isinstance)
   public func isInstance(object: PyObject,
@@ -60,20 +46,6 @@ extension PyInstance {
 
   // MARK: - Is subclass
 
-  internal static var isSubclassDoc: String {
-    return """
-    issubclass($module, cls, class_or_tuple, /)
-    --
-
-    Return whether \'cls\' is a derived from another class or is the same class.
-
-    A tuple, as in ``issubclass(x, (A, B, ...))``, may be given as the target to
-    check against. This is equivalent to ``issubclass(x, A) or issubclass(x, B)
-    or ...`` etc.
-    """
-  }
-
-  // sourcery: pymethod = issubclass, doc = isSubclassDoc
   /// issubclass(class, classinfo)
   /// See [this](https://docs.python.org/3/library/functions.html#issubclass)
   public func isSubclass(object: PyObject,

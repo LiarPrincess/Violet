@@ -103,10 +103,9 @@ extension PyInstance {
 
   // MARK: - Id
 
-  // sourcery: pymethod = id
   /// id(object)
   /// See [this](https://docs.python.org/3/library/functions.html#id)
-  public func id(_ object: PyObject) -> PyInt {
+  public func getId(object: PyObject) -> PyInt {
     let id = ObjectIdentifier(object)
     return self.newInt(id.hashValue)
   }
@@ -130,13 +129,12 @@ extension PyInstance {
     """
   }
 
-  // sourcery: pymethod = dir
   /// dir([object])
   /// See [this](https://docs.python.org/3/library/functions.html#dir)
   ///
   /// PyObject *
   /// PyObject_Dir(PyObject *obj)
-  public func dir(_ object: PyObject?) -> PyResult<PyObject> {
+  public func dir(object: PyObject? = nil) -> PyResult<PyObject> {
     if let object = object {
       return self.objectDir(object: object)
     }
@@ -184,7 +182,7 @@ extension PyInstance {
       return owner.isAbstractMethod()
     }
 
-    switch self.getAttribute(object, name: .__isabstractmethod__) {
+    switch self.getAttribute(object: object, name: .__isabstractmethod__) {
     case let .value(o):
       return self.isTrueBool(o)
     case let .error(e):

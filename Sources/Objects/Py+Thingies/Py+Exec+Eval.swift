@@ -7,36 +7,13 @@ import Foundation
 
 // MARK: - Exec
 
-private let execArguments = ArgumentParser.createOrTrap(
-  arguments: ["source", "globals", "locals"],
-  format: "O|OO:exec"
-)
-
 extension PyInstance {
 
-  // sourcery: pymethod = exec
   /// exec(object[, globals[, locals]])
   /// See [this](https://docs.python.org/3/library/functions.html#exec)
   ///
   /// static PyObject *
   /// builtin_exec_impl(PyObject *module, PyObject *source, PyObject *globals,
-  internal func exec(args: [PyObject],
-                     kwargs: PyDict?) -> PyResult<PyNone> {
-    switch execArguments.bind(args: args, kwargs: kwargs) {
-    case let .value(binding):
-      assert(binding.requiredCount == 1, "Invalid required argument count.")
-      assert(binding.optionalCount == 2, "Invalid optional argument count.")
-
-      let source = binding.required(at: 0)
-      let globals = binding.optional(at: 1)
-      let locals = binding.optional(at: 2)
-      return self.exec(source: source, globals: globals, locals: locals)
-
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
   public func exec(source: PyObject,
                    globals: PyObject?,
                    locals: PyObject?) -> PyResult<PyNone> {
@@ -77,33 +54,10 @@ extension PyInstance {
 
 // MARK: - Eval
 
-private let evalArguments = ArgumentParser.createOrTrap(
-  arguments: ["source", "globals", "locals"],
-  format: "O|OO:exec"
-)
-
 extension PyInstance {
 
-  // sourcery: pymethod = eval
   /// eval(expression[, globals[, locals]])
   /// See [this](https://docs.python.org/3/library/functions.html#eval)
-  public func eval(args: [PyObject],
-                   kwargs: PyDict?) -> PyResult<PyObject> {
-    switch execArguments.bind(args: args, kwargs: kwargs) {
-    case let .value(binding):
-      assert(binding.requiredCount == 1, "Invalid required argument count.")
-      assert(binding.optionalCount == 2, "Invalid optional argument count.")
-
-      let source = binding.required(at: 0)
-      let globals = binding.optional(at: 1)
-      let locals = binding.optional(at: 2)
-      return self.eval(source: source, globals: globals, locals: locals)
-
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
   public func eval(source: PyObject,
                    globals: PyObject?,
                    locals: PyObject?) -> PyResult<PyObject> {

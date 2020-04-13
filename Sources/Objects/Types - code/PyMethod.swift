@@ -107,13 +107,13 @@ public class PyMethod: PyObject {
   // sourcery: pymethod = __hash__
   public func hash() -> HashResult {
     let objectHash: PyHash
-    switch Py.hash(self.object) {
+    switch Py.hash(object: self.object) {
     case let .value(h): objectHash = h
     case let .error(e): return .error(e)
     }
 
     let fnHash: PyHash
-    switch Py.hash(self.function) {
+    switch Py.hash(object: self.function) {
     case let .value(h): fnHash = h
     case let .error(e): return .error(e)
     }

@@ -598,7 +598,6 @@ private struct DivmodOp: BinaryOp {
 
 extension PyInstance {
 
-  // sourcery: pymethod = divmod
   /// divmod(a, b)
   /// See [this](https://docs.python.org/3/library/functions.html#divmod)
   public func divmod(left: PyObject, right: PyObject) -> PyResult<PyObject> {
@@ -606,7 +605,6 @@ extension PyInstance {
   }
 
   // `divmod` in place does not make sense
-
 }
 
 // MARK: - Lshift

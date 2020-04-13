@@ -162,24 +162,6 @@ private enum MinImpl: MinMaxImpl {
 
 extension PyInstance {
 
-  internal static var minDoc: String {
-    return """
-    min(iterable, *[, default=obj, key=func]) -> value
-    min(arg1, arg2, *args, *[, key=func]) -> value
-
-    With a single iterable argument, return its smallest item. The
-    default keyword-only argument specifies an object to return if
-    the provided iterable is empty.
-    With two or more arguments, return the smallest argument.
-    """
-  }
-
-  public func min(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
-    return ArgumentParser.unpackKwargsDict(kwargs: kwargs)
-      .flatMap { self.min(args: args, kwargs: $0) }
-  }
-
-  // sourcery: pymethod = min, doc = minDoc
   /// min(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#min)
   internal func min(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
@@ -206,24 +188,6 @@ private enum MaxImpl: MinMaxImpl {
 
 extension PyInstance {
 
-  internal static var maxDoc: String {
-    return """
-    max(iterable, *[, default=obj, key=func]) -> value
-    max(arg1, arg2, *args, *[, key=func]) -> value
-
-    With a single iterable argument, return its biggest item. The
-    default keyword-only argument specifies an object to return if
-    the provided iterable is empty.
-    With two or more arguments, return the largest argument.
-    """
-  }
-
-  public func max(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
-    return ArgumentParser.unpackKwargsDict(kwargs: kwargs)
-      .flatMap { self.max(args: args, kwargs: $0) }
-  }
-
-  // sourcery: pymethod = max, doc = maxDoc
   /// max(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#max)
   internal func max(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {

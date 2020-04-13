@@ -2,36 +2,8 @@ import Core
 
 extension PyInstance {
 
-  internal static var buildClassDoc: String {
-    return """
-    __build_class__(func, name, *bases, metaclass=None, **kwds) -> class
-
-    Internal helper function used by the class statement.
-    """
-  }
-
-  // sourcery: pymethod = __build_class__, doc = buildClassDoc
   /// static PyObject *
-  /// builtin___build_class__(PyObject *self, PyObject *const *args,
-  ///                         Py_ssize_t nargs, PyObject *kwnames)
-  public func buildClass(args: [PyObject],
-                         kwargs: PyDict?) -> PyResult<PyObject> {
-    if args.count < 2 {
-      return .typeError("__build_class__: not enough arguments")
-    }
-
-    guard let fn = args[0] as? PyFunction else {
-      return .typeError("__build_class__: func must be a function")
-    }
-
-    guard let name = args[1] as? PyString else {
-      return .typeError("__build_class__: name is not a string")
-    }
-
-    let bases = Py.newTuple(Array(args[2...]))
-    return self.buildClass(fn: fn, name: name, bases: bases, kwargs: kwargs)
-  }
-
+  /// builtin___build_class__(PyObject *self, PyObject *const *args, ...)
   public func buildClass(fn: PyFunction,
                          name: PyString,
                          bases: PyTuple,
@@ -168,7 +140,7 @@ extension PyInstance {
   }
 
   private func get__prepare__(metatype: PyObject) -> PrepareCallResult {
-    switch Py.getAttribute(metatype, name: .__prepare__) {
+    switch Py.getAttribute(object: metatype, name: .__prepare__) {
     case let .value(o):
       return .value(o)
 

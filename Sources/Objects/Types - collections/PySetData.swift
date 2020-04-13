@@ -610,7 +610,7 @@ internal struct PySetData {
   }
 
   private func createElement(from object: PyObject) -> PyResult<PySetElement> {
-    switch Py.hash(object) {
+    switch Py.hash(object: object) {
     case let .value(hash):
       return .value(PySetElement(hash: hash, object: object))
     case let .error(e):

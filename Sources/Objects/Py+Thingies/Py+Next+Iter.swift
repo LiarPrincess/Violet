@@ -2,16 +2,6 @@ extension PyInstance {
 
   // MARK: - Next
 
-  internal static var nextDoc: String {
-    return """
-    next(iterator[, default])
-
-    Return the next item from the iterator. If default is given and the iterator
-    is exhausted, it is returned instead of raising StopIteration.
-    """
-  }
-
-  // sourcery: pymethod = next, doc = nextDoc
   /// next(iterator[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#next)
   public func next(iterator: PyObject,
@@ -46,18 +36,6 @@ extension PyInstance {
 
   // MARK: - Iter
 
-  internal static var iterDoc: String {
-    return """
-    iter(iterable) -> iterator
-    iter(callable, sentinel) -> iterator
-
-    Get an iterator from an object.  In the first form, the argument must
-    supply its own iterator, or be a sequence.
-    In the second form, the callable is called until it returns the sentinel.
-    """
-  }
-
-  // sourcery: pymethod = iter, doc = iterDoc
   /// iter(object[, sentinel])
   /// See [this](https://docs.python.org/3/library/functions.html#iter)
   public func iter(from object: PyObject,

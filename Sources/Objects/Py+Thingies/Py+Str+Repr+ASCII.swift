@@ -8,7 +8,6 @@ import Core
 
 extension PyInstance {
 
-  // sourcery: pymethod = repr
   /// repr(object)
   /// See [this](https://docs.python.org/3/library/functions.html#repr)
   public func repr(_ object: PyObject) -> PyResult<String> {
@@ -92,7 +91,6 @@ extension PyInstance {
 
   // MARK: - ASCII
 
-  // sourcery: pymethod = ascii
   /// ascii(object)
   /// See [this](https://docs.python.org/3/library/functions.html#ascii)
   public func ascii(_ object: PyObject) -> PyResult<String> {

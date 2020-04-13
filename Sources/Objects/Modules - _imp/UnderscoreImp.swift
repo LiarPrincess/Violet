@@ -85,7 +85,7 @@ public final class UnderscoreImp: PyModuleImplementation {
   // MARK: - Spec helpers
 
   internal func getName(spec: PyObject) -> PyResult<PyString> {
-    switch Py.getAttribute(spec, name: .name) {
+    switch Py.getAttribute(object: spec, name: .name) {
     case let .value(object):
       guard let str = object as? PyString else {
         return .typeError("Module name must be a str, not \(object.typeName)")
@@ -99,7 +99,7 @@ public final class UnderscoreImp: PyModuleImplementation {
   }
 
   internal func getPath(spec: PyObject) -> PyResult<PyString> {
-    switch Py.getAttribute(spec, name: .origin) {
+    switch Py.getAttribute(object: spec, name: .origin) {
     case let .value(object):
       guard let str = object as? PyString else {
         return .typeError("Module origin must be a str, not \(object.typeName)")

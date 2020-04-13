@@ -30,59 +30,11 @@ extension PyInstance {
 
 // MARK: - __import__
 
-private let importArguments = ArgumentParser.createOrTrap(
-  arguments: ["name", "globals", "locals", "fromlist", "level"],
-  format: "U|OOOi:__import__"
-)
-
 extension PyInstance {
 
-  internal static var importDoc: String {
-    return """
-    __import__(name, globals=None, locals=None, fromlist=(), level=0) -> module
-
-    Import a module. Because this function is meant for use by the Python
-    interpreter and not for general use, it is better to use
-    importlib.import_module() to programmatically import a module.
-
-    The globals argument is only used to determine the context;
-    they are not modified.  The locals argument is unused.  The fromlist
-    should be a list of names to emulate ``from name import ...'', or an
-    empty list to emulate ``import name''.
-    When importing a module from a package, note that __import__('A.B', ...)
-    returns package A when fromlist is empty, but its submodule B when
-    fromlist is not empty.  The level argument is used to determine whether to
-    perform absolute or relative imports: 0 is absolute, while a positive number
-    is the number of parent directories to search relative to the current module.
-    """
-  }
-
-  // sourcery: pymethod = __import__, doc = importDoc
   /// __import__(name, globals=None, locals=None, fromlist=(), level=0)
   /// See [this](https://docs.python.org/3/library/functions.html#__import__)
-  public func __import__(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
-    switch importArguments.bind(args: args, kwargs: kwargs) {
-    case let .value(binding):
-      assert(binding.requiredCount == 1, "Invalid required argument count.")
-      assert(binding.optionalCount == 4, "Invalid optional argument count.")
-
-      let name = binding.required(at: 0)
-      let globals = binding.optional(at: 1)
-      let locals = binding.optional(at: 2)
-      let fromList = binding.optional(at: 3)
-      let level = binding.optional(at: 4)
-
-      return self.__import__(name: name,
-                             globals: globals,
-                             locals: locals,
-                             fromList: fromList,
-                             level: level)
-
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
+  ///
   /// PyImport_ImportModuleLevelObject(PyObject *name, PyObject *globals,
   ///                                  PyObject *locals, PyObject *fromlist,
   ///                                  int level)
@@ -260,7 +212,7 @@ extension PyInstance {
   }
 
   private func getParent(spec: PyObject) -> PyResult<PyString> {
-    switch Py.getAttribute(spec, name: "parent") {
+    switch Py.getAttribute(object: spec, name: "parent") {
     case let .value(object):
       guard let string = object as? PyString else {
         return .typeError("__spec__.parent must be a string")
