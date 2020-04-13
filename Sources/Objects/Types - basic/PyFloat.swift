@@ -714,29 +714,24 @@ extension PyFloat {
   }
 
   private static func parseDouble(string object: PyObject) -> DoubleFromString {
-    if let str = object as? PyString {
-      guard let value = PyFloat.parseDouble(string: str.value) else {
-        let msg = "float() '\(str.value)' cannot be interpreted as float"
-        return .error(Py.newValueError(msg: msg))
-      }
-      return .value(value)
+    let string: String
+    switch Py.extractString(object: object) {
+    case .string(_, let s),
+         .bytes(_, let s):
+      string = s
+    case .byteDecodingError(let bytes):
+      let msg = "float() bytes at '\(bytes.ptr)' cannot be interpreted as str"
+      return .error(Py.newValueError(msg: msg))
+    case .notStringOrBytes:
+      return .notString
     }
 
-    if let bytes = object as? PyBytesType {
-      guard let string = bytes.data.string else {
-        let msg = "float() bytes '\(bytes.ptrString)' cannot be interpreted as str"
-        return .error(Py.newValueError(msg: msg))
-      }
-
-      if let value = PyFloat.parseDouble(string: string) {
-        return .value(value)
-      }
-
+    guard let value = PyFloat.parseDouble(string: string) else {
       let msg = "float() '\(string)' cannot be interpreted as float"
       return .error(Py.newValueError(msg: msg))
     }
 
-    return .notString
+    return .value(value)
   }
 
   private static func parseDouble(string: String) -> Double? {

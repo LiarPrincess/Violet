@@ -81,7 +81,7 @@ public class PyFunction: PyObject {
 
   // sourcery: pymethod = __repr__
   public func repr() -> PyResult<String> {
-    return .value("<function \(self.qualname) at \(self.ptrString)>")
+    return .value("<function \(self.qualname) at \(self.ptr)>")
   }
 
   // MARK: - Class

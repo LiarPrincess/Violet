@@ -69,10 +69,11 @@ public class PyObject: CustomStringConvertible {
 
   /// Object address.
   ///
-  /// It should be used only for error messages
-  /// (it is there mainly for debugging).
-  internal var ptrString: String {
-    return String(describing: Unmanaged.passUnretained(self).toOpaque())
+  /// It should be used only for:
+  /// - `builtins.id` function
+  /// - error messages (for debugging).
+  internal var ptr: UnsafeMutableRawPointer {
+    return Unmanaged.passUnretained(self).toOpaque()
   }
 
   // MARK: - Init

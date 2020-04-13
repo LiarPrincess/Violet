@@ -861,30 +861,24 @@ public class PyInt: PyObject {
 
   private static func parseBigInt(string object: PyObject,
                                   base: Int) -> IntFromString {
-    if let str = object as? PyString {
-      if let value = PyInt.parseBigInt(string: str.value, base: base) {
-        return .value(value)
-      }
-
-      let msg = "int() '\(str.value)' cannot be interpreted as int"
+    let string: String
+    switch Py.extractString(object: object) {
+    case .string(_, let s),
+         .bytes(_, let s):
+      string = s
+    case .byteDecodingError(let bytes):
+      let msg = "int() bytes at '\(bytes.ptr)' cannot be interpreted as str"
       return .error(Py.newValueError(msg: msg))
+    case .notStringOrBytes:
+      return .notString
     }
 
-    if let bytes = object as? PyBytesType {
-      guard let string = bytes.data.string else {
-        let msg = "int() bytes '\(bytes.ptrString)' cannot be interpreted as str"
-        return .error(Py.newValueError(msg: msg))
-      }
-
-      if let value = PyInt.parseBigInt(string: string, base: base) {
-        return .value(value)
-      }
-
+    guard let value = PyInt.parseBigInt(string: string, base: base) else {
       let msg = "int() '\(string)' cannot be interpreted as int"
       return .error(Py.newValueError(msg: msg))
     }
 
-    return .notString
+    return .value(value)
   }
 
   private static func parseBigInt(string: String, base: Int) -> BigInt? {

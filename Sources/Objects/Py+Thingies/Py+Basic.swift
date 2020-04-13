@@ -106,8 +106,9 @@ extension PyInstance {
   /// id(object)
   /// See [this](https://docs.python.org/3/library/functions.html#id)
   public func getId(object: PyObject) -> PyInt {
-    let id = ObjectIdentifier(object)
-    return self.newInt(id.hashValue)
+    let unsafeMutableRawPointer = object.ptr
+    let pointer = Int(bitPattern: unsafeMutableRawPointer)
+    return self.newInt(pointer)
   }
 
   // MARK: - Dir

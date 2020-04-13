@@ -99,7 +99,6 @@ extension Builtins {
   /// id(object)
   /// See [this](https://docs.python.org/3/library/functions.html#id)
   internal static func id(object: PyObject) -> PyInt {
-    // TODO: Change this.
     return Py.getId(object: object)
   }
 }

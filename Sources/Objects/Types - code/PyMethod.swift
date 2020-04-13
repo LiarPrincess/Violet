@@ -90,7 +90,7 @@ public class PyMethod: PyObject {
     let funcNameString = funcNameObject as? PyString
     let funcName = funcNameString?.value ?? self.function.name.value
 
-    let ptr = self.object.ptrString
+    let ptr = self.object.ptr
     let type = self.object.typeName
     return .value("<bound method \(funcName) of \(type) object at \(ptr)>")
   }

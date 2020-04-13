@@ -120,14 +120,14 @@ public class PyCell: PyObject {
 
   // sourcery: pymethod = __repr__
   public func repr() -> PyResult<String> {
-    let ptr = self.ptrString
+    let ptr = self.ptr
 
     guard let content = self.content else {
       return .value("<cell at \(ptr): empty>")
     }
 
     let type = content.typeName
-    let contentPtr = content.ptrString
+    let contentPtr = content.ptr
     return .value("<cell at \(ptr): \(type) object at \(contentPtr)>")
   }
 

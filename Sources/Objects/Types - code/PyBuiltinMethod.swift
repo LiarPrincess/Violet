@@ -81,7 +81,7 @@ public class PyBuiltinMethod: PyObject, PyBuiltinFunctionShared {
       return .value("<built-in method \(self.name)>")
     }
 
-    let ptr = self.object.ptrString
+    let ptr = self.object.ptr
     let type = self.object.typeName
     return .value("<built-in method \(self.name) of \(type) object at \(ptr)>")
   }

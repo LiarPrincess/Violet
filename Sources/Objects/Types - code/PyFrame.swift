@@ -117,7 +117,7 @@ public class PyFrame: PyObject {
 
   // sourcery: pymethod = __repr__
   public func repr() -> PyResult<String> {
-    let ptr = self.ptrString
+    let ptr = self.ptr
     let file = self.code.filename
     let line = self.currentLine
     let name = self.code.name

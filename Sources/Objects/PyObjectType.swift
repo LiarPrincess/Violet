@@ -74,9 +74,9 @@ internal enum PyObjectType {
   internal static func repr(zelf: PyObject) -> PyResult<String> {
     switch zelf.type.getModuleRaw() {
     case .builtins:
-      return .value("<\(zelf.typeName) object at \(zelf.ptrString)>")
+      return .value("<\(zelf.typeName) object at \(zelf.ptr)>")
     case .module(let module):
-      return .value("<\(module).\(zelf.typeName) object at \(zelf.ptrString)>")
+      return .value("<\(module).\(zelf.typeName) object at \(zelf.ptr)>")
     case .error(let e):
       return .error(e)
     }

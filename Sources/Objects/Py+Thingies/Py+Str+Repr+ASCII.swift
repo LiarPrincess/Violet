@@ -184,7 +184,7 @@ extension PyInstance {
 internal enum ExtractStringResult {
   case string(PyString, String)
   case bytes(PyBytesType, String)
-  case byteDecodingError
+  case byteDecodingError(PyBytesType)
   case notStringOrBytes
 }
 
@@ -203,7 +203,7 @@ extension PyInstance {
         return .bytes(bytes, string)
       }
 
-      return .byteDecodingError
+      return .byteDecodingError(bytes)
     }
 
     return .notStringOrBytes
@@ -225,6 +225,6 @@ extension PyInstance {
   }
 
   private func genericRepr(_ object: PyObject) -> String {
-    return "<\(object.typeName) object at \(object.ptrString)>"
+    return "<\(object.typeName) object at \(object.ptr)>"
   }
 }
