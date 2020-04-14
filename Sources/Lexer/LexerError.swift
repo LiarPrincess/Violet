@@ -109,7 +109,7 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
       return "Expected new line after backslash escape ('\\')."
 
     case .unimplemented(let u):
-      return String(describing: u)
+      return "UNIMPLEMENTED IN VIOLET:" + String(describing: u)
     }
   }
 }

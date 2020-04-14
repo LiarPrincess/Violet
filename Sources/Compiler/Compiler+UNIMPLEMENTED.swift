@@ -6,7 +6,20 @@ import Foundation
 // In CPython:
 // Python -> compile.c
 
-internal typealias Comprehensions = NonEmptyArray<Comprehension>
+public enum CompilerUnimplemented: CustomStringConvertible, Equatable {
+
+  case comprehension
+  case async
+
+  public var description: String {
+    switch self {
+    case .comprehension:
+      return "'comprehensions' are currently not implemented."
+    case .async:
+      return "'async' is currently not implemented."
+    }
+  }
+}
 
 extension CompilerImpl {
 
@@ -46,10 +59,10 @@ extension CompilerImpl {
   // MARK: - Helpers
 
   private func notImplementedAsync() -> Error {
-    trap("[Compiler] 'async' is currently not implemented.")
+    return self.error(.unimplemented(.async))
   }
 
   private func notImplementedComprehension() -> Error {
-    trap("[Compiler] 'comprehensions' are currently not implemented.")
+    self.error(.unimplemented(.comprehension))
   }
 }

@@ -111,6 +111,9 @@ public enum CompilerErrorKind: Equatable {
   case awaitOutsideFunction
   /// 'await' outside async function
   case awaitOutsideAsyncFunction
+
+  /// Given feature was not yet implmented.
+  case unimplemented(CompilerUnimplemented)
 }
 
 // MARK: - CustomStringConvertible
@@ -218,6 +221,9 @@ extension CompilerErrorKind: CustomStringConvertible {
       return "'await' outside function"
     case .awaitOutsideAsyncFunction:
       return "'await' outside async function"
+
+    case .unimplemented(let u):
+      return "UNIMPLEMENTED IN VIOLET:" + String(describing: u)
     }
   }
 }
