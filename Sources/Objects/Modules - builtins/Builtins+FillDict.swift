@@ -66,10 +66,13 @@ extension Builtins {
     self.setOrTrap(.bufferError, to: Py.errorTypes.bufferError)
     self.setOrTrap(.bytesWarning, to: Py.errorTypes.bytesWarning)
     self.setOrTrap(.childProcessError, to: Py.errorTypes.childProcessError)
-    self.setOrTrap(.connectionAbortedError, to: Py.errorTypes.connectionAbortedError)
+    self.setOrTrap(.connectionAbortedError,
+                   to: Py.errorTypes.connectionAbortedError)
     self.setOrTrap(.connectionError, to: Py.errorTypes.connectionError)
-    self.setOrTrap(.connectionRefusedError, to: Py.errorTypes.connectionRefusedError)
-    self.setOrTrap(.connectionResetError, to: Py.errorTypes.connectionResetError)
+    self.setOrTrap(.connectionRefusedError,
+                   to: Py.errorTypes.connectionRefusedError)
+    self.setOrTrap(.connectionResetError,
+                   to: Py.errorTypes.connectionResetError)
     self.setOrTrap(.deprecationWarning, to: Py.errorTypes.deprecationWarning)
     self.setOrTrap(.eofError, to: Py.errorTypes.eofError)
     self.setOrTrap(.exception, to: Py.errorTypes.exception)
@@ -94,7 +97,8 @@ extension Builtins {
     self.setOrTrap(.notImplementedError, to: Py.errorTypes.notImplementedError)
     self.setOrTrap(.osError, to: Py.errorTypes.osError)
     self.setOrTrap(.overflowError, to: Py.errorTypes.overflowError)
-    self.setOrTrap(.pendingDeprecationWarning, to: Py.errorTypes.pendingDeprecationWarning)
+    self.setOrTrap(.pendingDeprecationWarning,
+                   to: Py.errorTypes.pendingDeprecationWarning)
     self.setOrTrap(.permissionError, to: Py.errorTypes.permissionError)
     self.setOrTrap(.processLookupError, to: Py.errorTypes.processLookupError)
     self.setOrTrap(.recursionError, to: Py.errorTypes.recursionError)
@@ -123,50 +127,65 @@ extension Builtins {
     self.setOrTrap(.zeroDivisionError, to: Py.errorTypes.zeroDivisionError)
 
     // MARK: - Functions
-
-    self.setOrTrap(.__build_class__, doc: Self.buildClassDoc, fn: Self.buildClass(args:kwargs:))
-    self.setOrTrap(.__import__, doc: Self.importDoc, fn: Self.__import__(args:kwargs:))
-    self.setOrTrap(.abs, doc: nil, fn: Self.abs(object:))
-    self.setOrTrap(.all, doc: nil, fn: Self.all(iterable:))
-    self.setOrTrap(.any, doc: nil, fn: Self.any(iterable:))
-    self.setOrTrap(.ascii, doc: nil, fn: Self.ascii(object:))
-    self.setOrTrap(.bin, doc: nil, fn: Self.bin(object:))
-//    self.setOrTrap(.breakpoint, doc: nil, fn: Self.breakpoint)
-    self.setOrTrap(.callable, doc: nil, fn: Self.callable(object:))
-    self.setOrTrap(.chr, doc: nil, fn: Self.chr(object:))
-    self.setOrTrap(.compile, doc: nil, fn: Self.compile(args:kwargs:))
-    self.setOrTrap(.delattr, doc: nil, fn: Self.delattr(object:name:))
-    self.setOrTrap(.dir, doc: nil, fn: Self.dir(object:))
-    self.setOrTrap(.divmod, doc: nil, fn: Self.divmod(left:right:))
-    self.setOrTrap(.eval, doc: nil, fn: Self.eval(args:kwargs:))
-    self.setOrTrap(.exec, doc: nil, fn: Self.exec(args:kwargs:))
-//    self.setOrTrap(.format, doc: nil, fn: Self.format(value:format:))
-    self.setOrTrap(.getattr, doc: Self.getAttributeDoc, fn: Self.getattr(object:name:default:))
-    self.setOrTrap(.globals, doc: nil, fn: Self.globals)
-    self.setOrTrap(.hasattr, doc: nil, fn: Self.hasattr(object:name:))
-    self.setOrTrap(.hash, doc: nil, fn: Self.hash(object:))
-//    self.setOrTrap(.help, doc: nil, fn: Self.help)
-    self.setOrTrap(.hex, doc: nil, fn: Self.hex(object:))
-    self.setOrTrap(.id, doc: nil, fn: Self.id(object:))
-//    self.setOrTrap(.input, doc: nil, fn: Self.input)
-    self.setOrTrap(.isinstance, doc: Self.isInstanceDoc, fn: Self.isinstance(object:of:))
-    self.setOrTrap(.issubclass, doc: Self.isSubclassDoc, fn: Self.issubclass(object:of:))
+    self.setOrTrap(.__build_class__,
+                   doc: Self.__build_class__Doc,
+                   fn: Self.__build_class__(args:kwargs:))
+    self.setOrTrap(.__import__,
+                   doc: Self.__import__Doc,
+                   fn: Self.__import__(args:kwargs:))
+    self.setOrTrap(.abs, doc: Self.absDoc, fn: Self.abs(object:))
+    self.setOrTrap(.all, doc: Self.allDoc, fn: Self.all(iterable:))
+    self.setOrTrap(.any, doc: Self.anyDoc, fn: Self.any(iterable:))
+    self.setOrTrap(.ascii, doc: Self.asciiDoc, fn: Self.ascii(object:))
+    self.setOrTrap(.bin, doc: Self.binDoc, fn: Self.bin(object:))
+//    self.setOrTrap(.breakpoint, doc: Self.breakpointDoc, fn: Self.breakpoint)
+    self.setOrTrap(.callable, doc: Self.callableDoc, fn: Self.callable(object:))
+    self.setOrTrap(.chr, doc: Self.chrDoc, fn: Self.chr(object:))
+    self.setOrTrap(.compile, doc: Self.compileDoc, fn: Self.compile(args:kwargs:))
+    self.setOrTrap(.delattr,
+                   doc: Self.delattrDoc,
+                   fn: Self.delattr(object:name:))
+    self.setOrTrap(.dir, doc: Self.dirDoc, fn: Self.dir(object:))
+    self.setOrTrap(.divmod, doc: Self.divmodDoc, fn: Self.divmod(left:right:))
+    self.setOrTrap(.eval, doc: Self.evalDoc, fn: Self.eval(args:kwargs:))
+    self.setOrTrap(.exec, doc: Self.execDoc, fn: Self.exec(args:kwargs:))
+//    self.setOrTrap(.format, doc: Self.formatDoc, fn: Self.format(value:format:))
+    self.setOrTrap(.getattr,
+                   doc: Self.getattrDoc,
+                   fn: Self.getattr(object:name:default:))
+    self.setOrTrap(.globals, doc: Self.globalsDoc, fn: Self.globals)
+    self.setOrTrap(.hasattr,
+                   doc: Self.hasattrDoc,
+                   fn: Self.hasattr(object:name:))
+    self.setOrTrap(.hash, doc: Self.hashDoc, fn: Self.hash(object:))
+//    self.setOrTrap(.help, doc: Self.helpDoc, fn: Self.help)
+    self.setOrTrap(.hex, doc: Self.hexDoc, fn: Self.hex(object:))
+    self.setOrTrap(.id, doc: Self.idDoc, fn: Self.id(object:))
+//    self.setOrTrap(.input, doc: Self.inputDoc, fn: Self.input)
+    self.setOrTrap(.isinstance,
+                   doc: Self.isinstanceDoc,
+                   fn: Self.isinstance(object:of:))
+    self.setOrTrap(.issubclass,
+                   doc: Self.issubclassDoc,
+                   fn: Self.issubclass(object:of:))
     self.setOrTrap(.iter, doc: Self.iterDoc, fn: Self.iter(from:sentinel:))
-    self.setOrTrap(.len, doc: nil, fn: Self.length(iterable:))
-    self.setOrTrap(.locals, doc: nil, fn: Self.locals)
+    self.setOrTrap(.len, doc: Self.lenDoc, fn: Self.len(iterable:))
+    self.setOrTrap(.locals, doc: Self.localsDoc, fn: Self.locals)
     self.setOrTrap(.max, doc: Self.maxDoc, fn: Self.max(args:kwargs:))
     self.setOrTrap(.min, doc: Self.minDoc, fn: Self.min(args:kwargs:))
     self.setOrTrap(.next, doc: Self.nextDoc, fn: Self.next(iterator:default:))
-    self.setOrTrap(.oct, doc: nil, fn: Self.oct(object:))
-    self.setOrTrap(.open, doc: nil, fn: Self.open(args:kwargs:))
-    self.setOrTrap(.ord, doc: nil, fn: Self.ord(object:))
-    self.setOrTrap(.pow, doc: nil, fn: Self.pow(base:exp:mod:))
-    self.setOrTrap(.print, doc: nil, fn: Self.print(args:kwargs:))
-    self.setOrTrap(.repr, doc: nil, fn: Self.repr(object:))
-    self.setOrTrap(.round, doc: nil, fn: Self.round(number:nDigits:))
-    self.setOrTrap(.setattr, doc: nil, fn: Self.setattr(object:name:value:))
-    self.setOrTrap(.sorted, doc: nil, fn: Self.sorted(args:kwargs:))
-    self.setOrTrap(.sum, doc: nil, fn: Self.sum(args:kwargs:))
-//    self.setOrTrap(.vars, doc: nil, fn: Self.vars)
+    self.setOrTrap(.oct, doc: Self.octDoc, fn: Self.oct(object:))
+    self.setOrTrap(.open, doc: Self.openDoc, fn: Self.open(args:kwargs:))
+    self.setOrTrap(.ord, doc: Self.ordDoc, fn: Self.ord(object:))
+    self.setOrTrap(.pow, doc: Self.powDoc, fn: Self.pow(base:exp:mod:))
+    self.setOrTrap(.print, doc: Self.printDoc, fn: Self.print(args:kwargs:))
+    self.setOrTrap(.repr, doc: Self.reprDoc, fn: Self.repr(object:))
+    self.setOrTrap(.round, doc: Self.roundDoc, fn: Self.round(number:nDigits:))
+    self.setOrTrap(.setattr,
+                   doc: Self.setattrDoc,
+                   fn: Self.setattr(object:name:value:))
+    self.setOrTrap(.sorted, doc: Self.sortedDoc, fn: Self.sorted(args:kwargs:))
+    self.setOrTrap(.sum, doc: Self.sumDoc, fn: Self.sum(args:kwargs:))
+//    self.setOrTrap(.vars, doc: Self.varsDoc, fn: Self.vars)
   }
 }
