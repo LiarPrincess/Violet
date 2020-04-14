@@ -11,44 +11,44 @@ class CommentTests: XCTestCase, Common {
   // MARK: - Comment
 
   func test_comment() {
-    var lexer = Lexer(for: "# No one's slick as Gaston\n")
+    let lexer = self.createLexer(for: "# No one's slick as Gaston\n")
 
-    if let comment = self.getToken(&lexer) {
+    if let comment = self.getToken(lexer) {
       XCTAssertEqual(comment.kind, .comment("# No one's slick as Gaston"))
       XCTAssertEqual(comment.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(comment.end,   SourceLocation(line: 1, column: 26))
     }
 
-    self.getNewLine(&lexer)
-    self.getEOF(&lexer)
+    self.getNewLine(lexer)
+    self.getEOF(lexer)
   }
 
   func test_comment_afterCode() {
-    var lexer = Lexer(for: "Gaston # No one's quick as Gaston\n")
+    let lexer = self.createLexer(for: "Gaston # No one's quick as Gaston\n")
 
-    self.getIdentifier(&lexer, value: "Gaston")
+    self.getIdentifier(lexer, value: "Gaston")
 
-    if let comment = self.getToken(&lexer) {
+    if let comment = self.getToken(lexer) {
       XCTAssertEqual(comment.kind, .comment("# No one's quick as Gaston"))
       XCTAssertEqual(comment.start, SourceLocation(line: 1, column: 7))
       XCTAssertEqual(comment.end,   SourceLocation(line: 1, column: 33))
     }
 
-    self.getNewLine(&lexer)
-    self.getEOF(&lexer)
+    self.getNewLine(lexer)
+    self.getEOF(lexer)
   }
 
   func test_comment_inLastLine() {
     let s = "# No one's neck's as incredibly thick as Gaston"
-    var lexer = Lexer(for: s)
+    let lexer = self.createLexer(for: s)
 
-    if let comment = self.getToken(&lexer) {
+    if let comment = self.getToken(lexer) {
       XCTAssertEqual(comment.kind, .comment(s))
       XCTAssertEqual(comment.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(comment.end,   SourceLocation(line: 1, column: 47))
     }
 
-    self.getEOF(&lexer)
+    self.getEOF(lexer)
   }
 
   // MARK: - Encoding
@@ -59,24 +59,24 @@ class CommentTests: XCTestCase, Common {
   /// py: # -*- coding: utf-8 -*-
   func test_emacs_validEncoding_inFirstLine_isAccepted() {
     let s = "# -*- coding: \(validEncoding) -*-"
-    var lexer = Lexer(for: s + "\n")
+    let lexer = self.createLexer(for: s + "\n")
 
-    if let comment = self.getToken(&lexer) {
+    if let comment = self.getToken(lexer) {
       XCTAssertEqual(comment.kind, .comment(s))
       XCTAssertEqual(comment.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(comment.end,   SourceLocation(line: 1, column: 23))
     }
 
-    self.getNewLine(&lexer)
-    self.getEOF(&lexer)
+    self.getNewLine(lexer)
+    self.getEOF(lexer)
   }
 
   /// py: # -*- coding: latin-1 -*-
   func test_emacs_invalidEncoding_inFirstLine_throws() {
     let s = "# -*- coding: \(invalidEncoding) -*-"
-    var lexer = Lexer(for: s)
+    let lexer = self.createLexer(for: s)
 
-    if let error = self.notImplemented(&lexer) {
+    if let error = self.notImplemented(lexer) {
       XCTAssertEncoding(error, invalidEncoding)
     }
   }
@@ -85,9 +85,9 @@ class CommentTests: XCTestCase, Common {
   func test_emacs_invalidEncoding_inFirstLine_withIndent_throws() {
     // we can have spaces before encoding
     let s = "    # -*- coding: \(invalidEncoding) -*-"
-    var lexer = Lexer(for: s)
+    let lexer = self.createLexer(for: s)
 
-    if let error = self.notImplemented(&lexer) {
+    if let error = self.notImplemented(lexer) {
       XCTAssertEncoding(error, invalidEncoding)
     }
   }
@@ -95,18 +95,18 @@ class CommentTests: XCTestCase, Common {
   /// py: Gaston # -*- coding: latin-1 -*-
   func test_emacs_invalidEncoding_inFirstLine_withSomethingBefore_isIgnored() {
     let e = "# -*- coding: \(invalidEncoding) -*-"
-    var lexer = Lexer(for: "Gaston \(e)\n")
+    let lexer = self.createLexer(for: "Gaston \(e)\n")
 
-    self.getIdentifier(&lexer, value: "Gaston")
+    self.getIdentifier(lexer, value: "Gaston")
 
-    if let comment = self.getToken(&lexer) {
+    if let comment = self.getToken(lexer) {
       XCTAssertEqual(comment.kind, .comment(e))
       XCTAssertEqual(comment.start, SourceLocation(line: 1, column: 7))
       XCTAssertEqual(comment.end,   SourceLocation(line: 1, column: 32))
     }
 
-    self.getNewLine(&lexer)
-    self.getEOF(&lexer)
+    self.getNewLine(lexer)
+    self.getEOF(lexer)
   }
 
   /// py:
@@ -115,17 +115,17 @@ class CommentTests: XCTestCase, Common {
   func test_emacs_invalidEncoding_inSecondLine_throws() {
     let s = "# No one fights like Gaston\n # -*- coding: \(invalidEncoding) -*-"
     print(s)
-    var lexer = Lexer(for: s)
+    let lexer = self.createLexer(for: s)
 
-    if let comment = self.getToken(&lexer) {
+    if let comment = self.getToken(lexer) {
       XCTAssertEqual(comment.kind, .comment("# No one fights like Gaston"))
       XCTAssertEqual(comment.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(comment.end,   SourceLocation(line: 1, column: 27))
     }
 
-    self.getNewLine(&lexer)
+    self.getNewLine(lexer)
 
-    if let error = self.notImplemented(&lexer) {
+    if let error = self.notImplemented(lexer) {
       XCTAssertEncoding(error, invalidEncoding)
     }
   }

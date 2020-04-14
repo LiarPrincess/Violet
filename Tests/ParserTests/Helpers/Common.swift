@@ -22,7 +22,10 @@ extension Common {
 
   private func createParser(mode: ParserMode, tokens: [Token]) -> Parser {
     let lexer = FakeLexer(tokens: tokens)
-    return Parser(mode: mode, tokenSource: lexer)
+    return Parser(mode: mode,
+                  tokenSource: lexer,
+                  delegate: nil,
+                  lexerDelegate: nil)
   }
 
   internal func token(_ kind: TokenKind,

@@ -15,7 +15,7 @@ class FStringTests: XCTestCase, Common {
   // MARK: - Empty
 
   func test_empty() throws {
-    var string = FString()
+    var string = self.createFString()
 
     let group = try string.compile()
 
@@ -29,7 +29,7 @@ class FStringTests: XCTestCase, Common {
   func test_string() throws {
     let s = "The snow glows white on the mountain tonight"
 
-    var string = FString()
+    var string = self.createFString()
     string.append(s)
 
     let group = try string.compile()
@@ -40,7 +40,7 @@ class FStringTests: XCTestCase, Common {
   }
 
   func test_string_multiline() throws {
-    var string = FString()
+    var string = self.createFString()
     string.append("Not a footprint to be seen\n")
     string.append("A kingdom of isolation\n")
     string.append("And it looks like I'm the queen")
@@ -57,7 +57,7 @@ class FStringTests: XCTestCase, Common {
   func test_fString_withoutExpr() throws {
     let s = "The wind is howling like this swirling storm inside"
 
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString(s)
 
     let group = try string.compile()
@@ -70,7 +70,7 @@ class FStringTests: XCTestCase, Common {
   func test_fString_withoutExpr_withEscapes() throws {
     let s = "Couldn't keep {{it}} in, heaven knows I tried!"
 
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString(s)
 
     let group = try string.compile()
@@ -84,7 +84,7 @@ class FStringTests: XCTestCase, Common {
     let s = "Don't let them in, don't let them see{"
 
     do {
-      var string = FString()
+      var string = self.createFString()
       try string.appendFormatString(s)
       XCTAssert(false)
     } catch let error as FStringError {
@@ -98,7 +98,7 @@ class FStringTests: XCTestCase, Common {
     let s = "Be the good girl }you always have to be"
 
     do {
-      var string = FString()
+      var string = self.createFString()
       try string.appendFormatString(s)
       XCTAssert(false)
     } catch let error as FStringError {
@@ -109,7 +109,7 @@ class FStringTests: XCTestCase, Common {
   }
 
   func test_fString_withoutExpr_multiple() throws {
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString("Conceal, don't feel, don't let them know\n")
     try string.appendFormatString("Well, now they know!")
 
@@ -123,7 +123,7 @@ class FStringTests: XCTestCase, Common {
   // MARK: - Formatted value
 
   func test_formattedValue() throws {
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString("{2013}")
 
     let group = try string.compile()
@@ -138,7 +138,7 @@ class FStringTests: XCTestCase, Common {
   }
 
   func test_formattedValue_addition() throws {
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString("{20 + 13}")
 
     let group = try string.compile()
@@ -159,7 +159,7 @@ class FStringTests: XCTestCase, Common {
   }
 
   func test_formattedValue_string() throws {
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString("{'Let it go, let it go'}")
 
     let group = try string.compile()
@@ -174,7 +174,7 @@ class FStringTests: XCTestCase, Common {
   }
 
   func test_formattedValue_inParens() throws {
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString("{('Cant hold it back anymore')}")
 
     let group = try string.compile()
@@ -189,7 +189,7 @@ class FStringTests: XCTestCase, Common {
   }
 
   func test_formattedValue_conversion() throws {
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString("{'Let it go, let it go'!r}")
 
     let group = try string.compile()
@@ -204,7 +204,7 @@ class FStringTests: XCTestCase, Common {
   }
 
   func test_formattedValue_formatSpec() throws {
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString("{'Let it go, let it go':^30}")
 
     let group = try string.compile()
@@ -219,7 +219,7 @@ class FStringTests: XCTestCase, Common {
   }
 
   func test_formattedValue_conversion_formatSpec() throws {
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString("{'Turn away and slam the door!'!a:^30}")
 
     let group = try string.compile()
@@ -236,7 +236,7 @@ class FStringTests: XCTestCase, Common {
   // MARK: - FString - joined
 
   func test_joined_expression_atStart() throws {
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString("{I} don't care\nWhat they're going to say")
 
     let group = try string.compile()
@@ -253,7 +253,7 @@ class FStringTests: XCTestCase, Common {
   }
 
   func test_joined_expression_asEnd() throws {
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString("Let the storm rage {on}")
 
     let group = try string.compile()
@@ -270,7 +270,7 @@ class FStringTests: XCTestCase, Common {
   }
 
   func test_joined_expression_inTheMiddle() throws {
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString("The cold never {bothered} me anyway!")
 
     let group = try string.compile()
@@ -288,7 +288,7 @@ class FStringTests: XCTestCase, Common {
   }
 
   func test_joined_expression_inTheMiddle_withConversion_andFormatSpec() throws {
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString("Its funny {how!s:-10} some distance")
 
     let group = try string.compile()
@@ -306,7 +306,7 @@ class FStringTests: XCTestCase, Common {
   }
 
   func test_joined_expressions_multiple() throws {
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString("Makes {everything:+6} seem {small!a}")
 
     let group = try string.compile()
@@ -329,7 +329,7 @@ class FStringTests: XCTestCase, Common {
   }
 
   func test_joined_expressions_sideBySide() throws {
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString("And the {fears}{that} once controlled me")
 
     let group = try string.compile()
@@ -355,7 +355,7 @@ class FStringTests: XCTestCase, Common {
     let s = "{Can't get to me at all!}"
 
     do {
-      var string = FString()
+      var string = self.createFString()
       try string.appendFormatString(s)
       XCTAssert(false)
     } catch let error as FStringError {
@@ -369,7 +369,7 @@ class FStringTests: XCTestCase, Common {
     let s = "{Its time\\to see what I can do}"
 
     do {
-      var string = FString()
+      var string = self.createFString()
       try string.appendFormatString(s)
       XCTAssert(false)
     } catch let error as FStringError {
@@ -383,7 +383,7 @@ class FStringTests: XCTestCase, Common {
     let s = "{To test the limits #and break through}"
 
     do {
-      var string = FString()
+      var string = self.createFString()
       try string.appendFormatString(s)
       XCTAssert(false)
     } catch let error as FStringError {
@@ -395,7 +395,7 @@ class FStringTests: XCTestCase, Common {
 
   func test_joined_longString() throws {
     let s = "No right, no wrong, {'''no rules for me'''} Im free!"
-    var string = FString()
+    var string = self.createFString()
     try string.appendFormatString(s)
 
     let group = try string.compile()
@@ -416,7 +416,7 @@ class FStringTests: XCTestCase, Common {
     let s = "Let it go, {(let} it go"
 
     do {
-      var string = FString()
+      var string = self.createFString()
       try string.appendFormatString(s)
       XCTAssert(false)
     } catch let error as FStringError {
@@ -430,7 +430,7 @@ class FStringTests: XCTestCase, Common {
     let s = "I am one with the {((wind} and sky"
 
     do {
-      var string = FString()
+      var string = self.createFString()
       try string.appendFormatString(s)
       XCTAssert(false)
     } catch let error as FStringError {
@@ -444,7 +444,7 @@ class FStringTests: XCTestCase, Common {
     let s = "Let it go,{}let it go"
 
     do {
-      var string = FString()
+      var string = self.createFString()
       try string.appendFormatString(s)
       XCTAssert(false)
     } catch let error as FStringError {
@@ -458,7 +458,7 @@ class FStringTests: XCTestCase, Common {
     let s = "You'll never {'''see me cry!'"
 
     do {
-      var string = FString()
+      var string = self.createFString()
       try string.appendFormatString(s)
       XCTAssert(false)
     } catch let error as FStringError {
@@ -472,7 +472,7 @@ class FStringTests: XCTestCase, Common {
     let s = "Here {I!e} stand"
 
     do {
-      var string = FString()
+      var string = self.createFString()
       try string.appendFormatString(s)
       XCTAssert(false)
     } catch let error as FStringError {
@@ -486,7 +486,7 @@ class FStringTests: XCTestCase, Common {
     let s = "And here I'll {stay:>{width}}"
 
     do {
-      var string = FString()
+      var string = self.createFString()
       try string.appendFormatString(s)
       XCTAssert(false)
     } catch let error as NotImplemented {
@@ -494,5 +494,11 @@ class FStringTests: XCTestCase, Common {
     } catch {
       XCTAssert(false, "\(error)")
     }
+  }
+
+  // MARK: - Create fstring
+
+  private func createFString() -> FString {
+    return FString(parserDelegate: nil, lexerDelegate: nil)
   }
 }

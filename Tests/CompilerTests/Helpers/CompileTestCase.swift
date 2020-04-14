@@ -45,7 +45,10 @@ internal class CompileTestCase: XCTestCase, ASTCreator {
       try validator.validate(ast: ast)
 
       let options = CompilerOptions(optimizationLevel: optimizationLevel)
-      let compiler = try Compiler(ast: ast, filename: "file", options: options)
+      let compiler = Compiler(filename: "file",
+                              ast: ast,
+                              options: options,
+                              delegate: nil)
       return try compiler.run()
     } catch {
       XCTAssert(false, "\(error)", file: file, line: line)

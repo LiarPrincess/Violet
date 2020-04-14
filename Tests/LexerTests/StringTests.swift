@@ -10,9 +10,9 @@ class StringTests: XCTestCase, Common {
 
   func test_emptyString() {
     let s = ""
-    var lexer = Lexer(for: self.shortQuote(s))
+    let lexer = self.createLexer(for: self.shortQuote(s))
 
-    if let token = self.getToken(&lexer) {
+    if let token = self.getToken(lexer) {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 2))
@@ -24,9 +24,9 @@ class StringTests: XCTestCase, Common {
   /// py: "Look at this stuff. Isnt it neat?"
   func test_doubleQuote_simple() {
     let s = "Look at this stuff. Isnt it neat?"
-    var lexer = Lexer(for: self.shortQuote(s))
+    let lexer = self.createLexer(for: self.shortQuote(s))
 
-    if let token = self.getToken(&lexer) {
+    if let token = self.getToken(lexer) {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 35))
@@ -39,9 +39,9 @@ class StringTests: XCTestCase, Common {
     let s = "Wouldnt\\\\you\\\'think\\\"my\\ncollections\\tcomplete?"
     let expected = "Wouldnt\\you'think\"my\ncollections\tcomplete?"
 
-    var lexer = Lexer(for: self.shortQuote(s))
+    let lexer = self.createLexer(for: self.shortQuote(s))
 
-    if let token = self.getToken(&lexer) {
+    if let token = self.getToken(lexer) {
       XCTAssertEqual(token.kind, .string(expected))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 49))
@@ -55,9 +55,9 @@ class StringTests: XCTestCase, Common {
     let s = "Wouldnt you think Im the girl\\\nThe girl who has everything?"
     let expected = "Wouldnt you think Im the girlThe girl who has everything?"
 
-    var lexer = Lexer(for: self.shortQuote(s))
+    let lexer = self.createLexer(for: self.shortQuote(s))
 
-    if let token = self.getToken(&lexer) {
+    if let token = self.getToken(lexer) {
       XCTAssertEqual(token.kind, .string(expected))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 2, column: 29))
@@ -70,9 +70,9 @@ class StringTests: XCTestCase, Common {
     let s = "Wanderin\\47 free \\055 wish \\x49 could be Part of that \\U0001F30D"
     let expected = "Wanderin' free - wish I could be Part of that 🌍"
 
-    var lexer = Lexer(for: self.shortQuote(s))
+    let lexer = self.createLexer(for: self.shortQuote(s))
 
-    if let token = self.getToken(&lexer) {
+    if let token = self.getToken(lexer) {
       XCTAssertEqual(token.kind, .string(expected))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 66))
@@ -82,9 +82,9 @@ class StringTests: XCTestCase, Common {
   /// py: "Wouldn't I love, love to exp\lore that shore up above?"
   func test_doubleQuote_withUnrecognizedEscape_warns() {
     let s = "Wouldn't I love, love to exp\\lore that shore up above?"
-    var lexer = Lexer(for: self.shortQuote(s))
+    let lexer = self.createLexer(for: self.shortQuote(s))
 
-    if let token = self.getToken(&lexer) {
+    if let token = self.getToken(lexer) {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 56))
@@ -95,9 +95,9 @@ class StringTests: XCTestCase, Common {
   /// py: "🧜‍♀️: I wanna be where the people are, I wanna 👀, wanna 👀 em 💃"
   func test_doubleQuote_emoji() {
     let s = "🧜‍♀️: I wanna be where the people are, I wanna 👀, wanna 👀 em 💃"
-    var lexer = Lexer(for: self.shortQuote(s))
+    let lexer = self.createLexer(for: self.shortQuote(s))
 
-    if let token = self.getToken(&lexer) {
+    if let token = self.getToken(lexer) {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 64))
@@ -107,9 +107,9 @@ class StringTests: XCTestCase, Common {
   /// py: "c: 小美人鱼 j: リトルマーメイド k: 인어 공주"
   func test_doubleQuote_CJK() {
     let s = "c: 小美人鱼 j: リトルマーメイド k: 인어 공주"
-    var lexer = Lexer(for: self.shortQuote(s))
+    let lexer = self.createLexer(for: self.shortQuote(s))
 
-    if let token = self.getToken(&lexer) {
+    if let token = self.getToken(lexer) {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 30))
@@ -119,9 +119,9 @@ class StringTests: XCTestCase, Common {
   /// Quote, without closing.
   /// py: "Ive got gadgets and gizmos aplenty
   func test_doubleQuote_withoutEnd_throws() {
-    var lexer = Lexer(for: "\"Ive got gadgets and gizmos aplenty\n")
+    let lexer = self.createLexer(for: "\"Ive got gadgets and gizmos aplenty\n")
 
-    if let error = self.error(&lexer) {
+    if let error = self.error(lexer) {
       XCTAssertEqual(error.kind,  LexerErrorKind.unfinishedShortString)
       XCTAssertEqual(error.location, SourceLocation(line: 1, column: 35))
     }
@@ -133,9 +133,9 @@ class StringTests: XCTestCase, Common {
   /// py: 'Look at this stuff. Isnt it neat?'
   func test_singleQuote_simple() {
     let s = "Look at this stuff. Isnt it neat?"
-    var lexer = Lexer(for: self.shortQuote(s, "'"))
+    let lexer = self.createLexer(for: self.shortQuote(s, "'"))
 
-    if let token = self.getToken(&lexer) {
+    if let token = self.getToken(lexer) {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 35))
@@ -147,9 +147,9 @@ class StringTests: XCTestCase, Common {
   /// py: """Ive got whozits and whatzits galore"""
   func test_tripleQuote_simple() {
     let s = "Ive got whozits and whatzits galore"
-    var lexer = Lexer(for: self.longQuote(s))
+    let lexer = self.createLexer(for: self.longQuote(s))
 
-    if let token = self.getToken(&lexer) {
+    if let token = self.getToken(lexer) {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 41))
@@ -159,9 +159,9 @@ class StringTests: XCTestCase, Common {
   /// py: """You'want"thingamabobs?""I got twenty!"""
   func test_tripleQuote_singleQuotes_doNotEnd() {
     let s = "You'want\"thingamabobs?\"\"I got twenty!"
-    var lexer = Lexer(for: self.longQuote(s))
+    let lexer = self.createLexer(for: self.longQuote(s))
 
-    if let token = self.getToken(&lexer) {
+    if let token = self.getToken(lexer) {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 43))
@@ -174,9 +174,9 @@ class StringTests: XCTestCase, Common {
   /// I want more"""
   func test_tripleQuote_multilineString() {
     let s = "But who cares?\nNo big deal\nI want more"
-    var lexer = Lexer(for: self.longQuote(s))
+    let lexer = self.createLexer(for: self.longQuote(s))
 
-    if let token = self.getToken(&lexer) {
+    if let token = self.getToken(lexer) {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 3, column: 14))
@@ -188,9 +188,9 @@ class StringTests: XCTestCase, Common {
   /// No big deal
   /// I want more"
   func test_tripleQuote_withoutEnd_throws() {
-    var lexer = Lexer(for: "\"\"\"But who cares?\nNo big deal\nI want more\"")
+    let lexer = self.createLexer(for: "\"\"\"But who cares?\nNo big deal\nI want more\"")
 
-    if let error = self.error(&lexer) {
+    if let error = self.error(lexer) {
       XCTAssertEqual(error.kind,  LexerErrorKind.unfinishedLongString)
       XCTAssertEqual(error.location, SourceLocation(line: 3, column: 12))
     }
@@ -200,9 +200,9 @@ class StringTests: XCTestCase, Common {
 
   func test_rawString() {
     let s = "r\"\\\\\\\\\""
-    var lexer = Lexer(for: s)
+    let lexer = self.createLexer(for: s)
 
-    if let token = self.getToken(&lexer) {
+    if let token = self.getToken(lexer) {
       XCTAssertEqual(token.kind, .string("\\\\\\\\"))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 7))
@@ -221,9 +221,9 @@ class StringTests: XCTestCase, Common {
     }
     .joined()
 
-    var lexer = Lexer(for: "b" + self.shortQuote(s))
+    let lexer = self.createLexer(for: "b" + self.shortQuote(s))
 
-    if let token = self.getToken(&lexer) {
+    if let token = self.getToken(lexer) {
       let data = Data(rawData)
       XCTAssertEqual(token.kind, .bytes(data))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
