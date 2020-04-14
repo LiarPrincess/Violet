@@ -275,7 +275,7 @@ extension PyType {
   private static func setModuleFromCurrentFrameGlobals(
     type: PyType
   ) -> PyResult<()> {
-    switch Py.getGlobals() {
+    switch Py.globals() {
     case let .value(globals):
       if let module = globals.get(id: .__name__) {
         return type.setModule(module)

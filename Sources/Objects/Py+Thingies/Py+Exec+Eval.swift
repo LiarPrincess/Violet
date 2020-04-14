@@ -131,13 +131,13 @@ extension PyInstance {
       }
 
     case .none:
-      switch Py.getGlobals() {
+      switch Py.globals() {
       case let .value(g):
         switch self.parseDictOrNone(object: locals) {
         case .dict(let l):
           return .env(globals: g, locals: l)
         case .none:
-          switch Py.getLocals() {
+          switch Py.locals() {
           case let .value(l):
             return .env(globals: g, locals: l)
           case let .error(e):

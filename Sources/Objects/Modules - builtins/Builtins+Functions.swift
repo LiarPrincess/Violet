@@ -104,9 +104,9 @@ extension Builtins {
   internal static func getattr(object: PyObject,
                                name: PyObject,
                                default: PyObject? = nil) -> PyResult<PyObject> {
-    return Py.getAttribute(object: object,
-                           name: name,
-                           default: `default`)
+    return Py.getattr(object: object,
+                      name: name,
+                      default: `default`)
   }
 
   internal static var hasattrDoc: String {
@@ -121,7 +121,7 @@ extension Builtins {
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
   internal static func hasattr(object: PyObject,
                                name: PyObject) -> PyResult<Bool> {
-    return Py.hasAttribute(object: object, name: name)
+    return Py.hasattr(object: object, name: name)
   }
 
   internal static var setattrDoc: String {
@@ -137,7 +137,7 @@ extension Builtins {
   internal static func setattr(object: PyObject,
                                name: PyObject,
                                value: PyObject) -> PyResult<PyNone> {
-    return Py.setAttribute(object: object, name: name, value: value)
+    return Py.setattr(object: object, name: name, value: value)
   }
 
   internal static var delattrDoc: String {
@@ -152,7 +152,7 @@ extension Builtins {
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
   internal static func delattr(object: PyObject,
                                name: PyObject) -> PyResult<PyNone> {
-    return Py.deleteAttribute(object: object, name: name)
+    return Py.delattr(object: object, name: name)
   }
 }
 
@@ -172,7 +172,7 @@ extension Builtins {
   /// id(object)
   /// See [this](https://docs.python.org/3/library/functions.html#id)
   internal static func id(object: PyObject) -> PyInt {
-    return Py.getId(object: object)
+    return Py.id(object: object)
   }
 }
 
@@ -299,7 +299,7 @@ extension Builtins {
   /// callable(object)
   /// See [this](https://docs.python.org/3/library/functions.html#callable)
   internal static func callable(object: PyObject) -> PyResult<Bool> {
-    return Py.isCallable(object: object)
+    return Py.callable(object: object)
   }
 }
 
@@ -316,7 +316,7 @@ extension Builtins {
   /// len(s)
   /// See [this](https://docs.python.org/3/library/functions.html#len)
   internal static func len(iterable: PyObject) -> PyResult<PyObject> {
-    return Py.length(iterable: iterable)
+    return Py.len(iterable: iterable)
   }
 
   internal static var sortedDoc: String {
@@ -610,7 +610,7 @@ extension Builtins {
     }
 
     let bases = Py.newTuple(Array(args[2...]))
-    return Py.buildClass(fn: fn, name: name, bases: bases, kwargs: kwargs)
+    return Py.__build_class__(fn: fn, name: name, bases: bases, kwargs: kwargs)
   }
 }
 
@@ -686,7 +686,7 @@ extension Builtins {
   /// globals()
   /// See [this](https://docs.python.org/3/library/functions.html#globals)
   internal static func globals() -> PyResult<PyDict> {
-    return Py.getGlobals()
+    return Py.globals()
   }
 
   internal static var localsDoc: String {
@@ -702,7 +702,7 @@ extension Builtins {
   /// locals()
   /// See [this](https://docs.python.org/3/library/functions.html#locals)
   internal static func locals() -> PyResult<PyDict> {
-    return Py.getLocals()
+    return Py.locals()
   }
 }
 

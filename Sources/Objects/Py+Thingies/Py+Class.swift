@@ -23,10 +23,10 @@ extension PyInstance {
 
   /// static PyObject *
   /// builtin___build_class__(PyObject *self, PyObject *const *args, ...)
-  public func buildClass(fn: PyFunction,
-                         name: PyString,
-                         bases: PyTuple,
-                         kwargs: PyDict?) -> PyResult<PyObject> {
+  public func __build_class__(fn: PyFunction,
+                              name: PyString,
+                              bases: PyTuple,
+                              kwargs: PyDict?) -> PyResult<PyObject> {
     let metatype: PyObject
     switch self.calculateMetaclass(bases: bases, kwargs: kwargs) {
     case let .value(m): metatype = m
@@ -159,7 +159,7 @@ extension PyInstance {
   }
 
   private func get__prepare__(metatype: PyObject) -> PrepareCallResult {
-    switch Py.getAttribute(object: metatype, name: .__prepare__) {
+    switch Py.getattr(object: metatype, name: .__prepare__) {
     case let .value(o):
       return .value(o)
 

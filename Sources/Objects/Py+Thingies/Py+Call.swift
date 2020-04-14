@@ -99,12 +99,12 @@ extension PyInstance {
 
   /// callable(object)
   /// See [this](https://docs.python.org/3/library/functions.html#callable)
-  public func isCallable(object: PyObject) -> PyResult<Bool> {
+  public func callable(object: PyObject) -> PyResult<Bool> {
     if object is __call__Owner {
       return .value(true)
     }
 
-    return self.hasAttribute(object: object, name: .__call__)
+    return self.hasattr(object: object, name: .__call__)
   }
 }
 

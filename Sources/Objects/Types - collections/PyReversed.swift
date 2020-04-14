@@ -123,7 +123,7 @@ public class PyReversed: PyObject {
     }
 
     let count: Int
-    switch Py.lengthInt(iterable: object) {
+    switch Py.lenInt(iterable: object) {
     case let .value(l): count = l
     case let .error(e): return .error(e)
     }

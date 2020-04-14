@@ -97,7 +97,7 @@ extension Eval {
       return .exception(Py.newSystemError(msg: msg))
     }
 
-    let count = Py.lengthInt(tuple: keysTuple)
+    let count = Py.lenInt(tuple: keysTuple)
     let elements = self.stack.popElementsInPushOrder(count: count)
 
     switch Py.newDict(keys: keysTuple, elements: elements) {

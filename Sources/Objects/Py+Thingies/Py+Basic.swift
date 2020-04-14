@@ -105,7 +105,7 @@ extension PyInstance {
 
   /// id(object)
   /// See [this](https://docs.python.org/3/library/functions.html#id)
-  public func getId(object: PyObject) -> PyInt {
+  public func id(object: PyObject) -> PyInt {
     let unsafeMutableRawPointer = object.ptr
     let pointer = Int(bitPattern: unsafeMutableRawPointer)
     return self.newInt(pointer)
@@ -183,7 +183,7 @@ extension PyInstance {
       return owner.isAbstractMethod()
     }
 
-    switch self.getAttribute(object: object, name: .__isabstractmethod__) {
+    switch self.getattr(object: object, name: .__isabstractmethod__) {
     case let .value(o):
       return self.isTrueBool(o)
     case let .error(e):

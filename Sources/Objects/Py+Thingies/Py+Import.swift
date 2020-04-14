@@ -212,7 +212,7 @@ extension PyInstance {
   }
 
   private func getParent(spec: PyObject) -> PyResult<PyString> {
-    switch Py.getAttribute(object: spec, name: "parent") {
+    switch Py.getattr(object: spec, name: "parent") {
     case let .value(object):
       guard let string = object as? PyString else {
         return .typeError("__spec__.parent must be a string")

@@ -202,7 +202,7 @@ extension PyInstance {
       return .value(result)
     }
 
-    return self.getAttribute(object: object, name: .keys)
+    return self.getattr(object: object, name: .keys)
   }
 
   // MARK: - Range
@@ -322,7 +322,7 @@ extension PyInstance {
 
   /// len(s)
   /// See [this](https://docs.python.org/3/library/functions.html#len)
-  public func length(iterable: PyObject) -> PyResult<PyObject> {
+  public func len(iterable: PyObject) -> PyResult<PyObject> {
     if let owner = iterable as? __len__Owner {
       let bigInt = owner.getLength()
       return .value(self.newInt(bigInt))
@@ -338,7 +338,7 @@ extension PyInstance {
     }
   }
 
-  public func lengthBigInt(iterable: PyObject) -> PyResult<BigInt> {
+  public func lenBigInt(iterable: PyObject) -> PyResult<BigInt> {
     // Avoid 'PyObject' allocation inside `self.length(iterable: PyObject)`
     if let owner = iterable as? __len__Owner {
       let bigInt = owner.getLength()
@@ -346,7 +346,7 @@ extension PyInstance {
     }
 
     // Use `self.length(iterable: PyObject)`
-    switch self.length(iterable: iterable) {
+    switch self.len(iterable: iterable) {
     case let .value(object):
       guard let pyInt = object as? PyInt else {
         return .typeError("'\(object)' object cannot be interpreted as an integer")
@@ -359,12 +359,12 @@ extension PyInstance {
     }
   }
 
-  public func lengthInt(tuple: PyTuple) -> Int {
+  public func lenInt(tuple: PyTuple) -> Int {
     return tuple.data.count
   }
 
-  public func lengthInt(iterable: PyObject) -> PyResult<Int> {
-    return self.lengthBigInt(iterable: iterable)
+  public func lenInt(iterable: PyObject) -> PyResult<Int> {
+    return self.lenBigInt(iterable: iterable)
       .flatMap { bigInt -> PyResult<Int> in
         guard let int = Int(exactly: bigInt) else {
           return .overflowError("Object length is too big")
