@@ -76,7 +76,7 @@ class CommentTests: XCTestCase, Common {
     let s = "# -*- coding: \(invalidEncoding) -*-"
     let lexer = self.createLexer(for: s)
 
-    if let error = self.notImplemented(lexer) {
+    if let error = self.unimplemented(lexer) {
       XCTAssertEncoding(error, invalidEncoding)
     }
   }
@@ -87,7 +87,7 @@ class CommentTests: XCTestCase, Common {
     let s = "    # -*- coding: \(invalidEncoding) -*-"
     let lexer = self.createLexer(for: s)
 
-    if let error = self.notImplemented(lexer) {
+    if let error = self.unimplemented(lexer) {
       XCTAssertEncoding(error, invalidEncoding)
     }
   }
@@ -125,7 +125,7 @@ class CommentTests: XCTestCase, Common {
 
     self.getNewLine(lexer)
 
-    if let error = self.notImplemented(lexer) {
+    if let error = self.unimplemented(lexer) {
       XCTAssertEncoding(error, invalidEncoding)
     }
   }

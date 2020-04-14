@@ -32,19 +32,19 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
   /// Inconsistent mixing of tabs and spaces
 //  case tabSpace // nope, we don't have this
   /// Too many indentation levels
-  case tooDeep
+  case tooManyIndentationLevels
   /// No matching outer block for dedent
-  case dedent
+  case noMatchingDedent
 
   /// Invalid character in identifier
-  case identifier(UnicodeScalar)
+  case invalidCharacterInIdentifier(UnicodeScalar)
 
   /// EOL in single-quoted string
   case unfinishedShortString
   /// EOF in triple-quoted string
   case unfinishedLongString
   /// Unable to decode string escape sequence
-  case unicodeEscape
+  case invalidUnicodeEscape
   /// Bytes can only contain `'0 <= x < 256'` values
   case badByte(UnicodeScalar)
 
@@ -63,6 +63,9 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
   // Expected new line after '\'.
   case missingNewLineAfterBackslashEscape
 
+  /// Given feature was not yet implmented.
+  case unimplemented(LexerUnimplemented)
+
   public var description: String {
     switch self {
     case .eof:
@@ -72,12 +75,12 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
 
 //    case .tabSpace:
 //      return "Inconsistent mixing of tabs and spaces"
-    case .tooDeep:
+    case .tooManyIndentationLevels:
       return "Too many levels of indentation."
-    case .dedent:
+    case .noMatchingDedent:
       return "Unindent does not match any outer indentation level."
 
-    case .identifier(let c):
+    case .invalidCharacterInIdentifier(let c):
       return "Invalid character '\(c)' (unicode: \(c.uPlus)) in identifier."
 
     case .unfinishedShortString:
@@ -87,7 +90,7 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
     case .badByte(let c):
       return "Invalid character '\(c)' (value: \(c.value)). " +
              "Bytes can only contain '0 <= x < 256' values."
-    case .unicodeEscape:
+    case .invalidUnicodeEscape:
       return "Unable to decode string escape sequence."
 
     case .danglingIntegerUnderscore:
@@ -104,6 +107,9 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
 
     case .missingNewLineAfterBackslashEscape:
       return "Expected new line after backslash escape ('\\')."
+
+    case .unimplemented(let u):
+      return String(describing: u)
     }
   }
 }

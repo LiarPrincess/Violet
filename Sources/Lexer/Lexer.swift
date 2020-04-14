@@ -120,6 +120,13 @@ public final class Lexer: LexerType {
     return LexerError(kind, location: location ?? self.location)
   }
 
+  /// Create unimplemented lexer error
+  internal func unimplmented(_ unimplemented: LexerUnimplemented,
+                             location: SourceLocation? = nil) -> LexerError {
+    let kind = LexerErrorKind.unimplemented(unimplemented)
+    return self.error(kind, location: location)
+  }
+
   // MARK: - Helpers
 
   internal func isWhitespace(_ c: UnicodeScalar?) -> Bool {

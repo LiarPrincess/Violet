@@ -108,11 +108,11 @@ extension Lexer {
     case .yes:
       return
     case .emptyString:
-      throw self.error(.identifier(" "), location: start)
+      throw self.error(.invalidCharacterInIdentifier(" "), location: start)
     case let .no(scalar: scalar, column: column):
       let column   = start.column + column
       let location = SourceLocation(line: start.line, column: column)
-      throw self.error(.identifier(scalar), location: location)
+      throw self.error(.invalidCharacterInIdentifier(scalar), location: location)
     }
   }
 }

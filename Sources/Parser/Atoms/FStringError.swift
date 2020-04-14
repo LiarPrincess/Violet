@@ -1,4 +1,4 @@
-public indirect enum FStringError: Error, Equatable {
+public indirect enum FStringError: Error, Equatable, CustomStringConvertible {
   /// f-string: expecting '}'.
   /// For example: "abc{" or "abc}"
   case unexpectedEnd
@@ -18,9 +18,10 @@ public indirect enum FStringError: Error, Equatable {
   case invalidConversion(UnicodeScalar)
   /// Error when parsing expression.
   case parsingError(ParserErrorKind)
-}
 
-extension FStringError: CustomStringConvertible {
+  /// Given feature was not yet implmented.
+  case unimplemented(FStringUnimplemented)
+
   public var description: String {
     switch self {
     case .unexpectedEnd:
@@ -42,6 +43,8 @@ extension FStringError: CustomStringConvertible {
              "expected 's', 'r', or 'a'"
     case let .parsingError(kind):
       return String(describing: kind)
+    case let .unimplemented(u):
+      return String(describing: u)
     }
   }
 }

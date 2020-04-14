@@ -461,7 +461,8 @@ internal struct FString {
     while index != view.endIndex && view[index] != "}" {
       if view[index] == "{" {
         // if we ever implement this: add validation in ASTValidationPass
-        self.trapExpressionInFormatSpecifier()
+        let unimplemented = FStringUnimplemented.expressionInFStringFormatSpecifier
+        throw FStringError.unimplemented(unimplemented)
       }
 
       view.formIndex(after: &index)

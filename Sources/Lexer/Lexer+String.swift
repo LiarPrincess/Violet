@@ -175,7 +175,7 @@ extension Lexer {
       return .escaped(try self.readHex(quoteType, count: 8))
 
     case "N": // Character named name in the Unicode database
-      self.trapNamedUnicodeEscape()
+      throw self.unimplmented(.namedUnicodeEscape)
 
     default:
       self.advance() // backslash
@@ -226,7 +226,7 @@ extension Lexer {
       }
 
       guard HexNumber.isDigit(peek) else {
-        throw self.error(.unicodeEscape)
+        throw self.error(.invalidUnicodeEscape)
       }
 
       self.advance()
@@ -243,11 +243,11 @@ extension Lexer {
 
     let string = String(scalars)
     guard let int = UInt32(string, radix: radix) else {
-      throw self.error(.unicodeEscape, location: start)
+      throw self.error(.invalidUnicodeEscape, location: start)
     }
 
     guard let result = UnicodeScalar(int) else {
-      throw self.error(.unicodeEscape, location: start)
+      throw self.error(.invalidUnicodeEscape, location: start)
     }
 
     return result

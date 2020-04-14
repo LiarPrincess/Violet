@@ -63,7 +63,7 @@ extension Lexer {
 
     case .greater: // Indent - always one token
       if self.indents.indentColumns.count + 1 >= maxIndent {
-        throw self.error(.tooDeep, location: start)
+        throw self.error(.tooManyIndentationLevels, location: start)
       }
 
       let start = SourceLocation(line: self.location.line, column: 0)
@@ -84,7 +84,7 @@ extension Lexer {
 
       let oldIndent = self.indents.indentColumns.last ?? defaultIndent
       if oldIndent != indent {
-        throw self.error(.dedent, location: location)
+        throw self.error(.noMatchingDedent, location: location)
       }
     }
   }

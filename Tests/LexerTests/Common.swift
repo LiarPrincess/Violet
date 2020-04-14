@@ -110,16 +110,20 @@ extension Common {
     }
   }
 
-  internal func notImplemented(_ lexer: Lexer,
-                               file:    StaticString = #file,
-                               line:    UInt = #line) -> NotImplemented? {
+  internal func unimplemented(_ lexer: Lexer,
+                              file:    StaticString = #file,
+                              line:    UInt = #line) -> LexerUnimplemented? {
     do {
       let result = try lexer.getToken()
       XCTAssert(false, "Token: \(result)", file: file, line: line)
       return nil
-    } catch let error as NotImplemented {
-      return error
     } catch {
+      if let e = error as? LexerError {
+        if case let LexerErrorKind.unimplemented(u) = e.kind {
+          return u
+        }
+      }
+
       XCTAssert(false, "\(error)", file: file, line: line)
       return nil
     }
@@ -127,12 +131,12 @@ extension Common {
 
   // MARK: - Encoding
 
-  internal func XCTAssertEncoding(_ error: NotImplemented,
+  internal func XCTAssertEncoding(_ error: LexerUnimplemented,
                                   _ expectedEncoding: String,
                                   file:    StaticString = #file,
                                   line:    UInt = #line) {
     switch error {
-    case .encodingOtherThanUTF8(let encoding):
+    case .nonUTF8Encoding(let encoding):
       XCTAssertEqual(encoding, expectedEncoding, file: file, line: line)
     default:
       XCTAssertTrue(false, "\(error)", file: file, line: line)

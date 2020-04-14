@@ -137,7 +137,7 @@ class IndentSpaceTests: XCTestCase, Common {
     self.getNewLine(lexer)
 
     if let error = self.error(lexer) {
-      XCTAssertEqual(error.kind, .dedent)
+      XCTAssertEqual(error.kind, .noMatchingDedent)
       XCTAssertEqual(error.location, SourceLocation(line: 2, column: 0))
     }
   }

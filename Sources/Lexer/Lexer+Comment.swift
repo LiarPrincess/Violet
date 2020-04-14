@@ -37,8 +37,8 @@ extension Lexer {
   /// Do we have anything in line before '#'? -> nop
   /// Do we have encoding after '#' -> check if utf-8
   private func checkForEncodingAndPossiblyThrow(
-    _ commentIndex: UnicodeScalarIndex) throws {
-
+    _ commentIndex: UnicodeScalarIndex
+  ) throws {
     // If we are in 2nd line we should also check if 1st is also comment,
     // but it is not that simple because we can have whitespace before '#'.
 
@@ -61,7 +61,7 @@ extension Lexer {
 
     let encoding = comment[encodingRange]
     guard self.isValidEncoding(encoding) else {
-      self.trapNonUTF8Encoding(encoding: String(encoding))
+      throw self.unimplmented(.nonUTF8Encoding(encoding: String(encoding)))
     }
 
     // uff... we are safe, no BadThings™ can happen now
