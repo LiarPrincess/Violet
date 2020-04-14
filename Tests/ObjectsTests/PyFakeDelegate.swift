@@ -6,6 +6,10 @@ class PyFakeDelegate: PyDelegate {
     unreachable()
   }
 
+  var currentlyHandledException: PyBaseException? {
+    unreachable()
+  }
+
   // swiftlint:disable:next function_parameter_count
   func eval(name: PyString?,
             qualname: PyString?,

@@ -489,11 +489,19 @@ class FStringTests: XCTestCase, Common {
       var string = self.createFString()
       try string.appendFormatString(s)
       XCTAssert(false)
-    } catch let error as NotImplemented {
-      XCTAssertEqual(error, NotImplemented.expressionInFormatSpecifierInsideFString)
+    } catch let e where self.is_expressionInFStringFormatSpecifier(error: e) {
+      // Nothing, everything is ok.
     } catch {
       XCTAssert(false, "\(error)")
     }
+  }
+
+  private func is_expressionInFStringFormatSpecifier(error: Error) -> Bool {
+    if case let FStringError.unimplemented(u) = error {
+      return u == .expressionInFStringFormatSpecifier
+    }
+
+    return false
   }
 
   // MARK: - Create fstring
