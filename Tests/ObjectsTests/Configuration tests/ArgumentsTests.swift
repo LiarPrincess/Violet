@@ -337,17 +337,17 @@ OPTIONS:
                           also PYTHONOPTIMIZE=x
   -OO                     do -O changes and also discard docstrings (overrides
                           '-O' if it is also set)
-  -Wdefault               warning control; warn once per call location; also
+  -Wd, -Wdefault          warning control; warn once per call location; also
                           PYTHONWARNINGS=arg
-  -Werror                 warning control; convert to exceptions; also
+  -We, -Werror            warning control; convert to exceptions; also
                           PYTHONWARNINGS=arg
-  -Walways                warning control; warn every time; also
+  -Wa, -Walways           warning control; warn every time; also
                           PYTHONWARNINGS=arg
-  -Wmodule                warning control; warn once per calling module; also
+  -Wm, -Wmodule           warning control; warn once per calling module; also
                           PYTHONWARNINGS=arg
-  -Wonce                  warning control; warn once per Python process; also
+  -Wo, -Wonce             warning control; warn once per Python process; also
                           PYTHONWARNINGS=arg
-  -Wignore                warning control; never warn; also PYTHONWARNINGS=arg
+  -Wi, -Wignore           warning control; never warn; also PYTHONWARNINGS=arg
   -b                      issue warning about str(bytes_instance),
                           str(bytearray_instance) and comparing bytes/bytearray
                           with str.
