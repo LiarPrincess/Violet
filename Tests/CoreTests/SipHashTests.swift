@@ -6,7 +6,7 @@ import XCTest
 
 // Use './Scripts/siphash.c' to generate test data.
 
-class SipHash: XCTestCase {
+class SipHashTests: XCTestCase {
 
   // MARK: - Empty
 
@@ -22,7 +22,7 @@ class SipHash: XCTestCase {
     let data: [UInt8] = Array(0..<15)
 
     let hash = data.withContiguousStorageIfAvailable { ptr -> UInt64 in
-      Core.SipHash.hash(key0: key0, key1: key1, bytes: ptr)
+      SipHash.hash(key0: key0, key1: key1, bytes: ptr)
     }
 
     guard let h = hash else {
@@ -92,7 +92,7 @@ class SipHash: XCTestCase {
     let key: (UInt64, UInt64) = (0x4920536565207468, 0x65204c6967687420)
 
     let result = value.utf8.withContiguousStorageIfAvailable { ptr -> UInt64 in
-      Core.SipHash.hash(key0: key.0, key1: key.1, bytes: ptr)
+      SipHash.hash(key0: key.0, key1: key.1, bytes: ptr)
     }
 
     // swiftlint:disable:next force_unwrapping
