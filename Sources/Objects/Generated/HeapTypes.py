@@ -13,6 +13,7 @@ def get_heap_type_name(t):
 if __name__ == '__main__':
   print(f'''\
 // swiftlint:disable file_length
+// swiftlint:disable trailing_newline
 
 {generated_warning}
 

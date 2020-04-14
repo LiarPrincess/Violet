@@ -6,12 +6,12 @@ extension Eval {
   /// Pushes `builtins.BuildClass()` onto the stack.
   /// It is later called by `CallFunction` to construct a class.
   internal func loadBuildClass() -> InstructionResult {
-    guard let buildClass = self.builtinSymbols.get(id: .__build_class__) else {
-      let e = Py.newNameError(msg: "__build_class__ not found")
+    switch Py.get__build_class__() {
+    case let .value(fn):
+      self.stack.push(fn)
+      return .ok
+    case let .error(e):
       return .exception(e)
     }
-
-    self.stack.push(buildClass)
-    return .ok
   }
 }

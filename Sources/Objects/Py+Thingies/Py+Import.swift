@@ -8,7 +8,7 @@
 
 // swiftlint:disable file_length
 
-// MARK: - Get import
+// MARK: - Get __import__
 
 extension PyInstance {
 

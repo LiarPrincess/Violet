@@ -34,7 +34,9 @@ extension PyInstance {
       return .value(result)
     }
 
-    switch self.callMethod(object: type, selector: .__instancecheck__, arg: instance) {
+    switch self.callMethod(object: type,
+                           selector: .__instancecheck__,
+                           arg: instance) {
     case .value(let o):
       return self.isTrueBool(o)
     case .missingMethod:
@@ -73,7 +75,9 @@ extension PyInstance {
       return owner.isSubtype(of: `super`)
     }
 
-    switch self.callMethod(object: type, selector: .__subclasscheck__, arg: `super`) {
+    switch self.callMethod(object: type,
+                           selector: .__subclasscheck__,
+                           arg: `super`) {
     case .value(let o):
       return self.isTrueBool(o)
     case .missingMethod:

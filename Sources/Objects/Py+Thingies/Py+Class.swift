@@ -2,6 +2,25 @@ import Core
 
 extension PyInstance {
 
+  // MARK: - Get __build_class__
+
+  /// In CPython: interp->import_func
+  ///
+  /// This value is set in:
+  /// 'initimport(PyInterpreterState *interp, PyObject *sysmod)'
+  public func get__build_class__() -> PyResult<PyObject> {
+    let dict = Py.builtinsModule.__dict__
+
+    if let fn = dict.get(id: .__build_class__) {
+      return .value(fn)
+    }
+
+    let msg = "'__build_class__' function not found inside builtins module"
+    return .error(Py.newAttributeError(msg: msg))
+  }
+
+  // MARK: - __build_class__
+
   /// static PyObject *
   /// builtin___build_class__(PyObject *self, PyObject *const *args, ...)
   public func buildClass(fn: PyFunction,
