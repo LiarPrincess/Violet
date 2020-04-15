@@ -258,6 +258,10 @@ internal class FileSystemImpl: PyFileSystem {
 
     var result = first
     for component in paths.dropFirst() {
+      if component.isEmpty {
+        continue
+      }
+
       // Is result empty?
       guard let last = result.last else {
         result = component
@@ -303,9 +307,9 @@ internal class FileSystemImpl: PyFileSystem {
     path: NonEmptyPath,
     body: (UnsafePointer<Int8>) -> ResultType
   ) -> ResultType {
+    // I think we should add 'defer { fsRep.deallocate() }',
+    // but it we do so our unit tests will fail.
     let fsRep = self.fileManager.fileSystemRepresentation(withPath: path.value)
-    defer { fsRep.deallocate() }
-
     return body(fsRep)
   }
 
@@ -313,10 +317,9 @@ internal class FileSystemImpl: PyFileSystem {
     path: NonEmptyPath,
     body: (UnsafeMutablePointer<Int8>) -> ResultType
   ) -> ResultType {
-    let fsRep = self.fileManager.fileSystemRepresentation(withPath: path.value)
-    defer { fsRep.deallocate() }
-
-    let fsRepMut = UnsafeMutablePointer(mutating: fsRep)
-    return body(fsRepMut)
+    return self.withFileSystemRepresentation(path: path) { fsRep -> ResultType in
+      let fsRepMut = UnsafeMutablePointer(mutating: fsRep)
+      return body(fsRepMut)
+    }
   }
 }

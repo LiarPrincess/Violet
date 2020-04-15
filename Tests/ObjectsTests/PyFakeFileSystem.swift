@@ -55,6 +55,20 @@ class PyFakeFileSystem: PyFileSystem {
     return .error(self.createOSError())
   }
 
+  // MARK: - Path
+
+  func basename(path: String) -> String {
+    return ""
+  }
+
+  func dirname(path: String) -> String {
+    return ""
+  }
+
+  func join(paths: String...) -> String {
+    return ""
+  }
+
   // MARK: - Helpers
 
   private func createOSError(fn: StaticString = #function) -> PyOSError {
