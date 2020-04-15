@@ -195,8 +195,8 @@ extension PyInstance {
     }
   }
 
-  private func open(source: FileSource,
-                    mode: FileMode) -> PyResult<FileDescriptorType> {
+  internal func open(source: FileSource,
+                     mode: FileMode) -> PyResult<FileDescriptorType> {
 
     switch source {
     case let .fileDescriptor(fd):

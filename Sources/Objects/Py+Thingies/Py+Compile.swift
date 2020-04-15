@@ -62,7 +62,7 @@ LexerDelegate, ParserDelegate, CompilerDelegate {
   }
 }
 
-// MARK: - BuiltinFunctions
+// MARK: - Compile
 
 extension PyInstance {
 
@@ -109,16 +109,14 @@ extension PyInstance {
                         optimize: optimize)
   }
 
-  /// Compile object at a given `url`.
-  public func compile(url: URL,
+  /// Compile object at a given `path`.
+  public func compile(path: String,
                       mode: ParserMode,
                       optimize: OptimizationLevel? = nil) -> PyResult<PyCode> {
     let data: Data
-    switch Py.fileSystem.read(path: url.path) {
-    case let .value(d):
-      data = d
-    case let .error(e):
-      return .error(e)
+    switch Py.fileSystem.read(path: path) {
+    case let .value(d): data = d
+    case let .error(e): return .error(e)
     }
 
     let encoding = PyStringEncoding.default
@@ -127,9 +125,11 @@ extension PyInstance {
       return .error(e)
     }
 
+    let filename = Py.fileSystem.basename(path: path)
+
     return Py.compile(
       source: source,
-      filename: url.lastPathComponent,
+      filename: filename,
       mode: mode,
       optimize: optimize
     )

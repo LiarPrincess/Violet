@@ -142,7 +142,7 @@ extension VM {
     }
 
     let code: PyCode
-    switch Py.compile(url: script.__main__, mode: .fileInput) {
+    switch Py.compile(path: script.__main__, mode: .fileInput) {
     case let .value(c): code = c
     case let .error(e): return .error(e)
     }
@@ -151,7 +151,7 @@ extension VM {
       return .error(e)
     }
 
-    if let e = self.prependPath(value: script.directory.path) {
+    if let e = self.prependPath(value: script.directory) {
       return .error(e)
     }
 
@@ -172,9 +172,9 @@ extension VM {
 
   private struct ScriptLocation {
     /// File to execute.
-    fileprivate let __main__: URL
+    fileprivate let __main__: String
     /// Directory to add to `sys.path`.
-    fileprivate let directory: URL
+    fileprivate let directory: String
   }
 
   private func getScriptLocation(path: String) -> PyResult<ScriptLocation> {
@@ -193,9 +193,8 @@ extension VM {
     // otherwise try '__main_._py' inside this dir.
 
     if stat.isRegularFile {
-      let main = URL(fileURLWithPath: path, isDirectory: false)
-      let dir = main.deletingLastPathComponent()
-      return .value(ScriptLocation(__main__: main, directory: dir))
+      let dir = self.fileSystem.dirname(path: path)
+      return .value(ScriptLocation(__main__: path, directory: dir))
     }
 
     guard stat.isDirectory else {
@@ -203,16 +202,16 @@ extension VM {
       return .error(Py.newOSError(msg: msg))
     }
 
-    let dir = URL(fileURLWithPath: path, isDirectory: true)
-    let main = dir.appendingPathComponent("__main__.py")
+    let dir = path
+    let main = self.fileSystem.join(paths: dir, "__main__.py")
 
-    switch self.fileSystem.stat(path: main.path) {
+    switch self.fileSystem.stat(path: main) {
     case .value(let s):
       if s.isRegularFile {
         return .value(ScriptLocation(__main__: main, directory: dir))
       }
 
-      let msg = "'\(main.path)' is not a file (mode: \(s.st_mode))"
+      let msg = "'\(main)' is not a file (mode: \(s.st_mode))"
       return .error(Py.newOSError(msg: msg))
 
     case .enoent:

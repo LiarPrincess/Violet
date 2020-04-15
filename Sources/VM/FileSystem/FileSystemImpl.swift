@@ -1,6 +1,8 @@
 import Objects
 import Foundation
 
+// swiftlint:disable file_length
+
 // A lot of this code was based on:
 // https://github.com/apple/swift-corelibs-foundation/blob/master/Sources/
 //    Foundation/FileManager%2BPOSIX.swift
@@ -11,6 +13,12 @@ private let _stat = Darwin.stat(_:_:)
 #elseif canImport(Glibc)
 import Glibc
 private let _stat = Darwin.stat(_:_:)
+#endif
+
+#if os(Windows)
+let pathSeparators: [Character] = ["\\", "/"]
+#else
+let pathSeparators: [Character] = ["/"]
 #endif
 
 internal class FileSystemImpl: PyFileSystem {
@@ -46,8 +54,10 @@ internal class FileSystemImpl: PyFileSystem {
   /// Check if the file at given path exists.
   internal func exists(path: String, isDirectory: inout Bool) -> Bool {
     var isDirResult: ObjCBool = false
-    let existsResult = self.fileManager.fileExists(atPath: path,
-                                                   isDirectory: &isDirResult)
+    let existsResult = self.fileManager.fileExists(
+      atPath: path,
+      isDirectory: &isDirResult
+    )
 
     isDirectory = isDirResult.boolValue
     return existsResult
@@ -100,7 +110,11 @@ internal class FileSystemImpl: PyFileSystem {
   /// Foundation:
   /// func _fileExists(atPath path: String, , isDirectory: UnsafeMutablePointer<ObjCBool>?)
   internal func stat(path: String) -> FileStatResult {
-    return self.withFileSystemRepresentation(path: path) { fsRep in
+    guard let nonEmpty = NonEmptyPath(from: path) else {
+      return .enoent
+    }
+
+    return self.withFileSystemRepresentation(path: nonEmpty) { fsRep in
       var info = Foundation.stat()
       guard _stat(fsRep, &info) == 0 else {
         return self.handleStatError(path: path)
@@ -149,7 +163,11 @@ internal class FileSystemImpl: PyFileSystem {
   /// Foundation:
   /// func _contentsOfDir(atPath path: String, _ closure: (String, Int32) throws -> ())
   internal func listDir(path: String) -> ListDirResult {
-    return  self.withFileSystemRepresentation(path: path) { fsRep in
+    guard let nonEmpty = NonEmptyPath(from: path) else {
+      return .enoent
+    }
+
+    return  self.withFileSystemRepresentation(path: nonEmpty) { fsRep in
       guard let dir = opendir(fsRep) else {
         return .enoent
       }
@@ -197,14 +215,108 @@ internal class FileSystemImpl: PyFileSystem {
     return .entries(result)
   }
 
+  // MARK: - Basename
+
+  internal func basename(path: String) -> String {
+    guard let nonEmpty = NonEmptyPath(from: path) else {
+      return "" // $ basename ""
+    }
+
+    // 'Foundation.basename' returns 'UnsafeMutablePointer<Int8>!',
+    // so it is safe to unwrap.
+    let cString = self.withMutableFileSystemRepresentation(
+      path: nonEmpty,
+      body: Foundation.basename
+    )! // swiftlint:disable:this force_unwrapping
+
+    return String(cString: cString)
+  }
+
+  // MARK: - Dirname
+
+  internal func dirname(path: String) -> String {
+    guard let nonEmpty = NonEmptyPath(from: path) else {
+      return "." // $ dirname ""
+    }
+
+    // 'Foundation.dirname' returns 'UnsafeMutablePointer<Int8>!',
+    // so it is safe to unwrap.
+    let cString = self.withMutableFileSystemRepresentation(
+      path: nonEmpty,
+      body: Foundation.dirname
+    )! // swiftlint:disable:this force_unwrapping
+
+    return String(cString: cString)
+  }
+
+  // MARK: - Join
+
+  internal func join(paths: String...) -> String {
+    guard let first = paths.first else {
+      return ""
+    }
+
+    var result = first
+    for component in paths.dropFirst() {
+      // Is result empty?
+      guard let last = result.last else {
+        result = component
+        continue
+      }
+
+      if !self.isPathSeparator(char: last) {
+        // We will do this even if 'component' is empty
+        result.append(pathSeparators[0])
+      }
+
+      result.append(component)
+    }
+
+    return result
+  }
+
+  private func isPathSeparator(char: Character) -> Bool {
+    return pathSeparators.contains(char)
+  }
+
   // MARK: - Helpers
 
+  /// `FileManager.fileSystemRepresentation` does not accept empty path.
+  /// We will prevent that on the type level.
+  ///
+  /// Otherwise we would have 'to remember' to check this every time.
+  /// And you know how it works when programmers have 'to remember' stuff...
+  private struct NonEmptyPath {
+
+    fileprivate let value: String
+
+    fileprivate init?(from value: String) {
+      if value.isEmpty {
+        return nil
+      }
+
+      self.value = value
+    }
+  }
+
   private func withFileSystemRepresentation<ResultType>(
-    path: String,
-    _ body: (UnsafePointer<Int8>) -> ResultType
+    path: NonEmptyPath,
+    body: (UnsafePointer<Int8>) -> ResultType
   ) -> ResultType {
-    let fsRep = self.fileManager.fileSystemRepresentation(withPath: path)
+    let fsRep = self.fileManager.fileSystemRepresentation(withPath: path.value)
     defer { fsRep.deallocate() }
+
     return body(fsRep)
+  }
+
+  private func withMutableFileSystemRepresentation<ResultType>(
+    path: NonEmptyPath,
+    body: (UnsafeMutablePointer<Int8>) -> ResultType
+  ) -> ResultType {
+    let fsRep = self.fileManager.fileSystemRepresentation(withPath: path.value)
+    defer { fsRep.deallocate() }
+
+    let fsRepMut = UnsafeMutablePointer(mutating: fsRep)
+    return body(fsRepMut)
   }
 }

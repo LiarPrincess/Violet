@@ -94,14 +94,14 @@ extension PyInstance {
     case .error(let e): return .error(e)
     }
 
-    let url: URL
+    let path: String
     switch self.findModuleOnDisc(spec: spec) {
-    case let .value(u): url = u
+    case let .value(p): path = p
     case let .error(e): return .error(e)
     }
 
     let code: PyCode
-    switch self.compile(url: url, mode: .fileInput) {
+    switch self.compile(path: path, mode: .fileInput) {
     case let .value(c): code = c
     case let .error(e):
       let msg = "can't compile \(spec.name)"
@@ -154,7 +154,7 @@ extension PyInstance {
     }
   }
 
-  private func findModuleOnDisc(spec: ModuleSpec) -> ImportlibResult<URL> {
+  private func findModuleOnDisc(spec: ModuleSpec) -> ImportlibResult<String> {
     let moduleSearchPaths: PyList
     switch Py.sys.getPath() {
     case let .value(l): moduleSearchPaths = l
@@ -163,7 +163,7 @@ extension PyInstance {
       return .error(e)
     }
 
-    var triedPaths = [URL]()
+    var triedPaths = [String]()
     for object in moduleSearchPaths.elements {
       // If this is not 'str' then ignore
       guard let path = object as? PyString else {
@@ -171,13 +171,11 @@ extension PyInstance {
       }
 
       // Try 'path/filename'
-      let pathUrl = URL(fileURLWithPath: path.value)
-      let moduleUrl = pathUrl.appendingPathComponent(spec.filename)
-
-      triedPaths.append(pathUrl)
+      let modulePath = Py.fileSystem.join(paths: path.value, spec.filename)
+      triedPaths.append(path.value)
 
       let stat: FileStat
-      switch self.fileSystem.stat(path: moduleUrl.path) {
+      switch self.fileSystem.stat(path: modulePath) {
       case .value(let s): stat = s
       case .enoent: continue // No such file - just try next 'path'
       case .error(let e):
@@ -192,11 +190,11 @@ extension PyInstance {
       // Currently our 'importlib' is just a single file,
       // there is no need to support full module with '__init__' etc.
       if stat.isRegularFile {
-        return .value(moduleUrl)
+        return .value(modulePath)
       }
     }
 
-    let paths = triedPaths.map { $0.path }.joined(separator: ", ")
+    let paths = triedPaths.joined(separator: ", ")
     let msg = "'\(spec.name)' not found, tried: \(paths)."
     return .error(self.newPyImportError(msg: msg))
   }

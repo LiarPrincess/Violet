@@ -112,17 +112,15 @@ extension Sys {
     result.append(contentsOf: envPaths)
 
     // Next goes merge of compile-time $VIOLETPATH with dynamically located prefix.
-    let prefixUrl = URL(fileURLWithPath: prefix.value)
-
     for suffix in Configure.pythonPath {
-      let url = prefixUrl.appendingPathComponent(suffix)
-      result.append(url.path)
+      let path = Py.fileSystem.join(paths: prefix.value, suffix)
+      result.append(path)
     }
 
     // Violet special: add 'prefix' and 'prefix/Lib'
     // This will add 'Lib' directory from our repository root.
-    result.append(prefixUrl.path)
-    result.append(prefixUrl.appendingPathComponent(lib).path)
+    result.append(prefix.value)
+    result.append(Py.fileSystem.join(paths: prefix.value, lib))
 
     result.removeDuplicates()
 
@@ -141,22 +139,17 @@ extension Sys {
     // CPython: Search from argv0_path, until root.
     // Violet:  We will start from executable path.
     let executablePath = Py.config.executablePath
-    var candidate = URL(fileURLWithPath: executablePath)
+    var candidate = Py.fileSystem.dirname(path: executablePath)
 
-    var depth = 0
-    let maxDepth = candidate.pathComponents.count
+    while candidate != Py.fileSystem.topDirname {
+      let landmarkFile = Py.fileSystem.join(paths: candidate, lib, landmark)
 
-    while depth < maxDepth {
-      let landmarkUrl = candidate
-        .appendingPathComponent(lib)
-        .appendingPathComponent(landmark)
-
-      if self.isFile(path: landmarkUrl.path) {
-        return Py.newString(candidate.path)
+      if self.isFile(path: landmarkFile) {
+        return Py.newString(candidate)
       }
 
-      candidate.deleteLastPathComponent()
-      depth += 1
+      // Try parent directory
+      candidate = Py.fileSystem.dirname(path: candidate)
     }
 
     return Py.newString(Configure.prefix)

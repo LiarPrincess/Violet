@@ -121,7 +121,7 @@ extension PyInstance {
   public func newOSError(errno: Int32, path: String) -> PyOSError {
     // If we can't get filename then we will use full path.
     // It is still better than not providing anything.
-    let filename = self.getFilename(path: path) ?? path
+    let filename = Py.fileSystem.basename(path: path)
     return self.newOSError(errno: errno, filename: filename)
   }
 
@@ -138,14 +138,6 @@ extension PyInstance {
     }
 
     return result
-  }
-
-  /// If this string represents file path then try to obtain
-  /// name of the file/directory.
-  private func getFilename(path: String) -> String? {
-    let url = URL(fileURLWithPath: path)
-    let filename = url.lastPathComponent
-    return filename.isEmpty ? nil : filename
   }
 
   // MARK: - File not found

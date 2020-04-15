@@ -1,6 +1,8 @@
 import Core
 import Foundation
 
+// MARK: - FileStatResult
+
 public enum FileStatResult {
   /// Valid result
   case value(FileStat)
@@ -9,6 +11,8 @@ public enum FileStatResult {
   /// Ooopps...
   case error(PyOSError)
 }
+
+// MARK: - ListDirResult
 
 public enum ListDirResult {
   /// List containing names of the entries
@@ -19,6 +23,8 @@ public enum ListDirResult {
   case error(PyOSError)
 }
 
+// MARK: - PyFileSystem
+
 /// Delegate for all of the file-related needs.
 ///
 /// You can use dictionary-backed mock for tests.
@@ -26,6 +32,8 @@ public enum ListDirResult {
 /// Requires `AnyObject` to avoid cycle if the owner of `Py`
 /// is also set as fileSystem.
 public protocol PyFileSystem: AnyObject {
+
+  // MARK: - Cwd
 
   /// The path to the program’s current directory.
   ///
@@ -40,10 +48,14 @@ public protocol PyFileSystem: AnyObject {
   /// (Docs taken from `Foundation.FileManager.currentDirectoryPath`.)
   var currentWorkingDirectory: String { get }
 
+  // MARK: - Open
+
   /// Open file with given `fd`.
   func open(fd: Int32, mode: FileMode) -> PyResult<FileDescriptorType>
   /// Open file at given `path`.
   func open(path: String, mode: FileMode) -> PyResult<FileDescriptorType>
+
+  // MARK: - Stat
 
   /// Information about given file/dir.
   ///
@@ -54,10 +66,14 @@ public protocol PyFileSystem: AnyObject {
   /// Always chase the link.
   func stat(path: String) -> FileStatResult
 
+  // MARK: - List dir
+
   /// List containing the names of the entries in the directory given by `fd`.
   func listDir(fd: Int32) -> ListDirResult
   /// List containing the names of the entries in the directory given by `path`.
   func listDir(path: String) -> ListDirResult
+
+  // MARK: - Read
 
   /// Read the whole file.
   ///
@@ -67,7 +83,59 @@ public protocol PyFileSystem: AnyObject {
   ///
   /// Default implementation available.
   func read(path: String) -> PyResult<Data>
+
+  // MARK: - Basename
+
+  /// Returns the last portion of a path, similar to the Unix `basename` command.
+  /// Trailing directory separators are ignored.
+  ///
+  /// Example:
+  /// ```
+  /// basename('/foo/bar/baz/asdf/quux.html')
+  /// Returns: 'quux.html'
+  /// ```
+  ///
+  /// This doc was sponsored (aka. shamelessly stolen) by Node.
+  func basename(path: String) -> String
+
+  // MARK: - Dirname
+
+  /// Value returned by `dirname` when we are at the top directory.
+  ///
+  /// Default implementation available
+  /// (based on [man dirname](https://linux.die.net/man/1/dirname)).
+  var topDirname: String { get }
+
+  /// Returns the directory name of a path, similar to the Unix `dirname` command.
+  /// Trailing directory separators are ignored.
+  ///
+  /// Example:
+  /// ```
+  /// dirname('/foo/bar/baz/asdf/quux')
+  /// Returns: '/foo/bar/baz/asdf'
+  /// ```
+  ///
+  /// This doc was sponsored (aka. shamelessly stolen) by Node.
+  func dirname(path: String) -> String
+
+  // MARK: - Join
+
+  ///Joins all given `path` segments together using the platform-specific
+  ///separator as a delimiter.
+  ///
+  /// Zero-length path segments are ignored.
+  ///
+  /// Example:
+  /// ```
+  /// join('/foo', 'bar', 'baz/asdf');
+  /// Returns: '/foo/bar/baz/asdf'
+  /// ```
+  ///
+  /// This doc was sponsored (aka. shamelessly stolen) by Node.
+  func join(paths: String...) -> String
 }
+
+// MARK: - Default implementations
 
 extension PyFileSystem {
 
@@ -84,4 +152,6 @@ extension PyFileSystem {
   private func readToEnd(fd: FileDescriptorType) -> PyResult<Data> {
     return fd.readToEnd()
   }
+
+  public var topDirname: String { return "." }
 }
