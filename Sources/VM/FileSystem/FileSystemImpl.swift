@@ -234,9 +234,9 @@ internal class FileSystemImpl: PyFileSystem {
 
   // MARK: - Dirname
 
-  internal func dirname(path: String) -> String {
+  internal func dirname(path: String) -> DirnameResult {
     guard let nonEmpty = NonEmptyPath(from: path) else {
-      return "." // $ dirname ""
+      return .root(".") // $ dirname ""
     }
 
     // 'Foundation.dirname' returns 'UnsafeMutablePointer<Int8>!',
@@ -246,7 +246,16 @@ internal class FileSystemImpl: PyFileSystem {
       body: Foundation.dirname
     )! // swiftlint:disable:this force_unwrapping
 
-    return String(cString: cString)
+    // https://linux.die.net/man/3/dirname
+    let result = String(cString: cString)
+    switch result {
+    case ".":
+      return .root(".")
+    case "/":
+      return .root("/")
+    default:
+      return .path(result)
+    }
   }
 
   // MARK: - Join

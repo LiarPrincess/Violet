@@ -194,7 +194,7 @@ extension VM {
 
     if stat.isRegularFile {
       let dir = self.fileSystem.dirname(path: path)
-      return .value(ScriptLocation(__main__: path, directory: dir))
+      return .value(ScriptLocation(__main__: path, directory: dir.path))
     }
 
     guard stat.isDirectory else {

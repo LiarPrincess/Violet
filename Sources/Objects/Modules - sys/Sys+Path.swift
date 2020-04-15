@@ -138,18 +138,24 @@ extension Sys {
 
     // CPython: Search from argv0_path, until root.
     // Violet:  We will start from executable path.
-    let executablePath = Py.config.executablePath
-    var candidate = Py.fileSystem.dirname(path: executablePath)
+    var path = Py.config.executablePath
 
-    while candidate != Py.fileSystem.topDirname {
-      let landmarkFile = Py.fileSystem.join(paths: candidate, lib, landmark)
+    arrivedToRoot: while true {
+      let dir = Py.fileSystem.dirname(path: path)
+      let landmarkFile = Py.fileSystem.join(paths: dir.path, lib, landmark)
 
       if self.isFile(path: landmarkFile) {
-        return Py.newString(candidate)
+        return Py.newString(dir.path)
       }
 
-      // Try parent directory
-      candidate = Py.fileSystem.dirname(path: candidate)
+      switch dir.kind {
+      case .directory:
+        // Try parent directory
+        path = dir.path
+      case .root:
+        // We cannot go more 'up'
+        break arrivedToRoot
+      }
     }
 
     return Py.newString(Configure.prefix)

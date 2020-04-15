@@ -23,6 +23,28 @@ public enum ListDirResult {
   case error(PyOSError)
 }
 
+// MARK: - DirnameResult
+
+public struct DirnameResult {
+
+  public enum Kind {
+    /// Parent directory.
+    case directory
+    /// File system (or local) root.
+    ///
+    /// Calling `dirname` again will return the same result.
+    case root
+  }
+
+  public let kind: Kind
+  public let path: String
+
+  public init(kind: Kind, path: String) {
+    self.kind = kind
+    self.path = path
+  }
+}
+
 // MARK: - PyFileSystem
 
 /// Delegate for all of the file-related needs.
@@ -100,12 +122,6 @@ public protocol PyFileSystem: AnyObject {
 
   // MARK: - Dirname
 
-  /// Value returned by `dirname` when we are at the top directory.
-  ///
-  /// Default implementation available
-  /// (based on [man dirname](https://linux.die.net/man/1/dirname)).
-  var topDirname: String { get }
-
   /// Returns the directory name of a path, similar to the Unix `dirname` command.
   /// Trailing directory separators are ignored.
   ///
@@ -116,7 +132,7 @@ public protocol PyFileSystem: AnyObject {
   /// ```
   ///
   /// This doc was sponsored (aka. shamelessly stolen) by Node.
-  func dirname(path: String) -> String
+  func dirname(path: String) -> DirnameResult
 
   // MARK: - Join
 

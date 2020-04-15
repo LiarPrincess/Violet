@@ -6,37 +6,45 @@ class FileSystemTests: XCTestCase {
   // MARK: - Basename
 
   func test_basename() {
+    XCTAssertEqual(self.basename(path: "/frozen/elsa.txt"), "elsa.txt")
+    XCTAssertEqual(self.basename(path: "/frozen/.elsa"), ".elsa")
+    XCTAssertEqual(self.basename(path: "/frozen/elsa/"), "elsa")
+    XCTAssertEqual(self.basename(path: "/frozen/."), ".")
+    XCTAssertEqual(self.basename(path: "/frozen/.."), "..")
+    XCTAssertEqual(self.basename(path: "/frozen"), "frozen")
+    XCTAssertEqual(self.basename(path: "frozen"), "frozen")
+    XCTAssertEqual(self.basename(path: "."), ".")
+    XCTAssertEqual(self.basename(path: ".."), "..")
+    XCTAssertEqual(self.basename(path: "/"), "/")
+    XCTAssertEqual(self.basename(path: "//frozen"), "frozen")
+    XCTAssertEqual(self.basename(path: ""), "")
+  }
+
+  private func basename(path: String) -> String {
     let fs = self.createFileSystem()
-    XCTAssertEqual(fs.basename(path: "/frozen/elsa.txt"), "elsa.txt")
-    XCTAssertEqual(fs.basename(path: "/frozen/.elsa"), ".elsa")
-    XCTAssertEqual(fs.basename(path: "/frozen/elsa/"), "elsa")
-    XCTAssertEqual(fs.basename(path: "/frozen/."), ".")
-    XCTAssertEqual(fs.basename(path: "/frozen/.."), "..")
-    XCTAssertEqual(fs.basename(path: "/frozen"), "frozen")
-    XCTAssertEqual(fs.basename(path: "frozen"), "frozen")
-    XCTAssertEqual(fs.basename(path: "."), ".")
-    XCTAssertEqual(fs.basename(path: ".."), "..")
-    XCTAssertEqual(fs.basename(path: "/"), "/")
-    XCTAssertEqual(fs.basename(path: "//frozen"), "frozen")
-    XCTAssertEqual(fs.basename(path: ""), "")
+    return fs.basename(path: path)
   }
 
   // MARK: - Dirname
 
   func test_dirname() {
+    XCTAssertEqual(self.dirname(path: "/frozen/elsa.txt"), "/frozen")
+    XCTAssertEqual(self.dirname(path: "/frozen/.elsa"), "/frozen")
+    XCTAssertEqual(self.dirname(path: "/frozen/elsa/"), "/frozen")
+    XCTAssertEqual(self.dirname(path: "/frozen/."), "/frozen")
+    XCTAssertEqual(self.dirname(path: "/frozen/.."), "/frozen")
+    XCTAssertEqual(self.dirname(path: "/frozen"), "/")
+    XCTAssertEqual(self.dirname(path: "frozen"), ".")
+    XCTAssertEqual(self.dirname(path: "."), ".")
+    XCTAssertEqual(self.dirname(path: ".."), ".")
+    XCTAssertEqual(self.dirname(path: "/"), "/")
+    XCTAssertEqual(self.dirname(path: "//frozen"), "/")
+    XCTAssertEqual(self.dirname(path: ""), ".")
+  }
+
+  private func dirname(path: String) -> String {
     let fs = self.createFileSystem()
-    XCTAssertEqual(fs.dirname(path: "/frozen/elsa.txt"), "/frozen")
-    XCTAssertEqual(fs.dirname(path: "/frozen/.elsa"), "/frozen")
-    XCTAssertEqual(fs.dirname(path: "/frozen/elsa/"), "/frozen")
-    XCTAssertEqual(fs.dirname(path: "/frozen/."), "/frozen")
-    XCTAssertEqual(fs.dirname(path: "/frozen/.."), "/frozen")
-    XCTAssertEqual(fs.dirname(path: "/frozen"), "/")
-    XCTAssertEqual(fs.dirname(path: "frozen"), ".")
-    XCTAssertEqual(fs.dirname(path: "."), ".")
-    XCTAssertEqual(fs.dirname(path: ".."), ".")
-    XCTAssertEqual(fs.dirname(path: "/"), "/")
-    XCTAssertEqual(fs.dirname(path: "//frozen"), "/")
-    XCTAssertEqual(fs.dirname(path: ""), ".")
+    return fs.dirname(path: path).path
   }
 
   // MARK: - Join
