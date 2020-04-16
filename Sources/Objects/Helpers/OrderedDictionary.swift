@@ -60,12 +60,16 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
 
   /// Custom index with special reserved 'notAssigned' and 'deleted' values
   ///
-  /// We could use enum but that would cost us 2x more memory.
+  /// We could use enum, but that would cost us 2x more memory.
   /// (It would be also more type-safe, but nobody cares about that...)
   ///
-  /// If we want to optimize memory footprint further we can use 2 different
-  /// kind of indices: `Int8` and `Int` with `IndexKind` enum
+  /// HOT!
+  /// If we want to optimize cache access (and by that performance) we can use
+  /// 2 different kind of indices: `Int8` and `Int` with `IndexKind` enum
   /// (similiar to Foundation.Data._Representation).
+  ///
+  /// In such case we would use `Int8` for dictionaries with \<127 slots
+  /// (which means 90% of them), then if we need more we would move to `Int`.
   fileprivate struct EntryIndex: Equatable {
 
     /// Slot is free to use.
@@ -107,10 +111,15 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   /// Read the giant comment in `CPython/Objects/dictobject.c' for reasoning.
   /// Also, we will ignore overflows.
   internal struct IndexCalculation {
+
     /// Modulo by dictionary size.
+    ///
+    /// When we have dictionary with 32 slots and we get index 60,
+    /// we hvae to clamp it to be <=32.
     private let mask: Int
     /// Include hash in the index calculation (this way it is more 'random')
     private var pertub: Int
+    /// Index at which we will try to get/set/delete.
     internal private(set) var value: Int
 
     internal init(hash: Int, dictionarySize: Int) {
@@ -119,13 +128,14 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
     }
 
     internal init(hash: Int, mask: Int) {
-      assert(mask >= 0)
+      assert(mask >= 0, "Dict size <0? Hmm... interesting.")
 
       self.mask = mask
       self.pertub = Swift.abs(Swift.max(hash, Int.min + 1)) // abs(Int.min) -> trap
-      self.value = self.pertub & self.mask
+      self.value = self.pertub & self.mask // Initial index value
     }
 
+    /// Go to next index.
     internal mutating func calculateNext() {
       self.pertub >>= perturbShift
       self.value = (5 * self.value + self.pertub + 1) & self.mask
@@ -138,6 +148,8 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   internal fileprivate(set) var entries: [EntryOrDeleted]
   /// Actual hash table of `self.size` entries. Holds indices from `self.entries`.
   /// Indices must be: `0 <= indice < usableFraction(self.size)`.
+  ///
+  /// Having separate `indices` and `entries` is good for cache.
   fileprivate var indices: [EntryIndex]
 
   /// Number of used entries in `self.indices`.
@@ -225,6 +237,8 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
     self.indices = copy.indices
     self.used = copy.used
     self.usable = copy.usable
+
+    self.checkConsistency()
   }
 
   // MARK: - Get
