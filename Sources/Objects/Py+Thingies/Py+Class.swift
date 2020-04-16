@@ -21,6 +21,10 @@ extension PyInstance {
 
   // MARK: - __build_class__
 
+  /// Low level `class` building machinery.
+  /// Available in `Python` as `builtins.__build_class__`
+  /// (just remember to `import builtins` before).
+  ///
   /// static PyObject *
   /// builtin___build_class__(PyObject *self, PyObject *const *args, ...)
   public func __build_class__(fn: PyFunction,

@@ -105,6 +105,11 @@ extension Sys {
   /// static _PyInitError
   /// calculate_module_search_path(const _PyCoreConfig *core_config, ...)
   internal func createInitialPath(prefix: PyString) -> PyList {
+    // If we have override in config -> use it
+    if let fromConfig = Py.config.sys.path {
+      return self.asList(values: fromConfig)
+    }
+
     var result = [String]()
 
     // Run-time value of $VIOLETPATH goes first
@@ -124,13 +129,22 @@ extension Sys {
 
     result.removeDuplicates()
 
-    let strings = result.map(Py.newString(_:))
-    return Py.newList(strings)
+    return self.asList(values: result)
+  }
+
+  private func asList(values: [String]) -> PyList {
+    let elements = values.map(Py.newString(_:))
+    return Py.newList(elements)
   }
 
   /// static int
   /// search_for_prefix(const _PyCoreConfig *core_config, ...)
   internal func createInitialPrefix() -> PyString {
+    // If we have override in config -> use it
+    if let fromConfig = Py.config.sys.prefix {
+      return Py.newString(fromConfig)
+    }
+
     // If $VIOLETHOME is set, we believe it unconditionally
     if let home = Py.config.environment.violetHome {
       return Py.newString(home)

@@ -29,6 +29,28 @@ public struct PyConfig {
   /// Default stream for printing errors.
   public var standardError: FileDescriptorType
 
+  public struct Sys {
+
+    /// Value to use as initial `sys.path`.
+    ///
+    /// If `nil`: it will use default `Python` logic to obtain value.
+    /// Example usage: avoid file system access in unit tests.
+    public var path: [String]?
+    // swiftlint:disable:previous discouraged_optional_collection
+
+    /// Value to use as initial `sys.prefix`.
+    ///
+    /// If `nil` it will use default `Python` logic to obtain value.
+    /// Example usage: avoid file system access in unit tests.
+    public var prefix: String?
+  }
+
+  /// Values used when initializing `sys`.
+  ///
+  /// You can use it to override default logic.
+  /// Example usage: avoid file system access in unit tests.
+  public var sys = Sys()
+
   public init(
     arguments: Arguments,
     environment: Environment,
