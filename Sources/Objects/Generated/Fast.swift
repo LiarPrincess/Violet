@@ -1,15 +1,19 @@
+import Core
+
 // swiftlint:disable line_length
-// swiftlint:disable file_length
+// swiftlint:disable opening_brace
+// swiftlint:disable trailing_newline
 // swiftlint:disable discouraged_optional_boolean
+// swiftlint:disable file_length
 
 // Please note that this file was automatically generated. DO NOT EDIT!
 // The same goes for other files in 'Generated' directory.
 
-import Core
-
 // Sometimes instead of doing slow Python dispatch we will use Swift protocols.
 // Feel free to add new protocols if you need them (just modify the script
 // responsible for generating the code).
+
+// MARK: - Owner protocols
 
 // This protocol is here only to check if we have consistent '__new__' signatures.
 // It will not be used in 'Fast' dispatch.
@@ -102,6 +106,8 @@ protocol __truediv__Owner { func truediv(_ other: PyObject) -> PyResult<PyObject
 protocol __trunc__Owner { func trunc() -> PyObject }
 protocol __xor__Owner { func xor(_ other: PyObject) -> PyResult<PyObject> }
 protocol keysOwner { func keys() -> PyObject }
+
+// MARK: - Fast
 
 internal enum Fast {
 
@@ -729,3 +735,867 @@ internal enum Fast {
     return nil
   }
 }
+
+// MARK: - Conformance
+
+// PyBool does not add any new protocols to PyInt
+extension PyBool { }
+
+extension PyBuiltinFunction:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __call__Owner
+{ }
+
+extension PyBuiltinMethod:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __call__Owner
+{ }
+
+extension PyByteArray:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __str__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __contains__Owner,
+  __getitem__Owner,
+  __add__Owner,
+  __mul__Owner,
+  __rmul__Owner,
+  __iter__Owner,
+  __setitem__Owner,
+  __delitem__Owner,
+  __init__Owner,
+  __new__Owner
+{ }
+
+extension PyByteArrayIterator:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PyBytes:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __str__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __contains__Owner,
+  __getitem__Owner,
+  __add__Owner,
+  __mul__Owner,
+  __rmul__Owner,
+  __iter__Owner,
+  __new__Owner
+{ }
+
+extension PyBytesIterator:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PyCallableIterator:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
+{ }
+
+extension PyCell:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __repr__Owner,
+  __getattribute__Owner
+{ }
+
+extension PyClassMethod:
+  __dict__GetterOwner,
+  __isabstractmethod__Owner,
+  __init__Owner,
+  __new__Owner
+{ }
+
+extension PyCode:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner
+{ }
+
+extension PyComplex:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __str__Owner,
+  __bool__Owner,
+  __float__Owner,
+  __getattribute__Owner,
+  __pos__Owner,
+  __neg__Owner,
+  __abs__Owner,
+  __add__Owner,
+  __radd__Owner,
+  __sub__Owner,
+  __rsub__Owner,
+  __mul__Owner,
+  __rmul__Owner,
+  __pow__Owner,
+  __rpow__Owner,
+  __truediv__Owner,
+  __rtruediv__Owner,
+  __floordiv__Owner,
+  __rfloordiv__Owner,
+  __mod__Owner,
+  __rmod__Owner,
+  __divmod__Owner,
+  __rdivmod__Owner,
+  __new__Owner
+{ }
+
+extension PyDict:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __getitem__Owner,
+  __setitem__Owner,
+  __delitem__Owner,
+  __contains__Owner,
+  __iter__Owner,
+  keysOwner,
+  __new__Owner,
+  __init__Owner
+{ }
+
+extension PyDictItemIterator:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PyDictItems:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __contains__Owner,
+  __iter__Owner,
+  __new__Owner
+{ }
+
+extension PyDictKeyIterator:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PyDictKeys:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __contains__Owner,
+  __iter__Owner,
+  __new__Owner
+{ }
+
+extension PyDictValueIterator:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PyDictValues:
+  __repr__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __iter__Owner
+{ }
+
+extension PyEllipsis:
+  __repr__Owner,
+  __getattribute__Owner,
+  __new__Owner
+{ }
+
+extension PyEnumerate:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PyFilter:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PyFloat:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __str__Owner,
+  __bool__Owner,
+  __float__Owner,
+  __getattribute__Owner,
+  __pos__Owner,
+  __neg__Owner,
+  __abs__Owner,
+  __add__Owner,
+  __radd__Owner,
+  __sub__Owner,
+  __rsub__Owner,
+  __mul__Owner,
+  __rmul__Owner,
+  __pow__Owner,
+  __rpow__Owner,
+  __truediv__Owner,
+  __rtruediv__Owner,
+  __floordiv__Owner,
+  __rfloordiv__Owner,
+  __mod__Owner,
+  __rmod__Owner,
+  __divmod__Owner,
+  __rdivmod__Owner,
+  __round__Owner,
+  __trunc__Owner,
+  __new__Owner
+{ }
+
+extension PyFrame:
+  __repr__Owner,
+  __getattribute__Owner,
+  __setattr__Owner
+{ }
+
+extension PyFrozenSet:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __contains__Owner,
+  __and__Owner,
+  __rand__Owner,
+  __or__Owner,
+  __ror__Owner,
+  __xor__Owner,
+  __rxor__Owner,
+  __sub__Owner,
+  __rsub__Owner,
+  __iter__Owner,
+  __new__Owner
+{ }
+
+extension PyFunction:
+  __dict__GetterOwner,
+  __repr__Owner,
+  __call__Owner
+{ }
+
+extension PyInt:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __str__Owner,
+  __bool__Owner,
+  __float__Owner,
+  __index__Owner,
+  __getattribute__Owner,
+  __pos__Owner,
+  __neg__Owner,
+  __abs__Owner,
+  __trunc__Owner,
+  __add__Owner,
+  __radd__Owner,
+  __sub__Owner,
+  __rsub__Owner,
+  __mul__Owner,
+  __rmul__Owner,
+  __pow__Owner,
+  __rpow__Owner,
+  __truediv__Owner,
+  __rtruediv__Owner,
+  __floordiv__Owner,
+  __rfloordiv__Owner,
+  __mod__Owner,
+  __rmod__Owner,
+  __divmod__Owner,
+  __rdivmod__Owner,
+  __lshift__Owner,
+  __rlshift__Owner,
+  __rshift__Owner,
+  __rrshift__Owner,
+  __and__Owner,
+  __rand__Owner,
+  __or__Owner,
+  __ror__Owner,
+  __xor__Owner,
+  __rxor__Owner,
+  __invert__Owner,
+  __round__Owner,
+  __new__Owner
+{ }
+
+extension PyIterator:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
+{ }
+
+extension PyList:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __contains__Owner,
+  __getitem__Owner,
+  __setitem__Owner,
+  __delitem__Owner,
+  __iter__Owner,
+  __reversed__Owner,
+  __add__Owner,
+  __iadd__Owner,
+  __mul__Owner,
+  __rmul__Owner,
+  __new__Owner,
+  __init__Owner
+{ }
+
+extension PyListIterator:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PyListReverseIterator:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PyMap:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PyMethod:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __repr__Owner,
+  __hash__Owner,
+  __getattribute__Owner,
+  __setattr__Owner,
+  __call__Owner
+{ }
+
+extension PyModule:
+  __dict__GetterOwner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __setattr__Owner,
+  __dir__Owner,
+  __new__Owner,
+  __init__Owner
+{ }
+
+extension PyNamespace:
+  __dict__GetterOwner,
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __setattr__Owner,
+  __init__Owner
+{ }
+
+extension PyNone:
+  __repr__Owner,
+  __bool__Owner,
+  __getattribute__Owner,
+  __new__Owner
+{ }
+
+extension PyNotImplemented:
+  __repr__Owner,
+  __new__Owner
+{ }
+
+extension PyProperty:
+  __getattribute__Owner,
+  __new__Owner,
+  __init__Owner
+{ }
+
+extension PyRange:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __bool__Owner,
+  __len__Owner,
+  __getattribute__Owner,
+  __contains__Owner,
+  __getitem__Owner,
+  __reversed__Owner,
+  __iter__Owner,
+  __new__Owner
+{ }
+
+extension PyRangeIterator:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PyReversed:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PySet:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __contains__Owner,
+  __and__Owner,
+  __rand__Owner,
+  __or__Owner,
+  __ror__Owner,
+  __xor__Owner,
+  __rxor__Owner,
+  __sub__Owner,
+  __rsub__Owner,
+  __iter__Owner,
+  __new__Owner,
+  __init__Owner
+{ }
+
+extension PySetIterator:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PySlice:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __new__Owner
+{ }
+
+extension PyStaticMethod:
+  __dict__GetterOwner,
+  __isabstractmethod__Owner,
+  __init__Owner,
+  __new__Owner
+{ }
+
+extension PyString:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __str__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __contains__Owner,
+  __getitem__Owner,
+  __add__Owner,
+  __mul__Owner,
+  __rmul__Owner,
+  __iter__Owner,
+  __new__Owner
+{ }
+
+extension PyStringIterator:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PySuper:
+  __repr__Owner,
+  __getattribute__Owner,
+  __new__Owner,
+  __init__Owner
+{ }
+
+extension PyTextFile:
+  __repr__Owner,
+  __del__Owner
+{ }
+
+extension PyTuple:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __contains__Owner,
+  __getitem__Owner,
+  __iter__Owner,
+  __add__Owner,
+  __mul__Owner,
+  __rmul__Owner,
+  __new__Owner
+{ }
+
+extension PyTupleIterator:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+extension PyType:
+  __dict__GetterOwner,
+  __repr__Owner,
+  __subclasscheck__Owner,
+  __instancecheck__Owner,
+  __getattribute__Owner,
+  __setattr__Owner,
+  __dir__Owner,
+  __call__Owner,
+  __new__Owner,
+  __init__Owner
+{ }
+
+extension PyZip:
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
+// PyArithmeticError does not add any new protocols to PyException
+extension PyArithmeticError { }
+
+// PyAssertionError does not add any new protocols to PyException
+extension PyAssertionError { }
+
+// PyAttributeError does not add any new protocols to PyException
+extension PyAttributeError { }
+
+extension PyBaseException:
+  __dict__GetterOwner,
+  __repr__Owner,
+  __str__Owner,
+  __getattribute__Owner,
+  __setattr__Owner,
+  __new__Owner,
+  __init__Owner
+{ }
+
+// PyBlockingIOError does not add any new protocols to PyOSError
+extension PyBlockingIOError { }
+
+// PyBrokenPipeError does not add any new protocols to PyConnectionError
+extension PyBrokenPipeError { }
+
+// PyBufferError does not add any new protocols to PyException
+extension PyBufferError { }
+
+// PyBytesWarning does not add any new protocols to PyWarning
+extension PyBytesWarning { }
+
+// PyChildProcessError does not add any new protocols to PyOSError
+extension PyChildProcessError { }
+
+// PyConnectionAbortedError does not add any new protocols to PyConnectionError
+extension PyConnectionAbortedError { }
+
+// PyConnectionError does not add any new protocols to PyOSError
+extension PyConnectionError { }
+
+// PyConnectionRefusedError does not add any new protocols to PyConnectionError
+extension PyConnectionRefusedError { }
+
+// PyConnectionResetError does not add any new protocols to PyConnectionError
+extension PyConnectionResetError { }
+
+// PyDeprecationWarning does not add any new protocols to PyWarning
+extension PyDeprecationWarning { }
+
+// PyEOFError does not add any new protocols to PyException
+extension PyEOFError { }
+
+// PyException does not add any new protocols to PyBaseException
+extension PyException { }
+
+// PyFileExistsError does not add any new protocols to PyOSError
+extension PyFileExistsError { }
+
+// PyFileNotFoundError does not add any new protocols to PyOSError
+extension PyFileNotFoundError { }
+
+// PyFloatingPointError does not add any new protocols to PyArithmeticError
+extension PyFloatingPointError { }
+
+// PyFutureWarning does not add any new protocols to PyWarning
+extension PyFutureWarning { }
+
+// PyGeneratorExit does not add any new protocols to PyBaseException
+extension PyGeneratorExit { }
+
+// PyImportError does not add any new protocols to PyException
+extension PyImportError { }
+
+// PyImportWarning does not add any new protocols to PyWarning
+extension PyImportWarning { }
+
+// PyIndentationError does not add any new protocols to PySyntaxError
+extension PyIndentationError { }
+
+// PyIndexError does not add any new protocols to PyLookupError
+extension PyIndexError { }
+
+// PyInterruptedError does not add any new protocols to PyOSError
+extension PyInterruptedError { }
+
+// PyIsADirectoryError does not add any new protocols to PyOSError
+extension PyIsADirectoryError { }
+
+// PyKeyError does not add any new protocols to PyLookupError
+extension PyKeyError { }
+
+// PyKeyboardInterrupt does not add any new protocols to PyBaseException
+extension PyKeyboardInterrupt { }
+
+// PyLookupError does not add any new protocols to PyException
+extension PyLookupError { }
+
+// PyMemoryError does not add any new protocols to PyException
+extension PyMemoryError { }
+
+// PyModuleNotFoundError does not add any new protocols to PyImportError
+extension PyModuleNotFoundError { }
+
+// PyNameError does not add any new protocols to PyException
+extension PyNameError { }
+
+// PyNotADirectoryError does not add any new protocols to PyOSError
+extension PyNotADirectoryError { }
+
+// PyNotImplementedError does not add any new protocols to PyRuntimeError
+extension PyNotImplementedError { }
+
+// PyOSError does not add any new protocols to PyException
+extension PyOSError { }
+
+// PyOverflowError does not add any new protocols to PyArithmeticError
+extension PyOverflowError { }
+
+// PyPendingDeprecationWarning does not add any new protocols to PyWarning
+extension PyPendingDeprecationWarning { }
+
+// PyPermissionError does not add any new protocols to PyOSError
+extension PyPermissionError { }
+
+// PyProcessLookupError does not add any new protocols to PyOSError
+extension PyProcessLookupError { }
+
+// PyRecursionError does not add any new protocols to PyRuntimeError
+extension PyRecursionError { }
+
+// PyReferenceError does not add any new protocols to PyException
+extension PyReferenceError { }
+
+// PyResourceWarning does not add any new protocols to PyWarning
+extension PyResourceWarning { }
+
+// PyRuntimeError does not add any new protocols to PyException
+extension PyRuntimeError { }
+
+// PyRuntimeWarning does not add any new protocols to PyWarning
+extension PyRuntimeWarning { }
+
+// PyStopAsyncIteration does not add any new protocols to PyException
+extension PyStopAsyncIteration { }
+
+// PyStopIteration does not add any new protocols to PyException
+extension PyStopIteration { }
+
+// PySyntaxError does not add any new protocols to PyException
+extension PySyntaxError { }
+
+// PySyntaxWarning does not add any new protocols to PyWarning
+extension PySyntaxWarning { }
+
+// PySystemError does not add any new protocols to PyException
+extension PySystemError { }
+
+// PySystemExit does not add any new protocols to PyBaseException
+extension PySystemExit { }
+
+// PyTabError does not add any new protocols to PyIndentationError
+extension PyTabError { }
+
+// PyTimeoutError does not add any new protocols to PyOSError
+extension PyTimeoutError { }
+
+// PyTypeError does not add any new protocols to PyException
+extension PyTypeError { }
+
+// PyUnboundLocalError does not add any new protocols to PyNameError
+extension PyUnboundLocalError { }
+
+// PyUnicodeDecodeError does not add any new protocols to PyUnicodeError
+extension PyUnicodeDecodeError { }
+
+// PyUnicodeEncodeError does not add any new protocols to PyUnicodeError
+extension PyUnicodeEncodeError { }
+
+// PyUnicodeError does not add any new protocols to PyValueError
+extension PyUnicodeError { }
+
+// PyUnicodeTranslateError does not add any new protocols to PyUnicodeError
+extension PyUnicodeTranslateError { }
+
+// PyUnicodeWarning does not add any new protocols to PyWarning
+extension PyUnicodeWarning { }
+
+// PyUserWarning does not add any new protocols to PyWarning
+extension PyUserWarning { }
+
+// PyValueError does not add any new protocols to PyException
+extension PyValueError { }
+
+// PyWarning does not add any new protocols to PyException
+extension PyWarning { }
+
+// PyZeroDivisionError does not add any new protocols to PyArithmeticError
+extension PyZeroDivisionError { }
+

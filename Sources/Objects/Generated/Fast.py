@@ -4,7 +4,7 @@ from Common.strings import generated_warning
 from Common.SignatureInfo import SignatureInfo
 
 # All of the operations for which protocols will be generated
-# (Feel free to add new ones.)
+# (Feel free to add new ones)
 generated_protocols = set([
   "__abs__",
   "__add__",
@@ -79,21 +79,8 @@ def get_methods(t):
   return filter(lambda prop: prop.python_name in generated_protocols, t.methods)
 
 # ------
-# Shared
+# Helpers
 # ------
-
-def clean_signature(sig):
-  ''' If signature spans multiple lines then Sourcery will ignore new lines, but
-  preserve indentation, so we end up with:
-  protocol findOwner { func find(_ value: PyObject,                     start: PyObject?,                     end: PyObject?) -> PyResult<Int> }
-
-  This function will remove those '   '.
-  '''
-
-  while '  ' in sig:
-    sig = sig.replace('  ', ' ')
-
-  return sig
 
 def getter_protocol_name(name):
   name = name if name.startswith('__') else name.title()
@@ -106,36 +93,41 @@ def setter_protocol_name(name):
 def func_protocol_name(name):
   return f'{name}Owner'
 
-doc = '''\
-// Sometimes instead of doing slow Python dispatch we will use Swift protocols.
-// Feel free to add new protocols if you need them (just modify the script
-// responsible for generating the code).\
-'''
-
 types = get_types()
 
-# ---------
-# Protocols
-# ---------
-
 class ProtocolInfo:
-  def __init__(self, python_name, swift_protocol_name, swift_function, swift_return_type):
+  def __init__(self, python_name, swift_protocol_name, swift_signature):
     self.python_name = python_name
     self.swift_protocol_name = swift_protocol_name
-    self.swift_function = swift_function
-    self.swift_return_type = swift_return_type
+    self.swift_signature = swift_signature
 
-def print_protocols():
+# ----
+# Main
+# ----
+
+if __name__ == '__main__':
   print(f'''\
+import Core
+
 // swiftlint:disable line_length
-// swiftlint:disable file_length
+// swiftlint:disable opening_brace
+// swiftlint:disable trailing_newline
 // swiftlint:disable discouraged_optional_boolean
+// swiftlint:disable file_length
 
 {generated_warning}
 
-import Core
+// Sometimes instead of doing slow Python dispatch we will use Swift protocols.
+// Feel free to add new protocols if you need them (just modify the script
+// responsible for generating the code).
+''')
 
-{doc}
+  # =================
+  # === Protocols ===
+  # =================
+
+  print(f'''\
+// MARK: - Owner protocols
 
 // This protocol is here only to check if we have consistent '__new__' signatures.
 // It will not be used in 'Fast' dispatch.
@@ -153,9 +145,10 @@ protocol __init__Owner {{
 
   protocols_by_name = { }
   def add_protocol(python_name, swift_protocol_name, swift_function, swift_return_type):
-      if swift_protocol_name not in protocols_by_name:
-        protocol = ProtocolInfo(python_name, swift_protocol_name, swift_function, swift_return_type)
-        protocols_by_name[swift_protocol_name] = protocol
+    if swift_protocol_name not in protocols_by_name:
+      signature = SignatureInfo(swift_function, swift_return_type)
+      protocol = ProtocolInfo(python_name, swift_protocol_name, signature)
+      protocols_by_name[swift_protocol_name] = protocol
 
   for t in types:
     for prop in get_properties(t):
@@ -169,7 +162,7 @@ protocol __init__Owner {{
 
     for meth in get_methods(t):
       python_name = meth.python_name
-      swift_name_full = clean_signature(meth.swift_name_full)
+      swift_name_full = meth.swift_name_full
       swift_return_type = meth.swift_return_type
       protocol_name = func_protocol_name(python_name)
       add_protocol(python_name, protocol_name, swift_name_full, swift_return_type)
@@ -198,29 +191,35 @@ protocol __init__Owner {{
   for protocol_name in sorted(protocols_by_name):
     protocol = protocols_by_name[protocol_name]
     protocol_name = protocol.swift_protocol_name
-    fn = protocol.swift_function
-    return_type = protocol.swift_return_type
+    signature = protocol.swift_signature
 
-    print(f'protocol {protocol_name} {{ func {fn} -> {return_type} }}')
+    print(f'protocol {protocol_name} {{ func {signature.value} }}')
   print()
 
+  # ============
+  # === Fast ===
+  # ============
+
+  print('// MARK: - Fast')
+  print()
   print('internal enum Fast {')
+
   for protocol_name in sorted(protocols_by_name):
     protocol = protocols_by_name[protocol_name]
     python_name = protocol.python_name
     protocol_name = protocol.swift_protocol_name
 
-    sig = SignatureInfo(protocol.swift_function, protocol.swift_return_type)
-    swift_function_name = sig.function_name
+    signature = protocol.swift_signature
+    swift_function_name = signature.function_name
 
     fn_arguments = ''
     call_arguments = ''
-    for index, arg in enumerate(sig.arguments):
+    for index, arg in enumerate(signature.arguments):
       label = arg.label # str | None
       name = arg.name
       typ = arg.typ
 
-      is_last = index == len(sig.arguments) - 1
+      is_last = index == len(signature.arguments) - 1
 
       fn_label = label + ' ' if label else ''
       fn_arguments += f', {fn_label}{name}: {typ}'
@@ -237,7 +236,7 @@ protocol __init__Owner {{
       call_arguments += f'{call_label}{name}{call_comma}'
 
     print(f'''
-  internal static func {python_name}(_ zelf: PyObject{fn_arguments}) -> {sig.return_type}? {{
+  internal static func {python_name}(_ zelf: PyObject{fn_arguments}) -> {signature.return_type}? {{
     if let owner = zelf as? {protocol_name}, !zelf.hasOverriden(selector: "{python_name}") {{
       return owner.{swift_function_name}({call_arguments})
     }}
@@ -247,27 +246,20 @@ protocol __init__Owner {{
 ''')
 
   print('}')
+  print()
 
-# -----------
-# Conformance
-# -----------
+  # ===================
+  # === Conformance ===
+  # ===================
 
-class ConformanceEntry:
-  def __init__(self, swift_type, swift_base_type):
-    self.swift_type = swift_type
-    self.swift_base_type = swift_base_type
-    self.protocols = []
+  print('// MARK: - Conformance')
+  print()
 
-def print_conformance():
-  print(f'''\
-// swiftlint:disable file_length
-// swiftlint:disable opening_brace
-// swiftlint:disable trailing_newline
-
-{generated_warning}
-
-{doc}
-''')
+  class ConformanceEntry:
+    def __init__(self, swift_type, swift_base_type):
+      self.swift_type = swift_type
+      self.swift_base_type = swift_base_type
+      self.protocols = []
 
   # swift_type name pointing to ConformanceEntry
   entries_by_swift_type = { }
@@ -308,9 +300,6 @@ def print_conformance():
     swift_base_type = entry.swift_base_type
     self_protocols = entry.protocols
 
-    print(f'// MARK: - {swift_type.replace("Py", "")}')
-    print()
-
     # Remove parent conformances
     base = swift_base_type
     while base:
@@ -337,20 +326,3 @@ def print_conformance():
       print('{ }')
 
     print()
-
-# ----
-# Main
-# ----
-
-if __name__ == '__main__':
-  if len(sys.argv) < 2:
-    print("Usage: 'python3 Owners.py [protocols|conformance]'")
-    sys.exit(1)
-
-  mode = sys.argv[1]
-  if mode == 'protocols':
-    print_protocols()
-  elif mode == 'conformance':
-    print_conformance()
-  else:
-    print(f"Invalid argument '{mode}' passed to 'Owners.py'.")

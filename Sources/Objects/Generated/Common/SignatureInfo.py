@@ -13,13 +13,16 @@ class SignatureInfo:
   def __init__(self, swift_signature, swift_return_type):
     self.return_type = swift_return_type
 
-    open_paren_index = swift_signature.index('(')
-    self.function_name = swift_signature[:open_paren_index]
+    clean = clean_signature(swift_signature)
+    self.value = clean + ' -> ' + swift_return_type
 
-    close_paren_index = swift_signature.rindex(')')
+    open_paren_index = clean.index('(')
+    self.function_name = clean[:open_paren_index]
+
+    close_paren_index = clean.rindex(')')
 
     arguments_start_index = open_paren_index + 1
-    arguments = swift_signature[arguments_start_index:close_paren_index]
+    arguments = clean[arguments_start_index:close_paren_index]
 
     self.arguments = []
     if arguments:
@@ -39,6 +42,19 @@ class SignatureInfo:
 
         argument = ArgumentInfo(label, name, typ.strip())
         self.arguments.append(argument)
+
+def clean_signature(sig):
+  ''' If signature spans multiple lines then Sourcery will ignore new lines, but
+  preserve indentation, so we end up with:
+  protocol findOwner { func find(_ value: PyObject,                     start: PyObject?,                     end: PyObject?) -> PyResult<Int> }
+
+  This function will remove those '   '.
+  '''
+
+  while '  ' in sig:
+    sig = sig.replace('  ', ' ')
+
+  return sig
 
 def test():
   sig = SignatureInfo('abs()', 'PyObject')

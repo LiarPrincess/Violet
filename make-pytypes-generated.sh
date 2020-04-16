@@ -53,10 +53,9 @@ python3 $GENERATED/TypeLayout.py > $GENERATED/TypeLayout.swift
 # ==============
 # This stage does not really depend on type definitions.
 
-# === Owner protocols ===
+# === Fast dispatch ===
 # Sometimes instead of doing slow Python dispatch we will use Swift protocols.
-python3 $GENERATED/Owners.py "protocols" > $GENERATED/OwnerProtocols.swift
-python3 $GENERATED/Owners.py "conformance" > $GENERATED/OwnerConformance.swift
+python3 $GENERATED/Fast.py > $GENERATED/Fast.swift
 
 # === IdString ===
 # Predefined commonly used `__dict__` keys.
