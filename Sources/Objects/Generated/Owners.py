@@ -1,6 +1,7 @@
 import sys
 from Data.types import get_types
 from Common.strings import generated_warning
+from Common.SignatureInfo import SignatureInfo
 
 # All of the operations for which protocols will be generated
 # (Feel free to add new ones.)
@@ -117,9 +118,18 @@ types = get_types()
 # Protocols
 # ---------
 
+class ProtocolInfo:
+  def __init__(self, python_name, swift_protocol_name, swift_function, swift_return_type):
+    self.python_name = python_name
+    self.swift_protocol_name = swift_protocol_name
+    self.swift_function = swift_function
+    self.swift_return_type = swift_return_type
+
 def print_protocols():
   print(f'''\
 // swiftlint:disable line_length
+// swiftlint:disable file_length
+// swiftlint:disable discouraged_optional_boolean
 
 {generated_warning}
 
@@ -127,25 +137,33 @@ import Core
 
 {doc}
 
+// This protocol is here only to check if we have consistent '__new__' signatures.
+// It will not be used in 'Fast' dispatch.
 protocol __new__Owner {{
   static func pyNew(type: PyType, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
 }}
 
+// This protocol is here only to check if we have consistent '__init__' signatures.
+// It will not be used in 'Fast' dispatch.
 protocol __init__Owner {{
   associatedtype Zelf: PyObject
   static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone>
 }}
 ''')
 
-  protocols = set()
+  protocols_by_name = { }
+  def add_protocol(python_name, swift_protocol_name, swift_function, swift_return_type):
+      if swift_protocol_name not in protocols_by_name:
+        protocol = ProtocolInfo(python_name, swift_protocol_name, swift_function, swift_return_type)
+        protocols_by_name[swift_protocol_name] = protocol
+
   for t in types:
     for prop in get_properties(t):
       python_name = prop.python_name
-      swift_getter_fn = prop.swift_getter_fn
-      swift_type = prop.swift_type
-
+      swift_getter_fn = prop.swift_getter_fn + '()'
+      swift_return_type = prop.swift_type
       protocol_name = getter_protocol_name(python_name)
-      protocols.add(f'protocol {protocol_name} {{ func {swift_getter_fn}() -> {swift_type} }}')
+      add_protocol(python_name, protocol_name, swift_getter_fn, swift_return_type)
 
       # Setters are not supported
 
@@ -153,32 +171,82 @@ protocol __init__Owner {{
       python_name = meth.python_name
       swift_name_full = clean_signature(meth.swift_name_full)
       swift_return_type = meth.swift_return_type
-
       protocol_name = func_protocol_name(python_name)
-      protocols.add(f'protocol {protocol_name} {{ func {swift_name_full} -> {swift_return_type} }}')
+      add_protocol(python_name, protocol_name, swift_name_full, swift_return_type)
 
     # From static methods we have hand-written '__new__' and '__init__'.
     # We ignore other.
 
   # Additional protocols (none of the builtin types implement them)
-  protocols.add('protocol __matmul__Owner { func matmul(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __rmatmul__Owner { func rmatmul(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __isub__Owner { func isub(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __imul__Owner { func imul(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __imatmul__Owner { func imatmul(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __itruediv__Owner { func itruediv(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __ifloordiv__Owner { func ifloordiv(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __imod__Owner { func imod(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __ipow__Owner { func ipow(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __ilshift__Owner { func ilshift(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __irshift__Owner { func irshift(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __iand__Owner { func iand(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __ixor__Owner { func ixor(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __ior__Owner { func ior(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __complex__Owner { func asComplex() -> PyObject }')
+  #            python_name,     swift_protocol_name,  swift_function,                 swift_return_type
+  add_protocol('__matmul__',    '__matmul__Owner',    'matmul(_ other: PyObject)',    'PyResult<PyObject>')
+  add_protocol('__rmatmul__',   '__rmatmul__Owner',   'rmatmul(_ other: PyObject)',   'PyResult<PyObject>')
+  add_protocol('__isub__',      '__isub__Owner',      'isub(_ other: PyObject)',      'PyResult<PyObject>')
+  add_protocol('__imul__',      '__imul__Owner',      'imul(_ other: PyObject)',      'PyResult<PyObject>')
+  add_protocol('__imatmul__',   '__imatmul__Owner',   'imatmul(_ other: PyObject)',   'PyResult<PyObject>')
+  add_protocol('__itruediv__',  '__itruediv__Owner',  'itruediv(_ other: PyObject)',  'PyResult<PyObject>')
+  add_protocol('__ifloordiv__', '__ifloordiv__Owner', 'ifloordiv(_ other: PyObject)', 'PyResult<PyObject>')
+  add_protocol('__imod__',      '__imod__Owner',      'imod(_ other: PyObject)',      'PyResult<PyObject>')
+  add_protocol('__ipow__',      '__ipow__Owner',      'ipow(_ other: PyObject)',      'PyResult<PyObject>')
+  add_protocol('__ilshift__',   '__ilshift__Owner',   'ilshift(_ other: PyObject)',   'PyResult<PyObject>')
+  add_protocol('__irshift__',   '__irshift__Owner',   'irshift(_ other: PyObject)',   'PyResult<PyObject>')
+  add_protocol('__iand__',      '__iand__Owner',      'iand(_ other: PyObject)',      'PyResult<PyObject>')
+  add_protocol('__ixor__',      '__ixor__Owner',      'ixor(_ other: PyObject)',      'PyResult<PyObject>')
+  add_protocol('__ior__',       '__ior__Owner',       'ior(_ other: PyObject)',       'PyResult<PyObject>')
+  add_protocol('__complex__',   '__complex__Owner',   'asComplex()',                  'PyObject')
 
-  for line in sorted(protocols):
-    print(line)
+  for protocol_name in sorted(protocols_by_name):
+    protocol = protocols_by_name[protocol_name]
+    protocol_name = protocol.swift_protocol_name
+    fn = protocol.swift_function
+    return_type = protocol.swift_return_type
+
+    print(f'protocol {protocol_name} {{ func {fn} -> {return_type} }}')
+  print()
+
+  print('internal enum Fast {')
+  for protocol_name in sorted(protocols_by_name):
+    protocol = protocols_by_name[protocol_name]
+    python_name = protocol.python_name
+    protocol_name = protocol.swift_protocol_name
+
+    sig = SignatureInfo(protocol.swift_function, protocol.swift_return_type)
+    swift_function_name = sig.function_name
+
+    fn_arguments = ''
+    call_arguments = ''
+    for index, arg in enumerate(sig.arguments):
+      label = arg.label # str | None
+      name = arg.name
+      typ = arg.typ
+
+      is_last = index == len(sig.arguments) - 1
+
+      fn_label = label + ' ' if label else ''
+      fn_arguments += f', {fn_label}{name}: {typ}'
+
+      # print(f'// label: {label}, name: {name}, needs_call_label: {needs_call_label}')
+      if label is None:
+        call_label = name + ': '
+      elif label == '_':
+        call_label = ''
+      else:
+        call_label = label + ': '
+
+      call_comma = '' if is_last else ', '
+      call_arguments += f'{call_label}{name}{call_comma}'
+
+    print(f'''
+  internal static func {python_name}(_ zelf: PyObject{fn_arguments}) -> {sig.return_type}? {{
+    if let owner = zelf as? {protocol_name}, !zelf.hasOverriden(selector: "{python_name}") {{
+      return owner.{swift_function_name}({call_arguments})
+    }}
+
+    return nil
+  }}\
+''')
+
+  print('}')
 
 # -----------
 # Conformance
