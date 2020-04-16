@@ -10,8 +10,13 @@ private enum FastCallResult {
   /// Fast call is not available
   case unavailable
 
-  fileprivate init(_ value: PyResult<PyObject>) {
-    switch value {
+  fileprivate init(_ value: PyResult<PyObject>?) {
+    guard let v = value else {
+      self = .unavailable
+      return
+    }
+
+    switch v {
     case .value(let o):
       self = .value(o)
     case .error(let e):
@@ -155,19 +160,15 @@ private enum PowOp: TernaryOp {
   fileprivate static func callFastOp(left: PyObject,
                                      middle: PyObject,
                                      right: PyObject) -> FastCallResult {
-    if let owner = left as? __pow__Owner {
-      return FastCallResult(owner.pow(exp: middle, mod: right))
-    }
-    return .unavailable
+    let result = Fast.__pow__(left, exp: middle, mod: right)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastReflected(left: PyObject,
                                             middle: PyObject,
                                             right: PyObject) -> FastCallResult {
-    if let owner = middle as? __rpow__Owner {
-      return FastCallResult(owner.rpow(base: left, mod: right))
-    }
-    return .unavailable
+    let result = Fast.__rpow__(middle, base: left, mod: right)
+    return FastCallResult(result)
   }
 }
 

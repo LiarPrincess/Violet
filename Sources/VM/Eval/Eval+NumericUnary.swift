@@ -8,7 +8,7 @@ extension Eval {
   /// Implements `TOS = +TOS`.
   internal func unaryPositive() -> InstructionResult {
     let value = self.stack.top
-    switch Py.pos(value) {
+    switch Py.pos(object: value) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -22,7 +22,7 @@ extension Eval {
   /// Implements `TOS = -TOS`.
   internal func unaryNegative() -> InstructionResult {
     let value = self.stack.top
-    switch Py.neg(value) {
+    switch Py.neg(object: value) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -51,7 +51,7 @@ extension Eval {
   /// Implements `TOS = ~TOS`.
   internal func unaryInvert() -> InstructionResult {
     let value = self.stack.top
-    switch Py.invert(value) {
+    switch Py.invert(object: value) {
     case let .value(result):
       self.stack.top = result
       return .ok

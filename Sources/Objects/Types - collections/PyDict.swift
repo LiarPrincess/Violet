@@ -600,8 +600,8 @@ public class PyDict: PyObject {
   }
 
   private func callKeys(on object: PyObject) -> CallKeysResult {
-    if let owner = object as? keysOwner {
-      return .value(owner.keys())
+    if let result = Fast.keys(object) {
+      return .value(result)
     }
 
     switch Py.callMethod(object: object, selector: .keys) {
@@ -703,7 +703,7 @@ public class PyDict: PyObject {
       }
 
       let value: PyObject
-      switch Py.getItem(dict, at: keyObject) {
+      switch Py.getItem(object: dict, at: keyObject) {
       case let .value(v): value = v
       case let .error(e): return .error(e)
       }

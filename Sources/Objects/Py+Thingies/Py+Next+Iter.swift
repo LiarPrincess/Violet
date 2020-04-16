@@ -20,8 +20,8 @@ extension PyInstance {
   }
 
   private func callNext(iterator: PyObject) -> PyResult<PyObject> {
-    if let owner = iterator as? __next__Owner {
-      return owner.next()
+    if let result = Fast.__next__(iterator) {
+      return result
     }
 
     switch self.callMethod(object: iterator, selector: .__next__) {
@@ -45,8 +45,7 @@ extension PyInstance {
       return .value(result)
     }
 
-    if let owner = object as? __iter__Owner {
-      let result = owner.iter()
+    if let result = Fast.__iter__(object) {
       return .value(result)
     }
 

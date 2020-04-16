@@ -7,12 +7,12 @@ extension PyInstance {
   // MARK: - Pos
 
   /// PyObject * PyNumber_Positive(PyObject *o)
-  public func pos(_ value: PyObject) -> PyResult<PyObject> {
-    if let owner = value as? __pos__Owner {
-      return .value(owner.positive())
+  public func pos(object: PyObject) -> PyResult<PyObject> {
+    if let result = Fast.__pos__(object) {
+      return .value(result)
     }
 
-    return self.callUnaryMethod(object: value,
+    return self.callUnaryMethod(object: object,
                                 selector: .__pos__,
                                 operation: "unary +")
   }
@@ -20,12 +20,12 @@ extension PyInstance {
   // MARK: - Neg
 
   /// PyObject * PyNumber_Negative(PyObject *o)
-  public func neg(_ value: PyObject) -> PyResult<PyObject> {
-    if let owner = value as? __neg__Owner {
-      return .value(owner.negative())
+  public func neg(object: PyObject) -> PyResult<PyObject> {
+    if let result = Fast.__neg__(object) {
+      return .value(result)
     }
 
-    return self.callUnaryMethod(object: value,
+    return self.callUnaryMethod(object: object,
                                 selector: .__neg__,
                                 operation: "unary -")
   }
@@ -33,12 +33,12 @@ extension PyInstance {
   // MARK: - Invert
 
   /// PyObject * PyNumber_Invert(PyObject *o)
-  public func invert(_ value: PyObject) -> PyResult<PyObject> {
-    if let owner = value as? __invert__Owner {
-      return .value(owner.invert())
+  public func invert(object: PyObject) -> PyResult<PyObject> {
+    if let result = Fast.__invert__(object) {
+      return .value(result)
     }
 
-    return self.callUnaryMethod(object: value,
+    return self.callUnaryMethod(object: object,
                                 selector: .__invert__,
                                 operation: "unary ~")
   }
@@ -50,8 +50,8 @@ extension PyInstance {
   ///
   /// PyObject * PyNumber_Absolute(PyObject *o)
   public func abs(object: PyObject) -> PyResult<PyObject> {
-    if let owner = object as? __abs__Owner {
-      return .value(owner.abs())
+    if let result = Fast.__abs__(object) {
+      return .value(result)
     }
 
     return self.callUnaryMethod(object: object,

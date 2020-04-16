@@ -15,8 +15,13 @@ private enum FastCallResult {
   /// Fast call is not available
   case unavailable
 
-  fileprivate init(_ value: PyResult<PyObject>) {
-    switch value {
+  fileprivate init(_ value: PyResult<PyObject>?) {
+    guard let v = value else {
+      self = .unavailable
+      return
+    }
+
+    switch v {
     case .value(let o):
       self = .value(o)
     case .error(let e):
@@ -254,26 +259,20 @@ private struct AddOp: BinaryOp {
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
-    if let owner = left as? __add__Owner {
-      return FastCallResult(owner.add(right))
-    }
-    return .unavailable
+    let result = Fast.__add__(left, right)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastReflected(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-    if let owner = right as? __radd__Owner {
-      return FastCallResult(owner.radd(left))
-    }
-    return .unavailable
+    let result = Fast.__radd__(right, left)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let owner = left as? __iadd__Owner {
-      return FastCallResult(owner.iadd(right))
-    }
-    return .unavailable
+    let result = Fast.__iadd__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -300,26 +299,20 @@ private struct SubOp: BinaryOp {
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
-    if let owner = left as? __sub__Owner {
-      return FastCallResult(owner.sub(right))
-    }
-    return .unavailable
+    let result = Fast.__sub__(left, right)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastReflected(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-    if let owner = right as? __rsub__Owner {
-      return FastCallResult(owner.rsub(left))
-    }
-    return .unavailable
+    let result = Fast.__rsub__(right, left)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let owner = left as? __isub__Owner {
-      return FastCallResult(owner.isub(right))
-    }
-    return .unavailable
+    let result = Fast.__isub__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -346,26 +339,20 @@ private struct MulOp: BinaryOp {
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
-    if let owner = left as? __mul__Owner {
-      return FastCallResult(owner.mul(right))
-    }
-    return .unavailable
+    let result = Fast.__mul__(left, right)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastReflected(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-    if let owner = right as? __rmul__Owner {
-      return FastCallResult(owner.rmul(left))
-    }
-    return .unavailable
+    let result = Fast.__rmul__(right, left)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let owner = left as? __imul__Owner {
-      return FastCallResult(owner.imul(right))
-    }
-    return .unavailable
+    let result = Fast.__imul__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -392,26 +379,20 @@ private struct MatmulOp: BinaryOp {
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
-    if let owner = left as? __matmul__Owner {
-      return FastCallResult(owner.matmul(right))
-    }
-    return .unavailable
+    let result = Fast.__matmul__(left, right)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastReflected(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-    if let owner = right as? __rmatmul__Owner {
-      return FastCallResult(owner.rmatmul(left))
-    }
-    return .unavailable
+    let result = Fast.__rmatmul__(right, left)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let owner = left as? __imatmul__Owner {
-      return FastCallResult(owner.imatmul(right))
-    }
-    return .unavailable
+    let result = Fast.__imatmul__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -438,26 +419,20 @@ private struct TruedivOp: BinaryOp {
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
-    if let owner = left as? __truediv__Owner {
-      return FastCallResult(owner.truediv(right))
-    }
-    return .unavailable
+    let result = Fast.__truediv__(left, right)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastReflected(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-    if let owner = right as? __rtruediv__Owner {
-      return FastCallResult(owner.rtruediv(left))
-    }
-    return .unavailable
+    let result = Fast.__rtruediv__(right, left)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let owner = left as? __itruediv__Owner {
-      return FastCallResult(owner.itruediv(right))
-    }
-    return .unavailable
+    let result = Fast.__itruediv__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -484,26 +459,20 @@ private struct FloordivOp: BinaryOp {
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
-    if let owner = left as? __floordiv__Owner {
-      return FastCallResult(owner.floordiv(right))
-    }
-    return .unavailable
+    let result = Fast.__floordiv__(left, right)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastReflected(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-    if let owner = right as? __rfloordiv__Owner {
-      return FastCallResult(owner.rfloordiv(left))
-    }
-    return .unavailable
+    let result = Fast.__rfloordiv__(right, left)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let owner = left as? __ifloordiv__Owner {
-      return FastCallResult(owner.ifloordiv(right))
-    }
-    return .unavailable
+    let result = Fast.__ifloordiv__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -530,26 +499,20 @@ private struct ModOp: BinaryOp {
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
-    if let owner = left as? __mod__Owner {
-      return FastCallResult(owner.mod(right))
-    }
-    return .unavailable
+    let result = Fast.__mod__(left, right)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastReflected(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-    if let owner = right as? __rmod__Owner {
-      return FastCallResult(owner.rmod(left))
-    }
-    return .unavailable
+    let result = Fast.__rmod__(right, left)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let owner = left as? __imod__Owner {
-      return FastCallResult(owner.imod(right))
-    }
-    return .unavailable
+    let result = Fast.__imod__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -576,23 +539,20 @@ private struct DivmodOp: BinaryOp {
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
-    if let owner = left as? __divmod__Owner {
-      return FastCallResult(owner.divmod(right))
-    }
-    return .unavailable
+    let result = Fast.__divmod__(left, right)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastReflected(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-    if let owner = right as? __rdivmod__Owner {
-      return FastCallResult(owner.rdivmod(left))
-    }
-    return .unavailable
+    let result = Fast.__rdivmod__(right, left)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    return .unavailable
+    let result = Fast.__idivmod__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -619,26 +579,20 @@ private struct LshiftOp: BinaryOp {
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
-    if let owner = left as? __lshift__Owner {
-      return FastCallResult(owner.lshift(right))
-    }
-    return .unavailable
+    let result = Fast.__lshift__(left, right)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastReflected(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-    if let owner = right as? __rlshift__Owner {
-      return FastCallResult(owner.rlshift(left))
-    }
-    return .unavailable
+    let result = Fast.__rlshift__(right, left)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let owner = left as? __ilshift__Owner {
-      return FastCallResult(owner.ilshift(right))
-    }
-    return .unavailable
+    let result = Fast.__ilshift__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -665,26 +619,20 @@ private struct RshiftOp: BinaryOp {
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
-    if let owner = left as? __rshift__Owner {
-      return FastCallResult(owner.rshift(right))
-    }
-    return .unavailable
+    let result = Fast.__rshift__(left, right)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastReflected(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-    if let owner = right as? __rrshift__Owner {
-      return FastCallResult(owner.rrshift(left))
-    }
-    return .unavailable
+    let result = Fast.__rrshift__(right, left)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let owner = left as? __irshift__Owner {
-      return FastCallResult(owner.irshift(right))
-    }
-    return .unavailable
+    let result = Fast.__irshift__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -711,26 +659,20 @@ private struct AndOp: BinaryOp {
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
-    if let owner = left as? __and__Owner {
-      return FastCallResult(owner.and(right))
-    }
-    return .unavailable
+    let result = Fast.__and__(left, right)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastReflected(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-    if let owner = right as? __rand__Owner {
-      return FastCallResult(owner.rand(left))
-    }
-    return .unavailable
+    let result = Fast.__rand__(right, left)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let owner = left as? __iand__Owner {
-      return FastCallResult(owner.iand(right))
-    }
-    return .unavailable
+    let result = Fast.__iand__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -757,26 +699,20 @@ private struct OrOp: BinaryOp {
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
-    if let owner = left as? __or__Owner {
-      return FastCallResult(owner.or(right))
-    }
-    return .unavailable
+    let result = Fast.__or__(left, right)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastReflected(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-    if let owner = right as? __ror__Owner {
-      return FastCallResult(owner.ror(left))
-    }
-    return .unavailable
+    let result = Fast.__ror__(right, left)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let owner = left as? __ior__Owner {
-      return FastCallResult(owner.ior(right))
-    }
-    return .unavailable
+    let result = Fast.__ior__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -803,26 +739,20 @@ private struct XorOp: BinaryOp {
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
-    if let owner = left as? __xor__Owner {
-      return FastCallResult(owner.xor(right))
-    }
-    return .unavailable
+    let result = Fast.__xor__(left, right)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastReflected(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-    if let owner = right as? __rxor__Owner {
-      return FastCallResult(owner.rxor(left))
-    }
-    return .unavailable
+    let result = Fast.__rxor__(right, left)
+    return FastCallResult(result)
   }
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let owner = left as? __ixor__Owner {
-      return FastCallResult(owner.ixor(right))
-    }
-    return .unavailable
+    let result = Fast.__ixor__(left, right)
+    return FastCallResult(result)
   }
 }
 

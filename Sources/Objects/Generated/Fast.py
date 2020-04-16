@@ -14,7 +14,6 @@ generated_protocols = set([
   "__contains__",
   "__del__",
   "__delitem__",
-  "__dict__",
   "__dir__",
   "__divmod__",
   "__eq__",
@@ -84,7 +83,7 @@ def get_methods(t):
 
 def getter_protocol_name(name):
   name = name if name.startswith('__') else name.title()
-  return f'{name}GetterOwner'
+  return f'{name}Owner'
 
 def setter_protocol_name(name):
   name = name if name.startswith('__') else name.title()
@@ -94,12 +93,6 @@ def func_protocol_name(name):
   return f'{name}Owner'
 
 types = get_types()
-
-class ProtocolInfo:
-  def __init__(self, python_name, swift_protocol_name, swift_signature):
-    self.python_name = python_name
-    self.swift_protocol_name = swift_protocol_name
-    self.swift_signature = swift_signature
 
 # ----
 # Main
@@ -117,9 +110,38 @@ import Core
 
 {generated_warning}
 
+// == What is this? ==
 // Sometimes instead of doing slow Python dispatch we will use Swift protocols.
 // Feel free to add new protocols if you need them (just modify the script
 // responsible for generating the code).
+//
+// == Why? ==
+// Mostly for debugging (trust me, you don't want to debug raw Python implementation).
+//
+// Even for simple 'len([])' will have:
+// 1. Check if 'list' implements '__len__'
+// 2. Create bound method that will wrap 'list.__len__' function
+// 3. Call this method - it will (eventually) call 'PyList.__len__' in Swift
+// Now imagine going through this in lldb.
+//
+// That's a lot of work for such a simple operation.
+// With protocol dispatch we will:
+// 1. Check if 'list' implements '__len__Owner'
+// 2. Check user has overriden '__len__'
+// 3. Directly call 'PyList.__len__' in Swift
+// In lldb this is: n (check protocol), n (check override), s (step into Swift method)
+//
+// Also, performance (maybe).
+//
+// == Is this bullet-proof? ==
+// Not really.
+// If you remove one of the builtin methods from a type, then static protocol
+// conformance will still remain.
+//
+// Table of contents:
+// 1. Owner protocol definitions - protocols for each operation
+// 2. Fast enum - try to call given function with protocol dispatch
+// 3. Owner protocol conformance - this type supports given operation/protocol
 ''')
 
   # =================
@@ -131,23 +153,34 @@ import Core
 
 // This protocol is here only to check if we have consistent '__new__' signatures.
 // It will not be used in 'Fast' dispatch.
-protocol __new__Owner {{
+private protocol __new__Owner {{
   static func pyNew(type: PyType, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
 }}
 
 // This protocol is here only to check if we have consistent '__init__' signatures.
 // It will not be used in 'Fast' dispatch.
-protocol __init__Owner {{
+private protocol __init__Owner {{
   associatedtype Zelf: PyObject
   static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone>
 }}
+
+// Special protocol to get '__dict__' property.
+internal protocol __dict__Owner {{
+  func getDict() -> PyDict
+}}
 ''')
+
+  class ProtocolEntry:
+    def __init__(self, python_name, swift_protocol_name, swift_signature):
+      self.python_name = python_name
+      self.swift_protocol_name = swift_protocol_name
+      self.swift_signature = swift_signature
 
   protocols_by_name = { }
   def add_protocol(python_name, swift_protocol_name, swift_function, swift_return_type):
     if swift_protocol_name not in protocols_by_name:
       signature = SignatureInfo(swift_function, swift_return_type)
-      protocol = ProtocolInfo(python_name, swift_protocol_name, signature)
+      protocol = ProtocolEntry(python_name, swift_protocol_name, signature)
       protocols_by_name[swift_protocol_name] = protocol
 
   for t in types:
@@ -186,14 +219,15 @@ protocol __init__Owner {{
   add_protocol('__iand__',      '__iand__Owner',      'iand(_ other: PyObject)',      'PyResult<PyObject>')
   add_protocol('__ixor__',      '__ixor__Owner',      'ixor(_ other: PyObject)',      'PyResult<PyObject>')
   add_protocol('__ior__',       '__ior__Owner',       'ior(_ other: PyObject)',       'PyResult<PyObject>')
+  add_protocol('__idivmod__',   '__idivmod__Owner',   'idivmod(_ other: PyObject)',   'PyResult<PyObject>')
   add_protocol('__complex__',   '__complex__Owner',   'asComplex()',                  'PyObject')
 
   for protocol_name in sorted(protocols_by_name):
     protocol = protocols_by_name[protocol_name]
+    python_name = protocol.python_name
     protocol_name = protocol.swift_protocol_name
     signature = protocol.swift_signature
-
-    print(f'protocol {protocol_name} {{ func {signature.value} }}')
+    print(f'private protocol {protocol_name} {{ func {signature.value} }}')
   print()
 
   # ============
@@ -277,15 +311,22 @@ protocol __init__Owner {{
       entry = ConformanceEntry(swift_type, swift_base_type)
       entries_by_swift_type[swift_type] = entry
 
-    for prop in get_properties(t):
+    def add_protocol_conformance(protocol_name):
+      # 'protocols_by_name' - all generated protocols
+      # And special case for '__dict__'
+      protocol_exists = protocol_name in protocols_by_name or protocol_name == '__dict__Owner'
+      if protocol_exists:
+        entry.protocols.append(protocol_name)
+
+    for prop in t.properties:
       python_name = prop.python_name
       protocol_name = getter_protocol_name(python_name)
-      entry.protocols.append(protocol_name)
+      add_protocol_conformance(protocol_name)
 
-    for meth in get_methods(t):
+    for meth in t.methods:
       python_name = meth.python_name
       protocol_name = func_protocol_name(python_name)
-      entry.protocols.append(protocol_name)
+      add_protocol_conformance(protocol_name)
 
     # From static funcions we have only '__new__' and '__init__'.
     for meth in t.static_functions:

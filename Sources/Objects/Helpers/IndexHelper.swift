@@ -63,8 +63,8 @@ internal enum IndexHelper {
       return .value(int.value)
     }
 
-    if let indexOwner = value as? __index__Owner {
-      return .value(indexOwner.asIndex())
+    if let result = Fast.__index__(value) {
+      return .value(result)
     }
 
     switch Py.callMethod(object: value, selector: .__index__) {

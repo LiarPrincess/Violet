@@ -93,48 +93,41 @@ private struct {struct_name}: BinaryOp {{
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {{
-    if let owner = left as? __{name}__Owner {{
-      return FastCallResult(owner.{name}(right))
-    }}
-    return .unavailable
+    let result = Fast.__{name}__(left, right)
+    return FastCallResult(result)
   }}
 
   fileprivate static func callFastReflected(left: PyObject,
                                             right: PyObject) -> FastCallResult {{
-    if let owner = right as? __r{name}__Owner {{
-      return FastCallResult(owner.r{name}(left))
-    }}
-    return .unavailable
+    let result = Fast.__r{name}__(right, left)
+    return FastCallResult(result)
   }}
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {{
-    if let owner = left as? __i{name}__Owner {{
-      return FastCallResult(owner.i{name}(right))
-    }}
-    return .unavailable
+    let result = Fast.__i{name}__(left, right)
+    return FastCallResult(result)
   }}
 }}
 ''')
 
     if name == 'divmod':
       print(f'''\
-extension BuiltinFunctions {{
+extension PyInstance {{
 
-  // sourcery: pymethod = divmod
   /// divmod(a, b)
   /// See [this](https://docs.python.org/3/library/functions.html#divmod)
   public func {name}(left: PyObject, right: PyObject) -> PyResult<PyObject> {{
     return {struct_name}.call(left: left, right: right)
   }}
 
-  // `divmod` in place does not make sense\n
+  // `divmod` in place does not make sense
 }}
 ''')
 
     else:
       print(f'''\
-extension BuiltinFunctions {{
+extension PyInstance {{
 
   public func {name}(left: PyObject, right: PyObject) -> PyResult<PyObject> {{
     return {struct_name}.call(left: left, right: right)

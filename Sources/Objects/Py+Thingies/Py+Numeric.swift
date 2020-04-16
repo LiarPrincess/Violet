@@ -10,8 +10,8 @@ extension PyInstance {
   /// See [this](https://docs.python.org/3/library/functions.html#round)
   public func round(number: PyObject,
                     nDigits: PyObject? = nil) -> PyResult<PyObject> {
-    if let owner = number as? __round__Owner {
-      return owner.round(nDigits: nDigits)
+    if let result = Fast.__round__(number, nDigits: nDigits) {
+      return result
     }
 
     let args = self.get__round__Args(nDigits: nDigits)

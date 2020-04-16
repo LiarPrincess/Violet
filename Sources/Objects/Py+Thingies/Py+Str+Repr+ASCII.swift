@@ -11,8 +11,8 @@ extension PyInstance {
   /// repr(object)
   /// See [this](https://docs.python.org/3/library/functions.html#repr)
   public func repr(object: PyObject) -> PyResult<String> {
-    if let owner = object as? __repr__Owner {
-      return owner.repr()
+    if let result = Fast.__repr__(object) {
+      return result
     }
 
     switch self.callMethod(object: object, selector: .__repr__) {
@@ -56,8 +56,8 @@ extension PyInstance {
       return self.repr(object: object)
     }
 
-    if let owner = object as? __str__Owner {
-      return owner.str()
+    if let result = Fast.__str__(object) {
+      return result
     }
 
     switch self.callMethod(object: object, selector: .__str__) {

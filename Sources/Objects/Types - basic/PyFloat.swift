@@ -767,8 +767,8 @@ extension PyFloat {
   }
 
   private static func callFloat(_ object: PyObject) -> CallMethodResult {
-    if let owner = object as? __float__Owner {
-      switch owner.asFloat() {
+    if let result = Fast.__float__(object) {
+      switch result {
       case let .value(f): return .value(f)
       case let .error(e): return .error(e)
       }

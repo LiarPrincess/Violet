@@ -36,8 +36,8 @@ extension PyInstance {
     }
 
     // Try __bool__
-    if let boolOwner = object as? __bool__Owner {
-      return .value(boolOwner.asBool())
+    if let result = Fast.__bool__(object) {
+      return .value(result)
     }
 
     switch self.callMethod(object: object, selector: .__bool__) {
@@ -55,8 +55,7 @@ extension PyInstance {
     }
 
     // Try __len__
-    if let lenOwner = object as? __len__Owner {
-      let len = lenOwner.getLength()
+    if let len = Fast.__len__(object) {
       return .value(len.isTrue)
     }
 

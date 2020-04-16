@@ -44,8 +44,7 @@ extension PyInstance {
     }
 
     // Fast protocol-based path
-    if let owner = object as? __getattribute__Owner {
-      let result = owner.getAttribute(name: name)
+    if let result = Fast.__getattribute__(object, name: name) {
       return self.defaultIfAttributeError(result: result, default: `default`)
     }
 
@@ -161,8 +160,8 @@ extension PyInstance {
       return .typeError("setattr(): attribute name must be string")
     }
 
-    if let owner = object as? __setattr__Owner {
-      return owner.setAttribute(name: name, value: value)
+    if let result = Fast.__setattr__(object, name: name, value: value) {
+      return result
     }
 
     switch self.callMethod(object: object, selector: .__setattr__, args: [name, value]) {

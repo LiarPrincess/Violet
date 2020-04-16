@@ -604,8 +604,8 @@ public class PyComplex: PyObject {
   }
 
   private static func callComplex(_ object: PyObject) -> CallMethodResult {
-    if let owner = object as? __complex__Owner {
-      return .value(owner.asComplex())
+    if let result = Fast.__complex__(object) {
+      return .value(result)
     }
 
     return Py.callMethod(object: object, selector: .__complex__)

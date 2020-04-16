@@ -29,8 +29,7 @@ extension PyInstance {
 
   private func call__instancecheck__(instance: PyObject,
                                      type: PyObject) -> PyResult<Bool> {
-    if let owner = type as? __instancecheck__Owner {
-      let result = owner.isType(of: instance)
+    if let result = Fast.__instancecheck__(type, of: instance) {
       return .value(result)
     }
 
@@ -71,8 +70,8 @@ extension PyInstance {
 
   private func call__subclasscheck__(type: PyObject,
                                      super: PyObject) -> PyResult<Bool> {
-    if let owner = type as? __subclasscheck__Owner {
-      return owner.isSubtype(of: `super`)
+    if let result = Fast.__subclasscheck__(type, of: `super`) {
+      return result
     }
 
     switch self.callMethod(object: type,

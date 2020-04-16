@@ -9,103 +9,137 @@ import Core
 // Please note that this file was automatically generated. DO NOT EDIT!
 // The same goes for other files in 'Generated' directory.
 
+// == What is this? ==
 // Sometimes instead of doing slow Python dispatch we will use Swift protocols.
 // Feel free to add new protocols if you need them (just modify the script
 // responsible for generating the code).
+//
+// == Why? ==
+// Mostly for debugging (trust me, you don't want to debug raw Python implementation).
+//
+// Even for simple 'len([])' will have:
+// 1. Check if 'list' implements '__len__'
+// 2. Create bound method that will wrap 'list.__len__' function
+// 3. Call this method - it will (eventually) call 'PyList.__len__' in Swift
+// Now imagine going through this in lldb.
+//
+// That's a lot of work for such a simple operation.
+// With protocol dispatch we will:
+// 1. Check if 'list' implements '__len__Owner'
+// 2. Check user has overriden '__len__'
+// 3. Directly call 'PyList.__len__' in Swift
+// In lldb this is: n (check protocol), n (check override), s (step into Swift method)
+//
+// Also, performance (maybe).
+//
+// == Is this bullet-proof? ==
+// Not really.
+// If you remove one of the builtin methods from a type, then static protocol
+// conformance will still remain.
+//
+// Table of contents:
+// 1. Owner protocol definitions - protocols for each operation
+// 2. Fast enum - try to call given function with protocol dispatch
+// 3. Owner protocol conformance - this type supports given operation/protocol
 
 // MARK: - Owner protocols
 
 // This protocol is here only to check if we have consistent '__new__' signatures.
 // It will not be used in 'Fast' dispatch.
-protocol __new__Owner {
+private protocol __new__Owner {
   static func pyNew(type: PyType, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
 }
 
 // This protocol is here only to check if we have consistent '__init__' signatures.
 // It will not be used in 'Fast' dispatch.
-protocol __init__Owner {
+private protocol __init__Owner {
   associatedtype Zelf: PyObject
   static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone>
 }
 
-protocol __abs__Owner { func abs() -> PyObject }
-protocol __add__Owner { func add(_ other: PyObject) -> PyResult<PyObject> }
-protocol __and__Owner { func and(_ other: PyObject) -> PyResult<PyObject> }
-protocol __bool__Owner { func asBool() -> Bool }
-protocol __call__Owner { func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> }
-protocol __complex__Owner { func asComplex() -> PyObject }
-protocol __contains__Owner { func contains(_ element: PyObject) -> PyResult<Bool> }
-protocol __del__Owner { func del() -> PyResult<PyNone> }
-protocol __delitem__Owner { func delItem(at index: PyObject) -> PyResult<PyNone> }
-protocol __dict__GetterOwner { func getDict() -> PyDict }
-protocol __dir__Owner { func dir() -> PyResult<DirResult> }
-protocol __divmod__Owner { func divmod(_ other: PyObject) -> PyResult<PyObject> }
-protocol __eq__Owner { func isEqual(_ other: PyObject) -> CompareResult }
-protocol __float__Owner { func asFloat() -> PyResult<PyFloat> }
-protocol __floordiv__Owner { func floordiv(_ other: PyObject) -> PyResult<PyObject> }
-protocol __ge__Owner { func isGreaterEqual(_ other: PyObject) -> CompareResult }
-protocol __getattribute__Owner { func getAttribute(name: PyObject) -> PyResult<PyObject> }
-protocol __getitem__Owner { func getItem(at index: PyObject) -> PyResult<PyObject> }
-protocol __gt__Owner { func isGreater(_ other: PyObject) -> CompareResult }
-protocol __hash__Owner { func hash() -> HashResult }
-protocol __iadd__Owner { func iadd(_ other: PyObject) -> PyResult<PyObject> }
-protocol __iand__Owner { func iand(_ other: PyObject) -> PyResult<PyObject> }
-protocol __ifloordiv__Owner { func ifloordiv(_ other: PyObject) -> PyResult<PyObject> }
-protocol __ilshift__Owner { func ilshift(_ other: PyObject) -> PyResult<PyObject> }
-protocol __imatmul__Owner { func imatmul(_ other: PyObject) -> PyResult<PyObject> }
-protocol __imod__Owner { func imod(_ other: PyObject) -> PyResult<PyObject> }
-protocol __imul__Owner { func imul(_ other: PyObject) -> PyResult<PyObject> }
-protocol __index__Owner { func asIndex() -> BigInt }
-protocol __instancecheck__Owner { func isType(of object: PyObject) -> Bool }
-protocol __invert__Owner { func invert() -> PyObject }
-protocol __ior__Owner { func ior(_ other: PyObject) -> PyResult<PyObject> }
-protocol __ipow__Owner { func ipow(_ other: PyObject) -> PyResult<PyObject> }
-protocol __irshift__Owner { func irshift(_ other: PyObject) -> PyResult<PyObject> }
-protocol __isabstractmethod__Owner { func isAbstractMethod() -> PyResult<Bool> }
-protocol __isub__Owner { func isub(_ other: PyObject) -> PyResult<PyObject> }
-protocol __iter__Owner { func iter() -> PyObject }
-protocol __itruediv__Owner { func itruediv(_ other: PyObject) -> PyResult<PyObject> }
-protocol __ixor__Owner { func ixor(_ other: PyObject) -> PyResult<PyObject> }
-protocol __le__Owner { func isLessEqual(_ other: PyObject) -> CompareResult }
-protocol __len__Owner { func getLength() -> BigInt }
-protocol __lshift__Owner { func lshift(_ other: PyObject) -> PyResult<PyObject> }
-protocol __lt__Owner { func isLess(_ other: PyObject) -> CompareResult }
-protocol __matmul__Owner { func matmul(_ other: PyObject) -> PyResult<PyObject> }
-protocol __mod__Owner { func mod(_ other: PyObject) -> PyResult<PyObject> }
-protocol __mul__Owner { func mul(_ other: PyObject) -> PyResult<PyObject> }
-protocol __ne__Owner { func isNotEqual(_ other: PyObject) -> CompareResult }
-protocol __neg__Owner { func negative() -> PyObject }
-protocol __next__Owner { func next() -> PyResult<PyObject> }
-protocol __or__Owner { func or(_ other: PyObject) -> PyResult<PyObject> }
-protocol __pos__Owner { func positive() -> PyObject }
-protocol __pow__Owner { func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> }
-protocol __radd__Owner { func radd(_ other: PyObject) -> PyResult<PyObject> }
-protocol __rand__Owner { func rand(_ other: PyObject) -> PyResult<PyObject> }
-protocol __rdivmod__Owner { func rdivmod(_ other: PyObject) -> PyResult<PyObject> }
-protocol __repr__Owner { func repr() -> PyResult<String> }
-protocol __reversed__Owner { func reversed() -> PyObject }
-protocol __rfloordiv__Owner { func rfloordiv(_ other: PyObject) -> PyResult<PyObject> }
-protocol __rlshift__Owner { func rlshift(_ other: PyObject) -> PyResult<PyObject> }
-protocol __rmatmul__Owner { func rmatmul(_ other: PyObject) -> PyResult<PyObject> }
-protocol __rmod__Owner { func rmod(_ other: PyObject) -> PyResult<PyObject> }
-protocol __rmul__Owner { func rmul(_ other: PyObject) -> PyResult<PyObject> }
-protocol __ror__Owner { func ror(_ other: PyObject) -> PyResult<PyObject> }
-protocol __round__Owner { func round(nDigits: PyObject?) -> PyResult<PyObject> }
-protocol __rpow__Owner { func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> }
-protocol __rrshift__Owner { func rrshift(_ other: PyObject) -> PyResult<PyObject> }
-protocol __rshift__Owner { func rshift(_ other: PyObject) -> PyResult<PyObject> }
-protocol __rsub__Owner { func rsub(_ other: PyObject) -> PyResult<PyObject> }
-protocol __rtruediv__Owner { func rtruediv(_ other: PyObject) -> PyResult<PyObject> }
-protocol __rxor__Owner { func rxor(_ other: PyObject) -> PyResult<PyObject> }
-protocol __setattr__Owner { func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> }
-protocol __setitem__Owner { func setItem(at index: PyObject, to value: PyObject) -> PyResult<PyNone> }
-protocol __str__Owner { func str() -> PyResult<String> }
-protocol __sub__Owner { func sub(_ other: PyObject) -> PyResult<PyObject> }
-protocol __subclasscheck__Owner { func isSubtype(of object: PyObject) -> PyResult<Bool> }
-protocol __truediv__Owner { func truediv(_ other: PyObject) -> PyResult<PyObject> }
-protocol __trunc__Owner { func trunc() -> PyObject }
-protocol __xor__Owner { func xor(_ other: PyObject) -> PyResult<PyObject> }
-protocol keysOwner { func keys() -> PyObject }
+// Special protocol to get '__dict__' property.
+internal protocol __dict__Owner {
+  func getDict() -> PyDict
+}
+
+private protocol __abs__Owner { func abs() -> PyObject }
+private protocol __add__Owner { func add(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __and__Owner { func and(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __bool__Owner { func asBool() -> Bool }
+private protocol __call__Owner { func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> }
+private protocol __complex__Owner { func asComplex() -> PyObject }
+private protocol __contains__Owner { func contains(_ element: PyObject) -> PyResult<Bool> }
+private protocol __del__Owner { func del() -> PyResult<PyNone> }
+private protocol __delitem__Owner { func delItem(at index: PyObject) -> PyResult<PyNone> }
+private protocol __dir__Owner { func dir() -> PyResult<DirResult> }
+private protocol __divmod__Owner { func divmod(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __eq__Owner { func isEqual(_ other: PyObject) -> CompareResult }
+private protocol __float__Owner { func asFloat() -> PyResult<PyFloat> }
+private protocol __floordiv__Owner { func floordiv(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __ge__Owner { func isGreaterEqual(_ other: PyObject) -> CompareResult }
+private protocol __getattribute__Owner { func getAttribute(name: PyObject) -> PyResult<PyObject> }
+private protocol __getitem__Owner { func getItem(at index: PyObject) -> PyResult<PyObject> }
+private protocol __gt__Owner { func isGreater(_ other: PyObject) -> CompareResult }
+private protocol __hash__Owner { func hash() -> HashResult }
+private protocol __iadd__Owner { func iadd(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __iand__Owner { func iand(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __idivmod__Owner { func idivmod(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __ifloordiv__Owner { func ifloordiv(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __ilshift__Owner { func ilshift(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __imatmul__Owner { func imatmul(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __imod__Owner { func imod(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __imul__Owner { func imul(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __index__Owner { func asIndex() -> BigInt }
+private protocol __instancecheck__Owner { func isType(of object: PyObject) -> Bool }
+private protocol __invert__Owner { func invert() -> PyObject }
+private protocol __ior__Owner { func ior(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __ipow__Owner { func ipow(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __irshift__Owner { func irshift(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __isabstractmethod__Owner { func isAbstractMethod() -> PyResult<Bool> }
+private protocol __isub__Owner { func isub(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __iter__Owner { func iter() -> PyObject }
+private protocol __itruediv__Owner { func itruediv(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __ixor__Owner { func ixor(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __le__Owner { func isLessEqual(_ other: PyObject) -> CompareResult }
+private protocol __len__Owner { func getLength() -> BigInt }
+private protocol __lshift__Owner { func lshift(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __lt__Owner { func isLess(_ other: PyObject) -> CompareResult }
+private protocol __matmul__Owner { func matmul(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __mod__Owner { func mod(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __mul__Owner { func mul(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __ne__Owner { func isNotEqual(_ other: PyObject) -> CompareResult }
+private protocol __neg__Owner { func negative() -> PyObject }
+private protocol __next__Owner { func next() -> PyResult<PyObject> }
+private protocol __or__Owner { func or(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __pos__Owner { func positive() -> PyObject }
+private protocol __pow__Owner { func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> }
+private protocol __radd__Owner { func radd(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __rand__Owner { func rand(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __rdivmod__Owner { func rdivmod(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __repr__Owner { func repr() -> PyResult<String> }
+private protocol __reversed__Owner { func reversed() -> PyObject }
+private protocol __rfloordiv__Owner { func rfloordiv(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __rlshift__Owner { func rlshift(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __rmatmul__Owner { func rmatmul(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __rmod__Owner { func rmod(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __rmul__Owner { func rmul(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __ror__Owner { func ror(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __round__Owner { func round(nDigits: PyObject?) -> PyResult<PyObject> }
+private protocol __rpow__Owner { func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> }
+private protocol __rrshift__Owner { func rrshift(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __rshift__Owner { func rshift(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __rsub__Owner { func rsub(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __rtruediv__Owner { func rtruediv(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __rxor__Owner { func rxor(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __setattr__Owner { func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> }
+private protocol __setitem__Owner { func setItem(at index: PyObject, to value: PyObject) -> PyResult<PyNone> }
+private protocol __str__Owner { func str() -> PyResult<String> }
+private protocol __sub__Owner { func sub(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __subclasscheck__Owner { func isSubtype(of object: PyObject) -> PyResult<Bool> }
+private protocol __truediv__Owner { func truediv(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __trunc__Owner { func trunc() -> PyObject }
+private protocol __xor__Owner { func xor(_ other: PyObject) -> PyResult<PyObject> }
+private protocol keysOwner { func keys() -> PyObject }
 
 // MARK: - Fast
 
@@ -178,14 +212,6 @@ internal enum Fast {
   internal static func __delitem__(_ zelf: PyObject, at index: PyObject) -> PyResult<PyNone>? {
     if let owner = zelf as? __delitem__Owner, !zelf.hasOverriden(selector: "__delitem__") {
       return owner.delItem(at: index)
-    }
-
-    return nil
-  }
-
-  internal static func __dict__(_ zelf: PyObject) -> PyDict? {
-    if let owner = zelf as? __dict__GetterOwner, !zelf.hasOverriden(selector: "__dict__") {
-      return owner.getDict()
     }
 
     return nil
@@ -282,6 +308,14 @@ internal enum Fast {
   internal static func __iand__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
     if let owner = zelf as? __iand__Owner, !zelf.hasOverriden(selector: "__iand__") {
       return owner.iand(other)
+    }
+
+    return nil
+  }
+
+  internal static func __idivmod__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
+    if let owner = zelf as? __idivmod__Owner, !zelf.hasOverriden(selector: "__idivmod__") {
+      return owner.idivmod(other)
     }
 
     return nil
@@ -844,7 +878,7 @@ extension PyCell:
 { }
 
 extension PyClassMethod:
-  __dict__GetterOwner,
+  __dict__Owner,
   __isabstractmethod__Owner,
   __init__Owner,
   __new__Owner
@@ -1066,7 +1100,7 @@ extension PyFrozenSet:
 { }
 
 extension PyFunction:
-  __dict__GetterOwner,
+  __dict__Owner,
   __repr__Owner,
   __call__Owner
 { }
@@ -1147,6 +1181,7 @@ extension PyList:
   __iadd__Owner,
   __mul__Owner,
   __rmul__Owner,
+  __imul__Owner,
   __new__Owner,
   __init__Owner
 { }
@@ -1187,7 +1222,7 @@ extension PyMethod:
 { }
 
 extension PyModule:
-  __dict__GetterOwner,
+  __dict__Owner,
   __repr__Owner,
   __getattribute__Owner,
   __setattr__Owner,
@@ -1197,7 +1232,7 @@ extension PyModule:
 { }
 
 extension PyNamespace:
-  __dict__GetterOwner,
+  __dict__Owner,
   __eq__Owner,
   __ne__Owner,
   __lt__Owner,
@@ -1307,7 +1342,7 @@ extension PySlice:
 { }
 
 extension PyStaticMethod:
-  __dict__GetterOwner,
+  __dict__Owner,
   __isabstractmethod__Owner,
   __init__Owner,
   __new__Owner
@@ -1381,7 +1416,7 @@ extension PyTupleIterator:
 { }
 
 extension PyType:
-  __dict__GetterOwner,
+  __dict__Owner,
   __repr__Owner,
   __subclasscheck__Owner,
   __instancecheck__Owner,
@@ -1410,7 +1445,7 @@ extension PyAssertionError { }
 extension PyAttributeError { }
 
 extension PyBaseException:
-  __dict__GetterOwner,
+  __dict__Owner,
   __repr__Owner,
   __str__Owner,
   __getattribute__Owner,

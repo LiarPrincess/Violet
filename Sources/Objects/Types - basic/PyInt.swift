@@ -846,8 +846,8 @@ public class PyInt: PyObject {
   }
 
   private static func callTrunc(_ object: PyObject) -> CallMethodResult {
-    if let owner = object as? __trunc__Owner {
-      return .value(owner.trunc())
+    if let result = Fast.__trunc__(object) {
+      return .value(result)
     }
 
     return Py.callMethod(object: object, selector: .__trunc__)

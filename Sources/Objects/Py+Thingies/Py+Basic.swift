@@ -93,7 +93,7 @@ extension PyInstance {
   /// This is actually `dict` stored as '\_\_dict\_\_' in real '\_\_dict\_\_'.
   /// In such situation we return real '\_\_dict\_\_' (not the user property!).
   internal func get__dict__(object: PyObject) -> PyDict? {
-    if let owner = object as? __dict__GetterOwner {
+    if let owner = object as? __dict__Owner {
       let result = owner.getDict()
       return result
     }
@@ -146,8 +146,7 @@ extension PyInstance {
   ///static PyObject *
   ///_dir_object(PyObject *obj)
   private func objectDir(object: PyObject) -> PyResult<PyObject> {
-    if let owner = object as? __dir__Owner {
-      let result = owner.dir()
+    if let result = Fast.__dir__(object) {
       return result.asFunctionResult
     }
 
@@ -179,8 +178,8 @@ extension PyInstance {
   // MARK: - Is abstract method
 
   public func isAbstractMethod(object: PyObject) -> PyResult<Bool> {
-    if let owner = object as? __isabstractmethod__Owner {
-      return owner.isAbstractMethod()
+    if let result = Fast.__isabstractmethod__(object) {
+      return result
     }
 
     switch self.getattr(object: object, name: .__isabstractmethod__) {

@@ -3,17 +3,17 @@ extension PyInstance {
   // MARK: - Get
 
   /// PySequence_GetItem
-  public func getItem(_ object: PyObject,
+  public func getItem(object: PyObject,
                       at index: Int) -> PyResult<PyObject> {
     let int = self.newInt(index)
-    return self.getItem(object, at: int)
+    return self.getItem(object: object, at: int)
   }
 
   /// PyObject_GetItem
-  public func getItem(_ object: PyObject,
+  public func getItem(object: PyObject,
                       at index: PyObject) -> PyResult<PyObject> {
-    if let owner = object as? __getitem__Owner {
-      return owner.getItem(at: index)
+    if let result = Fast.__getitem__(object, at: index) {
+      return result
     }
 
     switch self.callMethod(object: object, selector: .__getitem__, arg: index) {
@@ -29,11 +29,11 @@ extension PyInstance {
   // MARK: - Set
 
   /// PyObject_SetItem
-  public func setItem(_ object: PyObject,
+  public func setItem(object: PyObject,
                       at index: PyObject,
                       value: PyObject) -> PyResult<PyNone> {
-    if let owner = object as? __setitem__Owner {
-      return owner.setItem(at: index, to: value)
+    if let result = Fast.__setitem__(object, at: index, to: value) {
+      return result
     }
 
     switch self.callMethod(object: object, selector: .__setitem__, arg: value) {
@@ -49,10 +49,10 @@ extension PyInstance {
   // MARK: - Delete
 
   /// PyObject_DelItem
-  public func deleteItem(_ object: PyObject,
+  public func deleteItem(object: PyObject,
                          at index: PyObject) -> PyResult<PyNone> {
-    if let owner = object as? __delitem__Owner {
-      return owner.delItem(at: index)
+    if let result = Fast.__delitem__(object, at: index) {
+      return result
     }
 
     switch self.callMethod(object: object, selector: .__delitem__) {

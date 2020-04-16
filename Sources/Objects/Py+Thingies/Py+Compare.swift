@@ -14,8 +14,13 @@ private enum FastCallResult {
   /// Fast call is not available
   case unavailable
 
-  fileprivate init(_ value: CompareResult) {
-    switch value {
+  fileprivate init(_ value: CompareResult?) {
+    guard let v = value else {
+      self = .unavailable
+      return
+    }
+
+    switch v {
     case .value(let o):
       self = .value(o)
     case .error(let e):
@@ -141,10 +146,8 @@ private enum EqualCompare: CompareOp {
 
   fileprivate static func callFastCompare(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let left = left as? __eq__Owner {
-      return FastCallResult(left.isEqual(right))
-    }
-    return .unavailable
+    let result = Fast.__eq__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -184,10 +187,8 @@ private enum NotEqualCompare: CompareOp {
 
   fileprivate static func callFastCompare(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let left = left as? __ne__Owner {
-      return FastCallResult(left.isNotEqual(right))
-    }
-    return .unavailable
+    let result = Fast.__ne__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -226,10 +227,8 @@ private enum LessCompare: CompareOp {
 
   fileprivate static func callFastCompare(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let left = left as? __lt__Owner {
-      return FastCallResult(left.isLess(right))
-    }
-    return .unavailable
+    let result = Fast.__lt__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -263,10 +262,8 @@ private enum LessEqualCompare: CompareOp {
 
   fileprivate static func callFastCompare(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let left = left as? __le__Owner {
-      return FastCallResult(left.isLessEqual(right))
-    }
-    return .unavailable
+    let result = Fast.__le__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -300,10 +297,8 @@ private enum GreaterCompare: CompareOp {
 
   fileprivate static func callFastCompare(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let left = left as? __gt__Owner {
-      return FastCallResult(left.isGreater(right))
-    }
-    return .unavailable
+    let result = Fast.__gt__(left, right)
+    return FastCallResult(result)
   }
 }
 
@@ -337,10 +332,8 @@ private enum GreaterEqualCompare: CompareOp {
 
   fileprivate static func callFastCompare(left: PyObject,
                                           right: PyObject) -> FastCallResult {
-    if let left = left as? __ge__Owner {
-      return FastCallResult(left.isGreaterEqual(right))
-    }
-    return .unavailable
+    let result = Fast.__ge__(left, right)
+    return FastCallResult(result)
   }
 }
 

@@ -10,8 +10,8 @@ extension PyInstance {
   /// Py_hash_t PyObject_Hash(PyObject *v)
   /// slot_tp_hash(PyObject *self)
   public func hash(object: PyObject) -> PyResult<PyHash> {
-    if let hashOwner = object as? __hash__Owner {
-      switch hashOwner.hash() {
+    if let result = Fast.__hash__(object) {
+      switch result {
       case .value(let hash): return .value(hash)
       case .notImplemented: return .error(self.hashNotImplemented(object))
       case .error(let e): return .error(e)

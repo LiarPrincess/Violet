@@ -65,12 +65,10 @@ extension PyInstance {
   public func call(callable: PyObject,
                    args: [PyObject] = [],
                    kwargs: PyDict? = nil) -> CallResult {
-    if let owner = callable as? __call__Owner {
-      switch owner.call(args: args, kwargs: kwargs) {
-      case .value(let result):
-        return .value(result)
-      case .error(let e):
-        return .error(e)
+    if let result = Fast.__call__(callable, args: args, kwargs: kwargs) {
+      switch result {
+      case let .value(result): return .value(result)
+      case let .error(e): return .error(e)
       }
     }
 
@@ -100,10 +98,6 @@ extension PyInstance {
   /// callable(object)
   /// See [this](https://docs.python.org/3/library/functions.html#callable)
   public func callable(object: PyObject) -> PyResult<Bool> {
-    if object is __call__Owner {
-      return .value(true)
-    }
-
     return self.hasattr(object: object, name: .__call__)
   }
 }

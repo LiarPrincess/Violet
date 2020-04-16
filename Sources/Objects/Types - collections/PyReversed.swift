@@ -62,7 +62,7 @@ public class PyReversed: PyObject {
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
     if self.index != PyReversed.endIndex {
-      switch Py.getItem(self.sequence, at: self.index) {
+      switch Py.getItem(object: self.sequence, at: self.index) {
       case .value(let o):
         self.index -= 1
         return .value(o)
@@ -138,18 +138,14 @@ public class PyReversed: PyObject {
   }
 
   private static func call__reversed__(on object: PyObject) -> CallMethodResult {
-    if let owner = object as? __reversed__Owner {
-      return .value(owner.reversed())
+    if let result = Fast.__reversed__(object) {
+      return .value(result)
     }
 
     return Py.callMethod(object: object, selector: .__reversed__)
   }
 
   private static func has__getitem__(object: PyObject) -> PyResult<Bool> {
-    if object is __getitem__Owner {
-      return .value(true)
-    }
-
     return Py.hasMethod(object: object, selector: .__getitem__)
   }
 }
