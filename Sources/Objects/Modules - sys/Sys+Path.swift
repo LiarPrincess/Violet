@@ -140,7 +140,7 @@ extension Sys {
     // Violet:  We will start from executable path.
     var path = Py.config.executablePath
 
-    arrivedToRoot: while true {
+    while true {
       let dir = Py.fileSystem.dirname(path: path)
       let landmarkFile = Py.fileSystem.join(paths: dir.path, lib, landmark)
 
@@ -148,13 +148,10 @@ extension Sys {
         return Py.newString(dir.path)
       }
 
-      switch dir.kind {
-      case .directory:
-        // Try parent directory
-        path = dir.path
-      case .root:
-        // We cannot go more 'up'
-        break arrivedToRoot
+      if dir.isTop {
+        break // We cannot go more 'up'
+      } else {
+        path = dir.path // Try parent directory
       }
     }
 

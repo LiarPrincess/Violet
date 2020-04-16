@@ -27,21 +27,15 @@ public enum ListDirResult {
 
 public struct DirnameResult {
 
-  public enum Kind {
-    /// Parent directory.
-    case directory
-    /// File system (or local) root.
-    ///
-    /// Calling `dirname` again will return the same result.
-    case root
-  }
-
-  public let kind: Kind
   public let path: String
+  /// Is file system (or local) root.
+  ///
+  /// Calling `dirname` again will return the same result.
+  public let isTop: Bool
 
-  public init(kind: Kind, path: String) {
-    self.kind = kind
+  public init(path: String, isTop: Bool) {
     self.path = path
+    self.isTop = isTop
   }
 }
 

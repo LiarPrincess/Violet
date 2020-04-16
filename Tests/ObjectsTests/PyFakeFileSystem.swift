@@ -62,7 +62,7 @@ class PyFakeFileSystem: PyFileSystem {
   }
 
   func dirname(path: String) -> DirnameResult {
-    return .root("")
+    return DirnameResult(path: "", isTop: true)
   }
 
   func join(paths: String...) -> String {
