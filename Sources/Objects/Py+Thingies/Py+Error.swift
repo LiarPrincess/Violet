@@ -46,7 +46,8 @@ extension PyInstance {
     object: PyObject,
     hasNoAttribute name: String
   ) -> PyAttributeError {
-    let msg = "\(object.typeName) object has no attribute '\(name)'"
+    let quoted = self.addQuoutesIfNotPresent(name: name)
+    let msg = "\(object.typeName) object has no attribute \(quoted)"
     return self.newAttributeError(msg: msg)
   }
 
@@ -55,8 +56,35 @@ extension PyInstance {
     object: PyObject,
     attributeIsReadOnly name: String
   ) -> PyAttributeError {
-    let msg = "'\(object.typeName)' object attribute '\(name)' is read-only"
+    let quoted = self.addQuoutesIfNotPresent(name: name)
+    let msg = "'\(object.typeName)' object attribute \(quoted) is read-only"
     return self.newAttributeError(msg: msg)
+  }
+
+  private func addQuoutesIfNotPresent(name: String) -> String {
+    // This will also check for empty
+    guard let first = name.first, let last = name.last else {
+      return "''"
+    }
+
+    var result = name
+
+    let quoteChar: Character
+    switch first {
+    case "'":
+      quoteChar = "'"
+    case "\"":
+      quoteChar = "\""
+    default:
+      quoteChar = "'"
+      result = "'" + result
+    }
+
+    if last != quoteChar {
+      result.append(quoteChar)
+    }
+
+    return result
   }
 
   // MARK: - Numeric errors
