@@ -94,8 +94,7 @@ extension PyInstance {
   /// In such situation we return real '\_\_dict\_\_' (not the user property!).
   internal func get__dict__(object: PyObject) -> PyDict? {
     if let owner = object as? __dict__Owner {
-      let result = owner.getDict()
-      return result
+      return owner.getDict()
     }
 
     return nil

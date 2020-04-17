@@ -32,7 +32,7 @@ if __name__ == '__main__':
 ''')
 
   print('''\
-internal protocol HeapType: __dict__GetterOwner {
+internal protocol HeapType: __dict__Owner {
   var __dict__: PyDict { get set }
 }
 
