@@ -610,7 +610,10 @@ extension Builtins {
     }
 
     let bases = Py.newTuple(Array(args[2...]))
-    return Py.__build_class__(fn: fn, name: name, bases: bases, kwargs: kwargs)
+    return Py.__build_class__(name: name,
+                              bases: bases,
+                              bodyFn: fn,
+                              kwargs: kwargs)
   }
 }
 

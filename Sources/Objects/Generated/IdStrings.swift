@@ -45,6 +45,8 @@ public struct IdString {
   public static let __builtins__ = Self.impl.__builtins__
   public static let __call__ = Self.impl.__call__
   public static let __class__ = Self.impl.__class__
+  public static let __class_getitem__ = Self.impl.__class_getitem__
+  public static let __classcell__ = Self.impl.__classcell__
   public static let __complex__ = Self.impl.__complex__
   public static let __contains__ = Self.impl.__contains__
   public static let __delitem__ = Self.impl.__delitem__
@@ -76,6 +78,7 @@ public struct IdString {
   public static let __imul__ = Self.impl.__imul__
   public static let __index__ = Self.impl.__index__
   public static let __init__ = Self.impl.__init__
+  public static let __init_subclass__ = Self.impl.__init_subclass__
   public static let __instancecheck__ = Self.impl.__instancecheck__
   public static let __invert__ = Self.impl.__invert__
   public static let __ior__ = Self.impl.__ior__
@@ -127,6 +130,7 @@ public struct IdString {
   public static let __rtruediv__ = Self.impl.__rtruediv__
   public static let __rxor__ = Self.impl.__rxor__
   public static let __set__ = Self.impl.__set__
+  public static let __set_name__ = Self.impl.__set_name__
   public static let __setattr__ = Self.impl.__setattr__
   public static let __setitem__ = Self.impl.__setitem__
   public static let __spec__ = Self.impl.__spec__
@@ -161,6 +165,8 @@ private struct IdStringImpl {
   fileprivate let __builtins__ = IdString(value: "__builtins__")
   fileprivate let __call__ = IdString(value: "__call__")
   fileprivate let __class__ = IdString(value: "__class__")
+  fileprivate let __class_getitem__ = IdString(value: "__class_getitem__")
+  fileprivate let __classcell__ = IdString(value: "__classcell__")
   fileprivate let __complex__ = IdString(value: "__complex__")
   fileprivate let __contains__ = IdString(value: "__contains__")
   fileprivate let __delitem__ = IdString(value: "__delitem__")
@@ -192,6 +198,7 @@ private struct IdStringImpl {
   fileprivate let __imul__ = IdString(value: "__imul__")
   fileprivate let __index__ = IdString(value: "__index__")
   fileprivate let __init__ = IdString(value: "__init__")
+  fileprivate let __init_subclass__ = IdString(value: "__init_subclass__")
   fileprivate let __instancecheck__ = IdString(value: "__instancecheck__")
   fileprivate let __invert__ = IdString(value: "__invert__")
   fileprivate let __ior__ = IdString(value: "__ior__")
@@ -243,6 +250,7 @@ private struct IdStringImpl {
   fileprivate let __rtruediv__ = IdString(value: "__rtruediv__")
   fileprivate let __rxor__ = IdString(value: "__rxor__")
   fileprivate let __set__ = IdString(value: "__set__")
+  fileprivate let __set_name__ = IdString(value: "__set_name__")
   fileprivate let __setattr__ = IdString(value: "__setattr__")
   fileprivate let __setitem__ = IdString(value: "__setitem__")
   fileprivate let __spec__ = IdString(value: "__spec__")

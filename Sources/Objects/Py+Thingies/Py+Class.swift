@@ -1,13 +1,13 @@
 import Core
 
+// In CPython:
+// Python -> builtinmodule.c
+
 extension PyInstance {
 
   // MARK: - Get __build_class__
 
-  /// In CPython: interp->import_func
-  ///
-  /// This value is set in:
-  /// 'initimport(PyInterpreterState *interp, PyObject *sysmod)'
+  /// Get `__build_class__` from `builtins` module.
   public func get__build_class__() -> PyResult<PyObject> {
     let dict = Py.builtinsModule.__dict__
 
@@ -27,66 +27,73 @@ extension PyInstance {
   ///
   /// static PyObject *
   /// builtin___build_class__(PyObject *self, PyObject *const *args, ...)
-  public func __build_class__(fn: PyFunction,
-                              name: PyString,
+  ///
+  /// - Warning:
+  /// Order of arguments in Swift method is a bit different than in Python
+  /// `builtins.__build_class__`! Idk. it makes more sense for me this way.
+  ///
+  /// - Parameters:
+  ///   - name: class name
+  ///   - bases: base classes (positional arguments in `class Alice(eat_me)`)
+  ///   - bodyFn: function/closure created from the class body;
+  ///             it has a single argument (`__locals__`) where the dict
+  ///             (or MutableSequence) representing the locals is passed
+  ///   - kwargs: keyword arguments and **kwds argument
+  public func __build_class__(name: PyString,
                               bases: PyTuple,
+                              bodyFn: PyFunction,
                               kwargs: PyDict?) -> PyResult<PyObject> {
+    // Type of our type. Most of the time it will be 'PyType' instance.
+    // But technically you can 'class Elsa(some_object): pass'.
+    // If you try hard enough with 'some_object' it may even work...
     let metatype: PyObject
     switch self.calculateMetaclass(bases: bases, kwargs: kwargs) {
     case let .value(m): metatype = m
     case let .error(e): return .error(e)
     }
 
-    let namespace: PyDict
-    switch self.createNamespace(name: name, bases: bases, metatype: metatype) {
-    case let .value(n): namespace = n
+    // Our class '__dict__' (the thing that contains methods etc.)
+    // CPython: namespace
+    let dict: PyDict
+    switch self.createDict(name: name, bases: bases, metatype: metatype) {
+    case let .value(n): dict = n
     case let .error(e): return .error(e)
     }
 
-    let cell: PyObject
-    switch self.createCell(fn: fn, namespace: namespace) {
-    case let .value(c): cell = c
+    // Call 'bodyFn' and use class '__dict__' as locals.
+    // This way 'def let_it_go(self, ...)' in class definition will became entry
+    // in '__dict__'.
+    //
+    // If we used '__class__' inside 'bodyFn' then we need to fill that cell.
+    // class Elsa:
+    //   def let_it_go(self):
+    //     c = __class__ # <-- this uses '__class__' cell
+    // It can also be 'None' if we have not used class cell.
+    let __class__cell: PyObject
+    switch self.eval(fn: bodyFn, locals: dict) {
+    case let .value(c): __class__cell = c
     case let .error(e): return .error(e)
     }
 
-    let cls: PyObject
-    let margs = [name, bases, namespace]
-    switch Py.call(callable: metatype, args: margs, kwargs: kwargs).asResult {
-    case let .value(c): cls = c
-    case let .error(e): return .error(e)
+    // Call our metatype to create type.
+    // Most of the time it will call 'PyType.call'.
+    let result: PyObject
+    let metaArgs = [name, bases, dict]
+    switch Py.call(callable: metatype, args: metaArgs, kwargs: kwargs) {
+    case let .value(r):
+      result = r
+    case let .notCallable(e),
+         let .error(e):
+      return .error(e)
     }
 
-    if let cls = cls as? PyType, let cell = cell as? PyCell {
-      if let e = self.setCellContent(name: name, cell: cell, cls: cls) {
-        return .error(e)
-      }
+    // Almost done!
+    // If we use '__class__' then we have to set that cell.
+    if let e = self.fill__class__cell(cell: __class__cell, with: result) {
+      return .error(e)
     }
 
-    return .value(cls)
-  }
-
-  private func setCellContent(name: PyString,
-                              cell: PyCell,
-                              cls: PyType) -> PyBaseException? {
-    // If content is nil -> it may be warning
-    if cell.content == nil {
-      let msg = "__class__ not set defining \(name.value) as \(cls.getName()). " +
-                "Was __classcell__ propagated to type.__new__?"
-      if let e = Py.warn(type: .deprecation, msg: msg) {
-        return e
-      }
-    }
-
-    // If we already have content that is not our class -> throw
-    if let content = cell.content, content !== cls {
-      let cntRepr = Py.reprOrGeneric(object: content)
-      let clsRepr = Py.reprOrGeneric(object: cls)
-      let msg = "__class__ set to \(cntRepr) defining \(name.value) as \(clsRepr)"
-      return Py.newTypeError(msg: msg)
-    }
-
-    cell.content = cls
-    return nil
+    return .value(result)
   }
 }
 
@@ -99,6 +106,8 @@ extension PyInstance {
     var result: PyObject
 
     if let kwargs = kwargs, let meta = kwargs.get(id: .metaclass) {
+      // 'metaclass' should not be propagated later when we call our 'metatype'
+      // to create new type.
       _ = kwargs.del(id: .metaclass)
       result = meta
     } else {
@@ -115,16 +124,17 @@ extension PyInstance {
         return .error(e)
       }
     }
-    // else: meta is not a class, so we cannot do the metaclass
-    // calculation, so we will use the explicitly given object as it is
+    // else:
+    //   'result' is not a class, so we cannot do the metaclass calculation,
+    //   we will use the given object as it is.
 
     return .value(result)
   }
 }
 
-// MARK: - Namespace
+// MARK: - Dict
 
-private enum PrepareCallResult {
+private enum GetPrepareResult {
   case value(PyObject)
   case none
   case error(PyBaseException)
@@ -132,13 +142,15 @@ private enum PrepareCallResult {
 
 extension PyInstance {
 
-  private func createNamespace(name: PyString,
-                               bases: PyTuple,
-                               metatype: PyObject) -> PyResult<PyDict> {
+  /// If our `metatype` has `__prepare__` then call it to obtain class `__dict__`.
+  /// Otherwise just return empty dict.
+  private func createDict(name: PyString,
+                          bases: PyTuple,
+                          metatype: PyObject) -> PyResult<PyDict> {
     switch self.get__prepare__(metatype: metatype) {
-    case .value(let prepare):
+    case let .value(__prepare__):
       let object: PyObject
-      switch Py.call(callable: prepare, args: [name, bases], kwargs: nil) {
+      switch Py.call(callable: __prepare__, args: [name, bases], kwargs: nil) {
       case let .value(o):
         object = o
       case let .error(e),
@@ -147,22 +159,24 @@ extension PyInstance {
       }
 
       guard let dict = object as? PyDict else {
-        let msg = "\(metatype.typeName).__prepare__() must return a mapping, " +
-                  "not \(object.typeName)"
+        let mt = metatype.typeName
+        let ot = object.typeName
+        let msg = "\(mt).__prepare__() must return a mapping, not \(ot)"
         return .typeError(msg)
       }
 
       return .value(dict)
 
     case .none:
+      // No '__prepare__'
       return .value(Py.newDict())
 
-    case .error(let e):
+    case let .error(e):
       return .error(e)
     }
   }
 
-  private func get__prepare__(metatype: PyObject) -> PrepareCallResult {
+  private func get__prepare__(metatype: PyObject) -> GetPrepareResult {
     switch Py.getattr(object: metatype, name: .__prepare__) {
     case let .value(o):
       return .value(o)
@@ -177,12 +191,11 @@ extension PyInstance {
   }
 }
 
-// MARK: - Cell
+// MARK: - Eval
 
 extension PyInstance {
 
-  private func createCell(fn: PyFunction,
-                          namespace: PyDict) -> PyResult<PyObject> {
+  private func eval(fn: PyFunction, locals: PyDict) -> PyResult<PyObject> {
     return Py.delegate.eval(
       name: nil,
       qualname: nil,
@@ -192,8 +205,45 @@ extension PyInstance {
       defaults: [],
       kwDefaults: nil,
       globals: fn.globals,
-      locals: namespace,
+      locals: locals,
       closure: fn.closure
     )
+  }
+}
+
+// MARK: - __class__
+
+extension PyInstance {
+
+  private func fill__class__cell(cell _cell: PyObject,
+                                 with _type: PyObject) -> PyBaseException? {
+    guard let type = _type as? PyType,
+          let cell = _cell as? PyCell else {
+      assert(_cell.isNone, "__class__ should be cell or None. Compiler error?")
+      return nil
+    }
+
+    let name = type.getName()
+
+    // If content is nil -> it may be warning
+    if cell.content == nil {
+      let typeRepr = Py.reprOrGeneric(object: type)
+      let msg = "__class__ not set defining \(name) as \(typeRepr). " +
+                "Was __classcell__ propagated to type.__new__?"
+      if let e = Py.warn(type: .deprecation, msg: msg) {
+        return e
+      }
+    }
+
+    // If we already have content that is not our class -> throw
+    if let content = cell.content, content !== type {
+      let contentRepr = Py.reprOrGeneric(object: content)
+      let typeRepr = Py.reprOrGeneric(object: type)
+      let msg = "__class__ set to \(contentRepr) defining \(name) as \(typeRepr)"
+      return Py.newTypeError(msg: msg)
+    }
+
+    cell.content = type
+    return nil
   }
 }

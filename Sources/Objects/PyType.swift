@@ -111,6 +111,10 @@ public class PyType: PyObject {
     return self.typeFlags.contains(.baseType)
   }
 
+  internal var hasGC: Bool {
+    return self.typeFlags.contains(.hasGC)
+  }
+
   override public var description: String {
     return "PyType(name: \(self.name), qualname: \(qualname))"
   }
@@ -140,7 +144,7 @@ public class PyType: PyObject {
     self.bases = mro?.baseClasses ?? []
     self.mro = [] // temporary, until we are able to use self
 
-    // Special init just for `PyType` and `BaseType`.
+    // Special init() without 'type' argument, just for `PyType` and `BaseType`.
     super.init()
 
     // Proper mro (with self at 1st place)
@@ -186,22 +190,27 @@ public class PyType: PyObject {
   // MARK: - Name
 
   // sourcery: pyproperty = __name__, setter = setName
-  public func getName() -> String {
+  public func getName() -> PyString {
+    let name = self.getNameRaw()
+    return Py.intern(name)
+  }
+
+  public func getNameRaw() -> String {
     if self.isHeapType {
       return self.name
     }
 
-    switch self.name.lastIndex(of: ".") {
-    case let .some(index):
-      return String(self.name.suffix(from: index))
-    case .none:
-      return self.name
+    if let moduleDotIndex = self.name.lastIndex(of: ".") {
+      let name = self.name.suffix(from: moduleDotIndex)
+      return String(name)
     }
+
+    return self.name
   }
 
   public func setName(_ value: PyObject?) -> PyResult<()> {
     let object: PyObject
-    switch self.checkSetSpecialAttribute(name: "__name__", value: value) {
+    switch self.checkSetSpecialAttribute(name: .__name__, value: value) {
     case let .value(v): object = v
     case let .error(e): return .error(e)
     }
@@ -218,17 +227,22 @@ public class PyType: PyObject {
   // MARK: - Qualname
 
   // sourcery: pyproperty = __qualname__, setter = setQualname
-  public func getQualname() -> String {
+  public func getQualname() -> PyString {
+    let qualname = self.getQualnameRaw()
+    return Py.intern(qualname)
+  }
+
+  public func getQualnameRaw() -> String {
     if self.isHeapType {
       return self.qualname
     }
 
-    return self.getName()
+    return self.getNameRaw()
   }
 
   public func setQualname(_ value: PyObject?) -> PyResult<()> {
     let object: PyObject
-    switch self.checkSetSpecialAttribute(name: "__qualname__", value: value) {
+    switch self.checkSetSpecialAttribute(name: .__qualname__, value: value) {
     case let .value(v): object = v
     case let .error(e): return .error(e)
     }
@@ -259,7 +273,7 @@ public class PyType: PyObject {
 
   public func setDoc(_ value: PyObject?) -> PyResult<()> {
     let object: PyObject
-    switch self.checkSetSpecialAttribute(name: "__doc__", value: value) {
+    switch self.checkSetSpecialAttribute(name: .__doc__, value: value) {
     case let .value(v): object = v
     case let .error(e): return .error(e)
     }
@@ -268,7 +282,8 @@ public class PyType: PyObject {
     return .value()
   }
 
-  /// Set type for a builtin type.
+  /// Set `__doc__` for a builtin type.
+  ///
   /// We can't do it in init because we are not allowed to use other types in init.
   /// (Which means that we would not be able to create PyString to put in dict)
   internal func setBuiltinTypeDoc(_ value: String?) {
@@ -332,7 +347,7 @@ public class PyType: PyObject {
 
   public func setModule(_ value: PyObject?) -> PyResult<()> {
     let object: PyObject
-    switch self.checkSetSpecialAttribute(name: "__module__", value: value) {
+    switch self.checkSetSpecialAttribute(name: .__module__, value: value) {
     case let .value(v): object = v
     case let .error(e): return .error(e)
     }
@@ -403,6 +418,7 @@ public class PyType: PyObject {
     return Py.newTuple(self.getMRORaw())
   }
 
+  /// Get `mro` as types (because `getMRO` returns tuple of objects).
   public func getMRORaw() -> [PyType] {
     return self.mro
   }
@@ -504,7 +520,7 @@ public class PyType: PyObject {
 
   // sourcery: pymethod = __setattr__
   internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
-    if let error = self.checkSetAttributeOnBuiltin() {
+    if let error = self.preventSetAttributeOnBuiltin() {
       return .error(error)
     }
 
@@ -513,14 +529,14 @@ public class PyType: PyObject {
   }
 
   public func setAttribute(name: PyString, value: PyObject?) -> PyResult<PyNone> {
-    if let error = self.checkSetAttributeOnBuiltin() {
+    if let error = self.preventSetAttributeOnBuiltin() {
       return .error(error)
     }
 
     return AttributeHelper.setAttribute(on: self, name: name, to: value)
   }
 
-  private func checkSetAttributeOnBuiltin() -> PyBaseException? {
+  private func preventSetAttributeOnBuiltin() -> PyBaseException? {
     if !self.isHeapType {
       let msg = "can't set attributes of built-in/extension type '\(self.name)'"
       return Py.newTypeError(msg: msg)
@@ -718,14 +734,16 @@ public class PyType: PyObject {
 
   // MARK: - Helpers
 
-  private func checkSetSpecialAttribute(name: String,
+  private func checkSetSpecialAttribute(name: IdString,
                                         value: PyObject?) -> PyResult<PyObject> {
+    let nameString = name.value.value
+
     guard self.isHeapType else {
-      return .typeError("can't set \(self.name).\(name)")
+      return .typeError("can't set \(self.name).\(nameString)")
     }
 
     guard let value = value else {
-      return .typeError("can't delete \(self.name).\(name)")
+      return .typeError("can't delete \(self.name).\(nameString)")
     }
 
     return .value(value)
