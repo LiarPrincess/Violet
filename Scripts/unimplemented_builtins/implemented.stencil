@@ -36,6 +36,11 @@ bytearray_iterator = type(iter(bytearray()))
 
 range_iterator = type(iter(range(1)))
 
+try:
+  raise BaseException()
+except BaseException as e:
+  traceback = type(e.__traceback__)
+
 # We dont have '_io' module.
 # Instead we use custom 'builtins.TextFile' based on '_io.TextIOWrapper'.
 TextFile = _io.TextIOWrapper

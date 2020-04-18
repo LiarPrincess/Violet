@@ -217,6 +217,8 @@ internal class TypeLayout: Equatable {
   /// - `mode: FileMode`
   /// - `closeOnDealloc: Bool`
   internal static let PyTextFile = TypeLayout(base: TypeLayout.PyObject)
+  /// `PyTraceback` uses the same layout as it s base type (`PyObject`).
+  internal static let PyTraceback = TypeLayout.PyObject
   /// - `data: PySequenceData`
   internal static let PyTuple = TypeLayout(base: TypeLayout.PyObject)
   /// - `tuple: PyTuple`

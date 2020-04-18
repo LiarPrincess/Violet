@@ -1508,6 +1508,9 @@ extension PyTextFile:
   __del__Owner
 { }
 
+// PyTraceback does not add any new protocols to PyObject
+extension PyTraceback { }
+
 extension PyTuple:
   __eq__Owner,
   __ne__Owner,

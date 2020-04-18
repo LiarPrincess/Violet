@@ -75,6 +75,7 @@ public final class BuiltinTypes {
   public let str_iterator: PyType
   public let `super`: PyType
   public let textFile: PyType
+  public let traceback: PyType
   public let tuple: PyType
   public let tuple_iterator: PyType
   public let type: PyType
@@ -142,6 +143,7 @@ public final class BuiltinTypes {
     self.str_iterator = PyType.initBuiltinType(name: "str_iterator", type: self.type, base: self.object)
     self.`super` = PyType.initBuiltinType(name: "super", type: self.type, base: self.object)
     self.textFile = PyType.initBuiltinType(name: "TextFile", type: self.type, base: self.object)
+    self.traceback = PyType.initBuiltinType(name: "traceback", type: self.type, base: self.object)
     self.tuple = PyType.initBuiltinType(name: "tuple", type: self.type, base: self.object)
     self.tuple_iterator = PyType.initBuiltinType(name: "tuple_iterator", type: self.type, base: self.object)
     self.zip = PyType.initBuiltinType(name: "zip", type: self.type, base: self.object)
@@ -208,6 +210,7 @@ public final class BuiltinTypes {
     self.fillStringIterator()
     self.fillSuper()
     self.fillTextFile()
+    self.fillTraceback()
     self.fillTuple()
     self.fillTupleIterator()
     self.fillType()
@@ -268,6 +271,7 @@ public final class BuiltinTypes {
       self.str_iterator,
       self.`super`,
       self.textFile,
+      self.traceback,
       self.tuple,
       self.tuple_iterator,
       self.type,
@@ -2191,6 +2195,26 @@ public final class BuiltinTypes {
       object,
       as: PyTextFile.self,
       typeName: "TextFile",
+      methodName: methodName
+    )
+  }
+
+  // MARK: - Traceback
+
+  func fillTraceback() {
+    let type = self.traceback
+    type.setBuiltinTypeDoc(PyTraceback.doc)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
+    type.setLayout(.PyTraceback)
+
+  }
+
+  private static func asTraceback(_ object: PyObject, methodName: String) -> PyResult<PyTraceback> {
+    return Self.cast(
+      object,
+      as: PyTraceback.self,
+      typeName: "traceback",
       methodName: methodName
     )
   }

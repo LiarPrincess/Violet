@@ -570,6 +570,10 @@ internal final class PyZipHeap: PyZip, HeapType {
 
 // PyTimeoutError already has everything we need.
 
+// MARK: - Traceback
+
+// PyTraceback is not a base type.
+
 // MARK: - TypeError
 
 // PyTypeError already has everything we need.

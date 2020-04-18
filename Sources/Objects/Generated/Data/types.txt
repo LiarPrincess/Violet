@@ -45,8 +45,8 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyObject,                           
 ############
 
 Type|bool|PyBool|PyInt
-Annotation|default
 Annotation|pytype
+Annotation|default
 Doc|doc
 Property|__class__|getClass||PyType|
 StaticFunction|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyObject>|
@@ -65,8 +65,8 @@ Method|__rxor__|rxor|rxor(_ other: PyObject)|rxor(_:)|PyResult<PyObject>|
 
 Type|builtinFunction|PyBuiltinFunction|PyObject
 Annotation|pytype
-Annotation|hasGC
 Annotation|default
+Annotation|hasGC
 Field|function|FunctionWrapper
 Field|module|PyObject?
 Field|doc|String?
@@ -93,9 +93,9 @@ Method|__call__|call|call(args: [PyObject], kwargs: PyDict?)|call(args:kwargs:)|
 ############
 
 Type|builtinMethod|PyBuiltinMethod|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|function|FunctionWrapper
 Field|object|PyObject
 Field|module|PyObject?
@@ -123,8 +123,8 @@ Method|__call__|call|call(args: [PyObject], kwargs: PyDict?)|call(args:kwargs:)|
 
 Type|bytearray|PyByteArray|PyObject
 Annotation|pytype
-Annotation|baseType
 Annotation|default
+Annotation|baseType
 Doc|doc
 Field|data|PyBytesData
 Property|__class__|getClass||PyType|
@@ -198,9 +198,9 @@ Method|copy|copy|copy()|copy|PyObject|copyDoc
 ############
 
 Type|bytearray_iterator|PyByteArrayIterator|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|bytes|PyByteArray
 Field|index|Int
 Property|__class__|getClass||PyType|
@@ -214,8 +214,8 @@ Method|__next__|next|next()|next|PyResult<PyObject>|
 ############
 
 Type|bytes|PyBytes|PyObject
-Annotation|pytype
 Annotation|default
+Annotation|pytype
 Annotation|baseType
 Annotation|bytesSubclass
 Doc|doc
@@ -280,9 +280,9 @@ Method|__iter__|iter|iter()|iter|PyObject|
 ############
 
 Type|bytes_iterator|PyBytesIterator|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|bytes|PyBytes
 Field|index|Int
 Property|__class__|getClass||PyType|
@@ -296,9 +296,9 @@ Method|__next__|next|next()|next|PyResult<PyObject>|
 ############
 
 Type|callable_iterator|PyCallableIterator|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|callable|PyObject
 Field|sentinel|PyObject
 Property|__class__|getClass||PyType|
@@ -312,8 +312,8 @@ Method|__next__|next|next()|next|PyResult<PyObject>|
 
 Type|cell|PyCell|PyObject
 Annotation|pytype
-Annotation|hasGC
 Annotation|default
+Annotation|hasGC
 Field|content|PyObject?
 Method|__eq__|isEqual|isEqual(_ other: PyObject)|isEqual(_:)|CompareResult|
 Method|__ne__|isNotEqual|isNotEqual(_ other: PyObject)|isNotEqual(_:)|CompareResult|
@@ -381,8 +381,8 @@ Method|__getattribute__|getAttribute|getAttribute(name: PyObject)|getAttribute(n
 
 Type|complex|PyComplex|PyObject
 Annotation|pytype
-Annotation|baseType
 Annotation|default
+Annotation|baseType
 Doc|doc
 Field|real|Double
 Field|imag|Double
@@ -432,8 +432,8 @@ Type|dict|PyDict|PyObject
 Annotation|default
 Annotation|pytype
 Annotation|baseType
-Annotation|hasGC
 Annotation|dictSubclass
+Annotation|hasGC
 Doc|doc
 Field|data|PyDictData
 Property|__class__|getClass||PyType|
@@ -470,9 +470,9 @@ Method|values|values|values()|values|PyObject|
 ############
 
 Type|dict_itemiterator|PyDictItemIterator|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|object|PyDict
 Field|index|Int
 Field|initCount|Int
@@ -487,9 +487,9 @@ Method|__next__|next|next()|next|PyResult<PyObject>|
 ############
 
 Type|dict_items|PyDictItems|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|dict|PyDict
 Property|__class__|getClass||PyType|
 StaticFunction|__new__|pyNew|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyObject>|
@@ -511,9 +511,9 @@ Method|__iter__|iter|iter()|iter|PyObject|
 ############
 
 Type|dict_keyiterator|PyDictKeyIterator|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|object|PyDict
 Field|index|Int
 Field|initCount|Int
@@ -528,9 +528,9 @@ Method|__next__|next|next()|next|PyResult<PyObject>|
 ############
 
 Type|dict_keys|PyDictKeys|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|dict|PyDict
 Property|__class__|getClass||PyType|
 StaticFunction|__new__|pyNew|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyObject>|
@@ -552,9 +552,9 @@ Method|__iter__|iter|iter()|iter|PyObject|
 ############
 
 Type|dict_valueiterator|PyDictValueIterator|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|object|PyDict
 Field|index|Int
 Field|initCount|Int
@@ -569,9 +569,9 @@ Method|__next__|next|next()|next|PyResult<PyObject>|
 ############
 
 Type|dict_values|PyDictValues|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|dict|PyDict
 Method|__repr__|repr|repr()|repr|PyResult<String>|
 Method|__getattribute__|getAttribute|getAttribute(name: PyObject)|getAttribute(name:)|PyResult<PyObject>|
@@ -583,8 +583,8 @@ Method|__iter__|iter|iter()|iter|PyObject|
 ############
 
 Type|ellipsis|PyEllipsis|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 Property|__class__|getClass||PyType|
 StaticFunction|__new__|pyNew|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyObject>|
 Method|__repr__|repr|repr()|repr|PyResult<String>|
@@ -633,8 +633,8 @@ Method|__next__|next|next()|next|PyResult<PyObject>|
 
 Type|float|PyFloat|PyObject
 Annotation|pytype
-Annotation|baseType
 Annotation|default
+Annotation|baseType
 Doc|doc
 Field|value|Double
 Property|real|asReal||PyObject|
@@ -792,9 +792,9 @@ Method|__call__|call|call(args: [PyObject], kwargs: PyDict?)|call(args:kwargs:)|
 ############
 
 Type|int|PyInt|PyObject
-Annotation|longSubclass
 Annotation|default
 Annotation|pytype
+Annotation|longSubclass
 Annotation|baseType
 Doc|doc
 Field|value|BigInt
@@ -860,9 +860,9 @@ Method|__round__|round|round(nDigits: PyObject?)|round(nDigits:)|PyResult<PyObje
 ############
 
 Type|iterator|PyIterator|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|sequence|PyObject
 Field|index|Int
 Property|__class__|getClass||PyType|
@@ -875,11 +875,11 @@ Method|__next__|next|next()|next|PyResult<PyObject>|
 ############
 
 Type|list|PyList|PyObject
-Annotation|pytype
-Annotation|hasGC
-Annotation|baseType
 Annotation|listSubclass
 Annotation|default
+Annotation|pytype
+Annotation|baseType
+Annotation|hasGC
 Doc|doc
 Field|data|PySequenceData
 Property|__class__|getClass||PyType|
@@ -923,9 +923,9 @@ Method|__imul__|imul|imul(_ other: PyObject)|imul(_:)|PyResult<PyObject>|
 ############
 
 Type|list_iterator|PyListIterator|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|list|PyList
 Field|index|Int
 Property|__class__|getClass||PyType|
@@ -939,9 +939,9 @@ Method|__next__|next|next()|next|PyResult<PyObject>|
 ############
 
 Type|list_reverseiterator|PyListReverseIterator|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|list|PyList
 Field|index|Int
 Property|__class__|getClass||PyType|
@@ -1060,8 +1060,8 @@ Method|__getattribute__|getAttribute|getAttribute(name: PyObject)|getAttribute(n
 ############
 
 Type|NotImplementedType|PyNotImplemented|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 Property|__class__|getClass||PyType|
 StaticFunction|__new__|pyNew|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyObject>|
 Method|__repr__|repr|repr()|repr|PyResult<String>|
@@ -1099,8 +1099,8 @@ Method|deleter|deleter|deleter(value: PyObject)|deleter(value:)|PyResult<PyObjec
 ############
 
 Type|range|PyRange|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|start|PyInt
 Field|stop|PyInt
@@ -1135,8 +1135,8 @@ Method|index|index|index(of element: PyObject)|index(of:)|PyResult<BigInt>|
 ############
 
 Type|range_iterator|PyRangeIterator|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 Field|start|BigInt
 Field|step|BigInt
 Field|length|BigInt
@@ -1219,9 +1219,9 @@ Method|__iter__|iter|iter()|iter|PyObject|
 ############
 
 Type|set_iterator|PySetIterator|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|set|PySetType
 Field|index|Int
 Field|initCount|Int
@@ -1236,9 +1236,9 @@ Method|__next__|next|next()|next|PyResult<PyObject>|
 ############
 
 Type|slice|PySlice|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|pytype
+Annotation|hasGC
+Annotation|default
 Doc|doc
 Field|start|PyObject
 Field|stop|PyObject
@@ -1284,10 +1284,10 @@ Method|__isabstractmethod__|isAbstractMethod|isAbstractMethod()|isAbstractMethod
 ############
 
 Type|str|PyString|PyObject
-Annotation|unicodeSubclass
 Annotation|default
 Annotation|pytype
 Annotation|baseType
+Annotation|unicodeSubclass
 Doc|doc
 Field|data|PyStringData
 Property|__class__|getClass||PyType|
@@ -1355,9 +1355,9 @@ Method|__iter__|iter|iter()|iter|PyObject|
 ############
 
 Type|str_iterator|PyStringIterator|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|string|PyString
 Field|index|Int
 Property|__class__|getClass||PyType|
@@ -1417,15 +1417,25 @@ Method|__enter__|enter|enter()|enter|PyResult<PyObject>|
 Method|__exit__|exit|exit(exceptionType: PyObject,                     exception: PyObject,                     traceback: PyObject)|exit(exceptionType:exception:traceback:)|PyResult<PyObject>|
 
 ############
+# traceback
+############
+
+Type|traceback|PyTraceback|PyObject
+Annotation|pytype
+Annotation|default
+Annotation|hasGC
+Doc|doc
+
+############
 # tuple
 ############
 
 Type|tuple|PyTuple|PyObject
-Annotation|default
+Annotation|tupleSubclass
 Annotation|pytype
+Annotation|default
 Annotation|baseType
 Annotation|hasGC
-Annotation|tupleSubclass
 Doc|doc
 Field|data|PySequenceData
 Property|__class__|getClass||PyType|
@@ -1454,9 +1464,9 @@ Method|__rmul__|rmul|rmul(_ other: PyObject)|rmul(_:)|PyResult<PyObject>|
 ############
 
 Type|tuple_iterator|PyTupleIterator|PyObject
+Annotation|pytype
 Annotation|default
 Annotation|hasGC
-Annotation|pytype
 Field|tuple|PyTuple
 Field|index|Int
 Property|__class__|getClass||PyType|
@@ -1472,9 +1482,9 @@ Method|__next__|next|next()|next|PyResult<PyObject>|
 Type|type|PyType|PyObject
 Annotation|default
 Annotation|pytype
+Annotation|typeSubclass
 Annotation|baseType
 Annotation|hasGC
-Annotation|typeSubclass
 Doc|doc
 Field|name|String
 Field|qualname|String
@@ -1485,8 +1495,8 @@ Field|subclasses|[PyTypeWeakRef]
 Field|__dict__|PyDict
 Field|layout|TypeLayout?
 Field|typeFlags|PyTypeFlags
-Property|__name__|getName|setName|String|
-Property|__qualname__|getQualname|setQualname|String|
+Property|__name__|getName|setName|PyString|
+Property|__qualname__|getQualname|setQualname|PyString|
 Property|__doc__|getDoc|setDoc|PyResult<PyObject>|
 Property|__module__|getModule|setModule|PyResult<String>|
 Property|__bases__|getBases|setBases|PyTuple|
@@ -1530,11 +1540,11 @@ Method|__next__|next|next()|next|PyResult<PyObject>|
 ############
 
 ErrorType|ArithmeticError|PyArithmeticError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1546,11 +1556,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyArithmeticError,                  
 ############
 
 ErrorType|AssertionError|PyAssertionError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1562,11 +1572,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyAssertionError,                   
 ############
 
 ErrorType|AttributeError|PyAttributeError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1578,11 +1588,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyAttributeError,                   
 ############
 
 ErrorType|BaseException|PyBaseException|PyObject
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Field|args|PyTuple
 Field|traceback|PyObject?
@@ -1610,11 +1620,11 @@ Method|__delattr__|delAttribute|delAttribute(name: PyObject)|delAttribute(name:)
 ############
 
 ErrorType|BlockingIOError|PyBlockingIOError|PyOSError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1626,11 +1636,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyBlockingIOError,                  
 ############
 
 ErrorType|BrokenPipeError|PyBrokenPipeError|PyConnectionError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1642,11 +1652,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyBrokenPipeError,                  
 ############
 
 ErrorType|BufferError|PyBufferError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1658,11 +1668,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyBufferError,                      
 ############
 
 ErrorType|BytesWarning|PyBytesWarning|PyWarning
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1674,11 +1684,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyBytesWarning,                     
 ############
 
 ErrorType|ChildProcessError|PyChildProcessError|PyOSError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1690,11 +1700,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyChildProcessError,                
 ############
 
 ErrorType|ConnectionAbortedError|PyConnectionAbortedError|PyConnectionError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1706,11 +1716,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyConnectionAbortedError,           
 ############
 
 ErrorType|ConnectionError|PyConnectionError|PyOSError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1722,11 +1732,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyConnectionError,                  
 ############
 
 ErrorType|ConnectionRefusedError|PyConnectionRefusedError|PyConnectionError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1738,11 +1748,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyConnectionRefusedError,           
 ############
 
 ErrorType|ConnectionResetError|PyConnectionResetError|PyConnectionError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1754,11 +1764,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyConnectionResetError,             
 ############
 
 ErrorType|DeprecationWarning|PyDeprecationWarning|PyWarning
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1770,11 +1780,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyDeprecationWarning,               
 ############
 
 ErrorType|EOFError|PyEOFError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1786,11 +1796,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyEOFError,                         
 ############
 
 ErrorType|Exception|PyException|PyBaseException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1802,11 +1812,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyException,                        
 ############
 
 ErrorType|FileExistsError|PyFileExistsError|PyOSError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1818,11 +1828,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyFileExistsError,                  
 ############
 
 ErrorType|FileNotFoundError|PyFileNotFoundError|PyOSError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1834,11 +1844,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyFileNotFoundError,                
 ############
 
 ErrorType|FloatingPointError|PyFloatingPointError|PyArithmeticError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1850,11 +1860,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyFloatingPointError,               
 ############
 
 ErrorType|FutureWarning|PyFutureWarning|PyWarning
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1866,11 +1876,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyFutureWarning,                    
 ############
 
 ErrorType|GeneratorExit|PyGeneratorExit|PyBaseException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1882,11 +1892,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyGeneratorExit,                    
 ############
 
 ErrorType|ImportError|PyImportError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1898,11 +1908,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyImportError,                      
 ############
 
 ErrorType|ImportWarning|PyImportWarning|PyWarning
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1914,11 +1924,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyImportWarning,                    
 ############
 
 ErrorType|IndentationError|PyIndentationError|PySyntaxError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1930,11 +1940,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyIndentationError,                 
 ############
 
 ErrorType|IndexError|PyIndexError|PyLookupError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1946,11 +1956,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyIndexError,                       
 ############
 
 ErrorType|InterruptedError|PyInterruptedError|PyOSError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1962,11 +1972,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyInterruptedError,                 
 ############
 
 ErrorType|IsADirectoryError|PyIsADirectoryError|PyOSError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1978,11 +1988,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyIsADirectoryError,                
 ############
 
 ErrorType|KeyError|PyKeyError|PyLookupError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -1994,11 +2004,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyKeyError,                         
 ############
 
 ErrorType|KeyboardInterrupt|PyKeyboardInterrupt|PyBaseException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2010,11 +2020,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyKeyboardInterrupt,                
 ############
 
 ErrorType|LookupError|PyLookupError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2026,11 +2036,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyLookupError,                      
 ############
 
 ErrorType|MemoryError|PyMemoryError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2042,11 +2052,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyMemoryError,                      
 ############
 
 ErrorType|ModuleNotFoundError|PyModuleNotFoundError|PyImportError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2058,11 +2068,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyModuleNotFoundError,              
 ############
 
 ErrorType|NameError|PyNameError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2074,11 +2084,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyNameError,                        
 ############
 
 ErrorType|NotADirectoryError|PyNotADirectoryError|PyOSError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2090,11 +2100,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyNotADirectoryError,               
 ############
 
 ErrorType|NotImplementedError|PyNotImplementedError|PyRuntimeError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2106,11 +2116,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyNotImplementedError,              
 ############
 
 ErrorType|OSError|PyOSError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2122,11 +2132,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyOSError,                          
 ############
 
 ErrorType|OverflowError|PyOverflowError|PyArithmeticError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2138,11 +2148,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyOverflowError,                    
 ############
 
 ErrorType|PendingDeprecationWarning|PyPendingDeprecationWarning|PyWarning
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2154,11 +2164,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyPendingDeprecationWarning,        
 ############
 
 ErrorType|PermissionError|PyPermissionError|PyOSError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2170,11 +2180,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyPermissionError,                  
 ############
 
 ErrorType|ProcessLookupError|PyProcessLookupError|PyOSError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2186,11 +2196,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyProcessLookupError,               
 ############
 
 ErrorType|RecursionError|PyRecursionError|PyRuntimeError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2202,11 +2212,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyRecursionError,                   
 ############
 
 ErrorType|ReferenceError|PyReferenceError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2218,11 +2228,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyReferenceError,                   
 ############
 
 ErrorType|ResourceWarning|PyResourceWarning|PyWarning
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2234,11 +2244,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyResourceWarning,                  
 ############
 
 ErrorType|RuntimeError|PyRuntimeError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2250,11 +2260,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyRuntimeError,                     
 ############
 
 ErrorType|RuntimeWarning|PyRuntimeWarning|PyWarning
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2266,11 +2276,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyRuntimeWarning,                   
 ############
 
 ErrorType|StopAsyncIteration|PyStopAsyncIteration|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2282,11 +2292,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyStopAsyncIteration,               
 ############
 
 ErrorType|StopIteration|PyStopIteration|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2298,11 +2308,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyStopIteration,                    
 ############
 
 ErrorType|SyntaxError|PySyntaxError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2314,11 +2324,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PySyntaxError,                      
 ############
 
 ErrorType|SyntaxWarning|PySyntaxWarning|PyWarning
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2330,11 +2340,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PySyntaxWarning,                    
 ############
 
 ErrorType|SystemError|PySystemError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2346,11 +2356,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PySystemError,                      
 ############
 
 ErrorType|SystemExit|PySystemExit|PyBaseException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2362,11 +2372,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PySystemExit,                       
 ############
 
 ErrorType|TabError|PyTabError|PyIndentationError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2378,11 +2388,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyTabError,                         
 ############
 
 ErrorType|TimeoutError|PyTimeoutError|PyOSError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2394,11 +2404,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyTimeoutError,                     
 ############
 
 ErrorType|TypeError|PyTypeError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2410,11 +2420,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyTypeError,                        
 ############
 
 ErrorType|UnboundLocalError|PyUnboundLocalError|PyNameError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2426,11 +2436,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyUnboundLocalError,                
 ############
 
 ErrorType|UnicodeDecodeError|PyUnicodeDecodeError|PyUnicodeError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2442,11 +2452,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyUnicodeDecodeError,               
 ############
 
 ErrorType|UnicodeEncodeError|PyUnicodeEncodeError|PyUnicodeError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2458,11 +2468,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyUnicodeEncodeError,               
 ############
 
 ErrorType|UnicodeError|PyUnicodeError|PyValueError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2474,11 +2484,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyUnicodeError,                     
 ############
 
 ErrorType|UnicodeTranslateError|PyUnicodeTranslateError|PyUnicodeError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2490,11 +2500,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyUnicodeTranslateError,            
 ############
 
 ErrorType|UnicodeWarning|PyUnicodeWarning|PyWarning
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2506,11 +2516,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyUnicodeWarning,                   
 ############
 
 ErrorType|UserWarning|PyUserWarning|PyWarning
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2522,11 +2532,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyUserWarning,                      
 ############
 
 ErrorType|ValueError|PyValueError|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2538,11 +2548,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyValueError,                       
 ############
 
 ErrorType|Warning|PyWarning|PyException
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
@@ -2554,11 +2564,11 @@ StaticFunction|__init__|pyInit|pyInit(zelf: PyWarning,                          
 ############
 
 ErrorType|ZeroDivisionError|PyZeroDivisionError|PyArithmeticError
-Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
-Annotation|baseType
 Annotation|pyerrortype
+Annotation|baseType
+Annotation|baseExceptionSubclass
+Annotation|hasGC
 Doc|doc
 Property|__class__|getClass||PyType|
 Property|__dict__|getDict||PyDict|
