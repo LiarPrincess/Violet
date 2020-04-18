@@ -14,6 +14,7 @@ builtinFunction = types.BuiltinFunctionType
 builtinMethod = types.BuiltinMethodType
 SimpleNamespace = types.SimpleNamespace
 frame = types.FrameType
+traceback = types.TracebackType
 
 iterator = collections.Iterator
 callable_iterator = type(iter(str, None))
@@ -36,11 +37,6 @@ bytes_iterator = type(iter(b''))
 bytearray_iterator = type(iter(bytearray()))
 
 range_iterator = type(iter(range(1)))
-
-try:
-  raise BaseException()
-except BaseException as e:
-  traceback = type(e.__traceback__)
 
 # We dont have '_io' module.
 # Instead we use custom 'builtins.TextFile' based on '_io.TextIOWrapper'.
@@ -962,6 +958,14 @@ types = {
     '__exit__',
   ],
   traceback: [
+    '__class__',
+    'tb_frame',
+    'tb_lasti',
+    'tb_lineno',
+    'tb_next',
+    '__getattribute__',
+    '__dir__',
+    '__new__',
   ],
   tuple: [
     '__class__',

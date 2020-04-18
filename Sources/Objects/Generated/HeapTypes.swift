@@ -330,6 +330,10 @@ internal final class PySuperHeap: PySuper, HeapType {
 
 // PyTextFile is not a base type.
 
+// MARK: - Traceback
+
+// PyTraceback is not a base type.
+
 // MARK: - Tuple
 
 /// Type used when we subclass builtin `tuple` class.
@@ -569,10 +573,6 @@ internal final class PyZipHeap: PyZip, HeapType {
 // MARK: - TimeoutError
 
 // PyTimeoutError already has everything we need.
-
-// MARK: - Traceback
-
-// PyTraceback is not a base type.
 
 // MARK: - TypeError
 

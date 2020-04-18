@@ -2208,6 +2208,16 @@ public final class BuiltinTypes {
     type.setFlag(.hasGC)
     type.setLayout(.PyTraceback)
 
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTraceback.getClass, castSelf: Self.asTraceback))
+    self.insert(type: type, name: "tb_frame", value: PyProperty.wrap(name: "tb_frame", doc: nil, get: PyTraceback.getFrame, castSelf: Self.asTraceback))
+    self.insert(type: type, name: "tb_lasti", value: PyProperty.wrap(name: "tb_lasti", doc: nil, get: PyTraceback.getLastInstruction, castSelf: Self.asTraceback))
+    self.insert(type: type, name: "tb_lineno", value: PyProperty.wrap(name: "tb_lineno", doc: nil, get: PyTraceback.getLineNo, castSelf: Self.asTraceback))
+    self.insert(type: type, name: "tb_next", value: PyProperty.wrap(name: "tb_next", doc: nil, get: PyTraceback.getNext, set: PyTraceback.setNext, castSelf: Self.asTraceback))
+
+    self.insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyTraceback.pyNew(type:args:kwargs:)))
+
+    self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyTraceback.getAttribute(name:), castSelf: Self.asTraceback))
+    self.insert(type: type, name: "__dir__", value: PyBuiltinFunction.wrap(name: "__dir__", doc: nil, fn: PyTraceback.dir, castSelf: Self.asTraceback))
   }
 
   private static func asTraceback(_ object: PyObject, methodName: String) -> PyResult<PyTraceback> {

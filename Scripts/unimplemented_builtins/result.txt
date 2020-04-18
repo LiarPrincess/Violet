@@ -184,17 +184,6 @@ TextIOWrapper
     __enter__
     __exit__
 
-traceback
-  Unimplemented:
-    __class__ - <class 'type'>
-    __new__ - <class 'builtin_function_or_method'>
-    __dir__
-    __getattribute__
-    tb_frame
-    tb_lasti
-    tb_lineno
-    tb_next
-
 BaseException
   Unimplemented:
     with_traceback
