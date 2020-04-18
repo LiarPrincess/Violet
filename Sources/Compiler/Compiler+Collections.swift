@@ -48,7 +48,7 @@ extension CompilerImpl {
   }
 
   /// compiler_tuple(struct compiler *c, expr_ty e)
-  public func visit(_ node: TupleExpr) throws {
+  internal func visit(_ node: TupleExpr) throws {
     let elements = node.elements
 
     switch node.context {
@@ -82,7 +82,7 @@ extension CompilerImpl {
   }
 
   /// compiler_list(struct compiler *c, expr_ty e)
-  public func visit(_ node: ListExpr) throws {
+  internal func visit(_ node: ListExpr) throws {
     let elements = node.elements
 
     switch node.context {
@@ -101,7 +101,7 @@ extension CompilerImpl {
   /// compiler_dict(struct compiler *c, expr_ty e)
   ///
   /// Our implementation is similiar to `self.visitLoadWithPossibleUnpack(...)`.
-  public func visit(_ node: DictionaryExpr) throws {
+  internal func visit(_ node: DictionaryExpr) throws {
     assert(node.context == .load)
 
     /// Elements that do not need unpacking
@@ -162,7 +162,7 @@ extension CompilerImpl {
   }
 
   /// compiler_set(struct compiler *c, expr_ty e)
-  public func visit(_ node: SetExpr) throws {
+  internal func visit(_ node: SetExpr) throws {
     assert(node.context == .load)
 
     let elements = node.elements

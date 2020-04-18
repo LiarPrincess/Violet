@@ -23,7 +23,7 @@ extension CompilerImpl {
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
   /// ```
-  public func visit(_ node: AssignStmt) throws {
+  internal func visit(_ node: AssignStmt) throws {
     try self.visit(node.value)
 
     for (index, target) in node.targets.enumerated() {
@@ -49,7 +49,7 @@ extension CompilerImpl {
   ///  8 LOAD_CONST               0 (None)
   /// 10 RETURN_VALUE
   /// ```
-  public func visit(_ node: AugAssignStmt) throws {
+  internal func visit(_ node: AugAssignStmt) throws {
     if let identifier = node.target as? IdentifierExpr {
       let mangled = self.mangle(name: identifier.value)
       self.builder.appendLoadName(mangled)
@@ -112,7 +112,7 @@ extension CompilerImpl {
   /// 14 LOAD_CONST               1 (None)
   /// 16 RETURN_VALUE
   /// ```
-  public func visit(_ node: AnnAssignStmt) throws {
+  internal func visit(_ node: AnnAssignStmt) throws {
     // swiftlint:enable function_body_length
 
     // Assignment first

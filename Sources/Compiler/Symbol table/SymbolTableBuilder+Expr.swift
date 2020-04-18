@@ -30,17 +30,17 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - General
 
-  public func visit(_ node: NoneExpr) throws { }
-  public func visit(_ node: EllipsisExpr) throws { }
+  internal func visit(_ node: NoneExpr) throws { }
+  internal func visit(_ node: EllipsisExpr) throws { }
 
   // MARK: - Bool
 
-  public func visit(_ node: TrueExpr) throws { }
-  public func visit(_ node: FalseExpr) throws { }
+  internal func visit(_ node: TrueExpr) throws { }
+  internal func visit(_ node: FalseExpr) throws { }
 
   // MARK: - Identifier
 
-  public func visit(_ node: IdentifierExpr) throws {
+  internal func visit(_ node: IdentifierExpr) throws {
     let flags = node.context == .store ?
       SymbolFlags.defLocal :
       SymbolFlags.use
@@ -56,14 +56,14 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Numbers
 
-  public func visit(_ node: IntExpr) throws { }
-  public func visit(_ node: FloatExpr) throws { }
-  public func visit(_ node: ComplexExpr) throws { }
+  internal func visit(_ node: IntExpr) throws { }
+  internal func visit(_ node: FloatExpr) throws { }
+  internal func visit(_ node: ComplexExpr) throws { }
 
   // MARK: - String
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  public func visit(_ node: StringExpr) throws {
+  internal func visit(_ node: StringExpr) throws {
     try self.visit(node.value)
   }
 
@@ -80,27 +80,27 @@ extension SymbolTableBuilderImpl {
     }
   }
 
-  public func visit(_ node: BytesExpr) throws { }
+  internal func visit(_ node: BytesExpr) throws { }
 
   // MARK: - Operators
 
-  public func visit(_ node: UnaryOpExpr) throws {
+  internal func visit(_ node: UnaryOpExpr) throws {
     try self.visit(node.right)
   }
 
-  public func visit(_ node: BinaryOpExpr) throws {
+  internal func visit(_ node: BinaryOpExpr) throws {
     try self.visit(node.left)
     try self.visit(node.right)
   }
 
-  public func visit(_ node: BoolOpExpr) throws {
+  internal func visit(_ node: BoolOpExpr) throws {
     try self.visit(node.left)
     try self.visit(node.right)
   }
 
   // MARK: - Compare
 
-  public func visit(_ node: CompareExpr) throws {
+  internal func visit(_ node: CompareExpr) throws {
     try self.visit(node.left)
     try self.visit(node.elements)
   }
@@ -114,16 +114,16 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Collections
 
-  public func visit(_ node: TupleExpr) throws {
+  internal func visit(_ node: TupleExpr) throws {
     try self.visit(node.elements)
   }
 
-  public func visit(_ node: ListExpr) throws {
+  internal func visit(_ node: ListExpr) throws {
     try self.visit(node.elements)
   }
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  public func visit(_ node: DictionaryExpr) throws {
+  internal func visit(_ node: DictionaryExpr) throws {
     for e in node.elements {
       switch e {
       case let .unpacking(expr):
@@ -135,13 +135,13 @@ extension SymbolTableBuilderImpl {
     }
   }
 
-  public func visit(_ node: SetExpr) throws {
+  internal func visit(_ node: SetExpr) throws {
     try self.visit(node.elements)
   }
 
   // MARK: - Comprehension
 
-  public func visit(_ node: ListComprehensionExpr) throws {
+  internal func visit(_ node: ListComprehensionExpr) throws {
     try self.visitComprehension(elt: node.element,
                                 value: nil,
                                 generators: node.generators,
@@ -149,7 +149,7 @@ extension SymbolTableBuilderImpl {
                                 kind: .list)
   }
 
-  public func visit(_ node: SetComprehensionExpr) throws {
+  internal func visit(_ node: SetComprehensionExpr) throws {
     try self.visitComprehension(elt: node.element,
                                 value: nil,
                                 generators: node.generators,
@@ -157,7 +157,7 @@ extension SymbolTableBuilderImpl {
                                 kind: .set)
   }
 
-  public func visit(_ node: DictionaryComprehensionExpr) throws {
+  internal func visit(_ node: DictionaryComprehensionExpr) throws {
     try self.visitComprehension(elt: node.key,
                                 value: node.value,
                                 generators: node.generators,
@@ -165,7 +165,7 @@ extension SymbolTableBuilderImpl {
                                 kind: .dictionary)
   }
 
-  public func visit(_ node: GeneratorExpr) throws {
+  internal func visit(_ node: GeneratorExpr) throws {
     try self.visitComprehension(elt: node.element,
                                 value: nil,
                                 generators: node.generators,
@@ -247,26 +247,26 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Await
 
-  public func visit(_ node: AwaitExpr) throws {
+  internal func visit(_ node: AwaitExpr) throws {
     try self.visit(node.value)
     self.currentScope.isCoroutine = true
   }
 
   // MARK: - Yield
 
-  public func visit(_ node: YieldExpr) throws {
+  internal func visit(_ node: YieldExpr) throws {
     try self.visit(node.value)
     self.currentScope.isGenerator = true
   }
 
-  public func visit(_ node: YieldFromExpr) throws {
+  internal func visit(_ node: YieldFromExpr) throws {
     try self.visit(node.value)
     self.currentScope.isGenerator = true
   }
 
   // MARK: - Lambda
 
-  public func visit(_ node: LambdaExpr) throws {
+  internal func visit(_ node: LambdaExpr) throws {
     try self.visitDefaults(node.args)
 
     self.enterScope(name: SymbolScopeNames.lambda,
@@ -279,7 +279,7 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Call
 
-  public func visit(_ node: CallExpr) throws {
+  internal func visit(_ node: CallExpr) throws {
     try self.visit(node.function)
     try self.visit(node.args)
     try self.visitKeywords(node.keywords)
@@ -287,7 +287,7 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - If
 
-  public func visit(_ node: IfExpr) throws {
+  internal func visit(_ node: IfExpr) throws {
     try self.visit(node.test)
     try self.visit(node.body)
     try self.visit(node.orElse)
@@ -295,13 +295,13 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Attribute
 
-  public func visit(_ node: AttributeExpr) throws {
+  internal func visit(_ node: AttributeExpr) throws {
     try self.visit(node.object)
   }
 
   // MARK: - Subscript
 
-  public func visit(_ node: SubscriptExpr) throws {
+  internal func visit(_ node: SubscriptExpr) throws {
     try self.visit(node.object)
     try self.visit(node.slice)
   }
@@ -324,7 +324,7 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Starred
 
-  public func visit(_ node: StarredExpr) throws {
+  internal func visit(_ node: StarredExpr) throws {
     try self.visit(node.expression)
   }
 }

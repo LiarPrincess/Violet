@@ -4,37 +4,46 @@ import Parser
 // In CPython:
 // Python -> future.c
 
-public struct FutureFeatureFlags: OptionSet {
-  public let rawValue: UInt8
-
-  /// Absolute imports are now default
-  public static let absoluteImport  = FutureFeatureFlags(rawValue: 1 << 0)
-  public static let division        = FutureFeatureFlags(rawValue: 1 << 1)
-  public static let withStatement   = FutureFeatureFlags(rawValue: 1 << 2)
-  public static let printFunction   = FutureFeatureFlags(rawValue: 1 << 3)
-  public static let unicodeLiterals = FutureFeatureFlags(rawValue: 1 << 4)
-  public static let barryAsBdfl     = FutureFeatureFlags(rawValue: 1 << 5)
-  public static let generatorStop   = FutureFeatureFlags(rawValue: 1 << 6)
-  public static let annotations     = FutureFeatureFlags(rawValue: 1 << 7)
-
-  public init(rawValue: UInt8) {
-    self.rawValue = rawValue
-  }
-}
-
 public struct FutureFeatures {
 
+  // MARK: - Flags
+
+  public struct Flags: OptionSet {
+
+    public let rawValue: UInt8
+
+    /// Absolute imports are now default
+    public static let absoluteImport  = Flags(rawValue: 1 << 0)
+    public static let division        = Flags(rawValue: 1 << 1)
+    public static let withStatement   = Flags(rawValue: 1 << 2)
+    public static let printFunction   = Flags(rawValue: 1 << 3)
+    public static let unicodeLiterals = Flags(rawValue: 1 << 4)
+    public static let barryAsBdfl     = Flags(rawValue: 1 << 5)
+    public static let generatorStop   = Flags(rawValue: 1 << 6)
+    public static let annotations     = Flags(rawValue: 1 << 7)
+
+    public init(rawValue: UInt8) {
+      self.rawValue = rawValue
+    }
+  }
+
+  // MARK: - Properties
+
   /// Flags set by future statements
-  public fileprivate(set) var flags: FutureFeatureFlags = []
+  public fileprivate(set) var flags: Flags = []
 
   /// Line number of last future statement
   public fileprivate(set) var lastLine: SourceLine = 0
-}
 
-public final class FutureBuilder {
+  // MARK: - Init
+
+  /// Private to force 'FutureFeatures.parse(ast:)'
+  private init() { }
+
+  // MARK: - Parse
 
   /// future_parse(PyFutureFeatures *ff, mod_ty mod, PyObject *filename)
-  public func parse(ast: AST) throws -> FutureFeatures {
+  public static func parse(ast: AST) throws -> FutureFeatures {
     var result = FutureFeatures()
 
     let statements = self.getStatements(from: ast)
@@ -76,7 +85,7 @@ public final class FutureBuilder {
     return result
   }
 
-  private func getStatements(from ast: AST) -> [Statement] {
+  private static func getStatements(from ast: AST) -> [Statement] {
     if let node = ast as? InteractiveAST {
       return node.statements
     }
@@ -88,7 +97,7 @@ public final class FutureBuilder {
     return []
   }
 
-  private func getIndexAfterDoc(_ statements: [Statement]) -> Int {
+  private static func getIndexAfterDoc(_ statements: [Statement]) -> Int {
     var index = 0
     while index < statements.count && statements[index].isDocString {
       index += 1
@@ -97,7 +106,7 @@ public final class FutureBuilder {
   }
 
   /// future_check_features(PyFutureFeatures *ff, stmt_ty s, PyObject *filename)
-  private func appendFeatures(
+  private static func appendFeatures(
     from imports: NonEmptyArray<Alias>,
     into features: inout FutureFeatures,
     errorLocation: SourceLocation) throws {

@@ -13,7 +13,7 @@ import Bytecode
 extension CompilerImpl {
 
   /// compiler_call(struct compiler *c, expr_ty e)
-  public func visit(_ node: CallExpr) throws {
+  internal func visit(_ node: CallExpr) throws {
     if try self.emitOptimizedMethodCall(function: node.function,
                                         args: node.args,
                                         keywords: node.keywords,

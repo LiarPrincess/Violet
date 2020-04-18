@@ -6,7 +6,7 @@ extension CodeObjectBuilder {
 
   // MARK: - Variables
 
-  public func appendName<S: ConstantString>(name: S, context: ExpressionContext) {
+  internal func appendName<S: ConstantString>(name: S, context: ExpressionContext) {
     switch context {
     case .store: self.appendStoreName(name)
     case .load:  self.appendLoadName(name)
@@ -14,7 +14,7 @@ extension CodeObjectBuilder {
     }
   }
 
-  public func appendFast(name: MangledName, context: ExpressionContext) {
+  internal func appendFast(name: MangledName, context: ExpressionContext) {
     switch context {
     case .store: self.appendStoreFast(name)
     case .load:  self.appendLoadFast(name)
@@ -22,7 +22,7 @@ extension CodeObjectBuilder {
     }
   }
 
-  public func appendGlobal<S: ConstantString>(name: S, context: ExpressionContext) {
+  internal func appendGlobal<S: ConstantString>(name: S, context: ExpressionContext) {
     switch context {
     case .store: self.appendStoreGlobal(name)
     case .load:  self.appendLoadGlobal(name)
@@ -32,7 +32,7 @@ extension CodeObjectBuilder {
 
   // MARK: - Operators
 
-  public func appendUnaryOperator(_ op: UnaryOperator) {
+  internal func appendUnaryOperator(_ op: UnaryOperator) {
     switch op {
     case .invert: self.appendUnaryInvert()
     case .not:    self.appendUnaryNot()
@@ -41,7 +41,7 @@ extension CodeObjectBuilder {
     }
   }
 
-  public func appendBinaryOperator(_ op: BinaryOperator) {
+  internal func appendBinaryOperator(_ op: BinaryOperator) {
     switch op {
     case .add:        self.appendBinaryAdd()
     case .sub:        self.appendBinarySubtract()
@@ -59,7 +59,7 @@ extension CodeObjectBuilder {
     }
   }
 
-  public func appendInplaceOperator(_ op: BinaryOperator) {
+  internal func appendInplaceOperator(_ op: BinaryOperator) {
     switch op {
     case .add:        self.appendInplaceAdd()
     case .sub:        self.appendInplaceSubtract()
@@ -80,7 +80,7 @@ extension CodeObjectBuilder {
   // MARK: - Compare
 
   /// Append a `compareOp` instruction to code object.
-  public func appendCompareOp(_ op: ComparisonOperator) {
+  internal func appendCompareOp(_ op: ComparisonOperator) {
     switch op {
     case .equal:        self.appendCompareOp(ComparisonOpcode.equal)
     case .notEqual:     self.appendCompareOp(ComparisonOpcode.notEqual)

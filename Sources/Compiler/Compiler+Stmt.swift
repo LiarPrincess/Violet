@@ -55,7 +55,7 @@ extension CompilerImpl {
   /// 22 LOAD_CONST               0 (None)
   /// 24 RETURN_VALUE
   /// ```
-  public func visit(_ node: ForStmt) throws {
+  internal func visit(_ node: ForStmt) throws {
     let iterationStart = self.builder.createLabel()
     let cleanup = self.builder.createLabel()
     let end = self.builder.createLabel()
@@ -110,7 +110,7 @@ extension CompilerImpl {
   /// 18 LOAD_CONST               0 (None)
   /// 20 RETURN_VALUE
   /// ```
-  public func visit(_ node: WhileStmt) throws {
+  internal func visit(_ node: WhileStmt) throws {
     let iterationStart = self.builder.createLabel()
     let cleanup = self.builder.createLabel()
     let end = self.builder.createLabel()
@@ -160,7 +160,7 @@ extension CompilerImpl {
   /// 14 LOAD_CONST               0 (None)
   /// 16 RETURN_VALUE
   /// ```
-  public func visit(_ node: IfStmt) throws {
+  internal func visit(_ node: IfStmt) throws {
     let end = self.builder.createLabel()
     let orElseStart = node.orElse.any ? self.builder.createLabel() : end
 
@@ -199,7 +199,7 @@ extension CompilerImpl {
   ///         exc = (None, None, None)
   ///     exit(*exc)
   /// ```
-  public func visit(_ node: WithStmt) throws {
+  internal func visit(_ node: WithStmt) throws {
     try self.visitWith(items: node.items, body: node.body, index: 0)
   }
 
@@ -276,7 +276,7 @@ extension CompilerImpl {
   // MARK: - Expression statement
 
   /// compiler_visit_stmt_expr(struct compiler *c, expr_ty value)
-  public func visit(_ node: ExprStmt) throws {
+  internal func visit(_ node: ExprStmt) throws {
     if self.isInteractive && self.nestLevel <= 1 {
       try self.visit(node.expression)
       self.builder.appendPrintExpr()
@@ -290,7 +290,7 @@ extension CompilerImpl {
   // MARK: - Assert
 
   /// compiler_assert(struct compiler *c, stmt_ty s)
-  public func visit(_ node: AssertStmt) throws {
+  internal func visit(_ node: AssertStmt) throws {
     guard self.options.optimizationLevel == .none else {
       return
     }
@@ -319,7 +319,7 @@ extension CompilerImpl {
   ///
   /// This is also usefull:
   /// https://docs.python.org/3.7/tutorial/controlflow.html
-  public func visit(_ node: ContinueStmt) throws {
+  internal func visit(_ node: ContinueStmt) throws {
     guard let blockType = self.blockStack.last else {
       throw self.error(.continueOutsideLoop)
     }
@@ -364,7 +364,7 @@ extension CompilerImpl {
   ///
   /// This is also usefull:
   /// https://docs.python.org/3.7/tutorial/controlflow.html
-  public func visit(_ node: BreakStmt) throws {
+  internal func visit(_ node: BreakStmt) throws {
     if !self.isInLoop {
       throw self.error(.breakOutsideLoop)
     }
@@ -375,7 +375,7 @@ extension CompilerImpl {
   // MARK: - Return
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
-  public func visit(_ node: ReturnStmt) throws {
+  internal func visit(_ node: ReturnStmt) throws {
     guard self.currentScope.type == .function else {
       throw self.error(.returnOutsideFunction)
     }
@@ -395,21 +395,21 @@ extension CompilerImpl {
 
   // MARK: - Delete
 
-  public func visit(_ node: DeleteStmt) throws {
+  internal func visit(_ node: DeleteStmt) throws {
     try self.visit(node.values)
   }
 
   // MARK: - Pass
 
-  public func visit(_ node: PassStmt) throws { }
+  internal func visit(_ node: PassStmt) throws { }
 
   // MARK: - Global, nonlocal
 
-  public func visit(_ node: GlobalStmt) throws {
+  internal func visit(_ node: GlobalStmt) throws {
     // This will be taken from symbol table when emitting expressions.
   }
 
-  public func visit(_ node: NonlocalStmt) throws {
+  internal func visit(_ node: NonlocalStmt) throws {
     // This will be taken from symbol table when emitting expressions.
   }
 }

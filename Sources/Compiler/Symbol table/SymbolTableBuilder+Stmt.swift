@@ -29,7 +29,7 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Function
 
-  public func visit(_ node: FunctionDefStmt) throws {
+  internal func visit(_ node: FunctionDefStmt) throws {
     try self.visitFunctionDef(name: node.name,
                               args: node.args,
                               body: node.body,
@@ -39,7 +39,7 @@ extension SymbolTableBuilderImpl {
                               node: node)
   }
 
-  public func visit(_ node: AsyncFunctionDefStmt) throws {
+  internal func visit(_ node: AsyncFunctionDefStmt) throws {
     try self.visitFunctionDef(name: node.name,
                               args: node.args,
                               body: node.body,
@@ -78,7 +78,7 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Class
 
-  public func visit(_ node: ClassDefStmt) throws {
+  internal func visit(_ node: ClassDefStmt) throws {
     try self.addSymbol(node.name, flags: .defLocal, location: node.start)
     try self.visit(node.bases)
     try self.visitKeywords(node.keywords)
@@ -95,7 +95,7 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Return
 
-  public func visit(_ node: ReturnStmt) throws {
+  internal func visit(_ node: ReturnStmt) throws {
     if let value = node.value {
       try self.visit(value)
       self.currentScope.hasReturnValue = true
@@ -104,23 +104,23 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Delete
 
-  public func visit(_ node: DeleteStmt) throws {
+  internal func visit(_ node: DeleteStmt) throws {
     try self.visit(node.values)
   }
 
   // MARK: - Assign
 
-  public func visit(_ node: AssignStmt) throws {
+  internal func visit(_ node: AssignStmt) throws {
     try self.visit(node.targets)
     try self.visit(node.value)
   }
 
-  public func visit(_ node: AugAssignStmt) throws {
+  internal func visit(_ node: AugAssignStmt) throws {
     try self.visit(node.target)
     try self.visit(node.value)
   }
 
-  public func visit(_ node: AnnAssignStmt) throws {
+  internal func visit(_ node: AnnAssignStmt) throws {
     if let identifier = node.target as? IdentifierExpr {
       let name = identifier.value
       let current = self.lookupMangled(name)
@@ -161,14 +161,14 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - For
 
-  public func visit(_ node: ForStmt) throws {
+  internal func visit(_ node: ForStmt) throws {
     try self.visitFor(target: node.target,
                       iterable: node.iterable,
                       body: node.body,
                       orElse: node.orElse)
   }
 
-  public func visit(_ node: AsyncForStmt) throws {
+  internal func visit(_ node: AsyncForStmt) throws {
     try self.visitFor(target: node.target,
                       iterable: node.iterable,
                       body: node.body,
@@ -187,7 +187,7 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - While
 
-  public func visit(_ node: WhileStmt) throws {
+  internal func visit(_ node: WhileStmt) throws {
     try self.visit(node.test)
     try self.visit(node.body)
     try self.visit(node.orElse)
@@ -195,7 +195,7 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - If
 
-  public func visit(_ node: IfStmt) throws {
+  internal func visit(_ node: IfStmt) throws {
     try self.visit(node.test)
     try self.visit(node.body)
     try self.visit(node.orElse)
@@ -203,11 +203,11 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - With
 
-  public func visit(_ node: WithStmt) throws {
+  internal func visit(_ node: WithStmt) throws {
     try self.visitWith(items: node.items, body: node.body)
   }
 
-  public func visit(_ node: AsyncWithStmt) throws {
+  internal func visit(_ node: AsyncWithStmt) throws {
     try self.visitWith(items: node.items, body: node.body)
   }
 
@@ -227,14 +227,14 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Raise
 
-  public func visit(_ node: RaiseStmt) throws {
+  internal func visit(_ node: RaiseStmt) throws {
     try self.visit(node.exception)
     try self.visit(node.cause)
   }
 
   // MARK: - Try
 
-  public func visit(_ node: TryStmt) throws {
+  internal func visit(_ node: TryStmt) throws {
     try self.visit(node.body)
     try self.visitExceptHandlers(node.handlers)
     try self.visit(node.orElse)
@@ -256,22 +256,22 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Assert
 
-  public func visit(_ node: AssertStmt) throws {
+  internal func visit(_ node: AssertStmt) throws {
     try self.visit(node.test)
     try self.visit(node.msg)
   }
 
   // MARK: - Import
 
-  public func visit(_ node: ImportStmt) throws {
+  internal func visit(_ node: ImportStmt) throws {
     try self.visitAliases(node.names, importStart: node.start)
   }
 
-  public func visit(_ node: ImportFromStmt) throws {
+  internal func visit(_ node: ImportFromStmt) throws {
     try self.visitAliases(node.names, importStart: node.start)
   }
 
-  public func visit(_ node: ImportFromStarStmt) throws {
+  internal func visit(_ node: ImportFromStarStmt) throws {
     // No names here, but we can check this:
     if self.currentScope.type != .module {
       throw self.error(.nonModuleImportStar, location: node.start)
@@ -300,7 +300,7 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Global
 
-  public func visit(_ node: GlobalStmt) throws {
+  internal func visit(_ node: GlobalStmt) throws {
     for name in node.identifiers {
       if let c = self.lookupMangled(name) {
         let errorLocation = node.start
@@ -328,7 +328,7 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Nonlocal
 
-  public func visit(_ node: NonlocalStmt) throws {
+  internal func visit(_ node: NonlocalStmt) throws {
     for name in node.identifiers {
       if let c = self.lookupMangled(name) {
         let errorLocation = node.start
@@ -356,13 +356,13 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Expr
 
-  public func visit(_ node: ExprStmt) throws {
+  internal func visit(_ node: ExprStmt) throws {
     try self.visit(node.expression)
   }
 
   // MARK: - Pass, break, continue
 
-  public func visit(_ node: PassStmt) throws { }
-  public func visit(_ node: BreakStmt) throws { }
-  public func visit(_ node: ContinueStmt) throws { }
+  internal func visit(_ node: PassStmt) throws { }
+  internal func visit(_ node: BreakStmt) throws { }
+  internal func visit(_ node: ContinueStmt) throws { }
 }

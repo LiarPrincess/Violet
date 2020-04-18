@@ -10,7 +10,7 @@ extension CompilerImpl {
 
   // MARK: - Lambda
 
-  public func visit(_ node: LambdaExpr) throws {
+  internal func visit(_ node: LambdaExpr) throws {
     let location = node.start
 
     var flags: FunctionFlags = []
@@ -40,7 +40,7 @@ extension CompilerImpl {
   // MARK: - Function
 
   /// compiler_function(struct compiler *c, stmt_ty s, int is_async)
-  public func visit(_ node: FunctionDefStmt) throws {
+  internal func visit(_ node: FunctionDefStmt) throws {
     let location = node.start
     try self.visitDecorators(decorators: node.decorators, location: location)
 

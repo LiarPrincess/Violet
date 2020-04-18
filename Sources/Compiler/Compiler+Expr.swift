@@ -30,21 +30,21 @@ extension CompilerImpl {
 
   // MARK: - General
 
-  public func visit(_ node: NoneExpr) throws {
+  internal func visit(_ node: NoneExpr) throws {
     self.builder.appendNone()
   }
 
-  public func visit(_ node: EllipsisExpr) throws {
+  internal func visit(_ node: EllipsisExpr) throws {
     self.builder.appendEllipsis()
   }
 
   // MARK: - Bool
 
-  public func visit(_ node: TrueExpr) throws {
+  internal func visit(_ node: TrueExpr) throws {
     self.builder.appendTrue()
   }
 
-  public func visit(_ node: FalseExpr) throws {
+  internal func visit(_ node: FalseExpr) throws {
     self.builder.appendFalse()
   }
 
@@ -57,7 +57,7 @@ extension CompilerImpl {
     case name
   }
 
-  public func visit(_ node: IdentifierExpr) throws {
+  internal func visit(_ node: IdentifierExpr) throws {
     self.visitName(name: node.value, context: node.context)
   }
 
@@ -117,15 +117,15 @@ extension CompilerImpl {
 
   // MARK: - Numbers
 
-  public func visit(_ node: IntExpr) throws {
+  internal func visit(_ node: IntExpr) throws {
     self.builder.appendInteger(node.value)
   }
 
-  public func visit(_ node: FloatExpr) throws {
+  internal func visit(_ node: FloatExpr) throws {
     self.builder.appendFloat(node.value)
   }
 
-  public func visit(_ node: ComplexExpr) throws {
+  internal func visit(_ node: ComplexExpr) throws {
     self.builder.appendComplex(real: node.real, imag: node.imag)
   }
 
@@ -133,11 +133,11 @@ extension CompilerImpl {
 
   /// compiler_formatted_value(struct compiler *c, expr_ty e)
   /// compiler_joined_str(struct compiler *c, expr_ty e)
-  public func visit(_ node: StringExpr) throws {
+  internal func visit(_ node: StringExpr) throws {
     try self.visit(node.value)
   }
 
-  public func visit(_ group: StringGroup) throws {
+  internal func visit(_ group: StringGroup) throws {
     switch group {
     case let .literal(s):
       self.builder.appendString(s)
@@ -172,18 +172,18 @@ extension CompilerImpl {
     }
   }
 
-  public func visit(_ node: BytesExpr) throws {
+  internal func visit(_ node: BytesExpr) throws {
     self.builder.appendBytes(node.value)
   }
 
   // MARK: - Operators
 
-  public func visit(_ node: UnaryOpExpr) throws {
+  internal func visit(_ node: UnaryOpExpr) throws {
     try self.visit(node.right)
     self.builder.appendUnaryOperator(node.op)
   }
 
-  public func visit(_ node: BinaryOpExpr) throws {
+  internal func visit(_ node: BinaryOpExpr) throws {
     try self.visit(node.left)
     try self.visit(node.right)
     self.builder.appendBinaryOperator(node.op)
@@ -198,7 +198,7 @@ extension CompilerImpl {
   /// 4 LOAD_NAME                1 (b)
   /// 6 RETURN_VALUE
   /// ```
-  public func visit(_ node: BoolOpExpr) throws {
+  internal func visit(_ node: BoolOpExpr) throws {
     let end = self.builder.createLabel()
 
     try self.visit(node.left)
@@ -231,7 +231,7 @@ extension CompilerImpl {
   ///  20 POP_TOP
   ///  22 RETURN_VALUE
   /// ```
-  public func visit(_ node: CompareExpr) throws {
+  internal func visit(_ node: CompareExpr) throws {
     try self.visit(node.left)
 
     if node.elements.count == 1 {
@@ -265,7 +265,7 @@ extension CompilerImpl {
   // MARK: - Await
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
-  public func visit(_ node: AwaitExpr) throws {
+  internal func visit(_ node: AwaitExpr) throws {
     guard self.currentScope.type == .function else {
       throw self.error(.awaitOutsideFunction)
     }
@@ -284,7 +284,7 @@ extension CompilerImpl {
   // MARK: - Yield
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
-  public func visit(_ node: YieldExpr) throws {
+  internal func visit(_ node: YieldExpr) throws {
     guard self.currentScope.type == .function else {
       throw self.error(.yieldOutsideFunction)
     }
@@ -299,7 +299,7 @@ extension CompilerImpl {
   }
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
-  public func visit(_ node: YieldFromExpr) throws {
+  internal func visit(_ node: YieldFromExpr) throws {
     guard self.currentScope.type == .function else {
       throw self.error(.yieldOutsideFunction)
     }
@@ -327,7 +327,7 @@ extension CompilerImpl {
   ///  8 LOAD_CONST               1 (3)
   /// 10 RETURN_VALUE
   /// ```
-  public func visit(_ node: IfExpr) throws {
+  internal func visit(_ node: IfExpr) throws {
     let end = self.builder.createLabel()
     let orElseStart = self.builder.createLabel()
 
@@ -341,7 +341,7 @@ extension CompilerImpl {
 
   // MARK: - Attribute
 
-  public func visit(_ node: AttributeExpr) throws {
+  internal func visit(_ node: AttributeExpr) throws {
     try self.visitAttribute(object: node.object,
                             name: node.name,
                             context: node.context)
@@ -378,7 +378,7 @@ extension CompilerImpl {
 
   // MARK: - Slice
 
-  public func visit(_ node: SubscriptExpr) throws {
+  internal func visit(_ node: SubscriptExpr) throws {
     try self.visitSubscript(object: node.object,
                             slice: node.slice,
                             context: node.context)
@@ -476,7 +476,7 @@ extension CompilerImpl {
 
   // MARK: - Starred
 
-  public func visit(_ node: StarredExpr) throws {
+  internal func visit(_ node: StarredExpr) throws {
     // In all legitimate cases, the starred node was already replaced
     // inside assign, call etc.
     switch node.context {

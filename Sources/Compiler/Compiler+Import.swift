@@ -21,7 +21,7 @@ extension CompilerImpl {
   ///  8 LOAD_CONST               1 (None)
   /// 10 RETURN_VALUE
   /// ```
-  public func visit(_ node: ImportStmt) throws {
+  internal func visit(_ node: ImportStmt) throws {
     for alias in node.names {
       self.setAppendLocation(alias)
 
@@ -58,7 +58,7 @@ extension CompilerImpl {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
-  public func visit(_ node: ImportFromStarStmt) throws {
+  internal func visit(_ node: ImportFromStarStmt) throws {
     try self.checkLateFuture(module: node.moduleName, location: node.start)
     try self.appendImportFromProlog(module: node.moduleName,
                                     names: ["*"],
@@ -82,7 +82,7 @@ extension CompilerImpl {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
-  public func visit(_ node: ImportFromStmt) throws {
+  internal func visit(_ node: ImportFromStmt) throws {
     try self.checkLateFuture(module: node.moduleName, location: node.start)
     try self.appendImportFromProlog(module: node.moduleName,
                                     names: node.names.map { $0.name },

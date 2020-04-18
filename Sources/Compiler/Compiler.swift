@@ -153,8 +153,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     let symbolTableBuilder = SymbolTableBuilder(delegate: self.delegate)
     self.symbolTable = try symbolTableBuilder.visit(self.ast)
 
-    let futureBuilder = FutureBuilder()
-    self.future = try futureBuilder.parse(ast: self.ast)
+    self.future = try FutureFeatures.parse(ast: self.ast)
 
     self.enterScope(node: self.ast, type: .module, argCount: 0, kwOnlyArgCount: 0)
     self.setAppendLocation(self.ast)

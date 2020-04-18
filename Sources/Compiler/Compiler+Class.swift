@@ -21,7 +21,7 @@ extension CompilerImpl {
   /// - `<name>` is the class name
   /// - `<bases>` is the positional arguments and *varargs argument
   /// - `<keywords>` is the keyword arguments and **kwds argument
-  public func visit(_ node: ClassDefStmt) throws {
+  internal func visit(_ node: ClassDefStmt) throws {
     let location = node.start
     try self.visitDecorators(decorators: node.decorators, location: location)
 

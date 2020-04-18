@@ -26,33 +26,33 @@ extension CompilerImpl {
   // MARK: - Comprehension
   // Remember about self.setAppendLocation(ASTNode)!
 
-  public func visit(_ node: ListComprehensionExpr) throws {
+  internal func visit(_ node: ListComprehensionExpr) throws {
     throw self.notImplementedComprehension()
   }
 
-  public func visit(_ node: SetComprehensionExpr) throws {
+  internal func visit(_ node: SetComprehensionExpr) throws {
     throw self.notImplementedComprehension()
   }
 
-  public func visit(_ node: DictionaryComprehensionExpr) throws {
+  internal func visit(_ node: DictionaryComprehensionExpr) throws {
     throw self.notImplementedComprehension()
   }
 
-  public func visit(_ node: GeneratorExpr) throws {
+  internal func visit(_ node: GeneratorExpr) throws {
     throw self.notImplementedComprehension()
   }
 
   // MARK: - Async
 
-  public func visit(_ node: AsyncForStmt) throws {
+  internal func visit(_ node: AsyncForStmt) throws {
     throw self.notImplementedAsync()
   }
 
-  public func visit(_ node: AsyncWithStmt) throws {
+  internal func visit(_ node: AsyncWithStmt) throws {
     throw self.notImplementedAsync()
   }
 
-  public func visit(_ node: AsyncFunctionDefStmt) throws {
+  internal func visit(_ node: AsyncFunctionDefStmt) throws {
     throw self.notImplementedAsync()
   }
 

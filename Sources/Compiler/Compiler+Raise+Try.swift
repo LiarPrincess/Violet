@@ -13,7 +13,7 @@ extension CompilerImpl {
   // MARK: - Raise
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
-  public func visit(_ node: RaiseStmt) throws {
+  internal func visit(_ node: RaiseStmt) throws {
     var arg = RaiseArg.reRaise
 
     if let exception = node.exception {
@@ -31,7 +31,7 @@ extension CompilerImpl {
 
   // MARK: - Try
 
-  public func visit(_ node: TryStmt) throws {
+  internal func visit(_ node: TryStmt) throws {
     if node.finally.any {
       try self.visitTryFinally(body: node.body,
                                handlers: node.handlers,
