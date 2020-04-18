@@ -261,7 +261,7 @@ internal enum PyObjectType {
       )
     }
 
-    let owner = lookup.owner
+    let owner = lookup.type
     let hasFromObject = owner === Py.types.object
     return !hasFromObject
   }

@@ -11,11 +11,15 @@ import Core
 
 // == What is this? ==
 // Sometimes instead of doing slow Python dispatch we will use Swift protocols.
-// Feel free to add new protocols if you need them (just modify the script
-// responsible for generating the code).
-//
+// For example: when user has an 'list' and ask for '__len__' we could lookup
+// this method in MRO, create bound object and dispatch it.
+// But this is a lot of work.
+// We can also: check if this method was overriden ('list' can be subclassed),
+// if not then we can go directly to our Swift implementation.
+// We could do this for all of the common magic methods.
+
 // == Why? ==
-// Mostly for debugging (trust me, you don't want to debug raw Python implementation).
+// REASON 1: Debugging (trust me, you don't want to debug raw Python dispatch)
 //
 // Even for simple 'len([])' will have:
 // 1. Check if 'list' implements '__len__'
@@ -24,23 +28,37 @@ import Core
 // Now imagine going through this in lldb.
 //
 // That's a lot of work for such a simple operation.
+//
 // With protocol dispatch we will:
 // 1. Check if 'list' implements '__len__Owner'
-// 2. Check user has overriden '__len__'
+// 2. Check user has not overriden '__len__'
 // 3. Directly call 'PyList.__len__' in Swift
-// In lldb this is: n (check protocol), n (check override), s (step into Swift method)
+// In lldb this is: n (check protocol), n (check override), s (step into Swift method).
 //
-// Also, performance (maybe).
-//
+// REASON 2: Static calls during 'Py.initialize'
+// This also allows us to call Python methods during 'Py.initialize',
+// when not all of the types are yet fully initialized.
+// For example when we have not yet added '__hash__' to 'str.__dict__'
+// we can still call this method because:
+// - 'str' confrms to '__hash__Owner' protocol
+// - it does not override builtin 'str.__hash__' method
+
 // == Is this bullet-proof? ==
 // Not really.
 // If you remove one of the builtin methods from a type, then static protocol
 // conformance will still remain.
 //
-// Table of contents:
+// But most of the time you can't do this:
+// >>> del list.__len__
+// Traceback (most recent call last):
+//   File "<stdin>", line 1, in <module>
+// TypeError: can't set attributes of built-in/extension type 'list'
+
+// === Table of contents ===
 // 1. Owner protocol definitions - protocols for each operation
-// 2. Fast enum - try to call given function with protocol dispatch
-// 3. Owner protocol conformance - this type supports given operation/protocol
+// 2. func hasOverridenBuiltinMethod
+// 3. Fast enum - try to call given function with protocol dispatch
+// 4. Owner protocol conformance - this type supports given operation/protocol
 
 // MARK: - Owner protocols
 
@@ -141,12 +159,37 @@ private protocol __trunc__Owner { func trunc() -> PyObject }
 private protocol __xor__Owner { func xor(_ other: PyObject) -> PyResult<PyObject> }
 private protocol keysOwner { func keys() -> PyObject }
 
+// MARK: - Has overriden
+
+/// Check if the user has overriden given method.
+private func hasOverridenBuiltinMethod(
+  object: PyObject,
+  selector: IdString
+) -> Bool {
+  // Soo... we could actually check if if the user has overriden builtin method:
+  // 1. Get method from MRO: let lookup = type.lookupWithType(name: selector)
+  // 2. Check if type is builtin/heap type: lookup.type.isHeapType
+  //    - If builtin: user has not overriden
+  //    - If heap: user has overriden
+  //
+  // Or we can just assume that all heap types override.
+  // In most of the cases it will not be true (how ofter do you see '__len__'
+  // overriden on a list subclass?), but it does not matter.
+  //
+  // Just a reminder: heap type - type created by user with 'class' statement.
+
+  let type = object.type
+  let isHeapType = type.isHeapType
+  return isHeapType
+}
+
 // MARK: - Fast
 
 internal enum Fast {
 
   internal static func __abs__(_ zelf: PyObject) -> PyObject? {
-    if let owner = zelf as? __abs__Owner, !zelf.hasOverriden(selector: "__abs__") {
+    if let owner = zelf as? __abs__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__abs__) {
       return owner.abs()
     }
 
@@ -154,7 +197,8 @@ internal enum Fast {
   }
 
   internal static func __add__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __add__Owner, !zelf.hasOverriden(selector: "__add__") {
+    if let owner = zelf as? __add__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__add__) {
       return owner.add(other)
     }
 
@@ -162,7 +206,8 @@ internal enum Fast {
   }
 
   internal static func __and__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __and__Owner, !zelf.hasOverriden(selector: "__and__") {
+    if let owner = zelf as? __and__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__and__) {
       return owner.and(other)
     }
 
@@ -170,7 +215,8 @@ internal enum Fast {
   }
 
   internal static func __bool__(_ zelf: PyObject) -> Bool? {
-    if let owner = zelf as? __bool__Owner, !zelf.hasOverriden(selector: "__bool__") {
+    if let owner = zelf as? __bool__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__bool__) {
       return owner.asBool()
     }
 
@@ -178,7 +224,8 @@ internal enum Fast {
   }
 
   internal static func __call__(_ zelf: PyObject, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>? {
-    if let owner = zelf as? __call__Owner, !zelf.hasOverriden(selector: "__call__") {
+    if let owner = zelf as? __call__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__call__) {
       return owner.call(args: args, kwargs: kwargs)
     }
 
@@ -186,7 +233,8 @@ internal enum Fast {
   }
 
   internal static func __complex__(_ zelf: PyObject) -> PyObject? {
-    if let owner = zelf as? __complex__Owner, !zelf.hasOverriden(selector: "__complex__") {
+    if let owner = zelf as? __complex__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__complex__) {
       return owner.asComplex()
     }
 
@@ -194,7 +242,8 @@ internal enum Fast {
   }
 
   internal static func __contains__(_ zelf: PyObject, _ element: PyObject) -> PyResult<Bool>? {
-    if let owner = zelf as? __contains__Owner, !zelf.hasOverriden(selector: "__contains__") {
+    if let owner = zelf as? __contains__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__contains__) {
       return owner.contains(element)
     }
 
@@ -202,7 +251,8 @@ internal enum Fast {
   }
 
   internal static func __del__(_ zelf: PyObject) -> PyResult<PyNone>? {
-    if let owner = zelf as? __del__Owner, !zelf.hasOverriden(selector: "__del__") {
+    if let owner = zelf as? __del__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__del__) {
       return owner.del()
     }
 
@@ -210,7 +260,8 @@ internal enum Fast {
   }
 
   internal static func __delitem__(_ zelf: PyObject, at index: PyObject) -> PyResult<PyNone>? {
-    if let owner = zelf as? __delitem__Owner, !zelf.hasOverriden(selector: "__delitem__") {
+    if let owner = zelf as? __delitem__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__delitem__) {
       return owner.delItem(at: index)
     }
 
@@ -218,7 +269,8 @@ internal enum Fast {
   }
 
   internal static func __dir__(_ zelf: PyObject) -> PyResult<DirResult>? {
-    if let owner = zelf as? __dir__Owner, !zelf.hasOverriden(selector: "__dir__") {
+    if let owner = zelf as? __dir__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__dir__) {
       return owner.dir()
     }
 
@@ -226,7 +278,8 @@ internal enum Fast {
   }
 
   internal static func __divmod__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __divmod__Owner, !zelf.hasOverriden(selector: "__divmod__") {
+    if let owner = zelf as? __divmod__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__divmod__) {
       return owner.divmod(other)
     }
 
@@ -234,7 +287,8 @@ internal enum Fast {
   }
 
   internal static func __eq__(_ zelf: PyObject, _ other: PyObject) -> CompareResult? {
-    if let owner = zelf as? __eq__Owner, !zelf.hasOverriden(selector: "__eq__") {
+    if let owner = zelf as? __eq__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__eq__) {
       return owner.isEqual(other)
     }
 
@@ -242,7 +296,8 @@ internal enum Fast {
   }
 
   internal static func __float__(_ zelf: PyObject) -> PyResult<PyFloat>? {
-    if let owner = zelf as? __float__Owner, !zelf.hasOverriden(selector: "__float__") {
+    if let owner = zelf as? __float__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__float__) {
       return owner.asFloat()
     }
 
@@ -250,7 +305,8 @@ internal enum Fast {
   }
 
   internal static func __floordiv__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __floordiv__Owner, !zelf.hasOverriden(selector: "__floordiv__") {
+    if let owner = zelf as? __floordiv__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__floordiv__) {
       return owner.floordiv(other)
     }
 
@@ -258,7 +314,8 @@ internal enum Fast {
   }
 
   internal static func __ge__(_ zelf: PyObject, _ other: PyObject) -> CompareResult? {
-    if let owner = zelf as? __ge__Owner, !zelf.hasOverriden(selector: "__ge__") {
+    if let owner = zelf as? __ge__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__ge__) {
       return owner.isGreaterEqual(other)
     }
 
@@ -266,7 +323,8 @@ internal enum Fast {
   }
 
   internal static func __getattribute__(_ zelf: PyObject, name: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __getattribute__Owner, !zelf.hasOverriden(selector: "__getattribute__") {
+    if let owner = zelf as? __getattribute__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__getattribute__) {
       return owner.getAttribute(name: name)
     }
 
@@ -274,7 +332,8 @@ internal enum Fast {
   }
 
   internal static func __getitem__(_ zelf: PyObject, at index: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __getitem__Owner, !zelf.hasOverriden(selector: "__getitem__") {
+    if let owner = zelf as? __getitem__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__getitem__) {
       return owner.getItem(at: index)
     }
 
@@ -282,7 +341,8 @@ internal enum Fast {
   }
 
   internal static func __gt__(_ zelf: PyObject, _ other: PyObject) -> CompareResult? {
-    if let owner = zelf as? __gt__Owner, !zelf.hasOverriden(selector: "__gt__") {
+    if let owner = zelf as? __gt__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__gt__) {
       return owner.isGreater(other)
     }
 
@@ -290,7 +350,8 @@ internal enum Fast {
   }
 
   internal static func __hash__(_ zelf: PyObject) -> HashResult? {
-    if let owner = zelf as? __hash__Owner, !zelf.hasOverriden(selector: "__hash__") {
+    if let owner = zelf as? __hash__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__hash__) {
       return owner.hash()
     }
 
@@ -298,7 +359,8 @@ internal enum Fast {
   }
 
   internal static func __iadd__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __iadd__Owner, !zelf.hasOverriden(selector: "__iadd__") {
+    if let owner = zelf as? __iadd__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__iadd__) {
       return owner.iadd(other)
     }
 
@@ -306,7 +368,8 @@ internal enum Fast {
   }
 
   internal static func __iand__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __iand__Owner, !zelf.hasOverriden(selector: "__iand__") {
+    if let owner = zelf as? __iand__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__iand__) {
       return owner.iand(other)
     }
 
@@ -314,7 +377,8 @@ internal enum Fast {
   }
 
   internal static func __idivmod__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __idivmod__Owner, !zelf.hasOverriden(selector: "__idivmod__") {
+    if let owner = zelf as? __idivmod__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__idivmod__) {
       return owner.idivmod(other)
     }
 
@@ -322,7 +386,8 @@ internal enum Fast {
   }
 
   internal static func __ifloordiv__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __ifloordiv__Owner, !zelf.hasOverriden(selector: "__ifloordiv__") {
+    if let owner = zelf as? __ifloordiv__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__ifloordiv__) {
       return owner.ifloordiv(other)
     }
 
@@ -330,7 +395,8 @@ internal enum Fast {
   }
 
   internal static func __ilshift__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __ilshift__Owner, !zelf.hasOverriden(selector: "__ilshift__") {
+    if let owner = zelf as? __ilshift__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__ilshift__) {
       return owner.ilshift(other)
     }
 
@@ -338,7 +404,8 @@ internal enum Fast {
   }
 
   internal static func __imatmul__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __imatmul__Owner, !zelf.hasOverriden(selector: "__imatmul__") {
+    if let owner = zelf as? __imatmul__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__imatmul__) {
       return owner.imatmul(other)
     }
 
@@ -346,7 +413,8 @@ internal enum Fast {
   }
 
   internal static func __imod__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __imod__Owner, !zelf.hasOverriden(selector: "__imod__") {
+    if let owner = zelf as? __imod__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__imod__) {
       return owner.imod(other)
     }
 
@@ -354,7 +422,8 @@ internal enum Fast {
   }
 
   internal static func __imul__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __imul__Owner, !zelf.hasOverriden(selector: "__imul__") {
+    if let owner = zelf as? __imul__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__imul__) {
       return owner.imul(other)
     }
 
@@ -362,7 +431,8 @@ internal enum Fast {
   }
 
   internal static func __index__(_ zelf: PyObject) -> BigInt? {
-    if let owner = zelf as? __index__Owner, !zelf.hasOverriden(selector: "__index__") {
+    if let owner = zelf as? __index__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__index__) {
       return owner.asIndex()
     }
 
@@ -370,7 +440,8 @@ internal enum Fast {
   }
 
   internal static func __instancecheck__(_ zelf: PyObject, of object: PyObject) -> Bool? {
-    if let owner = zelf as? __instancecheck__Owner, !zelf.hasOverriden(selector: "__instancecheck__") {
+    if let owner = zelf as? __instancecheck__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__instancecheck__) {
       return owner.isType(of: object)
     }
 
@@ -378,7 +449,8 @@ internal enum Fast {
   }
 
   internal static func __invert__(_ zelf: PyObject) -> PyObject? {
-    if let owner = zelf as? __invert__Owner, !zelf.hasOverriden(selector: "__invert__") {
+    if let owner = zelf as? __invert__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__invert__) {
       return owner.invert()
     }
 
@@ -386,7 +458,8 @@ internal enum Fast {
   }
 
   internal static func __ior__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __ior__Owner, !zelf.hasOverriden(selector: "__ior__") {
+    if let owner = zelf as? __ior__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__ior__) {
       return owner.ior(other)
     }
 
@@ -394,7 +467,8 @@ internal enum Fast {
   }
 
   internal static func __ipow__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __ipow__Owner, !zelf.hasOverriden(selector: "__ipow__") {
+    if let owner = zelf as? __ipow__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__ipow__) {
       return owner.ipow(other)
     }
 
@@ -402,7 +476,8 @@ internal enum Fast {
   }
 
   internal static func __irshift__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __irshift__Owner, !zelf.hasOverriden(selector: "__irshift__") {
+    if let owner = zelf as? __irshift__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__irshift__) {
       return owner.irshift(other)
     }
 
@@ -410,7 +485,8 @@ internal enum Fast {
   }
 
   internal static func __isabstractmethod__(_ zelf: PyObject) -> PyResult<Bool>? {
-    if let owner = zelf as? __isabstractmethod__Owner, !zelf.hasOverriden(selector: "__isabstractmethod__") {
+    if let owner = zelf as? __isabstractmethod__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__isabstractmethod__) {
       return owner.isAbstractMethod()
     }
 
@@ -418,7 +494,8 @@ internal enum Fast {
   }
 
   internal static func __isub__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __isub__Owner, !zelf.hasOverriden(selector: "__isub__") {
+    if let owner = zelf as? __isub__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__isub__) {
       return owner.isub(other)
     }
 
@@ -426,7 +503,8 @@ internal enum Fast {
   }
 
   internal static func __iter__(_ zelf: PyObject) -> PyObject? {
-    if let owner = zelf as? __iter__Owner, !zelf.hasOverriden(selector: "__iter__") {
+    if let owner = zelf as? __iter__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__iter__) {
       return owner.iter()
     }
 
@@ -434,7 +512,8 @@ internal enum Fast {
   }
 
   internal static func __itruediv__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __itruediv__Owner, !zelf.hasOverriden(selector: "__itruediv__") {
+    if let owner = zelf as? __itruediv__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__itruediv__) {
       return owner.itruediv(other)
     }
 
@@ -442,7 +521,8 @@ internal enum Fast {
   }
 
   internal static func __ixor__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __ixor__Owner, !zelf.hasOverriden(selector: "__ixor__") {
+    if let owner = zelf as? __ixor__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__ixor__) {
       return owner.ixor(other)
     }
 
@@ -450,7 +530,8 @@ internal enum Fast {
   }
 
   internal static func __le__(_ zelf: PyObject, _ other: PyObject) -> CompareResult? {
-    if let owner = zelf as? __le__Owner, !zelf.hasOverriden(selector: "__le__") {
+    if let owner = zelf as? __le__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__le__) {
       return owner.isLessEqual(other)
     }
 
@@ -458,7 +539,8 @@ internal enum Fast {
   }
 
   internal static func __len__(_ zelf: PyObject) -> BigInt? {
-    if let owner = zelf as? __len__Owner, !zelf.hasOverriden(selector: "__len__") {
+    if let owner = zelf as? __len__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__len__) {
       return owner.getLength()
     }
 
@@ -466,7 +548,8 @@ internal enum Fast {
   }
 
   internal static func __lshift__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __lshift__Owner, !zelf.hasOverriden(selector: "__lshift__") {
+    if let owner = zelf as? __lshift__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__lshift__) {
       return owner.lshift(other)
     }
 
@@ -474,7 +557,8 @@ internal enum Fast {
   }
 
   internal static func __lt__(_ zelf: PyObject, _ other: PyObject) -> CompareResult? {
-    if let owner = zelf as? __lt__Owner, !zelf.hasOverriden(selector: "__lt__") {
+    if let owner = zelf as? __lt__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__lt__) {
       return owner.isLess(other)
     }
 
@@ -482,7 +566,8 @@ internal enum Fast {
   }
 
   internal static func __matmul__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __matmul__Owner, !zelf.hasOverriden(selector: "__matmul__") {
+    if let owner = zelf as? __matmul__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__matmul__) {
       return owner.matmul(other)
     }
 
@@ -490,7 +575,8 @@ internal enum Fast {
   }
 
   internal static func __mod__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __mod__Owner, !zelf.hasOverriden(selector: "__mod__") {
+    if let owner = zelf as? __mod__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__mod__) {
       return owner.mod(other)
     }
 
@@ -498,7 +584,8 @@ internal enum Fast {
   }
 
   internal static func __mul__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __mul__Owner, !zelf.hasOverriden(selector: "__mul__") {
+    if let owner = zelf as? __mul__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__mul__) {
       return owner.mul(other)
     }
 
@@ -506,7 +593,8 @@ internal enum Fast {
   }
 
   internal static func __ne__(_ zelf: PyObject, _ other: PyObject) -> CompareResult? {
-    if let owner = zelf as? __ne__Owner, !zelf.hasOverriden(selector: "__ne__") {
+    if let owner = zelf as? __ne__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__ne__) {
       return owner.isNotEqual(other)
     }
 
@@ -514,7 +602,8 @@ internal enum Fast {
   }
 
   internal static func __neg__(_ zelf: PyObject) -> PyObject? {
-    if let owner = zelf as? __neg__Owner, !zelf.hasOverriden(selector: "__neg__") {
+    if let owner = zelf as? __neg__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__neg__) {
       return owner.negative()
     }
 
@@ -522,7 +611,8 @@ internal enum Fast {
   }
 
   internal static func __next__(_ zelf: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __next__Owner, !zelf.hasOverriden(selector: "__next__") {
+    if let owner = zelf as? __next__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__next__) {
       return owner.next()
     }
 
@@ -530,7 +620,8 @@ internal enum Fast {
   }
 
   internal static func __or__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __or__Owner, !zelf.hasOverriden(selector: "__or__") {
+    if let owner = zelf as? __or__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__or__) {
       return owner.or(other)
     }
 
@@ -538,7 +629,8 @@ internal enum Fast {
   }
 
   internal static func __pos__(_ zelf: PyObject) -> PyObject? {
-    if let owner = zelf as? __pos__Owner, !zelf.hasOverriden(selector: "__pos__") {
+    if let owner = zelf as? __pos__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__pos__) {
       return owner.positive()
     }
 
@@ -546,7 +638,8 @@ internal enum Fast {
   }
 
   internal static func __pow__(_ zelf: PyObject, exp: PyObject, mod: PyObject?) -> PyResult<PyObject>? {
-    if let owner = zelf as? __pow__Owner, !zelf.hasOverriden(selector: "__pow__") {
+    if let owner = zelf as? __pow__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__pow__) {
       return owner.pow(exp: exp, mod: mod)
     }
 
@@ -554,7 +647,8 @@ internal enum Fast {
   }
 
   internal static func __radd__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __radd__Owner, !zelf.hasOverriden(selector: "__radd__") {
+    if let owner = zelf as? __radd__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__radd__) {
       return owner.radd(other)
     }
 
@@ -562,7 +656,8 @@ internal enum Fast {
   }
 
   internal static func __rand__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __rand__Owner, !zelf.hasOverriden(selector: "__rand__") {
+    if let owner = zelf as? __rand__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__rand__) {
       return owner.rand(other)
     }
 
@@ -570,7 +665,8 @@ internal enum Fast {
   }
 
   internal static func __rdivmod__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __rdivmod__Owner, !zelf.hasOverriden(selector: "__rdivmod__") {
+    if let owner = zelf as? __rdivmod__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__rdivmod__) {
       return owner.rdivmod(other)
     }
 
@@ -578,7 +674,8 @@ internal enum Fast {
   }
 
   internal static func __repr__(_ zelf: PyObject) -> PyResult<String>? {
-    if let owner = zelf as? __repr__Owner, !zelf.hasOverriden(selector: "__repr__") {
+    if let owner = zelf as? __repr__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__repr__) {
       return owner.repr()
     }
 
@@ -586,7 +683,8 @@ internal enum Fast {
   }
 
   internal static func __reversed__(_ zelf: PyObject) -> PyObject? {
-    if let owner = zelf as? __reversed__Owner, !zelf.hasOverriden(selector: "__reversed__") {
+    if let owner = zelf as? __reversed__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__reversed__) {
       return owner.reversed()
     }
 
@@ -594,7 +692,8 @@ internal enum Fast {
   }
 
   internal static func __rfloordiv__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __rfloordiv__Owner, !zelf.hasOverriden(selector: "__rfloordiv__") {
+    if let owner = zelf as? __rfloordiv__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__rfloordiv__) {
       return owner.rfloordiv(other)
     }
 
@@ -602,7 +701,8 @@ internal enum Fast {
   }
 
   internal static func __rlshift__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __rlshift__Owner, !zelf.hasOverriden(selector: "__rlshift__") {
+    if let owner = zelf as? __rlshift__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__rlshift__) {
       return owner.rlshift(other)
     }
 
@@ -610,7 +710,8 @@ internal enum Fast {
   }
 
   internal static func __rmatmul__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __rmatmul__Owner, !zelf.hasOverriden(selector: "__rmatmul__") {
+    if let owner = zelf as? __rmatmul__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__rmatmul__) {
       return owner.rmatmul(other)
     }
 
@@ -618,7 +719,8 @@ internal enum Fast {
   }
 
   internal static func __rmod__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __rmod__Owner, !zelf.hasOverriden(selector: "__rmod__") {
+    if let owner = zelf as? __rmod__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__rmod__) {
       return owner.rmod(other)
     }
 
@@ -626,7 +728,8 @@ internal enum Fast {
   }
 
   internal static func __rmul__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __rmul__Owner, !zelf.hasOverriden(selector: "__rmul__") {
+    if let owner = zelf as? __rmul__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__rmul__) {
       return owner.rmul(other)
     }
 
@@ -634,7 +737,8 @@ internal enum Fast {
   }
 
   internal static func __ror__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __ror__Owner, !zelf.hasOverriden(selector: "__ror__") {
+    if let owner = zelf as? __ror__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__ror__) {
       return owner.ror(other)
     }
 
@@ -642,7 +746,8 @@ internal enum Fast {
   }
 
   internal static func __round__(_ zelf: PyObject, nDigits: PyObject?) -> PyResult<PyObject>? {
-    if let owner = zelf as? __round__Owner, !zelf.hasOverriden(selector: "__round__") {
+    if let owner = zelf as? __round__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__round__) {
       return owner.round(nDigits: nDigits)
     }
 
@@ -650,7 +755,8 @@ internal enum Fast {
   }
 
   internal static func __rpow__(_ zelf: PyObject, base: PyObject, mod: PyObject?) -> PyResult<PyObject>? {
-    if let owner = zelf as? __rpow__Owner, !zelf.hasOverriden(selector: "__rpow__") {
+    if let owner = zelf as? __rpow__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__rpow__) {
       return owner.rpow(base: base, mod: mod)
     }
 
@@ -658,7 +764,8 @@ internal enum Fast {
   }
 
   internal static func __rrshift__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __rrshift__Owner, !zelf.hasOverriden(selector: "__rrshift__") {
+    if let owner = zelf as? __rrshift__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__rrshift__) {
       return owner.rrshift(other)
     }
 
@@ -666,7 +773,8 @@ internal enum Fast {
   }
 
   internal static func __rshift__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __rshift__Owner, !zelf.hasOverriden(selector: "__rshift__") {
+    if let owner = zelf as? __rshift__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__rshift__) {
       return owner.rshift(other)
     }
 
@@ -674,7 +782,8 @@ internal enum Fast {
   }
 
   internal static func __rsub__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __rsub__Owner, !zelf.hasOverriden(selector: "__rsub__") {
+    if let owner = zelf as? __rsub__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__rsub__) {
       return owner.rsub(other)
     }
 
@@ -682,7 +791,8 @@ internal enum Fast {
   }
 
   internal static func __rtruediv__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __rtruediv__Owner, !zelf.hasOverriden(selector: "__rtruediv__") {
+    if let owner = zelf as? __rtruediv__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__rtruediv__) {
       return owner.rtruediv(other)
     }
 
@@ -690,7 +800,8 @@ internal enum Fast {
   }
 
   internal static func __rxor__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __rxor__Owner, !zelf.hasOverriden(selector: "__rxor__") {
+    if let owner = zelf as? __rxor__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__rxor__) {
       return owner.rxor(other)
     }
 
@@ -698,7 +809,8 @@ internal enum Fast {
   }
 
   internal static func __setattr__(_ zelf: PyObject, name: PyObject, value: PyObject?) -> PyResult<PyNone>? {
-    if let owner = zelf as? __setattr__Owner, !zelf.hasOverriden(selector: "__setattr__") {
+    if let owner = zelf as? __setattr__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__setattr__) {
       return owner.setAttribute(name: name, value: value)
     }
 
@@ -706,7 +818,8 @@ internal enum Fast {
   }
 
   internal static func __setitem__(_ zelf: PyObject, at index: PyObject, to value: PyObject) -> PyResult<PyNone>? {
-    if let owner = zelf as? __setitem__Owner, !zelf.hasOverriden(selector: "__setitem__") {
+    if let owner = zelf as? __setitem__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__setitem__) {
       return owner.setItem(at: index, to: value)
     }
 
@@ -714,7 +827,8 @@ internal enum Fast {
   }
 
   internal static func __str__(_ zelf: PyObject) -> PyResult<String>? {
-    if let owner = zelf as? __str__Owner, !zelf.hasOverriden(selector: "__str__") {
+    if let owner = zelf as? __str__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__str__) {
       return owner.str()
     }
 
@@ -722,7 +836,8 @@ internal enum Fast {
   }
 
   internal static func __sub__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __sub__Owner, !zelf.hasOverriden(selector: "__sub__") {
+    if let owner = zelf as? __sub__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__sub__) {
       return owner.sub(other)
     }
 
@@ -730,7 +845,8 @@ internal enum Fast {
   }
 
   internal static func __subclasscheck__(_ zelf: PyObject, of object: PyObject) -> PyResult<Bool>? {
-    if let owner = zelf as? __subclasscheck__Owner, !zelf.hasOverriden(selector: "__subclasscheck__") {
+    if let owner = zelf as? __subclasscheck__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__subclasscheck__) {
       return owner.isSubtype(of: object)
     }
 
@@ -738,7 +854,8 @@ internal enum Fast {
   }
 
   internal static func __truediv__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __truediv__Owner, !zelf.hasOverriden(selector: "__truediv__") {
+    if let owner = zelf as? __truediv__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__truediv__) {
       return owner.truediv(other)
     }
 
@@ -746,7 +863,8 @@ internal enum Fast {
   }
 
   internal static func __trunc__(_ zelf: PyObject) -> PyObject? {
-    if let owner = zelf as? __trunc__Owner, !zelf.hasOverriden(selector: "__trunc__") {
+    if let owner = zelf as? __trunc__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__trunc__) {
       return owner.trunc()
     }
 
@@ -754,7 +872,8 @@ internal enum Fast {
   }
 
   internal static func __xor__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
-    if let owner = zelf as? __xor__Owner, !zelf.hasOverriden(selector: "__xor__") {
+    if let owner = zelf as? __xor__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__xor__) {
       return owner.xor(other)
     }
 
@@ -762,7 +881,8 @@ internal enum Fast {
   }
 
   internal static func keys(_ zelf: PyObject) -> PyObject? {
-    if let owner = zelf as? keysOwner, !zelf.hasOverriden(selector: "keys") {
+    if let owner = zelf as? keysOwner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .keys) {
       return owner.keys()
     }
 

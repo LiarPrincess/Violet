@@ -112,11 +112,15 @@ import Core
 
 // == What is this? ==
 // Sometimes instead of doing slow Python dispatch we will use Swift protocols.
-// Feel free to add new protocols if you need them (just modify the script
-// responsible for generating the code).
-//
+// For example: when user has an 'list' and ask for '__len__' we could lookup
+// this method in MRO, create bound object and dispatch it.
+// But this is a lot of work.
+// We can also: check if this method was overriden ('list' can be subclassed),
+// if not then we can go directly to our Swift implementation.
+// We could do this for all of the common magic methods.
+
 // == Why? ==
-// Mostly for debugging (trust me, you don't want to debug raw Python implementation).
+// REASON 1: Debugging (trust me, you don't want to debug raw Python dispatch)
 //
 // Even for simple 'len([])' will have:
 // 1. Check if 'list' implements '__len__'
@@ -125,23 +129,37 @@ import Core
 // Now imagine going through this in lldb.
 //
 // That's a lot of work for such a simple operation.
+//
 // With protocol dispatch we will:
 // 1. Check if 'list' implements '__len__Owner'
-// 2. Check user has overriden '__len__'
+// 2. Check user has not overriden '__len__'
 // 3. Directly call 'PyList.__len__' in Swift
-// In lldb this is: n (check protocol), n (check override), s (step into Swift method)
+// In lldb this is: n (check protocol), n (check override), s (step into Swift method).
 //
-// Also, performance (maybe).
-//
+// REASON 2: Static calls during 'Py.initialize'
+// This also allows us to call Python methods during 'Py.initialize',
+// when not all of the types are yet fully initialized.
+// For example when we have not yet added '__hash__' to 'str.__dict__'
+// we can still call this method because:
+// - 'str' confrms to '__hash__Owner' protocol
+// - it does not override builtin 'str.__hash__' method
+
 // == Is this bullet-proof? ==
 // Not really.
 // If you remove one of the builtin methods from a type, then static protocol
 // conformance will still remain.
 //
-// Table of contents:
+// But most of the time you can't do this:
+// >>> del list.__len__
+// Traceback (most recent call last):
+//   File "<stdin>", line 1, in <module>
+// TypeError: can't set attributes of built-in/extension type 'list'
+
+// === Table of contents ===
 // 1. Owner protocol definitions - protocols for each operation
-// 2. Fast enum - try to call given function with protocol dispatch
-// 3. Owner protocol conformance - this type supports given operation/protocol
+// 2. func hasOverridenBuiltinMethod
+// 3. Fast enum - try to call given function with protocol dispatch
+// 4. Owner protocol conformance - this type supports given operation/protocol
 ''')
 
   # =================
@@ -230,6 +248,36 @@ internal protocol __dict__Owner {{
     print(f'private protocol {protocol_name} {{ func {signature.value} }}')
   print()
 
+  # =====================
+  # === Has overriden ===
+  # =====================
+
+  print('''\
+// MARK: - Has overriden
+
+/// Check if the user has overriden given method.
+private func hasOverridenBuiltinMethod(
+  object: PyObject,
+  selector: IdString
+) -> Bool {
+  // Soo... we could actually check if if the user has overriden builtin method:
+  // 1. Get method from MRO: let lookup = type.lookupWithType(name: selector)
+  // 2. Check if type is builtin/heap type: lookup.type.isHeapType
+  //    - If builtin: user has not overriden
+  //    - If heap: user has overriden
+  //
+  // Or we can just assume that all heap types override.
+  // In most of the cases it will not be true (how ofter do you see '__len__'
+  // overriden on a list subclass?), but it does not matter.
+  //
+  // Just a reminder: heap type - type created by user with 'class' statement.
+
+  let type = object.type
+  let isHeapType = type.isHeapType
+  return isHeapType
+}
+''')
+
   # ============
   # === Fast ===
   # ============
@@ -246,7 +294,7 @@ internal protocol __dict__Owner {{
     signature = protocol.swift_signature
     swift_function_name = signature.function_name
 
-    fn_arguments = ''
+    fn_arguments = '' # technically those are called 'parameters'
     call_arguments = ''
     for index, arg in enumerate(signature.arguments):
       label = arg.label # str | None
@@ -258,7 +306,6 @@ internal protocol __dict__Owner {{
       fn_label = label + ' ' if label else ''
       fn_arguments += f', {fn_label}{name}: {typ}'
 
-      # print(f'// label: {label}, name: {name}, needs_call_label: {needs_call_label}')
       if label is None:
         call_label = name + ': '
       elif label == '_':
@@ -271,7 +318,8 @@ internal protocol __dict__Owner {{
 
     print(f'''
   internal static func {python_name}(_ zelf: PyObject{fn_arguments}) -> {signature.return_type}? {{
-    if let owner = zelf as? {protocol_name}, !zelf.hasOverriden(selector: "{python_name}") {{
+    if let owner = zelf as? {protocol_name},
+       !hasOverridenBuiltinMethod(object: zelf, selector: .{python_name}) {{
       return owner.{swift_function_name}({call_arguments})
     }}
 
@@ -303,6 +351,7 @@ internal protocol __dict__Owner {{
     swift_type = t.swift_type
     swift_base_type = t.swift_base_type
 
+    # We will not generate conformances for 'object'
     if t.swift_type == 'PyObject':
       continue
 

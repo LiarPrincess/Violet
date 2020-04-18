@@ -85,7 +85,7 @@ extension PyInstance {
       trap("'\(type.getName())' is not a subclass of 'object'")
     }
 
-    let isFromObject = lookup.owner === Py.types.object
+    let isFromObject = lookup.type === Py.types.object
     return !isFromObject
   }
 

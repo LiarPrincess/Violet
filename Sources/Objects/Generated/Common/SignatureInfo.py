@@ -46,7 +46,7 @@ class SignatureInfo:
 def clean_signature(sig):
   ''' If signature spans multiple lines then Sourcery will ignore new lines, but
   preserve indentation, so we end up with:
-  protocol findOwner { func find(_ value: PyObject,                     start: PyObject?,                     end: PyObject?) -> PyResult<Int> }
+  func find(_ value: PyObject,                     start: PyObject?,                     end: PyObject?) -> PyResult<Int>
 
   This function will remove those '   '.
   '''

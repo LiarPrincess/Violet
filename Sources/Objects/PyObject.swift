@@ -60,7 +60,7 @@ public class PyObject: CustomStringConvertible {
 
   /// Name of the type (mostly for convenience).
   public var typeName: String {
-    return self.type.getName()
+    return self.type.getNameRaw()
   }
 
   public var description: String {
@@ -100,7 +100,7 @@ public class PyObject: CustomStringConvertible {
     self._type = type
   }
 
-  // MARK: - Helpers
+  // MARK: - Type predicates
 
   /// Is this `None`?
   public var isNone: Bool {

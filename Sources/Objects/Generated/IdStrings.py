@@ -24,7 +24,7 @@ ids = [
   '__classcell__',
   '__complex__',
   '__contains__',
-  # '__del__',
+  '__del__',
   # '__delattr__',
   # '__delete__',
   '__delitem__',

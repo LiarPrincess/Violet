@@ -4,7 +4,8 @@
 // Please note that this file was automatically generated. DO NOT EDIT!
 // The same goes for other files in 'Generated' directory.
 
-// Types used when we subclass one of the builtin types.
+// Types used when we subclass one of the builtin types
+// (the same but in other words: type created by user with 'class' statement).
 //
 // Normally most builtin types (like int, float etc.) do not have '__dict__'.
 // But if we subclass then then '__dict__' is now present.
