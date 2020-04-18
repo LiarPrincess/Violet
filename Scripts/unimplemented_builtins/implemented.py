@@ -1056,6 +1056,7 @@ types = {
     '__getattribute__',
     '__setattr__',
     '__delattr__',
+    'with_traceback',
     '__new__',
     '__init__',
   ],

@@ -19,7 +19,7 @@ public class PyBaseException: PyObject {
   }
 
   internal var args: PyTuple
-  internal var traceback: PyObject?
+  internal var traceback: PyTraceback?
   internal var cause: PyObject?
   internal lazy var __dict__ = Py.newDict()
 
@@ -35,7 +35,7 @@ public class PyBaseException: PyObject {
   // MARK: - Init
 
   internal convenience init(msg: String,
-                            traceback: PyObject? = nil,
+                            traceback: PyTraceback? = nil,
                             cause: PyObject? = nil,
                             exceptionContext: PyBaseException? = nil,
                             suppressExceptionContext: Bool = false) {
@@ -48,7 +48,7 @@ public class PyBaseException: PyObject {
   }
 
   internal init(args: PyTuple,
-                traceback: PyObject? = nil,
+                traceback: PyTraceback? = nil,
                 cause: PyObject? = nil,
                 exceptionContext: PyBaseException? = nil,
                 suppressExceptionContext: Bool = false) {
@@ -242,22 +242,34 @@ public class PyBaseException: PyObject {
   }
 
   public func setTraceback(_ value: PyObject?) -> PyResult<()> {
-//    guard let value = value else {
-//      return .typeError("__traceback__ may not be deleted")
-//    }
+    guard let value = value else {
+      return .typeError("__traceback__ may not be deleted")
+    }
 
-    // TODO: This (but we need PyTraceback first)
-//    else if (!(tb == Py_None || PyTraceBack_Check(tb))) {
-//        PyErr_SetString(PyExc_TypeError, "__traceback__ must be a traceback or None");
-//        return -1;
-//    }
+    if value.isNone {
+      self.traceback = nil
+      return .value()
+    }
 
-//    guard let tuple = value as? PyObject else {
-//      return .typeError("__traceback__ must be a traceback")
-//    }
-//
-//    self._traceback = tuple
-    return .value()
+    if let tb = value as? PyTraceback {
+      self.traceback = tb
+      return .value()
+    }
+
+    return .typeError("__traceback__ must be a traceback or None")
+  }
+
+  // MARK: - With traceback
+
+  internal static let withTracebackDoc = """
+    Exception.with_traceback(tb) --
+    set self.__traceback__ to tb and return self.
+    """
+
+  // sourcery: pymethod = with_traceback, doc = withTracebackDoc
+  internal func withTraceback(traceback: PyObject) -> PyResult<PyBaseException> {
+    let result = self.setTraceback(traceback)
+    return result.map { _ in self }
   }
 
   // MARK: - Cause

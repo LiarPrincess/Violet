@@ -184,10 +184,6 @@ TextIOWrapper
     __enter__
     __exit__
 
-BaseException
-  Unimplemented:
-    with_traceback
-
 ImportError
   Unimplemented:
     __str__

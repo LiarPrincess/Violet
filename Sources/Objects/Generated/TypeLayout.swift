@@ -246,7 +246,7 @@ internal class TypeLayout: Equatable {
   /// `PyAttributeError` uses the same layout as it s base type (`PyException`).
   internal static let PyAttributeError = TypeLayout.PyException
   /// - `args: PyTuple`
-  /// - `traceback: PyObject?`
+  /// - `traceback: PyTraceback?`
   /// - `cause: PyObject?`
   /// - `__dict__: Py`
   /// - `context: PyBaseException?`
