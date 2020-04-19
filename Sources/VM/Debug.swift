@@ -42,12 +42,12 @@ internal enum Debug {
   // MARK: - Frame
 
   internal static func instruction(code: PyCode,
-                                   instructionIndex: Int,
+                                   index: Int,
                                    extendedArg: Int) {
     guard isEnabled else { return }
-    let instruction = code.instructions[instructionIndex]
+    let instruction = code.instructions[index]
 
-    let byte = instructionIndex * Instruction.byteSize
+    let byte = index * Instruction.byteSize
     let dump = code.dumpInstruction(instruction, extendedArg: extendedArg)
     print("\(byte): \(dump)")
   }

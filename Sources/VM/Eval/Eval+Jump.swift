@@ -73,24 +73,24 @@ extension Eval {
 
   internal func jumpTo(labelIndex: Int) {
     let label = self.getLabel(index: labelIndex)
-    self.jumpTo(label: label)
+    self.jumpTo(instructionIndex: label)
   }
 
-  internal func jumpTo(label: Int) {
-    self.instructionIndex = label
+  internal func jumpTo(instructionIndex: Int) {
+    self.frame.nextInstructionIndex = instructionIndex
   }
 
   private func popJumpIf(_ cond: Bool, to labelIndex: Int) {
     if cond {
       let label = self.getLabel(index: labelIndex)
-      self.jumpTo(label: label)
+      self.jumpTo(instructionIndex: label)
     }
   }
 
   private func jumpIfOrPop(_ cond: Bool, to labelIndex: Int) {
     if cond {
       let label = self.getLabel(index: labelIndex)
-      self.jumpTo(label: label)
+      self.jumpTo(instructionIndex: label)
     } else {
       _ = self.stack.pop()
     }

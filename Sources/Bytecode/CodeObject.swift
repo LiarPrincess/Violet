@@ -75,7 +75,7 @@ public final class CodeObject: CustomStringConvertible {
   public let type: CodeObjectType
   /// Various flags used during the compilation process.
   public let flags: CodeObjectFlags
-  /// First source line number
+  /// First source line number.
   public let firstLine: SourceLine
 
   /// Instruction opcodes.

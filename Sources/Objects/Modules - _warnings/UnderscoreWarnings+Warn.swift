@@ -70,7 +70,7 @@ extension UnderscoreWarnings {
     }
 
     let globals = self.getGlobals(frame: frame)
-    let lineNo = Py.newInt(frame?.currentLine ?? 1)
+    let lineNo = Py.newInt(frame?.currentInstructionLine ?? SourceLocation.start.line)
 
     let registry: WarningRegistry
     switch self.getWarningRegistry(globals: globals) {

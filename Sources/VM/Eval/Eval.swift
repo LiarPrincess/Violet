@@ -90,12 +90,6 @@ internal final class Eval {
     set { self.frame.cellsAndFreeVariables = newValue }
   }
 
-  /// PC.
-  internal var instructionIndex: Int {
-    get { return self.frame.instructionIndex ?? 0 }
-    set { self.frame.instructionIndex = newValue }
-  }
-
   internal var currentlyHandledException: PyBaseException? {
     get { return self.vm.currentlyHandledException }
     set { self.vm.currentlyHandledException = newValue }
@@ -138,6 +132,7 @@ internal final class Eval {
 
       case .unwind(let reason):
         self.addExceptionContextIfNeeded(reason)
+
         switch self.unwind(reason: reason) {
         case .continueCodeExecution:
           break
@@ -166,10 +161,12 @@ internal final class Eval {
   /// Will also increment `PC`
   /// (just as the name... does not suggest, but as is customary).
   private func fetchInstruction() -> Instruction {
-    let index = self.instructionIndex
+    let index = self.frame.nextInstructionIndex
     assert(0 <= index && index < self.code.instructions.count)
+
     let result = self.code.instructions[index]
-    self.instructionIndex += 1
+    self.frame.currentInstructionIndex = index // for error location etc.
+    self.frame.nextInstructionIndex += 1 // pc increment
     return result
   }
 
@@ -178,7 +175,7 @@ internal final class Eval {
     Debug.stack(stack: self.stack)
     Debug.stack(stack: self.blocks)
     Debug.instruction(code: self.code,
-                      instructionIndex: self.instructionIndex,
+                      index: self.frame.nextInstructionIndex,
                       extendedArg: extendedArg)
 
     let instruction = self.fetchInstruction()

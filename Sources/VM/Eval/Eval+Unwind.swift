@@ -58,7 +58,7 @@ extension Eval {
       case let .setupLoop(endLabel):
         if case let .continue(loopStartLabel) = reason {
           // Do not unwind! We are still in a loop!
-          self.jumpTo(label: loopStartLabel)
+          self.jumpTo(instructionIndex: loopStartLabel)
           return .continueCodeExecution
         }
 
@@ -66,7 +66,7 @@ extension Eval {
         self.unwindBlock(block: block)
 
         if case .break = reason {
-          self.jumpTo(label: endLabel)
+          self.jumpTo(instructionIndex: endLabel)
           return .continueCodeExecution
         }
 
@@ -76,7 +76,7 @@ extension Eval {
 
         if case let .exception(e) = reason {
           self.prepareForExceptionHandling(exception: e)
-          self.jumpTo(label: firstExceptLabel) // execute except
+          self.jumpTo(instructionIndex: firstExceptLabel) // execute except
           return .continueCodeExecution
         }
 
@@ -86,13 +86,13 @@ extension Eval {
 
         if case let .exception(e) = reason {
           self.prepareForExceptionHandling(exception: e)
-          self.jumpTo(label: finallyStartLabel) // execute finally
+          self.jumpTo(instructionIndex: finallyStartLabel) // execute finally
           return .continueCodeExecution
         }
 
         // See 'PushFinallyReason' type for comment about what this is.
         PushFinallyReason.push(reason: reason, on: &self.stack)
-        self.jumpTo(label: finallyStartLabel) // execute finally
+        self.jumpTo(instructionIndex: finallyStartLabel) // execute finally
         return .continueCodeExecution
 
       case .exceptHandler:
@@ -114,7 +114,7 @@ extension Eval {
     case .continue:
       let e = Py.newSyntaxError(
         filename: self.code.filename,
-        line: Py.newInt(self.frame.currentLine),
+        line: Py.newInt(self.frame.currentInstructionLine),
         column: Py.newInt(0),
         text: Py.newString("'continue' not properly in loop")
       )
@@ -125,8 +125,8 @@ extension Eval {
 
     case .yield,
          .silenced:
-      let instruction = self.frame.instructionIndex ?? 0
-      let line = self.frame.currentLine
+      let instruction = self.frame.currentInstructionIndex ?? 0
+      let line = self.frame.currentInstructionLine
       let details = "(instruction: \(instruction), line: \(line))"
       let msg = "Popped all blocks, but this still remains: '\(reason)' \(details)"
       trap(msg)

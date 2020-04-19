@@ -3,6 +3,7 @@ import Bytecode
 
 // In CPython:
 // Objects -> frameobject.c
+// https://docs.python.org/3.8/library/inspect.html#types-and-members <-- this!
 
 // sourcery: pytype = frame, default, hasGC
 /// Basic evaluation environment.
@@ -19,9 +20,13 @@ public class PyFrame: PyObject {
 
   // MARK: - Properties
 
-  /// Code to run.
+  /// Code object being executed in this frame.
+  ///
+  /// Cpython: `f_code`.
   public let code: PyCode
-  /// Parent frame.
+  /// Next outer frame object (this frame’s caller).
+  ///
+  /// Cpython: `f_back`.
   public let parent: PyFrame?
 
   /// Stack of `PyObjects`.
@@ -29,11 +34,18 @@ public class PyFrame: PyObject {
   /// Stack of blocks (for loops, exception handlers etc.).
   public var blocks = BlockStack()
 
-  /// Local variables.
+  /// Local namespace seen by this frame.
+  ///
+  /// CPython: `f_locals`.
   public let locals: PyDict
-  /// Global variables.
+  /// Global namespace seen by this frame.
+  ///
+  /// CPython: `f_globals`.
   public let globals: PyDict
-  /// Builtin symbols (most of the time it would be `Py.builtinsModule.__dict__`).
+  /// Builtins namespace seen by this frame
+  /// (most of the time it would be `Py.builtinsModule.__dict__`).
+  ///
+  /// CPython: `f_builtins`.
   public let builtins: PyDict
 
   /// Function args and local variables.
@@ -43,7 +55,7 @@ public class PyFrame: PyObject {
   /// We could also put them at the bottom of our stack (like in other languages),
   /// but as 'the hipster trash that we are' (quote from @bestdressed)
   /// we won't do this.
-  /// We use array which is like dictionary, but with lower constants.
+  /// We use array, which is like dictionary, but with lower constants.
   ///
   /// CPython: `f_localsplus`.
   public lazy var fastLocals: [PyObject?] = [PyObject?](
@@ -57,25 +69,40 @@ public class PyFrame: PyObject {
   /// First cells and then free (see `loadClosure` or `deref` instructions).
   ///
   /// Btw. `Cell` = source for `free` variable.
+  ///      `Free` = cell from upper scope.
   ///
   /// And yes, just as `self.fastLocals` they could be placed at the bottom
   /// of the stack.
   /// And no, we will not do this (see `self.fastLocals` comment).
   /// \#hipsters
-  ///
-  /// CPython: `f_lasti`.
   public lazy var cellsAndFreeVariables: [PyCell] = [PyCell](
     //                                   ^ we need this for Sourcery
     repeating: Py.newCell(content: nil),
     count: self.code.cellVariableCount + self.code.freeVariableCount
   )
 
-  /// Current instruction index (`nil` it we have not started).
+  /// Index of last attempted instruction in bytecode
+  /// (`nil` it we have not started).
+  ///
+  /// Note that this is not the `PC`!
+  /// In fact it is `pc - 1` (most of the time, if an instuction causes
+  /// change in `PC` - like jump instruction etc. - this corelation stops
+  /// being true).
+  ///
   /// CPython: `f_lasti`.
-  public var instructionIndex: Int?
+  public var currentInstructionIndex: Int?
 
-  public var currentLine: SourceLine {
-    guard let index = self.instructionIndex else {
+  /// `PC`
+  ///
+  /// Index of the next executed instruction.
+  public var nextInstructionIndex = 0
+
+  /// Current line number in Python source code.
+  /// If we do not have started execution it will return first instruction line.
+  ///
+  /// Cpython: `f_lineno`.
+  public var currentInstructionLine: SourceLine {
+    guard let index = self.currentInstructionIndex else {
       return self.code.firstLine
     }
 
@@ -119,7 +146,7 @@ public class PyFrame: PyObject {
   public func repr() -> PyResult<String> {
     let ptr = self.ptr
     let file = self.code.filename
-    let line = self.currentLine
+    let line = self.currentInstructionLine
     let name = self.code.name
     let result = "<frame at \(ptr), file \(file), line \(line), code \(name)>"
     return .value(result)
@@ -178,11 +205,11 @@ public class PyFrame: PyObject {
 
   // sourcery: pyproperty = f_lasti
   internal func getLasti() -> Int {
-    return self.instructionIndex ?? 0
+    return self.currentInstructionIndex ?? 0
   }
 
   // sourcery: pyproperty = f_lineno
   internal func getLineno() -> Int {
-    return Int(self.currentLine)
+    return Int(self.currentInstructionLine)
   }
 }
