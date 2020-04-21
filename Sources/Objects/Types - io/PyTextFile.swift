@@ -88,7 +88,7 @@ public class PyTextFile: PyObject {
    // MARK: - String
 
    // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  public func repr() -> PyResult<String> {
     if self.hasReprLock {
       return .value("<TextFile - reentrant call>")
     }
@@ -111,14 +111,14 @@ public class PyTextFile: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Read
 
   // sourcery: pymethod = readable
-  internal func isReadable() -> Bool {
+  public func isReadable() -> Bool {
     switch self.mode {
     case .read,
          .update: return true
@@ -131,7 +131,7 @@ public class PyTextFile: PyObject {
   // sourcery: pymethod = read
   /// static PyObject *
   /// _io_TextIOWrapper_read_impl(textio *self, Py_ssize_t n)
-  internal func read(size: PyObject? = nil) -> PyResult<PyString> {
+  public func read(size: PyObject? = nil) -> PyResult<PyString> {
     guard let size = size else {
       return self.read(size: -1)
     }
@@ -148,7 +148,7 @@ public class PyTextFile: PyObject {
     return .typeError("read size must be int or none, not \(size.typeName)")
   }
 
-  internal func read(size: Int) -> PyResult<PyString> {
+  public func read(size: Int) -> PyResult<PyString> {
     return self.readRaw(size: size).map(Py.newString(_:))
   }
 
@@ -179,7 +179,7 @@ public class PyTextFile: PyObject {
   // MARK: - Write
 
   // sourcery: pymethod = writable
-  internal func isWritable() -> Bool {
+  public func isWritable() -> Bool {
     switch self.mode {
     case .write,
          .create,
@@ -192,7 +192,7 @@ public class PyTextFile: PyObject {
   // sourcery: pymethod = write
   /// static PyObject *
   /// _io_TextIOWrapper_write_impl(textio *self, Py_ssize_t n)
-  internal func write(object: PyObject) -> PyResult<PyNone> {
+  public func write(object: PyObject) -> PyResult<PyNone> {
     guard let str = object as? PyString else {
       return .typeError("write() argument must be str, not \(object.typeName)")
     }
@@ -200,7 +200,7 @@ public class PyTextFile: PyObject {
     return self.write(string: str.value)
   }
 
-  internal func write(string: String) -> PyResult<PyNone> {
+  public func write(string: String) -> PyResult<PyNone> {
     guard !self.isClosed() else {
       return .valueError("I/O operation on closed file.")
     }
@@ -217,13 +217,13 @@ public class PyTextFile: PyObject {
   // MARK: - Close
 
   // sourcery: pymethod = closed
-  internal func isClosed() -> Bool {
+  public func isClosed() -> Bool {
     return self.fd.raw < 0
   }
 
   // sourcery: pymethod = close
   /// Idempotent
-  internal func close() -> PyResult<PyNone> {
+  public func close() -> PyResult<PyNone> {
     return self.closeIfNotAlreadyClosed()
   }
 
@@ -238,7 +238,7 @@ public class PyTextFile: PyObject {
   // MARK: - Del
 
   // sourcery: pymethod = __del__
-  internal func del() -> PyResult<PyNone> {
+  public func del() -> PyResult<PyNone> {
     // Example when this matters:
     // 1) stdout - 'closeOnDealloc' should be 'false'
     //    We need to to allow printing after Violet context is destroyed.
@@ -264,7 +264,7 @@ public class PyTextFile: PyObject {
   // This things are defined in IOBase
 
   // sourcery: pymethod = __enter__
-  internal func enter() -> PyResult<PyObject> {
+  public func enter() -> PyResult<PyObject> {
     // 'FileDescriptorType' is responsible for actually opening file.
     // Also: we need to return self because result of '__enter__' will be binded
     // to 'f' in 'open('elsa') as f'.
@@ -272,9 +272,9 @@ public class PyTextFile: PyObject {
   }
 
   // sourcery: pymethod = __exit__
-  internal func exit(exceptionType: PyObject,
-                     exception: PyObject,
-                     traceback: PyObject) -> PyResult<PyObject> {
+  public func exit(exceptionType: PyObject,
+                   exception: PyObject,
+                   traceback: PyObject) -> PyResult<PyObject> {
     // Remember that if we return 'truthy' value (yes, we JavasScript now)
     // then the exception will be suspressed (and we dont wan't this).
     // So we return 'None' which is 'falsy'.

@@ -406,7 +406,7 @@ extension Builtins {
       let end = binding.optional(at: 1)
       let file = binding.optional(at: 2)
       let flush = binding.optional(at: 3)
-      return Py.print(args: args, sep: sep, end: end, file: file, flush: flush)
+      return Py.print(args: args, file: file, sep: sep, end: end, flush: flush)
 
     case let .error(e):
       return .error(e)

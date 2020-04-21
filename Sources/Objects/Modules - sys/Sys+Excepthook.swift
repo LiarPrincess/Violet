@@ -5,12 +5,6 @@ import Core
 // Python -> pythonrun.c
 // https://docs.python.org/3.7/library/sys.html
 
-private enum GetStderrOrNoneResult {
-  case none
-  case file(PyTextFile)
-  case error(PyBaseException)
-}
-
 extension Sys {
 
   // MARK: - Function
@@ -35,7 +29,7 @@ extension Sys {
   public func excepthook(type: PyObject,
                          value: PyObject,
                          traceback: PyObject) -> PyResult<PyObject> {
-    let fn = "sys.excepthook(): "
+    let fn = "sys.excepthook():"
 
     guard let error = value as? PyBaseException else {
       let t = value.typeName
@@ -43,12 +37,14 @@ extension Sys {
     }
 
     if error.getTraceback() == nil {
-      guard let tb = traceback as? PyTraceback else {
+      if traceback.isNone {
+        // nothing
+      } else if let tb = traceback as? PyTraceback {
+        error.setTraceback(traceback: tb)
+      } else {
         let t = traceback.typeName
         return .typeError("\(fn) Traceback expected for traceback, \(t) found")
       }
-
-      error.setTraceback(traceback: tb)
     }
 
     switch self.getStderrOrNone() {
@@ -64,27 +60,6 @@ extension Sys {
     }
   }
 
-  private func getStderrOrNone() -> GetStderrOrNoneResult {
-    switch self.get(.stderr) {
-    case .value(let object):
-      if object.isNone {
-        return .none
-      }
-
-      if let file = object as? PyTextFile {
-        return .file(file)
-      }
-
-      let msg = self.createPropertyTypeError(.stderr,
-                                             got: object,
-                                             expectedType: "textFile")
-      return .error(Py.newTypeError(msg: msg))
-
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
   // MARK: - Get
 
   public func getExcepthook() -> PyResult<PyObject> {
@@ -94,16 +69,16 @@ extension Sys {
 
 // MARK: - Call
 
-public enum CallExcepthookResult {
-  case value(PyObject)
-  /// `sys.excepthook` is missing
-  case missing(PyBaseException)
-  /// `sys.excepthook` is not callable
-  case notCallable(PyBaseException)
-  case error(PyBaseException)
-}
-
 extension Sys {
+
+  public enum CallExcepthookResult {
+    case value(PyObject)
+    /// `sys.excepthook` is missing
+    case missing(PyBaseException)
+    /// `sys.excepthook` is not callable
+    case notCallable(PyBaseException)
+    case error(PyBaseException)
+  }
 
   /// void
   /// PyErr_PrintEx(int set_sys_last_vars)

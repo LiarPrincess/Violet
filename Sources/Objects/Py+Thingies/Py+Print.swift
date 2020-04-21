@@ -35,13 +35,16 @@ extension PyInstance {
   /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
   /// See [this](https://docs.python.org/3/library/functions.html#print)
   ///
+  /// - Warning:
+  /// Swift function has different parameter order!
+  ///
   /// - Parameters:
   ///   - args: Objects to print
   public func print(args: [PyObject],
-                    sep: PyObject?,
-                    end: PyObject?,
                     file: PyObject?,
-                    flush: PyObject?) -> PyResult<PyNone> {
+                    sep: PyObject? = nil,
+                    end: PyObject? = nil,
+                    flush: PyObject? = nil) -> PyResult<PyNone> {
     let textFile: PyTextFile
     switch self.getTextFile(file: file) {
     case let .value(t): textFile = t
@@ -70,12 +73,15 @@ extension PyInstance {
   /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
   /// See [this](https://docs.python.org/3/library/functions.html#print)
   ///
+  /// - Warning:
+  /// Swift function has different parameter order!
+  ///
   /// - Parameters:
   ///   - args: Objects to print
-  public func print(args: [PyObject] = [],
+  public func print(args: [PyObject],
+                    stream: SysOutputStream?,
                     sep: PyString? = nil,
                     end: PyString? = nil,
-                    stream: SysOutputStream? = nil,
                     flush: PyObject? = nil) -> PyResult<PyNone> {
     let stream = stream ?? .default
 
@@ -262,8 +268,8 @@ During handling of the above exception, another exception occurred:
 
     let str: String = {
       switch self.strValue(object: error) {
-      case .value(let s): return ": " + s
-      case .error: return ": <exception str() failed>"
+      case .value(let s): return ": " + s + "\n"
+      case .error: return ": <exception str() failed>\n"
       }
     }()
 

@@ -11,6 +11,17 @@ extension VM {
 
   // MARK: - Run
 
+  public enum RunResult {
+    /// Nothing interesting happened. Boring...
+    case done
+    /// User `raised SystemExit`.
+    case systemExit(PyObject)
+    /// Something bad happened.
+    ///
+    /// Stack is already unwinded.
+    case error(PyBaseException)
+  }
+
   /// static void
   /// pymain_run_python(_PyMain *pymain)
   ///
@@ -20,25 +31,29 @@ extension VM {
   /// CPython (somewhere around):
   /// static int
   /// pymain_cmdline_impl(_PyMain *pymain, _PyCoreConfig *config, ...)
-  public func run() -> PyBaseException? {
+  ///
+  /// And also:
+  /// static void
+  /// pymain_run_python(_PyMain *pymain)
+  public func run() -> RunResult {
     if self.arguments.help {
       print(Objects.Arguments.helpMessage)
-      return nil
+      return .done
     }
 
     if self.arguments.version {
       print(Py.sys.version)
-      return nil
+      return .done
     }
 
     // Oh no... we will be running code! Let's prepare for this.
     // For some reason importing stuff seems to be important* in programming...
     // * Pun intended (sorry!)
     if let e = self.initImportlibIfNeeded() {
-      return e
+      return .error(e)
     }
 
-    var runRepl = false
+    var runRepl = Py.sys.flags.inspect
     var result: PyResult<PyObject>
 
     if let command = self.arguments.command {
@@ -55,17 +70,20 @@ extension VM {
     switch result {
     case .value:
       break // Let's ignore the returned value
-    case .error(let e) where e.isSystemExit:
-      return nil // Everything is fine
     case .error(let e):
-      return e
+      // Don't exit if '-i' flag was given
+      if let systemExit = e as? PySystemExit, !runRepl {
+        return self.handleSystemExit(error: systemExit)
+      }
+
+      return .error(e) // Ooops...
     }
 
-    if runRepl || Py.sys.flags.inspect {
+    if runRepl {
       self.runRepl()
     }
 
-    return nil
+    return .done
   }
 
   private func initImportlibIfNeeded() -> PyBaseException? {
@@ -92,8 +110,27 @@ extension VM {
     return nil
   }
 
+  /// CPython:
+  /// static void
+  /// handle_system_exit(void)
+  ///
+  /// But without printing, we delegate all of the side-effects to caller.
+  private func handleSystemExit(error: PySystemExit) -> RunResult {
+    assert(error.isSystemExit, "Python type: '\(error.typeName)'")
+
+    let code = Py.intern("code")
+    switch Py.getattr(object: error, name: code) {
+    case let .value(object):
+      return .systemExit(object)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
   // MARK: - Run command
 
+  /// static int
+  /// pymain_run_command(wchar_t *command, PyCompilerFlags *cf)
   private func run(command: String) -> PyResult<PyObject> {
     // From: https://docs.python.org/3.7/using/cmdline.html#cmdoption-c
     // Execute the Python code in 'command'.
@@ -106,6 +143,8 @@ extension VM {
 
   // MARK: - Run module
 
+  /// static int
+  /// pymain_run_module(const wchar_t *modname, int set_argv0)
   private func run(modulePath: String) -> PyResult<PyObject> {
     // From: https://docs.python.org/3.7/using/cmdline.html#cmdoption-m
     // Search sys.path for the named module and execute its contents
@@ -119,8 +158,8 @@ extension VM {
 
   // MARK: - Run script
 
-  /// static void
-  /// pymain_run_filename(_PyMain *pymain, PyCompilerFlags *cf)
+  /// int
+  /// PyRun_SimpleFileExFlags(FILE *fp, const char *filename, int closeit, ...)
   private func run(scriptPath: String) -> PyResult<PyObject> {
     // From 'https://docs.python.org/3.7/using/cmdline.html':
     // Execute the Python code contained in script, which must be a filesystem path
@@ -161,10 +200,9 @@ extension VM {
     case let .error(e): return .error(e)
     }
 
+    // Set '__file' (and whatever happens we need to do cleanup).
     let mainDict = main.getDict()
     mainDict.set(id: .__file__, to: Py.newString(scriptPath))
-
-    // Whatever happens we need to do cleanup:
     defer { _ = mainDict.del(id: .__file__) }
 
     return self.eval(code: code, globals: mainDict, locals: mainDict)
@@ -244,6 +282,8 @@ extension VM {
 
   // MARK: - Run REPL
 
+  /// static void
+  /// pymain_repl(_PyMain *pymain, PyCompilerFlags *cf)
   private func runRepl() {
 //    var input = ""
 //    var isContinuing = false

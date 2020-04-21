@@ -15,6 +15,8 @@ import Core
 // (and we would have gotten away with it without you meddling kids!)
 // https://www.youtube.com/watch?v=b4JLLv1lE7A
 
+// swiftlint:disable file_length
+
 /// Helper for classes that will be used as a `Python` module implementation.
 internal protocol PyModuleImplementation: AnyObject {
 

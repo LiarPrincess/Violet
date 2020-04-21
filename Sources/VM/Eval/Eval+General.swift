@@ -79,7 +79,7 @@ extension Eval {
   internal func printExpr() -> InstructionResult {
     let value = self.stack.pop()
 
-    switch Py.print(args: [value]) {
+    switch Py.print(args: [value], stream: .stdout) {
     case .value:
       return .ok
     case .error(let e):

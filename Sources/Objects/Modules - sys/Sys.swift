@@ -163,7 +163,7 @@ public final class Sys: PyModuleImplementation {
     self.setOrTrap(.platform, to: Py.newString(self.platform))
     self.setOrTrap(.copyright, to: Py.newString(self.copyright))
     self.setOrTrap(.hash_info, to: self.createInitialHashInfo())
-    self.setOrTrap(.tracebacklimit, to: Py.newInt(1000))
+    self.setOrTrap(.tracebacklimit, to: Py.newInt(1_000))
 
     self.setOrTrap(.modules, to: Py.newDict())
     self.setOrTrap(.builtin_module_names, to: Py.emptyTuple)

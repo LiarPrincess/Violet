@@ -60,6 +60,36 @@ extension Sys {
     return self.set(.stderr, to: value)
   }
 
+  public enum GetStderrOrNoneResult {
+    case none
+    case file(PyTextFile)
+    case error(PyBaseException)
+  }
+
+  public func getStderrOrNone() -> GetStderrOrNoneResult {
+    switch self.get(.stderr) {
+    case .value(let object):
+      if object.isNone {
+        return .none
+      }
+
+      if let file = object as? PyTextFile {
+        return .file(file)
+      }
+
+      let msg = self.createPropertyTypeError(
+        .stderr,
+        got: object,
+        expectedType: "textFile"
+      )
+
+      return .error(Py.newTypeError(msg: msg))
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
   // MARK: - Initial
 
   internal func createInitialStdin() -> PyTextFile {
