@@ -478,4 +478,25 @@ extension PyInstance {
 
     exception.setContext(current, checkAndPossiblyBreakCycle: true)
   }
+
+  // MARK: - Traceback
+
+  public func newTraceback(frame: PyFrame,
+                           error: PyBaseException?) -> PyTraceback {
+    let traceback = error?.getTraceback()
+    return self.newTraceback(frame: frame, next: traceback)
+  }
+
+  public func newTraceback(frame: PyFrame,
+                           next: PyTraceback?) -> PyTraceback {
+    let instruction = Py.newInt(frame.currentInstructionIndex ?? 0)
+    let line = Py.newInt(frame.currentInstructionLine)
+
+    return PyTraceback(
+      next: next,
+      frame: frame,
+      lastInstruction: instruction,
+      lineNo: line
+    )
+  }
 }

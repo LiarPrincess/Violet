@@ -70,6 +70,11 @@ extension PyModuleImplementation {
     }
   }
 
+  /// Get value from `self.__dict__` and cast it to `int`.
+  internal func getInt(_ name: Properties) -> PyResult<PyInt> {
+    return self.get(name, andCastAs: PyInt.self, typeName: "int")
+  }
+
   /// Get value from `self.__dict__` and cast it to `str`.
   internal func getString(_ name: Properties) -> PyResult<PyString> {
     return self.get(name, andCastAs: PyString.self, typeName: "str")
@@ -115,9 +120,17 @@ extension PyModuleImplementation {
       return .value(typed)
     }
 
-    let msg = "expected '\(Self.moduleName).\(name)' to be \(typeName) " +
-              "not \(object.typeName) <surprised Pikachu face>"
+    let msg = self.createPropertyTypeError(name,
+                                           got: object,
+                                           expectedType: typeName)
     return .typeError(msg)
+  }
+
+  internal func createPropertyTypeError(_ name: Properties,
+                                        got object: PyObject,
+                                        expectedType: String) -> String {
+    return "expected '\(Self.moduleName).\(name)' to be \(expectedType) " +
+              "not \(object.typeName) <surprised Pikachu face>"
   }
 
   // MARK: - Set

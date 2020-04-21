@@ -52,10 +52,6 @@ extension Sys {
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.dont_write_bytecode).
   internal var dontWriteBytecode: PyObject { }
 
-  /// sys.excepthook(type, value, traceback)
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.excepthook).
-  internal func exceptHook() -> PyObject { }
-
   /// sys.__breakpointhook__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__breakpointhook__).
   internal var __breakpointHook__: PyObject { }
@@ -213,10 +209,6 @@ extension Sys {
   /// sys.thread_info
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.thread_info).
   internal var threadInfo: PyObject { }
-
-  /// sys.tracebacklimit
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.tracebacklimit).
-  internal var tracebackLimit: PyObject { }
 
   /// sys.api_version
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.api_version).

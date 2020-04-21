@@ -146,15 +146,11 @@ public struct IdString {
   public static let _handle_fromlist = Self.impl._handle_fromlist
   public static let builtins = Self.impl.builtins
   public static let encoding = Self.impl.encoding
-  public static let filename = Self.impl.filename
   public static let keys = Self.impl.keys
-  public static let lineno = Self.impl.lineno
   public static let metaclass = Self.impl.metaclass
   public static let name = Self.impl.name
   public static let object = Self.impl.object
-  public static let offset = Self.impl.offset
   public static let origin = Self.impl.origin
-  public static let text = Self.impl.text
 }
 private struct IdStringImpl {
   fileprivate let __abs__ = IdString(value: "__abs__")
@@ -267,13 +263,9 @@ private struct IdStringImpl {
   fileprivate let _handle_fromlist = IdString(value: "_handle_fromlist")
   fileprivate let builtins = IdString(value: "builtins")
   fileprivate let encoding = IdString(value: "encoding")
-  fileprivate let filename = IdString(value: "filename")
   fileprivate let keys = IdString(value: "keys")
-  fileprivate let lineno = IdString(value: "lineno")
   fileprivate let metaclass = IdString(value: "metaclass")
   fileprivate let name = IdString(value: "name")
   fileprivate let object = IdString(value: "object")
-  fileprivate let offset = IdString(value: "offset")
   fileprivate let origin = IdString(value: "origin")
-  fileprivate let text = IdString(value: "text")
 }

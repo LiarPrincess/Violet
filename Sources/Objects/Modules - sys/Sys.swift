@@ -163,6 +163,7 @@ public final class Sys: PyModuleImplementation {
     self.setOrTrap(.platform, to: Py.newString(self.platform))
     self.setOrTrap(.copyright, to: Py.newString(self.copyright))
     self.setOrTrap(.hash_info, to: self.createInitialHashInfo())
+    self.setOrTrap(.tracebacklimit, to: Py.newInt(1000))
 
     self.setOrTrap(.modules, to: Py.newDict())
     self.setOrTrap(.builtin_module_names, to: Py.emptyTuple)
@@ -195,14 +196,17 @@ public final class Sys: PyModuleImplementation {
     // Not that capturing 'self' is intended.
     // See comment at the top of 'PyModuleImplementation' for details.
     self.setOrTrap(.exit,
-                   doc: Sys.exitDoc,
+                   doc: Self.exitDoc,
                    fn: self.exit(status:))
     self.setOrTrap(.intern,
-                   doc: Sys.internDoc,
+                   doc: Self.internDoc,
                    fn: self.intern(value:))
     self.setOrTrap(.getdefaultencoding,
-                   doc: Sys.getDefaultEncodingDoc,
+                   doc: Self.getDefaultEncodingDoc,
                    fn: self.getDefaultEncoding)
+    self.setOrTrap(.excepthook,
+                   doc: Self.excepthookDoc,
+                   fn: self.excepthook(type:value:traceback:))
   }
 
   // MARK: - Properties
@@ -218,6 +222,7 @@ public final class Sys: PyModuleImplementation {
     internal static let platform = Properties(value: "platform")
     internal static let copyright = Properties(value: "copyright")
     internal static let hash_info = Properties(value: "hash_info")
+    internal static let tracebacklimit = Properties(value: "tracebacklimit")
 
     internal static let modules = Properties(value: "modules")
     internal static let builtin_module_names =
@@ -246,6 +251,7 @@ public final class Sys: PyModuleImplementation {
     internal static let exit = Properties(value: "exit")
     internal static let intern = Properties(value: "intern")
     internal static let getdefaultencoding = Properties(value: "getdefaultencoding")
+    internal static let excepthook = Properties(value: "excepthook")
 
     private let value: String
 

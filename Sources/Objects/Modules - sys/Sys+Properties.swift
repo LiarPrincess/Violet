@@ -240,4 +240,12 @@ extension Sys {
 
     return Py.newNamespace(dict: dict)
   }
+
+  // MARK: - Tracebacklimit
+
+  /// sys.tracebacklimit
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.tracebacklimit).
+  internal func getTracebackLimit() -> PyResult<PyInt> {
+    return self.getInt(.tracebacklimit)
+  }
 }
