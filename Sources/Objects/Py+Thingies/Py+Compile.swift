@@ -209,15 +209,15 @@ extension PyInstance {
       return .typeError("compile(): mode must be an str")
     }
 
-    if string.compare(with: "exec") == .equal {
+    if string.isEqual("exec") {
       return .value(.exec)
     }
 
-    if string.compare(with: "eval") == .equal {
+    if string.isEqual("eval") {
       return .value(.eval)
     }
 
-    if string.compare(with: "single") == .equal {
+    if string.isEqual("single") {
       return .value(.single)
     }
 

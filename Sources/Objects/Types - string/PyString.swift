@@ -69,8 +69,18 @@ public class PyString: PyObject {
       return .value(true)
     }
 
-    return CompareResult(self.compare(with: other)
-      .map { $0 == .equal })
+    return CompareResult(self.compare(with: other).map { $0 == .equal })
+  }
+
+  internal func isEqual(_ other: PyString) -> Bool {
+    let result = self.compare(with: other.data)
+    return result == .equal
+  }
+
+  internal func isEqual(_ other: String) -> Bool {
+    let data = PyStringData(other)
+    let result = self.compare(with: data)
+    return result == .equal
   }
 
   // sourcery: pymethod = __ne__

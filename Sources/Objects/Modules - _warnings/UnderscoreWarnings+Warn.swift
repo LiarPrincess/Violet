@@ -249,7 +249,7 @@ extension UnderscoreWarnings {
 
     // If we are in '__main__' module, then we have to take filename
     // from arg0.
-    if module.compare(with: "__main__") == .equal {
+    if module.isEqual("__main__") {
       switch Py.sys.getArgv0() {
       case .value(let s) where s.data.any:
         return s

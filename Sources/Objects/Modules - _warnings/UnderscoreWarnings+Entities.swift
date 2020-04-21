@@ -160,18 +160,14 @@ extension UnderscoreWarnings {
       self.object = object
 
       self.action = {
-        if Self.isEqual(action: action, to: "default") { return .default }
-        if Self.isEqual(action: action, to: "error") { return .error }
-        if Self.isEqual(action: action, to: "ignore") { return .ignore }
-        if Self.isEqual(action: action, to: "always") { return .always }
-        if Self.isEqual(action: action, to: "module") { return .module }
-        if Self.isEqual(action: action, to: "once") { return .once }
+        if action.isEqual("default") { return .default }
+        if action.isEqual("error") { return .error }
+        if action.isEqual("ignore") { return .ignore }
+        if action.isEqual("always") { return .always }
+        if action.isEqual("module") { return .module }
+        if action.isEqual("once") { return .once }
         return .other
       }()
-    }
-
-    private static func isEqual(action: PyString, to value: String) -> Bool {
-      return action.compare(with: value) == .equal
     }
   }
 }
