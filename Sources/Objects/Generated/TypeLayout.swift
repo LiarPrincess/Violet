@@ -126,7 +126,8 @@ internal class TypeLayout: Equatable {
   /// - `builtins: PyDict`
   /// - `fastLocals: [PyObject?]`
   /// - `cellsAndFreeVariables: [PyCell]`
-  /// - `instructionIndex: Int?`
+  /// - `currentInstructionIndex: Int?`
+  /// - `nextInstructionIndex: Int`
   internal static let PyFrame = TypeLayout(base: TypeLayout.PyObject)
   /// - `data: PySetData`
   internal static let PyFrozenSet = TypeLayout(base: TypeLayout.PyObject)
@@ -247,10 +248,10 @@ internal class TypeLayout: Equatable {
   internal static let PyAttributeError = TypeLayout.PyException
   /// - `args: PyTuple`
   /// - `traceback: PyTraceback?`
-  /// - `cause: PyObject?`
-  /// - `__dict__: Py`
+  /// - `cause: PyBaseException?`
   /// - `context: PyBaseException?`
   /// - `suppressContext: Bool`
+  /// - `__dict__: Py`
   internal static let PyBaseException = TypeLayout(base: TypeLayout.PyObject)
   /// `PyBlockingIOError` uses the same layout as it s base type (`PyOSError`).
   internal static let PyBlockingIOError = TypeLayout.PyOSError

@@ -344,10 +344,22 @@ extension PyInstance {
                                     column: PyInt,
                                     text: PyString) {
     let dict = error.__dict__
-    dict.set(id: .filename, to: filename)
-    dict.set(id: .lineno, to: line)
-    dict.set(id: .offset, to: column)
-    dict.set(id: .text, to: text)
+
+    func insertOrTrap(key: String, value: PyObject) {
+      let keyObject = Py.intern(key)
+      switch dict.set(key: keyObject, to: value) {
+      case .ok:
+        break
+      case .error(let e):
+        trap("Error when inserting '\(key)' to SyntaxError: \(e)")
+      }
+    }
+
+    insertOrTrap(key: "filename", value: filename)
+    insertOrTrap(key: "lineno", value: line)
+    insertOrTrap(key: "offset", value: column)
+    insertOrTrap(key: "text", value: text)
+    insertOrTrap(key: "print_file_and_line", value: Py.none)
   }
 
   // MARK: - Factory from type

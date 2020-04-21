@@ -18,14 +18,18 @@ public class PyBaseException: PyObject {
     return "Common base class for all exceptions"
   }
 
-  internal var args: PyTuple
-  internal var traceback: PyTraceback?
-  internal var cause: PyObject?
-  internal lazy var __dict__ = Py.newDict()
-
+  private var args: PyTuple
+  private var traceback: PyTraceback?
+  /// `raise from xxx`.
+  private var cause: PyBaseException?
   /// Another exception during whose handling this exception was raised.
-  internal var context: PyBaseException?
-  internal var suppressContext: Bool
+  private var context: PyBaseException?
+  /// Should we use `self.cause` or `self.context`?
+  ///
+  /// If we have `cause` then probably `cause`, otherwise `context`.
+  private var suppressContext: Bool
+
+  internal lazy var __dict__ = Py.newDict()
 
   override public var description: String {
     let msg = self.message.map { "msg: \($0)" } ?? ""
@@ -36,7 +40,7 @@ public class PyBaseException: PyObject {
 
   internal convenience init(msg: String,
                             traceback: PyTraceback? = nil,
-                            cause: PyObject? = nil,
+                            cause: PyBaseException? = nil,
                             exceptionContext: PyBaseException? = nil,
                             suppressExceptionContext: Bool = false) {
     let args = Py.newTuple(Py.newString(msg))
@@ -49,7 +53,7 @@ public class PyBaseException: PyObject {
 
   internal init(args: PyTuple,
                 traceback: PyTraceback? = nil,
-                cause: PyObject? = nil,
+                cause: PyBaseException? = nil,
                 exceptionContext: PyBaseException? = nil,
                 suppressExceptionContext: Bool = false) {
     self.args = args
@@ -237,8 +241,8 @@ public class PyBaseException: PyObject {
   // MARK: - Traceback
 
   // sourcery: pyproperty = __traceback__, setter = setTraceback
-  public func getTraceback() -> PyObject {
-    return self.traceback ?? Py.none
+  public func getTraceback() -> PyTraceback? {
+    return self.traceback
   }
 
   public func setTraceback(_ value: PyObject?) -> PyResult<()> {
@@ -252,11 +256,15 @@ public class PyBaseException: PyObject {
     }
 
     if let tb = value as? PyTraceback {
-      self.traceback = tb
+      self.setTraceback(traceback: tb)
       return .value()
     }
 
     return .typeError("__traceback__ must be a traceback or None")
+  }
+
+  public func setTraceback(traceback: PyTraceback) {
+    self.traceback = traceback
   }
 
   // MARK: - With traceback
@@ -277,13 +285,13 @@ public class PyBaseException: PyObject {
   internal static let getCauseDoc = "exception cause"
 
   // sourcery: pyproperty = __cause__, setter = setCause, doc = getCauseDoc
-  public func getCause() -> PyObject? {
+  public func getCause() -> PyBaseException? {
     return self.cause
   }
 
   public func setCause(_ value: PyObject?) -> PyResult<()> {
     guard let value = value else {
-      return .typeError("__cause__ may not be deleted") // use 'None'
+      return .typeError("__cause__ may not be deleted") // set to 'None' instead
     }
 
     if value is PyNone {
@@ -448,8 +456,8 @@ public class PyBaseException: PyObject {
   // MARK: - Suppress context
 
   // sourcery: pyproperty = __suppress_context__, setter = setSuppressContext
-  public func getSuppressContext() -> PyBool {
-    return Py.newBool(self.suppressContext)
+  public func getSuppressContext() -> Bool {
+    return self.suppressContext
   }
 
   public func setSuppressContext(_ value: PyObject?) -> PyResult<()> {

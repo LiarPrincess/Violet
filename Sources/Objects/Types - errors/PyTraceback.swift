@@ -16,10 +16,22 @@ public class PyTraceback: PyObject {
 
   // MARK: - Properties
 
+  /// Next inner traceback object (called by this level)
+  ///
+  /// CPython: `tb_next`.
   private var next: PyTraceback?
-  private var frame: PyFrame
-  private var lastInstruction: PyInt
-  private var lineNo: PyInt
+  /// Frame object at this level
+  ///
+  /// CPython: `tb_frame`.
+  private let frame: PyFrame
+  /// Index of last attempted instruction in bytecode
+  ///
+  /// CPython: `tb_lasti`.
+  private let lastInstruction: PyInt
+  /// Current line number in Python source code
+  ///
+  /// CPython: `tb_lineno`.
+  private let lineNo: PyInt
 
   // MARK: - Init
 
@@ -65,29 +77,29 @@ public class PyTraceback: PyObject {
   // MARK: - Frame
 
   // sourcery: pyproperty = tb_frame
-  internal func getFrame() -> PyFrame {
+  public func getFrame() -> PyFrame {
     return self.frame
   }
 
   // MARK: - Last instruction
 
   // sourcery: pyproperty = tb_lasti
-  internal func getLastInstruction() -> PyInt {
+  public func getLastInstruction() -> PyInt {
     return self.lastInstruction
   }
 
   // MARK: - Line number
 
   // sourcery: pyproperty = tb_lineno
-  internal func getLineNo() -> PyInt {
+  public func getLineNo() -> PyInt {
     return self.lineNo
   }
 
   // MARK: - Next
 
   // sourcery: pyproperty = tb_next, setter = setNext
-  internal func getNext() -> PyObject {
-    return self.next ?? Py.none
+  public func getNext() -> PyTraceback? {
+    return self.next
   }
 
   public func setNext(_ value: PyObject?) -> PyResult<()> {
