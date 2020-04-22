@@ -112,21 +112,21 @@ internal enum Debug {
   internal static func callFunction(fn: PyObject,
                                     args: [PyObject],
                                     kwargs: PyDictData?,
-                                    result: CallResult) {
+                                    result: PyInstance.CallResult) {
     guard isEnabled else { return }
     print("  fn:", fn)
     print("  args:", args)
     print("  result:", result)
   }
 
-  internal static func loadMethod(method: GetMethodResult) {
+  internal static func loadMethod(method: PyInstance.GetMethodResult) {
     guard isEnabled else { return }
     print("  method:", method)
   }
 
   internal static func callMethod(method: PyObject,
                                   args: [PyObject],
-                                  result: CallResult) {
+                                  result: PyInstance.CallResult) {
     guard isEnabled else { return }
     print("  method:", method)
     print("  args:", args)

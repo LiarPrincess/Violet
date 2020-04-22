@@ -826,7 +826,9 @@ public class PyInt: PyObject {
 
   /// PyObject *
   /// PyNumber_Long(PyObject *o)
-  private static func parseBigInt(objectWithoutBase object: PyObject) -> PyResult<BigInt> {
+  private static func parseBigInt(
+    objectWithoutBase object: PyObject
+  ) -> PyResult<BigInt> {
     // Call has to be before 'PyInt' cast, because it can override
     switch PyInt.callTrunc(object) {
     case .value(let o):
@@ -855,7 +857,9 @@ public class PyInt: PyObject {
                       "not '\(object.typeName)'")
   }
 
-  private static func callTrunc(_ object: PyObject) -> CallMethodResult {
+  private static func callTrunc(
+    _ object: PyObject
+  ) -> PyInstance.CallMethodResult {
     if let result = Fast.__trunc__(object) {
       return .value(result)
     }

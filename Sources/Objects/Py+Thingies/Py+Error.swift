@@ -116,7 +116,7 @@ extension PyInstance {
     let result = PySystemExit(args: self.newTuple(args))
 
     let dict = result.__dict__
-    let codeValue = status ?? Py.none
+    let codeValue = status ?? self.none
     self.insertOrTrap(dict: dict, key: "code", value: codeValue)
 
     return result
@@ -140,14 +140,14 @@ extension PyInstance {
 
   public func newOSError(errno: Int32) -> PyOSError {
     let args = self.createOSErrorArgs(errno: errno, filename: nil)
-    let tuple = Py.newTuple(args)
+    let tuple = self.newTuple(args)
     return PyOSError(args: tuple)
   }
 
   /// Base class for I/O related errors.
   public func newOSError(errno: Int32, filename: String) -> PyOSError {
     let args = self.createOSErrorArgs(errno: errno, filename: filename)
-    let tuple = Py.newTuple(args)
+    let tuple = self.newTuple(args)
     return PyOSError(args: tuple)
   }
 
@@ -155,20 +155,20 @@ extension PyInstance {
   public func newOSError(errno: Int32, path: String) -> PyOSError {
     // If we can't get filename then we will use full path.
     // It is still better than not providing anything.
-    let filename = Py.fileSystem.basename(path: path)
+    let filename = self.fileSystem.basename(path: path)
     return self.newOSError(errno: errno, filename: filename)
   }
 
   /// https://docs.python.org/3/library/exceptions.html#OSError
   private func createOSErrorArgs(errno: Int32, filename: String?) -> [PyObject] {
     var result = [PyObject]()
-    result.append(Py.newInt(errno))
+    result.append(self.newInt(errno))
 
     let str = String(errno: errno) ?? "unknown OS error (errno: \(errno))"
-    result.append(Py.newString(str))
+    result.append(self.newString(str))
 
     if let filename = filename {
-      result.append(Py.newString(filename))
+      result.append(self.newString(filename))
     }
 
     return result
@@ -205,7 +205,7 @@ extension PyInstance {
 
   /// Signal the end from iterator.__next__().
   public func newStopIteration(value: PyObject? = nil) -> PyStopIteration {
-    let args = self.newTuple(value ?? Py.none)
+    let args = self.newTuple(value ?? self.none)
     return PyStopIteration(args: args)
   }
 
@@ -229,7 +229,7 @@ extension PyInstance {
     data: Data,
     encoding: PyStringEncoding
   ) -> PyUnicodeDecodeError {
-    let bytes = Py.newBytes(data)
+    let bytes = self.newBytes(data)
     return self.newUnicodeDecodeError(data: bytes, encoding: encoding)
   }
 
@@ -243,7 +243,7 @@ extension PyInstance {
 
     let dict = error.__dict__
     dict.set(id: .object, to: data)
-    dict.set(id: .encoding, to: Py.newString(encoding))
+    dict.set(id: .encoding, to: self.newString(encoding))
 
     return error
   }
@@ -253,7 +253,7 @@ extension PyInstance {
     string: String,
     encoding: PyStringEncoding
   ) -> PyUnicodeEncodeError {
-    let str = Py.newString(string)
+    let str = self.newString(string)
     return self.newUnicodeEncodeError(string: str, encoding: encoding)
   }
 
@@ -267,7 +267,7 @@ extension PyInstance {
 
     let dict = error.__dict__
     dict.set(id: .object, to: string)
-    dict.set(id: .encoding, to: Py.newString(encoding))
+    dict.set(id: .encoding, to: self.newString(encoding))
 
     return error
   }
@@ -290,7 +290,7 @@ extension PyInstance {
 
   public func newSyntaxError(filename: String,
                              error: LexerError) -> PySyntaxError {
-    return Py.newSyntaxError(
+    return self.newSyntaxError(
       filename: filename,
       line: error.location.line,
       column: error.location.column,
@@ -300,7 +300,7 @@ extension PyInstance {
 
   public func newSyntaxError(filename: String,
                              error: ParserError) -> PySyntaxError {
-    return Py.newSyntaxError(
+    return self.newSyntaxError(
       filename: filename,
       line: error.location.line,
       column: error.location.column,
@@ -310,7 +310,7 @@ extension PyInstance {
 
   public func newSyntaxError(filename: String,
                              error: CompilerError) -> PySyntaxError {
-    return Py.newSyntaxError(
+    return self.newSyntaxError(
       filename: filename,
       line: error.location.line,
       column: error.location.column,
@@ -323,10 +323,10 @@ extension PyInstance {
                              column: SourceColumn,
                              text: String) -> PySyntaxError {
     return self.newSyntaxError(
-      filename: Py.intern(filename),
-      line: Py.newInt(Int(line)),
-      column: Py.newInt(Int(column)),
-      text: Py.newString(text)
+      filename: self.intern(filename),
+      line: self.newInt(Int(line)),
+      column: self.newInt(Int(column)),
+      text: self.newString(text)
     )
   }
 
@@ -334,7 +334,7 @@ extension PyInstance {
                              line: PyInt,
                              column: PyInt,
                              text: PyString) -> PySyntaxError {
-    let args = Py.newTuple([filename, line, column, text])
+    let args = self.newTuple([filename, line, column, text])
     let e = PySyntaxError(args: args)
     self.fillSyntaxErrorDict(error: e,
                              filename: filename,
@@ -354,7 +354,7 @@ extension PyInstance {
     insertOrTrap(dict: dict, key: "lineno", value: line)
     insertOrTrap(dict: dict, key: "offset", value: column)
     insertOrTrap(dict: dict, key: "text", value: text)
-    insertOrTrap(dict: dict, key: "print_file_and_line", value: Py.none)
+    insertOrTrap(dict: dict, key: "print_file_and_line", value: self.none)
   }
 
   // MARK: - Factory from type
@@ -384,22 +384,19 @@ extension PyInstance {
 
   private func callExceptionType(type: PyType, arg: PyObject?) -> CallResult {
     guard let arg = arg else {
-      return Py.call(callable: type, args: [])
+      return self.call(callable: type, args: [])
     }
 
     if arg is PyNone {
-      return Py.call(callable: type, args: [])
+      return self.call(callable: type, args: [])
     }
 
     if let argTuple = arg as? PyTuple {
-      return Py.call(callable: type, args: argTuple.elements)
+      return self.call(callable: type, args: argTuple.elements)
     }
 
-    return Py.call(callable: type, args: [arg])
+    return self.call(callable: type, args: [arg])
   }
-}
-
-extension PyInstance {
 
   // MARK: - Exception matches
 
@@ -462,7 +459,7 @@ extension PyInstance {
     overrideCurrent: Bool
   ) {
     // No current -> nothing to do
-    guard let current = Py.delegate.currentlyHandledException else {
+    guard let current = self.delegate.currentlyHandledException else {
       return
     }
 
@@ -484,8 +481,8 @@ extension PyInstance {
 
   public func newTraceback(frame: PyFrame,
                            next: PyTraceback?) -> PyTraceback {
-    let instruction = Py.newInt(frame.currentInstructionIndex ?? 0)
-    let line = Py.newInt(frame.currentInstructionLine)
+    let instruction = self.newInt(frame.currentInstructionIndex ?? 0)
+    let line = self.newInt(frame.currentInstructionLine)
 
     return PyTraceback(
       next: next,
@@ -504,7 +501,7 @@ extension PyInstance {
   // MARK: - Helpers
 
   private func insertOrTrap(dict: PyDict, key: String, value: PyObject) {
-    let keyObject = Py.intern(key)
+    let keyObject = self.intern(key)
     switch dict.set(key: keyObject, to: value) {
     case .ok:
       break

@@ -18,7 +18,7 @@ extension PyInstance {
   /// PyObject * PyTuple_New(Py_ssize_t size)
   public func newTuple(_ elements: [PyObject]) -> PyTuple {
     return elements.isEmpty ?
-      Py.emptyTuple :
+      self.emptyTuple :
       PyTuple(elements: elements)
   }
 
@@ -34,7 +34,7 @@ extension PyInstance {
 
   internal func newTuple(_ data: PySequenceData) -> PyTuple {
     return data.isEmpty ?
-      Py.emptyTuple :
+      self.emptyTuple :
       PyTuple(data: data)
   }
 
@@ -106,24 +106,21 @@ extension PyInstance {
 
   internal func newFrozenSet(data: PySetData) -> PyFrozenSet {
     return data.isEmpty ?
-      Py.emptyFrozenSet :
+      self.emptyFrozenSet :
       PyFrozenSet(data: data)
   }
-}
-
-public class CreateDictionaryArg {
-  public let key: PyObject
-  public let value: PyObject
-
-  public init(key: PyObject, value: PyObject) {
-    self.key = key
-    self.value = value
-  }
-}
-
-extension PyInstance {
 
   // MARK: - Dictionary
+
+  public class CreateDictionaryArg {
+    public let key: PyObject
+    public let value: PyObject
+
+    public init(key: PyObject, value: PyObject) {
+      self.key = key
+      self.value = value
+    }
+  }
 
   public func newDict() -> PyDict {
     return PyDict(data: PyDictData())
@@ -186,7 +183,7 @@ extension PyInstance {
     case let .value(dict):
       switch dict.set(key: key, to: value) {
       case .ok:
-        return .value(Py.none)
+        return .value(self.none)
       case .error(let e):
         return .error(e)
       }
@@ -301,9 +298,9 @@ extension PyInstance {
 
   public func newSlice(stop: PyObject) -> PySlice {
     return PySlice(
-      start: Py.none,
+      start: self.none,
       stop: stop,
-      step: Py.none
+      step: self.none
     )
   }
 
@@ -311,9 +308,9 @@ extension PyInstance {
                        stop: PyObject?,
                        step: PyObject? = nil) -> PySlice {
     return PySlice(
-      start: start ?? Py.none,
-      stop: stop ?? Py.none,
-      step: step ?? Py.none
+      start: start ?? self.none,
+      stop: stop ?? self.none,
+      step: step ?? self.none
     )
   }
 
@@ -436,35 +433,32 @@ extension PyInstance {
       return .error(e)
     }
   }
-}
 
 // MARK: - Reduce
 
-/// `Builtins.reduce(iterable:initial:fn)` trampoline.
-public enum ReduceStep<Acc> {
-  /// Go to the next item without changing `acc`.
-  case goToNextElement
-  /// Go to the next item using given `acc`.
-  case setAcc(Acc)
-  /// End reduction with given `acc`.
-  /// Use this if you already have the result and don't need to iterate anymore.
-  case finish(Acc)
-  /// Finish reduction with given error.
-  case error(PyBaseException)
-}
+  /// `Builtins.reduce(iterable:initial:fn)` trampoline.
+  public enum ReduceStep<Acc> {
+    /// Go to the next item without changing `acc`.
+    case goToNextElement
+    /// Go to the next item using given `acc`.
+    case setAcc(Acc)
+    /// End reduction with given `acc`.
+    /// Use this if you already have the result and don't need to iterate anymore.
+    case finish(Acc)
+    /// Finish reduction with given error.
+    case error(PyBaseException)
+  }
 
-/// `Builtins.reduce(iterable:into:fn)` trampoline.
-public enum ReduceIntoStep<Acc> {
-  /// Go to the next item.
-  case goToNextElement
-  /// End reduction.
-  /// Use this if you already have the result and don't need to iterate anymore.
-  case finish
-  /// Finish reduction with given error.
-  case error(PyBaseException)
-}
-
-extension PyInstance {
+  /// `Builtins.reduce(iterable:into:fn)` trampoline.
+  public enum ReduceIntoStep<Acc> {
+    /// Go to the next item.
+    case goToNextElement
+    /// End reduction.
+    /// Use this if you already have the result and don't need to iterate anymore.
+    case finish
+    /// Finish reduction with given error.
+    case error(PyBaseException)
+  }
 
   public typealias ReduceFn<Acc> = (Acc, PyObject) -> ReduceStep<Acc>
 
@@ -567,13 +561,13 @@ extension PyInstance {
 
     if let bytes = iterable as? PyBytesType {
       let scalars = bytes.data.scalars
-      let byteObjects = scalars.map(Py.newInt)
+      let byteObjects = scalars.map(self.newInt)
       return .value(byteObjects)
     }
 
     if let string = iterable as? PyString {
       let scalars = string.data.scalars
-      let characterObjects = scalars.map { Py.intern(String($0)) }
+      let characterObjects = scalars.map { self.intern(String($0)) }
       return .value(characterObjects)
     }
 

@@ -1,4 +1,4 @@
-// MARK: - Shared
+// MARK: - Abstract
 
 private enum MinMaxResult {
   case useCurrent

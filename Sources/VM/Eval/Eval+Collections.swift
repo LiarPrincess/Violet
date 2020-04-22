@@ -1,6 +1,8 @@
 import Bytecode
 import Objects
 
+private typealias CreateDictionaryArg = PyInstance.CreateDictionaryArg
+
 extension Eval {
 
   // MARK: - Tuple

@@ -26,7 +26,7 @@ private enum FastCallResult {
 }
 
 /// Basically a template for ternary operations (even though we have only one).
-/// See `BuiltinFunctions+Compare` for reasoning why we do it this way.
+/// See `Py+Compare` for reasoning why we do it this way.
 private protocol TernaryOp {
 
   /// Operator used to invoke given binary operation, for example '+'.
@@ -179,7 +179,7 @@ extension PyInstance {
   public func pow(base: PyObject,
                   exp: PyObject,
                   mod: PyObject? = nil) -> PyResult<PyObject> {
-    let mod = mod ?? Py.none
+    let mod = mod ?? self.none
     return PowOp.call(left: base, middle: exp, right: mod)
   }
 

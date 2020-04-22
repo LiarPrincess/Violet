@@ -32,18 +32,20 @@ private enum FastCallResult {
 }
 
 /// Basically a template for compare operations.
+///
 /// This may not be the cleanest/most idiomatic Swift, but it gets the job done.
 /// Alternatives:
 /// - function with CompareMode enum (equal, left etc...) argument and then
 ///   switch on it. But then our performance heavly depends on Swift compiler,
 ///   (can it inline this and then eliminate dead code?) otherwise we pay
 ///   for each switch.
-/// - C#-style abstract class with `final` subclass for every compare operation.
+/// - Java-style abstract class with `final` subclass for every compare operation.
 ///   In **best** case compiler will (maybe) skip vtable (because of `final`),
 ///   so we would get static dispatch. But this type of programming
 ///   (abstract classes) is truly non-idiomatic in Swift.
 ///
-/// Or we could use templates.
+/// Or we could use protocol which will guarantee us static dispatch
+/// (btw. eveything is on static/type-level, we do not need instances):
 private protocol CompareOp {
   /// Python selector, for example `__eq__`.
   static var selector: IdString { get }
@@ -157,7 +159,7 @@ extension PyInstance {
     // Quick result when objects are the same.
     // Guarantees that identity implies equality.
     if  left === right {
-      return .value(Py.true)
+      return .value(self.true)
     }
 
     switch EqualCompare.compare(left: left, right: right) {
@@ -197,13 +199,13 @@ extension PyInstance {
   public func isNotEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     // Quick result when objects are the same.
     if left === right {
-      return .value(Py.false)
+      return .value(self.false)
     }
 
     switch NotEqualCompare.compare(left: left, right: right) {
     case .value(let result):
       if result.isNotImplemented {
-        return .value(Py.newBool(left !== right))
+        return .value(self.newBool(left !== right))
       }
       return .value(result)
 

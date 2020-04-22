@@ -4,9 +4,9 @@ import Core
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-// MARK: - Repr
-
 extension PyInstance {
+
+  // MARK: - Repr
 
   /// repr(object)
   /// See [this](https://docs.python.org/3/library/functions.html#repr)
@@ -38,11 +38,8 @@ extension PyInstance {
     case .error: return self.genericRepr(object: object)
     }
   }
-}
 
-// MARK: - Str
-
-extension PyInstance {
+  // MARK: - Str
 
   /// class str(object='')
   /// class str(object=b'', encoding='utf-8', errors='strict')
@@ -85,7 +82,7 @@ extension PyInstance {
       trap("'\(type.getName())' is not a subclass of 'object'")
     }
 
-    let isFromObject = lookup.type === Py.types.object
+    let isFromObject = lookup.type === self.types.object
     return !isFromObject
   }
 
@@ -131,7 +128,7 @@ extension PyInstance {
   public func join(strings elements: [PyObject],
                    separator: PyObject) -> PyResult<PyString> {
     if elements.isEmpty {
-      return .value(Py.emptyString)
+      return .value(self.emptyString)
     }
 
     if elements.count == 1 {
@@ -178,17 +175,15 @@ extension PyInstance {
 
     return .value(result)
   }
-}
-  // MARK: - Decode string
 
-internal enum ExtractStringResult {
-  case string(PyString, String)
-  case bytes(PyBytesType, String)
-  case byteDecodingError(PyBytesType)
-  case notStringOrBytes
-}
+  // MARK: - Extract string
 
-extension PyInstance {
+  internal enum ExtractStringResult {
+    case string(PyString, String)
+    case bytes(PyBytesType, String)
+    case byteDecodingError(PyBytesType)
+    case notStringOrBytes
+  }
 
   /// Extract `String` from this object (if possible).
   ///

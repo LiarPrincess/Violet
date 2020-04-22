@@ -166,7 +166,7 @@ extension PyInstance {
 
     switch self.callMethod(object: object, selector: .__setattr__, args: [name, value]) {
     case .value:
-      return .value(Py.none)
+      return .value(self.none)
     case .missingMethod:
       let typeName = object.typeName
       let operation = value is PyNone ? "del" : "assign to"
@@ -207,19 +207,16 @@ extension PyInstance {
       return .typeError("delattr(): attribute name must be string")
     }
 
-    return self.setattr(object: object, name: name, value: Py.none)
+    return self.setattr(object: object, name: name, value: self.none)
   }
-}
 
-// MARK: - Lookup
+  // MARK: - Lookup
 
-public enum LookupResult {
-  case value(PyObject)
-  case notFound
-  case error(PyBaseException)
-}
-
-extension PyInstance {
+  public enum LookupResult {
+    case value(PyObject)
+    case notFound
+    case error(PyBaseException)
+  }
 
   /// Look for a name through the MRO.
   ///
@@ -244,6 +241,6 @@ extension PyInstance {
 
   /// We will intern attribute names, because they tend to be repeated a lot.
   private func interned(name: String) -> PyString {
-    return Py.intern(name)
+    return self.intern(name)
   }
 }

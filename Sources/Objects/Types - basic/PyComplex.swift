@@ -603,7 +603,9 @@ public class PyComplex: PyObject {
     return .typeError("complex() argument must be a string or a number, not '\(t)'")
   }
 
-  private static func callComplex(_ object: PyObject) -> CallMethodResult {
+  private static func callComplex(
+    _ object: PyObject
+  ) -> PyInstance.CallMethodResult {
     if let result = Fast.__complex__(object) {
       return .value(result)
     }

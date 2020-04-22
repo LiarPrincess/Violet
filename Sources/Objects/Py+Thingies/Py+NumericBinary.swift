@@ -31,7 +31,7 @@ private enum FastCallResult {
 }
 
 /// Basically a template for binary operations.
-/// See `BuiltinFunctions+Compare` for reasoning why we do it this way.
+/// See `Py+Compare` for reasoning why we do it this way.
 private protocol BinaryOp {
 
   /// Operator used to invoke given binary operation, for example '+'.

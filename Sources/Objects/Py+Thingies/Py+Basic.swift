@@ -15,17 +15,17 @@ extension PyInstance {
   }
 
   public func newInt(_ value: Int) -> PyInt {
-    return Py.getInterned(value) ?? PyInt(value: value)
+    return self.getInterned(value) ?? PyInt(value: value)
   }
 
   public func newInt(_ value: BigInt) -> PyInt {
-    return Py.getInterned(value) ?? PyInt(value: value)
+    return self.getInterned(value) ?? PyInt(value: value)
   }
 
   // MARK: - Bool
 
   public func newBool(_ value: Bool) -> PyBool {
-    return value ? Py.true : Py.false
+    return value ? self.true : self.false
   }
 
   public func newBool(_ value: BigInt) -> PyBool {
@@ -48,7 +48,7 @@ extension PyInstance {
 
   public func newString(_ value: String) -> PyString {
     return value.isEmpty ?
-      Py.emptyString :
+      self.emptyString :
       PyString(value: value)
   }
 
@@ -162,7 +162,7 @@ extension PyInstance {
   /// static PyObject *
   /// _dir_locals(void)
   private func localsDir() -> PyResult<PyObject> {
-    guard let frame = Py.delegate.frame else {
+    guard let frame = self.delegate.frame else {
       return .systemError("frame does not exist")
     }
 

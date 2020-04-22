@@ -10,27 +10,9 @@ import Foundation
 
 // swiftlint:disable file_length
 
-// MARK: - Print
-
-public enum SysOutputStream {
-  case __stdout__
-  case stdout
-  case __stderr__
-  case stderr
-
-  fileprivate static var `default` = SysOutputStream.stdout
-
-  fileprivate func getFile() -> PyResult<PyTextFile> {
-    switch self {
-    case .__stdout__: return Py.sys.get__stdout__()
-    case .stdout: return Py.sys.getStdout()
-    case .__stderr__: return Py.sys.get__stderr__()
-    case .stderr: return Py.sys.getStderr()
-    }
-  }
-}
-
 extension PyInstance {
+
+  // MARK: - Print
 
   /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
   /// See [this](https://docs.python.org/3/library/functions.html#print)
@@ -70,6 +52,10 @@ extension PyInstance {
                       flush: flush)
   }
 
+  private var defaultPrintStream: Sys.OutputStream {
+    return .stdout
+  }
+
   /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
   /// See [this](https://docs.python.org/3/library/functions.html#print)
   ///
@@ -79,11 +65,11 @@ extension PyInstance {
   /// - Parameters:
   ///   - args: Objects to print
   public func print(args: [PyObject],
-                    stream: SysOutputStream?,
+                    stream: Sys.OutputStream?,
                     sep: PyString? = nil,
                     end: PyString? = nil,
                     flush: PyObject? = nil) -> PyResult<PyNone> {
-    let stream = stream ?? .default
+    let stream = stream ?? self.defaultPrintStream
 
     switch stream.getFile() {
     case let .value(file):
@@ -112,7 +98,7 @@ extension PyInstance {
       }
 
       let string: String
-      switch Py.strValue(object: object) {
+      switch self.strValue(object: object) {
       case let .value(s): string = s
       case let .error(e): return .error(e)
       }
@@ -128,12 +114,12 @@ extension PyInstance {
     }
 
     // We do not support 'flush' at the moment.
-    return .value(Py.none)
+    return .value(self.none)
   }
 
   private func getTextFile(file: PyObject?) -> PyResult<PyTextFile> {
     guard let file = file, !file.isNone else {
-      return SysOutputStream.default.getFile()
+      return self.defaultPrintStream.getFile()
     }
 
     guard let textFile = file as? PyTextFile else {
@@ -170,11 +156,8 @@ extension PyInstance {
       return e
     }
   }
-}
 
-// MARK: - Print error
-
-extension PyInstance {
+  // MARK: - Print error
 
   /// This function will swallow any error and continue printing!
   ///
@@ -477,7 +460,7 @@ During handling of the above exception, another exception occurred:
 
   private func getErrorAttribute(error: PyBaseException,
                                  name: String) -> PyResult<String> {
-    let key = Py.intern(name)
+    let key = self.intern(name)
 
     let object: PyObject
     switch self.getattr(object: error, name: key) {

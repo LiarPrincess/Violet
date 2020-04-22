@@ -51,7 +51,7 @@ extension PyInstance {
     }
 
     let closeOnDealloc: Bool
-    switch self.isTrueBool(closefdArg ?? Py.true) {
+    switch self.isTrueBool(closefdArg ?? self.true) {
     case let .value(b): closeOnDealloc = b
     case let .error(e): return .error(e)
     }
@@ -86,17 +86,17 @@ extension PyInstance {
 
     switch source {
     case let .fileDescriptor(fd):
-      return Py.fileSystem.open(fd: fd, mode: mode)
+      return self.fileSystem.open(fd: fd, mode: mode)
 
     case let .string(path):
-      return Py.fileSystem.open(path: path, mode: mode)
+      return self.fileSystem.open(path: path, mode: mode)
 
     case let .bytes(bytes):
       guard let path = self.toString(bytes: bytes) else {
         return .valueError("bytes cannot interpreted as path")
       }
 
-      return Py.fileSystem.open(path: path, mode: mode)
+      return self.fileSystem.open(path: path, mode: mode)
     }
   }
 

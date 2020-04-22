@@ -9,14 +9,14 @@ extension PyInstance {
 
   /// Get `__build_class__` from `builtins` module.
   public func get__build_class__() -> PyResult<PyObject> {
-    let dict = Py.builtinsModule.__dict__
+    let dict = self.builtinsModule.__dict__
 
     if let fn = dict.get(id: .__build_class__) {
       return .value(fn)
     }
 
     let msg = "'__build_class__' function not found inside builtins module"
-    return .error(Py.newAttributeError(msg: msg))
+    return .error(self.newAttributeError(msg: msg))
   }
 
   // MARK: - __build_class__
@@ -79,7 +79,7 @@ extension PyInstance {
     // Most of the time it will call 'PyType.call'.
     let result: PyObject
     let metaArgs = [name, bases, dict]
-    switch Py.call(callable: metatype, args: metaArgs, kwargs: kwargs) {
+    switch self.call(callable: metatype, args: metaArgs, kwargs: kwargs) {
     case let .value(r):
       result = r
     case let .notCallable(e),
@@ -95,11 +95,8 @@ extension PyInstance {
 
     return .value(result)
   }
-}
 
-// MARK: - Metaclass
-
-extension PyInstance {
+  // MARK: - Metaclass
 
   private func calculateMetaclass(bases: PyTuple,
                                   kwargs: PyDict?) -> PyResult<PyObject> {
@@ -111,7 +108,7 @@ extension PyInstance {
       _ = kwargs.del(id: .metaclass)
       result = meta
     } else {
-      result = bases.elements.first?.type ?? Py.types.type
+      result = bases.elements.first?.type ?? self.types.type
     }
 
     if let metaType = result as? PyType {
@@ -130,17 +127,14 @@ extension PyInstance {
 
     return .value(result)
   }
-}
 
-// MARK: - Dict
+  // MARK: - Dict
 
-private enum GetPrepareResult {
-  case value(PyObject)
-  case none
-  case error(PyBaseException)
-}
-
-extension PyInstance {
+  private enum GetPrepareResult {
+    case value(PyObject)
+    case none
+    case error(PyBaseException)
+  }
 
   /// If our `metatype` has `__prepare__` then call it to obtain class `__dict__`.
   /// Otherwise just return empty dict.
@@ -150,7 +144,7 @@ extension PyInstance {
     switch self.get__prepare__(metatype: metatype) {
     case let .value(__prepare__):
       let object: PyObject
-      switch Py.call(callable: __prepare__, args: [name, bases], kwargs: nil) {
+      switch self.call(callable: __prepare__, args: [name, bases], kwargs: nil) {
       case let .value(o):
         object = o
       case let .error(e),
@@ -169,7 +163,7 @@ extension PyInstance {
 
     case .none:
       // No '__prepare__'
-      return .value(Py.newDict())
+      return .value(self.newDict())
 
     case let .error(e):
       return .error(e)
@@ -177,7 +171,7 @@ extension PyInstance {
   }
 
   private func get__prepare__(metatype: PyObject) -> GetPrepareResult {
-    switch Py.getattr(object: metatype, name: .__prepare__) {
+    switch self.getattr(object: metatype, name: .__prepare__) {
     case let .value(o):
       return .value(o)
 
@@ -189,14 +183,11 @@ extension PyInstance {
       return .error(e)
     }
   }
-}
 
-// MARK: - Eval
-
-extension PyInstance {
+  // MARK: - Eval
 
   private func eval(fn: PyFunction, locals: PyDict) -> PyResult<PyObject> {
-    return Py.delegate.eval(
+    return self.delegate.eval(
       name: nil,
       qualname: nil,
       code: fn.code,
@@ -209,11 +200,8 @@ extension PyInstance {
       closure: fn.closure
     )
   }
-}
 
-// MARK: - __class__
-
-extension PyInstance {
+  // MARK: - __class__
 
   private func fill__class__cell(cell _cell: PyObject,
                                  with _type: PyObject) -> PyBaseException? {
@@ -227,20 +215,20 @@ extension PyInstance {
 
     // If content is nil -> it may be warning
     if cell.content == nil {
-      let typeRepr = Py.reprOrGeneric(object: type)
+      let typeRepr = self.reprOrGeneric(object: type)
       let msg = "__class__ not set defining \(name) as \(typeRepr). " +
                 "Was __classcell__ propagated to type.__new__?"
-      if let e = Py.warn(type: .deprecation, msg: msg) {
+      if let e = self.warn(type: .deprecation, msg: msg) {
         return e
       }
     }
 
     // If we already have content that is not our class -> throw
     if let content = cell.content, content !== type {
-      let contentRepr = Py.reprOrGeneric(object: content)
-      let typeRepr = Py.reprOrGeneric(object: type)
+      let contentRepr = self.reprOrGeneric(object: content)
+      let typeRepr = self.reprOrGeneric(object: type)
       let msg = "__class__ set to \(contentRepr) defining \(name) as \(typeRepr)"
-      return Py.newTypeError(msg: msg)
+      return self.newTypeError(msg: msg)
     }
 
     cell.content = type

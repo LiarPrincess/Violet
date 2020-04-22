@@ -38,9 +38,10 @@ extension PyInstance {
 
     switch self.callMethod(object: object, selector: .__setitem__, arg: value) {
     case .value:
-      return .value(Py.none)
+      return .value(self.none)
     case .missingMethod:
-      return .typeError("'\(object.typeName)' object does not support item assignment")
+      let t = object.typeName
+      return .typeError("'\(t)' object does not support item assignment")
     case .error(let e), .notCallable(let e):
       return .error(e)
     }
@@ -57,9 +58,10 @@ extension PyInstance {
 
     switch self.callMethod(object: object, selector: .__delitem__) {
     case .value:
-      return .value(Py.none)
+      return .value(self.none)
     case .missingMethod:
-      return .typeError("'\(object.typeName)' object does not support item deletion")
+      let t = object.typeName
+      return .typeError("'\(t)' object does not support item deletion")
     case .error(let e), .notCallable(let e):
       return .error(e)
     }

@@ -59,8 +59,6 @@ public enum PyWarningEnum {
   }
 }
 
-// MARK: - BuiltinFunctions
-
 extension PyInstance {
 
   // MARK: - Syntax
@@ -100,10 +98,10 @@ extension PyInstance {
                          column: SourceColumn,
                          text: String) -> PyBaseException? {
     return self.warnSyntax(
-      filename: Py.intern(filename),
-      line: Py.newInt(Int(line)),
-      column: Py.newInt(Int(column)),
-      text: Py.newString(text)
+      filename: self.intern(filename),
+      line: self.newInt(Int(line)),
+      column: self.newInt(Int(column)),
+      text: self.newString(text)
     )
   }
 
@@ -118,18 +116,18 @@ extension PyInstance {
       text: text
     )
 
-    let frame = Py.delegate.frame
+    let frame = self.delegate.frame
     let registry: UnderscoreWarnings.WarningRegistry
-    switch Py._warnings.getWarningRegistry(frame: frame) {
+    switch self._warnings.getWarningRegistry(frame: frame) {
     case let .value(r): registry = r
     case let .error(e): return e
     }
 
     // We cannot use generic 'warn' as this time we have to point to specific
     // file/line.
-    let result = Py._warnings.warnExplicit(
+    let result = self._warnings.warnExplicit(
       message: message,
-      category: Py.errorTypes.syntaxWarning,
+      category: self.errorTypes.syntaxWarning,
       filename: filename,
       lineNo: line,
       module: nil,
@@ -150,10 +148,10 @@ extension PyInstance {
                                column: SourceColumn,
                                text: String) -> PySyntaxWarning {
     return self.newSyntaxWarning(
-      filename: Py.intern(filename),
-      line: Py.newInt(Int(line)),
-      column: Py.newInt(Int(column)),
-      text: Py.newString(text)
+      filename: self.intern(filename),
+      line: self.newInt(Int(line)),
+      column: self.newInt(Int(column)),
+      text: self.newString(text)
     )
   }
 
@@ -161,7 +159,7 @@ extension PyInstance {
                                line: PyInt,
                                column: PyInt,
                                text: PyString) -> PySyntaxWarning {
-    let args = Py.newTuple(text)
+    let args = self.newTuple(text)
     let e = PySyntaxWarning(args: args)
     self.fillSyntaxErrorDict(error: e,
                              filename: filename,
@@ -175,17 +173,17 @@ extension PyInstance {
 
   public func warnBytesIfEnabled(msg: String) -> PyBaseException? {
     // We will call 'getInterned' because messages tend to be repeated.
-    switch Py.sys.flags.bytesWarning {
+    switch self.sys.flags.bytesWarning {
     case .ignore:
       return nil
 
     case .warning:
-      let msgObject = Py.intern(msg)
+      let msgObject = self.intern(msg)
       return self.warn(type: .bytes, msg: msgObject)
 
     case .error:
-      let msgObject = Py.intern(msg)
-      let args = Py.newTuple(msgObject)
+      let msgObject = self.intern(msg)
+      let args = self.newTuple(msgObject)
       let error = PyBytesWarning(args: args)
       return error
     }
@@ -202,13 +200,13 @@ extension PyInstance {
   }
 
   public func warn(type: PyType, msg: String) -> PyBaseException? {
-    let object = Py.newString(msg)
+    let object = self.newString(msg)
     return self.warn(type: type, msg: object)
   }
 
   public func warn(type: PyType, msg: PyString) -> PyBaseException? {
-    assert(type.isSubtype(of: Py.errorTypes.warning))
-    switch Py._warnings.warn(message: msg, category: type) {
+    assert(type.isSubtype(of: self.errorTypes.warning))
+    switch self._warnings.warn(message: msg, category: type) {
     case .value:
       return nil
     case .error(let e):

@@ -5,9 +5,9 @@ import Compiler
 import Bytecode
 import Foundation
 
-// MARK: - Exec
-
 extension PyInstance {
+
+  // MARK: - Exec
 
   /// exec(object[, globals[, locals]])
   /// See [this](https://docs.python.org/3/library/functions.html#exec)
@@ -30,7 +30,7 @@ extension PyInstance {
     }
 
     if env.globals.get(id: .builtins) == nil {
-      env.globals.set(id: .builtins, to: Py.builtinsModule)
+      env.globals.set(id: .builtins, to: self.builtinsModule)
     }
 
     let code: PyCode
@@ -48,13 +48,10 @@ extension PyInstance {
     }
 
     let result = self.run(code: code, env: env)
-    return result.map { _ in Py.none }
+    return result.map { _ in self.none }
   }
-}
 
-// MARK: - Eval
-
-extension PyInstance {
+  // MARK: - Eval
 
   /// eval(expression[, globals[, locals]])
   /// See [this](https://docs.python.org/3/library/functions.html#eval)
@@ -74,7 +71,7 @@ extension PyInstance {
     }
 
     if env.globals.get(id: .builtins) == nil {
-      env.globals.set(id: .builtins, to: Py.builtinsModule)
+      env.globals.set(id: .builtins, to: self.builtinsModule)
     }
 
     let code: PyCode
@@ -94,26 +91,23 @@ extension PyInstance {
     let result = self.run(code: code, env: env)
     return result
   }
-}
 
-// MARK: - Env
+  // MARK: - Env
 
-private typealias Env = (globals: PyDict, locals: PyDict)
+  private typealias Env = (globals: PyDict, locals: PyDict)
 
-private enum ParseEnvResult {
-  case env(globals: PyDict, locals: PyDict)
-  case globalsNotDict(globalsType: String)
-  case localsNotDict(localsType: String)
-  case error(PyBaseException)
-}
+  private enum ParseEnvResult {
+    case env(globals: PyDict, locals: PyDict)
+    case globalsNotDict(globalsType: String)
+    case localsNotDict(localsType: String)
+    case error(PyBaseException)
+  }
 
-private enum DictOrNone {
-  case dict(PyDict)
-  case none
-  case somethingElse(typeName: String)
-}
-
-extension PyInstance {
+  private enum DictOrNone {
+    case dict(PyDict)
+    case none
+    case somethingElse(typeName: String)
+  }
 
   private func parseEnv(globals: PyObject?, locals: PyObject?) -> ParseEnvResult {
     // Omg! This code looks soooooo... bad.
@@ -131,13 +125,13 @@ extension PyInstance {
       }
 
     case .none:
-      switch Py.globals() {
+      switch self.globals() {
       case let .value(g):
         switch self.parseDictOrNone(object: locals) {
         case .dict(let l):
           return .env(globals: g, locals: l)
         case .none:
-          switch Py.locals() {
+          switch self.locals() {
           case let .value(l):
             return .env(globals: g, locals: l)
           case let .error(e):
@@ -171,19 +165,16 @@ extension PyInstance {
 
     return .somethingElse(typeName: obj.typeName)
   }
-}
 
-// MARK: - Source
+  // MARK: - Source
 
-private enum Source {
-  case code(PyCode)
-  case codeWithFreeVariables
-  case byteDecodingError
-  case notStringOrBytes
-  case error(PyBaseException)
-}
-
-extension PyInstance {
+  private enum Source {
+    case code(PyCode)
+    case codeWithFreeVariables
+    case byteDecodingError
+    case notStringOrBytes
+    case error(PyBaseException)
+  }
 
   private func parseSource(arg: PyObject,
                            filename: String,
@@ -221,7 +212,7 @@ extension PyInstance {
   // MARK: - Run
 
   private func run(code: PyCode, env: Env) -> PyResult<PyObject> {
-    return Py.delegate.eval(
+    return self.delegate.eval(
       name: nil,
       qualname: nil,
       code: code,

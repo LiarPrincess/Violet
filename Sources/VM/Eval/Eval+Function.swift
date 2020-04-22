@@ -149,7 +149,7 @@ extension Eval {
 
   /// call_function(PyObject ***pp_stack, Py_ssize_t argCount, PyObject *kwnames)
   private func callFunction(argAndKwargCount: Int,
-                            kwNames: PyTuple?) -> CallResult {
+                            kwNames: PyTuple?) -> PyInstance.CallResult {
     guard let kwNames = kwNames else {
       let args = stack.popElementsInPushOrder(count: argAndKwargCount)
       let fn = self.stack.pop()

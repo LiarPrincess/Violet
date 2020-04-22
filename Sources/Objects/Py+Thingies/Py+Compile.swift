@@ -12,7 +12,7 @@ import Foundation
 // MARK: - Helpers
 
 private class WarningsHandler:
-LexerDelegate, ParserDelegate, CompilerDelegate {
+  LexerDelegate, ParserDelegate, CompilerDelegate {
 
   fileprivate let filename: String
   fileprivate private(set) var lexerWarnings = [LexerWarning]()
@@ -114,20 +114,20 @@ extension PyInstance {
                       mode: ParserMode,
                       optimize: OptimizationLevel? = nil) -> PyResult<PyCode> {
     let data: Data
-    switch Py.fileSystem.read(path: path) {
+    switch self.fileSystem.read(path: path) {
     case let .value(d): data = d
     case let .error(e): return .error(e)
     }
 
     let encoding = PyStringEncoding.default
     guard let source = String(data: data, encoding: encoding.swift) else {
-      let e = Py.newUnicodeDecodeError(data: data, encoding: encoding)
+      let e = self.newUnicodeDecodeError(data: data, encoding: encoding)
       return .error(e)
     }
 
-    let filename = Py.fileSystem.basename(path: path)
+    let filename = self.fileSystem.basename(path: path)
 
-    return Py.compile(
+    return self.compile(
       source: source,
       filename: filename,
       mode: mode,
@@ -154,7 +154,7 @@ extension PyInstance {
       }
 
       let compilerOptions = CompilerOptions(
-        optimizationLevel: optimize ?? Py.sys.flags.optimize
+        optimizationLevel: optimize ?? self.sys.flags.optimize
       )
 
       let compiler = Compiler(filename: filename,
@@ -170,19 +170,19 @@ extension PyInstance {
       return .value(self.newCode(code: code))
     } catch {
       if let e = error as? LexerError {
-        return .error(Py.newSyntaxError(filename: filename, error: e))
+        return .error(self.newSyntaxError(filename: filename, error: e))
       }
 
       if let e = error as? ParserError {
-        return .error(Py.newSyntaxError(filename: filename, error: e))
+        return .error(self.newSyntaxError(filename: filename, error: e))
       }
 
       if let e = error as? CompilerError {
-        return .error(Py.newSyntaxError(filename: filename, error: e))
+        return .error(self.newSyntaxError(filename: filename, error: e))
       }
 
       let msg = String(describing: error)
-      let e = Py.newRuntimeError(msg: "Error when compiling '\(filename)': '\(msg)'")
+      let e = self.newRuntimeError(msg: "Error when compiling '\(filename)': '\(msg)'")
       return .error(e)
     }
   }
@@ -227,7 +227,7 @@ extension PyInstance {
   // MARK: - Optimize
 
   private var optimizeFromArgumentsOrEnvironment: OptimizationLevel {
-    return Py.sys.flags.optimize
+    return self.sys.flags.optimize
   }
 
   private func parseOptimize(arg: PyObject?) -> PyResult<OptimizationLevel> {

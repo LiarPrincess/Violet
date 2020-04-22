@@ -7,26 +7,26 @@ import Core
 
 // swiftlint:disable file_length
 
-// MARK: - Call
+extension PyInstance {
 
-public enum CallResult {
-  case value(PyObject)
-  /// Object is not callable.
-  case notCallable(PyBaseException)
-  case error(PyBaseException)
+  // MARK: - Call
 
-  public var asResult: PyResult<PyObject> {
-    switch self {
-    case let .value(o):
-      return .value(o)
-    case let .error(e),
-         let .notCallable(e):
-      return .error(e)
+  public enum CallResult {
+    case value(PyObject)
+    /// Object is not callable.
+    case notCallable(PyBaseException)
+    case error(PyBaseException)
+
+    public var asResult: PyResult<PyObject> {
+      switch self {
+      case let .value(o):
+        return .value(o)
+      case let .error(e),
+           let .notCallable(e):
+        return .error(e)
+      }
     }
   }
-}
-
-extension PyInstance {
 
   /// Call `callable` with single positional argument.
   public func call(callable: PyObject, arg: PyObject) -> CallResult {
@@ -89,11 +89,8 @@ extension PyInstance {
       return .error(e)
     }
   }
-}
 
-// MARK: - Is callable
-
-extension PyInstance {
+  // MARK: - Is callable
 
   /// callable(object)
   /// See [this](https://docs.python.org/3/library/functions.html#callable)
@@ -104,40 +101,40 @@ extension PyInstance {
 
 // MARK: - Get method
 
-public enum GetMethodResult {
-  /// Method found (_yay!_), here is its value (_double yay!_).
-  case value(PyObject)
-  /// Such method does not exist.
-  case notFound(PyBaseException)
-  /// Raise error in VM.
-  case error(PyBaseException)
-}
-
 internal protocol HasCustomGetMethod {
-  func getMethod(selector: PyString) -> GetMethodResult
-}
-
-/// Helper for `getMethod`.
-private enum FunctionAttribute {
-  case function(PyFunction)
-  case builtinFunction(PyBuiltinFunction)
-}
-
-/// Helper for `getMethod`.
-private enum CallableFromDict {
-  case value(PyObject)
-  case notFound
-  case error(PyBaseException)
-
-  fileprivate init(result: PyResult<PyObject>) {
-    switch result {
-    case let .value(o): self = .value(o)
-    case let .error(e): self = .error(e)
-    }
-  }
+  func getMethod(selector: PyString) -> PyInstance.GetMethodResult
 }
 
 extension PyInstance {
+
+  public enum GetMethodResult {
+    /// Method found (_yay!_), here is its value (_double yay!_).
+    case value(PyObject)
+    /// Such method does not exist.
+    case notFound(PyBaseException)
+    /// Raise error in VM.
+    case error(PyBaseException)
+  }
+
+  /// Helper for `getMethod`.
+  private enum FunctionAttribute {
+    case function(PyFunction)
+    case builtinFunction(PyBuiltinFunction)
+  }
+
+  /// Helper for `getMethod`.
+  private enum CallableFromDict {
+    case value(PyObject)
+    case notFound
+    case error(PyBaseException)
+
+    fileprivate init(result: PyResult<PyObject>) {
+      switch result {
+      case let .value(o): self = .value(o)
+      case let .error(e): self = .error(e)
+      }
+    }
+  }
 
   public func hasMethod(object: PyObject,
                         selector: IdString) -> PyResult<Bool> {
@@ -232,7 +229,7 @@ extension PyInstance {
       return .value(p)
     }
 
-    let e = Py.newAttributeError(object: object, hasNoAttribute: selector.value)
+    let e = self.newAttributeError(object: object, hasNoAttribute: selector.value)
     return .notFound(e)
   }
 
@@ -248,7 +245,7 @@ extension PyInstance {
 
   private func getCallableFromDict(object: PyObject,
                                    selector: PyString) -> CallableFromDict {
-    guard let dict = Py.get__dict__(object: object) else {
+    guard let dict = self.get__dict__(object: object) else {
       return .notFound
     }
 
@@ -276,31 +273,28 @@ extension PyInstance {
       return .error(e)
     }
   }
-}
 
-// MARK: - Call method
+  // MARK: - Call method
 
-public enum CallMethodResult {
-  case value(PyObject)
-  /// Such method does not exists.
-  case missingMethod(PyBaseException)
-  /// Method exists, but it is not callable.
-  case notCallable(PyBaseException)
-  case error(PyBaseException)
+  public enum CallMethodResult {
+    case value(PyObject)
+    /// Such method does not exists.
+    case missingMethod(PyBaseException)
+    /// Method exists, but it is not callable.
+    case notCallable(PyBaseException)
+    case error(PyBaseException)
 
-  public var asResult: PyResult<PyObject> {
-    switch self {
-    case let .value(o):
-      return .value(o)
-    case let .error(e),
-         let .notCallable(e),
-         let .missingMethod(e):
-      return .error(e)
+    public var asResult: PyResult<PyObject> {
+      switch self {
+      case let .value(o):
+        return .value(o)
+      case let .error(e),
+           let .notCallable(e),
+           let .missingMethod(e):
+        return .error(e)
+      }
     }
   }
-}
-
-extension PyInstance {
 
   /// Call method with single positional argument.
   public func callMethod(object: PyObject,

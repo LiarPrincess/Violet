@@ -762,11 +762,12 @@ extension PyFloat {
       return .value(d)
     }
 
-    let msg = "float() argument must be a string, or a number, not '\(object.typeName)'"
+    let t = object.typeName
+    let msg = "float() argument must be a string, or a number, not '\(t)'"
     return .typeError(msg)
   }
 
-  private static func callFloat(_ object: PyObject) -> CallMethodResult {
+  private static func callFloat(_ object: PyObject) -> PyInstance.CallMethodResult {
     if let result = Fast.__float__(object) {
       switch result {
       case let .value(f): return .value(f)

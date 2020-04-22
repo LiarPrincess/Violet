@@ -9,7 +9,7 @@ extension PyInstance {
   /// globals()
   /// See [this](https://docs.python.org/3/library/functions.html#globals)
   public func globals() -> PyResult<PyDict> {
-    guard let frame = Py.delegate.frame else {
+    guard let frame = self.delegate.frame else {
       return .runtimeError("globals(): no current frame")
     }
 
@@ -20,7 +20,7 @@ extension PyInstance {
   /// locals()
   /// See [this](https://docs.python.org/3/library/functions.html#locals)
   public func locals() -> PyResult<PyDict> {
-    guard let frame = Py.delegate.frame else {
+    guard let frame = self.delegate.frame else {
       return .runtimeError("locals(): no current frame")
     }
 

@@ -8,29 +8,26 @@
 
 // swiftlint:disable file_length
 
-// MARK: - Get __import__
-
 extension PyInstance {
+
+  // MARK: - Get __import__
 
   /// In CPython: interp->import_func
   ///
   /// This value is set in:
   /// 'initimport(PyInterpreterState *interp, PyObject *sysmod)'
   public func get__import__() -> PyResult<PyObject> {
-    let dict = Py.builtinsModule.__dict__
+    let dict = self.builtinsModule.__dict__
 
     if let fn = dict.get(id: .__import__) {
       return .value(fn)
     }
 
     let msg = "'__import__' function not found inside builtins module"
-    return .error(Py.newAttributeError(msg: msg))
+    return .error(self.newAttributeError(msg: msg))
   }
-}
 
-// MARK: - __import__
-
-extension PyInstance {
+  // MARK: - __import__
 
   /// __import__(name, globals=None, locals=None, fromlist=(), level=0)
   /// See [this](https://docs.python.org/3/library/functions.html#__import__)
@@ -73,7 +70,7 @@ extension PyInstance {
 
     let absName: PyString
     switch self.resolveLevel(name: name, level: level, globals: globals) {
-    case let .value(s): absName = Py.intern(s)
+    case let .value(s): absName = self.intern(s)
     case let .error(e): return .error(e)
     }
 
@@ -96,7 +93,7 @@ extension PyInstance {
 
   private func parseLevel(from object: PyObject?) -> PyResult<PyInt> {
     guard let object = object else {
-      return .value(Py.newInt(0))
+      return .value(self.newInt(0))
     }
 
     guard let int = object as? PyInt else {
@@ -188,7 +185,7 @@ extension PyInstance {
     // Last resort '__name__' and '__path__':
     let msg = "can't resolve package from __spec__ or __package__, " +
     "falling back on __name__ and __path__"
-    if let e = Py.warn(type: .import, msg: msg) {
+    if let e = self.warn(type: .import, msg: msg) {
       return .error(e)
     }
 
@@ -212,7 +209,7 @@ extension PyInstance {
   }
 
   private func getParent(spec: PyObject) -> PyResult<PyString> {
-    switch Py.getattr(object: spec, name: "parent") {
+    switch self.getattr(object: spec, name: "parent") {
     case let .value(object):
       guard let string = object as? PyString else {
         return .typeError("__spec__.parent must be a string")
@@ -241,7 +238,7 @@ extension PyInstance {
   /// PyObject *
   /// PyImport_GetModule(PyObject *name)
   private func getExistingOrLoadModule(absName: PyString) -> PyResult<PyObject> {
-    switch Py.sys.getModule(name: absName) {
+    switch self.sys.getModule(name: absName) {
     case let .value(m):
       if m.isNone {
         return self.call_find_and_load(absName: absName)
@@ -275,7 +272,7 @@ extension PyInstance {
   private func callImportlibMethod(selector: IdString,
                                    args: [PyObject]) -> CallResult {
     let importlib: PyModule
-    switch Py.getImportlib() {
+    switch self.getImportlib() {
     case let .value(m): importlib = m
     case let .error(e): return .error(e)
     }
@@ -283,11 +280,11 @@ extension PyInstance {
     // We need to 'allowsCallableFromDict' because we don't want to call
     // PyModule method, but our own 'def'.
 
-    switch Py.getMethod(object: importlib,
-                        selector: selector.value,
-                        allowsCallableFromDict: true) {
+    switch self.getMethod(object: importlib,
+                          selector: selector.value,
+                          allowsCallableFromDict: true) {
     case let .value(method):
-      return Py.call(callable: method, args: args, kwargs: nil)
+      return self.call(callable: method, args: args, kwargs: nil)
     case let .notFound(e),
          let .error(e):
       return .error(e)
@@ -303,7 +300,7 @@ extension PyInstance {
                               fromList: PyObject?) -> PyResult<PyObject> {
     // If we have 'fromList' then call '_handle_fromlist' from 'importlib'
     if let fl = fromList, !fl.isNone {
-      switch Py.isTrueBool(fl) {
+      switch self.isTrueBool(fl) {
       case .value(true):
         return self.call_handle_fromlist(module: module, fromList: fl)
       case .value(false):
@@ -324,11 +321,11 @@ extension PyInstance {
     // to extract 'toplevel' name.
     if level.value == 0 {
       let front = String(nameScalars[..<nameDotIndex])
-      return self.__import__(name: Py.newString(front),
+      return self.__import__(name: self.newString(front),
                              globals: nil,
                              locals: nil,
                              fromList: nil,
-                             level: Py.newInt(0))
+                             level: self.newInt(0))
     }
 
     // Extract toplevel module (the one that is bound by the import statement)
@@ -339,13 +336,13 @@ extension PyInstance {
                                                     nameDotIndex: nameDotIndex,
                                                     absName: absName.value)
 
-    let interned = Py.intern(absTopLevel)
-    switch Py.sys.getModule(name: interned) {
+    let interned = self.intern(absTopLevel)
+    switch self.sys.getModule(name: interned) {
     case .value(let m):
       return .value(m)
     case .notFound:
       let msg = "\(absTopLevel) not in sys.modules as expected"
-      return .error(Py.newKeyError(msg: msg))
+      return .error(self.newKeyError(msg: msg))
     case .error(let e):
       return .error(e)
     }

@@ -90,6 +90,42 @@ extension Sys {
     }
   }
 
+  // MARK: - Helper enums
+
+  public enum InputStream {
+    /// `sys.__stdin__`
+    case __stdin__
+    /// `sys.stdin`
+    case stdin
+
+    public func getFile() -> PyResult<PyTextFile> {
+      switch self {
+      case .__stdin__: return Py.sys.get__stdin__()
+      case .stdin: return Py.sys.getStdin()
+      }
+    }
+  }
+
+  public enum OutputStream {
+    /// `sys.__stdout__`
+    case __stdout__
+    /// `sys.stdout`
+    case stdout
+    /// `sys.__stderr__`
+    case __stderr__
+    /// `sys.stderr`
+    case stderr
+
+    public func getFile() -> PyResult<PyTextFile> {
+      switch self {
+      case .__stdout__: return Py.sys.get__stdout__()
+      case .stdout: return Py.sys.getStdout()
+      case .__stderr__: return Py.sys.get__stderr__()
+      case .stderr: return Py.sys.getStderr()
+      }
+    }
+  }
+
   // MARK: - Initial
 
   internal func createInitialStdin() -> PyTextFile {

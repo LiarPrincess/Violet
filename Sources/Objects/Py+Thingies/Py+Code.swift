@@ -9,9 +9,9 @@ import Foundation
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension PyInstance {
+// MARK: - Function
 
-  // MARK: - Function
+extension PyInstance {
 
   public func newFunction(qualname: PyObject,
                           code: PyObject,
@@ -41,7 +41,7 @@ extension PyInstance {
   public func newFunction(qualname: String?,
                           code: PyCode,
                           globals: PyDict) -> PyFunction {
-    let module = globals.get(id: .__name__) ?? Py.none
+    let module = globals.get(id: .__name__) ?? self.none
 
     return PyFunction(
       qualname: qualname,
@@ -71,7 +71,7 @@ extension PyInstance {
   public func newModule(name: String,
                         doc: String? = nil,
                         dict: PyDict? = nil) -> PyModule {
-    let nameObject = Py.intern(name)
+    let nameObject = self.intern(name)
     let docObject = doc.map(self.newString)
     return self.newModule(name: nameObject, doc: docObject, dict: dict)
   }
