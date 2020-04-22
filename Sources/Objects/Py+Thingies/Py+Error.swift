@@ -459,7 +459,7 @@ extension PyInstance {
   /// Context - another exception during whose handling this exception was raised.
   public func setContextUsingCurrentlyHandledExceptionFromDelegate(
     on exception: PyBaseException,
-    overrideCurrentContext: Bool
+    overrideCurrent: Bool
   ) {
     // No current -> nothing to do
     guard let current = Py.delegate.currentlyHandledException else {
@@ -467,7 +467,7 @@ extension PyInstance {
     }
 
     let hasEmptyContext = exception.getContext()?.isNone ?? true
-    guard hasEmptyContext || overrideCurrentContext else {
+    guard hasEmptyContext || overrideCurrent else {
       return
     }
 
@@ -493,6 +493,12 @@ extension PyInstance {
       lastInstruction: instruction,
       lineNo: line
     )
+  }
+
+  public func addTraceback(on error: PyBaseException, frame: PyFrame) {
+    let current = error.getTraceback()
+    let new = self.newTraceback(frame: frame, next: current)
+    error.setTraceback(traceback: new)
   }
 
   // MARK: - Helpers

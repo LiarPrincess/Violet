@@ -20,8 +20,11 @@ internal enum InstructionResult {
     return .unwind(.continue(loopStartLabel: loopStartLabel))
   }
   /// `UnwindReason.exception`
-  internal static func exception(_ value: PyBaseException) -> InstructionResult {
-    return .unwind(.exception(value))
+  internal static func exception(
+    _ value: PyBaseException,
+    fillTracebackAndContext fill: Bool = true
+  ) -> InstructionResult {
+    return .unwind(.exception(value, fillTracebackAndContext: fill))
   }
   /// `UnwindReason.yield`
   internal static var yield: InstructionResult {

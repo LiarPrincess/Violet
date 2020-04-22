@@ -442,10 +442,10 @@ During handling of the above exception, another exception occurred:
     }
 
     // TODO: Print line when printing traceback
-    // In CPython: if (_Py_DisplaySourceLine(f, filename, lineno, 4))
-
-    let omgThisIsNotImplemented = "    ... (some code, probably, idk)"
-    return self.write(file: file, string: omgThisIsNotImplemented)
+    // (Remember that 'file' parameter is the file we are writing TO,
+    //  not an actual file from which we have to print line! Use 'code' for this.)
+    let line = "    ... (some code, probably, idk, not implemented, let it go)\n"
+    return self.write(file: file, string: line)
   }
 
   // MARK: - File and line

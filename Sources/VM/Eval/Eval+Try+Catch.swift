@@ -31,7 +31,7 @@ extension Eval {
   /// The popped block must be an exception handler block,
   /// as implicitly created when entering an except handler.
   /// In addition to popping extraneous values from the frame stack,
-  /// the last three popped values are used to restore the exception state.
+  /// the last popped value is used to restore the exception state.
   internal func popExcept() -> InstructionResult {
     guard let block = self.blocks.pop(), block.isExceptHandler else {
       let msg = "popped block is not an except handler"
@@ -61,7 +61,10 @@ extension Eval {
       return .continue(loopStartLabel: label)
 
     case let .exception(e):
-      return .exception(e) // We are still handling the same exception
+      // We are still handling the same exception
+      // Also exception was allready filled when we started finally,
+      // so we don't need to add current line to traceback.
+      return .exception(e, fillTracebackAndContext: false)
 
     case .silenced:
       // An exception was silenced by 'with', we must manually unwind the

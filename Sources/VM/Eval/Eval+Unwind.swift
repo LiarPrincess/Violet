@@ -20,7 +20,7 @@ internal enum UnwindReason {
   case `continue`(loopStartLabel: Int)
   /// Instruction raised an error.
   /// We will unwind trying to handle it (try-except and finally blocks).
-  case exception(PyBaseException)
+  case exception(PyBaseException, fillTracebackAndContext: Bool)
   /// 'yield' operator
   case yield
   /// Exception silenced by 'with'
@@ -74,7 +74,7 @@ extension Eval {
         _ = self.blocks.pop()
         self.unwindBlock(block: block)
 
-        if case let .exception(e) = reason {
+        if case let .exception(e, _) = reason {
           self.prepareForExceptionHandling(exception: e)
           self.jumpTo(instructionIndex: firstExceptLabel) // execute except
           return .continueCodeExecution
@@ -84,7 +84,7 @@ extension Eval {
         _ = self.blocks.pop()
         self.unwindBlock(block: block)
 
-        if case let .exception(e) = reason {
+        if case let .exception(e, _) = reason {
           self.prepareForExceptionHandling(exception: e)
           self.jumpTo(instructionIndex: finallyStartLabel) // execute finally
           return .continueCodeExecution
@@ -120,7 +120,7 @@ extension Eval {
       )
       return .reportExceptionToParentFrame(e)
 
-    case .exception(let e):
+    case .exception(let e, _):
       return .reportExceptionToParentFrame(e)
 
     case .yield,

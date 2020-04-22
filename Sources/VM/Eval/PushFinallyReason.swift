@@ -55,7 +55,7 @@ internal enum PushFinallyReason {
       case .return(let value): return .return(value)
       case .break: return .break
       case .continue(let l): return .continue(loopStartLabel: l)
-      case .exception(let e): return .exception(e)
+      case .exception(let e, _): return .exception(e)
       case .yield: return .yield
       case .silenced: return .silenced
       }

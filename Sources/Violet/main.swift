@@ -30,7 +30,7 @@ private func run(file: URL) {
       return
     }
 
-    // Just print this object in 'stderr'
+    // Just print this object in 'stderr' and call it a day...
     switch Py.sys.getStderrOrNone() {
     case .none: return // User requested no printing
     case .file(let f): _ = Py.print(args: [object], file: f) // Ignore error
@@ -41,9 +41,10 @@ private func run(file: URL) {
     // CPython: PyErr_PrintEx(int set_sys_last_vars)
     let excepthookResult = Py.sys.callExcepthook(error: error)
 
-    // Everything is 'ok'.
-    // Ignore whatever nonsense this function returned...
     if case Sys.CallExcepthookResult.value = excepthookResult {
+      // Everything is 'ok' (at least in 'excepthook', the whole 'VM.run' just
+      // raised, but yeah 'excepthook' is fine).
+      // Anyway... let's ignore whatever nonsense this function returned...
       return
     }
 
@@ -59,10 +60,14 @@ private func run(file: URL) {
       _ = stderr.write(string: string) // Ignore error (again)
     }
 
-    // 'switch' is better than series of 'ifs', becuse it checks for exhaustiveness
+    // 'switch' is better than series of 'ifs', because it checks for exhaustiveness
     switch excepthookResult {
     case .value:
-      assert(false, "We checked that already (btw. you broke Swift...)")
+      assert(
+        false,
+        "We checked that already " +
+        "(btw. you broke Swift... https://www.youtube.com/watch?v=oyFQVZ2h0V8)"
+      )
 
     case .missing:
       write(string: "sys.excepthook is missing\n")
@@ -71,7 +76,7 @@ private func run(file: URL) {
 
     case .notCallable(let hookError),
          .error(let hookError):
-      // There was an error when displaying an error... well...
+      // There was an error when displaying an error... well... bad day?
 
       write(string: "Error in sys.excepthook:\n")
       Py.printRecursive(error: hookError, file: stderr)

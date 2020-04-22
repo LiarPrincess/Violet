@@ -131,7 +131,9 @@ internal final class Eval {
         break // go to next instruction
 
       case .unwind(let reason):
-        self.addExceptionContextIfNeeded(reason)
+        if case let .exception(error, fillTracebackEtc) = reason, fillTracebackEtc {
+          self.fillContextAndTraceback(error: error)
+        }
 
         switch self.unwind(reason: reason) {
         case .continueCodeExecution:
@@ -139,23 +141,53 @@ internal final class Eval {
         case .return(let value):
           return .value(value)
         case .reportExceptionToParentFrame(let e):
+          self.fillContextAndTracebackIfNotExceptionFromUnwind(
+            error: e,
+            unwindReason: reason
+          )
+
+          assert(e.getTraceback()?.getFrame() === self.frame)
           return .error(e)
         }
       }
     }
   }
 
-  /// Context - another exception during whose handling this exception was raised.
-  private func addExceptionContextIfNeeded(_ reason: UnwindReason) {
-    guard case let UnwindReason.exception(exception) = reason else {
+  private func fillContextAndTracebackIfNotExceptionFromUnwind(
+    error: PyBaseException,
+    unwindReason: UnwindReason
+  ) {
+    // Is the same exception as in unwind reason?
+    //
+    // DO NOT base this check on 'self.frame' and 'current line' being last
+    // entries in error traceback! We can raise the same error in a loop:
+    // e = BaseException('elsa')
+    // for i in range(0, 25):
+    //   try:
+    //     raise e // will append this frame/line multiple times
+    //   except BaseException as ee:
+    //     pass
+
+    if case let UnwindReason.exception(unwindError, _) = unwindReason,
+      error === unwindError {
       return
     }
 
-    Py.setContextUsingCurrentlyHandledExceptionFromDelegate(
-      on: exception,
-      overrideCurrentContext: false
-    )
+    self.fillContextAndTraceback(error: error)
   }
+
+  private func fillContextAndTraceback(error: PyBaseException) {
+    // Context - another exception during whose handling this exception was raised.
+    Py.setContextUsingCurrentlyHandledExceptionFromDelegate(
+      on: error,
+      overrideCurrent: false
+    )
+
+    // Traceback - stack trace, call stack etc.
+    Py.addTraceback(on: error, frame: self.frame)
+  }
+
+  // MARK: - Execute instruction
 
   /// Fetch instruction at `self.frame.instructionIndex`.
   /// Will also increment `PC`

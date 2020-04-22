@@ -72,7 +72,7 @@ extension VM {
     self.fillCells(in: frame, from: code)
     self.fillFree(in: frame, from: code, using: closure)
 
-    // TODO: Everything below following line:
+    // TODO: Everything below following line in CPython:
     /* Handle generator/coroutine/asynchronous generator */
 
     Debug.frameStart(frame: frame)
