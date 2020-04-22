@@ -117,13 +117,23 @@ public class PyInt: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
+  /// Python method! Use `reprRaw` instead.
   public func repr() -> PyResult<String> {
-    return .value(String(describing: self.value))
+    return .value(self.reprRaw())
+  }
+
+  public func reprRaw() -> String {
+    return String(describing: self.value)
   }
 
   // sourcery: pymethod = __str__
+  /// Python method! Use `strRaw` instead.
   public func str() -> PyResult<String> {
     return self.repr()
+  }
+
+  public func strRaw() -> String {
+    return self.reprRaw()
   }
 
   // MARK: - Convertible

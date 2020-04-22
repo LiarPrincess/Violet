@@ -70,9 +70,52 @@ extension Eval {
 
   // MARK: - Format
 
-  public func format(value: PyObject, format: PyObject?) -> PyObject {
-    // Use 'Py.format' after we write this function
+  /// PyObject *format_spec
+  /// PyObject_Format(PyObject *obj, PyObject *)
+  public func format(value: PyObject,
+                     format _format: PyObject?) -> PyResult<PyObject> {
+    // Move this to 'Py.format' after we finish the whole implementation.
+    let format: PyString?
+    switch self.parseFormat(format: _format) {
+    case .nil: format = nil
+    case .string(let s): format = s
+    case .error(let e): return .error(e)
+    }
+
+    // Fast path for common types
+    let isFormatEmpty = format?.value.isEmpty ?? true
+    if isFormatEmpty {
+      if let str = value as? PyString {
+        return .value(str)
+      }
+
+      if let int = value as? PyInt {
+        let str = int.reprRaw()
+        return .value(Py.newString(str))
+      }
+    }
+
     self.unimplemented()
+  }
+
+  private enum ParseFormatResult {
+    case `nil`
+    case string(PyString)
+    case error(PyBaseException)
+  }
+
+  private func parseFormat(format: PyObject?) -> ParseFormatResult {
+    guard let format = format else {
+      return .nil
+    }
+
+    guard let str = format as? PyString else {
+      let t = format.typeName
+      let msg = "Format specifier must be a string, not \(t)"
+      return .error(Py.newTypeError(msg: msg))
+    }
+
+    return .string(str)
   }
 
   // MARK: - Unimplemented

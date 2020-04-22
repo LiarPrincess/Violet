@@ -22,10 +22,13 @@ extension Eval {
       return .ok
     }
 
-    let formatted = self.format(value: value, format: format)
-    self.stack.push(formatted)
-
-    return .ok
+    switch self.format(value: value, format: format) {
+    case let .value(o):
+      self.stack.push(o)
+      return .ok
+    case let .error(e):
+      return .exception(e)
+    }
   }
 
   private func convert(value: PyObject,
