@@ -15,11 +15,17 @@ for t in implemented.types:
   members_from_sourcery = implemented.types[t]
 
   ignored = [
-    '__init_subclass__', '__subclasshook__', # TODO: Later
-    '__reduce__', '__reduce_ex__', # Pickle
-    '__getnewargs__',  # Pickle (probably)
-    '__length_hint__', '__setstate__', # Iterator methods
-    '__sizeof__', # CPython implementation detail
+    # Those things are implemented on 'object' and then propagated downstream.
+    # We have them on 'object' and we don't need them on every possible superclass.
+    '__init_subclass__', '__subclasshook__',
+    # Pickle
+    '__reduce__', '__reduce_ex__',
+    # Pickle (probably)
+    '__getnewargs__',
+    # Iterator methods
+    '__length_hint__', '__setstate__',
+    # CPython implementation detail
+    '__sizeof__',
   ]
 
   for name, member in inspect.getmembers(t):
