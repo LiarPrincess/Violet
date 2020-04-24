@@ -25,6 +25,7 @@ private func emitAstBuilder(inputFile: URL) {
 
 // MARK: - Builder
 
+// swiftlint:disable:next function_body_length
 private func printBuilder(entities: [Entity]) {
   print("""
     /// Helper for creating AST nodes with increasing id.
