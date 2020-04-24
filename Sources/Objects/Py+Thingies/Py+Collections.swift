@@ -553,19 +553,23 @@ extension PyInstance {
   }
 
   public func toArray(iterable: PyObject) -> PyResult<[PyObject]> {
-    // TODO: This is actually quite risky. We should check if it is a heap type.
+    // Remember that user can override '__iter__' and '__next__'!
+    // We will assume that user types (the ones defined with 'class' statement)
+    // override those magic methods.
+    let isHeapType = iterable.type.isHeapType
+    let hasOverriden__iter__ = isHeapType
 
-    if let sequence = iterable as? PySequenceType {
+    if let sequence = iterable as? PySequenceType, !hasOverriden__iter__ {
       return .value(sequence.data.elements)
     }
 
-    if let bytes = iterable as? PyBytesType {
+    if let bytes = iterable as? PyBytesType, !hasOverriden__iter__ {
       let scalars = bytes.data.scalars
       let byteObjects = scalars.map(self.newInt)
       return .value(byteObjects)
     }
 
-    if let string = iterable as? PyString {
+    if let string = iterable as? PyString, !hasOverriden__iter__ {
       let scalars = string.data.scalars
       let characterObjects = scalars.map { self.intern(String($0)) }
       return .value(characterObjects)
