@@ -170,20 +170,8 @@ import Core
   print(f'''\
 // MARK: - Owner protocols
 
-// This protocol is here only to check if we have consistent '__new__' signatures.
-// It will not be used in 'Fast' dispatch.
-private protocol __new__Owner {{
-  static func pyNew(type: PyType, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
-}}
-
-// This protocol is here only to check if we have consistent '__init__' signatures.
-// It will not be used in 'Fast' dispatch.
-private protocol __init__Owner {{
-  associatedtype Zelf: PyObject
-  static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone>
-}}
-
-// Special protocol to get '__dict__' property.
+// This is the only protocol marked as 'internal'.
+/// Special protocol to get '__dict__' property.
 internal protocol __dict__Owner {{
   func getDict() -> PyDict
 }}
@@ -378,14 +366,6 @@ private func hasOverridenBuiltinMethod(
       python_name = meth.python_name
       protocol_name = func_protocol_name(python_name)
       add_protocol_conformance(protocol_name)
-
-    # From static funcions we have only '__new__' and '__init__'.
-    for meth in t.static_functions:
-      python_name = meth.python_name
-
-      if python_name in ['__new__', '__init__']:
-        protocol_name = func_protocol_name(python_name)
-        entry.protocols.append(protocol_name)
 
   for entry in entries_by_swift_type.values():
     swift_type = entry.swift_type

@@ -62,20 +62,8 @@ import Core
 
 // MARK: - Owner protocols
 
-// This protocol is here only to check if we have consistent '__new__' signatures.
-// It will not be used in 'Fast' dispatch.
-private protocol __new__Owner {
-  static func pyNew(type: PyType, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
-}
-
-// This protocol is here only to check if we have consistent '__init__' signatures.
-// It will not be used in 'Fast' dispatch.
-private protocol __init__Owner {
-  associatedtype Zelf: PyObject
-  static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone>
-}
-
-// Special protocol to get '__dict__' property.
+// This is the only protocol marked as 'internal'.
+/// Special protocol to get '__dict__' property.
 internal protocol __dict__Owner {
   func getDict() -> PyDict
 }
@@ -950,16 +938,13 @@ extension PyByteArray:
   __rmul__Owner,
   __iter__Owner,
   __setitem__Owner,
-  __delitem__Owner,
-  __init__Owner,
-  __new__Owner
+  __delitem__Owner
 { }
 
 extension PyByteArrayIterator:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PyBytes:
@@ -979,15 +964,13 @@ extension PyBytes:
   __add__Owner,
   __mul__Owner,
   __rmul__Owner,
-  __iter__Owner,
-  __new__Owner
+  __iter__Owner
 { }
 
 extension PyBytesIterator:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PyCallableIterator:
@@ -1009,9 +992,7 @@ extension PyCell:
 
 extension PyClassMethod:
   __dict__Owner,
-  __isabstractmethod__Owner,
-  __init__Owner,
-  __new__Owner
+  __isabstractmethod__Owner
 { }
 
 extension PyCode:
@@ -1057,8 +1038,7 @@ extension PyComplex:
   __mod__Owner,
   __rmod__Owner,
   __divmod__Owner,
-  __rdivmod__Owner,
-  __new__Owner
+  __rdivmod__Owner
 { }
 
 extension PyDict:
@@ -1077,16 +1057,13 @@ extension PyDict:
   __delitem__Owner,
   __contains__Owner,
   __iter__Owner,
-  keysOwner,
-  __new__Owner,
-  __init__Owner
+  keysOwner
 { }
 
 extension PyDictItemIterator:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PyDictItems:
@@ -1101,15 +1078,13 @@ extension PyDictItems:
   __getattribute__Owner,
   __len__Owner,
   __contains__Owner,
-  __iter__Owner,
-  __new__Owner
+  __iter__Owner
 { }
 
 extension PyDictKeyIterator:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PyDictKeys:
@@ -1124,15 +1099,13 @@ extension PyDictKeys:
   __getattribute__Owner,
   __len__Owner,
   __contains__Owner,
-  __iter__Owner,
-  __new__Owner
+  __iter__Owner
 { }
 
 extension PyDictValueIterator:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PyDictValues:
@@ -1144,22 +1117,19 @@ extension PyDictValues:
 
 extension PyEllipsis:
   __repr__Owner,
-  __getattribute__Owner,
-  __new__Owner
+  __getattribute__Owner
 { }
 
 extension PyEnumerate:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PyFilter:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PyFloat:
@@ -1195,8 +1165,7 @@ extension PyFloat:
   __divmod__Owner,
   __rdivmod__Owner,
   __round__Owner,
-  __trunc__Owner,
-  __new__Owner
+  __trunc__Owner
 { }
 
 extension PyFrame:
@@ -1225,8 +1194,7 @@ extension PyFrozenSet:
   __rxor__Owner,
   __sub__Owner,
   __rsub__Owner,
-  __iter__Owner,
-  __new__Owner
+  __iter__Owner
 { }
 
 extension PyFunction:
@@ -1280,8 +1248,7 @@ extension PyInt:
   __xor__Owner,
   __rxor__Owner,
   __invert__Owner,
-  __round__Owner,
-  __new__Owner
+  __round__Owner
 { }
 
 extension PyIterator:
@@ -1311,30 +1278,25 @@ extension PyList:
   __iadd__Owner,
   __mul__Owner,
   __rmul__Owner,
-  __imul__Owner,
-  __new__Owner,
-  __init__Owner
+  __imul__Owner
 { }
 
 extension PyListIterator:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PyListReverseIterator:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PyMap:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PyMethod:
@@ -1356,9 +1318,7 @@ extension PyModule:
   __repr__Owner,
   __getattribute__Owner,
   __setattr__Owner,
-  __dir__Owner,
-  __new__Owner,
-  __init__Owner
+  __dir__Owner
 { }
 
 extension PyNamespace:
@@ -1371,26 +1331,21 @@ extension PyNamespace:
   __ge__Owner,
   __repr__Owner,
   __getattribute__Owner,
-  __setattr__Owner,
-  __init__Owner
+  __setattr__Owner
 { }
 
 extension PyNone:
   __repr__Owner,
   __bool__Owner,
-  __getattribute__Owner,
-  __new__Owner
+  __getattribute__Owner
 { }
 
 extension PyNotImplemented:
-  __repr__Owner,
-  __new__Owner
+  __repr__Owner
 { }
 
 extension PyProperty:
-  __getattribute__Owner,
-  __new__Owner,
-  __init__Owner
+  __getattribute__Owner
 { }
 
 extension PyRange:
@@ -1408,22 +1363,19 @@ extension PyRange:
   __contains__Owner,
   __getitem__Owner,
   __reversed__Owner,
-  __iter__Owner,
-  __new__Owner
+  __iter__Owner
 { }
 
 extension PyRangeIterator:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PyReversed:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PySet:
@@ -1446,16 +1398,13 @@ extension PySet:
   __rxor__Owner,
   __sub__Owner,
   __rsub__Owner,
-  __iter__Owner,
-  __new__Owner,
-  __init__Owner
+  __iter__Owner
 { }
 
 extension PySetIterator:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PySlice:
@@ -1467,15 +1416,12 @@ extension PySlice:
   __ge__Owner,
   __hash__Owner,
   __repr__Owner,
-  __getattribute__Owner,
-  __new__Owner
+  __getattribute__Owner
 { }
 
 extension PyStaticMethod:
   __dict__Owner,
-  __isabstractmethod__Owner,
-  __init__Owner,
-  __new__Owner
+  __isabstractmethod__Owner
 { }
 
 extension PyString:
@@ -1495,22 +1441,18 @@ extension PyString:
   __add__Owner,
   __mul__Owner,
   __rmul__Owner,
-  __iter__Owner,
-  __new__Owner
+  __iter__Owner
 { }
 
 extension PyStringIterator:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PySuper:
   __repr__Owner,
-  __getattribute__Owner,
-  __new__Owner,
-  __init__Owner
+  __getattribute__Owner
 { }
 
 extension PyTextFile:
@@ -1520,8 +1462,7 @@ extension PyTextFile:
 
 extension PyTraceback:
   __getattribute__Owner,
-  __dir__Owner,
-  __new__Owner
+  __dir__Owner
 { }
 
 extension PyTuple:
@@ -1540,15 +1481,13 @@ extension PyTuple:
   __iter__Owner,
   __add__Owner,
   __mul__Owner,
-  __rmul__Owner,
-  __new__Owner
+  __rmul__Owner
 { }
 
 extension PyTupleIterator:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 extension PyType:
@@ -1559,16 +1498,13 @@ extension PyType:
   __getattribute__Owner,
   __setattr__Owner,
   __dir__Owner,
-  __call__Owner,
-  __new__Owner,
-  __init__Owner
+  __call__Owner
 { }
 
 extension PyZip:
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner,
-  __new__Owner
+  __next__Owner
 { }
 
 // PyArithmeticError does not add any new protocols to PyException
@@ -1585,9 +1521,7 @@ extension PyBaseException:
   __repr__Owner,
   __str__Owner,
   __getattribute__Owner,
-  __setattr__Owner,
-  __new__Owner,
-  __init__Owner
+  __setattr__Owner
 { }
 
 // PyBlockingIOError does not add any new protocols to PyOSError
