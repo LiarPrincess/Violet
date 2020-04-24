@@ -30,6 +30,7 @@ private func printVisitor(type: String, classes: [ClassDef]) {
 
   print("/// Visitor for AST nodes.")
   print("public protocol \(type)Visitor {")
+  print()
   print("  /// Visit result.")
   print("  associatedtype \(type)Result")
   print()
@@ -43,9 +44,10 @@ private func printVisitor(type: String, classes: [ClassDef]) {
 
   print("/// Visitor for AST nodes.")
   print("///")
-  print("/// Each function has additional `payload` argument to pass data between")
-  print("/// nodes (so that we don't have to use fileds/globals which is always awkard).")
+  print("/// Each function has an additional `payload` argument to pass data between")
+  print("/// nodes (so that we don't have to use fileds/globals which is always awkward).")
   print("public protocol \(type)VisitorWithPayload: AnyObject {")
+  print()
   print("  /// Visit result.")
   print("  associatedtype \(type)Result")
   print("  /// Additional value passed to all of the calls.")

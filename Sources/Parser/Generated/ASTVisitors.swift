@@ -11,6 +11,7 @@ import Foundation
 
 /// Visitor for AST nodes.
 public protocol ASTVisitor {
+
   /// Visit result.
   associatedtype ASTResult
 
@@ -21,9 +22,10 @@ public protocol ASTVisitor {
 
 /// Visitor for AST nodes.
 ///
-/// Each function has additional `payload` argument to pass data between
-/// nodes (so that we don't have to use fileds/globals which is always awkard).
+/// Each function has an additional `payload` argument to pass data between
+/// nodes (so that we don't have to use fileds/globals which is always awkward).
 public protocol ASTVisitorWithPayload: AnyObject {
+
   /// Visit result.
   associatedtype ASTResult
   /// Additional value passed to all of the calls.
@@ -38,6 +40,7 @@ public protocol ASTVisitorWithPayload: AnyObject {
 
 /// Visitor for AST nodes.
 public protocol StatementVisitor {
+
   /// Visit result.
   associatedtype StatementResult
 
@@ -71,9 +74,10 @@ public protocol StatementVisitor {
 
 /// Visitor for AST nodes.
 ///
-/// Each function has additional `payload` argument to pass data between
-/// nodes (so that we don't have to use fileds/globals which is always awkard).
+/// Each function has an additional `payload` argument to pass data between
+/// nodes (so that we don't have to use fileds/globals which is always awkward).
 public protocol StatementVisitorWithPayload: AnyObject {
+
   /// Visit result.
   associatedtype StatementResult
   /// Additional value passed to all of the calls.
@@ -111,6 +115,7 @@ public protocol StatementVisitorWithPayload: AnyObject {
 
 /// Visitor for AST nodes.
 public protocol ExpressionVisitor {
+
   /// Visit result.
   associatedtype ExpressionResult
 
@@ -149,9 +154,10 @@ public protocol ExpressionVisitor {
 
 /// Visitor for AST nodes.
 ///
-/// Each function has additional `payload` argument to pass data between
-/// nodes (so that we don't have to use fileds/globals which is always awkard).
+/// Each function has an additional `payload` argument to pass data between
+/// nodes (so that we don't have to use fileds/globals which is always awkward).
 public protocol ExpressionVisitorWithPayload: AnyObject {
+
   /// Visit result.
   associatedtype ExpressionResult
   /// Additional value passed to all of the calls.
