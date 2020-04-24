@@ -1,14 +1,119 @@
 import Core
 import Foundation
 
+// swiftlint:disable file_length
+
+/// `Py` represents a `Python` context.
+///
+/// You can use it to interact with `Python` objects.
+/// For example: to call `getattr` function on `elsa` instance you call
+/// `Py.getattr(object: elsa, name: "let_it_go")`.
+///
+/// # Global variable
+/// `Py` is a global variable .
+/// Yes, we know it is bad (at least that's whay they say in every programming
+/// book/manual).
+/// The thing is that it is way easier to use than alternative.
+///
+/// And the alternative would be to pass additional `py` parameter to every
+/// function that needs to act on context.
+/// The thing is: 95% of our functions (in `Objects` module) need to call some
+/// `Python` function (directly on indirectly).
+/// And having this artificial parameter would be a pure boilerplate
+/// (in addition to our usual error handling boilerplate).
+///
+/// I would argue that at this point just making it global is an acceptable
+/// trade-off/simplification.
+///
+/// Btw. in some early version of `Objects` we actually had `PyContext` type
+/// that we passed to every function (or injected in `ctor`).
+/// The user/programmer experience was... not that great.
+/// Most notably in functions which had 2 `PyObject` arguments that could
+/// potentially come from 2 different `PyContexts`. In such case we had to decide
+/// if we want to allocate result object (think `3` in `1 + 2 = 3`)
+/// in context of object `1` or `2`. Now we just use global `Py` context.
+///
+/// # Instance vs static
+/// `Py` is heap-allocated instance of `PyInstance` class.
+/// There is an interesting aternative of making `Py` static:
+/// ```Swift
+/// public enum Py {
+///   public static func getattr() { thingies... }
+/// ).
+/// ```
+///
+/// So, lets talk about this  (spoiler: both models are 'ok', we use instance
+/// because we started this way, we may transition to `static` at some point).
+///
+/// ## Instance (current model)
+/// Pros:
+/// - we can have multiple `PyInstances` at the same time (for example 1 per thread)
+/// - encapsulation? object-orientation fetish? (because we need to have dem
+///   instances?)
+///
+/// We use it mostly because in early days we had `PyContext` instance passed
+/// to every function (or injected in `ctor`).
+/// Then we moved to global `Py`, so naturally we made `Py` also an instance.
+/// Making it static would require bigger mental-leap.
+///
+/// And about that 'multiple `PyInstances`', we can do following:
+/// ```Swift
+/// public var Py: PyInstance {
+///   // get `PyInstance` from thread local storage (TLS) or something, idk...
+/// }
+/// ```
+///
+/// That would allow us to have `Py` per thread.
+/// Not really sure what we would use this for, but we can.
+/// (maybe multi-threaded testing? but we can just `fork` to run each test in
+/// separate process, we don't really  have app domains from `.Net`.).
+///
+/// ## Static
+/// Pros:
+/// - easier mental model
+/// - faster? - but we don't care about this
+///
+/// That would require us to make some code changes.
+/// Not only in `Py` but also in other types.
+///
+/// For example we could make `BuiltinTypes` an `enum` a with static property for
+/// each type.
+/// For source compatibility we would make `Py.types` property an `typealias`.
+/// Note that, even though `BuiltinTypes` will be `static`, the types itself will
+/// still be allocated on a heap (although semantic-wise types are reference types,
+/// so it kind of makes sense).
+///
+/// ## Note about 'heap types'
+/// (this is partially connected to 'Instance vs static' debate)
+///
+/// Heap type is a type created by user with 'class' statement
+/// (see 'Generated/HeapTypes.swift' for more details).
+///
+/// This name comes from `CPython`.
+/// Opposite of 'heap type' is 'builtin type' that uses static allocation
+/// (I'm talking about core `CPython` and not about extensions).
+/// Example (for `int` type defined in 'Objects/longobject.c'):
+/// ```C
+/// PyTypeObject PyLong_Type = {
+///   PyVarObject_HEAD_INIT(&PyType_Type, 0)
+///   "int",                                      /* tp_name */
+///   ... (and so on...)
+/// }
+/// ```
+///
+/// In `Violet` all of the types are heap-allocated (even builtin ones).
+/// But, we will still use 'heap-type' name with the same meaning as in `CPython`.
+/// Partially because they leak 'heap-type' implementation-detail in error
+/// messages, so we assume that this is part of the lingo.
 public private(set) var Py = PyInstance()
 
+/// Read `Py` documentation.
 public final class PyInstance {
 
   // MARK: - Builtins
 
   /// Interned `true` value.
-  public private(set) lazy var `true`  = PyBool(value: true)
+  public private(set) lazy var `true` = PyBool(value: true)
   /// Interned `false` value.
   public private(set) lazy var `false` = PyBool(value: false)
   /// Interned `None` value.
@@ -160,6 +265,7 @@ public final class PyInstance {
     self._config = config
     self._delegate = delegate
     self._fileSystem = fileSystem
+    assert(self.isInitialized)
 
     // At this point everything should be initialized,
     // which means that from now on we are able to create PyObjects.
