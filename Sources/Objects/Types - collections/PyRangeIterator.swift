@@ -66,7 +66,7 @@ public class PyRangeIterator: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyRangeIterator> {
     return .typeError("cannot create 'range_iterator' instances")
   }
 }

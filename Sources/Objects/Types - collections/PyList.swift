@@ -479,7 +479,7 @@ public class PyList: PyObject, PySequenceType {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyList> {
     let isBuiltin = type === Py.types.list
     let alloca = isBuiltin ?
       PyList.init(type:data:) :

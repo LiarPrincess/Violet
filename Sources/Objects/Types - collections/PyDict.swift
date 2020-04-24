@@ -799,7 +799,7 @@ public class PyDict: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyDict> {
     let isBuiltin = type === Py.types.dict
     let alloca = isBuiltin ?
       PyDict.init(type:data:) :

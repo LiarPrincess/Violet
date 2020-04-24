@@ -150,7 +150,7 @@ public class PyTraceback: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyTraceback> {
     switch newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 4, "Invalid required argument count.")
@@ -176,7 +176,7 @@ public class PyTraceback: PyObject {
                             next _next: PyObject,
                             frame _frame: PyObject,
                             lastInstruction _lastInstruction: PyObject,
-                            lineNo _lineNo: PyObject) -> PyResult<PyObject> {
+                            lineNo _lineNo: PyObject) -> PyResult<PyTraceback> {
     let fn = "TracebackType.__new__()"
 
     var next: PyTraceback?

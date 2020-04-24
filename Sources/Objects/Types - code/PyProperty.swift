@@ -248,7 +248,7 @@ public class PyProperty: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyProperty> {
     let isBuiltin = type === Py.types.property
     let alloca = isBuiltin ? PyProperty.init(type:) : PyPropertyHeap.init(type:)
     return .value(alloca(type))

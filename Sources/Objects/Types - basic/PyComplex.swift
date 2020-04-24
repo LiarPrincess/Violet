@@ -438,7 +438,7 @@ public class PyComplex: PyObject {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PyComplex> {
     switch newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
@@ -454,7 +454,7 @@ public class PyComplex: PyObject {
 
   private class func pyNew(type: PyType,
                            arg0: PyObject?,
-                           arg1: PyObject?) -> PyResult<PyObject> {
+                           arg1: PyObject?) -> PyResult<PyComplex> {
     // Special-case for a identity.
     if let complex = arg0 as? PyComplex, arg1 == nil {
       return .value(complex)

@@ -619,7 +619,7 @@ public class PyBytes: PyObject, PyBytesType {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PyBytes> {
     switch newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
@@ -640,9 +640,11 @@ public class PyBytes: PyObject, PyBytesType {
   private static func pyNew(type: PyType,
                             object: PyObject?,
                             encoding: PyObject?,
-                            errors: PyObject?) -> PyResult<PyObject> {
+                            errors: PyObject?) -> PyResult<PyBytes> {
     let isBuiltin = type === Py.types.bytes
-    let alloca = isBuiltin ? newBytes(type:value:) : PyBytesHeap.init(type:value:)
+    let alloca = isBuiltin ?
+      newBytes(type:value:) :
+      PyBytesHeap.init(type:value:)
 
     return PyBytesData
       .handleNewArgs(object: object, encoding: encoding, errors: errors)

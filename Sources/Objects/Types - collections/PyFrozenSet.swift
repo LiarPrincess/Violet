@@ -290,7 +290,7 @@ public class PyFrozenSet: PyObject, PySetType {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PyFrozenSet> {
     let isBuiltin = type === Py.types.frozenset
     if isBuiltin {
       if let e = ArgumentParser.noKwargsOrError(fnName: "frozenset",

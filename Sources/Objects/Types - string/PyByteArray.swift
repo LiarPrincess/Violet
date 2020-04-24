@@ -613,7 +613,7 @@ public class PyByteArray: PyObject, PyBytesType {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PyByteArray> {
     let isBuiltin = type === Py.types.bytes
     let alloca = isBuiltin ? newByteArray(type:value:) : PyByteArrayHeap.init(type:value:)
 

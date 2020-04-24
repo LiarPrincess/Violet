@@ -733,7 +733,7 @@ public class PyString: PyObject {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PyString> {
     switch newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
@@ -754,7 +754,7 @@ public class PyString: PyObject {
   private static func pyNew(type: PyType,
                             object: PyObject?,
                             encoding encodingObj: PyObject?,
-                            errors errorObj: PyObject?) -> PyResult<PyObject> {
+                            errors errorObj: PyObject?) -> PyResult<PyString> {
     let isBuiltin = type === Py.types.str
     let alloca = isBuiltin ?
       newString(type:value:) :

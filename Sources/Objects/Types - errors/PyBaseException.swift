@@ -480,7 +480,7 @@ public class PyBaseException: PyObject {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
     return .value(PyBaseException(args: argsTuple))
   }

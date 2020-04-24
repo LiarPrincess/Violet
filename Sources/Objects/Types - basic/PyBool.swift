@@ -116,7 +116,7 @@ public class PyBool: PyInt {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyInt> {
     if let e = ArgumentParser.noKwargsOrError(fnName: "bool", kwargs: kwargs) {
       return .error(e)
     }
@@ -132,6 +132,6 @@ public class PyBool: PyInt {
       return .value(Py.false)
     }
 
-    return Py.isTrue(args[0]).map { $0 as PyObject }
+    return Py.isTrue(args[0]).map { $0 as PyInt }
   }
 }

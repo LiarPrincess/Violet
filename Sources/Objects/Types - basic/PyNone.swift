@@ -109,7 +109,7 @@ public class PyNone: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     let noKwargs = kwargs?.data.isEmpty ?? true
     guard args.isEmpty && noKwargs else {
       return .typeError("NoneType takes no arguments")

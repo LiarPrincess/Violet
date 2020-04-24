@@ -52,7 +52,7 @@ public class PyEllipsis: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyEllipsis> {
     let noKwargs = kwargs?.data.isEmpty ?? true
     guard args.isEmpty && noKwargs else {
       return .typeError("EllipsisType takes no arguments")

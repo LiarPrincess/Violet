@@ -65,7 +65,7 @@ public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PySetIterator> {
     return .typeError("cannot create 'set_iterator' instances")
   }
 }

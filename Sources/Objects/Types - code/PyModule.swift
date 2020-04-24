@@ -169,7 +169,7 @@ public class PyModule: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyModule> {
     return .value(PyModule(type: type))
   }
 

@@ -31,11 +31,12 @@ extension PyBuiltinFunction {
 
   // MARK: - New
 
-  internal static func wrapNew(
+  internal static func wrapNew<Zelf: PyObject>(
     type: PyType,
     doc: String?,
-    fn: @escaping NewFunction,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    fn: @escaping NewFunction<Zelf>,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: NewFunctionWrapper(type: type, fn: fn),
@@ -50,7 +51,8 @@ extension PyBuiltinFunction {
     type: PyType,
     doc: String?,
     fn: @escaping InitFunction<Zelf>,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: InitFunctionWrapper(type: type, fn: fn),
@@ -65,7 +67,8 @@ extension PyBuiltinFunction {
     name: String,
     doc: String?,
     fn: @escaping ([PyObject], PyDict?) -> R,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: ArgsKwargsFunctionWrapper(name: name) { args, kwargs in
@@ -84,7 +87,8 @@ extension PyBuiltinFunction {
     doc: String?,
     fn: @escaping (Zelf) -> ([PyObject], PyDict?) -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: ArgsKwargsMethodWrapper(name: name) { arg0, args, kwargs in
@@ -103,7 +107,8 @@ extension PyBuiltinFunction {
     name: String,
     doc: String?,
     fn: @escaping () -> R,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: NullaryFunctionWrapper(name: name) {
@@ -122,7 +127,8 @@ extension PyBuiltinFunction {
     doc: String?,
     fn: @escaping (Zelf) -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: UnaryFunctionWrapper(name: name) { arg0 in
@@ -140,7 +146,8 @@ extension PyBuiltinFunction {
     doc: String?,
     fn: @escaping (Zelf) -> () -> R, // Read-only property disquised as method
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: UnaryFunctionWrapper(name: name) { arg0 in
@@ -158,7 +165,8 @@ extension PyBuiltinFunction {
     name: String,
     doc: String?,
     fn: @escaping (PyObject) -> R,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: UnaryFunctionWrapper(name: name) { arg0 in
@@ -175,7 +183,8 @@ extension PyBuiltinFunction {
     name: String,
     doc: String?,
     fn: @escaping (PyObject?) -> R,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: UnaryFunctionOptWrapper(name: name) { arg0 in
@@ -194,7 +203,8 @@ extension PyBuiltinFunction {
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject) -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: BinaryFunctionWrapper(name: name) { arg0, arg1 in
@@ -212,7 +222,8 @@ extension PyBuiltinFunction {
     name: String,
     doc: String?,
     fn: @escaping (PyObject, PyObject) -> R,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: BinaryFunctionWrapper(name: name) { arg0, arg1 in
@@ -231,7 +242,8 @@ extension PyBuiltinFunction {
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject?) -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: BinaryFunctionOptWrapper(name: name) { arg0, arg1 in
@@ -249,7 +261,8 @@ extension PyBuiltinFunction {
     name: String,
     doc: String?,
     fn: @escaping (PyObject, PyObject?) -> R,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: BinaryFunctionOptWrapper(name: name) { arg0, arg1 in
@@ -268,7 +281,8 @@ extension PyBuiltinFunction {
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject) -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: TernaryFunctionWrapper(name: name) { arg0, arg1, arg2 in
@@ -286,7 +300,8 @@ extension PyBuiltinFunction {
     name: String,
     doc: String?,
     fn: @escaping (PyObject, PyObject, PyObject) -> R,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: TernaryFunctionWrapper(name: name) { arg0, arg1, arg2 in
@@ -305,7 +320,8 @@ extension PyBuiltinFunction {
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject?) -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: TernaryFunctionOptWrapper(name: name) { arg0, arg1, arg2 in
@@ -323,7 +339,8 @@ extension PyBuiltinFunction {
     name: String,
     doc: String?,
     fn: @escaping (PyObject, PyObject, PyObject?) -> R,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: TernaryFunctionOptWrapper(name: name) { arg0, arg1, arg2 in
@@ -342,7 +359,8 @@ extension PyBuiltinFunction {
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject?, PyObject?) -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: TernaryFunctionOptOptWrapper(name: name) { arg0, arg1, arg2 in
@@ -360,7 +378,8 @@ extension PyBuiltinFunction {
     name: String,
     doc: String?,
     fn: @escaping (PyObject, PyObject?, PyObject?) -> R,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: TernaryFunctionOptOptWrapper(name: name) { arg0, arg1, arg2 in
@@ -379,7 +398,8 @@ extension PyBuiltinFunction {
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject, PyObject) -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: QuartaryFunctionWrapper(name: name) { arg0, arg1, arg2, arg3 in
@@ -399,7 +419,8 @@ extension PyBuiltinFunction {
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject, PyObject?) -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: QuartaryFunctionOptWrapper(name: name) { arg0, arg1, arg2, arg3 in
@@ -419,7 +440,8 @@ extension PyBuiltinFunction {
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject?, PyObject?) -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: QuartaryFunctionOptOptWrapper(name: name) { arg0, arg1, arg2, arg3 in
@@ -439,7 +461,8 @@ extension PyBuiltinFunction {
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject?, PyObject?, PyObject?) -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
-    module: PyString? = nil) -> PyBuiltinFunction {
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: QuartaryFunctionOptOptOptWrapper(name: name) { arg0, arg1, arg2, arg3 in

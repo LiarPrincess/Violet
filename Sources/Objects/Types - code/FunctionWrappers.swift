@@ -13,17 +13,36 @@ internal protocol FunctionWrapper {
 
 // MARK: - New
 
-internal typealias NewFunction = (PyType, [PyObject], PyDict?) -> PyResult<PyObject>
+internal typealias NewFunction<Zelf: PyObject> =
+  (PyType, [PyObject], PyDict?) -> PyResult<Zelf>
 
 /// Wrapper dedicated to `__new__` function
 internal struct NewFunctionWrapper: FunctionWrapper {
 
   internal let type: PyType
-  internal let fn: NewFunction
+  internal let fn: NewFunction<PyObject>
 
   internal var name: String {
     let typeName = self.type.getName()
     return "\(typeName).__new__"
+  }
+
+  internal init<Zelf: PyObject>(type: PyType,
+                                fn: @escaping NewFunction<Zelf>) {
+    self.type = type
+    self.fn = NewFunctionWrapper.eraseZelf(type: type, fn: fn)
+  }
+
+  /// Convert from `NewFunction<Zelf>` to `NewFunction<PyObject>`
+  private static func eraseZelf<Zelf: PyObject>(
+    type: PyType,
+    fn: @escaping NewFunction<Zelf>
+  ) -> NewFunction<PyObject> {
+
+    return { (type: PyType, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> in
+      let result = fn(type, args, kwargs)
+      return result.map { $0 as PyObject }
+    }
   }
 
   /// static PyObject *
@@ -75,7 +94,8 @@ internal struct InitFunctionWrapper: FunctionWrapper {
   /// Convert from `InitFunction<Zelf>` to `InitFunction<PyObject>`
   private static func eraseZelf<Zelf: PyObject>(
     type: PyType,
-    fn: @escaping InitFunction<Zelf>) -> InitFunction<PyObject> {
+    fn: @escaping InitFunction<Zelf>
+  ) -> InitFunction<PyObject> {
 
     return { (object: PyObject, args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> in
       guard let zelf = object as? Zelf else {

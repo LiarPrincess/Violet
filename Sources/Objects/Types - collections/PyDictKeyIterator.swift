@@ -65,7 +65,7 @@ public class PyDictKeyIterator: PyObject, OrderedDictionaryBackedIterator {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PyDictKeyIterator> {
     return .typeError("cannot create 'dict_keyiterator' instances")
   }
 }

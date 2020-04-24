@@ -35,11 +35,13 @@ if __name__ == '__main__':
     final = 'final ' if is_final(name) else ''
     builtins_type_variable = get_builtins_type_property_name(name)
 
+    class_name = 'Py' + name
+
     print(f'''\
 // MARK: - {name}
 
 // sourcery: pyerrortype = {name}, default, baseType, hasGC, baseExceptionSubclass
-public {final}class Py{name}: Py{base} {{
+public {final}class {class_name}: Py{base} {{
 
   override internal class var doc: String {{
     return "{doc}"
@@ -67,13 +69,13 @@ public {final}class Py{name}: Py{base} {{
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyObject> {{
+                                     kwargs: PyDict?) -> PyResult<PyBaseException> {{
     let argsTuple = Py.newTuple(args)
     return .value(Py{name}(args: argsTuple))
   }}
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: Py{name},
+  internal class func pyInit(zelf: {class_name},
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyNone> {{
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)

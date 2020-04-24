@@ -115,7 +115,7 @@ public class PyEnumerate: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyEnumerate> {
     switch PyEnumerate.newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
@@ -132,7 +132,7 @@ public class PyEnumerate: PyObject {
 
   internal static func pyNew(type: PyType,
                              iterable: PyObject,
-                             startFrom index: PyObject?) -> PyResult<PyObject> {
+                             startFrom index: PyObject?) -> PyResult<PyEnumerate> {
     var startIndex = BigInt(0)
     if let index = index {
       switch IndexHelper.bigInt(index) {

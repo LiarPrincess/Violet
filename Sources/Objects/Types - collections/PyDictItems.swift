@@ -121,7 +121,7 @@ public class PyDictItems: PyObject, PyDictViewsShared {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PyDictItems> {
     return .typeError("cannot create 'dict_items' instances")
   }
 }

@@ -361,7 +361,7 @@ public class PySlice: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PySlice> {
     if let e = ArgumentParser.noKwargsOrError(fnName: "slice", kwargs: kwargs) {
       return .error(e)
     }

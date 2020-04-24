@@ -768,7 +768,7 @@ public class PyInt: PyObject {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PyInt> {
     switch newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
@@ -784,7 +784,7 @@ public class PyInt: PyObject {
 
   private static func pyNew(type: PyType,
                             x: PyObject?,
-                            base: PyObject?) -> PyResult<PyObject> {
+                            base: PyObject?) -> PyResult<PyInt> {
     let isBuiltin = type === Py.types.int
     let alloca = isBuiltin ? newInt(type:value:) : PyIntHeap.init(type:value:)
 

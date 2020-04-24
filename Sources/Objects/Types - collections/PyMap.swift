@@ -83,7 +83,7 @@ public class PyMap: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyMap> {
     if type === Py.types.map {
       if let e = ArgumentParser.noKwargsOrError(fnName: "map", kwargs: kwargs) {
         return .error(e)

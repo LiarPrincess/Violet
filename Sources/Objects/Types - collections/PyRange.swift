@@ -404,7 +404,7 @@ public class PyRange: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyRange> {
     if let e = ArgumentParser.noKwargsOrError(fnName: "range", kwargs: kwargs) {
       return .error(e)
     }
@@ -419,7 +419,7 @@ public class PyRange: PyObject {
 
     // Handle 1 argument
     if args.count == 1 {
-      return Py.newRange(stop: args[0]).map { $0 as PyObject }
+      return Py.newRange(stop: args[0])
     }
 
     // Handle 2 or 3 arguments
@@ -427,6 +427,5 @@ public class PyRange: PyObject {
     let stop = args[1]
     let step = args.count == 3 ? args[2] : nil
     return Py.newRange(start: start, stop: stop, step: step)
-      .map { $0 as PyObject }
   }
 }
