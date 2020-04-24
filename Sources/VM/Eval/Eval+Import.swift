@@ -33,15 +33,16 @@ extension Eval {
     let globals = self.globalSymbols
     let locals = self.localSymbols
 
-    let result = Py.__import__(
-      name: name,
-      globals: globals,
-      locals: locals,
-      fromList: fromList,
-      level: level
-    )
+    let __import__: PyObject
+    switch Py.get__import__() {
+    case let .value(i): __import__ = i
+    case let .error(e): return .error(e)
+    }
 
-    return result
+    let args = [name, globals, locals, fromList, level]
+    let callResult = Py.call(callable: __import__, args: args, kwargs: nil)
+
+    return callResult.asResult
   }
 
   // MARK: - Import star
