@@ -12,6 +12,7 @@ import Foundation
 /// Helper for creating AST nodes with increasing id.
 public struct ASTBuilder {
 
+  /// See `ASTNodeId` doc.
   public private(set) var nextId: ASTNodeId = 0
 
   private mutating func getNextId() -> ASTNodeId {
