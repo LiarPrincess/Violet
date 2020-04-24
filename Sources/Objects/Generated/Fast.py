@@ -20,6 +20,7 @@ generated_protocols = set([
   "__float__",
   "__floordiv__",
   "__ge__",
+  "__getattr__",
   "__getattribute__",
   "__getitem__",
   "__gt__",
@@ -239,6 +240,7 @@ internal protocol __dict__Owner {{
   add_protocol('__ior__',       '__ior__Owner',       'ior(_ other: PyObject)',       'PyResult<PyObject>')
   add_protocol('__idivmod__',   '__idivmod__Owner',   'idivmod(_ other: PyObject)',   'PyResult<PyObject>')
   add_protocol('__complex__',   '__complex__Owner',   'asComplex()',                  'PyObject')
+  add_protocol('__getattr__',   '__getattr__Owner',   'getAttribute(name: PyObject)', 'PyResult<PyObject>')
 
   for protocol_name in sorted(protocols_by_name):
     protocol = protocols_by_name[protocol_name]

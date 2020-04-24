@@ -1,7 +1,7 @@
-import Foundation
+import VM
 import Core
 import Objects
-import VM
+import Foundation
 
 // swiftlint:disable:next function_body_length
 private func run(file: URL) {
@@ -38,6 +38,10 @@ private func run(file: URL) {
     }
 
   case .error(let error):
+    func haltForInspection() -> Never {
+      exit(1)
+    }
+
     // CPython: PyErr_PrintEx(int set_sys_last_vars)
     let excepthookResult = Py.sys.callExcepthook(error: error)
 
@@ -45,15 +49,15 @@ private func run(file: URL) {
       // Everything is 'ok' (at least in 'excepthook', the whole 'VM.run' just
       // raised, but yeah 'excepthook' is fine).
       // Anyway... let's ignore whatever nonsense this function returned...
-      return
+      haltForInspection()
     }
 
     // We will be printing to 'stderr' (probably).
     let stderr: PyTextFile
     switch Py.sys.getStderrOrNone() {
-    case .none: return // User requested no printing
+    case .none: haltForInspection() // User requested no printing
     case .file(let f): stderr = f
-    case .error: return // Ignore error, it's not like we can do anything
+    case .error: haltForInspection() // Ignore error, it's not like we can do anything
     }
 
     func write(string: String) {
@@ -73,6 +77,7 @@ private func run(file: URL) {
       write(string: "sys.excepthook is missing\n")
       // 'printRecursive' ignores any new errors (just like we are doing right now)
       Py.printRecursive(error: error, file: stderr)
+      haltForInspection()
 
     case .notCallable(let hookError),
          .error(let hookError):
@@ -83,6 +88,7 @@ private func run(file: URL) {
 
       write(string: "\nOriginal exception was:\n")
       Py.printRecursive(error: error, file: stderr)
+      haltForInspection()
     }
   }
 }
@@ -102,8 +108,6 @@ let testDir = mainDir.appendingPathComponent("PyTests")
 //run(file: testDir.appendingPathComponent("test_import.py"))
 //run(file: testDir.appendingPathComponent("test_class.py"))
 //run(file: testDir.appendingPathComponent("test_with.py"))
-
-run(file: mainDir.appendingPathComponent("xxx.py"))
 
 if false {
 

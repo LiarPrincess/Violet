@@ -427,7 +427,7 @@ During handling of the above exception, another exception occurred:
     // TODO: Print line when printing traceback
     // (Remember that 'file' parameter is the file we are writing TO,
     //  not an actual file from which we have to print line! Use 'code' for this.)
-    let line = "    ... (some code, probably, idk, not implemented, let it go)\n"
+    let line = "    ... (some code, probably, idk, not implemented)\n"
     return self.write(file: file, string: line)
   }
 

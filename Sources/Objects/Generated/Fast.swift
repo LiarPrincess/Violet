@@ -95,6 +95,7 @@ private protocol __eq__Owner { func isEqual(_ other: PyObject) -> CompareResult 
 private protocol __float__Owner { func asFloat() -> PyResult<PyFloat> }
 private protocol __floordiv__Owner { func floordiv(_ other: PyObject) -> PyResult<PyObject> }
 private protocol __ge__Owner { func isGreaterEqual(_ other: PyObject) -> CompareResult }
+private protocol __getattr__Owner { func getAttribute(name: PyObject) -> PyResult<PyObject> }
 private protocol __getattribute__Owner { func getAttribute(name: PyObject) -> PyResult<PyObject> }
 private protocol __getitem__Owner { func getItem(at index: PyObject) -> PyResult<PyObject> }
 private protocol __gt__Owner { func isGreater(_ other: PyObject) -> CompareResult }
@@ -317,6 +318,15 @@ internal enum Fast {
     if let owner = zelf as? __ge__Owner,
        !hasOverridenBuiltinMethod(object: zelf, selector: .__ge__) {
       return owner.isGreaterEqual(other)
+    }
+
+    return nil
+  }
+
+  internal static func __getattr__(_ zelf: PyObject, name: PyObject) -> PyResult<PyObject>? {
+    if let owner = zelf as? __getattr__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__getattr__) {
+      return owner.getAttribute(name: name)
     }
 
     return nil

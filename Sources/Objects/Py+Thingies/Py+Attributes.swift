@@ -11,7 +11,7 @@ extension PyInstance {
   public func getattr(object: PyObject,
                       name: String,
                       default: PyObject? = nil) -> PyResult<PyObject> {
-    let interned = self.interned(name: name)
+    let interned = self.asObject(name: name)
     return self.getattr(object: object,
                         name: interned,
                         default: `default`)
@@ -43,58 +43,114 @@ extension PyInstance {
       return .typeError("getattr(): attribute name must be string")
     }
 
-    // Fast protocol-based path
-    if let result = Fast.__getattribute__(object, name: name) {
-      return self.defaultIfAttributeError(result: result, default: `default`)
+    // https://docs.python.org/3.8/reference/datamodel.html#object.__getattribute__
+    let __getattribute__AttributeError: PyBaseException
+    switch self.call__getattribute__(object: object, name: name) {
+    case let .value(o):
+      return .value(o)
+    case let .error(e):
+      if e.isAttributeError {
+        __getattribute__AttributeError = e
+        break // There is still a hope! Let's ask '__getattr__'.
+      }
+
+      return .error(e)
     }
 
-    // Calling '__getattribute__' method could ask for '__getattribute__' attribute.
-    // Which would try to call '__getattribute__' to get '__getattribute__'.
-    // Which would... (you probably know where this is going...)
-    // Anyway... we have to break the cycle.
-    // Trust me it is not a hack, it is... yeah it is a hack.
-    if name.value == "__getattribute__" {
-      let result = AttributeHelper.getAttribute(from: object, name: name)
-      return self.defaultIfAttributeError(result: result, default: `default`)
-    }
-
-    // Slow python path
-    // attribute names tend to be reused, so we will intern them
-    switch self.callMethod(object: object, selector: .__getattribute__, arg: name) {
-    case .value(let o):
+    // https://docs.python.org/3.8/reference/datamodel.html#object.__getattr__
+    var __getattr__AttributeError: PyBaseException?
+    switch self.call__getattr__(object: object, name: name) {
+    case let .value(o):
       return .value(o)
     case .missingMethod:
-      let result = AttributeHelper.getAttribute(from: object, name: name)
-      return self.defaultIfAttributeError(result: result, default: `default`)
-    case .notCallable(let e):
+      break // __getattr__ is optional
+    case let .error(e):
+      if e.isAttributeError {
+        __getattr__AttributeError = e
+        break
+      }
+
       return .error(e)
-    case .error(let e):
-      return self.defaultIfAttributeError(error: e, default: `default`)
     }
+
+    if let d = `default` {
+      return .value(d)
+    }
+
+    // Try this:
+    // a = AttributeError('a')
+    // b = AttributeError('b')
+    //
+    // class Elsa:
+    //   def __getattribute__(self, attr): raise a
+    //   def __getattr__(self, attr): raise b
+    //
+    // e = Elsa()
+    // getattr(e, 'let_it_go')
+    //
+    // And then comment '__getattr__' line
+    let e = __getattr__AttributeError ?? __getattribute__AttributeError
+    return .error(e)
   }
 
-  private func defaultIfAttributeError(result: PyResult<PyObject>,
-                                       default: PyObject?) -> PyResult<PyObject> {
-    guard case let PyResult.error(e) = result else {
+  private func call__getattribute__(object: PyObject,
+                                    name: PyString) -> PyResult<PyObject> {
+    // Fast protocol-based path
+    if let result = Fast.__getattribute__(object, name: name) {
       return result
     }
 
-    return self.defaultIfAttributeError(error: e, default: `default`)
+    // Calling '__getattribute__' could ask for '__getattribute__' attribute.
+    // That would create a cycle which we have to break.
+    // Trust me it is not a hack, it is... yeah it is a hack.
+    if name.value == "__getattribute__" {
+      let result = AttributeHelper.getAttribute(from: object, name: name)
+      return result
+    }
+
+    // Slow python path
+    switch self.callMethod(object: object,
+                           selector: .__getattribute__,
+                           arg: name) {
+    case let .value(o):
+      return .value(o)
+    case let .missingMethod(e),
+         let .notCallable(e),
+         let .error(e):
+      return .error(e)
+    }
   }
 
-  private func defaultIfAttributeError(error: PyBaseException,
-                                       default: PyObject?) -> PyResult<PyObject> {
-    // We are only interested in AttributeError
-    guard error.isAttributeError else {
-      return .error(error)
+  private enum CallGetattrResult {
+    case value(PyObject)
+    case missingMethod
+    case error(PyBaseException)
+
+    fileprivate init(result: PyResult<PyObject>) {
+      switch result {
+      case let .value(o): self = .value(o)
+      case let .error(e): self = .error(e)
+      }
+    }
+  }
+
+  private func call__getattr__(object: PyObject,
+                               name: PyString) -> CallGetattrResult {
+    // Fast protocol-based path
+    if let result = Fast.__getattr__(object, name: name) {
+      return CallGetattrResult(result: result)
     }
 
-    // It is AttributeError. If we have `default` then return it.
-    if let def = `default` {
-      return .value(def)
+    // Slow python path
+    switch self.callMethod(object: object, selector: .__getattr__, arg: name) {
+    case .value(let o):
+      return .value(o)
+    case .missingMethod:
+      return .missingMethod
+    case .notCallable(let e),
+         .error(let e):
+      return .error(e)
     }
-
-    return .error(error)
   }
 
   // MARK: - Has
@@ -102,7 +158,7 @@ extension PyInstance {
   /// hasattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
   public func hasattr(object: PyObject, name: String) -> PyResult<Bool> {
-    let interned = self.interned(name: name)
+    let interned = self.asObject(name: name)
     return self.hasattr(object: object, name: interned)
   }
 
@@ -139,7 +195,7 @@ extension PyInstance {
   public func setattr(object: PyObject,
                       name: String,
                       value: PyObject) -> PyResult<PyNone> {
-    let interned = self.interned(name: name)
+    let interned = self.asObject(name: name)
     return self.setattr(object: object, name: interned, value: value)
   }
 
@@ -164,19 +220,20 @@ extension PyInstance {
       return result
     }
 
-    switch self.callMethod(object: object, selector: .__setattr__, args: [name, value]) {
+    let args = [name, value]
+    switch self.callMethod(object: object, selector: .__setattr__, args: args) {
     case .value:
       return .value(self.none)
     case .missingMethod:
-      let typeName = object.typeName
-      let operation = value is PyNone ? "del" : "assign to"
+      let t = object.typeName
+      let operation = value.isNone ? "del" : "assign to"
       let details = "(\(operation) \(name.reprRaw()))"
 
       switch self.hasattr(object: object, name: name) {
       case .value(true):
-        return .typeError("'\(typeName)' object has only read-only attributes \(details)")
+        return .typeError("'\(t)' object has only read-only attributes \(details)")
       case .value(false):
-        return .typeError("'\(typeName)' object has no attributes \(details)")
+        return .typeError("'\(t)' object has no attributes \(details)")
       case let .error(e):
         return .error(e)
       }
@@ -190,7 +247,7 @@ extension PyInstance {
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
   public func delattr(object: PyObject, name: String) -> PyResult<PyNone> {
-    let interned = self.interned(name: name)
+    let interned = self.asObject(name: name)
     return self.delattr(object: object, name: interned)
   }
 
@@ -240,7 +297,7 @@ extension PyInstance {
   // MARK: - Helpers
 
   /// We will intern attribute names, because they tend to be repeated a lot.
-  private func interned(name: String) -> PyString {
+  private func asObject(name: String) -> PyString {
     return self.intern(name)
   }
 }
