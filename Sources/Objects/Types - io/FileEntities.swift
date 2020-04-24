@@ -151,8 +151,9 @@ internal struct FileModeParser {
       case "t": if let e = result.setType(.text) { return .error(e) }
       case "b": if let e = result.setType(.binary) { return .error(e) }
       case "U":
-        // TODO: Deprecation warning: "'U' mode is deprecated"
-        break
+        if let e = Py.warn(type: .deprecation, msg: "'U' mode is deprecated") {
+          return .error(e)
+        }
       default: return .valueError("invalid mode: '\(string)'")
       }
     }
