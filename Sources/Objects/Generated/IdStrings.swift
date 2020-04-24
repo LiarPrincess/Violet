@@ -40,6 +40,7 @@ public struct IdString {
   public static let __add__ = Self.impl.__add__
   public static let __all__ = Self.impl.__all__
   public static let __and__ = Self.impl.__and__
+  public static let __annotations__ = Self.impl.__annotations__
   public static let __bool__ = Self.impl.__bool__
   public static let __build_class__ = Self.impl.__build_class__
   public static let __builtins__ = Self.impl.__builtins__
@@ -157,6 +158,7 @@ private struct IdStringImpl {
   fileprivate let __add__ = IdString(value: "__add__")
   fileprivate let __all__ = IdString(value: "__all__")
   fileprivate let __and__ = IdString(value: "__and__")
+  fileprivate let __annotations__ = IdString(value: "__annotations__")
   fileprivate let __bool__ = IdString(value: "__bool__")
   fileprivate let __build_class__ = IdString(value: "__build_class__")
   fileprivate let __builtins__ = IdString(value: "__builtins__")

@@ -86,4 +86,28 @@ extension Eval {
       return .exception(e)
     }
   }
+
+  // MARK: - Annotations
+
+  /// Checks whether Annotations is defined in locals(),
+  /// if not it is set up to an empty dict.
+  /// This opcode is only emitted if a class or module body contains variable
+  /// annotations statically.
+  internal func setupAnnotations() -> InstructionResult {
+    let locals = self.localSymbols
+
+    if let object = locals.get(id: .__annotations__) {
+      guard object is PyDict else {
+        let t = object.typeName
+        let msg = "You thought __annotations__ would be dict, but it was me Dio (\(t))!"
+        return .exception(Py.newTypeError(msg: msg))
+      }
+
+      return .ok
+    }
+
+    let result = Py.newDict()
+    locals.set(id: .__annotations__, to: result)
+    return .ok
+  }
 }

@@ -12,6 +12,7 @@ ids = [
   '__all__',
   '__and__',
   # '__anext__',
+  '__annotations__',
   # '__await__',
   # '__bases__',
   '__bool__',

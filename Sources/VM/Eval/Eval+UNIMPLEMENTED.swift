@@ -4,16 +4,6 @@ import Objects
 
 extension Eval {
 
-  // MARK: - General
-
-  /// Checks whether Annotations is defined in locals(),
-  /// if not it is set up to an empty dict.
-  /// This opcode is only emitted if a class or module body contains variable
-  /// annotations statically.
-  internal func setupAnnotations() -> InstructionResult {
-    self.unimplemented()
-  }
-
   // MARK: - Coroutines
 
   /// Implements `TOS = GetAwaitable(TOS)`.
