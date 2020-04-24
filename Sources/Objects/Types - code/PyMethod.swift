@@ -151,7 +151,7 @@ public class PyMethod: PyObject {
   }
 
   // sourcery: pyproperty = __doc__
-  public func getDoc() -> PyResult<PyObject> {
+  public func getDoc() -> PyString? {
     return self.function.getDoc()
   }
 

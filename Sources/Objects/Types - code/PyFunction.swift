@@ -134,8 +134,8 @@ public class PyFunction: PyObject {
   // MARK: - Defaults
 
   // sourcery: pyproperty = __defaults__, setter = setDefaults
-  public func getDefaults() -> PyObject {
-    return self.defaults ?? Py.none
+  public func getDefaults() -> PyTuple? {
+    return self.defaults
   }
 
   public func setDefaults(_ object: PyObject) -> PyResult<()> {
@@ -155,8 +155,8 @@ public class PyFunction: PyObject {
   // MARK: - Keyword defaults
 
   // sourcery: pyproperty = __kwdefaults__, setter = setKeywordDefaults
-  public func getKeywordDefaults() -> PyObject {
-    return self.kwDefaults ?? Py.none
+  public func getKeywordDefaults() -> PyDict? {
+    return self.kwDefaults
   }
 
   public func setKeywordDefaults(_ object: PyObject) -> PyResult<()> {
@@ -176,8 +176,8 @@ public class PyFunction: PyObject {
   // MARK: - Closure
 
   // sourcery: pyproperty = __closure__, setter = setClosure
-  public func getClosure() -> PyObject {
-    return self.closure ?? Py.none
+  public func getClosure() -> PyTuple? {
+    return self.closure
   }
 
   /// Note that there is not `Python` setter for closure.
@@ -215,8 +215,8 @@ public class PyFunction: PyObject {
   // MARK: - Annotations
 
   // sourcery: pyproperty = __annotations__, setter = setAnnotations
-  public func getAnnotations() -> PyObject {
-    return self.closure ?? Py.none
+  public func getAnnotations() -> PyDict? {
+    return self.annotations
   }
 
   public func setAnnotations(_ object: PyObject) -> PyResult<()> {
@@ -261,12 +261,8 @@ public class PyFunction: PyObject {
   // MARK: - Doc
 
   // sourcery: pyproperty = __doc__, setter = setDoc
-  public func getDoc() -> PyResult<PyObject> {
-    guard let doc = self.doc else {
-      return .value(Py.none)
-    }
-
-    return .value(doc)
+  public func getDoc() -> PyString? {
+    return self.doc
   }
 
   public func setDoc(_ object: PyObject) -> PyResult<()> {

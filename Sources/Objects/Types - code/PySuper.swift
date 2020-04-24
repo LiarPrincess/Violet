@@ -167,22 +167,22 @@ public class PySuper: PyObject, HasCustomGetMethod {
   internal static let thisClassDoc = "the class invoking super()"
 
   // sourcery: pyproperty = __thisclass__, doc = thisClassDoc
-  public func getThisClass() -> PyObject {
-    return self.thisClass ?? Py.none
+  public func getThisClass() -> PyType? {
+    return self.thisClass
   }
 
   internal static let selfDoc = "the instance invoking super(); may be None"
 
   // sourcery: pyproperty = __self__, doc = selfDoc
-  public func getSelf() -> PyObject {
-    return self.object ?? Py.none
+  public func getSelf() -> PyObject? {
+    return self.object
   }
 
   internal static let selfClassDoc = "the type of the instance invoking super(); may be None"
 
   // sourcery: pyproperty = __self_class__, doc = selfClassDoc
-  public func getSelfClass() -> PyObject {
-    return self.object ?? Py.none
+  public func getSelfClass() -> PyObject? {
+    return self.object
   }
 
   // MARK: - Get

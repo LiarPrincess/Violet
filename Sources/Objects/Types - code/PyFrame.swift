@@ -179,8 +179,8 @@ public class PyFrame: PyObject {
   // MARK: - Properties
 
   // sourcery: pyproperty = f_back
-  internal func getBack() -> PyObject {
-    return self.parent ?? Py.none
+  internal func getBack() -> PyFrame? {
+    return self.parent
   }
 
   // sourcery: pyproperty = f_builtins

@@ -123,18 +123,18 @@ public class PyProperty: PyObject {
   // MARK: - Getters
 
   // sourcery: pyproperty = fget
-  public func getFGet() -> PyObject {
-    return self.get ?? Py.none
+  public func getFGet() -> PyObject? {
+    return self.get
   }
 
   // sourcery: pyproperty = fset
-  public func getFSet() -> PyObject {
-    return self.set ?? Py.none
+  public func getFSet() -> PyObject? {
+    return self.set
   }
 
   // sourcery: pyproperty = fdel
-  public func getFDel() -> PyObject {
-    return self.del ?? Py.none
+  public func getFDel() -> PyObject? {
+    return self.del
   }
 
   // MARK: - Get

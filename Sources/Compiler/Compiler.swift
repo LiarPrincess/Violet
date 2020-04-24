@@ -181,12 +181,12 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   }
 
   internal func visit(_ node: InteractiveAST) throws {
-    try self.setupAnnotationsIfNeeded(body: node.statements)
+    // We cannot use 'visitBody' because we do not want '__doc__'.
+    self.setupAnnotationsIfNeeded(statements: node.statements)
     try self.visit(node.statements)
   }
 
   internal func visit(_ node: ModuleAST) throws {
-    try self.setupAnnotationsIfNeeded(body: node.statements)
     try self.visitBody(body: node.statements, onDoc: .storeAs__doc__)
   }
 
@@ -216,6 +216,8 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
       return
     }
 
+    self.setupAnnotationsIfNeeded(statements: body)
+
     if let doc = first.getDocString(), self.options.optimizationLevel < .OO {
       switch onDoc {
       case .storeAs__doc__:
@@ -233,10 +235,10 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
 
   // MARK: - Annotations
 
-  internal func setupAnnotationsIfNeeded<C: Collection>(
-    body: C
-  ) throws where C.Element == Statement {
-    if self.hasAnnotations(body) {
+  private func setupAnnotationsIfNeeded<C: Collection>(
+    statements: C
+  ) where C.Element == Statement {
+    if self.hasAnnotations(statements: statements) {
       self.builder.appendSetupAnnotations()
     }
   }
@@ -244,48 +246,53 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   /// Search if variable annotations are present statically in a block.
   ///
   /// find_ann(asdl_seq *stmts)
-  private func hasAnnotations<S: Sequence>(_ stmts: S) -> Bool
+  private func hasAnnotations<S: Sequence>(statements: S) -> Bool
     where S.Element == Statement {
-    return stmts.contains { [unowned self] in self.hasAnnotations($0) }
+
+    return statements.contains(where: self.hasAnnotations(statement:))
   }
 
   /// Search if variable annotations are present statically in a block.
   ///
   /// find_ann(asdl_seq *stmts)
-  private func hasAnnotations(_ statement: Statement) -> Bool {
+  private func hasAnnotations(statement: Statement) -> Bool {
     if statement is AnnAssignStmt {
       return true
     }
 
     if let loop = statement as? ForStmt {
-      return self.hasAnnotations(loop.body) || self.hasAnnotations(loop.orElse)
+      return self.hasAnnotations(statements: loop.body)
+          || self.hasAnnotations(statements: loop.orElse)
     }
 
     if let loop = statement as? AsyncForStmt {
-      return self.hasAnnotations(loop.body) || self.hasAnnotations(loop.orElse)
+      return self.hasAnnotations(statements: loop.body)
+          || self.hasAnnotations(statements: loop.orElse)
     }
 
     if let loop = statement as? WhileStmt {
-      return self.hasAnnotations(loop.body) || self.hasAnnotations(loop.orElse)
+      return self.hasAnnotations(statements: loop.body)
+          || self.hasAnnotations(statements: loop.orElse)
     }
 
     if let iff = statement as? IfStmt {
-      return self.hasAnnotations(iff.body) || self.hasAnnotations(iff.orElse)
+      return self.hasAnnotations(statements: iff.body)
+          || self.hasAnnotations(statements: iff.orElse)
     }
 
     if let with = statement as? WithStmt {
-      return self.hasAnnotations(with.body)
+      return self.hasAnnotations(statements: with.body)
     }
 
     if let with = statement as? AsyncWithStmt {
-      return self.hasAnnotations(with.body)
+      return self.hasAnnotations(statements: with.body)
     }
 
     if let tryy = statement as? TryStmt {
-      return self.hasAnnotations(tryy.body)
-        || self.hasAnnotations(tryy.finally)
-        || self.hasAnnotations(tryy.orElse)
-        || tryy.handlers.contains { self.hasAnnotations($0.body) }
+      return self.hasAnnotations(statements: tryy.body)
+          || self.hasAnnotations(statements: tryy.finally)
+          || self.hasAnnotations(statements: tryy.orElse)
+          || tryy.handlers.contains { self.hasAnnotations(statements: $0.body) }
     }
 
     return false
