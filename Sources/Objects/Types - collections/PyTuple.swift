@@ -38,6 +38,12 @@ public class PyTuple: PyObject, PySequenceType {
     super.init(type: Py.types.tuple)
   }
 
+  /// Use only in `__new__`!
+  internal init(type: PyType, data: PySequenceData) {
+    self.data = data
+    super.init(type: type)
+  }
+
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
@@ -262,12 +268,18 @@ public class PyTuple: PyObject, PySequenceType {
       return .error(e)
     }
 
-    let isBuiltin = type === Py.types.list
+    let isBuiltin = type === Py.types.tuple
     let alloca = isBuiltin ?
-      PyList.init(type:data:) :
-      PyListHeap.init(type:data:)
+      PyTuple.newTuple(type:data:) :
+      PyTupleHeap.init(type:data:)
 
     return PyTuple.getSequenceData(args: args).map { alloca(type, $0) }
+  }
+
+  /// Allocate new PyType (it will use 'builtins' cache if possible).
+  private static func newTuple(type: PyType, data: PySequenceData) -> PyTuple {
+    assert(type === Py.types.tuple, "Only for builtin tuple (not subclass!)")
+    return Py.newTuple(data)
   }
 
   private static func getSequenceData(args: [PyObject]) -> PyResult<PySequenceData> {
