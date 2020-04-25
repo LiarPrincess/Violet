@@ -223,7 +223,7 @@ extension CompilerErrorKind: CustomStringConvertible {
       return "'await' outside async function"
 
     case .unimplemented(let u):
-      return "UNIMPLEMENTED IN VIOLET:" + String(describing: u)
+      return "UNIMPLEMENTED IN VIOLET: " + String(describing: u)
     }
   }
 }

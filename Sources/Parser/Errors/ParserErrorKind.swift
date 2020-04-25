@@ -38,6 +38,8 @@ public enum ParserErrorKind: Equatable {
   case callWithKeywordExpression
   /// Keyword argument repeated.
   case callWithDuplicateKeywordArgument(String)
+  /// Generator expression must be parenthesized (or be the only argument)
+  case callWithGeneratorArgumentWithoutParens
 
   // MARK: - Atom
 
@@ -131,6 +133,8 @@ extension ParserErrorKind: CustomStringConvertible {
       return "Keyword can't be an expression."
     case .callWithDuplicateKeywordArgument(let name):
       return "Duplicate keyword argument '\(name)'."
+    case .callWithGeneratorArgumentWithoutParens:
+      return "Generator expression must be parenthesized"
 
     case .dictUnpackingInsideComprehension:
       return "Dictionary unpacking (the one with '**') " +

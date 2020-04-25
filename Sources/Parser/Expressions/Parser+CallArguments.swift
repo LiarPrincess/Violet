@@ -15,12 +15,29 @@ internal struct CallIR {
   internal fileprivate(set) var args: [Expression] = []
   internal fileprivate(set) var keywords: [Keyword] = []
 
-  /// Flag for preventing incorrect ordering of arguments
-  /// (for example `f(**a, b)` is not valid).
+  /// Flag for preventing incorrect ordering of arguments.
+  /// (star star = keyword argument unpacking).
+  ///
+  /// Something like `f(a, **b)` is allowed
+  /// Something like `f(**a, b)` is not allowed.
   fileprivate var hasStarStar = false
 
-  /// Is it base class definition (so we don't allow generators)?
-  /// Just so we don't have to pass it as an arg to every method.
+  /// We do allow generators as arguments (except for base classes),
+  /// but only in one of the following cases:
+  /// - generator is the ONLY argument,
+  ///   for example: `sing(n for n in [elsa, ariel])`
+  /// - generator arguments are in parenthesis,
+  ///   for example: `sing('let it go', (n for n in [elsa, ariel]))`
+  ///
+  /// Something like (notice no parens):
+  /// `sing('let it go', n for n in [elsa, ariel])` is not allowed.
+  fileprivate var hasGeneratorWithoutParens = false
+
+  /// When parsing base class definition we don't allow generators.
+  ///
+  /// Something like `class Elsa(n for n in [princess, singer])` is invalid.
+  ///
+  /// We will store it in ir so we don't have to pass it as an arg to every method.
   fileprivate let isBaseClass: Bool
 
   fileprivate init(isBaseClass: Bool) {
@@ -46,7 +63,16 @@ extension Parser {
 
     while self.peek.kind == .comma && self.peekNext.kind != closingToken {
       try self.advance() // ,
+
+      let start = self.peek.start
       try self.argument(into: &ir, closingToken: closingToken)
+
+      // We allow generator arguments, but only if they are the only argument.
+      // Something like 'sing(n for n in [elsa, ariel])'.
+      // Otherwise parens are required.
+      if ir.hasGeneratorWithoutParens && ir.args.count > 1 {
+        throw self.error(.callWithGeneratorArgumentWithoutParens, location: start)
+      }
     }
 
     // optional trailing comma
@@ -168,12 +194,12 @@ extension Parser {
   private func parsePositionalArgument(test: Expression,
                                        closingToken: TokenKind,
                                        into ir: inout CallIR) throws {
-
+    // We do not allow generators as base class in class definition
     if ir.isBaseClass && self.isCompFor() {
       throw self.error(.baseClassWithGenerator, location: test.start)
     }
 
-    guard !ir.hasStarStar else {
+    if ir.hasStarStar {
       throw self.error(.callWithPositionalArgumentAfterKeywordUnpacking,
                        location: test.start)
     }
@@ -185,11 +211,7 @@ extension Parser {
 
     let closings = [closingToken, .comma]
     if let generators = try self.compForOrNop(closingTokens: closings) {
-      assert(!generators.isEmpty)
-
-      // TODO: throw parens when we have some args (+ flag in ir)
-      // and another throw in while (and then remove warning)
-      self.warn(.callWithGeneratorArgument)
+      ir.hasGeneratorWithoutParens = true
 
       let end = generators.last?.end ?? test.end
       let expr = self.builder.generatorExpr(element: test,
@@ -200,6 +222,8 @@ extension Parser {
 
       ir.args.append(expr)
     } else {
+      // Well, it is just an argument without generator part
+      // (or generator in parens).
       ir.args.append(test)
     }
   }

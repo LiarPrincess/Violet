@@ -20,16 +20,13 @@ public struct ParserWarning: CustomStringConvertible {
 
 public enum ParserWarningKind: CustomStringConvertible {
 
-  /// Something like `f(a for b in [])`.
-  /// Basic support is implemented, but it may not work correctly.
-  /// - Note:
-  /// If there are other arguments present we should require parens!
-  case callWithGeneratorArgument
+  /// In the past we had parser warnings, but since then we fixed all of them.
+  ///
+  /// We will leave this code, so that in the future we don't have to reimplement
+  /// this.
+  case weDoNotHaveWarningsAnymore
 
   public var description: String {
-    switch self {
-    case .callWithGeneratorArgument:
-      return "Call with generator argument."
-    }
+    trap("Wo do not have parser warnings anmore...")
   }
 }

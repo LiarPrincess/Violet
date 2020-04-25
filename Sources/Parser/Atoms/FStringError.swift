@@ -44,7 +44,7 @@ public indirect enum FStringError: Error, Equatable, CustomStringConvertible {
     case let .parsingError(kind):
       return String(describing: kind)
     case let .unimplemented(u):
-      return "UNIMPLEMENTED IN VIOLET:" + String(describing: u)
+      return "UNIMPLEMENTED IN VIOLET: " + String(describing: u)
     }
   }
 }
