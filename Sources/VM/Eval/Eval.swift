@@ -210,6 +210,11 @@ internal final class Eval {
                       index: self.frame.nextInstructionIndex,
                       extendedArg: extendedArg)
 
+    if hasKeyboardInterrupt {
+      hasKeyboardInterrupt = false // Reset flag, very important!
+      return .exception(Py.newKeyboardInterrupt())
+    }
+
     let instruction = self.fetchInstruction()
 
     // According to CPython doing single switch will trash our jump prediction

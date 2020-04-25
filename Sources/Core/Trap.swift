@@ -5,6 +5,8 @@
 /// Call this when one the core invariants is broken and it may not be safe
 /// to continue.
 ///
+/// It is highly recommended to put a brakepoint in here.
+///
 /// Orginally this function was called `uhOhSoThatHappened`,
 /// but that was way too long for our 80 column limit .
 public func trap(_ msg: String,

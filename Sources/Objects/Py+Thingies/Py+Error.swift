@@ -357,6 +357,12 @@ extension PyInstance {
     insertOrTrap(dict: dict, key: "print_file_and_line", value: self.none)
   }
 
+  // MARK: - Keyboard interrupt
+
+  public func newKeyboardInterrupt() -> PyKeyboardInterrupt {
+    return PyKeyboardInterrupt(args: self.emptyTuple)
+  }
+
   // MARK: - Factory from type
 
   /// static PyObject*

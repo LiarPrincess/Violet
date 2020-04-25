@@ -170,6 +170,24 @@ extension PyInstance {
                         alreadyPrinted: &alreadyPrinted)
   }
 
+  private var causeMsg: String {
+    return """
+
+    The above exception was the direct cause of the following exception:
+
+
+    """
+  }
+
+  private var contextMsg: String {
+    return """
+
+    During handling of the above exception, another exception occurred:
+
+
+    """
+  }
+
   /// This function will swallow any error and continue printing!
   ///
   /// static void
@@ -188,13 +206,7 @@ extension PyInstance {
         self.printRecursive(error: cause,
                             file: file,
                             alreadyPrinted: &alreadyPrinted)
-
-        let msg = """
-The above exception was the direct cause of the following exception:
-
-
-"""
-        _ = self.write(file: file, string: msg) // swallow error
+        _ = self.write(file: file, string: self.causeMsg) // swallow error
       }
     } else if let context = error.getContext(), !error.getSuppressContext() {
       let contextId = ObjectIdentifier(context)
@@ -202,14 +214,7 @@ The above exception was the direct cause of the following exception:
         self.printRecursive(error: context,
                             file: file,
                             alreadyPrinted: &alreadyPrinted)
-
-        let msg = """
-During handling of the above exception, another exception occurred:
-
-
-"""
-
-        _ = self.write(file: file, string: msg) // swallow error
+        _ = self.write(file: file, string: self.contextMsg) // swallow error
       }
     }
 
@@ -226,10 +231,10 @@ During handling of the above exception, another exception occurred:
     //   File "<frozen.py>", line 2, in <elsa_walks_into_fire_module>
     // AnnaException: Then don't run into fire
     //
-    // Regular reminder that Elsa outfit at the beginning of Frozen was AMAZING...
+    // Regular reminder that Elsa outfit at the beginning of Frozen 2 was AMAZING...
     // You know, the one before she ran into water.
-    // Yeah there may be a pattern here...
-
+    // Yeah, there may be a pattern here...
+    //
     // Also:
     // We could totally use '??' as monadic bind for errors and write this whole
     // function as a single line with just 'return' statement.

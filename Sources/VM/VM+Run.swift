@@ -47,8 +47,11 @@ extension VM {
     }
 
     // Oh no... we will be running code! Let's prepare for this.
-    // For some reason importing stuff seems to be important* in programming...
-    // * Pun intended (sorry!)
+    if let e = self.registerSignalHandlers() {
+      return .error(e)
+    }
+
+    // For some reason importing stuff seems to be important in programming...
     if let e = self.initImportlibIfNeeded() {
       return .error(e)
     }
@@ -71,12 +74,7 @@ extension VM {
     case .value:
       break // Let's ignore the returned value
     case .error(let e):
-      // Don't exit if '-i' flag was given
-      if let systemExit = e as? PySystemExit, !runRepl {
-        return self.handleSystemExit(error: systemExit)
-      }
-
-      return .error(e) // Ooops...
+      return self.handleErrorOrSystemExit(error: e)
     }
 
     if runRepl {
@@ -110,13 +108,10 @@ extension VM {
     return nil
   }
 
-  /// CPython:
-  /// static void
-  /// handle_system_exit(void)
-  ///
-  /// But without printing, we delegate all of the side-effects to caller.
-  private func handleSystemExit(error: PySystemExit) -> RunResult {
-    assert(error.isSystemExit, "Python type: '\(error.typeName)'")
+  private func handleErrorOrSystemExit(error: PyBaseException) -> RunResult {
+    guard error.isSystemExit else {
+      return .error(error)
+    }
 
     let code = Py.intern("code")
     switch Py.getattr(object: error, name: code) {
