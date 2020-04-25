@@ -220,8 +220,6 @@ extension CompilerImpl {
 
   /// compiler_visit_annexpr(struct compiler *c, expr_ty annotation)
   internal func visitAnnExpr(_ annotation: Expression) throws {
-    // TODO: We should use proper 'ast_unparse' implementation
-    let string = String(describing: annotation)
-    self.builder.appendString(string)
+    throw self.error(.unimplemented(.postponedAnnotationsEvaluation_PEP563))
   }
 }

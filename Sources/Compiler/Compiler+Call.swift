@@ -8,7 +8,6 @@ import Bytecode
 
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
-// TODO: ^ Remove this
 
 extension CompilerImpl {
 

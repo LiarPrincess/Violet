@@ -10,6 +10,15 @@ public enum CompilerUnimplemented: CustomStringConvertible, Equatable {
 
   case comprehension
   case async
+  /// PEP-563
+  ///
+  /// This asks us to provide AST -> Python code transformation:
+  /// ```
+  /// The string form is obtained from the AST during the compilation step,
+  /// which means that the string form might not preserve the exact formatting
+  /// of the source.
+  /// ```
+  case postponedAnnotationsEvaluation_PEP563
 
   public var description: String {
     switch self {
@@ -17,6 +26,9 @@ public enum CompilerUnimplemented: CustomStringConvertible, Equatable {
       return "'comprehensions' are currently not implemented."
     case .async:
       return "'async' is currently not implemented."
+    case .postponedAnnotationsEvaluation_PEP563:
+      let pep = "PEP 563 (postponed evaluation of annotations)"
+      return "\(pep) is currently not implemented."
     }
   }
 }
