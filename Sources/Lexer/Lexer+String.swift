@@ -127,6 +127,8 @@ extension Lexer {
   }
 
   // swiftlint:disable:next function_body_length
+  /// PyObject *
+  /// _PyUnicode_DecodeUnicodeEscape(const char *s,
   private func readEscaped(_ prefix: StringPrefix,
                            _ quoteType: QuoteType) throws -> EscapeResult {
     assert(self.peek == "\\")
@@ -179,7 +181,7 @@ extension Lexer {
 
     default:
       self.advance() // backslash
-      self.warn(.unrecognizedEscapeSequence)
+      self.warn(.unrecognizedEscapeSequence("\\\(escaped)"))
       return .notEscapeCharacter // invalid escape -> no escape
     }
   }

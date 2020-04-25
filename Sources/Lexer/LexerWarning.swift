@@ -27,12 +27,12 @@ public enum LexerWarningKind: Equatable, CustomStringConvertible {
   /// Changed in version 3.6:
   /// Unrecognized escape sequences produce a DeprecationWarning.
   /// In some future version of Python they will be a SyntaxError.
-  case unrecognizedEscapeSequence
+  case unrecognizedEscapeSequence(String)
 
   public var description: String {
     switch self {
-    case .unrecognizedEscapeSequence:
-      return "Unrecognized escape sequence."
+    case let .unrecognizedEscapeSequence(s):
+      return "Unrecognized escape sequence '\(s)'."
     }
   }
 }
