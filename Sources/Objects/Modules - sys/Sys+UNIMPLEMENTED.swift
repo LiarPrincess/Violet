@@ -100,10 +100,6 @@ extension Sys {
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.getrefcount).
   internal func getRefCount() -> PyObject { }
 
-  /// sys.getrecursionlimit()
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.getrecursionlimit).
-  internal func getRecursionLimit() -> PyObject { }
-
   /// sys.getsizeof(object[, default])
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.getsizeof).
   internal func getSizeof() -> PyObject { }
@@ -175,10 +171,6 @@ extension Sys {
   /// sys.setprofile(profilefunc)
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.setprofile).
   internal func setProfile() -> PyObject { }
-
-  /// sys.setrecursionlimit(limit)
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.setrecursionlimit).
-  internal func setRecursionLimit() -> PyObject { }
 
   /// sys.setswitchinterval(interval)
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.setswitchinterval).

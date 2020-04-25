@@ -12,6 +12,9 @@ extension VM {
     return self.registerKeyboardInterruptHandler()
   }
 
+  /// Register handler that will be fired when user presses 'Ctrl+C' (SIGINT)
+  /// while executing Python code.
+  ///
   /// From 'Modules/signalmodule.c':
   /// 'PyInit__signal(void)' sets 'SIGINT' handler to
   /// 'signal_default_int_handler(PyObject *self, PyObject *args)'.

@@ -144,6 +144,11 @@ public final class Sys: PyModuleImplementation {
     return Lyrics.galavant // Very important...
   }
 
+  /// This is not stored in `__dict__`!
+  ///
+  /// CPython stores it in `_PyRuntime.ceval.recursion_limit`.
+  internal var recursionLimit = Py.newInt(1_000)
+
   // MARK: - Init
 
   internal init() {
@@ -207,6 +212,12 @@ public final class Sys: PyModuleImplementation {
     self.setOrTrap(.excepthook,
                    doc: Self.excepthookDoc,
                    fn: self.excepthook(type:value:traceback:))
+    self.setOrTrap(.getrecursionlimit,
+                   doc: Self.getRecursionLimitDoc,
+                   fn: self.getRecursionLimit)
+    self.setOrTrap(.setrecursionlimit,
+                   doc: Self.setRecursionLimitDoc,
+                   fn: self.setRecursionLimit(limit:))
   }
 
   // MARK: - Properties
@@ -222,7 +233,6 @@ public final class Sys: PyModuleImplementation {
     internal static let platform = Properties(value: "platform")
     internal static let copyright = Properties(value: "copyright")
     internal static let hash_info = Properties(value: "hash_info")
-    internal static let tracebacklimit = Properties(value: "tracebacklimit")
 
     internal static let modules = Properties(value: "modules")
     internal static let builtin_module_names =
@@ -252,6 +262,10 @@ public final class Sys: PyModuleImplementation {
     internal static let intern = Properties(value: "intern")
     internal static let getdefaultencoding = Properties(value: "getdefaultencoding")
     internal static let excepthook = Properties(value: "excepthook")
+
+    internal static let getrecursionlimit = Properties(value: "getrecursionlimit")
+    internal static let setrecursionlimit = Properties(value: "setrecursionlimit")
+    internal static let tracebacklimit = Properties(value: "tracebacklimit")
 
     private let value: String
 

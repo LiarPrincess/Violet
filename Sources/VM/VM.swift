@@ -4,6 +4,9 @@ import Foundation
 // swiftlint:disable:next type_name
 public final class VM: PyDelegate {
 
+  /// Stack of currently executed frames.
+  ///
+  /// Current frame is last.
   internal var frames = [PyFrame]()
   internal let fileSystem = FileSystemImpl(bundle: .main, fileManager: .default)
 

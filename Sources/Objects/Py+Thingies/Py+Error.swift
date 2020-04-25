@@ -363,6 +363,13 @@ extension PyInstance {
     return PyKeyboardInterrupt(args: self.emptyTuple)
   }
 
+  // MARK: - Recursion
+
+  public func newRecursionError() -> PyRecursionError {
+    let msg = "maximum recursion depth exceeded"
+    return PyRecursionError(msg: msg)
+  }
+
   // MARK: - Factory from type
 
   /// static PyObject*
