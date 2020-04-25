@@ -79,7 +79,8 @@ extension PyInstance {
     guard let lookup = type.lookupWithType(name: .__str__) else {
       // 'object' has default implementation for '__str__',
       // if we did not find it then something went really wrong.
-      trap("'\(type.getName())' is not a subclass of 'object'")
+      let typeName = type.getNameRaw()
+      trap("'\(typeName)' is not a subclass of 'object'")
     }
 
     let isFromObject = lookup.type === self.types.object

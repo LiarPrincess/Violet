@@ -211,7 +211,7 @@ extension PyInstance {
       return nil
     }
 
-    let name = type.getName()
+    let name = type.getNameRaw()
 
     // If content is nil -> it may be warning
     if cell.content == nil {

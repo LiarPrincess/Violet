@@ -108,7 +108,8 @@ extension PyType {
       }
 
       guard base.isBaseType else {
-        return .typeError("type '\(base.getName())' is not an acceptable base type")
+        let baseName = base.getNameRaw()
+        return .typeError("type '\(baseName)' is not an acceptable base type")
       }
 
       result.append(base)
@@ -307,7 +308,7 @@ extension PyType {
     while let candidate = typeOrNil {
       assert(
         candidate.layout != nil,
-        "Unknown memory layout for \(candidate.getName())." +
+        "Unknown memory layout for \(candidate.getNameRaw())." +
         "'PyType.layout' should be set. (Is this type from external module? Ooo!)"
       )
 
@@ -320,8 +321,8 @@ extension PyType {
 
     // 'Object' type (the one at the top of the lattice) has defined layout.
     // It should be used if anything else fails.
-    let name = type.getName()
-    trap("'\(name)' type does not derieve from 'object'.")
+    let typeName = type.getNameRaw()
+    trap("'\(typeName)' type does not derieve from 'object'.")
   }
 
   // MARK: - __module__
