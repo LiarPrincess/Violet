@@ -413,6 +413,10 @@ extension PyType {
 
   private static func add__dict__PropertyIfNotPresent(type: PyType) {
     // If any base class has '__dict__' then we don't have to re-add it.
+    // To be really honest, I'm not really sure if this check is needed.
+    // Even if we have custom '__dict__' getter what else can it return?
+    // Anyway, we will not override it.
+
     if Self.anyBaseClassExceptForObjectHas(type: type, name: .__dict__) {
       return
     }
