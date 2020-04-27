@@ -155,7 +155,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
 
     self.future = try FutureFeatures.parse(ast: self.ast)
 
-    self.enterScope(node: self.ast, type: .module, argCount: 0, kwOnlyArgCount: 0)
+    self.enterScope(node: self.ast, kind: .module, argCount: 0, kwOnlyArgCount: 0)
     self.setAppendLocation(self.ast)
 
     try self.visit(self.ast)
@@ -306,12 +306,12 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   /// Use `self.codeObject` to emit instructions.
   internal func inNewCodeObject<N: ASTNode>(
     node: N,
-    type: CodeObjectType,
+    kind: CodeObject.Kind,
     emitInstructions block: () throws -> Void
   ) throws -> CodeObject {
     return try self.inNewCodeObject(
       node: node,
-      type: type,
+      kind: kind,
       argCount: 0,
       kwOnlyArgCount: 0,
       emitInstructions: block
@@ -324,14 +324,14 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   /// Use `self.codeObject` to emit instructions.
   internal func inNewCodeObject<N: ASTNode>(
     node: N,
-    type: CodeObjectType,
+    kind: CodeObject.Kind,
     argCount: Int,
     kwOnlyArgCount: Int,
     emitInstructions block: () throws -> Void
   ) throws -> CodeObject {
 
     self.enterScope(node: node,
-                    type: type,
+                    kind: kind,
                     argCount: argCount,
                     kwOnlyArgCount: kwOnlyArgCount)
     try block()
@@ -347,7 +347,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   ///
   /// compiler_enter_scope(struct compiler *c, identifier name, ...)
   private func enterScope<N: ASTNode>(node: N,
-                                      type: CodeObjectType,
+                                      kind: CodeObject.Kind,
                                       argCount: Int,
                                       kwOnlyArgCount: Int) {
     // swiftlint:enable function_body_length
@@ -356,11 +356,11 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
       trap("[BUG] Compiler: Entering scope that is not present in symbol table.")
     }
 
-    assert(self.isMatchingScopeType(scope.type, to: type))
+    assert(self.hasKind(scope: scope, kind: kind))
 
-    let name = self.createName(type: type, scope: scope)
-    let qualifiedName = self.createQualifiedName(for: name, type: type)
-    let flags = self.createFlags(type: type, scope: scope)
+    let name = self.createName(scope: scope, kind: kind)
+    let qualifiedName = self.createQualifiedName(name: name, kind: kind)
+    let flags = self.createFlags(scope: scope, kind: kind)
 
     // In 'variableNames' we have to put parameters before locals.
     let paramNames = self.filterSymbols(scope, accepting: .defParam)
@@ -385,7 +385,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     let object = CodeObject(name: name,
                             qualifiedName: qualifiedName,
                             filename: self.filename,
-                            type: type,
+                            kind: kind,
                             flags: flags,
                             variableNames: variableNames,
                             freeVariableNames: freeVars,
@@ -394,7 +394,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
                             kwOnlyArgCount: kwOnlyArgCount,
                             firstLine: node.start.line)
 
-    let className = type == .class ? name : nil
+    let className = kind == .class ? name : nil
     let unit = CompilerUnit(scope: scope, codeObject: object, className: className)
     self.unitStack.append(unit)
   }
@@ -416,27 +416,29 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
 
   // MARK: - Scope/code object helpers
 
-  private func isMatchingScopeType(_ scopeType: ScopeType,
-                                   to codeObjectType: CodeObjectType) -> Bool {
-    switch scopeType {
+  private func hasKind(scope: SymbolScope, kind: CodeObject.Kind) -> Bool {
+    switch scope.type {
     case .module:
-      return codeObjectType == .module
+      return kind == .module
     case .class:
-      return codeObjectType == .class
+      return kind == .class
     case .function:
-      return codeObjectType == .function
-        || codeObjectType == .asyncFunction
-        || codeObjectType == .lambda
-        || codeObjectType == .comprehension
+      return kind == .function
+        || kind == .asyncFunction
+        || kind == .lambda
+        || kind == .comprehension
     }
   }
 
   /// Crate CodeObject name
-  private func createName(type: CodeObjectType, scope: SymbolScope) -> String {
-    switch type {
-    case .module: return CodeObject.moduleName
-    case .lambda: return CodeObject.lambdaName
-    case .comprehension: return scope.name
+  private func createName(scope: SymbolScope, kind: CodeObject.Kind) -> String {
+    switch kind {
+    case .module:
+      return CodeObject.moduleName
+    case .lambda:
+      return CodeObject.lambdaName
+    case .comprehension:
+      return scope.name
     case .class,
          .function,
          .asyncFunction:
@@ -461,7 +463,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   /// - Note:
   /// It has to be called BEFORE code object is pushed on stack!
   /// (which is different than CPython)
-  private func createQualifiedName(for name: String, type: CodeObjectType) -> String {
+  private func createQualifiedName(name: String, kind: CodeObject.Kind) -> String {
     // Top scope has "" as qualified name.
     guard let parent = self.unitStack.last else {
       return ""
@@ -474,7 +476,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
 
     /// Is this a special case? (see docstring)
     let isGlobalNestedInOtherScope: Bool = {
-      guard type == .function || type == .asyncFunction || type == .class else {
+      guard kind == .function || kind == .asyncFunction || kind == .class else {
         return false
       }
 
@@ -488,7 +490,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     }
 
     /// Otherwise just concat to parent
-    let parentType = parent.codeObject.type
+    let parentType = parent.codeObject.kind
     let isParentFunction = parentType == .function
                         || parentType == .asyncFunction
                         || parentType == .lambda
@@ -536,9 +538,9 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
 
   /// static int
   /// compute_code_flags(struct compiler *c)
-  private func createFlags(type: CodeObjectType,
-                           scope: SymbolScope) -> CodeObjectFlags {
-    var result = CodeObjectFlags()
+  private func createFlags(scope: SymbolScope,
+                           kind: CodeObject.Kind) -> CodeObject.Flags {
+    var result = CodeObject.Flags()
 
     if scope.type == .function {
       result.formUnion(.newLocals)

@@ -64,11 +64,11 @@ class CompileClassDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let cls = self.getCodeObject(parent: code, qualifiedName: "Princess") {
-        XCTAssertCode(cls, name: "Princess", type: .class)
+        XCTAssertCode(cls, name: "Princess", kind: .class)
         XCTAssertInstructions(cls, classExpected)
       }
     }
@@ -130,11 +130,11 @@ class CompileClassDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", type: .class)
+        XCTAssertCode(cls, name: "Aurora", kind: .class)
         XCTAssertInstructions(cls, classExpected)
       }
     }
@@ -199,11 +199,11 @@ class CompileClassDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", type: .class)
+        XCTAssertCode(cls, name: "Aurora", kind: .class)
         XCTAssertInstructions(cls, classExpected)
       }
     }
@@ -269,11 +269,11 @@ class CompileClassDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", type: .class)
+        XCTAssertCode(cls, name: "Aurora", kind: .class)
         XCTAssertInstructions(cls, classExpected)
       }
     }
@@ -350,11 +350,11 @@ class CompileClassDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", type: .class)
+        XCTAssertCode(cls, name: "Aurora", kind: .class)
         XCTAssertInstructions(cls, classExpected)
       }
     }
@@ -420,11 +420,11 @@ class CompileClassDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", type: .class)
+        XCTAssertCode(cls, name: "Aurora", kind: .class)
         XCTAssertInstructions(cls, classExpected)
       }
     }
@@ -491,11 +491,11 @@ class CompileClassDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", type: .class)
+        XCTAssertCode(cls, name: "Aurora", kind: .class)
         XCTAssertInstructions(cls, classExpected)
       }
     }
@@ -564,11 +564,11 @@ class CompileClassDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", type: .class)
+        XCTAssertCode(cls, name: "Aurora", kind: .class)
         XCTAssertInstructions(cls, classExpected)
       }
     }
@@ -634,11 +634,11 @@ class CompileClassDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", type: .class)
+        XCTAssertCode(cls, name: "Aurora", kind: .class)
         XCTAssertInstructions(cls, classExpected)
       }
     }
@@ -737,15 +737,15 @@ class CompileClassDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", type: .class)
+        XCTAssertCode(cls, name: "Aurora", kind: .class)
         XCTAssertInstructions(cls, classExpected)
 
         if let innt = self.getCodeObject(parent: cls, qualifiedName: "Aurora.__init__") {
-          XCTAssertCode(innt, name: "__init__", type: .function)
+          XCTAssertCode(innt, name: "__init__", kind: .function)
           XCTAssertInstructions(innt, __init__Expected)
         }
       }

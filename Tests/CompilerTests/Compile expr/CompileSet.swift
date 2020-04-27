@@ -26,7 +26,7 @@ class CompileSet: CompileTestCase {
     ]
 
     if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
     }
   }
@@ -46,7 +46,7 @@ class CompileSet: CompileTestCase {
     ]
 
     if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
     }
   }
@@ -73,7 +73,7 @@ class CompileSet: CompileTestCase {
     ]
 
     if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
     }
   }
@@ -108,7 +108,7 @@ class CompileSet: CompileTestCase {
     ]
 
     if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
     }
   }

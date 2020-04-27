@@ -22,7 +22,7 @@ extension CompilerImpl {
     let kwOnlyArgCount = node.args.kwOnlyArgs.count
 
     let codeObject = try self.inNewCodeObject(node: node,
-                                              type: .lambda,
+                                              kind: .lambda,
                                               argCount: argCount,
                                               kwOnlyArgCount: kwOnlyArgCount) {
       // Make None the first constant, so the lambda can't have a docstring.
@@ -57,7 +57,7 @@ extension CompilerImpl {
     let kwOnlyArgCount = node.args.kwOnlyArgs.count
 
     let codeObject = try self.inNewCodeObject(node: node,
-                                              type: .function,
+                                              kind: .function,
                                               argCount: argCount,
                                               kwOnlyArgCount: kwOnlyArgCount) {
 
@@ -242,7 +242,7 @@ extension CompilerImpl {
   private func getRefType(name: MangledName,
                           qualifiedName: String) -> SymbolFlags {
     let classId = SpecialIdentifiers.__class__
-    if self.codeObject.type == .class && name.value == classId {
+    if self.codeObject.kind == .class && name.value == classId {
       return .cell
     }
 

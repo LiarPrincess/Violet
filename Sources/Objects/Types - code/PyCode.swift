@@ -74,7 +74,7 @@ public class PyCode: PyObject {
   public var qualifiedName: PyString
 
   /// Various flags used during the compilation process.
-  public var codeFlags: CodeObjectFlags {
+  public var codeFlags: CodeObject.Flags {
     return self.codeObject.flags
   }
 

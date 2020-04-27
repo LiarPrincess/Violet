@@ -1,3 +1,4 @@
+import Foundation
 import VioletCore
 
 // In CPython:
@@ -6,35 +7,39 @@ import VioletCore
 // (Unofficial) docs:
 // https://tech.blog.aknin.name/2010/07/03/pythons-innards-code-objects/
 
-public enum CodeObjectType {
-  case module
-  case `class`
-  case function
-  case asyncFunction
-  case lambda
-  case comprehension
-}
-
-public struct CodeObjectFlags: OptionSet {
-  public let rawValue: UInt16
-
-  public static let optimized   = CodeObjectFlags(rawValue: 0x0001)
-  public static let newLocals   = CodeObjectFlags(rawValue: 0x0002)
-  public static let varArgs     = CodeObjectFlags(rawValue: 0x0004)
-  public static let varKeywords = CodeObjectFlags(rawValue: 0x0008)
-  public static let nested      = CodeObjectFlags(rawValue: 0x0010)
-  public static let generator   = CodeObjectFlags(rawValue: 0x0020)
-  public static let noFree      = CodeObjectFlags(rawValue: 0x0040)
-  public static let coroutine         = CodeObjectFlags(rawValue: 0x0080)
-  public static let iterableCoroutine = CodeObjectFlags(rawValue: 0x0100)
-  public static let asyncGenerator    = CodeObjectFlags(rawValue: 0x0200)
-
-  public init(rawValue: UInt16) {
-    self.rawValue = rawValue
-  }
-}
-
 public final class CodeObject: CustomStringConvertible {
+
+  // MARK: - Types
+
+  public enum Kind {
+    case module
+    case `class`
+    case function
+    case asyncFunction
+    case lambda
+    case comprehension
+  }
+
+  public struct Flags: OptionSet {
+    public let rawValue: UInt16
+
+    public static let optimized   = Flags(rawValue: 0x0001)
+    public static let newLocals   = Flags(rawValue: 0x0002)
+    public static let varArgs     = Flags(rawValue: 0x0004)
+    public static let varKeywords = Flags(rawValue: 0x0008)
+    public static let nested      = Flags(rawValue: 0x0010)
+    public static let generator   = Flags(rawValue: 0x0020)
+    public static let noFree      = Flags(rawValue: 0x0040)
+    public static let coroutine         = Flags(rawValue: 0x0080)
+    public static let iterableCoroutine = Flags(rawValue: 0x0100)
+    public static let asyncGenerator    = Flags(rawValue: 0x0200)
+
+    public init(rawValue: UInt16) {
+      self.rawValue = rawValue
+    }
+  }
+
+  // MARK: - Properties
 
   public static let moduleName = "<module>"
   public static let lambdaName = "<lambda>"
@@ -72,9 +77,9 @@ public final class CodeObject: CustomStringConvertible {
 
   /// Type of the code object.
   /// Possible values are: module, class, (async)function, lambda and comprehension.
-  public let type: CodeObjectType
+  public let kind: Kind
   /// Various flags used during the compilation process.
-  public let flags: CodeObjectFlags
+  public let flags: Flags
   /// First source line number.
   public let firstLine: SourceLine
 
@@ -151,11 +156,13 @@ public final class CodeObject: CustomStringConvertible {
     return "CodeObject(qualifiedName: \(name))"
   }
 
+  // MARK: - Init
+
   public init(name: String,
               qualifiedName: String,
               filename: String,
-              type: CodeObjectType,
-              flags: CodeObjectFlags,
+              kind: Kind,
+              flags: Flags,
               variableNames: [MangledName],
               freeVariableNames: [MangledName],
               cellVariableNames: [MangledName],
@@ -165,7 +172,7 @@ public final class CodeObject: CustomStringConvertible {
     self.name = name
     self.qualifiedName = qualifiedName
     self.filename = filename
-    self.type = type
+    self.kind = kind
     self.flags = flags
     self.variableNames = variableNames
     self.freeVariableNames = freeVariableNames

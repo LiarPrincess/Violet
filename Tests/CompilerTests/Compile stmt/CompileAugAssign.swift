@@ -51,7 +51,7 @@ class CompileAugAssign: CompileTestCase {
       ]
 
       if let code = self.compile(stmt: stmt) {
-        XCTAssertCode(code, name: "<module>", qualified: "", type: .module, msg)
+        XCTAssertCode(code, name: "<module>", qualified: "", kind: .module, msg)
         XCTAssertInstructions(code, expected, msg)
       }
     }
@@ -97,7 +97,7 @@ class CompileAugAssign: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
     }
   }
@@ -150,7 +150,7 @@ class CompileAugAssign: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
     }
   }

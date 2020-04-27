@@ -8,23 +8,23 @@ import VioletCompiler
 internal func XCTAssertCode(_ code: CodeObject,
                             name: String,
                             qualified: String,
-                            type: CodeObjectType,
+                            kind: CodeObject.Kind,
                             _ message:  String = "",
                             file: StaticString = #file,
                             line: UInt         = #line) {
   XCTAssertEqual(code.name,          name,      message, file: file, line: line)
   XCTAssertEqual(code.qualifiedName, qualified, message, file: file, line: line)
-  XCTAssertEqual(code.type,          type,      message, file: file, line: line)
+  XCTAssertEqual(code.kind,          kind,      message, file: file, line: line)
 }
 
 internal func XCTAssertCode(_ code: CodeObject,
                             name: String,
-                            type: CodeObjectType,
+                            kind: CodeObject.Kind,
                             _ message:  String = "",
                             file: StaticString = #file,
                             line: UInt         = #line) {
   XCTAssertEqual(code.name, name, message, file: file, line: line)
-  XCTAssertEqual(code.type, type, message, file: file, line: line)
+  XCTAssertEqual(code.kind, kind, message, file: file, line: line)
 }
 
 internal func XCTAssertInstructions(_ code: CodeObject,

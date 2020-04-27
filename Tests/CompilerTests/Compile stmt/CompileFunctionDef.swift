@@ -48,11 +48,11 @@ class CompileFunctionDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", type: .function)
+        XCTAssertCode(def, name: "cook", kind: .function)
         XCTAssertInstructions(def, defExpected)
       }
     }
@@ -104,11 +104,11 @@ class CompileFunctionDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", type: .function)
+        XCTAssertCode(def, name: "cook", kind: .function)
         XCTAssertInstructions(def, defExpected)
       }
     }
@@ -155,11 +155,11 @@ class CompileFunctionDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", type: .function)
+        XCTAssertCode(def, name: "cook", kind: .function)
         XCTAssertInstructions(def, defExpected)
       }
     }
@@ -212,11 +212,11 @@ class CompileFunctionDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", type: .function)
+        XCTAssertCode(def, name: "cook", kind: .function)
         XCTAssertInstructions(def, defExpected)
       }
     }
@@ -265,11 +265,11 @@ class CompileFunctionDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", type: .function)
+        XCTAssertCode(def, name: "cook", kind: .function)
         XCTAssertInstructions(def, defExpected)
       }
     }
@@ -314,11 +314,11 @@ class CompileFunctionDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", type: .function)
+        XCTAssertCode(def, name: "cook", kind: .function)
         XCTAssertInstructions(def, defExpected)
       }
     }
@@ -367,11 +367,11 @@ class CompileFunctionDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", type: .function)
+        XCTAssertCode(def, name: "cook", kind: .function)
         XCTAssertInstructions(def, defExpected)
       }
     }
@@ -418,11 +418,11 @@ class CompileFunctionDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", type: .function)
+        XCTAssertCode(def, name: "cook", kind: .function)
         XCTAssertInstructions(def, defExpected)
       }
     }
@@ -475,11 +475,11 @@ class CompileFunctionDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", type: .function)
+        XCTAssertCode(def, name: "cook", kind: .function)
         XCTAssertInstructions(def, defExpected)
       }
     }
@@ -526,11 +526,11 @@ class CompileFunctionDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", type: .function)
+        XCTAssertCode(def, name: "cook", kind: .function)
         XCTAssertInstructions(def, defExpected)
       }
     }
@@ -577,11 +577,11 @@ class CompileFunctionDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", type: .function)
+        XCTAssertCode(def, name: "cook", kind: .function)
         XCTAssertInstructions(def, defExpected)
       }
     }
@@ -632,11 +632,11 @@ class CompileFunctionDef: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
 
       if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", type: .function)
+        XCTAssertCode(def, name: "cook", kind: .function)
         XCTAssertInstructions(def, defExpected)
       }
     }

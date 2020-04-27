@@ -30,7 +30,7 @@ class CompileImport: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
     }
   }
@@ -58,7 +58,7 @@ class CompileImport: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
     }
   }
@@ -86,7 +86,7 @@ class CompileImport: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
     }
   }
@@ -125,7 +125,7 @@ class CompileImport: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
     }
   }
@@ -160,7 +160,7 @@ class CompileImport: CompileTestCase {
     ]
 
     if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
       XCTAssertInstructions(code, expected)
     }
   }

@@ -11,7 +11,7 @@ extension CodeObject {
       Name: \(self.name)
       QualifiedName: \(self.qualifiedName)
       Filename: \(self.filename)
-      Type: \(self.dumpType())
+      Type: \(self.dumpKind())
 
       Instructions (line, byte, instruction):
 
@@ -42,10 +42,10 @@ extension CodeObject {
     return result
   }
 
-  // MARK: - Type
+  // MARK: - Kind
 
-  private func dumpType() -> String {
-    switch self.type {
+  private func dumpKind() -> String {
+    switch self.kind {
     case .module: return "Module"
     case .`class`: return "Class"
     case .function: return "Function"
