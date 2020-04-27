@@ -93,7 +93,7 @@ extension CodeObjectBuilder {
   }
 
   /// Append a `loadConst` instruction to this code object.
-  public func appendTuple(_ value: [Constant]) {
+  public func appendTuple(_ value: [CodeObject.Constant]) {
     _ = self.appendNewConstant(.tuple(value))
   }
 
@@ -106,13 +106,13 @@ extension CodeObjectBuilder {
 
   /// Simply add new constant, without emitting any instruction.
   public func addConstant(string: String) {
-    let constant = Constant.string(string)
+    let constant = CodeObject.Constant.string(string)
     self.code.constants.append(constant)
   }
 
   // MARK: - Helpers
 
-  private func appendNewConstant(_ constant: Constant) -> Int {
+  private func appendNewConstant(_ constant: CodeObject.Constant) -> Int {
     let index = self.code.constants.endIndex
     self.code.constants.append(constant)
 

@@ -39,6 +39,36 @@ public final class CodeObject: CustomStringConvertible {
     }
   }
 
+  public enum Constant: CustomStringConvertible {
+    case `true`
+    case `false`
+    case none
+    case ellipsis
+    case integer(BigInt)
+    case float(Double)
+    case complex(real: Double, imag: Double)
+    case string(String)
+    case bytes(Data)
+    case code(CodeObject)
+    case tuple([Constant])
+
+    public var description: String {
+      switch self {
+      case .`true`: return "true"
+      case .`false`: return "false"
+      case .none: return "none"
+      case .ellipsis: return "ellipsis"
+      case let .integer(i): return "integer(\(i))"
+      case let .float(f): return "float(\(f))"
+      case let .complex(r, i): return "complex(real: \(r), imag: \(i))"
+      case let .string(s): return "string(\(s))"
+      case let .bytes(b): return "bytes(\(b))"
+      case let .code(c): return "code(\(c))"
+      case let .tuple(t): return "tuple(\(t))"
+      }
+    }
+  }
+
   // MARK: - Properties
 
   public static let moduleName = "<module>"

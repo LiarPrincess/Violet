@@ -107,7 +107,7 @@ extension CompilerImpl {
                                       names: [String],
                                       level: UInt8) throws {
     let importName = module ?? ""
-    let nameTuple = names.map { Constant.string($0) }
+    let nameTuple = names.map { CodeObject.Constant.string($0) }
 
     self.builder.appendInteger(BigInt(level))
     self.builder.appendTuple(nameTuple)

@@ -63,7 +63,7 @@ internal class CompileTestCase: XCTestCase, ASTCreator {
                               _ message:  String = "",
                               file: StaticString = #file,
                               line: UInt         = #line) -> CodeObject? {
-    for case let Constant.code(c) in code.constants
+    for case let .code(c) in code.constants
       where c.qualifiedName == qualifiedName {
 
       return c

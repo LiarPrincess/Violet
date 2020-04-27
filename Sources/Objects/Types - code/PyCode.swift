@@ -256,7 +256,7 @@ public class PyCode: PyObject {
     return variableCount + 1
   }
 
-  private static func intern(constant: VioletBytecode.Constant) -> Constant {
+  private static func intern(constant: CodeObject.Constant) -> Constant {
     switch constant {
     case .true: return .true
     case .false: return .false

@@ -2,8 +2,8 @@ import XCTest
 import VioletCore
 @testable import VioletBytecode
 
-internal func XCTAssertConstant(_ lhs: Constant,
-                                _ rhs: Constant,
+internal func XCTAssertConstant(_ lhs: CodeObject.Constant,
+                                _ rhs: CodeObject.Constant,
                                 file: StaticString = #file,
                                 line: UInt         = #line) {
   switch (lhs, rhs) {
@@ -61,8 +61,8 @@ class AppendConstants: XCTestCase {
       return
     }
 
-    XCTAssertConstant(codeObject.constants[0], Constant.string(s0))
-    XCTAssertConstant(codeObject.constants[1], Constant.string(s1))
+    XCTAssertConstant(codeObject.constants[0], CodeObject.Constant.string(s0))
+    XCTAssertConstant(codeObject.constants[1], CodeObject.Constant.string(s1))
 
     guard codeObject.instructions.count == 2 else {
       XCTAssert(false)

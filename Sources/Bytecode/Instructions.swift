@@ -10,56 +10,6 @@ import VioletCore
 // swiftlint:disable trailing_newline
 // swiftlint:disable vertical_whitespace_closing_braces
 
-public enum Constant {
-  case `true`
-  case `false`
-  case none
-  case ellipsis
-  case integer(BigInt)
-  case float(Double)
-  case complex(real: Double, imag: Double)
-  case string(String)
-  case bytes(Data)
-  case code(CodeObject)
-  case tuple([Constant])
-
-  public var isInteger: Bool {
-    if case .integer = self { return true }
-    return false
-  }
-
-  public var isFloat: Bool {
-    if case .float = self { return true }
-    return false
-  }
-
-  public var isComplex: Bool {
-    if case .complex = self { return true }
-    return false
-  }
-
-  public var isString: Bool {
-    if case .string = self { return true }
-    return false
-  }
-
-  public var isBytes: Bool {
-    if case .bytes = self { return true }
-    return false
-  }
-
-  public var isCode: Bool {
-    if case .code = self { return true }
-    return false
-  }
-
-  public var isTuple: Bool {
-    if case .tuple = self { return true }
-    return false
-  }
-
-}
-
 public enum StringConversion {
   case none
   case str

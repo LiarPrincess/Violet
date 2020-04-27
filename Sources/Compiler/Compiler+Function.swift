@@ -126,7 +126,7 @@ extension CompilerImpl {
 
     if names.any {
       flags.formUnion(.hasKwOnlyArgDefaults)
-      let elements = names.map { Constant.string($0.value) }
+      let elements = names.map { CodeObject.Constant.string($0.value) }
       self.builder.appendTuple(elements)
       self.builder.appendBuildConstKeyMap(elementCount: names.count)
     }
@@ -169,7 +169,7 @@ extension CompilerImpl {
 
     if names.any {
       flags.formUnion(.hasAnnotations)
-      let elements = names.map { Constant.string($0.value) }
+      let elements = names.map { CodeObject.Constant.string($0.value) }
       self.builder.appendTuple(elements)
       self.builder.appendBuildConstKeyMap(elementCount: names.count)
     }

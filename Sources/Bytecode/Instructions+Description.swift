@@ -6,35 +6,6 @@ import Foundation
 
 // swiftlint:disable file_length
 
-extension Constant: CustomStringConvertible {
-  public var description: String {
-    switch self {
-    case .`true`:
-      return "true"
-    case .`false`:
-      return "false"
-    case .none:
-      return "none"
-    case .ellipsis:
-      return "ellipsis"
-    case let .integer(value0):
-      return "integer(\(value0))"
-    case let .float(value0):
-      return "float(\(value0))"
-    case let .complex(real: value0, imag: value1):
-      return "complex(real: \(value0), imag: \(value1))"
-    case let .string(value0):
-      return "string(\(value0))"
-    case let .bytes(value0):
-      return "bytes(\(value0))"
-    case let .code(value0):
-      return "code(\(value0))"
-    case let .tuple(value0):
-      return "tuple(\(value0))"
-    }
-  }
-}
-
 extension StringConversion: CustomStringConvertible {
   public var description: String {
     switch self {

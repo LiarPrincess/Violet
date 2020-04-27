@@ -144,8 +144,8 @@ extension CompilerImpl {
   }
 
   /// Precondition: 'hasDictionaryUnpack' = false
-  private func getNames(keywords: [Keyword]) -> [Constant] {
-    var result = [Constant]()
+  private func getNames(keywords: [Keyword]) -> [CodeObject.Constant] {
+    var result = [CodeObject.Constant]()
     for keyword in keywords {
       switch keyword.kind {
       case .dictionaryUnpack: assert(false)
@@ -179,7 +179,7 @@ extension CompilerImpl {
       try self.visit(keyword.value)
       self.builder.appendBuildMap(elementCount: 1)
     } else {
-      var names = [Constant]()
+      var names = [CodeObject.Constant]()
       for keyword in keywords {
         guard case let KeywordKind.named(name) = keyword.kind else {
           trap("[BUG] Compiler: VisitSubkwargs should not be called for unpack.")

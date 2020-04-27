@@ -17,19 +17,6 @@ and labels properties of 'CodeObject'.
 @alias CellOrFreeIndex = UInt8
 @alias Item = UInt8
 
-@enum Constant =
-  True
-  | False
-  | None
-  | Ellipsis
-  | Integer(BigInt)
-  | Float(Double)
-  | Complex(Double real, Double imag)
-  | String(String)
-  | Bytes(Data)
-  | Code(CodeObject)
-  | Tuple(Constant*)
-
 @enum StringConversion =
     none
   | str
