@@ -126,11 +126,13 @@ extension Lexer {
     case notEscapeCharacter
   }
 
-  // swiftlint:disable:next function_body_length
+  // swiftlint:disable function_body_length
   /// PyObject *
   /// _PyUnicode_DecodeUnicodeEscape(const char *s,
   private func readEscaped(_ prefix: StringPrefix,
                            _ quoteType: QuoteType) throws -> EscapeResult {
+    // swiftlint:enable function_body_length
+
     assert(self.peek == "\\")
 
     if prefix.r {
