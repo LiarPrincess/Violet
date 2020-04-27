@@ -158,7 +158,7 @@ extension Parser {
   // MARK: - Comparison
 
   /// `comp_op: '<'|'>'|'=='|'>='|'<='|'<>'|'!='|'in'|'not' 'in'|'is'|'is' 'not'`
-  private static let comparisonOperators: [TokenKind:ComparisonOperator] = [
+  private static let comparisonOperators: [TokenKind: CompareExpr.Operator] = [
     .equalEqual: .equal,
     .notEqual:   .notEqual,
     // <> - pep401 is not implmented
@@ -176,7 +176,7 @@ extension Parser {
   internal func comparison(context: ExpressionContext) throws -> Expression {
     let left = try self.expr(context: context)
 
-    var elements = [ComparisonElement]()
+    var elements = [CompareExpr.Element]()
     while var op = Parser.comparisonOperators[self.peek.kind] {
       let first = self.peek
       try self.advance() // op
@@ -191,14 +191,14 @@ extension Parser {
       }
 
       let right = try self.expr(context: context)
-      let element = ComparisonElement(op: op, right: right)
+      let element = CompareExpr.Element(op: op, right: right)
       elements.append(element)
     }
 
     // If we have any element then return compare otherwise normal expr
     if let first = elements.first {
       let rest = elements.dropFirst()
-      let comps = NonEmptyArray<ComparisonElement>(first: first, rest: rest)
+      let comps = NonEmptyArray<CompareExpr.Element>(first: first, rest: rest)
 
       return self.builder.compareExpr(left: left,
                                       elements: comps,
@@ -296,7 +296,7 @@ extension Parser {
 
   // MARK: - Shift expr
 
-  private static let shiftExprOperators: [TokenKind:BinaryOperator] = [
+  private static let shiftExprOperators: [TokenKind: BinaryOpExpr.Operator] = [
     .leftShift: .leftShift,
     .rightShift: .rightShift
   ]
@@ -322,7 +322,7 @@ extension Parser {
 
   // MARK: - Arith expr
 
-  private static let arithExprOperators: [TokenKind:BinaryOperator] = [
+  private static let arithExprOperators: [TokenKind: BinaryOpExpr.Operator] = [
     .plus: .add,
     .minus: .sub
   ]
@@ -348,7 +348,7 @@ extension Parser {
 
   // MARK: - Term
 
-  private static let termOperators: [TokenKind:BinaryOperator] = [
+  private static let termOperators: [TokenKind: BinaryOpExpr.Operator] = [
     .star: .mul,
     .at: .matMul,
     .slash: .div,

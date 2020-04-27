@@ -67,7 +67,7 @@ extension SymbolTableBuilderImpl {
     try self.visit(node.value)
   }
 
-  private func visit(_ group: StringGroup) throws {
+  private func visit(_ group: StringExpr.Group) throws {
     switch group {
     case .literal:
       break
@@ -106,7 +106,7 @@ extension SymbolTableBuilderImpl {
   }
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  private func visit(_ elements: NonEmptyArray<ComparisonElement>) throws {
+  private func visit(_ elements: NonEmptyArray<CompareExpr.Element>) throws {
     for e in elements {
       try self.visit(e.right)
     }

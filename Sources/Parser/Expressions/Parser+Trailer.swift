@@ -84,7 +84,7 @@ extension Parser {
   // MARK: - Subscript
 
   /// `subscriptlist: subscript (',' subscript)* [',']`
-  private func subscriptList(closingToken: TokenKind) throws -> SliceKind {
+  private func subscriptList(closingToken: TokenKind) throws -> Slice.Kind {
     let first = try self.subscript(closingTokens: closingToken, .comma)
     var elements = NonEmptyArray<Slice>(first: first)
 
@@ -116,7 +116,7 @@ extension Parser {
   }
 
   private func asTupleIndexIfAllElementsAreIndices(
-    _ slices: NonEmptyArray<Slice>) -> SliceKind? {
+    _ slices: NonEmptyArray<Slice>) -> Slice.Kind? {
 
     var indices = [Expression]()
 
@@ -149,7 +149,7 @@ extension Parser {
 
     // subscript: test -> index
     if let index = lower, closingTokens.contains(self.peek.kind) {
-      let kind = SliceKind.index(index)
+      let kind = Slice.Kind.index(index)
       return self.builder.slice(kind: kind, start: index.start, end: index.end)
     }
 
@@ -174,7 +174,7 @@ extension Parser {
       }
     }
 
-    let kind = SliceKind.slice(lower: lower, upper: upper, step: step)
+    let kind = Slice.Kind.slice(lower: lower, upper: upper, step: step)
     return self.builder.slice(kind: kind, start: start, end: end)
   }
 }

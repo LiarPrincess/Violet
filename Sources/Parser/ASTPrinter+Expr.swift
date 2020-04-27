@@ -72,7 +72,7 @@ extension ASTPrinter {
     )
   }
 
-  public func visit(_ group: StringGroup) -> Doc {
+  public func visit(_ group: StringExpr.Group) -> Doc {
     switch group {
     case let .literal(s):
       return self.text("String: '\(self.trim(s))'")
@@ -95,7 +95,7 @@ extension ASTPrinter {
     }
   }
 
-  public func visit(_ flag: ConversionFlag) -> Doc {
+  public func visit(_ flag: StringExpr.Conversion) -> Doc {
     switch flag {
     case .str: return self.text("str")
     case .ascii: return self.text("ascii")
@@ -177,7 +177,7 @@ extension ASTPrinter {
     )
   }
 
-  public func visit(_ element: ComparisonElement) -> Doc {
+  public func visit(_ element: CompareExpr.Element) -> Doc {
     return self.block(
       title: "ComparisonElement",
       lines:
@@ -212,7 +212,7 @@ extension ASTPrinter {
     return self.base(expr: node, lines: e)
   }
 
-  public func visit(_ element: DictionaryElement) -> Doc {
+  public func visit(_ element: DictionaryExpr.Element) -> Doc {
     switch element {
     case let .unpacking(expr):
       return self.block(title: "Unpack", lines: self.visit(expr))
@@ -335,10 +335,13 @@ extension ASTPrinter {
       self.text("Defaults: none") :
       self.block(title: "Defaults", lines: node.defaults.map(self.visit))
 
-    let vararg =
-      node.vararg == .none ? text("Vararg: none") :
-      node.vararg == .unnamed ? text("Vararg: unnamed") :
-        self.block(title: "Vararg", lines: self.visit(node.vararg))
+    let vararg: Doc = {
+      switch node.vararg {
+      case .none: return .text("Vararg: none")
+      case .unnamed: return text("Vararg: unnamed")
+      case .named: return self.block(title: "Vararg", lines: self.visit(node.vararg))
+      }
+    }()
 
     let kwOnly = node.kwOnlyArgs.isEmpty ?
       self.text("KwOnlyArgs: none") :
@@ -364,7 +367,7 @@ extension ASTPrinter {
     )
   }
 
-  public func visit(_ node: Arg) -> Doc {
+  public func visit(_ node: Argument) -> Doc {
     let ann = node.annotation.map {
       self.block(title: "Annotation", lines: self.visit($0))
     } ?? text("Annotation: none")
@@ -390,7 +393,7 @@ extension ASTPrinter {
 
   // MARK: - Keyword
 
-  public func visit(_ node: Keyword) -> Doc {
+  public func visit(_ node: KeywordArgument) -> Doc {
     return self.block(
       title: "Keyword(start: \(node.start), end: \(node.end))",
       lines:
@@ -399,7 +402,7 @@ extension ASTPrinter {
     )
   }
 
-  public func visit(_ node: KeywordKind) -> Doc {
+  public func visit(_ node: KeywordArgument.Kind) -> Doc {
     switch node {
     case .dictionaryUnpack:
       return self.text("DictionaryUnpack")
@@ -469,7 +472,7 @@ extension ASTPrinter {
     )
   }
 
-  public func visit(_ kind: SliceKind) -> Doc {
+  public func visit(_ kind: Slice.Kind) -> Doc {
     switch kind {
     case let .slice(lower, upper, step):
       return self.block(
@@ -508,7 +511,7 @@ extension ASTPrinter {
 
   // MARK: - Operators
 
-  public func visit(_ op: UnaryOperator) -> Doc {
+  public func visit(_ op: UnaryOpExpr.Operator) -> Doc {
     switch op {
     case .invert: return self.text("inv")
     case .not:    return self.text("not")
@@ -517,14 +520,14 @@ extension ASTPrinter {
     }
   }
 
-  public func visit(_ op: BooleanOperator) -> Doc {
+  public func visit(_ op: BoolOpExpr.Operator) -> Doc {
     switch op {
     case .and: return self.text("and")
     case .or:  return self.text("or")
     }
   }
 
-  public func visit(_ op: BinaryOperator) -> Doc {
+  public func visit(_ op: BinaryOpExpr.Operator) -> Doc {
     switch op {
     case .add: return self.text("+")
     case .sub: return self.text("-")
@@ -542,7 +545,7 @@ extension ASTPrinter {
     }
   }
 
-  public func visit(_ op: ComparisonOperator) -> Doc {
+  public func visit(_ op: CompareExpr.Operator) -> Doc {
     switch op {
     case .equal:    return self.text("==")
     case .notEqual: return self.text("!=")

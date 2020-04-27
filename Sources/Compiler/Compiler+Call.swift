@@ -30,7 +30,7 @@ extension CompilerImpl {
   /// maybe_optimize_method_call(struct compiler *c, expr_ty e)
   private func emitOptimizedMethodCall(function: Expression,
                                        args:     [Expression],
-                                       keywords: [Keyword],
+                                       keywords: [KeywordArgument],
                                        context:  ExpressionContext) throws -> Bool {
     // Check if it is an method
     guard let method = function as? AttributeExpr, context == .load else {
@@ -59,7 +59,7 @@ extension CompilerImpl {
   ///                      asdl_seq *keywords)
   /// ```
   internal func callHelper(args: [Expression],
-                           keywords: [Keyword],
+                           keywords: [KeywordArgument],
                            context:  ExpressionContext,
                            alreadyPushedArgs: Int) throws {
     var nSeen = alreadyPushedArgs
@@ -83,7 +83,13 @@ extension CompilerImpl {
       }
     }
 
-    let hasDictionaryUnpack = keywords.contains { $0.kind == .dictionaryUnpack }
+    let hasDictionaryUnpack = keywords.contains { kwarg in
+      switch kwarg.kind {
+      case .named: return false
+      case .dictionaryUnpack: return true
+      }
+    }
+
     if nSubArgs > 0 || hasDictionaryUnpack {
       // Pack up any trailing positional arguments.
       if nSeen > 0 {
@@ -144,7 +150,7 @@ extension CompilerImpl {
   }
 
   /// Precondition: 'hasDictionaryUnpack' = false
-  private func getNames(keywords: [Keyword]) -> [CodeObject.Constant] {
+  private func getNames(keywords: [KeywordArgument]) -> [CodeObject.Constant] {
     var result = [CodeObject.Constant]()
     for keyword in keywords {
       switch keyword.kind {
@@ -156,7 +162,7 @@ extension CompilerImpl {
   }
 
   /// compiler_visit_keyword(struct compiler *c, keyword_ty k)
-  private func visitKeywords(keywords: [Keyword]) throws {
+  private func visitKeywords(keywords: [KeywordArgument]) throws {
     for keyword in keywords {
       try self.visit(keyword.value)
     }
@@ -164,14 +170,14 @@ extension CompilerImpl {
 
   /// compiler_subkwargs(struct compiler *c, asdl_seq *keywords,
   /// Py_ssize_t begin, Py_ssize_t end)
-  private func visitSubkwargs(keywords: ArraySlice<Keyword>) throws {
+  private func visitSubkwargs(keywords: ArraySlice<KeywordArgument>) throws {
     assert(keywords.any)
 
     if keywords.count == 1 {
       // swiftlint:disable:next force_unwrapping
       let keyword = keywords.first!
 
-      guard case let KeywordKind.named(name) = keyword.kind else {
+      guard case let .named(name) = keyword.kind else {
         trap("[BUG] Compiler: VisitSubkwargs should not be called for unpack.")
       }
 
@@ -181,7 +187,7 @@ extension CompilerImpl {
     } else {
       var names = [CodeObject.Constant]()
       for keyword in keywords {
-        guard case let KeywordKind.named(name) = keyword.kind else {
+        guard case let .named(name) = keyword.kind else {
           trap("[BUG] Compiler: VisitSubkwargs should not be called for unpack.")
         }
 

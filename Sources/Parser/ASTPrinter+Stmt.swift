@@ -290,7 +290,7 @@ extension ASTPrinter {
     )
   }
 
-  public func visit(_ node: ExceptHandlerKind) -> Doc {
+  public func visit(_ node: ExceptHandler.Kind) -> Doc {
       switch node {
       case .default:
         return self.text("Default")

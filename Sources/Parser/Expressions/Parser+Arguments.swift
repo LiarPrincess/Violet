@@ -12,17 +12,17 @@ import VioletLexer
 private struct ArgumentsIR {
 
   /// Positional arguments.
-  fileprivate var args: [Arg] = []
+  fileprivate var args: [Argument] = []
   /// Default values for positional arguments.
   fileprivate var defaults: [Expression] = []
   /// Non-keyworded variable length arguments.
   fileprivate var vararg: Vararg = .none
   /// Parameters which occur after the '*args'.
-  fileprivate var kwOnlyArgs: [Arg] = []
+  fileprivate var kwOnlyArgs: [Argument] = []
   /// Default values for keyword-only arguments.
   fileprivate var kwOnlyDefaults: [Expression] = []
   /// Keyworded (named) variable length arguments.
-  fileprivate var kwarg: Arg?
+  fileprivate var kwarg: Argument?
 
   fileprivate var start: SourceLocation
   fileprivate var end:   SourceLocation
@@ -97,21 +97,21 @@ extension Parser {
 
   // MARK: - Arg factory
 
-  private typealias ArgFactory = (Parser) throws -> Arg
+  private typealias ArgFactory = (Parser) throws -> Argument
 
   /// `vfpdef: NAME`
-  private static func vfpdef(_ parser: Parser) throws -> Arg {
+  private static func vfpdef(_ parser: Parser) throws -> Argument {
     let token = parser.peek
     let name = try parser.consumeIdentifierOrThrow()
     try parser.checkForbiddenName(name, location: token.start)
-    return parser.builder.arg(name: name,
-                              annotation: nil,
-                              start: token.start,
-                              end: token.end)
+    return parser.builder.argument(name: name,
+                                   annotation: nil,
+                                   start: token.start,
+                                   end: token.end)
   }
 
   /// `tfpdef: NAME [':' test]`
-  private static func tfpdef(_ parser: Parser) throws -> Arg {
+  private static func tfpdef(_ parser: Parser) throws -> Argument {
     let token = parser.peek
     let name = try parser.consumeIdentifierOrThrow()
     try parser.checkForbiddenName(name, location: token.start)
@@ -124,10 +124,10 @@ extension Parser {
     }
 
     let end = annotation?.end ?? token.end
-    return parser.builder.arg(name: name,
-                              annotation: annotation,
-                              start: token.start,
-                              end: end)
+    return parser.builder.argument(name: name,
+                                   annotation: annotation,
+                                   start: token.start,
+                                   end: end)
   }
 
   // MARK: - Args list
@@ -156,7 +156,7 @@ extension Parser {
     }
 
     // After single '*' (e.g. 'lambda a, *: 5') we must have args
-    if ir.vararg == .unnamed && ir.kwOnlyArgs.isEmpty {
+    if case .unnamed = ir.vararg, ir.kwOnlyArgs.isEmpty {
       throw self.error(.starWithoutFollowingArguments)
     }
 
@@ -208,7 +208,7 @@ extension Parser {
       throw self.error(.varargsAfterKwargs)
     }
 
-    guard ir.vararg == .none else {
+    guard case .none = ir.vararg else {
       throw self.error(.duplicateVarargs)
     }
 

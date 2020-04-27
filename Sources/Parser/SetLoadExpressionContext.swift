@@ -205,7 +205,7 @@ internal final class SetLoadExpressionContext: ExpressionVisitor {
     self.visit(args.kwOnlyDefaults)
   }
 
-  private func visitArgs(_ args: [Arg]) {
+  private func visitArgs(_ args: [Argument]) {
     for a in args {
       self.visit(a.annotation)
     }
@@ -220,7 +220,7 @@ internal final class SetLoadExpressionContext: ExpressionVisitor {
     }
   }
 
-  private func visitKeywords(_ keywords: [Keyword]) {
+  private func visitKeywords(_ keywords: [KeywordArgument]) {
     for keyword in keywords {
       self.visit(keyword.value)
     }

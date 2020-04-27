@@ -124,7 +124,7 @@ public struct ASTBuilder {
   public mutating func classDefStmt(
     name: String,
     bases: [Expression],
-    keywords: [Keyword],
+    keywords: [KeywordArgument],
     body: NonEmptyArray<Statement>,
     decorators: [Expression],
     start: SourceLocation,
@@ -193,7 +193,7 @@ public struct ASTBuilder {
 
   public mutating func augAssignStmt(
     target: Expression,
-    op: BinaryOperator,
+    op: BinaryOpExpr.Operator,
     value: Expression,
     start: SourceLocation,
     end: SourceLocation
@@ -309,6 +309,23 @@ public struct ASTBuilder {
     )
   }
 
+  // MARK: - WithItem
+
+  public mutating func withItem(
+    contextExpr: Expression,
+    optionalVars: Expression?,
+    start: SourceLocation,
+    end: SourceLocation
+  ) -> WithItem {
+    return WithItem(
+      id: self.getNextId(),
+      contextExpr: contextExpr,
+      optionalVars: optionalVars,
+      start: start,
+      end: end
+    )
+  }
+
   // MARK: - WithStmt
 
   public mutating func withStmt(
@@ -337,6 +354,23 @@ public struct ASTBuilder {
     return AsyncWithStmt(
       id: self.getNextId(),
       items: items,
+      body: body,
+      start: start,
+      end: end
+    )
+  }
+
+  // MARK: - ExceptHandler
+
+  public mutating func exceptHandler(
+    kind: ExceptHandler.Kind,
+    body: NonEmptyArray<Statement>,
+    start: SourceLocation,
+    end: SourceLocation
+  ) -> ExceptHandler {
+    return ExceptHandler(
+      id: self.getNextId(),
+      kind: kind,
       body: body,
       start: start,
       end: end
@@ -393,6 +427,23 @@ public struct ASTBuilder {
       id: self.getNextId(),
       test: test,
       msg: msg,
+      start: start,
+      end: end
+    )
+  }
+
+  // MARK: - Alias
+
+  public mutating func alias(
+    name: String,
+    asName: String?,
+    start: SourceLocation,
+    end: SourceLocation
+  ) -> Alias {
+    return Alias(
+      id: self.getNextId(),
+      name: name,
+      asName: asName,
       start: start,
       end: end
     )
@@ -533,57 +584,6 @@ public struct ASTBuilder {
     )
   }
 
-  // MARK: - Alias
-
-  public mutating func alias(
-    name: String,
-    asName: String?,
-    start: SourceLocation,
-    end: SourceLocation
-  ) -> Alias {
-    return Alias(
-      id: self.getNextId(),
-      name: name,
-      asName: asName,
-      start: start,
-      end: end
-    )
-  }
-
-  // MARK: - WithItem
-
-  public mutating func withItem(
-    contextExpr: Expression,
-    optionalVars: Expression?,
-    start: SourceLocation,
-    end: SourceLocation
-  ) -> WithItem {
-    return WithItem(
-      id: self.getNextId(),
-      contextExpr: contextExpr,
-      optionalVars: optionalVars,
-      start: start,
-      end: end
-    )
-  }
-
-  // MARK: - ExceptHandler
-
-  public mutating func exceptHandler(
-    kind: ExceptHandlerKind,
-    body: NonEmptyArray<Statement>,
-    start: SourceLocation,
-    end: SourceLocation
-  ) -> ExceptHandler {
-    return ExceptHandler(
-      id: self.getNextId(),
-      kind: kind,
-      body: body,
-      start: start,
-      end: end
-    )
-  }
-
   // MARK: - TrueExpr
 
   public mutating func trueExpr(
@@ -664,7 +664,7 @@ public struct ASTBuilder {
   // MARK: - StringExpr
 
   public mutating func stringExpr(
-    value: StringGroup,
+    value: StringExpr.Group,
     context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
@@ -751,7 +751,7 @@ public struct ASTBuilder {
   // MARK: - UnaryOpExpr
 
   public mutating func unaryOpExpr(
-    op: UnaryOperator,
+    op: UnaryOpExpr.Operator,
     right: Expression,
     context: ExpressionContext,
     start: SourceLocation,
@@ -770,7 +770,7 @@ public struct ASTBuilder {
   // MARK: - BinaryOpExpr
 
   public mutating func binaryOpExpr(
-    op: BinaryOperator,
+    op: BinaryOpExpr.Operator,
     left: Expression,
     right: Expression,
     context: ExpressionContext,
@@ -791,7 +791,7 @@ public struct ASTBuilder {
   // MARK: - BoolOpExpr
 
   public mutating func boolOpExpr(
-    op: BooleanOperator,
+    op: BoolOpExpr.Operator,
     left: Expression,
     right: Expression,
     context: ExpressionContext,
@@ -813,7 +813,7 @@ public struct ASTBuilder {
 
   public mutating func compareExpr(
     left: Expression,
-    elements: NonEmptyArray<ComparisonElement>,
+    elements: NonEmptyArray<CompareExpr.Element>,
     context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
@@ -865,7 +865,7 @@ public struct ASTBuilder {
   // MARK: - DictionaryExpr
 
   public mutating func dictionaryExpr(
-    elements: [DictionaryElement],
+    elements: [DictionaryExpr.Element],
     context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
@@ -891,6 +891,27 @@ public struct ASTBuilder {
       id: self.getNextId(),
       elements: elements,
       context: context,
+      start: start,
+      end: end
+    )
+  }
+
+  // MARK: - Comprehension
+
+  public mutating func comprehension(
+    target: Expression,
+    iterable: Expression,
+    ifs: [Expression],
+    isAsync: Bool,
+    start: SourceLocation,
+    end: SourceLocation
+  ) -> Comprehension {
+    return Comprehension(
+      id: self.getNextId(),
+      target: target,
+      iterable: iterable,
+      ifs: ifs,
+      isAsync: isAsync,
       start: start,
       end: end
     )
@@ -1049,7 +1070,7 @@ public struct ASTBuilder {
   public mutating func callExpr(
     function: Expression,
     args: [Expression],
-    keywords: [Keyword],
+    keywords: [KeywordArgument],
     context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
@@ -1059,6 +1080,59 @@ public struct ASTBuilder {
       function: function,
       args: args,
       keywords: keywords,
+      context: context,
+      start: start,
+      end: end
+    )
+  }
+
+  // MARK: - AttributeExpr
+
+  public mutating func attributeExpr(
+    object: Expression,
+    name: String,
+    context: ExpressionContext,
+    start: SourceLocation,
+    end: SourceLocation
+  ) -> AttributeExpr {
+    return AttributeExpr(
+      id: self.getNextId(),
+      object: object,
+      name: name,
+      context: context,
+      start: start,
+      end: end
+    )
+  }
+
+  // MARK: - Slice
+
+  public mutating func slice(
+    kind: Slice.Kind,
+    start: SourceLocation,
+    end: SourceLocation
+  ) -> Slice {
+    return Slice(
+      id: self.getNextId(),
+      kind: kind,
+      start: start,
+      end: end
+    )
+  }
+
+  // MARK: - SubscriptExpr
+
+  public mutating func subscriptExpr(
+    object: Expression,
+    slice: Slice,
+    context: ExpressionContext,
+    start: SourceLocation,
+    end: SourceLocation
+  ) -> SubscriptExpr {
+    return SubscriptExpr(
+      id: self.getNextId(),
+      object: object,
+      slice: slice,
       context: context,
       start: start,
       end: end
@@ -1086,44 +1160,6 @@ public struct ASTBuilder {
     )
   }
 
-  // MARK: - AttributeExpr
-
-  public mutating func attributeExpr(
-    object: Expression,
-    name: String,
-    context: ExpressionContext,
-    start: SourceLocation,
-    end: SourceLocation
-  ) -> AttributeExpr {
-    return AttributeExpr(
-      id: self.getNextId(),
-      object: object,
-      name: name,
-      context: context,
-      start: start,
-      end: end
-    )
-  }
-
-  // MARK: - SubscriptExpr
-
-  public mutating func subscriptExpr(
-    object: Expression,
-    slice: Slice,
-    context: ExpressionContext,
-    start: SourceLocation,
-    end: SourceLocation
-  ) -> SubscriptExpr {
-    return SubscriptExpr(
-      id: self.getNextId(),
-      object: object,
-      slice: slice,
-      context: context,
-      start: start,
-      end: end
-    )
-  }
-
   // MARK: - StarredExpr
 
   public mutating func starredExpr(
@@ -1141,51 +1177,15 @@ public struct ASTBuilder {
     )
   }
 
-  // MARK: - Slice
-
-  public mutating func slice(
-    kind: SliceKind,
-    start: SourceLocation,
-    end: SourceLocation
-  ) -> Slice {
-    return Slice(
-      id: self.getNextId(),
-      kind: kind,
-      start: start,
-      end: end
-    )
-  }
-
-  // MARK: - Comprehension
-
-  public mutating func comprehension(
-    target: Expression,
-    iterable: Expression,
-    ifs: [Expression],
-    isAsync: Bool,
-    start: SourceLocation,
-    end: SourceLocation
-  ) -> Comprehension {
-    return Comprehension(
-      id: self.getNextId(),
-      target: target,
-      iterable: iterable,
-      ifs: ifs,
-      isAsync: isAsync,
-      start: start,
-      end: end
-    )
-  }
-
   // MARK: - Arguments
 
   public mutating func arguments(
-    args: [Arg],
+    args: [Argument],
     defaults: [Expression],
     vararg: Vararg,
-    kwOnlyArgs: [Arg],
+    kwOnlyArgs: [Argument],
     kwOnlyDefaults: [Expression],
-    kwarg: Arg?,
+    kwarg: Argument?,
     start: SourceLocation,
     end: SourceLocation
   ) -> Arguments {
@@ -1202,15 +1202,15 @@ public struct ASTBuilder {
     )
   }
 
-  // MARK: - Arg
+  // MARK: - Argument
 
-  public mutating func arg(
+  public mutating func argument(
     name: String,
     annotation: Expression?,
     start: SourceLocation,
     end: SourceLocation
-  ) -> Arg {
-    return Arg(
+  ) -> Argument {
+    return Argument(
       id: self.getNextId(),
       name: name,
       annotation: annotation,
@@ -1219,15 +1219,15 @@ public struct ASTBuilder {
     )
   }
 
-  // MARK: - Keyword
+  // MARK: - KeywordArgument
 
-  public mutating func keyword(
-    kind: KeywordKind,
+  public mutating func keywordArgument(
+    kind: KeywordArgument.Kind,
     value: Expression,
     start: SourceLocation,
     end: SourceLocation
-  ) -> Keyword {
-    return Keyword(
+  ) -> KeywordArgument {
+    return KeywordArgument(
       id: self.getNextId(),
       kind: kind,
       value: value,

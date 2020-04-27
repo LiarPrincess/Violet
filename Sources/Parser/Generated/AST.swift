@@ -328,7 +328,7 @@ public final class ClassDefStmt: Statement {
   /// `starargs` and kwargs are each a single node, as in a function call.
   ///  starargs will be expanded to join the list of base classes,
   ///  and kwargs will be passed to the metaclass.
-  public var keywords: [Keyword]
+  public var keywords: [KeywordArgument]
   /// `body` is a list of nodes representing the code within the class definition.
   public var body: NonEmptyArray<Statement>
   /// `decorators` is a list of nodes, as in `FunctionDef`.
@@ -338,7 +338,7 @@ public final class ClassDefStmt: Statement {
     id: ASTNodeId,
     name: String,
     bases: [Expression],
-    keywords: [Keyword],
+    keywords: [KeywordArgument],
     body: NonEmptyArray<Statement>,
     decorators: [Expression],
     start: SourceLocation,
@@ -479,13 +479,13 @@ public final class AssignStmt: Statement {
 public final class AugAssignStmt: Statement {
 
   public var target: Expression
-  public var op: BinaryOperator
+  public var op: BinaryOpExpr.Operator
   public var value: Expression
 
   public init(
     id: ASTNodeId,
     target: Expression,
-    op: BinaryOperator,
+    op: BinaryOpExpr.Operator,
     value: Expression,
     start: SourceLocation,
     end: SourceLocation
@@ -736,6 +736,46 @@ public final class IfStmt: Statement {
 
 }
 
+// MARK: - WithItem
+
+/// A single context manager in a `with` block.
+public struct WithItem: ASTNode, CustomStringConvertible {
+
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public var id: ASTNodeId
+  /// Context manager (often a Call node).
+  public var contextExpr: Expression
+  /// Name, Tuple or List for the `as foo` part, or `nil` if that isn’t used.
+  public var optionalVars: Expression?
+  /// Location of the first character in the source code.
+  public var start: SourceLocation
+  /// Location just after the last character in the source code.
+  public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
+  public init(
+    id: ASTNodeId,
+    contextExpr: Expression,
+    optionalVars: Expression?,
+    start: SourceLocation,
+    end: SourceLocation
+  ) {
+    self.id = id
+    self.contextExpr = contextExpr
+    self.optionalVars = optionalVars
+    self.start = start
+    self.end = end
+  }
+
+
+}
+
 // MARK: - WithStmt
 
 /// A `with` block.
@@ -808,6 +848,65 @@ public final class AsyncWithStmt: Statement {
     try visitor.visit(self, payload: payload)
   }
 
+}
+
+// MARK: - ExceptHandler
+
+/// A single except clause.
+public struct ExceptHandler: ASTNode, CustomStringConvertible {
+
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public var id: ASTNodeId
+  /// Exception type it will match,  (or `.default` for a catch-all).
+  public var kind: ExceptHandler.Kind
+  /// List of handler nodes.
+  public var body: NonEmptyArray<Statement>
+  /// Location of the first character in the source code.
+  public var start: SourceLocation
+  /// Location just after the last character in the source code.
+  public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
+  public init(
+    id: ASTNodeId,
+    kind: ExceptHandler.Kind,
+    body: NonEmptyArray<Statement>,
+    start: SourceLocation,
+    end: SourceLocation
+  ) {
+    self.id = id
+    self.kind = kind
+    self.body = body
+    self.start = start
+    self.end = end
+  }
+
+
+}
+
+// MARK: - Kind
+
+extension ExceptHandler {
+
+  public enum Kind: CustomStringConvertible {
+
+    /// Handler with type it will match, typically an `Identifier` node.
+    case typed(type: Expression, asName: String?)
+    /// Catch-all handler.
+    case `default`
+
+    public var description: String {
+      let printer = ASTPrinter()
+      let doc = printer.visit(self)
+      return doc.layout()
+    }
+  }
 }
 
 // MARK: - RaiseStmt
@@ -925,6 +1024,46 @@ public final class AssertStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
+
+}
+
+// MARK: - Alias
+
+/// Import name with optional 'as' alias.
+/// Both parameters are raw strings of the names.
+/// `asName` can be `nil` if the regular name is to be used.
+public struct Alias: ASTNode, CustomStringConvertible {
+
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public var id: ASTNodeId
+  public var name: String
+  public var asName: String?
+  /// Location of the first character in the source code.
+  public var start: SourceLocation
+  /// Location just after the last character in the source code.
+  public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
+  public init(
+    id: ASTNodeId,
+    name: String,
+    asName: String?,
+    start: SourceLocation,
+    end: SourceLocation
+  ) {
+    self.id = id
+    self.name = name
+    self.asName = asName
+    self.start = start
+    self.end = end
+  }
+
 
 }
 
@@ -1200,142 +1339,6 @@ public final class ContinueStmt: Statement {
 
 }
 
-// MARK: - Alias
-
-/// Import name with optional 'as' alias.
-/// Both parameters are raw strings of the names.
-/// `asName` can be `nil` if the regular name is to be used.
-public struct Alias: ASTNode, CustomStringConvertible {
-
-  /// A unique node identifier.
-  /// Mostly used for efficient Equatable/Hashable implementation.
-  public var id: ASTNodeId
-  public var name: String
-  public var asName: String?
-  /// Location of the first character in the source code.
-  public var start: SourceLocation
-  /// Location just after the last character in the source code.
-  public var end: SourceLocation
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-  public init(
-    id: ASTNodeId,
-    name: String,
-    asName: String?,
-    start: SourceLocation,
-    end: SourceLocation
-  ) {
-    self.id = id
-    self.name = name
-    self.asName = asName
-    self.start = start
-    self.end = end
-  }
-
-}
-
-// MARK: - WithItem
-
-/// A single context manager in a `with` block.
-public struct WithItem: ASTNode, CustomStringConvertible {
-
-  /// A unique node identifier.
-  /// Mostly used for efficient Equatable/Hashable implementation.
-  public var id: ASTNodeId
-  /// Context manager (often a Call node).
-  public var contextExpr: Expression
-  /// Name, Tuple or List for the `as foo` part, or `nil` if that isn’t used.
-  public var optionalVars: Expression?
-  /// Location of the first character in the source code.
-  public var start: SourceLocation
-  /// Location just after the last character in the source code.
-  public var end: SourceLocation
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-  public init(
-    id: ASTNodeId,
-    contextExpr: Expression,
-    optionalVars: Expression?,
-    start: SourceLocation,
-    end: SourceLocation
-  ) {
-    self.id = id
-    self.contextExpr = contextExpr
-    self.optionalVars = optionalVars
-    self.start = start
-    self.end = end
-  }
-
-}
-
-// MARK: - ExceptHandler
-
-/// A single except clause.
-public struct ExceptHandler: ASTNode, CustomStringConvertible {
-
-  /// A unique node identifier.
-  /// Mostly used for efficient Equatable/Hashable implementation.
-  public var id: ASTNodeId
-  /// Exception type it will match,  (or `.default` for a catch-all).
-  public var kind: ExceptHandlerKind
-  /// List of handler nodes.
-  public var body: NonEmptyArray<Statement>
-  /// Location of the first character in the source code.
-  public var start: SourceLocation
-  /// Location just after the last character in the source code.
-  public var end: SourceLocation
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-  public init(
-    id: ASTNodeId,
-    kind: ExceptHandlerKind,
-    body: NonEmptyArray<Statement>,
-    start: SourceLocation,
-    end: SourceLocation
-  ) {
-    self.id = id
-    self.kind = kind
-    self.body = body
-    self.start = start
-    self.end = end
-  }
-
-}
-
-public enum ExceptHandlerKind: Equatable, CustomStringConvertible {
-  /// Handler with type it will match, typically an `Identifier` node.
-  case typed(type: Expression, asName: String?)
-  /// Catch-all handler.
-  case `default`
-
-  public var isTyped: Bool {
-    if case .typed = self { return true }
-    return false
-  }
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-}
-
 // MARK: - Expression
 
 /// Combination of one or more constants, variables, operators and functions
@@ -1387,7 +1390,10 @@ public class Expression: ASTNode, CustomStringConvertible {
 
 }
 
-public enum ExpressionContext: Equatable, CustomStringConvertible {
+// MARK: - ExpressionContext
+
+public enum ExpressionContext: CustomStringConvertible {
+
   case store
   case load
   case del
@@ -1397,7 +1403,6 @@ public enum ExpressionContext: Equatable, CustomStringConvertible {
     let doc = printer.visit(self)
     return doc.layout()
   }
-
 }
 
 // MARK: - TrueExpr
@@ -1480,6 +1485,50 @@ public final class EllipsisExpr: Expression {
 
 }
 
+// MARK: - Group
+
+extension StringExpr {
+
+  /// For normal strings and f-strings, concatenate them together.
+  public enum Group: CustomStringConvertible {
+
+    /// String - no f-strings.
+    case literal(String)
+    /// FormattedValue - just an f-string (with no leading or trailing literals).
+    case formattedValue(Expression, conversion: StringExpr.Conversion?, spec: String?)
+    /// JoinedStr - if there are multiple f-strings or any literals involved.
+    case joined([Group])
+
+    public var description: String {
+      let printer = ASTPrinter()
+      let doc = printer.visit(self)
+      return doc.layout()
+    }
+  }
+}
+
+// MARK: - Conversion
+
+extension StringExpr {
+
+  /// Transforms a value prior to formatting it.
+  public enum Conversion: CustomStringConvertible {
+
+    /// Converts by calling `str(<value>)`.
+    case str
+    /// Converts by calling `ascii(<value>)`.
+    case ascii
+    /// Converts by calling `repr(<value>)`.
+    case repr
+
+    public var description: String {
+      let printer = ASTPrinter()
+      let doc = printer.visit(self)
+      return doc.layout()
+    }
+  }
+}
+
 // MARK: - IdentifierExpr
 
 public final class IdentifierExpr: Expression {
@@ -1516,11 +1565,11 @@ public final class IdentifierExpr: Expression {
 
 public final class StringExpr: Expression {
 
-  public var value: StringGroup
+  public var value: StringExpr.Group
 
   public init(
     id: ASTNodeId,
-    value: StringGroup,
+    value: StringExpr.Group,
     context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
@@ -1675,17 +1724,41 @@ public final class BytesExpr: Expression {
 
 }
 
+// MARK: - Operator
+
+extension UnaryOpExpr {
+
+  public enum Operator: CustomStringConvertible {
+
+    /// Bitwise inversion of its integer argument.
+    /// Only applies to integral numbers.
+    case invert
+    /// True if its argument is false, False otherwise.
+    case not
+    /// Unchanged argument. CPython: UAdd (unary add).
+    case plus
+    /// Negation of its numeric argument. CPython: USub (unary sub).
+    case minus
+
+    public var description: String {
+      let printer = ASTPrinter()
+      let doc = printer.visit(self)
+      return doc.layout()
+    }
+  }
+}
+
 // MARK: - UnaryOpExpr
 
 /// Operation with single operand.
 public final class UnaryOpExpr: Expression {
 
-  public var op: UnaryOperator
+  public var op: UnaryOpExpr.Operator
   public var right: Expression
 
   public init(
     id: ASTNodeId,
-    op: UnaryOperator,
+    op: UnaryOpExpr.Operator,
     right: Expression,
     context: ExpressionContext,
     start: SourceLocation,
@@ -1711,18 +1784,68 @@ public final class UnaryOpExpr: Expression {
 
 }
 
+// MARK: - Operator
+
+extension BinaryOpExpr {
+
+  public enum Operator: CustomStringConvertible {
+
+    /// Sum of its arguments.
+    /// - Numbers added together.
+    /// - Sequences are concatenated.
+    case add
+    /// Difference of its arguments.
+    case sub
+    /// Product of its arguments.
+    /// - Numbers multiplied together.
+    /// - For integer and sequence repetition is performed.
+    case mul
+    /// Intended to be used for matrix multiplication.
+    /// No builtin Python types implement this operator.
+    case matMul
+    /// Quotient of their arguments.
+    /// Division of integers yields a float.
+    case div
+    /// Remainder from the division of the first argument by the second.
+    case modulo
+    /// Left argument raised to the power of its right argument.
+    case pow
+    /// Shift the first argument to the left by the number of bits
+    /// given by the second argument.
+    case leftShift
+    /// Shift the first argument to the right by the number of bits
+    /// given by the second argument.
+    case rightShift
+    /// Bitwise (inclusive) OR of its arguments, which must be integers.
+    case bitOr
+    /// Bitwise XOR (exclusive OR) of its arguments, which must be integers.
+    case bitXor
+    /// Bitwise AND of its arguments, which must be integers.
+    case bitAnd
+    /// Quotient of their arguments.
+    /// Floor division of integers results in an integer.
+    case floorDiv
+
+    public var description: String {
+      let printer = ASTPrinter()
+      let doc = printer.visit(self)
+      return doc.layout()
+    }
+  }
+}
+
 // MARK: - BinaryOpExpr
 
 /// Operation with 2 operands.
 public final class BinaryOpExpr: Expression {
 
-  public var op: BinaryOperator
+  public var op: BinaryOpExpr.Operator
   public var left: Expression
   public var right: Expression
 
   public init(
     id: ASTNodeId,
-    op: BinaryOperator,
+    op: BinaryOpExpr.Operator,
     left: Expression,
     right: Expression,
     context: ExpressionContext,
@@ -1748,6 +1871,25 @@ public final class BinaryOpExpr: Expression {
     try visitor.visit(self, payload: payload)
   }
 
+}
+
+// MARK: - Operator
+
+extension BoolOpExpr {
+
+  public enum Operator: CustomStringConvertible {
+
+    /// Logical `and` with short-circuit.
+    case and
+    /// Logical `or` with short-circuit.
+    case or
+
+    public var description: String {
+      let printer = ASTPrinter()
+      let doc = printer.visit(self)
+      return doc.layout()
+    }
+  }
 }
 
 // MARK: - BoolOpExpr
@@ -1763,13 +1905,13 @@ public final class BinaryOpExpr: Expression {
 /// - empty containers
 public final class BoolOpExpr: Expression {
 
-  public var op: BooleanOperator
+  public var op: BoolOpExpr.Operator
   public var left: Expression
   public var right: Expression
 
   public init(
     id: ASTNodeId,
-    op: BooleanOperator,
+    op: BoolOpExpr.Operator,
     left: Expression,
     right: Expression,
     context: ExpressionContext,
@@ -1797,17 +1939,79 @@ public final class BoolOpExpr: Expression {
 
 }
 
+// MARK: - Operator
+
+extension CompareExpr {
+
+  public enum Operator: CustomStringConvertible {
+
+    /// True when two operands are equal.
+    case equal
+    /// True when two operands are not equal.
+    case notEqual
+    /// True when left operand is less than the value of right operand.
+    case less
+    /// True when left operand is less than or equal to the value of right operand.
+    case lessEqual
+    /// True when left operand is greater than the value of right operand.
+    case greater
+    /// True when left operand is greater than or equal to the value of right operand.
+    case greaterEqual
+    /// True when x and y are the same object.
+    case `is`
+    /// Negation of `x is y`.
+    case isNot
+    /// True when x is a member of s.
+    case `in`
+    /// Negation of `x in s`
+    case notIn
+
+    public var description: String {
+      let printer = ASTPrinter()
+      let doc = printer.visit(self)
+      return doc.layout()
+    }
+  }
+}
+
+// MARK: - Element
+
+extension CompareExpr {
+
+  public struct Element: CustomStringConvertible {
+
+    public var op: CompareExpr.Operator
+    public var right: Expression
+
+    public var description: String {
+      let printer = ASTPrinter()
+      let doc = printer.visit(self)
+      return doc.layout()
+    }
+
+    public init(
+      op: CompareExpr.Operator,
+      right: Expression
+    ) {
+      self.op = op
+      self.right = right
+    }
+
+
+  }
+}
+
 // MARK: - CompareExpr
 
 public final class CompareExpr: Expression {
 
   public var left: Expression
-  public var elements: NonEmptyArray<ComparisonElement>
+  public var elements: NonEmptyArray<CompareExpr.Element>
 
   public init(
     id: ASTNodeId,
     left: Expression,
-    elements: NonEmptyArray<ComparisonElement>,
+    elements: NonEmptyArray<CompareExpr.Element>,
     context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
@@ -1830,6 +2034,25 @@ public final class CompareExpr: Expression {
     try visitor.visit(self, payload: payload)
   }
 
+}
+
+// MARK: - Element
+
+extension DictionaryExpr {
+
+  public enum Element: CustomStringConvertible {
+
+    /// `**expr`
+    case unpacking(Expression)
+    /// `key : value`
+    case keyValue(key: Expression, value: Expression)
+
+    public var description: String {
+      let printer = ASTPrinter()
+      let doc = printer.visit(self)
+      return doc.layout()
+    }
+  }
 }
 
 // MARK: - TupleExpr
@@ -1903,11 +2126,11 @@ public final class ListExpr: Expression {
 /// Set of `key: value` pairs between braces: {a: b}. Keys are unique.
 public final class DictionaryExpr: Expression {
 
-  public var elements: [DictionaryElement]
+  public var elements: [DictionaryExpr.Element]
 
   public init(
     id: ASTNodeId,
-    elements: [DictionaryElement],
+    elements: [DictionaryExpr.Element],
     context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
@@ -1961,6 +2184,55 @@ public final class SetExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
+
+}
+
+// MARK: - Comprehension
+
+/// One `for` clause in a comprehension.
+public struct Comprehension: ASTNode, CustomStringConvertible {
+
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public var id: ASTNodeId
+  /// Reference to use for each element,
+  /// typically a `Identifier` or `Tuple` node.
+  public var target: Expression
+  /// Object to iterate over.
+  public var iterable: Expression
+  /// List of test expressions. We can have multiple `ifs`.
+  public var ifs: [Expression]
+  /// Indicates that the comprehension is asynchronous.
+  public var isAsync: Bool
+  /// Location of the first character in the source code.
+  public var start: SourceLocation
+  /// Location just after the last character in the source code.
+  public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
+  public init(
+    id: ASTNodeId,
+    target: Expression,
+    iterable: Expression,
+    ifs: [Expression],
+    isAsync: Bool,
+    start: SourceLocation,
+    end: SourceLocation
+  ) {
+    self.id = id
+    self.target = target
+    self.iterable = iterable
+    self.ifs = ifs
+    self.isAsync = isAsync
+    self.start = start
+    self.end = end
+  }
+
 
 }
 
@@ -2273,13 +2545,13 @@ public final class CallExpr: Expression {
 
   public var function: Expression
   public var args: [Expression]
-  public var keywords: [Keyword]
+  public var keywords: [KeywordArgument]
 
   public init(
     id: ASTNodeId,
     function: Expression,
     args: [Expression],
-    keywords: [Keyword],
+    keywords: [KeywordArgument],
     context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
@@ -2287,6 +2559,134 @@ public final class CallExpr: Expression {
     self.function = function
     self.args = args
     self.keywords = keywords
+    super.init(id: id, context: context, start: start, end: end)
+  }
+
+  override public func accept<V: ExpressionVisitor>(
+      _ visitor: V
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self)
+  }
+
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
+  }
+
+}
+
+// MARK: - AttributeExpr
+
+/// For example `apple.juice = poison`.
+public final class AttributeExpr: Expression {
+
+  public var object: Expression
+  public var name: String
+
+  public init(
+    id: ASTNodeId,
+    object: Expression,
+    name: String,
+    context: ExpressionContext,
+    start: SourceLocation,
+    end: SourceLocation
+  ) {
+    self.object = object
+    self.name = name
+    super.init(id: id, context: context, start: start, end: end)
+  }
+
+  override public func accept<V: ExpressionVisitor>(
+      _ visitor: V
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self)
+  }
+
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
+  }
+
+}
+
+// MARK: - Slice
+
+public struct Slice: ASTNode, CustomStringConvertible {
+
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public var id: ASTNodeId
+  public var kind: Slice.Kind
+  /// Location of the first character in the source code.
+  public var start: SourceLocation
+  /// Location just after the last character in the source code.
+  public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
+  public init(
+    id: ASTNodeId,
+    kind: Slice.Kind,
+    start: SourceLocation,
+    end: SourceLocation
+  ) {
+    self.id = id
+    self.kind = kind
+    self.start = start
+    self.end = end
+  }
+
+
+}
+
+// MARK: - Kind
+
+extension Slice {
+
+  public enum Kind: CustomStringConvertible {
+
+    /// Regular slicing: `movies[pinocchio:frozen2]`.
+    case slice(lower: Expression?, upper: Expression?, step: Expression?)
+    /// Advanced slicing: `frozen[kristoff:ana, olaf]`.
+    /// `value` holds a list of `Slice` and `Index` nodes.
+    case extSlice(NonEmptyArray<Slice>)
+    /// Subscripting with a single value: `frozen[elsa]`.
+    case index(Expression)
+
+    public var description: String {
+      let printer = ASTPrinter()
+      let doc = printer.visit(self)
+      return doc.layout()
+    }
+  }
+}
+
+// MARK: - SubscriptExpr
+
+/// For example `apple[juice] = poison`.
+public final class SubscriptExpr: Expression {
+
+  public var object: Expression
+  public var slice: Slice
+
+  public init(
+    id: ASTNodeId,
+    object: Expression,
+    slice: Slice,
+    context: ExpressionContext,
+    start: SourceLocation,
+    end: SourceLocation
+  ) {
+    self.object = object
+    self.slice = slice
     super.init(id: id, context: context, start: start, end: end)
   }
 
@@ -2344,78 +2744,6 @@ public final class IfExpr: Expression {
 
 }
 
-// MARK: - AttributeExpr
-
-/// For example `apple.juice = poison`.
-public final class AttributeExpr: Expression {
-
-  public var object: Expression
-  public var name: String
-
-  public init(
-    id: ASTNodeId,
-    object: Expression,
-    name: String,
-    context: ExpressionContext,
-    start: SourceLocation,
-    end: SourceLocation
-  ) {
-    self.object = object
-    self.name = name
-    super.init(id: id, context: context, start: start, end: end)
-  }
-
-  override public func accept<V: ExpressionVisitor>(
-      _ visitor: V
-  ) throws -> V.ExpressionResult {
-    try visitor.visit(self)
-  }
-
-  override public func accept<V: ExpressionVisitorWithPayload>(
-      _ visitor: V,
-      payload: V.ExpressionPayload
-  ) throws -> V.ExpressionResult {
-    try visitor.visit(self, payload: payload)
-  }
-
-}
-
-// MARK: - SubscriptExpr
-
-/// For example `apple[juice] = poison`.
-public final class SubscriptExpr: Expression {
-
-  public var object: Expression
-  public var slice: Slice
-
-  public init(
-    id: ASTNodeId,
-    object: Expression,
-    slice: Slice,
-    context: ExpressionContext,
-    start: SourceLocation,
-    end: SourceLocation
-  ) {
-    self.object = object
-    self.slice = slice
-    super.init(id: id, context: context, start: start, end: end)
-  }
-
-  override public func accept<V: ExpressionVisitor>(
-      _ visitor: V
-  ) throws -> V.ExpressionResult {
-    try visitor.visit(self)
-  }
-
-  override public func accept<V: ExpressionVisitorWithPayload>(
-      _ visitor: V,
-      payload: V.ExpressionPayload
-  ) throws -> V.ExpressionResult {
-    try visitor.visit(self, payload: payload)
-  }
-
-}
-
 // MARK: - StarredExpr
 
 /// For example:
@@ -2451,323 +2779,6 @@ public final class StarredExpr: Expression {
 
 }
 
-public enum UnaryOperator: Equatable, CustomStringConvertible {
-  /// Bitwise inversion of its integer argument.
-  /// Only applies to integral numbers.
-  case invert
-  /// True if its argument is false, False otherwise.
-  case not
-  /// Unchanged argument. CPython: UAdd (unary add).
-  case plus
-  /// Negation of its numeric argument. CPython: USub (unary sub).
-  case minus
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-}
-
-public enum BooleanOperator: Equatable, CustomStringConvertible {
-  /// Logical `and` with short-circuit.
-  case and
-  /// Logical `or` with short-circuit.
-  case or
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-}
-
-public enum BinaryOperator: Equatable, CustomStringConvertible {
-  /// Sum of its arguments.
-  /// - Numbers added together.
-  /// - Sequences are concatenated.
-  case add
-  /// Difference of its arguments.
-  case sub
-  /// Product of its arguments.
-  /// - Numbers multiplied together.
-  /// - For integer and sequence repetition is performed.
-  case mul
-  /// Intended to be used for matrix multiplication.
-  /// No builtin Python types implement this operator.
-  case matMul
-  /// Quotient of their arguments.
-  /// Division of integers yields a float.
-  case div
-  /// Remainder from the division of the first argument by the second.
-  case modulo
-  /// Left argument raised to the power of its right argument.
-  case pow
-  /// Shift the first argument to the left by the number of bits
-  /// given by the second argument.
-  case leftShift
-  /// Shift the first argument to the right by the number of bits
-  /// given by the second argument.
-  case rightShift
-  /// Bitwise (inclusive) OR of its arguments, which must be integers.
-  case bitOr
-  /// Bitwise XOR (exclusive OR) of its arguments, which must be integers.
-  case bitXor
-  /// Bitwise AND of its arguments, which must be integers.
-  case bitAnd
-  /// Quotient of their arguments.
-  /// Floor division of integers results in an integer.
-  case floorDiv
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-}
-
-// MARK: - ComparisonElement
-
-public struct ComparisonElement: Equatable, CustomStringConvertible {
-
-  public var op: ComparisonOperator
-  public var right: Expression
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-  public init(
-    op: ComparisonOperator,
-    right: Expression
-  ) {
-    self.op = op
-    self.right = right
-  }
-
-}
-
-public enum ComparisonOperator: Equatable, CustomStringConvertible {
-  /// True when two operands are equal.
-  case equal
-  /// True when two operands are not equal.
-  case notEqual
-  /// True when left operand is less than the value of right operand.
-  case less
-  /// True when left operand is less than or equal to the value of right operand.
-  case lessEqual
-  /// True when left operand is greater than the value of right operand.
-  case greater
-  /// True when left operand is greater than or equal to the value of right operand.
-  case greaterEqual
-  /// True when x and y are the same object.
-  case `is`
-  /// Negation of `x is y`.
-  case isNot
-  /// True when x is a member of s.
-  case `in`
-  /// Negation of `x in s`
-  case notIn
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-}
-
-public enum DictionaryElement: Equatable, CustomStringConvertible {
-  /// `**expr`
-  case unpacking(Expression)
-  /// `key : value`
-  case keyValue(key: Expression, value: Expression)
-
-  public var isUnpacking: Bool {
-    if case .unpacking = self { return true }
-    return false
-  }
-
-  public var isKeyValue: Bool {
-    if case .keyValue = self { return true }
-    return false
-  }
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-}
-
-/// For normal strings and f-strings, concatenate them together.
-public enum StringGroup: Equatable, CustomStringConvertible {
-  /// String - no f-strings.
-  case literal(String)
-  /// FormattedValue - just an f-string (with no leading or trailing literals).
-  case formattedValue(Expression, conversion: ConversionFlag?, spec: String?)
-  /// JoinedStr - if there are multiple f-strings or any literals involved.
-  case joined([StringGroup])
-
-  public var isLiteral: Bool {
-    if case .literal = self { return true }
-    return false
-  }
-
-  public var isFormattedValue: Bool {
-    if case .formattedValue = self { return true }
-    return false
-  }
-
-  public var isJoined: Bool {
-    if case .joined = self { return true }
-    return false
-  }
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-}
-
-/// Transforms a value prior to formatting it.
-public enum ConversionFlag: Equatable, CustomStringConvertible {
-  /// Converts by calling `str(<value>)`.
-  case str
-  /// Converts by calling `ascii(<value>)`.
-  case ascii
-  /// Converts by calling `repr(<value>)`.
-  case repr
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-}
-
-// MARK: - Slice
-
-public struct Slice: ASTNode, CustomStringConvertible {
-
-  /// A unique node identifier.
-  /// Mostly used for efficient Equatable/Hashable implementation.
-  public var id: ASTNodeId
-  public var kind: SliceKind
-  /// Location of the first character in the source code.
-  public var start: SourceLocation
-  /// Location just after the last character in the source code.
-  public var end: SourceLocation
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-  public init(
-    id: ASTNodeId,
-    kind: SliceKind,
-    start: SourceLocation,
-    end: SourceLocation
-  ) {
-    self.id = id
-    self.kind = kind
-    self.start = start
-    self.end = end
-  }
-
-}
-
-public enum SliceKind: Equatable, CustomStringConvertible {
-  /// Regular slicing: `movies[pinocchio:frozen2]`.
-  case slice(lower: Expression?, upper: Expression?, step: Expression?)
-  /// Advanced slicing: `frozen[kristoff:ana, olaf]`.
-  /// `value` holds a list of `Slice` and `Index` nodes.
-  case extSlice(NonEmptyArray<Slice>)
-  /// Subscripting with a single value: `frozen[elsa]`.
-  case index(Expression)
-
-  public var isSlice: Bool {
-    if case .slice = self { return true }
-    return false
-  }
-
-  public var isExtSlice: Bool {
-    if case .extSlice = self { return true }
-    return false
-  }
-
-  public var isIndex: Bool {
-    if case .index = self { return true }
-    return false
-  }
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-}
-
-// MARK: - Comprehension
-
-/// One `for` clause in a comprehension.
-public struct Comprehension: ASTNode, CustomStringConvertible {
-
-  /// A unique node identifier.
-  /// Mostly used for efficient Equatable/Hashable implementation.
-  public var id: ASTNodeId
-  /// Reference to use for each element,
-  /// typically a `Identifier` or `Tuple` node.
-  public var target: Expression
-  /// Object to iterate over.
-  public var iterable: Expression
-  /// List of test expressions. We can have multiple `ifs`.
-  public var ifs: [Expression]
-  /// Indicates that the comprehension is asynchronous.
-  public var isAsync: Bool
-  /// Location of the first character in the source code.
-  public var start: SourceLocation
-  /// Location just after the last character in the source code.
-  public var end: SourceLocation
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
-  public init(
-    id: ASTNodeId,
-    target: Expression,
-    iterable: Expression,
-    ifs: [Expression],
-    isAsync: Bool,
-    start: SourceLocation,
-    end: SourceLocation
-  ) {
-    self.id = id
-    self.target = target
-    self.iterable = iterable
-    self.ifs = ifs
-    self.isAsync = isAsync
-    self.start = start
-    self.end = end
-  }
-
-}
-
 // MARK: - Arguments
 
 /// The arguments for a function passed by value
@@ -2781,7 +2792,7 @@ public struct Arguments: ASTNode, CustomStringConvertible {
   /// Function positional arguments.
   /// When a function is called, positional arguments are mapped
   /// to these parameters based solely on their position.
-  public var args: [Arg]
+  public var args: [Argument]
   /// Default values for positional arguments.
   /// If there are fewer defaults, they correspond to the last *n* arguments.
   /// - Important: The default value is evaluated only **once**.
@@ -2792,7 +2803,7 @@ public struct Arguments: ASTNode, CustomStringConvertible {
   /// Parameters which occur after the '*args'.
   /// Can only be used as keywords rather than positional arguments.
   /// CPython `kwonlyargs`.
-  public var kwOnlyArgs: [Arg]
+  public var kwOnlyArgs: [Argument]
   /// Default values for keyword-only arguments.
   /// If no default value is specified then implicit `None` is assumed.
   /// CPython `kw_defaults`.
@@ -2800,7 +2811,7 @@ public struct Arguments: ASTNode, CustomStringConvertible {
   public var kwOnlyDefaults: [Expression]
   /// Keyworded (named) variable length arguments.
   /// By convention called `**kwargs`.
-  public var kwarg: Arg?
+  public var kwarg: Argument?
   /// Location of the first character in the source code.
   public var start: SourceLocation
   /// Location just after the last character in the source code.
@@ -2814,12 +2825,12 @@ public struct Arguments: ASTNode, CustomStringConvertible {
 
   public init(
     id: ASTNodeId,
-    args: [Arg],
+    args: [Argument],
     defaults: [Expression],
     vararg: Vararg,
-    kwOnlyArgs: [Arg],
+    kwOnlyArgs: [Argument],
     kwOnlyDefaults: [Expression],
-    kwarg: Arg?,
+    kwarg: Argument?,
     start: SourceLocation,
     end: SourceLocation
   ) {
@@ -2834,11 +2845,12 @@ public struct Arguments: ASTNode, CustomStringConvertible {
     self.end = end
   }
 
+
 }
 
-// MARK: - Arg
+// MARK: - Argument
 
-public struct Arg: ASTNode, CustomStringConvertible {
+public struct Argument: ASTNode, CustomStringConvertible {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
@@ -2874,39 +2886,37 @@ public struct Arg: ASTNode, CustomStringConvertible {
     self.end = end
   }
 
+
 }
 
-public enum Vararg: Equatable, CustomStringConvertible {
+// MARK: - Vararg
+
+public enum Vararg: CustomStringConvertible {
+
   case none
   /// Separator for keyword arguments. Represented by just `*`.
   case unnamed
-  case named(Arg)
-
-  public var isNamed: Bool {
-    if case .named = self { return true }
-    return false
-  }
+  case named(Argument)
 
   public var description: String {
     let printer = ASTPrinter()
     let doc = printer.visit(self)
     return doc.layout()
   }
-
 }
 
-// MARK: - Keyword
+// MARK: - KeywordArgument
 
 /// A keyword argument to a function call or class definition.
 /// `nil` name is used for `**kwargs`.
-public struct Keyword: ASTNode, CustomStringConvertible {
+public struct KeywordArgument: ASTNode, CustomStringConvertible {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
   public var id: ASTNodeId
   /// Type of the keyword argument, either dictionary unpack (`**tangled`)
   /// or named (`princess=rapunzel`).
-  public var kind: KeywordKind
+  public var kind: KeywordArgument.Kind
   /// Node to pass in.
   public var value: Expression
   /// Location of the first character in the source code.
@@ -2922,7 +2932,7 @@ public struct Keyword: ASTNode, CustomStringConvertible {
 
   public init(
     id: ASTNodeId,
-    kind: KeywordKind,
+    kind: KeywordArgument.Kind,
     value: Expression,
     start: SourceLocation,
     end: SourceLocation
@@ -2934,22 +2944,23 @@ public struct Keyword: ASTNode, CustomStringConvertible {
     self.end = end
   }
 
+
 }
 
-public enum KeywordKind: Equatable, CustomStringConvertible {
-  case dictionaryUnpack
-  case named(String)
+// MARK: - Kind
 
-  public var isNamed: Bool {
-    if case .named = self { return true }
-    return false
+extension KeywordArgument {
+
+  public enum Kind: CustomStringConvertible {
+
+    case dictionaryUnpack
+    case named(String)
+
+    public var description: String {
+      let printer = ASTPrinter()
+      let doc = printer.visit(self)
+      return doc.layout()
+    }
   }
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
-
 }
 

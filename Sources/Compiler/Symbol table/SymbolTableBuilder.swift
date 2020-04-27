@@ -222,7 +222,7 @@ internal final class SymbolTableBuilderImpl:
   // MARK: - Visit keyword
 
   /// symtable_visit_keyword(struct symtable *st, keyword_ty k)
-  internal func visitKeywords(_ keywords: [Keyword]) throws {
+  internal func visitKeywords(_ keywords: [KeywordArgument]) throws {
     for k in keywords {
       try self.visit(k.value)
     }

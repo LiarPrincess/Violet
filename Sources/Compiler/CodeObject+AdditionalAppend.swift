@@ -32,7 +32,7 @@ extension CodeObjectBuilder {
 
   // MARK: - Operators
 
-  internal func appendUnaryOperator(_ op: UnaryOperator) {
+  internal func appendUnaryOperator(_ op: UnaryOpExpr.Operator) {
     switch op {
     case .invert: self.appendUnaryInvert()
     case .not:    self.appendUnaryNot()
@@ -41,7 +41,7 @@ extension CodeObjectBuilder {
     }
   }
 
-  internal func appendBinaryOperator(_ op: BinaryOperator) {
+  internal func appendBinaryOperator(_ op: BinaryOpExpr.Operator) {
     switch op {
     case .add:        self.appendBinaryAdd()
     case .sub:        self.appendBinarySubtract()
@@ -59,7 +59,7 @@ extension CodeObjectBuilder {
     }
   }
 
-  internal func appendInplaceOperator(_ op: BinaryOperator) {
+  internal func appendInplaceOperator(_ op: BinaryOpExpr.Operator) {
     switch op {
     case .add:        self.appendInplaceAdd()
     case .sub:        self.appendInplaceSubtract()
@@ -80,7 +80,7 @@ extension CodeObjectBuilder {
   // MARK: - Compare
 
   /// Append a `compareOp` instruction to code object.
-  internal func appendCompareOp(operator: ComparisonOperator) {
+  internal func appendCompareOp(operator: CompareExpr.Operator) {
     switch `operator` {
     case .equal:        self.appendCompareOp(type: .equal)
     case .notEqual:     self.appendCompareOp(type: .notEqual)

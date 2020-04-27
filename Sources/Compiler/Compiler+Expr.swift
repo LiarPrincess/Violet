@@ -137,7 +137,7 @@ extension CompilerImpl {
     try self.visit(node.value)
   }
 
-  internal func visit(_ group: StringGroup) throws {
+  internal func visit(_ group: StringExpr.Group) throws {
     switch group {
     case let .literal(s):
       self.builder.appendString(s)

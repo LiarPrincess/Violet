@@ -14,7 +14,7 @@ import VioletLexer
 internal struct CallIR {
 
   internal fileprivate(set) var args: [Expression] = []
-  internal fileprivate(set) var keywords: [Keyword] = []
+  internal fileprivate(set) var keywords: [KeywordArgument] = []
 
   /// Flag for preventing incorrect ordering of arguments.
   /// (star star = keyword argument unpacking).
@@ -147,10 +147,10 @@ extension Parser {
     try self.advance() // **
 
     let test = try self.test(context: .load)
-    let keyword = self.builder.keyword(kind: .dictionaryUnpack,
-                                       value: test,
-                                       start: start,
-                                       end: test.end)
+    let keyword = self.builder.keywordArgument(kind: .dictionaryUnpack,
+                                               value: test,
+                                               start: start,
+                                               end: test.end)
 
     ir.keywords.append(keyword)
     ir.hasStarStar = true
@@ -173,10 +173,10 @@ extension Parser {
       }
 
       let value = try self.test(context: .load)
-      let keyword = self.builder.keyword(kind: .named(name),
-                                         value: value,
-                                         start: nameToken.start,
-                                         end: value.end)
+      let keyword = self.builder.keywordArgument(kind: .named(name),
+                                                 value: value,
+                                                 start: nameToken.start,
+                                                 end: value.end)
       ir.keywords.append(keyword)
 
     case .lambda:
@@ -187,12 +187,17 @@ extension Parser {
     }
   }
 
-  private func isDuplicate(name: String, in keywords: [Keyword]) -> Bool {
+  private func isDuplicate(name: String, in keywords: [KeywordArgument]) -> Bool {
     for k in keywords {
-      if case let KeywordKind.named(n) = k.kind, n == name {
+      switch k.kind {
+      case .named(let n) where n == name:
         return true
+      case .named,
+           .dictionaryUnpack:
+        break
       }
     }
+
     return false
   }
 

@@ -11,6 +11,7 @@ import VioletCore
 // swiftlint:disable vertical_whitespace_closing_braces
 
 extension Instruction {
+
   public enum StringConversion {
     case none
     case str
@@ -20,6 +21,7 @@ extension Instruction {
 }
 
 extension Instruction {
+
   public enum CompareType {
     /// True when two operands are equal.
     case equal
@@ -47,6 +49,7 @@ extension Instruction {
 }
 
 extension Instruction {
+
   public enum SliceArg {
     case lowerUpper
     case lowerUpperStep
@@ -54,6 +57,7 @@ extension Instruction {
 }
 
 extension Instruction {
+
   public enum RaiseArg {
     /// Re-raise previous exception.
     /// CPython 0.

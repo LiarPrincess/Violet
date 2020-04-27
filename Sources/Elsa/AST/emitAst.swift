@@ -1,5 +1,7 @@
 import Foundation
 
+// swiftlint:disable file_length
+
 public func emitAst(inputFile: URL, outputFile: URL) {
   withRedirectedStandardOutput(to: outputFile) {
     emitAst(inputFile: inputFile)
@@ -30,13 +32,12 @@ private func emitAst(inputFile: URL) {
     case let .class(c):
       let keyword = hasSubclass(class: c, in: entities) ? "class" : "final class"
       printProduct(keyword: keyword, def: c)
-      printEquatable(c)
     }
   }
 }
 
-private func hasSubclass(class: ClassDef, in other: [Entity]) -> Bool {
-  let className = `class`.name
+private func hasSubclass(class def: ClassDef, in other: [Entity]) -> Bool {
+  let className = def.name
 
   for entity in other {
     switch entity {
@@ -56,102 +57,144 @@ private func hasSubclass(class: ClassDef, in other: [Entity]) -> Bool {
 // MARK: - Enum
 
 private func printEnum(_ def: EnumDef) {
-  printDoc(def.doc)
+  print("// MARK: - \(def.name)")
+  print()
 
-  let bases = createBases(def.bases)
+  var indent = ""
+  if let parent = def.nestedInside {
+    indent = "  "
+    print("extension \(parent) {")
+    print()
+  }
+
   let indirect = def.isIndirect ? "indirect " : ""
-  print("public \(indirect)enum \(def.name)\(bases), CustomStringConvertible {")
+  let bases = joinBases(def.bases + ["CustomStringConvertible"])
 
-  // print `case xxx([Statement])`
+  printDoc(def.doc, indent: indent)
+  print("\(indent)public \(indirect)enum \(def.name)\(bases) {")
+  print()
+
+  printCases(def, indent: indent)
+  print()
+
+  printCustomStringConvertible(indent: indent)
+
+  if def.nestedInside != nil {
+    print("  }")
+  }
+  print("}")
+  print()
+}
+
+private func printCases(_ def: EnumDef, indent: String) {
   for caseDef in def.cases {
-    printDoc(caseDef.doc, indent: 2)
+    printDoc(caseDef.doc, indent: indent + "  ")
 
     var properties = ""
     if !caseDef.properties.isEmpty {
       properties += "("
-      properties += caseDef.properties.map { $0.nameColonType ?? $0.type }.joined(", ")
+      properties += caseDef.properties
+        .map { $0.nameColonType ?? $0.type }
+        .joined(", ")
       properties += ")"
     }
 
-    print("  case \(caseDef.escapedName)\(properties)")
+    let name = caseDef.escapedName
+    print("  \(indent)case \(name)\(properties)")
   }
-  print("")
-
-  // print `var isXXX: Bool {`
-  for caseDef in def.cases where !caseDef.properties.isEmpty {
-    print("""
-        public var is\(pascalCase(caseDef.name)): Bool {
-          if case .\(caseDef.name) = self { return true }
-          return false
-        }
-
-      """)
-  }
-
-  printDescription()
-
-  print("}")
-  print()
 }
 
 // MARK: - Product
 
 private func printProduct<T: ProductType>(keyword: String, def: T) {
-  let bases = createBases(def.bases)
-
   print("// MARK: - \(def.name)")
   print()
 
+  var indent = ""
+  if let parent = def.nestedInside {
+    indent = "  "
+    print("extension \(parent) {")
+    print()
+  }
+
+  printDoc(def.doc, indent: indent)
+
+  // Avoid repeated conformance to 'CustomStringConvertible'
   let isSubclass = def.isASTSubclass || def.isStmtSubclass || def.isExprSubclass
-  let hasDescr = !isSubclass
-  let descrProtocol = hasDescr ? ", CustomStringConvertible" : ""
+  let hasCustomStringConvertible = !isSubclass
 
-  printDoc(def.doc)
-  print("public \(keyword) \(def.name)\(bases)\(descrProtocol) {")
+  printName(keyword: keyword,
+            def: def,
+            hasCustomStringConvertible: hasCustomStringConvertible,
+            indent: indent)
   print()
 
-  for property in def.properties {
-    printDoc(property.doc, indent: 2)
-    print("  public var \(property.nameColonType)")
+  if !def.properties.isEmpty {
+    printProperties(def: def, indent: indent)
+    print()
   }
+
+  if hasCustomStringConvertible {
+    printCustomStringConvertible(indent: indent)
+    print()
+  }
+
+  printInit(def: def, indent: indent)
   print()
-
-  if hasDescr {
-    printDescription()
-  }
-
-  printInit(def: def)
   printVisitor(def: def)
+  print()
 
+  if def.nestedInside != nil {
+    print("  }")
+  }
   print("}")
   print()
 }
 
+private func printName<T: ProductType>(keyword: String,
+                                       def: T,
+                                       hasCustomStringConvertible: Bool,
+                                       indent: String) {
+  var baseClassNames = def.bases
+  if hasCustomStringConvertible {
+    baseClassNames.append("CustomStringConvertible")
+  }
+
+  let bases = joinBases(baseClassNames)
+  print("\(indent)public \(keyword) \(def.name)\(bases) {")
+}
+
+private func printProperties<T: ProductType>(def: T, indent: String) {
+  for propertyDef in def.properties {
+    printDoc(propertyDef.doc, indent: indent + "  ")
+    print("  \(indent)public var \(propertyDef.nameColonType)")
+  }
+}
+
 // MARK: - Init
 
-private func printInit<T: ProductType>(def: T) {
+private func printInit<T: ProductType>(def: T, indent: String) {
   if def.isASTSubclass || def.isStmtSubclass || def.isExprSubclass {
-    printSubclassInit(def: def)
+    printSubclassInit(def: def, indent: indent)
     return
   }
 
-  print("  public init(")
+  print("  \(indent)public init(")
   for (index, prop) in def.properties.enumerated() {
     let isLast = index == def.properties.count - 1
     let comma = isLast ? "" : ","
-    print("    \(prop.nameColonType)\(comma)")
+    print("    \(indent)\(prop.nameColonType)\(comma)")
   }
-  print("  ) {")
+  print("  \(indent)) {")
 
   for property in def.properties {
-    print("    self.\(property.name) = \(property.name)")
+    print("    \(indent)self.\(property.name) = \(property.name)")
   }
 
-  print("  }")
-  print()
+  print("  \(indent)}")
 }
 
-private func printSubclassInit<T: ProductType>(def: T) {
+private func printSubclassInit<T: ProductType>(def: T, indent: String) {
   let isUsingSuperInit = def.properties.isEmpty
   if isUsingSuperInit {
     return
@@ -159,29 +202,28 @@ private func printSubclassInit<T: ProductType>(def: T) {
 
   let isExpr = def.isExprSubclass
 
-  print("  public init(")
-  print("    id: ASTNodeId,")
+  print("  \(indent)public init(")
+  print("    \(indent)id: ASTNodeId,")
   for prop in def.properties {
-    print("    \(prop.nameColonType),")
+    print("    \(indent)\(prop.nameColonType),")
   }
   if isExpr {
-    print("    context: ExpressionContext,")
+    print("    \(indent)context: ExpressionContext,")
   }
-  print("    start: SourceLocation,")
-  print("    end: SourceLocation")
-  print("  ) {")
+  print("    \(indent)start: SourceLocation,")
+  print("    \(indent)end: SourceLocation")
+  print("  \(indent)) {")
 
   for property in def.properties {
-    print("    self.\(property.name) = \(property.name)")
+    print("    \(indent)self.\(property.name) = \(property.name)")
   }
 
   if isExpr {
-    print("    super.init(id: id, context: context, start: start, end: end)")
+    print("    \(indent)super.init(id: id, context: context, start: start, end: end)")
   } else {
-    print("    super.init(id: id, start: start, end: end)")
+    print("    \(indent)super.init(id: id, start: start, end: end)")
   }
-  print("  }")
-  print()
+  print("  \(indent)}")
 }
 
 private func productPropertyInit(_ prop: ProductProperty) -> String {
@@ -193,9 +235,9 @@ private func productPropertyInit(_ prop: ProductProperty) -> String {
 
 // swiftlint:disable:next function_body_length
 private func printVisitor<T: ProductType>(def: T) {
-  guard let prefix = def.visitorPrefix else { return }
+  guard let prefix = getVisitorPrefix(def: def) else { return }
 
-  if def.isAST || def .isStmt || def.isExpr {
+  if def.isAST || def.isStmt || def.isExpr {
     print("""
       public func accept<V: \(prefix)Visitor>(
           _ visitor: V
@@ -209,11 +251,8 @@ private func printVisitor<T: ProductType>(def: T) {
       ) throws -> V.\(prefix)Result {
         trap("'accept' method should be overriden in subclass")
       }
-
     """)
-  }
-
-  if def.isASTSubclass || def.isStmtSubclass || def.isExprSubclass {
+  } else if def.isASTSubclass || def.isStmtSubclass || def.isExprSubclass {
     print("""
       override public func accept<V: \(prefix)Visitor>(
           _ visitor: V
@@ -227,48 +266,40 @@ private func printVisitor<T: ProductType>(def: T) {
       ) throws -> V.\(prefix)Result {
         try visitor.visit(self, payload: payload)
       }
-
     """)
   }
 }
 
+private func getVisitorPrefix<T: ProductType>(def: T) -> String? {
+  if def.isAST || def.isASTSubclass {
+    return "AST"
+  }
+
+  if def.isStmt || def.isStmtSubclass {
+    return "Statement"
+  }
+
+  if def.isExpr || def.isExprSubclass {
+    return "Expression"
+  }
+
+  return nil
+}
+
 // MARK: - Description
 
-private func printDescription() {
+private func printCustomStringConvertible(indent: String) {
   print("""
-    public var description: String {
-      let printer = ASTPrinter()
-      let doc = printer.visit(self)
-      return doc.layout()
-    }
-
+    \(indent)public var description: String {
+    \(indent)  let printer = ASTPrinter()
+    \(indent)  let doc = printer.visit(self)
+    \(indent)  return doc.layout()
+    \(indent)}
   """)
 }
 
-// MARK: - Equatable
-
-private func printEquatable(_ def: ClassDef) {
-  guard def.bases.contains("Equatable") else {
-    return
-  }
-
-  let type = def.name
-  print("extension \(type) {")
-  print("  public static func == (lhs: \(type), rhs: \(type)) -> Bool {")
-
-  for prop in def.properties {
-    let name = prop.name
-    print("    guard lhs.\(name) == rhs.\(name) else { return false }")
-  }
-
-  print("    return true")
-  print("  }")
-
-  print("}")
-  print()
-}
 // MARK: - Common
 
-private func createBases(_ bases: [String]) -> String {
+private func joinBases(_ bases: [String]) -> String {
   return bases.isEmpty ? "" : ": " + bases.joined(", ")
 }

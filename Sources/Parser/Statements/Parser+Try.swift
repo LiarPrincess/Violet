@@ -85,7 +85,7 @@ extension Parser {
   }
 
   /// [test ['as' NAME]] | <empty>
-  private func parseExceptHandlerKind() throws -> ExceptHandlerKind {
+  private func parseExceptHandlerKind() throws -> ExceptHandler.Kind {
     guard self.peek.kind != .colon else {
       return .default
     }

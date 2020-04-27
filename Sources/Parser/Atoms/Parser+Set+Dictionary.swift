@@ -150,11 +150,11 @@ extension Parser {
   }
 
   /// `(comp_for | (',' (test ':' test | '**' expr))* [','])`
-  private func dictionaryDisplay(first: DictionaryElement,
+  private func dictionaryDisplay(first: DictionaryExpr.Element,
                                  start: SourceLocation,
                                  closingToken: TokenKind) throws -> Expression {
 
-    var elements = [DictionaryElement]()
+    var elements = [DictionaryExpr.Element]()
     elements.append(first)
 
     // while

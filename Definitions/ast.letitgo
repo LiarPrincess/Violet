@@ -55,9 +55,6 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   Expr expression
 )
 
-
-
-
 {- --------------- -}
 {- -- Statement -- -}
 {- --------------- -}
@@ -76,6 +73,10 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Location just after the last character in the source code.
   Loc end
 )
+
+{- -------------- -}
+{- -- Function -- -}
+{- -------------- -}
 
 -- A function definition.
 @finalClass FunctionDefStmt: Stmt = (
@@ -107,6 +108,10 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   Expr? returns
 )
 
+{- ----------- -}
+{- -- Class -- -}
+{- ----------- -}
+
 -- A class definition.
 @finalClass ClassDefStmt: Stmt = (
   -- `name` is a raw string for the class name
@@ -118,12 +123,16 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- `starargs` and kwargs are each a single node, as in a function call.
   --  starargs will be expanded to join the list of base classes,
   --  and kwargs will be passed to the metaclass.
-  Keyword* keywords,
+  KeywordArgument* keywords,
   -- `body` is a list of nodes representing the code within the class definition.
   Stmt+ body,
   -- `decorators` is a list of nodes, as in `FunctionDef`.
   Expr* decorators
 )
+
+{- ------------------- -}
+{- -- Return/Delete -- -}
+{- ------------------- -}
 
 -- A `return` statement.
 @finalClass ReturnStmt: Stmt = (Expr? value)
@@ -132,6 +141,10 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Contains a list of nodes, such as Name, Attribute or Subscript nodes.
   Expr+ values
 )
+
+{- ------------ -}
+{- -- Assign -- -}
+{- ------------ -}
 
 -- An assignment.
 --
@@ -142,7 +155,11 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 --
 -- Target can be Name, Subscript or Attribute, but not a Tuple or List
 -- (unlike the targets of `Assign`).
-@finalClass AugAssignStmt: Stmt = (Expr target, BinaryOperator op, Expr value)
+@finalClass AugAssignStmt: Stmt = (
+  Expr target,
+  BinaryOpExpr.Operator op,
+  Expr value
+)
 -- An assignment with a type annotation.
 @finalClass AnnAssignStmt: Stmt = (
   Expr target,
@@ -153,6 +170,10 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- (which excludes `tangled.rapunzel`).
   Bool isSimple
 )
+
+{- --------- -}
+{- -- For -- -}
+{- --------- -}
 
 -- A `for` loop.
 @finalClass ForStmt: Stmt = (
@@ -180,6 +201,11 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- rather than via a break statement.
   Stmt* orElse
 )
+
+{- ----------- -}
+{- -- While -- -}
+{- ----------- -}
+
 -- A `while` loop.
 @finalClass WhileStmt: Stmt = (
   -- Holds the condition, such as a Compare node.
@@ -190,6 +216,10 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- rather than via a break statement.
   Stmt* orElse
 )
+
+{- -------- -}
+{- -- If -- -}
+{- -------- -}
 
 -- An if statement.
 --
@@ -205,6 +235,25 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   Stmt* orElse
 )
 
+{- ---------- -}
+{- -- With -- -}
+{- ---------- -}
+
+-- A single context manager in a `with` block.
+@struct WithItem: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
+  -- Context manager (often a Call node).
+  Expr contextExpr,
+  -- Name, Tuple or List for the `as foo` part, or `nil` if that isn’t used.
+  Expr? optionalVars,
+  -- Location of the first character in the source code.
+  Loc start,
+  -- Location just after the last character in the source code.
+  Loc end
+)
+
 -- A `with` block.
 @finalClass WithStmt: Stmt = (
   -- List of `Withitem` nodes representing the context managers.
@@ -212,6 +261,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Indented block inside the context.
   Stmt+ body
 )
+
 -- An `async with` definition.
 @finalClass AsyncWithStmt: Stmt = (
   -- List of `Withitem` nodes representing the context managers.
@@ -219,6 +269,31 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Indented block inside the context.
   Stmt+ body
 )
+
+{- ---------------- -}
+{- -- Exceptions -- -}
+{- ---------------- -}
+
+-- A single except clause.
+@struct ExceptHandler: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
+  -- Exception type it will match,  (or `.default` for a catch-all).
+  ExceptHandler.Kind kind,
+  -- List of handler nodes.
+  Stmt+ body,
+  -- Location of the first character in the source code.
+  Loc start,
+  -- Location just after the last character in the source code.
+  Loc end
+)
+
+@enum ExceptHandler.Kind =
+  -- Handler with type it will match, typically an `Identifier` node.
+  Typed(Expr type, Identifier? asName)
+  -- Catch-all handler.
+  | Default
 
 -- Raising an exception.
 @finalClass RaiseStmt: Stmt = (
@@ -237,12 +312,36 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   Stmt* orElse,
   Stmt* finally
 )
+
+{- ------------ -}
+{- -- Assert -- -}
+{- ------------ -}
+
 -- An assertion.
 @finalClass AssertStmt: Stmt = (
   -- Holds the condition, such as a `Compare` node.
   Expr test,
   -- Holds the failure message, normally a `Str` node.
   Expr? msg
+)
+
+{- ------------ -}
+{- -- Import -- -}
+{- ------------ -}
+
+-- Import name with optional 'as' alias.
+-- Both parameters are raw strings of the names.
+-- `asName` can be `nil` if the regular name is to be used.
+@struct Alias: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
+  Identifier name,
+  Identifier? asName,
+  -- Location of the first character in the source code.
+  Loc start,
+  -- Location just after the last character in the source code.
+  Loc end
 )
 
 -- An import statement.
@@ -268,10 +367,19 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   UInt8 level
 )
 
+{- ----------- -}
+{- -- Scope -- -}
+{- ----------- -}
+
 -- `global` statement.
 @finalClass GlobalStmt: Stmt = (Identifier+ identifiers)
 -- `nonlocal` statement.
 @finalClass NonlocalStmt: Stmt = (Identifier+ identifiers)
+
+{- ----------- -}
+{- -- Other -- -}
+{- ----------- -}
+
 -- `Expression` statement.
 @finalClass ExprStmt: Stmt = (Expr expression)
 -- A `pass` statement.
@@ -280,65 +388,6 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 @finalClass BreakStmt: Stmt = ()
 -- `continue` statement.
 @finalClass ContinueStmt: Stmt = ()
-
-{- ----------------------- -}
-{- -- Statement helpers -- -}
-{- ----------------------- -}
-
--- Import name with optional 'as' alias.
--- Both parameters are raw strings of the names.
--- `asName` can be `nil` if the regular name is to be used.
-@struct Alias: ASTNode = (
-  -- A unique node identifier.
-  -- Mostly used for efficient Equatable/Hashable implementation.
-  NodeId id,
-  Identifier name,
-  Identifier? asName,
-  -- Location of the first character in the source code.
-  Loc start,
-  -- Location just after the last character in the source code.
-  Loc end
-)
-
--- A single context manager in a `with` block.
-@struct WithItem: ASTNode = (
-  -- A unique node identifier.
-  -- Mostly used for efficient Equatable/Hashable implementation.
-  NodeId id,
-  -- Context manager (often a Call node).
-  Expr contextExpr,
-  -- Name, Tuple or List for the `as foo` part, or `nil` if that isn’t used.
-  Expr? optionalVars,
-  -- Location of the first character in the source code.
-  Loc start,
-  -- Location just after the last character in the source code.
-  Loc end
-)
-
--- A single except clause.
-@struct ExceptHandler: ASTNode = (
-  -- A unique node identifier.
-  -- Mostly used for efficient Equatable/Hashable implementation.
-  NodeId id,
-  -- Exception type it will match,  (or `.default` for a catch-all).
-  ExceptHandlerKind kind,
-  -- List of handler nodes.
-  Stmt+ body,
-  -- Location of the first character in the source code.
-  Loc start,
-  -- Location just after the last character in the source code.
-  Loc end
-)
-
-@enum ExceptHandlerKind: Equatable =
-  -- Handler with type it will match, typically an `Identifier` node.
-  Typed(Expr type, Identifier? asName)
-  -- Catch-all handler.
-  | Default
-
-
-
-
 
 {- ----------------- -}
 {- -- Expressions -- -}
@@ -360,7 +409,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   Loc end
 )
 
-@enum ExpressionContext: Equatable =
+@enum ExpressionContext =
   Store
   | Load
   | Del
@@ -370,105 +419,38 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 @finalClass NoneExpr: Expr = ()
 @finalClass EllipsisExpr: Expr = ()
 
+{- Based on RustPython. -}
+{- CPython uses 'JoinedStr(expr* values)', but we know that values are strings. -}
+-- For normal strings and f-strings, concatenate them together.
+@enum StringExpr.Group =
+  -- String - no f-strings.
+  Literal(String)
+  -- FormattedValue - just an f-string (with no leading or trailing literals).
+  | FormattedValue(Expr, StringExpr.Conversion? conversion, String? spec)
+  -- JoinedStr - if there are multiple f-strings or any literals involved.
+  | Joined(Group*)
+
+-- Transforms a value prior to formatting it.
+@enum StringExpr.Conversion =
+  -- Converts by calling `str(<value>)`.
+  Str
+  -- Converts by calling `ascii(<value>)`.
+  | Ascii
+  -- Converts by calling `repr(<value>)`.
+  | Repr
+
 @finalClass IdentifierExpr: Expr = (String value)
-@finalClass StringExpr: Expr = (StringGroup value)
+@finalClass StringExpr: Expr = (StringExpr.Group value)
 @finalClass IntExpr: Expr = (BigInt value)
 @finalClass FloatExpr: Expr = (Double value)
 @finalClass ComplexExpr: Expr = (Double real, Double imag)
 @finalClass BytesExpr: Expr = (Data value)
 
--- Operation with single operand.
-@finalClass UnaryOpExpr: Expr = (UnaryOperator op, Expr right)
--- Operation with 2 operands.
-@finalClass BinaryOpExpr: Expr = (BinaryOperator op, Expr left, Expr right)
--- Operation with logical values as operands.
--- Returns last evaluated argument (even if it's not strictly `True` or `False`).
--- - Note:
--- Following values are interpreted as false:
--- - False\n- None\n- numeric zero\n- empty strings\n- empty containers
-@finalClass BoolOpExpr: Expr = (BooleanOperator op, Expr left, Expr right)
-{- need sequence to distinguish between: x < 4 < 3 and (x < 4) < 3 -}
-@finalClass CompareExpr: Expr = (Expr left, ComparisonElement+ elements)
+{- ---------------- -}
+{- -- Operations -- -}
+{- ---------------- -}
 
--- Values separated by commas (sometimes between parentheses): (a,b).
-@finalClass TupleExpr: Expr = (Expr* elements)
--- List of comma-separated values between square brackets: [a,b].
-@finalClass ListExpr: Expr = (Expr* elements)
--- Set of `key: value` pairs between braces: {a: b}. Keys are unique.
-@finalClass DictionaryExpr: Expr = (DictionaryElement* elements)
--- List of comma-separated values between braces: {a}. Unordered with no duplicates.
-@finalClass SetExpr: Expr = (Expr* elements)
-
--- Brackets containing an expression followed by a for clause and then
--- zero or more for or if clauses.
-@finalClass ListComprehensionExpr: Expr = (
-  -- Expression that will be evaluated for each item
-  Expr element,
-  Comprehension+ generators
-)
--- Brackets containing an expression followed by a for clause and then
--- zero or more for or if clauses.
-@finalClass SetComprehensionExpr: Expr = (
-  -- Expression that will be evaluated for each item
-  Expr element,
-  Comprehension+ generators
-)
--- Brackets containing an expression followed by a for clause and then
--- zero or more for or if clauses.
-@finalClass DictionaryComprehensionExpr: Expr = (
-  -- Expression that will be evaluated for each item
-  Expr key,
-  -- Expression that will be evaluated for each item
-  Expr value,
-  Comprehension+ generators
-)
-{- the grammar constrains where yield expressions can occur -}
--- Expression followed by a for clause and then
--- zero or more for or if clauses.
-@finalClass GeneratorExpr: Expr = (
-  -- Expression that will be evaluated for each item
-  Expr element,
-  Comprehension+ generators
-)
-
--- An await expression.
--- `value` is what it waits for.\n
--- Only valid in the body of an AsyncFunctionDef.
-@finalClass AwaitExpr: Expr = (Expr value)
--- A `yield` or `yield from` expression.
--- Because these are expressions, they must be wrapped in a `Expr` node
--- if the value sent back is not used.
-@finalClass YieldExpr: Expr = (Expr? value)
--- A `yield` or `yield from` expression.
--- Because these are expressions, they must be wrapped in a `Expr` node
--- if the value sent back is not used.
-@finalClass YieldFromExpr: Expr = (Expr value)
-
--- Minimal function definition that can be used inside an expression.
--- Unlike `FunctionDef`, body holds a single node.
-@finalClass LambdaExpr: Expr = (Arguments args, Expr body)
--- A function call.
--- - `func` - function to call
--- - `args` - arguments passed by position
--- - `keywords` - keyword objects representing arguments passed by keyword
-@finalClass CallExpr: Expr = (Expr function, Expr* args, Keyword* keywords)
-
--- For example: `1 if True else 2`
-@finalClass IfExpr: Expr = (Expr test, Expr body, Expr orElse)
--- For example `apple.juice = poison`.
-@finalClass AttributeExpr: Expr = (Expr object, Identifier name)
--- For example `apple[juice] = poison`.
-@finalClass SubscriptExpr: Expr = (Expr object, Slice slice)
--- For example:
--- `dwarfs = ["Doc", "Grumpy", "Happy", "Sleepy", "Bashful", "Sneezy", "Dopey"]`
--- `singSong(*dwarfs)`
-@finalClass StarredExpr: Expr = (Expr expression)
-
-{- ------------------------ -}
-{- -- Expression helpers -- -}
-{- ------------------------ -}
-
-@enum UnaryOperator: Equatable =
+@enum UnaryOpExpr.Operator =
   -- Bitwise inversion of its integer argument.
   -- Only applies to integral numbers.
   Invert
@@ -479,13 +461,10 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Negation of its numeric argument. CPython: USub (unary sub).
   | Minus
 
-@enum BooleanOperator: Equatable =
-  -- Logical `and` with short-circuit.
-  And
-  -- Logical `or` with short-circuit.
-  | Or
+-- Operation with single operand.
+@finalClass UnaryOpExpr: Expr = (UnaryOpExpr.Operator op, Expr right)
 
-@enum BinaryOperator: Equatable =
+@enum BinaryOpExpr.Operator =
   -- Sum of its arguments.
   -- - Numbers added together.
   -- - Sequences are concatenated.
@@ -522,12 +501,27 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Floor division of integers results in an integer.
   | FloorDiv
 
-@struct ComparisonElement: Equatable = (
-  ComparisonOperator op,
-  Expr right
-)
+-- Operation with 2 operands.
+@finalClass BinaryOpExpr: Expr = (BinaryOpExpr.Operator op, Expr left, Expr right)
 
-@enum ComparisonOperator: Equatable =
+@enum BoolOpExpr.Operator =
+  -- Logical `and` with short-circuit.
+  And
+  -- Logical `or` with short-circuit.
+  | Or
+
+-- Operation with logical values as operands.
+-- Returns last evaluated argument (even if it's not strictly `True` or `False`).
+-- - Note:
+-- Following values are interpreted as false:
+-- - False\n- None\n- numeric zero\n- empty strings\n- empty containers
+@finalClass BoolOpExpr: Expr = (BoolOpExpr.Operator op, Expr left, Expr right)
+
+{- ------------- -}
+{- -- Compare -- -}
+{- ------------- -}
+
+@enum CompareExpr.Operator =
   -- True when two operands are equal.
   Equal
   -- True when two operands are not equal.
@@ -549,51 +543,36 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Negation of `x in s`
   | NotIn
 
-@enum DictionaryElement: Equatable =
+@struct CompareExpr.Element = (
+  CompareExpr.Operator op,
+  Expr right
+)
+
+{- need sequence to distinguish between: x < 4 < 3 and (x < 4) < 3 -}
+@finalClass CompareExpr: Expr = (Expr left, CompareExpr.Element+ elements)
+
+{- ----------------- -}
+{- -- Collections -- -}
+{- ----------------- -}
+
+@enum DictionaryExpr.Element =
   -- `**expr`
     unpacking(Expr)
   -- `key : value`
   | keyValue(Expr key, Expr value)
 
-{- Based on RustPython. -}
-{- CPython uses 'JoinedStr(expr* values)', but we know that values are strings. -}
--- For normal strings and f-strings, concatenate them together.
-@enum StringGroup: Equatable =
-  -- String - no f-strings.
-  Literal(String)
-  -- FormattedValue - just an f-string (with no leading or trailing literals).
-  | FormattedValue(Expr, ConversionFlag? conversion, String? spec)
-  -- JoinedStr - if there are multiple f-strings or any literals involved.
-  | Joined(StringGroup*)
+-- Values separated by commas (sometimes between parentheses): (a,b).
+@finalClass TupleExpr: Expr = (Expr* elements)
+-- List of comma-separated values between square brackets: [a,b].
+@finalClass ListExpr: Expr = (Expr* elements)
+-- Set of `key: value` pairs between braces: {a: b}. Keys are unique.
+@finalClass DictionaryExpr: Expr = (DictionaryExpr.Element* elements)
+-- List of comma-separated values between braces: {a}. Unordered with no duplicates.
+@finalClass SetExpr: Expr = (Expr* elements)
 
--- Transforms a value prior to formatting it.
-@enum ConversionFlag: Equatable =
-  -- Converts by calling `str(<value>)`.
-  Str
-  -- Converts by calling `ascii(<value>)`.
-  | Ascii
-  -- Converts by calling `repr(<value>)`.
-  | Repr
-
-@struct Slice: ASTNode = (
-  -- A unique node identifier.
-  -- Mostly used for efficient Equatable/Hashable implementation.
-  NodeId id,
-  SliceKind kind,
-  -- Location of the first character in the source code.
-  Loc start,
-  -- Location just after the last character in the source code.
-  Loc end
-)
-
-@enum SliceKind: Equatable =
-  -- Regular slicing: `movies[pinocchio:frozen2]`.
-  Slice(Expr? lower, Expr? upper, Expr? step)
-  -- Advanced slicing: `frozen[kristoff:ana, olaf]`.
-  -- `value` holds a list of `Slice` and `Index` nodes.
-  | ExtSlice(Slice+)
-  -- Subscripting with a single value: `frozen[elsa]`.
-  | Index(Expr)
+{- -------------------- -}
+{- -- Comprehensions -- -}
+{- -------------------- -}
 
 -- One `for` clause in a comprehension.
 @struct Comprehension: ASTNode = (
@@ -615,6 +594,120 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   Loc end
 )
 
+-- Brackets containing an expression followed by a for clause and then
+-- zero or more for or if clauses.
+@finalClass ListComprehensionExpr: Expr = (
+  -- Expression that will be evaluated for each item
+  Expr element,
+  Comprehension+ generators
+)
+
+-- Brackets containing an expression followed by a for clause and then
+-- zero or more for or if clauses.
+@finalClass SetComprehensionExpr: Expr = (
+  -- Expression that will be evaluated for each item
+  Expr element,
+  Comprehension+ generators
+)
+
+-- Brackets containing an expression followed by a for clause and then
+-- zero or more for or if clauses.
+@finalClass DictionaryComprehensionExpr: Expr = (
+  -- Expression that will be evaluated for each item
+  Expr key,
+  -- Expression that will be evaluated for each item
+  Expr value,
+  Comprehension+ generators
+)
+
+{- the grammar constrains where yield expressions can occur -}
+-- Expression followed by a for clause and then
+-- zero or more for or if clauses.
+@finalClass GeneratorExpr: Expr = (
+  -- Expression that will be evaluated for each item
+  Expr element,
+  Comprehension+ generators
+)
+
+{- --------------------------- -}
+{- -- Coroutines/generators -- -}
+{- --------------------------- -}
+
+-- An await expression.
+-- `value` is what it waits for.\n
+-- Only valid in the body of an AsyncFunctionDef.
+@finalClass AwaitExpr: Expr = (Expr value)
+-- A `yield` or `yield from` expression.
+-- Because these are expressions, they must be wrapped in a `Expr` node
+-- if the value sent back is not used.
+@finalClass YieldExpr: Expr = (Expr? value)
+-- A `yield` or `yield from` expression.
+-- Because these are expressions, they must be wrapped in a `Expr` node
+-- if the value sent back is not used.
+@finalClass YieldFromExpr: Expr = (Expr value)
+
+{- --------------- -}
+{- -- Functions -- -}
+{- --------------- -}
+
+-- Minimal function definition that can be used inside an expression.
+-- Unlike `FunctionDef`, body holds a single node.
+@finalClass LambdaExpr: Expr = (Arguments args, Expr body)
+-- A function call.
+-- - `func` - function to call
+-- - `args` - arguments passed by position
+-- - `keywords` - keyword objects representing arguments passed by keyword
+@finalClass CallExpr: Expr = (
+  Expr function,
+  Expr* args,
+  KeywordArgument* keywords
+)
+
+{- ------------ -}
+{- -- Access -- -}
+{- ------------ -}
+
+-- For example `apple.juice = poison`.
+@finalClass AttributeExpr: Expr = (Expr object, Identifier name)
+
+@struct Slice: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
+  Slice.Kind kind,
+  -- Location of the first character in the source code.
+  Loc start,
+  -- Location just after the last character in the source code.
+  Loc end
+)
+
+@enum Slice.Kind =
+  -- Regular slicing: `movies[pinocchio:frozen2]`.
+  Slice(Expr? lower, Expr? upper, Expr? step)
+  -- Advanced slicing: `frozen[kristoff:ana, olaf]`.
+  -- `value` holds a list of `Slice` and `Index` nodes.
+  | ExtSlice(Slice+)
+  -- Subscripting with a single value: `frozen[elsa]`.
+  | Index(Expr)
+
+-- For example `apple[juice] = poison`.
+@finalClass SubscriptExpr: Expr = (Expr object, Slice slice)
+
+{- ----------- -}
+{- -- Other -- -}
+{- ----------- -}
+
+-- For example: `1 if True else 2`
+@finalClass IfExpr: Expr = (Expr test, Expr body, Expr orElse)
+-- For example:
+-- `dwarfs = ["Doc", "Grumpy", "Happy", "Sleepy", "Bashful", "Sneezy", "Dopey"]`
+-- `singSong(*dwarfs)`
+@finalClass StarredExpr: Expr = (Expr expression)
+
+{- --------------- -}
+{- -- Arguments -- -}
+{- --------------- -}
+
 -- The arguments for a function passed by value
 -- (where the value is always an object reference, not the value of the object).
 -- https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions"
@@ -625,7 +718,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Function positional arguments.
   -- When a function is called, positional arguments are mapped
   -- to these parameters based solely on their position.
-  Arg* args,
+  Argument* args,
   -- Default values for positional arguments.
   -- If there are fewer defaults, they correspond to the last *n* arguments.
   -- - Important: The default value is evaluated only **once**.
@@ -636,7 +729,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Parameters which occur after the '*args'.
   -- Can only be used as keywords rather than positional arguments.
   -- CPython `kwonlyargs`.
-  Arg* kwOnlyArgs,
+  Argument* kwOnlyArgs,
   -- Default values for keyword-only arguments.
   -- If no default value is specified then implicit `None` is assumed.
   -- CPython `kw_defaults`.
@@ -644,14 +737,14 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   Expr* kwOnlyDefaults,
   -- Keyworded (named) variable length arguments.
   -- By convention called `**kwargs`.
-  Arg? kwarg,
+  Argument? kwarg,
   -- Location of the first character in the source code.
   Loc start,
   -- Location just after the last character in the source code.
   Loc end
 )
 
-@struct Arg: ASTNode = (
+@struct Argument: ASTNode = (
   -- A unique node identifier.
   -- Mostly used for efficient Equatable/Hashable implementation.
   NodeId id,
@@ -667,21 +760,21 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   Loc end
 )
 
-@enum Vararg: Equatable =
+@enum Vararg =
   none
   -- Separator for keyword arguments. Represented by just `*`.
   | unnamed
-  | named(Arg)
+  | named(Argument)
 
 -- A keyword argument to a function call or class definition.
 -- `nil` name is used for `**kwargs`.
-@struct Keyword: ASTNode = (
+@struct KeywordArgument: ASTNode = (
   -- A unique node identifier.
   -- Mostly used for efficient Equatable/Hashable implementation.
   NodeId id,
   -- Type of the keyword argument, either dictionary unpack (`**tangled`)
   -- or named (`princess=rapunzel`).
-  KeywordKind kind,
+  KeywordArgument.Kind kind,
   -- Node to pass in.
   Expr value,
   -- Location of the first character in the source code.
@@ -690,4 +783,4 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   Loc end
 )
 
-@enum KeywordKind: Equatable = dictionaryUnpack | named(Identifier)
+@enum KeywordArgument.Kind = dictionaryUnpack | named(Identifier)

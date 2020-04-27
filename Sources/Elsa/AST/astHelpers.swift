@@ -69,20 +69,4 @@ extension ProductType {
       || self.isStmtSubclass
       || self.isExprSubclass
   }
-
-  internal var visitorPrefix: String? {
-    if self.isAST || self.isASTSubclass {
-      return "AST"
-    }
-
-    if self.isStmt || self.isStmtSubclass {
-      return "Statement"
-    }
-
-    if self.isExpr || self.isExprSubclass {
-      return "Expression"
-    }
-
-    return nil
-  }
 }

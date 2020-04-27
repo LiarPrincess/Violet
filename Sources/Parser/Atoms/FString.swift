@@ -16,9 +16,9 @@ private enum FStringFragment {
   /// String literal (the part NOT between '{' and '}').
   case literal(String)
   /// Expression + formatter (the part between '{' and '}').
-  case formattedValue(Expression, conversion: ConversionFlag?, spec: String?)
+  case formattedValue(Expression, conversion: StringExpr.Conversion?, spec: String?)
 
-  fileprivate func compile() -> StringGroup {
+  fileprivate func compile() -> StringExpr.Group {
     switch self {
     case let .literal(s):
       return .literal(s)
@@ -94,7 +94,7 @@ internal struct FString {
   /// - String - no f-strings.
   /// - FormattedValue - just an f-string (with no leading or trailing literals).
   /// - JoinedStr - if there are multiple f-strings or any literals involved.
-  internal mutating func compile() throws -> StringGroup {
+  internal mutating func compile() throws -> StringExpr.Group {
     // No fstrings? -> simple string.
     if self.fragments.isEmpty {
       return .literal(self.lastStr ?? "")
@@ -115,7 +115,7 @@ internal struct FString {
     }
 
     let groups = self.fragments.map { $0.compile() }
-    return StringGroup.joined(groups)
+    return StringExpr.Group.joined(groups)
   }
 
   // MARK: - Consume literal
@@ -198,7 +198,7 @@ internal struct FString {
       || view[index] == "}"
     )
 
-    var conversion: ConversionFlag?
+    var conversion: StringExpr.Conversion?
     if index != view.endIndex && view[index] == "!" {
       conversion = try self.consumeExprConversion(in: view, advancing: &index)
     }
@@ -420,7 +420,8 @@ internal struct FString {
 
   private func consumeExprConversion(
     in view: String.UnicodeScalarView,
-    advancing index: inout String.UnicodeScalarIndex) throws -> ConversionFlag {
+    advancing index: inout String.UnicodeScalarIndex
+  ) throws -> StringExpr.Conversion {
 
     assert(view[index] == "!")
     view.formIndex(after: &index) // consume '!'

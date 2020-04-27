@@ -146,9 +146,9 @@ public protocol ExpressionVisitor {
   func visit(_ node: YieldFromExpr) throws -> ExpressionResult
   func visit(_ node: LambdaExpr) throws -> ExpressionResult
   func visit(_ node: CallExpr) throws -> ExpressionResult
-  func visit(_ node: IfExpr) throws -> ExpressionResult
   func visit(_ node: AttributeExpr) throws -> ExpressionResult
   func visit(_ node: SubscriptExpr) throws -> ExpressionResult
+  func visit(_ node: IfExpr) throws -> ExpressionResult
   func visit(_ node: StarredExpr) throws -> ExpressionResult
 }
 
@@ -190,9 +190,9 @@ public protocol ExpressionVisitorWithPayload: AnyObject {
   func visit(_ node: YieldFromExpr, payload: ExpressionPayload) throws -> ExpressionResult
   func visit(_ node: LambdaExpr, payload: ExpressionPayload) throws -> ExpressionResult
   func visit(_ node: CallExpr, payload: ExpressionPayload) throws -> ExpressionResult
-  func visit(_ node: IfExpr, payload: ExpressionPayload) throws -> ExpressionResult
   func visit(_ node: AttributeExpr, payload: ExpressionPayload) throws -> ExpressionResult
   func visit(_ node: SubscriptExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: IfExpr, payload: ExpressionPayload) throws -> ExpressionResult
   func visit(_ node: StarredExpr, payload: ExpressionPayload) throws -> ExpressionResult
 }
 

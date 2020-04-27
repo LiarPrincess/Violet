@@ -490,7 +490,7 @@ internal final class ASTValidatorPass:
   }
 
   /// validate_args(asdl_seq *args)
-  private func visitArgs(_ args: [Arg]) throws {
+  private func visitArgs(_ args: [Argument]) throws {
     for a in args {
       try self.visitExpression(a.annotation, payload: .load)
     }
@@ -507,7 +507,7 @@ internal final class ASTValidatorPass:
   }
 
   /// validate_keywords(asdl_seq *keywords)
-  private func visitKeywords(_ keywords: [Keyword]) throws {
+  private func visitKeywords(_ keywords: [KeywordArgument]) throws {
     for keyword in keywords {
       try self.visitExpression(keyword.value, payload: .load)
     }

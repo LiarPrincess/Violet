@@ -157,7 +157,8 @@ extension CompilerImpl {
     self.builder.setLabel(firstExcept)
     for (index, handler) in handlers.enumerated() {
       let isLast = index == handlers.count - 1
-      if handler.kind == .default && !isLast {
+
+      if case .default = handler.kind, !isLast {
         throw self.error(.defaultExceptNotLast)
       }
 

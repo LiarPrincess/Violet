@@ -27,7 +27,8 @@ private func emitBytecode(inputFile: URL) {
     case let .struct(s):
       emitProduct(keyword: "struct", def: s)
     case let .class(c):
-      emitProduct(keyword: "class", def: c)
+      let keyword = c.isFinal ? "final class" : "class"
+      emitProduct(keyword: keyword, def: c)
       emitEquatable(c)
     }
   }
@@ -36,21 +37,21 @@ private func emitBytecode(inputFile: URL) {
 // MARK: - Enum
 
 private func emitEnum(_ def: EnumDef) {
-  printDoc(def.doc)
-
   var indent = ""
   if let parent = def.nestedInside {
     indent = "  "
     print("extension \(parent) {")
+    print()
   }
 
   let bases = createBases(def.bases)
   let indirect = def.isIndirect ? "indirect " : ""
+
+  printDoc(def.doc, indent: indent)
   print("\(indent)public \(indirect)enum \(def.name)\(bases) {")
 
-  // emit `case single([Statement])`
   for caseDef in def.cases {
-    printDoc(caseDef.doc, indent: indent.count + 2)
+    printDoc(caseDef.doc, indent: indent + "  ")
 
     var properties = ""
     if !caseDef.properties.isEmpty {
@@ -72,14 +73,15 @@ private func emitEnum(_ def: EnumDef) {
 // MARK: - Product
 
 private func emitProduct<T: ProductType>(keyword: String, def: T) {
+  assert(def.nestedInside == nil)
   let bases = createBases(def.bases)
 
-  printDoc(def.doc)
+  printDoc(def.doc, indent: "")
   print("public \(keyword) \(def.name)\(bases) {")
   print()
 
   for property in def.properties {
-    printDoc(property.doc, indent: 2)
+    printDoc(property.doc, indent: "  ")
     print("  public let \(property.nameColonType)")
   }
   print()

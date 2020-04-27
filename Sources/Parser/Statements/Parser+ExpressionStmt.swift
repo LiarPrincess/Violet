@@ -112,7 +112,7 @@ extension Parser {
   /// augassign: ('+=' | '-=' | '*=' | '@=' | '/=' | '%=' | '&=' | '|=' | '^=' |
   ///             '<<=' | '>>=' | '**=' | '//=')
   /// ```
-  private static let augAssign: [TokenKind:BinaryOperator] = [
+  private static let augAssign: [TokenKind: BinaryOpExpr.Operator] = [
     .plusEqual: .add, // +=
     .minusEqual: .sub, // -=
     .starEqual: .mul, // *=
