@@ -145,7 +145,7 @@ extension CompilerImpl {
     case let .formattedValue(expr, conversion: conv, spec: spec):
       try self.visit(expr)
 
-      var conversion = StringConversion.none
+      var conversion = Instruction.StringConversion.none
       switch conv {
       case .some(.str):   conversion = .str
       case .some(.repr):  conversion = .repr
@@ -237,7 +237,7 @@ extension CompilerImpl {
     if node.elements.count == 1 {
       let first = node.elements.first
       try self.visit(first.right)
-      self.builder.appendCompareOp(first.op)
+      self.builder.appendCompareOp(operator: first.op)
     } else {
       let end = self.builder.createLabel()
       let cleanup = self.builder.createLabel()
@@ -246,13 +246,13 @@ extension CompilerImpl {
         try self.visit(element.right)
         self.builder.appendDupTop()
         self.builder.appendRotThree()
-        self.builder.appendCompareOp(element.op)
+        self.builder.appendCompareOp(operator: element.op)
         self.builder.appendJumpIfFalseOrPop(to: cleanup)
       }
 
       let last = node.elements.last
       try self.visit(last.right)
-      self.builder.appendCompareOp(last.op)
+      self.builder.appendCompareOp(operator: last.op)
 
       self.builder.appendJumpAbsolute(to: end)
       self.builder.setLabel(cleanup)
@@ -465,13 +465,13 @@ extension CompilerImpl {
       self.builder.appendNone()
     }
 
-    var type = SliceArg.lowerUpper
+    var type = Instruction.SliceArg.lowerUpper
     if let s = step {
       type = .lowerUpperStep
       try self.visit(s)
     }
 
-    self.builder.appendBuildSlice(type)
+    self.builder.appendBuildSlice(arg: type)
   }
 
   // MARK: - Starred
@@ -552,20 +552,20 @@ extension CompilerImpl {
 
     try self.visit(compare.left)
 
-    let end     = self.builder.createLabel()
+    let end = self.builder.createLabel()
     let cleanup = self.builder.createLabel()
 
     for element in compare.elements.dropLast() {
       try self.visit(element.right)
       self.builder.appendDupTop()
       self.builder.appendRotThree()
-      self.builder.appendCompareOp(element.op)
+      self.builder.appendCompareOp(operator: element.op)
       self.builder.appendJumpIfFalseOrPop(to: cleanup)
     }
 
     let last = compare.elements.last
     try self.visit(last.right)
-    self.builder.appendCompareOp(last.op)
+    self.builder.appendCompareOp(operator: last.op)
 
     switch cond {
     case true:  self.builder.appendPopJumpIfTrue(to: next)

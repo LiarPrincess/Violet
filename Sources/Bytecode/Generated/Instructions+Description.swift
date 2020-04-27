@@ -6,7 +6,7 @@ import Foundation
 
 // swiftlint:disable file_length
 
-extension StringConversion: CustomStringConvertible {
+extension Instruction.StringConversion: CustomStringConvertible {
   public var description: String {
     switch self {
     case .none:
@@ -21,7 +21,7 @@ extension StringConversion: CustomStringConvertible {
   }
 }
 
-extension ComparisonOpcode: CustomStringConvertible {
+extension Instruction.CompareType: CustomStringConvertible {
   public var description: String {
     switch self {
     case .equal:
@@ -50,7 +50,7 @@ extension ComparisonOpcode: CustomStringConvertible {
   }
 }
 
-extension SliceArg: CustomStringConvertible {
+extension Instruction.SliceArg: CustomStringConvertible {
   public var description: String {
     switch self {
     case .lowerUpper:
@@ -61,7 +61,7 @@ extension SliceArg: CustomStringConvertible {
   }
 }
 
-extension RaiseArg: CustomStringConvertible {
+extension Instruction.RaiseArg: CustomStringConvertible {
   public var description: String {
     switch self {
     case .reRaise:

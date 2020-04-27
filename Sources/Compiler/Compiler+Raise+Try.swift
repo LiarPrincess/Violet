@@ -14,7 +14,7 @@ extension CompilerImpl {
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
   internal func visit(_ node: RaiseStmt) throws {
-    var arg = RaiseArg.reRaise
+    var arg = Instruction.RaiseArg.reRaise
 
     if let exception = node.exception {
       try self.visit(exception)
@@ -168,11 +168,12 @@ extension CompilerImpl {
       if case let .typed(type: type, asName: _) = handler.kind {
         self.builder.appendDupTop() // dup exception (exception match will consume it)
         try self.visit(type)
-        self.builder.appendCompareOp(.exceptionMatch)
+        self.builder.appendCompareOp(type: .exceptionMatch)
         self.builder.appendPopJumpIfFalse(to: nextExcept)
       }
 
-      if case let .typed(type: _, asName: asName) = handler.kind, let name = asName {
+      if case let .typed(type: _, asName: asName) = handler.kind,
+              let name = asName {
         self.builder.appendStoreName(name) // we have name -> store exception
 
         // try:

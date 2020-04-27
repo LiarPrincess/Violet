@@ -38,13 +38,19 @@ private func emitBytecode(inputFile: URL) {
 private func emitEnum(_ def: EnumDef) {
   printDoc(def.doc)
 
+  var indent = ""
+  if let parent = def.nestedInside {
+    indent = "  "
+    print("extension \(parent) {")
+  }
+
   let bases = createBases(def.bases)
   let indirect = def.isIndirect ? "indirect " : ""
-  print("public \(indirect)enum \(def.name)\(bases) {")
+  print("\(indent)public \(indirect)enum \(def.name)\(bases) {")
 
   // emit `case single([Statement])`
   for caseDef in def.cases {
-    printDoc(caseDef.doc, indent: 2)
+    printDoc(caseDef.doc, indent: indent.count + 2)
 
     var properties = ""
     if !caseDef.properties.isEmpty {
@@ -53,21 +59,12 @@ private func emitEnum(_ def: EnumDef) {
       properties += ")"
     }
 
-    print("  case \(caseDef.escapedName)\(properties)")
-  }
-  print("")
-
-  // emit `var isXXX: Bool {`
-  for caseDef in def.cases where !caseDef.properties.isEmpty {
-    print("""
-        public var is\(pascalCase(caseDef.name)): Bool {
-          if case .\(caseDef.name) = self { return true }
-          return false
-        }
-
-      """)
+    print("\(indent)  case \(caseDef.escapedName)\(properties)")
   }
 
+  if def.nestedInside != nil {
+    print("  }")
+  }
   print("}")
   print()
 }

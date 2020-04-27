@@ -96,14 +96,14 @@ internal enum Debug {
 
   // MARK: - Compare
 
-  internal static func compare(a: PyObject,
+  internal static func compare(type: Instruction.CompareType,
+                               a: PyObject,
                                b: PyObject,
-                               op: ComparisonOpcode,
                                result: PyResult<PyObject>) {
     guard isEnabled else { return }
+    print("  type:", type)
     print("  a:", a)
     print("  b:", b)
-    print("  op:", op)
     print("  result:", result)
   }
 

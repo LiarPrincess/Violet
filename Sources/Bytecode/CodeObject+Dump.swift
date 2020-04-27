@@ -415,8 +415,8 @@ extension CodeObject {
     }
   }
 
-  private func toString(_ opcode: ComparisonOpcode) -> String {
-    switch opcode {
+  private func toString(_ type: Instruction.CompareType) -> String {
+    switch type {
     case .equal: return "=="
     case .notEqual: return "!="
     case .less: return "<"
@@ -431,14 +431,14 @@ extension CodeObject {
     }
   }
 
-  private func toString(_ slice: SliceArg) -> String {
+  private func toString(_ slice: Instruction.SliceArg) -> String {
     switch slice {
     case .lowerUpper: return "2 (lower and upper)"
     case .lowerUpperStep: return "3 (lower, upper and step)"
     }
   }
 
-  private func toString(_ conversion: StringConversion) -> String? {
+  private func toString(_ conversion: Instruction.StringConversion) -> String? {
     switch conversion {
     case .none: return nil
     case .str: return "str"
@@ -447,7 +447,7 @@ extension CodeObject {
     }
   }
 
-  private func toString(_ arg: RaiseArg) -> String {
+  private func toString(_ arg: Instruction.RaiseArg) -> String {
     switch arg {
     case .reRaise: return "reRaise"
     case .exceptionOnly: return "exception"

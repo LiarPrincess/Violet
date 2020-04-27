@@ -13,7 +13,7 @@ extension CompilerImpl {
   internal func visit(_ node: LambdaExpr) throws {
     let location = node.start
 
-    var flags: FunctionFlags = []
+    var flags: Instruction.FunctionFlags = []
     try self.visitDefaultArguments(args: node.args,
                                    updating: &flags,
                                    location: location)
@@ -44,7 +44,7 @@ extension CompilerImpl {
     let location = node.start
     try self.visitDecorators(decorators: node.decorators, location: location)
 
-    var flags: FunctionFlags = []
+    var flags: Instruction.FunctionFlags = []
     try self.visitDefaultArguments(args: node.args,
                                    updating: &flags,
                                    location: location)
@@ -90,7 +90,7 @@ extension CompilerImpl {
 
   /// compiler_default_arguments(struct compiler *c, arguments_ty args)
   private func visitDefaultArguments(args: Arguments,
-                                     updating flags: inout FunctionFlags,
+                                     updating flags: inout Instruction.FunctionFlags,
                                      location: SourceLocation) throws {
     if args.defaults.any {
       flags.formUnion(.hasPositionalArgDefaults)
@@ -110,7 +110,7 @@ extension CompilerImpl {
   /// asdl_seq *kw_defaults)
   private func visitKwOnlyDefaults(kwOnlyArgs:     [Arg],
                                    kwOnlyDefaults: [Expression],
-                                   updating flags: inout FunctionFlags,
+                                   updating flags: inout Instruction.FunctionFlags,
                                    location: SourceLocation) throws {
     assert(kwOnlyArgs.count == kwOnlyDefaults.count)
 
@@ -137,7 +137,7 @@ extension CompilerImpl {
   /// compiler_visit_annotations(struct compiler *c, arguments_ty args, ...)
   private func visitAnnotations(args: Arguments,
                                 returns: Expression?,
-                                updating flags: inout FunctionFlags,
+                                updating flags: inout Instruction.FunctionFlags,
                                 location: SourceLocation) throws {
     var names = [MangledName]()
     try self.visitArgAnnotations(args: args.args,
@@ -210,7 +210,7 @@ extension CompilerImpl {
   /// compiler_make_closure(struct compiler *c, PyCodeObject *co,
   /// Py_ssize_t flags, PyObject *qualname)
   internal func makeClosure(codeObject: CodeObject,
-                            flags: FunctionFlags,
+                            flags: Instruction.FunctionFlags,
                             location: SourceLocation) throws {
     let qualifiedName = codeObject.qualifiedName
     var makeFunctionFlags = flags

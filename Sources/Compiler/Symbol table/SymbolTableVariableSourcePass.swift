@@ -163,7 +163,7 @@ internal final class SymbolTableVariableSourcePass {
 
     if flags.contains(.defGlobal) {
       if flags.contains(.defNonlocal) {
-        let kind = CompilerErrorKind.bothGlobalAndNonlocal(name.base)
+        let kind = CompilerErrorKind.bothGlobalAndNonlocal(name.beforeMangling)
         throw self.error(kind, location: info.location)
       }
 
@@ -175,12 +175,12 @@ internal final class SymbolTableVariableSourcePass {
 
     if flags.contains(.defNonlocal) {
       guard let bound = outerContext?.bound else {
-        let kind = CompilerErrorKind.nonlocalAtModuleLevel(name.base)
+        let kind = CompilerErrorKind.nonlocalAtModuleLevel(name.beforeMangling)
         throw self.error(kind, location: info.location)
       }
 
       if !bound.contains(name) {
-        let kind = CompilerErrorKind.nonlocalWithoutBinding(name.base)
+        let kind = CompilerErrorKind.nonlocalWithoutBinding(name.beforeMangling)
         throw self.error(kind, location: info.location)
       }
 
@@ -266,7 +266,7 @@ internal final class SymbolTableVariableSourcePass {
     // Update source information for all symbols in this scope
     for (name, info) in scope.symbols {
       guard let srcFlags = scopeContext.symbolSources[name] else {
-        trap("[BUG] Source for variable '\(name.base)' was not found, " +
+        trap("[BUG] Source for variable '\(name.beforeMangling)' was not found, " +
           "and thus cannot be set."
         )
       }

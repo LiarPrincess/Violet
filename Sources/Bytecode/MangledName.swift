@@ -12,20 +12,20 @@ import VioletCore
 public struct MangledName: Equatable, Hashable {
 
   /// Name BEFORE mangling
-  public let base: String
+  public let beforeMangling: String
 
   /// Name AFTER mangling
   public let value: String
 
   /// Init without mangling
   public init(from name: String) {
-    self.base = name
+    self.beforeMangling = name
     self.value = name
   }
 
   /// Init with mangling
   public init(className: String?, name: String) {
-    self.base = name
+    self.beforeMangling = name
     self.value = mangle(className: className, name: name)
   }
 

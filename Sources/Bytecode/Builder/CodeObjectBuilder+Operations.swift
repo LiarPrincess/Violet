@@ -161,7 +161,7 @@ extension CodeObjectBuilder {
   // MARK: - Comparison
 
   /// Append a `compareOp` instruction to this code object.
-  public func appendCompareOp(_ op: ComparisonOpcode) {
-    self.append(.compareOp(op))
+  public func appendCompareOp(type: Instruction.CompareType) {
+    self.append(.compareOp(type))
   }
 }

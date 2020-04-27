@@ -122,7 +122,7 @@ internal class Parser {
       cases.append(self.enumCaseDef())
     }
 
-    return EnumDef(name,
+    return EnumDef(name: name,
                    bases: bases,
                    cases: cases,
                    isIndirect: indirect,
@@ -149,7 +149,7 @@ internal class Parser {
     self.consumeOrFail(.equal)
     let properties = self.structProperties()
 
-    return StructDef(name, bases: bases, properties: properties, doc: doc)
+    return StructDef(name: name, bases: bases, properties: properties, doc: doc)
   }
 
   private func classDef() -> ClassDef {

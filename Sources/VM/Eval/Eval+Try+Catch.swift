@@ -96,7 +96,7 @@ extension Eval {
   /// - 1: raise TOS (raise exception instance or type at TOS)
   /// - 2: raise TOS1 from TOS (raise exception instance or type at TOS1
   ///      with Cause set to TOS)
-  internal func raiseVarargs(arg: RaiseArg) -> InstructionResult {
+  internal func raiseVarargs(arg: Instruction.RaiseArg) -> InstructionResult {
     var cause: PyObject?
     var value: PyObject?
 

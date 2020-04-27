@@ -80,18 +80,18 @@ extension CodeObjectBuilder {
   // MARK: - Compare
 
   /// Append a `compareOp` instruction to code object.
-  internal func appendCompareOp(_ op: ComparisonOperator) {
-    switch op {
-    case .equal:        self.appendCompareOp(ComparisonOpcode.equal)
-    case .notEqual:     self.appendCompareOp(ComparisonOpcode.notEqual)
-    case .less:         self.appendCompareOp(ComparisonOpcode.less)
-    case .lessEqual:    self.appendCompareOp(ComparisonOpcode.lessEqual)
-    case .greater:      self.appendCompareOp(ComparisonOpcode.greater)
-    case .greaterEqual: self.appendCompareOp(ComparisonOpcode.greaterEqual)
-    case .is:           self.appendCompareOp(ComparisonOpcode.is)
-    case .isNot:        self.appendCompareOp(ComparisonOpcode.isNot)
-    case .in:           self.appendCompareOp(ComparisonOpcode.in)
-    case .notIn:        self.appendCompareOp(ComparisonOpcode.notIn)
+  internal func appendCompareOp(operator: ComparisonOperator) {
+    switch `operator` {
+    case .equal:        self.appendCompareOp(type: .equal)
+    case .notEqual:     self.appendCompareOp(type: .notEqual)
+    case .less:         self.appendCompareOp(type: .less)
+    case .lessEqual:    self.appendCompareOp(type: .lessEqual)
+    case .greater:      self.appendCompareOp(type: .greater)
+    case .greaterEqual: self.appendCompareOp(type: .greaterEqual)
+    case .is:           self.appendCompareOp(type: .is)
+    case .isNot:        self.appendCompareOp(type: .isNot)
+    case .in:           self.appendCompareOp(type: .in)
+    case .notIn:        self.appendCompareOp(type: .notIn)
     }
   }
 }

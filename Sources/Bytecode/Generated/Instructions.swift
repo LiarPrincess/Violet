@@ -10,57 +10,61 @@ import VioletCore
 // swiftlint:disable trailing_newline
 // swiftlint:disable vertical_whitespace_closing_braces
 
-public enum StringConversion {
-  case none
-  case str
-  case repr
-  case ascii
-
+extension Instruction {
+  public enum StringConversion {
+    case none
+    case str
+    case repr
+    case ascii
+  }
 }
 
-public enum ComparisonOpcode {
-  /// True when two operands are equal.
-  case equal
-  /// True when two operands are not equal.
-  case notEqual
-  /// True when left operand is less than the value of right operand.
-  case less
-  /// True when left operand is less than or equal to the value of right operand.
-  case lessEqual
-  /// True when left operand is greater than the value of right operand.
-  case greater
-  /// True when left operand is greater than or equal to the value of right operand.
-  case greaterEqual
-  /// True when x and y are the same object.
-  case `is`
-  /// Negation of `x is y`.
-  case isNot
-  /// True when x is a member of s.
-  case `in`
-  /// Negation of `x in s`
-  case notIn
-  /// Does the exception has specified type?
-  case exceptionMatch
-
+extension Instruction {
+  public enum CompareType {
+    /// True when two operands are equal.
+    case equal
+    /// True when two operands are not equal.
+    case notEqual
+    /// True when left operand is less than the value of right operand.
+    case less
+    /// True when left operand is less than or equal to the value of right operand.
+    case lessEqual
+    /// True when left operand is greater than the value of right operand.
+    case greater
+    /// True when left operand is greater than or equal to the value of right operand.
+    case greaterEqual
+    /// True when x and y are the same object.
+    case `is`
+    /// Negation of `x is y`.
+    case isNot
+    /// True when x is a member of s.
+    case `in`
+    /// Negation of `x in s`
+    case notIn
+    /// Does the exception has specified type?
+    case exceptionMatch
+  }
 }
 
-public enum SliceArg {
-  case lowerUpper
-  case lowerUpperStep
-
+extension Instruction {
+  public enum SliceArg {
+    case lowerUpper
+    case lowerUpperStep
+  }
 }
 
-public enum RaiseArg {
-  /// Re-raise previous exception.
-  /// CPython 0.
-  case reRaise
-  /// Raise exception instance or type at TOS
-  /// CPython 1.
-  case exceptionOnly
-  /// Raise exception instance or type at TOS1 with Cause set to TOS
-  /// CPython 2.
-  case exceptionAndCause
-
+extension Instruction {
+  public enum RaiseArg {
+    /// Re-raise previous exception.
+    /// CPython 0.
+    case reRaise
+    /// Raise exception instance or type at TOS
+    /// CPython 1.
+    case exceptionOnly
+    /// Raise exception instance or type at TOS1 with Cause set to TOS
+    /// CPython 2.
+    case exceptionAndCause
+  }
 }
 
 public enum Instruction {
@@ -139,7 +143,7 @@ public enum Instruction {
   /// Implements in-place TOS = TOS1 | TOS.
   case inplaceOr
   /// Performs a `Boolean` operation.
-  case compareOp(ComparisonOpcode)
+  case compareOp(CompareType)
   /// Implements `TOS = GetAwaitable(TOS)`.
   ///
   /// `GetAwaitable(o)` returns:
@@ -479,301 +483,5 @@ public enum Instruction {
   case loadClosure(cellOrFreeIndex: UInt8)
   /// Pushes a slice object on the stack.
   case buildSlice(SliceArg)
-
-  public var isCompareOp: Bool {
-    if case .compareOp = self { return true }
-    return false
-  }
-
-  public var isSetupLoop: Bool {
-    if case .setupLoop = self { return true }
-    return false
-  }
-
-  public var isForIter: Bool {
-    if case .forIter = self { return true }
-    return false
-  }
-
-  public var isContinue: Bool {
-    if case .continue = self { return true }
-    return false
-  }
-
-  public var isBuildTuple: Bool {
-    if case .buildTuple = self { return true }
-    return false
-  }
-
-  public var isBuildList: Bool {
-    if case .buildList = self { return true }
-    return false
-  }
-
-  public var isBuildSet: Bool {
-    if case .buildSet = self { return true }
-    return false
-  }
-
-  public var isBuildMap: Bool {
-    if case .buildMap = self { return true }
-    return false
-  }
-
-  public var isBuildConstKeyMap: Bool {
-    if case .buildConstKeyMap = self { return true }
-    return false
-  }
-
-  public var isSetAdd: Bool {
-    if case .setAdd = self { return true }
-    return false
-  }
-
-  public var isListAppend: Bool {
-    if case .listAppend = self { return true }
-    return false
-  }
-
-  public var isMapAdd: Bool {
-    if case .mapAdd = self { return true }
-    return false
-  }
-
-  public var isBuildTupleUnpack: Bool {
-    if case .buildTupleUnpack = self { return true }
-    return false
-  }
-
-  public var isBuildTupleUnpackWithCall: Bool {
-    if case .buildTupleUnpackWithCall = self { return true }
-    return false
-  }
-
-  public var isBuildListUnpack: Bool {
-    if case .buildListUnpack = self { return true }
-    return false
-  }
-
-  public var isBuildSetUnpack: Bool {
-    if case .buildSetUnpack = self { return true }
-    return false
-  }
-
-  public var isBuildMapUnpack: Bool {
-    if case .buildMapUnpack = self { return true }
-    return false
-  }
-
-  public var isBuildMapUnpackWithCall: Bool {
-    if case .buildMapUnpackWithCall = self { return true }
-    return false
-  }
-
-  public var isUnpackSequence: Bool {
-    if case .unpackSequence = self { return true }
-    return false
-  }
-
-  public var isUnpackEx: Bool {
-    if case .unpackEx = self { return true }
-    return false
-  }
-
-  public var isLoadConst: Bool {
-    if case .loadConst = self { return true }
-    return false
-  }
-
-  public var isStoreName: Bool {
-    if case .storeName = self { return true }
-    return false
-  }
-
-  public var isLoadName: Bool {
-    if case .loadName = self { return true }
-    return false
-  }
-
-  public var isDeleteName: Bool {
-    if case .deleteName = self { return true }
-    return false
-  }
-
-  public var isStoreAttribute: Bool {
-    if case .storeAttribute = self { return true }
-    return false
-  }
-
-  public var isLoadAttribute: Bool {
-    if case .loadAttribute = self { return true }
-    return false
-  }
-
-  public var isDeleteAttribute: Bool {
-    if case .deleteAttribute = self { return true }
-    return false
-  }
-
-  public var isStoreGlobal: Bool {
-    if case .storeGlobal = self { return true }
-    return false
-  }
-
-  public var isLoadGlobal: Bool {
-    if case .loadGlobal = self { return true }
-    return false
-  }
-
-  public var isDeleteGlobal: Bool {
-    if case .deleteGlobal = self { return true }
-    return false
-  }
-
-  public var isLoadFast: Bool {
-    if case .loadFast = self { return true }
-    return false
-  }
-
-  public var isStoreFast: Bool {
-    if case .storeFast = self { return true }
-    return false
-  }
-
-  public var isDeleteFast: Bool {
-    if case .deleteFast = self { return true }
-    return false
-  }
-
-  public var isLoadDeref: Bool {
-    if case .loadDeref = self { return true }
-    return false
-  }
-
-  public var isStoreDeref: Bool {
-    if case .storeDeref = self { return true }
-    return false
-  }
-
-  public var isDeleteDeref: Bool {
-    if case .deleteDeref = self { return true }
-    return false
-  }
-
-  public var isLoadClassDeref: Bool {
-    if case .loadClassDeref = self { return true }
-    return false
-  }
-
-  public var isMakeFunction: Bool {
-    if case .makeFunction = self { return true }
-    return false
-  }
-
-  public var isCallFunction: Bool {
-    if case .callFunction = self { return true }
-    return false
-  }
-
-  public var isCallFunctionKw: Bool {
-    if case .callFunctionKw = self { return true }
-    return false
-  }
-
-  public var isCallFunctionEx: Bool {
-    if case .callFunctionEx = self { return true }
-    return false
-  }
-
-  public var isLoadMethod: Bool {
-    if case .loadMethod = self { return true }
-    return false
-  }
-
-  public var isCallMethod: Bool {
-    if case .callMethod = self { return true }
-    return false
-  }
-
-  public var isImportName: Bool {
-    if case .importName = self { return true }
-    return false
-  }
-
-  public var isImportFrom: Bool {
-    if case .importFrom = self { return true }
-    return false
-  }
-
-  public var isSetupExcept: Bool {
-    if case .setupExcept = self { return true }
-    return false
-  }
-
-  public var isSetupFinally: Bool {
-    if case .setupFinally = self { return true }
-    return false
-  }
-
-  public var isRaiseVarargs: Bool {
-    if case .raiseVarargs = self { return true }
-    return false
-  }
-
-  public var isSetupWith: Bool {
-    if case .setupWith = self { return true }
-    return false
-  }
-
-  public var isJumpAbsolute: Bool {
-    if case .jumpAbsolute = self { return true }
-    return false
-  }
-
-  public var isPopJumpIfTrue: Bool {
-    if case .popJumpIfTrue = self { return true }
-    return false
-  }
-
-  public var isPopJumpIfFalse: Bool {
-    if case .popJumpIfFalse = self { return true }
-    return false
-  }
-
-  public var isJumpIfTrueOrPop: Bool {
-    if case .jumpIfTrueOrPop = self { return true }
-    return false
-  }
-
-  public var isJumpIfFalseOrPop: Bool {
-    if case .jumpIfFalseOrPop = self { return true }
-    return false
-  }
-
-  public var isFormatValue: Bool {
-    if case .formatValue = self { return true }
-    return false
-  }
-
-  public var isBuildString: Bool {
-    if case .buildString = self { return true }
-    return false
-  }
-
-  public var isExtendedArg: Bool {
-    if case .extendedArg = self { return true }
-    return false
-  }
-
-  public var isLoadClosure: Bool {
-    if case .loadClosure = self { return true }
-    return false
-  }
-
-  public var isBuildSlice: Bool {
-    if case .buildSlice = self { return true }
-    return false
-  }
-
 }
 

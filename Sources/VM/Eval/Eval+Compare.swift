@@ -4,12 +4,12 @@ import VioletBytecode
 extension Eval {
 
   /// Performs a `Boolean` operation.
-  internal func compareOp(comparison: ComparisonOpcode) -> InstructionResult {
+  internal func compareOp(type: Instruction.CompareType) -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    let result = self.compare(left: left, right: right, comparison: comparison)
-    Debug.compare(a: left, b: right, op: comparison, result: result)
+    let result = self.compare(type: type, left: left, right: right)
+    Debug.compare(type: type, a: left, b: right, result: result)
 
     switch result {
     case let .value(o):
@@ -20,10 +20,10 @@ extension Eval {
     }
   }
 
-  private func compare(left: PyObject,
-                       right: PyObject,
-                       comparison: ComparisonOpcode) -> PyResult<PyObject> {
-    switch comparison {
+  private func compare(type: Instruction.CompareType,
+                       left: PyObject,
+                       right: PyObject) -> PyResult<PyObject> {
+    switch type {
     case .equal:
       return Py.isEqual(left: left, right: right)
     case .notEqual:

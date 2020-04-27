@@ -29,6 +29,11 @@ private func isValidNameCharacter(_ c: Character) -> Bool {
       || ("a" <= c && c <= "z")
       || ("A" <= c && c <= "Z")
       || c == "_"
+      // Format: 'type to nest it inside [.] type name'.
+      // For example:
+      // 'Instruction.StringConversion' will generate:
+      // extension Instruction { enum StringConversion { ... } }
+      || c == "."
 }
 
 // MARK: - Lexer

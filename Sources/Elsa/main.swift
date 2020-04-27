@@ -31,8 +31,12 @@ private func generateAST() {
 }
 
 private func generateBytecode() {
-  let bytecodeDir = sourcesDir.appendingPathComponent("Bytecode")
-  let compilerTestsDir = testsDir .appendingPathComponent("CompilerTests")
+  let bytecodeDir = sourcesDir
+    .appendingPathComponent("Bytecode")
+    .appendingPathComponent("Generated")
+
+  let compilerTestsDir = testsDir
+    .appendingPathComponent("CompilerTests")
 
   let definition = rootDir
     .appendingPathComponent("Definitions", isDirectory: true)

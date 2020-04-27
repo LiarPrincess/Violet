@@ -298,9 +298,9 @@ internal final class Eval {
     case .inplaceOr:
       return self.inplaceOr()
 
-    case let .compareOp(comparison):
+    case let .compareOp(type):
       assert(extendedArg == 0)
-      return self.compareOp(comparison: comparison)
+      return self.compareOp(type: type)
 
     case .getAwaitable:
       return self.getAwaitable()

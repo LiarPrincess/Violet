@@ -142,7 +142,7 @@ extension Eval {
   // MARK: - Slice
 
   /// Pushes a slice object on the stack.
-  internal func buildSlice(arg: SliceArg) -> InstructionResult {
+  internal func buildSlice(arg: Instruction.SliceArg) -> InstructionResult {
     let step = self.getSliceStep(arg: arg)
     let stop = self.stack.pop()
     let start = self.stack.top
@@ -152,7 +152,7 @@ extension Eval {
     return .ok
   }
 
-  private func getSliceStep(arg: SliceArg) -> PyObject? {
+  private func getSliceStep(arg: Instruction.SliceArg) -> PyObject? {
     switch arg {
     case .lowerUpper:
       return nil

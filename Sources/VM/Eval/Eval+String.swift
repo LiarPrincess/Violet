@@ -6,7 +6,7 @@ extension Eval {
   // MARK: - Format
 
   /// Used for implementing formatted literal strings (f-strings).
-  internal func formatValue(conversion: StringConversion,
+  internal func formatValue(conversion: Instruction.StringConversion,
                             hasFormat: Bool) -> InstructionResult {
     let format: PyObject? = hasFormat ? self.stack.pop() : nil
     let rawValue = self.stack.pop()
@@ -31,8 +31,10 @@ extension Eval {
     }
   }
 
-  private func convert(value: PyObject,
-                       conversion: StringConversion) -> PyResult<PyObject> {
+  private func convert(
+    value: PyObject,
+    conversion: Instruction.StringConversion
+  ) -> PyResult<PyObject> {
     switch conversion {
     case .none:
       return .value(value)

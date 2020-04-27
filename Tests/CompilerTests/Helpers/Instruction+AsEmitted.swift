@@ -348,7 +348,7 @@ extension CodeObject {
     return mangled.value
   }
 
-  private func toString(_ opcode: ComparisonOpcode) -> String {
+  private func toString(_ opcode: Instruction.CompareType) -> String {
     switch opcode {
     case .equal: return "=="
     case .notEqual: return "!="
@@ -364,14 +364,14 @@ extension CodeObject {
     }
   }
 
-  private func toString(_ slice: SliceArg) -> String {
+  private func toString(_ slice: Instruction.SliceArg) -> String {
     switch slice {
     case .lowerUpper: return "2"
     case .lowerUpperStep: return "3"
     }
   }
 
-  private func toString(_ conversion: StringConversion) -> String? {
+  private func toString(_ conversion: Instruction.StringConversion) -> String? {
     switch conversion {
     case .none: return nil
     case .str: return "str"
@@ -380,7 +380,7 @@ extension CodeObject {
     }
   }
 
-  private func toString(_ arg: RaiseArg) -> String {
+  private func toString(_ arg: Instruction.RaiseArg) -> String {
     switch arg {
     case .reRaise: return "reRaise"
     case .exceptionOnly: return "exception"

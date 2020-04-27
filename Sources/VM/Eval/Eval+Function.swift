@@ -18,7 +18,7 @@ extension Eval {
   /// - `0x08` - has tuple containing cells for free variables,
   ///            making a closure the code associated with the function (at TOS1)
   ///            the qualified name of the function (at TOS)
-  internal func makeFunction(flags: FunctionFlags) -> InstructionResult {
+  internal func makeFunction(flags: Instruction.FunctionFlags) -> InstructionResult {
     let qualname = self.stack.pop()
     let code = self.stack.pop()
     let globals = self.globalSymbols
@@ -268,8 +268,9 @@ extension Eval {
     }
 
     guard Py.hasIter(object: args) else {
+      let t = args.typeName
       let fnName = self.getFunctionName(object: fn) ?? "function"
-      let msg = "\(fnName) argument after * must be an iterable, not \(args.typeName)"
+      let msg = "\(fnName) argument after * must be an iterable, not \(t)"
       return .typeError(msg)
     }
 
@@ -283,7 +284,8 @@ extension Eval {
   /// TOS is popped and method and TOS are pushed when interpreter
   /// can call unbound method directly.
   /// TOS will be used as the first argument (self) by `CallMethod`.
-  /// Otherwise, NULL and method is pushed (method is bound method or something else).
+  /// Otherwise, NULL and method is pushed (method is bound method
+  /// or something else).
   internal func loadMethod(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
     let object = self.stack.top

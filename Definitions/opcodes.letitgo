@@ -17,30 +17,13 @@ and labels properties of 'CodeObject'.
 @alias CellOrFreeIndex = UInt8
 @alias Item = UInt8
 
-@enum StringConversion =
+@enum Instruction.StringConversion =
     none
   | str
   | repr
   | ascii
 
-{-
-  We cannot name following type 'ComparisonOpcode',
-  because we have such type in Parser.
-
-  AFAIK this is not supported by Swift because:
-  Module Parser
-    class Parser
-    enum ComparisonOpcode
-  Module Bytecode
-    enum ComparisonOpcode
-
-  We cannot just use 'Parser.ComparisonOpcode',
-  because Swift thinks we are using Parser class instead of Parser as a module.
-  We cannot use the type from Parser,
-  because Bytecode should not import Parser (and vice-versa).
--}
-
-@enum ComparisonOpcode =
+@enum Instruction.CompareType =
   -- True when two operands are equal.
   Equal
   -- True when two operands are not equal.
@@ -64,11 +47,11 @@ and labels properties of 'CodeObject'.
   -- Does the exception has specified type?
   | ExceptionMatch
 
-@enum SliceArg =
+@enum Instruction.SliceArg =
     LowerUpper
   | LowerUpperStep
 
-@enum RaiseArg =
+@enum Instruction.RaiseArg =
   -- Re-raise previous exception.
   -- CPython 0.
     ReRaise
@@ -200,11 +183,11 @@ and labels properties of 'CodeObject'.
 {- ----------- -}
 
   -- Performs a `Boolean` operation.
-  | CompareOp(ComparisonOpcode)
+  | CompareOp(CompareType)
 
-{- ------------------ -}
+{- ----------- -}
 {-  Coroutines -}
-{- ------------------ -}
+{- ----------- -}
 
   -- Implements `TOS = GetAwaitable(TOS)`.
   --

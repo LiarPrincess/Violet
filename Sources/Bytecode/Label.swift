@@ -1,5 +1,8 @@
 /// Index of jump target in `CodeObject.labels`.
-/// Basically a wrapper around array index for additional type safety.
+///
+/// Basically a wrapper around array index for additional type safety (otherwise
+/// we would have to use `Int` which can be mistaken with any other `int`).
+///
 /// - Important:
 /// Labels can only be used inside a single block!
 public struct Label {

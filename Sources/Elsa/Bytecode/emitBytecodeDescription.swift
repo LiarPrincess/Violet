@@ -33,7 +33,8 @@ private func emitBytecodeDescription(inputFile: URL) {
 }
 
 private func emitDescription(_ def: EnumDef) {
-  print("extension \(def.name): CustomStringConvertible {")
+  let parent = def.nestedInside.map { $0 + "." } ?? ""
+  print("extension \(parent)\(def.name): CustomStringConvertible {")
   print("  public var description: String {")
   print("    switch self {")
 

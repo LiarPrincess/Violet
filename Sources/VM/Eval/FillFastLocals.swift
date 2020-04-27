@@ -368,6 +368,6 @@ internal struct FillFastLocals {
   // MARK: - Helpers
 
   private func getName(_ name: MangledName) -> String {
-    return name.base
+    return name.beforeMangling
   }
 }

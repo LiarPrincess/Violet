@@ -48,7 +48,7 @@ extension CodeObjectBuilder {
   }
 
   /// Append a `buildSlice` instruction to this code object.
-  public func appendBuildSlice(_ arg: SliceArg) {
+  public func appendBuildSlice(arg: Instruction.SliceArg) {
     self.append(.buildSlice(arg))
   }
 
