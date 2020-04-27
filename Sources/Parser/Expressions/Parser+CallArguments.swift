@@ -1,3 +1,4 @@
+import VioletCore
 import VioletLexer
 
 // In CPython:
@@ -26,12 +27,19 @@ internal struct CallIR {
   /// but only in one of the following cases:
   /// - generator is the ONLY argument,
   ///   for example: `sing(n for n in [elsa, ariel])`
-  /// - generator arguments are in parenthesis,
+  /// - generators are in parenthesis,
   ///   for example: `sing('let it go', (n for n in [elsa, ariel]))`
   ///
   /// Something like (notice no parens):
   /// `sing('let it go', n for n in [elsa, ariel])` is not allowed.
-  fileprivate var hasGeneratorWithoutParens = false
+  ///
+  /// We also need to remember the location in the source code,
+  /// so that we know where to put error.
+  fileprivate var generatorWithoutParensLocation: SourceLocation?
+
+  fileprivate var hasGeneratorWithoutParens: Bool {
+    return self.generatorWithoutParensLocation != nil
+  }
 
   /// When parsing base class definition we don't allow generators.
   ///
@@ -63,15 +71,13 @@ extension Parser {
 
     while self.peek.kind == .comma && self.peekNext.kind != closingToken {
       try self.advance() // ,
-
-      let start = self.peek.start
       try self.argument(into: &ir, closingToken: closingToken)
 
-      // We allow generator arguments, but only if they are the only argument.
-      // Something like 'sing(n for n in [elsa, ariel])'.
+      // We allow generator arguments, but only if they are the only argument
+      // (something like 'sing(n for n in [elsa, ariel])').
       // Otherwise parens are required.
-      if ir.hasGeneratorWithoutParens && ir.args.count > 1 {
-        throw self.error(.callWithGeneratorArgumentWithoutParens, location: start)
+      if let loc = ir.generatorWithoutParensLocation, ir.args.count > 1 {
+        throw self.error(.callWithGeneratorArgumentWithoutParens, location: loc)
       }
     }
 
@@ -211,7 +217,12 @@ extension Parser {
 
     let closings = [closingToken, .comma]
     if let generators = try self.compForOrNop(closingTokens: closings) {
-      ir.hasGeneratorWithoutParens = true
+      // It is possible that 'generatorWithoutParensLocation' is already filled
+      // if we have multiple generator arguments without parens.
+      // We will use location of the 1st generator in error message.
+      if ir.generatorWithoutParensLocation == nil {
+        ir.generatorWithoutParensLocation = test.start
+      }
 
       let end = generators.last?.end ?? test.end
       let expr = self.builder.generatorExpr(element: test,
