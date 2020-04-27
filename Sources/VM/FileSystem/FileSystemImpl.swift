@@ -1,5 +1,5 @@
-import VioletObjects
 import Foundation
+import VioletObjects
 
 // swiftlint:disable file_length
 

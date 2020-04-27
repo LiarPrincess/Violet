@@ -1,5 +1,5 @@
-import VioletCore
 import Foundation
+import VioletCore
 
 // In CPython:
 // Modules -> _io -> _iomodule.c

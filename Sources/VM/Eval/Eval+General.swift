@@ -1,6 +1,6 @@
 import Foundation
-import VioletObjects
 import VioletBytecode
+import VioletObjects
 
 extension Eval {
 

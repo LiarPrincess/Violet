@@ -1,5 +1,5 @@
-import VioletCore
 import Foundation
+import VioletCore
 
 // swiftlint:disable file_length
 // swiftlint:disable yoda_condition

@@ -1,6 +1,6 @@
+import Foundation
 import VioletCore
 import VioletParser
-import Foundation
 
 // swiftlint:disable file_length
 

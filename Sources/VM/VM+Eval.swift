@@ -1,6 +1,6 @@
 import VioletCore
-import VioletObjects
 import VioletBytecode
+import VioletObjects
 
 extension VM {
 

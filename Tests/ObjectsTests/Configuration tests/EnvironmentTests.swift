@@ -1,5 +1,5 @@
-import Foundation
 import XCTest
+import Foundation
 @testable import VioletObjects
 
 // Song reference: https://youtu.be/40kfRj_ZUHY?t=36

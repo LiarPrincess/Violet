@@ -1,6 +1,6 @@
+import Foundation
 import VioletCore
 import VioletLexer
-import Foundation
 
 // FString: https://www.python.org/dev/peps/pep-0498/
 

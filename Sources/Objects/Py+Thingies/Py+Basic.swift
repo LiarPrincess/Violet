@@ -1,6 +1,6 @@
+import Foundation
 import VioletCore
 import VioletBytecode
-import Foundation
 
 // In CPython:
 // Python -> builtinmodule.c

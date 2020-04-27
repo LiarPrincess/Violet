@@ -1,6 +1,6 @@
+import Foundation
 import VioletCore
 import VioletObjects
-import Foundation
 
 // MARK: - Unwind reason
 

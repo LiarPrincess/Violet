@@ -1,7 +1,7 @@
+import Foundation
 import VioletCore
 import VioletParser
 import VioletBytecode
-import Foundation
 
 // In CPython:
 // Python -> compile.c

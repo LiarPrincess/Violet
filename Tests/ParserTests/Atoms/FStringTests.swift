@@ -1,5 +1,5 @@
-import Foundation
 import XCTest
+import Foundation
 import VioletCore
 import VioletLexer
 @testable import VioletParser

@@ -1,7 +1,7 @@
-import VioletVM
+import Foundation
 import VioletCore
 import VioletObjects
-import Foundation
+import VioletVM
 
 // swiftlint:disable:next function_body_length
 private func run(file: URL) {

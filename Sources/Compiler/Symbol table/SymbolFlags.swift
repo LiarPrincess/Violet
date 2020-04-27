@@ -1,6 +1,6 @@
 import VioletCore
-import VioletBytecode
 import VioletParser
+import VioletBytecode
 
 // In CPython:
 // Include -> symtable.h

@@ -1,8 +1,8 @@
+import Foundation
 import VioletCore
 import VioletLexer
 import VioletParser
 import VioletCompiler
-import Foundation
 
 // In CPython:
 // Python -> _warnings.c

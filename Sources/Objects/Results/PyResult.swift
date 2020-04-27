@@ -1,5 +1,5 @@
-import VioletCore
 import Foundation
+import VioletCore
 
 /// Result of a `Python` operation.
 ///

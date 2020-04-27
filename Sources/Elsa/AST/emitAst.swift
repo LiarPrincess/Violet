@@ -1,7 +1,5 @@
 import Foundation
 
-// swiftlint:disable file_length
-
 public func emitAst(inputFile: URL, outputFile: URL) {
   withRedirectedStandardOutput(to: outputFile) {
     emitAst(inputFile: inputFile)

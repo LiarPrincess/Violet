@@ -1,6 +1,6 @@
 import VioletCore
-import VioletBytecode
 import VioletParser
+import VioletBytecode
 
 extension CodeObjectBuilder {
 

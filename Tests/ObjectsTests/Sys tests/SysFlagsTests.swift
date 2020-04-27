@@ -1,5 +1,5 @@
-import Foundation
 import XCTest
+import Foundation
 import VioletCompiler
 @testable import VioletObjects
 

@@ -1,5 +1,5 @@
-import VioletLexer
 import Foundation
+import VioletLexer
 
 // In CPython:
 // Python -> ast.c

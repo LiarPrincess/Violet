@@ -1,5 +1,5 @@
-import VioletCore
 import Foundation
+import VioletCore
 
 /// Importlib module spec, so that we can share code between
 /// `importlib` and `importlib_external`.

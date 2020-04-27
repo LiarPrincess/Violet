@@ -1,9 +1,9 @@
+import Foundation
 import VioletCore
 import VioletLexer
 import VioletParser
-import VioletCompiler
 import VioletBytecode
-import Foundation
+import VioletCompiler
 
 // In CPython:
 // Python -> builtinmodule.c

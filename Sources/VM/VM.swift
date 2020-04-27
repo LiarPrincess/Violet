@@ -1,5 +1,5 @@
-import VioletObjects
 import Foundation
+import VioletObjects
 
 // swiftlint:disable:next type_name
 public final class VM: PyDelegate {

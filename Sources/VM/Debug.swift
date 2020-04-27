@@ -1,6 +1,6 @@
 import VioletParser
-import VioletObjects
 import VioletBytecode
+import VioletObjects
 
 #if DEBUG
 /// Change this if you feel like it.

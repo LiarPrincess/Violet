@@ -1,6 +1,6 @@
 import XCTest
-import VioletObjects
 import Foundation
+import VioletObjects
 
 /// Test case that uses `Py`.
 class PyTestCase: XCTestCase, PyDelegate, PyFileSystem {

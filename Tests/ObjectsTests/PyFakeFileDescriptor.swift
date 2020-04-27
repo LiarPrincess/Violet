@@ -1,5 +1,5 @@
-import VioletObjects
 import Foundation
+import VioletObjects
 
 class PyFakeFileDescriptor: FileDescriptorType {
 

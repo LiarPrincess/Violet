@@ -1,5 +1,5 @@
-import VioletCore
 import Foundation
+import VioletCore
 
 /// Return type of a Python function.
 internal typealias PyFunctionResult = PyResult<PyObject>
