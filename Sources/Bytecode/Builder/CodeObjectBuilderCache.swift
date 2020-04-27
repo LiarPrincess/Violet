@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 /// Indices of already added objects (so that we don't store duplicates).
 internal struct CodeObjectBuilderCache {

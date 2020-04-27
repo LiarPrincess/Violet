@@ -1,6 +1,6 @@
 import XCTest
-import Core
-@testable import Objects
+import VioletCore
+@testable import VioletObjects
 
 // swiftlint:disable number_separator
 
@@ -170,7 +170,7 @@ class HashFloat: XCTestCase {
   private func hash(_ value: Double) -> Int {
     // Key is 'I See the Light ' in ASCII
     let key: (UInt64, UInt64) = (0x4920536565207468, 0x65204c6967687420)
-    let hasher = Objects.Hasher(key0: key.0, key1: key.1)
+    let hasher = Hasher(key0: key.0, key1: key.1)
     return hasher.hash(value)
   }
 }

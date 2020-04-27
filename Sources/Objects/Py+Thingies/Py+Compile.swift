@@ -1,8 +1,8 @@
-import Core
-import Lexer
-import Parser
-import Compiler
-import Bytecode
+import VioletCore
+import VioletLexer
+import VioletParser
+import VioletCompiler
+import VioletBytecode
 import Foundation
 
 // In CPython:

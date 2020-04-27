@@ -1,4 +1,4 @@
-import Lexer
+import VioletLexer
 
 // In CPython:
 // Python -> ast.c

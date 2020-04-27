@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import Objects
+@testable import VioletObjects
 
 // Song reference: https://youtu.be/40kfRj_ZUHY?t=36
 class EnvironmentTests: XCTestCase {

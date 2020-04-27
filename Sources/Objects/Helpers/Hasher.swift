@@ -1,5 +1,5 @@
 import Foundation
-import Core
+import VioletCore
 
 // In CPython:
 // Python -> pyhash.c <-- Seriously look it up!

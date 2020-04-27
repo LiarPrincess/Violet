@@ -1,8 +1,8 @@
 import XCTest
-import Core
-import Parser
-import Bytecode
-@testable import Compiler
+import VioletCore
+import VioletParser
+import VioletBytecode
+@testable import VioletCompiler
 
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length

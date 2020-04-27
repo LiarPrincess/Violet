@@ -1,8 +1,8 @@
 import XCTest
-import Core
-import Parser
-import Bytecode
-@testable import Compiler
+import VioletCore
+import VioletParser
+import VioletBytecode
+@testable import VioletCompiler
 
 /// Use 'Scripts/dump_dis.py' for reference.
 class CompileList: CompileTestCase {

@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 // Module implementation is based on pre-specialization (partial application)
 // of function to module object and then wrapping remaining function.

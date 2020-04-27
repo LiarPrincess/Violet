@@ -1,6 +1,6 @@
-import Core
-import Bytecode
-import Objects
+import VioletCore
+import VioletBytecode
+import VioletObjects
 
 // Docs:
 // https://tech.blog.aknin.name/2010/06/05/pythons-innards-naming/

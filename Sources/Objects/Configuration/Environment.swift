@@ -1,5 +1,5 @@
 import Foundation
-import Compiler
+import VioletCompiler
 
 // Descriptions taken from: https://docs.python.org/3.7/using/cmdline.html
 

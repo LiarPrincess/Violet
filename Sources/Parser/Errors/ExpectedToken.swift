@@ -1,4 +1,4 @@
-import Lexer
+import VioletLexer
 
 // swiftlint:disable file_length
 

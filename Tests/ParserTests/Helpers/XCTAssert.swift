@@ -1,4 +1,4 @@
-import Parser
+import VioletParser
 import XCTest
 
 internal func XCTAssertAST(_ ast: AST,

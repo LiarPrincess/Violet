@@ -1,5 +1,5 @@
-import Core
-import Bytecode
+import VioletCore
+import VioletBytecode
 import Foundation
 
 // In CPython:

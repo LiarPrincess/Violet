@@ -1,6 +1,6 @@
 import XCTest
-import Core
-@testable import Bytecode
+import VioletCore
+@testable import VioletBytecode
 
 internal func XCTAssertConstant(_ lhs: Constant,
                                 _ rhs: Constant,

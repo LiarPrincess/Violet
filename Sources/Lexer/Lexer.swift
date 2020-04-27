@@ -1,5 +1,5 @@
 import Foundation
-import Core
+import VioletCore
 
 // https://docs.python.org/3/reference/lexical_analysis.html
 

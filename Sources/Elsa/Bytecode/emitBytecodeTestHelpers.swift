@@ -9,8 +9,8 @@ public func emitBytecodeTestHelpers(inputFile: URL, outputFile: URL) {
 private func emitBytecodeTestHelpers(inputFile: URL) {
   print(createHeader(inputFile: inputFile))
 
-  print("import Core")
-  print("import Bytecode")
+  print("import VioletCore")
+  print("import VioletBytecode")
   print("import Foundation")
   print()
 

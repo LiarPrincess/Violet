@@ -1,5 +1,5 @@
-import Core
-import Bytecode
+import VioletCore
+import VioletBytecode
 
 // In CPython:
 // Objects -> codeobject.c
@@ -256,7 +256,7 @@ public class PyCode: PyObject {
     return variableCount + 1
   }
 
-  private static func intern(constant: Bytecode.Constant) -> Constant {
+  private static func intern(constant: VioletBytecode.Constant) -> Constant {
     switch constant {
     case .true: return .true
     case .false: return .false

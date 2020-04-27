@@ -1,5 +1,5 @@
-import Core
-import Objects
+import VioletCore
+import VioletObjects
 import Foundation
 
 // In CPython:
@@ -37,7 +37,7 @@ extension VM {
   /// pymain_run_python(_PyMain *pymain)
   public func run() -> RunResult {
     if self.arguments.help {
-      print(Objects.Arguments.helpMessage)
+      print(Arguments.helpMessage)
       return .done
     }
 

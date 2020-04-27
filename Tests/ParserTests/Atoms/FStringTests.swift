@@ -1,8 +1,8 @@
 import Foundation
 import XCTest
-import Core
-import Lexer
-@testable import Parser
+import VioletCore
+import VioletLexer
+@testable import VioletParser
 
 // Use this for reference:
 // https://www.youtube.com/watch?v=BTBaUHSi-xk

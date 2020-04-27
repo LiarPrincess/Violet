@@ -11,7 +11,7 @@ types = list(filter(lambda t: not t.is_error, all_types))
 
 if __name__ == '__main__':
   print(f'''\
-import Core
+import VioletCore
 
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length

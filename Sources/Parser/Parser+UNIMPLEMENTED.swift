@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 // Technically this is an 'FString', but it belongs to 'Parser',
 // thats why we have it in 'Parser+UNIMPLEMENTED.swift' file.

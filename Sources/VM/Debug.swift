@@ -1,6 +1,6 @@
-import Parser
-import Objects
-import Bytecode
+import VioletParser
+import VioletObjects
+import VioletBytecode
 
 #if DEBUG
 /// Change this if you feel like it.
@@ -34,7 +34,7 @@ internal enum Debug {
     print("=== \(title) ===")
     print(code.dump())
 
-    for case Objects.Constant.code(let inner) in code.constants {
+    for case VioletObjects.Constant.code(let inner) in code.constants {
       Debug.code(inner)
     }
   }

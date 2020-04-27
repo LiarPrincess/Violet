@@ -30,7 +30,7 @@ def get_base_type(t):
 
 if __name__ == '__main__':
   print(f'''\
-import Core
+import VioletCore
 
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length

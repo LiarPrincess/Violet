@@ -1,5 +1,5 @@
 import XCTest
-import Core
+import VioletCore
 
 class MutableCollectionRemoveDuplicates: XCTestCase {
 

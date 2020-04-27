@@ -1,5 +1,5 @@
-import Core
-import Bytecode
+import VioletCore
+import VioletBytecode
 
 public struct SymbolInfo: Equatable, CustomStringConvertible {
 

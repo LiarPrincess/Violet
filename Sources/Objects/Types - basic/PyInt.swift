@@ -1,5 +1,5 @@
 import Foundation
-import Core
+import VioletCore
 
 // In CPython:
 // Objects -> longobject.c

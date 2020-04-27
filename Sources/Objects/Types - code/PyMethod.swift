@@ -1,4 +1,4 @@
-import Bytecode
+import VioletBytecode
 
 // In CPython:
 // Objects -> classobject.c

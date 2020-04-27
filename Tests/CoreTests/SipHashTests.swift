@@ -1,5 +1,5 @@
 import XCTest
-@testable import Core
+@testable import VioletCore
 
 // swiftlint:disable number_separator
 // swiftlint:disable function_body_length

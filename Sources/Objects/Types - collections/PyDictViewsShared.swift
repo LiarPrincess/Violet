@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 /// Shared methods for various `PyDict` views.
 internal protocol PyDictViewsShared: PyObject {

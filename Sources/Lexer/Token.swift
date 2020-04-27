@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 /// Single 'word' in a source code.
 public struct Token: Equatable {

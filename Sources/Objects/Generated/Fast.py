@@ -101,7 +101,7 @@ types = get_types()
 
 if __name__ == '__main__':
   print(f'''\
-import Core
+import VioletCore
 
 // swiftlint:disable line_length
 // swiftlint:disable opening_brace

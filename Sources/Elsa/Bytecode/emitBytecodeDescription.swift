@@ -9,7 +9,7 @@ public func emitBytecodeDescription(inputFile: URL, outputFile: URL) {
 private func emitBytecodeDescription(inputFile: URL) {
   print(createHeader(inputFile: inputFile))
 
-  print("import Core")
+  print("import VioletCore")
   print("import Foundation")
   print()
 

@@ -1,6 +1,6 @@
 import XCTest
-import Core
-@testable import Objects
+import VioletCore
+@testable import VioletObjects
 
 // swiftlint:disable number_separator
 // swiftlint:disable file_length

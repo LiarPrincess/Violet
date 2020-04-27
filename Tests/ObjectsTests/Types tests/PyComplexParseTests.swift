@@ -1,6 +1,6 @@
 import XCTest
-import Core
-@testable import Objects
+import VioletCore
+@testable import VioletObjects
 
 class PyComplexParseTests: PyTestCase {
 

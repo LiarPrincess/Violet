@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 /// Internal helper for `sys.version_info`.
 ///

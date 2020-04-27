@@ -1,5 +1,5 @@
-import Bytecode
-import Objects
+import VioletBytecode
+import VioletObjects
 
 private typealias CreateDictionaryArg = PyInstance.CreateDictionaryArg
 

@@ -1,9 +1,9 @@
 import XCTest
-import Core
-import Lexer
-import Parser
-import Bytecode
-import Compiler
+import VioletCore
+import VioletLexer
+import VioletParser
+import VioletBytecode
+import VioletCompiler
 
 internal func XCTAssertCode(_ code: CodeObject,
                             name: String,

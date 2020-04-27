@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 // MARK: - String builder
 

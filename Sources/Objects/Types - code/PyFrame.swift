@@ -1,5 +1,5 @@
-import Core
-import Bytecode
+import VioletCore
+import VioletBytecode
 
 // In CPython:
 // Objects -> frameobject.c

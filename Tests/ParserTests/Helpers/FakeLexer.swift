@@ -1,4 +1,4 @@
-import Lexer
+import VioletLexer
 
 internal class FakeLexer: LexerType {
 

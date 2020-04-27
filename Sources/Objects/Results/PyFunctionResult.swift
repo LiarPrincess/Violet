@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 import Foundation
 
 /// Return type of a Python function.

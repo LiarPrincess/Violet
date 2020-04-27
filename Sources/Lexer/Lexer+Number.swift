@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 // https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
 // https://github.molgen.mpg.de/git-mirror/glibc/blob/master/stdlib/strtod_l.c

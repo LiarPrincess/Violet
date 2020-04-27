@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 // In CPython:
 // Python -> traceback.c

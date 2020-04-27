@@ -45,7 +45,7 @@
 // - we are no longer NSObject
 // - no queues/barriers
 
-import Core
+import VioletCore
 import Foundation.NSData
 
 // swiftlint:disable force_unwrapping

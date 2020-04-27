@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 import Foundation
 
 /// Importlib module spec, so that we can share code between

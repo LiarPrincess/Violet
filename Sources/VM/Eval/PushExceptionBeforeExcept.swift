@@ -1,4 +1,4 @@
-import Objects
+import VioletObjects
 
 /// Helper for the situation when we want to push current exception on stack.
 /// Later we will probably want to pop this exception.

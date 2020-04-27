@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 import Foundation
 
 /// Result of a `Python` operation.

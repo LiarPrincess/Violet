@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 public enum LexerUnimplemented: CustomStringConvertible, Equatable {
 

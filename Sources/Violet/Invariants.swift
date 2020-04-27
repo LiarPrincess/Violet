@@ -1,10 +1,10 @@
 import Foundation
-import Core
-import Lexer
-import Parser
-import Bytecode
-import Compiler
-import VM
+import VioletCore
+import VioletLexer
+import VioletParser
+import VioletBytecode
+import VioletCompiler
+import VioletVM
 
 private var anyFailed = false
 

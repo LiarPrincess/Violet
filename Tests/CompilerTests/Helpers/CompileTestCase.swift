@@ -1,8 +1,8 @@
 import XCTest
-import Core
-import Parser
-import Bytecode
-@testable import Compiler
+import VioletCore
+import VioletParser
+import VioletBytecode
+@testable import VioletCompiler
 
 /// Base class for all of the compiler tests
 internal class CompileTestCase: XCTestCase, ASTCreator {

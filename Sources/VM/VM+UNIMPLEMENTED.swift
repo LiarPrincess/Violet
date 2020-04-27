@@ -1,5 +1,5 @@
-import Core
-import Objects
+import VioletCore
+import VioletObjects
 
 extension VM {
 

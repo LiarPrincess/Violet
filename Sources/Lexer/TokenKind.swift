@@ -1,5 +1,5 @@
 import Foundation
-import Core
+import VioletCore
 
 // Based on 'Grammar/Tokens' from CPython.
 

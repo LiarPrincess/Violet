@@ -1,6 +1,6 @@
 import ArgumentParser
-import Core
-import Compiler
+import VioletCore
+import VioletCompiler
 
 // In CPython:
 // Modules -> main.c

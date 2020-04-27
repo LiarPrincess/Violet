@@ -1,6 +1,6 @@
-import Core
-import Bytecode
-import Objects
+import VioletCore
+import VioletBytecode
+import VioletObjects
 
 extension Eval {
 

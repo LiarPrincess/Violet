@@ -1,8 +1,8 @@
 import Foundation
 import XCTest
-import Core
-import Lexer
-@testable import Parser
+import VioletCore
+import VioletLexer
+@testable import VioletParser
 
 private let e: UInt8 = 0x45 // it is 'E'
 private let l: UInt8 = 0x6c

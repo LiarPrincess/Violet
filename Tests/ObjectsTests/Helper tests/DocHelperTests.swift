@@ -1,6 +1,6 @@
 import XCTest
-import Core
-@testable import Objects
+import VioletCore
+@testable import VioletObjects
 
 // For some reason 'int' does not have '--' separator.
 private let intDoc = """
@@ -97,10 +97,10 @@ class DocHelperTests: XCTestCase {
   // MARK: - Helpers
 
   private func getSignature(_ doc: String) -> String? {
-    return Objects.DocHelper.getSignature(doc)
+    return DocHelper.getSignature(doc)
   }
 
   private func getDocWithoutSignature(_ doc: String) -> String {
-    return Objects.DocHelper.getDocWithoutSignature(doc)
+    return DocHelper.getDocWithoutSignature(doc)
   }
 }

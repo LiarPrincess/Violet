@@ -1,8 +1,8 @@
 import XCTest
-import Core
-import Parser
-import Bytecode
-@testable import Compiler
+import VioletCore
+import VioletParser
+import VioletBytecode
+@testable import VioletCompiler
 
 private let a: UInt8 = 0x41 // it is 'A', but camelCase happened
 private let l: UInt8 = 0x6c

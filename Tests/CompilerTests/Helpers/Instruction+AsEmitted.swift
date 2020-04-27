@@ -1,6 +1,6 @@
 import Foundation
-import Core
-import Bytecode
+import VioletCore
+import VioletBytecode
 
 // swiftlint:disable file_length
 

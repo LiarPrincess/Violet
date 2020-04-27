@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 // swiftlint:disable trailing_closure
 

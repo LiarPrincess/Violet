@@ -1,5 +1,5 @@
 import XCTest
-@testable import VM
+@testable import VioletVM
 
 class FileSystemTests: XCTestCase {
 

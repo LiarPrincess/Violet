@@ -1,6 +1,6 @@
 import Foundation
-import Core
-import Lexer
+import VioletCore
+import VioletLexer
 
 // swiftlint:disable file_length
 

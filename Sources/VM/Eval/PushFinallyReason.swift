@@ -1,5 +1,5 @@
-import Core
-import Objects
+import VioletCore
+import VioletObjects
 
 /// Helper for `unwind` block and `endFinally` instruction.
 /// Basically a way to remember what we were doing before

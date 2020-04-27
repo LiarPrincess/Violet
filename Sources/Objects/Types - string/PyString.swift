@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 private typealias UnicodeScalarView = String.UnicodeScalarView
 private typealias UnicodeScalarViewSub = UnicodeScalarView.SubSequence

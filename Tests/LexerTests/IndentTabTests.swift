@@ -1,6 +1,6 @@
 import XCTest
-import Core
-@testable import Lexer
+import VioletCore
+@testable import VioletLexer
 
 /// Use 'python3 -m tokenize -e file.py' for python reference
 class IndentTabTests: XCTestCase, Common {

@@ -1,5 +1,5 @@
-import Core
-import Lexer
+import VioletCore
+import VioletLexer
 
 // In CPython:
 // Python -> ast.c

@@ -1,6 +1,6 @@
-import VM
-import Core
-import Objects
+import VioletVM
+import VioletCore
+import VioletObjects
 import Foundation
 
 // swiftlint:disable:next function_body_length

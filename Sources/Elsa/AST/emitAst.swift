@@ -9,8 +9,8 @@ public func emitAst(inputFile: URL, outputFile: URL) {
 private func emitAst(inputFile: URL) {
   print(createHeader(inputFile: inputFile))
 
-  print("import Core")
-  print("import Lexer")
+  print("import VioletCore")
+  print("import VioletLexer")
   print("import Foundation")
   print()
 

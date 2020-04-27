@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 /// Internal helper for `sys.implementation`.
 public struct ImplementationInfo {

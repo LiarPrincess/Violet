@@ -1,5 +1,5 @@
 import XCTest
-import Objects
+import VioletObjects
 import Foundation
 
 /// Test case that uses `Py`.

@@ -1,5 +1,5 @@
-import Core
-import Parser
+import VioletCore
+import VioletParser
 
 // In CPython:
 // Python -> symtable.c

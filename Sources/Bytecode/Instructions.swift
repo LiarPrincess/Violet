@@ -2,7 +2,7 @@
 // DO NOT EDIT!
 
 import Foundation
-import Core
+import VioletCore
 
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable line_length
@@ -191,7 +191,7 @@ public enum Instruction {
   /// Performs a `Boolean` operation.
   case compareOp(ComparisonOpcode)
   /// Implements `TOS = GetAwaitable(TOS)`.
-  /// 
+  ///
   /// `GetAwaitable(o)` returns:
   /// - `o` if `o` is a coroutine object
   /// - generator object with the `CoIterableCoroutine` flag
@@ -278,15 +278,15 @@ public enum Instruction {
   /// which are put onto the stack right-to-left.
   case unpackSequence(elementCount: UInt8)
   /// Implements assignment with a starred target.
-  /// 
+  ///
   /// Unpacks an iterable in TOS into individual values, where the total number
   /// of values can be smaller than the number of items in the iterable:
   /// one of the new values will be a list of all leftover items.
-  /// 
+  ///
   /// The low byte of counts is the number of values before the list value,
   /// the high byte of counts the number of values after it.
   /// The resulting values are put onto the stack right-to-left.
-  /// 
+  ///
   /// Use `UnpackExArg` struct to handle argument.
   case unpackEx(arg: UInt8)
   /// Pushes constant pointed by `index` onto the stack.
@@ -339,7 +339,7 @@ public enum Instruction {
   /// This is used for loading free variables in class bodies.
   case loadClassDeref(cellOrFreeIndex: UInt8)
   /// Pushes a new function object on the stack.
-  /// 
+  ///
   /// From bottom to top, the consumed stack must consist of values
   /// if the argument carries a specified flag value
   /// - `0x01` - has tuple of default values for positional-only
@@ -352,11 +352,11 @@ public enum Instruction {
   case makeFunction(FunctionFlags)
   /// Calls a callable object with positional arguments.
   /// `argc` indicates the number of positional arguments.
-  /// 
+  ///
   /// Stack layout (1st item means TOS):
   /// - positional arguments, with the right-most argument on top
   /// - callable object to call.
-  /// 
+  ///
   /// It will:
   /// 1. pop all arguments and the callable object off the stack
   /// 2. call the callable object with those arguments
@@ -366,27 +366,27 @@ public enum Instruction {
   case callFunction(argumentCount: UInt8)
   /// Calls a callable object with positional (if any) and keyword arguments.
   /// `argc` indicates the total number of positional and keyword arguments.
-  /// 
+  ///
   /// Stack layout (1st item means TOS):
   /// - tuple of keyword argument names
   /// - keyword arguments in the order corresponding to the tuple
   /// - positional arguments, with the right-most parameter on top
   /// - callable object to call.
-  /// 
+  ///
   /// It will:
   /// 1. pop all arguments and the callable object off the stack
   /// 2. call the callable object with those arguments
   /// 3. push the return value returned by the callable object.
   case callFunctionKw(argumentCount: UInt8)
   /// Calls a callable object with variable set of positional and keyword arguments.
-  /// 
+  ///
   /// Stack layout (1st item means TOS):
   /// - (if `hasKeywordArguments` is set) mapping object containing keyword arguments
   /// - iterable object containing positional arguments and a callable object to call
-  /// 
+  ///
   /// `BuildmapUnpackWithCall` and `BuildTupleUnpackWithCall` can be used for
   /// merging multiple mapping objects and iterables containing arguments.
-  /// 
+  ///
   /// It will:
   /// 1. pop all arguments and the callable object off the stack
   /// 2. mapping object and iterable object are each “unpacked” and their
@@ -400,7 +400,7 @@ public enum Instruction {
   /// It is later called by `CallFunction` to construct a class.
   case loadBuildClass
   /// Loads a method named `name` from TOS object.
-  /// 
+  ///
   /// TOS is popped and method and TOS are pushed when interpreter can call unbound method directly.
   /// TOS will be used as the first argument (self) by `CallMethod`.
   /// Otherwise, NULL and method is pushed (method is bound method or something else).
@@ -408,7 +408,7 @@ public enum Instruction {
   /// Calls a method.
   /// `argc` is number of positional arguments.
   /// Keyword arguments are not supported.
-  /// 
+  ///
   /// This opcode is designed to be used with `LoadMethod`.
   /// Positional arguments are on top of the stack.
   /// Below them, two items described in `LoadMethod` on the stack.
@@ -416,19 +416,19 @@ public enum Instruction {
   case callMethod(argumentCount: UInt8)
   /// Loads all symbols not starting with '_' directly from the module TOS
   /// to the local namespace.
-  /// 
+  ///
   /// The module is popped after loading all names.
   /// This opcode implements `from module import *`.
   case importStar
   /// Imports the module `name`.
-  /// 
+  ///
   /// TOS and TOS1 are popped and provide the `fromlist` and `level` arguments of `Import()`.
   /// The module object is pushed onto the stack.
   /// The current namespace is not affected: for a proper import statement,
   /// a subsequent StoreFast instruction modifies the namespace.
   case importName(nameIndex: UInt8)
   /// Loads the attribute `name` from the module found in TOS.
-  /// 
+  ///
   /// The resulting object is pushed onto the stack,
   /// to be subsequently stored by a `StoreFast` instruction.
   case importFrom(nameIndex: UInt8)
@@ -455,19 +455,19 @@ public enum Instruction {
   /// - 2: raise TOS1 from TOS (raise exception instance or type at TOS1 with Cause set to TOS)
   case raiseVarargs(RaiseArg)
   /// This opcode performs several operations before a `with` block starts.
-  /// 
+  ///
   /// It does following operations:
   /// 1.loads `Exit()` from the context manager and pushes it onto the stack
   /// for later use by `WithCleanup`.
   /// 2. calls `Enter()`
   /// 3. block staring at to `afterBodyLabel` is pushed.
   /// 4. the result of calling the enter method is pushed onto the stack.
-  /// 
+  ///
   /// The next opcode will either ignore it (`PopTop`),
   /// or store it in variable (StoreFast, StoreName, or UnpackSequence).
   case setupWith(afterBodyLabel: UInt8)
   /// Cleans up the stack when a `with` statement block exits.
-  /// 
+  ///
   /// TOS is the context manager’s `__exit__()` bound method.
   /// Below TOS are 1–3 values indicating how/why the finally clause was entered:
   /// - `SECOND = None`
@@ -479,7 +479,7 @@ public enum Instruction {
   /// Pushes `SECOND` and result of the call to the stack.
   case withCleanupStart
   /// Pops exception type and result of ‘exit’ function call from the stack.
-  /// 
+  ///
   /// If the stack represents an exception, and the function call returns a ‘true’ value,
   /// this information is “zapped” and replaced with a single WhySilenced
   /// to prevent EndFinally from re-raising the exception.
@@ -509,7 +509,7 @@ public enum Instruction {
   /// and pushes the resulting string onto the stack.
   case buildString(UInt8)
   /// Prefixes any opcode which has an argument too big to fit into the default one byte.
-  /// 
+  ///
   /// `ext` holds an additional byte which act as higher bits in the argument.
   /// For each opcode, at most three prefixal `ExtendedArg` are allowed,
   /// forming an argument from two-byte to four-byte.

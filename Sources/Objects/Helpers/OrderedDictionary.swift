@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 // In CPython:
 // Objects -> dict-common.h

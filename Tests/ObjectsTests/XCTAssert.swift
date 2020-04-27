@@ -1,6 +1,6 @@
 import XCTest
-import Core
-@testable import Objects
+import VioletCore
+@testable import VioletObjects
 
 internal func XCTAssertTypeError(error: PyBaseException,
                                  msg: String,
@@ -19,7 +19,9 @@ internal func XCTAssertTypeError(error: PyBaseException,
 private func extractMsgFromFirstArg(error: PyBaseException,
                                     file: StaticString,
                                     line: UInt) -> String? {
-  guard let firstArg = error.args.elements.first else {
+  let args = error.getArgs()
+
+  guard let firstArg = args.elements.first else {
     XCTAssert(false, "Empty args.", file: file, line: line)
     return nil
   }

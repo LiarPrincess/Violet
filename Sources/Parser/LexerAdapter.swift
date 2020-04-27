@@ -1,4 +1,4 @@
-import Lexer
+import VioletLexer
 
 /// Minor pre-processing of provided lexer.
 ///

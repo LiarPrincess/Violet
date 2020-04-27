@@ -1,5 +1,5 @@
-import Core
-import Objects
+import VioletCore
+import VioletObjects
 import Foundation
 
 /// We can't store this in VM because we can't access closure variables

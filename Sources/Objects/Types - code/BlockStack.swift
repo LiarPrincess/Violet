@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 public struct Block: CustomStringConvertible {
   /// The type of block.

@@ -1,4 +1,4 @@
-import Objects
+import VioletObjects
 
 /// Result of running of a single instruction.
 internal enum InstructionResult {

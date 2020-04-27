@@ -1,7 +1,7 @@
-import Core
-import Lexer
-import Parser
-import Compiler
+import VioletCore
+import VioletLexer
+import VioletParser
+import VioletCompiler
 import Foundation
 
 // In CPython:

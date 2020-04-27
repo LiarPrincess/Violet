@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 
 /// Helper for adding new instructions to `CodeObject`.
 /// It will store reference to `codeObject`,

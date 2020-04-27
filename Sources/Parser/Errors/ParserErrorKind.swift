@@ -1,4 +1,4 @@
-import Lexer
+import VioletLexer
 
 public enum ParserErrorKind: Equatable {
 

@@ -1,7 +1,7 @@
 import Foundation
 import XCTest
-import Compiler
-@testable import Objects
+import VioletCompiler
+@testable import VioletObjects
 
 // swiftlint:disable file_length
 

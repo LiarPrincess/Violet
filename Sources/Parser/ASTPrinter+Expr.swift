@@ -1,4 +1,4 @@
-import Core
+import VioletCore
 import Rapunzel
 
 // swiftlint:disable file_length

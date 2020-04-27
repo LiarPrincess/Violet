@@ -1,7 +1,7 @@
-import Core
+import VioletCore
 import Foundation
-import Bytecode
-import Objects
+import VioletBytecode
+import VioletObjects
 
 // In CPython:
 // Python -> ceval.c
@@ -102,7 +102,7 @@ internal final class Eval {
     return self.code.names[index]
   }
 
-  internal func getConstant(index: Int) -> Objects.Constant {
+  internal func getConstant(index: Int) -> VioletObjects.Constant {
     assert(0 <= index && index < self.code.constants.count)
     return self.code.constants[index]
   }

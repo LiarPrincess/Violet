@@ -1,6 +1,6 @@
-import Core
-import Parser
-import Bytecode
+import VioletCore
+import VioletParser
+import VioletBytecode
 import Foundation
 
 // In CPython:

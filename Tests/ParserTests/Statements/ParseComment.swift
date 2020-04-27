@@ -1,7 +1,7 @@
 import XCTest
-import Core
-import Lexer
-@testable import Parser
+import VioletCore
+import VioletLexer
+@testable import VioletParser
 
 class ParseComment: XCTestCase, Common {
 
