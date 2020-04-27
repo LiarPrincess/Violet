@@ -44,6 +44,7 @@ internal class Parser {
       if !result.isEmpty {
         result.append("\n")
       }
+
       result.append(value)
       self.advanceToken()
     }

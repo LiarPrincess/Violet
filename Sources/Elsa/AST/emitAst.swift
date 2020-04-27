@@ -272,16 +272,3 @@ private func printEquatable(_ def: ClassDef) {
 private func createBases(_ bases: [String]) -> String {
   return bases.isEmpty ? "" : ": " + bases.joined(", ")
 }
-
-private func printDoc(_ doc: String?, indent indentCount: Int = 0) {
-  guard let doc = doc else { return }
-
-  let indent = String(repeating: " ", count: indentCount)
-  let split = doc.split(separator: "\n",
-                        maxSplits: .max,
-                        omittingEmptySubsequences: false)
-
-  for line in split {
-    print("\(indent)/// \(line)")
-  }
-}

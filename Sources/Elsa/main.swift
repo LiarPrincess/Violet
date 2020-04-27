@@ -40,8 +40,7 @@ private func generateBytecode() {
 
   emitBytecode(
     inputFile: definition,
-    outputFile: bytecodeDir.appendingPathComponent("Instructions.swift"),
-    imports: ["Foundation", "Core"]
+    outputFile: bytecodeDir.appendingPathComponent("Instructions.swift")
   )
 
   emitBytecodeDescription(

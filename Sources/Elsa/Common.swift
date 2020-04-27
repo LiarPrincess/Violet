@@ -48,6 +48,22 @@ internal func createHeader(inputFile: URL) -> String {
   """
 }
 
+// MARK: - Doc
+
+func printDoc(_ doc: String?, indent indentCount: Int = 0) {
+  guard let doc = doc else { return }
+
+  let indent = String(repeating: " ", count: indentCount)
+  let split = doc.split(separator: "\n",
+                        maxSplits: .max,
+                        omittingEmptySubsequences: false)
+
+  for line in split {
+    let doc = line.isEmpty ? "///" : "/// " + line
+    print("\(indent)\(doc)")
+  }
+}
+
 // MARK: - String utils
 
 internal func parenthesize<T>(_ value: T) -> String {
