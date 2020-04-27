@@ -1339,6 +1339,22 @@ public final class ContinueStmt: Statement {
 
 }
 
+// MARK: - ExpressionContext
+
+/// What are we going to do with this expression?
+public enum ExpressionContext: CustomStringConvertible {
+
+  case store
+  case load
+  case del
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+}
+
 // MARK: - Expression
 
 /// Combination of one or more constants, variables, operators and functions
@@ -1388,21 +1404,6 @@ public class Expression: ASTNode, CustomStringConvertible {
     trap("'accept' method should be overriden in subclass")
   }
 
-}
-
-// MARK: - ExpressionContext
-
-public enum ExpressionContext: CustomStringConvertible {
-
-  case store
-  case load
-  case del
-
-  public var description: String {
-    let printer = ASTPrinter()
-    let doc = printer.visit(self)
-    return doc.layout()
-  }
 }
 
 // MARK: - TrueExpr

@@ -52,19 +52,16 @@ public struct ClassDef: ProductType {
   public let bases: [String]
   public let properties: [ProductProperty]
   public let doc: String?
-  public let isFinal: Bool
 
   public init(_ name: String,
               bases: [String],
               properties: [ProductProperty],
-              isFinal: Bool,
               doc: String? = nil) {
     let parsedName = parseName(name: name)
     self.name = parsedName.name
     self.nestedInside = parsedName.nestedInside
     self.bases = bases
     self.properties = properties
-    self.isFinal = isFinal
     self.doc = fixDocNewLines(doc)
   }
 }

@@ -23,6 +23,7 @@ private func emitAst(inputFile: URL) {
   print("")
 
   let entities = parse(url: inputFile)
+
   for entity in entities {
     switch entity {
     case let .enum(e):
@@ -34,24 +35,6 @@ private func emitAst(inputFile: URL) {
       printProduct(keyword: keyword, def: c)
     }
   }
-}
-
-private func hasSubclass(class def: ClassDef, in other: [Entity]) -> Bool {
-  let className = def.name
-
-  for entity in other {
-    switch entity {
-    case let .class(c):
-      if c.bases.contains(className) {
-        return true
-      }
-    case .enum,
-         .struct:
-      break
-    }
-  }
-
-  return false
 }
 
 // MARK: - Enum

@@ -113,3 +113,23 @@ internal func getArticle(_ s: String) -> String {
 
   return isVowel(String(first)) ? "an" : "a"
 }
+
+// MARK: - has subclass
+
+func hasSubclass(class def: ClassDef, in other: [Entity]) -> Bool {
+  let className = def.name
+
+  for entity in other {
+    switch entity {
+    case let .class(c):
+      if c.bases.contains(className) {
+        return true
+      }
+    case .enum,
+         .struct:
+      break
+    }
+  }
+
+  return false
+}

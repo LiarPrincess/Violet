@@ -74,7 +74,7 @@ internal class Parser {
         result.append(.enum(self.enumDef()))
       case .struct:
         result.append(.struct(self.structDef()))
-      case .class, .finalClass:
+      case .class:
         result.append(.class(self.classDef()))
 
       case .name(let value):
@@ -153,11 +153,10 @@ internal class Parser {
   }
 
   private func classDef() -> ClassDef {
-    assert(self.token.kind == .class || self.token.kind == .finalClass)
+    assert(self.token.kind == .class)
 
     let doc = self.useCollectedDoc()
-    let isFinal = self.token.kind == .finalClass
-    self.advance() // @class, @finalClass
+    self.advance() // @class
 
     let name = self.consumeNameOrFail()
     let bases = self.consumeProtocols()
@@ -167,7 +166,6 @@ internal class Parser {
     return ClassDef(name,
                     bases: bases,
                     properties: properties,
-                    isFinal: isFinal,
                     doc: doc)
   }
 

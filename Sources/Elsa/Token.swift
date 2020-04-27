@@ -6,7 +6,6 @@ public enum TokenKind: Equatable, CustomStringConvertible {
   case indirect
   case `struct`
   case `class`
-  case finalClass
   case underscoreInit
   case name(String)
   case doc(String)
@@ -31,7 +30,6 @@ public enum TokenKind: Equatable, CustomStringConvertible {
     case .indirect: return "@indirectEnum"
     case .struct: return "@struct"
     case .class: return "@class"
-    case .finalClass: return "@finalClass"
     case .underscoreInit: return "@underscoreInit"
     case .name(let value): return value
     case .doc: return "documentation"

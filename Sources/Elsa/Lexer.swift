@@ -6,7 +6,6 @@ private let keywords: [String:TokenKind] = [
   "indirectEnum": .indirect,
   "struct":   .struct,
   "class":   .class,
-  "finalClass": .finalClass,
   "underscoreInit": .underscoreInit
 ]
 

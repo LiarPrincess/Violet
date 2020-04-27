@@ -3,17 +3,11 @@ import VioletCore
 /// Node unique identifier.
 ///
 /// Used for `Equatable` and `Hashable` default implementation.
-/// Technically, not needed because we can use `ObjectIdentifier` for this.
 ///
-/// Mostly remainder from our old AST implementation where we used structs
-/// as nodes (with `kind` enum, for example `Expression struct` +
-/// `ExpressionKind enum`). We moved from this to our current class based version
-/// to save some memory (we has huge payloads in those enums and since each
-/// enum case has to have the same size we wasted a lot of memory in cases with
-/// smaller payloads).
-///
-/// Anyway, we were not able to use `ObjectIdentifier` for structs, so we had to
-/// implement our own thing.
+/// Normally we would use `ObjectIdentifier`, but since our AST contains
+/// both classes and structs we need some other solution.
+/// We use structs, so they can be inlined inside other nodes which decreases
+/// number of indirections.
 public typealias ASTNodeId = UInt
 
 /// Thingie that can be placed in AST.

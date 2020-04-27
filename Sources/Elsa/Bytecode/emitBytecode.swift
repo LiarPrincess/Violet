@@ -20,16 +20,17 @@ private func emitBytecode(inputFile: URL) {
   print("// swiftlint:disable vertical_whitespace_closing_braces")
   print("")
 
-  for entity in parse(url: inputFile) {
+  let entities = parse(url: inputFile)
+
+  for entity in entities {
     switch entity {
     case let .enum(e):
       emitEnum(e)
     case let .struct(s):
       emitProduct(keyword: "struct", def: s)
     case let .class(c):
-      let keyword = c.isFinal ? "final class" : "class"
+      let keyword = hasSubclass(class: c, in: entities) ? "class" : "final class"
       emitProduct(keyword: keyword, def: c)
-      emitEquatable(c)
     }
   }
 }
@@ -102,26 +103,6 @@ private func productPropertyInit(_ prop: ProductProperty) -> String {
   return prefix + prop.nameColonType
 }
 
-private func emitEquatable(_ def: ClassDef) {
-  guard def.bases.contains("Equatable") else {
-    return
-  }
-
-  let type = def.name
-  print("extension \(type) {")
-  print("  public static func == (lhs: \(type), rhs: \(type)) -> Bool {")
-
-  for prop in def.properties {
-    let name = prop.name
-    print("    guard lhs.\(name) == rhs.\(name) else { return false }")
-  }
-
-  print("    return true")
-  print("  }")
-
-  print("}")
-  print()
-}
 // MARK: - Common
 
 private func createBases(_ bases: [String]) -> String {
