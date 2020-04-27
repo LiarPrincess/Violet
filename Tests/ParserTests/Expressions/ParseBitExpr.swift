@@ -6,7 +6,7 @@ import VioletLexer
 class ParseBitExpr: XCTestCase, Common {
 
   func test_operators() {
-    let variants: [(TokenKind, BinaryOperator)] = [
+    let variants: [(TokenKind, BinaryOpExpr.Operator)] = [
       (.vbar, .bitOr), // grammar: expr
       (.circumflex, .bitXor), // grammar: xor_expr
       (.amper, .bitAnd), // grammar: and_expr

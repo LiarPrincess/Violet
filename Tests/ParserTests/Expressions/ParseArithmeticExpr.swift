@@ -6,7 +6,7 @@ import VioletLexer
 class ParseArithmeticExpr: XCTestCase, Common {
 
   func test_unary() {
-    let variants: [(TokenKind, UnaryOperator)] = [
+    let variants: [(TokenKind, UnaryOpExpr.Operator)] = [
       (.plus, .plus), // grammar: factor
       (.minus, .minus),
       (.tilde, .invert)
@@ -32,7 +32,7 @@ class ParseArithmeticExpr: XCTestCase, Common {
   }
 
   func test_binary() {
-    let variants: [(TokenKind, BinaryOperator)] = [
+    let variants: [(TokenKind, BinaryOpExpr.Operator)] = [
       (.plus, .add), // grammar: arith_expr
       (.minus, .sub),
       (.star, .mul), // grammar: term

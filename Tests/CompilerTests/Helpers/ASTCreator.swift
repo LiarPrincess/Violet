@@ -122,7 +122,7 @@ extension ASTCreator {
   public func classDefStmt(
     name: String,
     bases: [Expression],
-    keywords: [Keyword],
+    keywords: [KeywordArgument],
     body: [Statement],
     decorators: [Expression] = [],
     start: SourceLocation? = nil,
@@ -191,7 +191,7 @@ extension ASTCreator {
 
   public func augAssignStmt(
     target: Expression,
-    op: BinaryOperator,
+    op: BinaryOpExpr.Operator,
     value: Expression,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -644,7 +644,7 @@ extension ASTCreator {
   // MARK: - StringExpr
 
   public func stringExpr(
-    value: StringGroup,
+    value: StringExpr.Group,
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -746,7 +746,7 @@ extension ASTCreator {
   // MARK: - UnaryOpExpr
 
   public func unaryOpExpr(
-    op: UnaryOperator,
+    op: UnaryOpExpr.Operator,
     right: Expression,
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
@@ -765,7 +765,7 @@ extension ASTCreator {
   // MARK: - BinaryOpExpr
 
   public func binaryOpExpr(
-    op: BinaryOperator,
+    op: BinaryOpExpr.Operator,
     left: Expression,
     right: Expression,
     context: ExpressionContext = .load,
@@ -786,7 +786,7 @@ extension ASTCreator {
   // MARK: - BoolOpExpr
 
   public func boolOpExpr(
-    op: BooleanOperator,
+    op: BoolOpExpr.Operator,
     left: Expression,
     right: Expression,
     context: ExpressionContext = .load,
@@ -808,7 +808,7 @@ extension ASTCreator {
 
   public func compareExpr(
     left: Expression,
-    elements: [ComparisonElement],
+    elements: [CompareExpr.Element],
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -860,7 +860,7 @@ extension ASTCreator {
   // MARK: - DictionaryExpr
 
   public func dictionaryExpr(
-    elements: [DictionaryElement],
+    elements: [DictionaryExpr.Element],
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -1044,7 +1044,7 @@ extension ASTCreator {
   public func callExpr(
     function: Expression,
     args: [Expression],
-    keywords: [Keyword],
+    keywords: [KeywordArgument],
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -1139,12 +1139,12 @@ extension ASTCreator {
   // MARK: - Arguments
 
   internal func arguments(
-    args: [Arg] = [],
+    args: [Argument] = [],
     defaults: [Expression] = [],
     vararg: Vararg = .none,
-    kwOnlyArgs: [Arg] = [],
+    kwOnlyArgs: [Argument] = [],
     kwOnlyDefaults: [Expression] = [],
-    kwarg: Arg? = nil,
+    kwarg: Argument? = nil,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
   ) -> Arguments {
@@ -1166,8 +1166,8 @@ extension ASTCreator {
     annotation: Expression? = nil,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
-  ) -> Arg {
-    return Arg(
+  ) -> Argument {
+    return Argument(
       id: self.id,
       name: name,
       annotation: annotation,
@@ -1177,12 +1177,12 @@ extension ASTCreator {
   }
 
   internal func keyword(
-    kind: KeywordKind,
+    kind: KeywordArgument.Kind,
     value: Expression,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
-  ) -> Keyword {
-    return Keyword(
+  ) -> KeywordArgument {
+    return KeywordArgument(
       id: self.id,
       kind: kind,
       value: value,
@@ -1228,7 +1228,7 @@ extension ASTCreator {
   // MARK: - ExceptHandler
 
   internal func exceptHandler(
-    kind: ExceptHandlerKind,
+    kind: ExceptHandler.Kind,
     body: [Statement],
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -1245,7 +1245,7 @@ extension ASTCreator {
   // MARK: - Slice
 
   internal func slice(
-    kind: SliceKind,
+    kind: Slice.Kind,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
   ) -> Slice {

@@ -296,7 +296,7 @@ class CompileSubscript: CompileTestCase {
     }
   }
 
-  private func extSlice(slices: [Slice]) -> SliceKind {
+  private func extSlice(slices: [Slice]) -> Slice.Kind {
     assert(slices.any)
     let first = slices[0]
     let rest = Array(slices.dropFirst())

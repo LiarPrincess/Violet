@@ -79,7 +79,7 @@ class CompileStringTests: CompileTestCase {
   ///  2 FORMAT_VALUE             1 (str)
   ///  4 RETURN_VALUE
   func test_formattedValue_withConversion() {
-    let conversions: [ConversionFlag: String] = [
+    let conversions: [StringExpr.Conversion: String] = [
       .str: "str",
       .ascii: "ascii",
       .repr: "repr"

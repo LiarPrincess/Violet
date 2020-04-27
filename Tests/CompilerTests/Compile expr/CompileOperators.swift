@@ -18,7 +18,7 @@ class CompileOperators: CompileTestCase {
   /// 2 UNARY_POSITIVE
   /// 4 RETURN_VALUE
   func test_unary() {
-    let operators: [UnaryOperator: EmittedInstructionKind] = [
+    let operators: [UnaryOpExpr.Operator: EmittedInstructionKind] = [
       .plus: .unaryPositive,
       .minus: .unaryNegative,
       .not: .unaryNot,
@@ -81,7 +81,7 @@ class CompileOperators: CompileTestCase {
   /// 4 BINARY_ADD
   /// 6 RETURN_VALUE
   func test_binary() {
-    let operators: [BinaryOperator: EmittedInstructionKind] = [
+    let operators: [BinaryOpExpr.Operator: EmittedInstructionKind] = [
       .add: .binaryAdd,
       .sub: .binarySubtract,
       .mul: .binaryMultiply,
@@ -243,7 +243,7 @@ class CompileOperators: CompileTestCase {
   /// 4 COMPARE_OP               0 (<)
   /// 6 RETURN_VALUE
   func test_compare() {
-    let operators: [ComparisonOperator: String] = [
+    let operators: [CompareExpr.Operator: String] = [
       .equal: "==",
       .notEqual: "!=",
       .less: "<",
@@ -264,7 +264,7 @@ class CompileOperators: CompileTestCase {
 
       let expr = self.compareExpr(
         left: left,
-        elements: [ComparisonElement(op: op, right: right)]
+        elements: [CompareExpr.Element(op: op, right: right)]
       )
 
       let expected: [EmittedInstruction] = [
@@ -309,8 +309,8 @@ class CompileOperators: CompileTestCase {
     let expr = self.compareExpr(
       left: left,
       elements: [
-        ComparisonElement(op: .less, right: middle),
-        ComparisonElement(op: .less, right: right)
+        CompareExpr.Element(op: .less, right: middle),
+        CompareExpr.Element(op: .less, right: right)
       ]
     )
 
@@ -370,9 +370,9 @@ class CompileOperators: CompileTestCase {
     let expr = self.compareExpr(
       left: element1,
       elements: [
-        ComparisonElement(op: .less, right: element2),
-        ComparisonElement(op: .less, right: element3),
-        ComparisonElement(op: .less, right: element4)
+        CompareExpr.Element(op: .less, right: element2),
+        CompareExpr.Element(op: .less, right: element3),
+        CompareExpr.Element(op: .less, right: element4)
       ]
     )
 
@@ -415,7 +415,7 @@ class CompileOperators: CompileTestCase {
     let expr = self.compareExpr(
       left: left,
       elements: [
-        ComparisonElement(op: .less, right: right)
+        CompareExpr.Element(op: .less, right: right)
       ]
     )
 

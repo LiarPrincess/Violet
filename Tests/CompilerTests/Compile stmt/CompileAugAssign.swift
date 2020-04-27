@@ -16,7 +16,7 @@ class CompileAugAssign: CompileTestCase {
   ///  8 LOAD_CONST               0 (None)
   /// 10 RETURN_VALUE
   func test_simple() {
-    let operators: [BinaryOperator: EmittedInstructionKind] = [
+    let operators: [BinaryOpExpr.Operator: EmittedInstructionKind] = [
       .add: .inplaceAdd,
       .sub: .inplaceSubtract,
       .mul: .inplaceMultiply,

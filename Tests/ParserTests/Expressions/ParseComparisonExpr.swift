@@ -6,7 +6,7 @@ import VioletLexer
 class ParseComparisonExpr: XCTestCase, Common {
 
   func test_operators() {
-    let variants: [(TokenKind, ComparisonOperator)] = [
+    let variants: [(TokenKind, CompareExpr.Operator)] = [
       (.equalEqual, .equal),
       (.notEqual,   .notEqual),
       // <> - pep401 is not implmented

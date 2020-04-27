@@ -11,7 +11,7 @@ class ParseAugAssign: XCTestCase, Common {
 
   /// Ariel += "legs"
   func test_simple() {
-    let augAssign: [TokenKind:BinaryOperator] = [
+    let augAssign: [TokenKind: BinaryOpExpr.Operator] = [
       .plusEqual: .add, // +=
       .minusEqual: .sub, // -=
       .starEqual: .mul, // *=

@@ -207,7 +207,7 @@ class STExpr: SymbolTableTestCase {
 
   /// +elsa
   func test_operations_unary() {
-    let operators: [UnaryOperator] = [.invert, .not, .plus, .minus]
+    let operators: [UnaryOpExpr.Operator] = [.invert, .not, .plus, .minus]
 
     for op in operators {
       let expr = self.unaryOpExpr(
@@ -232,7 +232,7 @@ class STExpr: SymbolTableTestCase {
 
   /// anna + elsa
   func test_operations_binary() {
-    let operators: [BinaryOperator] = [
+    let operators: [BinaryOpExpr.Operator] = [
       .add, .sub, .mul, .matMul, .div, .modulo, .pow,
       .leftShift, .rightShift,
       .bitOr, .bitXor, .bitAnd, .floorDiv
@@ -266,7 +266,7 @@ class STExpr: SymbolTableTestCase {
 
   /// anna or elsa
   func test_operations_bool() {
-    let operators: [BooleanOperator] = [.and, .or]
+    let operators: [BoolOpExpr.Operator] = [.and, .or]
 
     for op in operators {
       let expr = self.boolOpExpr(
@@ -296,7 +296,7 @@ class STExpr: SymbolTableTestCase {
 
   /// anna is elsa
   func test_operations_comparison() {
-    let operators: [ComparisonOperator] = [
+    let operators: [CompareExpr.Operator] = [
       .equal, .notEqual,
       .less, .lessEqual, .greater, .greaterEqual,
       .is, .isNot, .in, .notIn
@@ -306,7 +306,7 @@ class STExpr: SymbolTableTestCase {
       let left = self.identifierExpr(value: "anna", start: loc1)
       let right = self.identifierExpr(value: "elsa", start: loc2)
 
-      let element = ComparisonElement(op: op, right: right)
+      let element = CompareExpr.Element(op: op, right: right)
 
       let expr = self.compareExpr(
         left: left,

@@ -23,7 +23,7 @@ class ParseBoolExpr: XCTestCase, Common {
   }
 
   func test_and_or() {
-    let variants: [(TokenKind, BooleanOperator)] = [
+    let variants: [(TokenKind, BoolOpExpr.Operator)] = [
       (.or, .or), // grammar: or_test
       (.and, .and) // grammar: and_test
     ]
