@@ -102,7 +102,7 @@ internal final class Eval {
     return self.code.names[index]
   }
 
-  internal func getConstant(index: Int) -> VioletObjects.Constant {
+  internal func getConstant(index: Int) -> PyCode.Constant {
     assert(0 <= index && index < self.code.constants.count)
     return self.code.constants[index]
   }

@@ -9,46 +9,48 @@ import VioletBytecode
 
 // swiftlint:disable file_length
 
-public enum Constant {
-  case `true`
-  case `false`
-  case none
-  case ellipsis
-  case integer(PyInt)
-  case float(PyFloat)
-  case complex(PyComplex)
-  case string(PyString)
-  case bytes(PyBytes)
-  case code(PyCode)
-  case tuple(PyTuple)
-
-  public var asObject: PyObject {
-    switch self {
-    case .true: return Py.true
-    case .false: return Py.false
-    case .none: return Py.none
-    case .ellipsis: return Py.ellipsis
-    case let .integer(object): return object
-    case let .float(object): return object
-    case let .complex(object): return object
-    case let .string(object): return object
-    case let .bytes(object): return object
-    case let .code(object): return object
-    case let .tuple(object): return object
-    }
-  }
-}
-
 // sourcery: pytype = code, default
 public class PyCode: PyObject {
+
+  // MARK: - Types
+
+  public enum Constant {
+    case `true`
+    case `false`
+    case none
+    case ellipsis
+    case integer(PyInt)
+    case float(PyFloat)
+    case complex(PyComplex)
+    case string(PyString)
+    case bytes(PyBytes)
+    case code(PyCode)
+    case tuple(PyTuple)
+
+    public var asObject: PyObject {
+      switch self {
+      case .true: return Py.true
+      case .false: return Py.false
+      case .none: return Py.none
+      case .ellipsis: return Py.ellipsis
+      case let .integer(object): return object
+      case let .float(object): return object
+      case let .complex(object): return object
+      case let .string(object): return object
+      case let .bytes(object): return object
+      case let .code(object): return object
+      case let .tuple(object): return object
+      }
+    }
+  }
+
+  // MARK: - Basic properties
 
   internal static let doc: String = """
     Create a code object. Not for the faint of heart.
     """
 
   private let codeObject: CodeObject
-
-  // MARK: - Basic
 
   /// Non-unique name of this code object.
   ///

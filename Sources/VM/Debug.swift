@@ -34,7 +34,7 @@ internal enum Debug {
     print("=== \(title) ===")
     print(code.dump())
 
-    for case VioletObjects.Constant.code(let inner) in code.constants {
+    for case PyCode.Constant.code(let inner) in code.constants {
       Debug.code(inner)
     }
   }
