@@ -20,17 +20,18 @@
 
 // swiftlint:disable file_length
 // swiftlint:disable line_length
+// swiftformat:disable numberFormatting
 
 extension Unicode {
 
   /// Case folding mapping as defined in 'Section 3.13 Default Case Algorithms'
   /// in Unicode standards
-  internal static var caseFoldMapping: [UInt32:String] {
+  internal static var caseFoldMapping: [UInt32: String] {
     return data
   }
 }
 
-private let data: [UInt32:String] = [
+private let data: [UInt32: String] = [
   0x0041: "\u{0061}", // LATIN CAPITAL LETTER A
   0x0042: "\u{0062}", // LATIN CAPITAL LETTER B
   0x0043: "\u{0063}", // LATIN CAPITAL LETTER C
@@ -1517,5 +1518,5 @@ private let data: [UInt32:String] = [
   0x1E91E: "\u{1E940}", // ADLAM CAPITAL LETTER GBE
   0x1E91F: "\u{1E941}", // ADLAM CAPITAL LETTER ZAL
   0x1E920: "\u{1E942}", // ADLAM CAPITAL LETTER KPO
-  0x1E921: "\u{1E943}"  // ADLAM CAPITAL LETTER SHA
+  0x1E921: "\u{1E943}" // ADLAM CAPITAL LETTER SHA
 ]

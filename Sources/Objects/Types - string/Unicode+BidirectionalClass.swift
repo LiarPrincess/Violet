@@ -5,6 +5,8 @@
 // To get the newest version of 'UnicodeData.txt' go to:
 // https://www.unicode.org/Public/UCD/latest/ucd/
 
+// swiftformat:disable numberFormatting
+
 extension Unicode {
 
   /// Characters with bidirectional class: WS, B, or S
@@ -40,5 +42,5 @@ private let data: Set<UInt32> = Set([
   0x2028, // LINE SEPARATOR, WS
   0x2029, // PARAGRAPH SEPARATOR, B
   0x205F, // MEDIUM MATHEMATICAL SPACE, WS
-  0x3000  // IDEOGRAPHIC SPACE, WS
+  0x3000 // IDEOGRAPHIC SPACE, WS
 ])

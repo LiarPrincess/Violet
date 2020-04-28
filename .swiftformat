@@ -8,10 +8,6 @@
 --exclude Sources/Objects/Generated/*
 --exclude Tests/CompilerTests/Helpers/EmittedInstruction.swift
 
-# Generated from Unicode data:
---exclude Sources/Objects/Types - string/Unicode+BidirectionalClass.swift
---exclude Sources/Objects/Types - string/Unicode+CaseFolding.swift
-
 # =============
 # == Options ==
 # =============
