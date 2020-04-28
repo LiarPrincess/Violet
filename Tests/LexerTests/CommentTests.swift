@@ -2,6 +2,8 @@ import XCTest
 import VioletCore
 @testable import VioletLexer
 
+// swiftformat:disable consecutiveSpaces
+
 /// Use 'python3 -m tokenize -e file.py' for python reference
 /// and https://disney.fandom.com/wiki/Gaston_(song) for song reference.
 /// As a vim user I have to say that emacs encoding declaration is more popular,
@@ -77,7 +79,7 @@ class CommentTests: XCTestCase, Common {
     let lexer = self.createLexer(for: s)
 
     if let error = self.unimplemented(lexer) {
-      XCTAssertEncoding(error, invalidEncoding)
+      XCTAssertEncoding(error, self.invalidEncoding)
     }
   }
 
@@ -88,7 +90,7 @@ class CommentTests: XCTestCase, Common {
     let lexer = self.createLexer(for: s)
 
     if let error = self.unimplemented(lexer) {
-      XCTAssertEncoding(error, invalidEncoding)
+      XCTAssertEncoding(error, self.invalidEncoding)
     }
   }
 
@@ -125,7 +127,7 @@ class CommentTests: XCTestCase, Common {
     self.getNewLine(lexer)
 
     if let error = self.unimplemented(lexer) {
-      XCTAssertEncoding(error, invalidEncoding)
+      XCTAssertEncoding(error, self.invalidEncoding)
     }
   }
 }

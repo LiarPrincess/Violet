@@ -2,6 +2,8 @@ import XCTest
 import VioletCore
 @testable import VioletLexer
 
+// swiftformat:disable consecutiveSpaces
+
 /// Use 'python3 -m tokenize -e file.py' for python reference.
 class FloatingPointTests: XCTestCase, Common {
 

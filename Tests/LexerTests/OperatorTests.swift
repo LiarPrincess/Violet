@@ -3,6 +3,7 @@ import VioletCore
 @testable import VioletLexer
 
 // swiftlint:disable file_length
+// swiftformat:disable consecutiveSpaces
 
 // Use this to generate:
 // for (name, kind) in namedKinds { // e.g. name: "leftParen", kind: .leftParen

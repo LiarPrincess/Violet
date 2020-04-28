@@ -3,7 +3,7 @@ import VioletCore
 @testable import VioletLexer
 
 /// Shared test helpers.
-internal protocol Common { }
+internal protocol Common {}
 
 extension Common {
 
@@ -18,7 +18,7 @@ extension Common {
   internal func XCTAssertInt(_ kind: TokenKind,
                              _ expected: Int64,
                              file: StaticString = #file,
-                             line: UInt         = #line) {
+                             line: UInt = #line) {
     let pyExpected = BigInt(expected)
     XCTAssertEqual(kind, .int(pyExpected), file: file, line: line)
   }
@@ -37,8 +37,8 @@ extension Common {
 
   /// Use this if you just want to perform detailed tests on token.
   internal func getToken(_ lexer: Lexer,
-                         file:    StaticString = #file,
-                         line:    UInt         = #line) -> Token? {
+                         file: StaticString = #file,
+                         line: UInt = #line) -> Token? {
     do {
       return try lexer.getToken()
     } catch {
@@ -51,8 +51,8 @@ extension Common {
   @discardableResult
   internal func getIdentifier(_ lexer: Lexer,
                               value: String,
-                              file:  StaticString = #file,
-                              line:  UInt = #line) -> Token? {
+                              file: StaticString = #file,
+                              line: UInt = #line) -> Token? {
     return self.getSpecificToken(lexer, kind: .identifier(value), file: file, line: line)
   }
 
@@ -60,8 +60,8 @@ extension Common {
   @discardableResult
   internal func getComment(_ lexer: Lexer,
                            value: String,
-                           file:  StaticString = #file,
-                           line:  UInt = #line) -> Token? {
+                           file: StaticString = #file,
+                           line: UInt = #line) -> Token? {
     return self.getSpecificToken(lexer, kind: .comment(value), file: file, line: line)
   }
 
@@ -85,7 +85,7 @@ extension Common {
   private func getSpecificToken(_ lexer: Lexer,
                                 kind: TokenKind,
                                 file: StaticString = #file,
-                                line: UInt         = #line) -> Token? {
+                                line: UInt = #line) -> Token? {
     if let token = self.getToken(lexer, file: file, line: line) {
       XCTAssertEqual(token.kind, kind, file: file, line: line)
       return token
@@ -96,8 +96,8 @@ extension Common {
   // MARK: - Errors
 
   internal func error(_ lexer: Lexer,
-                      file:    StaticString = #file,
-                      line:    UInt = #line) -> LexerError? {
+                      file: StaticString = #file,
+                      line: UInt = #line) -> LexerError? {
     do {
       let result = try lexer.getToken()
       XCTAssert(false, "Token: \(result)", file: file, line: line)
@@ -111,8 +111,8 @@ extension Common {
   }
 
   internal func unimplemented(_ lexer: Lexer,
-                              file:    StaticString = #file,
-                              line:    UInt = #line) -> LexerUnimplemented? {
+                              file: StaticString = #file,
+                              line: UInt = #line) -> LexerUnimplemented? {
     do {
       let result = try lexer.getToken()
       XCTAssert(false, "Token: \(result)", file: file, line: line)
@@ -133,8 +133,8 @@ extension Common {
 
   internal func XCTAssertEncoding(_ error: LexerUnimplemented,
                                   _ expectedEncoding: String,
-                                  file:    StaticString = #file,
-                                  line:    UInt = #line) {
+                                  file: StaticString = #file,
+                                  line: UInt = #line) {
     switch error {
     case .nonUTF8Encoding(let encoding):
       XCTAssertEqual(encoding, expectedEncoding, file: file, line: line)

@@ -2,6 +2,8 @@ import XCTest
 import VioletCore
 @testable import VioletLexer
 
+// swiftformat:disable consecutiveSpaces
+
 /// Use 'python3 -m tokenize -e file.py' for python reference
 /// and https://www.youtube.com/watch?v=LCCxnuLlS18 for song reference.
 class IdentifierTests: XCTestCase, Common {

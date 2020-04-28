@@ -15,7 +15,6 @@
 # In most of the lexer/parser tests we have to specify source location.
 # We want them in the same column across multiple lines.
 # We will insert ' ' (empty space) to create alignment, that breaks some rules.
---exclude Tests/LexerTests/*
 --exclude Tests/ParserTests/*
 
 # =============

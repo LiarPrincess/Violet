@@ -2,6 +2,8 @@ import XCTest
 import VioletCore
 @testable import VioletLexer
 
+// swiftformat:disable consecutiveSpaces
+
 /// Use 'python3 -m tokenize -e file.py' for python reference.
 class IntegerTests: XCTestCase, Common {
 
@@ -75,7 +77,7 @@ class IntegerTests: XCTestCase, Common {
     let lexer = self.createLexer(for: s)
 
     if let token = self.getToken(lexer) {
-      XCTAssertInt(token.kind, 0b100110111)
+      XCTAssertInt(token.kind, 0b1_0011_0111)
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 11))
     }
@@ -131,7 +133,7 @@ class IntegerTests: XCTestCase, Common {
     let lexer = self.createLexer(for: s)
 
     if let token = self.getToken(lexer) {
-      XCTAssertInt(token.kind, 0xdeadbeef)
+      XCTAssertInt(token.kind, 0xdead_beef)
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 10))
     }
@@ -142,7 +144,7 @@ class IntegerTests: XCTestCase, Common {
     let lexer = self.createLexer(for: s)
 
     if let token = self.getToken(lexer) {
-      XCTAssertInt(token.kind, 0x01_23_45_67_89_ac)
+      XCTAssertInt(token.kind, 0x0123_4567_89ac)
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 20))
     }
