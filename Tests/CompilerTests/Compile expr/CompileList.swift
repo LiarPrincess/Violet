@@ -50,7 +50,7 @@ class CompileList: CompileTestCase {
     ])
 
     let expected: [EmittedInstruction] = [
-      .init(.loadName,  "ariel"),
+      .init(.loadName, "ariel"),
       .init(.loadConst, "true"),
       .init(.buildList, "2"),
       .init(.return)
@@ -76,9 +76,9 @@ class CompileList: CompileTestCase {
     ])
 
     let expected: [EmittedInstruction] = [
-      .init(.loadName,   "ariel"),
+      .init(.loadName, "ariel"),
       .init(.buildTuple, "1"), // <- tuple!
-      .init(.loadName,   "sea"),
+      .init(.loadName, "sea"),
       .init(.buildListUnpack, "2"),
       .init(.return)
     ]
@@ -108,11 +108,11 @@ class CompileList: CompileTestCase {
     ])
 
     let expected: [EmittedInstruction] = [
-      .init(.loadName,   "ariel"),
+      .init(.loadName, "ariel"),
       .init(.buildTuple, "1"),
-      .init(.loadName,   "sea"),
-      .init(.loadName,   "land"),
-      .init(.loadName,   "eric"),
+      .init(.loadName, "sea"),
+      .init(.loadName, "land"),
+      .init(.loadName, "eric"),
       .init(.buildTuple, "1"),
       .init(.buildListUnpack, "4"),
       .init(.return)

@@ -2,9 +2,9 @@ import XCTest
 @testable import Rapunzel
 
 private func XCTAssertLayout(_ doc: Doc,
-                             _ s:  String,
+                             _ s: String,
                              file: StaticString = #file,
-                             line: UInt         = #line) {
+                             line: UInt = #line) {
   let layout = doc.layout()
   XCTAssertEqual(layout, s, file: file, line: line)
 }
@@ -25,8 +25,8 @@ class Tests: XCTestCase {
   // MARK: - Ctors
 
   func test_ctors() {
-    XCTAssertLayout(.concat(rapunzel, flynn), "RapunzelFlynn")
-    XCTAssertLayout(.nest(2, rapunzel), "  Rapunzel")
+    XCTAssertLayout(.concat(self.rapunzel, self.flynn), "RapunzelFlynn")
+    XCTAssertLayout(.nest(2, self.rapunzel), "  Rapunzel")
     XCTAssertLayout(.text("Rapunzel"), "Rapunzel")
     XCTAssertLayout(.line, "\n")
   }
@@ -34,12 +34,12 @@ class Tests: XCTestCase {
   // MARK: - Combine
 
   func test_nest_recursive() {
-    let horizontal = Doc.nest(2, rapunzel) <> Doc.nest(3, flynn)
+    let horizontal = Doc.nest(2, self.rapunzel) <> Doc.nest(3, self.flynn)
     XCTAssertLayout(horizontal, "  Rapunzel   Flynn")
 
-    let vertical = rapunzel <|>
-                    Doc.nest(2, flynn <|> // notice not closed paren
-                      Doc.nest(3, pascal))
+    let vertical = self.rapunzel <|>
+                    Doc.nest(2, self.flynn <|> // notice not closed paren
+                      Doc.nest(3, self.pascal))
 
     XCTAssertLayout(vertical, """
       Rapunzel
@@ -68,17 +68,17 @@ class Tests: XCTestCase {
   }
 
   func test_common_spread() {
-    let doc = Doc.spread(rapunzel, flynn, pascal)
+    let doc = Doc.spread(self.rapunzel, self.flynn, self.pascal)
     XCTAssertLayout(doc, "Rapunzel Flynn Pascal")
   }
 
   func test_common_stack() {
-    let doc = Doc.stack(rapunzel, flynn, pascal)
+    let doc = Doc.stack(self.rapunzel, self.flynn, self.pascal)
     XCTAssertLayout(doc, "Rapunzel\nFlynn\nPascal")
   }
 
   func test_common_block() {
-    let doc = Doc.block(title: "Tangled", indent: 2, lines: [rapunzel, flynn])
+    let doc = Doc.block(title: "Tangled", indent: 2, lines: [self.rapunzel, self.flynn])
     XCTAssertLayout(doc, """
       Tangled
         Rapunzel
@@ -93,7 +93,7 @@ class Tests: XCTestCase {
     let thugs = Doc.block(title: "Pub Thugs", indent: 2, lines: [thug1, thug2])
     let doc = Doc.block(title: "Tangled",
                         indent: 2,
-                        lines: [rapunzel, flynn, thugs, pascal])
+                        lines: [self.rapunzel, self.flynn, thugs, self.pascal])
 
     XCTAssertLayout(doc, """
       Tangled
@@ -107,7 +107,7 @@ class Tests: XCTestCase {
   }
 
   func test_common_join() {
-    let join = Doc.join([rapunzel, flynn, pascal], with: .colon)
+    let join = Doc.join([self.rapunzel, self.flynn, self.pascal], with: .colon)
     XCTAssertLayout(join, "Rapunzel:Flynn:Pascal")
   }
 

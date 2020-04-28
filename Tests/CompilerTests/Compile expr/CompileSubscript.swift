@@ -121,7 +121,7 @@ class CompileSubscript: CompileTestCase {
         kind: .slice(
           lower: self.stringExpr(value: .literal("Quasimodo")),
           upper: self.stringExpr(value: .literal("Esmeralda")),
-          step:  self.stringExpr(value: .literal("Frollo"))
+          step: self.stringExpr(value: .literal("Frollo"))
         )
       )
     )
@@ -158,7 +158,7 @@ class CompileSubscript: CompileTestCase {
         kind: .slice(
           lower: self.identifierExpr(value: "Quasimodo"),
           upper: self.identifierExpr(value: "Esmeralda"),
-          step:  self.identifierExpr(value: "Frollo")
+          step: self.identifierExpr(value: "Frollo")
         )
       )
     )
@@ -194,7 +194,7 @@ class CompileSubscript: CompileTestCase {
         kind: .slice(
           lower: self.identifierExpr(value: "Quasimodo"),
           upper: self.identifierExpr(value: "Esmeralda"),
-          step:  nil
+          step: nil
         )
       )
     )
@@ -268,7 +268,7 @@ class CompileSubscript: CompileTestCase {
               kind: .slice(
                 lower: self.identifierExpr(value: "Quasimodo"),
                 upper: self.identifierExpr(value: "Esmeralda"),
-                step:  nil
+                step: nil
               )
             ),
             self.slice(

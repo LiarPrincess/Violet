@@ -106,11 +106,11 @@ class EnvironmentTests: XCTestCase {
   func test_warnings_single() {
     let presets: [String: WarningOption] = [
       "default": .default,
-      "error":   .error,
-      "always":  .always,
-      "module":  .module,
-      "once":    .once,
-      "ignore":  .ignore
+      "error": .error,
+      "always": .always,
+      "module": .module,
+      "once": .once,
+      "ignore": .ignore
     ]
 
     for (value, warning) in presets {
@@ -181,8 +181,8 @@ class EnvironmentTests: XCTestCase {
 
   private func assertEqual(_ lhs: Environment,
                            _ rhs: Environment,
-                           file:  StaticString = #file,
-                           line:  UInt         = #line) {
+                           file: StaticString = #file,
+                           line: UInt = #line) {
     XCTAssertEqual(lhs.violetHome, rhs.violetHome, "violetHome", file: file, line: line)
     XCTAssertEqual(lhs.violetPath, rhs.violetPath, "violetPath", file: file, line: line)
     XCTAssertEqual(lhs.optimize, rhs.optimize, "optimize", file: file, line: line)

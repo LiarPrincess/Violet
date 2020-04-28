@@ -582,7 +582,7 @@ class STFunction: SymbolTableTestCase {
 
   /// def let_it_go(): x = 2
   ///
-  ///```c
+  /// ```c
   /// name: top
   /// lineno: 0
   /// symbols:

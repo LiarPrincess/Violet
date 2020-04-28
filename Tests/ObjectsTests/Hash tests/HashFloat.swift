@@ -123,9 +123,9 @@ class HashFloat: XCTestCase {
     //  >>> hash(1.3)
     //  691752902764108289
 
-    XCTAssertEqual(self.hash(1.1), 230584300921369601)
-    XCTAssertEqual(self.hash(1.2), 461168601842738689)
-    XCTAssertEqual(self.hash(1.3), 691752902764108289)
+    XCTAssertEqual(self.hash(1.1), 230_584_300_921_369_601)
+    XCTAssertEqual(self.hash(1.2), 461_168_601_842_738_689)
+    XCTAssertEqual(self.hash(1.3), 691_752_902_764_108_289)
   }
 
   func test_decimal_negative() {
@@ -136,9 +136,9 @@ class HashFloat: XCTestCase {
     //  >>> hash(-1.3)
     //  -691752902764108289
 
-    XCTAssertEqual(self.hash(-1.1), -230584300921369601)
-    XCTAssertEqual(self.hash(-1.2), -461168601842738689)
-    XCTAssertEqual(self.hash(-1.3), -691752902764108289)
+    XCTAssertEqual(self.hash(-1.1), -230_584_300_921_369_601)
+    XCTAssertEqual(self.hash(-1.2), -461_168_601_842_738_689)
+    XCTAssertEqual(self.hash(-1.3), -691_752_902_764_108_289)
   }
 
   // MARK: - NaN
@@ -161,15 +161,15 @@ class HashFloat: XCTestCase {
     // >>> hash(float('-inf'))
     // -314159
 
-    XCTAssertEqual(self.hash(+Double.infinity),  314159)
-    XCTAssertEqual(self.hash(-Double.infinity), -314159)
+    XCTAssertEqual(self.hash(+Double.infinity), 314_159)
+    XCTAssertEqual(self.hash(-Double.infinity), -314_159)
   }
 
   // MARK: - Helper
 
   private func hash(_ value: Double) -> Int {
     // Key is 'I See the Light ' in ASCII
-    let key: (UInt64, UInt64) = (0x4920536565207468, 0x65204c6967687420)
+    let key: (UInt64, UInt64) = (0x4920_5365_6520_7468, 0x6520_4c69_6768_7420)
     let hasher = Hasher(key0: key.0, key1: key.1)
     return hasher.hash(value)
   }

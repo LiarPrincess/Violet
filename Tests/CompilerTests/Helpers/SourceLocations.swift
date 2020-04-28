@@ -1,15 +1,15 @@
 import VioletCore
 
-internal var loc0:  SourceLocation { return getLocation( 0) }
-internal var loc1:  SourceLocation { return getLocation( 1) }
-internal var loc2:  SourceLocation { return getLocation( 2) }
-internal var loc3:  SourceLocation { return getLocation( 3) }
-internal var loc4:  SourceLocation { return getLocation( 4) }
-internal var loc5:  SourceLocation { return getLocation( 5) }
-internal var loc6:  SourceLocation { return getLocation( 6) }
-internal var loc7:  SourceLocation { return getLocation( 7) }
-internal var loc8:  SourceLocation { return getLocation( 8) }
-internal var loc9:  SourceLocation { return getLocation( 9) }
+internal var loc0: SourceLocation { return getLocation(0) }
+internal var loc1: SourceLocation { return getLocation(1) }
+internal var loc2: SourceLocation { return getLocation(2) }
+internal var loc3: SourceLocation { return getLocation(3) }
+internal var loc4: SourceLocation { return getLocation(4) }
+internal var loc5: SourceLocation { return getLocation(5) }
+internal var loc6: SourceLocation { return getLocation(6) }
+internal var loc7: SourceLocation { return getLocation(7) }
+internal var loc8: SourceLocation { return getLocation(8) }
+internal var loc9: SourceLocation { return getLocation(9) }
 internal var loc10: SourceLocation { return getLocation(10) }
 internal var loc11: SourceLocation { return getLocation(11) }
 internal var loc12: SourceLocation { return getLocation(12) }

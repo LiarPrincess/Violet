@@ -49,7 +49,7 @@ class CompileAssert: CompileTestCase {
   func test_withMessage() {
     let stmt = self.assertStmt(
       test: self.identifierExpr(value: "pooh"),
-      msg:  self.stringExpr(value: .literal("Stuck at Rabbits Howse"))
+      msg: self.stringExpr(value: .literal("Stuck at Rabbits Howse"))
     )
 
     let expected: [EmittedInstruction] = [
@@ -73,7 +73,7 @@ class CompileAssert: CompileTestCase {
   func test_withOptimization_emitsNothing() {
     let stmt = self.assertStmt(
       test: self.identifierExpr(value: "pooh"),
-      msg:  nil
+      msg: nil
     )
 
     let expected: [EmittedInstruction] = [

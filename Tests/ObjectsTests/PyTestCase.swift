@@ -67,7 +67,7 @@ class PyTestCase: XCTestCase, PyDelegate, PyFileSystem {
 
             globals: PyDict,
             locals: PyDict,
-            closure: PyTuple?)  -> PyResult<PyObject> {
+            closure: PyTuple?) -> PyResult<PyObject> {
     unreachable()
   }
 

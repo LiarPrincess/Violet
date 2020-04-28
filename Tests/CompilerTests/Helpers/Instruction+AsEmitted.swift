@@ -91,7 +91,7 @@ extension CodeObject {
       return EmittedInstruction(.inplaceOr)
 
     case let .compareOp(arg):
-      return EmittedInstruction(.compareOp, toString(arg))
+      return EmittedInstruction(.compareOp, self.toString(arg))
 
     case .getAwaitable:
       return EmittedInstruction(.getAwaitable)
@@ -117,9 +117,9 @@ extension CodeObject {
     case .getYieldFromIter:
       return EmittedInstruction(.getYieldFromIter)
 
-    case .`break`:
+    case .break:
       return EmittedInstruction(.break)
-    case let .`continue`(loopStartLabel: arg):
+    case let .continue(loopStartLabel: arg):
       return EmittedInstruction(.continue, String(describing: arg))
 
     case let .buildTuple(elementCount: arg):
@@ -215,7 +215,7 @@ extension CodeObject {
       let arg = hasKeywordArguments ? "1" : "0"
       return EmittedInstruction(.callFunctionEx, arg)
 
-    case .`return`:
+    case .return:
       return EmittedInstruction(.return)
 
     case .loadBuildClass:
@@ -297,9 +297,9 @@ extension CodeObject {
 
   private func toString(_ c: Constant) -> String {
     switch c {
-    case .true:  return "true"
+    case .true: return "true"
     case .false: return "false"
-    case .none:     return "none"
+    case .none: return "none"
     case .ellipsis: return "ellipsis"
 
     case let .integer(value):

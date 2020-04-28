@@ -13,7 +13,7 @@ internal class CompileTestCase: XCTestCase, ASTCreator {
 
   internal func compile(expr: Expression,
                         file: StaticString = #file,
-                        line: UInt         = #line) -> CodeObject? {
+                        line: UInt = #line) -> CodeObject? {
     let ast = self.expressionAST(expression: expr)
     return self.compile(ast: ast, file: file, line: line)
   }
@@ -21,7 +21,7 @@ internal class CompileTestCase: XCTestCase, ASTCreator {
   internal func compile(stmt: Statement,
                         optimizationLevel: OptimizationLevel = .none,
                         file: StaticString = #file,
-                        line: UInt         = #line) -> CodeObject? {
+                        line: UInt = #line) -> CodeObject? {
     let ast = self.moduleAST(statements: [stmt])
     return self.compile(ast: ast,
                         optimizationLevel: optimizationLevel,
@@ -31,7 +31,7 @@ internal class CompileTestCase: XCTestCase, ASTCreator {
 
   internal func compile(stmts: [Statement],
                         file: StaticString = #file,
-                        line: UInt         = #line) -> CodeObject? {
+                        line: UInt = #line) -> CodeObject? {
     let ast = self.moduleAST(statements: stmts)
     return self.compile(ast: ast, file: file, line: line)
   }
@@ -39,7 +39,7 @@ internal class CompileTestCase: XCTestCase, ASTCreator {
   private func compile(ast: AST,
                        optimizationLevel: OptimizationLevel = .none,
                        file: StaticString = #file,
-                       line: UInt         = #line) -> CodeObject? {
+                       line: UInt = #line) -> CodeObject? {
     do {
       let validator = ASTValidator()
       try validator.validate(ast: ast)
@@ -60,9 +60,9 @@ internal class CompileTestCase: XCTestCase, ASTCreator {
 
   internal func getCodeObject(parent code: CodeObject,
                               qualifiedName: String,
-                              _ message:  String = "",
+                              _ message: String = "",
                               file: StaticString = #file,
-                              line: UInt         = #line) -> CodeObject? {
+                              line: UInt = #line) -> CodeObject? {
     for case let .code(c) in code.constants
       where c.qualifiedName == qualifiedName {
 

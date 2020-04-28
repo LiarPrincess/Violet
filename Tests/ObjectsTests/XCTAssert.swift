@@ -5,7 +5,7 @@ import VioletCore
 internal func XCTAssertTypeError(error: PyBaseException,
                                  msg: String,
                                  file: StaticString = #file,
-                                 line: UInt         = #line) {
+                                 line: UInt = #line) {
   XCTAssert(error is PyTypeError,
             "'\(error.typeName)' is not a type error.",
             file: file,

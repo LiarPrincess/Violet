@@ -5,10 +5,10 @@ import VioletCore
 internal func XCTAssertConstant(_ lhs: CodeObject.Constant,
                                 _ rhs: CodeObject.Constant,
                                 file: StaticString = #file,
-                                line: UInt         = #line) {
+                                line: UInt = #line) {
   switch (lhs, rhs) {
-  case (.`true`, .`true`),
-       (.`false`, .`false`),
+  case (.true, .true),
+       (.false, .false),
        (.none, .none),
        (.ellipsis, .ellipsis):
     break

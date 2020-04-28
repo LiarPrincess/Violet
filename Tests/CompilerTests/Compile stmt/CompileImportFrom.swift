@@ -99,7 +99,7 @@ class CompileImportFrom: CompileTestCase {
       moduleName: "Tangled",
       names: [
         self.alias(name: "Rapunzel", asName: "Daughter"),
-        self.alias(name: "Pascal",   asName: nil)
+        self.alias(name: "Pascal", asName: nil)
       ],
       level: 0
     )

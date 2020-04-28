@@ -247,7 +247,7 @@ class OrderedDictionaryTests: XCTestCase {
     typealias Dict = OrderedDictionary<Int, String>
 
     let size = 32
-    let hash = -5073420405599346384
+    let hash = -5_073_420_405_599_346_384
     var index = Dict.IndexCalculation(hash: hash, dictionarySize: size)
 
     let maxTries = 100
@@ -278,7 +278,7 @@ class OrderedDictionaryTests: XCTestCase {
   private func get(_ dict: OrderedDictionary<Int, String>,
                    key: Int,
                    file: StaticString = #file,
-                   line: UInt         = #line) -> String? {
+                   line: UInt = #line) -> String? {
     switch dict.get(key: key) {
     case .value(let o):
       return o
@@ -294,7 +294,7 @@ class OrderedDictionaryTests: XCTestCase {
                       key: Int,
                       value: String,
                       file: StaticString = #file,
-                      line: UInt         = #line) {
+                      line: UInt = #line) {
     switch dict.insert(key: key, value: value) {
     case .inserted, .updated:
       break
@@ -306,7 +306,7 @@ class OrderedDictionaryTests: XCTestCase {
   private func remove(_ dict: inout OrderedDictionary<Int, String>,
                       key: Int,
                       file: StaticString = #file,
-                      line: UInt         = #line) -> String? {
+                      line: UInt = #line) -> String? {
     switch dict.remove(key: key) {
     case .value(let o):
       return o

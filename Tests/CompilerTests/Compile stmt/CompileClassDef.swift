@@ -459,7 +459,7 @@ class CompileClassDef: CompileTestCase {
       bases: [],
       keywords: [
         self.keyword(kind: .named("Princess"), value: self.intExpr(value: 1)),
-        self.keyword(kind: .named("Human"),    value: self.intExpr(value: 2))
+        self.keyword(kind: .named("Human"), value: self.intExpr(value: 2))
       ],
       body: [self.identifierStmt(value: "sleep")]
     )

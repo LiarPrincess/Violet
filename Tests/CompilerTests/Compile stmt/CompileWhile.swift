@@ -60,7 +60,7 @@ class CompileWhile: CompileTestCase {
   func test_withElse() {
     let stmt = self.whileStmt(
       test: self.identifierExpr(value: "frollo"),
-      body:   [self.identifierStmt(value: "quasimodo")],
+      body: [self.identifierStmt(value: "quasimodo")],
       orElse: [self.identifierStmt(value: "esmeralda")]
     )
 

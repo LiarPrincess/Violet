@@ -50,7 +50,7 @@ class CompileTuple: CompileTestCase {
     ])
 
     let expected: [EmittedInstruction] = [
-      .init(.loadName,  "ariel"),
+      .init(.loadName, "ariel"),
       .init(.loadConst, "true"),
       .init(.buildTuple, "2"),
       .init(.return)
@@ -76,9 +76,9 @@ class CompileTuple: CompileTestCase {
     ])
 
     let expected: [EmittedInstruction] = [
-      .init(.loadName,   "ariel"),
+      .init(.loadName, "ariel"),
       .init(.buildTuple, "1"),
-      .init(.loadName,   "sea"),
+      .init(.loadName, "sea"),
       .init(.buildTupleUnpack, "2"),
       .init(.return)
     ]
@@ -108,11 +108,11 @@ class CompileTuple: CompileTestCase {
     ])
 
     let expected: [EmittedInstruction] = [
-      .init(.loadName,   "ariel"),
+      .init(.loadName, "ariel"),
       .init(.buildTuple, "1"),
-      .init(.loadName,   "sea"),
-      .init(.loadName,   "land"),
-      .init(.loadName,   "eric"),
+      .init(.loadName, "sea"),
+      .init(.loadName, "land"),
+      .init(.loadName, "eric"),
       .init(.buildTuple, "1"),
       .init(.buildTupleUnpack, "4"),
       .init(.return)

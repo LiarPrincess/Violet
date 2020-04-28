@@ -5,6 +5,34 @@ import VioletCompiler
 
 // swiftlint:disable file_length
 
+private func XCTAssertEqual(_ lhs: Arguments,
+                            _ rhs: Arguments,
+                            file: StaticString = #file,
+                            line: UInt = #line) {
+  XCTAssertEqual(lhs.help, rhs.help, "help", file: file, line: line)
+  XCTAssertEqual(lhs.version, rhs.version, "version", file: file, line: line)
+  XCTAssertEqual(lhs.debug, rhs.debug, "debug", file: file, line: line)
+  XCTAssertEqual(lhs.quiet, rhs.quiet, "quiet", file: file, line: line)
+  XCTAssertEqual(lhs.isolated, rhs.isolated, "isolated", file: file, line: line)
+  XCTAssertEqual(lhs.optimize, rhs.optimize, "optimization", file: file, line: line)
+  XCTAssertEqual(lhs.warnings, rhs.warnings, "warnings", file: file, line: line)
+  XCTAssertEqual(lhs.bytesWarning, rhs.bytesWarning, "bytesWarning", file: file, line: line)
+  XCTAssertEqual(lhs.command, rhs.command, "command", file: file, line: line)
+  XCTAssertEqual(lhs.module, rhs.module, "module", file: file, line: line)
+  XCTAssertEqual(lhs.script, rhs.script, "script", file: file, line: line)
+
+  XCTAssertEqual(lhs.inspectInteractively,
+                 rhs.inspectInteractively,
+                 "inspectInteractively",
+                 file: file,
+                 line: line)
+  XCTAssertEqual(lhs.ignoreEnvironment,
+                 rhs.ignoreEnvironment,
+                 "ignoreEnvironment",
+                 file: file,
+                 line: line)
+}
+
 class ArgumentsTests: XCTestCase {
 
   private let programName = "Violet"
@@ -16,7 +44,7 @@ class ArgumentsTests: XCTestCase {
       if let parsed = self.parse(cmd) {
         var expected = Arguments()
         expected.help = true
-        assertEqual(parsed, expected)
+        XCTAssertEqual(parsed, expected)
       }
     }
   }
@@ -26,7 +54,7 @@ class ArgumentsTests: XCTestCase {
       if let parsed = self.parse(cmd) {
         var expected = Arguments()
         expected.version = true
-        assertEqual(parsed, expected)
+        XCTAssertEqual(parsed, expected)
       }
     }
   }
@@ -35,7 +63,7 @@ class ArgumentsTests: XCTestCase {
     if let parsed = self.parse("-d") {
       var expected = Arguments()
       expected.debug = true
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -43,7 +71,7 @@ class ArgumentsTests: XCTestCase {
     if let parsed = self.parse("-q") {
       var expected = Arguments()
       expected.quiet = true
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -51,7 +79,7 @@ class ArgumentsTests: XCTestCase {
     if let parsed = self.parse("-i") {
       var expected = Arguments()
       expected.inspectInteractively = true
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -59,7 +87,7 @@ class ArgumentsTests: XCTestCase {
     if let parsed = self.parse("-E") {
       var expected = Arguments()
       expected.ignoreEnvironment = true
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -68,7 +96,7 @@ class ArgumentsTests: XCTestCase {
       var expected = Arguments()
       expected.isolated = true
       expected.ignoreEnvironment = true
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -79,7 +107,7 @@ class ArgumentsTests: XCTestCase {
       if let parsed = self.parse(flag) {
         var expected = Arguments()
         expected.verbose = i
-        assertEqual(parsed, expected)
+        XCTAssertEqual(parsed, expected)
       }
     }
   }
@@ -96,7 +124,7 @@ class ArgumentsTests: XCTestCase {
       if let parsed = self.parse(cmd) {
         var expected = Arguments()
         expected.bytesWarning = compare
-        assertEqual(parsed, expected)
+        XCTAssertEqual(parsed, expected)
       }
     }
   }
@@ -105,7 +133,7 @@ class ArgumentsTests: XCTestCase {
     if let parsed = self.parse("-bb -b") {
       var expected = Arguments()
       expected.bytesWarning = .error
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -121,7 +149,7 @@ class ArgumentsTests: XCTestCase {
       if let parsed = self.parse(cmd) {
         var expected = Arguments()
         expected.optimize = optimize
-        assertEqual(parsed, expected)
+        XCTAssertEqual(parsed, expected)
       }
     }
   }
@@ -130,7 +158,7 @@ class ArgumentsTests: XCTestCase {
     if let parsed = self.parse("-OO -O") {
       var expected = Arguments()
       expected.optimize = .OO
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -150,7 +178,7 @@ class ArgumentsTests: XCTestCase {
       if let parsed = self.parse(cmd) {
         var expected = Arguments()
         expected.warnings = [warning]
-        assertEqual(parsed, expected)
+        XCTAssertEqual(parsed, expected)
       }
     }
   }
@@ -164,7 +192,7 @@ class ArgumentsTests: XCTestCase {
     if let parsed = self.parse(cmd) {
       var expected = Arguments()
       expected.warnings = warnings
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -185,7 +213,7 @@ class ArgumentsTests: XCTestCase {
         expected.quiet = true
         expected.bytesWarning = .warning
         expected.optimize = .O
-        assertEqual(parsed, expected)
+        XCTAssertEqual(parsed, expected)
       }
     }
   }
@@ -199,7 +227,7 @@ class ArgumentsTests: XCTestCase {
     if let parsed = self.parse(cmd) {
       var expected = Arguments()
       expected.command = fn + "\n"
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -215,7 +243,7 @@ class ArgumentsTests: XCTestCase {
       expected.bytesWarning = .warning
       expected.optimize = .O
       expected.command = fn + "\n"
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -226,7 +254,7 @@ class ArgumentsTests: XCTestCase {
     if let parsed = self.parse(cmd) {
       var expected = Arguments()
       expected.module = file
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -242,7 +270,7 @@ class ArgumentsTests: XCTestCase {
       expected.bytesWarning = .warning
       expected.optimize = .O
       expected.module = file
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -253,7 +281,7 @@ class ArgumentsTests: XCTestCase {
     if let parsed = self.parse(cmd) {
       var expected = Arguments()
       expected.script = file
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -269,7 +297,7 @@ class ArgumentsTests: XCTestCase {
       expected.bytesWarning = .warning
       expected.optimize = .O
       expected.script = file
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -281,7 +309,7 @@ class ArgumentsTests: XCTestCase {
       expected.command = nil
       expected.module = nil
       expected.script = nil
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -298,7 +326,7 @@ class ArgumentsTests: XCTestCase {
       expected.command = nil
       expected.module = nil
       expected.script = nil
-      assertEqual(parsed, expected)
+      XCTAssertEqual(parsed, expected)
     }
   }
 
@@ -359,37 +387,9 @@ OPTIONS:
 
   // MARK: - Helpers
 
-  private func assertEqual(_ lhs: Arguments,
-                           _ rhs: Arguments,
-                           file:  StaticString = #file,
-                           line:  UInt         = #line) {
-    XCTAssertEqual(lhs.help, rhs.help, "help", file: file, line: line)
-    XCTAssertEqual(lhs.version, rhs.version, "version", file: file, line: line)
-    XCTAssertEqual(lhs.debug, rhs.debug, "debug", file: file, line: line)
-    XCTAssertEqual(lhs.quiet, rhs.quiet, "quiet", file: file, line: line)
-    XCTAssertEqual(lhs.isolated, rhs.isolated, "isolated", file: file, line: line)
-    XCTAssertEqual(lhs.optimize, rhs.optimize, "optimization", file: file, line: line)
-    XCTAssertEqual(lhs.warnings, rhs.warnings, "warnings", file: file, line: line)
-    XCTAssertEqual(lhs.bytesWarning, rhs.bytesWarning, "bytesWarning", file: file, line: line)
-    XCTAssertEqual(lhs.command, rhs.command, "command", file: file, line: line)
-    XCTAssertEqual(lhs.module, rhs.module, "module", file: file, line: line)
-    XCTAssertEqual(lhs.script, rhs.script, "script", file: file, line: line)
-
-    XCTAssertEqual(lhs.inspectInteractively,
-                   rhs.inspectInteractively,
-                   "inspectInteractively",
-                   file: file,
-                   line: line)
-    XCTAssertEqual(lhs.ignoreEnvironment,
-                   rhs.ignoreEnvironment,
-                   "ignoreEnvironment",
-                   file: file,
-                   line: line)
-  }
-
   private func parse(_ arguments: String,
                      file: StaticString = #file,
-                     line: UInt         = #line) -> Arguments? {
+                     line: UInt = #line) -> Arguments? {
 
     do {
       let split = arguments.split(separator: " ").map { String($0) }

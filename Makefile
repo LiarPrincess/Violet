@@ -42,7 +42,7 @@ lint:
 	SwiftLint lint --reporter emoji
 
 format:
-	SwiftFormat --config ./.swiftformat "./Sources"
+	SwiftFormat --config ./.swiftformat "./Sources" "./Tests"
 
 # -----------
 # -- Xcode --

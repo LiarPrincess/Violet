@@ -107,7 +107,7 @@ class CompileImport: CompileTestCase {
     let stmt = self.importStmt(
       names: [
         self.alias(name: "Rapunzel", asName: "Daughter"),
-        self.alias(name: "Pascal",   asName: nil)
+        self.alias(name: "Pascal", asName: nil)
       ]
     )
 

@@ -9,9 +9,9 @@ internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
                                       name: String,
                                       flags: SymbolFlags,
                                       location: SourceLocation? = nil,
-                                      _ message:  String = "",
+                                      _ message: String = "",
                                       file: StaticString = #file,
-                                      line: UInt         = #line) {
+                                      line: UInt = #line) {
   let mangled = MangledName(from: name)
 
   XCTAssertNotNil(scope.symbols[mangled],
@@ -52,9 +52,9 @@ internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
 
 internal func XCTAssertContainsParameter(_ scope: SymbolScope,
                                          name: String,
-                                         _ message:  String = "",
+                                         _ message: String = "",
                                          file: StaticString = #file,
-                                         line: UInt         = #line) {
+                                         line: UInt = #line) {
   let mangled = MangledName(from: name)
   XCTAssertTrue(scope.parameterNames.contains(mangled),
                 "\(message) (missing \(name))",
@@ -65,12 +65,12 @@ internal func XCTAssertContainsParameter(_ scope: SymbolScope,
 internal struct ScopeFeatures: OptionSet {
   let rawValue: UInt16
 
-  static let isNested          = ScopeFeatures(rawValue: 1 << 0)
-  static let isGenerator       = ScopeFeatures(rawValue: 1 << 3)
-  static let isCoroutine       = ScopeFeatures(rawValue: 1 << 4)
-  static let hasVarargs        = ScopeFeatures(rawValue: 1 << 5)
-  static let hasVarKeywords    = ScopeFeatures(rawValue: 1 << 6)
-  static let hasReturnValue    = ScopeFeatures(rawValue: 1 << 7)
+  static let isNested = ScopeFeatures(rawValue: 1 << 0)
+  static let isGenerator = ScopeFeatures(rawValue: 1 << 3)
+  static let isCoroutine = ScopeFeatures(rawValue: 1 << 4)
+  static let hasVarargs = ScopeFeatures(rawValue: 1 << 5)
+  static let hasVarKeywords = ScopeFeatures(rawValue: 1 << 6)
+  static let hasReturnValue = ScopeFeatures(rawValue: 1 << 7)
   static let needsClassClosure = ScopeFeatures(rawValue: 1 << 8)
 }
 
@@ -79,9 +79,9 @@ internal func XCTAssertScope(_ scope: SymbolScope,
                              name: String,
                              type: ScopeType,
                              flags: ScopeFeatures,
-                             _ message:  String = "",
+                             _ message: String = "",
                              file: StaticString = #file,
-                             line: UInt         = #line) {
+                             line: UInt = #line) {
 
   XCTAssertEqual(scope.name, name, message, file: file, line: line)
   XCTAssertEqual(scope.type, type, message, file: file, line: line)

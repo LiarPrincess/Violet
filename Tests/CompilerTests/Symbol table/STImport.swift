@@ -20,7 +20,7 @@ class STImport: SymbolTableTestCase {
   func test_import() {
     let stmt = self.importStmt(
       names: [
-        self.alias(name: "frozen",  asName: nil, start: loc1),
+        self.alias(name: "frozen", asName: nil, start: loc1),
         self.alias(name: "tangled", asName: nil, start: loc2)
       ]
     )
@@ -47,7 +47,7 @@ class STImport: SymbolTableTestCase {
   func test_import_withAlias() {
     let stmt = self.importStmt(
       names: [
-        self.alias(name: "frozen",  asName: nil, start: loc1),
+        self.alias(name: "frozen", asName: nil, start: loc1),
         self.alias(name: "tangled", asName: "bestMovieEver", start: loc2)
       ]
     )
@@ -114,7 +114,7 @@ class STImport: SymbolTableTestCase {
     let stmt = self.importFromStmt(
       moduleName: "disnep",
       names: [
-        self.alias(name: "elsa",     asName: nil, start: loc1),
+        self.alias(name: "elsa", asName: nil, start: loc1),
         self.alias(name: "rapunzel", asName: nil, start: loc2)
       ],
       level: 0
@@ -151,7 +151,7 @@ class STImport: SymbolTableTestCase {
     let stmt = self.importFromStmt(
       moduleName: "disnep",
       names: [
-        self.alias(name: "elsa",     asName: nil, start: loc1),
+        self.alias(name: "elsa", asName: nil, start: loc1),
         self.alias(name: "rapunzel", asName: "princess", start: loc2)
       ],
       level: 0

@@ -1,37 +1,51 @@
-# =================
-# == Directories ==
-# =================
+# ==============
+# == Excludes ==
+# ==============
 
+# Generated:
 --exclude Sources/Parser/Generated/*
 --exclude Sources/Bytecode/Generated/*
 --exclude Sources/Objects/Generated/*
+--exclude Tests/CompilerTests/Helpers/EmittedInstruction.swift
+
+# Generated from Unicode data:
 --exclude Sources/Objects/Types - string/Unicode+BidirectionalClass.swift
 --exclude Sources/Objects/Types - string/Unicode+CaseFolding.swift
+
+# Tons of numbers for which formatting does not even make sense:
+--exclude Tests/CoreTests/SipHashTests.swift
+--exclude Tests/ObjectsTests/Hash tests/HashString.swift
+
+# In most of the lexer/parser tests we have to specify source location.
+# We want them in the same column across multiple lines.
+# We will insert ' ' (empty space) to create alignment, that breaks some rules.
+--exclude Tests/LexerTests/*
+--exclude Tests/ParserTests/*
 
 # =============
 # == Options ==
 # =============
 
 # Use 'swiftformat --options' to list all of the possible options
-# Most of the options are set to default (except for '--self')
+# For most of the options we use default value (except for '--self')
 
 --allman false
 --commas always
---elseposition same-line # I hate it, but this is 'default' for Swift
+--elseposition same-line # I hate it, but this is 'community choice' in Swift
 --empty void
 --header ignore # We don't have a header. Headers are ugly.
 --ifdef indent
 --indent 2
 --indentcase false
 --linebreaks lf
---maxwidth none # 80 is preferred (but not required), never go over 100
+--maxwidth none # 80 is preferred (but not required), don't go over 100
 --nospaceoperators ..<, ...
 --operatorfunc spaced
 --self insert # Yes!
 --selfrequired
 --semicolons inline
 --stripunusedargs closure-only
---tabwidth unspecified # Never ever use tabs!
+--tabwidth unspecified # Don't use tabs!
 --trailingclosures
 --trimwhitespace always
 --xcodeindentation disabled
@@ -51,26 +65,29 @@
 --closingparen balanced
 
 # We have our own (see: './Scipts/sort_swift_imports')
-# But it is not required to follow it (just recommended).
+# But it is not required to follow it.
 --importgrouping alphabetized
 
 # Our own rule: all patterns should start at the same column,
 # otherwise reader has to 'zig-zag' to read which pattern is bound where.
-# (in other words: if all patterns have binding -> hoist, otherwise inline)
-# This is not allowed (or at least frowned upon):
+# (in other words: if all patterns have binding -> hoist, otherwise per variable)
+#
+# For example, this is not allowed (or at least frowned upon):
+# switch frozen {
 # case .elsa
 # case let .anna(x) <-- nope, both 'elsa' and 'anna' should start the same column
+# }
 --patternlet hoist
 
 # ===========
 # == Rules ==
 # ===========
 
---disable andOperator
+--disable andOperator # Use '&&' ot ',' wherever you want
 --enable anyObjectProtocol
 --enable blankLinesAroundMark
 --enable blankLinesAtEndOfScope
---disable blankLinesAtStartOfScope
+--disable blankLinesAtStartOfScope # Empty line after 'class' definition
 --enable blankLinesBetweenScopes
 --enable braces
 --enable consecutiveBlankLines
@@ -80,8 +97,8 @@
 --enable emptyBraces
 --enable fileHeader
 --disable hoistPatternLet
---disable indent
---disable isEmpty
+--disable indent # This breaks a lof of already written stuff, a lot of stuff.
+--disable isEmpty # False-positives
 --enable leadingDelimiters
 --enable linebreakAtEndOfFile
 --enable linebreaks
@@ -99,8 +116,8 @@
 --enable redundantObjc
 --enable redundantParens
 --enable redundantPattern
---disable redundantRawValues
---disable redundantReturn
+--disable redundantRawValues # TODO: Do we even use this?
+--disable redundantReturn # implicit = bad
 --enable redundantSelf
 --enable redundantVoidReturnType
 --enable semicolons
@@ -116,16 +133,16 @@
 --enable spaceInsideComments
 --enable spaceInsideGenerics
 --enable spaceInsideParens
---disable specifiers
+--disable specifiers # Conflict with SwiftLint
 --enable strongOutlets
 --enable strongifiedSelf
 --enable todos
 --enable trailingClosures
---disable trailingCommas
+--disable trailingCommas #
 --enable trailingSpace
 --enable typeSugar
 --enable unusedArguments
 --enable void
---disable wrap
---disable wrapArguments
---disable yodaConditions
+--disable wrap # Breaks already written code
+--disable wrapArguments # Se above
+--disable yodaConditions # '0 < x && x < 10' is better than ' x > 0 && x < 10'

@@ -77,7 +77,7 @@ class ArgumentParserTests: PyTestCase {
   func test_init_markers_multipleMaxPositional_fails() {
     guard let e = self.createError(
       arguments: ["", "elsa", "anna"],
-      format: "|O$O$O:frozen"  // multiple '$'
+      format: "|O$O$O:frozen" // multiple '$'
     ) else { return }
 
     guard let s = self.asSystemError(e) else { return }
@@ -306,7 +306,7 @@ class ArgumentParserTests: PyTestCase {
   private func createParser(arguments: [String],
                             format: String,
                             file: StaticString = #file,
-                            line: UInt         = #line) -> ArgumentParser? {
+                            line: UInt = #line) -> ArgumentParser? {
     switch ArgumentParser.create(arguments: arguments, format: format) {
     case let .value(r):
       return r
@@ -319,7 +319,7 @@ class ArgumentParserTests: PyTestCase {
   private func createError(arguments: [String],
                            format: String,
                            file: StaticString = #file,
-                           line: UInt         = #line) -> PyBaseException? {
+                           line: UInt = #line) -> PyBaseException? {
     switch ArgumentParser.create(arguments: arguments, format: format) {
     case let .value(r):
       XCTAssert(false, String(describing: r), file: file, line: line)
@@ -331,7 +331,7 @@ class ArgumentParserTests: PyTestCase {
 
   private func asSystemError(_ e: PyBaseException?,
                              file: StaticString = #file,
-                             line: UInt         = #line) -> PySystemError? {
+                             line: UInt = #line) -> PySystemError? {
     if let s = e as? PySystemError {
       return s
     }
@@ -342,7 +342,7 @@ class ArgumentParserTests: PyTestCase {
 
   private func asTypeError(_ e: PyBaseException?,
                            file: StaticString = #file,
-                           line: UInt         = #line) -> PyTypeError? {
+                           line: UInt = #line) -> PyTypeError? {
     if let s = e as? PyTypeError {
       return s
     }
@@ -354,9 +354,9 @@ class ArgumentParserTests: PyTestCase {
   private func bind(arguments: [String],
                     format: String,
                     args: [PyObject],
-                    kwargs: [String:PyObject],
+                    kwargs: [String: PyObject],
                     file: StaticString = #file,
-                    line: UInt         = #line) -> ArgumentParser.Binding? {
+                    line: UInt = #line) -> ArgumentParser.Binding? {
     guard let parser = self.createParser(arguments: arguments,
                                          format: format,
                                          file: file,
@@ -376,9 +376,9 @@ class ArgumentParserTests: PyTestCase {
   private func bindError(arguments: [String],
                          format: String,
                          args: [PyObject],
-                         kwargs: [String:PyObject],
+                         kwargs: [String: PyObject],
                          file: StaticString = #file,
-                         line: UInt         = #line) -> PyBaseException? {
+                         line: UInt = #line) -> PyBaseException? {
     guard let parser = self.createParser(arguments: arguments,
                                          format: format,
                                          file: file,

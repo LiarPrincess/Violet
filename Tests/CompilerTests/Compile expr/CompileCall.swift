@@ -168,7 +168,7 @@ class CompileCall: CompileTestCase {
       args: [],
       keywords: [
         self.keyword(kind: .named("zucchini"), value: self.identifierExpr(value: "tomato")),
-        self.keyword(kind: .named("pepper"),   value: self.identifierExpr(value: "eggplant"))
+        self.keyword(kind: .named("pepper"), value: self.identifierExpr(value: "eggplant"))
       ]
     )
 
@@ -205,8 +205,8 @@ class CompileCall: CompileTestCase {
       args: [],
       keywords: [
         self.keyword(kind: .named("zucchini"), value: self.identifierExpr(value: "tomato")),
-        self.keyword(kind: .named("salt"),     value: self.identifierExpr(value: "pepper")),
-        self.keyword(kind: .dictionaryUnpack,  value: self.identifierExpr(value: "eggplant"))
+        self.keyword(kind: .named("salt"), value: self.identifierExpr(value: "pepper")),
+        self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr(value: "eggplant"))
       ]
     )
 
@@ -250,9 +250,9 @@ class CompileCall: CompileTestCase {
       args: [],
       keywords: [
         self.keyword(kind: .named("zucchini"), value: self.identifierExpr(value: "tomato")),
-        self.keyword(kind: .dictionaryUnpack,  value: self.identifierExpr(value: "pepper")),
-        self.keyword(kind: .dictionaryUnpack,  value: self.identifierExpr(value: "eggplant")),
-        self.keyword(kind: .named("salt"),     value: self.identifierExpr(value: "onion"))
+        self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr(value: "pepper")),
+        self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr(value: "eggplant")),
+        self.keyword(kind: .named("salt"), value: self.identifierExpr(value: "onion"))
       ]
     )
 
@@ -304,7 +304,7 @@ class CompileCall: CompileTestCase {
         )
       ],
       keywords: [
-        self.keyword(kind: .named("pepper"),  value: self.identifierExpr(value: "salt")),
+        self.keyword(kind: .named("pepper"), value: self.identifierExpr(value: "salt")),
         self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr(value: "eggplant"))
       ]
     )

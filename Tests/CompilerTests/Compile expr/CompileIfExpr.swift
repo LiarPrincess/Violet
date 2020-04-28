@@ -26,8 +26,8 @@ class CompileIfExpr: CompileTestCase {
   /// 18 RETURN_VALUE
   func test_constants() {
     let expr = self.ifExpr(
-      test:   self.stringExpr(value: .literal("touched")),
-      body:   self.stringExpr(value: .literal("genie")),
+      test: self.stringExpr(value: .literal("touched")),
+      body: self.stringExpr(value: .literal("genie")),
       orElse: self.stringExpr(value: .literal("lamp"))
     )
 
@@ -62,8 +62,8 @@ class CompileIfExpr: CompileTestCase {
   /// 18 RETURN_VALUE
   func test_withIdentifier() {
     let expr = self.ifExpr(
-      test:   self.identifierExpr(value: "touched"),
-      body:   self.identifierExpr(value: "genie"),
+      test: self.identifierExpr(value: "touched"),
+      body: self.identifierExpr(value: "genie"),
       orElse: self.identifierExpr(value: "lamp")
     )
 
@@ -101,8 +101,8 @@ class CompileIfExpr: CompileTestCase {
   /// 26 RETURN_VALUE
   func test_nested() {
     let expr = self.ifExpr(
-      test:   self.identifierExpr(value: "jasmine"),
-      body:   self.identifierExpr(value: "aladdin"),
+      test: self.identifierExpr(value: "jasmine"),
+      body: self.identifierExpr(value: "aladdin"),
       orElse: self.ifExpr(
         test: self.identifierExpr(value: "prince"),
         body: self.identifierExpr(value: "ali"),

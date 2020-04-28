@@ -127,11 +127,11 @@ class CompileOperators: CompileTestCase {
   ///  8 BINARY_SUBTRACT
   /// 10 RETURN_VALUE
   func test_binary_multiple() {
-    let left   = self.identifierExpr(value: "eugene")
+    let left = self.identifierExpr(value: "eugene")
     let middle = self.identifierExpr(value: "rapunzel")
-    let right  = self.identifierExpr(value: "cassandra")
+    let right = self.identifierExpr(value: "cassandra")
 
-    let add  = self.binaryOpExpr(op: .add, left: left, right: middle)
+    let add = self.binaryOpExpr(op: .add, left: left, right: middle)
     let expr = self.binaryOpExpr(op: .sub, left: add, right: right)
 
     let expected: [EmittedInstruction] = [
@@ -211,11 +211,11 @@ class CompileOperators: CompileTestCase {
   ///  8 LOAD_NAME                2 (eugene)
   /// 10 RETURN_VALUE
   func test_boolean_multiple() {
-    let left   = self.identifierExpr(value: "rapunzel")
+    let left = self.identifierExpr(value: "rapunzel")
     let middle = self.identifierExpr(value: "cassandra")
-    let right  = self.identifierExpr(value: "eugene")
+    let right = self.identifierExpr(value: "eugene")
 
-    let and  = self.boolOpExpr(op: .and, left: left, right: middle)
+    let and = self.boolOpExpr(op: .and, left: left, right: middle)
     let expr = self.boolOpExpr(op: .or, left: and, right: right)
 
     let expected: [EmittedInstruction] = [
@@ -250,9 +250,9 @@ class CompileOperators: CompileTestCase {
       .lessEqual: "<=",
       .greater: ">",
       .greaterEqual: ">=",
-      .`is`:  "is",
+      .is: "is",
       .isNot: "is not",
-      .`in`:  "in",
+      .in: "in",
       .notIn: "not in"
     ]
 
@@ -302,9 +302,9 @@ class CompileOperators: CompileTestCase {
   /// 28 LOAD_CONST               0 (None)
   /// 30 RETURN_VALUE
   func test_compare_triple() {
-    let left   = self.identifierExpr(value: "eugene")
+    let left = self.identifierExpr(value: "eugene")
     let middle = self.identifierExpr(value: "rapunzel")
-    let right  = self.identifierExpr(value: "cassandra")
+    let right = self.identifierExpr(value: "cassandra")
 
     let expr = self.compareExpr(
       left: left,

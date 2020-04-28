@@ -9,20 +9,20 @@ internal func XCTAssertCode(_ code: CodeObject,
                             name: String,
                             qualified: String,
                             kind: CodeObject.Kind,
-                            _ message:  String = "",
+                            _ message: String = "",
                             file: StaticString = #file,
-                            line: UInt         = #line) {
-  XCTAssertEqual(code.name,          name,      message, file: file, line: line)
+                            line: UInt = #line) {
+  XCTAssertEqual(code.name, name, message, file: file, line: line)
   XCTAssertEqual(code.qualifiedName, qualified, message, file: file, line: line)
-  XCTAssertEqual(code.kind,          kind,      message, file: file, line: line)
+  XCTAssertEqual(code.kind, kind, message, file: file, line: line)
 }
 
 internal func XCTAssertCode(_ code: CodeObject,
                             name: String,
                             kind: CodeObject.Kind,
-                            _ message:  String = "",
+                            _ message: String = "",
                             file: StaticString = #file,
-                            line: UInt         = #line) {
+                            line: UInt = #line) {
   XCTAssertEqual(code.name, name, message, file: file, line: line)
   XCTAssertEqual(code.kind, kind, message, file: file, line: line)
 }
@@ -31,7 +31,7 @@ internal func XCTAssertInstructions(_ code: CodeObject,
                                     _ expected: [EmittedInstruction],
                                     _ message: String = "",
                                     file: StaticString = #file,
-                                    line: UInt         = #line) {
+                                    line: UInt = #line) {
   XCTAssertEqual(code.instructions.count,
                  expected.count,
                  "\(message) (count)",

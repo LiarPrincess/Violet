@@ -12,8 +12,8 @@ class BigIntTests: XCTestCase {
     let x = BigInt(1_000_000 as Int)
     XCTAssertEqual(x, 1_000_000)
 
-    let y = BigInt(1_000 as UInt16)
-    XCTAssertEqual(y, 1_000)
+    let y = BigInt(1000 as UInt16)
+    XCTAssertEqual(y, 1000)
 
     let z = BigInt(-1_000_000 as Int)
     XCTAssertEqual(z, -1_000_000)
@@ -58,7 +58,7 @@ class BigIntTests: XCTestCase {
     XCTAssertEqual(x - x, 0)
 
     let y: BigInt = -1
-    XCTAssertEqual((y - y), 0)
+    XCTAssertEqual(y - y, 0)
 
     XCTAssertEqual(x * 0, 0)
   }
@@ -147,8 +147,8 @@ class BigIntTests: XCTestCase {
     XCTAssertEqual(String(x, radix: 16, uppercase: false), "-4ea383fdd9da5cd6")
     XCTAssertEqual(String(x, radix: 36, uppercase: false), "-171usy24wtkgm")
 
-    XCTAssertTrue(BigInt("12345") == 12_345)
-    XCTAssertTrue(BigInt("-12345") == -12_345)
+    XCTAssertTrue(BigInt("12345") == 12345)
+    XCTAssertTrue(BigInt("-12345") == -12345)
 
     XCTAssertTrue(BigInt("-3UNIZHA6PAL30Y", radix: 10) == nil)
     XCTAssertTrue(BigInt("---") == nil)
@@ -166,7 +166,7 @@ class BigIntTests: XCTestCase {
     XCTAssertTrue(BigInt(UInt32.max) << 16 == UInt(UInt32.max) << 16)
 
     var (x, y) = (1 as BigInt, 1 as UInt64)
-    for i in 0..<63 {   // don't test 64-bit shift, UInt64 << 64 == 0
+    for i in 0..<63 { // don't test 64-bit shift, UInt64 << 64 == 0
       XCTAssertTrue(x << i == y << i, "Iteration: \(i)")
     }
 

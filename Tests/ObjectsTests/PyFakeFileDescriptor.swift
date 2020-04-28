@@ -17,7 +17,7 @@ class PyFakeFileDescriptor: FileDescriptorType {
     unreachable()
   }
 
-  func write<T>(contentsOf data: T) -> PyResult<PyNone> where T : DataProtocol {
+  func write<T>(contentsOf data: T) -> PyResult<PyNone> where T: DataProtocol {
     unreachable()
   }
 

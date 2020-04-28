@@ -39,7 +39,7 @@ class CompileSet: CompileTestCase {
     ])
 
     let expected: [EmittedInstruction] = [
-      .init(.loadName,  "ariel"),
+      .init(.loadName, "ariel"),
       .init(.loadConst, "true"),
       .init(.buildSet, "2"),
       .init(.return)
