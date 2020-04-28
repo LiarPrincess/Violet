@@ -7,7 +7,7 @@ all: build
 # -- Usual things --
 # ------------------
 
-.PHONY: build test clean lint
+.PHONY: build test clean
 
 build:
 	swift build $(SWIFT_BUILD_FLAGS)
@@ -17,10 +17,6 @@ test:
 
 clean:
 	swift package clean
-
-lint:
-	# If you are using any other reporter than 'emoji' then you are doing it wrong...
-	SwiftLint lint --reporter emoji
 
 # ---------------------
 # -- Code generation --
@@ -34,6 +30,20 @@ elsa:
 gen:
 	./Sources/Objects/Generated/run.sh
 	./Scripts/unimplemented_builtins/main.sh
+
+# -----------------
+# -- Lint/format --
+# -----------------
+
+.PHONY: lint format
+
+# If you are using any other reporter than 'emoji' then you are doing it wrong...
+lint:
+	SwiftLint lint --reporter emoji
+
+format:
+	# --dryrun
+	SwiftFormat --config ./.swiftformat "./Sources/Core" "./Sources/Lexer" "./Sources/Parser"
 
 # -----------
 # -- Xcode --

@@ -9,7 +9,7 @@ import VioletLexer
 
 public final class ASTValidator {
 
-  public init() { }
+  public init() {}
 
   public func validate(ast: AST) throws {
     let pass = ASTValidatorPass()
@@ -213,9 +213,9 @@ internal final class ASTValidatorPass:
     try self.visitExpression(node.expression, payload: .load)
   }
 
-  internal func visit(_ node: PassStmt) throws { }
-  internal func visit(_ node: BreakStmt) throws { }
-  internal func visit(_ node: ContinueStmt) throws { }
+  internal func visit(_ node: PassStmt) throws {}
+  internal func visit(_ node: BreakStmt) throws {}
+  internal func visit(_ node: ContinueStmt) throws {}
 
   // MARK: - WithItems
 
@@ -455,7 +455,7 @@ internal final class ASTValidatorPass:
     case let .slice(lower, upper, step):
       if let lower = lower { try self.visitExpression(lower, payload: .load) }
       if let upper = upper { try self.visitExpression(upper, payload: .load) }
-      if let step  = step { try self.visitExpression(step, payload: .load) }
+      if let step = step { try self.visitExpression(step, payload: .load) }
 
     case let .extSlice(dims):
       // we don't have to check .isEmpty because of NonEmptyArray

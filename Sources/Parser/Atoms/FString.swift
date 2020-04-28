@@ -256,7 +256,7 @@ internal struct FString {
   }
 
   private enum QuoteCount {
-    /** " */   case short
+    /** " */ case short
     /** """ */ case long
   }
 
@@ -296,7 +296,7 @@ internal struct FString {
            ")" where isInsideParen:
         nestedDepth -= 1
 
-      case "'"  where !isInsideString, // string start
+      case "'" where !isInsideString, // string start
            "\"" where !isInsideString:
 
         /// We dont know if it is short (") or long (""") quote.

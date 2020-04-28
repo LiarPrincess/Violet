@@ -3,42 +3,42 @@ import VioletCore
 
 // https://docs.python.org/3/reference/lexical_analysis.html#identifiers
 
-internal let keywords: [String:TokenKind] = [
-  "and":      .and,
-  "as":       .as,
-  "assert":   .assert,
-  "async":    .async,
-  "await":    .await,
-  "break":    .break,
-  "class":    .class,
+internal let keywords: [String: TokenKind] = [
+  "and": .and,
+  "as": .as,
+  "assert": .assert,
+  "async": .async,
+  "await": .await,
+  "break": .break,
+  "class": .class,
   "continue": .continue,
-  "def":      .def,
-  "del":      .del,
-  "elif":     .elif,
-  "else":     .else,
-  "except":   .except,
-  "false":    .false,
-  "finally":  .finally,
-  "for":      .for,
-  "from":     .from,
-  "global":   .global,
-  "if":       .if,
-  "import":   .import,
-  "in":       .in,
-  "is":       .is,
-  "lambda":   .lambda,
-  "none":     .none,
+  "def": .def,
+  "del": .del,
+  "elif": .elif,
+  "else": .else,
+  "except": .except,
+  "false": .false,
+  "finally": .finally,
+  "for": .for,
+  "from": .from,
+  "global": .global,
+  "if": .if,
+  "import": .import,
+  "in": .in,
+  "is": .is,
+  "lambda": .lambda,
+  "none": .none,
   "nonlocal": .nonlocal,
-  "not":      .not,
-  "or":       .or,
-  "pass":     .pass,
-  "raise":    .raise,
-  "return":   .return,
-  "true":     .true,
-  "try":      .try,
-  "while":    .while,
-  "with":     .with,
-  "yield":    .yield
+  "not": .not,
+  "or": .or,
+  "pass": .pass,
+  "raise": .raise,
+  "return": .return,
+  "true": .true,
+  "try": .try,
+  "while": .while,
+  "with": .with,
+  "yield": .yield
 ]
 
 extension Lexer {
@@ -110,7 +110,7 @@ extension Lexer {
     case .emptyString:
       throw self.error(.invalidCharacterInIdentifier(" "), location: start)
     case let .no(scalar: scalar, column: column):
-      let column   = start.column + column
+      let column = start.column + column
       let location = SourceLocation(line: start.line, column: column)
       throw self.error(.invalidCharacterInIdentifier(scalar), location: location)
     }

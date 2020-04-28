@@ -103,7 +103,7 @@ extension Parser {
   private struct DottedName {
     let name: String
     let start: SourceLocation
-    let end:   SourceLocation
+    let end: SourceLocation
   }
 
   /// `dotted_name: NAME ('.' NAME)*`

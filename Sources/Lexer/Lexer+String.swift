@@ -29,7 +29,7 @@ extension Lexer {
     return try self.string(prefix: prefix, start: self.location)
   }
 
-  internal func string(prefix: StringPrefix, start:  SourceLocation) throws -> Token {
+  internal func string(prefix: StringPrefix, start: SourceLocation) throws -> Token {
     let scalars = try readString(prefix: prefix)
     let end = self.location
 
@@ -84,8 +84,8 @@ extension Lexer {
       switch peek {
       case "\\":
         switch try self.readEscaped(prefix, quoteType) {
-        case .escaped(let char):  result.append(char)
-        case .escapedNewLine:     break
+        case .escaped(let char): result.append(char)
+        case .escapedNewLine: break
         case .notEscapeCharacter: result.append("\\")
         }
       default:
@@ -151,11 +151,11 @@ extension Lexer {
       return .escapedNewLine
 
     case "\\": return self.simpleEscaped("\\") // Backslash (\)
-    case "'":  return self.simpleEscaped("'")  // Single quote (')
+    case "'": return self.simpleEscaped("'") // Single quote (')
     case "\"": return self.simpleEscaped("\"") // Double quote (")
-    case "n":  return self.simpleEscaped("\n") // ASCII Linefeed (LF)
-    case "r":  return self.simpleEscaped("\r") // ASCII Carriage Return (CR)
-    case "t":  return self.simpleEscaped("\t") // ASCII Horizontal Tab (TAB)
+    case "n": return self.simpleEscaped("\n") // ASCII Linefeed (LF)
+    case "r": return self.simpleEscaped("\r") // ASCII Carriage Return (CR)
+    case "t": return self.simpleEscaped("\t") // ASCII Horizontal Tab (TAB)
 
     case "a": return self.simpleEscaped("\u{0007}") // ASCII Bell (BEL)
     case "b": return self.simpleEscaped("\u{0008}") // ASCII Backspace (BS)
@@ -242,8 +242,8 @@ extension Lexer {
 
   /// string: '123', radix: 10 -> Unicode character at 123
   private func decodeScalar(_ scalars: UnicodeScalarView.SubSequence,
-                            radix:     Int,
-                            start:     SourceLocation) throws -> UnicodeScalar {
+                            radix: Int,
+                            start: SourceLocation) throws -> UnicodeScalar {
 
     let string = String(scalars)
     guard let int = UInt32(string, radix: radix) else {

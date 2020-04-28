@@ -215,16 +215,16 @@ private func joinWithCommaAndOr<T>(_ elements: [T]) -> String {
 
 // swiftlint:disable:next cyclomatic_complexity
 private func needsQuotes(_ kind: TokenKind) -> Bool {
-  if case TokenKind.identifier   = kind { return false }
-  if case TokenKind.string       = kind { return false }
+  if case TokenKind.identifier = kind { return false }
+  if case TokenKind.string = kind { return false }
   if case TokenKind.formatString = kind { return false }
-  if case TokenKind.int          = kind { return false }
-  if case TokenKind.float        = kind { return false }
-  if case TokenKind.imaginary    = kind { return false }
-  if case TokenKind.bytes        = kind { return false }
+  if case TokenKind.int = kind { return false }
+  if case TokenKind.float = kind { return false }
+  if case TokenKind.imaginary = kind { return false }
+  if case TokenKind.bytes = kind { return false }
 
-  if case TokenKind.indent  = kind { return false }
-  if case TokenKind.dedent  = kind { return false }
+  if case TokenKind.indent = kind { return false }
+  if case TokenKind.dedent = kind { return false }
   if case TokenKind.newLine = kind { return false }
   if case TokenKind.comment = kind { return false }
 

@@ -100,8 +100,8 @@ public final class Lexer: LexerType {
 
   /// Create token
   internal func token(_ kind: TokenKind,
-                      start:  SourceLocation? = nil,
-                      end:    SourceLocation? = nil) -> Token {
+                      start: SourceLocation? = nil,
+                      end: SourceLocation? = nil) -> Token {
     let s = start ?? self.location
     let e = end ?? self.location
     return Token(kind, start: s, end: e)

@@ -30,7 +30,7 @@ extension Parser {
       rightExpr
   }
 
-  ///```
+  /// ```
   /// atom:
   ///  - '(' [yield_expr|testlist_comp] ')'
   ///  - '[' [testlist_comp] ']'

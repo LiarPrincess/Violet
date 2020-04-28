@@ -25,7 +25,7 @@ private struct ArgumentsIR {
   fileprivate var kwarg: Argument?
 
   fileprivate var start: SourceLocation
-  fileprivate var end:   SourceLocation
+  fileprivate var end: SourceLocation
 
   fileprivate init(start: SourceLocation, end: SourceLocation) {
     self.start = start
@@ -33,10 +33,10 @@ private struct ArgumentsIR {
   }
 
   fileprivate func compile(using builder: inout ASTBuilder) -> Arguments {
-    return builder.arguments(args:     self.args,
+    return builder.arguments(args: self.args,
                              defaults: self.defaults,
                              vararg: self.vararg,
-                             kwOnlyArgs:     self.kwOnlyArgs,
+                             kwOnlyArgs: self.kwOnlyArgs,
                              kwOnlyDefaults: self.kwOnlyDefaults,
                              kwarg: self.kwarg,
                              start: self.start,
@@ -140,8 +140,8 @@ extension Parser {
     while self.peek.kind != closingToken {
       switch self.peek.kind {
       case .identifier: try self.parseArgument(ir: &ir, parseArg: parseArg)
-      case .star:       try self.parseVarargs(ir: &ir, parseArg: parseArg)
-      case .starStar:   try self.parseKwargs(ir: &ir, parseArg: parseArg)
+      case .star: try self.parseVarargs(ir: &ir, parseArg: parseArg)
+      case .starStar: try self.parseKwargs(ir: &ir, parseArg: parseArg)
       default:
         throw self.unexpectedToken(expected: [.identifier, .star, .starStar])
       }

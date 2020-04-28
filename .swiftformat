@@ -1,0 +1,128 @@
+# =================
+# == Directories ==
+# =================
+
+# TODO: ?
+# --exclude Tests/XCTestManifests.swift,Snapshots
+
+# =============
+# == Options ==
+# =============
+
+# Use 'swiftformat --options' to list all of the possible options
+# Most of the options are set to default (except for '--self')
+
+--allman false
+--commas always
+--elseposition same-line # I hate it, but this is 'default' for Swift
+--empty void
+--header ignore # We don't have a header. Headers are ugly.
+--ifdef indent
+--indent 2
+--indentcase false
+--linebreaks lf
+--maxwidth none # 80 is preferred (but not required), never go over 100
+--nospaceoperators ..<, ...
+--operatorfunc spaced
+--self insert # Yes!
+--selfrequired
+--semicolons inline
+--stripunusedargs closure-only
+--tabwidth unspecified # Never ever use tabs!
+--trailingclosures
+--trimwhitespace always
+--xcodeindentation disabled
+
+--decimalgrouping 3,6
+--binarygrouping 4,8
+--octalgrouping 4,8
+--hexgrouping 4,8
+--exponentcase lowercase
+--exponentgrouping enabled
+--fractiongrouping enabled
+--hexliteralcase lowercase
+
+--wraparguments preserve
+--wrapcollections preserve
+--wrapparameters preserve
+--closingparen balanced
+
+# We have our own (see: './Scipts/sort_swift_imports')
+# But it is not required to follow it (just recommended).
+--importgrouping alphabetized
+
+# Our own rule: all patterns should start at the same column,
+# otherwise reader has to 'zig-zag' to read which pattern is bound where.
+# (in other words: if all patterns have binding -> hoist, otherwise inline)
+# This is not allowed (or at least frowned upon):
+# case .elsa
+# case let .anna(x) <-- nope, both 'elsa' and 'anna' should start the same column
+--patternlet hoist
+
+# ===========
+# == Rules ==
+# ===========
+
+--disable andOperator
+--enable anyObjectProtocol
+--enable blankLinesAroundMark
+--enable blankLinesAtEndOfScope
+--disable blankLinesAtStartOfScope
+--enable blankLinesBetweenScopes
+--enable braces
+--enable consecutiveBlankLines
+--enable consecutiveSpaces
+--enable duplicateImports
+--enable elseOnSameLine
+--enable emptyBraces
+--enable fileHeader
+--disable hoistPatternLet
+--disable indent
+--disable isEmpty
+--enable leadingDelimiters
+--enable linebreakAtEndOfFile
+--enable linebreaks
+--enable numberFormatting
+# --enable ranges - deprecated
+--enable redundantBackticks
+--enable redundantBreak
+--enable redundantExtensionACL
+--enable redundantFileprivate
+--enable redundantGet
+--enable redundantInit
+--enable redundantLet
+--enable redundantLetError
+--enable redundantNilInit
+--enable redundantObjc
+--enable redundantParens
+--enable redundantPattern
+--disable redundantRawValues
+--disable redundantReturn
+--enable redundantSelf
+--enable redundantVoidReturnType
+--enable semicolons
+--disable sortedImports
+--enable spaceAroundBraces
+--enable spaceAroundBrackets
+--enable spaceAroundComments
+--enable spaceAroundGenerics
+--enable spaceAroundOperators
+--enable spaceAroundParens
+--enable spaceInsideBraces
+--enable spaceInsideBrackets
+--enable spaceInsideComments
+--enable spaceInsideGenerics
+--enable spaceInsideParens
+--disable specifiers
+--enable strongOutlets
+--enable strongifiedSelf
+--enable todos
+--enable trailingClosures
+--disable trailingCommas
+--enable trailingSpace
+--enable typeSugar
+--enable unusedArguments
+--enable void
+--disable wrap
+--disable wrapArguments
+--disable yodaConditions

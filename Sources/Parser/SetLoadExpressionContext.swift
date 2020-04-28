@@ -249,7 +249,7 @@ internal final class SetLoadExpressionContext: ExpressionVisitor {
     case let .slice(lower, upper, step):
       if let lower = lower { self.visit(lower) }
       if let upper = upper { self.visit(upper) }
-      if let step  = step { self.visit(step) }
+      if let step = step { self.visit(step) }
 
     case let .extSlice(dims):
       // we don't have to check .isEmpty because of NonEmptyArray

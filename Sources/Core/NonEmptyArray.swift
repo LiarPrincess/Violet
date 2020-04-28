@@ -44,7 +44,7 @@ public struct NonEmptyArray<Element>: Sequence,
   public typealias Iterator = Array<Element>.Iterator
 
   public var startIndex: Index { return self.elements.startIndex }
-  public var endIndex:   Index { return self.elements.endIndex }
+  public var endIndex: Index { return self.elements.endIndex }
 
   public subscript(index: Index) -> Iterator.Element {
     return self.elements[index]
@@ -71,8 +71,8 @@ public struct NonEmptyArray<Element>: Sequence,
 
 // MARK: - Conditional conformance
 
-extension NonEmptyArray: Equatable where Element: Equatable { }
-extension NonEmptyArray: Hashable  where Element: Hashable { }
+extension NonEmptyArray: Equatable where Element: Equatable {}
+extension NonEmptyArray: Hashable where Element: Hashable {}
 
 // MARK: - To array
 

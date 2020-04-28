@@ -11,8 +11,8 @@ extension Parser {
   // MARK: - Function
 
   /// `funcdef: 'def' NAME parameters ['->' test] ':' suite`
-  internal func funcDef(isAsync:    Bool = false,
-                        start:      SourceLocation? = nil,
+  internal func funcDef(isAsync: Bool = false,
+                        start: SourceLocation? = nil,
                         decorators: [Expression] = []) throws -> Statement {
     assert(self.peek.kind == .def)
 
@@ -48,7 +48,7 @@ extension Parser {
   // MARK: - Class
 
   /// `classdef: 'class' NAME ['(' [arglist] ')'] ':' suite`
-  internal func classDef(start:      SourceLocation? = nil,
+  internal func classDef(start: SourceLocation? = nil,
                          decorators: [Expression] = []) throws -> Statement {
     assert(self.peek.kind == .class)
 

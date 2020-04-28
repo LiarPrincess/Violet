@@ -43,7 +43,7 @@ extension Parser {
     assert(self.isString(self.peek) || self.isFormatString(self.peek))
 
     let start = self.peek.start
-    var end   = self.peek.end
+    var end = self.peek.end
     var string = FString(parserDelegate: self.delegate,
                          lexerDelegate: self.lexerDelegate)
 

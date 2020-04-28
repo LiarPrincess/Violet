@@ -37,6 +37,6 @@ public struct SourceLocation: Equatable {
 
 extension SourceLocation: CustomStringConvertible {
   public var description: String {
-    return "\(line):\(column)"
+    return "\(self.line):\(self.column)"
   }
 }

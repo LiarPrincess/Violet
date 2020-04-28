@@ -109,7 +109,7 @@ extension Lexer {
   private func compareWithCurrentIndent(_ indent: Int) -> IndentCompare {
     let currentIndent = self.indents.indentColumns.last ?? defaultIndent
     return indent == currentIndent ? .equal :
-           indent  > currentIndent ? .greater :
+           indent > currentIndent ? .greater :
            .less
   }
 

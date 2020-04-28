@@ -12,9 +12,9 @@ public enum NumberType {
 extension NumberType: CustomStringConvertible {
   public var description: String {
     switch self {
-    case .binary:      return "binary"
-    case .octal:       return "octal"
-    case .decimal:     return "decimal"
+    case .binary: return "binary"
+    case .octal: return "octal"
+    case .decimal: return "decimal"
     case .hexadecimal: return "hexadecimal"
     }
   }

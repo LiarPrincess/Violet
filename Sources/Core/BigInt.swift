@@ -71,12 +71,12 @@ public struct BigInt:
   /// Number of bits necessary to represent self in binary.
   /// `bitLength` in Python.
   ///
-  ///```py
+  /// ```py
   /// >>> bin(37)
   /// '0b100101'
   /// >>> (37).bit_length()
   /// 6
-  ///```
+  /// ```
   public var minRequiredWidth: Int {
     if self == 0 {
       return 0
@@ -114,11 +114,11 @@ public struct BigInt:
     self.value = v
   }
 
-  public init<T : BinaryInteger>(truncatingIfNeeded source: T) {
+  public init<T: BinaryInteger>(truncatingIfNeeded source: T) {
     self.value = Storage(truncatingIfNeeded: source)
   }
 
-  public init<T : BinaryInteger>(clamping source: T) {
+  public init<T: BinaryInteger>(clamping source: T) {
     self.value = Storage(clamping: source)
   }
 
@@ -178,7 +178,7 @@ public struct BigInt:
     lhs.value *= rhs.value
   }
 
-  public static func / (lhs: BigInt, rhs:BigInt) -> BigInt {
+  public static func / (lhs: BigInt, rhs: BigInt) -> BigInt {
     return BigInt(lhs.value / rhs.value)
   }
 

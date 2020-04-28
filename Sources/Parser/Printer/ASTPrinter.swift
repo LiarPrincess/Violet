@@ -56,7 +56,7 @@ public final class ASTPrinter: ASTVisitor, StatementVisitor, ExpressionVisitor {
   }
 
   internal func block(title: String, lines: Doc...) -> Doc {
-    return block(title: title, lines: lines)
+    return self.block(title: title, lines: lines)
   }
 
   internal func block(title: String, lines: [Doc]) -> Doc {

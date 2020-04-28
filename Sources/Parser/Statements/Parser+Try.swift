@@ -8,8 +8,8 @@ import VioletLexer
 /// Intermediate representation for try.
 private struct TryIR {
   fileprivate var handlers = [ExceptHandler]()
-  fileprivate var orElse   = [Statement]()
-  fileprivate var finally  = [Statement]()
+  fileprivate var orElse = [Statement]()
+  fileprivate var finally = [Statement]()
   fileprivate var end: SourceLocation
 
   fileprivate init(end: SourceLocation) {
@@ -55,8 +55,8 @@ extension Parser {
 
     return self.builder.tryStmt(body: body,
                                 handlers: ir.handlers,
-                                orElse:   ir.orElse,
-                                finally:  ir.finally,
+                                orElse: ir.orElse,
+                                finally: ir.finally,
                                 start: start,
                                 end: ir.end)
   }

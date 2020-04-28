@@ -1,5 +1,5 @@
-import VioletCore
 import Rapunzel
+import VioletCore
 
 // swiftlint:disable file_length
 // swiftlint:disable vertical_parameter_alignment_on_call
@@ -514,8 +514,8 @@ extension ASTPrinter {
   public func visit(_ op: UnaryOpExpr.Operator) -> Doc {
     switch op {
     case .invert: return self.text("inv")
-    case .not:    return self.text("not")
-    case .plus:  return self.text("+")
+    case .not: return self.text("not")
+    case .plus: return self.text("+")
     case .minus: return self.text("-")
     }
   }
@@ -523,7 +523,7 @@ extension ASTPrinter {
   public func visit(_ op: BoolOpExpr.Operator) -> Doc {
     switch op {
     case .and: return self.text("and")
-    case .or:  return self.text("or")
+    case .or: return self.text("or")
     }
   }
 
@@ -547,15 +547,15 @@ extension ASTPrinter {
 
   public func visit(_ op: CompareExpr.Operator) -> Doc {
     switch op {
-    case .equal:    return self.text("==")
+    case .equal: return self.text("==")
     case .notEqual: return self.text("!=")
-    case .less:      return self.text("<")
+    case .less: return self.text("<")
     case .lessEqual: return self.text("<=")
-    case .greater:      return self.text(">")
+    case .greater: return self.text(">")
     case .greaterEqual: return self.text(">=")
-    case .is:    return self.text("is")
+    case .is: return self.text("is")
     case .isNot: return self.text("is not")
-    case .in:    return self.text("in")
+    case .in: return self.text("in")
     case .notIn: return self.text("not in")
     }
   }

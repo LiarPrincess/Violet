@@ -38,25 +38,26 @@ internal final class SetStoreExpressionContext: ExpressionVisitor {
   }
 
   // MARK: - Visitor
-  internal func visit(_ node: TrueExpr) { }
-  internal func visit(_ node: FalseExpr) { }
-  internal func visit(_ node: NoneExpr) { }
-  internal func visit(_ node: EllipsisExpr) { }
+
+  internal func visit(_ node: TrueExpr) {}
+  internal func visit(_ node: FalseExpr) {}
+  internal func visit(_ node: NoneExpr) {}
+  internal func visit(_ node: EllipsisExpr) {}
 
   internal func visit(_ node: IdentifierExpr) {
     self.setContext(node)
   }
 
-  internal func visit(_ node: StringExpr) { }
-  internal func visit(_ node: IntExpr) { }
-  internal func visit(_ node: FloatExpr) { }
-  internal func visit(_ node: ComplexExpr) { }
-  internal func visit(_ node: BytesExpr) { }
+  internal func visit(_ node: StringExpr) {}
+  internal func visit(_ node: IntExpr) {}
+  internal func visit(_ node: FloatExpr) {}
+  internal func visit(_ node: ComplexExpr) {}
+  internal func visit(_ node: BytesExpr) {}
 
-  internal func visit(_ node: UnaryOpExpr) { }
-  internal func visit(_ node: BinaryOpExpr) { }
-  internal func visit(_ node: BoolOpExpr) { }
-  internal func visit(_ node: CompareExpr) { }
+  internal func visit(_ node: UnaryOpExpr) {}
+  internal func visit(_ node: BinaryOpExpr) {}
+  internal func visit(_ node: BoolOpExpr) {}
+  internal func visit(_ node: CompareExpr) {}
 
   internal func visit(_ node: TupleExpr) {
     self.setContext(node)
@@ -68,22 +69,22 @@ internal final class SetStoreExpressionContext: ExpressionVisitor {
     self.visit(node.elements)
   }
 
-  internal func visit(_ node: DictionaryExpr) { }
-  internal func visit(_ node: SetExpr) { }
-  internal func visit(_ node: ListComprehensionExpr) { }
+  internal func visit(_ node: DictionaryExpr) {}
+  internal func visit(_ node: SetExpr) {}
+  internal func visit(_ node: ListComprehensionExpr) {}
 
-  internal func visit(_ node: SetComprehensionExpr) { }
-  internal func visit(_ node: DictionaryComprehensionExpr) { }
-  internal func visit(_ node: GeneratorExpr) { }
+  internal func visit(_ node: SetComprehensionExpr) {}
+  internal func visit(_ node: DictionaryComprehensionExpr) {}
+  internal func visit(_ node: GeneratorExpr) {}
 
-  internal func visit(_ node: AwaitExpr) { }
-  internal func visit(_ node: YieldExpr) { }
-  internal func visit(_ node: YieldFromExpr) { }
+  internal func visit(_ node: AwaitExpr) {}
+  internal func visit(_ node: YieldExpr) {}
+  internal func visit(_ node: YieldFromExpr) {}
 
-  internal func visit(_ node: LambdaExpr) { }
-  internal func visit(_ node: CallExpr) { }
+  internal func visit(_ node: LambdaExpr) {}
+  internal func visit(_ node: CallExpr) {}
 
-  internal func visit(_ node: IfExpr) { }
+  internal func visit(_ node: IfExpr) {}
 
   internal func visit(_ node: AttributeExpr) {
     self.setContext(node)

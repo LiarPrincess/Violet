@@ -182,7 +182,7 @@ internal struct TestListStarExprResult {
       return e
     case let .tuple(es, end):
       return builder.tupleExpr(elements: Array(es),
-                               context: context,
+                               context: self.context,
                                start: start,
                                end: end)
     }

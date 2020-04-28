@@ -44,7 +44,7 @@ public enum SipHash {
 
     /// Process remaining bytes
     let wordSizeInBytes = MemoryLayout<UInt64>.size
-    let remainingBytes = bytes.count %  wordSizeInBytes
+    let remainingBytes = bytes.count % wordSizeInBytes
     let remainingBytesStart = (bytes.count / wordSizeInBytes) * wordSizeInBytes
 
     var b = UInt64(bytes.count) &<< 56
@@ -54,7 +54,7 @@ public enum SipHash {
     case 5: b |= UInt64(bytes[remainingBytesStart + 4]) &<< 32; fallthrough
     case 4: b |= UInt64(bytes[remainingBytesStart + 3]) &<< 24; fallthrough
     case 3: b |= UInt64(bytes[remainingBytesStart + 2]) &<< 16; fallthrough
-    case 2: b |= UInt64(bytes[remainingBytesStart + 1]) &<<  8; fallthrough
+    case 2: b |= UInt64(bytes[remainingBytesStart + 1]) &<< 8; fallthrough
     case 1: b |= UInt64(bytes[remainingBytesStart]); fallthrough
     case 0: state.process(b)
     default: assert(false, "0 <= remainingBytes < 8")
@@ -66,10 +66,10 @@ public enum SipHash {
   private struct State {
     // We will use the same "somepseudorandomlygeneratedbytes" as in example.
     // (Although it is very tempting to use Disney themed values.)
-    private var v0: UInt64 = 0x736f6d6570736575
-    private var v1: UInt64 = 0x646f72616e646f6d
-    private var v2: UInt64 = 0x6c7967656e657261
-    private var v3: UInt64 = 0x7465646279746573
+    private var v0: UInt64 = 0x736f_6d65_7073_6575
+    private var v1: UInt64 = 0x646f_7261_6e64_6f6d
+    private var v2: UInt64 = 0x6c79_6765_6e65_7261
+    private var v3: UInt64 = 0x7465_6462_7974_6573
 
     fileprivate init(key0: UInt64, key1: UInt64) {
       self.v0 ^= key0
@@ -99,20 +99,20 @@ public enum SipHash {
     }
 
     private mutating func round() {
-      self.v0 = v0 &+ v1
-      self.v1 = self.rotateLeft(v1, by: 13)
-      self.v1 ^= v0
-      self.v0 = self.rotateLeft(v0, by: 32)
-      self.v2 = v2 &+ v3
-      self.v3 = self.rotateLeft(v3, by: 16)
-      self.v3 ^= v2
-      self.v0 = v0 &+ v3
-      self.v3 = self.rotateLeft(v3, by: 21)
-      self.v3 ^= v0
-      self.v2 = v2 &+ v1
-      self.v1 = self.rotateLeft(v1, by: 17)
-      self.v1 ^= v2
-      self.v2 = self.rotateLeft(v2, by: 32)
+      self.v0 = self.v0 &+ self.v1
+      self.v1 = self.rotateLeft(self.v1, by: 13)
+      self.v1 ^= self.v0
+      self.v0 = self.rotateLeft(self.v0, by: 32)
+      self.v2 = self.v2 &+ self.v3
+      self.v3 = self.rotateLeft(self.v3, by: 16)
+      self.v3 ^= self.v2
+      self.v0 = self.v0 &+ self.v3
+      self.v3 = self.rotateLeft(self.v3, by: 21)
+      self.v3 ^= self.v0
+      self.v2 = self.v2 &+ self.v1
+      self.v1 = self.rotateLeft(self.v1, by: 17)
+      self.v1 ^= self.v2
+      self.v2 = self.rotateLeft(self.v2, by: 32)
     }
 
     private func rotateLeft(_ value: UInt64, by count: UInt64) -> UInt64 {

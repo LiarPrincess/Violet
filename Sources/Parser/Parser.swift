@@ -222,13 +222,13 @@ public final class Parser {
 
   /// Report parser warning
   internal func warn(_ kind: ParserWarningKind,
-                     location:  SourceLocation? = nil) {
+                     location: SourceLocation? = nil) {
     let warning = ParserWarning(kind, location: location ?? self.peek.start)
     self.delegate?.warn(warning: warning)
   }
 
   /// Create parser error
-  internal func error(_ kind:   ParserErrorKind,
+  internal func error(_ kind: ParserErrorKind,
                       location: SourceLocation? = nil) -> ParserError {
     return ParserError(kind, location: location ?? self.peek.start)
   }

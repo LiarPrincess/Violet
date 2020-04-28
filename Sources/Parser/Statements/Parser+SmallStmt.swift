@@ -7,10 +7,10 @@ import VioletLexer
 
 extension Parser {
 
-  ///```c
+  /// ```c
   /// small_stmt: (expr_stmt | del_stmt | pass_stmt | flow_stmt |
   ///              import_stmt | global_stmt | nonlocal_stmt | assert_stmt)
-  ///```
+  /// ```
   internal func smallStmt(closingTokens: [TokenKind]) throws -> Statement {
     // swiftlint:disable:previous function_body_length
 

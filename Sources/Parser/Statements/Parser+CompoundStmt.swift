@@ -46,8 +46,8 @@ extension Parser {
   /// Intermediate representation for if/elif.
   private struct IfIR {
     fileprivate let start: SourceLocation
-    fileprivate let test:  Expression
-    fileprivate let body:  NonEmptyArray<Statement>
+    fileprivate let test: Expression
+    fileprivate let body: NonEmptyArray<Statement>
   }
 
   /// ```c
@@ -195,7 +195,7 @@ extension Parser {
     return isAsync ?
       self.builder.asyncForStmt(target: target, iterable: iter, body: body,
                                 orElse: orElse, start: forStart, end: end) :
-      self.builder.forStmt     (target: target, iterable: iter, body: body,
+      self.builder.forStmt(target: target, iterable: iter, body: body,
                                 orElse: orElse, start: forStart, end: end)
     // swiftlint:enable multiline_arguments no_space_in_method_call
   }
@@ -204,7 +204,7 @@ extension Parser {
 
   /// `with_stmt: 'with' with_item (',' with_item)*  ':' suite`
   internal func withStmt(isAsync: Bool = false,
-                         start:   SourceLocation? = nil) throws -> Statement {
+                         start: SourceLocation? = nil) throws -> Statement {
 
     assert(self.peek.kind == .with)
 
@@ -228,7 +228,7 @@ extension Parser {
     // swiftlint:disable no_space_in_method_call
     return isAsync ?
       self.builder.asyncWithStmt(items: items, body: body, start: start, end: end) :
-      self.builder.withStmt     (items: items, body: body, start: start, end: end)
+      self.builder.withStmt(items: items, body: body, start: start, end: end)
     // swiftlint:enable no_space_in_method_call
   }
 

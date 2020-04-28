@@ -160,15 +160,15 @@ extension Parser {
   /// `comp_op: '<'|'>'|'=='|'>='|'<='|'<>'|'!='|'in'|'not' 'in'|'is'|'is' 'not'`
   private static let comparisonOperators: [TokenKind: CompareExpr.Operator] = [
     .equalEqual: .equal,
-    .notEqual:   .notEqual,
+    .notEqual: .notEqual,
     // <> - pep401 is not implmented
-    .less:      .less,
+    .less: .less,
     .lessEqual: .lessEqual,
-    .greater:      .greater,
+    .greater: .greater,
     .greaterEqual: .greaterEqual,
-    .in:  .in,
+    .in: .in,
     .not: .notIn, // 'in' will be checked in code
-    .is:  .is
+    .is: .is
     // is not - will be handled in code
   ]
 

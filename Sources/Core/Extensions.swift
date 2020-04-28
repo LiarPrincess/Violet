@@ -182,7 +182,7 @@ extension Dictionary {
     case takeExisting
   }
 
-  public mutating func merge(_ other: [Key : Value],
+  public mutating func merge(_ other: [Key: Value],
                              uniquingKeysWith: UniquingKeysWithStrategy) {
     switch uniquingKeysWith {
     case .takeExisting:
