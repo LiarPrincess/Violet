@@ -97,7 +97,6 @@ opt_in_rules:
   - modifier_order
   - reduce_into
   - unused_import
-  - unused_private_declaration
   - unused_declaration
 
   # Maybe later:
