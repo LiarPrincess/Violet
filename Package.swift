@@ -8,10 +8,17 @@ let package = Package(
     .macOS(.v10_11)
   ],
   products: [
+    // Main executable
     .executable(name: "Violet", targets: ["Violet"]),
+    // Executable for running tests written in Python (from 'PyTest' directory)
+    .executable(name: "PyTests", targets: ["PyTests"]),
+    // Violet as a library
     .library(name: "VioletFramework", targets: ["VioletVM"]),
 
+    // Code generation tool used for AST and bytecode
     .executable(name: "Elsa", targets: ["Elsa"]),
+    // Pretty printer based on Philip Wadler idea:
+    // https://homepages.inf.ed.ac.uk/wadler/papers/prettier/prettier.pdf
     .library(name: "Rapunzel", targets: ["Rapunzel"])
   ],
   dependencies: [
@@ -58,6 +65,9 @@ let package = Package(
 
     // Main executable
     .target(name: "Violet", dependencies: ["VioletVM"]),
+
+    // Target for running tests written in Python (from 'PyTest' directory)
+    .target(name: "PyTests", dependencies: ["VioletVM"]),
 
     // Code generation tool used for AST and bytecode
     .target(name: "Elsa"),
