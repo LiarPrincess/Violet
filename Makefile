@@ -43,7 +43,7 @@ lint:
 
 format:
 	# --dryrun
-	SwiftFormat --config ./.swiftformat "./Sources/Core" "./Sources/Lexer" "./Sources/Parser"
+	SwiftFormat --config ./.swiftformat "./Sources"
 
 # -----------
 # -- Xcode --

@@ -229,7 +229,7 @@ extension CompilerImpl {
   /// 22 RETURN_VALUE
   /// ```
   private func visitWith(items: NonEmptyArray<WithItem>,
-                         body:  NonEmptyArray<Statement>,
+                         body: NonEmptyArray<Statement>,
                          index: Int) throws {
     let item = items[index]
     let afterBody = self.builder.createLabel()
@@ -401,7 +401,7 @@ extension CompilerImpl {
 
   // MARK: - Pass
 
-  internal func visit(_ node: PassStmt) throws { }
+  internal func visit(_ node: PassStmt) throws {}
 
   // MARK: - Global, nonlocal
 

@@ -126,7 +126,7 @@ internal final class SymbolTableBuilderImpl:
   /// In general variables with '__' prefix should only be used if we
   /// really need mangling to avoid potential name clash.
   internal func addSymbol(_ name: String,
-                          flags:  SymbolFlags,
+                          flags: SymbolFlags,
                           location: SourceLocation) throws {
     let mangled = MangledName(className: self.className, name: name)
 
@@ -231,7 +231,7 @@ internal final class SymbolTableBuilderImpl:
   // MARK: - Error/warning
 
   /// Report compiler warning
-  internal func warn(_ kind: CompilerWarningKind, location:  SourceLocation) {
+  internal func warn(_ kind: CompilerWarningKind, location: SourceLocation) {
     let warning = CompilerWarning(kind, location: location)
     self.delegate?.warn(warning: warning)
   }

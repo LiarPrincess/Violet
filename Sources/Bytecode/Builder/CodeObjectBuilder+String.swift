@@ -4,7 +4,7 @@ extension CodeObjectBuilder {
 
   /// Append a `formatValue` instruction to this code object.
   public func appendFormatValue(conversion: Instruction.StringConversion,
-                                hasFormat:  Bool) {
+                                hasFormat: Bool) {
     self.append(.formatValue(conversion: conversion, hasFormat: hasFormat))
   }
 

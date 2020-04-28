@@ -47,7 +47,7 @@ extension CodeObject {
   private func dumpKind() -> String {
     switch self.kind {
     case .module: return "Module"
-    case .`class`: return "Class"
+    case .class: return "Class"
     case .function: return "Function"
     case .asyncFunction: return "Async function"
     case .lambda: return "Lambda"
@@ -157,9 +157,9 @@ extension CodeObject {
     case .getYieldFromIter:
       return "getYieldFromIter"
 
-    case .`break`:
+    case .break:
       return "break"
-    case .`continue`(let loopStartLabel):
+    case .continue(let loopStartLabel):
       let label = self.getLabel(extendedArg + Int(loopStartLabel))
       return "continue (loopStartByte: \(label))"
 
@@ -269,7 +269,7 @@ extension CodeObject {
     case let .callFunctionEx(hasKeywordArguments: hasKeywordArguments):
       return "callFunctionEx (hasKeywordArguments: \(hasKeywordArguments))"
 
-    case .`return`:
+    case .return:
       return "return"
 
     case .loadBuildClass:
@@ -388,9 +388,9 @@ extension CodeObject {
 
   private func toString(_ c: Constant) -> String {
     switch c {
-    case .true:  return "true"
+    case .true: return "true"
     case .false: return "false"
-    case .none:     return "none"
+    case .none: return "none"
     case .ellipsis: return "ellipsis"
 
     case let .integer(value):

@@ -30,8 +30,8 @@ private final class OuterContext {
   /// Set of variables bound in outer scopes (used for nonlocals)
   fileprivate var bound: Set<MangledName>
 
-  fileprivate init(free:   [MangledName: SymbolInfo],
-                   bound:  Set<MangledName>,
+  fileprivate init(free: [MangledName: SymbolInfo],
+                   bound: Set<MangledName>,
                    global: Set<MangledName>) {
     self.free = free
     self.bound = bound
@@ -50,7 +50,7 @@ private final class ScopeContext {
 
   /// Sources for each symbol (basically the main thing in this pass).
   /// CPython: `scopes`
-  fileprivate var symbolSources = [MangledName:SymbolFlags]()
+  fileprivate var symbolSources = [MangledName: SymbolFlags]()
 
   /// Variable names visible in nested blocks.
   /// Basically: outer bound + our local bound
@@ -142,7 +142,7 @@ internal final class SymbolTableVariableSourcePass {
   }
 
   private func mergeFree(target: inout [MangledName: SymbolInfo],
-                         src:          [MangledName: SymbolInfo]) {
+                         src: [MangledName: SymbolInfo]) {
     target.merge(src) { lhs, _ in lhs }
   }
 
@@ -152,8 +152,8 @@ internal final class SymbolTableVariableSourcePass {
   ///
   /// analyze_name(PySTEntryObject *ste, PyObject *scopes, PyObject *name, ...)
   private func analyzeName(_ name: MangledName,
-                           info:   SymbolInfo,
-                           scope:  SymbolScope,
+                           info: SymbolInfo,
+                           scope: SymbolScope,
                            scopeContext: ScopeContext,
                            outerContext: OuterContext?) throws {
     // CPython translation:
@@ -217,8 +217,8 @@ internal final class SymbolTableVariableSourcePass {
     addingFreeVariablesTo free: inout [MangledName: SymbolInfo]) throws {
 
     // Set is an value type in Swift, so we can simply:
-    let childContext = OuterContext(free:   scopeContext.newFree,
-                                    bound:  scopeContext.newBound,
+    let childContext = OuterContext(free: scopeContext.newFree,
+                                    bound: scopeContext.newBound,
                                     global: scopeContext.newGlobal)
 
     try self.analyzeBlock(scope: scope, outerContext: childContext)

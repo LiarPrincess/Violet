@@ -30,13 +30,13 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - General
 
-  internal func visit(_ node: NoneExpr) throws { }
-  internal func visit(_ node: EllipsisExpr) throws { }
+  internal func visit(_ node: NoneExpr) throws {}
+  internal func visit(_ node: EllipsisExpr) throws {}
 
   // MARK: - Bool
 
-  internal func visit(_ node: TrueExpr) throws { }
-  internal func visit(_ node: FalseExpr) throws { }
+  internal func visit(_ node: TrueExpr) throws {}
+  internal func visit(_ node: FalseExpr) throws {}
 
   // MARK: - Identifier
 
@@ -56,9 +56,9 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Numbers
 
-  internal func visit(_ node: IntExpr) throws { }
-  internal func visit(_ node: FloatExpr) throws { }
-  internal func visit(_ node: ComplexExpr) throws { }
+  internal func visit(_ node: IntExpr) throws {}
+  internal func visit(_ node: FloatExpr) throws {}
+  internal func visit(_ node: ComplexExpr) throws {}
 
   // MARK: - String
 
@@ -80,7 +80,7 @@ extension SymbolTableBuilderImpl {
     }
   }
 
-  internal func visit(_ node: BytesExpr) throws { }
+  internal func visit(_ node: BytesExpr) throws {}
 
   // MARK: - Operators
 
@@ -178,7 +178,7 @@ extension SymbolTableBuilderImpl {
   /// - Parameters:
   ///   - elt: element (key in dictionary)
   ///   - value: value in dictionary, nil otherwise
-  private func visitComprehension(elt:   Expression,
+  private func visitComprehension(elt: Expression,
                                   value: Expression?,
                                   generators: NonEmptyArray<Comprehension>,
                                   expr: Expression,
@@ -220,10 +220,10 @@ extension SymbolTableBuilderImpl {
 
   private func getIdentifier(for kind: ComprehensionKind) -> String {
     switch kind {
-    case .list:       return SymbolScopeNames.listcomp
-    case .set:        return SymbolScopeNames.setcomp
+    case .list: return SymbolScopeNames.listcomp
+    case .set: return SymbolScopeNames.setcomp
     case .dictionary: return SymbolScopeNames.dictcomp
-    case .generator:  return SymbolScopeNames.genexpr
+    case .generator: return SymbolScopeNames.genexpr
     }
   }
 

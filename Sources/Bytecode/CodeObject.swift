@@ -23,16 +23,16 @@ public final class CodeObject: CustomStringConvertible {
   public struct Flags: OptionSet {
     public let rawValue: UInt16
 
-    public static let optimized   = Flags(rawValue: 0x0001)
-    public static let newLocals   = Flags(rawValue: 0x0002)
-    public static let varArgs     = Flags(rawValue: 0x0004)
+    public static let optimized = Flags(rawValue: 0x0001)
+    public static let newLocals = Flags(rawValue: 0x0002)
+    public static let varArgs = Flags(rawValue: 0x0004)
     public static let varKeywords = Flags(rawValue: 0x0008)
-    public static let nested      = Flags(rawValue: 0x0010)
-    public static let generator   = Flags(rawValue: 0x0020)
-    public static let noFree      = Flags(rawValue: 0x0040)
-    public static let coroutine         = Flags(rawValue: 0x0080)
+    public static let nested = Flags(rawValue: 0x0010)
+    public static let generator = Flags(rawValue: 0x0020)
+    public static let noFree = Flags(rawValue: 0x0040)
+    public static let coroutine = Flags(rawValue: 0x0080)
     public static let iterableCoroutine = Flags(rawValue: 0x0100)
-    public static let asyncGenerator    = Flags(rawValue: 0x0200)
+    public static let asyncGenerator = Flags(rawValue: 0x0200)
 
     public init(rawValue: UInt16) {
       self.rawValue = rawValue
@@ -54,8 +54,8 @@ public final class CodeObject: CustomStringConvertible {
 
     public var description: String {
       switch self {
-      case .`true`: return "true"
-      case .`false`: return "false"
+      case .true: return "true"
+      case .false: return "false"
       case .none: return "none"
       case .ellipsis: return "ellipsis"
       case let .integer(i): return "integer(\(i))"

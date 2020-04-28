@@ -36,6 +36,7 @@ public enum CompilerUnimplemented: CustomStringConvertible, Equatable {
 extension CompilerImpl {
 
   // MARK: - Comprehension
+
   // Remember about self.setAppendLocation(ASTNode)!
 
   internal func visit(_ node: ListComprehensionExpr) throws {

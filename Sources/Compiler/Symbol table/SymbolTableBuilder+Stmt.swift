@@ -362,7 +362,7 @@ extension SymbolTableBuilderImpl {
 
   // MARK: - Pass, break, continue
 
-  internal func visit(_ node: PassStmt) throws { }
-  internal func visit(_ node: BreakStmt) throws { }
-  internal func visit(_ node: ContinueStmt) throws { }
+  internal func visit(_ node: PassStmt) throws {}
+  internal func visit(_ node: BreakStmt) throws {}
+  internal func visit(_ node: ContinueStmt) throws {}
 }

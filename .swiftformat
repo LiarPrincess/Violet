@@ -3,6 +3,14 @@
 # =================
 
 --exclude Sources/Parser/Generated/*
+--exclude Sources/Bytecode/Generated/*
+
+--exclude Sources/Objects/*
+--exclude Sources/VM/*
+--exclude Sources/Violet/*
+
+--exclude Sources/Elsa/*
+--exclude Sources/Rapunzel/*
 
 # =============
 # == Options ==

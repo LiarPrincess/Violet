@@ -147,8 +147,8 @@ extension CompilerImpl {
 
       var conversion = Instruction.StringConversion.none
       switch conv {
-      case .some(.str):   conversion = .str
-      case .some(.repr):  conversion = .repr
+      case .some(.str): conversion = .str
+      case .some(.repr): conversion = .repr
       case .some(.ascii): conversion = .ascii
       default: break
       }
@@ -205,7 +205,7 @@ extension CompilerImpl {
 
     switch node.op {
     case .and: self.builder.appendJumpIfFalseOrPop(to: end)
-    case .or:  self.builder.appendJumpIfTrueOrPop(to: end)
+    case .or: self.builder.appendJumpIfTrueOrPop(to: end)
     }
 
     try self.visit(node.right)
@@ -349,7 +349,7 @@ extension CompilerImpl {
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visitAttribute(object: Expression,
-                               name:   String,
+                               name: String,
                                context: ExpressionContext,
                                isAugumented: Bool = false) throws {
     let mangled = self.mangle(name: name)
@@ -386,8 +386,8 @@ extension CompilerImpl {
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visitSubscript(object: Expression,
-                               slice:  Slice,
-                               context:  ExpressionContext,
+                               slice: Slice,
+                               context: ExpressionContext,
                                isAugumented: Bool = false) throws {
     let isAugumentedStore = isAugumented && context == .store
     if !isAugumentedStore {
@@ -399,8 +399,8 @@ extension CompilerImpl {
 
   /// compiler_visit_slice(struct compiler *c, slice_ty s, expr_context_ty ctx)
   /// compiler_handle_subscr(struct compiler *c, const char *kind, ...)
-  private func visitSlice(slice:  Slice,
-                          context:  ExpressionContext,
+  private func visitSlice(slice: Slice,
+                          context: ExpressionContext,
                           isAugumented: Bool) throws {
 
     let isAugumentedStore = isAugumented && context == .store
@@ -451,7 +451,7 @@ extension CompilerImpl {
   /// compiler_slice(struct compiler *c, slice_ty s, expr_context_ty ctx)
   private func compileSlice(lower: Expression?,
                             upper: Expression?,
-                            step:  Expression?) throws {
+                            step: Expression?) throws {
 
     if let l = lower {
       try self.visit(l)
@@ -492,7 +492,7 @@ extension CompilerImpl {
   // swiftlint:disable function_body_length
 
   /// compiler_jump_if(struct compiler *c, expr_ty e, basicblock *next, int cond)
-  internal func visit(_ expression:  Expression,
+  internal func visit(_ expression: Expression,
                       andJumpTo next: Label,
                       ifBooleanValueIs cond: Bool) throws {
     // swiftlint:enable function_body_length
@@ -511,8 +511,8 @@ extension CompilerImpl {
       let hasLabel = cond != isOr
       let next2 = hasLabel ? self.builder.createLabel() : next
 
-      try self.visit(boolOp.left,  andJumpTo: next2, ifBooleanValueIs: isOr)
-      try self.visit(boolOp.right, andJumpTo: next,  ifBooleanValueIs: cond)
+      try self.visit(boolOp.left, andJumpTo: next2, ifBooleanValueIs: isOr)
+      try self.visit(boolOp.right, andJumpTo: next, ifBooleanValueIs: cond)
 
       if hasLabel {
         self.builder.setLabel(next2)
@@ -520,11 +520,11 @@ extension CompilerImpl {
 
       return
     } else if let ifExpr = expression as? IfExpr {
-      let end   = self.builder.createLabel()
+      let end = self.builder.createLabel()
       let next2 = self.builder.createLabel()
 
       try self.visit(ifExpr.test, andJumpTo: next2, ifBooleanValueIs: false)
-      try self.visit(ifExpr.body, andJumpTo: next,  ifBooleanValueIs: cond)
+      try self.visit(ifExpr.body, andJumpTo: next, ifBooleanValueIs: cond)
 
       self.builder.appendJumpAbsolute(to: end)
       self.builder.setLabel(next2)
@@ -540,12 +540,12 @@ extension CompilerImpl {
     // general implementation:
     try self.visit(expression)
     switch cond {
-    case true:  self.builder.appendPopJumpIfTrue(to: next)
+    case true: self.builder.appendPopJumpIfTrue(to: next)
     case false: self.builder.appendPopJumpIfFalse(to: next)
     }
   }
 
-  private func visit(_ compare:  CompareExpr,
+  private func visit(_ compare: CompareExpr,
                      andJumpTo next: Label,
                      ifBooleanValueIs cond: Bool) throws {
     assert(compare.elements.count > 1)
@@ -568,7 +568,7 @@ extension CompilerImpl {
     self.builder.appendCompareOp(operator: last.op)
 
     switch cond {
-    case true:  self.builder.appendPopJumpIfTrue(to: next)
+    case true: self.builder.appendPopJumpIfTrue(to: next)
     case false: self.builder.appendPopJumpIfFalse(to: next)
     }
 

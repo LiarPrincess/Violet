@@ -21,17 +21,17 @@ extension CompilerImpl {
     }
 
     try self.visit(node.function)
-    try self.callHelper(args:     node.args,
+    try self.callHelper(args: node.args,
                         keywords: node.keywords,
-                        context:  node.context,
+                        context: node.context,
                         alreadyPushedArgs: 0)
   }
 
   /// maybe_optimize_method_call(struct compiler *c, expr_ty e)
   private func emitOptimizedMethodCall(function: Expression,
-                                       args:     [Expression],
+                                       args: [Expression],
                                        keywords: [KeywordArgument],
-                                       context:  ExpressionContext) throws -> Bool {
+                                       context: ExpressionContext) throws -> Bool {
     // Check if it is an method
     guard let method = function as? AttributeExpr, context == .load else {
       return false
@@ -39,7 +39,7 @@ extension CompilerImpl {
 
     // No keywords or varargs
     let hasVarargs = args.contains { $0 is StarredExpr }
-    guard !hasVarargs && keywords.isEmpty  else {
+    guard !hasVarargs && keywords.isEmpty else {
       return false
     }
 
@@ -60,7 +60,7 @@ extension CompilerImpl {
   /// ```
   internal func callHelper(args: [Expression],
                            keywords: [KeywordArgument],
-                           context:  ExpressionContext,
+                           context: ExpressionContext,
                            alreadyPushedArgs: Int) throws {
     var nSeen = alreadyPushedArgs
     var nSubArgs = 0

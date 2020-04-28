@@ -29,10 +29,10 @@ public final class SymbolTable {
 public struct ScopeByNodeDictionary {
 
   // We can't use `Node` as key because it as an protocol.
-  private var inner = [ASTNodeId:SymbolScope]()
+  private var inner = [ASTNodeId: SymbolScope]()
 
   // `internal` so, that we can't instantiate it outside of this module.
-  internal init() { }
+  internal init() {}
 
   public internal(set) subscript<N: ASTNode>(key: N) -> SymbolScope? {
     get { return self.inner[key.id] }

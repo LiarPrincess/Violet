@@ -44,7 +44,7 @@ extension CompilerImpl {
     }
   }
 
-  ///compiler_try_finally(struct compiler *c, stmt_ty s)
+  /// compiler_try_finally(struct compiler *c, stmt_ty s)
   ///
   /// Code generated for "try: <body> finally: <finalbody>" is as follows:
   ///
@@ -74,8 +74,8 @@ extension CompilerImpl {
   ///   stack.
   private func visitTryFinally(body: NonEmptyArray<Statement>,
                                handlers: [ExceptHandler],
-                               orElse:   [Statement],
-                               finally:  [Statement]) throws {
+                               orElse: [Statement],
+                               finally: [Statement]) throws {
     let finallyStart = self.builder.createLabel()
 
     // body
@@ -135,7 +135,7 @@ extension CompilerImpl {
   /// Of course, parts are not generated if Vi or Ei is not present.
   private func visitTryExcept(body: NonEmptyArray<Statement>,
                               handlers: [ExceptHandler],
-                              orElse:   [Statement]) throws {
+                              orElse: [Statement]) throws {
     // THERE IS A DIFFERENCE BETWEEN US AND CPYTHON.
     // SEE LONG COMMENT ABOVE THIS FUNCTION!
     // WE WILL PUSH ONLY EXCEPTION (WITHOUT TYPE AND TRACEBACK)!

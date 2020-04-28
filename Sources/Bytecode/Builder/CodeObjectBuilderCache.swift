@@ -10,17 +10,17 @@ internal struct CodeObjectBuilderCache {
   internal var zero: Int?
   internal var one: Int?
   /// CodeObject.constants -> string
-  internal var constantStrings = [UseScalarsToHashString:Int]()
+  internal var constantStrings = [UseScalarsToHashString: Int]()
 
   /// CodeObject.names
-  internal var names = [UseScalarsToHashString:Int]()
+  internal var names = [UseScalarsToHashString: Int]()
 
   /// CodeObject.variableNames
-  internal let variableNames: [MangledName:Int]
+  internal let variableNames: [MangledName: Int]
   /// CodeObject.freeVariableNames
-  internal let freeVariableNames: [MangledName:Int]
+  internal let freeVariableNames: [MangledName: Int]
   /// CodeObject.cellVariableNames
-  internal let cellVariableNames: [MangledName:Int]
+  internal let cellVariableNames: [MangledName: Int]
 
   internal init(code: CodeObject) {
     for (index, constant) in code.constants.enumerated() {
@@ -56,8 +56,8 @@ internal struct CodeObjectBuilderCache {
 }
 
 /// Name -> index
-private func toIndexDict(names: [String]) -> [UseScalarsToHashString:Int] {
-  var result = [UseScalarsToHashString:Int]()
+private func toIndexDict(names: [String]) -> [UseScalarsToHashString: Int] {
+  var result = [UseScalarsToHashString: Int]()
   result.reserveCapacity(names.count)
 
   for (index, name) in names.enumerated() {
@@ -70,8 +70,8 @@ private func toIndexDict(names: [String]) -> [UseScalarsToHashString:Int] {
 }
 
 /// Mangled name -> index
-private func toIndexDict(names: [MangledName]) -> [MangledName:Int] {
-  var result = [MangledName:Int]()
+private func toIndexDict(names: [MangledName]) -> [MangledName: Int] {
+  var result = [MangledName: Int]()
   result.reserveCapacity(names.count)
 
   for (index, name) in names.enumerated() {

@@ -212,7 +212,7 @@ extension CompilerImpl {
   /// check_ann_slice(struct compiler *c, slice_ty sl)
   private func visitAnnSlice(lower: Expression?,
                              upper: Expression?,
-                             step:  Expression?) throws {
+                             step: Expression?) throws {
     if let l = lower { try self.checkAnnExpr(l) }
     if let u = upper { try self.checkAnnExpr(u) }
     if let s = step { try self.checkAnnExpr(s) }

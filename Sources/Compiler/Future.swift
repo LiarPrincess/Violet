@@ -13,14 +13,14 @@ public struct FutureFeatures {
     public let rawValue: UInt8
 
     /// Absolute imports are now default
-    public static let absoluteImport  = Flags(rawValue: 1 << 0)
-    public static let division        = Flags(rawValue: 1 << 1)
-    public static let withStatement   = Flags(rawValue: 1 << 2)
-    public static let printFunction   = Flags(rawValue: 1 << 3)
+    public static let absoluteImport = Flags(rawValue: 1 << 0)
+    public static let division = Flags(rawValue: 1 << 1)
+    public static let withStatement = Flags(rawValue: 1 << 2)
+    public static let printFunction = Flags(rawValue: 1 << 3)
     public static let unicodeLiterals = Flags(rawValue: 1 << 4)
-    public static let barryAsBdfl     = Flags(rawValue: 1 << 5)
-    public static let generatorStop   = Flags(rawValue: 1 << 6)
-    public static let annotations     = Flags(rawValue: 1 << 7)
+    public static let barryAsBdfl = Flags(rawValue: 1 << 5)
+    public static let generatorStop = Flags(rawValue: 1 << 6)
+    public static let annotations = Flags(rawValue: 1 << 7)
 
     public init(rawValue: UInt8) {
       self.rawValue = rawValue
@@ -30,15 +30,15 @@ public struct FutureFeatures {
   // MARK: - Properties
 
   /// Flags set by future statements
-  public fileprivate(set) var flags: Flags = []
+  public private(set) var flags: Flags = []
 
   /// Line number of last future statement
-  public fileprivate(set) var lastLine: SourceLine = 0
+  public private(set) var lastLine: SourceLine = 0
 
   // MARK: - Init
 
   /// Private to force 'FutureFeatures.parse(ast:)'
-  private init() { }
+  private init() {}
 
   // MARK: - Parse
 

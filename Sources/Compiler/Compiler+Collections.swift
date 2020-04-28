@@ -56,7 +56,7 @@ extension CompilerImpl {
       try self.emitStoreWithPossibleUnpack(elements: elements)
     case .load:
       let adapter = TupleLoadAdapter(builder: self.builder)
-      try self.emitLoadWithPossibleUnpack(elements: elements, adapter:  adapter)
+      try self.emitLoadWithPossibleUnpack(elements: elements, adapter: adapter)
     case .del:
       try self.visit(elements)
     }
@@ -90,7 +90,7 @@ extension CompilerImpl {
       try self.emitStoreWithPossibleUnpack(elements: elements)
     case .load:
       let adapter = ListLoadAdapter(builder: self.builder)
-      try self.emitLoadWithPossibleUnpack(elements: elements, adapter:  adapter)
+      try self.emitLoadWithPossibleUnpack(elements: elements, adapter: adapter)
     case .del:
       try self.visit(elements)
     }
@@ -167,7 +167,7 @@ extension CompilerImpl {
 
     let elements = node.elements
     let adapter = SetLoadAdapter(builder: self.builder)
-    try self.emitLoadWithPossibleUnpack(elements: elements, adapter:  adapter)
+    try self.emitLoadWithPossibleUnpack(elements: elements, adapter: adapter)
   }
 
   // MARK: - Helpers
@@ -209,7 +209,7 @@ extension CompilerImpl {
 
       let countBefore = index
       let countAfter = elements.count - index - 1
-      if countBefore > 0xff || countAfter > 0xffff_ff {
+      if countBefore > 0xff || countAfter > 0xffffff {
         throw self.error(.tooManyExpressionsInStarUnpackingAssignment)
       }
 

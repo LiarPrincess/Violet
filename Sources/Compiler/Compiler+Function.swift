@@ -108,7 +108,7 @@ extension CompilerImpl {
 
   /// compiler_visit_kwonlydefaults(struct compiler *c, asdl_seq *kwonlyargs,
   /// asdl_seq *kw_defaults)
-  private func visitKwOnlyDefaults(kwOnlyArgs:     [Argument],
+  private func visitKwOnlyDefaults(kwOnlyArgs: [Argument],
                                    kwOnlyDefaults: [Expression],
                                    updating flags: inout Instruction.FunctionFlags,
                                    location: SourceLocation) throws {

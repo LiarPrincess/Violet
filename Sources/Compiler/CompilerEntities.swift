@@ -42,9 +42,9 @@ internal final class CompilerUnit {
   /// Mostly used for mangling.
   internal let className: String?
 
-  internal init(scope:      SymbolScope,
+  internal init(scope: SymbolScope,
                 codeObject: CodeObject,
-                className:  String?) {
+                className: String?) {
     self.scope = scope
     self.codeObject = codeObject
     self.builder = CodeObjectBuilder(codeObject: codeObject)
