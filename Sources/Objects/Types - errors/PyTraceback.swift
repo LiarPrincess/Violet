@@ -102,7 +102,7 @@ public class PyTraceback: PyObject {
     return self.next
   }
 
-  public func setNext(_ value: PyObject?) -> PyResult<()> {
+  public func setNext(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       return .typeError("can't delete tb_next attribute")
     }
@@ -151,7 +151,7 @@ public class PyTraceback: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyTraceback> {
-    switch newArguments.bind(args: args, kwargs: kwargs) {
+    switch self.newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 4, "Invalid required argument count.")
       assert(binding.optionalCount == 0, "Invalid optional argument count.")

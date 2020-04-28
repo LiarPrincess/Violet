@@ -408,7 +408,7 @@ public class PySet: PyObject, PySetType {
       }
     }
 
-    return.value(Py.none)
+    return .value(Py.none)
   }
 
   // MARK: - Helpers

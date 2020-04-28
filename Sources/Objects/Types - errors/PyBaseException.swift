@@ -217,7 +217,7 @@ public class PyBaseException: PyObject {
     return self.args
   }
 
-  public func setArgs(_ value: PyObject?) -> PyResult<()> {
+  public func setArgs(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       return .typeError("args may not be deleted")
     }
@@ -245,7 +245,7 @@ public class PyBaseException: PyObject {
     return self.traceback
   }
 
-  public func setTraceback(_ value: PyObject?) -> PyResult<()> {
+  public func setTraceback(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       return .typeError("__traceback__ may not be deleted")
     }
@@ -289,7 +289,7 @@ public class PyBaseException: PyObject {
     return self.cause
   }
 
-  public func setCause(_ value: PyObject?) -> PyResult<()> {
+  public func setCause(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       return .typeError("__cause__ may not be deleted") // set to 'None' instead
     }
@@ -327,7 +327,7 @@ public class PyBaseException: PyObject {
     return self.context
   }
 
-  public func setContext(_ value: PyObject?) -> PyResult<()> {
+  public func setContext(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       return .typeError("__context__ may not be deleted") // use 'None'
     }
@@ -460,7 +460,7 @@ public class PyBaseException: PyObject {
     return self.suppressContext
   }
 
-  public func setSuppressContext(_ value: PyObject?) -> PyResult<()> {
+  public func setSuppressContext(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       self.suppressContext = false
       return .value()

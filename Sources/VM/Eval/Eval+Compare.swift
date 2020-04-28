@@ -78,7 +78,7 @@ extension Eval {
       return nil
     }
 
-    let msg  = "catching classes that do not inherit from BaseException is not allowed"
+    let msg = "catching classes that do not inherit from BaseException is not allowed"
     return Py.newTypeError(msg: msg)
   }
 }

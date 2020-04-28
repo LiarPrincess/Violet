@@ -11,7 +11,7 @@ extension PyInstance {
   public func any(iterable: PyObject) -> PyResult<Bool> {
     return self.reduce(iterable: iterable, initial: false) { _, object in
       switch self.isTrueBool(object) {
-      case .value(true):  return .finish(true)
+      case .value(true): return .finish(true)
       case .value(false): return .goToNextElement
       case .error(let e): return .error(e)
       }

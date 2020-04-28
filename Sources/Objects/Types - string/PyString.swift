@@ -734,7 +734,7 @@ public class PyString: PyObject {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDict?) -> PyResult<PyString> {
-    switch newArguments.bind(args: args, kwargs: kwargs) {
+    switch self.newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
       assert(binding.optionalCount == 3, "Invalid optional argument count.")
@@ -757,7 +757,7 @@ public class PyString: PyObject {
                             errors errorObj: PyObject?) -> PyResult<PyString> {
     let isBuiltin = type === Py.types.str
     let alloca = isBuiltin ?
-      newString(type:value:) :
+      self.newString(type:value:) :
       PyStringHeap.init(type:value:)
 
     guard let object = object else {

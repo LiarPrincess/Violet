@@ -350,11 +350,11 @@ extension PyInstance {
                                     column: PyInt,
                                     text: PyString) {
     let dict = error.__dict__
-    insertOrTrap(dict: dict, key: "filename", value: filename)
-    insertOrTrap(dict: dict, key: "lineno", value: line)
-    insertOrTrap(dict: dict, key: "offset", value: column)
-    insertOrTrap(dict: dict, key: "text", value: text)
-    insertOrTrap(dict: dict, key: "print_file_and_line", value: self.none)
+    self.insertOrTrap(dict: dict, key: "filename", value: filename)
+    self.insertOrTrap(dict: dict, key: "lineno", value: line)
+    self.insertOrTrap(dict: dict, key: "offset", value: column)
+    self.insertOrTrap(dict: dict, key: "text", value: text)
+    self.insertOrTrap(dict: dict, key: "print_file_and_line", value: self.none)
   }
 
   // MARK: - Keyboard interrupt

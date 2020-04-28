@@ -142,8 +142,8 @@ extension PyInstance {
     return self.localsDir()
   }
 
-  ///static PyObject *
-  ///_dir_object(PyObject *obj)
+  /// static PyObject *
+  /// _dir_object(PyObject *obj)
   private func objectDir(object: PyObject) -> PyResult<PyObject> {
     if let result = Fast.__dir__(object) {
       return result.asFunctionResult

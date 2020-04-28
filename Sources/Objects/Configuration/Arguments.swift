@@ -121,7 +121,7 @@ public struct Arguments {
   // MARK: - Init
 
   /// Use arguments with default values.
-  public init() { }
+  public init() {}
 
   /// Parse specified command line arguments.
   public init(from arguments: [String]) throws {

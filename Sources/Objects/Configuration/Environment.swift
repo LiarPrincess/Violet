@@ -77,7 +77,7 @@ public struct Environment {
   public var verbose = 0
 
   /// Use default environment.
-  public init() { }
+  public init() {}
 
   /// Create environment parsed from given dictionary.
   ///
@@ -122,11 +122,11 @@ private func parseWarnings(_ value: String) -> [WarningOption] {
     .compactMap { split in
       switch split {
       case "default": return .default
-      case "error":   return .error
-      case "always":  return .always
-      case "module":  return .module
-      case "once":    return .once
-      case "ignore":  return .ignore
+      case "error": return .error
+      case "always": return .always
+      case "module": return .module
+      case "once": return .once
+      case "ignore": return .ignore
       default: return nil
       }
     }

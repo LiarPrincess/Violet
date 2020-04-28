@@ -80,25 +80,25 @@ internal struct FillFastLocals {
 
   // MARK: - Setters
 
-  fileprivate func isSet(index: Int) -> Bool {
+  private func isSet(index: Int) -> Bool {
     let value = self.frame.fastLocals[index]
     return value != nil
   }
 
-  fileprivate func set(index: Int, value: PyObject) {
+  private func set(index: Int, value: PyObject) {
     assert(!self.isSet(index: index))
     self.frame.fastLocals[index] = value
   }
 
   /// *args
-  fileprivate func setVarArgs(value: [PyObject]) {
+  private func setVarArgs(value: [PyObject]) {
     let tuple = Py.newTuple(value)
     self.set(index: self.totalArgs, value: tuple)
   }
 
   /// **kwags
-  fileprivate func setVarKwargs(value: PyDict) {
-    let index = self.hasVarArgs ? totalArgs + 1 : totalArgs
+  private func setVarKwargs(value: PyDict) {
+    let index = self.hasVarArgs ? self.totalArgs + 1 : self.totalArgs
     self.set(index: index, value: value)
   }
 

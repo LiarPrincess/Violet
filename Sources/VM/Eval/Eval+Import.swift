@@ -66,7 +66,7 @@ extension Eval {
   }
 
   private func importAllFrom(module: PyObject,
-                             locals: PyDict) -> PyResult<()> {
+                             locals: PyDict) -> PyResult<Void> {
     // Names can come from:
     // - '__all__' - user decides which names are exported
     // - '__dict__' - ignore the ones that start with undercore
@@ -100,7 +100,7 @@ extension Eval {
       case let .value(value):
         switch locals.setItem(at: name, to: value) {
         case .value: break
-        case .error(let e):return .error(e)
+        case .error(let e): return .error(e)
         }
       case let .error(e):
         return .error(e)

@@ -15,7 +15,7 @@ public enum CompareResult {
 
   /// Method used when implementing `__ne__`.
   ///
-  ///We don't want to override `!` operator, because it is tiny and easy to miss.
+  /// We don't want to override `!` operator, because it is tiny and easy to miss.
   public var not: CompareResult {
     switch self {
     case .value(let bool):

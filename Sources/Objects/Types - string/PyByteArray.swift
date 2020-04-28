@@ -615,7 +615,9 @@ public class PyByteArray: PyObject, PyBytesType {
                             args: [PyObject],
                             kwargs: PyDict?) -> PyResult<PyByteArray> {
     let isBuiltin = type === Py.types.bytes
-    let alloca = isBuiltin ? newByteArray(type:value:) : PyByteArrayHeap.init(type:value:)
+    let alloca = isBuiltin ?
+      self.newByteArray(type:value:) :
+      PyByteArrayHeap.init(type:value:)
 
     let data = Data()
     return .value(alloca(type, data))

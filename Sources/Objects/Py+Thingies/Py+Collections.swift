@@ -468,7 +468,7 @@ extension PyInstance {
   /// This method is similiar to `Array.reduce(_:_:)`.
   public func reduce<Acc>(iterable: PyObject,
                           initial: Acc,
-                          fn: ReduceFn<Acc>)  -> PyResult<Acc> {
+                          fn: ReduceFn<Acc>) -> PyResult<Acc> {
     let iter: PyObject
     switch self.iter(from: iterable) {
     case let .value(i): iter = i
@@ -513,7 +513,7 @@ extension PyInstance {
   /// I am 90% sure it will create needles copy during COW.
   public func reduce<Acc>(iterable: PyObject,
                           into initial: Acc,
-                          fn: ReduceIntoFn<Acc>)  -> PyResult<Acc> {
+                          fn: ReduceIntoFn<Acc>) -> PyResult<Acc> {
     let iter: PyObject
     switch self.iter(from: iterable) {
     case let .value(i): iter = i

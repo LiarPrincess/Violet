@@ -232,7 +232,7 @@ internal struct UnaryFunctionOptWrapper: FunctionWrapper {
 
 // MARK: - Positional binary
 
-internal typealias BinaryFunction    = (PyObject, PyObject) -> PyFunctionResult
+internal typealias BinaryFunction = (PyObject, PyObject) -> PyFunctionResult
 internal typealias BinaryFunctionOpt = (PyObject, PyObject?) -> PyFunctionResult
 
 /// Wrapper dedicated to method that takes 2 arguments.
@@ -456,5 +456,6 @@ internal struct QuartaryFunctionOptOptOptWrapper: FunctionWrapper {
 }
 
 // MARK: - Positional quintary
+
 // We are not doing this!
 // We have already gone too far with 'QuartaryFunctionOptOptOptWrapper'.

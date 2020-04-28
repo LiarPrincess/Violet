@@ -130,8 +130,8 @@ public protocol PyFileSystem: AnyObject {
 
   // MARK: - Join
 
-  ///Joins all given `path` segments together using the platform-specific
-  ///separator as a delimiter.
+  /// Joins all given `path` segments together using the platform-specific
+  /// separator as a delimiter.
   ///
   /// Zero-length path segments are ignored.
   ///

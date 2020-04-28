@@ -81,7 +81,7 @@ extension CompareOp {
     }
 
     // Try left compare (default path)
-    switch callCompare(left: left, right: right) {
+    switch self.callCompare(left: left, right: right) {
     case .value(let result):
       if result.isNotImplemented {
         break // try other options
@@ -158,7 +158,7 @@ extension PyInstance {
   public func isEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     // Quick result when objects are the same.
     // Guarantees that identity implies equality.
-    if  left === right {
+    if left === right {
       return .value(self.true)
     }
 
@@ -170,7 +170,7 @@ extension PyInstance {
       return .value(result)
 
     case .error(let e):
-      return  .error(e)
+      return .error(e)
     }
   }
 
@@ -210,7 +210,7 @@ extension PyInstance {
       return .value(result)
 
     case .error(let e):
-      return  .error(e)
+      return .error(e)
     }
   }
 
@@ -245,7 +245,7 @@ extension PyInstance {
       return .value(result)
 
     case .error(let e):
-      return  .error(e)
+      return .error(e)
     }
   }
 
@@ -280,7 +280,7 @@ extension PyInstance {
       return .value(result)
 
     case .error(let e):
-      return  .error(e)
+      return .error(e)
     }
   }
 
@@ -315,7 +315,7 @@ extension PyInstance {
       return .value(result)
 
     case .error(let e):
-      return  .error(e)
+      return .error(e)
     }
   }
 
@@ -350,7 +350,7 @@ extension PyInstance {
       return .value(result)
 
     case .error(let e):
-      return  .error(e)
+      return .error(e)
     }
   }
 

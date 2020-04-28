@@ -2,10 +2,10 @@ public struct PyConfig {
 
   /// First part of 128 bit `SipHash` key.
   /// Default key it is 'VioletEvergarden' in ASCII.
-  public var hashKey0: UInt64 = 0x56696f6c65744576
+  public var hashKey0: UInt64 = 0x5669_6f6c_6574_4576
   /// Second part of 128 bit `SipHash` key.
   /// Default key it is 'VioletEvergarden' in ASCII.
-  public var hashKey1: UInt64 = 0x657267617264656e
+  public var hashKey1: UInt64 = 0x6572_6761_7264_656e
 
   /// Command line arguments
   public var arguments: Arguments

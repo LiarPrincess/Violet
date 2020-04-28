@@ -17,8 +17,8 @@ extension Builtins {
     self.setOrTrap(.ellipsis, to: Py.ellipsis)
     self.setOrTrap(.dotDotDot, to: Py.ellipsis)
     self.setOrTrap(.notImplemented, to: Py.notImplemented)
-    self.setOrTrap(.true, to: Py.`true`)
-    self.setOrTrap(.false, to: Py.`false`)
+    self.setOrTrap(.true, to: Py.true)
+    self.setOrTrap(.false, to: Py.false)
 
     // MARK: - Types
 
@@ -127,6 +127,7 @@ extension Builtins {
     self.setOrTrap(.zeroDivisionError, to: Py.errorTypes.zeroDivisionError)
 
     // MARK: - Functions
+
     self.setOrTrap(.__build_class__,
                    doc: Self.__build_class__Doc,
                    fn: Self.__build_class__(args:kwargs:))

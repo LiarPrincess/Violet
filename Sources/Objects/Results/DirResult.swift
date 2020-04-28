@@ -7,7 +7,7 @@ public class DirResult: PyFunctionResultConvertible {
 
   // MARK: - Init
 
-  internal init() { }
+  internal init() {}
 
   internal init<S: Sequence>(_ elements: S) where S.Element == PyObject {
     self.append(contentsOf: elements)

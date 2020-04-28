@@ -28,7 +28,7 @@ extension PyInstance {
     case .value(let o):
       return .value(o)
     case .missingMethod:
-      return . typeError("'\(iterator.typeName)' object is not an iterator")
+      return .typeError("'\(iterator.typeName)' object is not an iterator")
     case .error(let e), .notCallable(let e):
       return .error(e)
     }

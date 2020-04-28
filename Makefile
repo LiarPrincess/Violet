@@ -42,7 +42,6 @@ lint:
 	SwiftLint lint --reporter emoji
 
 format:
-	# --dryrun
 	SwiftFormat --config ./.swiftformat "./Sources"
 
 # -----------

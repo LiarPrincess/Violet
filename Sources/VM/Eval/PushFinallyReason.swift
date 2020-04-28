@@ -19,12 +19,12 @@ internal enum PushFinallyReason {
 
   // MARK: - Marker values
 
-  private static let `return`   = BigInt(0)
-  private static let `break`    = BigInt(1)
+  private static let `return` = BigInt(0)
+  private static let `break` = BigInt(1)
   private static let `continue` = BigInt(2)
-  private static let exception  = BigInt(3)
-  private static let yield      = BigInt(4)
-  private static let silenced   = BigInt(5)
+  private static let exception = BigInt(3)
+  private static let yield = BigInt(4)
+  private static let silenced = BigInt(5)
 
   // MARK: - Push
 

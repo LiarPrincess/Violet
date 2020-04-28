@@ -326,7 +326,7 @@ internal final class Eval {
       return self.getIter()
     case .getYieldFromIter:
       return self.getYieldFromIter()
-    case .`break`:
+    case .break:
       return self.doBreak()
     case let .continue(loopStartLabel):
       let extended = self.extend(base: extendedArg, arg: loopStartLabel)
@@ -461,7 +461,7 @@ internal final class Eval {
       assert(extendedArg == 0)
       return self.callFunctionEx(hasKeywordArguments: hasKeywordArguments)
 
-    case .`return`:
+    case .return:
       return self.doReturn()
 
     case .loadBuildClass:

@@ -18,7 +18,7 @@ internal struct BytesBuilder: StringBuilderType {
 
   internal private(set) var result = Data()
 
-  internal init() { }
+  internal init() {}
 
   internal mutating func append(_ value: UInt8) {
     self.result.append(value)
@@ -179,7 +179,7 @@ internal struct PyBytesData: PyStringImpl {
 
   // MARK: - Append
 
-  internal mutating func append(_ value: PyObject) -> PyResult<()> {
+  internal mutating func append(_ value: PyObject) -> PyResult<Void> {
     switch PyBytesData.asByte(value) {
     case let .value(b):
       self.values.append(b)
@@ -191,7 +191,7 @@ internal struct PyBytesData: PyStringImpl {
 
   // MARK: - Extend
 
-  internal mutating func extend(iterable: PyObject) -> PyResult<()> {
+  internal mutating func extend(iterable: PyObject) -> PyResult<Void> {
     // Fast path: adding bytes
     if let bytes = Self.extractSelf(from: iterable) {
       self.values.append(contentsOf: bytes.scalars)
@@ -222,7 +222,7 @@ internal struct PyBytesData: PyStringImpl {
   // MARK: - Insert
 
   internal mutating func insert(at index: PyObject,
-                                item: PyObject) -> PyResult<()> {
+                                item: PyObject) -> PyResult<Void> {
     let parsedIndex: Int
     switch IndexHelper.int(index) {
     case let .value(i): parsedIndex = i
@@ -239,14 +239,14 @@ internal struct PyBytesData: PyStringImpl {
   }
 
   internal mutating func insert(at index: Int,
-                                item: UInt8) -> PyResult<()> {
+                                item: UInt8) -> PyResult<Void> {
     self.values.insert(item, at: index)
     return .value()
   }
 
   // MARK: - Remove
 
-  internal mutating func remove(_ value: PyObject) -> PyResult<()> {
+  internal mutating func remove(_ value: PyObject) -> PyResult<Void> {
     switch PyBytesData.asByte(value) {
     case let .value(b):
       guard let index = self.values.firstIndex(of: b) else {
@@ -301,7 +301,7 @@ internal struct PyBytesData: PyStringImpl {
   // MARK: - Set/del item
 
   internal mutating func setItem(at index: PyObject,
-                                 to value: PyObject) -> PyResult<()> {
+                                 to value: PyObject) -> PyResult<Void> {
     // Setting slice is not (yet) implemented
 
     let parsedIndex: Int
@@ -320,7 +320,7 @@ internal struct PyBytesData: PyStringImpl {
     return .value()
   }
 
-  internal mutating func delItem(at index: PyObject) -> PyResult<()> {
+  internal mutating func delItem(at index: PyObject) -> PyResult<Void> {
     let parsedIndex: Int
     switch IndexHelper.int(index) {
     case let .value(i): parsedIndex = i
@@ -383,7 +383,7 @@ internal struct PyBytesData: PyStringImpl {
 
   /// Helper for `__new__` method.
   ///
-  ///```
+  /// ```
   /// >>> help(bytes)
   /// class bytes(object)
   /// |  bytes(iterable_of_ints) -> bytes

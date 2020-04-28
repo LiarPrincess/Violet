@@ -10,7 +10,7 @@ public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
   internal var index: Int
   private var initCount: Int
 
-  internal var dict: OrderedDictionary<PySetElement, ()> {
+  internal var dict: OrderedDictionary<PySetElement, Void> {
     return self.set.data.dict
   }
 

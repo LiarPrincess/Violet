@@ -625,7 +625,7 @@ public class PyDict: PyObject {
     return .value(Py.none)
   }
 
-  private func insert(key: PyDictKey, value: PyObject) -> PyResult<()> {
+  private func insert(key: PyDictKey, value: PyObject) -> PyResult<Void> {
     switch self.data.insert(key: key, value: value) {
     case .inserted, .updated:
       return .value()

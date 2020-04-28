@@ -16,7 +16,7 @@ extension Eval {
   /// The next opcode will either ignore it (`PopTop`),
   /// or store it in variable (StoreFast, StoreName, or UnpackSequence).
   internal func setupWith(afterBodyLabelIndex: Int) -> InstructionResult {
-    let manager  = self.stack.top
+    let manager = self.stack.top
 
     let __enter__: PyObject
     switch Py.getFromType(object: manager, name: .__enter__) {

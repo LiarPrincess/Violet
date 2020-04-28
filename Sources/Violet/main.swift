@@ -94,7 +94,7 @@ private func run(file: URL) {
 }
 
 // ------------------------------------------------
-//exit(0)
+// exit(0)
 // ------------------------------------------------
 
 let currentFile = URL(fileURLWithPath: #file)
@@ -104,10 +104,10 @@ let mainDir = currentFile
   .deletingLastPathComponent()
 let testDir = mainDir.appendingPathComponent("PyTests")
 
-//run(file: testDir.appendingPathComponent("fizzbuzz.py"))
-//run(file: testDir.appendingPathComponent("test_import.py"))
-//run(file: testDir.appendingPathComponent("test_class.py"))
-//run(file: testDir.appendingPathComponent("test_with.py"))
+// run(file: testDir.appendingPathComponent("fizzbuzz.py"))
+// run(file: testDir.appendingPathComponent("test_import.py"))
+// run(file: testDir.appendingPathComponent("test_class.py"))
+// run(file: testDir.appendingPathComponent("test_with.py"))
 
 if false {
 
@@ -176,11 +176,11 @@ if false {
   run(file: builtinsDir.appendingPathComponent("printing.py"))
 
   // Not implemented:
-  //run(file: builtinsDir.appendingPathComponent("builtin_dir.py"))
-  //run(file: builtinsDir.appendingPathComponent("builtin_exec.py"))
-  //run(file: builtinsDir.appendingPathComponent("builtin_file.py"))
-  //run(file: builtinsDir.appendingPathComponent("builtin_format.py"))
-  //run(file: builtinsDir.appendingPathComponent("builtin_locals.py"))
-  //run(file: builtinsDir.appendingPathComponent("builtin_open.py"))
-  //run(file: builtinsDir.appendingPathComponent("builtins_module.py"))
+  // run(file: builtinsDir.appendingPathComponent("builtin_dir.py"))
+  // run(file: builtinsDir.appendingPathComponent("builtin_exec.py"))
+  // run(file: builtinsDir.appendingPathComponent("builtin_file.py"))
+  // run(file: builtinsDir.appendingPathComponent("builtin_format.py"))
+  // run(file: builtinsDir.appendingPathComponent("builtin_locals.py"))
+  // run(file: builtinsDir.appendingPathComponent("builtin_open.py"))
+  // run(file: builtinsDir.appendingPathComponent("builtins_module.py"))
 }

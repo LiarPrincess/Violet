@@ -47,7 +47,7 @@ internal struct PySetData {
   // then it would not take any space in dictionary!
   // For example `struct { Int, Void }` has the same storage as `struct { Int }`.
   // This trick is sponsored by 'go lang': `map[T]struct{}`.
-  internal typealias DictType = OrderedDictionary<PySetElement, ()>
+  internal typealias DictType = OrderedDictionary<PySetElement, Void>
   internal typealias Iterator = DictType.Iterator
 
   internal private(set) var dict: DictType
@@ -369,11 +369,11 @@ internal struct PySetData {
 
   // MARK: - Symmetric difference
 
-  internal func symmetricDifference(with other: PyObject) -> PyResult<PySetData > {
+  internal func symmetricDifference(with other: PyObject) -> PyResult<PySetData> {
     return self.makeSet(from: other).flatMap(self.symmetricDifference(with:))
   }
 
-  private func symmetricDifference(with other: PySetData) -> PyResult<PySetData > {
+  private func symmetricDifference(with other: PySetData) -> PyResult<PySetData> {
     var result = PySetData()
 
     for entry in self.dict {
@@ -421,7 +421,7 @@ internal struct PySetData {
     for entry in smallerSet.dict {
       switch largerSet.dict.contains(key: entry.key) {
       case .value(true): return .value(false)
-      case .value(false) : break
+      case .value(false): break
       case .error(let e): return .error(e)
       }
     }

@@ -24,7 +24,7 @@ public class PyComplex: PyObject {
   internal let imag: Double
 
   override public var description: String {
-    return "PyComplex(real: \(real), imag: \(imag))"
+    return "PyComplex(real: \(self.real), imag: \(self.imag))"
   }
 
   // MARK: - Init
@@ -439,7 +439,7 @@ public class PyComplex: PyObject {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDict?) -> PyResult<PyComplex> {
-    switch newArguments.bind(args: args, kwargs: kwargs) {
+    switch self.newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
       assert(binding.optionalCount == 2, "Invalid optional argument count.")
@@ -467,7 +467,7 @@ public class PyComplex: PyObject {
 
     if let str = arg0 as? PyString {
       guard arg1 == nil else {
-        return . typeError("complex() can't take second arg if first is a string")
+        return .typeError("complex() can't take second arg if first is a string")
       }
 
       return PyComplex.parse(str.value).map { alloca(type, $0.real, $0.imag) }

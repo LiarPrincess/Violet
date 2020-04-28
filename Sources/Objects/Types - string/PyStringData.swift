@@ -9,7 +9,7 @@ internal struct StringBuilder: StringBuilderType {
 
   internal private(set) var result = ""
 
-  internal init() { }
+  internal init() {}
 
   internal mutating func append(_ value: UnicodeScalar) {
     self.result.unicodeScalars.append(value)

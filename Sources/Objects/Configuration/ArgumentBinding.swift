@@ -253,5 +253,5 @@ internal struct ArgumentBinding: ParsableCommand {
 
   // MARK: - Init
 
-  internal init() { }
+  internal init() {}
 }

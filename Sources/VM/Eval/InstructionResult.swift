@@ -11,14 +11,17 @@ internal enum InstructionResult {
   internal static func `return`(_ value: PyObject) -> InstructionResult {
     return .unwind(.return(value))
   }
+
   /// `UnwindReason.break`
   internal static var `break`: InstructionResult {
     return .unwind(.break)
   }
+
   /// `UnwindReason.continue`
   internal static func `continue`(loopStartLabel: Int) -> InstructionResult {
     return .unwind(.continue(loopStartLabel: loopStartLabel))
   }
+
   /// `UnwindReason.exception`
   internal static func exception(
     _ value: PyBaseException,
@@ -26,10 +29,12 @@ internal enum InstructionResult {
   ) -> InstructionResult {
     return .unwind(.exception(value, fillTracebackAndContext: fill))
   }
+
   /// `UnwindReason.yield`
   internal static var yield: InstructionResult {
     return .unwind(.yield)
   }
+
   /// `UnwindReason.silenced`
   internal static var silenced: InstructionResult {
     return .unwind(.silenced)

@@ -167,7 +167,7 @@ internal struct ArgumentParser {
           return .systemError("Invalid format string ($ specified twice)")
         }
         if i < positionalArgCount {
-          return .systemError( "Empty parameter name after $")
+          return .systemError("Empty parameter name after $")
         }
 
         maxPositionalArgCount = i
@@ -175,7 +175,7 @@ internal struct ArgumentParser {
       }
 
       // We expect argument formatter (for example 'O') here
-      if formatIndex == format.endIndex || isFormatEnd(format[formatIndex]) {
+      if formatIndex == format.endIndex || self.isFormatEnd(format[formatIndex]) {
         let msg = "More keyword list entries (\(argCount)) than format specifiers (\(i))"
         return .systemError(msg)
       }
@@ -183,7 +183,7 @@ internal struct ArgumentParser {
       format.formIndex(after: &formatIndex)
     }
 
-    if formatIndex != format.endIndex && !isFormatEnd(format[formatIndex]) {
+    if formatIndex != format.endIndex && !self.isFormatEnd(format[formatIndex]) {
       return .systemError("More argument specifiers than keyword list entries")
     }
 
@@ -283,7 +283,7 @@ internal struct ArgumentParser {
                      kwargs: PyDict?) -> PyResult<Binding> {
     // We do not expect large kwargs dictionaries,
     // so the allocation should be minimal.
-    var kwargsDict: [String:PyObject]
+    var kwargsDict: [String: PyObject]
     switch ArgumentParser.guaranteeStringKeywords(kwargs: kwargs) {
     case let .value(r): kwargsDict = r
     case let .error(e): return .error(e)
@@ -298,7 +298,7 @@ internal struct ArgumentParser {
   ///                           struct _PyArg_Parser *parser,
   ///                           va_list *p_va, int flags)
   internal func bind(args: [PyObject],
-                     kwargs: [String:PyObject]) -> PyResult<Binding> {
+                     kwargs: [String: PyObject]) -> PyResult<Binding> {
     if args.count + kwargs.count > self.argumentCount {
       return .error(self.tooMuchArgumentsError(args: args, kwargs: kwargs))
     }
@@ -358,7 +358,7 @@ internal struct ArgumentParser {
 
   private func tooMuchArgumentsError(
     args: [PyObject],
-    kwargs: [String:PyObject]
+    kwargs: [String: PyObject]
   ) -> PyBaseException {
     let providedCount = args.count + kwargs.count
     assert(providedCount > self.argumentCount)
@@ -393,7 +393,7 @@ internal struct ArgumentParser {
 
   private func missingArgumentError(argIndex: Int,
                                     args: [PyObject],
-                                    kwargs: [String:PyObject]) -> PyBaseException {
+                                    kwargs: [String: PyObject]) -> PyBaseException {
     let fn = self.fnName + "()"
 
     if argIndex < self.positionalOnlyArgCount {
@@ -413,7 +413,7 @@ internal struct ArgumentParser {
 
   private func checkArgumentGivenAsPositionalAndKwarg(
     args: [PyObject],
-    kwargs: [String:PyObject]) -> PyBaseException? {
+    kwargs: [String: PyObject]) -> PyBaseException? {
 
     // We are missing some positional args (it may be OK, they may be optional)
     if args.count < self.positionalOnlyArgCount {
@@ -433,7 +433,7 @@ internal struct ArgumentParser {
   }
 
   private func checkExtraneousKeywordArguments(
-    kwargs: [String:PyObject]
+    kwargs: [String: PyObject]
   ) -> PyBaseException? {
 
     for key in kwargs.keys {
@@ -528,7 +528,7 @@ internal struct ArgumentParser {
   /// PyArg_ValidateKeywordArguments(PyObject *kwargs)
   internal static func guaranteeStringKeywords(
     kwargs: PyDict?
-  ) -> PyResult<[String:PyObject]> {
+  ) -> PyResult<[String: PyObject]> {
 
     switch kwargs {
     case .some(let kwargs):
@@ -542,9 +542,9 @@ internal struct ArgumentParser {
   /// PyArg_ValidateKeywordArguments(PyObject *kwargs)
   internal static func guaranteeStringKeywords(
     kwargs: PyDict
-  ) -> PyResult<[String:PyObject]> {
+  ) -> PyResult<[String: PyObject]> {
 
-    var result = [String:PyObject]()
+    var result = [String: PyObject]()
 
     for entry in kwargs.data {
       switch entry.key.object as? PyString {

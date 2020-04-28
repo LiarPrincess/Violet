@@ -13,7 +13,7 @@ extension PyProperty {
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>
   ) -> PyProperty {
     return PyProperty(
-      get: wrapGetter(get: get, castSelf: castSelf),
+      get: self.wrapGetter(get: get, castSelf: castSelf),
       set: nil,
       del: nil
     )
@@ -25,12 +25,12 @@ extension PyProperty {
     name: String,
     doc: String?,
     get: @escaping (Zelf) -> () -> R,
-    set: @escaping (Zelf) -> (PyObject) -> PyResult<()>,
+    set: @escaping (Zelf) -> (PyObject) -> PyResult<Void>,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>
   ) -> PyProperty {
     return PyProperty(
-      get: wrapGetter(get: get, castSelf: castSelf),
-      set: wrapSetter(set: set, castSelf: castSelf),
+      get: self.wrapGetter(get: get, castSelf: castSelf),
+      set: self.wrapSetter(set: set, castSelf: castSelf),
       del: nil
     )
   }
@@ -52,7 +52,7 @@ extension PyProperty {
   // MARK: - Wrap setter
 
   private static func wrapSetter<Zelf>(
-    set: @escaping (Zelf) -> (PyObject) -> PyResult<()>,
+    set: @escaping (Zelf) -> (PyObject) -> PyResult<Void>,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>
   ) -> PyBuiltinFunction {
     let name = "__set__"

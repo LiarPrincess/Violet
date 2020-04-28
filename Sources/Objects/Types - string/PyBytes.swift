@@ -620,7 +620,7 @@ public class PyBytes: PyObject, PyBytesType {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDict?) -> PyResult<PyBytes> {
-    switch newArguments.bind(args: args, kwargs: kwargs) {
+    switch self.newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
       assert(binding.optionalCount == 3, "Invalid optional argument count.")
@@ -643,7 +643,7 @@ public class PyBytes: PyObject, PyBytesType {
                             errors: PyObject?) -> PyResult<PyBytes> {
     let isBuiltin = type === Py.types.bytes
     let alloca = isBuiltin ?
-      newBytes(type:value:) :
+      self.newBytes(type:value:) :
       PyBytesHeap.init(type:value:)
 
     return PyBytesData

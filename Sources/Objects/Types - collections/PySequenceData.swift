@@ -120,13 +120,13 @@ internal struct PySequenceData {
       switch Py.hash(object: e) {
       case let .value(y):
         x = (x ^ y) &* mult
-        mult &+= 82_520 + PyHash(2 * self.elements.count)
+        mult &+= 82520 + PyHash(2 * self.elements.count)
       case let .error(e):
         return .error(e)
       }
     }
 
-    return .value(x &+ 97_531)
+    return .value(x &+ 97531)
   }
 
   // MARK: - Length
@@ -597,7 +597,7 @@ internal struct PySequenceData {
       return .notImplemented
     }
 
-    return mul(count: countInt)
+    return self.mul(count: countInt)
   }
 
   internal func rmul(count: PyObject) -> MulResult {
@@ -605,7 +605,7 @@ internal struct PySequenceData {
       return .notImplemented
     }
 
-    return mul(count: countInt)
+    return self.mul(count: countInt)
   }
 
   private func mul(count: PyInt) -> MulResult {

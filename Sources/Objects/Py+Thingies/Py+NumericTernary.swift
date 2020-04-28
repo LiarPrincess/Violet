@@ -61,7 +61,7 @@ extension TernaryOp {
     if left.type !== middle.type && middle.type.isSubtype(of: left.type) {
       checkedReflected = true
 
-      switch callReflected(left: left, middle: middle, right: right) {
+      switch self.callReflected(left: left, middle: middle, right: right) {
       case .value(let result):
         if result.isNotImplemented {
           break // try other options
@@ -73,7 +73,7 @@ extension TernaryOp {
     }
 
     // Try left `op` middle, right (default path)
-    switch callOp(left: left, middle: middle, right: right) {
+    switch self.callOp(left: left, middle: middle, right: right) {
     case .value(let result):
       if result.isNotImplemented {
         break // try other options
@@ -85,7 +85,7 @@ extension TernaryOp {
 
     // Try reflected on middle
     if !checkedReflected {
-      switch callReflected(left: left, middle: middle, right: right) {
+      switch self.callReflected(left: left, middle: middle, right: right) {
       case .value(let result):
         if result.isNotImplemented {
           break // try other options

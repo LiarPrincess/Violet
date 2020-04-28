@@ -208,7 +208,7 @@ extension PyInstance {
     }
 
     if allowsCallableFromDict {
-      switch  self.getCallableFromDict(object: object, selector: selector) {
+      switch self.getCallableFromDict(object: object, selector: selector) {
       case .value(let attr): return .value(attr)
       case .notFound: break // try other
       case .error(let e): return .error(e)

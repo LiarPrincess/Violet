@@ -72,7 +72,7 @@ extension BinaryOp {
   /// define SLOT1BINFULL(FUNCNAME, TESTFUNC, SLOTNAME, OPSTR, ROPSTR)
   fileprivate static func call(left: PyObject,
                                right: PyObject) -> PyResult<PyObject> {
-    switch callInner(left: left, right: right, operation: op) {
+    switch self.callInner(left: left, right: right, operation: op) {
     case .value(let result):
       if result.isNotImplemented {
         let lt = left.typeName
@@ -96,7 +96,7 @@ extension BinaryOp {
 
   fileprivate static func callInPlace(left: PyObject,
                                       right: PyObject) -> PyResult<PyObject> {
-    switch callInPlaceInner(left: left, right: right) {
+    switch self.callInPlaceInner(left: left, right: right) {
     case .value(let result):
       if result.isNotImplemented {
         break // try other options
@@ -109,7 +109,7 @@ extension BinaryOp {
     }
 
     // Try standard operation, for example '+'
-    switch callInner(left: left, right: right, operation: op) {
+    switch self.callInner(left: left, right: right, operation: op) {
     case .value(let result):
       if result.isNotImplemented {
         let lt = left.typeName
@@ -138,7 +138,7 @@ extension BinaryOp {
     if left.type !== right.type && right.type.isSubtype(of: left.type) {
       checkedReflected = true
 
-      switch callReflected(left: left, right: right) {
+      switch self.callReflected(left: left, right: right) {
       case .value(let result):
         if result.isNotImplemented {
           break // try other options
@@ -150,7 +150,7 @@ extension BinaryOp {
     }
 
     // Try left `op` right (default path)
-    switch callOp(left: left, right: right) {
+    switch self.callOp(left: left, right: right) {
     case .value(let result):
       if result.isNotImplemented {
         break // try other options
@@ -162,7 +162,7 @@ extension BinaryOp {
 
     // Try reflected on right
     if !checkedReflected {
-      switch callReflected(left: left, right: right) {
+      switch self.callReflected(left: left, right: right) {
       case .value(let result):
         if result.isNotImplemented {
           break // try other options

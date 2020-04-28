@@ -903,6 +903,7 @@ extension Builtins {
     or ...`` etc.
     """
   }
+
   /// isinstance(object, classinfo)
   /// See [this](https://docs.python.org/3/library/functions.html#isinstance)
   internal static func isinstance(object: PyObject,

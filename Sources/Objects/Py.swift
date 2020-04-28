@@ -117,7 +117,7 @@ public final class PyInstance {
   /// Interned `false` value.
   public private(set) lazy var `false` = PyBool(value: false)
   /// Interned `None` value.
-  public private(set) lazy var none  = PyNone()
+  public private(set) lazy var none = PyNone()
   /// Interned `ellipsis (...)` value.
   public private(set) lazy var ellipsis = PyEllipsis()
   /// Interned empty `tuple` value (because `tuple` is immutable).
@@ -219,7 +219,7 @@ public final class PyInstance {
 
   // MARK: - Init/deinit
 
-  fileprivate init() { }
+  fileprivate init() {}
 
   deinit {
     // Clean circular references.
@@ -351,7 +351,7 @@ public final class PyInstance {
 
   // MARK: - Intern strings
 
-  private var internedStrings = [UseScalarsToHashString:PyString]()
+  private var internedStrings = [UseScalarsToHashString: PyString]()
 
   /// Get cached `PySString` value for given `String`.
   public func getInterned(_ value: String) -> PyString? {

@@ -54,7 +54,7 @@ extension PyType {
     }
 
     // class type(name, bases, dict)
-    switch newArguments.bind(args: args, kwargs: kwargs) {
+    switch self.newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 3, "Invalid required argument count.")
       assert(binding.optionalCount == 0, "Invalid optional argument count.")
@@ -612,7 +612,7 @@ extension PyType {
     }
 
     guard args.count == 1 || args.count == 3 else {
-      return . typeError("type.__init__() takes 1 or 3 arguments")
+      return .typeError("type.__init__() takes 1 or 3 arguments")
     }
 
     // Call object.__init__(self) now.

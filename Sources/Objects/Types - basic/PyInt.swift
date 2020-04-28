@@ -769,7 +769,7 @@ public class PyInt: PyObject {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDict?) -> PyResult<PyInt> {
-    switch newArguments.bind(args: args, kwargs: kwargs) {
+    switch self.newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
       assert(binding.optionalCount == 2, "Invalid optional argument count.")
@@ -786,7 +786,7 @@ public class PyInt: PyObject {
                             x: PyObject?,
                             base: PyObject?) -> PyResult<PyInt> {
     let isBuiltin = type === Py.types.int
-    let alloca = isBuiltin ? newInt(type:value:) : PyIntHeap.init(type:value:)
+    let alloca = isBuiltin ? self.newInt(type:value:) : PyIntHeap.init(type:value:)
 
     guard let x = x else {
       if base != nil {

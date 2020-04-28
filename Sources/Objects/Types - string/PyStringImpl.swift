@@ -189,7 +189,7 @@ extension PyStringImpl {
 
     for element in self.scalars {
       switch Self.toUnicodeScalar(element) {
-      case "'":  singleCount += 1
+      case "'": singleCount += 1
       case "\"": doubleCount += 1
       default: break
       }
@@ -212,9 +212,9 @@ extension PyStringImpl {
       // Map 16-bit characters to '\uxxxx'
       result.append("u")
       result.append(self.hex((value >> 12) & 0xf))
-      result.append(self.hex((value >>  8) & 0xf))
-      result.append(self.hex((value >>  4) & 0xf))
-      result.append(self.hex((value >>  0) & 0xf))
+      result.append(self.hex((value >> 8) & 0xf))
+      result.append(self.hex((value >> 4) & 0xf))
+      result.append(self.hex((value >> 0) & 0xf))
     } else {
       // Map 21-bit characters to '\U00xxxxxx'
       result.append("U")
@@ -223,9 +223,9 @@ extension PyStringImpl {
       result.append(self.hex((value >> 20) & 0xf))
       result.append(self.hex((value >> 16) & 0xf))
       result.append(self.hex((value >> 12) & 0xf))
-      result.append(self.hex((value >>  8) & 0xf))
-      result.append(self.hex((value >>  4) & 0xf))
-      result.append(self.hex((value >>  0) & 0xf))
+      result.append(self.hex((value >> 8) & 0xf))
+      result.append(self.hex((value >> 4) & 0xf))
+      result.append(self.hex((value >> 0) & 0xf))
     }
 
     return result
@@ -406,9 +406,9 @@ extension PyStringImpl {
   }
 
   internal func substring(start: Index? = nil,
-                          end:   Index? = nil) -> SubSequence {
+                          end: Index? = nil) -> SubSequence {
     let s = start ?? self.startIndex
-    let e = end   ?? self.endIndex
+    let e = end ?? self.endIndex
     return self[s..<e]
   }
 
@@ -516,7 +516,7 @@ extension PyStringImpl {
   /// ASCII characters have code points in the range U+0000-U+007F.
   /// https://docs.python.org/3/library/stdtypes.html#str.isascii
   internal var isAscii: Bool {
-    return self.scalars.any && self.scalars.allSatisfy {  element in
+    return self.scalars.any && self.scalars.allSatisfy { element in
       let scalar = Self.toUnicodeScalar(element)
       return scalar.isASCII
     }
@@ -1333,7 +1333,7 @@ extension PyStringImpl {
     let parsedFill: Element
     switch self.parseJustFillChar(fill, fnName: "center") {
     case .default: parsedFill = Self.defaultFill
-    case .value(let s): parsedFill  = s
+    case .value(let s): parsedFill = s
     case .error(let e): return .error(e)
     }
 
@@ -1364,7 +1364,7 @@ extension PyStringImpl {
     let parsedFill: Element
     switch self.parseJustFillChar(fill, fnName: "ljust") {
     case .default: parsedFill = Self.defaultFill
-    case .value(let s): parsedFill  = s
+    case .value(let s): parsedFill = s
     case .error(let e): return .error(e)
     }
 
@@ -1387,7 +1387,7 @@ extension PyStringImpl {
     let parsedFill: Element
     switch self.parseJustFillChar(fill, fnName: "rjust") {
     case .default: parsedFill = Self.defaultFill
-    case .value(let s): parsedFill  = s
+    case .value(let s): parsedFill = s
     case .error(let e): return .error(e)
     }
 
@@ -1834,7 +1834,7 @@ extension PyStringImpl {
     case let .index(index: index1, position: _):
       // before | index1 | separator | index2 | after
       let sepCount = separator.scalars.count
-      let index2 = self.index(index1, offsetBy: sepCount, limitedBy: endIndex)
+      let index2 = self.index(index1, offsetBy: sepCount, limitedBy: self.endIndex)
 
       let before = self.substring(end: index1)
       let after = self.substring(start: index2)

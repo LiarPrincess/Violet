@@ -22,7 +22,7 @@ internal enum IndexHelper {
   /// ```
   internal static func intMaybe(_ value: PyObject) -> IndexMaybe<Int> {
     let bigInt: BigInt
-    switch bigIntMaybe(value) {
+    switch self.bigIntMaybe(value) {
     case .value(let v): bigInt = v
     case .notIndex: return .notIndex
     case .error(let e): return .error(e)

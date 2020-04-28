@@ -111,7 +111,7 @@ internal struct Hasher {
     var result: PyHash = 0
     while mantissa > 0 {
       result = ((result << 28) & Hasher.modulus) | result >> (Hasher.bits - 28)
-      mantissa *= 268_435_456.0  // 2**28
+      mantissa *= 268_435_456.0 // 2**28
       exponent -= 28
 
       let mantissaInt = PyHash(mantissa) // pull out integer part

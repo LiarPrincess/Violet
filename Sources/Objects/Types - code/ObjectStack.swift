@@ -31,7 +31,7 @@ public struct ObjectStack {
     return self.elements.count
   }
 
-  public init() { }
+  public init() {}
 
   // MARK: - Peek
 

@@ -89,10 +89,10 @@ public class PyFrozenSet: PyObject, PySetType {
     for entry in self.data.dict {
       let y = entry.key.hash
       x = (x ^ y) * mult
-      mult += 82_520 + PyHash(2 * self.data.count)
+      mult += 82520 + PyHash(2 * self.data.count)
     }
 
-    return .value(x + 97_531)
+    return .value(x + 97531)
   }
 
   // MARK: - String

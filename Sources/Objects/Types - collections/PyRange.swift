@@ -75,7 +75,7 @@ public class PyRange: PyObject {
                                       stop: BigInt,
                                       step: BigInt) -> BigInt {
     let isGoingUp = step >= 0
-    let low  = isGoingUp ? start : stop
+    let low = isGoingUp ? start : stop
     let high = isGoingUp ? stop : start
 
     // len(range(0, 3, -1)) -> 0
@@ -293,7 +293,7 @@ public class PyRange: PyObject {
 
     let indices: PySlice.GetLongIndicesResult
     switch slice.getLongIndices(length: length) {
-    case let .value(i):indices = i
+    case let .value(i): indices = i
     case let .error(e): return .error(e)
     }
 

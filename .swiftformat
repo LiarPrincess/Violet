@@ -4,10 +4,9 @@
 
 --exclude Sources/Parser/Generated/*
 --exclude Sources/Bytecode/Generated/*
-
---exclude Sources/Objects/*
---exclude Sources/VM/*
---exclude Sources/Violet/*
+--exclude Sources/Objects/Generated/*
+--exclude Sources/Objects/Types - string/Unicode+BidirectionalClass.swift
+--exclude Sources/Objects/Types - string/Unicode+CaseFolding.swift
 
 # =============
 # == Options ==

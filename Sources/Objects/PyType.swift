@@ -81,9 +81,9 @@ public class PyType: PyObject {
   // normal type - type: typeType, base: objectType, mro: [self, objectType]
   private var name: String
   private var qualname: String
-  private var base:  PyType?
+  private var base: PyType?
   private var bases: [PyType]
-  private var mro:   [PyType]
+  private var mro: [PyType]
   private var subclasses: [PyTypeWeakRef] = []
   private lazy var __dict__ = PyDict()
 
@@ -116,7 +116,7 @@ public class PyType: PyObject {
   }
 
   override public var description: String {
-    return "PyType(name: \(self.name), qualname: \(qualname))"
+    return "PyType(name: \(self.name), qualname: \(self.qualname))"
   }
 
   // MARK: - Init
@@ -126,7 +126,7 @@ public class PyType: PyObject {
                             qualname: String,
                             type: PyType,
                             base: PyType,
-                            mro:  MRO) {
+                            mro: MRO) {
     assert(mro.baseClasses.contains { $0 === base })
 
     self.init(name: name, qualname: qualname, base: base, mro: mro)
@@ -208,7 +208,7 @@ public class PyType: PyObject {
     return self.name
   }
 
-  public func setName(_ value: PyObject?) -> PyResult<()> {
+  public func setName(_ value: PyObject?) -> PyResult<Void> {
     let object: PyObject
     switch self.checkSetSpecialAttribute(name: .__name__, value: value) {
     case let .value(v): object = v
@@ -240,7 +240,7 @@ public class PyType: PyObject {
     return self.getNameRaw()
   }
 
-  public func setQualname(_ value: PyObject?) -> PyResult<()> {
+  public func setQualname(_ value: PyObject?) -> PyResult<Void> {
     let object: PyObject
     switch self.checkSetSpecialAttribute(name: .__qualname__, value: value) {
     case let .value(v): object = v
@@ -271,7 +271,7 @@ public class PyType: PyObject {
     return .value(doc)
   }
 
-  public func setDoc(_ value: PyObject?) -> PyResult<()> {
+  public func setDoc(_ value: PyObject?) -> PyResult<Void> {
     let object: PyObject
     switch self.checkSetSpecialAttribute(name: .__doc__, value: value) {
     case let .value(v): object = v
@@ -345,7 +345,7 @@ public class PyType: PyObject {
     return .builtins
   }
 
-  public func setModule(_ value: PyObject?) -> PyResult<()> {
+  public func setModule(_ value: PyObject?) -> PyResult<Void> {
     let object: PyObject
     switch self.checkSetSpecialAttribute(name: .__module__, value: value) {
     case let .value(v): object = v
@@ -367,7 +367,7 @@ public class PyType: PyObject {
     return self.bases
   }
 
-  public func setBases(_ value: PyObject?) -> PyResult<()> {
+  public func setBases(_ value: PyObject?) -> PyResult<Void> {
     // Violet currently does not support this
     return .typeError("can't set \(self.name).__bases__")
   }

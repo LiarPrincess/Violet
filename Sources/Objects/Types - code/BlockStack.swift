@@ -66,7 +66,7 @@ public struct BlockStack {
     return self.elements.any
   }
 
-  public init() { }
+  public init() {}
 
   public func peek(_ n: Int) -> Block {
     let count = self.elements.count

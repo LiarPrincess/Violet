@@ -167,7 +167,7 @@ internal class FileSystemImpl: PyFileSystem {
       return .enoent
     }
 
-    return  self.withFileSystemRepresentation(path: nonEmpty) { fsRep in
+    return self.withFileSystemRepresentation(path: nonEmpty) { fsRep in
       guard let dir = opendir(fsRep) else {
         return .enoent
       }

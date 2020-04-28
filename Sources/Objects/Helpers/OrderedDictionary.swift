@@ -41,7 +41,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   // MARK: - Helper data types
 
   public struct Entry {
-    public let key:  Key
+    public let key: Key
     public let value: Value
 
     fileprivate init(key: Key, value: Value) {
@@ -161,7 +161,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   fileprivate var usable: Int
   /// Size of the hash table. It must be a power of 2.
   ///
-  ///- Warning:
+  /// - Warning:
   /// This is not a number of items in dictionary! Use `self.used` for that.
   fileprivate var size: Int {
     return self.indices.count

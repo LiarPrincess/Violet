@@ -21,11 +21,11 @@ internal enum Unimplemented {
 
     /// Hardcoded 'UTF-8'.
     ///
-    ///```
+    /// ```
     /// >>> import locale
     /// >>> locale.getpreferredencoding()
     /// 'UTF-8'
-    ///```
+    /// ```
     internal static let getpreferredencoding = PyStringEncoding.utf8
   }
 }

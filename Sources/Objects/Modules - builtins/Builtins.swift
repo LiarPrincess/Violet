@@ -24,9 +24,9 @@ public final class Builtins: PyModuleImplementation {
   public var notImplemented: PyNotImplemented { return Py.notImplemented }
 
   // sourcery: pyproperty = True
-  public var `true`: PyBool { return Py.`true` }
+  public var `true`: PyBool { return Py.true }
   // sourcery: pyproperty = False
-  public var `false`: PyBool { return Py.`false` }
+  public var `false`: PyBool { return Py.false }
 
   // MARK: - Dict
 

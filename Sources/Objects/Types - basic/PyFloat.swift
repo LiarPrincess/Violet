@@ -50,9 +50,9 @@ private protocol FloatCompare {
 }
 
 private enum FloatSign: BigInt, Equatable {
-  case plus =  1
-  case minus =  -1
-  case zero =  0
+  case plus = 1
+  case minus = -1
+  case zero = 0
 }
 
 extension FloatCompare {
@@ -166,13 +166,13 @@ extension FloatCompare {
 
   private static func getSign(_ value: Double) -> FloatSign {
     return value == 0.0 ? .zero :
-           value >  0.0 ? .plus :
+           value > 0.0 ? .plus :
            .minus
   }
 
   private static func getSign(_ value: BigInt) -> FloatSign {
     return value == 0 ? .zero :
-           value >  0 ? .plus :
+           value > 0 ? .plus :
            .minus
   }
 }

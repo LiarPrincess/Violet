@@ -98,7 +98,7 @@ public class PyFunction: PyObject {
     return self.name
   }
 
-  public func setName(_ value: PyObject?) -> PyResult<()> {
+  public func setName(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       return .value()
     }
@@ -118,7 +118,7 @@ public class PyFunction: PyObject {
     return self.qualname
   }
 
-  public func setQualname(_ value: PyObject?) -> PyResult<()> {
+  public func setQualname(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       return .value()
     }
@@ -138,7 +138,7 @@ public class PyFunction: PyObject {
     return self.defaults
   }
 
-  public func setDefaults(_ object: PyObject) -> PyResult<()> {
+  public func setDefaults(_ object: PyObject) -> PyResult<Void> {
     if object.isNone {
       self.defaults = nil
       return .value()
@@ -159,7 +159,7 @@ public class PyFunction: PyObject {
     return self.kwDefaults
   }
 
-  public func setKeywordDefaults(_ object: PyObject) -> PyResult<()> {
+  public func setKeywordDefaults(_ object: PyObject) -> PyResult<Void> {
     if object.isNone {
       self.kwDefaults = nil
       return .value()
@@ -182,7 +182,7 @@ public class PyFunction: PyObject {
 
   /// Note that there is not `Python` setter for closure.
   /// It can be only set from `Swift`.
-  public func setClosure(_ object: PyObject) -> PyResult<()> {
+  public func setClosure(_ object: PyObject) -> PyResult<Void> {
     if object.isNone {
       self.closure = nil
       return .value()
@@ -203,7 +203,7 @@ public class PyFunction: PyObject {
     return self.globals
   }
 
-  public func setGlobals(_ object: PyObject) -> PyResult<()> {
+  public func setGlobals(_ object: PyObject) -> PyResult<Void> {
     if let dict = object as? PyDict {
       self.globals = dict
       return .value()
@@ -219,7 +219,7 @@ public class PyFunction: PyObject {
     return self.annotations
   }
 
-  public func setAnnotations(_ object: PyObject) -> PyResult<()> {
+  public func setAnnotations(_ object: PyObject) -> PyResult<Void> {
     if object.isNone {
       self.annotations = nil
       return .value()
@@ -240,7 +240,7 @@ public class PyFunction: PyObject {
     return self.code
   }
 
-  public func setCode(_ object: PyObject) -> PyResult<()> {
+  public func setCode(_ object: PyObject) -> PyResult<Void> {
     guard let code = object as? PyCode else {
       return .typeError("__code__ must be set to a code object")
     }
@@ -265,7 +265,7 @@ public class PyFunction: PyObject {
     return self.doc
   }
 
-  public func setDoc(_ object: PyObject) -> PyResult<()> {
+  public func setDoc(_ object: PyObject) -> PyResult<Void> {
     if object.isNone {
       self.doc = nil
       return .value()
@@ -291,7 +291,7 @@ public class PyFunction: PyObject {
     return Py.strValue(object: self.module)
   }
 
-  public func setModule(_ object: PyObject) -> PyResult<()> {
+  public func setModule(_ object: PyObject) -> PyResult<Void> {
     self.module = object
     return .value()
   }

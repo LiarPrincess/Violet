@@ -53,7 +53,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
     self.init(type: Py.types.super,
               requestedType: requestedType,
               object: object,
-              objectType: objectType )
+              objectType: objectType)
   }
 
   /// Use only in `__new__`!

@@ -20,8 +20,8 @@ public class PySlice: PyObject {
     """
 
   internal var start: PyObject
-  internal var stop:  PyObject
-  internal var step:  PyObject
+  internal var stop: PyObject
+  internal var step: PyObject
 
   override public var description: String {
     let start = "start: \(self.start)"
@@ -183,8 +183,8 @@ public class PySlice: PyObject {
 
   internal struct GetLongIndicesResult {
     var start: Int
-    var stop:  Int
-    var step:  Int
+    var stop: Int
+    var step: Int
   }
 
   /// int _PySlice_GetLongIndices(PySliceObject *self, PyObject *length, ...)
@@ -212,7 +212,7 @@ public class PySlice: PyObject {
 
     // Find lower and upper bounds for start and stop.
     let isStepNegative = step < 0
-    let lower = isStepNegative ?  -1 : 0
+    let lower = isStepNegative ? -1 : 0
     let upper = isStepNegative ? length - 1 : length
 
     // Compute start.
@@ -257,9 +257,9 @@ public class PySlice: PyObject {
   /// Ok, so `UnpackedIndices` stores extracted idices,
   /// use `adjust(toCount:)` method to clamp them to desired length.
   internal struct AdjustedIndices {
-    internal var start:  Int
-    internal var stop:   Int
-    internal var step:   Int
+    internal var start: Int
+    internal var stop: Int
+    internal var step: Int
     /// Number of entries between `self.start` and `self.stop` using `self.step`.
     internal let count: Int
   }
@@ -268,8 +268,8 @@ public class PySlice: PyObject {
   /// use `PySlice.unpack` to extract correct indices.
   internal struct UnpackedIndices {
     internal var start: Int
-    internal var stop:  Int
-    internal var step:  Int
+    internal var stop: Int
+    internal var step: Int
 
     /// Ok, so we have correct indices, now clamp them to desired length.
     ///

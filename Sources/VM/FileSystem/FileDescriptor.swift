@@ -132,10 +132,10 @@ internal class FileDescriptor: CustomStringConvertible {
       switch self.operation {
       case .read:
         switch self.errno {
-        case EFBIG: return.fileReadTooLarge
-        case ENOENT: return.fileReadNoSuchFile
-        case EPERM, EACCES: return.fileReadNoPermission
-        case ENAMETOOLONG: return.fileReadUnknown
+        case EFBIG: return .fileReadTooLarge
+        case ENOENT: return .fileReadNoSuchFile
+        case EPERM, EACCES: return .fileReadNoPermission
+        case ENAMETOOLONG: return .fileReadUnknown
         default: return .fileReadUnknown
         }
       case .write:
@@ -236,11 +236,11 @@ internal class FileDescriptor: CustomStringConvertible {
       if statbuf.st_blksize > 0 {
         readBlockSize = Int(clamping: statbuf.st_blksize)
       } else {
-        readBlockSize = 1_024 * 8
+        readBlockSize = 1024 * 8
       }
     } else {
       /* We get here on sockets, character special files, FIFOs ... */
-      readBlockSize = 1_024 * 8
+      readBlockSize = 1024 * 8
     }
 
     var currentAllocationSize = readBlockSize
@@ -301,7 +301,7 @@ internal class FileDescriptor: CustomStringConvertible {
         bytesWritten = _write(self._fd,
                               buf.advanced(by: length - bytesRemaining),
                               bytesRemaining)
-      } while (bytesWritten < 0 && errno == EINTR)
+      } while bytesWritten < 0 && errno == EINTR
 
       if bytesWritten <= 0 {
         throw _NSErrorWithErrno(errno, reading: false, path: nil)
@@ -470,15 +470,15 @@ extension FileDescriptor {
 
       override func readToEnd() throws -> Data { return Data() }
       override func read(upToCount count: Int) throws -> Data { return Data() }
-      override func write<T: DataProtocol>(contentsOf data: T) throws { }
+      override func write<T: DataProtocol>(contentsOf data: T) throws {}
       override func offset() throws -> UInt64 { return 0 }
       override func seekToEnd() throws -> UInt64 { return 0 }
-      override func seek(toOffset offset: UInt64) throws { }
-      override func truncate(atOffset offset: UInt64) throws { }
-      override func synchronize() throws { }
-      override func close() throws { }
+      override func seek(toOffset offset: UInt64) throws {}
+      override func truncate(atOffset offset: UInt64) throws {}
+      override func synchronize() throws {}
+      override func close() throws {}
 
-      deinit { }
+      deinit {}
     }
 
     return NullDevice(fileDescriptor: -1, closeOnDealloc: false)
