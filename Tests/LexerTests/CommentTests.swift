@@ -114,7 +114,6 @@ class CommentTests: XCTestCase, Common {
   ///  # -*- coding: latin-1 -*-
   func test_emacs_invalidEncoding_inSecondLine_throws() {
     let s = "# No one fights like Gaston\n # -*- coding: \(invalidEncoding) -*-"
-    print(s)
     let lexer = self.createLexer(for: s)
 
     if let comment = self.getToken(lexer) {
