@@ -3,15 +3,31 @@ import XCTest
 
 // swiftlint:disable number_separator
 // swiftlint:disable function_body_length
+// swiftformat:disable numberFormatting
 
 // Use './Scripts/siphash.c' to generate test data.
+
+private func XCTAssertHash(_ value: String,
+                           _ expected: UInt64,
+                           file: StaticString = #file,
+                           line: UInt = #line) {
+  // Key is 'I See the Light ' in ASCII
+  let key: (UInt64, UInt64) = (0x4920536565207468, 0x65204c6967687420)
+
+  let hash = value.utf8.withContiguousStorageIfAvailable { ptr -> UInt64 in
+    SipHash.hash(key0: key.0, key1: key.1, bytes: ptr)
+  }
+
+  // swiftlint:disable:next force_unwrapping
+  XCTAssertEqual(hash!, expected, file: file, line: line)
+}
 
 class SipHashTests: XCTestCase {
 
   // MARK: - Empty
 
   func test_empty() {
-    XCTAssertEqual(self.hash(""), 8600138830522006719)
+    XCTAssertHash("", 8600138830522006719)
   }
 
   // MARK: - Example from paper
@@ -85,25 +101,5 @@ class SipHashTests: XCTestCase {
     XCTAssertHash("Now that I see you", 9418091429171647485)
 
     XCTAssertHash("Now that I see you", 9418091429171647485)
-  }
-
-  private func hash(_ value: String) -> UInt64 {
-    // Key is 'I See the Light ' in ASCII
-    let key: (UInt64, UInt64) = (0x4920536565207468, 0x65204c6967687420)
-
-    let result = value.utf8.withContiguousStorageIfAvailable { ptr -> UInt64 in
-      SipHash.hash(key0: key.0, key1: key.1, bytes: ptr)
-    }
-
-    // swiftlint:disable:next force_unwrapping
-    return result!
-  }
-
-  private func XCTAssertHash(_ value: String,
-                             _ expected: UInt64,
-                             file: StaticString = #file,
-                             line: UInt         = #line) {
-    let hash = self.hash(value)
-    XCTAssertEqual(hash, expected, file: file, line: line)
   }
 }

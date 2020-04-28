@@ -3,6 +3,7 @@ import VioletCore
 @testable import VioletObjects
 
 // swiftlint:disable number_separator
+// swiftformat:disable numberFormatting
 
 class HashInt: XCTestCase {
 
@@ -48,7 +49,7 @@ class HashInt: XCTestCase {
     // 2
 
     let modulus = BigInt(1 << 61)
-    XCTAssertEqual(self.hash(modulus - 2), 2_305_843_009_213_693_950)
+    XCTAssertEqual(self.hash(modulus - 2), 2305843009213693950)
     XCTAssertEqual(self.hash(modulus - 1), 0)
     XCTAssertEqual(self.hash(modulus + 0), 1)
     XCTAssertEqual(self.hash(modulus + 1), 2)
@@ -101,15 +102,15 @@ class HashInt: XCTestCase {
     XCTAssertEqual(self.hash(modulus - 1), -2)
     XCTAssertEqual(self.hash(modulus + 0), -1) // '-1' is used for errors
     XCTAssertEqual(self.hash(modulus + 1), 0)
-    XCTAssertEqual(self.hash(modulus + 2), -2_305_843_009_213_693_950)
-    XCTAssertEqual(self.hash(modulus + 3), -2_305_843_009_213_693_949)
+    XCTAssertEqual(self.hash(modulus + 2), -2305843009213693950)
+    XCTAssertEqual(self.hash(modulus + 3), -2305843009213693949)
   }
 
   // MARK: - Helper
 
   private func hash(_ value: BigInt) -> Int {
     // Key is 'I See the Light ' in ASCII
-    let key: (UInt64, UInt64) = (0x4920_5365_6520_7468, 0x6520_4c69_6768_7420)
+    let key: (UInt64, UInt64) = (0x4920536565207468, 0x65204c6967687420)
     let hasher = Hasher(key0: key.0, key1: key.1)
     return hasher.hash(value)
   }

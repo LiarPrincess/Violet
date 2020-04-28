@@ -236,11 +236,11 @@ internal class FileDescriptor: CustomStringConvertible {
       if statbuf.st_blksize > 0 {
         readBlockSize = Int(clamping: statbuf.st_blksize)
       } else {
-        readBlockSize = 1024 * 8
+        readBlockSize = 1_024 * 8
       }
     } else {
       /* We get here on sockets, character special files, FIFOs ... */
-      readBlockSize = 1024 * 8
+      readBlockSize = 1_024 * 8
     }
 
     var currentAllocationSize = readBlockSize

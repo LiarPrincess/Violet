@@ -12,10 +12,6 @@
 --exclude Sources/Objects/Types - string/Unicode+BidirectionalClass.swift
 --exclude Sources/Objects/Types - string/Unicode+CaseFolding.swift
 
-# Tons of numbers for which formatting does not even make sense:
---exclude Tests/CoreTests/SipHashTests.swift
---exclude Tests/ObjectsTests/Hash tests/HashString.swift
-
 # In most of the lexer/parser tests we have to specify source location.
 # We want them in the same column across multiple lines.
 # We will insert ' ' (empty space) to create alignment, that breaks some rules.
@@ -50,10 +46,13 @@
 --trimwhitespace always
 --xcodeindentation disabled
 
---decimalgrouping 3,6
---binarygrouping 4,8
---octalgrouping 4,8
---hexgrouping 4,8
+# Arguments are
+# - group - group size (count % group == 0)
+# - threshold - min digit count to apply (number.count >= threshold)
+--decimalgrouping 3,1
+--binarygrouping 4,1
+--octalgrouping 4,1
+--hexgrouping 4,1
 --exponentcase lowercase
 --exponentgrouping enabled
 --fractiongrouping enabled

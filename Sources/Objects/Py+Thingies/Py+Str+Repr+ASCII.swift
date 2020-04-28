@@ -109,7 +109,7 @@ extension PyInstance {
     for scalar in scalars {
       if scalar.isASCII {
         result.append(String(scalar))
-      } else if scalar.value < 0x10000 {
+      } else if scalar.value < 0x1_0000 {
         // \uxxxx Character with 16-bit hex value xxxx
         let hex = self.hex(value: scalar.value, padTo: 4)
         result.append("\\u\(hex)")

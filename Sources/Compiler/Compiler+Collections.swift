@@ -209,7 +209,7 @@ extension CompilerImpl {
 
       let countBefore = index
       let countAfter = elements.count - index - 1
-      if countBefore > 0xff || countAfter > 0xffffff {
+      if countBefore > 0xff || countAfter > 0xff_ffff {
         throw self.error(.tooManyExpressionsInStarUnpackingAssignment)
       }
 

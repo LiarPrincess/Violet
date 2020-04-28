@@ -16,7 +16,7 @@ public struct UnpackExArg {
 
   public init(countBefore: Int, countAfter: Int) {
     precondition(0 <= countBefore && countBefore <= 0xff)
-    precondition(0 <= countAfter && countAfter <= 0xffffff)
+    precondition(0 <= countAfter && countAfter <= 0xff_ffff)
     self.value = countAfter << 8 | countBefore
   }
 }

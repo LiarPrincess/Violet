@@ -20,7 +20,7 @@ extension PyInstance {
     }
 
     guard let int = Int(exactly: bigInt),
-          let scalar = UnicodeScalar(int), int < 0x110000 else {
+          let scalar = UnicodeScalar(int), int < 0x11_0000 else {
       return .valueError("chr() arg not in range(0x110000)")
     }
 

@@ -4,13 +4,27 @@ import VioletCore
 
 // swiftlint:disable function_body_length
 // swiftlint:disable number_separator
+// swiftformat:disable numberFormatting
+
+private func XCTAssertHash(_ value: String,
+                           _ expected: UInt64,
+                           file: StaticString = #file,
+                           line: UInt = #line) {
+  // Key is 'I See the Light ' in ASCII
+  let key: (UInt64, UInt64) = (0x4920536565207468, 0x65204c6967687420)
+  let hasher = Hasher(key0: key.0, key1: key.1)
+  let hash = hasher.hash(value)
+
+  let exp = PyHash(truncatingIfNeeded: expected)
+  XCTAssertEqual(hash, exp, file: file, line: line)
+}
 
 class HashString: XCTestCase {
 
   // MARK: - Empty
 
   func test_empty_isZero() {
-    XCTAssertEqual(self.hash(""), 0)
+    XCTAssertHash("", 0)
   }
 
   // MARK: - 'I See the Light' song
@@ -66,23 +80,5 @@ class HashString: XCTestCase {
     XCTAssertHash("Now that I see you", 9418091429171647485)
 
     XCTAssertHash("Now that I see you", 9418091429171647485)
-  }
-
-  // MARK: - Helper
-
-  private func hash(_ value: String) -> Int {
-    // Key is 'I See the Light ' in ASCII
-    let key: (UInt64, UInt64) = (0x4920536565207468, 0x65204c6967687420)
-    let hasher = Hasher(key0: key.0, key1: key.1)
-    return hasher.hash(value)
-  }
-
-  private func XCTAssertHash(_ value: String,
-                             _ expected: UInt64,
-                             file: StaticString = #file,
-                             line: UInt         = #line) {
-    let hash = self.hash(value)
-    let exp = PyHash(truncatingIfNeeded: expected)
-    XCTAssertEqual(hash, exp, file: file, line: line)
   }
 }

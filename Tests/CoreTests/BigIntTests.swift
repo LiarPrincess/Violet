@@ -12,8 +12,8 @@ class BigIntTests: XCTestCase {
     let x = BigInt(1_000_000 as Int)
     XCTAssertEqual(x, 1_000_000)
 
-    let y = BigInt(1000 as UInt16)
-    XCTAssertEqual(y, 1000)
+    let y = BigInt(1_000 as UInt16)
+    XCTAssertEqual(y, 1_000)
 
     let z = BigInt(-1_000_000 as Int)
     XCTAssertEqual(z, -1_000_000)
@@ -147,8 +147,8 @@ class BigIntTests: XCTestCase {
     XCTAssertEqual(String(x, radix: 16, uppercase: false), "-4ea383fdd9da5cd6")
     XCTAssertEqual(String(x, radix: 36, uppercase: false), "-171usy24wtkgm")
 
-    XCTAssertTrue(BigInt("12345") == 12345)
-    XCTAssertTrue(BigInt("-12345") == -12345)
+    XCTAssertTrue(BigInt("12345") == 12_345)
+    XCTAssertTrue(BigInt("-12345") == -12_345)
 
     XCTAssertTrue(BigInt("-3UNIZHA6PAL30Y", radix: 10) == nil)
     XCTAssertTrue(BigInt("---") == nil)
