@@ -3,6 +3,8 @@ import VioletCore
 import VioletLexer
 @testable import VioletParser
 
+// swiftformat:disable consecutiveSpaces
+
 class ParseDelete: XCTestCase, Common {
 
   /// del Jafar
@@ -97,7 +99,7 @@ class ParseDelete: XCTestCase, Common {
       self.token(.del,                   start: loc0, end: loc1),
       self.token(.identifier("agrabah"), start: loc2, end: loc3),
       self.token(.dot,                   start: loc4, end: loc5),
-      self.token(.identifier("jafar")  , start: loc6, end: loc7)
+      self.token(.identifier("jafar"),   start: loc6, end: loc7)
     )
 
     guard let ast = self.parse(parser) else { return }

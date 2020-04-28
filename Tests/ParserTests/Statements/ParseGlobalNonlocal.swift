@@ -3,6 +3,8 @@ import VioletCore
 import VioletLexer
 @testable import VioletParser
 
+// swiftformat:disable consecutiveSpaces
+
 class ParseGlobalNonlocal: XCTestCase, Common {
 
   // MARK: - global
@@ -59,6 +61,7 @@ class ParseGlobalNonlocal: XCTestCase, Common {
         Genie
     """)
   }
+
   /// nonlocal Genie, MagicCarpet
   func test_nonlocal_multiple() {
     let parser = self.createStmtParser(

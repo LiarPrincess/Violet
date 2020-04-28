@@ -3,6 +3,8 @@ import VioletCore
 import VioletLexer
 @testable import VioletParser
 
+// swiftformat:disable consecutiveSpaces
+
 class ParseFor: XCTestCase, Common {
 
   /// for person in castle: "becomeItem"

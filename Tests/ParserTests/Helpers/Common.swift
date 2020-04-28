@@ -4,7 +4,7 @@ import VioletLexer
 @testable import VioletParser
 
 /// Shared test helpers.
-internal protocol Common { }
+internal protocol Common {}
 
 extension Common {
 
@@ -38,7 +38,7 @@ extension Common {
 
   internal func parse(_ parser: Parser,
                       file: StaticString = #file,
-                      line: UInt         = #line) -> AST? {
+                      line: UInt = #line) -> AST? {
     do {
       return try parser.parse()
     } catch {

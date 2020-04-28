@@ -3,6 +3,8 @@ import VioletCore
 import VioletLexer
 @testable import VioletParser
 
+// swiftformat:disable consecutiveSpaces
+
 class ParseImport: XCTestCase, Common {
 
   /// import Rapunzel

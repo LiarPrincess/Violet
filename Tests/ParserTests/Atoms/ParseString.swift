@@ -4,6 +4,8 @@ import VioletCore
 import VioletLexer
 @testable import VioletParser
 
+// swiftformat:disable consecutiveSpaces
+
 private let e: UInt8 = 0x45 // it is 'E'
 private let l: UInt8 = 0x6c
 private let s: UInt8 = 0x73

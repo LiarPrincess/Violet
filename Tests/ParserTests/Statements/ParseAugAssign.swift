@@ -4,6 +4,7 @@ import VioletLexer
 @testable import VioletParser
 
 // swiftlint:disable function_body_length
+// swiftformat:disable consecutiveSpaces
 
 class ParseAugAssign: XCTestCase, Common {
 

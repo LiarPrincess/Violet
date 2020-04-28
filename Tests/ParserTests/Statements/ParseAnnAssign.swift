@@ -3,6 +3,8 @@ import VioletCore
 import VioletLexer
 @testable import VioletParser
 
+// swiftformat:disable consecutiveSpaces
+
 class ParseAnnAssign: XCTestCase, Common {
 
   /// Flounder:Animal = "Friend"

@@ -5,6 +5,7 @@ import VioletLexer
 
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
+// swiftformat:disable consecutiveSpaces
 
 class ParseDecorators: XCTestCase, Common {
 

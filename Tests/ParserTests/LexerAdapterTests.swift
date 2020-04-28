@@ -8,7 +8,7 @@ import VioletLexer
 internal func XCTAssertTokens(_ adapter: inout LexerAdapter,
                               _ expected: [TokenKind],
                               file: StaticString = #file,
-                              line: UInt         = #line) {
+                              line: UInt = #line) {
   do {
     let tokens = try consume(adapter: &adapter)
     XCTAssertEqual(tokens.count, expected.count, "Count", file: file, line: line)
@@ -23,7 +23,7 @@ internal func XCTAssertTokens(_ adapter: inout LexerAdapter,
 
 private func consume(adapter: inout LexerAdapter,
                      file: StaticString = #file,
-                     line: UInt         = #line) throws -> [Token] {
+                     line: UInt = #line) throws -> [Token] {
   try adapter.populatePeeks()
 
   var result = [Token]()

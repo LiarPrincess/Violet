@@ -3,6 +3,8 @@ import VioletCore
 import VioletLexer
 @testable import VioletParser
 
+// swiftformat:disable consecutiveSpaces
+
 class ParseAsync: XCTestCase, Common {
 
   /// async def cook(): "Ratatouille"
