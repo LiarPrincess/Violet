@@ -6,7 +6,7 @@ internal class Parser {
   private var token: Token
   private var location = SourceLocation.start
 
-  private var aliases = [String:String]()
+  private var aliases = [String: String]()
 
   internal init(lexer: Lexer) {
     self.lexer = lexer
@@ -30,7 +30,7 @@ internal class Parser {
 
   private func advanceToken() {
     self.token = self.lexer.getToken()
-    self.location = token.location
+    self.location = self.token.location
   }
 
   // MARK: - Doc
@@ -66,7 +66,7 @@ internal class Parser {
     var result = [Entity]()
 
     while self.token.kind != .eof {
-      switch token.kind {
+      switch self.token.kind {
 
       case .alias:
         self.alias()
@@ -81,7 +81,7 @@ internal class Parser {
         self.fail("'\(value)' is not a valid entity declaration. " +
           "Expected @struct, @enum or @indirect.")
       default:
-        self.fail("Unexpected '\(token.kind)'.")
+        self.fail("Unexpected '\(self.token.kind)'.")
       }
     }
 
@@ -243,7 +243,7 @@ internal class Parser {
 
   private func consumeOrFail(_ kind: TokenKind) {
     guard self.token.kind == kind else {
-      self.fail("Invalid token. Expected: '\(kind)', got: '\(token.kind)'.")
+      self.fail("Invalid token. Expected: '\(kind)', got: '\(self.token.kind)'.")
     }
 
     self.advance()

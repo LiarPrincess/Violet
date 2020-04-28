@@ -9,9 +9,6 @@
 --exclude Sources/VM/*
 --exclude Sources/Violet/*
 
---exclude Sources/Elsa/*
---exclude Sources/Rapunzel/*
-
 # =============
 # == Options ==
 # =============

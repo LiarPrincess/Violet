@@ -15,8 +15,8 @@ public protocol ProductType {
   /// ``` Swift
   /// extension NestedInside {
   ///   struct Name { ... }
-  ///}
-  ///```
+  /// }
+  /// ```
   var nestedInside: String? { get }
   /// Implemented protocols
   var bases: [String] { get }
@@ -94,7 +94,7 @@ public struct ProductProperty {
   ///
   /// `baseType + kind = type`
   public var type: String {
-    return getType(baseType: self.baseType, kind: kind)
+    return getType(baseType: self.baseType, kind: self.kind)
   }
 
   public var nameColonType: String {
@@ -125,8 +125,8 @@ public struct EnumDef {
   /// ``` Swift
   /// extension NestedInside {
   ///   struct Name { ... }
-  ///}
-  ///```
+  /// }
+  /// ```
   public let nestedInside: String?
   /// Implemented protocols
   public let bases: [String]
@@ -188,7 +188,7 @@ public struct EnumCaseProperty {
   ///
   /// `baseType + kind = type`
   public var type: String {
-    return getType(baseType: self.baseType, kind: kind)
+    return getType(baseType: self.baseType, kind: self.kind)
   }
 
   public var nameColonType: String? {
@@ -213,9 +213,9 @@ public enum PropertyKind {
 
 private func getType(baseType type: String, kind: PropertyKind) -> String {
   switch kind {
-  case .single:   return type
-  case .min1:     return "NonEmptyArray<" + type + ">"
-  case .many:     return "[" + type + "]"
+  case .single: return type
+  case .min1: return "NonEmptyArray<" + type + ">"
+  case .many: return "[" + type + "]"
   case .optional: return type + "?"
   }
 }

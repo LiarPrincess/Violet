@@ -1,11 +1,11 @@
 import Foundation
 
-private let keywords: [String:TokenKind] = [
-  "alias":    .alias,
-  "enum":     .enum,
+private let keywords: [String: TokenKind] = [
+  "alias": .alias,
+  "enum": .enum,
   "indirectEnum": .indirect,
-  "struct":   .struct,
-  "class":   .class,
+  "struct": .struct,
+  "class": .class,
   "underscoreInit": .underscoreInit
 ]
 

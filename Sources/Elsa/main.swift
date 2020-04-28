@@ -1,9 +1,9 @@
 import Foundation
 
 let elsaDir = URL(fileURLWithPath: #file).deletingLastPathComponent()
-let sourcesDir  = elsaDir.deletingLastPathComponent()
+let sourcesDir = elsaDir.deletingLastPathComponent()
 let rootDir = sourcesDir.deletingLastPathComponent()
-let testsDir = rootDir .appendingPathComponent("Tests")
+let testsDir = rootDir.appendingPathComponent("Tests")
 
 private func generateAST() {
   let parserDir = sourcesDir

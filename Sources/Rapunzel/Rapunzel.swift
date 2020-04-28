@@ -140,13 +140,13 @@ public indirect enum Doc: RapunzelConvertible {
   /// `(`
   public static let leftParen = Doc.text("(")
   /// `[`
-  public static let leftSqb   = Doc.text("[")
+  public static let leftSqb = Doc.text("[")
   /// `{`
   public static let leftBrace = Doc.text("{")
   /// `)`
   public static let rightParen = Doc.text(")")
   /// `]`
-  public static let rightSqb   = Doc.text("]")
+  public static let rightSqb = Doc.text("]")
   /// `}`
   public static let rightBrace = Doc.text("}")
 
