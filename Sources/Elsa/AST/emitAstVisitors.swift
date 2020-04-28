@@ -9,8 +9,8 @@ public func emitAstVisitors(inputFile: URL, outputFile: URL) {
 private func emitAstVisitors(inputFile: URL) {
   print(createHeader(inputFile: inputFile))
 
-  print("import VioletCore")
   print("import Foundation")
+  print("import VioletCore")
   print()
 
   print("// swiftlint:disable line_length")

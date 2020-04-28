@@ -9,9 +9,9 @@ public func emitAst(inputFile: URL, outputFile: URL) {
 private func emitAst(inputFile: URL) {
   print(createHeader(inputFile: inputFile))
 
+  print("import Foundation")
   print("import VioletCore")
   print("import VioletLexer")
-  print("import Foundation")
   print()
 
   print("// swiftlint:disable file_length")

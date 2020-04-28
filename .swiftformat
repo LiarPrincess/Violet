@@ -2,8 +2,7 @@
 # == Directories ==
 # =================
 
-# TODO: ?
-# --exclude Tests/XCTestManifests.swift,Snapshots
+--exclude Sources/Parser/Generated/*
 
 # =============
 # == Options ==

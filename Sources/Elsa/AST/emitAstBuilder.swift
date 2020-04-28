@@ -9,8 +9,8 @@ public func emitAstBuilder(inputFile: URL, outputFile: URL) {
 private func emitAstBuilder(inputFile: URL) {
   print(createHeader(inputFile: inputFile))
 
-  print("import VioletCore")
   print("import Foundation")
+  print("import VioletCore")
   print()
 
   print("// swiftlint:disable file_length")
@@ -45,7 +45,7 @@ private func printBuilder(entities: [Entity]) {
         return result
       }
 
-      public init() { }
+      public init() {}
 
     """)
 
