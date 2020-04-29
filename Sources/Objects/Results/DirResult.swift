@@ -34,17 +34,15 @@ public class DirResult: PyFunctionResultConvertible {
 
   // MARK: - Append object
 
-  internal func append(keysFrom dict: PyDict) -> PyBaseException? {
-    let keysObject = dict.keys()
-
-    guard let keys = keysObject as? PySequenceType else {
-      let t = keysObject.typeName
-      let msg = "dir(): expected keys() to be a list, not '\(t)'"
-      return Py.newTypeError(msg: msg)
+  internal func append(keysFrom object: PyObject) -> PyBaseException? {
+    switch Py.callMethod(object: object, selector: .keys) {
+    case let .value(keys):
+      return self.append(elementsFrom: keys)
+    case let .missingMethod(e),
+         let .notCallable(e),
+         let .error(e):
+      return e
     }
-
-    self.append(contentsOf: keys.data.elements)
-    return nil
   }
 
   internal func append(elementsFrom object: PyObject) -> PyBaseException? {

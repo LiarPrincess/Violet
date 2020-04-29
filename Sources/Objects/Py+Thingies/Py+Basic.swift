@@ -151,7 +151,14 @@ extension PyInstance {
 
     switch self.callMethod(object: object, selector: .__dir__) {
     case .value(let o):
-      return .value(o)
+      // Now we need to sort them
+      let dir = DirResult()
+      if let e = dir.append(elementsFrom: o) {
+        return .error(e)
+      }
+
+      return dir.asFunctionResult
+
     case .missingMethod:
       return .typeError("object does not provide __dir__")
     case .error(let e), .notCallable(let e):
