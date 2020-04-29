@@ -190,12 +190,12 @@ extension VM {
     }
 
     let main: PyModule
-    switch self.add__main__Module() {
+    switch self.add__main__Module(loader: .sourceFileLoader) {
     case let .value(m): main = m
     case let .error(e): return .error(e)
     }
 
-    // Set '__file' (and whatever happens we need to do cleanup).
+    // Set '__file__' (and whatever happens we need to do cleanup).
     let mainDict = main.getDict()
     mainDict.set(id: .__file__, to: Py.newString(scriptPath))
     defer { _ = mainDict.del(id: .__file__) }
@@ -369,14 +369,88 @@ extension VM {
     return Py.sys.prependPath(value: value)
   }
 
-  private func add__main__Module() -> PyResult<PyModule> {
+  /// Type of the `__loader__` to set on `__main__`module.
+  private enum MainLoader {
+    /// Will use `Importlib.BuiltinImporter` as `__loader__`.
+    ///
+    /// Use this it you have input from `<stdin>` (repl etc.).
+    case builtinImporter
+    /// Will use `ImportlibExternal.SourceFileLoader` as `__loader__`.
+    ///
+    /// Use this if the code comes from `.py` file.
+    case sourceFileLoader
+    /// Will use `ImportlibExternal.SourcelessFileLoader` as `__loader__`.
+    ///
+    /// Use this if the code comes from Violet equivalent of `.pyc` file.
+    case sourcelessFileLoader
+
+    /// Attribute on `self.module` that contains this loader.
+    fileprivate var name: String {
+      switch self {
+      case .builtinImporter:
+        return "BuiltinImporter"
+      case .sourceFileLoader:
+        return "SourceFileLoader"
+      case .sourcelessFileLoader:
+        return "SourcelessFileLoader"
+      }
+    }
+
+    /// Name of the module that contains this loader.
+    fileprivate var module: String {
+      switch self {
+      case .builtinImporter:
+        return "importlib"
+      case .sourceFileLoader,
+           .sourcelessFileLoader:
+        return "importlib_external"
+      }
+    }
+  }
+
+  /// static _PyInitError
+  /// add_main_module(PyInterpreterState *interp)
+  private func add__main__Module(loader: MainLoader) -> PyResult<PyModule> {
     let name = Py.intern("__main__")
     let module = Py.newModule(name: name)
+    let dict = module.getDict()
+
+    if dict.get(id: .__annotations__) == nil {
+      dict.set(id: .__annotations__, to: Py.newDict())
+    }
+
+    if dict.get(id: .__builtins__) == nil {
+      dict.set(id: .__builtins__, to: Py.builtinsModule)
+    }
+
+    if dict.get(id: .__loader__) == nil {
+      switch self.getLoader(type: loader) {
+      case let .value(value):
+        dict.set(id: .__loader__, to: value)
+      case let .error(e):
+        return .error(e)
+      }
+    }
 
     if let e = Py.sys.addModule(module: module) {
       return .error(e)
     }
 
     return .value(module)
+  }
+
+  private func getLoader(type: MainLoader) -> PyResult<PyObject> {
+    let module: PyObject
+    let moduleName = Py.intern(type.module)
+    switch Py.sys.getModule(name: moduleName) {
+    case let .value(m):
+      module = m
+    case let .notFound(e),
+         let .error(e):
+      return .error(e)
+    }
+
+    let attribute = type.name
+    return Py.getattr(object: module, name: attribute)
   }
 }

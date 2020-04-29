@@ -61,6 +61,17 @@ extension PyInstance {
 
   // MARK: - Importlib external
 
+  public func getImportlibExternal() -> PyResult<PyModule> {
+    let importlib = self.getImportlib()
+    return importlib.flatMap(self.getImportlibExternal(importlib:))
+  }
+
+  public func getImportlibExternal(importlib: PyModule) -> PyResult<PyModule> {
+    // 'self.initImportlibExternalIfNeeded' is idempotent (with the same caveats
+    // as 'self.initImportlibIfNeeded').
+    return self.initImportlibExternalIfNeeded(importlib: importlib)
+  }
+
   /// `importlib_external` is a part of `importlib` that allows us to import
   /// modules that require external filesystem access.
   /// For example: `import elsa`, where `elsa` is a file on disc.
