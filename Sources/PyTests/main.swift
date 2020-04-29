@@ -52,14 +52,15 @@ private func run(file: URL) {
 
 // MARK: - Test dir
 
-private var testDir: URL = {
+private var rootDir: URL = {
   let currentFile = URL(fileURLWithPath: #file)
-  let mainDir = currentFile
+  return currentFile
     .deletingLastPathComponent()
     .deletingLastPathComponent()
     .deletingLastPathComponent()
-  return mainDir.appendingPathComponent("PyTests")
 }()
+
+private let testDir = rootDir.appendingPathComponent("PyTests")
 
 // MARK: - Old types
 
@@ -150,18 +151,25 @@ private func runNotFinished() {
 //  run(file: testDir.appendingPathComponent("fizzbuzz.py"))
 //  run(file: testDir.appendingPathComponent("test_import.py"))
 
-//  let waiting = testDir.appendingPathComponent("Waiting room")
+  let dir = testDir.appendingPathComponent("Builtins")
+  run(file: dir.appendingPathComponent("builtin_open.py"))
+
+  let waiting = testDir.appendingPathComponent("Waiting room")
 //  run(file: waiting.appendingPathComponent("builtin_exec.py"))
 //  run(file: waiting.appendingPathComponent("builtin_file.py"))
 //  run(file: waiting.appendingPathComponent("builtin_format.py"))
 //  run(file: waiting.appendingPathComponent("builtin_locals.py"))
-//  run(file: waiting.appendingPathComponent("builtin_open.py"))
 //  run(file: waiting.appendingPathComponent("builtins_module.py"))
 }
 
 // MARK: - Main
 
+// If we call 'open' we want to look inside repository root.
+guard FileManager.default.changeCurrentDirectoryPath(rootDir.path) else {
+  trap("Failed to set cwd to: '\(rootDir.path)'")
+}
+
 //runOldTypes()
 //runOldBuiltins()
-runVioletTests()
-//runNotFinished()
+//runVioletTests()
+runNotFinished()
