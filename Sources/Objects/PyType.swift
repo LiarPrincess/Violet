@@ -88,18 +88,8 @@ public class PyType: PyObject {
   private lazy var __dict__ = PyDict()
 
   /// Swift storage (layout).
-  ///
-  /// When creating new class we will check if all of the base classes have
-  /// the same layout.
-  /// So, for example we will allow this:
-  ///   >>> class C(int, object): pass
-  /// but do not allow this:
-  ///   >>> class C(int, str): pass
-  ///   TypeError: multiple bases have instance lay-out conflict
-  ///
-  /// This field was added specially for `Violet`, it is not present
-  /// in `CPython` (or any other `Python` implementation for that matter).
-  internal private(set) var layout: TypeLayout?
+  /// See `PyType.MemoryLayout` documentation for details.
+  internal let layout: MemoryLayout
 
   internal private(set) var typeFlags = PyTypeFlags()
 
@@ -126,10 +116,15 @@ public class PyType: PyObject {
                             qualname: String,
                             type: PyType,
                             base: PyType,
-                            mro: MRO) {
+                            mro: MRO,
+                            layout: MemoryLayout) {
     assert(mro.baseClasses.contains { $0 === base })
 
-    self.init(name: name, qualname: qualname, base: base, mro: mro)
+    self.init(name: name,
+              qualname: qualname,
+              base: base,
+              mro: mro,
+              layout: layout)
     self.setType(to: type)
   }
 
@@ -137,12 +132,17 @@ public class PyType: PyObject {
   ///
   /// NEVER EVER use this function!
   /// Reserved for `objectType` and `typeType`.
-  private init(name: String, qualname: String, base: PyType?, mro: MRO?) {
+  private init(name: String,
+               qualname: String,
+               base: PyType?,
+               mro: MRO?,
+               layout: MemoryLayout) {
     self.name = name
     self.qualname = qualname
     self.base = base
     self.bases = mro?.baseClasses ?? []
     self.mro = [] // temporary, until we are able to use self
+    self.layout = layout
 
     // Special init() without 'type' argument, just for `PyType` and `BaseType`.
     super.init()
@@ -165,7 +165,11 @@ public class PyType: PyObject {
   /// It will not set `self.type` property!
   internal static func initObjectType() -> PyType {
     let name = "object"
-    return PyType(name: name, qualname: name, base: nil, mro: nil)
+    return PyType(name: name,
+                  qualname: name,
+                  base: nil,
+                  mro: nil,
+                  layout: .PyObject)
   }
 
   /// NEVER EVER use this function! It is a reserved for `typeType`.
@@ -175,16 +179,26 @@ public class PyType: PyObject {
   internal static func initTypeType(objectType: PyType) -> PyType {
     let name = "type"
     let mro = MRO.linearize(baseClass: objectType)
-    return PyType(name: name, qualname: name, base: objectType, mro: mro)
+    return PyType(name: name,
+                  qualname: name,
+                  base: objectType,
+                  mro: mro,
+                  layout: .PyType)
   }
 
   /// NEVER EVER use this function! It is a reserved for builtin types
   /// (except for `objectType` and `typeType` they have their own inits).
   internal static func initBuiltinType(name: String,
                                        type: PyType,
-                                       base: PyType) -> PyType {
+                                       base: PyType,
+                                       layout: MemoryLayout) -> PyType {
     let mro = MRO.linearize(baseClass: base)
-    return PyType(name: name, qualname: name, type: type, base: base, mro: mro)
+    return PyType(name: name,
+                  qualname: name,
+                  type: type,
+                  base: base,
+                  mro: mro,
+                  layout: layout)
   }
 
   // MARK: - Name
@@ -714,10 +728,6 @@ public class PyType: PyObject {
 
   internal func setFlag(_ flag: PyTypeFlags) {
     self.typeFlags.insert(flag)
-  }
-
-  internal func setLayout(_ layout: TypeLayout) {
-    self.layout = layout
   }
 
   // MARK: - GC

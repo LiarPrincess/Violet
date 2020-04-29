@@ -1,5 +1,6 @@
 from Data.types import get_types
 from Common.strings import generated_warning
+from TypeMemoryLayout import get_layout_name
 from Common.builtin_types import (
   get_property_name_escaped,
   get_fill_function_name, print_fill_type_method,
@@ -75,7 +76,6 @@ import VioletCore
 
   for t in types:
     python_type = t.python_type
-    property_name_escaped = get_property_name_escaped(python_type)
 
     # 'self.object' and 'self.type' are already initialized
     if python_type == 'object' or python_type == 'type':
@@ -85,10 +85,12 @@ import VioletCore
     if python_type == 'bool':
       continue
 
-    print(f'    self.{property_name_escaped} = PyType.initBuiltinType(name: "{python_type}", type: self.type, base: self.object)')
+    layout = get_layout_name(t)
+    property_name_escaped = get_property_name_escaped(python_type)
+    print(f'    self.{property_name_escaped} = PyType.initBuiltinType(name: "{python_type}", type: self.type, base: self.object, layout: .{layout})')
 
   # And now add 'bool'
-  print('    self.bool = PyType.initBuiltinType(name: "bool", type: self.type, base: self.int)')
+  print('    self.bool = PyType.initBuiltinType(name: "bool", type: self.type, base: self.int, layout: .PyBool)')
   print('  }')
   print()
 

@@ -139,8 +139,10 @@ extension PyType {
       case let .error(e): return .error(e)
       }
 
-      // Calculate best base using bases memory layout (layout confilct -> error)
-      switch PyType.bestBase(bases: bases) {
+      // Calculate best base using bases memory layout (layout confilct -> error).
+      // We will call this base 'solid' - our new type will have the same memory
+      // layout (+- '__dict__' because it does not matter).
+      switch PyType.getSolidBase(bases: bases) {
       case let .value(r): base = r
       case let .error(e): return .error(e)
       }
@@ -160,7 +162,8 @@ extension PyType {
       qualname: args.name.value, // May be overriden later (if we have it in dict)
       type: metatype,
       base: base,
-      mro: mro
+      mro: mro,
+      layout: base.layout // Heap types will use the same layout as base (+- __dict__)
     )
 
     // Flags have to be set ASAP!
@@ -172,7 +175,7 @@ extension PyType {
     }
 
     // Initialize '__dict__' from passed-in dict
-    // Also: we have to COPY the kwargs! Swift COW will take care of this.
+    // Also: we have to COPY it! Swift COW will take care of this.
     let dict = Py.newDict(data: args.dict.data)
     type.setDict(value: dict)
 
@@ -259,70 +262,41 @@ extension PyType {
 
   // MARK: - Best base
 
+  /// Solid base - traverse class hierarchy (from derieved to base)
+  /// until we reach something with defined layout.
+  ///
+  /// For example:
+  ///   Given:   Bool -> Int -> Object
+  ///   Returns: Int layout
+  ///   Reason: 'Bool' and 'Int' have the same layout (single BigInt property),
+  ///            but 'Int' and 'Object' have different layouts.
+  ///
   /// static PyTypeObject *
   /// best_base(PyObject *bases)
-  private static func bestBase(bases: [PyType]) -> PyResult<PyType> {
+  private static func getSolidBase(bases: [PyType]) -> PyResult<PyType> {
     assert(bases.any)
 
-    var result: SolidBase?
+    var result: PyType?
 
-    for b in bases {
-      let candidate = PyType.solidBase(type: b)
-
+    for candidate in bases {
       guard let currentResult = result else {
         result = candidate
         continue
       }
 
-      if candidate.layout.isAddingNewProperties(to: currentResult.layout) {
+      let layout = candidate.layout
+      if layout.isAddingNewProperties(to: currentResult.layout) {
         result = candidate
-      } else if currentResult.layout.isAddingNewProperties(to: candidate.layout) {
+      } else if currentResult.layout.isAddingNewProperties(to: layout) {
         // nothing
       } else {
         return .typeError("multiple bases have instance lay-out conflict")
       }
     }
 
-    assert(result != nil) // basically the same check as 'bases.any' at top
-    return .value(result!.type) // swiftlint:disable:this force_unwrapping
-  }
-
-  private struct SolidBase {
-    fileprivate let type: PyType
-    fileprivate let layout: TypeLayout
-  }
-
-  /// static PyTypeObject *
-  /// solid_base(PyTypeObject *type)
-  private static func solidBase(type: PyType) -> SolidBase {
-    // Traverse class hierarchy (from derieved to base) until we reach
-    // something with defined layout.
-    // For example:
-    //   Given:   Bool -> Int -> Object
-    //   Returns: Int layout
-    //   Reason: 'Bool' and 'Int' have the same layout (single BigInt property),
-    //           but 'Int' and 'Object' have different layouts.
-
-    var typeOrNil: PyType? = type
-
-    while let candidate = typeOrNil {
-      assert(
-        candidate.layout != nil,
-        "Unknown memory layout for \(candidate.getNameRaw())." +
-        "'PyType.layout' should be set. (Is this type from external module? Ooo!)"
-      )
-
-      if let layout = candidate.layout {
-        return SolidBase(type: type, layout: layout)
-      }
-
-      typeOrNil = candidate.getBase()
-    }
-
-    // 'Object' type (the one at the top of the lattice) has defined layout.
-    // It should be used if anything else fails.
-    let typeName = type.getNameRaw()
-    trap("'\(typeName)' type does not derieve from 'object'.")
+    // We can force unwrap because we checked 'bases.any' at the top.
+    // swiftlint:disable:next force_unwrapping
+    return .value(result!)
   }
 
   // MARK: - __module__

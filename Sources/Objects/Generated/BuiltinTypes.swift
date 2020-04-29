@@ -95,59 +95,59 @@ public final class BuiltinTypes {
     self.type.setType(to: self.type)
 
     // 'self.bool' has to be last because it uses 'self.int' as base!
-    self.builtinFunction = PyType.initBuiltinType(name: "builtinFunction", type: self.type, base: self.object)
-    self.builtinMethod = PyType.initBuiltinType(name: "builtinMethod", type: self.type, base: self.object)
-    self.bytearray = PyType.initBuiltinType(name: "bytearray", type: self.type, base: self.object)
-    self.bytearray_iterator = PyType.initBuiltinType(name: "bytearray_iterator", type: self.type, base: self.object)
-    self.bytes = PyType.initBuiltinType(name: "bytes", type: self.type, base: self.object)
-    self.bytes_iterator = PyType.initBuiltinType(name: "bytes_iterator", type: self.type, base: self.object)
-    self.callable_iterator = PyType.initBuiltinType(name: "callable_iterator", type: self.type, base: self.object)
-    self.cell = PyType.initBuiltinType(name: "cell", type: self.type, base: self.object)
-    self.classmethod = PyType.initBuiltinType(name: "classmethod", type: self.type, base: self.object)
-    self.code = PyType.initBuiltinType(name: "code", type: self.type, base: self.object)
-    self.complex = PyType.initBuiltinType(name: "complex", type: self.type, base: self.object)
-    self.dict = PyType.initBuiltinType(name: "dict", type: self.type, base: self.object)
-    self.dict_itemiterator = PyType.initBuiltinType(name: "dict_itemiterator", type: self.type, base: self.object)
-    self.dict_items = PyType.initBuiltinType(name: "dict_items", type: self.type, base: self.object)
-    self.dict_keyiterator = PyType.initBuiltinType(name: "dict_keyiterator", type: self.type, base: self.object)
-    self.dict_keys = PyType.initBuiltinType(name: "dict_keys", type: self.type, base: self.object)
-    self.dict_valueiterator = PyType.initBuiltinType(name: "dict_valueiterator", type: self.type, base: self.object)
-    self.dict_values = PyType.initBuiltinType(name: "dict_values", type: self.type, base: self.object)
-    self.ellipsis = PyType.initBuiltinType(name: "ellipsis", type: self.type, base: self.object)
-    self.enumerate = PyType.initBuiltinType(name: "enumerate", type: self.type, base: self.object)
-    self.filter = PyType.initBuiltinType(name: "filter", type: self.type, base: self.object)
-    self.float = PyType.initBuiltinType(name: "float", type: self.type, base: self.object)
-    self.frame = PyType.initBuiltinType(name: "frame", type: self.type, base: self.object)
-    self.frozenset = PyType.initBuiltinType(name: "frozenset", type: self.type, base: self.object)
-    self.function = PyType.initBuiltinType(name: "function", type: self.type, base: self.object)
-    self.int = PyType.initBuiltinType(name: "int", type: self.type, base: self.object)
-    self.iterator = PyType.initBuiltinType(name: "iterator", type: self.type, base: self.object)
-    self.list = PyType.initBuiltinType(name: "list", type: self.type, base: self.object)
-    self.list_iterator = PyType.initBuiltinType(name: "list_iterator", type: self.type, base: self.object)
-    self.list_reverseiterator = PyType.initBuiltinType(name: "list_reverseiterator", type: self.type, base: self.object)
-    self.map = PyType.initBuiltinType(name: "map", type: self.type, base: self.object)
-    self.method = PyType.initBuiltinType(name: "method", type: self.type, base: self.object)
-    self.module = PyType.initBuiltinType(name: "module", type: self.type, base: self.object)
-    self.simpleNamespace = PyType.initBuiltinType(name: "types.SimpleNamespace", type: self.type, base: self.object)
-    self.none = PyType.initBuiltinType(name: "NoneType", type: self.type, base: self.object)
-    self.notImplemented = PyType.initBuiltinType(name: "NotImplementedType", type: self.type, base: self.object)
-    self.property = PyType.initBuiltinType(name: "property", type: self.type, base: self.object)
-    self.range = PyType.initBuiltinType(name: "range", type: self.type, base: self.object)
-    self.range_iterator = PyType.initBuiltinType(name: "range_iterator", type: self.type, base: self.object)
-    self.reversed = PyType.initBuiltinType(name: "reversed", type: self.type, base: self.object)
-    self.set = PyType.initBuiltinType(name: "set", type: self.type, base: self.object)
-    self.set_iterator = PyType.initBuiltinType(name: "set_iterator", type: self.type, base: self.object)
-    self.slice = PyType.initBuiltinType(name: "slice", type: self.type, base: self.object)
-    self.staticmethod = PyType.initBuiltinType(name: "staticmethod", type: self.type, base: self.object)
-    self.str = PyType.initBuiltinType(name: "str", type: self.type, base: self.object)
-    self.str_iterator = PyType.initBuiltinType(name: "str_iterator", type: self.type, base: self.object)
-    self.`super` = PyType.initBuiltinType(name: "super", type: self.type, base: self.object)
-    self.textFile = PyType.initBuiltinType(name: "TextFile", type: self.type, base: self.object)
-    self.traceback = PyType.initBuiltinType(name: "traceback", type: self.type, base: self.object)
-    self.tuple = PyType.initBuiltinType(name: "tuple", type: self.type, base: self.object)
-    self.tuple_iterator = PyType.initBuiltinType(name: "tuple_iterator", type: self.type, base: self.object)
-    self.zip = PyType.initBuiltinType(name: "zip", type: self.type, base: self.object)
-    self.bool = PyType.initBuiltinType(name: "bool", type: self.type, base: self.int)
+    self.builtinFunction = PyType.initBuiltinType(name: "builtinFunction", type: self.type, base: self.object, layout: .PyBuiltinFunction)
+    self.builtinMethod = PyType.initBuiltinType(name: "builtinMethod", type: self.type, base: self.object, layout: .PyBuiltinMethod)
+    self.bytearray = PyType.initBuiltinType(name: "bytearray", type: self.type, base: self.object, layout: .PyByteArray)
+    self.bytearray_iterator = PyType.initBuiltinType(name: "bytearray_iterator", type: self.type, base: self.object, layout: .PyByteArrayIterator)
+    self.bytes = PyType.initBuiltinType(name: "bytes", type: self.type, base: self.object, layout: .PyBytes)
+    self.bytes_iterator = PyType.initBuiltinType(name: "bytes_iterator", type: self.type, base: self.object, layout: .PyBytesIterator)
+    self.callable_iterator = PyType.initBuiltinType(name: "callable_iterator", type: self.type, base: self.object, layout: .PyCallableIterator)
+    self.cell = PyType.initBuiltinType(name: "cell", type: self.type, base: self.object, layout: .PyCell)
+    self.classmethod = PyType.initBuiltinType(name: "classmethod", type: self.type, base: self.object, layout: .PyClassMethod)
+    self.code = PyType.initBuiltinType(name: "code", type: self.type, base: self.object, layout: .PyCode)
+    self.complex = PyType.initBuiltinType(name: "complex", type: self.type, base: self.object, layout: .PyComplex)
+    self.dict = PyType.initBuiltinType(name: "dict", type: self.type, base: self.object, layout: .PyDict)
+    self.dict_itemiterator = PyType.initBuiltinType(name: "dict_itemiterator", type: self.type, base: self.object, layout: .PyDictItemIterator)
+    self.dict_items = PyType.initBuiltinType(name: "dict_items", type: self.type, base: self.object, layout: .PyDictItems)
+    self.dict_keyiterator = PyType.initBuiltinType(name: "dict_keyiterator", type: self.type, base: self.object, layout: .PyDictKeyIterator)
+    self.dict_keys = PyType.initBuiltinType(name: "dict_keys", type: self.type, base: self.object, layout: .PyDictKeys)
+    self.dict_valueiterator = PyType.initBuiltinType(name: "dict_valueiterator", type: self.type, base: self.object, layout: .PyDictValueIterator)
+    self.dict_values = PyType.initBuiltinType(name: "dict_values", type: self.type, base: self.object, layout: .PyDictValues)
+    self.ellipsis = PyType.initBuiltinType(name: "ellipsis", type: self.type, base: self.object, layout: .PyEllipsis)
+    self.enumerate = PyType.initBuiltinType(name: "enumerate", type: self.type, base: self.object, layout: .PyEnumerate)
+    self.filter = PyType.initBuiltinType(name: "filter", type: self.type, base: self.object, layout: .PyFilter)
+    self.float = PyType.initBuiltinType(name: "float", type: self.type, base: self.object, layout: .PyFloat)
+    self.frame = PyType.initBuiltinType(name: "frame", type: self.type, base: self.object, layout: .PyFrame)
+    self.frozenset = PyType.initBuiltinType(name: "frozenset", type: self.type, base: self.object, layout: .PyFrozenSet)
+    self.function = PyType.initBuiltinType(name: "function", type: self.type, base: self.object, layout: .PyFunction)
+    self.int = PyType.initBuiltinType(name: "int", type: self.type, base: self.object, layout: .PyInt)
+    self.iterator = PyType.initBuiltinType(name: "iterator", type: self.type, base: self.object, layout: .PyIterator)
+    self.list = PyType.initBuiltinType(name: "list", type: self.type, base: self.object, layout: .PyList)
+    self.list_iterator = PyType.initBuiltinType(name: "list_iterator", type: self.type, base: self.object, layout: .PyListIterator)
+    self.list_reverseiterator = PyType.initBuiltinType(name: "list_reverseiterator", type: self.type, base: self.object, layout: .PyListReverseIterator)
+    self.map = PyType.initBuiltinType(name: "map", type: self.type, base: self.object, layout: .PyMap)
+    self.method = PyType.initBuiltinType(name: "method", type: self.type, base: self.object, layout: .PyMethod)
+    self.module = PyType.initBuiltinType(name: "module", type: self.type, base: self.object, layout: .PyModule)
+    self.simpleNamespace = PyType.initBuiltinType(name: "types.SimpleNamespace", type: self.type, base: self.object, layout: .PyNamespace)
+    self.none = PyType.initBuiltinType(name: "NoneType", type: self.type, base: self.object, layout: .PyNone)
+    self.notImplemented = PyType.initBuiltinType(name: "NotImplementedType", type: self.type, base: self.object, layout: .PyNotImplemented)
+    self.property = PyType.initBuiltinType(name: "property", type: self.type, base: self.object, layout: .PyProperty)
+    self.range = PyType.initBuiltinType(name: "range", type: self.type, base: self.object, layout: .PyRange)
+    self.range_iterator = PyType.initBuiltinType(name: "range_iterator", type: self.type, base: self.object, layout: .PyRangeIterator)
+    self.reversed = PyType.initBuiltinType(name: "reversed", type: self.type, base: self.object, layout: .PyReversed)
+    self.set = PyType.initBuiltinType(name: "set", type: self.type, base: self.object, layout: .PySet)
+    self.set_iterator = PyType.initBuiltinType(name: "set_iterator", type: self.type, base: self.object, layout: .PySetIterator)
+    self.slice = PyType.initBuiltinType(name: "slice", type: self.type, base: self.object, layout: .PySlice)
+    self.staticmethod = PyType.initBuiltinType(name: "staticmethod", type: self.type, base: self.object, layout: .PyStaticMethod)
+    self.str = PyType.initBuiltinType(name: "str", type: self.type, base: self.object, layout: .PyString)
+    self.str_iterator = PyType.initBuiltinType(name: "str_iterator", type: self.type, base: self.object, layout: .PyStringIterator)
+    self.`super` = PyType.initBuiltinType(name: "super", type: self.type, base: self.object, layout: .PySuper)
+    self.textFile = PyType.initBuiltinType(name: "TextFile", type: self.type, base: self.object, layout: .PyTextFile)
+    self.traceback = PyType.initBuiltinType(name: "traceback", type: self.type, base: self.object, layout: .PyTraceback)
+    self.tuple = PyType.initBuiltinType(name: "tuple", type: self.type, base: self.object, layout: .PyTuple)
+    self.tuple_iterator = PyType.initBuiltinType(name: "tuple_iterator", type: self.type, base: self.object, layout: .PyTupleIterator)
+    self.zip = PyType.initBuiltinType(name: "zip", type: self.type, base: self.object, layout: .PyZip)
+    self.bool = PyType.initBuiltinType(name: "bool", type: self.type, base: self.int, layout: .PyBool)
   }
 
   // MARK: - Stage 2 - fill __dict__
@@ -320,7 +320,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(PyObjectType.doc)
     type.setFlag(.baseType)
     type.setFlag(.default)
-    type.setLayout(.PyObject)
 
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyObjectType.isEqual(zelf:other:)))
     self.insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyObjectType.isNotEqual(zelf:other:)))
@@ -358,7 +357,6 @@ public final class BuiltinTypes {
     let type = self.bool
     type.setBuiltinTypeDoc(PyBool.doc)
     type.setFlag(.default)
-    type.setLayout(.PyBool)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBool.getClass, castSelf: Self.asBool))
 
@@ -390,7 +388,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyBuiltinFunction)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBuiltinFunction.getClass, castSelf: Self.asBuiltinFunction))
     self.insert(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyBuiltinFunction.getName, castSelf: Self.asBuiltinFunction))
@@ -427,7 +424,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyBuiltinMethod)
 
     self.insert(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyBuiltinMethod.getName, castSelf: Self.asBuiltinMethod))
     self.insert(type: type, name: "__qualname__", value: PyProperty.wrap(name: "__qualname__", doc: nil, get: PyBuiltinMethod.getQualname, castSelf: Self.asBuiltinMethod))
@@ -463,7 +459,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(PyByteArray.doc)
     type.setFlag(.baseType)
     type.setFlag(.default)
-    type.setLayout(.PyByteArray)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyByteArray.getClass, castSelf: Self.asByteArray))
 
@@ -550,7 +545,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyByteArrayIterator)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyByteArrayIterator.getClass, castSelf: Self.asByteArrayIterator))
 
@@ -578,7 +572,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.bytesSubclass)
     type.setFlag(.default)
-    type.setLayout(.PyBytes)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBytes.getClass, castSelf: Self.asBytes))
 
@@ -654,7 +647,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyBytesIterator)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBytesIterator.getClass, castSelf: Self.asBytesIterator))
 
@@ -681,7 +673,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyCallableIterator)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyCallableIterator.getClass, castSelf: Self.asCallableIterator))
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyCallableIterator.getAttribute(name:), castSelf: Self.asCallableIterator))
@@ -705,7 +696,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyCell)
 
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyCell.isEqual(_:), castSelf: Self.asCell))
     self.insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyCell.isNotEqual(_:), castSelf: Self.asCell))
@@ -734,7 +724,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyClassMethod)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyClassMethod.getClass, castSelf: Self.asClassMethod))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyClassMethod.getDict, castSelf: Self.asClassMethod))
@@ -762,7 +751,6 @@ public final class BuiltinTypes {
     let type = self.code
     type.setBuiltinTypeDoc(PyCode.doc)
     type.setFlag(.default)
-    type.setLayout(.PyCode)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyCode.getClass, castSelf: Self.asCode))
     self.insert(type: type, name: "co_name", value: PyProperty.wrap(name: "co_name", doc: nil, get: PyCode.getName, castSelf: Self.asCode))
@@ -798,7 +786,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(PyComplex.doc)
     type.setFlag(.baseType)
     type.setFlag(.default)
-    type.setLayout(.PyComplex)
 
     self.insert(type: type, name: "real", value: PyProperty.wrap(name: "real", doc: nil, get: PyComplex.asReal, castSelf: Self.asComplex))
     self.insert(type: type, name: "imag", value: PyProperty.wrap(name: "imag", doc: nil, get: PyComplex.asImag, castSelf: Self.asComplex))
@@ -859,7 +846,6 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.dictSubclass)
     type.setFlag(.hasGC)
-    type.setLayout(.PyDict)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDict.getClass, castSelf: Self.asDict))
 
@@ -909,7 +895,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyDictItemIterator)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictItemIterator.getClass, castSelf: Self.asDictItemIterator))
 
@@ -936,7 +921,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyDictItems)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictItems.getClass, castSelf: Self.asDictItems))
 
@@ -972,7 +956,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyDictKeyIterator)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictKeyIterator.getClass, castSelf: Self.asDictKeyIterator))
 
@@ -999,7 +982,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyDictKeys)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictKeys.getClass, castSelf: Self.asDictKeys))
 
@@ -1035,7 +1017,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyDictValueIterator)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictValueIterator.getClass, castSelf: Self.asDictValueIterator))
 
@@ -1062,7 +1043,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyDictValues)
 
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyDictValues.repr, castSelf: Self.asDictValues))
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyDictValues.getAttribute(name:), castSelf: Self.asDictValues))
@@ -1085,7 +1065,6 @@ public final class BuiltinTypes {
     let type = self.ellipsis
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
-    type.setLayout(.PyEllipsis)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyEllipsis.getClass, castSelf: Self.asEllipsis))
 
@@ -1113,7 +1092,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyEnumerate)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyEnumerate.getClass, castSelf: Self.asEnumerate))
 
@@ -1141,7 +1119,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyFilter)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFilter.getClass, castSelf: Self.asFilter))
 
@@ -1168,7 +1145,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(PyFloat.doc)
     type.setFlag(.baseType)
     type.setFlag(.default)
-    type.setLayout(.PyFloat)
 
     self.insert(type: type, name: "real", value: PyProperty.wrap(name: "real", doc: nil, get: PyFloat.asReal, castSelf: Self.asFloat))
     self.insert(type: type, name: "imag", value: PyProperty.wrap(name: "imag", doc: nil, get: PyFloat.asImag, castSelf: Self.asFloat))
@@ -1230,7 +1206,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyFrame)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFrame.getClass, castSelf: Self.asFrame))
     self.insert(type: type, name: "f_back", value: PyProperty.wrap(name: "f_back", doc: nil, get: PyFrame.getBack, castSelf: Self.asFrame))
@@ -1263,7 +1238,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyFrozenSet)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFrozenSet.getClass, castSelf: Self.asFrozenSet))
 
@@ -1315,7 +1289,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(PyFunction.doc)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyFunction)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFunction.getClass, castSelf: Self.asFunction))
     self.insert(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyFunction.getName, set: PyFunction.setName, castSelf: Self.asFunction))
@@ -1351,7 +1324,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.longSubclass)
-    type.setLayout(.PyInt)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyInt.getClass, castSelf: Self.asInt))
     self.insert(type: type, name: "real", value: PyProperty.wrap(name: "real", doc: nil, get: PyInt.asReal, castSelf: Self.asInt))
@@ -1429,7 +1401,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyIterator)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIterator.getClass, castSelf: Self.asIterator))
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyIterator.getAttribute(name:), castSelf: Self.asIterator))
@@ -1455,7 +1426,6 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setFlag(.listSubclass)
-    type.setLayout(.PyList)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyList.getClass, castSelf: Self.asList))
 
@@ -1512,7 +1482,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyListIterator)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyListIterator.getClass, castSelf: Self.asListIterator))
 
@@ -1539,7 +1508,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyListReverseIterator)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyListReverseIterator.getClass, castSelf: Self.asListReverseIterator))
 
@@ -1567,7 +1535,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyMap)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMap.getClass, castSelf: Self.asMap))
 
@@ -1594,7 +1561,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(PyMethod.doc)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyMethod)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMethod.getClass, castSelf: Self.asMethod))
     self.insert(type: type, name: "__doc__", value: PyProperty.wrap(name: "__doc__", doc: nil, get: PyMethod.getDoc, castSelf: Self.asMethod))
@@ -1632,7 +1598,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyModule)
 
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyModule.getDict, castSelf: Self.asModule))
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyModule.getClass, castSelf: Self.asModule))
@@ -1664,7 +1629,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyNamespace)
 
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNamespace.getDict, castSelf: Self.asNamespace))
 
@@ -1697,7 +1661,6 @@ public final class BuiltinTypes {
     let type = self.none
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
-    type.setLayout(.PyNone)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNone.getClass, castSelf: Self.asNone))
 
@@ -1723,7 +1686,6 @@ public final class BuiltinTypes {
     let type = self.notImplemented
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
-    type.setLayout(.PyNotImplemented)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNotImplemented.getClass, castSelf: Self.asNotImplemented))
 
@@ -1749,7 +1711,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyProperty)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyProperty.getClass, castSelf: Self.asProperty))
     self.insert(type: type, name: "fget", value: PyProperty.wrap(name: "fget", doc: nil, get: PyProperty.getFGet, castSelf: Self.asProperty))
@@ -1783,7 +1744,6 @@ public final class BuiltinTypes {
     let type = self.range
     type.setBuiltinTypeDoc(PyRange.doc)
     type.setFlag(.default)
-    type.setLayout(.PyRange)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRange.getClass, castSelf: Self.asRange))
     self.insert(type: type, name: "start", value: PyProperty.wrap(name: "start", doc: nil, get: PyRange.getStart, castSelf: Self.asRange))
@@ -1826,7 +1786,6 @@ public final class BuiltinTypes {
     let type = self.range_iterator
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
-    type.setLayout(.PyRangeIterator)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRangeIterator.getClass, castSelf: Self.asRangeIterator))
 
@@ -1854,7 +1813,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyReversed)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyReversed.getClass, castSelf: Self.asReversed))
 
@@ -1882,7 +1840,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PySet)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySet.getClass, castSelf: Self.asSet))
 
@@ -1941,7 +1898,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PySetIterator)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySetIterator.getClass, castSelf: Self.asSetIterator))
 
@@ -1968,7 +1924,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(PySlice.doc)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PySlice)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySlice.getClass, castSelf: Self.asSlice))
     self.insert(type: type, name: "start", value: PyProperty.wrap(name: "start", doc: nil, get: PySlice.getStart, castSelf: Self.asSlice))
@@ -2006,7 +1961,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyStaticMethod)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStaticMethod.getClass, castSelf: Self.asStaticMethod))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyStaticMethod.getDict, castSelf: Self.asStaticMethod))
@@ -2036,7 +1990,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.unicodeSubclass)
-    type.setLayout(.PyString)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyString.getClass, castSelf: Self.asString))
 
@@ -2117,7 +2070,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyStringIterator)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStringIterator.getClass, castSelf: Self.asStringIterator))
 
@@ -2145,7 +2097,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PySuper)
 
     self.insert(type: type, name: "__thisclass__", value: PyProperty.wrap(name: "__thisclass__", doc: PySuper.thisClassDoc, get: PySuper.getThisClass, castSelf: Self.asSuper))
     self.insert(type: type, name: "__self__", value: PyProperty.wrap(name: "__self__", doc: PySuper.selfDoc, get: PySuper.getSelf, castSelf: Self.asSuper))
@@ -2176,7 +2127,6 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasFinalize)
     type.setFlag(.hasGC)
-    type.setLayout(.PyTextFile)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTextFile.getClass, castSelf: Self.asTextFile))
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyTextFile.repr, castSelf: Self.asTextFile))
@@ -2207,7 +2157,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(PyTraceback.doc)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyTraceback)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTraceback.getClass, castSelf: Self.asTraceback))
     self.insert(type: type, name: "tb_frame", value: PyProperty.wrap(name: "tb_frame", doc: nil, get: PyTraceback.getFrame, castSelf: Self.asTraceback))
@@ -2239,7 +2188,6 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setFlag(.tupleSubclass)
-    type.setLayout(.PyTuple)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTuple.getClass, castSelf: Self.asTuple))
 
@@ -2281,7 +2229,6 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyTupleIterator)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTupleIterator.getClass, castSelf: Self.asTupleIterator))
 
@@ -2310,7 +2257,6 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setFlag(.typeSubclass)
-    type.setLayout(.PyType)
 
     self.insert(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyType.getName, set: PyType.setName, castSelf: Self.asType))
     self.insert(type: type, name: "__qualname__", value: PyProperty.wrap(name: "__qualname__", doc: nil, get: PyType.getQualname, set: PyType.setQualname, castSelf: Self.asType))
@@ -2353,7 +2299,6 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyZip)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyZip.getClass, castSelf: Self.asZip))
 

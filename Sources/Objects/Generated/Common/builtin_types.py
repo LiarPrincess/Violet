@@ -1,4 +1,4 @@
-from TypeLayout import get_layout_name
+from TypeMemoryLayout import get_layout_name
 
 # =============
 # Property name
@@ -107,8 +107,6 @@ def print_fill_type_method(t):
   for flag in sourcery_flags:
     print(f'    type.setFlag(.{flag})')
 
-  layout = get_layout_name(t)
-  print(f'    type.setLayout(.{layout})')
   print()
 
   # ==================

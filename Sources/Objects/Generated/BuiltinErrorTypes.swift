@@ -91,70 +91,70 @@ public final class BuiltinErrorTypes {
   /// Init that will only initialize properties.
   internal init() {
     let types = Py.types
-    self.baseException = PyType.initBuiltinType(name: "BaseException", type: types.type, base: types.object)
-    self.systemExit = PyType.initBuiltinType(name: "SystemExit", type: types.type, base: self.baseException)
-    self.keyboardInterrupt = PyType.initBuiltinType(name: "KeyboardInterrupt", type: types.type, base: self.baseException)
-    self.generatorExit = PyType.initBuiltinType(name: "GeneratorExit", type: types.type, base: self.baseException)
-    self.exception = PyType.initBuiltinType(name: "Exception", type: types.type, base: self.baseException)
-    self.stopIteration = PyType.initBuiltinType(name: "StopIteration", type: types.type, base: self.exception)
-    self.stopAsyncIteration = PyType.initBuiltinType(name: "StopAsyncIteration", type: types.type, base: self.exception)
-    self.arithmeticError = PyType.initBuiltinType(name: "ArithmeticError", type: types.type, base: self.exception)
-    self.floatingPointError = PyType.initBuiltinType(name: "FloatingPointError", type: types.type, base: self.arithmeticError)
-    self.overflowError = PyType.initBuiltinType(name: "OverflowError", type: types.type, base: self.arithmeticError)
-    self.zeroDivisionError = PyType.initBuiltinType(name: "ZeroDivisionError", type: types.type, base: self.arithmeticError)
-    self.assertionError = PyType.initBuiltinType(name: "AssertionError", type: types.type, base: self.exception)
-    self.attributeError = PyType.initBuiltinType(name: "AttributeError", type: types.type, base: self.exception)
-    self.bufferError = PyType.initBuiltinType(name: "BufferError", type: types.type, base: self.exception)
-    self.eofError = PyType.initBuiltinType(name: "EOFError", type: types.type, base: self.exception)
-    self.importError = PyType.initBuiltinType(name: "ImportError", type: types.type, base: self.exception)
-    self.moduleNotFoundError = PyType.initBuiltinType(name: "ModuleNotFoundError", type: types.type, base: self.importError)
-    self.lookupError = PyType.initBuiltinType(name: "LookupError", type: types.type, base: self.exception)
-    self.indexError = PyType.initBuiltinType(name: "IndexError", type: types.type, base: self.lookupError)
-    self.keyError = PyType.initBuiltinType(name: "KeyError", type: types.type, base: self.lookupError)
-    self.memoryError = PyType.initBuiltinType(name: "MemoryError", type: types.type, base: self.exception)
-    self.nameError = PyType.initBuiltinType(name: "NameError", type: types.type, base: self.exception)
-    self.unboundLocalError = PyType.initBuiltinType(name: "UnboundLocalError", type: types.type, base: self.nameError)
-    self.osError = PyType.initBuiltinType(name: "OSError", type: types.type, base: self.exception)
-    self.blockingIOError = PyType.initBuiltinType(name: "BlockingIOError", type: types.type, base: self.osError)
-    self.childProcessError = PyType.initBuiltinType(name: "ChildProcessError", type: types.type, base: self.osError)
-    self.connectionError = PyType.initBuiltinType(name: "ConnectionError", type: types.type, base: self.osError)
-    self.brokenPipeError = PyType.initBuiltinType(name: "BrokenPipeError", type: types.type, base: self.connectionError)
-    self.connectionAbortedError = PyType.initBuiltinType(name: "ConnectionAbortedError", type: types.type, base: self.connectionError)
-    self.connectionRefusedError = PyType.initBuiltinType(name: "ConnectionRefusedError", type: types.type, base: self.connectionError)
-    self.connectionResetError = PyType.initBuiltinType(name: "ConnectionResetError", type: types.type, base: self.connectionError)
-    self.fileExistsError = PyType.initBuiltinType(name: "FileExistsError", type: types.type, base: self.osError)
-    self.fileNotFoundError = PyType.initBuiltinType(name: "FileNotFoundError", type: types.type, base: self.osError)
-    self.interruptedError = PyType.initBuiltinType(name: "InterruptedError", type: types.type, base: self.osError)
-    self.isADirectoryError = PyType.initBuiltinType(name: "IsADirectoryError", type: types.type, base: self.osError)
-    self.notADirectoryError = PyType.initBuiltinType(name: "NotADirectoryError", type: types.type, base: self.osError)
-    self.permissionError = PyType.initBuiltinType(name: "PermissionError", type: types.type, base: self.osError)
-    self.processLookupError = PyType.initBuiltinType(name: "ProcessLookupError", type: types.type, base: self.osError)
-    self.timeoutError = PyType.initBuiltinType(name: "TimeoutError", type: types.type, base: self.osError)
-    self.referenceError = PyType.initBuiltinType(name: "ReferenceError", type: types.type, base: self.exception)
-    self.runtimeError = PyType.initBuiltinType(name: "RuntimeError", type: types.type, base: self.exception)
-    self.notImplementedError = PyType.initBuiltinType(name: "NotImplementedError", type: types.type, base: self.runtimeError)
-    self.recursionError = PyType.initBuiltinType(name: "RecursionError", type: types.type, base: self.runtimeError)
-    self.syntaxError = PyType.initBuiltinType(name: "SyntaxError", type: types.type, base: self.exception)
-    self.indentationError = PyType.initBuiltinType(name: "IndentationError", type: types.type, base: self.syntaxError)
-    self.tabError = PyType.initBuiltinType(name: "TabError", type: types.type, base: self.indentationError)
-    self.systemError = PyType.initBuiltinType(name: "SystemError", type: types.type, base: self.exception)
-    self.typeError = PyType.initBuiltinType(name: "TypeError", type: types.type, base: self.exception)
-    self.valueError = PyType.initBuiltinType(name: "ValueError", type: types.type, base: self.exception)
-    self.unicodeError = PyType.initBuiltinType(name: "UnicodeError", type: types.type, base: self.valueError)
-    self.unicodeDecodeError = PyType.initBuiltinType(name: "UnicodeDecodeError", type: types.type, base: self.unicodeError)
-    self.unicodeEncodeError = PyType.initBuiltinType(name: "UnicodeEncodeError", type: types.type, base: self.unicodeError)
-    self.unicodeTranslateError = PyType.initBuiltinType(name: "UnicodeTranslateError", type: types.type, base: self.unicodeError)
-    self.warning = PyType.initBuiltinType(name: "Warning", type: types.type, base: self.exception)
-    self.deprecationWarning = PyType.initBuiltinType(name: "DeprecationWarning", type: types.type, base: self.warning)
-    self.pendingDeprecationWarning = PyType.initBuiltinType(name: "PendingDeprecationWarning", type: types.type, base: self.warning)
-    self.runtimeWarning = PyType.initBuiltinType(name: "RuntimeWarning", type: types.type, base: self.warning)
-    self.syntaxWarning = PyType.initBuiltinType(name: "SyntaxWarning", type: types.type, base: self.warning)
-    self.userWarning = PyType.initBuiltinType(name: "UserWarning", type: types.type, base: self.warning)
-    self.futureWarning = PyType.initBuiltinType(name: "FutureWarning", type: types.type, base: self.warning)
-    self.importWarning = PyType.initBuiltinType(name: "ImportWarning", type: types.type, base: self.warning)
-    self.unicodeWarning = PyType.initBuiltinType(name: "UnicodeWarning", type: types.type, base: self.warning)
-    self.bytesWarning = PyType.initBuiltinType(name: "BytesWarning", type: types.type, base: self.warning)
-    self.resourceWarning = PyType.initBuiltinType(name: "ResourceWarning", type: types.type, base: self.warning)
+    self.baseException = PyType.initBuiltinType(name: "BaseException", type: types.type, base: types.object, layout: .PyBaseException)
+    self.systemExit = PyType.initBuiltinType(name: "SystemExit", type: types.type, base: self.baseException, layout: .PySystemExit)
+    self.keyboardInterrupt = PyType.initBuiltinType(name: "KeyboardInterrupt", type: types.type, base: self.baseException, layout: .PyKeyboardInterrupt)
+    self.generatorExit = PyType.initBuiltinType(name: "GeneratorExit", type: types.type, base: self.baseException, layout: .PyGeneratorExit)
+    self.exception = PyType.initBuiltinType(name: "Exception", type: types.type, base: self.baseException, layout: .PyException)
+    self.stopIteration = PyType.initBuiltinType(name: "StopIteration", type: types.type, base: self.exception, layout: .PyStopIteration)
+    self.stopAsyncIteration = PyType.initBuiltinType(name: "StopAsyncIteration", type: types.type, base: self.exception, layout: .PyStopAsyncIteration)
+    self.arithmeticError = PyType.initBuiltinType(name: "ArithmeticError", type: types.type, base: self.exception, layout: .PyArithmeticError)
+    self.floatingPointError = PyType.initBuiltinType(name: "FloatingPointError", type: types.type, base: self.arithmeticError, layout: .PyFloatingPointError)
+    self.overflowError = PyType.initBuiltinType(name: "OverflowError", type: types.type, base: self.arithmeticError, layout: .PyOverflowError)
+    self.zeroDivisionError = PyType.initBuiltinType(name: "ZeroDivisionError", type: types.type, base: self.arithmeticError, layout: .PyZeroDivisionError)
+    self.assertionError = PyType.initBuiltinType(name: "AssertionError", type: types.type, base: self.exception, layout: .PyAssertionError)
+    self.attributeError = PyType.initBuiltinType(name: "AttributeError", type: types.type, base: self.exception, layout: .PyAttributeError)
+    self.bufferError = PyType.initBuiltinType(name: "BufferError", type: types.type, base: self.exception, layout: .PyBufferError)
+    self.eofError = PyType.initBuiltinType(name: "EOFError", type: types.type, base: self.exception, layout: .PyEOFError)
+    self.importError = PyType.initBuiltinType(name: "ImportError", type: types.type, base: self.exception, layout: .PyImportError)
+    self.moduleNotFoundError = PyType.initBuiltinType(name: "ModuleNotFoundError", type: types.type, base: self.importError, layout: .PyModuleNotFoundError)
+    self.lookupError = PyType.initBuiltinType(name: "LookupError", type: types.type, base: self.exception, layout: .PyLookupError)
+    self.indexError = PyType.initBuiltinType(name: "IndexError", type: types.type, base: self.lookupError, layout: .PyIndexError)
+    self.keyError = PyType.initBuiltinType(name: "KeyError", type: types.type, base: self.lookupError, layout: .PyKeyError)
+    self.memoryError = PyType.initBuiltinType(name: "MemoryError", type: types.type, base: self.exception, layout: .PyMemoryError)
+    self.nameError = PyType.initBuiltinType(name: "NameError", type: types.type, base: self.exception, layout: .PyNameError)
+    self.unboundLocalError = PyType.initBuiltinType(name: "UnboundLocalError", type: types.type, base: self.nameError, layout: .PyUnboundLocalError)
+    self.osError = PyType.initBuiltinType(name: "OSError", type: types.type, base: self.exception, layout: .PyOSError)
+    self.blockingIOError = PyType.initBuiltinType(name: "BlockingIOError", type: types.type, base: self.osError, layout: .PyBlockingIOError)
+    self.childProcessError = PyType.initBuiltinType(name: "ChildProcessError", type: types.type, base: self.osError, layout: .PyChildProcessError)
+    self.connectionError = PyType.initBuiltinType(name: "ConnectionError", type: types.type, base: self.osError, layout: .PyConnectionError)
+    self.brokenPipeError = PyType.initBuiltinType(name: "BrokenPipeError", type: types.type, base: self.connectionError, layout: .PyBrokenPipeError)
+    self.connectionAbortedError = PyType.initBuiltinType(name: "ConnectionAbortedError", type: types.type, base: self.connectionError, layout: .PyConnectionAbortedError)
+    self.connectionRefusedError = PyType.initBuiltinType(name: "ConnectionRefusedError", type: types.type, base: self.connectionError, layout: .PyConnectionRefusedError)
+    self.connectionResetError = PyType.initBuiltinType(name: "ConnectionResetError", type: types.type, base: self.connectionError, layout: .PyConnectionResetError)
+    self.fileExistsError = PyType.initBuiltinType(name: "FileExistsError", type: types.type, base: self.osError, layout: .PyFileExistsError)
+    self.fileNotFoundError = PyType.initBuiltinType(name: "FileNotFoundError", type: types.type, base: self.osError, layout: .PyFileNotFoundError)
+    self.interruptedError = PyType.initBuiltinType(name: "InterruptedError", type: types.type, base: self.osError, layout: .PyInterruptedError)
+    self.isADirectoryError = PyType.initBuiltinType(name: "IsADirectoryError", type: types.type, base: self.osError, layout: .PyIsADirectoryError)
+    self.notADirectoryError = PyType.initBuiltinType(name: "NotADirectoryError", type: types.type, base: self.osError, layout: .PyNotADirectoryError)
+    self.permissionError = PyType.initBuiltinType(name: "PermissionError", type: types.type, base: self.osError, layout: .PyPermissionError)
+    self.processLookupError = PyType.initBuiltinType(name: "ProcessLookupError", type: types.type, base: self.osError, layout: .PyProcessLookupError)
+    self.timeoutError = PyType.initBuiltinType(name: "TimeoutError", type: types.type, base: self.osError, layout: .PyTimeoutError)
+    self.referenceError = PyType.initBuiltinType(name: "ReferenceError", type: types.type, base: self.exception, layout: .PyReferenceError)
+    self.runtimeError = PyType.initBuiltinType(name: "RuntimeError", type: types.type, base: self.exception, layout: .PyRuntimeError)
+    self.notImplementedError = PyType.initBuiltinType(name: "NotImplementedError", type: types.type, base: self.runtimeError, layout: .PyNotImplementedError)
+    self.recursionError = PyType.initBuiltinType(name: "RecursionError", type: types.type, base: self.runtimeError, layout: .PyRecursionError)
+    self.syntaxError = PyType.initBuiltinType(name: "SyntaxError", type: types.type, base: self.exception, layout: .PySyntaxError)
+    self.indentationError = PyType.initBuiltinType(name: "IndentationError", type: types.type, base: self.syntaxError, layout: .PyIndentationError)
+    self.tabError = PyType.initBuiltinType(name: "TabError", type: types.type, base: self.indentationError, layout: .PyTabError)
+    self.systemError = PyType.initBuiltinType(name: "SystemError", type: types.type, base: self.exception, layout: .PySystemError)
+    self.typeError = PyType.initBuiltinType(name: "TypeError", type: types.type, base: self.exception, layout: .PyTypeError)
+    self.valueError = PyType.initBuiltinType(name: "ValueError", type: types.type, base: self.exception, layout: .PyValueError)
+    self.unicodeError = PyType.initBuiltinType(name: "UnicodeError", type: types.type, base: self.valueError, layout: .PyUnicodeError)
+    self.unicodeDecodeError = PyType.initBuiltinType(name: "UnicodeDecodeError", type: types.type, base: self.unicodeError, layout: .PyUnicodeDecodeError)
+    self.unicodeEncodeError = PyType.initBuiltinType(name: "UnicodeEncodeError", type: types.type, base: self.unicodeError, layout: .PyUnicodeEncodeError)
+    self.unicodeTranslateError = PyType.initBuiltinType(name: "UnicodeTranslateError", type: types.type, base: self.unicodeError, layout: .PyUnicodeTranslateError)
+    self.warning = PyType.initBuiltinType(name: "Warning", type: types.type, base: self.exception, layout: .PyWarning)
+    self.deprecationWarning = PyType.initBuiltinType(name: "DeprecationWarning", type: types.type, base: self.warning, layout: .PyDeprecationWarning)
+    self.pendingDeprecationWarning = PyType.initBuiltinType(name: "PendingDeprecationWarning", type: types.type, base: self.warning, layout: .PyPendingDeprecationWarning)
+    self.runtimeWarning = PyType.initBuiltinType(name: "RuntimeWarning", type: types.type, base: self.warning, layout: .PyRuntimeWarning)
+    self.syntaxWarning = PyType.initBuiltinType(name: "SyntaxWarning", type: types.type, base: self.warning, layout: .PySyntaxWarning)
+    self.userWarning = PyType.initBuiltinType(name: "UserWarning", type: types.type, base: self.warning, layout: .PyUserWarning)
+    self.futureWarning = PyType.initBuiltinType(name: "FutureWarning", type: types.type, base: self.warning, layout: .PyFutureWarning)
+    self.importWarning = PyType.initBuiltinType(name: "ImportWarning", type: types.type, base: self.warning, layout: .PyImportWarning)
+    self.unicodeWarning = PyType.initBuiltinType(name: "UnicodeWarning", type: types.type, base: self.warning, layout: .PyUnicodeWarning)
+    self.bytesWarning = PyType.initBuiltinType(name: "BytesWarning", type: types.type, base: self.warning, layout: .PyBytesWarning)
+    self.resourceWarning = PyType.initBuiltinType(name: "ResourceWarning", type: types.type, base: self.warning, layout: .PyResourceWarning)
   }
 
   // MARK: - Stage 2 - fill __dict__
@@ -347,7 +347,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyBaseException)
 
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBaseException.getDict, castSelf: Self.asBaseException))
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBaseException.getClass, castSelf: Self.asBaseException))
@@ -386,7 +385,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PySystemExit)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySystemExit.getClass, castSelf: Self.asSystemExit))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySystemExit.getDict, castSelf: Self.asSystemExit))
@@ -413,7 +411,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyKeyboardInterrupt)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyKeyboardInterrupt.getClass, castSelf: Self.asKeyboardInterrupt))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyKeyboardInterrupt.getDict, castSelf: Self.asKeyboardInterrupt))
@@ -440,7 +437,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyGeneratorExit)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyGeneratorExit.getClass, castSelf: Self.asGeneratorExit))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyGeneratorExit.getDict, castSelf: Self.asGeneratorExit))
@@ -467,7 +463,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyException)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyException.getClass, castSelf: Self.asException))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyException.getDict, castSelf: Self.asException))
@@ -494,7 +489,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyStopIteration)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStopIteration.getClass, castSelf: Self.asStopIteration))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyStopIteration.getDict, castSelf: Self.asStopIteration))
@@ -521,7 +515,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyStopAsyncIteration)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStopAsyncIteration.getClass, castSelf: Self.asStopAsyncIteration))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyStopAsyncIteration.getDict, castSelf: Self.asStopAsyncIteration))
@@ -548,7 +541,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyArithmeticError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyArithmeticError.getClass, castSelf: Self.asArithmeticError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyArithmeticError.getDict, castSelf: Self.asArithmeticError))
@@ -575,7 +567,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyFloatingPointError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFloatingPointError.getClass, castSelf: Self.asFloatingPointError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFloatingPointError.getDict, castSelf: Self.asFloatingPointError))
@@ -602,7 +593,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyOverflowError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyOverflowError.getClass, castSelf: Self.asOverflowError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyOverflowError.getDict, castSelf: Self.asOverflowError))
@@ -629,7 +619,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyZeroDivisionError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyZeroDivisionError.getClass, castSelf: Self.asZeroDivisionError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyZeroDivisionError.getDict, castSelf: Self.asZeroDivisionError))
@@ -656,7 +645,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyAssertionError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyAssertionError.getClass, castSelf: Self.asAssertionError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyAssertionError.getDict, castSelf: Self.asAssertionError))
@@ -683,7 +671,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyAttributeError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyAttributeError.getClass, castSelf: Self.asAttributeError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyAttributeError.getDict, castSelf: Self.asAttributeError))
@@ -710,7 +697,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyBufferError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBufferError.getClass, castSelf: Self.asBufferError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBufferError.getDict, castSelf: Self.asBufferError))
@@ -737,7 +723,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyEOFError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyEOFError.getClass, castSelf: Self.asEOFError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyEOFError.getDict, castSelf: Self.asEOFError))
@@ -764,7 +749,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyImportError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyImportError.getClass, castSelf: Self.asImportError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyImportError.getDict, castSelf: Self.asImportError))
@@ -791,7 +775,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyModuleNotFoundError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyModuleNotFoundError.getClass, castSelf: Self.asModuleNotFoundError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyModuleNotFoundError.getDict, castSelf: Self.asModuleNotFoundError))
@@ -818,7 +801,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyLookupError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyLookupError.getClass, castSelf: Self.asLookupError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyLookupError.getDict, castSelf: Self.asLookupError))
@@ -845,7 +827,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyIndexError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIndexError.getClass, castSelf: Self.asIndexError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyIndexError.getDict, castSelf: Self.asIndexError))
@@ -872,7 +853,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyKeyError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyKeyError.getClass, castSelf: Self.asKeyError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyKeyError.getDict, castSelf: Self.asKeyError))
@@ -899,7 +879,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyMemoryError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMemoryError.getClass, castSelf: Self.asMemoryError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyMemoryError.getDict, castSelf: Self.asMemoryError))
@@ -926,7 +905,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyNameError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNameError.getClass, castSelf: Self.asNameError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNameError.getDict, castSelf: Self.asNameError))
@@ -953,7 +931,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyUnboundLocalError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnboundLocalError.getClass, castSelf: Self.asUnboundLocalError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnboundLocalError.getDict, castSelf: Self.asUnboundLocalError))
@@ -980,7 +957,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyOSError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyOSError.getClass, castSelf: Self.asOSError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyOSError.getDict, castSelf: Self.asOSError))
@@ -1007,7 +983,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyBlockingIOError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBlockingIOError.getClass, castSelf: Self.asBlockingIOError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBlockingIOError.getDict, castSelf: Self.asBlockingIOError))
@@ -1034,7 +1009,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyChildProcessError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyChildProcessError.getClass, castSelf: Self.asChildProcessError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyChildProcessError.getDict, castSelf: Self.asChildProcessError))
@@ -1061,7 +1035,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyConnectionError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionError.getClass, castSelf: Self.asConnectionError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionError.getDict, castSelf: Self.asConnectionError))
@@ -1088,7 +1061,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyBrokenPipeError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBrokenPipeError.getClass, castSelf: Self.asBrokenPipeError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBrokenPipeError.getDict, castSelf: Self.asBrokenPipeError))
@@ -1115,7 +1087,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyConnectionAbortedError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionAbortedError.getClass, castSelf: Self.asConnectionAbortedError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionAbortedError.getDict, castSelf: Self.asConnectionAbortedError))
@@ -1142,7 +1113,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyConnectionRefusedError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionRefusedError.getClass, castSelf: Self.asConnectionRefusedError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionRefusedError.getDict, castSelf: Self.asConnectionRefusedError))
@@ -1169,7 +1139,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyConnectionResetError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionResetError.getClass, castSelf: Self.asConnectionResetError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionResetError.getDict, castSelf: Self.asConnectionResetError))
@@ -1196,7 +1165,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyFileExistsError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFileExistsError.getClass, castSelf: Self.asFileExistsError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFileExistsError.getDict, castSelf: Self.asFileExistsError))
@@ -1223,7 +1191,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyFileNotFoundError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFileNotFoundError.getClass, castSelf: Self.asFileNotFoundError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFileNotFoundError.getDict, castSelf: Self.asFileNotFoundError))
@@ -1250,7 +1217,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyInterruptedError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyInterruptedError.getClass, castSelf: Self.asInterruptedError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyInterruptedError.getDict, castSelf: Self.asInterruptedError))
@@ -1277,7 +1243,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyIsADirectoryError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIsADirectoryError.getClass, castSelf: Self.asIsADirectoryError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyIsADirectoryError.getDict, castSelf: Self.asIsADirectoryError))
@@ -1304,7 +1269,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyNotADirectoryError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNotADirectoryError.getClass, castSelf: Self.asNotADirectoryError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNotADirectoryError.getDict, castSelf: Self.asNotADirectoryError))
@@ -1331,7 +1295,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyPermissionError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyPermissionError.getClass, castSelf: Self.asPermissionError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyPermissionError.getDict, castSelf: Self.asPermissionError))
@@ -1358,7 +1321,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyProcessLookupError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyProcessLookupError.getClass, castSelf: Self.asProcessLookupError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyProcessLookupError.getDict, castSelf: Self.asProcessLookupError))
@@ -1385,7 +1347,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyTimeoutError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTimeoutError.getClass, castSelf: Self.asTimeoutError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyTimeoutError.getDict, castSelf: Self.asTimeoutError))
@@ -1412,7 +1373,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyReferenceError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyReferenceError.getClass, castSelf: Self.asReferenceError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyReferenceError.getDict, castSelf: Self.asReferenceError))
@@ -1439,7 +1399,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyRuntimeError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRuntimeError.getClass, castSelf: Self.asRuntimeError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyRuntimeError.getDict, castSelf: Self.asRuntimeError))
@@ -1466,7 +1425,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyNotImplementedError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNotImplementedError.getClass, castSelf: Self.asNotImplementedError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNotImplementedError.getDict, castSelf: Self.asNotImplementedError))
@@ -1493,7 +1451,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyRecursionError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRecursionError.getClass, castSelf: Self.asRecursionError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyRecursionError.getDict, castSelf: Self.asRecursionError))
@@ -1520,7 +1477,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PySyntaxError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySyntaxError.getClass, castSelf: Self.asSyntaxError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySyntaxError.getDict, castSelf: Self.asSyntaxError))
@@ -1547,7 +1503,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyIndentationError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIndentationError.getClass, castSelf: Self.asIndentationError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyIndentationError.getDict, castSelf: Self.asIndentationError))
@@ -1574,7 +1529,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyTabError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTabError.getClass, castSelf: Self.asTabError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyTabError.getDict, castSelf: Self.asTabError))
@@ -1601,7 +1555,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PySystemError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySystemError.getClass, castSelf: Self.asSystemError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySystemError.getDict, castSelf: Self.asSystemError))
@@ -1628,7 +1581,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyTypeError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTypeError.getClass, castSelf: Self.asTypeError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyTypeError.getDict, castSelf: Self.asTypeError))
@@ -1655,7 +1607,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyValueError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyValueError.getClass, castSelf: Self.asValueError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyValueError.getDict, castSelf: Self.asValueError))
@@ -1682,7 +1633,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyUnicodeError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeError.getClass, castSelf: Self.asUnicodeError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeError.getDict, castSelf: Self.asUnicodeError))
@@ -1709,7 +1659,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyUnicodeDecodeError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeDecodeError.getClass, castSelf: Self.asUnicodeDecodeError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeDecodeError.getDict, castSelf: Self.asUnicodeDecodeError))
@@ -1736,7 +1685,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyUnicodeEncodeError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeEncodeError.getClass, castSelf: Self.asUnicodeEncodeError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeEncodeError.getDict, castSelf: Self.asUnicodeEncodeError))
@@ -1763,7 +1711,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyUnicodeTranslateError)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeTranslateError.getClass, castSelf: Self.asUnicodeTranslateError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeTranslateError.getDict, castSelf: Self.asUnicodeTranslateError))
@@ -1790,7 +1737,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyWarning)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyWarning.getClass, castSelf: Self.asWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyWarning.getDict, castSelf: Self.asWarning))
@@ -1817,7 +1763,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyDeprecationWarning)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDeprecationWarning.getClass, castSelf: Self.asDeprecationWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyDeprecationWarning.getDict, castSelf: Self.asDeprecationWarning))
@@ -1844,7 +1789,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyPendingDeprecationWarning)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyPendingDeprecationWarning.getClass, castSelf: Self.asPendingDeprecationWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyPendingDeprecationWarning.getDict, castSelf: Self.asPendingDeprecationWarning))
@@ -1871,7 +1815,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyRuntimeWarning)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRuntimeWarning.getClass, castSelf: Self.asRuntimeWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyRuntimeWarning.getDict, castSelf: Self.asRuntimeWarning))
@@ -1898,7 +1841,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PySyntaxWarning)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySyntaxWarning.getClass, castSelf: Self.asSyntaxWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySyntaxWarning.getDict, castSelf: Self.asSyntaxWarning))
@@ -1925,7 +1867,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyUserWarning)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUserWarning.getClass, castSelf: Self.asUserWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUserWarning.getDict, castSelf: Self.asUserWarning))
@@ -1952,7 +1893,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyFutureWarning)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFutureWarning.getClass, castSelf: Self.asFutureWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFutureWarning.getDict, castSelf: Self.asFutureWarning))
@@ -1979,7 +1919,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyImportWarning)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyImportWarning.getClass, castSelf: Self.asImportWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyImportWarning.getDict, castSelf: Self.asImportWarning))
@@ -2006,7 +1945,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyUnicodeWarning)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeWarning.getClass, castSelf: Self.asUnicodeWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeWarning.getDict, castSelf: Self.asUnicodeWarning))
@@ -2033,7 +1971,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyBytesWarning)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBytesWarning.getClass, castSelf: Self.asBytesWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBytesWarning.getDict, castSelf: Self.asBytesWarning))
@@ -2060,7 +1997,6 @@ public final class BuiltinErrorTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
     type.setFlag(.hasGC)
-    type.setLayout(.PyResourceWarning)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyResourceWarning.getClass, castSelf: Self.asResourceWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyResourceWarning.getDict, castSelf: Self.asResourceWarning))

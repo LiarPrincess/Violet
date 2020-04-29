@@ -42,11 +42,11 @@ echo ''
 # === Builtin types ===
 # This will generate class that will create 'PyType' object
 # for each of the builtin types.
-echo 'Generating BuiltinTypes'
+echo 'Generating builtin type instances'
 python3 $GENERATED/BuiltinTypes.py > $GENERATED/BuiltinTypes.swift
 python3 $GENERATED/BuiltinErrorTypes.py > $GENERATED/BuiltinErrorTypes.swift
 
-# === TypeLayout ===
+# === Type memory layout ===
 # When creating new class we will check if all of the base classes have
 # the same layout.
 # So, for example we will allow this:
@@ -54,8 +54,8 @@ python3 $GENERATED/BuiltinErrorTypes.py > $GENERATED/BuiltinErrorTypes.swift
 # but do not allow this:
 #   >>> class C(int, str): pass
 #   TypeError: multiple bases have instance lay-out conflict
-echo 'Generating TypeLayouts'
-python3 $GENERATED/TypeLayout.py > $GENERATED/TypeLayout.swift
+echo 'Generating type memory layouts'
+python3 $GENERATED/TypeMemoryLayout.py > $GENERATED/TypeMemoryLayout.swift
 
 # ==============
 # Stage 3: Other

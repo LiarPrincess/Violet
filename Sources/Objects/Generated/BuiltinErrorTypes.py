@@ -1,7 +1,8 @@
 from Data.errors import data
 from Data.types import get_types
-from Common.strings import generated_warning
 from Common.errors import where_to_find_it_in_cpython
+from Common.strings import generated_warning
+from TypeMemoryLayout import get_layout_name
 from Common.builtin_types import (
   get_property_name_escaped,
   get_fill_function_name, print_fill_type_method,
@@ -76,7 +77,6 @@ import VioletCore
 
   for t in types:
     python_type = t.python_type
-    property_name = get_property_name_escaped(python_type)
 
     if python_type == 'BaseException':
       base_property = 'types.object'
@@ -84,7 +84,9 @@ import VioletCore
       base_type = get_base_type(t)
       base_property = 'self.' + get_property_name_escaped(base_type.python_type)
 
-    print(f'    self.{property_name} = PyType.initBuiltinType(name: "{python_type}", type: types.type, base: {base_property})')
+    layout = get_layout_name(t)
+    property_name = get_property_name_escaped(python_type)
+    print(f'    self.{property_name} = PyType.initBuiltinType(name: "{python_type}", type: types.type, base: {base_property}, layout: .{layout})')
   print('  }')
   print()
 
