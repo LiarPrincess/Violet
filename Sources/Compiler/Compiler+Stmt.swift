@@ -116,7 +116,6 @@ extension CompilerImpl {
     let end = self.builder.createLabel()
 
     self.builder.appendSetupLoop(loopEnd: end)
-
     self.builder.setLabel(iterationStart)
 
     // 'continue' will jump to 'startLabel'
