@@ -152,14 +152,12 @@ private func runNotFinished() {
 //  run(file: testDir.appendingPathComponent("test_import.py"))
 
   let dir = testDir.appendingPathComponent("Builtins")
-  run(file: dir.appendingPathComponent("builtin_open.py"))
-
-  let waiting = testDir.appendingPathComponent("Waiting room")
-//  run(file: waiting.appendingPathComponent("builtin_exec.py"))
-//  run(file: waiting.appendingPathComponent("builtin_file.py"))
-//  run(file: waiting.appendingPathComponent("builtin_format.py"))
-//  run(file: waiting.appendingPathComponent("builtin_locals.py"))
 //  run(file: waiting.appendingPathComponent("builtins_module.py"))
+//  run(file: dir.appendingPathComponent("builtin_open.py"))
+//  run(file: dir.appendingPathComponent("builtin_locals.py"))
+//  run(file: dir.appendingPathComponent("builtin_file.py"))
+
+//  run(file: dir.appendingPathComponent("builtin_exec.py"))
 }
 
 // MARK: - Main
