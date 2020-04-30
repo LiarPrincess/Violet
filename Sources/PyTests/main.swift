@@ -131,6 +131,11 @@ private func runOldBuiltins() {
   run(file: dir.appendingPathComponent("builtin_zip.py"))
   run(file: dir.appendingPathComponent("builtins.py"))
   run(file: dir.appendingPathComponent("printing.py"))
+  run(file: dir.appendingPathComponent("builtin_open.py"))
+  run(file: dir.appendingPathComponent("builtin_locals.py"))
+  run(file: dir.appendingPathComponent("builtin_file.py"))
+  run(file: dir.appendingPathComponent("builtin_exec.py"))
+  run(file: dir.appendingPathComponent("builtins_module.py"))
 }
 
 // MARK: - Violet
@@ -150,14 +155,6 @@ private func runVioletTests() {
 private func runNotFinished() {
 //  run(file: testDir.appendingPathComponent("fizzbuzz.py"))
 //  run(file: testDir.appendingPathComponent("test_import.py"))
-
-  let dir = testDir.appendingPathComponent("Builtins")
-//  run(file: dir.appendingPathComponent("builtin_open.py"))
-//  run(file: dir.appendingPathComponent("builtin_locals.py"))
-//  run(file: dir.appendingPathComponent("builtin_file.py"))
-
-  run(file: dir.appendingPathComponent("builtin_exec.py"))
-//  run(file: dir.appendingPathComponent("builtins_module.py"))
 }
 
 // MARK: - Main
@@ -167,7 +164,7 @@ guard FileManager.default.changeCurrentDirectoryPath(rootDir.path) else {
   trap("Failed to set cwd to: '\(rootDir.path)'")
 }
 
-//runOldTypes()
-//runOldBuiltins()
-//runVioletTests()
+runOldTypes()
+runOldBuiltins()
+runVioletTests()
 runNotFinished()
