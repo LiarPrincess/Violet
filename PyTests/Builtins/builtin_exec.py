@@ -57,6 +57,7 @@ del g
 def f():
     g = 1
     assert 'g' not in globals()
+    print(locals())
     assert 'g' in locals()
     exec("assert 'g' not in globals()")
     exec("assert 'g' in locals()")

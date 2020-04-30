@@ -1,6 +1,8 @@
 import VioletCore
 import VioletBytecode
 
+// swiftlint:disable file_length
+
 // In CPython:
 // Objects -> frameobject.c
 // https://docs.python.org/3.8/library/inspect.html#types-and-members <-- this!
@@ -211,5 +213,94 @@ public class PyFrame: PyObject {
   // sourcery: pyproperty = f_lineno
   internal func getLineno() -> Int {
     return Int(self.currentInstructionLine)
+  }
+
+  // MARK: - Locals <-> fast locals
+
+  /// We store function arguments and locals in `self.fastLocals`.
+  /// In some cases (for example `__builtins__.locals()`) we need a proper
+  /// `locals` dict.
+  /// This method will copy values from `self.fastLocals` to `self.locals`.
+  ///
+  /// We will also do the same for `cells` and `frees`.
+  ///
+  /// CPython:
+  /// int
+  /// PyFrame_FastToLocalsWithError(PyFrameObject *f)
+  ///
+  /// - Important:
+  /// But this is only a 'copy value' operation.
+  /// We will still use `self.fastLocals` when operating on value.
+  public func copyFastToLocals() -> PyBaseException? {
+    let variableNames = self.code.variableNames
+    let cellNames = self.code.cellVariableNames
+    let freeNames = self.code.freeVariableNames
+
+    let fastLocals = self.fastLocals
+    let cellsAndFrees = self.cellsAndFreeVariables
+
+    assert(variableNames.count == fastLocals.count)
+    assert(cellNames.count + freeNames.count == cellsAndFrees.count)
+
+    // Merge fast locals (arguments, local variables etc.) into self.locals
+    for (name, value) in zip(variableNames, fastLocals) {
+      // O(n), but we do not expect a lot of 'cells' and 'frees'.
+      let isCellOrFree = cellNames.contains(name) || freeNames.contains(name)
+      if isCellOrFree {
+        continue
+      }
+
+      // TODO: 'PyFrame.updateLocals' for fast: 'allowDelete: false'
+      if let e = self.updateLocals(name: name, value: value, allowDelete: false) {
+        return e
+      }
+    }
+
+    // Same for cells and free
+    for (name, cell) in zip(cellNames, cellsAndFrees) {
+      if let e = self.updateLocals(name: name, value: cell.content) {
+        return e
+      }
+    }
+
+    // Free variables are after cells in 'self.cellsAndFreeVariables'
+    let frees = cellsAndFrees.dropFirst(cellNames.count)
+    for (name, cell) in zip(freeNames, frees) {
+      if let e = self.updateLocals(name: name, value: cell.content) {
+        return e
+      }
+    }
+
+    return nil
+  }
+
+  private func updateLocals(name: MangledName,
+                            value: PyObject?,
+                            allowDelete: Bool = false) -> PyBaseException? {
+    let locals = self.locals
+    let key = Py.intern(name.value)
+
+    // If we have value -> add it to locals
+    if let value = value {
+      switch locals.set(key: key, to: value) {
+      case .ok:
+        return nil
+      case .error(let e):
+        return e
+      }
+    }
+
+    guard allowDelete else {
+      return nil
+    }
+
+    // If we don't have value -> remove name from locals
+    switch locals.del(key: key) {
+    case .value,
+         .notFound:
+      return nil
+    case .error(let e):
+      return e
+    }
   }
 }

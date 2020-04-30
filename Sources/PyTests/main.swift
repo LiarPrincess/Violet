@@ -152,17 +152,17 @@ private func runNotFinished() {
 //  run(file: testDir.appendingPathComponent("test_import.py"))
 
   let dir = testDir.appendingPathComponent("Builtins")
-//  run(file: waiting.appendingPathComponent("builtins_module.py"))
 //  run(file: dir.appendingPathComponent("builtin_open.py"))
 //  run(file: dir.appendingPathComponent("builtin_locals.py"))
 //  run(file: dir.appendingPathComponent("builtin_file.py"))
 
-//  run(file: dir.appendingPathComponent("builtin_exec.py"))
+  run(file: dir.appendingPathComponent("builtin_exec.py"))
+//  run(file: dir.appendingPathComponent("builtins_module.py"))
 }
 
 // MARK: - Main
 
-// If we call 'open' we want to look inside repository root.
+// If we call 'open' we want to start at repository root.
 guard FileManager.default.changeCurrentDirectoryPath(rootDir.path) else {
   trap("Failed to set cwd to: '\(rootDir.path)'")
 }
