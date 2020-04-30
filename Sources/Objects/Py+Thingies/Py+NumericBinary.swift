@@ -65,6 +65,8 @@ private protocol BinaryOp {
 
 extension BinaryOp {
 
+  // MARK: Call
+
   /// static PyObject *
   /// binary_op1(PyObject *v, PyObject *w, const int op_slot)
   /// static PyObject *
@@ -72,12 +74,11 @@ extension BinaryOp {
   /// define SLOT1BINFULL(FUNCNAME, TESTFUNC, SLOTNAME, OPSTR, ROPSTR)
   fileprivate static func call(left: PyObject,
                                right: PyObject) -> PyResult<PyObject> {
-    switch self.callInner(left: left, right: right, operation: op) {
-    case .value(let result):
+    switch self.callInner(left: left, right: right) {
+    case let .value(result):
       if result.isNotImplemented {
-        let lt = left.typeName
-        let rt = right.typeName
-        var msg = "unsupported operand type(s) for \(op): '\(lt)' and '\(rt)'."
+        var msg = "unsupported operand type(s) for \(op): " +
+                  "\(left.typeName) and \(right.typeName)."
 
         // For C++ programmers who try to `print << 'Elsa'`:
         if let fn = left as? PyBuiltinFunction, fn.name == "print", Self.op == "<<" {
@@ -89,56 +90,59 @@ extension BinaryOp {
 
       return .value(result)
 
-    case .error(let e):
+    case let .error(e):
       return .error(e)
     }
   }
 
+  // MARK: Call in place
+
   fileprivate static func callInPlace(left: PyObject,
                                       right: PyObject) -> PyResult<PyObject> {
-    switch self.callInPlaceInner(left: left, right: right) {
-    case .value(let result):
+    switch self.callInPlaceOp(left: left, right: right) {
+    case let .value(result):
       if result.isNotImplemented {
         break // try other options
       }
 
       return .value(result)
 
-    case .error(let e):
+    case let .error(e):
       return .error(e)
     }
 
     // Try standard operation, for example '+'
-    switch self.callInner(left: left, right: right, operation: op) {
-    case .value(let result):
+    switch self.callInner(left: left, right: right) {
+    case let .value(result):
       if result.isNotImplemented {
-        let lt = left.typeName
-        let rt = right.typeName
-        let msg = "unsupported operand type(s) for \(inPlaceOp): '\(lt)' and '\(rt)'."
+        let msg = "unsupported operand type(s) for \(inPlaceOp): " +
+                  "\(left.typeName) and \(right.typeName)."
         return .typeError(msg)
       }
 
       return .value(result)
 
-    case .error(let e):
+    case let .error(e):
       return .error(e)
     }
   }
 
+  /// Standard operation call.
+  /// Bascially code shared between normal and in-place call.
+  ///
   /// static PyObject *
   /// binary_op1(PyObject *v, PyObject *w, const int op_slot)
   /// static PyObject *
   /// binary_op(PyObject *v, PyObject *w, const int op_slot, const char *op_name)
   fileprivate static func callInner(left: PyObject,
-                                    right: PyObject,
-                                    operation: String) -> PyResult<PyObject> {
+                                    right: PyObject) -> PyResult<PyObject> {
     var checkedReflected = false
 
     // Check if right is subtype of left, if so then use right.
     if left.type !== right.type && right.type.isSubtype(of: left.type) {
       checkedReflected = true
 
-      switch self.callReflected(left: left, right: right) {
+      switch self.callReflectedOp(left: left, right: right) {
       case .value(let result):
         if result.isNotImplemented {
           break // try other options
@@ -162,7 +166,7 @@ extension BinaryOp {
 
     // Try reflected on right
     if !checkedReflected {
-      switch self.callReflected(left: left, right: right) {
+      switch self.callReflectedOp(left: left, right: right) {
       case .value(let result):
         if result.isNotImplemented {
           break // try other options
@@ -176,6 +180,8 @@ extension BinaryOp {
     // No hope left! We are doomed!
     return .value(Py.notImplemented)
   }
+
+  // MARK: Call op
 
   private static func callOp(left: PyObject,
                              right: PyObject) -> PyResult<PyObject> {
@@ -195,13 +201,14 @@ extension BinaryOp {
       return .value(result)
     case .missingMethod:
       return .value(Py.notImplemented)
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }
 
-  private static func callReflected(left: PyObject,
-                                    right: PyObject) -> PyResult<PyObject> {
+  private static func callReflectedOp(left: PyObject,
+                                      right: PyObject) -> PyResult<PyObject> {
     // Try fast protocol-based dispach
     switch callFastReflected(left: left, right: right) {
     case .value(let result):
@@ -218,13 +225,14 @@ extension BinaryOp {
       return .value(result)
     case .missingMethod:
       return .value(Py.notImplemented)
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }
 
-  private static func callInPlaceInner(left: PyObject,
-                                       right: PyObject) -> PyResult<PyObject> {
+  private static func callInPlaceOp(left: PyObject,
+                                    right: PyObject) -> PyResult<PyObject> {
     // Try fast protocol-based dispach
     switch callFastInPlace(left: left, right: right) {
     case .value(let result):
@@ -241,7 +249,8 @@ extension BinaryOp {
       return .value(result)
     case .missingMethod:
       return .value(Py.notImplemented)
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }

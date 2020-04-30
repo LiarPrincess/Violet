@@ -100,7 +100,7 @@ private protocol __index__Owner { func asIndex() -> BigInt }
 private protocol __instancecheck__Owner { func isType(of object: PyObject) -> Bool }
 private protocol __invert__Owner { func invert() -> PyObject }
 private protocol __ior__Owner { func ior(_ other: PyObject) -> PyResult<PyObject> }
-private protocol __ipow__Owner { func ipow(_ other: PyObject) -> PyResult<PyObject> }
+private protocol __ipow__Owner { func ipow(_ base: PyObject, mod: PyObject) -> PyResult<PyObject> }
 private protocol __irshift__Owner { func irshift(_ other: PyObject) -> PyResult<PyObject> }
 private protocol __isabstractmethod__Owner { func isAbstractMethod() -> PyResult<Bool> }
 private protocol __isub__Owner { func isub(_ other: PyObject) -> PyResult<PyObject> }
@@ -464,10 +464,10 @@ internal enum Fast {
     return nil
   }
 
-  internal static func __ipow__(_ zelf: PyObject, _ other: PyObject) -> PyResult<PyObject>? {
+  internal static func __ipow__(_ zelf: PyObject, _ base: PyObject, mod: PyObject) -> PyResult<PyObject>? {
     if let owner = zelf as? __ipow__Owner,
        !hasOverridenBuiltinMethod(object: zelf, selector: .__ipow__) {
-      return owner.ipow(other)
+      return owner.ipow(base, mod: mod)
     }
 
     return nil
