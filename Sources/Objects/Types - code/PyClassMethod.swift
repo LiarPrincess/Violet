@@ -75,8 +75,7 @@ public class PyClassMethod: PyObject {
       return .runtimeError("uninitialized classmethod object")
     }
 
-    let result = Py.newMethod(fn: callable, object: type)
-    return result.map { $0 as PyObject }
+    return Py.newMethod(fn: callable, object: type)
   }
 
   // MARK: - Is abstract method

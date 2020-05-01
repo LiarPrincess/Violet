@@ -53,17 +53,29 @@ extension PyInstance {
 
   // MARK: - Method
 
-  public func newMethod(fn: PyObject, object: PyObject) -> PyResult<PyMethod> {
-    guard let f = fn as? PyFunction else {
-      return .typeError("method() func must be function, not \(fn.typeName)")
-    }
-
-    let result = self.newMethod(fn: f, object: object)
-    return .value(result)
+  public func newMethod(fn: PyFunction,
+                        object: PyObject) -> PyMethod {
+    return PyMethod(fn: fn, object: object)
   }
 
-  public func newMethod(fn: PyFunction, object: PyObject) -> PyMethod {
-    return PyMethod(fn: fn, object: object)
+  public func newMethod(fn: PyBuiltinFunction,
+                        object: PyObject) -> PyBuiltinMethod {
+    return PyBuiltinMethod(fn: fn.function, object: object)
+  }
+
+  public func newMethod(fn: PyObject,
+                        object: PyObject) -> PyResult<PyObject> {
+    if let f = fn as? PyBuiltinFunction {
+      let result = self.newMethod(fn: f, object: object)
+      return .value(result)
+    }
+
+    if let f = fn as? PyFunction {
+      let result = self.newMethod(fn: f, object: object)
+      return .value(result)
+    }
+
+    return .typeError("method() func must be function, not \(fn.typeName)")
   }
 
   // MARK: - Module
