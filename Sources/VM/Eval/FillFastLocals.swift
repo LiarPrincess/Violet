@@ -283,7 +283,8 @@ internal struct FillFastLocals {
 
     let given = self.args.count
     let defCount = self.defaults.count
-    var msg = "\(self.code.name)() takes "
+    let fnName = self.code.name.value
+    var msg = "\(fnName)() takes "
 
     if defCount > 0 {
       msg += "from \(argCount - defCount) to \(argCount) positional arguments "

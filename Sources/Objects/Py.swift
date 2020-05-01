@@ -217,34 +217,9 @@ public final class PyInstance {
     self.trapUninitialized()
   }
 
-  // MARK: - Init/deinit
+  // MARK: - Init
 
   fileprivate init() {}
-
-  deinit {
-    // Clean circular references.
-    // This is VERY IMPORTANT because:
-    // 1. 'type' inherits from 'object'
-    //    both 'type' and 'object' are instances of 'type'
-    // 2. 'Type' type has 'BuiltinFunction' attributes which reference 'Type'.
-    for type in self.types.all {
-      type.gcClean()
-    }
-
-    for type in self.errorTypes.all {
-      type.gcClean()
-    }
-
-    // Ids:
-    IdString.gcClean()
-
-    // And also modules:
-    self.builtinsModule.gcClean()
-    self.sysModule.gcClean()
-    self._impModule.gcClean()
-    self._warningsModule.gcClean()
-    self._osModule.gcClean()
-  }
 
   // MARK: - Initialize
 
@@ -307,12 +282,35 @@ public final class PyInstance {
   /// You can use this to reinitialize `Py` (note that you will have to call
   /// `Py.initialize(config:,delegate:)` again).
   public func destroy() {
+    // Clean circular references.
+    // This is VERY IMPORTANT because:
+    // 1. 'type' inherits from 'object'
+    //     both 'type' and 'object' are instances of 'type'
+    // 2. 'Type' type has 'BuiltinFunction' attributes which reference 'Type'.
+    for type in self.types.all {
+      type.gcClean()
+    }
+
+    for type in self.errorTypes.all {
+      type.gcClean()
+    }
+
+    // Ids:
+    IdString.gcClean()
+
+    // And also modules:
+    self.builtinsModule.gcClean()
+    self.sysModule.gcClean()
+    self._impModule.gcClean()
+    self._warningsModule.gcClean()
+    self._osModule.gcClean()
+
     // TODO: Uncomment this when we have GC.
     // weak var old = Py
     // weak var builtins = Py.builtinsModule
     // weak var sys = Py.sysModule
 
-    // Assigning new instance will 'deinit' old one.
+    // We always need an instance (even if uninitalized)
     Py = PyInstance()
 
     // assert(old == nil, "Memory leak!")
