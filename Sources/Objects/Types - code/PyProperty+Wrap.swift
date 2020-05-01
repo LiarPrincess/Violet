@@ -35,6 +35,38 @@ extension PyProperty {
     )
   }
 
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    get: @escaping (PyObject) -> R,
+    set: @escaping (PyObject, PyObject) -> PyResult<PyNone>,
+    del: @escaping (PyObject) -> PyResult<PyNone>
+  ) -> PyProperty {
+    let fget = PyBuiltinFunction.wrap(
+      name: "__get__",
+      doc: nil,
+      fn: get
+    )
+
+    let fset = PyBuiltinFunction.wrap(
+      name: "__set__",
+      doc: nil,
+      fn: set
+    )
+
+    let fdel = PyBuiltinFunction.wrap(
+      name: "__del__",
+      doc: nil,
+      fn: del
+    )
+
+    return PyProperty(
+      get: fget,
+      set: fset,
+      del: fdel
+    )
+  }
+
   // MARK: - Wrap getter
 
   private static func wrapGetter<Zelf, R: PyFunctionResultConvertible>(

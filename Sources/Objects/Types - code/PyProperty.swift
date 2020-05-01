@@ -165,21 +165,22 @@ public class PyProperty: PyObject {
 
   // sourcery: pymethod = __set__
   public func set(object: PyObject, value: PyObject) -> PyResult<PyObject> {
-    let isDelete = value is PyNone
-    let fnOrNil = isDelete ? self.del : self.set
+    let isDelete = value.isNone
+    if isDelete {
+      guard let fn = self.del else {
+        return .attributeError("can't delete attribute")
+      }
 
-    guard let fn = fnOrNil else {
-      let msg = isDelete ? "can't delete attribute" : "can't set attribute"
-      return .attributeError(msg)
+      let callResult = Py.call(callable: fn, arg: object)
+      return callResult.asResult
     }
 
-    switch Py.call(callable: fn, args: [object, value]) {
-    case .value(let r):
-      return .value(r)
-    case .error(let e),
-         .notCallable(let e):
-      return .error(e)
+    guard let fn = self.set else {
+      return .attributeError("can't set attribute")
     }
+
+    let callResult = Py.call(callable: fn, args: [object, value])
+    return callResult.asResult
   }
 
   // MARK: - Del

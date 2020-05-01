@@ -395,16 +395,12 @@ extension PyType {
       return
     }
 
-    let getter = PyBuiltinFunction.wrap(
+    let property = PyProperty.wrap(
       name: "__dict__",
       doc: nil,
-      fn: Self.getHeapType__dict__
-    )
-
-    let property = PyProperty(
-      get: getter,
-      set: nil,
-      del: nil
+      get: Self.getHeapType__dict__(object:),
+      set: Self.setHeapType__dict__(object:value:),
+      del: Self.delHeapType__dict__(object:)
     )
 
     let dict = type.getDict()
@@ -431,16 +427,43 @@ extension PyType {
 
   /// This method will be called when we get '__dict__' property
   /// on heap type instance.
-  private static func getHeapType__dict__(object: PyObject) -> PyResult<PyDict> {
-    assert(object.type.isHeapType)
+  private static func getHeapType__dict__(object: PyObject) -> PyDict {
+    let object = self.asHeapObjectOrTrap(object: object)
+    return object.__dict__
+  }
 
-    if let dict = Py.get__dict__(object: object) {
-      return .value(dict)
+  private static func setHeapType__dict__(object: PyObject,
+                                          value: PyObject) -> PyResult<PyNone> {
+    guard let dict = value as? PyDict else {
+      let t = value.typeName
+      return .typeError("__dict__ must be set to a dictionary, not a '\(t)'")
     }
 
-    // Should not be possible, heap types are all about adding '__dict__'
-    let e = Py.newAttributeError(object: object, hasNoAttribute: "__dict__")
-    return .error(e)
+    let object = self.asHeapObjectOrTrap(object: object)
+    object.__dict__ = dict
+    return .value(Py.none)
+  }
+
+  private static func delHeapType__dict__(object: PyObject) -> PyResult<PyNone> {
+    // There always has to be an dict:
+    // >>> class Princess(): pass
+    // ...
+    // >>> elsa = Princess() # well, technically Elsa is a queen
+    // >>> del elsa.__dict__
+    // >>> print(elsa.__dict__)
+    // {}
+
+    let object = self.asHeapObjectOrTrap(object: object)
+    object.__dict__ = Py.newDict()
+    return .value(Py.none)
+  }
+
+  private static func asHeapObjectOrTrap(object: PyObject) -> HeapType {
+    if let result = object as? HeapType {
+      return result
+    }
+
+    trap("Heap type '__dict__' called on non heap type.")
   }
 
   // MARK: - __getattribute__ method

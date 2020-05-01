@@ -18,7 +18,7 @@
 // >>> MyInt().__dict__ # But the subclass has
 // { }
 
-internal protocol HeapType: __dict__Owner {
+internal protocol HeapType: AnyObject, __dict__Owner {
   var __dict__: PyDict { get set }
 }
 
