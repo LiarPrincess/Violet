@@ -19,8 +19,9 @@ class TypeInfo:
 
     self.fields = []
     self.properties = []
-    self.static_functions = []
     self.methods = []
+    self.static_functions = []
+    self.class_functions = []
 
 class FieldInfo:
   '''
@@ -30,7 +31,7 @@ class FieldInfo:
     self.swift_field_name = swift_field_name
     self.swift_field_type = swift_field_type
 
-class PropertyInfo:
+class PyPropertyInfo:
   '''
   Python property backed by Swift property.
 
@@ -47,7 +48,7 @@ class PropertyInfo:
     self.swift_type = swift_type
     self.swift_static_doc_property = swift_static_doc_property or None
 
-class FunctionInfo:
+class PyFunctionInfo:
   '''
   Python function/method.
 
@@ -67,9 +68,6 @@ class FunctionInfo:
     self.swift_selector = swift_selector
     self.swift_return_type = swift_return_type
     self.swift_static_doc_property = swift_static_doc_property or None
-
-# Functions and methods have exactly the same properties.
-MethodInfo = FunctionInfo
 
 # -------
 # Parsing
@@ -131,7 +129,7 @@ def get_types() -> [TypeInfo]:
         field = FieldInfo(swift_field_name, swift_field_type)
         current_type.fields.append(field)
 
-      elif line_type == 'Property':
+      elif line_type == 'PyProperty':
         assert current_type
         assert len(split) == 6
         python_name = split[1]
@@ -140,10 +138,10 @@ def get_types() -> [TypeInfo]:
         swift_type = split[4]
         swift_static_doc_property = split[5]
 
-        prop = PropertyInfo(python_name, swift_getter_fn, swift_setter_fn, swift_type, swift_static_doc_property)
+        prop = PyPropertyInfo(python_name, swift_getter_fn, swift_setter_fn, swift_type, swift_static_doc_property)
         current_type.properties.append(prop)
 
-      elif line_type == 'StaticFunction' or line_type == 'Method':
+      elif line_type == 'PyMethod' or line_type == 'PyClassMethod' or line_type == 'PyStaticMethod':
         assert current_type
         assert len(split) == 7
         python_name = split[1]
@@ -153,12 +151,14 @@ def get_types() -> [TypeInfo]:
         swift_return_type = split[5]
         swift_static_doc_property = split[6]
 
-        if line_type == 'StaticFunction':
-          fn = FunctionInfo(python_name, swift_name, swift_name_full, swift_selector, swift_return_type, swift_static_doc_property)
-          current_type.static_functions.append(fn)
-        else:
-          fn = MethodInfo(python_name, swift_name, swift_name_full, swift_selector, swift_return_type, swift_static_doc_property)
+        fn = PyFunctionInfo(python_name, swift_name, swift_name_full, swift_selector, swift_return_type, swift_static_doc_property)
+
+        if line_type == 'PyMethod':
           current_type.methods.append(fn)
+        elif line_type == 'PyStaticMethod':
+          current_type.static_functions.append(fn)
+        elif line_type == 'PyClassMethod':
+          current_type.class_functions.append(fn)
 
       else:
         assert False, f"Unknown line type: '{line_type}'"

@@ -27,7 +27,6 @@ generated_protocols = set([
   "__hash__",
   "__iadd__",
   "__index__",
-  "__init__",
   "__instancecheck__",
   "__invert__",
   "__isabstractmethod__",
@@ -93,13 +92,13 @@ def setter_protocol_name(name):
 def func_protocol_name(name):
   return f'{name}Owner'
 
-types = get_types()
-
 # ----
 # Main
 # ----
 
 if __name__ == '__main__':
+  types = get_types()
+
   print(f'''\
 import VioletCore
 
@@ -191,6 +190,10 @@ internal protocol __dict__Owner {{
       protocols_by_name[swift_protocol_name] = protocol
 
   for t in types:
+    # Object will never participate in 'Fast'
+    if t.python_type == 'object':
+      continue
+
     for prop in get_properties(t):
       python_name = prop.python_name
       swift_getter_fn = prop.swift_getter_fn + '()'
@@ -208,7 +211,7 @@ internal protocol __dict__Owner {{
       add_protocol(python_name, protocol_name, swift_name_full, swift_return_type)
 
     # From static methods we have hand-written '__new__' and '__init__'.
-    # We ignore other.
+    # We ignore others.
 
   # Additional protocols (none of the builtin types implement them)
   #            python_name,     swift_protocol_name,  swift_function,                 swift_return_type

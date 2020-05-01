@@ -1,7 +1,6 @@
 from Data.types import get_types
 from Common.strings import generated_warning
 
-types = get_types()
 
 def get_layout_name(t):
   return t.swift_type
@@ -71,7 +70,7 @@ extension PyType {
     }
 ''')
 
-  for t in types:
+  for t in get_types():
     swift_type = t.swift_type
     base_type = t.swift_base_type
     fields = t.fields

@@ -1,7 +1,7 @@
 object
   Why do we even have this?
-    __subclasshook__
     __init_subclass__
+    __subclasshook__
 
 type
   Unimplemented:

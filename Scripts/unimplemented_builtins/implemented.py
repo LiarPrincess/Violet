@@ -61,10 +61,10 @@ types = {
     '__getattribute__',
     '__setattr__',
     '__delattr__',
-    '__subclasshook__',
     '__init_subclass__',
     '__new__',
     '__init__',
+    '__subclasshook__',
   ],
   type: [
     '__name__',

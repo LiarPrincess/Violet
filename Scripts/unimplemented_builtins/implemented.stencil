@@ -51,6 +51,12 @@ TextFile = _io.TextIOWrapper
   {% for method in methods|annotated:"pymethod" %}
     '{{ method.annotations.pymethod }}',
   {% endfor %}
+  {% for method in methods|annotated:"pystaticmethod" %}
+    '{{ method.annotations.pystaticmethod }}',
+  {% endfor %}
+  {% for method in methods|annotated:"pyclassmethod" %}
+    '{{ method.annotations.pyclassmethod }}',
+  {% endfor %}
 {% endmacro %}
 
 types = {

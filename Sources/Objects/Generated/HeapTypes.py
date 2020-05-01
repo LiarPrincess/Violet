@@ -1,8 +1,6 @@
 from Data.types import get_types
 from Common.strings import generated_warning
 
-types = get_types()
-
 def get_heap_type_name(t):
   swift_type = t.swift_type
   if swift_type == 'PyObjectType':
@@ -44,7 +42,7 @@ extension HeapType {
 }
 ''')
 
-  for t in types:
+  for t in get_types():
     python_type = t.python_type
     swift_type = t.swift_type
     swift_type_withot_py = swift_type.replace('Py', '')

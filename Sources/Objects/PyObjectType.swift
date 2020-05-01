@@ -166,13 +166,21 @@ internal enum PyObjectType {
 
   // MARK: - Subclasshook
 
-  // sourcery: pymethod = __subclasshook__
+  // sourcery: pyclassmethod = __subclasshook__
   /// Abstract classes can override this to customize issubclass().
   /// This is invoked early on by abc.ABCMeta.__subclasscheck__().
   /// It should return True, False or NotImplemented.  If it returns
   /// NotImplemented, the normal algorithm is used.  Otherwise, it
   /// overrides the normal algorithm (and the outcome is cached).
-  internal static func subclasshook(zelf: PyObject) -> PyResult<PyObject> {
+  internal static func subclasshook(args: [PyObject],
+                                    kwargs: PyDict?) -> PyResult<PyObject> {
+    // This can be called with any number of arguments:
+    // >>> type(object).__subclasshook__(1,2)
+    // NotImplemented
+    // >>> type(object).__subclasshook__(1,2,4,5,6,7)
+    // NotImplemented
+    //
+    // https://docs.python.org/3/library/abc.html#abc.ABCMeta.__subclasshook__
     return .value(Py.notImplemented)
   }
 
