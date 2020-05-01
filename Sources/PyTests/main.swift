@@ -102,6 +102,16 @@ private func runOldTypes() {
   run(file: dir.appendingPathComponent("mro.py"))
   run(file: dir.appendingPathComponent("inplace_ops.py"))
   run(file: dir.appendingPathComponent("object.py"))
+  run(file: dir.appendingPathComponent("3.1.2.13.py"))
+  run(file: dir.appendingPathComponent("3.1.2.16.py"))
+  run(file: dir.appendingPathComponent("3.1.2.18.py"))
+  run(file: dir.appendingPathComponent("3.1.2.19.py"))
+  run(file: dir.appendingPathComponent("3.1.3.2.py"))
+  run(file: dir.appendingPathComponent("3.1.3.4.py"))
+  run(file: dir.appendingPathComponent("3.1.3.5.py"))
+  run(file: dir.appendingPathComponent("cast.py"))
+  run(file: dir.appendingPathComponent("unicode_slicing.py"))
+  run(file: dir.appendingPathComponent("variables.py"))
 }
 
 // MARK: - Old builtins
