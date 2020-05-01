@@ -67,6 +67,91 @@ internal struct PyStringData: PyStringImpl, CustomStringConvertible {
     return string?.data
   }
 
+  // MARK: - Repr
+
+  internal func createRepr() -> String {
+    let quote = self.getReprQuoteChar()
+
+    var result = String(quote)
+    result.reserveCapacity(self.count)
+
+    for element in self.scalars {
+      switch element {
+      case quote, "\\":
+        result.append("\\")
+        result.append(element)
+      case "\n":
+        result.append("\\n")
+      case "\t":
+        result.append("\\t")
+      case "\r":
+        result.append("\\r")
+      default:
+        if self.isPritable(scalar: element) {
+          result.append(element)
+        } else {
+          let repr = self.createNonPrintableRepr(scalar: element)
+          result.append(repr)
+        }
+      }
+    }
+    result.append(quote)
+
+    return result
+  }
+
+  private func getReprQuoteChar() -> UnicodeScalar {
+    var singleCount = 0
+    var doubleCount = 0
+
+    for element in self.scalars {
+      switch element {
+      case "'": singleCount += 1
+      case "\"": doubleCount += 1
+      default: break
+      }
+    }
+
+    // Use single quote if equal
+    return singleCount <= doubleCount ? "'" : "\""
+  }
+
+  private func createNonPrintableRepr(scalar: UnicodeScalar) -> String {
+    var result = "\\"
+    let value = scalar.value
+
+    if value < 0xff {
+      // Map 8-bit characters to '\xhh'
+      result.append("x")
+      result.append(self.hex((value >> 4) & 0xf))
+      result.append(self.hex((value >> 0) & 0xf))
+    } else if value < 0xffff {
+      // Map 16-bit characters to '\uxxxx'
+      result.append("u")
+      result.append(self.hex((value >> 12) & 0xf))
+      result.append(self.hex((value >> 8) & 0xf))
+      result.append(self.hex((value >> 4) & 0xf))
+      result.append(self.hex((value >> 0) & 0xf))
+    } else {
+      // Map 21-bit characters to '\U00xxxxxx'
+      result.append("U")
+      result.append(self.hex((value >> 28) & 0xf))
+      result.append(self.hex((value >> 24) & 0xf))
+      result.append(self.hex((value >> 20) & 0xf))
+      result.append(self.hex((value >> 16) & 0xf))
+      result.append(self.hex((value >> 12) & 0xf))
+      result.append(self.hex((value >> 8) & 0xf))
+      result.append(self.hex((value >> 4) & 0xf))
+      result.append(self.hex((value >> 0) & 0xf))
+    }
+
+    return result
+  }
+
+  private func hex(_ value: UInt32) -> String {
+    return String(value, radix: 16, uppercase: false)
+  }
+
   // MARK: - Properties
 
   /// https://docs.python.org/3/library/stdtypes.html#str.isidentifier

@@ -142,6 +142,49 @@ internal struct PyBytesData: PyStringImpl {
     return nil
   }
 
+  // MARK: - Repr
+
+  internal func createRepr() -> String {
+    let quote: UnicodeScalar = "'"
+    var result = String(quote)
+    result.reserveCapacity(self.count)
+
+    for element in self.scalars {
+      let scalar = Self.toUnicodeScalar(element)
+      switch scalar {
+      case quote, "\\":
+        result.append("\\")
+        result.append(scalar)
+      case "\n":
+        result.append("\\n")
+      case "\t":
+        result.append("\\t")
+      case "\r":
+        result.append("\\r")
+      default:
+        let space = 0x20
+        let lastAscii = 0x7f
+
+        if element == 0 {
+          result.append("\\x00")
+        } else if space <= element && element < lastAscii {
+          result.append(scalar)
+        } else {
+          result.append("\\x")
+          result.append(self.hex((element >> 4) & 0xf))
+          result.append(self.hex((element >> 0) & 0xf))
+        }
+      }
+    }
+    result.append(quote)
+
+    return result
+  }
+
+  private func hex(_ value: UInt8) -> String {
+    return String(value, radix: 16, uppercase: false)
+  }
+
   // MARK: - String
 
   /// static PyObject *
