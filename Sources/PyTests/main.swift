@@ -98,6 +98,10 @@ private func runOldTypes() {
   run(file: dir.appendingPathComponent("test_tuple.py"))
   run(file: dir.appendingPathComponent("test_with.py"))
   run(file: dir.appendingPathComponent("type_hints.py"))
+  run(file: dir.appendingPathComponent("indentation.py"))
+  run(file: dir.appendingPathComponent("mro.py"))
+  run(file: dir.appendingPathComponent("inplace_ops.py"))
+  run(file: dir.appendingPathComponent("object.py"))
 }
 
 // MARK: - Old builtins
@@ -164,7 +168,7 @@ guard FileManager.default.changeCurrentDirectoryPath(rootDir.path) else {
   trap("Failed to set cwd to: '\(rootDir.path)'")
 }
 
-runOldTypes()
-runOldBuiltins()
-runVioletTests()
+//runOldTypes()
+//runOldBuiltins()
+//runVioletTests()
 runNotFinished()
