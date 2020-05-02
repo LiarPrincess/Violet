@@ -1712,17 +1712,17 @@ extension PyStringImpl {
 
 // MARK: - Partition
 
-internal enum StringPartitionResult<SubString> {
+internal enum StringPartitionResult<Zelf, SubString> {
   /// Separator was not found
   case separatorNotFound
   /// Separator was found.
-  case separatorFound(before: SubString, after: SubString)
+  case separatorFound(before: SubString, separator: Zelf, after: SubString)
   case error(PyBaseException)
 }
 
 extension PyStringImpl {
 
-  internal typealias PartitionResult = StringPartitionResult<Self.SubSequence>
+  internal typealias PartitionResult = StringPartitionResult<Self, Self.SubSequence>
 
   internal func partition(separator: PyObject) -> PartitionResult {
     guard let sep = Self.extractSelf(from: separator) else {
@@ -1746,7 +1746,7 @@ extension PyStringImpl {
 
       let before = self.substring(end: index1)
       let after = self.substring(start: index2)
-      return .separatorFound(before: before, after: after)
+      return .separatorFound(before: before, separator: separator, after: after)
 
     case .notFound:
       return .separatorNotFound
@@ -1775,7 +1775,7 @@ extension PyStringImpl {
 
       let before = self.substring(end: index1)
       let after = self.substring(start: index2)
-      return .separatorFound(before: before, after: after)
+      return .separatorFound(before: before, separator: separator, after: after)
 
     case .notFound:
       return .separatorNotFound

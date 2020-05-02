@@ -507,10 +507,10 @@ public class PyBytes: PyObject, PyBytesType {
     case .separatorNotFound:
       let empty = Py.emptyBytes
       return .value(Py.newTuple(self, empty, empty))
-    case let .separatorFound(before, after):
+    case let .separatorFound(before, _, after):
       let b = Py.newBytes(before)
       let a = Py.newBytes(after)
-      return .value(Py.newTuple(b, separator, a))
+      return .value(Py.newTuple(b, separator, a)) // Reuse separator
     case let .error(e):
       return .error(e)
     }
@@ -522,10 +522,10 @@ public class PyBytes: PyObject, PyBytesType {
     case .separatorNotFound:
       let empty = Py.emptyBytes
       return .value(Py.newTuple(empty, empty, self))
-    case let .separatorFound(before, after):
+    case let .separatorFound(before, _, after):
       let b = Py.newBytes(before)
       let a = Py.newBytes(after)
-      return .value(Py.newTuple(b, separator, a))
+      return .value(Py.newTuple(b, separator, a)) // Reuse separator
     case let .error(e):
       return .error(e)
     }
@@ -652,6 +652,6 @@ public class PyBytes: PyObject, PyBytesType {
   }
 
   private static func newBytes(type: PyType, value: Data) -> PyBytes {
-    return Py.newBytes(value)
+    return Py.newBytes(value) // Use cached empty bytes
   }
 }

@@ -61,8 +61,16 @@ extension PyInstance {
     return PyBytes(value: value)
   }
 
+  internal func newBytes(_ data: PyBytesData) -> PyBytes {
+    return PyBytes(value: data.values)
+  }
+
   public func newByteArray(_ value: Data) -> PyByteArray {
     return PyByteArray(value: value)
+  }
+
+  internal func newByteArray(_ data: PyBytesData) -> PyByteArray {
+    return PyByteArray(value: data.values)
   }
 
   // MARK: - Namespace

@@ -621,7 +621,7 @@ public class PyString: PyObject {
     case .separatorNotFound:
       let empty = Py.emptyString
       return .value(Py.newTuple(self, empty, empty))
-    case let .separatorFound(before, after):
+    case let .separatorFound(before, _, after):
       let b = Py.newString(String(before))
       let a = Py.newString(String(after))
       return .value(Py.newTuple(b, separator, a))
@@ -636,7 +636,7 @@ public class PyString: PyObject {
     case .separatorNotFound:
       let empty = Py.emptyString
       return .value(Py.newTuple(empty, empty, self))
-    case let .separatorFound(before, after):
+    case let .separatorFound(before, _, after):
       let b = Py.newString(String(before))
       let a = Py.newString(String(after))
       return .value(Py.newTuple(b, separator, a))

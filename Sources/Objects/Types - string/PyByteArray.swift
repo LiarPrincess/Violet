@@ -38,7 +38,7 @@ public class PyByteArray: PyObject, PyBytesType {
 
   internal init(value: Data) {
     self.data = PyBytesData(value)
-    super.init(type: Py.types.bytes)
+    super.init(type: Py.types.bytearray)
   }
 
   /// Use only in  `__new__`!
@@ -144,7 +144,7 @@ public class PyByteArray: PyObject, PyBytesType {
     case let .item(int):
       return .value(Py.newInt(int))
     case let .slice(bytes):
-      return .value(Py.newBytes(bytes))
+      return .value(Py.newByteArray(bytes))
     case let .error(e):
       return .error(e)
     }
@@ -504,12 +504,14 @@ public class PyByteArray: PyObject, PyBytesType {
   internal func partition(separator: PyObject) -> PyResult<PyTuple> {
     switch self.data.partition(separator: separator) {
     case .separatorNotFound:
-      let empty = Py.emptyBytes
-      return .value(Py.newTuple(self, empty, empty))
-    case let .separatorFound(before, after):
-      let b = Py.newBytes(before)
-      let a = Py.newBytes(after)
-      return .value(Py.newTuple(b, separator, a))
+      let empty1 = Py.newByteArray(Data())
+      let empty2 = Py.newByteArray(Data())
+      return .value(Py.newTuple(self, empty1, empty2))
+    case let .separatorFound(before, sep, after):
+      let b = Py.newByteArray(before)
+      let s = Py.newByteArray(sep) // Always new!
+      let a = Py.newByteArray(after)
+      return .value(Py.newTuple(b, s, a))
     case let .error(e):
       return .error(e)
     }
@@ -519,12 +521,14 @@ public class PyByteArray: PyObject, PyBytesType {
   internal func rpartition(separator: PyObject) -> PyResult<PyTuple> {
     switch self.data.rpartition(separator: separator) {
     case .separatorNotFound:
-      let empty = Py.emptyBytes
-      return .value(Py.newTuple(empty, empty, self))
-    case let .separatorFound(before, after):
-      let b = Py.newBytes(before)
-      let a = Py.newBytes(after)
-      return .value(Py.newTuple(b, separator, a))
+      let empty1 = Py.newByteArray(Data())
+      let empty2 = Py.newByteArray(Data())
+      return .value(Py.newTuple(empty1, empty2, self))
+    case let .separatorFound(before, sep, after):
+      let b = Py.newByteArray(before)
+      let s = Py.newByteArray(sep) // Always new!
+      let a = Py.newByteArray(after)
+      return .value(Py.newTuple(b, s, a))
     case let .error(e):
       return .error(e)
     }
