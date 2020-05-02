@@ -26,8 +26,6 @@ bytearray
     fromhex - <class 'builtin_function_or_method'>
     maketrans - <class 'builtin_function_or_method'>
     __alloc__
-    __iadd__
-    __imul__
     __mod__
     __rmod__
     decode

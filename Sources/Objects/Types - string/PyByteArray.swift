@@ -590,19 +590,41 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.add(other).map(Py.newBytes(_:))
+    return self.data.add(other).map(Py.newByteArray(_:))
+  }
+
+  // sourcery: pymethod = __iadd__
+  internal func iadd(_ other: PyObject) -> PyResult<PyObject> {
+    switch self.data.add(other) {
+    case let .value(data):
+      self.data = PyBytesData(data)
+      return .value(self)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.mul(other).map(Py.newBytes(_:))
+    return self.data.mul(other).map(Py.newByteArray(_:))
   }
 
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.rmul(other).map(Py.newBytes(_:))
+    return self.data.rmul(other).map(Py.newByteArray(_:))
+  }
+
+  // sourcery: pymethod = __imul__
+  internal func imul(_ other: PyObject) -> PyResult<PyObject> {
+    switch self.data.mul(other) {
+    case let .value(data):
+      self.data = PyBytesData(data)
+      return .value(self)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Iter

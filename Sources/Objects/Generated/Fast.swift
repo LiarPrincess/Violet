@@ -934,8 +934,10 @@ extension PyByteArray:
   __contains__Owner,
   __getitem__Owner,
   __add__Owner,
+  __iadd__Owner,
   __mul__Owner,
   __rmul__Owner,
+  __imul__Owner,
   __iter__Owner,
   __setitem__Owner,
   __delitem__Owner
