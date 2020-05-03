@@ -343,24 +343,35 @@ internal struct PyBytesData: PyStringImpl {
 
   // MARK: - Set/del item
 
+  private enum SetItemImpl: SetItemHelper {
+
+    // swiftlint:disable:next nesting
+    fileprivate typealias Collection = Data
+
+    fileprivate static func getElement(object: PyObject) -> PyResult<UInt8> {
+      return PyBytesData.asByte(object)
+    }
+
+    fileprivate static func getElements(object: PyObject) -> PyResult<[UInt8]> {
+      return Py.reduce(iterable: object, into: []) { acc, object in
+        switch SetItemImpl.getElement(object: object) {
+        case let .value(i):
+          acc.append(i)
+          return .goToNextElement
+        case let .error(e):
+          return .error(e)
+        }
+      }
+    }
+  }
+
   internal mutating func setItem(at index: PyObject,
-                                 to value: PyObject) -> PyResult<Void> {
-    // Setting slice is not (yet) implemented
-
-    let parsedIndex: Int
-    switch IndexHelper.int(index) {
-    case let .value(i): parsedIndex = i
-    case let .error(e): return .error(e)
-    }
-
-    let byte: UInt8
-    switch PyBytesData.asByte(value) {
-    case let .value(b): byte = b
-    case let .error(e): return .error(e)
-    }
-
-    self.values[parsedIndex] = byte
-    return .value()
+                                 to value: PyObject) -> PyResult<PyNone> {
+    return SetItemImpl.setItem(
+      collection: &self.values,
+      index: index,
+      value: value
+    )
   }
 
   internal mutating func delItem(at index: PyObject) -> PyResult<Void> {

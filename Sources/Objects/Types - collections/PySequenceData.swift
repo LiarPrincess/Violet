@@ -238,115 +238,37 @@ internal struct PySequenceData {
 
   // MARK: - Set item
 
+  private enum SetItemImpl: SetItemHelper {
+
+    // swiftlint:disable:next nesting
+    fileprivate typealias Collection = [PyObject]
+
+    fileprivate static func getElement(object: PyObject) -> PyResult<PyObject> {
+      return .value(object)
+    }
+
+    fileprivate static func getElements(object: PyObject) -> PyResult<[PyObject]> {
+      switch Py.toArray(iterable: object) {
+      case let .value(elements):
+        return .value(elements)
+      case .error:
+        return .typeError("can only assign an iterable")
+      }
+    }
+  }
+
   internal mutating func setItem(at index: PyObject,
                                  to value: PyObject) -> PyResult<PyNone> {
-    switch IndexHelper.intMaybe(index) {
-    case .value(let indexInt):
-      return self.setItem(at: indexInt, to: value)
-    case .notIndex:
-      break // Try other
-    case .error(let e):
-      return .error(e)
-    }
-
-    if let slice = index as? PySlice {
-      return self.setItem(at: slice, to: value)
-    }
-
-    let msg = "list indices must be integers or slices, not \(index.typeName)"
-    return .error(Py.newTypeError(msg: msg))
+    return SetItemImpl.setItem(collection: &self.elements,
+                               index: index,
+                               value: value)
   }
 
   internal mutating func setItem(at index: Int,
                                  to value: PyObject) -> PyResult<PyNone> {
-    var index = index
-
-    if index < 0 {
-      index += self.elements.count
-    }
-
-    guard 0 <= index && index < self.elements.count else {
-      let msg = "list assignment index out of range"
-      return .error(Py.newIndexError(msg: msg))
-    }
-
-    self.elements[index] = value
-    return .value(Py.none)
-  }
-
-  internal mutating func setItem(at slice: PySlice,
-                                 to value: PyObject) -> PyResult<PyNone> {
-    var indices: PySlice.AdjustedIndices
-    switch slice.unpack() {
-    case let .value(u): indices = u.adjust(toCount: self.elements.count)
-    case let .error(e): return .error(e)
-    }
-
-    if indices.step == 1 {
-      return self.setContinuousItems(start: indices.start, stop: indices.stop, to: value)
-    }
-
-    // Make sure s[5:2] = [..] inserts at the right place: before 5, not before 2.
-    if (indices.step < 0 && indices.start < indices.stop) ||
-       (indices.step > 0 && indices.start > indices.stop) {
-      indices.stop = indices.start
-    }
-
-    let elements: [PyObject]
-    switch Py.toArray(iterable: value) {
-    case .value(let e): elements = e
-    case .error: return .typeError("must assign iterable to extended slice")
-    }
-
-    guard elements.count == indices.count else {
-      let msg = "attempt to assign sequence of size \(elements.count) " +
-                "to extended slice of size \(indices.count)"
-      return .valueError(msg)
-    }
-
-    // swiftlint:disable:next empty_count
-    if indices.count == 0 {
-      return .value(Py.none)
-    }
-
-    var elementsIndex = 0
-    for index in stride(from: indices.start, to: indices.stop, by: indices.step) {
-      self.elements[index] = elements[elementsIndex]
-      elementsIndex += 1
-    }
-
-    return .value(Py.none)
-  }
-
-  // static int
-  // list_ass_slice(PyListObject *a, Py_ssize_t ilow, Py_ssize_t ihigh, PyObject *v)
-  private mutating func setContinuousItems(
-    start: Int,
-    stop: Int,
-    to value: PyObject
-  ) -> PyResult<PyNone> {
-
-    let elements: [PyObject]
-    switch Py.toArray(iterable: value) {
-    case .value(let e): elements = e
-    case .error: return .typeError("can only assign an iterable")
-    }
-
-    let low = min(max(start, 0), self.elements.count)
-    let high = min(max(stop, low), self.elements.count)
-
-    let replacementCount = high - low
-    assert(replacementCount >= 0)
-
-    // Fast path: we have list of 7 elements, add 3 more but replace 10.
-    // In total that gives us empty list.
-    let countChange = elements.count - replacementCount
-    if self.elements.count + countChange == 0 {
-      return .value(self.clear())
-    }
-
-    self.elements.replaceSubrange(low..<high, with: elements)
-    return .value(Py.none)
+    return SetItemImpl.setItem(collection: &self.elements,
+                               index: index,
+                               value: value)
   }
 
   // MARK: - Del item

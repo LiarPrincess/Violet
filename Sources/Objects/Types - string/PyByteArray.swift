@@ -739,7 +739,8 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = insert, doc = insertDoc
   internal func insert(at index: PyObject, item: PyObject) -> PyResult<PyNone> {
-    return self.data.insert(at: index, item: item).map { _ in Py.none }
+    let result = self.data.insert(at: index, item: item)
+    return result.map { _ in Py.none }
   }
 
   // MARK: - Remove
@@ -785,7 +786,6 @@ public class PyByteArray: PyObject, PyBytesType {
   internal func setItem(at index: PyObject,
                         to value: PyObject) -> PyResult<PyNone> {
     return self.data.setItem(at: index, to: value)
-      .map { _ in Py.none }
   }
 
   // sourcery: pymethod = __delitem__
