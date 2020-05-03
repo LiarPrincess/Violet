@@ -375,7 +375,7 @@ extension PyInstance {
   /// int
   /// PySequence_Contains(PyObject *seq, PyObject *ob)
   public func contains(iterable: PyObject, element: PyObject) -> PyResult<Bool> {
-    if let result = Fast.__contains__(iterable, element) {
+    if let result = Fast.__contains__(iterable, element: element) {
       return result
     }
 

@@ -62,7 +62,7 @@ public class PyReversed: PyObject {
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
     if self.index != PyReversed.endIndex {
-      switch Py.getItem(object: self.sequence, at: self.index) {
+      switch Py.getItem(object: self.sequence, index: self.index) {
       case .value(let o):
         self.index -= 1
         return .value(o)

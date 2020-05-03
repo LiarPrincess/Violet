@@ -138,14 +138,14 @@ public class PyTuple: PyObject, PySequenceType {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(_ element: PyObject) -> PyResult<Bool> {
+  internal func contains(element: PyObject) -> PyResult<Bool> {
     return self.data.contains(value: element)
   }
 
   // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
-  internal func getItem(at index: PyObject) -> PyResult<PyObject> {
+  internal func getItem(index: PyObject) -> PyResult<PyObject> {
     switch self.data.getItem(index: index) {
     case let .single(s): return .value(s)
     case let .slice(s): return .value(Py.newTuple(s))
@@ -156,7 +156,7 @@ public class PyTuple: PyObject, PySequenceType {
   // MARK: - Count
 
   // sourcery: pymethod = count
-  internal func count(_ element: PyObject) -> PyResult<BigInt> {
+  internal func count(element: PyObject) -> PyResult<BigInt> {
     return self.data.count(element: element).map(BigInt.init)
   }
 

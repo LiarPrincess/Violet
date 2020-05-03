@@ -98,7 +98,7 @@ extension Eval {
 
       switch Py.getattr(object: module, name: name) {
       case let .value(value):
-        switch locals.setItem(at: name, to: value) {
+        switch locals.setItem(index: name, value: value) {
         case .value: break
         case .error(let e): return .error(e)
         }

@@ -131,15 +131,15 @@ public class PyBytes: PyObject, PyBytesType {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(_ element: PyObject) -> PyResult<Bool> {
+  internal func contains(element: PyObject) -> PyResult<Bool> {
     return self.data.contains(element)
   }
 
   // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
-  internal func getItem(at index: PyObject) -> PyResult<PyObject> {
-    switch self.data.getItem(at: index) {
+  internal func getItem(index: PyObject) -> PyResult<PyObject> {
+    switch self.data.getItem(index: index) {
     case let .item(int):
       let result = Py.newInt(int)
       return .value(result)

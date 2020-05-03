@@ -314,17 +314,17 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = __getitem__
   /// Implementation of `Python` subscript.
-  public func getItem(at index: PyObject) -> PyResult<PyObject> {
+  public func getItem(index: PyObject) -> PyResult<PyObject> {
     switch Py.hash(object: index) {
     case let .value(hash):
-      return self.getItem(at: index, hash: hash)
+      return self.getItem(index: index, hash: hash)
     case let .error(e):
       return .error(e)
     }
   }
 
   /// Implementation of `Python` subscript.
-  public func getItem(at index: PyObject, hash: PyHash) -> PyResult<PyObject> {
+  public func getItem(index: PyObject, hash: PyHash) -> PyResult<PyObject> {
     let key = PyDictKey(hash: hash, object: index)
 
     switch self.data.get(key: key) {
@@ -347,20 +347,19 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = __setitem__
   /// Implementation of `Python` subscript.
-  public func setItem(at index: PyObject,
-                      to value: PyObject) -> PyResult<PyNone> {
+  public func setItem(index: PyObject, value: PyObject) -> PyResult<PyNone> {
     switch Py.hash(object: index) {
     case let .value(hash):
-      return self.setItem(at: index, hash: hash, to: value)
+      return self.setItem(index: index, hash: hash, value: value)
     case let .error(e):
       return .error(e)
     }
   }
 
   /// Implementation of `Python` subscript.
-  public func setItem(at index: PyObject,
+  public func setItem(index: PyObject,
                       hash: PyHash,
-                      to value: PyObject) -> PyResult<PyNone> {
+                      value: PyObject) -> PyResult<PyNone> {
     let key = PyDictKey(hash: hash, object: index)
 
     switch self.data.insert(key: key, value: value) {
@@ -375,18 +374,17 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = __delitem__
   /// Implementation of `Python` subscript.
-  public func delItem(at index: PyObject) -> PyResult<PyNone> {
+  public func delItem(index: PyObject) -> PyResult<PyNone> {
     switch Py.hash(object: index) {
     case let .value(hash):
-      return self.delItem(at: index, hash: hash)
+      return self.delItem(index: index, hash: hash)
     case let .error(e):
       return .error(e)
     }
   }
 
   /// Implementation of `Python` subscript.
-  public func delItem(at index: PyObject,
-                      hash: PyHash) -> PyResult<PyNone> {
+  public func delItem(index: PyObject, hash: PyHash) -> PyResult<PyNone> {
     let key = PyDictKey(hash: hash, object: index)
 
     switch self.data.remove(key: key) {
@@ -424,14 +422,14 @@ public class PyDict: PyObject {
 
       let arg0 = binding.required(at: 0)
       let arg1 = binding.optional(at: 1)
-      return self.getWithDefault(arg0, default: arg1)
+      return self.getWithDefault(index: arg0, default: arg1)
     case let .error(e):
       return .error(e)
     }
   }
 
   /// Implementation of Python `get($self, key, default=None, /)` method.
-  public func getWithDefault(_ index: PyObject,
+  public func getWithDefault(index: PyObject,
                              default: PyObject?) -> PyResult<PyObject> {
     let key: PyDictKey
     switch self.createKey(from: index) {
@@ -480,7 +478,7 @@ public class PyDict: PyObject {
 
       let arg0 = binding.required(at: 0)
       let arg1 = binding.optional(at: 1)
-      return self.setWithDefault(arg0, default: arg1)
+      return self.setWithDefault(index: arg0, default: arg1)
     case let .error(e):
       return .error(e)
     }
@@ -491,7 +489,7 @@ public class PyDict: PyObject {
   /// If `key` is in the dictionary, return its value.
   /// If not, insert key with a value of `default` and return `default`.
   /// `default` defaults to None.
-  public func setWithDefault(_ index: PyObject,
+  public func setWithDefault(index: PyObject,
                              default: PyObject?) -> PyResult<PyObject> {
     let key: PyDictKey
     switch self.createKey(from: index) {
@@ -518,7 +516,7 @@ public class PyDict: PyObject {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  public func contains(_ element: PyObject) -> PyResult<Bool> {
+  public func contains(element: PyObject) -> PyResult<Bool> {
     let key: PyDictKey
     switch self.createKey(from: element) {
     case let .value(v): key = v
@@ -703,7 +701,7 @@ public class PyDict: PyObject {
       }
 
       let value: PyObject
-      switch Py.getItem(object: dict, at: keyObject) {
+      switch Py.getItem(object: dict, index: keyObject) {
       case let .value(v): value = v
       case let .error(e): return .error(e)
       }

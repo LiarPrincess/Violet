@@ -91,8 +91,8 @@ public class PyDictKeys: PyObject, PyDictViewsShared {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(_ element: PyObject) -> PyResult<Bool> {
-    return self.dict.contains(element)
+  internal func contains(element: PyObject) -> PyResult<Bool> {
+    return self.dict.contains(element: element)
   }
 
   // MARK: - Iter

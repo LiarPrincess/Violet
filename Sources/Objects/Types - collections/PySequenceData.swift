@@ -321,7 +321,7 @@ internal struct PySequenceData {
 
   // MARK: - Insert
 
-  internal mutating func insert(at index: PyObject,
+  internal mutating func insert(index: PyObject,
                                 item: PyObject) -> PyResult<PyNone> {
     var parsedIndex: Int
     switch IndexHelper.int(index) {
@@ -329,11 +329,11 @@ internal struct PySequenceData {
     case let .error(e): return .error(e)
     }
 
-    self.insert(at: parsedIndex, item: item)
+    self.insert(index: parsedIndex, item: item)
     return .value(Py.none)
   }
 
-  internal mutating func insert(at index: Int, item: PyObject) {
+  internal mutating func insert(index: Int, item: PyObject) {
     var index = index
 
     if index < 0 {

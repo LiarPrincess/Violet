@@ -264,8 +264,7 @@ internal struct PyBytesData: PyStringImpl {
 
   // MARK: - Insert
 
-  internal mutating func insert(at index: PyObject,
-                                item: PyObject) -> PyResult<Void> {
+  internal mutating func insert(index: PyObject, item: PyObject) -> PyResult<Void> {
     let parsedIndex: Int
     switch IndexHelper.int(index) {
     case let .value(i): parsedIndex = i
@@ -278,11 +277,10 @@ internal struct PyBytesData: PyStringImpl {
     case let .error(e): return .error(e)
     }
 
-    return self.insert(at: parsedIndex, item: byte)
+    return self.insert(index: parsedIndex, item: byte)
   }
 
-  internal mutating func insert(at index: Int,
-                                item: UInt8) -> PyResult<Void> {
+  internal mutating func insert(index: Int, item: UInt8) -> PyResult<Void> {
     var index = index
 
     if index < 0 {

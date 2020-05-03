@@ -1115,12 +1115,10 @@ internal enum StringGetItemResult<Item, Slice> {
 
 extension PyStringImpl {
 
-  internal func getItem(
-    at index: PyObject
-  ) -> StringGetItemResult<Element, Builder.Result> {
+  internal func getItem(index: PyObject) -> StringGetItemResult<Element, Builder.Result> {
     switch IndexHelper.intMaybe(index) {
     case .value(let index):
-      switch self.getItem(at: index) {
+      switch self.getItem(index: index) {
       case let .value(r): return .item(r)
       case let .error(e): return .error(e)
       }
@@ -1142,7 +1140,7 @@ extension PyStringImpl {
     return .error(Py.newTypeError(msg: msg))
   }
 
-  internal func getItem(at index: Int) -> PyResult<Element> {
+  internal func getItem(index: Int) -> PyResult<Element> {
     var offset = index
     if offset < 0 {
       offset += self.count

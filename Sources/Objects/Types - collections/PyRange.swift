@@ -211,7 +211,7 @@ public class PyRange: PyObject {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(_ element: PyObject) -> PyResult<Bool> {
+  internal func contains(element: PyObject) -> PyResult<Bool> {
     guard let int = element as? PyInt else {
       return .value(false)
     }
@@ -243,17 +243,17 @@ public class PyRange: PyObject {
   // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
-  internal func getItem(at index: PyObject) -> PyResult<PyObject> {
+  internal func getItem(index: PyObject) -> PyResult<PyObject> {
     switch IndexHelper.intMaybe(index) {
     case .value(let int):
       // swiftlint:disable:next array_init
-      return self.getItem(at: BigInt(int)).map { $0 }
+      return self.getItem(index: BigInt(int)).map { $0 }
     case .notIndex: break // Try slice
     case .error(let e): return .error(e)
     }
 
     if let slice = index as? PySlice {
-      let result = self.getItem(at: slice)
+      let result = self.getItem(slice: slice)
       return result.flatMap { PyResult<PyObject>.value($0) }
     }
 
@@ -261,15 +261,15 @@ public class PyRange: PyObject {
     return .typeError(msg)
   }
 
-  internal func getItem(at index: PyInt) -> PyResult<PyInt> {
-    return self.getItem(at: index.value)
+  internal func getItem(index: PyInt) -> PyResult<PyInt> {
+    return self.getItem(index: index.value)
   }
 
-  internal func getItem(at index: Int) -> PyResult<PyInt> {
-    return self.getItem(at: BigInt(index))
+  internal func getItem(index: Int) -> PyResult<PyInt> {
+    return self.getItem(index: BigInt(index))
   }
 
-  internal func getItem(at index: BigInt) -> PyResult<PyInt> {
+  internal func getItem(index: BigInt) -> PyResult<PyInt> {
     var index = index
 
     if index < 0 {
@@ -284,7 +284,7 @@ public class PyRange: PyObject {
     return .value(Py.newInt(result))
   }
 
-  internal func getItem(at slice: PySlice) -> PyResult<PyRange> {
+  internal func getItem(slice: PySlice) -> PyResult<PyRange> {
     let length: Int
     switch IndexHelper.int(self.length) {
     case let .value(l): length = l
@@ -373,7 +373,7 @@ public class PyRange: PyObject {
   // MARK: - Count
 
   // sourcery: pymethod = count
-  internal func count(_ element: PyObject) -> PyResult<BigInt> {
+  internal func count(element: PyObject) -> PyResult<BigInt> {
     if let int = element as? PyInt {
       return .value(self.contains(int) ? 1 : 0)
     }

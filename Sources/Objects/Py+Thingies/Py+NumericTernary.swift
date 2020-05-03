@@ -272,7 +272,7 @@ private enum PowOp: TernaryOp {
   fileprivate static func callFastInPlace(left: PyObject,
                                           middle: PyObject,
                                           right: PyObject) -> FastCallResult {
-    let result = Fast.__ipow__(left, middle, mod: right)
+    let result = Fast.__ipow__(left, base: middle, mod: right)
     return FastCallResult(result)
   }
 }

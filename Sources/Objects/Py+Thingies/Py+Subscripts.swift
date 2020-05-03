@@ -3,16 +3,14 @@ extension PyInstance {
   // MARK: - Get
 
   /// PySequence_GetItem
-  public func getItem(object: PyObject,
-                      at index: Int) -> PyResult<PyObject> {
+  public func getItem(object: PyObject, index: Int) -> PyResult<PyObject> {
     let int = self.newInt(index)
-    return self.getItem(object: object, at: int)
+    return self.getItem(object: object, index: int)
   }
 
   /// PyObject_GetItem
-  public func getItem(object: PyObject,
-                      at index: PyObject) -> PyResult<PyObject> {
-    if let result = Fast.__getitem__(object, at: index) {
+  public func getItem(object: PyObject, index: PyObject) -> PyResult<PyObject> {
+    if let result = Fast.__getitem__(object, index: index) {
       return result
     }
 
@@ -30,9 +28,9 @@ extension PyInstance {
 
   /// PyObject_SetItem
   public func setItem(object: PyObject,
-                      at index: PyObject,
+                      index: PyObject,
                       value: PyObject) -> PyResult<PyNone> {
-    if let result = Fast.__setitem__(object, at: index, to: value) {
+    if let result = Fast.__setitem__(object, index: index, value: value) {
       return result
     }
 
@@ -50,9 +48,8 @@ extension PyInstance {
   // MARK: - Delete
 
   /// PyObject_DelItem
-  public func deleteItem(object: PyObject,
-                         at index: PyObject) -> PyResult<PyNone> {
-    if let result = Fast.__delitem__(object, at: index) {
+  public func deleteItem(object: PyObject, index: PyObject) -> PyResult<PyNone> {
+    if let result = Fast.__delitem__(object, index: index) {
       return result
     }
 

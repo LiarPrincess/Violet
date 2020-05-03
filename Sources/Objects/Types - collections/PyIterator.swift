@@ -52,7 +52,7 @@ public class PyIterator: PyObject {
       return .stopIteration()
     }
 
-    switch Py.getItem(object: self.sequence, at: self.index) {
+    switch Py.getItem(object: self.sequence, index: self.index) {
     case .value(let o):
       self.index += 1
       return .value(o)

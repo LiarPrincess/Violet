@@ -132,15 +132,15 @@ public class PyByteArray: PyObject, PyBytesType {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(_ element: PyObject) -> PyResult<Bool> {
+  internal func contains(element: PyObject) -> PyResult<Bool> {
     return self.data.contains(element)
   }
 
   // MARK: - Get/set/del item
 
   // sourcery: pymethod = __getitem__
-  internal func getItem(at index: PyObject) -> PyResult<PyObject> {
-    switch self.data.getItem(at: index) {
+  internal func getItem(index: PyObject) -> PyResult<PyObject> {
+    switch self.data.getItem(index: index) {
     case let .item(int):
       return .value(Py.newInt(int))
     case let .slice(bytes):
@@ -151,13 +151,12 @@ public class PyByteArray: PyObject, PyBytesType {
   }
 
   // sourcery: pymethod = __setitem__
-  internal func setItem(at index: PyObject,
-                        to value: PyObject) -> PyResult<PyNone> {
+  internal func setItem(index: PyObject, value: PyObject) -> PyResult<PyNone> {
     return self.data.setItem(index: index, value: value)
   }
 
   // sourcery: pymethod = __delitem__
-  internal func delItem(at index: PyObject) -> PyResult<PyNone> {
+  internal func delItem(index: PyObject) -> PyResult<PyNone> {
     return self.data.delItem(index: index)
   }
 
@@ -563,12 +562,12 @@ public class PyByteArray: PyObject, PyBytesType {
     """
 
   // Special overload for `CountOwner` protocol.
-  internal func count(_ element: PyObject) -> PyResult<BigInt> {
-    return self.count(element, start: nil, end: nil)
+  internal func count(element: PyObject) -> PyResult<BigInt> {
+    return self.count(element: element, start: nil, end: nil)
   }
 
   // sourcery: pymethod = count, doc = countDoc
-  internal func count(_ element: PyObject,
+  internal func count(element: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<BigInt> {
     return self.data.count(element, start: start, end: end)
@@ -684,8 +683,8 @@ public class PyByteArray: PyObject, PyBytesType {
     """
 
   // sourcery: pymethod = insert, doc = insertDoc
-  internal func insert(at index: PyObject, item: PyObject) -> PyResult<PyNone> {
-    let result = self.data.insert(at: index, item: item)
+  internal func insert(index: PyObject, item: PyObject) -> PyResult<PyNone> {
+    let result = self.data.insert(index: index, item: item)
     return result.map { _ in Py.none }
   }
 

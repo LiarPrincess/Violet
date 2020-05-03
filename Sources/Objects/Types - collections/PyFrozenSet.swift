@@ -132,7 +132,7 @@ public class PyFrozenSet: PyObject, PySetType {
   // MARK: - Contaions
 
   // sourcery: pymethod = __contains__
-  public func contains(_ element: PyObject) -> PyResult<Bool> {
+  public func contains(element: PyObject) -> PyResult<Bool> {
     return self.data.contains(value: element)
   }
 

@@ -228,7 +228,7 @@ internal protocol __dict__Owner {{
   add_protocol('__iand__',      '__iand__Owner',      'iand(_ other: PyObject)',      'PyResult<PyObject>')
   add_protocol('__ixor__',      '__ixor__Owner',      'ixor(_ other: PyObject)',      'PyResult<PyObject>')
   add_protocol('__ior__',       '__ior__Owner',       'ior(_ other: PyObject)',       'PyResult<PyObject>')
-  add_protocol('__ipow__',      '__ipow__Owner',      'ipow(_ base: PyObject, mod: PyObject)', 'PyResult<PyObject>')
+  add_protocol('__ipow__',      '__ipow__Owner',      'ipow(base: PyObject, mod: PyObject)', 'PyResult<PyObject>')
   add_protocol('__idivmod__',   '__idivmod__Owner',   'idivmod(_ other: PyObject)',   'PyResult<PyObject>')
   add_protocol('__complex__',   '__complex__Owner',   'asComplex()',                  'PyObject')
   add_protocol('__getattr__',   '__getattr__Owner',   'getAttribute(name: PyObject)', 'PyResult<PyObject>')

@@ -91,7 +91,7 @@ extension Eval {
     let index = self.stack.pop()
     let object = self.stack.top
 
-    switch Py.getItem(object: object, at: index) {
+    switch Py.getItem(object: object, index: index) {
     case let .value(r):
       self.stack.top = r
       return .ok
@@ -106,7 +106,7 @@ extension Eval {
     let object = self.stack.pop()
     let value = self.stack.pop()
 
-    switch Py.setItem(object: object, at: index, value: value) {
+    switch Py.setItem(object: object, index: index, value: value) {
     case .value:
       return .ok
     case .error(let e):
@@ -119,7 +119,7 @@ extension Eval {
     let index = self.stack.pop()
     let object = self.stack.pop()
 
-    switch Py.deleteItem(object: object, at: index) {
+    switch Py.deleteItem(object: object, index: index) {
     case .value:
       return .ok
     case .error(let e):

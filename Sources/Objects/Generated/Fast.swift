@@ -74,9 +74,9 @@ private protocol __and__Owner { func and(_ other: PyObject) -> PyResult<PyObject
 private protocol __bool__Owner { func asBool() -> Bool }
 private protocol __call__Owner { func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> }
 private protocol __complex__Owner { func asComplex() -> PyObject }
-private protocol __contains__Owner { func contains(_ element: PyObject) -> PyResult<Bool> }
+private protocol __contains__Owner { func contains(element: PyObject) -> PyResult<Bool> }
 private protocol __del__Owner { func del() -> PyResult<PyNone> }
-private protocol __delitem__Owner { func delItem(at index: PyObject) -> PyResult<PyNone> }
+private protocol __delitem__Owner { func delItem(index: PyObject) -> PyResult<PyNone> }
 private protocol __dir__Owner { func dir() -> PyResult<DirResult> }
 private protocol __divmod__Owner { func divmod(_ other: PyObject) -> PyResult<PyObject> }
 private protocol __eq__Owner { func isEqual(_ other: PyObject) -> CompareResult }
@@ -85,7 +85,7 @@ private protocol __floordiv__Owner { func floordiv(_ other: PyObject) -> PyResul
 private protocol __ge__Owner { func isGreaterEqual(_ other: PyObject) -> CompareResult }
 private protocol __getattr__Owner { func getAttribute(name: PyObject) -> PyResult<PyObject> }
 private protocol __getattribute__Owner { func getAttribute(name: PyObject) -> PyResult<PyObject> }
-private protocol __getitem__Owner { func getItem(at index: PyObject) -> PyResult<PyObject> }
+private protocol __getitem__Owner { func getItem(index: PyObject) -> PyResult<PyObject> }
 private protocol __gt__Owner { func isGreater(_ other: PyObject) -> CompareResult }
 private protocol __hash__Owner { func hash() -> HashResult }
 private protocol __iadd__Owner { func iadd(_ other: PyObject) -> PyResult<PyObject> }
@@ -100,7 +100,7 @@ private protocol __index__Owner { func asIndex() -> BigInt }
 private protocol __instancecheck__Owner { func isType(of object: PyObject) -> Bool }
 private protocol __invert__Owner { func invert() -> PyObject }
 private protocol __ior__Owner { func ior(_ other: PyObject) -> PyResult<PyObject> }
-private protocol __ipow__Owner { func ipow(_ base: PyObject, mod: PyObject) -> PyResult<PyObject> }
+private protocol __ipow__Owner { func ipow(base: PyObject, mod: PyObject) -> PyResult<PyObject> }
 private protocol __irshift__Owner { func irshift(_ other: PyObject) -> PyResult<PyObject> }
 private protocol __isabstractmethod__Owner { func isAbstractMethod() -> PyResult<Bool> }
 private protocol __isub__Owner { func isub(_ other: PyObject) -> PyResult<PyObject> }
@@ -139,7 +139,7 @@ private protocol __rsub__Owner { func rsub(_ other: PyObject) -> PyResult<PyObje
 private protocol __rtruediv__Owner { func rtruediv(_ other: PyObject) -> PyResult<PyObject> }
 private protocol __rxor__Owner { func rxor(_ other: PyObject) -> PyResult<PyObject> }
 private protocol __setattr__Owner { func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> }
-private protocol __setitem__Owner { func setItem(at index: PyObject, to value: PyObject) -> PyResult<PyNone> }
+private protocol __setitem__Owner { func setItem(index: PyObject, value: PyObject) -> PyResult<PyNone> }
 private protocol __str__Owner { func str() -> PyResult<String> }
 private protocol __sub__Owner { func sub(_ other: PyObject) -> PyResult<PyObject> }
 private protocol __subclasscheck__Owner { func isSubtype(of object: PyObject) -> PyResult<Bool> }
@@ -230,10 +230,10 @@ internal enum Fast {
     return nil
   }
 
-  internal static func __contains__(_ zelf: PyObject, _ element: PyObject) -> PyResult<Bool>? {
+  internal static func __contains__(_ zelf: PyObject, element: PyObject) -> PyResult<Bool>? {
     if let owner = zelf as? __contains__Owner,
        !hasOverridenBuiltinMethod(object: zelf, selector: .__contains__) {
-      return owner.contains(element)
+      return owner.contains(element: element)
     }
 
     return nil
@@ -248,10 +248,10 @@ internal enum Fast {
     return nil
   }
 
-  internal static func __delitem__(_ zelf: PyObject, at index: PyObject) -> PyResult<PyNone>? {
+  internal static func __delitem__(_ zelf: PyObject, index: PyObject) -> PyResult<PyNone>? {
     if let owner = zelf as? __delitem__Owner,
        !hasOverridenBuiltinMethod(object: zelf, selector: .__delitem__) {
-      return owner.delItem(at: index)
+      return owner.delItem(index: index)
     }
 
     return nil
@@ -329,10 +329,10 @@ internal enum Fast {
     return nil
   }
 
-  internal static func __getitem__(_ zelf: PyObject, at index: PyObject) -> PyResult<PyObject>? {
+  internal static func __getitem__(_ zelf: PyObject, index: PyObject) -> PyResult<PyObject>? {
     if let owner = zelf as? __getitem__Owner,
        !hasOverridenBuiltinMethod(object: zelf, selector: .__getitem__) {
-      return owner.getItem(at: index)
+      return owner.getItem(index: index)
     }
 
     return nil
@@ -464,10 +464,10 @@ internal enum Fast {
     return nil
   }
 
-  internal static func __ipow__(_ zelf: PyObject, _ base: PyObject, mod: PyObject) -> PyResult<PyObject>? {
+  internal static func __ipow__(_ zelf: PyObject, base: PyObject, mod: PyObject) -> PyResult<PyObject>? {
     if let owner = zelf as? __ipow__Owner,
        !hasOverridenBuiltinMethod(object: zelf, selector: .__ipow__) {
-      return owner.ipow(base, mod: mod)
+      return owner.ipow(base: base, mod: mod)
     }
 
     return nil
@@ -815,10 +815,10 @@ internal enum Fast {
     return nil
   }
 
-  internal static func __setitem__(_ zelf: PyObject, at index: PyObject, to value: PyObject) -> PyResult<PyNone>? {
+  internal static func __setitem__(_ zelf: PyObject, index: PyObject, value: PyObject) -> PyResult<PyNone>? {
     if let owner = zelf as? __setitem__Owner,
        !hasOverridenBuiltinMethod(object: zelf, selector: .__setitem__) {
-      return owner.setItem(at: index, to: value)
+      return owner.setItem(index: index, value: value)
     }
 
     return nil
