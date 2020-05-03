@@ -109,29 +109,10 @@ public class PyList: PyObject, PySequenceType {
     }
 
     return self.withReprLock {
-      self.reprInner()
+      self.data.repr(openBracket: "[",
+                     closeBracket: "]",
+                     appendCommaIfSingleElement: false)
     }
-  }
-
-  private func reprInner() -> PyResult<String> {
-    if self.data.isEmpty {
-      return .value("[]")
-    }
-
-    var result = "["
-    for (index, element) in self.elements.enumerated() {
-      if index > 0 {
-        result += ", " // so that we don't have ', )'.
-      }
-
-      switch Py.repr(object: element) {
-      case let .value(s): result += s
-      case let .error(e): return .error(e)
-      }
-    }
-
-    result += "]"
-    return .value(result)
   }
 
   // MARK: - Attributes
@@ -146,12 +127,6 @@ public class PyList: PyObject, PySequenceType {
   // sourcery: pyproperty = __class__
   internal func getClass() -> PyType {
     return self.type
-  }
-
-  // MARK: - Length
-
-  internal var isEmpty: Bool {
-    return self.data.isEmpty
   }
 
   // sourcery: pymethod = __len__
@@ -273,20 +248,7 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = pop
   internal func pop(index: PyObject?) -> PyResult<PyObject> {
-    switch self.parsePopIndex(from: index) {
-    case let .value(i):
-      return self.data.pop(at: i, typeName: "list")
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  private func parsePopIndex(from index: PyObject?) -> PyResult<Int> {
-    guard let index = index else {
-      return .value(-1)
-    }
-
-    return IndexHelper.int(index)
+    return self.data.pop(index: index, typeName: "list")
   }
 
   // MARK: - Sort

@@ -129,6 +129,35 @@ internal struct PySequenceData {
     return .value(x &+ 97_531)
   }
 
+  // MARK: - Repr
+
+  internal func repr(openBracket: String,
+                     closeBracket: String,
+                     appendCommaIfSingleElement: Bool) -> PyResult<String> {
+    if self.isEmpty {
+      return .value(openBracket + closeBracket)
+    }
+
+    var result = openBracket
+    for (index, element) in self.elements.enumerated() {
+      if index > 0 {
+        result += ", " // so that we don't have ', )'.
+      }
+
+      switch Py.repr(object: element) {
+      case let .value(s): result += s
+      case let .error(e): return .error(e)
+      }
+    }
+
+    if appendCommaIfSingleElement && self.count == 1 {
+      result += ","
+    }
+
+    result += closeBracket
+    return .value(result)
+  }
+
   // MARK: - Length
 
   internal var isEmpty: Bool {
@@ -446,7 +475,21 @@ internal struct PySequenceData {
 
   // MARK: - Pop
 
-  internal mutating func pop(at index: Int,
+  internal mutating func pop(index: PyObject?,
+                             typeName: String) -> PyResult<PyObject> {
+    let intIndex = self.parsePopIndex(from: index)
+    return intIndex.flatMap { self.pop(index: $0, typeName: typeName) }
+  }
+
+  private func parsePopIndex(from index: PyObject?) -> PyResult<Int> {
+    guard let index = index else {
+      return .value(-1)
+    }
+
+    return IndexHelper.int(index)
+  }
+
+  internal mutating func pop(index: Int,
                              typeName: String) -> PyResult<PyObject> {
     if self.isEmpty {
       return .indexError("pop from empty \(typeName)")
