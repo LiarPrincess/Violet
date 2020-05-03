@@ -38,8 +38,9 @@ public indirect enum FStringError: Error, Equatable, CustomStringConvertible {
       return "Mismatched '(', '{', or '['"
     case .emptyExpression:
       return "Empty expression not allowed"
-    case let .invalidConversion(c):
-      return "Invalid conversion character '\(c)' (unicode: \(c.uPlus)), " +
+    case let .invalidConversion(scalar):
+      let codePoint = scalar.codePointNotation
+      return "Invalid conversion character '\(scalar)' (unicode: \(codePoint)), " +
              "expected 's', 'r', or 'a'"
     case let .parsingError(kind):
       return String(describing: kind)

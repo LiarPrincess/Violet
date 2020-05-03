@@ -70,8 +70,9 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
     switch self {
     case .eof:
       return "Unexpected end of file."
-    case .unexpectedCharacter(let c):
-      return "Unexpected character '\(c)' (unicode: \(c.uPlus))."
+    case .unexpectedCharacter(let scalar):
+      let codePoint = scalar.codePointNotation
+      return "Unexpected character '\(scalar)' (unicode: \(codePoint))."
 
 //    case .tabSpace:
 //      return "Inconsistent mixing of tabs and spaces"
@@ -80,8 +81,9 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
     case .noMatchingDedent:
       return "Unindent does not match any outer indentation level."
 
-    case .invalidCharacterInIdentifier(let c):
-      return "Invalid character '\(c)' (unicode: \(c.uPlus)) in identifier."
+    case .invalidCharacterInIdentifier(let scalar):
+      let codePoint = scalar.codePointNotation
+      return "Invalid character '\(scalar)' (unicode: \(codePoint)) in identifier."
 
     case .unfinishedShortString:
       return "EOL while scanning string literal."
@@ -96,12 +98,12 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
     case .danglingIntegerUnderscore:
       return "Digit is required after underscore."
     case let .invalidIntegerDigit(type, c):
-      return "Character '\(c)' (unicode: \(c.uPlus)) is not valid \(type) digit."
+      return "Character '\(c)' (unicode: \(c.codePointNotation)) is not valid \(type) digit."
     case let .unableToParseInteger(type, s):
       return "Unable to parse \(type) integer from '\(s)'."
 
     case .invalidDecimalDigit(let c):
-      return "Character '\(c)' (unicode: \(c.uPlus)) is not valid decimal digit."
+      return "Character '\(c)' (unicode: \(c.codePointNotation)) is not valid decimal digit."
     case .unableToParseDecimal(let s):
       return "Unable to parse decimal from '\(s)'."
 

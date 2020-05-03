@@ -4,7 +4,7 @@ import Foundation
 
 extension Array {
 
-  /// Basically: `self.append(element)`
+  /// Basically: `self.append(element)`, but with more 'stack-oriented' name.
   public mutating func push(_ element: Element) {
     self.append(element)
   }
@@ -30,6 +30,7 @@ extension Collection {
         result += 1
       }
     }
+
     return result
   }
 }
@@ -162,7 +163,7 @@ extension OptionSet {
   }
 
   /// Returns a Boolean value that indicates whether
-  /// the set has any intersction with specified elements.
+  /// the set has any intersection with specified elements.
   public func contains(anyOf other: Self) -> Bool {
     return self.intersection(other).any
   }
@@ -228,12 +229,18 @@ extension String {
 
 extension UnicodeScalar {
 
-  /// Scalar -> U+XXXX (for example U+005F). Then you can use it
+  /// U+XXXX (for example U+005F). Then you can use it
   /// [here](https://unicode.org/cldr/utility/character.jsp?a=005f)\.
-  public var uPlus: String {
-    let hex = String(self.value, radix: 16, uppercase: true)
-    let pad = String(repeating: "0", count: 4 - hex.count)
-    return "U+\(pad)\(hex)"
+  public var codePointNotation: String {
+    var numberPart = String(self.value, radix: 16, uppercase: true)
+
+    if numberPart.count < 4 {
+      let pad = String(repeating: "0", count: 4 - numberPart.count)
+      assert(pad.any)
+      numberPart = pad + numberPart
+    }
+
+    return "U+\(numberPart)"
   }
 
   /// Basically `self.properties.isXIDStart` + underscore.
