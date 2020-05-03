@@ -283,6 +283,19 @@ internal struct PyBytesData: PyStringImpl {
 
   internal mutating func insert(at index: Int,
                                 item: UInt8) -> PyResult<Void> {
+    var index = index
+
+    if index < 0 {
+      index += self.values.count
+      if index < 0 {
+        index = 0
+      }
+    }
+
+    if index > self.values.count {
+      index = self.values.count
+    }
+
     self.values.insert(item, at: index)
     return .value()
   }
