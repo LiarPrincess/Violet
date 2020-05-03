@@ -396,7 +396,6 @@ extension PyType {
     }
 
     let property = PyProperty.wrap(
-      name: "__dict__",
       doc: nil,
       get: Self.getHeapType__dict__(object:),
       set: Self.setHeapType__dict__(object:value:),

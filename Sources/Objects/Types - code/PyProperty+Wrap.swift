@@ -7,7 +7,6 @@ extension PyProperty {
   // MARK: - Wrap read only property
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
-    name: String,
     doc: String?,
     get: @escaping (Zelf) -> () -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>
@@ -22,7 +21,6 @@ extension PyProperty {
   // MARK: - Wrap property
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
-    name: String,
     doc: String?,
     get: @escaping (Zelf) -> () -> R,
     set: @escaping (Zelf) -> (PyObject) -> PyResult<Void>,
@@ -36,7 +34,6 @@ extension PyProperty {
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
-    name: String,
     doc: String?,
     get: @escaping (PyObject) -> R,
     set: @escaping (PyObject, PyObject) -> PyResult<PyNone>,

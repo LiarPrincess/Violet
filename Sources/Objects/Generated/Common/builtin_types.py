@@ -128,9 +128,9 @@ def print_fill_type_method(t: TypeInfo):
       print()
 
     if not swift_setter_fn:
-      print(f'    self.insert(type: type, name: "{python_name}", value: PyProperty.wrap(name: "{python_name}", doc: {doc}, get: {swift_type}.{swift_getter_fn}, castSelf: {castSelf}))')
+      print(f'    self.insert(type: type, name: "{python_name}", value: PyProperty.wrap(doc: {doc}, get: {swift_type}.{swift_getter_fn}, castSelf: {castSelf}))')
     else:
-      print(f'    self.insert(type: type, name: "{python_name}", value: PyProperty.wrap(name: "{python_name}", doc: {doc}, get: {swift_type}.{swift_getter_fn}, set: {swift_type}.{swift_setter_fn}, castSelf: {castSelf}))')
+      print(f'    self.insert(type: type, name: "{python_name}", value: PyProperty.wrap(doc: {doc}, get: {swift_type}.{swift_getter_fn}, set: {swift_type}.{swift_setter_fn}, castSelf: {castSelf}))')
 
   # ================
   # === New/init ===

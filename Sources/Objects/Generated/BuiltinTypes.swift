@@ -360,7 +360,7 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(PyBool.doc)
     type.setFlag(.default)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBool.getClass, castSelf: Self.asBool))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBool.getClass, castSelf: Self.asBool))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyBool.pyNew(type:args:kwargs:)))
 
@@ -391,12 +391,12 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBuiltinFunction.getClass, castSelf: Self.asBuiltinFunction))
-    self.insert(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyBuiltinFunction.getName, castSelf: Self.asBuiltinFunction))
-    self.insert(type: type, name: "__qualname__", value: PyProperty.wrap(name: "__qualname__", doc: nil, get: PyBuiltinFunction.getQualname, castSelf: Self.asBuiltinFunction))
-    self.insert(type: type, name: "__text_signature__", value: PyProperty.wrap(name: "__text_signature__", doc: nil, get: PyBuiltinFunction.getTextSignature, castSelf: Self.asBuiltinFunction))
-    self.insert(type: type, name: "__module__", value: PyProperty.wrap(name: "__module__", doc: nil, get: PyBuiltinFunction.getModule, castSelf: Self.asBuiltinFunction))
-    self.insert(type: type, name: "__self__", value: PyProperty.wrap(name: "__self__", doc: nil, get: PyBuiltinFunction.getSelf, castSelf: Self.asBuiltinFunction))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBuiltinFunction.getClass, castSelf: Self.asBuiltinFunction))
+    self.insert(type: type, name: "__name__", value: PyProperty.wrap(doc: nil, get: PyBuiltinFunction.getName, castSelf: Self.asBuiltinFunction))
+    self.insert(type: type, name: "__qualname__", value: PyProperty.wrap(doc: nil, get: PyBuiltinFunction.getQualname, castSelf: Self.asBuiltinFunction))
+    self.insert(type: type, name: "__text_signature__", value: PyProperty.wrap(doc: nil, get: PyBuiltinFunction.getTextSignature, castSelf: Self.asBuiltinFunction))
+    self.insert(type: type, name: "__module__", value: PyProperty.wrap(doc: nil, get: PyBuiltinFunction.getModule, castSelf: Self.asBuiltinFunction))
+    self.insert(type: type, name: "__self__", value: PyProperty.wrap(doc: nil, get: PyBuiltinFunction.getSelf, castSelf: Self.asBuiltinFunction))
 
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyBuiltinFunction.isEqual(_:), castSelf: Self.asBuiltinFunction))
     self.insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyBuiltinFunction.isNotEqual(_:), castSelf: Self.asBuiltinFunction))
@@ -428,11 +428,11 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyBuiltinMethod.getName, castSelf: Self.asBuiltinMethod))
-    self.insert(type: type, name: "__qualname__", value: PyProperty.wrap(name: "__qualname__", doc: nil, get: PyBuiltinMethod.getQualname, castSelf: Self.asBuiltinMethod))
-    self.insert(type: type, name: "__text_signature__", value: PyProperty.wrap(name: "__text_signature__", doc: nil, get: PyBuiltinMethod.getTextSignature, castSelf: Self.asBuiltinMethod))
-    self.insert(type: type, name: "__module__", value: PyProperty.wrap(name: "__module__", doc: nil, get: PyBuiltinMethod.getModule, castSelf: Self.asBuiltinMethod))
-    self.insert(type: type, name: "__self__", value: PyProperty.wrap(name: "__self__", doc: nil, get: PyBuiltinMethod.getSelf, castSelf: Self.asBuiltinMethod))
+    self.insert(type: type, name: "__name__", value: PyProperty.wrap(doc: nil, get: PyBuiltinMethod.getName, castSelf: Self.asBuiltinMethod))
+    self.insert(type: type, name: "__qualname__", value: PyProperty.wrap(doc: nil, get: PyBuiltinMethod.getQualname, castSelf: Self.asBuiltinMethod))
+    self.insert(type: type, name: "__text_signature__", value: PyProperty.wrap(doc: nil, get: PyBuiltinMethod.getTextSignature, castSelf: Self.asBuiltinMethod))
+    self.insert(type: type, name: "__module__", value: PyProperty.wrap(doc: nil, get: PyBuiltinMethod.getModule, castSelf: Self.asBuiltinMethod))
+    self.insert(type: type, name: "__self__", value: PyProperty.wrap(doc: nil, get: PyBuiltinMethod.getSelf, castSelf: Self.asBuiltinMethod))
 
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyBuiltinMethod.isEqual(_:), castSelf: Self.asBuiltinMethod))
     self.insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyBuiltinMethod.isNotEqual(_:), castSelf: Self.asBuiltinMethod))
@@ -464,7 +464,7 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyByteArray.getClass, castSelf: Self.asByteArray))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyByteArray.getClass, castSelf: Self.asByteArray))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyByteArray.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyByteArray.pyInit(args:kwargs:)))
@@ -552,7 +552,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyByteArrayIterator.getClass, castSelf: Self.asByteArrayIterator))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyByteArrayIterator.getClass, castSelf: Self.asByteArrayIterator))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyByteArrayIterator.pyNew(type:args:kwargs:)))
 
@@ -579,7 +579,7 @@ public final class BuiltinTypes {
     type.setFlag(.bytesSubclass)
     type.setFlag(.default)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBytes.getClass, castSelf: Self.asBytes))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBytes.getClass, castSelf: Self.asBytes))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyBytes.pyNew(type:args:kwargs:)))
 
@@ -654,7 +654,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBytesIterator.getClass, castSelf: Self.asBytesIterator))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBytesIterator.getClass, castSelf: Self.asBytesIterator))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyBytesIterator.pyNew(type:args:kwargs:)))
 
@@ -680,7 +680,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyCallableIterator.getClass, castSelf: Self.asCallableIterator))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyCallableIterator.getClass, castSelf: Self.asCallableIterator))
 
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyCallableIterator.getAttribute(name:), castSelf: Self.asCallableIterator))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyCallableIterator.iter, castSelf: Self.asCallableIterator))
@@ -732,9 +732,9 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyClassMethod.getClass, castSelf: Self.asClassMethod))
-    self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyClassMethod.getDict, castSelf: Self.asClassMethod))
-    self.insert(type: type, name: "__func__", value: PyProperty.wrap(name: "__func__", doc: nil, get: PyClassMethod.getFunc, castSelf: Self.asClassMethod))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyClassMethod.getClass, castSelf: Self.asClassMethod))
+    self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyClassMethod.getDict, castSelf: Self.asClassMethod))
+    self.insert(type: type, name: "__func__", value: PyProperty.wrap(doc: nil, get: PyClassMethod.getFunc, castSelf: Self.asClassMethod))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyClassMethod.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyClassMethod.pyInit(args:kwargs:)))
@@ -759,13 +759,13 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(PyCode.doc)
     type.setFlag(.default)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyCode.getClass, castSelf: Self.asCode))
-    self.insert(type: type, name: "co_name", value: PyProperty.wrap(name: "co_name", doc: nil, get: PyCode.getName, castSelf: Self.asCode))
-    self.insert(type: type, name: "co_filename", value: PyProperty.wrap(name: "co_filename", doc: nil, get: PyCode.getFilename, castSelf: Self.asCode))
-    self.insert(type: type, name: "co_firstlineno", value: PyProperty.wrap(name: "co_firstlineno", doc: nil, get: PyCode.getFirstLineNo, castSelf: Self.asCode))
-    self.insert(type: type, name: "co_argcount", value: PyProperty.wrap(name: "co_argcount", doc: nil, get: PyCode.getArgCount, castSelf: Self.asCode))
-    self.insert(type: type, name: "co_kwonlyargcount", value: PyProperty.wrap(name: "co_kwonlyargcount", doc: nil, get: PyCode.getKwOnlyArgCount, castSelf: Self.asCode))
-    self.insert(type: type, name: "co_nlocals", value: PyProperty.wrap(name: "co_nlocals", doc: nil, get: PyCode.getNLocals, castSelf: Self.asCode))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyCode.getClass, castSelf: Self.asCode))
+    self.insert(type: type, name: "co_name", value: PyProperty.wrap(doc: nil, get: PyCode.getName, castSelf: Self.asCode))
+    self.insert(type: type, name: "co_filename", value: PyProperty.wrap(doc: nil, get: PyCode.getFilename, castSelf: Self.asCode))
+    self.insert(type: type, name: "co_firstlineno", value: PyProperty.wrap(doc: nil, get: PyCode.getFirstLineNo, castSelf: Self.asCode))
+    self.insert(type: type, name: "co_argcount", value: PyProperty.wrap(doc: nil, get: PyCode.getArgCount, castSelf: Self.asCode))
+    self.insert(type: type, name: "co_kwonlyargcount", value: PyProperty.wrap(doc: nil, get: PyCode.getKwOnlyArgCount, castSelf: Self.asCode))
+    self.insert(type: type, name: "co_nlocals", value: PyProperty.wrap(doc: nil, get: PyCode.getNLocals, castSelf: Self.asCode))
 
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyCode.isEqual(_:), castSelf: Self.asCode))
     self.insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyCode.isNotEqual(_:), castSelf: Self.asCode))
@@ -795,9 +795,9 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
 
-    self.insert(type: type, name: "real", value: PyProperty.wrap(name: "real", doc: nil, get: PyComplex.asReal, castSelf: Self.asComplex))
-    self.insert(type: type, name: "imag", value: PyProperty.wrap(name: "imag", doc: nil, get: PyComplex.asImag, castSelf: Self.asComplex))
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyComplex.getClass, castSelf: Self.asComplex))
+    self.insert(type: type, name: "real", value: PyProperty.wrap(doc: nil, get: PyComplex.asReal, castSelf: Self.asComplex))
+    self.insert(type: type, name: "imag", value: PyProperty.wrap(doc: nil, get: PyComplex.asImag, castSelf: Self.asComplex))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyComplex.getClass, castSelf: Self.asComplex))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyComplex.pyNew(type:args:kwargs:)))
 
@@ -855,7 +855,7 @@ public final class BuiltinTypes {
     type.setFlag(.dictSubclass)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDict.getClass, castSelf: Self.asDict))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDict.getClass, castSelf: Self.asDict))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyDict.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyDict.pyInit(args:kwargs:)))
@@ -904,7 +904,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictItemIterator.getClass, castSelf: Self.asDictItemIterator))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDictItemIterator.getClass, castSelf: Self.asDictItemIterator))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyDictItemIterator.pyNew(type:args:kwargs:)))
 
@@ -930,7 +930,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictItems.getClass, castSelf: Self.asDictItems))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDictItems.getClass, castSelf: Self.asDictItems))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyDictItems.pyNew(type:args:kwargs:)))
 
@@ -965,7 +965,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictKeyIterator.getClass, castSelf: Self.asDictKeyIterator))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDictKeyIterator.getClass, castSelf: Self.asDictKeyIterator))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyDictKeyIterator.pyNew(type:args:kwargs:)))
 
@@ -991,7 +991,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictKeys.getClass, castSelf: Self.asDictKeys))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDictKeys.getClass, castSelf: Self.asDictKeys))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyDictKeys.pyNew(type:args:kwargs:)))
 
@@ -1026,7 +1026,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictValueIterator.getClass, castSelf: Self.asDictValueIterator))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDictValueIterator.getClass, castSelf: Self.asDictValueIterator))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyDictValueIterator.pyNew(type:args:kwargs:)))
 
@@ -1074,7 +1074,7 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyEllipsis.getClass, castSelf: Self.asEllipsis))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyEllipsis.getClass, castSelf: Self.asEllipsis))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyEllipsis.pyNew(type:args:kwargs:)))
 
@@ -1101,7 +1101,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyEnumerate.getClass, castSelf: Self.asEnumerate))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyEnumerate.getClass, castSelf: Self.asEnumerate))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyEnumerate.pyNew(type:args:kwargs:)))
 
@@ -1128,7 +1128,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFilter.getClass, castSelf: Self.asFilter))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyFilter.getClass, castSelf: Self.asFilter))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyFilter.pyNew(type:args:kwargs:)))
 
@@ -1154,9 +1154,9 @@ public final class BuiltinTypes {
     type.setFlag(.baseType)
     type.setFlag(.default)
 
-    self.insert(type: type, name: "real", value: PyProperty.wrap(name: "real", doc: nil, get: PyFloat.asReal, castSelf: Self.asFloat))
-    self.insert(type: type, name: "imag", value: PyProperty.wrap(name: "imag", doc: nil, get: PyFloat.asImag, castSelf: Self.asFloat))
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFloat.getClass, castSelf: Self.asFloat))
+    self.insert(type: type, name: "real", value: PyProperty.wrap(doc: nil, get: PyFloat.asReal, castSelf: Self.asFloat))
+    self.insert(type: type, name: "imag", value: PyProperty.wrap(doc: nil, get: PyFloat.asImag, castSelf: Self.asFloat))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyFloat.getClass, castSelf: Self.asFloat))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyFloat.pyNew(type:args:kwargs:)))
 
@@ -1215,14 +1215,14 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFrame.getClass, castSelf: Self.asFrame))
-    self.insert(type: type, name: "f_back", value: PyProperty.wrap(name: "f_back", doc: nil, get: PyFrame.getBack, castSelf: Self.asFrame))
-    self.insert(type: type, name: "f_builtins", value: PyProperty.wrap(name: "f_builtins", doc: nil, get: PyFrame.getBuiltins, castSelf: Self.asFrame))
-    self.insert(type: type, name: "f_globals", value: PyProperty.wrap(name: "f_globals", doc: nil, get: PyFrame.getGlobals, castSelf: Self.asFrame))
-    self.insert(type: type, name: "f_locals", value: PyProperty.wrap(name: "f_locals", doc: nil, get: PyFrame.getLocals, castSelf: Self.asFrame))
-    self.insert(type: type, name: "f_code", value: PyProperty.wrap(name: "f_code", doc: nil, get: PyFrame.getCode, castSelf: Self.asFrame))
-    self.insert(type: type, name: "f_lasti", value: PyProperty.wrap(name: "f_lasti", doc: nil, get: PyFrame.getLasti, castSelf: Self.asFrame))
-    self.insert(type: type, name: "f_lineno", value: PyProperty.wrap(name: "f_lineno", doc: nil, get: PyFrame.getLineno, castSelf: Self.asFrame))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyFrame.getClass, castSelf: Self.asFrame))
+    self.insert(type: type, name: "f_back", value: PyProperty.wrap(doc: nil, get: PyFrame.getBack, castSelf: Self.asFrame))
+    self.insert(type: type, name: "f_builtins", value: PyProperty.wrap(doc: nil, get: PyFrame.getBuiltins, castSelf: Self.asFrame))
+    self.insert(type: type, name: "f_globals", value: PyProperty.wrap(doc: nil, get: PyFrame.getGlobals, castSelf: Self.asFrame))
+    self.insert(type: type, name: "f_locals", value: PyProperty.wrap(doc: nil, get: PyFrame.getLocals, castSelf: Self.asFrame))
+    self.insert(type: type, name: "f_code", value: PyProperty.wrap(doc: nil, get: PyFrame.getCode, castSelf: Self.asFrame))
+    self.insert(type: type, name: "f_lasti", value: PyProperty.wrap(doc: nil, get: PyFrame.getLasti, castSelf: Self.asFrame))
+    self.insert(type: type, name: "f_lineno", value: PyProperty.wrap(doc: nil, get: PyFrame.getLineno, castSelf: Self.asFrame))
 
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyFrame.repr, castSelf: Self.asFrame))
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyFrame.getAttribute(name:), castSelf: Self.asFrame))
@@ -1248,7 +1248,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFrozenSet.getClass, castSelf: Self.asFrozenSet))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyFrozenSet.getClass, castSelf: Self.asFrozenSet))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyFrozenSet.pyNew(type:args:kwargs:)))
 
@@ -1299,18 +1299,18 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFunction.getClass, castSelf: Self.asFunction))
-    self.insert(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyFunction.getName, set: PyFunction.setName, castSelf: Self.asFunction))
-    self.insert(type: type, name: "__qualname__", value: PyProperty.wrap(name: "__qualname__", doc: nil, get: PyFunction.getQualname, set: PyFunction.setQualname, castSelf: Self.asFunction))
-    self.insert(type: type, name: "__defaults__", value: PyProperty.wrap(name: "__defaults__", doc: nil, get: PyFunction.getDefaults, set: PyFunction.setDefaults, castSelf: Self.asFunction))
-    self.insert(type: type, name: "__kwdefaults__", value: PyProperty.wrap(name: "__kwdefaults__", doc: nil, get: PyFunction.getKeywordDefaults, set: PyFunction.setKeywordDefaults, castSelf: Self.asFunction))
-    self.insert(type: type, name: "__closure__", value: PyProperty.wrap(name: "__closure__", doc: nil, get: PyFunction.getClosure, set: PyFunction.setClosure, castSelf: Self.asFunction))
-    self.insert(type: type, name: "__globals__", value: PyProperty.wrap(name: "__globals__", doc: nil, get: PyFunction.getGlobals, set: PyFunction.setGlobals, castSelf: Self.asFunction))
-    self.insert(type: type, name: "__annotations__", value: PyProperty.wrap(name: "__annotations__", doc: nil, get: PyFunction.getAnnotations, set: PyFunction.setAnnotations, castSelf: Self.asFunction))
-    self.insert(type: type, name: "__code__", value: PyProperty.wrap(name: "__code__", doc: nil, get: PyFunction.getCode, set: PyFunction.setCode, castSelf: Self.asFunction))
-    self.insert(type: type, name: "__doc__", value: PyProperty.wrap(name: "__doc__", doc: nil, get: PyFunction.getDoc, set: PyFunction.setDoc, castSelf: Self.asFunction))
-    self.insert(type: type, name: "__module__", value: PyProperty.wrap(name: "__module__", doc: nil, get: PyFunction.getModule, set: PyFunction.setModule, castSelf: Self.asFunction))
-    self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFunction.getDict, castSelf: Self.asFunction))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyFunction.getClass, castSelf: Self.asFunction))
+    self.insert(type: type, name: "__name__", value: PyProperty.wrap(doc: nil, get: PyFunction.getName, set: PyFunction.setName, castSelf: Self.asFunction))
+    self.insert(type: type, name: "__qualname__", value: PyProperty.wrap(doc: nil, get: PyFunction.getQualname, set: PyFunction.setQualname, castSelf: Self.asFunction))
+    self.insert(type: type, name: "__defaults__", value: PyProperty.wrap(doc: nil, get: PyFunction.getDefaults, set: PyFunction.setDefaults, castSelf: Self.asFunction))
+    self.insert(type: type, name: "__kwdefaults__", value: PyProperty.wrap(doc: nil, get: PyFunction.getKeywordDefaults, set: PyFunction.setKeywordDefaults, castSelf: Self.asFunction))
+    self.insert(type: type, name: "__closure__", value: PyProperty.wrap(doc: nil, get: PyFunction.getClosure, set: PyFunction.setClosure, castSelf: Self.asFunction))
+    self.insert(type: type, name: "__globals__", value: PyProperty.wrap(doc: nil, get: PyFunction.getGlobals, set: PyFunction.setGlobals, castSelf: Self.asFunction))
+    self.insert(type: type, name: "__annotations__", value: PyProperty.wrap(doc: nil, get: PyFunction.getAnnotations, set: PyFunction.setAnnotations, castSelf: Self.asFunction))
+    self.insert(type: type, name: "__code__", value: PyProperty.wrap(doc: nil, get: PyFunction.getCode, set: PyFunction.setCode, castSelf: Self.asFunction))
+    self.insert(type: type, name: "__doc__", value: PyProperty.wrap(doc: nil, get: PyFunction.getDoc, set: PyFunction.setDoc, castSelf: Self.asFunction))
+    self.insert(type: type, name: "__module__", value: PyProperty.wrap(doc: nil, get: PyFunction.getModule, set: PyFunction.setModule, castSelf: Self.asFunction))
+    self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyFunction.getDict, castSelf: Self.asFunction))
 
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyFunction.repr, castSelf: Self.asFunction))
     self.insert(type: type, name: "__get__", value: PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyFunction.get(object:type:), castSelf: Self.asFunction))
@@ -1335,11 +1335,11 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.longSubclass)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyInt.getClass, castSelf: Self.asInt))
-    self.insert(type: type, name: "real", value: PyProperty.wrap(name: "real", doc: nil, get: PyInt.asReal, castSelf: Self.asInt))
-    self.insert(type: type, name: "imag", value: PyProperty.wrap(name: "imag", doc: nil, get: PyInt.asImag, castSelf: Self.asInt))
-    self.insert(type: type, name: "numerator", value: PyProperty.wrap(name: "numerator", doc: nil, get: PyInt.numerator, castSelf: Self.asInt))
-    self.insert(type: type, name: "denominator", value: PyProperty.wrap(name: "denominator", doc: nil, get: PyInt.denominator, castSelf: Self.asInt))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyInt.getClass, castSelf: Self.asInt))
+    self.insert(type: type, name: "real", value: PyProperty.wrap(doc: nil, get: PyInt.asReal, castSelf: Self.asInt))
+    self.insert(type: type, name: "imag", value: PyProperty.wrap(doc: nil, get: PyInt.asImag, castSelf: Self.asInt))
+    self.insert(type: type, name: "numerator", value: PyProperty.wrap(doc: nil, get: PyInt.numerator, castSelf: Self.asInt))
+    self.insert(type: type, name: "denominator", value: PyProperty.wrap(doc: nil, get: PyInt.denominator, castSelf: Self.asInt))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyInt.pyNew(type:args:kwargs:)))
 
@@ -1412,7 +1412,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIterator.getClass, castSelf: Self.asIterator))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyIterator.getClass, castSelf: Self.asIterator))
 
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyIterator.getAttribute(name:), castSelf: Self.asIterator))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyIterator.iter, castSelf: Self.asIterator))
@@ -1438,7 +1438,7 @@ public final class BuiltinTypes {
     type.setFlag(.hasGC)
     type.setFlag(.listSubclass)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyList.getClass, castSelf: Self.asList))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyList.getClass, castSelf: Self.asList))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyList.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyList.pyInit(args:kwargs:)))
@@ -1494,7 +1494,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyListIterator.getClass, castSelf: Self.asListIterator))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyListIterator.getClass, castSelf: Self.asListIterator))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyListIterator.pyNew(type:args:kwargs:)))
 
@@ -1520,7 +1520,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyListReverseIterator.getClass, castSelf: Self.asListReverseIterator))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyListReverseIterator.getClass, castSelf: Self.asListReverseIterator))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyListReverseIterator.pyNew(type:args:kwargs:)))
 
@@ -1547,7 +1547,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMap.getClass, castSelf: Self.asMap))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyMap.getClass, castSelf: Self.asMap))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyMap.pyNew(type:args:kwargs:)))
 
@@ -1573,8 +1573,8 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMethod.getClass, castSelf: Self.asMethod))
-    self.insert(type: type, name: "__doc__", value: PyProperty.wrap(name: "__doc__", doc: nil, get: PyMethod.getDoc, castSelf: Self.asMethod))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyMethod.getClass, castSelf: Self.asMethod))
+    self.insert(type: type, name: "__doc__", value: PyProperty.wrap(doc: nil, get: PyMethod.getDoc, castSelf: Self.asMethod))
 
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyMethod.isEqual(_:), castSelf: Self.asMethod))
     self.insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyMethod.isNotEqual(_:), castSelf: Self.asMethod))
@@ -1611,8 +1611,8 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyModule.getDict, castSelf: Self.asModule))
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyModule.getClass, castSelf: Self.asModule))
+    self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyModule.getDict, castSelf: Self.asModule))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyModule.getClass, castSelf: Self.asModule))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyModule.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyModule.pyInit(args:kwargs:)))
@@ -1642,7 +1642,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNamespace.getDict, castSelf: Self.asNamespace))
+    self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyNamespace.getDict, castSelf: Self.asNamespace))
 
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNamespace.pyInit(args:kwargs:)))
 
@@ -1674,7 +1674,7 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNone.getClass, castSelf: Self.asNone))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyNone.getClass, castSelf: Self.asNone))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyNone.pyNew(type:args:kwargs:)))
 
@@ -1699,7 +1699,7 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNotImplemented.getClass, castSelf: Self.asNotImplemented))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyNotImplemented.getClass, castSelf: Self.asNotImplemented))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyNotImplemented.pyNew(type:args:kwargs:)))
 
@@ -1724,10 +1724,10 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyProperty.getClass, castSelf: Self.asProperty))
-    self.insert(type: type, name: "fget", value: PyProperty.wrap(name: "fget", doc: nil, get: PyProperty.getFGet, castSelf: Self.asProperty))
-    self.insert(type: type, name: "fset", value: PyProperty.wrap(name: "fset", doc: nil, get: PyProperty.getFSet, castSelf: Self.asProperty))
-    self.insert(type: type, name: "fdel", value: PyProperty.wrap(name: "fdel", doc: nil, get: PyProperty.getFDel, castSelf: Self.asProperty))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyProperty.getClass, castSelf: Self.asProperty))
+    self.insert(type: type, name: "fget", value: PyProperty.wrap(doc: nil, get: PyProperty.getFGet, castSelf: Self.asProperty))
+    self.insert(type: type, name: "fset", value: PyProperty.wrap(doc: nil, get: PyProperty.getFSet, castSelf: Self.asProperty))
+    self.insert(type: type, name: "fdel", value: PyProperty.wrap(doc: nil, get: PyProperty.getFDel, castSelf: Self.asProperty))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyProperty.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyProperty.pyInit(args:kwargs:)))
@@ -1757,10 +1757,10 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(PyRange.doc)
     type.setFlag(.default)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRange.getClass, castSelf: Self.asRange))
-    self.insert(type: type, name: "start", value: PyProperty.wrap(name: "start", doc: nil, get: PyRange.getStart, castSelf: Self.asRange))
-    self.insert(type: type, name: "stop", value: PyProperty.wrap(name: "stop", doc: nil, get: PyRange.getStop, castSelf: Self.asRange))
-    self.insert(type: type, name: "step", value: PyProperty.wrap(name: "step", doc: nil, get: PyRange.getStep, castSelf: Self.asRange))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyRange.getClass, castSelf: Self.asRange))
+    self.insert(type: type, name: "start", value: PyProperty.wrap(doc: nil, get: PyRange.getStart, castSelf: Self.asRange))
+    self.insert(type: type, name: "stop", value: PyProperty.wrap(doc: nil, get: PyRange.getStop, castSelf: Self.asRange))
+    self.insert(type: type, name: "step", value: PyProperty.wrap(doc: nil, get: PyRange.getStep, castSelf: Self.asRange))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyRange.pyNew(type:args:kwargs:)))
 
@@ -1799,7 +1799,7 @@ public final class BuiltinTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRangeIterator.getClass, castSelf: Self.asRangeIterator))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyRangeIterator.getClass, castSelf: Self.asRangeIterator))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyRangeIterator.pyNew(type:args:kwargs:)))
 
@@ -1826,7 +1826,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyReversed.getClass, castSelf: Self.asReversed))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyReversed.getClass, castSelf: Self.asReversed))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyReversed.pyNew(type:args:kwargs:)))
 
@@ -1853,7 +1853,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySet.getClass, castSelf: Self.asSet))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySet.getClass, castSelf: Self.asSet))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PySet.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySet.pyInit(args:kwargs:)))
@@ -1911,7 +1911,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySetIterator.getClass, castSelf: Self.asSetIterator))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySetIterator.getClass, castSelf: Self.asSetIterator))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PySetIterator.pyNew(type:args:kwargs:)))
 
@@ -1937,10 +1937,10 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySlice.getClass, castSelf: Self.asSlice))
-    self.insert(type: type, name: "start", value: PyProperty.wrap(name: "start", doc: nil, get: PySlice.getStart, castSelf: Self.asSlice))
-    self.insert(type: type, name: "stop", value: PyProperty.wrap(name: "stop", doc: nil, get: PySlice.getStop, castSelf: Self.asSlice))
-    self.insert(type: type, name: "step", value: PyProperty.wrap(name: "step", doc: nil, get: PySlice.getStep, castSelf: Self.asSlice))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySlice.getClass, castSelf: Self.asSlice))
+    self.insert(type: type, name: "start", value: PyProperty.wrap(doc: nil, get: PySlice.getStart, castSelf: Self.asSlice))
+    self.insert(type: type, name: "stop", value: PyProperty.wrap(doc: nil, get: PySlice.getStop, castSelf: Self.asSlice))
+    self.insert(type: type, name: "step", value: PyProperty.wrap(doc: nil, get: PySlice.getStep, castSelf: Self.asSlice))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PySlice.pyNew(type:args:kwargs:)))
 
@@ -1974,9 +1974,9 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStaticMethod.getClass, castSelf: Self.asStaticMethod))
-    self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyStaticMethod.getDict, castSelf: Self.asStaticMethod))
-    self.insert(type: type, name: "__func__", value: PyProperty.wrap(name: "__func__", doc: nil, get: PyStaticMethod.getFunc, castSelf: Self.asStaticMethod))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyStaticMethod.getClass, castSelf: Self.asStaticMethod))
+    self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyStaticMethod.getDict, castSelf: Self.asStaticMethod))
+    self.insert(type: type, name: "__func__", value: PyProperty.wrap(doc: nil, get: PyStaticMethod.getFunc, castSelf: Self.asStaticMethod))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyStaticMethod.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStaticMethod.pyInit(args:kwargs:)))
@@ -2003,7 +2003,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.unicodeSubclass)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyString.getClass, castSelf: Self.asString))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyString.getClass, castSelf: Self.asString))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyString.pyNew(type:args:kwargs:)))
 
@@ -2083,7 +2083,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStringIterator.getClass, castSelf: Self.asStringIterator))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyStringIterator.getClass, castSelf: Self.asStringIterator))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyStringIterator.pyNew(type:args:kwargs:)))
 
@@ -2110,9 +2110,9 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__thisclass__", value: PyProperty.wrap(name: "__thisclass__", doc: PySuper.thisClassDoc, get: PySuper.getThisClass, castSelf: Self.asSuper))
-    self.insert(type: type, name: "__self__", value: PyProperty.wrap(name: "__self__", doc: PySuper.selfDoc, get: PySuper.getSelf, castSelf: Self.asSuper))
-    self.insert(type: type, name: "__self_class__", value: PyProperty.wrap(name: "__self_class__", doc: PySuper.selfClassDoc, get: PySuper.getSelfClass, castSelf: Self.asSuper))
+    self.insert(type: type, name: "__thisclass__", value: PyProperty.wrap(doc: PySuper.thisClassDoc, get: PySuper.getThisClass, castSelf: Self.asSuper))
+    self.insert(type: type, name: "__self__", value: PyProperty.wrap(doc: PySuper.selfDoc, get: PySuper.getSelf, castSelf: Self.asSuper))
+    self.insert(type: type, name: "__self_class__", value: PyProperty.wrap(doc: PySuper.selfClassDoc, get: PySuper.getSelfClass, castSelf: Self.asSuper))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PySuper.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySuper.pyInit(args:kwargs:)))
@@ -2140,7 +2140,7 @@ public final class BuiltinTypes {
     type.setFlag(.hasFinalize)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTextFile.getClass, castSelf: Self.asTextFile))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyTextFile.getClass, castSelf: Self.asTextFile))
 
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyTextFile.repr, castSelf: Self.asTextFile))
     self.insert(type: type, name: "readable", value: PyBuiltinFunction.wrap(name: "readable", doc: nil, fn: PyTextFile.isReadable, castSelf: Self.asTextFile))
@@ -2171,11 +2171,11 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTraceback.getClass, castSelf: Self.asTraceback))
-    self.insert(type: type, name: "tb_frame", value: PyProperty.wrap(name: "tb_frame", doc: nil, get: PyTraceback.getFrame, castSelf: Self.asTraceback))
-    self.insert(type: type, name: "tb_lasti", value: PyProperty.wrap(name: "tb_lasti", doc: nil, get: PyTraceback.getLastInstruction, castSelf: Self.asTraceback))
-    self.insert(type: type, name: "tb_lineno", value: PyProperty.wrap(name: "tb_lineno", doc: nil, get: PyTraceback.getLineNo, castSelf: Self.asTraceback))
-    self.insert(type: type, name: "tb_next", value: PyProperty.wrap(name: "tb_next", doc: nil, get: PyTraceback.getNext, set: PyTraceback.setNext, castSelf: Self.asTraceback))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyTraceback.getClass, castSelf: Self.asTraceback))
+    self.insert(type: type, name: "tb_frame", value: PyProperty.wrap(doc: nil, get: PyTraceback.getFrame, castSelf: Self.asTraceback))
+    self.insert(type: type, name: "tb_lasti", value: PyProperty.wrap(doc: nil, get: PyTraceback.getLastInstruction, castSelf: Self.asTraceback))
+    self.insert(type: type, name: "tb_lineno", value: PyProperty.wrap(doc: nil, get: PyTraceback.getLineNo, castSelf: Self.asTraceback))
+    self.insert(type: type, name: "tb_next", value: PyProperty.wrap(doc: nil, get: PyTraceback.getNext, set: PyTraceback.setNext, castSelf: Self.asTraceback))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyTraceback.pyNew(type:args:kwargs:)))
 
@@ -2202,7 +2202,7 @@ public final class BuiltinTypes {
     type.setFlag(.hasGC)
     type.setFlag(.tupleSubclass)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTuple.getClass, castSelf: Self.asTuple))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyTuple.getClass, castSelf: Self.asTuple))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyTuple.pyNew(type:args:kwargs:)))
 
@@ -2243,7 +2243,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTupleIterator.getClass, castSelf: Self.asTupleIterator))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyTupleIterator.getClass, castSelf: Self.asTupleIterator))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyTupleIterator.pyNew(type:args:kwargs:)))
 
@@ -2271,15 +2271,15 @@ public final class BuiltinTypes {
     type.setFlag(.hasGC)
     type.setFlag(.typeSubclass)
 
-    self.insert(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyType.getName, set: PyType.setName, castSelf: Self.asType))
-    self.insert(type: type, name: "__qualname__", value: PyProperty.wrap(name: "__qualname__", doc: nil, get: PyType.getQualname, set: PyType.setQualname, castSelf: Self.asType))
-    self.insert(type: type, name: "__doc__", value: PyProperty.wrap(name: "__doc__", doc: nil, get: PyType.getDoc, set: PyType.setDoc, castSelf: Self.asType))
-    self.insert(type: type, name: "__module__", value: PyProperty.wrap(name: "__module__", doc: nil, get: PyType.getModule, set: PyType.setModule, castSelf: Self.asType))
-    self.insert(type: type, name: "__bases__", value: PyProperty.wrap(name: "__bases__", doc: nil, get: PyType.getBases, set: PyType.setBases, castSelf: Self.asType))
-    self.insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyType.getDict, castSelf: Self.asType))
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyType.getClass, castSelf: Self.asType))
-    self.insert(type: type, name: "__base__", value: PyProperty.wrap(name: "__base__", doc: nil, get: PyType.getBase, castSelf: Self.asType))
-    self.insert(type: type, name: "__mro__", value: PyProperty.wrap(name: "__mro__", doc: nil, get: PyType.getMRO, castSelf: Self.asType))
+    self.insert(type: type, name: "__name__", value: PyProperty.wrap(doc: nil, get: PyType.getName, set: PyType.setName, castSelf: Self.asType))
+    self.insert(type: type, name: "__qualname__", value: PyProperty.wrap(doc: nil, get: PyType.getQualname, set: PyType.setQualname, castSelf: Self.asType))
+    self.insert(type: type, name: "__doc__", value: PyProperty.wrap(doc: nil, get: PyType.getDoc, set: PyType.setDoc, castSelf: Self.asType))
+    self.insert(type: type, name: "__module__", value: PyProperty.wrap(doc: nil, get: PyType.getModule, set: PyType.setModule, castSelf: Self.asType))
+    self.insert(type: type, name: "__bases__", value: PyProperty.wrap(doc: nil, get: PyType.getBases, set: PyType.setBases, castSelf: Self.asType))
+    self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyType.getDict, castSelf: Self.asType))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyType.getClass, castSelf: Self.asType))
+    self.insert(type: type, name: "__base__", value: PyProperty.wrap(doc: nil, get: PyType.getBase, castSelf: Self.asType))
+    self.insert(type: type, name: "__mro__", value: PyProperty.wrap(doc: nil, get: PyType.getMRO, castSelf: Self.asType))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyType.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyType.pyInit(args:kwargs:)))
@@ -2313,7 +2313,7 @@ public final class BuiltinTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyZip.getClass, castSelf: Self.asZip))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyZip.getClass, castSelf: Self.asZip))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyZip.pyNew(type:args:kwargs:)))
 
