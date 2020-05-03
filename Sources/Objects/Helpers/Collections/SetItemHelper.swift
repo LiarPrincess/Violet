@@ -24,7 +24,7 @@ extension SetItemHelper {
                                value: PyObject) -> PyResult<PyNone> {
     switch IndexHelper.intMaybe(index) {
     case .value(let int):
-      return self.setItem(collection: &collection, index: int, value: value)
+      return Self.setItem(collection: &collection, index: int, value: value)
     case .notIndex:
       break // Try other
     case .error(let e):
@@ -32,7 +32,7 @@ extension SetItemHelper {
     }
 
     if let slice = index as? PySlice {
-      return self.setItem(collection: &collection, slice: slice, value: value)
+      return Self.setItem(collection: &collection, slice: slice, value: value)
     }
 
     let t = index.typeName
@@ -40,7 +40,7 @@ extension SetItemHelper {
     return .error(Py.newTypeError(msg: msg))
   }
 
-  // MARK: - Int
+  // MARK: - Int index
 
   internal static func setItem(collection: inout Collection,
                                index: Int,
@@ -78,7 +78,7 @@ extension SetItemHelper {
     }
 
     if indices.step == 1 {
-      return self.setContinuousItems(collection: &collection,
+      return Self.setContinuousItems(collection: &collection,
                                      start: indices.start,
                                      stop: indices.stop,
                                      value: value)

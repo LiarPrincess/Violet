@@ -158,82 +158,21 @@ internal struct PySequenceData {
 
   // MARK: - Get item
 
-  internal enum GetItemResult {
-    case single(PyObject)
-    case slice([PyObject])
-    case error(PyBaseException)
+  private enum GetItemImpl: GetItemHelper {
+    // swiftlint:disable:next nesting
+    fileprivate typealias Collection = [PyObject]
   }
 
-  internal func getItem(index: PyObject, typeName: String) -> GetItemResult {
-    switch IndexHelper.intMaybe(index) {
-    case .value(let index):
-      switch self.getItem(index: index, typeName: typeName) {
-      case let .value(v): return .single(v)
-      case let .error(e): return .error(e)
-      }
-    case .notIndex:
-      break // Try slice
-    case .error(let e):
-      return .error(e)
-    }
-
-    if let slice = index as? PySlice {
-      switch self.getItem(slice: slice) {
-      case let .value(v): return .slice(v)
-      case let .error(e): return .error(e)
-      }
-    }
-
-    let msg = "\(typeName) indices must be integers or slices, not \(index.typeName)"
-    return .error(Py.newTypeError(msg: msg))
+  internal func getItem(index: PyObject) -> GetItemResult<PyObject> {
+    return GetItemImpl.getItem(collection: self.elements, index: index)
   }
 
-  internal func getItem(index: Int, typeName: String) -> PyResult<PyObject> {
-    var index = index
-    if index < 0 {
-      index += self.count
-    }
-
-    guard 0 <= index && index < self.count else {
-      return .indexError("\(typeName) index out of range")
-    }
-
-    return .value(self.elements[index])
+  internal func getItem(index: Int) -> PyResult<PyObject> {
+    return GetItemImpl.getItem(collection: self.elements, index: index)
   }
 
   internal func getItem(slice: PySlice) -> PyResult<[PyObject]> {
-    let indices: PySlice.AdjustedIndices
-    switch slice.unpack() {
-    case let .value(u): indices = u.adjust(toCount: self.count)
-    case let .error(e): return .error(e)
-    }
-
-    // swiftlint:disable:next empty_count
-    if indices.count <= 0 {
-      return .value([])
-    }
-
-    if indices.step == 0 {
-      return .valueError("slice step cannot be zero")
-    }
-
-    if indices.step == 1 {
-      let result = self.elements.dropFirst(indices.start).prefix(indices.count)
-      return .value(Array(result))
-    }
-
-    var result = [PyObject]()
-    for i in 0..<indices.count {
-      let index = indices.start + i * indices.step
-
-      guard 0 <= index && index < self.count else {
-        return .value(result)
-      }
-
-      result.append(self.elements[index])
-    }
-
-    return .value(result)
+    return GetItemImpl.getItem(collection: self.elements, slice: slice)
   }
 
   // MARK: - Set item
@@ -257,105 +196,44 @@ internal struct PySequenceData {
     }
   }
 
-  internal mutating func setItem(at index: PyObject,
-                                 to value: PyObject) -> PyResult<PyNone> {
+  internal mutating func setItem(index: PyObject,
+                                 value: PyObject) -> PyResult<PyNone> {
     return SetItemImpl.setItem(collection: &self.elements,
                                index: index,
                                value: value)
   }
 
-  internal mutating func setItem(at index: Int,
-                                 to value: PyObject) -> PyResult<PyNone> {
+  internal mutating func setItem(index: Int,
+                                 value: PyObject) -> PyResult<PyNone> {
     return SetItemImpl.setItem(collection: &self.elements,
                                index: index,
+                               value: value)
+  }
+
+  internal mutating func setItem(slice: PySlice,
+                                 value: PyObject) -> PyResult<PyNone> {
+    return SetItemImpl.setItem(collection: &self.elements,
+                               slice: slice,
                                value: value)
   }
 
   // MARK: - Del item
 
-  internal mutating func delItem(at index: PyObject) -> PyResult<PyNone> {
-    switch IndexHelper.intMaybe(index) {
-    case .value(let indexInt):
-      return self.delItem(at: indexInt)
-    case .notIndex:
-      break // Try slice
-    case .error(let e):
-      return .error(e)
-    }
-
-    if let slice = index as? PySlice {
-      return self.delItem(at: slice)
-    }
-
-    let msg = "list indices must be integers or slices, not \(index.typeName)"
-    return .error(Py.newTypeError(msg: msg))
+  private enum DelItemImpl: DelItemHelper {
+    // swiftlint:disable:next nesting
+    fileprivate typealias Collection = [PyObject]
   }
 
-  internal mutating func delItem(at index: Int) -> PyResult<PyNone> {
-    var index = index
-
-    if index < 0 {
-      index += self.elements.count
-    }
-
-    guard 0 <= index && index < self.elements.count else {
-      let msg = "list assignment index out of range"
-      return .error(Py.newIndexError(msg: msg))
-    }
-
-    _ = self.elements.remove(at: index)
-    return .value(Py.none)
+  internal mutating func delItem(index: PyObject) -> PyResult<PyNone> {
+    return DelItemImpl.delItem(collection: &self.elements, index: index)
   }
 
-  internal mutating func delItem(at slice: PySlice) -> PyResult<PyNone> {
-    var indices: PySlice.AdjustedIndices
-    switch slice.unpack() {
-    case let .value(u): indices = u.adjust(toCount: self.elements.count)
-    case let .error(e): return .error(e)
-    }
+  internal mutating func delItem(index: Int) -> PyResult<PyNone> {
+    return DelItemImpl.delItem(collection: &self.elements, index: index)
+  }
 
-    if indices.step == 1 {
-      let range = indices.start..<indices.stop
-      self.elements.replaceSubrange(range, with: [])
-      return .value(Py.none)
-    }
-
-    // Make sure s[5:2] = [..] inserts at the right place: before 5, not before 2.
-    if (indices.step < 0 && indices.start < indices.stop) ||
-       (indices.step > 0 && indices.start > indices.stop) {
-      indices.stop = indices.start
-    }
-
-    // swiftlint:disable:next empty_count
-    if indices.count <= 0 {
-      return .value(Py.none)
-    }
-
-    // Fix the slice, so we can start from lower indices
-    if indices.step < 0 {
-      indices.stop = indices.start + 1
-      indices.start = indices.stop + indices.step * (indices.count - 1) - 1
-      indices.step = -indices.step
-    }
-
-    var groupStart = 0
-    var result = [PyObject]()
-    result.reserveCapacity(self.elements.count - indices.count)
-
-    for index in stride(from: indices.start, to: indices.stop, by: indices.step) {
-      let elements = self.elements[groupStart..<index]
-      result.append(contentsOf: elements)
-      groupStart = index + 1 // +1 to skip 'index'
-    }
-
-    // Include final group
-    if groupStart < self.elements.count {
-      let elements = self.elements[groupStart..<self.elements.count]
-      result.append(contentsOf: elements)
-    }
-
-    self.elements = result
-    return .value(Py.none)
+  internal mutating func delItem(slice: PySlice) -> PyResult<PyNone> {
+    return DelItemImpl.delItem(collection: &self.elements, slice: slice)
   }
 
   // MARK: - Count

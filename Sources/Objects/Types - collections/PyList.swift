@@ -166,28 +166,26 @@ public class PyList: PyObject, PySequenceType {
     return self.data.contains(value: element)
   }
 
-  // MARK: - Get item
+  // MARK: - Get/set/del item
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
-    switch self.data.getItem(index: index, typeName: "list") {
+    switch self.data.getItem(index: index) {
     case let .single(s): return .value(s)
     case let .slice(s): return .value(Py.newList(s))
     case let .error(e): return .error(e)
     }
   }
 
-  // MARK: - Set/del item
-
   // sourcery: pymethod = __setitem__
   internal func setItem(at index: PyObject,
                         to value: PyObject) -> PyResult<PyNone> {
-    return self.data.setItem(at: index, to: value)
+    return self.data.setItem(index: index, value: value)
   }
 
   // sourcery: pymethod = __delitem__
   internal func delItem(at index: PyObject) -> PyResult<PyNone> {
-    return self.data.delItem(at: index)
+    return self.data.delItem(index: index)
   }
 
   // MARK: - Count

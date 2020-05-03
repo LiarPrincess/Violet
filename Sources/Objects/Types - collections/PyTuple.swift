@@ -169,7 +169,7 @@ public class PyTuple: PyObject, PySequenceType {
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
-    switch self.data.getItem(index: index, typeName: "tuple") {
+    switch self.data.getItem(index: index) {
     case let .single(s): return .value(s)
     case let .slice(s): return .value(Py.newTuple(s))
     case let .error(e): return .error(e)

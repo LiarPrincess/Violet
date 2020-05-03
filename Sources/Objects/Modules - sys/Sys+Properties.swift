@@ -82,7 +82,7 @@ extension Sys {
       return .value(Py.none)
     }
 
-    return list.data.setItem(at: 0, to: object)
+    return list.data.setItem(index: 0, value: object)
   }
 
   // MARK: - Flags

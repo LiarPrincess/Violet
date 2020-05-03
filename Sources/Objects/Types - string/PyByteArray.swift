@@ -136,7 +136,7 @@ public class PyByteArray: PyObject, PyBytesType {
     return self.data.contains(element)
   }
 
-  // MARK: - Get item
+  // MARK: - Get/set/del item
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
@@ -148,6 +148,17 @@ public class PyByteArray: PyObject, PyBytesType {
     case let .error(e):
       return .error(e)
     }
+  }
+
+  // sourcery: pymethod = __setitem__
+  internal func setItem(at index: PyObject,
+                        to value: PyObject) -> PyResult<PyNone> {
+    return self.data.setItem(index: index, value: value)
+  }
+
+  // sourcery: pymethod = __delitem__
+  internal func delItem(at index: PyObject) -> PyResult<PyNone> {
+    return self.data.delItem(index: index)
   }
 
   // MARK: - Predicates
@@ -778,20 +789,6 @@ public class PyByteArray: PyObject, PyBytesType {
   // sourcery: pymethod = pop, doc = popDoc
   internal func pop(index: PyObject?) -> PyResult<PyObject> {
     return self.data.pop(index: index).map(Py.newInt)
-  }
-
-  // MARK: - Set/del item
-
-  // sourcery: pymethod = __setitem__
-  internal func setItem(at index: PyObject,
-                        to value: PyObject) -> PyResult<PyNone> {
-    return self.data.setItem(at: index, to: value)
-  }
-
-  // sourcery: pymethod = __delitem__
-  internal func delItem(at index: PyObject) -> PyResult<PyNone> {
-    return self.data.delItem(at: index)
-      .map { _ in Py.none }
   }
 
   // MARK: - Clear

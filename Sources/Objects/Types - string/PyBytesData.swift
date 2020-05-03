@@ -341,7 +341,7 @@ internal struct PyBytesData: PyStringImpl {
     return IndexHelper.int(index)
   }
 
-  // MARK: - Set/del item
+  // MARK: - Set item
 
   private enum SetItemImpl: SetItemHelper {
 
@@ -365,24 +365,44 @@ internal struct PyBytesData: PyStringImpl {
     }
   }
 
-  internal mutating func setItem(at index: PyObject,
-                                 to value: PyObject) -> PyResult<PyNone> {
-    return SetItemImpl.setItem(
-      collection: &self.values,
-      index: index,
-      value: value
-    )
+  internal mutating func setItem(index: PyObject,
+                                 value: PyObject) -> PyResult<PyNone> {
+    return SetItemImpl.setItem(collection: &self.values,
+                               index: index,
+                               value: value)
   }
 
-  internal mutating func delItem(at index: PyObject) -> PyResult<Void> {
-    let parsedIndex: Int
-    switch IndexHelper.int(index) {
-    case let .value(i): parsedIndex = i
-    case let .error(e): return .error(e)
-    }
+  internal mutating func setItem(index: Int,
+                                 value: PyObject) -> PyResult<PyNone> {
+    return SetItemImpl.setItem(collection: &self.values,
+                               index: index,
+                               value: value)
+  }
 
-    _ = self.values.remove(at: parsedIndex)
-    return .value()
+  internal mutating func setItem(slice: PySlice,
+                                 value: PyObject) -> PyResult<PyNone> {
+    return SetItemImpl.setItem(collection: &self.values,
+                               slice: slice,
+                               value: value)
+  }
+
+  // MARK: - Del item
+
+  private enum DelItemImpl: DelItemHelper {
+    // swiftlint:disable:next nesting
+    fileprivate typealias Collection = Data
+  }
+
+  internal mutating func delItem(index: PyObject) -> PyResult<PyNone> {
+    DelItemImpl.delItem(collection: &self.values, index: index)
+  }
+
+  internal mutating func delItem(index: Int) -> PyResult<PyNone> {
+    DelItemImpl.delItem(collection: &self.values, index: index)
+  }
+
+  internal mutating func delItem(slice: PySlice) -> PyResult<PyNone> {
+    DelItemImpl.delItem(collection: &self.values, slice: slice)
   }
 
   // MARK: - Clear
