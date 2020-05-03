@@ -452,17 +452,15 @@ public class PyList: PyObject, PySequenceType {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal static func pyInit(zelf: PyList,
-                              args: [PyObject],
-                              kwargs: PyDict?) -> PyResult<PyNone> {
-    if zelf.type === Py.types.list {
-      if let e = ArgumentParser.noKwargsOrError(fnName: zelf.typeName,
+  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    if self.type === Py.types.list {
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.typeName,
                                                 kwargs: kwargs) {
         return .error(e)
       }
     }
 
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: zelf.typeName,
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: self.typeName,
                                                         args: args,
                                                         min: 0,
                                                         max: 1) {
@@ -470,7 +468,7 @@ public class PyList: PyObject, PySequenceType {
     }
 
     if let iterable = args.first {
-      switch zelf.data.extend(iterable: iterable) {
+      switch self.data.extend(iterable: iterable) {
       case .value: break
       case .error(let e): return .error(e)
       }

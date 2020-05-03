@@ -645,71 +645,6 @@ public class PyByteArray: PyObject, PyBytesType {
     return PyByteArrayIterator(bytes: self)
   }
 
-  // MARK: - Python new
-
-  // sourcery: pystaticmethod = __new__
-  internal class func pyNew(type: PyType,
-                            args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyByteArray> {
-    let isBuiltin = type === Py.types.bytes
-    let alloca = isBuiltin ?
-      self.newByteArray(type:value:) :
-      PyByteArrayHeap.init(type:value:)
-
-    let data = Data()
-    return .value(alloca(type, data))
-  }
-
-  private static func newByteArray(type: PyType, value: Data) -> PyByteArray {
-    return Py.newByteArray(value)
-  }
-
-  // MARK: - Python init
-
-  private static let initArguments = ArgumentParser.createOrTrap(
-    arguments: ["source", "encoding", "errors"],
-    format: "|Oss:bytearray"
-  )
-
-  // sourcery: pymethod = __init__
-  internal static func pyInit(zelf: PyByteArray,
-                              args: [PyObject],
-                              kwargs: PyDict?) -> PyResult<PyNone> {
-    switch PyByteArray.initArguments.bind(args: args, kwargs: kwargs) {
-    case let .value(binding):
-      assert(binding.requiredCount == 0, "Invalid required argument count.")
-      assert(binding.optionalCount == 3, "Invalid optional argument count.")
-
-      let object = binding.optional(at: 0)
-      let encoding = binding.optional(at: 1)
-      let errors = binding.optional(at: 2)
-      return PyByteArray.pyInit(zelf: zelf,
-                                object: object,
-                                encoding: encoding,
-                                errors: errors)
-
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  private static func pyInit(zelf: PyByteArray,
-                             object: PyObject?,
-                             encoding: PyObject?,
-                             errors: PyObject?) -> PyResult<PyNone> {
-    switch PyBytesData.handleNewArgs(object: object,
-                                     encoding: encoding,
-                                     errors: errors) {
-    case let .value(data):
-      zelf.data = PyBytesData(data)
-      return .value(Py.none)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  // MARK: Methods that are not in PyBytes
-
   // MARK: - Append
 
   internal static let appendDoc = """
@@ -833,5 +768,57 @@ public class PyByteArray: PyObject, PyBytesType {
   // sourcery: pymethod = copy, doc = copyDoc
   internal func copy() -> PyObject {
     return Py.newByteArray(self.data.values)
+  }
+
+  // MARK: - Python new
+
+  // sourcery: pystaticmethod = __new__
+  internal class func pyNew(type: PyType,
+                            args: [PyObject],
+                            kwargs: PyDict?) -> PyResult<PyByteArray> {
+    let isBuiltin = type === Py.types.bytes
+    let alloca = isBuiltin ?
+      self.newByteArray(type:value:) :
+      PyByteArrayHeap.init(type:value:)
+
+    let data = Data()
+    return .value(alloca(type, data))
+  }
+
+  private static func newByteArray(type: PyType, value: Data) -> PyByteArray {
+    return Py.newByteArray(value)
+  }
+
+  // MARK: - Python init
+
+  private static let initArguments = ArgumentParser.createOrTrap(
+    arguments: ["source", "encoding", "errors"],
+    format: "|Oss:bytearray"
+  )
+
+  // sourcery: pymethod = __init__
+  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    switch PyByteArray.initArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 0, "Invalid required argument count.")
+      assert(binding.optionalCount == 3, "Invalid optional argument count.")
+
+      let object = binding.optional(at: 0)
+      let encoding = binding.optional(at: 1)
+      let errors = binding.optional(at: 2)
+
+      switch PyBytesData.handleNewArgs(object: object,
+                                       encoding: encoding,
+                                       errors: errors) {
+      case let .value(data):
+        self.data = PyBytesData(data)
+        return .value(Py.none)
+      case let .error(e):
+        return .error(e)
+      }
+
+    case let .error(e):
+      return .error(e)
+    }
   }
 }

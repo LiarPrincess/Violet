@@ -181,9 +181,7 @@ public class PyModule: PyObject {
   )
 
   // sourcery: pymethod = __init__
-  internal static func pyInit(zelf: PyModule,
-                              args: [PyObject],
-                              kwargs: PyDict?) -> PyResult<PyNone> {
+  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
     switch PyModule.initArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
@@ -191,7 +189,7 @@ public class PyModule: PyObject {
 
       let name = binding.required(at: 0)
       let doc = binding.optional(at: 1) ?? Py.none
-      zelf.initDictContent(name: name, doc: doc)
+      self.initDictContent(name: name, doc: doc)
 
       return .value(Py.none)
 

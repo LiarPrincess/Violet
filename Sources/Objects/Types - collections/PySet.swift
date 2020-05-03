@@ -386,15 +386,13 @@ public class PySet: PyObject, PySetType {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal static func pyInit(zelf: PySet,
-                              args: [PyObject],
-                              kwargs: PyDict?) -> PyResult<PyNone> {
-    if let e = ArgumentParser.noKwargsOrError(fnName: zelf.typeName,
+  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.typeName,
                                               kwargs: kwargs) {
       return .error(e)
     }
 
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: zelf.typeName,
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: self.typeName,
                                                         args: args,
                                                         min: 0,
                                                         max: 1) {
@@ -402,7 +400,7 @@ public class PySet: PyObject, PySetType {
     }
 
     if let iterable = args.first {
-      switch zelf.update(from: iterable) {
+      switch self.update(from: iterable) {
       case .value: break
       case .error(let e): return .error(e)
       }

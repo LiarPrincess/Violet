@@ -75,10 +75,8 @@ public {final}class {class_name}: Py{base} {{
   }}
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: {class_name},
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {{
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {{
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }}
 }}
 ''')

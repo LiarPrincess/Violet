@@ -599,9 +599,7 @@ extension PyType {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal static func pyInit(zelf: PyType,
-                              args: [PyObject],
-                              kwargs: PyDict?) -> PyResult<PyNone> {
+  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
     if let kwargs = kwargs {
       if args.count == 1 && kwargs.data.any {
         return .typeError("type.__init__() takes no keyword arguments")
@@ -613,6 +611,6 @@ extension PyType {
     }
 
     // Call object.__init__(self) now.
-    return PyObjectType.pyInit(zelf: zelf, args: [], kwargs: nil)
+    return PyObjectType.pyInit(zelf: self, args: [], kwargs: nil)
   }
 }

@@ -45,6 +45,30 @@ extension PyBuiltinFunction {
     )
   }
 
+  internal static func wrapInit<Zelf: PyObject>(
+    type: PyType,
+    doc: String?,
+    fn: @escaping (Zelf, [PyObject], PyDict?) -> PyResult<PyNone>,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+
+    return Self.wrapInit(
+      type: type,
+      doc: doc,
+      fn: Self.toInitSignature(fn: fn),
+      module: module
+    )
+  }
+
+  private static func toInitSignature<Zelf: PyObject>(
+    fn: @escaping (Zelf, [PyObject], PyDict?) -> PyResult<PyNone>
+  ) -> InitFunction<Zelf> {
+    return { (zelf: Zelf) in { (args: [PyObject], kwargs: PyDict?) in
+        fn(zelf, args, kwargs)
+      }
+    }
+  }
+
   // MARK: - Args kwargs function
 
   internal static func wrap<R: PyFunctionResultConvertible>(

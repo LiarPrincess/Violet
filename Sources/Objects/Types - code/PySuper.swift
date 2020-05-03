@@ -211,7 +211,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
     }
 
     let objectType: PyType
-    switch PySuper.checkSuper(type: suType, object: object) {
+    switch self.checkSuper(type: suType, object: object) {
     case let .value(t): objectType = t
     case let .error(e): return .error(e)
     }
@@ -254,9 +254,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
   )
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PySuper,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
+  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
     if let e = ArgumentParser.noKwargsOrError(fnName: "super", kwargs: kwargs) {
       return .error(e)
     }
@@ -268,16 +266,15 @@ public class PySuper: PyObject, HasCustomGetMethod {
 
       let type = binding.optional(at: 0)
       let object = binding.optional(at: 1)
-      return PySuper.pyInit(zelf: zelf, type: type, object: object)
+      return self.pyInit(type: type, object: object)
 
     case let .error(e):
       return .error(e)
     }
   }
 
-  internal class func pyInit(zelf: PySuper,
-                             type typeArg: PyObject?,
-                             object objectArg: PyObject?) -> PyResult<PyNone> {
+  internal func pyInit(type typeArg: PyObject?,
+                       object objectArg: PyObject?) -> PyResult<PyNone> {
     let type: PyType
     var object = objectArg
 
@@ -315,9 +312,9 @@ public class PySuper: PyObject, HasCustomGetMethod {
       }
     }
 
-    zelf.thisClass = type
-    zelf.object = object
-    zelf.objectType = objectType
+    self.thisClass = type
+    self.object = object
+    self.objectType = objectType
     return .value(Py.none)
   }
 
@@ -454,8 +451,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
   /// But... when obj is an instance, we want to allow for the case where
   /// `Py_TYPE(obj)` is not a subclass of type, but `object.__class__` is!
   /// This will allow using `super()` with a proxy for `object`.
-  private static func checkSuper(type: PyType,
-                                 object: PyObject) -> PyResult<PyType> {
+  private func checkSuper(type: PyType, object: PyObject) -> PyResult<PyType> {
     if let objectAsType = object as? PyType, objectAsType.isSubtype(of: type) {
       return .value(objectAsType)
     }

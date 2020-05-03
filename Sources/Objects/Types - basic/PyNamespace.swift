@@ -114,9 +114,7 @@ public class PyNamespace: PyObject {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal static func pyInit(zelf: PyNamespace,
-                              args: [PyObject],
-                              kwargs: PyDict?) -> PyResult<PyNone> {
+  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
     guard args.isEmpty else {
       return .typeError("no positional arguments expected")
     }
@@ -130,7 +128,7 @@ public class PyNamespace: PyObject {
     case .error(let e): return .error(e)
     }
 
-    switch zelf.__dict__.update(from: kwargs) {
+    switch self.__dict__.update(from: kwargs) {
     case .value: break
     case .error(let e): return .error(e)
     }

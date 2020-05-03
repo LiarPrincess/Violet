@@ -17,8 +17,8 @@
 Type|object|PyObject|
 Field|_type|PyType!
 Field|flags|PyObjectFlags
-Annotation|baseType
 Annotation|default
+Annotation|baseType
 Doc|doc
 PyMethod|__eq__|isEqual|isEqual(zelf: PyObject,                               other: PyObject)|isEqual(zelf:other:)|CompareResult|
 PyMethod|__ne__|isNotEqual|isNotEqual(zelf: PyObject,                                  other: PyObject)|isNotEqual(zelf:other:)|CompareResult|
@@ -47,8 +47,8 @@ PyClassMethod|__subclasshook__|subclasshook|subclasshook(args: [PyObject],      
 ############
 
 Type|bool|PyBool|PyInt
-Annotation|default
 Annotation|pytype
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyMethod|__repr__|repr|repr()|repr|PyResult<String>|
@@ -66,8 +66,8 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 Type|builtinFunction|PyBuiltinFunction|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 Annotation|hasGC
 Field|function|FunctionWrapper
 Field|module|PyObject?
@@ -95,8 +95,8 @@ PyMethod|__call__|call|call(args: [PyObject], kwargs: PyDict?)|call(args:kwargs:
 ############
 
 Type|builtinMethod|PyBuiltinMethod|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 Annotation|hasGC
 Field|function|FunctionWrapper
 Field|object|PyObject
@@ -124,9 +124,9 @@ PyMethod|__call__|call|call(args: [PyObject], kwargs: PyDict?)|call(args:kwargs:
 ############
 
 Type|bytearray|PyByteArray|PyObject
-Annotation|baseType
-Annotation|default
 Annotation|pytype
+Annotation|default
+Annotation|baseType
 Doc|doc
 Field|data|PyBytesData
 PyProperty|__class__|getClass||PyType|
@@ -186,7 +186,6 @@ PyMethod|__mul__|mul|mul(_ other: PyObject)|mul(_:)|PyResult<PyObject>|
 PyMethod|__rmul__|rmul|rmul(_ other: PyObject)|rmul(_:)|PyResult<PyObject>|
 PyMethod|__imul__|imul|imul(_ other: PyObject)|imul(_:)|PyResult<PyObject>|
 PyMethod|__iter__|iter|iter()|iter|PyObject|
-PyMethod|__init__|pyInit|pyInit(zelf: PyByteArray,                              args: [PyObject],                              kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
 PyMethod|append|append|append(_ element: PyObject)|append(_:)|PyResult<PyNone>|appendDoc
 PyMethod|extend|extend|extend(iterable: PyObject)|extend(iterable:)|PyResult<PyNone>|
 PyMethod|insert|insert|insert(at index: PyObject, item: PyObject)|insert(at:item:)|PyResult<PyNone>|insertDoc
@@ -195,6 +194,7 @@ PyMethod|pop|pop|pop(index: PyObject?)|pop(index:)|PyResult<PyObject>|popDoc
 PyMethod|clear|clear|clear()|clear|PyNone|clearDoc
 PyMethod|reverse|reverse|reverse()|reverse|PyResult<PyNone>|reverseDoc
 PyMethod|copy|copy|copy()|copy|PyObject|copyDoc
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyByteArray>|
 
 ############
@@ -218,10 +218,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|bytes|PyBytes|PyObject
-Annotation|pytype
-Annotation|default
 Annotation|baseType
+Annotation|pytype
 Annotation|bytesSubclass
+Annotation|default
 Doc|doc
 Field|data|PyBytesData
 PyProperty|__class__|getClass||PyType|
@@ -315,8 +315,8 @@ PyMethod|__next__|next|next()|next|PyResult<PyObject>|
 ############
 
 Type|cell|PyCell|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 Annotation|hasGC
 Field|content|PyObject?
 PyMethod|__eq__|isEqual|isEqual(_ other: PyObject)|isEqual(_:)|CompareResult|
@@ -333,10 +333,10 @@ PyMethod|__getattribute__|getAttribute|getAttribute(name: PyObject)|getAttribute
 ############
 
 Type|classmethod|PyClassMethod|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|callable|PyObject?
 Field|__dict__|PyDict
@@ -345,7 +345,7 @@ PyProperty|__dict__|getDict||PyDict|
 PyProperty|__func__|getFunc||PyObject?|
 PyMethod|__get__|get|get(object: PyObject, type: PyObject)|get(object:type:)|PyResult<PyObject>|
 PyMethod|__isabstractmethod__|isAbstractMethod|isAbstractMethod()|isAbstractMethod|PyResult<Bool>|
-PyMethod|__init__|pyInit|pyInit(zelf: PyClassMethod,                              args: [PyObject],                              kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyClassMethod>|
 
 ############
@@ -353,8 +353,8 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|code|PyCode|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|codeObject|CodeObject
 Field|name|PyString
@@ -384,9 +384,9 @@ PyMethod|__getattribute__|getAttribute|getAttribute(name: PyObject)|getAttribute
 ############
 
 Type|complex|PyComplex|PyObject
-Annotation|baseType
-Annotation|default
 Annotation|pytype
+Annotation|default
+Annotation|baseType
 Doc|doc
 Field|real|Double
 Field|imag|Double
@@ -433,11 +433,11 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|dict|PyDict|PyObject
-Annotation|default
 Annotation|dictSubclass
-Annotation|hasGC
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|data|PyDictData
 PyProperty|__class__|getClass||PyType|
@@ -466,7 +466,7 @@ PyMethod|popitem|popItem|popItem()|popItem|PyResult<PyObject>|popitemDoc
 PyMethod|keys|keys|keys()|keys|PyObject|
 PyMethod|items|items|items()|items|PyObject|
 PyMethod|values|values|values()|values|PyObject|
-PyMethod|__init__|pyInit|pyInit(zelf: PyDict,                              args: [PyObject],                              kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyDict>|
 
 ############
@@ -587,8 +587,8 @@ PyMethod|__iter__|iter|iter()|iter|PyObject|
 ############
 
 Type|ellipsis|PyEllipsis|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 PyProperty|__class__|getClass||PyType|
 PyMethod|__repr__|repr|repr()|repr|PyResult<String>|
 PyMethod|__reduce__|reduce|reduce()|reduce|String|
@@ -600,10 +600,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|enumerate|PyEnumerate|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|iterator|PyObject
 Field|nextIndex|BigInt
@@ -618,10 +618,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|filter|PyFilter|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|fn|PyObject
 Field|iterator|PyObject
@@ -636,9 +636,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|float|PyFloat|PyObject
-Annotation|baseType
-Annotation|default
 Annotation|pytype
+Annotation|default
+Annotation|baseType
 Doc|doc
 Field|value|Double
 PyProperty|real|asReal||PyObject|
@@ -687,8 +687,8 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|frame|PyFrame|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 Annotation|hasGC
 Field|code|PyCode
 Field|parent|PyFrame?
@@ -719,10 +719,10 @@ PyMethod|__delattr__|delAttribute|delAttribute(name: PyObject)|delAttribute(name
 ############
 
 Type|frozenset|PyFrozenSet|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|data|PySetData
 PyProperty|__class__|getClass||PyType|
@@ -761,8 +761,8 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|function|PyFunction|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 Annotation|hasGC
 Doc|doc
 Field|name|PyString
@@ -797,10 +797,10 @@ PyMethod|__call__|call|call(args: [PyObject], kwargs: PyDict?)|call(args:kwargs:
 ############
 
 Type|int|PyInt|PyObject
-Annotation|default
-Annotation|longSubclass
 Annotation|baseType
+Annotation|longSubclass
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|value|BigInt
 PyProperty|__class__|getClass||PyType|
@@ -880,11 +880,11 @@ PyMethod|__next__|next|next()|next|PyResult<PyObject>|
 ############
 
 Type|list|PyList|PyObject
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|listSubclass
-Annotation|baseType
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|data|PySequenceData
 PyProperty|__class__|getClass||PyType|
@@ -920,7 +920,7 @@ PyMethod|__iadd__|iadd|iadd(_ other: PyObject)|iadd(_:)|PyResult<PyObject>|
 PyMethod|__mul__|mul|mul(_ other: PyObject)|mul(_:)|PyResult<PyObject>|
 PyMethod|__rmul__|rmul|rmul(_ other: PyObject)|rmul(_:)|PyResult<PyObject>|
 PyMethod|__imul__|imul|imul(_ other: PyObject)|imul(_:)|PyResult<PyObject>|
-PyMethod|__init__|pyInit|pyInit(zelf: PyList,                              args: [PyObject],                              kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyList>|
 
 ############
@@ -960,10 +960,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|map|PyMap|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|fn|PyObject
 Field|iterators|[PyObject]
@@ -1007,10 +1007,10 @@ PyMethod|__call__|call|call(args: [PyObject], kwargs: PyDict?)|call(args:kwargs:
 ############
 
 Type|module|PyModule|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|__dict__|PyDict
 PyProperty|__dict__|getDict||PyDict|
@@ -1020,7 +1020,7 @@ PyMethod|__getattribute__|getAttribute|getAttribute(name: PyObject)|getAttribute
 PyMethod|__setattr__|setAttribute|setAttribute(name: PyObject, value: PyObject?)|setAttribute(name:value:)|PyResult<PyNone>|
 PyMethod|__delattr__|delAttribute|delAttribute(name: PyObject)|delAttribute(name:)|PyResult<PyNone>|
 PyMethod|__dir__|dir|dir()|dir|PyResult<DirResult>|
-PyMethod|__init__|pyInit|pyInit(zelf: PyModule,                              args: [PyObject],                              kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyModule>|
 
 ############
@@ -1028,10 +1028,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|types.SimpleNamespace|PyNamespace|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|__dict__|PyDict
 PyProperty|__dict__|getDict||PyDict|
@@ -1045,15 +1045,15 @@ PyMethod|__repr__|repr|repr()|repr|PyResult<String>|
 PyMethod|__getattribute__|getAttribute|getAttribute(name: PyObject)|getAttribute(name:)|PyResult<PyObject>|
 PyMethod|__setattr__|setAttribute|setAttribute(name: PyObject, value: PyObject?)|setAttribute(name:value:)|PyResult<PyNone>|
 PyMethod|__delattr__|delAttribute|delAttribute(name: PyObject)|delAttribute(name:)|PyResult<PyNone>|
-PyMethod|__init__|pyInit|pyInit(zelf: PyNamespace,                              args: [PyObject],                              kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 
 ############
 # NoneType
 ############
 
 Type|NoneType|PyNone|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 PyProperty|__class__|getClass||PyType|
 PyMethod|__repr__|repr|repr()|repr|PyResult<String>|
 PyMethod|__bool__|asBool|asBool()|asBool|Bool|
@@ -1065,8 +1065,8 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|NotImplementedType|PyNotImplemented|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 PyProperty|__class__|getClass||PyType|
 PyMethod|__repr__|repr|repr()|repr|PyResult<String>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyNotImplemented>|
@@ -1076,10 +1076,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|property|PyProperty|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|_get|PyObject?
 Field|_set|PyObject?
@@ -1096,7 +1096,7 @@ PyMethod|__delete__|del|del(object: PyObject)|del(object:)|PyResult<PyObject>|
 PyMethod|getter|getter|getter(value: PyObject)|getter(value:)|PyResult<PyObject>|getterDoc
 PyMethod|setter|setter|setter(value: PyObject)|setter(value:)|PyResult<PyObject>|
 PyMethod|deleter|deleter|deleter(value: PyObject)|deleter(value:)|PyResult<PyObject>|
-PyMethod|__init__|pyInit|pyInit(zelf: PyProperty,                              args: [PyObject],                              kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyProperty>|
 
 ############
@@ -1104,8 +1104,8 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|range|PyRange|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|start|PyInt
 Field|stop|PyInt
@@ -1140,8 +1140,8 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|range_iterator|PyRangeIterator|PyObject
-Annotation|default
 Annotation|pytype
+Annotation|default
 Field|start|BigInt
 Field|step|BigInt
 Field|length|BigInt
@@ -1157,10 +1157,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|reversed|PyReversed|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|sequence|PyObject
 Field|index|Int
@@ -1175,10 +1175,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|set|PySet|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|data|PySetData
 PyProperty|__class__|getClass||PyType|
@@ -1216,7 +1216,7 @@ PyMethod|clear|clear|clear()|clear|PyNone|clearDoc
 PyMethod|copy|copy|copy()|copy|PyObject|copyDoc
 PyMethod|pop|pop|pop()|pop|PyResult<PyObject>|popDoc
 PyMethod|__iter__|iter|iter()|iter|PyObject|
-PyMethod|__init__|pyInit|pyInit(zelf: PySet,                              args: [PyObject],                              kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PySet>|
 
 ############
@@ -1269,10 +1269,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|staticmethod|PyStaticMethod|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|callable|PyObject?
 Field|__dict__|PyDict
@@ -1281,7 +1281,7 @@ PyProperty|__dict__|getDict||PyDict|
 PyProperty|__func__|getFunc||PyObject?|
 PyMethod|__get__|get|get(object: PyObject, type: PyObject)|get(object:type:)|PyResult<PyObject>|
 PyMethod|__isabstractmethod__|isAbstractMethod|isAbstractMethod()|isAbstractMethod|PyResult<Bool>|
-PyMethod|__init__|pyInit|pyInit(zelf: PyStaticMethod,                              args: [PyObject],                              kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyStaticMethod>|
 
 ############
@@ -1290,9 +1290,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 
 Type|str|PyString|PyObject
 Annotation|default
-Annotation|unicodeSubclass
 Annotation|baseType
 Annotation|pytype
+Annotation|unicodeSubclass
 Doc|doc
 Field|data|PyStringData
 PyProperty|__class__|getClass||PyType|
@@ -1376,10 +1376,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|super|PySuper|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|thisClass|PyType?
 Field|object|PyObject?
@@ -1390,7 +1390,7 @@ PyProperty|__self_class__|getSelfClass||PyObject?|selfClassDoc
 PyMethod|__repr__|repr|repr()|repr|PyResult<String>|
 PyMethod|__getattribute__|getAttribute|getAttribute(name: PyObject)|getAttribute(name:)|PyResult<PyObject>|
 PyMethod|__get__|get|get(object: PyObject, type: PyObject)|get(object:type:)|PyResult<PyObject>|
-PyMethod|__init__|pyInit|pyInit(zelf: PySuper,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PySuper>|
 
 ############
@@ -1398,10 +1398,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|TextFile|PyTextFile|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|hasFinalize
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|name|String?
 Field|fd|FileDescriptorType
@@ -1448,11 +1448,11 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|tuple|PyTuple|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|tupleSubclass
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|data|PySequenceData
 PyProperty|__class__|getClass||PyType|
@@ -1497,11 +1497,11 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|type|PyType|PyObject
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|typeSubclass
-Annotation|baseType
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|name|String
 Field|qualname|String
@@ -1530,7 +1530,7 @@ PyMethod|__setattr__|setAttribute|setAttribute(name: PyObject, value: PyObject?)
 PyMethod|__delattr__|delAttribute|delAttribute(name: PyObject)|delAttribute(name:)|PyResult<PyNone>|
 PyMethod|__dir__|dir|dir()|dir|PyResult<DirResult>|
 PyMethod|__call__|call|call(args: [PyObject], kwargs: PyDict?)|call(args:kwargs:)|PyResult<PyObject>|
-PyMethod|__init__|pyInit|pyInit(zelf: PyType,                              args: [PyObject],                              kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyObject>|
 
 ############
@@ -1538,10 +1538,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|zip|PyZip|PyObject
-Annotation|default
-Annotation|hasGC
 Annotation|baseType
+Annotation|hasGC
 Annotation|pytype
+Annotation|default
 Doc|doc
 Field|iterators|[PyObject]
 PyProperty|__class__|getClass||PyType|
@@ -1557,15 +1557,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 ErrorType|ArithmeticError|PyArithmeticError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyArithmeticError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1573,15 +1573,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|AssertionError|PyAssertionError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyAssertionError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1589,15 +1589,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|AttributeError|PyAttributeError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyAttributeError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1605,11 +1605,11 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|BaseException|PyBaseException|PyObject
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 Field|args|PyTuple
 Field|traceback|PyTraceback?
@@ -1630,7 +1630,7 @@ PyMethod|__getattribute__|getAttribute|getAttribute(name: PyObject)|getAttribute
 PyMethod|__setattr__|setAttribute|setAttribute(name: PyObject, value: PyObject?)|setAttribute(name:value:)|PyResult<PyNone>|
 PyMethod|__delattr__|delAttribute|delAttribute(name: PyObject)|delAttribute(name:)|PyResult<PyNone>|
 PyMethod|with_traceback|withTraceback|withTraceback(traceback: PyObject)|withTraceback(traceback:)|PyResult<PyBaseException>|withTracebackDoc
-PyMethod|__init__|pyInit|pyInit(zelf: PyBaseException,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1638,15 +1638,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 ErrorType|BlockingIOError|PyBlockingIOError|PyOSError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyBlockingIOError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1654,15 +1654,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|BrokenPipeError|PyBrokenPipeError|PyConnectionError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyBrokenPipeError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1670,15 +1670,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|BufferError|PyBufferError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyBufferError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1686,15 +1686,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|BytesWarning|PyBytesWarning|PyWarning
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyBytesWarning,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1702,15 +1702,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|ChildProcessError|PyChildProcessError|PyOSError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyChildProcessError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1718,15 +1718,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|ConnectionAbortedError|PyConnectionAbortedError|PyConnectionError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyConnectionAbortedError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1734,15 +1734,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|ConnectionError|PyConnectionError|PyOSError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyConnectionError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1750,15 +1750,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|ConnectionRefusedError|PyConnectionRefusedError|PyConnectionError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyConnectionRefusedError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1766,15 +1766,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|ConnectionResetError|PyConnectionResetError|PyConnectionError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyConnectionResetError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1782,15 +1782,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|DeprecationWarning|PyDeprecationWarning|PyWarning
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyDeprecationWarning,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1798,15 +1798,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|EOFError|PyEOFError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyEOFError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1814,15 +1814,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|Exception|PyException|PyBaseException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyException,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1830,15 +1830,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|FileExistsError|PyFileExistsError|PyOSError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyFileExistsError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1846,15 +1846,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|FileNotFoundError|PyFileNotFoundError|PyOSError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyFileNotFoundError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1862,15 +1862,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|FloatingPointError|PyFloatingPointError|PyArithmeticError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyFloatingPointError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1878,15 +1878,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|FutureWarning|PyFutureWarning|PyWarning
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyFutureWarning,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1894,15 +1894,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|GeneratorExit|PyGeneratorExit|PyBaseException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyGeneratorExit,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1910,15 +1910,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|ImportError|PyImportError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyImportError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1926,15 +1926,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|ImportWarning|PyImportWarning|PyWarning
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyImportWarning,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1942,15 +1942,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|IndentationError|PyIndentationError|PySyntaxError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyIndentationError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1958,15 +1958,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|IndexError|PyIndexError|PyLookupError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyIndexError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1974,15 +1974,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|InterruptedError|PyInterruptedError|PyOSError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyInterruptedError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -1990,15 +1990,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|IsADirectoryError|PyIsADirectoryError|PyOSError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyIsADirectoryError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2006,15 +2006,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|KeyError|PyKeyError|PyLookupError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyKeyError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2022,15 +2022,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|KeyboardInterrupt|PyKeyboardInterrupt|PyBaseException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyKeyboardInterrupt,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2038,15 +2038,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|LookupError|PyLookupError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyLookupError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2054,15 +2054,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|MemoryError|PyMemoryError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyMemoryError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2070,15 +2070,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|ModuleNotFoundError|PyModuleNotFoundError|PyImportError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyModuleNotFoundError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2086,15 +2086,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|NameError|PyNameError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyNameError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2102,15 +2102,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|NotADirectoryError|PyNotADirectoryError|PyOSError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyNotADirectoryError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2118,15 +2118,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|NotImplementedError|PyNotImplementedError|PyRuntimeError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyNotImplementedError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2134,15 +2134,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|OSError|PyOSError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyOSError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2150,15 +2150,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|OverflowError|PyOverflowError|PyArithmeticError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyOverflowError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2166,15 +2166,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|PendingDeprecationWarning|PyPendingDeprecationWarning|PyWarning
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyPendingDeprecationWarning,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2182,15 +2182,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|PermissionError|PyPermissionError|PyOSError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyPermissionError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2198,15 +2198,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|ProcessLookupError|PyProcessLookupError|PyOSError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyProcessLookupError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2214,15 +2214,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|RecursionError|PyRecursionError|PyRuntimeError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyRecursionError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2230,15 +2230,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|ReferenceError|PyReferenceError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyReferenceError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2246,15 +2246,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|ResourceWarning|PyResourceWarning|PyWarning
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyResourceWarning,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2262,15 +2262,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|RuntimeError|PyRuntimeError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyRuntimeError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2278,15 +2278,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|RuntimeWarning|PyRuntimeWarning|PyWarning
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyRuntimeWarning,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2294,15 +2294,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|StopAsyncIteration|PyStopAsyncIteration|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyStopAsyncIteration,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2310,15 +2310,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|StopIteration|PyStopIteration|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyStopIteration,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2326,15 +2326,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|SyntaxError|PySyntaxError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PySyntaxError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2342,15 +2342,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|SyntaxWarning|PySyntaxWarning|PyWarning
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PySyntaxWarning,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2358,15 +2358,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|SystemError|PySystemError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PySystemError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2374,15 +2374,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|SystemExit|PySystemExit|PyBaseException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PySystemExit,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2390,15 +2390,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|TabError|PyTabError|PyIndentationError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyTabError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2406,15 +2406,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|TimeoutError|PyTimeoutError|PyOSError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyTimeoutError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2422,15 +2422,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|TypeError|PyTypeError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyTypeError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2438,15 +2438,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|UnboundLocalError|PyUnboundLocalError|PyNameError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyUnboundLocalError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2454,15 +2454,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|UnicodeDecodeError|PyUnicodeDecodeError|PyUnicodeError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyUnicodeDecodeError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2470,15 +2470,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|UnicodeEncodeError|PyUnicodeEncodeError|PyUnicodeError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyUnicodeEncodeError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2486,15 +2486,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|UnicodeError|PyUnicodeError|PyValueError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyUnicodeError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2502,15 +2502,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|UnicodeTranslateError|PyUnicodeTranslateError|PyUnicodeError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyUnicodeTranslateError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2518,15 +2518,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|UnicodeWarning|PyUnicodeWarning|PyWarning
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyUnicodeWarning,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2534,15 +2534,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|UserWarning|PyUserWarning|PyWarning
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyUserWarning,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2550,15 +2550,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|ValueError|PyValueError|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyValueError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2566,15 +2566,15 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|Warning|PyWarning|PyException
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyWarning,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|
 
 ############
@@ -2582,13 +2582,13 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                
 ############
 
 ErrorType|ZeroDivisionError|PyZeroDivisionError|PyArithmeticError
-Annotation|default
+Annotation|baseType
 Annotation|hasGC
 Annotation|pyerrortype
-Annotation|baseType
 Annotation|baseExceptionSubclass
+Annotation|default
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
-PyMethod|__init__|pyInit|pyInit(zelf: PyZeroDivisionError,                             args: [PyObject],                             kwargs: PyDict?)|pyInit(zelf:args:kwargs:)|PyResult<PyNone>|
+PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:kwargs:)|PyResult<PyNone>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyBaseException>|

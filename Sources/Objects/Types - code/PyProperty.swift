@@ -263,15 +263,13 @@ public class PyProperty: PyObject {
   )
 
   // sourcery: pymethod = __init__
-  internal static func pyInit(zelf: PyProperty,
-                              args: [PyObject],
-                              kwargs: PyDict?) -> PyResult<PyNone> {
+  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
     switch PyProperty.initArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
-      zelf.get = binding.optional(at: 0)
-      zelf.set = binding.optional(at: 1)
-      zelf.del = binding.optional(at: 2)
-      zelf.doc = binding.optional(at: 3)
+      self.get = binding.optional(at: 0)
+      self.set = binding.optional(at: 1)
+      self.del = binding.optional(at: 2)
+      self.doc = binding.optional(at: 3)
       return .value(Py.none)
 
     case let .error(e):

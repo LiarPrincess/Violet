@@ -195,7 +195,6 @@ types = {
     '__rmul__',
     '__imul__',
     '__iter__',
-    '__init__',
     'append',
     'extend',
     'insert',
@@ -204,6 +203,7 @@ types = {
     'clear',
     'reverse',
     'copy',
+    '__init__',
     '__new__',
   ],
   bytearray_iterator: [

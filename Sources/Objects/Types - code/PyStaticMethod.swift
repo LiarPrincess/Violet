@@ -99,15 +99,13 @@ public class PyStaticMethod: PyObject {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal static func pyInit(zelf: PyStaticMethod,
-                              args: [PyObject],
-                              kwargs: PyDict?) -> PyResult<PyNone> {
-    if let e = ArgumentParser.noKwargsOrError(fnName: zelf.typeName,
+  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.typeName,
                                               kwargs: kwargs) {
       return .error(e)
     }
 
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: zelf.typeName,
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: self.typeName,
                                                         args: args,
                                                         min: 1,
                                                         max: 1) {
@@ -115,7 +113,7 @@ public class PyStaticMethod: PyObject {
     }
 
     let callable = args[0]
-    zelf.callable = callable
+    self.callable = callable
     return .value(Py.none)
   }
 }

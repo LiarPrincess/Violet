@@ -48,10 +48,8 @@ public final class PySystemExit: PyBaseException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PySystemExit,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -92,10 +90,8 @@ public final class PyKeyboardInterrupt: PyBaseException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyKeyboardInterrupt,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -136,10 +132,8 @@ public final class PyGeneratorExit: PyBaseException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyGeneratorExit,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -180,10 +174,8 @@ public class PyException: PyBaseException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyException,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -224,10 +216,8 @@ public final class PyStopIteration: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyStopIteration,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -268,10 +258,8 @@ public final class PyStopAsyncIteration: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyStopAsyncIteration,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -312,10 +300,8 @@ public class PyArithmeticError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyArithmeticError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -356,10 +342,8 @@ public final class PyFloatingPointError: PyArithmeticError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyFloatingPointError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -400,10 +384,8 @@ public final class PyOverflowError: PyArithmeticError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyOverflowError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -444,10 +426,8 @@ public final class PyZeroDivisionError: PyArithmeticError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyZeroDivisionError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -488,10 +468,8 @@ public final class PyAssertionError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyAssertionError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -532,10 +510,8 @@ public final class PyAttributeError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyAttributeError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -576,10 +552,8 @@ public final class PyBufferError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyBufferError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -620,10 +594,8 @@ public final class PyEOFError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyEOFError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -664,10 +636,8 @@ public class PyImportError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyImportError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -708,10 +678,8 @@ public final class PyModuleNotFoundError: PyImportError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyModuleNotFoundError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -752,10 +720,8 @@ public class PyLookupError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyLookupError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -796,10 +762,8 @@ public final class PyIndexError: PyLookupError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyIndexError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -840,10 +804,8 @@ public final class PyKeyError: PyLookupError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyKeyError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -884,10 +846,8 @@ public final class PyMemoryError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyMemoryError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -928,10 +888,8 @@ public class PyNameError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyNameError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -972,10 +930,8 @@ public final class PyUnboundLocalError: PyNameError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyUnboundLocalError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1016,10 +972,8 @@ public class PyOSError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyOSError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1060,10 +1014,8 @@ public final class PyBlockingIOError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyBlockingIOError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1104,10 +1056,8 @@ public final class PyChildProcessError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyChildProcessError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1148,10 +1098,8 @@ public class PyConnectionError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyConnectionError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1192,10 +1140,8 @@ public final class PyBrokenPipeError: PyConnectionError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyBrokenPipeError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1236,10 +1182,8 @@ public final class PyConnectionAbortedError: PyConnectionError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyConnectionAbortedError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1280,10 +1224,8 @@ public final class PyConnectionRefusedError: PyConnectionError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyConnectionRefusedError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1324,10 +1266,8 @@ public final class PyConnectionResetError: PyConnectionError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyConnectionResetError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1368,10 +1308,8 @@ public final class PyFileExistsError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyFileExistsError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1412,10 +1350,8 @@ public final class PyFileNotFoundError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyFileNotFoundError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1456,10 +1392,8 @@ public final class PyInterruptedError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyInterruptedError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1500,10 +1434,8 @@ public final class PyIsADirectoryError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyIsADirectoryError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1544,10 +1476,8 @@ public final class PyNotADirectoryError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyNotADirectoryError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1588,10 +1518,8 @@ public final class PyPermissionError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyPermissionError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1632,10 +1560,8 @@ public final class PyProcessLookupError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyProcessLookupError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1676,10 +1602,8 @@ public final class PyTimeoutError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyTimeoutError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1720,10 +1644,8 @@ public final class PyReferenceError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyReferenceError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1764,10 +1686,8 @@ public class PyRuntimeError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyRuntimeError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1808,10 +1728,8 @@ public final class PyNotImplementedError: PyRuntimeError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyNotImplementedError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1852,10 +1770,8 @@ public final class PyRecursionError: PyRuntimeError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyRecursionError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1896,10 +1812,8 @@ public class PySyntaxError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PySyntaxError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1940,10 +1854,8 @@ public class PyIndentationError: PySyntaxError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyIndentationError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -1984,10 +1896,8 @@ public final class PyTabError: PyIndentationError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyTabError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2031,10 +1941,8 @@ public final class PySystemError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PySystemError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2075,10 +1983,8 @@ public final class PyTypeError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyTypeError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2119,10 +2025,8 @@ public class PyValueError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyValueError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2163,10 +2067,8 @@ public class PyUnicodeError: PyValueError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyUnicodeError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2207,10 +2109,8 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyUnicodeDecodeError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2251,10 +2151,8 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyUnicodeEncodeError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2295,10 +2193,8 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyUnicodeTranslateError,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2339,10 +2235,8 @@ public class PyWarning: PyException {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyWarning,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2383,10 +2277,8 @@ public final class PyDeprecationWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyDeprecationWarning,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2428,10 +2320,8 @@ public final class PyPendingDeprecationWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyPendingDeprecationWarning,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2472,10 +2362,8 @@ public final class PyRuntimeWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyRuntimeWarning,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2516,10 +2404,8 @@ public final class PySyntaxWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PySyntaxWarning,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2560,10 +2446,8 @@ public final class PyUserWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyUserWarning,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2605,10 +2489,8 @@ public final class PyFutureWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyFutureWarning,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2649,10 +2531,8 @@ public final class PyImportWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyImportWarning,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2694,10 +2574,8 @@ public final class PyUnicodeWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyUnicodeWarning,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2739,10 +2617,8 @@ public final class PyBytesWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyBytesWarning,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 
@@ -2783,10 +2659,8 @@ public final class PyResourceWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyResourceWarning,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 }
 

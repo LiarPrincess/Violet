@@ -72,7 +72,7 @@ internal struct NewFunctionWrapper: FunctionWrapper {
 // MARK: - Init
 
 internal typealias InitFunction<Zelf: PyObject> =
-  (Zelf, [PyObject], PyDict?) -> PyResult<PyNone>
+  (Zelf) -> ([PyObject], PyDict?) -> PyResult<PyNone>
 
 /// Wrapper dedicated to `__init__` function
 internal struct InitFunctionWrapper: FunctionWrapper {
@@ -97,15 +97,16 @@ internal struct InitFunctionWrapper: FunctionWrapper {
     fn: @escaping InitFunction<Zelf>
   ) -> InitFunction<PyObject> {
 
-    return { (object: PyObject, args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> in
-      guard let zelf = object as? Zelf else {
-        let typeName = type.getNameRaw()
-        return .typeError(
-          "descriptor '__init__' requires a '\(typeName)' object " +
-          "but received a '\(object.typeName)'")
-      }
+    return { (object: PyObject) in { (args: [PyObject], kwargs: PyDict?) in
+        guard let zelf = object as? Zelf else {
+          let typeName = type.getNameRaw()
+          return .typeError(
+            "descriptor '__init__' requires a '\(typeName)' object " +
+            "but received a '\(object.typeName)'")
+        }
 
-      return fn(zelf, args, kwargs)
+        return fn(zelf)(args, kwargs)
+      }
     }
   }
 
@@ -116,7 +117,7 @@ internal struct InitFunctionWrapper: FunctionWrapper {
 
     let zelf = args[0]
     let argsWithoutZelf = Array(args.dropFirst())
-    return self.fn(zelf, argsWithoutZelf, kwargs).map { $0 as PyObject }
+    return self.fn(zelf)(argsWithoutZelf, kwargs).map { $0 as PyObject }
   }
 }
 

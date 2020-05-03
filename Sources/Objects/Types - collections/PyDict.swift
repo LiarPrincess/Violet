@@ -812,12 +812,8 @@ public class PyDict: PyObject {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal static func pyInit(zelf: PyDict,
-                              args: [PyObject],
-                              kwargs: PyDict?) -> PyResult<PyNone> {
-    return zelf
-      .update(args: args, kwargs: kwargs)
-      .map { _ in Py.none }
+  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.update(args: args, kwargs: kwargs)
   }
 
   // MARK: - GC

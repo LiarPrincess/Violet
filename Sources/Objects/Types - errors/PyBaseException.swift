@@ -488,30 +488,25 @@ public class PyBaseException: PyObject {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  internal class func pyInit(zelf: PyBaseException,
-                             args: [PyObject],
-                             kwargs: PyDict?) -> PyResult<PyNone> {
-    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    return self.pyInitShared(args: args, kwargs: kwargs)
   }
 
   /// `pyInit` in all of the exception classes will call this shared method.
-  internal static func pyInitShared(zelf: PyBaseException,
-                                    args: [PyObject],
-                                    kwargs: PyDict?) -> PyResult<PyNone> {
+  internal func pyInitShared(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
     // Copy args if needed
-    let zelfArgs = zelf.args.elements
-    let hasAssignedArgsIn__new__ = zelfArgs.count == args.count
-        && zip(zelfArgs, args).allSatisfy { $0.0 === $0.1 }
+    let selfArgs = self.args.elements
+    let hasAssignedArgsIn__new__ = selfArgs.count == args.count
+        && zip(selfArgs, args).allSatisfy { $0.0 === $0.1 }
 
     if !hasAssignedArgsIn__new__ {
       let argsTuple = Py.newTuple(args)
-      zelf.setArgs(argsTuple)
+      self.setArgs(argsTuple)
     }
 
     // Copy kwargs
     if let kwargs = kwargs {
-      let zelfDict = zelf.__dict__
-      switch zelfDict.update(from: kwargs.data) {
+      switch self.__dict__.update(from: kwargs.data) {
       case .value: break
       case .error(let e): return .error(e)
       }
