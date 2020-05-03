@@ -256,8 +256,12 @@ extension PyInstance {
 
     let str: String = {
       switch self.strValue(object: error) {
-      case .value(let s): return ": " + s + "\n"
-      case .error: return ": <exception str() failed>\n"
+      case .value(let s) where s.isEmpty:
+        return "\n"
+      case .value(let s):
+        return ": " + s + "\n"
+      case .error:
+        return ": <exception str() failed>\n"
       }
     }()
 
