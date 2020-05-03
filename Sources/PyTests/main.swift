@@ -7,6 +7,8 @@ import VioletVM
 
 // MARK: - Run
 
+// This will leak memory on every call.
+// (because we do not have GC to break circular references)
 private func run(file: URL) {
   print(file.lastPathComponent)
 
@@ -70,6 +72,7 @@ private func runOldTypes() {
   run(file: dir.appendingPathComponent("test_basic_types.py"))
   run(file: dir.appendingPathComponent("test_bool.py"))
   run(file: dir.appendingPathComponent("test_bytes.py"))
+  run(file: dir.appendingPathComponent("bytearray.py"))
   run(file: dir.appendingPathComponent("test_class.py"))
   run(file: dir.appendingPathComponent("test_commas.py"))
   run(file: dir.appendingPathComponent("test_comparisons.py"))
@@ -178,7 +181,7 @@ guard FileManager.default.changeCurrentDirectoryPath(rootDir.path) else {
   trap("Failed to set cwd to: '\(rootDir.path)'")
 }
 
-//runOldTypes()
-//runOldBuiltins()
-//runVioletTests()
+runOldTypes()
+runOldBuiltins()
+runVioletTests()
 runNotFinished()
