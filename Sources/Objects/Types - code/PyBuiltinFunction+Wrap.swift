@@ -29,22 +29,6 @@ import VioletCore
 
 extension PyBuiltinFunction {
 
-  // MARK: - New
-
-  internal static func wrapNew<Zelf: PyObject>(
-    type: PyType,
-    doc: String?,
-    fn: @escaping NewFunction<Zelf>,
-    module: PyString? = nil
-  ) -> PyBuiltinFunction {
-
-    return PyBuiltinFunction(
-      fn: NewFunctionWrapper(type: type, fn: fn),
-      module: module,
-      doc: doc
-    )
-  }
-
   // MARK: - Init
 
   internal static func wrapInit<Zelf: PyObject>(

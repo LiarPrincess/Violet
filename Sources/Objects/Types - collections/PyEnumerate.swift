@@ -112,7 +112,7 @@ public class PyEnumerate: PyObject {
     format: "O|O:enumerate"
   )
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyEnumerate> {

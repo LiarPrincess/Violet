@@ -66,7 +66,7 @@ public {final}class {class_name}: Py{base} {{
      return self.__dict__
    }}
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {{

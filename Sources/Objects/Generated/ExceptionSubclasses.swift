@@ -39,7 +39,7 @@ public final class PySystemExit: PyBaseException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -83,7 +83,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -127,7 +127,7 @@ public final class PyGeneratorExit: PyBaseException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -171,7 +171,7 @@ public class PyException: PyBaseException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -215,7 +215,7 @@ public final class PyStopIteration: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -259,7 +259,7 @@ public final class PyStopAsyncIteration: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -303,7 +303,7 @@ public class PyArithmeticError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -347,7 +347,7 @@ public final class PyFloatingPointError: PyArithmeticError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -391,7 +391,7 @@ public final class PyOverflowError: PyArithmeticError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -435,7 +435,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -479,7 +479,7 @@ public final class PyAssertionError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -523,7 +523,7 @@ public final class PyAttributeError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -567,7 +567,7 @@ public final class PyBufferError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -611,7 +611,7 @@ public final class PyEOFError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -655,7 +655,7 @@ public class PyImportError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -699,7 +699,7 @@ public final class PyModuleNotFoundError: PyImportError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -743,7 +743,7 @@ public class PyLookupError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -787,7 +787,7 @@ public final class PyIndexError: PyLookupError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -831,7 +831,7 @@ public final class PyKeyError: PyLookupError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -875,7 +875,7 @@ public final class PyMemoryError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -919,7 +919,7 @@ public class PyNameError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -963,7 +963,7 @@ public final class PyUnboundLocalError: PyNameError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1007,7 +1007,7 @@ public class PyOSError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1051,7 +1051,7 @@ public final class PyBlockingIOError: PyOSError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1095,7 +1095,7 @@ public final class PyChildProcessError: PyOSError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1139,7 +1139,7 @@ public class PyConnectionError: PyOSError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1183,7 +1183,7 @@ public final class PyBrokenPipeError: PyConnectionError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1227,7 +1227,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1271,7 +1271,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1315,7 +1315,7 @@ public final class PyConnectionResetError: PyConnectionError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1359,7 +1359,7 @@ public final class PyFileExistsError: PyOSError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1403,7 +1403,7 @@ public final class PyFileNotFoundError: PyOSError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1447,7 +1447,7 @@ public final class PyInterruptedError: PyOSError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1491,7 +1491,7 @@ public final class PyIsADirectoryError: PyOSError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1535,7 +1535,7 @@ public final class PyNotADirectoryError: PyOSError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1579,7 +1579,7 @@ public final class PyPermissionError: PyOSError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1623,7 +1623,7 @@ public final class PyProcessLookupError: PyOSError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1667,7 +1667,7 @@ public final class PyTimeoutError: PyOSError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1711,7 +1711,7 @@ public final class PyReferenceError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1755,7 +1755,7 @@ public class PyRuntimeError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1799,7 +1799,7 @@ public final class PyNotImplementedError: PyRuntimeError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1843,7 +1843,7 @@ public final class PyRecursionError: PyRuntimeError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1887,7 +1887,7 @@ public class PySyntaxError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1931,7 +1931,7 @@ public class PyIndentationError: PySyntaxError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -1975,7 +1975,7 @@ public final class PyTabError: PyIndentationError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2022,7 +2022,7 @@ public final class PySystemError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2066,7 +2066,7 @@ public final class PyTypeError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2110,7 +2110,7 @@ public class PyValueError: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2154,7 +2154,7 @@ public class PyUnicodeError: PyValueError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2198,7 +2198,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2242,7 +2242,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2286,7 +2286,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2330,7 +2330,7 @@ public class PyWarning: PyException {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2374,7 +2374,7 @@ public final class PyDeprecationWarning: PyWarning {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2419,7 +2419,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2463,7 +2463,7 @@ public final class PyRuntimeWarning: PyWarning {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2507,7 +2507,7 @@ public final class PySyntaxWarning: PyWarning {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2551,7 +2551,7 @@ public final class PyUserWarning: PyWarning {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2596,7 +2596,7 @@ public final class PyFutureWarning: PyWarning {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2640,7 +2640,7 @@ public final class PyImportWarning: PyWarning {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2685,7 +2685,7 @@ public final class PyUnicodeWarning: PyWarning {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2730,7 +2730,7 @@ public final class PyBytesWarning: PyWarning {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
@@ -2774,7 +2774,7 @@ public final class PyResourceWarning: PyWarning {
      return self.__dict__
    }
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {

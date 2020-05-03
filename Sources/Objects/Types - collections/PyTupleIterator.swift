@@ -57,7 +57,7 @@ public class PyTupleIterator: PyObject {
 
   // MARK: - Python new
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyTupleIterator> {

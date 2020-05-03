@@ -138,6 +138,24 @@ def print_fill_type_method(t: TypeInfo):
 
   is_first = True
 
+  # __new__
+  for meth in t.static_functions:
+    python_name = meth.python_name
+    swift_selector = meth.swift_selector
+
+    static_doc_property = meth.swift_static_doc_property
+    doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
+
+    if not python_name == '__new__':
+      continue
+
+    if is_first:
+      is_first = False
+      print()
+
+    print(f'    self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: {doc}, fn: {swift_type}.{swift_selector}))')
+
+  # __init__
   for meth in t.methods:
     python_name = meth.python_name
     swift_selector = meth.swift_selector
@@ -145,18 +163,14 @@ def print_fill_type_method(t: TypeInfo):
     static_doc_property = meth.swift_static_doc_property
     doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
 
-    is_new_or_init = python_name == '__new__' or python_name == '__init__'
-    if not is_new_or_init:
+    if not python_name == '__init__':
       continue
 
     if is_first:
       is_first = False
       print()
 
-    if python_name == '__new__':
-      print(f'    self.insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: {doc}, fn: {swift_type}.{swift_selector}))')
-    elif python_name == '__init__':
-      print(f'    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: {doc}, fn: {swift_type}.{swift_selector}))')
+    print(f'    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: {doc}, fn: {swift_type}.{swift_selector}))')
 
   # ==============================
   # === Static/class functions ===
@@ -164,12 +178,18 @@ def print_fill_type_method(t: TypeInfo):
 
   is_first = True
 
+  def is_new_or_init(name):
+    return name == '__new__' or name == '__init__'
+
   def print_static_class_method(factory_type: str, fn: PyFunctionInfo):
     python_name = fn.python_name
     swift_selector = fn.swift_selector
 
     static_doc_property = fn.swift_static_doc_property
     doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
+
+    if is_new_or_init(python_name):
+      return
 
     nonlocal is_first
     if is_first:
@@ -197,7 +217,7 @@ def print_fill_type_method(t: TypeInfo):
     static_doc_property = meth.swift_static_doc_property
     doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
 
-    if python_name == '__new__' or python_name == '__init__':
+    if is_new_or_init(python_name):
       continue
 
     if is_first:

@@ -33,7 +33,7 @@ extension PyType {
 
 // swiftlint:disable function_body_length
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   /// static PyObject *
   /// type_new(PyTypeObject *metatype, PyObject *args, PyObject *kwds)
   internal static func pyNew(type: PyType,

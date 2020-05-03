@@ -199,7 +199,7 @@ internal enum PyObjectType {
   // There is a long comment in 'Objects -> typeobject.c' about '__new__'
   // and '__init'.
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyObject> {

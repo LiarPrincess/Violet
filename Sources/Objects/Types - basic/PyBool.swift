@@ -113,7 +113,7 @@ public class PyBool: PyInt {
 
   // MARK: - Python new
 
-  // sourcery: pymethod = __new__
+  // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyInt> {
