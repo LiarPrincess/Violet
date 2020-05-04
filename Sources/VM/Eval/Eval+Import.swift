@@ -54,11 +54,16 @@ extension Eval {
   /// This opcode implements `from module import *`.
   internal func importStar() -> InstructionResult {
     let module = self.stack.pop()
-    // TODO: PyFrame_FastToLocalsWithError(f)
+
+    if let e = self.frame.copyFastToLocals() {
+      return .exception(e)
+    }
 
     switch self.importAllFrom(module: module, locals: self.localSymbols) {
     case .value:
-      // TODO: PyFrame_LocalsToFast(f, 0);
+      if let e = self.frame.copyLocalsToFast(onLocalMissing: .ignore) {
+        return .exception(e)
+      }
       return .ok
     case .error(let e):
       return .exception(e)

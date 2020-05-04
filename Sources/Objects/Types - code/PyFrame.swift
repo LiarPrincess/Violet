@@ -10,6 +10,7 @@ import VioletBytecode
 // sourcery: pytype = frame, default, hasGC
 /// Basic evaluation environment.
 ///
+/// - Important:
 /// CPython stores stack, local and free variables as a single block of memory
 /// in `PyFrameObject.f_localsplus` using following layout:
 /// ```
@@ -18,6 +19,9 @@ import VioletBytecode
 ///  ```
 ///
 /// We have separate `fastLocals`, `cellsAndFreeVariables` and `stack`.
+/// Our cache usage will suck (3 arrays stored on heap), but... oh well....
+/// This allows us to have typed `cellsAndFreeVariables`
+/// (`[PyCell]` instead of `[PyObject]`).
 public class PyFrame: PyObject {
 
   // MARK: - Properties
@@ -97,6 +101,7 @@ public class PyFrame: PyObject {
   /// `PC`
   ///
   /// Index of the next executed instruction.
+  /// Change this if you need to jump somewhere.
   public var nextInstructionIndex = 0
 
   /// Current line number in Python source code.
@@ -215,8 +220,10 @@ public class PyFrame: PyObject {
     return Int(self.currentInstructionLine)
   }
 
-  // MARK: - Locals <-> fast locals
+  // MARK: - Fast to locals
 
+  /// Merge fast locals (arguments, local variables etc.) into 'self.locals'.
+  ///
   /// We store function arguments and locals in `self.fastLocals`.
   /// In some cases (for example `__builtins__.locals()`) we need a proper
   /// `locals` dict.
@@ -227,26 +234,13 @@ public class PyFrame: PyObject {
   /// CPython:
   /// int
   /// PyFrame_FastToLocalsWithError(PyFrameObject *f)
-  ///
-  /// - Important:
-  /// But this is only a 'copy value' operation.
-  /// We will still use `self.fastLocals` when operating on value.
   public func copyFastToLocals() -> PyBaseException? {
     let variableNames = self.code.variableNames
-    let cellNames = self.code.cellVariableNames
-    let freeNames = self.code.freeVariableNames
-
     let fastLocals = self.fastLocals
-    let cellsAndFrees = self.cellsAndFreeVariables
-
     assert(variableNames.count == fastLocals.count)
-    assert(cellNames.count + freeNames.count == cellsAndFrees.count)
 
-    // Merge fast locals (arguments, local variables etc.) into self.locals
     for (name, value) in zip(variableNames, fastLocals) {
-      // O(n), but we do not expect a lot of 'cells' and 'frees'.
-      let isCellOrFree = cellNames.contains(name) || freeNames.contains(name)
-      if isCellOrFree {
+      if self.isCellOrFree(name: name) {
         continue
       }
 
@@ -257,6 +251,11 @@ public class PyFrame: PyObject {
     }
 
     // Same for cells and free
+    let cellNames = self.code.cellVariableNames
+    let freeNames = self.code.freeVariableNames
+    let cellsAndFrees = self.cellsAndFreeVariables
+    assert(cellNames.count + freeNames.count == cellsAndFrees.count)
+
     for (name, cell) in zip(cellNames, cellsAndFrees) {
       if let e = self.updateLocals(name: name, value: cell.content) {
         return e
@@ -274,11 +273,18 @@ public class PyFrame: PyObject {
     return nil
   }
 
+  /// `O(n)`, but we do not expect a lot of 'cells' and 'frees'.
+  private func isCellOrFree(name: MangledName) -> Bool {
+    let cellNames = self.code.cellVariableNames
+    let freeNames = self.code.freeVariableNames
+    return cellNames.contains(name) || freeNames.contains(name)
+  }
+
   private func updateLocals(name: MangledName,
                             value: PyObject?,
                             allowDelete: Bool = false) -> PyBaseException? {
     let locals = self.locals
-    let key = Py.intern(name.value)
+    let key = self.createLocalsKey(name: name)
 
     // If we have value -> add it to locals
     if let value = value {
@@ -302,5 +308,124 @@ public class PyFrame: PyObject {
     case .error(let e):
       return e
     }
+  }
+
+  private func createLocalsKey(name: MangledName) -> PyString {
+    return Py.intern(name.value)
+  }
+
+  // MARK: - Locals to fast
+
+  /// What should `PyFrame.copyLocalsToFast` do when the value is missing from
+  /// `self.locals`?
+  public enum LocalMissingStrategy {
+    /// Leave the current value.
+    case ignore
+    /// Remove value (set to `nil`).
+    case remove
+  }
+
+  /// Reversal of `self.copyFastToLocals` (<-- go there for documentation).
+  public func copyLocalsToFast(
+    onLocalMissing: LocalMissingStrategy
+  ) -> PyBaseException? {
+    let variableNames = self.code.variableNames
+    assert(variableNames.count == self.fastLocals.count)
+
+    for (index, name) in variableNames.enumerated() {
+      if self.isCellOrFree(name: name) {
+        continue
+      }
+
+      if let e = self.updateFastFromLocal(index: index,
+                                          name: name,
+                                          onMissing: onLocalMissing) {
+        return e
+      }
+    }
+
+    // Same for cells and free
+    let cellNames = self.code.cellVariableNames
+    let freeNames = self.code.freeVariableNames
+    assert(cellNames.count + freeNames.count == self.cellsAndFreeVariables.count)
+
+    for (index, name) in cellNames.enumerated() {
+      if let e = self.updateCellOrFreeFromLocal(index: index,
+                                                name: name,
+                                                onMissing: onLocalMissing) {
+        return e
+      }
+    }
+
+    for (freeIndex, name) in freeNames.enumerated() {
+      // Free variables are after cells in 'self.cellsAndFreeVariables'
+      let cellOrFreeIndex = cellNames.count + freeIndex
+      if let e = self.updateCellOrFreeFromLocal(index: cellOrFreeIndex,
+                                                name: name,
+                                                onMissing: onLocalMissing) {
+        return e
+      }
+    }
+
+    return nil
+  }
+
+  private func updateFastFromLocal(
+    index: Int,
+    name: MangledName,
+    onMissing: LocalMissingStrategy
+  ) -> PyBaseException? {
+    assert(0 <= index && index < self.fastLocals.count)
+
+    switch self.getLocal(name: name) {
+    case .value(let value):
+      self.fastLocals[index] = value
+
+    case .notFound:
+      switch onMissing {
+      case .ignore:
+        break
+      case .remove:
+        self.fastLocals[index] = nil
+      }
+
+    case .error(let e):
+      return e
+    }
+
+    return nil
+  }
+
+  private func updateCellOrFreeFromLocal(
+    index: Int,
+    name: MangledName,
+    onMissing: LocalMissingStrategy
+  ) -> PyBaseException? {
+    assert(0 <= index && index < self.cellsAndFreeVariables.count)
+
+    switch self.getLocal(name: name) {
+    case .value(let value):
+      let cell = self.cellsAndFreeVariables[index]
+      cell.content = value
+
+    case .notFound:
+      switch onMissing {
+      case .ignore:
+        break
+      case .remove:
+        let cell = self.cellsAndFreeVariables[index]
+        cell.content = nil
+      }
+
+    case .error(let e):
+      return e
+    }
+
+    return nil
+  }
+
+  private func getLocal(name: MangledName) -> PyDict.GetResult {
+    let key = self.createLocalsKey(name: name)
+    return self.locals.get(key: key)
   }
 }

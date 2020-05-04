@@ -9,8 +9,7 @@ public struct PyConfig {
 
   /// Command line arguments
   public var arguments: Arguments
-  /// These environment variables influence Python’s behavior,
-  /// they are processed before the command-line switches other than `-E` or `-I`.
+  /// These environment variables influence Python’s behavior.
   ///
   /// It is customary that command-line switches override environmental variables
   /// where there is a conflict.
@@ -26,7 +25,7 @@ public struct PyConfig {
   public var standardInput: FileDescriptorType
   /// Default stream to print to.
   public var standardOutput: FileDescriptorType
-  /// Default stream for printing errors.
+  /// Default stream to print errors to.
   public var standardError: FileDescriptorType
 
   public struct Sys {
