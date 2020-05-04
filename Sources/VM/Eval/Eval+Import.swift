@@ -186,13 +186,87 @@ extension Eval {
     let name = self.getName(index: nameIndex)
     let module = self.stack.top // Leave it at top
 
-    // CPython does this differently, but we are going for 'close enough'.
     switch Py.getattr(object: module, name: name) {
-    case let .value(o):
+    case .value(let o):
       self.stack.push(o)
       return .ok
-    case let .error(e):
-      return .exception(e)
+
+    case .error:
+      // Try to fallback on reading the module directly from 'sys.modules'
+      switch self.importFromSys(name: name, module: module) {
+      case let .value(o):
+        self.stack.push(o)
+        return .ok
+      case let .error(e):
+        return .exception(e)
+      }
     }
+  }
+
+  private func importFromSys(name: PyString,
+                             module: PyObject) -> PyResult<PyObject> {
+    let package: PyString
+    switch self.getString(module: module, name: .__name__) {
+    case .value(let p):
+      package = p
+    case .notString,
+         .error:
+      let e = self.createImportFromError(name: name,
+                                         module: module,
+                                         package: nil)
+      return .error(e)
+    }
+
+    let fullName = "\(package.value).\(name.value)"
+    switch Py.sys.getModule(name: Py.newString(fullName)) {
+    case .value(let o):
+      return .value(o)
+    case .notFound,
+         .error:
+      let e = self.createImportFromError(name: name,
+                                         module: module,
+                                         package: package)
+      return .error(e)
+    }
+  }
+
+  private func createImportFromError(name: PyString,
+                                     module: PyObject,
+                                     package: PyString?) -> PyImportError {
+    let name = name.value
+    let package = package?.value ?? "<unknown module name>"
+
+    let path: String = {
+      switch self.getString(module: module, name: .__file__) {
+      case .value(let str):
+        return str.value
+      case .notString,
+           .error:
+        return "unknown location"
+      }
+    }()
+
+    let msg = "cannot import name \(name) from \(package) (\(path))"
+    return Py.newPyImportError(msg: msg)
+  }
+
+  private enum GetStringResult {
+    case value(PyString)
+    case notString
+    case error(PyBaseException)
+  }
+
+  private func getString(module: PyObject, name: IdString) -> GetStringResult {
+    let object: PyObject
+    switch Py.getattr(object: module, name: .__name__) {
+    case let .value(o): object = o
+    case let .error(e): return .error(e)
+    }
+
+    guard let str = object as? PyString else {
+      return .notString
+    }
+
+    return .value(str)
   }
 }
