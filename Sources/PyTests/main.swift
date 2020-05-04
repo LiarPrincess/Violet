@@ -155,6 +155,23 @@ private func runOldBuiltins() {
   run(file: dir.appendingPathComponent("builtins_module.py"))
 }
 
+// MARK: - Rust Python
+
+private func runRustPythonTests() {
+  let dir = testDir.appendingPathComponent("RustPython")
+
+  // Not an test by itself, but we will run it anyway just to see it it fails
+  run(file: dir.appendingPathComponent("testutils.py"))
+
+  run(file: dir.appendingPathComponent("import.py"))
+  run(file: dir.appendingPathComponent("import_file.py"))
+  run(file: dir.appendingPathComponent("import_mutual1.py"))
+  run(file: dir.appendingPathComponent("import_mutual2.py"))
+  run(file: dir.appendingPathComponent("import_name.py"))
+  run(file: dir.appendingPathComponent("import_star.py"))
+  run(file: dir.appendingPathComponent("import_target.py"))
+}
+
 // MARK: - Violet
 
 private func runVioletTests() {
@@ -167,13 +184,6 @@ private func runVioletTests() {
   run(file: dir.appendingPathComponent("unbound_methods.py"))
 }
 
-// MARK: - Not finished
-
-private func runNotFinished() {
-//  run(file: testDir.appendingPathComponent("fizzbuzz.py"))
-//  run(file: testDir.appendingPathComponent("test_import.py"))
-}
-
 // MARK: - Main
 
 // If we call 'open' we want to start at repository root.
@@ -181,7 +191,7 @@ guard FileManager.default.changeCurrentDirectoryPath(rootDir.path) else {
   trap("Failed to set cwd to: '\(rootDir.path)'")
 }
 
-runOldTypes()
-runOldBuiltins()
+//runOldTypes()
+//runOldBuiltins()
+runRustPythonTests()
 runVioletTests()
-runNotFinished()
