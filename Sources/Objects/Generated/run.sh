@@ -12,6 +12,7 @@ GENERATED=./Sources/Objects/Generated
 # This will add new error types (as subclasses of 'PyBaseException')
 echo 'Generating exception subclasses'
 python3 $GENERATED/ExceptionSubclasses.py > $GENERATED/ExceptionSubclasses.swift
+echo ''
 
 # =====================================
 # Stage 2: Work on all type definitions
@@ -44,7 +45,6 @@ python3 $GENERATED/BuiltinErrorTypes.py > $GENERATED/BuiltinErrorTypes.swift
 # even though in Violet all of the types are technically 'heap' types.
 echo 'Generating heap types'
 python3 $GENERATED/HeapTypes.py > $GENERATED/HeapTypes.swift
-echo ''
 
 # === Type memory layout ===
 # When creating new class we will check if all of the base classes have

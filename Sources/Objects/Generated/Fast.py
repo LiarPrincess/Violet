@@ -97,8 +97,6 @@ def func_protocol_name(name):
 # ----
 
 if __name__ == '__main__':
-  types = get_types()
-
   print(f'''\
 import VioletCore
 
@@ -165,6 +163,8 @@ import VioletCore
   # =================
   # === Protocols ===
   # =================
+
+  types = get_types()
 
   print(f'''\
 // MARK: - Owner protocols

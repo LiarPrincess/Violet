@@ -7,9 +7,6 @@ from Common.builtin_types import (
   print_fill_helpers, get_downcast_function_name, print_downcast_function
 )
 
-all_types = get_types()
-types = list(filter(lambda t: not t.is_error, all_types))
-
 if __name__ == '__main__':
   print(f'''\
 import VioletCore
@@ -44,6 +41,9 @@ import VioletCore
 
   print('  // MARK: - Properties')
   print()
+
+  all_types = get_types()
+  types = list(filter(lambda t: not t.is_error, all_types))
 
   for t in types:
     python_type = t.python_type

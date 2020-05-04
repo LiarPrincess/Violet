@@ -9,26 +9,6 @@ from Common.builtin_types import (
   print_fill_helpers, get_downcast_function_name, print_downcast_function
 )
 
-all_types = get_types()
-def get_type(e):
-  python_type = e.class_name
-  for t in all_types:
-    if t.python_type == python_type:
-      return t
-
-  assert False, f"Type not found: '{python_type}'"
-
-# Errors in 'data' are in the correct order (parent is before its subclasses).
-types = list(map(get_type, data))
-
-def get_base_type(t):
-  swift_base_type = t.swift_base_type
-  for other in all_types:
-    if other.swift_type == swift_base_type:
-      return other
-
-  assert False, f"Unable to find base type of: '{t.swift_type}'"
-
 if __name__ == '__main__':
   print(f'''\
 import VioletCore
@@ -49,6 +29,26 @@ import VioletCore
 
   print('public final class BuiltinErrorTypes {')
   print()
+
+  all_types = get_types()
+  def get_type(e):
+    python_type = e.class_name
+    for t in all_types:
+      if t.python_type == python_type:
+        return t
+
+    assert False, f"Type not found: '{python_type}'"
+
+  # Errors in 'data' are in the correct order (parent is before its subclasses).
+  types = list(map(get_type, data))
+
+  def get_base_type(t):
+    swift_base_type = t.swift_base_type
+    for other in all_types:
+      if other.swift_type == swift_base_type:
+        return other
+
+    assert False, f"Unable to find base type of: '{t.swift_type}'"
 
   # ==================
   # === Properties ===
