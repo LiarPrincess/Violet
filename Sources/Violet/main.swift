@@ -37,7 +37,7 @@ case .systemExit(let object):
     break // Ignore error, it's not like we can do anything
   }
 
-  // Error is an error, even if we did not print message
+  // Error is an error, even if we did print message
   exit(1)
 
 case .error(let error):
@@ -46,12 +46,12 @@ case .error(let error):
 
   if case .value = excepthookResult {
     // Everything is 'ok' (at least in 'excepthook', the whole 'VM.run' just
-    // raised, but yeah 'excepthook' is fine).
+    // raised, but yeah... 'excepthook' is fine).
     // Anyway... let's ignore whatever nonsense this function returned...
     exit(1)
   }
 
-  // We will be printing to 'stderr' (probably).
+  // We will be printing to 'stderr' (probably)
   let stderr: PyTextFile
   switch Py.sys.getStderrOrNone() {
   case .none: exit(1) // User requested no printing
