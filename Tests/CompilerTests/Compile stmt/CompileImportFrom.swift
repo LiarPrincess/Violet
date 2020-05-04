@@ -168,8 +168,6 @@ class CompileImportFrom: CompileTestCase {
   ///  2 LOAD_CONST               1 (('*',))
   ///  4 IMPORT_NAME              0 (Tangled)
   ///  6 IMPORT_STAR
-  ///  8 LOAD_NAME                1 (additional_block) <- skip that
-  /// 10 POP_TOP
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   func test_module_importAll() {
@@ -183,7 +181,6 @@ class CompileImportFrom: CompileTestCase {
       .init(.loadConst, "('*')"),
       .init(.importName, "Tangled"),
       .init(.importStar),
-      .init(.popTop),
       .init(.loadConst, "none"),
       .init(.return)
     ]

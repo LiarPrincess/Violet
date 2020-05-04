@@ -54,8 +54,6 @@ extension CompilerImpl {
   ///  2 LOAD_CONST               1 (('*',))
   ///  4 IMPORT_NAME              0 (Tangled)
   ///  6 IMPORT_STAR
-  ///  8 LOAD_NAME                1 (additional_block)
-  /// 10 POP_TOP
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   internal func visit(_ node: ImportFromStarStmt) throws {
@@ -65,7 +63,6 @@ extension CompilerImpl {
                                     level: node.level)
 
     self.builder.appendImportStar()
-    self.builder.appendPopTop()
   }
 
   // MARK: - Import from

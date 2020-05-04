@@ -59,19 +59,20 @@ extension Eval {
       return .exception(e)
     }
 
-    switch self.importAllFrom(module: module, locals: self.localSymbols) {
+    switch self.importAllFrom(module: module) {
     case .value:
       if let e = self.frame.copyLocalsToFast(onLocalMissing: .ignore) {
         return .exception(e)
       }
       return .ok
     case .error(let e):
+      // Ignore errors, import error is more important
+      _ = self.frame.copyLocalsToFast(onLocalMissing: .ignore)
       return .exception(e)
     }
   }
 
-  private func importAllFrom(module: PyObject,
-                             locals: PyDict) -> PyResult<Void> {
+  private func importAllFrom(module: PyObject) -> PyResult<Void> {
     // Names can come from:
     // - '__all__' - user decides which names are exported
     // - '__dict__' - ignore the ones that start with undercore
@@ -103,7 +104,7 @@ extension Eval {
 
       switch Py.getattr(object: module, name: name) {
       case let .value(value):
-        switch locals.setItem(index: name, value: value) {
+        switch self.localSymbols.setItem(index: name, value: value) {
         case .value: break
         case .error(let e): return .error(e)
         }
@@ -250,13 +251,13 @@ extension Eval {
     return Py.newPyImportError(msg: msg)
   }
 
-  private enum GetStringResult {
+  private enum GetString {
     case value(PyString)
     case notString
     case error(PyBaseException)
   }
 
-  private func getString(module: PyObject, name: IdString) -> GetStringResult {
+  private func getString(module: PyObject, name: IdString) -> GetString {
     let object: PyObject
     switch Py.getattr(object: module, name: .__name__) {
     case let .value(o): object = o
