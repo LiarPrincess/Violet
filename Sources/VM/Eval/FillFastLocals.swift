@@ -226,7 +226,7 @@ internal struct FillFastLocals {
 
   /// Add missing keyword arguments (copy default values from kwdefs).
   private func fillFromKwArgsDefaults() -> PyBaseException? {
-    guard let kwDefaults = kwDefaults else {
+    guard let kwDefaults = self.kwDefaults else {
       return nil
     }
 
@@ -342,7 +342,7 @@ internal struct FillFastLocals {
 
     assert(missingNames.count == count)
 
-    let name = self.code.name
+    let name = self.code.name.value
     let count = missingNames.count
     let s = missingNames.count != 1 ? "s" : ""
     let names = self.formatNames(names: missingNames)

@@ -176,7 +176,14 @@ internal final class SymbolTableBuilderImpl:
   /// symtable_visit_params(struct symtable *st, asdl_seq *args)
   /// symtable_visit_arguments(struct symtable *st, arguments_ty a)
   internal func visitArguments(_ args: Arguments) throws {
+    // Do not reorder this!
+    // Args -> KwOnlyArgs -> Vararg -> Kwarg
+
     for a in args.args {
+      try self.addSymbol(a.name, flags: .defParam, location: a.start)
+    }
+
+    for a in args.kwOnlyArgs {
       try self.addSymbol(a.name, flags: .defParam, location: a.start)
     }
 
@@ -186,10 +193,6 @@ internal final class SymbolTableBuilderImpl:
       self.currentScope.hasVarargs = true
     case .none, .unnamed:
       break
-    }
-
-    for a in args.kwOnlyArgs {
-      try self.addSymbol(a.name, flags: .defParam, location: a.start)
     }
 
     if let a = args.kwarg {
