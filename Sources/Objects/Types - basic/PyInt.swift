@@ -336,7 +336,7 @@ public class PyInt: PyObject {
     switch self.parsePowMod(mod: mod) {
     case .none:
       let result = self.pow(base: self.value, exp: exp.value)
-      return .value(result.asObject)
+      return result.convertToObject()
 
     case .int(let modPyInt):
       if modPyInt.value == 0 {
@@ -351,6 +351,8 @@ public class PyInt: PyObject {
         let modDouble = Double(modPyInt.value)
         let result = powDouble.truncatingRemainder(dividingBy: modDouble)
         return .value(Py.newFloat(result))
+      case let .error(e):
+        return .error(e)
       }
 
     case .notImplemented:
@@ -371,7 +373,7 @@ public class PyInt: PyObject {
     switch self.parsePowMod(mod: mod) {
     case .none:
       let result = self.pow(base: base.value, exp: self.value)
-      return .value(result.asObject)
+      return result.convertToObject()
     case .int:
       // Three-arg power doesn't use __rpow__.
       return .value(Py.notImplemented)
@@ -405,16 +407,26 @@ public class PyInt: PyObject {
   private enum PowResult {
     case int(BigInt)
     case fraction(Double)
+    case error(PyBaseException)
 
-    fileprivate var asObject: PyObject {
+    fileprivate func convertToObject() -> PyResult<PyObject> {
       switch self {
-      case let .int(i): return Py.newInt(i)
-      case let .fraction(f): return Py.newFloat(f)
+      case let .int(i):
+        return .value(Py.newInt(i))
+      case let .fraction(f):
+        return .value(Py.newFloat(f))
+      case let .error(e):
+        return .error(e)
       }
     }
   }
 
   private func pow(base: BigInt, exp: BigInt) -> PowResult {
+    if base == 0 && exp < 0 {
+      let msg = "0.0 cannot be raised to a negative power"
+      return .error(Py.newZeroDivisionError(msg: msg))
+    }
+
     if exp == 0 {
       return .int(1)
     }

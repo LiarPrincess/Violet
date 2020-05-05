@@ -335,7 +335,7 @@ extension Eval {
 
   private func nameError(_ name: PyString) -> InstructionResult {
     let repr = Py.reprOrGeneric(object: name)
-    let e = Py.newNameError(msg: "name '\(repr)' is not defined")
+    let e = Py.newNameError(msg: "name \(repr) is not defined")
     return .exception(e)
   }
 }
