@@ -845,17 +845,19 @@ public class PyInt: PyObject {
   private static func parseBigInt(
     objectWithoutBase object: PyObject
   ) -> PyResult<BigInt> {
-    // Call has to be before 'PyInt' cast, because '__trunc__' can be overriden
-    switch PyInt.callTrunc(object) {
-    case .value(let o):
-      guard let int = o as? PyInt else {
-        return .typeError("__trunc__ returned non-Integral (type \(o.typeName))")
-      }
-      return .value(int.value)
-    case .missingMethod:
-      break // try other possibilities
-    case .error(let e), .notCallable(let e):
-      return .error(e)
+    // '__int__' and '__trunc__' have to be before 'PyInt' cast,
+    // because they can be overriden
+
+    switch PyInt.call__int__(object: object) {
+    case .value(let int): return .value(int.value)
+    case .missingMethod: break // try other
+    case .error(let e): return .error(e)
+    }
+
+    switch PyInt.call__trunc__(object: object) {
+    case .value(let int): return .value(int.value)
+    case .missingMethod: break // try other
+    case .error(let e): return .error(e)
     }
 
     if let int = object as? PyInt {
@@ -868,19 +870,65 @@ public class PyInt: PyObject {
     case .error(let e): return .error(e)
     }
 
-    return .typeError("int() argument must be a string, " +
-                      "a bytes-like object or a number, " +
-                      "not '\(object.typeName)'")
+    let msg = "int() argument must be a string, a bytes-like object " +
+              "or a number, not '\(object.typeName)'"
+    return .typeError(msg)
   }
 
-  private static func callTrunc(
-    _ object: PyObject
-  ) -> PyInstance.CallMethodResult {
-    if let result = Fast.__trunc__(object) {
-      return .value(result)
+  private enum NumberConverterResult {
+    case value(PyInt)
+    case missingMethod
+    case error(PyBaseException)
+  }
+
+  private static func call__int__(object: PyObject) -> NumberConverterResult {
+    if let result = Fast.__int__(object) {
+      switch result {
+      case let .value(int): return .value(int)
+      case let .error(e): return .error(e)
+      }
     }
 
-    return Py.callMethod(object: object, selector: .__trunc__)
+    switch Py.callMethod(object: object, selector: .__int__) {
+    case .value(let o):
+      guard let int = o as? PyInt else {
+        let msg = "__int__ returned non-int (type \(o.typeName)"
+        return .error(Py.newTypeError(msg: msg))
+      }
+
+      return .value(int)
+
+    case .missingMethod:
+      return .missingMethod
+    case .error(let e),
+         .notCallable(let e):
+      return .error(e)
+    }
+  }
+
+  private static func call__trunc__(object: PyObject) -> NumberConverterResult {
+    if let result = Fast.__trunc__(object) {
+      return Self.interpret__trunc__(object: result)
+    }
+
+    switch Py.callMethod(object: object, selector: .__trunc__) {
+    case .value(let o):
+      return Self.interpret__trunc__(object: o)
+    case .missingMethod:
+      return .missingMethod
+    case .error(let e),
+         .notCallable(let e):
+      return .error(e)
+    }
+  }
+
+  private static func interpret__trunc__(object: PyObject) -> NumberConverterResult {
+    if let int = object as? PyInt {
+      return .value(int)
+    }
+
+    let msg = "__trunc__ returned non-Integral (type \(object.typeName))"
+    return .error(Py.newTypeError(msg: msg))
   }
 
   private enum IntFromString {

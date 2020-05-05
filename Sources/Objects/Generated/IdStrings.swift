@@ -82,6 +82,7 @@ public struct IdString {
   public static let __init__ = Self.impl.__init__
   public static let __init_subclass__ = Self.impl.__init_subclass__
   public static let __instancecheck__ = Self.impl.__instancecheck__
+  public static let __int__ = Self.impl.__int__
   public static let __invert__ = Self.impl.__invert__
   public static let __ior__ = Self.impl.__ior__
   public static let __ipow__ = Self.impl.__ipow__
@@ -200,6 +201,7 @@ private struct IdStringImpl {
   fileprivate let __init__ = IdString(value: "__init__")
   fileprivate let __init_subclass__ = IdString(value: "__init_subclass__")
   fileprivate let __instancecheck__ = IdString(value: "__instancecheck__")
+  fileprivate let __int__ = IdString(value: "__int__")
   fileprivate let __invert__ = IdString(value: "__invert__")
   fileprivate let __ior__ = IdString(value: "__ior__")
   fileprivate let __ipow__ = IdString(value: "__ipow__")

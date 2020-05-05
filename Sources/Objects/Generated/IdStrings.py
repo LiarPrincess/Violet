@@ -63,6 +63,7 @@ ids = [
   '__init__',
   '__init_subclass__',
   '__instancecheck__',
+  '__int__',
   '__invert__',
   '__ior__',
   '__ipow__',

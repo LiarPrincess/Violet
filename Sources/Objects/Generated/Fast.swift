@@ -98,6 +98,7 @@ private protocol __imod__Owner { func imod(_ other: PyObject) -> PyResult<PyObje
 private protocol __imul__Owner { func imul(_ other: PyObject) -> PyResult<PyObject> }
 private protocol __index__Owner { func asIndex() -> BigInt }
 private protocol __instancecheck__Owner { func isType(of object: PyObject) -> Bool }
+private protocol __int__Owner { func asInt() -> PyResult<PyInt> }
 private protocol __invert__Owner { func invert() -> PyObject }
 private protocol __ior__Owner { func ior(_ other: PyObject) -> PyResult<PyObject> }
 private protocol __ipow__Owner { func ipow(base: PyObject, mod: PyObject) -> PyResult<PyObject> }
@@ -441,6 +442,15 @@ internal enum Fast {
     if let owner = zelf as? __instancecheck__Owner,
        !hasOverridenBuiltinMethod(object: zelf, selector: .__instancecheck__) {
       return owner.isType(of: object)
+    }
+
+    return nil
+  }
+
+  internal static func __int__(_ zelf: PyObject) -> PyResult<PyInt>? {
+    if let owner = zelf as? __int__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__int__) {
+      return owner.asInt()
     }
 
     return nil
@@ -1020,6 +1030,7 @@ extension PyComplex:
   __repr__Owner,
   __str__Owner,
   __bool__Owner,
+  __int__Owner,
   __float__Owner,
   __getattribute__Owner,
   __pos__Owner,
@@ -1145,6 +1156,7 @@ extension PyFloat:
   __repr__Owner,
   __str__Owner,
   __bool__Owner,
+  __int__Owner,
   __float__Owner,
   __getattribute__Owner,
   __pos__Owner,
@@ -1216,6 +1228,7 @@ extension PyInt:
   __repr__Owner,
   __str__Owner,
   __bool__Owner,
+  __int__Owner,
   __float__Owner,
   __index__Owner,
   __getattribute__Owner,
