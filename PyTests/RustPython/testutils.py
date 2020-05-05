@@ -19,8 +19,9 @@ class AssertRaises:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is None:
+            # VIOLET: We do not have format, but we have (limited) fstrings
             failmsg = self.failmsg or \
-                '{} was not raised'.format(self.expected.__name__)
+                f'{self.expected.__name__} was not raised'
             assert False, failmsg
         if not issubclass(exc_type, self.expected):
             return False

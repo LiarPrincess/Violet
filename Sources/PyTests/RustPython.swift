@@ -14,6 +14,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("3.1.3.2.py"))
 //  runTest(file: dir.appendingPathComponent("3.1.3.4.py"))
 //  runTest(file: dir.appendingPathComponent("3.1.3.5.py"))
+//  runTest(file: dir.appendingPathComponent("bools.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_abs.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_ascii.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_dict.py"))
@@ -71,7 +72,6 @@ internal func runRustPythonTests() {
 
   // Failing tests:
 //  runTest(file: dir.appendingPathComponent("attr.py"))
-//  runTest(file: dir.appendingPathComponent("bools.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_callable.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_format.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_open.py"))

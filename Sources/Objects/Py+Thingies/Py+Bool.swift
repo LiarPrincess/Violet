@@ -60,13 +60,31 @@ extension PyInstance {
     }
 
     switch self.callMethod(object: object, selector: .__len__) {
-    case .value(let result):
-      return self.isTrueBool(result)
+    case .value(let len):
+      return self.interpret__len__asBool(len: len)
     case .missingMethod:
-      return .value(true)
-    case .error(let e), .notCallable(let e):
+      return .value(true) // If we don't have '__bool__' or '__len__' -> True
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
+  }
+
+  private func interpret__len__asBool(len: PyObject) -> PyResult<Bool> {
+    // Do you even 'int', bro?
+    let bigInt: BigInt
+    switch IndexHelper.bigInt(len) {
+    case let .value(b):
+      bigInt = b
+    case let .error(e):
+      return .error(e)
+    }
+
+    guard bigInt.hashValue >= 0 else {
+      return .valueError("__len__() should return >= 0")
+    }
+
+    return .value(bigInt.isTrue)
   }
 
   // MARK: - Is

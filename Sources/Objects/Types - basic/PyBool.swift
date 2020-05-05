@@ -132,6 +132,9 @@ public class PyBool: PyInt {
       return .value(Py.false)
     }
 
-    return Py.isTrue(args[0]).map { $0 as PyInt }
+    // The result is actually 'PyBool', but we are overriding 'PyInt.pyNew'
+    // so we have to have the same result type.
+    let result = Py.isTrue(args[0])
+    return result.map { $0 as PyInt }
   }
 }
