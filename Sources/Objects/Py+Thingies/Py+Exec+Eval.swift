@@ -10,7 +10,7 @@ import VioletCompiler
 private protocol ExecEval {
 
   static var filename: String { get }
-  static var parserMode: ParserMode { get }
+  static var parserMode: Parser.Mode { get }
 
   static func createLocalsNotDictError(type: String) -> String
   static func createGlobalsNotDictError(type: String) -> String
@@ -176,7 +176,7 @@ extension PyInstance {
   private struct Exec: ExecEval {
 
     fileprivate static let filename = "exec"
-    fileprivate static let parserMode = ParserMode.fileInput
+    fileprivate static let parserMode = Parser.Mode.fileInput
 
     fileprivate static func createLocalsNotDictError(type: String) -> String {
       return "exec() locals must be a dict, not \(type)"
@@ -216,7 +216,7 @@ extension PyInstance {
   private struct Eval: ExecEval {
 
     fileprivate static let filename = "eval"
-    fileprivate static let parserMode = ParserMode.eval
+    fileprivate static let parserMode = Parser.Mode.eval
 
     fileprivate static func createLocalsNotDictError(type: String) -> String {
       return "locals must be a mapping"

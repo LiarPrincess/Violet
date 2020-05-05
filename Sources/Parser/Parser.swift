@@ -7,38 +7,54 @@ import VioletLexer
 
 // https://docs.python.org/3/reference/index.html
 
-public enum ParserMode {
-  /// Used for input in interactive mode.
-  case interactive
-  /// Used for all input read from non-interactive files.
-  case fileInput
-  /// Used for `eval()`.
-  case eval
-
-  /// The same as `fileInput`.
-  public static var exec: ParserMode { return .fileInput }
-
-  /// The same as `interactive`.
-  public static var single: ParserMode { return .interactive }
-}
-
-private enum ParserState {
-  case notStarted
-  case finished(AST)
-  case error(Error)
-}
-
 public final class Parser {
+
+  // MARK: - Helper types
+
+  /// What/why are we parsing?
+  ///
+  /// What is the meaning of life? 42?
+  public enum Mode {
+    /// Used for input in interactive mode.
+    case interactive
+    /// Used for all input read from non-interactive files.
+    case fileInput
+    /// Used for `eval()`.
+    case eval
+
+    /// The same as `fileInput`.
+    public static var exec: Mode { return .fileInput }
+
+    /// The same as `interactive`.
+    public static var single: Mode { return .interactive }
+  }
+
+  /// Remember the parser execution result.
+  ///
+  /// If we ever happen to have "great" idea along the lines of:
+  /// "let's just run the parser again, because why not".
+  private enum State {
+    /// We will run te parser.
+    case notStarted
+    /// Everything is ok.
+    case finished(AST)
+    /// Everything is terrible and the word* hates us...
+    ///
+    /// (*) Microsoft Word
+    case error(Error)
+  }
+
+  // MARK: - Properties
 
   /// Token source.
   internal var lexer: LexerAdapter
 
   /// What are we parsing? Expression? Statement?
-  private var mode: ParserMode
+  private var mode: Mode
 
   /// Current parser state.
   /// Used for example for: caching parsing result.
-  private var state = ParserState.notStarted
+  private var state = State.notStarted
 
   /// Helper for creating AST nodes.
   public var builder = ASTBuilder()
@@ -46,9 +62,11 @@ public final class Parser {
   internal weak var delegate: ParserDelegate?
   internal weak var lexerDelegate: LexerDelegate?
 
+  // MARK: - Init
+
   /// - Parameters:
   ///   - lexerDelegate: mostly for `fstrings` when we have to lex expression
-  public init(mode: ParserMode,
+  public init(mode: Parser.Mode,
               tokenSource: LexerType,
               delegate: ParserDelegate?,
               lexerDelegate: LexerDelegate?) {

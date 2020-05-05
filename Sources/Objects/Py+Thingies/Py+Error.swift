@@ -334,7 +334,7 @@ extension PyInstance {
                              line: PyInt,
                              column: PyInt,
                              text: PyString) -> PySyntaxError {
-    let args = self.newTuple([filename, line, column, text])
+    let args = self.newTuple(text)
     let e = PySyntaxError(args: args)
     self.fillSyntaxErrorDict(error: e,
                              filename: filename,

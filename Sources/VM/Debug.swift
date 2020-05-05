@@ -20,9 +20,9 @@ internal enum Debug {
 
   internal static func ast(_ ast: AST) {
     guard isEnabled else { return }
-//    print("=== AST ===")
-//    print(ast)
-//    print()
+    print("=== AST ===")
+    print(ast)
+    print()
   }
 
   internal static func code(_ code: PyCode) {

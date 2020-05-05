@@ -89,7 +89,7 @@ extension PyInstance {
     case let .error(e): return .error(e)
     }
 
-    let mode: ParserMode
+    let mode: Parser.Mode
     switch self.parseMode(arg: modeArg) {
     case let .value(m): mode = m
     case let .error(e): return .error(e)
@@ -111,7 +111,7 @@ extension PyInstance {
 
   /// Compile object at a given `path`.
   public func compile(path: String,
-                      mode: ParserMode,
+                      mode: Parser.Mode,
                       optimize: OptimizationLevel? = nil) -> PyResult<PyCode> {
     let data: Data
     switch self.fileSystem.read(path: path) {
@@ -137,7 +137,7 @@ extension PyInstance {
 
   public func compile(source: String,
                       filename: String,
-                      mode: ParserMode,
+                      mode: Parser.Mode,
                       optimize: OptimizationLevel? = nil) -> PyResult<PyCode> {
     do {
       let delegate = WarningsHandler(filename: filename)
@@ -204,7 +204,7 @@ extension PyInstance {
 
   // MARK: - Mode
 
-  private func parseMode(arg: PyObject) -> PyResult<ParserMode> {
+  private func parseMode(arg: PyObject) -> PyResult<Parser.Mode> {
     guard let string = arg as? PyString else {
       return .typeError("compile(): mode must be an str")
     }
