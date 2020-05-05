@@ -20,24 +20,24 @@ extension Lexer {
       case "B", "b":
         self.advance() // 0
         self.advance() // Bb
-        return try self.integer(start, base: BinaryNumber.self)
+        return try self.integer(start: start, base: BinaryNumber.self)
       case "O", "o":
         self.advance() // 0
         self.advance() // Oo
-        return try self.integer(start, base: OctalNumber.self)
+        return try self.integer(start: start, base: OctalNumber.self)
       case "X", "x":
         self.advance() // 0
         self.advance() // Xx
-        return try self.integer(start, base: HexNumber.self)
+        return try self.integer(start: start, base: HexNumber.self)
       default:
-        return try self.decimalIntegerOrFloat(start)
+        return try self.decimalIntegerOrFloat(start: start)
       }
     }
 
-    return try self.decimalIntegerOrFloat(start)
+    return try self.decimalIntegerOrFloat(start: start)
   }
 
-  private func integer<T: NumberBase>(_ start: SourceLocation,
+  private func integer<T: NumberBase>(start: SourceLocation,
                                       base: T.Type) throws -> Token {
     let startIndex = self.sourceIndex
     repeat {
@@ -59,12 +59,12 @@ extension Lexer {
       }
     } while self.peek == "_"
 
-    let string = self.source[startIndex..<self.sourceIndex]
-    let value = try self.parseInt(string, base: base, start: start)
+    let scalars = self.source[startIndex..<self.sourceIndex]
+    let value = try self.parseInt(scalars: scalars, base: base, start: start)
     return self.token(.int(value), start: start)
   }
 
-  private func decimalIntegerOrFloat(_ start: SourceLocation) throws -> Token {
+  private func decimalIntegerOrFloat(start: SourceLocation) throws -> Token {
     // it can't be nil, otherwise we would never call self.number().
     guard let first = self.peek else { throw self.error(.eof) }
 
@@ -90,22 +90,22 @@ extension Lexer {
       try self.advanceDecimals()
     }
 
-    let string = self.source[startIndex..<self.sourceIndex]
+    let scalars = self.source[startIndex..<self.sourceIndex]
 
     if self.peek == "J" || self.peek == "j" {
       self.advance() // Jj
-      let value = try self.parseDouble(string, start: start)
+      let value = try self.parseDouble(scalars: scalars, start: start)
       return self.token(.imaginary(value), start: start)
     }
 
     let isInteger = self.sourceIndex == integerEnd
     if isInteger {
       let base = DecimalNumber.self
-      let value = try self.parseInt(string, base: base, start: start)
+      let value = try self.parseInt(scalars: scalars, base: base, start: start)
       return self.token(.int(value), start: start)
     }
 
-    let value = try self.parseDouble(string, start: start)
+    let value = try self.parseDouble(scalars: scalars, start: start)
     return self.token(.float(value), start: start)
   }
 
@@ -135,25 +135,28 @@ extension Lexer {
 
   // MARK: - Parse
 
-  private func parseInt<T: NumberBase>(_ scalars: UnicodeScalarView.SubSequence,
-                                       base: T.Type,
-                                       start: SourceLocation) throws -> BigInt {
-
-    let string = self.toNumberString(scalars)
-    guard let value = BigInt(string, radix: base.radix) else {
+  private func parseInt<T: NumberBase>(
+    scalars: UnicodeScalarView.SubSequence,
+    base: T.Type,
+    start: SourceLocation
+  ) throws -> BigInt {
+    guard let value = BigInt(parseUsingPythonRules: scalars,
+                             radix: base.radix) else {
       // After we add proper ints:
       // let kind = LexerErrorKind.unableToParseInteger(base.type, string)
       // throw self.error(kind, location: start)
-      throw self.unimplmented(.unlimitedInteger(valueToParse: string))
+      throw self.unimplmented(
+        .unlimitedInteger(valueToParse: String(scalars)),
+        location: start
+      )
     }
 
     return value
   }
 
-  private func parseDouble(_ scalars: UnicodeScalarView.SubSequence,
+  private func parseDouble(scalars: UnicodeScalarView.SubSequence,
                            start: SourceLocation) throws -> Double {
-
-    let string = self.toNumberString(scalars)
+    let string = self.toNumberString(scalars: scalars)
     guard let value = Double(string) else {
       throw self.error(.unableToParseDecimal(string), location: start)
     }
@@ -161,7 +164,7 @@ extension Lexer {
     return value
   }
 
-  private func toNumberString(_ scalars: UnicodeScalarView.SubSequence) -> String {
+  private func toNumberString(scalars: UnicodeScalarView.SubSequence) -> String {
     // Not really sure if 'scalars.filter' should return
     // 'UnicodeScalarView.SubSequence', it seems weird...
     return String(scalars.filter { $0 != "_" }) // smol me maybe

@@ -35,7 +35,7 @@ public struct BigInt:
   // MARK: - Properties
 
   /// Holds our `BigInt` value.
-  private var value: Storage
+  internal var value: Storage
 
   /// A collection containing the words of this value’s binary representation,
   /// in order from the least significant to most significant.
