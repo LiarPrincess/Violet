@@ -140,8 +140,11 @@ extension Lexer {
     base: T.Type,
     start: SourceLocation
   ) throws -> BigInt {
-    guard let value = BigInt(parseUsingPythonRules: scalars,
-                             radix: base.radix) else {
+
+    guard let value = BigInt(
+      parseUsingPythonRules: self.removeUnderscores(scalars: scalars),
+      radix: base.radix
+    ) else {
       // After we add proper ints:
       // let kind = LexerErrorKind.unableToParseInteger(base.type, string)
       // throw self.error(kind, location: start)
@@ -164,9 +167,16 @@ extension Lexer {
     return value
   }
 
+  private func removeUnderscores(
+    scalars: UnicodeScalarView.SubSequence
+  ) -> UnicodeScalarView.SubSequence {
+    // Not really sure if 'filter' should return 'UnicodeScalarView.SubSequence',
+    // but well...
+    return scalars.filter { $0 != "_" }
+  }
+
   private func toNumberString(scalars: UnicodeScalarView.SubSequence) -> String {
-    // Not really sure if 'scalars.filter' should return
-    // 'UnicodeScalarView.SubSequence', it seems weird...
-    return String(scalars.filter { $0 != "_" }) // smol me maybe
+    let withoutUnderscores = self.removeUnderscores(scalars: scalars)
+    return String(withoutUnderscores) // smol me maybe
   }
 }
