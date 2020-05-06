@@ -22,6 +22,24 @@ extension PyInstance {
     return self.getInterned(value) ?? PyInt(value: value)
   }
 
+  /// PyObject *
+  /// PyLong_FromDouble(double dval)
+  public func newInt(double value: Double) -> PyResult<PyInt> {
+    if value.isInfinite {
+      return .overflowError("cannot convert float infinity to integer")
+    }
+
+    if value.isNaN {
+      return .valueError("cannot convert float NaN to integer")
+    }
+
+    if let int = BigInt(exactly: value) {
+      return .value(Py.newInt(int))
+    }
+
+    return .valueError("cannot convert \(value) to integer")
+  }
+
   // MARK: - Bool
 
   public func newBool(_ value: Bool) -> PyBool {

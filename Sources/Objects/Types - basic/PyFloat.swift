@@ -611,10 +611,17 @@ extension PyFloat {
 
   // MARK: - Round
 
-  /// Round to 'nearest' integer
-  /// Also: 0.5.__round__() == 0
-  private var roundingRule: FloatingPointRoundingRule {
-    return .toNearestOrEven
+  /// See comment in `round(nDigits: PyObject?)`.
+  private var roundDigitMax: Int {
+    let DBL_MANT_DIG = Double.significandBitCount + 1
+    let DBL_MIN_EXP = Double.leastNormalMagnitude.exponent + 1
+    return Int(Double(DBL_MANT_DIG - DBL_MIN_EXP) * 0.301_03)
+  }
+
+  /// See comment in `round(nDigits: PyObject?)`.
+  private var roundDigitMin: Int {
+    let DBL_MAX_EXP = Double.greatestFiniteMagnitude.exponent + 1
+    return -Int((Double(DBL_MAX_EXP + 1) * 0.301_03))
   }
 
   // sourcery: pymethod = __round__
@@ -623,36 +630,123 @@ extension PyFloat {
   /// Return the Integral closest to x, rounding half toward even.
   /// When an argument is passed, work like built-in round(x, ndigits).
   ///
-  /// If `nDigits` is not given or is `None` -> Int.
-  /// Otherwise -> Float.
+  /// If `nDigits` is not given or is `None` returns the nearest integer.
+  /// If `nDigits` is given returns the number rounded off to the `ndigits`.
   internal func round(nDigits: PyObject?) -> PyResult<PyObject> {
-    guard let nDigits = nDigits else {
-      return .value(self.roundToInt())
-    }
+    switch self.parseRoundDigitCount(object: nDigits) {
+    case .none:
+      let rounded = self.roundToEven(value: self.value)
+      let result = Py.newInt(double: rounded)
+      return result.map { $0 as PyObject }
 
-    if nDigits is PyNone {
-      return .value(self.roundToInt())
-    }
+    case .int(let nDigits):
+      // nans and infinities round to themselves
+      if !self.value.isFinite {
+        return .value(self)
+      }
 
-    guard let nDigitsInt = nDigits as? PyInt else {
-      let msg = "'\(nDigits.typeName)' object cannot be interpreted as an integer"
-      return .typeError(msg)
-    }
+      // Dark magic incomming (well above our $0 paygrade):
+      // Deal with extreme values for ndigits.
+      // For ndigits > NDIGITS_MAX, x always rounds to itself.
+      // For ndigits < NDIGITS_MIN, x always rounds to +-0.0.
+      // Here 0.30103 is an upper bound for log10(2).
 
-    switch nDigitsInt.value {
-    case 0:
-      let rounded = self.value.rounded(self.roundingRule)
-      return .value(Py.newFloat(rounded))
-    default:
-      // TODO: Implement float rounding to arbitrary precision
-      let msg = "Float rounding to arbitrary precision was not yet implemented."
-      return .systemError(msg)
+      if nDigits > self.roundDigitMax {
+        // return self
+        return .value(self)
+      }
+
+      if nDigits < self.roundDigitMin {
+        // return 0.0, but with sign of x
+        let zero = Double(signOf: self.value, magnitudeOf: 0.0)
+        return .value(Py.newFloat(zero))
+      }
+
+      return self.round(nDigit: nDigits)
+
+    case .error(let e):
+      return .error(e)
     }
   }
 
-  internal func roundToInt() -> PyInt {
-    let rounded = self.value.rounded(self.roundingRule)
-    return Py.newInt(BigInt(rounded))
+  private enum RoundDigits {
+    case none
+    case int(Int)
+    case error(PyBaseException)
+  }
+
+  private func parseRoundDigitCount(object: PyObject?) -> RoundDigits {
+    guard let object = object else {
+      return .none
+    }
+
+    if object.isNone {
+      return .none
+    }
+
+    switch IndexHelper.int(object) {
+    case let .value(i):
+      return .int(i)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  /// Round to the closest allowed value;
+  /// if two values are equally close, the even one is chosen.
+  ///
+  /// AFAIK it is te same as `value.round(.toNearestOrEven)`.
+  private func roundToEven(value: Double) -> Double {
+    let result = Foundation.round(value)
+
+    if Foundation.fabs(value - result) == 0.5 {
+      // halfway case: round to even
+      return 2.0 * Foundation.round(value / 2.0)
+    }
+
+    return result
+  }
+
+  /// ``` Python
+  /// (123.456).__round__(0) -> 123.0
+  /// (123.456).__round__(1) -> 123.5
+  /// (123.456).__round__(2) -> 123.46
+  /// (123.456).__round__(-1) -> 120.0
+  /// (123.456).__round__(-2) -> 100.0
+  /// ```
+  ///
+  /// static PyObject *
+  /// double_round(double x, int ndigits)
+  ///
+  /// We are implementing version with 'PY_NO_SHORT_FLOAT_REPR'
+  /// even though we actually have 'SHORT_FLOAT_REPR'.
+  private func round(nDigit: Int) -> PyResult<PyObject> {
+    assert(self.roundDigitMin <= nDigit && nDigit <= self.roundDigitMax)
+
+    let scalledToDigits: Double, pow10: Double
+    if nDigit >= 0 {
+       // CPython has special case for overflow, we are too lazy for that
+      pow10 = Foundation.pow(10.0, Double(nDigit))
+      scalledToDigits = self.value * pow10
+
+      // Because 'mul' can overflow
+      guard scalledToDigits.isFinite else {
+        return .value(self)
+      }
+    } else {
+      pow10 = Foundation.pow(10.0, -Double(nDigit))
+      scalledToDigits = self.value / pow10
+    }
+
+    let rounded = self.roundToEven(value: scalledToDigits)
+    let rescalled = nDigit >= 0 ? rounded / pow10 : rounded * pow10
+
+    // if computation resulted in overflow, raise OverflowError
+    guard rescalled.isFinite else {
+      return .overflowError("overflow occurred during round")
+    }
+
+    return .value(Py.newFloat(rescalled))
   }
 
   // MARK: - Trunc
@@ -661,20 +755,7 @@ extension PyFloat {
   internal func trunc() -> PyResult<PyInt> {
     var intPart: Double = 0
     _ = Foundation.modf(self.value, &intPart)
-
-    if intPart.isInfinite {
-      return .overflowError("cannot convert float infinity to integer")
-    }
-
-    if intPart.isNaN {
-      return .valueError("cannot convert float NaN to integer")
-    }
-
-    if let int = BigInt(exactly: intPart) {
-      return .value(Py.newInt(int))
-    }
-
-    return .valueError("cannot convert \(self.value) to integer")
+    return Py.newInt(double: intPart)
   }
 
   // MARK: - Python new
