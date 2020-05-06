@@ -658,15 +658,23 @@ extension PyFloat {
   // MARK: - Trunc
 
   // sourcery: pymethod = __trunc__
-  internal func trunc() -> PyObject {
-    let (intPart, _) = Foundation.modf(self.value)
+  internal func trunc() -> PyResult<PyInt> {
+    var intPart: Double = 0
+    _ = Foundation.modf(self.value, &intPart)
 
-    if let int = BigInt(exactly: intPart) {
-      return Py.newInt(int)
+    if intPart.isInfinite {
+      return .overflowError("cannot convert float infinity to integer")
     }
 
-    let int = BigInt(self.value)
-    return Py.newInt(int)
+    if intPart.isNaN {
+      return .valueError("cannot convert float NaN to integer")
+    }
+
+    if let int = BigInt(exactly: intPart) {
+      return .value(Py.newInt(int))
+    }
+
+    return .valueError("cannot convert \(self.value) to integer")
   }
 
   // MARK: - Python new

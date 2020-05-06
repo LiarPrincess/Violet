@@ -145,7 +145,7 @@ private protocol __str__Owner { func str() -> PyResult<String> }
 private protocol __sub__Owner { func sub(_ other: PyObject) -> PyResult<PyObject> }
 private protocol __subclasscheck__Owner { func isSubtype(of object: PyObject) -> PyResult<Bool> }
 private protocol __truediv__Owner { func truediv(_ other: PyObject) -> PyResult<PyObject> }
-private protocol __trunc__Owner { func trunc() -> PyObject }
+private protocol __trunc__Owner { func trunc() -> PyResult<PyInt> }
 private protocol __xor__Owner { func xor(_ other: PyObject) -> PyResult<PyObject> }
 private protocol keysOwner { func keys() -> PyObject }
 
@@ -870,7 +870,7 @@ internal enum Fast {
     return nil
   }
 
-  internal static func __trunc__(_ zelf: PyObject) -> PyObject? {
+  internal static func __trunc__(_ zelf: PyObject) -> PyResult<PyInt>? {
     if let owner = zelf as? __trunc__Owner,
        !hasOverridenBuiltinMethod(object: zelf, selector: .__trunc__) {
       return owner.trunc()

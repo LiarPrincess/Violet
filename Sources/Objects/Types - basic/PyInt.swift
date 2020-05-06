@@ -227,8 +227,8 @@ public class PyInt: PyObject {
   internal static let truncDoc = "Truncating an Integral returns itself."
 
   // sourcery: pymethod = __trunc__, , doc = truncDoc
-  public func trunc() -> PyObject {
-    return self
+  public func trunc() -> PyResult<PyInt> {
+    return .value(self)
   }
 
   // MARK: - Floor
@@ -997,27 +997,27 @@ public class PyInt: PyObject {
 
   private static func call__trunc__(object: PyObject) -> NumberConverterResult {
     if let result = Fast.__trunc__(object) {
-      return Self.interpret__trunc__(object: result)
+      switch result {
+      case let .value(int): return .value(int)
+      case let .error(e): return .error(e)
+      }
     }
 
     switch Py.callMethod(object: object, selector: .__trunc__) {
     case .value(let o):
-      return Self.interpret__trunc__(object: o)
+      if let int = o as? PyInt {
+        return .value(int)
+      }
+
+      let msg = "__trunc__ returned non-Integral (type \(o.typeName))"
+      return .error(Py.newTypeError(msg: msg))
+
     case .missingMethod:
       return .missingMethod
     case .error(let e),
          .notCallable(let e):
       return .error(e)
     }
-  }
-
-  private static func interpret__trunc__(object: PyObject) -> NumberConverterResult {
-    if let int = object as? PyInt {
-      return .value(int)
-    }
-
-    let msg = "__trunc__ returned non-Integral (type \(object.typeName))"
-    return .error(Py.newTypeError(msg: msg))
   }
 
   private enum IntFromString {
