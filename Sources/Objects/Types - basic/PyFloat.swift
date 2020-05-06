@@ -374,7 +374,14 @@ extension PyFloat {
 
   // MARK: - Imaginary
 
-  // sourcery: pymethod = conjugate
+  internal static let conjugateDoc = """
+    conjugate($self, /)
+    --
+
+    Return self, the complex conjugate of any float.
+    """
+
+  // sourcery: pymethod = conjugate, doc = conjugateDoc
   /// float.conjugate
   /// Return self, the complex conjugate of any float.
   public func conjugate() -> PyObject {
@@ -435,7 +442,26 @@ extension PyFloat {
 
   // MARK: - Integer ratio
 
-  // sourcery: pymethod = as_integer_ratio
+  internal static let asIntegerRatioDoc = """
+    as_integer_ratio($self, /)
+    --
+
+    Return integer ratio.
+
+    Return a pair of integers, whose ratio is exactly equal to the original float
+    and with a positive denominator.
+
+    Raise OverflowError on infinities and a ValueError on NaNs.
+
+    >>> (10.0).as_integer_ratio()
+    (10, 1)
+    >>> (0.0).as_integer_ratio()
+    (0, 1)
+    >>> (-.25).as_integer_ratio()
+    (-1, 4)
+    """
+
+  // sourcery: pymethod = as_integer_ratio, doc = asIntegerRatioDoc
   public func asIntegerRatio() -> PyResult<PyObject> {
     if self.value.isInfinite {
       return .overflowError("cannot convert Infinity to integer ratio")
@@ -710,7 +736,16 @@ extension PyFloat {
     return -Int((Double(DBL_MAX_EXP + 1) * 0.301_03))
   }
 
-  // sourcery: pymethod = __round__
+  internal static let roundDoc = """
+    __round__($self, ndigits=None, /)
+    --
+
+    Return the Integral closest to x, rounding half toward even.
+
+    When an argument is passed, work like built-in round(x, ndigits).
+    """
+
+  // sourcery: pymethod = __round__, doc = roundDoc
   /// Round a Python float v to the closest multiple of 10**-ndigits
   ///
   /// Return the Integral closest to x, rounding half toward even.
@@ -835,7 +870,14 @@ extension PyFloat {
 
   // MARK: - Trunc
 
-  // sourcery: pymethod = __trunc__
+  internal static let truncDoc = """
+    __trunc__($self, /)
+    --
+
+    Return the Integral closest to x between 0 and x.
+    """
+
+  // sourcery: pymethod = __trunc__, doc = truncDoc
   public func trunc() -> PyResult<PyInt> {
     var intPart: Double = 0
     _ = Foundation.modf(self.value, &intPart)
@@ -909,9 +951,31 @@ extension PyFloat {
 
     return .value(result)
   }
+
+  // MARK: - From hex
+
+  internal static let fromHexDoc = """
+    fromhex($type, string, /)
+    --
+
+    Create a floating-point number from a hexadecimal string.
+
+    >>> float.fromhex(\'0x1.ffffp10\')
+    2047.984375
+    >>> float.fromhex(\'-0x1p-1074\')
+    -5e-324
+    """
+
   // MARK: - Python new
 
-  // sourcery: pystaticmethod = __new__
+  internal static let newDoc = """
+    float(x=0, /)
+    --
+
+    Convert a string or number to a floating point number, if possible.
+    """
+
+  // sourcery: pystaticmethod = __new__, doc = newDoc
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDict?) -> PyResult<PyFloat> {
