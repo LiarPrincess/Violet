@@ -104,7 +104,8 @@ public class PyModule: PyObject {
       }
     }
 
-    let msg = "module \(self.name) has no attribute '\(name.reprRaw())'"
+    let nameQuoted = name.reprRaw().quoted
+    let msg = "module \(self.name) has no attribute '\(nameQuoted)'"
     return .attributeError(msg)
   }
 

@@ -83,8 +83,7 @@ public class PyNone: PyObject {
       return .value(p)
     }
 
-    let msg = "\(self.typeName) object has no attribute '\(name.reprRaw())'"
-    return .attributeError(msg)
+    return .error(Py.newAttributeError(object: self, hasNoAttribute: name))
   }
 
   private func bindToSelf(object: PyObject) -> PyResult<PyObject> {

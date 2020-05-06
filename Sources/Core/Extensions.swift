@@ -284,6 +284,43 @@ extension String {
     self.init(view)
   }
 
+  private enum Quote: Character {
+    case single = "'"
+    case double = "\""
+
+    fileprivate var opposite: Quote {
+      switch self {
+      case .single: return .double
+      case .double: return .single
+      }
+    }
+  }
+
+  /// Add quotes if needed.
+  public var quoted: String {
+    // This will also check for empty
+    guard let first = self.first, let last = self.last else {
+      return "''"
+    }
+
+    var firstAsQuote: Quote?
+    switch first {
+    case "'": firstAsQuote = .single
+    case "\"": firstAsQuote = .double
+    default: break
+    }
+
+    // Check if we already have quotes
+    if let f = firstAsQuote, f.rawValue == last {
+      return self
+    }
+
+    // We need to add quotes (but not the same as existing)
+    // If we do not have quotes then single quote is preferred
+    let quote = firstAsQuote?.opposite ?? .single
+    return "\(quote)\(self)\(quote)"
+  }
+
   public mutating func append(_ scalar: UnicodeScalar) {
     self.unicodeScalars.append(scalar)
   }

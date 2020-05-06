@@ -123,8 +123,7 @@ extension PyInstance {
     }
 
     guard let textFile = file as? PyTextFile else {
-      let msg = "'\(file.typeName)' object has no attribute 'write'"
-      return .attributeError(msg)
+      return .error(Py.newAttributeError(object: file, hasNoAttribute: "write"))
     }
 
     return .value(textFile)

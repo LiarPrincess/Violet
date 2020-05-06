@@ -528,7 +528,8 @@ public class PyType: PyObject {
       return .value(a)
     }
 
-    let msg = "type object '\(self.typeName)' has no attribute '\(name.reprRaw())'"
+    let nameQuoted = name.reprRaw().quoted
+    let msg = "type object '\(self.typeName)' has no attribute \(nameQuoted)"
     return .attributeError(msg)
   }
 
