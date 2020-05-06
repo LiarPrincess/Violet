@@ -284,9 +284,13 @@ extension String {
     self.init(view)
   }
 
-  private enum Quote: Character {
+  private enum Quote: Character, CustomStringConvertible {
     case single = "'"
     case double = "\""
+
+    fileprivate var description: String {
+      return String(self.rawValue)
+    }
 
     fileprivate var opposite: Quote {
       switch self {

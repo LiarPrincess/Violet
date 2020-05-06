@@ -38,14 +38,14 @@ import VioletCore
 /// If we start with uppercase then everyone will be like:
 /// `wtf? uppercase? what is this? <surprised Pikachu face>`.
 internal struct Frexp {
-  internal let exponent: Int32
+  internal let exponent: Int
   /// Negative if input number was negative!
   internal let mantissa: Double
 
   internal init(value: Double) {
     var e = Int32(0)
     self.mantissa = Foundation.frexp(value, &e) // non-tuple version
-    self.exponent = e
+    self.exponent = Int(e)
   }
 }
 
@@ -707,7 +707,6 @@ extension PyFloat {
 
   /// See comment in `round(nDigits: PyObject?)`.
   private var roundDigitCountMin: Int {
-    let DBL_MAX_EXP = Double.greatestFiniteMagnitude.exponent + 1
     return -Int((Double(DBL_MAX_EXP + 1) * 0.301_03))
   }
 
@@ -843,6 +842,73 @@ extension PyFloat {
     return Py.newInt(double: intPart)
   }
 
+  // MARK: - Hex
+
+  internal static let hexDoc = """
+    hex($self, /)
+    --
+
+    Return a hexadecimal representation of a floating-point number.
+
+    >>> (-0.1).hex()
+    \'-0x1.999999999999ap-4\'
+    >>> 3.14159.hex()
+    \'0x1.921f9f01b866ep+1\'
+    """
+
+  /// `#define TOHEX_NBITS DBL_MANT_DIG + 3 - (DBL_MANT_DIG+2)%4`
+  private var hexBitCount: Int {
+    return DBL_MANT_DIG + 3 - (DBL_MANT_DIG + 2) % 4
+  }
+
+  // sourcery: pymethod = hex, doc = hexDoc
+  public func hex() -> PyResult<String> {
+    if self.value.isNaN || self.value.isInfinite {
+      return self.repr()
+    }
+
+    if self.value.isZero {
+      switch self.value.sign {
+      case .plus: return .value("0x0.0p+0")
+      case .minus: return .value("-0x0.0p+0")
+      }
+    }
+
+    let sign = self.value < 0 ? "-" : ""
+    var result = "\(sign)0x"
+
+    let frexp = Frexp(value: Swift.abs(self.value))
+    var exponent = frexp.exponent
+    var mantissa = frexp.mantissa
+
+    let shift = 1 - Swift.max(DBL_MIN_EXP - exponent, 0)
+    mantissa = Foundation.scalbn(mantissa, shift) // scalbn(x, exp) = x * (2 ** exp)
+    exponent -= shift
+
+    // mantissa
+    func appendMantisaDigit() {
+      let asInt = Int(mantissa)
+      assert(0 <= asInt && asInt < 16)
+      result.append(String(asInt, radix: 16, uppercase: false))
+      mantissa -= Double(asInt)
+    }
+
+    appendMantisaDigit()
+    result.append(".")
+
+    for _ in 0..<((self.hexBitCount - 1) / 4) {
+      mantissa *= 16.0
+      appendMantisaDigit()
+    }
+    result.append("p")
+
+    // exponent
+    let exponentAbs = Swift.abs(exponent)
+    result.append(exponent < 0 ? "-" : "+")
+    result.append(String(exponentAbs, radix: 16, uppercase: false))
+
+    return .value(result)
+  }
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__

@@ -121,11 +121,11 @@ internal struct Hasher {
     }
 
     // adjust for the exponent; first reduce it modulo BITS
-    let bits32 = Int32(Hasher.bits)
+    let bits = Hasher.bits
     exponent = exponent >= 0 ?
-      exponent % bits32 :
-      bits32 - 1 - ((-1 - exponent) % bits32)
-    result = ((result << exponent) & Hasher.modulus) | result >> (bits32 - exponent)
+      exponent % bits :
+      bits - 1 - ((-1 - exponent) % bits)
+    result = ((result << exponent) & Hasher.modulus) | result >> (bits - exponent)
 
     return sign * result
   }
