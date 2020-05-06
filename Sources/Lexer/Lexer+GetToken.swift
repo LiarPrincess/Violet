@@ -22,7 +22,7 @@ extension Lexer {
 
       guard let peek = self.peek else {
         return self.getEOFDedentToken() ??
-          self.token(.eof, start: start, end: start.next)
+          self.token(.eof, start: start, end: start.nextColumn)
       }
 
       switch peek {
@@ -36,7 +36,7 @@ extension Lexer {
           self.isAtBeginOfLine = true
 
           // 'self.advance' moved us to new line, so we can't use current location
-          return self.token(.newLine, start: start, end: start.next)
+          return self.token(.newLine, start: start, end: start.nextColumn)
         }
         // just consume it, nothing else
 

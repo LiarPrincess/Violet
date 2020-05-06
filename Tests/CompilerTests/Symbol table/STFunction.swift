@@ -504,8 +504,8 @@ class STFunction: SymbolTableTestCase {
   // MARK: - Error - Duplicate argument
 
   func test_duplicateArgument_args_args_throws() {
-    let arg0 = self.arg(name: "elsa", annotation: nil)
-    let arg1 = self.arg(name: "elsa", annotation: nil, start: loc1)
+    let arg0 = self.arg(name: "elsa", annotation: nil, start: loc1)
+    let arg1 = self.arg(name: "elsa", annotation: nil, start: loc2)
 
     let def = self.functionDefStmt(
       name: "let_it_go",
@@ -517,13 +517,13 @@ class STFunction: SymbolTableTestCase {
 
     if let error = self.error(forStmt: def) {
       XCTAssertEqual(error.kind, .duplicateArgument("elsa"))
-      XCTAssertEqual(error.location, loc1)
+      XCTAssertEqual(error.location, loc2)
     }
   }
 
   func test_duplicateArgument_args_vararg_throws() {
-    let arg0 = self.arg(name: "elsa", annotation: nil)
-    let arg1 = self.arg(name: "elsa", annotation: nil, start: loc1)
+    let arg0 = self.arg(name: "elsa", annotation: nil, start: loc1)
+    let arg1 = self.arg(name: "elsa", annotation: nil, start: loc2)
 
     let def = self.functionDefStmt(
       name: "let_it_go",
@@ -536,13 +536,13 @@ class STFunction: SymbolTableTestCase {
 
     if let error = self.error(forStmt: def) {
       XCTAssertEqual(error.kind, .duplicateArgument("elsa"))
-      XCTAssertEqual(error.location, loc1)
+      XCTAssertEqual(error.location, loc2)
     }
   }
 
   func test_duplicateArgument_vararg_kwOnlyArgs_throws() {
-    let arg0 = self.arg(name: "elsa", annotation: nil)
-    let arg1 = self.arg(name: "elsa", annotation: nil, start: loc1)
+    let arg0 = self.arg(name: "elsa", annotation: nil, start: loc1)
+    let arg1 = self.arg(name: "elsa", annotation: nil, start: loc2)
 
     let def = self.functionDefStmt(
       name: "let_it_go",
@@ -555,13 +555,13 @@ class STFunction: SymbolTableTestCase {
 
     if let error = self.error(forStmt: def) {
       XCTAssertEqual(error.kind, .duplicateArgument("elsa"))
-      XCTAssertEqual(error.location, loc1)
+      XCTAssertEqual(error.location, loc2)
     }
   }
 
   func test_duplicateArgument_kwOnlyArgs_kwarg_throws() {
-    let arg0 = self.arg(name: "elsa", annotation: nil)
-    let arg1 = self.arg(name: "elsa", annotation: nil, start: loc1)
+    let arg0 = self.arg(name: "elsa", annotation: nil, start: loc1)
+    let arg1 = self.arg(name: "elsa", annotation: nil, start: loc2)
 
     let def = self.functionDefStmt(
       name: "let_it_go",
@@ -574,7 +574,7 @@ class STFunction: SymbolTableTestCase {
 
     if let error = self.error(forStmt: def) {
       XCTAssertEqual(error.kind, .duplicateArgument("elsa"))
-      XCTAssertEqual(error.location, loc1)
+      XCTAssertEqual(error.location, loc2)
     }
   }
 

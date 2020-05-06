@@ -151,7 +151,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     }
 
     let symbolTableBuilder = SymbolTableBuilder(delegate: self.delegate)
-    self.symbolTable = try symbolTableBuilder.visit(self.ast)
+    self.symbolTable = try symbolTableBuilder.visit(ast: self.ast)
 
     self.future = try FutureFeatures.parse(ast: self.ast)
 

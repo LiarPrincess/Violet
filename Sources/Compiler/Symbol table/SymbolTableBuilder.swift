@@ -13,8 +13,8 @@ public final class SymbolTableBuilder {
     self.impl = SymbolTableBuilderImpl(delegate: delegate)
   }
 
-  public func visit(_ ast: AST) throws -> SymbolTable {
-    return try self.impl.visit(ast)
+  public func visit(ast: AST) throws -> SymbolTable {
+    return try self.impl.visit(ast: ast)
   }
 }
 
@@ -61,7 +61,7 @@ internal final class SymbolTableBuilderImpl:
   // MARK: - Pass
 
   /// PySymtable_BuildObject(mod_ty mod, ...)
-  internal func visit(_ ast: AST) throws -> SymbolTable {
+  internal func visit(ast: AST) throws -> SymbolTable {
     self.enterScope(name: SymbolScopeNames.top, type: .module, node: ast)
 
     try ast.accept(self)
@@ -125,7 +125,7 @@ internal final class SymbolTableBuilderImpl:
   /// ```
   /// In general variables with '__' prefix should only be used if we
   /// really need mangling to avoid potential name clash.
-  internal func addSymbol(_ name: String,
+  internal func addSymbol(name: String,
                           flags: SymbolFlags,
                           location: SourceLocation) throws {
     let mangled = MangledName(className: self.className, name: name)
@@ -135,7 +135,8 @@ internal final class SymbolTableBuilderImpl:
 
     if let current = self.currentScope.symbols[mangled] {
       if flags.contains(.defParam) && current.flags.contains(.defParam) {
-        throw self.error(.duplicateArgument(name), location: location)
+        let loc = Swift.max(current.location, location)
+        throw self.error(.duplicateArgument(name), location: loc)
       }
 
       firstLocation = current.location
@@ -161,14 +162,14 @@ internal final class SymbolTableBuilderImpl:
   /// Lookup mangled name in current scope.
   ///
   /// symtable_lookup(struct symtable *st, PyObject *name)
-  internal func lookupMangled(_ name: String) -> SymbolInfo? {
+  internal func lookupMangled(name: String) -> SymbolInfo? {
     let mangled = MangledName(className: self.className, name: name)
     return self.currentScope.symbols[mangled]
   }
 
   // MARK: - Visit arguments
 
-  internal func visitDefaults(_ args: Arguments) throws {
+  internal func visitDefaults(args: Arguments) throws {
     try self.visit(args.defaults)
     try self.visit(args.kwOnlyDefaults)
   }
@@ -180,30 +181,30 @@ internal final class SymbolTableBuilderImpl:
     // Args -> KwOnlyArgs -> Vararg -> Kwarg
 
     for a in args.args {
-      try self.addSymbol(a.name, flags: .defParam, location: a.start)
+      try self.addSymbol(name: a.name, flags: .defParam, location: a.start)
     }
 
     for a in args.kwOnlyArgs {
-      try self.addSymbol(a.name, flags: .defParam, location: a.start)
+      try self.addSymbol(name: a.name, flags: .defParam, location: a.start)
     }
 
     switch args.vararg {
     case let .named(a):
-      try self.addSymbol(a.name, flags: .defParam, location: a.start)
+      try self.addSymbol(name: a.name, flags: .defParam, location: a.start)
       self.currentScope.hasVarargs = true
     case .none, .unnamed:
       break
     }
 
     if let a = args.kwarg {
-      try self.addSymbol(a.name, flags: .defParam, location: a.start)
+      try self.addSymbol(name: a.name, flags: .defParam, location: a.start)
       self.currentScope.hasVarKeywords = true
     }
   }
 
   /// symtable_visit_argannotations(struct symtable *st, asdl_seq *args)
   /// symtable_visit_annotations(struct symtable *st, stmt_ty s, ...)
-  internal func visitAnnotations(_ args: Arguments) throws {
+  internal func visitAnnotations(args: Arguments) throws {
     for a in args.args {
       try self.visit(a.annotation)
     }
@@ -225,7 +226,7 @@ internal final class SymbolTableBuilderImpl:
   // MARK: - Visit keyword
 
   /// symtable_visit_keyword(struct symtable *st, keyword_ty k)
-  internal func visitKeywords(_ keywords: [KeywordArgument]) throws {
+  internal func visitKeywords(keywords: [KeywordArgument]) throws {
     for k in keywords {
       try self.visit(k.value)
     }

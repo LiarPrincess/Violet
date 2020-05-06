@@ -45,12 +45,12 @@ extension SymbolTableBuilderImpl {
       SymbolFlags.defLocal :
       SymbolFlags.use
 
-    try self.addSymbol(node.value, flags: flags, location: node.start)
+    try self.addSymbol(name: node.value, flags: flags, location: node.start)
 
     let isSuper = self.currentScope.type == .function && node.value == "super"
     if node.context == .load && isSuper {
       let name = SpecialIdentifiers.__class__
-      try self.addSymbol(name, flags: .use, location: node.start)
+      try self.addSymbol(name: name, flags: .use, location: node.start)
     }
   }
 
@@ -231,7 +231,7 @@ extension SymbolTableBuilderImpl {
   /// symtable_implicit_arg(struct symtable *st, int pos)
   private func implicitArg(pos: Int, location: SourceLocation) throws {
     let id = ".\(pos)"
-    try self.addSymbol(id, flags: .defParam, location: location)
+    try self.addSymbol(name: id, flags: .defParam, location: location)
   }
 
   /// symtable_visit_comprehension(struct symtable *st, comprehension_ty lc)
@@ -267,7 +267,7 @@ extension SymbolTableBuilderImpl {
   // MARK: - Lambda
 
   internal func visit(_ node: LambdaExpr) throws {
-    try self.visitDefaults(node.args)
+    try self.visitDefaults(args: node.args)
 
     self.enterScope(name: SymbolScopeNames.lambda,
                     type: .function,
@@ -282,7 +282,7 @@ extension SymbolTableBuilderImpl {
   internal func visit(_ node: CallExpr) throws {
     try self.visit(node.function)
     try self.visit(node.args)
-    try self.visitKeywords(node.keywords)
+    try self.visitKeywords(keywords: node.keywords)
   }
 
   // MARK: - If

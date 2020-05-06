@@ -1,18 +1,22 @@
 public typealias SourceLine = UInt16
 public typealias SourceColumn = UInt16
 
-public struct SourceLocation: Equatable {
+public struct SourceLocation: Equatable, Comparable, CustomStringConvertible {
 
   /// Initial location.
   public static var start: SourceLocation {
     return SourceLocation(line: 1, column: 0)
   }
 
-  /// Line in file starting from 1.
+  /// Line in file, starting from 1.
   public private(set) var line: SourceLine
 
-  /// Column in line starting from 0.
+  /// Column in line, starting from 0.
   public private(set) var column: SourceColumn
+
+  public var description: String {
+    return "\(self.line):\(self.column)"
+  }
 
   public init(line: SourceLine, column: SourceColumn) {
     self.line = line
@@ -28,15 +32,21 @@ public struct SourceLocation: Equatable {
     self.column += 1
   }
 
-  public var next: SourceLocation {
-    let line = self.line
-    let column = self.column + 1
-    return SourceLocation(line: line, column: column)
+  public var nextColumn: SourceLocation {
+    let nextColumn = self.column + 1
+    return SourceLocation(line: self.line, column: nextColumn)
   }
-}
 
-extension SourceLocation: CustomStringConvertible {
-  public var description: String {
-    return "\(self.line):\(self.column)"
+  public static func < (lhs: SourceLocation, rhs: SourceLocation) -> Bool {
+    if lhs.line < rhs.line {
+      return true
+    }
+
+    if lhs.line == rhs.line {
+      return lhs.column < rhs.column
+    }
+
+    assert(lhs.line > rhs.line) // Well… math is hard and we are not good at it
+    return false
   }
 }

@@ -59,9 +59,9 @@ extension SymbolTableBuilderImpl {
                                 node stmt: Statement) throws {
     // swiftlint:enable function_parameter_count
 
-    try self.addSymbol(name, flags: .defLocal, location: stmt.start)
-    try self.visitDefaults(args)
-    try self.visitAnnotations(args)
+    try self.addSymbol(name: name, flags: .defLocal, location: stmt.start)
+    try self.visitDefaults(args: args)
+    try self.visitAnnotations(args: args)
     try self.visit(returns) // in CPython it is a part of visitAnnotations
     try self.visit(decorators)
 
@@ -79,9 +79,9 @@ extension SymbolTableBuilderImpl {
   // MARK: - Class
 
   internal func visit(_ node: ClassDefStmt) throws {
-    try self.addSymbol(node.name, flags: .defLocal, location: node.start)
+    try self.addSymbol(name: node.name, flags: .defLocal, location: node.start)
     try self.visit(node.bases)
-    try self.visitKeywords(node.keywords)
+    try self.visitKeywords(keywords: node.keywords)
     try self.visit(node.decorators)
 
     let previousClassName = self.className
@@ -123,7 +123,7 @@ extension SymbolTableBuilderImpl {
   internal func visit(_ node: AnnAssignStmt) throws {
     if let identifier = node.target as? IdentifierExpr {
       let name = identifier.value
-      let current = self.lookupMangled(name)
+      let current = self.lookupMangled(name: name)
 
       // This throws (the same for nonlocal):
       //   global rapunzel
@@ -146,7 +146,7 @@ extension SymbolTableBuilderImpl {
       // '(rapunzel): Int = 5' is tuple -> not simple!
       if node.isSimple {
         let flags: SymbolFlags = [.defLocal, .annotated]
-        try self.addSymbol(name, flags: flags, location: node.target.start)
+        try self.addSymbol(name: name, flags: flags, location: node.target.start)
       } else if node.value != nil {
         // different than CPython, but has the same effect:
         try self.visit(node.target)
@@ -247,7 +247,7 @@ extension SymbolTableBuilderImpl {
       if case let .typed(type: type, asName: asName) = h.kind {
         try self.visit(type)
         if let n = asName {
-          try self.addSymbol(n, flags: .defLocal, location: h.start)
+          try self.addSymbol(name: n, flags: .defLocal, location: h.start)
         }
       }
       try self.visit(h.body)
@@ -294,7 +294,7 @@ extension SymbolTableBuilderImpl {
         name = String(name[name.startIndex..<dotIndex])
       }
 
-      try self.addSymbol(name, flags: .defImport, location: alias.start)
+      try self.addSymbol(name: name, flags: .defImport, location: alias.start)
     }
   }
 
@@ -302,7 +302,7 @@ extension SymbolTableBuilderImpl {
 
   internal func visit(_ node: GlobalStmt) throws {
     for name in node.identifiers {
-      if let c = self.lookupMangled(name) {
+      if let c = self.lookupMangled(name: name) {
         let errorLocation = node.start
 
         if c.flags.contains(.defParam) {
@@ -322,7 +322,7 @@ extension SymbolTableBuilderImpl {
         }
       }
 
-      try self.addSymbol(name, flags: .defGlobal, location: node.start)
+      try self.addSymbol(name: name, flags: .defGlobal, location: node.start)
     }
   }
 
@@ -330,7 +330,7 @@ extension SymbolTableBuilderImpl {
 
   internal func visit(_ node: NonlocalStmt) throws {
     for name in node.identifiers {
-      if let c = self.lookupMangled(name) {
+      if let c = self.lookupMangled(name: name) {
         let errorLocation = node.start
 
         if c.flags.contains(.defParam) {
@@ -350,7 +350,7 @@ extension SymbolTableBuilderImpl {
         }
       }
 
-      try self.addSymbol(name, flags: .defNonlocal, location: node.start)
+      try self.addSymbol(name: name, flags: .defNonlocal, location: node.start)
     }
   }
 

@@ -39,7 +39,7 @@ internal class SymbolTableTestCase: XCTestCase, ASTCreator {
       try validator.validate(ast: ast)
 
       let builer = SymbolTableBuilder(delegate: nil)
-      return try builer.visit(ast)
+      return try builer.visit(ast: ast)
     } catch {
       XCTAssert(false, "\(error)", file: file, line: line)
       return nil
@@ -74,7 +74,7 @@ internal class SymbolTableTestCase: XCTestCase, ASTCreator {
                      line: UInt = #line) -> CompilerError? {
     do {
       let builer = SymbolTableBuilder(delegate: nil)
-      let result = try builer.visit(ast)
+      let result = try builer.visit(ast: ast)
       XCTAssert(false, "Successful build: \(result)", file: file, line: line)
       return nil
     } catch let error as CompilerError {
