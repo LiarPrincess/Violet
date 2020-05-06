@@ -859,18 +859,12 @@ extension PyFloat {
       return .notString
     }
 
-    guard let value = PyFloat.parseDouble(string: string) else {
+    guard let value = Double(parseUsingPythonRules: string) else {
       let msg = "float() '\(string)' cannot be interpreted as float"
       return .error(Py.newValueError(msg: msg))
     }
 
     return .value(value)
-  }
-
-  private static func parseDouble(string: String) -> Double? {
-    var input = string
-    input.removeAll { $0.isWhitespace || $0 == "_" }
-    return Double(input)
   }
 
   /// PyObject *

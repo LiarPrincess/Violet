@@ -159,8 +159,10 @@ extension Lexer {
 
   private func parseDouble(scalars: UnicodeScalarView.SubSequence,
                            start: SourceLocation) throws -> Double {
-    let string = self.toNumberString(scalars: scalars)
-    guard let value = Double(string) else {
+    guard let value = Double(
+      parseUsingPythonRules: self.removeUnderscores(scalars: scalars)
+    ) else {
+      let string = String(scalars)
       throw self.error(.unableToParseDecimal(string), location: start)
     }
 
@@ -170,13 +172,7 @@ extension Lexer {
   private func removeUnderscores(
     scalars: UnicodeScalarView.SubSequence
   ) -> UnicodeScalarView.SubSequence {
-    // Not really sure if 'filter' should return 'UnicodeScalarView.SubSequence',
-    // but well...
+    // Not really sure if 'filter' should return 'UnicodeScalarView.SubSequence'
     return scalars.filter { $0 != "_" }
-  }
-
-  private func toNumberString(scalars: UnicodeScalarView.SubSequence) -> String {
-    let withoutUnderscores = self.removeUnderscores(scalars: scalars)
-    return String(withoutUnderscores) // smol me maybe
   }
 }
