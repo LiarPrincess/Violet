@@ -20,7 +20,7 @@ extension Common {
     return self.createParser(mode: .fileInput, tokens: tokens)
   }
 
-  private func createParser(mode: ParserMode, tokens: [Token]) -> Parser {
+  private func createParser(mode: Parser.Mode, tokens: [Token]) -> Parser {
     let lexer = FakeLexer(tokens: tokens)
     return Parser(mode: mode,
                   tokenSource: lexer,

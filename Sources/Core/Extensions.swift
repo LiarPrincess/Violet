@@ -1,5 +1,7 @@
 import Foundation
 
+// swiftlint:disable file_length
+
 // MARK: - Array
 
 extension Array {
@@ -32,6 +34,37 @@ extension Collection {
     }
 
     return result
+  }
+
+  /// Returns a subsequence containing the given number of initial elements.
+  ///
+  /// If the number of elements to take exceeds the number of elements in
+  /// the collection, the result is the whole collection.
+  ///
+  ///     let numbers = [1, 2, 3, 4, 5]
+  ///     print(numbers.takeFirst(2))
+  ///     // Prints "[1, 2]"
+  ///     print(numbers.takeFirst(10))
+  ///     // Prints "[1, 2, 3, 4, 5]"
+  ///
+  /// - Parameter k: The number of elements to take from the beginning of
+  ///   the collection. `k` must be greater than or equal to zero.
+  /// - Returns: A subsequence ending after the specified number of
+  ///   elements.
+  ///
+  /// - Complexity: O(1) if the collection conforms to `RandomAccessCollection`;
+  ///   otherwise, O(*k*), where *k* is the number of elements to take.
+  public func takeFirst(_ k: Int = 1) -> SubSequence {
+    precondition(
+      k >= 0,
+      "Can't take a negative number of elements from a collection"
+    )
+
+    let end = self.index(self.startIndex,
+                         offsetBy: k,
+                         limitedBy: self.endIndex) ?? self.endIndex
+
+    return self[..<end]
   }
 }
 
@@ -126,6 +159,37 @@ extension BidirectionalCollection {
 
   private var emptySubSequence: SubSequence {
     return self[self.startIndex..<self.startIndex]
+  }
+
+  /// Returns a subsequence containing specified number of final elements.
+  ///
+  /// If the number of elements to take exceeds the number of elements in the
+  /// collection, the result is the whole collection.
+  ///
+  ///     let numbers = [1, 2, 3, 4, 5]
+  ///     print(numbers.takeLast(2))
+  ///     // Prints "[4, 5]"
+  ///     print(numbers.takeLast(10))
+  ///     // Prints "[1, 2, 3, 4, 5]"
+  ///
+  /// - Parameter k: The number of elements to take from starting from the end
+  ///   of the collection. `k` must be greater than or equal to zero.
+  /// - Returns: A subsequence that takes `k` elements from the end.
+  ///
+  /// - Complexity: O(1) if the collection conforms to `RandomAccessCollection`;
+  ///   otherwise, O(*k*), where *k* is the number of elements to take.
+  public func takeLast(_ k: Int = 1) -> SubSequence {
+    precondition(
+      k >= 0,
+      "Can't take a negative number of elements from a collection"
+    )
+
+    let start = self.index(
+      self.endIndex,
+      offsetBy: -k,
+      limitedBy: self.startIndex) ?? self.startIndex
+
+    return self[start...]
   }
 }
 

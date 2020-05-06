@@ -161,13 +161,8 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     try self.visit(self.ast)
 
     // Emit epilog (because we may be a jump target).
-    if !self.currentScope.hasReturnValue {
-      let isExpression = self.ast is ExpressionAST
-      if !isExpression {
-        self.builder.appendNone()
-      }
-      self.builder.appendReturn()
-    }
+    let isExpression = self.ast is ExpressionAST
+    try self.appendReturn(addNone: !isExpression)
 
     assert(self.unitStack.count == 1)
     return self.codeObject
@@ -589,6 +584,38 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   private func popBlock() {
     assert(self.blockStack.any)
     _ = self.blockStack.popLast()
+  }
+
+  // MARK: - Return
+
+  /// Append return at the end of the scope.
+  internal func appendReturn(addNone: Bool) throws {
+    // If we already have 'return' and no jumps then we do not need
+    // to add another 'return'.
+    // We will not check all of the instructions for 'return' (because that
+    // would be slow), we will just take 10 last.
+    let hasReturn = self.codeObject.instructions
+      .takeLast(10)
+      .contains(where: self.isReturn(instruction:))
+    let hasNoJumps = self.codeObject.labels.isEmpty
+
+    if hasReturn && hasNoJumps {
+      return
+    }
+
+    if addNone {
+      self.builder.appendNone()
+    }
+    self.builder.appendReturn()
+  }
+
+  private func isReturn(instruction: Instruction) -> Bool {
+    switch instruction {
+    case .return:
+      return true
+    default:
+      return false
+    }
   }
 
   // MARK: - Mangle

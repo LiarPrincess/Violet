@@ -60,13 +60,8 @@ extension CompilerImpl {
                                               kind: .function,
                                               argCount: argCount,
                                               kwOnlyArgCount: kwOnlyArgCount) {
-
       try self.visitBody(body: node.body, onDoc: .appendToConstants)
-
-      if !self.currentScope.hasReturnValue {
-        self.builder.appendNone()
-        self.builder.appendReturn()
-      }
+      try self.appendReturn(addNone: true)
     }
 
     try self.makeClosure(codeObject: codeObject, flags: flags, location: location)
