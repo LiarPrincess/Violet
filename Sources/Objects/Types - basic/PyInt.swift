@@ -427,19 +427,33 @@ public class PyInt: PyObject {
       return .error(Py.newZeroDivisionError(msg: msg))
     }
 
-    if exp == 0 {
-      return .int(1)
-    }
-
-    if exp == 1 {
-      return .int(base)
-    }
-
-    let result = self.exponentiationBySquaring(1, base, Swift.abs(exp))
-
+    let result = self.powNonNegativeExp(base: base, exp: Swift.abs(exp))
     return exp > 0 ?
       .int(result) :
       .fraction(Double(1.0) / Double(result))
+  }
+
+  /// Specialized version of `pow` that assumes `exp >= 0`.
+  ///
+  /// This will always return some `BigInt`, never fraction or `ZeroDivisionError`.
+  private func powNonNegativeExp(base: BigInt, exp: BigInt) -> BigInt {
+    precondition(exp >= 0)
+
+    // Order of the following checks matters!
+    if exp == 0 {
+      return 1
+    }
+
+    if exp == 1 {
+      return base
+    }
+
+    // This has to be after 'exp == 0', because 'pow(0, 0) -> 1'
+    if base == 0 {
+      return 0
+    }
+
+    return self.exponentiationBySquaring(1, base, Swift.abs(exp))
   }
 
   /// Source:
@@ -597,7 +611,8 @@ public class PyInt: PyObject {
       return .value(Py.notImplemented)
     }
 
-    return self.divmod(left: self.value, right: other.value)
+    let result = self.divmod(left: self.value, right: other.value)
+    return result.map { $0.asObject() }
   }
 
   // sourcery: pymethod = __rdivmod__
@@ -606,21 +621,30 @@ public class PyInt: PyObject {
       return .value(Py.notImplemented)
     }
 
-    return self.divmod(left: other.value, right: self.value)
+    let result = self.divmod(left: other.value, right: self.value)
+    return result.map { $0.asObject() }
   }
 
-  private func divmod(left: BigInt, right: BigInt) -> PyResult<PyObject> {
+  private struct Divmod {
+    fileprivate var quotient: BigInt
+    fileprivate var remainder: BigInt
+
+    fileprivate func asObject() -> PyTuple {
+      let q = Py.newInt(self.quotient)
+      let r = Py.newInt(self.remainder)
+      return Py.newTuple(q, r)
+    }
+  }
+
+  private func divmod(left: BigInt, right: BigInt) -> PyResult<Divmod> {
     if right == 0 {
       return .zeroDivisionError("divmod() by zero")
     }
 
-    // Let's pray to inlining god for performance
-    let div = self.floordivRaw(left: left, right: right)
-    let mod = self.modRaw(left: left, right: right)
-
-    let tuple0 = Py.newInt(div)
-    let tuple1 = Py.newInt(mod)
-    return .value(Py.newTuple(tuple0, tuple1))
+    // Let's pray to inlining god for performance...
+    let quotient = self.floordivRaw(left: left, right: right)
+    let remainder = self.modRaw(left: left, right: right)
+    return .value(Divmod(quotient: quotient, remainder: remainder))
   }
 
   // MARK: - LShift
@@ -737,37 +761,102 @@ public class PyInt: PyObject {
   // MARK: - Round
 
   // sourcery: pymethod = __round__
-  /// Round an integer m to the nearest 10**n (n positive)
+  /// Round an integer `m` to the nearest `10**n (n positive)`.
   ///
   /// ```
   /// int.__round__(12345,  2) -> 12345
   /// int.__round__(12345, -2) -> 12300
   /// ```
-  public func round(nDigits: PyObject?) -> PyResult<PyObject> {
-    let digitCount: BigInt? = {
-      guard let n = nDigits else {
-        return 0
-      }
-
-      if n is PyNone {
-        return 0
-      }
-
-      if let int = n as? PyInt {
-        return int.value
-      }
-
-      return nil
-    }()
+  ///
+  /// static PyObject *
+  /// long_round(PyObject *self, PyObject *args)
+  public func round(nDigits _nDigits: PyObject?) -> PyResult<PyObject> {
+    let nDigits: BigInt
+    switch self.parseRoundDigitCount(object: _nDigits) {
+    case let .value(n): nDigits = n
+    case let .error(e): return .error(e)
+    }
 
     // if digits >= 0 then no rounding is necessary; return self unchanged
-    if let dc = digitCount, dc >= 0 {
+    if nDigits >= 0 {
       return .value(self)
     }
 
-    // TODO: Implement int rounding to arbitrary precision
-    let msg = "Int rounding to arbitrary precision was not yet implemented."
-    return .systemError(msg)
+    // result = self - divmod_near(self, 10 ** -ndigits)[1]
+    let pow10 = self.powNonNegativeExp(base: 10, exp: -nDigits)
+
+    let divMod: Divmod
+    switch self.divmodNear(left: self.value, right: pow10) {
+    case let .value(d): divMod = d
+    case let .error(e): return .error(e)
+    }
+
+    let result = self.value - divMod.remainder
+    return .value(Py.newInt(result))
+  }
+
+  private func parseRoundDigitCount(object: PyObject?) -> PyResult<BigInt> {
+    guard let object = object else {
+      return .value(0)
+    }
+
+    return IndexHelper.bigInt(object)
+  }
+
+  /// Return a pair `(q, r)` such that `a = b * q + r`, and
+  /// `abs(r) <= abs(b)/2`, with equality possible only if `q` is even.
+  /// In other words, `q == a / b`, rounded to the nearest integer using
+  /// round-half-to-even.
+  ///
+  /// PyObject *
+  /// _PyLong_DivmodNear(PyObject *a, PyObject *b)
+  private func divmodNear(left a: BigInt, right b: BigInt) -> PyResult<Divmod> {
+    // Equivalent Python code:
+    //
+    // def divmod_near(a, b):
+    //     q, r = divmod(a, b)
+    //     # round up if either r / b > 0.5, or r / b == 0.5 and q is odd.
+    //     # The expression r / b > 0.5 is equivalent to 2 * r > b if b is
+    //     # positive, 2 * r < b if b negative.
+    //
+    //     greater_than_half = 2*r > b if b > 0 else 2*r < b
+    //     exactly_half = 2*r == b
+    //     if greater_than_half or exactly_half and q % 2 == 1:
+    //         q += 1
+    //         r -= b
+    //     return q, r
+
+    let quotientIsNegative = (a < 0) != (b < 0)
+
+    var result: Divmod
+    switch self.divmod(left: a, right: b) {
+    case let .value(d):
+      result = d
+    case let .error(e):
+      return .error(e)
+    }
+
+    var twiceRem = result.remainder << 2
+    if quotientIsNegative {
+      twiceRem = -twiceRem
+    }
+
+    // See Python code above
+    let greaterThanHalf = b > 0 ? twiceRem > b : twiceRem < b
+    let exactlyHalf = twiceRem == b
+    let quotientIsOdd = (result.quotient & 1) == 1
+
+    if greaterThanHalf || (exactlyHalf && quotientIsOdd) {
+      if quotientIsNegative {
+        result.quotient -= 1
+        result.remainder += b
+      } else {
+        result.quotient += 1
+        result.remainder -= b
+      }
+    }
+
+    return .value(result)
   }
 
   // MARK: - Python new
