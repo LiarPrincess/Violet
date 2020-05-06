@@ -482,6 +482,7 @@ types = {
     '__neg__',
     '__abs__',
     'is_integer',
+    'as_integer_ratio',
     '__add__',
     '__radd__',
     '__sub__',

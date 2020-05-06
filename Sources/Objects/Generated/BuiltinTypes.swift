@@ -1178,6 +1178,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__neg__", value: PyBuiltinFunction.wrap(name: "__neg__", doc: nil, fn: PyFloat.negative, castSelf: Self.asFloat))
     self.insert(type: type, name: "__abs__", value: PyBuiltinFunction.wrap(name: "__abs__", doc: nil, fn: PyFloat.abs, castSelf: Self.asFloat))
     self.insert(type: type, name: "is_integer", value: PyBuiltinFunction.wrap(name: "is_integer", doc: PyFloat.isIntegerDoc, fn: PyFloat.isInteger, castSelf: Self.asFloat))
+    self.insert(type: type, name: "as_integer_ratio", value: PyBuiltinFunction.wrap(name: "as_integer_ratio", doc: nil, fn: PyFloat.asIntegerRatio, castSelf: Self.asFloat))
     self.insert(type: type, name: "__add__", value: PyBuiltinFunction.wrap(name: "__add__", doc: nil, fn: PyFloat.add(_:), castSelf: Self.asFloat))
     self.insert(type: type, name: "__radd__", value: PyBuiltinFunction.wrap(name: "__radd__", doc: nil, fn: PyFloat.radd(_:), castSelf: Self.asFloat))
     self.insert(type: type, name: "__sub__", value: PyBuiltinFunction.wrap(name: "__sub__", doc: nil, fn: PyFloat.sub(_:), castSelf: Self.asFloat))

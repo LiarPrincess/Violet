@@ -93,7 +93,6 @@ float
     __set_format__ - <class 'builtin_function_or_method'>
     fromhex - <class 'builtin_function_or_method'>
     __format__
-    as_integer_ratio
     hex
 
 frame

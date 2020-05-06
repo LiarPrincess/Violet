@@ -20,7 +20,7 @@ public class PyFloat: PyObject {
     Convert a string or number to a floating point number, if possible.
     """
 
-  internal let value: Double
+  public let value: Double
 
   override public var description: String {
     return "PyFloat(\(self.value))"
@@ -39,6 +39,8 @@ public class PyFloat: PyObject {
     super.init(type: type)
   }
 }
+
+// MARK: - Compare abstract
 
 /// Private helper for comparison operations.
 private protocol FloatCompare {
@@ -198,12 +200,12 @@ extension PyFloat {
   /// 'static PyObject* float_richcompare(PyObject *v, PyObject *w, int op)'
   /// for details).
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
+  public func isEqual(_ other: PyObject) -> CompareResult {
     return EqualCompare.compare(left: self.value, right: other)
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
+  public func isNotEqual(_ other: PyObject) -> CompareResult {
     return self.isEqual(other).not
   }
 
@@ -223,7 +225,7 @@ extension PyFloat {
   }
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
+  public func isLess(_ other: PyObject) -> CompareResult {
     return LessCompare.compare(left: self.value, right: other)
   }
 
@@ -241,7 +243,7 @@ extension PyFloat {
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
+  public func isLessEqual(_ other: PyObject) -> CompareResult {
     return LessEqualCompare.compare(left: self.value, right: other)
   }
 
@@ -259,7 +261,7 @@ extension PyFloat {
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
+  public func isGreater(_ other: PyObject) -> CompareResult {
     return GreaterCompare.compare(left: self.value, right: other)
   }
 
@@ -277,53 +279,53 @@ extension PyFloat {
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+  public func isGreaterEqual(_ other: PyObject) -> CompareResult {
     return GreaterEqualCompare.compare(left: self.value, right: other)
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
+  public func hash() -> HashResult {
     return .value(Py.hasher.hash(self.value))
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  public func repr() -> PyResult<String> {
     return .value(String(describing: self.value))
   }
 
   // sourcery: pymethod = __str__
-  internal func str() -> PyResult<String> {
+  public func str() -> PyResult<String> {
     return self.repr()
   }
 
   // MARK: - Convertible
 
   // sourcery: pymethod = __bool__
-  internal func asBool() -> Bool {
+  public func asBool() -> Bool {
     return !self.value.isZero
   }
 
   // sourcery: pymethod = __int__
-  internal func asInt() -> PyResult<PyInt> {
+  public func asInt() -> PyResult<PyInt> {
     return .value(Py.newInt(BigInt(self.value)))
   }
 
   // sourcery: pymethod = __float__
-  internal func asFloat() -> PyResult<PyFloat> {
+  public func asFloat() -> PyResult<PyFloat> {
     return .value(self)
   }
 
   // sourcery: pyproperty = real
-  internal func asReal() -> PyObject {
+  public func asReal() -> PyObject {
     return self
   }
 
   // sourcery: pyproperty = imag
-  internal func asImag() -> PyObject {
+  public func asImag() -> PyObject {
     return Py.newFloat(0.0)
   }
 
@@ -332,40 +334,40 @@ extension PyFloat {
   // sourcery: pymethod = conjugate
   /// float.conjugate
   /// Return self, the complex conjugate of any float.
-  internal func conjugate() -> PyObject {
+  public func conjugate() -> PyObject {
     return self
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Sign
 
   // sourcery: pymethod = __pos__
-  internal func positive() -> PyObject {
+  public func positive() -> PyObject {
     return self
   }
 
   // sourcery: pymethod = __neg__
-  internal func negative() -> PyObject {
+  public func negative() -> PyObject {
     return Py.newFloat(-self.value)
   }
 
   // MARK: - Abs
 
   // sourcery: pymethod = __abs__
-  internal func abs() -> PyObject {
+  public func abs() -> PyObject {
     return Py.newFloat(Swift.abs(self.value))
   }
 
@@ -379,7 +381,7 @@ extension PyFloat {
     """
 
   // sourcery: pymethod = is_integer, , doc = isIntegerDoc
-  internal func isInteger() -> PyBool {
+  public func isInteger() -> PyBool {
     guard self.value.isFinite else {
       return Py.false
     }
@@ -388,10 +390,54 @@ extension PyFloat {
     return Py.newBool(result)
   }
 
+  // MARK: - Integer ratio
+
+  // sourcery: pymethod = as_integer_ratio
+  public func asIntegerRatio() -> PyResult<PyObject> {
+    if self.value.isInfinite {
+      return .overflowError("cannot convert Infinity to integer ratio")
+    }
+
+    if self.value.isNaN {
+      return .valueError("cannot convert NaN to integer ratio")
+    }
+
+    var exponent = Int32(0)
+    var floatPart = Foundation.frexp(self.value, &exponent)
+    // self_double == float_part * 2**exponent exactly
+
+    for _ in 0..<300 {
+      if floatPart == Foundation.floor(floatPart) {
+        break
+      }
+
+      floatPart *= 2
+      exponent -= 1
+    }
+
+    var numerator: BigInt
+    switch Py.newInt(double: floatPart) {
+    case let .value(i): numerator = i.value
+    case let .error(e): return .error(e)
+    }
+
+    var denominator = BigInt(1)
+
+    if exponent > 0 {
+      numerator = numerator << exponent
+    } else {
+      denominator = denominator << -exponent // notice '-'!
+    }
+
+    let pyNumerator = Py.newInt(numerator)
+    let pyDenominator = Py.newInt(denominator)
+    return .value(Py.newTuple(pyNumerator, pyDenominator))
+  }
+
   // MARK: - Add
 
   // sourcery: pymethod = __add__
-  internal func add(_ other: PyObject) -> PyResult<PyObject> {
+  public func add(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
@@ -400,14 +446,14 @@ extension PyFloat {
   }
 
   // sourcery: pymethod = __radd__
-  internal func radd(_ other: PyObject) -> PyResult<PyObject> {
+  public func radd(_ other: PyObject) -> PyResult<PyObject> {
     return self.add(other)
   }
 
   // MARK: - Sub
 
   // sourcery: pymethod = __sub__
-  internal func sub(_ other: PyObject) -> PyResult<PyObject> {
+  public func sub(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
@@ -416,7 +462,7 @@ extension PyFloat {
   }
 
   // sourcery: pymethod = __rsub__
-  internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
+  public func rsub(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
@@ -427,7 +473,7 @@ extension PyFloat {
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
-  internal func mul(_ other: PyObject) -> PyResult<PyObject> {
+  public func mul(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
@@ -436,18 +482,18 @@ extension PyFloat {
   }
 
   // sourcery: pymethod = __rmul__
-  internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
+  public func rmul(_ other: PyObject) -> PyResult<PyObject> {
     return self.mul(other)
   }
 
   // MARK: - Pow
 
-  internal func pow(exp: PyObject) -> PyResult<PyObject> {
+  public func pow(exp: PyObject) -> PyResult<PyObject> {
     return self.pow(exp: exp, mod: nil)
   }
 
   // sourcery: pymethod = __pow__
-  internal func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
+  public func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     guard self.isNilOrNone(mod) else {
       return .typeError("pow() 3rd argument not allowed unless all arguments are integers")
     }
@@ -460,12 +506,12 @@ extension PyFloat {
     return .value(Py.newFloat(result))
   }
 
-  internal func rpow(base: PyObject) -> PyResult<PyObject> {
+  public func rpow(base: PyObject) -> PyResult<PyObject> {
     return self.rpow(base: base, mod: nil)
   }
 
   // sourcery: pymethod = __rpow__
-  internal func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
+  public func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     guard self.isNilOrNone(mod) else {
       return .typeError("pow() 3rd argument not allowed unless all arguments are integers")
     }
@@ -485,7 +531,7 @@ extension PyFloat {
   // MARK: - True div
 
   // sourcery: pymethod = __truediv__
-  internal func truediv(_ other: PyObject) -> PyResult<PyObject> {
+  public func truediv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
@@ -494,7 +540,7 @@ extension PyFloat {
   }
 
   // sourcery: pymethod = __rtruediv__
-  internal func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
+  public func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
@@ -513,7 +559,7 @@ extension PyFloat {
   // MARK: - Floor div
 
   // sourcery: pymethod = __floordiv__
-  internal func floordiv(_ other: PyObject) -> PyResult<PyObject> {
+  public func floordiv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
@@ -522,7 +568,7 @@ extension PyFloat {
   }
 
   // sourcery: pymethod = __rfloordiv__
-  internal func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
+  public func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
@@ -546,7 +592,7 @@ extension PyFloat {
   // MARK: - Mod
 
   // sourcery: pymethod = __mod__
-  internal func mod(_ other: PyObject) -> PyResult<PyObject> {
+  public func mod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
@@ -555,7 +601,7 @@ extension PyFloat {
   }
 
   // sourcery: pymethod = __rmod__
-  internal func rmod(_ other: PyObject) -> PyResult<PyObject> {
+  public func rmod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
@@ -579,7 +625,7 @@ extension PyFloat {
   // MARK: - Div mod
 
   // sourcery: pymethod = __divmod__
-  internal func divmod(_ other: PyObject) -> PyResult<PyObject> {
+  public func divmod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
@@ -588,7 +634,7 @@ extension PyFloat {
   }
 
   // sourcery: pymethod = __rdivmod__
-  internal func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
+  public func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
@@ -612,14 +658,14 @@ extension PyFloat {
   // MARK: - Round
 
   /// See comment in `round(nDigits: PyObject?)`.
-  private var roundDigitMax: Int {
+  private var roundDigitCountMax: Int {
     let DBL_MANT_DIG = Double.significandBitCount + 1
     let DBL_MIN_EXP = Double.leastNormalMagnitude.exponent + 1
     return Int(Double(DBL_MANT_DIG - DBL_MIN_EXP) * 0.301_03)
   }
 
   /// See comment in `round(nDigits: PyObject?)`.
-  private var roundDigitMin: Int {
+  private var roundDigitCountMin: Int {
     let DBL_MAX_EXP = Double.greatestFiniteMagnitude.exponent + 1
     return -Int((Double(DBL_MAX_EXP + 1) * 0.301_03))
   }
@@ -632,7 +678,7 @@ extension PyFloat {
   ///
   /// If `nDigits` is not given or is `None` returns the nearest integer.
   /// If `nDigits` is given returns the number rounded off to the `ndigits`.
-  internal func round(nDigits: PyObject?) -> PyResult<PyObject> {
+  public func round(nDigits: PyObject?) -> PyResult<PyObject> {
     switch self.parseRoundDigitCount(object: nDigits) {
     case .none:
       let rounded = self.roundToEven(value: self.value)
@@ -641,7 +687,7 @@ extension PyFloat {
 
     case .int(let nDigits):
       // nans and infinities round to themselves
-      if !self.value.isFinite {
+      guard self.value.isFinite else {
         return .value(self)
       }
 
@@ -651,13 +697,11 @@ extension PyFloat {
       // For ndigits < NDIGITS_MIN, x always rounds to +-0.0.
       // Here 0.30103 is an upper bound for log10(2).
 
-      if nDigits > self.roundDigitMax {
-        // return self
+      if nDigits > self.roundDigitCountMax {
         return .value(self)
       }
 
-      if nDigits < self.roundDigitMin {
-        // return 0.0, but with sign of x
+      if nDigits < self.roundDigitCountMin {
         let zero = Double(signOf: self.value, magnitudeOf: 0.0)
         return .value(Py.newFloat(zero))
       }
@@ -721,7 +765,7 @@ extension PyFloat {
   /// We are implementing version with 'PY_NO_SHORT_FLOAT_REPR'
   /// even though we actually have 'SHORT_FLOAT_REPR'.
   private func round(nDigit: Int) -> PyResult<PyObject> {
-    assert(self.roundDigitMin <= nDigit && nDigit <= self.roundDigitMax)
+    assert(self.roundDigitCountMin <= nDigit && nDigit <= self.roundDigitCountMax)
 
     let scalledToDigits: Double, pow10: Double
     if nDigit >= 0 {
@@ -752,7 +796,7 @@ extension PyFloat {
   // MARK: - Trunc
 
   // sourcery: pymethod = __trunc__
-  internal func trunc() -> PyResult<PyInt> {
+  public func trunc() -> PyResult<PyInt> {
     var intPart: Double = 0
     _ = Foundation.modf(self.value, &intPart)
     return Py.newInt(double: intPart)
