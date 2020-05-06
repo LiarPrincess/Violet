@@ -10,6 +10,53 @@ import VioletCore
 // swiftlint:disable type_name
 // swiftlint:disable nesting
 
+// MARK: - Frexp
+
+/// `value == mantissa * 2 ** exponent`
+///
+/// # Important
+/// Do not use `Double.significand‚` or `Foundation.frexp`
+/// (version that returns tuple)!
+///
+/// They return different results than `frexp` in CPython (which makes comparing
+/// code very unintuitive).
+///
+/// In Swift `value.significand` is always positive (afaik), for example:
+/// ``` Swift
+/// let value = -1.0
+/// print(value.sign) -> minus
+/// print(value.significand) -> 1.0 <- it is positive!
+/// print(value.exponent) -> 0
+/// ```
+///
+/// CPython uses version where significand is negative when value is negative
+/// [cplusplus.com/frexp](https://www.cplusplus.com/reference/cmath/frexp).
+///
+/// # Naming
+/// We could create our own `frexp` function, but then every reader would just
+/// assume that we are using `Foundation` version.
+/// If we start with uppercase then everyone will be like:
+/// `wtf? uppercase? what is this? <surprised Pikachu face>`.
+internal struct Frexp {
+  internal let exponent: Int32
+  /// Negative if input number was negative!
+  internal let mantissa: Double
+
+  internal init(value: Double) {
+    var e = Int32(0)
+    self.mantissa = Foundation.frexp(value, &e) // non-tuple version
+    self.exponent = e
+  }
+}
+
+// MARK: - Random stuff
+
+private let DBL_MANT_DIG = Double.significandBitCount + 1
+private let DBL_MIN_EXP = Double.leastNormalMagnitude.exponent + 1
+private let DBL_MAX_EXP = Double.greatestFiniteMagnitude.exponent + 1
+
+// MARK: - PyFloat
+
 // sourcery: pytype = float, default, baseType
 /// This subtype of PyObject represents a Python floating point object.
 public class PyFloat: PyObject {
@@ -128,12 +175,8 @@ extension FloatCompare {
     // we know that nBits (the # of bits in 'right') > 48 at this point
     // https://en.wikipedia.org/wiki/Radix_point
 
-    // IMPORTANT:
-    // Do not use 'var (m, e) = frexp(value)' here, it will give you incorrect result!
-    // For 'value = -1.0' you will get 'm = 0.5', but it should be '-0.5'!
-    // We do not care about mantissa, but still... there is something going on.
-    var exponent: Int32 = 0
-    _ = frexp(left, &exponent)
+    let frexp = Frexp(value: left)
+    let exponent = frexp.exponent
 
     if exponent < 0 || exponent < nBits {
       let result = Self.compare(left: 1.0, right: 2.0)
@@ -402,21 +445,21 @@ extension PyFloat {
       return .valueError("cannot convert NaN to integer ratio")
     }
 
-    var exponent = Int32(0)
-    var floatPart = Foundation.frexp(self.value, &exponent)
-    // self_double == float_part * 2**exponent exactly
+    let frexp = Frexp(value: self.value)
+    var exponent = frexp.exponent
+    var mantissa = frexp.mantissa
 
     for _ in 0..<300 {
-      if floatPart == Foundation.floor(floatPart) {
+      if mantissa == Foundation.floor(mantissa) {
         break
       }
 
-      floatPart *= 2
+      mantissa *= 2
       exponent -= 1
     }
 
     var numerator: BigInt
-    switch Py.newInt(double: floatPart) {
+    switch Py.newInt(double: mantissa) {
     case let .value(i): numerator = i.value
     case let .error(e): return .error(e)
     }
@@ -659,8 +702,6 @@ extension PyFloat {
 
   /// See comment in `round(nDigits: PyObject?)`.
   private var roundDigitCountMax: Int {
-    let DBL_MANT_DIG = Double.significandBitCount + 1
-    let DBL_MIN_EXP = Double.leastNormalMagnitude.exponent + 1
     return Int(Double(DBL_MANT_DIG - DBL_MIN_EXP) * 0.301_03)
   }
 

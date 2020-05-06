@@ -94,12 +94,9 @@ internal struct Hasher {
     }
 
     // Complicated stuff incoming, basically 1:1 from CPython:
-    //
-    // IMPORTANT:
-    // 'var (m, e) = frexp(value)' will give you incorrect result!
-    // For 'value = -1.0' you will get 'm = 0.5', but it should be '-0.5'!
-    var exponent: Int32 = 0
-    var mantissa = frexp(value, &exponent)
+    let frexp = Frexp(value: value)
+    var exponent = frexp.exponent
+    var mantissa = frexp.mantissa
 
     var sign: PyHash = 1
     if mantissa < 0 {
