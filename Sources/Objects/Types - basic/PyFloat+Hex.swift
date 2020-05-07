@@ -164,7 +164,7 @@ private struct FromHexString: CustomStringConvertible {
   }
 
   fileprivate init(string: String) {
-    let trimmed = string.trimmingCharacters(in: .whitespaces)
+    let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
     let scalars = trimmed.unicodeScalars
     self.window = scalars[scalars.startIndex...]
   }
@@ -415,10 +415,10 @@ private func combine(sign: FloatingPointSign,
   let ndigits = fdigits + integer.count
 
   // Adjust exponent for fractional part.
-  let exponent = _exponent - 4 * (fdigits - 1)
+  let exponent = _exponent - 4 * fdigits
 
   // top_exp = 1 more than exponent of most sig. bit of coefficient
-  var topExponent: Int {
+  let topExponent: Int = {
     var result = exponent + 4 * (ndigits - 1)
 
     var digit = firstCoefficientDigit
@@ -428,7 +428,7 @@ private func combine(sign: FloatingPointSign,
     }
 
     return result
-  }
+  }()
 
   if topExponent < DBL_MIN_EXP - DBL_MANT_DIG {
     return .value(0.0)
@@ -436,6 +436,24 @@ private func combine(sign: FloatingPointSign,
 
   if topExponent > DBL_MAX_EXP {
     return .error(overflowError())
+  }
+
+  /// Exponent of least significant bit of the *rounded* value.
+  /// This is `top_exp - DBL_MANT_DIG` unless result is subnormal.
+  let leastSignificantBit = max(topExponent, DBL_MIN_EXP) - DBL_MANT_DIG
+
+  if exponent >= leastSignificantBit {
+    // no rounding required
+    var significand = 0.0
+    for digit in integer {
+      significand = 16.0 * significand + Double(digit)
+    }
+    for digit in (fraction ?? []) {
+      significand = 16.0 * significand + Double(digit)
+    }
+
+    let unsigned = Foundation.scalbn(significand, exponent)
+    return .value(sign.apply(to: unsigned))
   }
 
   fatalError()
