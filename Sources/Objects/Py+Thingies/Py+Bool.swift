@@ -80,7 +80,7 @@ extension PyInstance {
       return .error(e)
     }
 
-    guard bigInt.hashValue >= 0 else {
+    guard bigInt >= 0 else {
       return .valueError("__len__() should return >= 0")
     }
 
