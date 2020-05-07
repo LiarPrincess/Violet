@@ -214,6 +214,7 @@ float_fromhex(const char *s)
     if (s == NULL)
         return;
 
+    length = strlen(s);
     s_end = s + length;
 
     /********************
@@ -362,7 +363,7 @@ float_fromhex(const char *s)
     x = 0.0;
     if (exp >= lsb) {
         /* no rounding required */
-        printf("exp >= lsb");
+        printf("exp >= lsb\n");
         for (i = ndigits-1; i >= 0; i--) {
             printf("  iter %zd, value %f\n", i, x);
             x = 16.0*x + HEX_DIGIT(i);
@@ -377,8 +378,12 @@ float_fromhex(const char *s)
        containing the first bit to be rounded away. */
     half_eps = 1 << (int)((lsb - exp - 1) % 4);
     key_digit = (lsb - exp - 1) / 4;
+    printf("half_eps: %d\n", half_eps);
+    printf("key_digit: %ld\n", key_digit);
+
     for (i = ndigits-1; i > key_digit; i--)
         x = 16.0*x + HEX_DIGIT(i);
+
     digit = HEX_DIGIT(key_digit);
     x = 16.0*x + (double)(digit & (16-2*half_eps));
 

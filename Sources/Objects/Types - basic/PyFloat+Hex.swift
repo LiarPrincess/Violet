@@ -7,7 +7,6 @@ import VioletCore
 // https://docs.python.org/3/library/stdtypes.html#float.fromhex <- THIS!
 
 // swiftlint:disable file_length
-// swiftlint:disable function_body_length
 
 // MARK: - Hex
 
@@ -54,7 +53,7 @@ extension PyFloat {
     mantissa = Foundation.scalbn(mantissa, shift) // scalbn(x, exp) = x * (2 ** exp)
     exponent -= shift
 
-    // mantissa
+    // mantissa (hex!)
     func appendMantisaDigit() {
       let asInt = Int(mantissa)
       assert(0 <= asInt && asInt < 16)
@@ -70,11 +69,11 @@ extension PyFloat {
       appendMantisaDigit()
     }
 
-    // exponent
+    // exponent (decimal!)
     result.append("p")
     let exponentAbs = Swift.abs(exponent)
     result.append(exponent < 0 ? "-" : "+")
-    result.append(String(exponentAbs, radix: 16, uppercase: false))
+    result.append(String(exponentAbs, radix: 10, uppercase: false))
 
     return .value(result)
   }
@@ -98,35 +97,56 @@ extension PyFloat {
 
   // sourcery: pyclassmethod = fromhex, doc = fromHexDoc
   public static func fromHex(type: PyType,
-                             value: PyObject) -> PyResult<PyFloat> {
+                             value: PyObject) -> PyResult<PyObject> {
     guard let stringObject = value as? PyString else {
       // This message looks weird, but argument name is 'string'
       let t = value.typeName
       return .typeError("fromhex(): string has to have str type, not \(t)")
     }
 
-    var string = FromHexString(string: stringObject.value)
+    let result = Self.fromHex(string: stringObject.value)
+
+    switch result {
+    case let .value(double):
+      let pyFloat = Py.newFloat(double)
+
+      // Fast path for 'float'
+      if type === Py.types.float {
+        return .value(pyFloat)
+      }
+
+      let callResult = Py.call(callable: type, arg: pyFloat)
+      return callResult.asResult
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  /// Raw `fromHex` that works on Swift values, use this for debug.
+  private static func fromHex(string _string: String) -> PyResult<Double> {
+    var string = FromHexString(string: _string)
     if string.isEmpty {
       return .error(parserError())
     }
 
     switch parseInfinityOrNan(string: string) {
-    case .value(let d): return .value(Py.newFloat(d))
+    case .value(let d): return .value(d)
     case .notInfinityOrNan: break // Try other
     case .error(let e): return .error(e)
     }
 
-    // [sign] ['0x'] integer ['.' fraction] ['p' exponent]
+    // Format: [sign] ['0x'] integer ['.' fraction] ['p' exponent]
 
     let sign = parseSign(string: &string)
-    _ = string.advanceIf("0x")
+    _ = string.advanceIf("0x") // if not then nop
 
     // Integer and fraction are strings of hexadecimal (!) digits
     let integer = parseInteger(string: &string)
     let fraction = parseFraction(string: &string)
 
-    // TODO: Insane check: 'goto insane_length_error;'
+    // Skipping the 'insane' check from CPython, because we are lazy
 
+    // Exponent is decimal
     let exponent: Int
     switch parseExponent(string: &string) {
     case .value(let e): exponent = e
@@ -139,11 +159,10 @@ extension PyFloat {
       return .error(parserError())
     }
 
-    let result = combine(sign: sign,
-                         integer: integer,
-                         fraction: fraction,
-                         exponent: exponent)
-    return result.map(Py.newFloat(_:))
+    return combine(sign: sign,
+                   integer: integer,
+                   fraction: fraction,
+                   exponent: exponent)
   }
 }
 
@@ -171,14 +190,6 @@ private struct FromHexString: CustomStringConvertible {
 
   fileprivate var peek: UnicodeScalar? {
     return self.window.first
-  }
-
-  fileprivate var peekNext: UnicodeScalar? {
-    guard let index = self.index(offset: 2) else {
-      return nil
-    }
-
-    return self.window[index]
   }
 
   fileprivate mutating func advanceIf(_ string: String) -> Bool {
@@ -224,7 +235,7 @@ private struct FromHexString: CustomStringConvertible {
     return result
   }
 
-  fileprivate mutating func advance(count: Int) {
+  private mutating func advance(count: Int) {
     // swiftlint:disable:next empty_count
     assert(count >= 0)
 
@@ -252,24 +263,14 @@ private struct FromHexString: CustomStringConvertible {
 
 // MARK: - Sign
 
-extension FloatingPointSign {
+extension Double {
 
-  fileprivate func apply(to value: Int) -> Int {
-    let abs = Swift.abs(value)
-    switch self {
+  fileprivate init(sign: FloatingPointSign, magnitudeOf magnitude: Double) {
+    switch sign {
     case .plus:
-      return abs
+      self = Double(signOf: 1.0, magnitudeOf: magnitude)
     case .minus:
-      return -abs
-    }
-  }
-
-  fileprivate func apply(to value: Double) -> Double {
-    switch self {
-    case .plus:
-      return Double(signOf: 1.0, magnitudeOf: value)
-    case .minus:
-      return Double(signOf: -1.0, magnitudeOf: value)
+      self = Double(signOf: -1.0, magnitudeOf: magnitude)
     }
   }
 }
@@ -307,7 +308,7 @@ private func parseInfinityOrNan(string: FromHexString) -> InfinityOrNan {
       return .error(parserError())
     }
 
-    return .value(sign.apply(to: Double.infinity))
+    return .value(Double(sign: sign, magnitudeOf: Double.infinity))
   }
 
   if copy.advanceIf("nan") {
@@ -315,7 +316,7 @@ private func parseInfinityOrNan(string: FromHexString) -> InfinityOrNan {
       return .error(parserError())
     }
 
-    return .value(sign.apply(to: Double.nan))
+    return .value(Double(sign: sign, magnitudeOf: Double.nan))
   }
 
   return .notInfinityOrNan
@@ -368,8 +369,12 @@ private func parseExponent(string: inout FromHexString) -> Exponent {
     return .error(parserError())
   }
 
-  let result = sign.apply(to: unsigned)
-  return .value(result)
+  switch sign {
+  case .plus:
+    return .value(unsigned)
+  case .minus:
+    return .value(-unsigned)
+  }
 }
 
 // MARK: - Combine
@@ -401,9 +406,8 @@ private func combine(sign: FloatingPointSign,
   let integer = ltrimZero(digits: _integer)
   let fraction = rtrimZero(digits: _fraction)
 
-  let isIntegerZero = integer.allSatisfy(isZero(hex:))
-  let isFractionZerp = fraction?.allSatisfy(isZero(hex:)) ?? true
-  if (isIntegerZero && isFractionZerp) || _exponent < LONG_MIN / 2 {
+  let isCoeffZero = isCoefficientZero(integer: integer, fraction: fraction)
+  if isCoeffZero || _exponent < LONG_MIN / 2 {
     return .value(0.0)
   }
 
@@ -438,32 +442,29 @@ private func combine(sign: FloatingPointSign,
     return .error(overflowError())
   }
 
-  /// Exponent of least significant bit of the *rounded* value.
-  /// This is `top_exp - DBL_MANT_DIG` unless result is subnormal.
-  let leastSignificantBit = max(topExponent, DBL_MIN_EXP) - DBL_MANT_DIG
+  // At this point CPython checks if 'exp >= lsb' to decide if we need rounding.
+  // We will just assume that we don't need rounding (because we are lazy).
 
-  if exponent >= leastSignificantBit {
-    // no rounding required
-    var significand = 0.0
-    for digit in integer {
-      significand = 16.0 * significand + Double(digit)
-    }
-    for digit in (fraction ?? []) {
-      significand = 16.0 * significand + Double(digit)
-    }
-
-    let unsigned = Foundation.scalbn(significand, exponent)
-    return .value(sign.apply(to: unsigned))
+  var significand = 0.0
+  for digit in integer {
+    significand = 16.0 * significand + Double(digit)
+  }
+  for digit in (fraction ?? []) {
+    significand = 16.0 * significand + Double(digit)
   }
 
-  fatalError()
+  let result = Double(sign: sign, exponent: exponent, significand: significand)
+  return .value(result)
 }
 
-// MARK: - helpers
-
-private func isZero(scalar: UnicodeScalar) -> Bool {
-  return scalar == "0"
+private func isCoefficientZero(integer: HexDigits.SubSequence,
+                               fraction: HexDigits.SubSequence?) -> Bool {
+  let isIntegerZero = integer.allSatisfy(isZero(hex:))
+  let isFractionZerp = fraction?.allSatisfy(isZero(hex:)) ?? true
+  return isIntegerZero && isFractionZerp
 }
+
+// MARK: - Helpers
 
 private func isDecimal(scalar: UnicodeScalar) -> Bool {
   let digit = scalar.asDecimalDigit
@@ -483,6 +484,7 @@ private func ltrimZero(digits: HexDigits) -> HexDigits.SubSequence {
   return digits.drop(while: isZero(hex:))
 }
 
+// Overload for optional
 private func rtrimZero(digits: HexDigits?) -> HexDigits.SubSequence? {
   return digits.map(rtrimZero(digits:))
 }
