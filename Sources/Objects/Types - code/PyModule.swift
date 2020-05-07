@@ -43,7 +43,7 @@ public class PyModule: PyObject {
   }
 
   /// Use only in `__new__`!
-  override internal init(type: PyType) {
+  override private init(type: PyType) {
     self.__dict__ = Py.newDict()
     super.init(type: type)
   }

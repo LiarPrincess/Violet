@@ -42,7 +42,7 @@ public class PyEnumerate: PyObject {
   }
 
   /// Use only in `__new__`!
-  internal init(type: PyType, iterator: PyObject, startFrom index: BigInt) {
+  private init(type: PyType, iterator: PyObject, startFrom index: BigInt) {
     self.iterator = iterator
     self.nextIndex = index
     super.init(type: type)

@@ -29,7 +29,7 @@ public class PyZip: PyObject {
   }
 
   /// Use only in `__new__`!
-  internal init(type: PyType, iterators: [PyObject]) {
+  private init(type: PyType, iterators: [PyObject]) {
     self.iterators = iterators
     super.init(type: type)
   }

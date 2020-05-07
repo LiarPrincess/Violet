@@ -57,10 +57,10 @@ public class PySuper: PyObject, HasCustomGetMethod {
   }
 
   /// Use only in `__new__`!
-  internal init(type: PyType,
-                requestedType: PyType?,
-                object: PyObject?,
-                objectType: PyType?) {
+  private init(type: PyType,
+               requestedType: PyType?,
+               object: PyObject?,
+               objectType: PyType?) {
     self.thisClass = type
     self.object = object
     self.objectType = objectType

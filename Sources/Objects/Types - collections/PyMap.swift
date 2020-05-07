@@ -29,7 +29,7 @@ public class PyMap: PyObject {
   }
 
   /// Use only in `__new__`!
-  internal init(type: PyType, fn: PyObject, iterators: [PyObject]) {
+  private init(type: PyType, fn: PyObject, iterators: [PyObject]) {
     self.fn = fn
     self.iterators = iterators
     super.init(type: type)

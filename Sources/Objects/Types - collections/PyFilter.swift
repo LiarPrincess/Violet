@@ -29,7 +29,7 @@ public class PyFilter: PyObject {
   }
 
   /// Use only in `__new__`!
-  internal init(type: PyType, fn: PyObject, iterator: PyObject) {
+  private init(type: PyType, fn: PyObject, iterator: PyObject) {
     self.fn = fn
     self.iterator = iterator
     super.init(type: type)
