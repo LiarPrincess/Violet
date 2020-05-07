@@ -7,6 +7,9 @@ import VioletCore
 
 // swiftlint:disable file_length
 
+internal let LONG_MAX = Int.max // 9223372036854775807
+internal let LONG_MIN = Int.min // -9223372036854775808
+
 // sourcery: pytype = int, default, baseType, longSubclass
 /// All integers are implemented as “long” integer objects.
 public class PyInt: PyObject {

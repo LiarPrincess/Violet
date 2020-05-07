@@ -91,9 +91,7 @@ float
   Unimplemented:
     __getformat__ - <class 'builtin_function_or_method'>
     __set_format__ - <class 'builtin_function_or_method'>
-    fromhex - <class 'builtin_function_or_method'>
     __format__
-    hex
 
 frame
   Unimplemented:

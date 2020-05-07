@@ -464,6 +464,7 @@ types = {
     'real',
     'imag',
     '__class__',
+    'hex',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -502,6 +503,7 @@ types = {
     '__round__',
     '__trunc__',
     '__new__',
+    'fromhex',
   ],
   frame: [
     '__class__',

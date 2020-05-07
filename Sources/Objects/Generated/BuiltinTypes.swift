@@ -1158,8 +1158,11 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "imag", value: PyProperty.wrap(doc: nil, get: PyFloat.asImag, castSelf: Self.asFloat))
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyFloat.getClass, castSelf: Self.asFloat))
 
-    self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyFloat.pyNew(type:args:kwargs:)))
+    self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: PyFloat.newDoc, fn: PyFloat.pyNew(type:args:kwargs:)))
 
+    self.insert(type: type, name: "fromhex", value: PyClassMethod.wrap(name: "fromhex", doc: PyFloat.fromHexDoc, fn: PyFloat.fromHex(type:value:)))
+
+    self.insert(type: type, name: "hex", value: PyBuiltinFunction.wrap(name: "hex", doc: PyFloat.hexDoc, fn: PyFloat.hex, castSelf: Self.asFloat))
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyFloat.isEqual(_:), castSelf: Self.asFloat))
     self.insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyFloat.isNotEqual(_:), castSelf: Self.asFloat))
     self.insert(type: type, name: "__lt__", value: PyBuiltinFunction.wrap(name: "__lt__", doc: nil, fn: PyFloat.isLess(_:), castSelf: Self.asFloat))
@@ -1172,13 +1175,13 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__bool__", value: PyBuiltinFunction.wrap(name: "__bool__", doc: nil, fn: PyFloat.asBool, castSelf: Self.asFloat))
     self.insert(type: type, name: "__int__", value: PyBuiltinFunction.wrap(name: "__int__", doc: nil, fn: PyFloat.asInt, castSelf: Self.asFloat))
     self.insert(type: type, name: "__float__", value: PyBuiltinFunction.wrap(name: "__float__", doc: nil, fn: PyFloat.asFloat, castSelf: Self.asFloat))
-    self.insert(type: type, name: "conjugate", value: PyBuiltinFunction.wrap(name: "conjugate", doc: nil, fn: PyFloat.conjugate, castSelf: Self.asFloat))
+    self.insert(type: type, name: "conjugate", value: PyBuiltinFunction.wrap(name: "conjugate", doc: PyFloat.conjugateDoc, fn: PyFloat.conjugate, castSelf: Self.asFloat))
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyFloat.getAttribute(name:), castSelf: Self.asFloat))
     self.insert(type: type, name: "__pos__", value: PyBuiltinFunction.wrap(name: "__pos__", doc: nil, fn: PyFloat.positive, castSelf: Self.asFloat))
     self.insert(type: type, name: "__neg__", value: PyBuiltinFunction.wrap(name: "__neg__", doc: nil, fn: PyFloat.negative, castSelf: Self.asFloat))
     self.insert(type: type, name: "__abs__", value: PyBuiltinFunction.wrap(name: "__abs__", doc: nil, fn: PyFloat.abs, castSelf: Self.asFloat))
     self.insert(type: type, name: "is_integer", value: PyBuiltinFunction.wrap(name: "is_integer", doc: PyFloat.isIntegerDoc, fn: PyFloat.isInteger, castSelf: Self.asFloat))
-    self.insert(type: type, name: "as_integer_ratio", value: PyBuiltinFunction.wrap(name: "as_integer_ratio", doc: nil, fn: PyFloat.asIntegerRatio, castSelf: Self.asFloat))
+    self.insert(type: type, name: "as_integer_ratio", value: PyBuiltinFunction.wrap(name: "as_integer_ratio", doc: PyFloat.asIntegerRatioDoc, fn: PyFloat.asIntegerRatio, castSelf: Self.asFloat))
     self.insert(type: type, name: "__add__", value: PyBuiltinFunction.wrap(name: "__add__", doc: nil, fn: PyFloat.add(_:), castSelf: Self.asFloat))
     self.insert(type: type, name: "__radd__", value: PyBuiltinFunction.wrap(name: "__radd__", doc: nil, fn: PyFloat.radd(_:), castSelf: Self.asFloat))
     self.insert(type: type, name: "__sub__", value: PyBuiltinFunction.wrap(name: "__sub__", doc: nil, fn: PyFloat.sub(_:), castSelf: Self.asFloat))
@@ -1195,8 +1198,8 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__rmod__", value: PyBuiltinFunction.wrap(name: "__rmod__", doc: nil, fn: PyFloat.rmod(_:), castSelf: Self.asFloat))
     self.insert(type: type, name: "__divmod__", value: PyBuiltinFunction.wrap(name: "__divmod__", doc: nil, fn: PyFloat.divmod(_:), castSelf: Self.asFloat))
     self.insert(type: type, name: "__rdivmod__", value: PyBuiltinFunction.wrap(name: "__rdivmod__", doc: nil, fn: PyFloat.rdivmod(_:), castSelf: Self.asFloat))
-    self.insert(type: type, name: "__round__", value: PyBuiltinFunction.wrap(name: "__round__", doc: nil, fn: PyFloat.round(nDigits:), castSelf: Self.asFloat))
-    self.insert(type: type, name: "__trunc__", value: PyBuiltinFunction.wrap(name: "__trunc__", doc: nil, fn: PyFloat.trunc, castSelf: Self.asFloat))
+    self.insert(type: type, name: "__round__", value: PyBuiltinFunction.wrap(name: "__round__", doc: PyFloat.roundDoc, fn: PyFloat.round(nDigits:), castSelf: Self.asFloat))
+    self.insert(type: type, name: "__trunc__", value: PyBuiltinFunction.wrap(name: "__trunc__", doc: PyFloat.truncDoc, fn: PyFloat.trunc, castSelf: Self.asFloat))
   }
 
   private static func asFloat(_ object: PyObject, methodName: String) -> PyResult<PyFloat> {

@@ -10,6 +10,10 @@ import VioletCore
 // swiftlint:disable type_name
 // swiftlint:disable nesting
 
+internal let DBL_MANT_DIG = Double.significandBitCount + 1 // 53
+internal let DBL_MIN_EXP = Double.leastNormalMagnitude.exponent + 1 // -1021
+internal let DBL_MAX_EXP = Double.greatestFiniteMagnitude.exponent + 1 // 1024
+
 // MARK: - Frexp
 
 /// `value == mantissa * 2 ** exponent`
@@ -48,12 +52,6 @@ internal struct Frexp {
     self.exponent = Int(e)
   }
 }
-
-// MARK: - Random stuff
-
-private let DBL_MANT_DIG = Double.significandBitCount + 1
-private let DBL_MIN_EXP = Double.leastNormalMagnitude.exponent + 1
-private let DBL_MAX_EXP = Double.greatestFiniteMagnitude.exponent + 1
 
 // MARK: - PyFloat
 
@@ -883,88 +881,6 @@ extension PyFloat {
     _ = Foundation.modf(self.value, &intPart)
     return Py.newInt(double: intPart)
   }
-
-  // MARK: - Hex
-
-  internal static let hexDoc = """
-    hex($self, /)
-    --
-
-    Return a hexadecimal representation of a floating-point number.
-
-    >>> (-0.1).hex()
-    \'-0x1.999999999999ap-4\'
-    >>> 3.14159.hex()
-    \'0x1.921f9f01b866ep+1\'
-    """
-
-  /// `#define TOHEX_NBITS DBL_MANT_DIG + 3 - (DBL_MANT_DIG+2)%4`
-  private var hexBitCount: Int {
-    return DBL_MANT_DIG + 3 - (DBL_MANT_DIG + 2) % 4
-  }
-
-  // sourcery: pymethod = hex, doc = hexDoc
-  public func hex() -> PyResult<String> {
-    if self.value.isNaN || self.value.isInfinite {
-      return self.repr()
-    }
-
-    if self.value.isZero {
-      switch self.value.sign {
-      case .plus: return .value("0x0.0p+0")
-      case .minus: return .value("-0x0.0p+0")
-      }
-    }
-
-    let sign = self.value < 0 ? "-" : ""
-    var result = "\(sign)0x"
-
-    let frexp = Frexp(value: Swift.abs(self.value))
-    var exponent = frexp.exponent
-    var mantissa = frexp.mantissa
-
-    let shift = 1 - Swift.max(DBL_MIN_EXP - exponent, 0)
-    mantissa = Foundation.scalbn(mantissa, shift) // scalbn(x, exp) = x * (2 ** exp)
-    exponent -= shift
-
-    // mantissa
-    func appendMantisaDigit() {
-      let asInt = Int(mantissa)
-      assert(0 <= asInt && asInt < 16)
-      result.append(String(asInt, radix: 16, uppercase: false))
-      mantissa -= Double(asInt)
-    }
-
-    appendMantisaDigit()
-    result.append(".")
-
-    for _ in 0..<((self.hexBitCount - 1) / 4) {
-      mantissa *= 16.0
-      appendMantisaDigit()
-    }
-    result.append("p")
-
-    // exponent
-    let exponentAbs = Swift.abs(exponent)
-    result.append(exponent < 0 ? "-" : "+")
-    result.append(String(exponentAbs, radix: 16, uppercase: false))
-
-    return .value(result)
-  }
-
-  // MARK: - From hex
-
-  internal static let fromHexDoc = """
-    fromhex($type, string, /)
-    --
-
-    Create a floating-point number from a hexadecimal string.
-
-    >>> float.fromhex(\'0x1.ffffp10\')
-    2047.984375
-    >>> float.fromhex(\'-0x1p-1074\')
-    -5e-324
-    """
 
   // MARK: - Python new
 

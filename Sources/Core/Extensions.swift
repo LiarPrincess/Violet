@@ -334,6 +334,61 @@ extension String {
 
 extension UnicodeScalar {
 
+  /// Try to convert scalar to digit.
+  ///
+  /// Acceptable values:
+  /// - ascii numbers
+  /// - ascii lowercase letters (a - z)
+  /// - ascii uppercase letters (A - Z)
+  public var asDigit: Int? {
+    // Tip: use 'man ascii':
+    let  a = 0x61,  z = 0x7a
+    let  A = 0x41,  Z = 0x5a
+    let n0 = 0x30, n9 = 0x39
+
+    let value = Int(self.value)
+
+    if n0 <= value && value <= n9 {
+      return value - n0
+    }
+
+    if a <= value && value <= z {
+      return value - a + 10 // '+ 10' because 'a' is 10 not 0
+    }
+
+    if A <= value && value <= Z {
+      return value - A + 10
+    }
+
+    return nil
+  }
+
+  /// Try to convert scalar to decimal digit.
+  ///
+  /// Acceptable values:
+  /// - ascii numbers
+  public var asDecimalDigit: Int? {
+    guard let digit = self.asDigit else {
+      return nil
+    }
+
+    return digit < 10 ? digit : nil
+  }
+
+  /// Try to convert scalar to hex digit.
+  ///
+  /// Acceptable values:
+  /// - ascii numbers
+  /// - ascii lowercase letters (a - f)
+  /// - ascii uppercase letters (A - F)
+  public var asHexDigit: Int? {
+    guard let digit = self.asDigit else {
+      return nil
+    }
+
+    return digit < 16 ? digit : nil
+  }
+
   /// U+XXXX (for example U+005F). Then you can use it
   /// [here](https://unicode.org/cldr/utility/character.jsp?a=005f)\.
   public var codePointNotation: String {

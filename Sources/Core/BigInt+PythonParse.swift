@@ -309,25 +309,10 @@ extension BigInt {
   }
 
   private static func parseDigit(scalar: UnicodeScalar) -> Storage? {
-    // Tip: use 'man ascii':
-    let  a: Storage = 0x61,  z: Storage = 0x7a
-    let  A: Storage = 0x41,  Z: Storage = 0x5a
-    let n0: Storage = 0x30, n9: Storage = 0x39
-
-    let value = Storage(scalar.value)
-
-    if n0 <= value && value <= n9 {
-      return value - n0
+    guard let int = scalar.asDigit else {
+      return nil
     }
 
-    if a <= value && value <= z {
-      return value - a + 10 // '+ 10' because 'a' is 10 not 0
-    }
-
-    if A <= value && value <= Z {
-      return value - A + 10
-    }
-
-    return nil
+    return Storage(exactly: int)
   }
 }
