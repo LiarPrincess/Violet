@@ -307,8 +307,31 @@ extension Eval {
   }
 
   private func load(dicts: [PyDict], name: PyString) -> InstructionResult {
+    func load(dict: PyDict) -> PyDict.GetResult {
+      // If this is exactly dict then use 'get', otherwise 'getItem'
+      let isExactlyDict = dict.type === Py.types.dict
+
+      if isExactlyDict {
+        return dict.get(key: name)
+      }
+
+      switch Py.callMethod(object: dict, selector: .__getitem__, arg: name) {
+      case let .value(o):
+        return .value(o)
+      case let .missingMethod(e),
+           let .notCallable(e):
+        return .error(e)
+      case let .error(e):
+        if e.isKeyError {
+          return .notFound
+        }
+
+        return .error(e)
+      }
+    }
+
     for dict in dicts {
-      switch dict.get(key: name) {
+      switch load(dict: dict) {
       case .value(let o):
         self.stack.push(o)
         return .ok
