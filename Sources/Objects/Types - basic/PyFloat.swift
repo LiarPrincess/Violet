@@ -726,12 +726,12 @@ extension PyFloat {
 
   /// See comment in `round(nDigits: PyObject?)`.
   private var roundDigitCountMax: Int {
-    return Int(Double(DBL_MANT_DIG - DBL_MIN_EXP) * 0.301_03)
+    return Int(Double(DBL_MANT_DIG - DBL_MIN_EXP) * 0.30_103)
   }
 
   /// See comment in `round(nDigits: PyObject?)`.
   private var roundDigitCountMin: Int {
-    return -Int((Double(DBL_MAX_EXP + 1) * 0.301_03))
+    return -Int(Double(DBL_MAX_EXP + 1) * 0.30_103)
   }
 
   internal static let roundDoc = """

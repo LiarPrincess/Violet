@@ -90,8 +90,7 @@ extension Eval {
   /// This opcode is used only for calls with positional arguments!
   internal func callFunction(argumentCount: Int) -> InstructionResult {
     let level = self.stackLevel
-    let result = self.callFunction(argAndKwargCount: argumentCount,
-                                   kwNames: nil)
+    let result = self.callFunction(argAndKwargCount: argumentCount, kwNames: nil)
 
     let fnObject = 1
     let expectedLevel = level - argumentCount - fnObject

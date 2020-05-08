@@ -496,7 +496,8 @@ extension PyInstance {
     )
   }
 
-  public func addTraceback(on error: PyBaseException, frame: PyFrame) {
+  /// Add traceback to given `error` using given `frame`.
+  public func addTraceback(to error: PyBaseException, frame: PyFrame) {
     let current = error.getTraceback()
     let new = self.newTraceback(frame: frame, next: current)
     error.setTraceback(traceback: new)

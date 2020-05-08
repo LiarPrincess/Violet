@@ -184,7 +184,7 @@ internal final class Eval {
     )
 
     // Traceback - stack trace, call stack etc.
-    Py.addTraceback(on: error, frame: self.frame)
+    Py.addTraceback(to: error, frame: self.frame)
   }
 
   // MARK: - Execute instruction

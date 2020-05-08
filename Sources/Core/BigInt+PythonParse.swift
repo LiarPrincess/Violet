@@ -235,9 +235,9 @@ extension BigInt {
       return
     }
 
-    let isBinary = base ==  2 && (second == "b" || second == "B")
-    let isOctal  = base ==  8 && (second == "o" || second == "O")
-    let isHex    = base == 16 && (second == "x" || second == "X")
+    let isBinary = base == 2 && (second == "b" || second == "B")
+    let isOctal = base == 8 && (second == "o" || second == "O")
+    let isHex = base == 16 && (second == "x" || second == "X")
 
     guard isBinary || isOctal || isHex else {
       return

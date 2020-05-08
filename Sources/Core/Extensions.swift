@@ -342,8 +342,8 @@ extension UnicodeScalar {
   /// - ascii uppercase letters (A - Z)
   public var asDigit: Int? {
     // Tip: use 'man ascii':
-    let  a = 0x61,  z = 0x7a
-    let  A = 0x41,  Z = 0x5a
+    let a = 0x61, z = 0x7a
+    let A = 0x41, Z = 0x5a
     let n0 = 0x30, n9 = 0x39
 
     let value = Int(self.value)

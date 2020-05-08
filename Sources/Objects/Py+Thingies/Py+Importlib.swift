@@ -275,16 +275,8 @@ extension PyInstance {
     return self.newPyImportError(msg: msg, cause: cause)
   }
 
-  private func newPyImportError(msg base: String,
+  private func newPyImportError(msg: String,
                                 cause: PyBaseException) -> PyImportError {
-    let msg: String = {
-      if let details = cause.message {
-        return "\(base): \(details)."
-      }
-
-      return base + "."
-    }()
-
     let result = Py.newPyImportError(msg: msg)
     result.setCause(cause)
     return result

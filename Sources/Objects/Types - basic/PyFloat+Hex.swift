@@ -179,7 +179,7 @@ private struct FromHexString: CustomStringConvertible {
   }
 
   fileprivate var isEmpty: Bool {
-    return window.isEmpty
+    return self.window.isEmpty
   }
 
   fileprivate init(string: String) {
@@ -449,7 +449,7 @@ private func combine(sign: FloatingPointSign,
   for digit in integer {
     significand = 16.0 * significand + Double(digit)
   }
-  for digit in (fraction ?? []) {
+  for digit in fraction ?? [] {
     significand = 16.0 * significand + Double(digit)
   }
 

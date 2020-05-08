@@ -35,7 +35,7 @@ extension ExecEval {
       return .error(e)
     }
 
-    if  globals.get(id: .__builtins__) == nil {
+    if globals.get(id: .__builtins__) == nil {
       let builtins = Py.delegate.frame?.builtins ?? Py.builtins.__dict__
       globals.set(id: .__builtins__, to: builtins)
     }
