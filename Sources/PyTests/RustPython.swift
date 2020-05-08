@@ -135,5 +135,5 @@ internal func runRustPythonTests() {
   //  runTest(file: dir.appendingPathComponent("math_basics.py"))
   //  runTest(file: dir.appendingPathComponent("membership.py"))
   //  runTest(file: dir.appendingPathComponent("set.py"))
-  //  runTest(file: dir.appendingPathComponent("tuple.py"))
+  runTest(file: dir.appendingPathComponent("tuple.py"))
 }
