@@ -305,7 +305,7 @@ assert set([1,2,3]) ^ frozenset([4,5]) == set([1,2,3,4,5])
 # s = {1, A(), B()}
 # assert len(s) == 3
 
-# Violet: This test is not correct
+# VIOLET: This test is not correct
 # s = {True}
 # s.add(1.0)
 # assert str(s) == '{True}'

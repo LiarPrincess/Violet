@@ -22,3 +22,5 @@ guard FileManager.default.changeCurrentDirectoryPath(rootDir.path) else {
 // runOldBuiltins()
 runRustPythonTests()
 // runVioletTests()
+
+printSummary()

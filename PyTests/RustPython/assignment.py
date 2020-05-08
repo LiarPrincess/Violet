@@ -44,19 +44,20 @@ assert d == 3
 a, = [1]
 assert a == 1
 
-def g():
-    yield 1337
-    yield 42
+# VIOLET: We do not have 'yield', we also disabled '__annotations__' tests, because they depend on 'yield' tests
+# def g():
+#     yield 1337
+#     yield 42
 
-a, b = g()
-assert a == 1337
-assert b == 42
+# a, b = g()
+# assert a == 1337
+# assert b == 42
 
-# Variable annotations:
-a: bool
-b: bool = False
+# # Variable annotations:
+# a: bool
+# b: bool = False
 
-assert a == 1337
-assert b == False
+# assert a == 1337
+# assert b == False
 
-assert __annotations__['a'] == bool
+# assert __annotations__['a'] == bool

@@ -3,6 +3,35 @@ import VioletCore
 import VioletObjects
 import VioletVM
 
+// swiftlint:disable function_body_length
+
+private var passedTests = [String]()
+private var failedTests = [String]()
+
+/// In case we need to run all of the tests, so see 'what sticks'.
+///
+/// Just remember to comment the 'exit' on 'error' case in 'runTest' switch.
+internal func printSummary() {
+  func printSummary(title: String, tests: [String]) {
+    print("\(title):")
+    if passedTests.isEmpty {
+      print("  none")
+    } else {
+      for test in tests {
+        print("  \(test)")
+      }
+    }
+  }
+
+  // Did we even run any test?
+  guard passedTests.any && failedTests.any else {
+    return
+  }
+
+  printSummary(title: "Success", tests: passedTests)
+  printSummary(title: "Failed", tests: failedTests)
+}
+
 // This will leak memory on every call.
 // (because we do not have GC to break circular references)
 internal func runTest(file: URL) {
@@ -16,6 +45,7 @@ internal func runTest(file: URL) {
   switch vm.run() {
   case .done:
     print("  ✔ Success")
+    passedTests.append(file.lastPathComponent)
     return
 
   case .systemExit(let object):
@@ -31,6 +61,7 @@ internal func runTest(file: URL) {
     }()
 
     print("  ✔ Success (SystemExit: \(status))")
+    passedTests.append(file.lastPathComponent)
     return
 
   case .error(let error):
@@ -44,6 +75,7 @@ internal func runTest(file: URL) {
     // 'printRecursive' ignores any new errors
     print("  ✖ Error:")
     Py.printRecursive(error: error, file: stdout)
+    failedTests.append(file.lastPathComponent)
     exit(1) // halt for inspection
   }
 }
