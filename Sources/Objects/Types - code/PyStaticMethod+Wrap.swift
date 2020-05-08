@@ -8,12 +8,14 @@ extension PyStaticMethod {
     doc: String?,
     fn: @escaping NewFunction<Zelf>,
     module: PyString? = nil
-  ) -> PyBuiltinFunction {
+  ) -> PyStaticMethod {
 
-    return PyBuiltinFunction(
+    let wrapped = PyBuiltinFunction(
       fn: NewFunctionWrapper(type: type, fn: fn),
       module: module,
       doc: doc
     )
+
+    return PyStaticMethod(callable: wrapped)
   }
 }

@@ -199,12 +199,12 @@ extension PyType {
     // We don't have to, because we store '__doc__' in dict (and not as property).
 
     // Special-case __new__: if it's a plain function, make it a static
-    Self.convertFunctionToStaticMethodIfNeeded(type: type, name: .__new__)
+    Self.convertFunctionToStaticMethodIfNeeded(type: type, fnName: .__new__)
 
     // Special-case '__init_subclass__' and '__class_getitem__':
     // if they are plain functions, make them classmethodss
-    Self.convertFunctionToClassMethodIfNeeded(type: type, name: .__init_subclass__)
-    Self.convertFunctionToClassMethodIfNeeded(type: type, name: .__class_getitem__)
+    Self.convertFunctionToClassMethodIfNeeded(type: type, fnName: .__init_subclass__)
+    Self.convertFunctionToClassMethodIfNeeded(type: type, fnName: .__class_getitem__)
 
     // Add properties/methods connected to '__dict__'
     Self.add__dict__PropertyIfNotPresent(type: type)
@@ -349,11 +349,11 @@ extension PyType {
 
   private static func convertFunctionToStaticMethodIfNeeded(
     type: PyType,
-    name: IdString
+    fnName: IdString
   ) {
     let dict = type.getDict()
 
-    guard let object = dict.get(id: name) else {
+    guard let object = dict.get(id: fnName) else {
       return
     }
 
@@ -362,16 +362,16 @@ extension PyType {
     }
 
     let method = PyStaticMethod(callable: function)
-    dict.set(id: name, to: method)
+    dict.set(id: fnName, to: method)
   }
 
   private static func convertFunctionToClassMethodIfNeeded(
     type: PyType,
-    name: IdString
+    fnName: IdString
   ) {
     let dict = type.getDict()
 
-    guard let object = dict.get(id: name) else {
+    guard let object = dict.get(id: fnName) else {
       return
     }
 
@@ -380,7 +380,7 @@ extension PyType {
     }
 
     let method = PyClassMethod(callable: function)
-    dict.set(id: name, to: method)
+    dict.set(id: fnName, to: method)
   }
 
   // MARK: - __dict__ property

@@ -32,13 +32,13 @@ public class PyStaticMethod: PyObject {
   private var callable: PyObject?
   private lazy var __dict__ = PyDict()
 
-  internal convenience init(callable: PyObject?) {
-    let type = Py.types.classmethod
+  internal convenience init(callable: PyObject) {
+    let type = Py.types.staticmethod
     self.init(type: type, callable: callable)
   }
 
   /// Use only in `__new__`!
-  internal init(type: PyType, callable: PyObject?) {
+  private init(type: PyType, callable: PyObject?) {
     self.callable = callable
     super.init(type: type)
   }

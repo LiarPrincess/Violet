@@ -30,12 +30,11 @@ internal struct NewFunctionWrapper: FunctionWrapper {
   internal init<Zelf: PyObject>(type: PyType,
                                 fn: @escaping NewFunction<Zelf>) {
     self.type = type
-    self.fn = NewFunctionWrapper.eraseZelf(type: type, fn: fn)
+    self.fn = NewFunctionWrapper.eraseZelf(fn: fn)
   }
 
   /// Convert from `NewFunction<Zelf>` to `NewFunction<PyObject>`
   private static func eraseZelf<Zelf: PyObject>(
-    type: PyType,
     fn: @escaping NewFunction<Zelf>
   ) -> NewFunction<PyObject> {
 
@@ -77,17 +76,16 @@ internal typealias InitFunction<Zelf: PyObject> =
 /// Wrapper dedicated to `__init__` function
 internal struct InitFunctionWrapper: FunctionWrapper {
 
-  internal let type: PyType
+  internal let typeName: String
   internal let fn: InitFunction<PyObject>
 
   internal var name: String {
-    let typeName = self.type.getNameRaw()
-    return "\(typeName).__init__"
+    return "\(self.typeName).__init__"
   }
 
   internal init<Zelf: PyObject>(type: PyType,
                                 fn: @escaping InitFunction<Zelf>) {
-    self.type = type
+    self.typeName = type.getName().value
     self.fn = InitFunctionWrapper.eraseZelf(type: type, fn: fn)
   }
 

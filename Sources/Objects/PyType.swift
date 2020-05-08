@@ -665,8 +665,10 @@ public class PyType: PyObject {
   internal func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
     let object: PyObject
     switch self.call__new__(args: args, kwargs: kwargs) {
-    case let .value(o): object = o
-    case let .error(e): return .error(e)
+    case let .value(o):
+      object = o
+    case let .error(e):
+      return .error(e)
     }
 
     // Ugly exception: when the call was type(something),
@@ -699,12 +701,30 @@ public class PyType: PyObject {
     }
 
     // '__new__' is a static method, so we can't just use 'callMethod'
-    guard let newFn = self.lookup(name: .__new__) else {
+    guard let newAttribute = self.lookup(name: .__new__) else {
       return .typeError("cannot create '\(self.name)' instances")
     }
 
+    // '__new__' can (and probably will) be an descriptor,
+    // in the most common case (staticmethod) we still have to call '__get__'
+    let newFn: PyObject
+    if let descr = GetDescriptor(type: self, attribute: newAttribute) {
+      switch descr.call() {
+      case let .value(f):
+        newFn = f
+      case let .error(e):
+        return .error(e)
+      }
+    } else {
+      newFn = newAttribute
+    }
+
     let argsWithType = [self] + args
-    return Py.call(callable: newFn, args: argsWithType, kwargs: kwargs).asResult
+    let callResult = Py.call(callable: newFn,
+                             args: argsWithType,
+                             kwargs: kwargs)
+
+    return callResult.asResult
   }
 
   private func call__init__(object: PyObject,
