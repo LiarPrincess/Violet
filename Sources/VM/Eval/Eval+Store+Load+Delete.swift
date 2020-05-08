@@ -246,10 +246,11 @@ extension Eval {
       value = o
     case .notFound:
       let cell = self.cellsAndFreeVariables[cellOrFreeIndex]
-      switch cell.content {
-      case .some(let o): value = o
-      case .none: return self.unboundDerefError(index: cellOrFreeIndex)
+      guard let content = cell.content else {
+        return self.unboundDerefError(index: cellOrFreeIndex)
       }
+
+      value = content
     case .error(let e):
       return .exception(e)
     }

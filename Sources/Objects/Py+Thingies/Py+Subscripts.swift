@@ -19,7 +19,8 @@ extension PyInstance {
       return .value(r)
     case .missingMethod:
       return .typeError("'\(object.typeName)' object is not subscriptable")
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }
@@ -34,13 +35,15 @@ extension PyInstance {
       return result
     }
 
-    switch self.callMethod(object: object, selector: .__setitem__, arg: value) {
+    let args = [index, value]
+    switch self.callMethod(object: object, selector: .__setitem__, args: args) {
     case .value:
       return .value(self.none)
     case .missingMethod:
       let t = object.typeName
       return .typeError("'\(t)' object does not support item assignment")
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }
@@ -53,13 +56,14 @@ extension PyInstance {
       return result
     }
 
-    switch self.callMethod(object: object, selector: .__delitem__) {
+    switch self.callMethod(object: object, selector: .__delitem__, arg: index) {
     case .value:
       return .value(self.none)
     case .missingMethod:
       let t = object.typeName
       return .typeError("'\(t)' object does not support item deletion")
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }
