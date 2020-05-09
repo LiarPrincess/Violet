@@ -66,7 +66,7 @@ extension CompilerImpl {
     let mangled = self.mangle(name: name)
     let info = self.currentScope.symbols[mangled]
 
-    // TODO: Leave assert here, but handle __doc__ and the like better
+    // 'name.starts(with: "_")' for '__doc__' etc.
     assert(info != nil || name.starts(with: "_"))
 
     let flags = info?.flags ?? []
