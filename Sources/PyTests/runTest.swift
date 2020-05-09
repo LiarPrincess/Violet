@@ -13,9 +13,9 @@ private var failedTests = [String]()
 /// Just remember to comment the 'exit' on 'error' case in 'runTest' switch.
 internal func printSummary() {
   func printSummary(title: String, tests: [String]) {
-    print("\(title):")
-    if passedTests.isEmpty {
-      print("  none")
+    print(title)
+    if tests.isEmpty {
+      print("  (empty)")
     } else {
       for test in tests {
         print("  \(test)")
@@ -24,12 +24,12 @@ internal func printSummary() {
   }
 
   // Did we even run any test?
-  guard passedTests.any && failedTests.any else {
+  guard passedTests.any || failedTests.any else {
     return
   }
 
-  printSummary(title: "Success", tests: passedTests)
-  printSummary(title: "Failed", tests: failedTests)
+  printSummary(title: "Passed tests:", tests: passedTests)
+  printSummary(title: "Failed tests:", tests: failedTests)
 }
 
 // This will leak memory on every call.
