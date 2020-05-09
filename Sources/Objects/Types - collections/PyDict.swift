@@ -329,18 +329,24 @@ public class PyDict: PyObject {
 
     switch self.data.get(key: key) {
     case .value(let o): return .value(o)
-    case .notFound: break // Try '__missing__'
+    case .notFound: break // Try other
     case .error(let e): return .error(e)
     }
 
-    switch Py.callMethod(object: self, selector: .__missing__, arg: index) {
-    case .value(let o):
-      return .value(o)
-    case .missingMethod:
-      return .keyError(key: index)
-    case .error(let e), .notCallable(let e):
-      return .error(e)
+    // Call '__missing__' method if we're a subclass.
+    if !self.checkExact() {
+      switch Py.callMethod(object: self, selector: .__missing__, arg: index) {
+      case .value(let o):
+        return .value(o)
+      case .missingMethod:
+        return .keyError(key: index)
+      case .error(let e),
+           .notCallable(let e):
+        return .error(e)
+      }
     }
+
+    return .keyError(key: index)
   }
 
   // MARK: - Set - subscript
@@ -720,7 +726,7 @@ public class PyDict: PyObject {
   internal static let copyDoc = "D.copy() -> a shallow copy of D"
 
   // sourcery: pymethod = copy, doc = copyDoc
-  public func copy() -> PyObject {
+  public func copy() -> PyDict {
     let result = Py.newDict()
     result.data = self.data
     return result

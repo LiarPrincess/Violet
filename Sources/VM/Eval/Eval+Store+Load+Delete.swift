@@ -25,7 +25,7 @@ extension Eval {
   internal func storeName(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
     let value = self.stack.pop()
-    return self.store(name: name, value: value, dict: self.localSymbols)
+    return self.store(dict: self.localSymbols, name: name, value: value)
   }
 
   /// Pushes the value associated with `name` onto the stack.
@@ -38,7 +38,7 @@ extension Eval {
   /// Implements `del name`.
   internal func deleteName(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-    return self.del(name: name, from: self.localSymbols)
+    return self.del(dict: self.localSymbols, name: name)
   }
 
   // MARK: - Attribute
@@ -133,7 +133,7 @@ extension Eval {
   internal func storeGlobal(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
     let value = self.stack.pop()
-    return self.store(name: name, value: value, dict: self.globalSymbols)
+    return self.store(dict: self.globalSymbols, name: name, value: value)
   }
 
   /// Loads the global named `name` onto the stack.
@@ -146,7 +146,7 @@ extension Eval {
   /// Works as DeleteName, but deletes a global name.
   internal func deleteGlobal(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-    return self.del(name: name, from: self.globalSymbols)
+    return self.del(dict: self.globalSymbols, name: name)
   }
 
   // MARK: - Fast
@@ -241,7 +241,7 @@ extension Eval {
     let name = Py.intern(mangled.value)
 
     let value: PyObject
-    switch self.localSymbols.get(key: name) {
+    switch self.load(dict: self.localSymbols, name: name) {
     case .value(let o):
       value = o
     case .notFound:
@@ -296,41 +296,50 @@ extension Eval {
 
   // MARK: - Helpers
 
-  private func store(name: PyString,
-                     value: PyObject,
-                     dict: PyDict) -> InstructionResult {
-    switch dict.set(key: name, to: value) {
-    case .ok:
+  private func store(dict: PyDict,
+                     name: PyString,
+                     value: PyObject) -> InstructionResult {
+    if dict.checkExact() {
+      switch dict.set(key: name, to: value) {
+      case .ok:
+        return .ok
+      case .error(let e):
+        return .exception(e)
+      }
+    }
+
+    switch Py.setItem(object: dict, index: name, value: value) {
+    case .value:
       return .ok
     case .error(let e):
       return .exception(e)
     }
   }
 
-  private func load(dicts: [PyDict], name: PyString) -> InstructionResult {
-    func load(dict: PyDict) -> PyDict.GetResult {
-      // If this is exactly dict then use 'get', otherwise 'getItem'
-      if dict.checkExact() {
-        return dict.get(key: name)
-      }
-
-      switch Py.callMethod(object: dict, selector: .__getitem__, arg: name) {
-      case let .value(o):
-        return .value(o)
-      case let .missingMethod(e),
-           let .notCallable(e):
-        return .error(e)
-      case let .error(e):
-        if e.isKeyError {
-          return .notFound
-        }
-
-        return .error(e)
-      }
+  private func load(dict: PyDict, name: PyString) -> PyDict.GetResult {
+    // If this is exactly dict then use 'get', otherwise 'getItem'
+    if dict.checkExact() {
+      return dict.get(key: name)
     }
 
+    switch Py.callMethod(object: dict, selector: .__getitem__, arg: name) {
+    case let .value(o):
+      return .value(o)
+    case let .missingMethod(e),
+         let .notCallable(e):
+      return .error(e)
+    case let .error(e):
+      if e.isKeyError {
+        return .notFound
+      }
+
+      return .error(e)
+    }
+  }
+
+  private func load(dicts: [PyDict], name: PyString) -> InstructionResult {
     for dict in dicts {
-      switch load(dict: dict) {
+      switch load(dict: dict, name: name) {
       case .value(let o):
         self.stack.push(o)
         return .ok
@@ -344,12 +353,21 @@ extension Eval {
     return self.nameError(name)
   }
 
-  private func del(name: PyString, from dict: PyDict) -> InstructionResult {
-    switch dict.del(key: name) {
+  private func del(dict: PyDict, name: PyString) -> InstructionResult {
+    if dict.checkExact() {
+      switch dict.del(key: name) {
+      case .value:
+        return .ok
+      case .notFound:
+        return self.nameError(name)
+      case .error(let e):
+        return .exception(e)
+      }
+    }
+
+    switch Py.deleteItem(object: dict, index: name) {
     case .value:
       return .ok
-    case .notFound:
-      return self.nameError(name)
     case .error(let e):
       return .exception(e)
     }

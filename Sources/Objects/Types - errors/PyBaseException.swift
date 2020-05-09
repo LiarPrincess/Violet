@@ -112,37 +112,36 @@ public class PyBaseException: PyObject {
 
   public var isAttributeError: Bool {
     let type = Py.errorTypes.attributeError
-    return self.hasTypeThatIsSubclass(of: type)
+    return self.isSubtype(of: type)
   }
 
   public var isStopIteration: Bool {
     let type = Py.errorTypes.stopIteration
-    return self.hasTypeThatIsSubclass(of: type)
+    return self.isSubtype(of: type)
   }
 
   public var isIndexError: Bool {
     let type = Py.errorTypes.indexError
-    return self.hasTypeThatIsSubclass(of: type)
+    return self.isSubtype(of: type)
   }
 
   public var isTypeError: Bool {
     let type = Py.errorTypes.typeError
-    return self.hasTypeThatIsSubclass(of: type)
+    return self.isSubtype(of: type)
   }
 
   public var isKeyError: Bool {
     let type = Py.errorTypes.keyError
-    return self.hasTypeThatIsSubclass(of: type)
+    return self.isSubtype(of: type)
   }
 
   public var isSystemExit: Bool {
     let type = Py.errorTypes.systemExit
-    return self.hasTypeThatIsSubclass(of: type)
+    return self.isSubtype(of: type)
   }
 
-  private func hasTypeThatIsSubclass(of type: PyType) -> Bool {
-    let mro = self.type.getMRORaw()
-    return mro.contains { $0 === type }
+  private func isSubtype(of type: PyType) -> Bool {
+    return self.type.isSubtype(of: type)
   }
 
   // MARK: - String
