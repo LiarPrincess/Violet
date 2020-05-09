@@ -28,13 +28,15 @@ assert a == [1, 2, 3, 4]
 a.extend({'a': 1, 'b': 2, 'z': 51})
 assert a == [1, 2, 3, 4, 'a', 'b', 'z']
 
-class Iter:
-    def __iter__(self):
-        yield 12
-        yield 28
+# VIOLET: We do not have generators
+a = [1, 2, 3, 4, 'a', 'b', 'z', 12, 28]
+# class Iter:
+#     def __iter__(self):
+#         yield 12
+#         yield 28
 
-a.extend(Iter())
-assert a == [1, 2, 3, 4, 'a', 'b', 'z', 12, 28]
+# a.extend(Iter())
+# assert a == [1, 2, 3, 4, 'a', 'b', 'z', 12, 28]
 
 a.extend(bytes(b'hello world'))
 assert a == [1, 2, 3, 4, 'a', 'b', 'z', 12, 28, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100]
@@ -107,13 +109,18 @@ x = ['a', 'b', 'c']
 x.insert(-100, 'z')
 assert x == ['z', 'a', 'b', 'c']
 
-assert_raises(OverflowError, lambda: x.insert(100000000000000000000, 'z'))
+# VIOLET: We do not have BigInt
+# assert_raises(OverflowError, lambda: x.insert(100000000000000000000, 'z'))
 
 x = [[], 2, {}]
 y = x.copy()
 assert x is not y
 assert x == y
-assert all(a is b for a, b in zip(x, y))
+# VIOLET: We do not have comprehensions, rewritten as loop
+# assert all(a is b for a, b in zip(x, y))
+for a, b in zip(x, y):
+  assert a is b
+
 y.append(4)
 assert x != y
 
@@ -473,16 +480,17 @@ x[3:8] = CIterNext()
 assert x == [0, 1, 2, 1, 2, 3, 8, 9]
 
 # __iter__ yield
-class CIter:
-  def __init__(self, sec=(1, 2, 3)):
-    self.sec = sec
-  def __iter__(self):
-    for n in self.sec:
-      yield n
+# VIOLET: We do not have generators
+# class CIter:
+#   def __init__(self, sec=(1, 2, 3)):
+#     self.sec = sec
+#   def __iter__(self):
+#     for n in self.sec:
+#       yield n
 
-x = list(range(10))
-x[3:8] = CIter()
-assert x == [0, 1, 2, 1, 2, 3, 8, 9]
+# x = list(range(10))
+# x[3:8] = CIter()
+# assert x == [0, 1, 2, 1, 2, 3, 8, 9]
 
 # __getitem but no __iter__ sequence
 class CGetItem:
@@ -496,18 +504,19 @@ x[3:8] = CGetItem()
 assert x == [0, 1, 2, 1, 2, 3, 8, 9]
 
 # iter raises error
-class CIterError:
-  def __iter__(self):
-    for i in range(10):
-      if i > 5:
-        raise RuntimeError
-      yield i
+# VIOLET: We do not have generators
+# class CIterError:
+#   def __iter__(self):
+#     for i in range(10):
+#       if i > 5:
+#         raise RuntimeError
+#       yield i
 
-def bad_iter_assign():
-  x = list(range(10))
-  x[3:8] = CIterError()
+# def bad_iter_assign():
+#   x = list(range(10))
+#   x[3:8] = CIterError()
 
-assert_raises(RuntimeError, bad_iter_assign)
+# assert_raises(RuntimeError, bad_iter_assign)
 
 # slice assign when step or stop is -1
 a = list(range(10))
@@ -591,21 +600,24 @@ assert a == [1, 2, 3, 4]
 a += {'a': 1, 'b': 2, 'z': 51}
 assert a == [1, 2, 3, 4, 'a', 'b', 'z']
 
-class Iter:
-    def __iter__(self):
-        yield 12
-        yield 28
+# VIOLET: We do not have generators
+a == [1, 2, 3, 4, 'a', 'b', 'z', 12, 28]
+# class Iter:
+#     def __iter__(self):
+#         yield 12
+#         yield 28
 
-a += Iter()
-assert a == [1, 2, 3, 4, 'a', 'b', 'z', 12, 28]
+# a += Iter()
+# assert a == [1, 2, 3, 4, 'a', 'b', 'z', 12, 28]
 
 a += bytes(b'hello world')
 assert a == [1, 2, 3, 4, 'a', 'b', 'z', 12, 28, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100]
 
-class Next:
-    def __next__(self):
-        yield 12
-        yield 28
+# VIOLET: We do not have generators
+# class Next:
+#     def __next__(self):
+#         yield 12
+#         yield 28
 
 def iadd_int():
     a = []
