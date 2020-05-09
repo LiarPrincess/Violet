@@ -23,7 +23,7 @@ for t in implemented.types:
     # Pickle (probably)
     '__getnewargs__',
     # Iterator methods
-    '__length_hint__', '__setstate__',
+    '__setstate__',
     # CPython implementation detail
     '__sizeof__',
   ]

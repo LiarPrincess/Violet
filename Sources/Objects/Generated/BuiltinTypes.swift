@@ -559,6 +559,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyByteArrayIterator.getAttribute(name:), castSelf: Self.asByteArrayIterator))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyByteArrayIterator.iter, castSelf: Self.asByteArrayIterator))
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyByteArrayIterator.next, castSelf: Self.asByteArrayIterator))
+    self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyByteArrayIterator.lengthHint, castSelf: Self.asByteArrayIterator))
   }
 
   private static func asByteArrayIterator(_ object: PyObject, methodName: String) -> PyResult<PyByteArrayIterator> {
@@ -661,6 +662,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyBytesIterator.getAttribute(name:), castSelf: Self.asBytesIterator))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyBytesIterator.iter, castSelf: Self.asBytesIterator))
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyBytesIterator.next, castSelf: Self.asBytesIterator))
+    self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyBytesIterator.lengthHint, castSelf: Self.asBytesIterator))
   }
 
   private static func asBytesIterator(_ object: PyObject, methodName: String) -> PyResult<PyBytesIterator> {
@@ -913,6 +915,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyDictItemIterator.getAttribute(name:), castSelf: Self.asDictItemIterator))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyDictItemIterator.iter, castSelf: Self.asDictItemIterator))
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyDictItemIterator.next, castSelf: Self.asDictItemIterator))
+    self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyDictItemIterator.lengthHint, castSelf: Self.asDictItemIterator))
   }
 
   private static func asDictItemIterator(_ object: PyObject, methodName: String) -> PyResult<PyDictItemIterator> {
@@ -974,6 +977,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyDictKeyIterator.getAttribute(name:), castSelf: Self.asDictKeyIterator))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyDictKeyIterator.iter, castSelf: Self.asDictKeyIterator))
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyDictKeyIterator.next, castSelf: Self.asDictKeyIterator))
+    self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyDictKeyIterator.lengthHint, castSelf: Self.asDictKeyIterator))
   }
 
   private static func asDictKeyIterator(_ object: PyObject, methodName: String) -> PyResult<PyDictKeyIterator> {
@@ -1035,6 +1039,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyDictValueIterator.getAttribute(name:), castSelf: Self.asDictValueIterator))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyDictValueIterator.iter, castSelf: Self.asDictValueIterator))
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyDictValueIterator.next, castSelf: Self.asDictValueIterator))
+    self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyDictValueIterator.lengthHint, castSelf: Self.asDictValueIterator))
   }
 
   private static func asDictValueIterator(_ object: PyObject, methodName: String) -> PyResult<PyDictValueIterator> {
@@ -1423,6 +1428,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyIterator.getAttribute(name:), castSelf: Self.asIterator))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyIterator.iter, castSelf: Self.asIterator))
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyIterator.next, castSelf: Self.asIterator))
+    self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyIterator.lengthHint, castSelf: Self.asIterator))
   }
 
   private static func asIterator(_ object: PyObject, methodName: String) -> PyResult<PyIterator> {
@@ -1507,6 +1513,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyListIterator.getAttribute(name:), castSelf: Self.asListIterator))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyListIterator.iter, castSelf: Self.asListIterator))
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyListIterator.next, castSelf: Self.asListIterator))
+    self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyListIterator.lengthHint, castSelf: Self.asListIterator))
   }
 
   private static func asListIterator(_ object: PyObject, methodName: String) -> PyResult<PyListIterator> {
@@ -1533,6 +1540,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyListReverseIterator.getAttribute(name:), castSelf: Self.asListReverseIterator))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyListReverseIterator.iter, castSelf: Self.asListReverseIterator))
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyListReverseIterator.next, castSelf: Self.asListReverseIterator))
+    self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyListReverseIterator.lengthHint, castSelf: Self.asListReverseIterator))
   }
 
   private static func asListReverseIterator(_ object: PyObject, methodName: String) -> PyResult<PyListReverseIterator> {
@@ -1812,6 +1820,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyRangeIterator.getAttribute(name:), castSelf: Self.asRangeIterator))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyRangeIterator.iter, castSelf: Self.asRangeIterator))
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyRangeIterator.next, castSelf: Self.asRangeIterator))
+    self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyRangeIterator.lengthHint, castSelf: Self.asRangeIterator))
   }
 
   private static func asRangeIterator(_ object: PyObject, methodName: String) -> PyResult<PyRangeIterator> {
@@ -1839,6 +1848,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyReversed.getAttribute(name:), castSelf: Self.asReversed))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyReversed.iter, castSelf: Self.asReversed))
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyReversed.next, castSelf: Self.asReversed))
+    self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyReversed.lengthHint, castSelf: Self.asReversed))
   }
 
   private static func asReversed(_ object: PyObject, methodName: String) -> PyResult<PyReversed> {
@@ -1924,6 +1934,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PySetIterator.getAttribute(name:), castSelf: Self.asSetIterator))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PySetIterator.iter, castSelf: Self.asSetIterator))
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PySetIterator.next, castSelf: Self.asSetIterator))
+    self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PySetIterator.lengthHint, castSelf: Self.asSetIterator))
   }
 
   private static func asSetIterator(_ object: PyObject, methodName: String) -> PyResult<PySetIterator> {
@@ -2096,6 +2107,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyStringIterator.getAttribute(name:), castSelf: Self.asStringIterator))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyStringIterator.iter, castSelf: Self.asStringIterator))
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyStringIterator.next, castSelf: Self.asStringIterator))
+    self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyStringIterator.lengthHint, castSelf: Self.asStringIterator))
   }
 
   private static func asStringIterator(_ object: PyObject, methodName: String) -> PyResult<PyStringIterator> {
@@ -2256,6 +2268,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyTupleIterator.getAttribute(name:), castSelf: Self.asTupleIterator))
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyTupleIterator.iter, castSelf: Self.asTupleIterator))
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyTupleIterator.next, castSelf: Self.asTupleIterator))
+    self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyTupleIterator.lengthHint, castSelf: Self.asTupleIterator))
   }
 
   private static func asTupleIterator(_ object: PyObject, methodName: String) -> PyResult<PyTupleIterator> {

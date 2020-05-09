@@ -328,7 +328,8 @@ extension PyInstance {
       return .value(o)
     case .missingMethod:
       return .typeError("object of type '\(iterable.typeName)' has no len()")
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }

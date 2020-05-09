@@ -26,28 +26,28 @@ public class PyIterator: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
+  public func iter() -> PyObject {
     return self
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal func next() -> PyResult<PyObject> {
+  public func next() -> PyResult<PyObject> {
     guard self.index != PyIterator.endIndex else {
       return .stopIteration()
     }
@@ -65,5 +65,19 @@ public class PyIterator: PyObject {
 
       return .error(e)
     }
+  }
+
+  // MARK: - Length hint
+
+  // sourcery: pymethod = __length_hint__
+  public func lengthHint() -> PyResult<PyInt> {
+    let len: BigInt
+    switch Py.lenBigInt(iterable: self.sequence) {
+    case let .value(l): len = l
+    case let .error(e): return .error(e)
+    }
+
+    let result = len - BigInt(self.index)
+    return .value(Py.newInt(result))
   }
 }

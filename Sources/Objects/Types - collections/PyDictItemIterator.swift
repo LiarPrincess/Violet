@@ -30,28 +30,28 @@ public class PyDictItemIterator: PyObject, OrderedDictionaryBackedIterator {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
+  public func iter() -> PyObject {
     return self.iterShared()
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal func next() -> PyResult<PyObject> {
+  public func next() -> PyResult<PyObject> {
     guard self.initCount == self.object.data.count else {
       self.index = -1 // Make this state sticky
       return .runtimeError("dictionary changed size during iteration")
@@ -66,6 +66,13 @@ public class PyDictItemIterator: PyObject, OrderedDictionaryBackedIterator {
     case let .error(e):
       return .error(e)
     }
+  }
+
+  // MARK: - Length hint
+
+  // sourcery: pymethod = __length_hint__
+  public func lengthHint() -> PyInt {
+    return self.lengthHintShared()
   }
 
   // MARK: - Python new

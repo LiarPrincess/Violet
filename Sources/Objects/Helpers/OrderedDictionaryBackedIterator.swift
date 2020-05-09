@@ -32,4 +32,9 @@ extension OrderedDictionaryBackedIterator {
 
     return .error(Py.newStopIteration())
   }
+
+  internal func lengthHintShared() -> PyInt {
+    let result = self.dict.count - self.index
+    return Py.newInt(result)
+  }
 }

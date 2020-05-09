@@ -24,28 +24,28 @@ public class PyBytesIterator: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
+  public func iter() -> PyObject {
     return self
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal func next() -> PyResult<PyObject> {
+  public func next() -> PyResult<PyObject> {
     let scalars = self.bytes.data.scalars
 
     if self.index < scalars.count {
@@ -56,6 +56,15 @@ public class PyBytesIterator: PyObject {
     }
 
     return .stopIteration()
+  }
+
+  // MARK: - Length hint
+
+  // sourcery: pymethod = __length_hint__
+  public func lengthHint() -> PyInt {
+    let data = self.bytes.data.values
+    let result = data.count - self.index
+    return Py.newInt(result)
   }
 
   // MARK: - Python new

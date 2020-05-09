@@ -24,28 +24,28 @@ public class PyTupleIterator: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
+  public func iter() -> PyObject {
     return self
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  internal func next() -> PyResult<PyObject> {
+  public func next() -> PyResult<PyObject> {
     if self.index < self.tuple.elements.count {
       let item = self.tuple.elements[self.index]
       self.index += 1
@@ -53,6 +53,15 @@ public class PyTupleIterator: PyObject {
     }
 
     return .stopIteration()
+  }
+
+  // MARK: - Length hint
+
+  // sourcery: pymethod = __length_hint__
+  public func lengthHint() -> PyInt {
+    let data = self.tuple.data
+    let result = data.count - self.index
+    return Py.newInt(result)
   }
 
   // MARK: - Python new

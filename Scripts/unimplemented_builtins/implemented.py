@@ -211,6 +211,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__length_hint__',
     '__new__',
   ],
   bytes: [
@@ -274,6 +275,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__length_hint__',
     '__new__',
   ],
   callable_iterator: [
@@ -386,6 +388,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__length_hint__',
     '__new__',
   ],
   dict_items: [
@@ -409,6 +412,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__length_hint__',
     '__new__',
   ],
   dict_keys: [
@@ -432,6 +436,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__length_hint__',
     '__new__',
   ],
   dict_values: [
@@ -632,6 +637,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__length_hint__',
   ],
   list: [
     '__class__',
@@ -675,6 +681,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__length_hint__',
     '__new__',
   ],
   list_reverseiterator: [
@@ -682,6 +689,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__length_hint__',
     '__new__',
   ],
   map: [
@@ -791,6 +799,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__length_hint__',
     '__new__',
   ],
   reversed: [
@@ -798,6 +807,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__length_hint__',
     '__new__',
   ],
   set: [
@@ -844,6 +854,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__length_hint__',
     '__new__',
   ],
   slice: [
@@ -938,6 +949,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__length_hint__',
     '__new__',
   ],
   super: [
@@ -1000,6 +1012,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__length_hint__',
     '__new__',
   ],
   type: [

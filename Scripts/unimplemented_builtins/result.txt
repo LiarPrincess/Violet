@@ -114,6 +114,7 @@ int
 Iterator
   Why do we even have this?
     __getattribute__
+    __length_hint__
 
 method
   Why do we even have this?
