@@ -379,6 +379,7 @@ types = {
     'values',
     '__init__',
     '__new__',
+    'fromkeys',
   ],
   dict_itemiterator: [
     '__class__',

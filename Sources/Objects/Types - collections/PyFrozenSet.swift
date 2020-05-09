@@ -285,6 +285,12 @@ public class PyFrozenSet: PyObject, PySetType {
     return PySetIterator(set: self)
   }
 
+  // MARK: - Check exact
+
+  public func checkExact() -> Bool {
+    return self.type === Py.types.frozenset
+  }
+
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__

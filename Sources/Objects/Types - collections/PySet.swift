@@ -368,6 +368,12 @@ public class PySet: PyObject, PySetType {
     return PySetIterator(set: self)
   }
 
+  // MARK: - Check exact
+
+  public func checkExact() -> Bool {
+    return self.type === Py.types.set
+  }
+
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__

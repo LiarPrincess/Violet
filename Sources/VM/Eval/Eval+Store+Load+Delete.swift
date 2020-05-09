@@ -310,9 +310,7 @@ extension Eval {
   private func load(dicts: [PyDict], name: PyString) -> InstructionResult {
     func load(dict: PyDict) -> PyDict.GetResult {
       // If this is exactly dict then use 'get', otherwise 'getItem'
-      let isExactlyDict = dict.type === Py.types.dict
-
-      if isExactlyDict {
+      if dict.checkExact() {
         return dict.get(key: name)
       }
 

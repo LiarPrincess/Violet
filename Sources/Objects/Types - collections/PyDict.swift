@@ -179,7 +179,7 @@ public class PyDict: PyObject {
   ///
   /// It will trap on fail.
   public func get(id: IdString) -> PyObject? {
-    let key = self.createKey(from: id)
+    let key = Self.createKey(from: id)
 
     switch self.data.get(key: key) {
     case .value(let o):
@@ -195,7 +195,7 @@ public class PyDict: PyObject {
   ///
   /// It may fail if hashing or actuall storage access fails.
   public func get(key: PyObject) -> GetResult {
-    switch self.createKey(from: key) {
+    switch Self.createKey(from: key) {
     case let .value(key):
       return self.get(key: key)
     case let .error(e):
@@ -225,7 +225,7 @@ public class PyDict: PyObject {
   }
 
   public func set(id: IdString, to value: PyObject) {
-    let key = self.createKey(from: id)
+    let key = Self.createKey(from: id)
 
     switch self.data.insert(key: key, value: value) {
     case .inserted,
@@ -237,7 +237,7 @@ public class PyDict: PyObject {
   }
 
   public func set(key: PyObject, to value: PyObject) -> SetResult {
-    switch self.createKey(from: key) {
+    switch Self.createKey(from: key) {
     case let .value(key):
       return self.set(key: key, to: value)
     case let .error(e):
@@ -264,7 +264,7 @@ public class PyDict: PyObject {
   }
 
   public func del(id: IdString) -> PyObject? {
-    let key = self.createKey(from: id)
+    let key = Self.createKey(from: id)
 
     switch self.data.remove(key: key) {
     case .value(let o):
@@ -277,7 +277,7 @@ public class PyDict: PyObject {
   }
 
   public func del(key: PyObject) -> DelResult {
-    switch self.createKey(from: key) {
+    switch Self.createKey(from: key) {
     case let .value(key):
       return self.del(key: key)
     case let .error(e):
@@ -432,7 +432,7 @@ public class PyDict: PyObject {
   public func getWithDefault(index: PyObject,
                              default: PyObject?) -> PyResult<PyObject> {
     let key: PyDictKey
-    switch self.createKey(from: index) {
+    switch Self.createKey(from: index) {
     case let .value(v): key = v
     case let .error(e): return .error(e)
     }
@@ -492,7 +492,7 @@ public class PyDict: PyObject {
   public func setWithDefault(index: PyObject,
                              default: PyObject?) -> PyResult<PyObject> {
     let key: PyDictKey
-    switch self.createKey(from: index) {
+    switch Self.createKey(from: index) {
     case let .value(v): key = v
     case let .error(e): return .error(e)
     }
@@ -518,7 +518,7 @@ public class PyDict: PyObject {
   // sourcery: pymethod = __contains__
   public func contains(element: PyObject) -> PyResult<Bool> {
     let key: PyDictKey
-    switch self.createKey(from: element) {
+    switch Self.createKey(from: element) {
     case let .value(v): key = v
     case let .error(e): return .error(e)
     }
@@ -676,7 +676,7 @@ public class PyDict: PyObject {
         return .valueError(msg)
       }
 
-      return self.createKey(from: array[0]).map { ($0, array[1]) }
+      return Self.createKey(from: array[0]).map { ($0, array[1]) }
 
     case let .error(e):
       return .error(e)
@@ -695,7 +695,7 @@ public class PyDict: PyObject {
 
     for keyObject in keys {
       let key: PyDictKey
-      switch self.createKey(from: keyObject) {
+      switch Self.createKey(from: keyObject) {
       case let .value(k): key = k
       case let .error(e): return .error(e)
       }
@@ -737,7 +737,7 @@ public class PyDict: PyObject {
   public func pop(_ index: PyObject,
                   default: PyObject?) -> PyResult<PyObject> {
     let key: PyDictKey
-    switch self.createKey(from: index) {
+    switch Self.createKey(from: index) {
     case let .value(v): key = v
     case let .error(e): return .error(e)
     }
@@ -775,6 +775,60 @@ public class PyDict: PyObject {
     return .value(result)
   }
 
+  // MARK: - From keys
+
+  // sourcery: pyclassmethod = fromkeys
+  public static func fromKeys(type: PyType,
+                              iterable: PyObject,
+                              value: PyObject?) -> PyResult<PyObject> {
+    let value = value ?? Py.none
+
+    let dictObject: PyObject
+    switch Py.call(callable: type) {
+    case let .value(d):
+      dictObject = d
+    case let .notCallable(e),
+         let .error(e):
+      return .error(e)
+    }
+
+    // Fast path for 'dict'
+    if let dict = dictObject as? PyDict, dict.checkExact(), dict.data.isEmpty {
+      if let iterDict = iterable as? PyDict, iterDict.checkExact() {
+        for entry in iterDict.data {
+          switch dict.insert(key: entry.key, value: value) {
+          case .value: break // go to next
+          case .error(let e): return .error(e)
+          }
+        }
+      }
+
+      if let iterSet = iterable as? PySetType, iterSet.checkExact() {
+        for entry in iterSet.data.dict {
+          let key = PyDictKey(hash: entry.key.hash, object: entry.key.object)
+          switch dict.insert(key: key, value: value) {
+          case .value: break // go to next
+          case .error(let e): return .error(e)
+          }
+        }
+      }
+    }
+
+    let result = Py.reduce(iterable: iterable, initial: 0) { _, object in
+      switch Py.setItem(object: dictObject, index: object, value: value) {
+      case .value: return .goToNextElement
+      case .error(let e): return .error(e)
+      }
+    }
+
+    switch result {
+    case .value:
+      return .value(dictObject)
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
   // MARK: - Views
 
   // sourcery: pymethod = keys
@@ -790,6 +844,16 @@ public class PyDict: PyObject {
   // sourcery: pymethod = values
   public func values() -> PyObject {
     return PyDictValues(dict: self)
+  }
+
+  // MARK: - Check exact
+
+  /// Is this builtin `dict` type?
+  ///
+  /// Will return `false` if this is a `dict` subclass.
+  /// `PyDict_CheckExact`
+  public func checkExact() -> Bool {
+    return self.type === Py.types.dict
   }
 
   // MARK: - Python new
@@ -824,11 +888,11 @@ public class PyDict: PyObject {
 
   // MARK: - Helpers
 
-  private func createKey(from id: IdString) -> PyDictKey {
+  private static func createKey(from id: IdString) -> PyDictKey {
     return PyDictKey(hash: id.hash, object: id.value)
   }
 
-  private func createKey(from object: PyObject) -> PyResult<PyDictKey> {
+  private static func createKey(from object: PyObject) -> PyResult<PyDictKey> {
     switch Py.hash(object: object) {
     case let .value(hash):
       return .value(PyDictKey(hash: hash, object: object))

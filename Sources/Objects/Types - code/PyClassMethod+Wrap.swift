@@ -58,4 +58,27 @@ extension PyClassMethod {
 
     return PyClassMethod(callable: wrapped)
   }
+
+  // MARK: - Positional ternary
+
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    fn: @escaping (PyType, PyObject, PyObject?) -> R,
+    module: PyString? = nil
+  ) -> PyClassMethod {
+
+    let wrapped = PyBuiltinFunction.wrap(
+      name: name,
+      doc: doc,
+      fn: { (arg0: PyObject, arg1: PyObject, arg2: PyObject?) -> PyFunctionResult in
+        let type = asType(name: name, object: arg0)
+        let result = type.map { fn($0, arg1, arg2) }
+        return result.asFunctionResult
+      },
+      module: module
+    )
+
+    return PyClassMethod(callable: wrapped)
+  }
 }

@@ -35,6 +35,8 @@ extension OrderedDictionary where Value == Void {
 
 internal protocol PySetType: PyObject {
   var data: PySetData { get set }
+
+  func checkExact() -> Bool
 }
 
 // MARK: - PySetData
