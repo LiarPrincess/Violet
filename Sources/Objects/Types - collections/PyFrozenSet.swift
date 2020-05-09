@@ -315,7 +315,7 @@ public class PyFrozenSet: PyObject, PySetType {
 
     var dataOrNil: PySetData?
     if let iterable = args.first {
-      switch PyFrozenSet.data(fromIterable: iterable) {
+      switch PyFrozenSet.createData(iterable: iterable) {
       case let .value(d): dataOrNil = d
       case let .error(e): return .error(e)
       }
@@ -333,26 +333,18 @@ public class PyFrozenSet: PyObject, PySetType {
     return Py.newFrozenSet(data: data)
   }
 
-  private static func data(fromIterable iterable: PyObject) -> PyResult<PySetData> {
-    if let set = iterable as? PySetType {
+  private static func createData(iterable: PyObject) -> PyResult<PySetData> {
+    if let set = iterable as? PySetType, set.checkExact() {
       return .value(set.data)
     }
 
-    switch Py.toArray(iterable: iterable) {
-    case let .value(array):
-      var data = PySetData()
-
-      for object in array {
-        switch data.insert(value: object) {
-        case .ok: break
-        case .error(let e): return .error(e)
-        }
+    return Py.reduce(iterable: iterable, into: PySetData()) { data, object in
+      switch data.insert(value: object) {
+      case .ok:
+        return .goToNextElement
+      case .error(let e):
+        return .error(e)
       }
-
-      return .value(data)
-
-    case let .error(e):
-      return .error(e)
     }
   }
 

@@ -801,22 +801,11 @@ public class PyDict: PyObject {
     // Fast path for 'dict'
     if let dict = dictObject as? PyDict, dict.checkExact(), dict.data.isEmpty {
       if let iterDict = iterable as? PyDict, iterDict.checkExact() {
-        for entry in iterDict.data {
-          switch dict.insert(key: entry.key, value: value) {
-          case .value: break // go to next
-          case .error(let e): return .error(e)
-          }
-        }
+        return self.fillFromKeys(dict: dict, iterable: iterDict, value: value)
       }
 
       if let iterSet = iterable as? PySetType, iterSet.checkExact() {
-        for entry in iterSet.data.dict {
-          let key = PyDictKey(hash: entry.key.hash, object: entry.key.object)
-          switch dict.insert(key: key, value: value) {
-          case .value: break // go to next
-          case .error(let e): return .error(e)
-          }
-        }
+        return self.fillFromKeys(dict: dict, iterable: iterSet, value: value)
       }
     }
 
@@ -833,6 +822,39 @@ public class PyDict: PyObject {
     case .error(let e):
       return .error(e)
     }
+  }
+
+  private static func fillFromKeys(dict: PyDict,
+                                   iterable: PyDict,
+                                   value: PyObject) -> PyResult<PyObject> {
+    assert(dict.checkExact())
+    assert(iterable.checkExact())
+
+    for entry in iterable.data {
+      switch dict.insert(key: entry.key, value: value) {
+      case .value: break // go to next
+      case .error(let e): return .error(e)
+      }
+    }
+
+    return .value(dict)
+  }
+
+  private static func fillFromKeys(dict: PyDict,
+                                   iterable: PySetType,
+                                   value: PyObject) -> PyResult<PyObject> {
+    assert(dict.checkExact())
+    assert(iterable.checkExact())
+
+    for entry in iterable.data.dict {
+      let key = PyDictKey(hash: entry.key.hash, object: entry.key.object)
+      switch dict.insert(key: key, value: value) {
+      case .value: break // go to next
+      case .error(let e): return .error(e)
+      }
+    }
+
+    return .value(dict)
   }
 
   // MARK: - Views

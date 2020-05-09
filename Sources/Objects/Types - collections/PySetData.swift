@@ -581,7 +581,7 @@ internal struct PySetData {
   // MARK: - Helpers
 
   private func makeSet(from other: PyObject) -> PyResult<PySetData> {
-    if let set = other as? PySetType {
+    if let set = other as? PySetType, set.checkExact() {
       return .value(set.data)
     }
 
