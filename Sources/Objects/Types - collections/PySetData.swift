@@ -36,6 +36,9 @@ extension OrderedDictionary where Value == Void {
 internal protocol PySetType: PyObject {
   var data: PySetData { get set }
 
+  /// Is this builtin `set/frozenset` type?
+  ///
+  /// Will return `false` if this is a subclass.
   func checkExact() -> Bool
 }
 

@@ -5,6 +5,11 @@ import VioletCore
 
 internal protocol PySequenceType {
   var data: PySequenceData { get }
+
+  /// Is this builtin `list/tuple` type?
+  ///
+  /// Will return `false` if this is a subclass.
+  func checkExact() -> Bool
 }
 
 /// Main logic for Python sequences.

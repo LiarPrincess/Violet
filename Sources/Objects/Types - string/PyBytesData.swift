@@ -7,6 +7,11 @@ import VioletCore
 /// Protocol implemented by both `bytes` and `bytesarray`.
 internal protocol PyBytesType: PyObject {
   var data: PyBytesData { get }
+
+  /// Is this builtin `bytes/bytearray` type?
+  ///
+  /// Will return `false` if this is a subclass.
+  func checkExact() -> Bool
 }
 
 // MARK: - Bytes builder
@@ -555,12 +560,32 @@ internal struct PyBytesData: PyStringImpl {
     }
   }
 
-  private static func new(fromIterable object: PyObject) -> NewFromResult {
-    guard Py.hasIter(object: object) else {
+  private static func new(fromIterable iterable: PyObject) -> NewFromResult {
+    guard Py.hasIter(object: iterable) else {
       return .tryOther
     }
 
-    let acc = Py.reduce(iterable: object, into: Data()) { data, object in
+    if let bytes = iterable as? PyBytesType, bytes.checkExact() {
+      return .bytes(bytes.data.values)
+    }
+
+    if let sequence = iterable as? PySequenceType, sequence.checkExact() {
+      var result = Data()
+      result.reserveCapacity(sequence.data.count)
+
+      for element in sequence.data.elements {
+        switch PyBytesData.asByte(element) {
+        case let .value(byte):
+          result.append(byte)
+        case let .error(e):
+          return .error(e)
+        }
+
+        return .bytes(result)
+      }
+    }
+
+    let acc = Py.reduce(iterable: iterable, into: Data()) { data, object in
       switch PyBytesData.asByte(object) {
       case let .value(byte):
         data.append(byte)

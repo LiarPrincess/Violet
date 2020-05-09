@@ -366,6 +366,13 @@ public final class PyInstance {
   /// Cache given string and return it.
   ///
   /// If it is already in cache then it will return interned value.
+  public func intern(_ value: UnicodeScalar) -> PyString {
+    return self.intern(String(value))
+  }
+
+  /// Cache given string and return it.
+  ///
+  /// If it is already in cache then it will return interned value.
   public func intern(_ value: String) -> PyString {
     if let interned = self.getInterned(value) {
       return interned

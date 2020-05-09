@@ -878,8 +878,7 @@ public class PyDict: PyObject {
 
   /// Is this builtin `dict` type?
   ///
-  /// Will return `false` if this is a `dict` subclass.
-  /// `PyDict_CheckExact`
+  /// Will return `false` if this is a subclass.
   public func checkExact() -> Bool {
     return self.type === Py.types.dict
   }

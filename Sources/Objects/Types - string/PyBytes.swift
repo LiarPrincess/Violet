@@ -609,6 +609,12 @@ public class PyBytes: PyObject, PyBytesType {
     return PyBytesIterator(bytes: self)
   }
 
+  // MARK: - Check exact
+
+  public func checkExact() -> Bool {
+    return self.type === Py.types.bytes
+  }
+
   // MARK: - Python new
 
   private static let newArguments = ArgumentParser.createOrTrap(

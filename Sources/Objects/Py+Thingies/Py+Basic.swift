@@ -76,7 +76,9 @@ extension PyInstance {
   }
 
   public func newBytes(_ value: Data) -> PyBytes {
-    return PyBytes(value: value)
+    return value.isEmpty ?
+      self.emptyBytes :
+      PyBytes(value: value)
   }
 
   internal func newBytes(_ data: PyBytesData) -> PyBytes {

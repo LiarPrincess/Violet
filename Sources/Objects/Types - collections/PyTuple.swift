@@ -228,6 +228,12 @@ public class PyTuple: PyObject, PySequenceType {
     }
   }
 
+  // MARK: - Check exact
+
+  public func checkExact() -> Bool {
+    return self.type === Py.types.tuple
+  }
+
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__

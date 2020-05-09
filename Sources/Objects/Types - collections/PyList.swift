@@ -433,6 +433,12 @@ public class PyList: PyObject, PySequenceType {
     }
   }
 
+  // MARK: - Check exact
+
+  public func checkExact() -> Bool {
+    return self.type === Py.types.list
+  }
+
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__

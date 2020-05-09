@@ -723,6 +723,12 @@ public class PyString: PyObject {
     return PyStringIterator(string: self)
   }
 
+  // MARK: - Check exact
+
+  public func checkExact() -> Bool {
+    return self.type === Py.types.str
+  }
+
   // MARK: - Python new
 
   private static let newArguments = ArgumentParser.createOrTrap(
