@@ -32,11 +32,11 @@ extension Sys {
   }
 
   public func intern(value: PyString) -> PyString {
-    return Py.intern(value.value)
+    return Py.intern(string: value.value)
   }
 
   public func intern(value: String) -> PyString {
-    return Py.intern(value)
+    return Py.intern(string: value)
   }
 
   // MARK: - Exit

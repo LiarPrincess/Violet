@@ -231,9 +231,9 @@ public class PyCode: PyObject {
     assert(code.variableNames.count >= totalArgs)
 
     self.codeObject = code
-    self.name = Py.intern(code.name)
-    self.qualifiedName = Py.intern(code.qualifiedName)
-    self.filename = Py.intern(code.filename)
+    self.name = Py.intern(string: code.name)
+    self.qualifiedName = Py.intern(string: code.qualifiedName)
+    self.filename = Py.intern(string: code.filename)
 
     // We will convert constants and names here.
     // Otherwise we would have to convert them (`O(1)` + massive constants)

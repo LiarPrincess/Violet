@@ -236,7 +236,7 @@ extension UnderscoreWarnings {
       return string
     }
 
-    return Py.intern("<string>")
+    return Py.intern(string: "<string>")
   }
 
   // MARK: - File name
@@ -259,6 +259,6 @@ extension UnderscoreWarnings {
       }
     }
 
-    return Py.intern("__main__")
+    return Py.intern(string: "__main__")
   }
 }

@@ -220,7 +220,7 @@ extension Sys {
     let dict = PyDict()
 
     func set(name: String, value: PyObject) {
-      let interned = Py.intern(name)
+      let interned = Py.intern(string: name)
       switch dict.set(key: interned, to: value) {
       case .ok:
         break

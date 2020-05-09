@@ -90,7 +90,7 @@ extension Sys {
       self.insertOrTrap(dict: dict, name: name, value: value, for: property)
     }
 
-    let name = Py.intern(implementation.name)
+    let name = Py.intern(string: implementation.name)
     let hexversion = Py.newInt(implementation.version.hexVersion)
 
     let version = self.createVersionObject(

@@ -113,7 +113,7 @@ extension VM {
       return .error(error)
     }
 
-    let code = Py.intern("code")
+    let code = Py.intern(string: "code")
     switch Py.getattr(object: error, name: code) {
     case let .value(object):
       return .systemExit(object)
@@ -411,7 +411,7 @@ extension VM {
   /// static _PyInitError
   /// add_main_module(PyInterpreterState *interp)
   private func add__main__Module(loader: MainLoader) -> PyResult<PyModule> {
-    let name = Py.intern("__main__")
+    let name = Py.intern(string: "__main__")
     let module = Py.newModule(name: name)
     let dict = module.getDict()
 
@@ -441,7 +441,7 @@ extension VM {
 
   private func getLoader(type: MainLoader) -> PyResult<PyObject> {
     let module: PyObject
-    let moduleName = Py.intern(type.module)
+    let moduleName = Py.intern(string: type.module)
     switch Py.sys.getModule(name: moduleName) {
     case let .value(m):
       module = m

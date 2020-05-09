@@ -238,7 +238,7 @@ extension Eval {
     assert(0 <= freeIndex && freeIndex < self.code.freeVariableCount)
 
     let mangled = self.code.freeVariableNames[freeIndex]
-    let name = Py.intern(mangled.value)
+    let name = Py.intern(string: mangled.value)
 
     let value: PyObject
     switch self.load(dict: self.localSymbols, name: name) {

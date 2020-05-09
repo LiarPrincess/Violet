@@ -15,11 +15,11 @@ extension PyInstance {
   }
 
   public func newInt(_ value: Int) -> PyInt {
-    return self.getInterned(value) ?? PyInt(value: value)
+    return self.getInterned(int: value) ?? PyInt(value: value)
   }
 
   public func newInt(_ value: BigInt) -> PyInt {
-    return self.getInterned(value) ?? PyInt(value: value)
+    return self.getInterned(int: value) ?? PyInt(value: value)
   }
 
   /// PyObject *

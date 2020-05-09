@@ -313,7 +313,7 @@ extension PyInstance {
                              column: SourceColumn,
                              text: String) -> PySyntaxError {
     return self.newSyntaxError(
-      filename: self.intern(filename),
+      filename: self.intern(string: filename),
       line: self.newInt(Int(line)),
       column: self.newInt(Int(column)),
       text: self.newString(text)
@@ -506,7 +506,7 @@ extension PyInstance {
   // MARK: - Helpers
 
   private func insertOrTrap(dict: PyDict, key: String, value: PyObject) {
-    let keyObject = self.intern(key)
+    let keyObject = self.intern(string: key)
     switch dict.set(key: keyObject, to: value) {
     case .ok:
       break

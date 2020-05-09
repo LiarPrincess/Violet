@@ -95,12 +95,12 @@ extension UnderscoreWarnings {
   /// normalize_module(PyObject *filename)
   private func createModuleName(filename: PyString) -> PyString {
     if filename.value.isEmpty {
-      return Py.intern("<unknown>")
+      return Py.intern(string: "<unknown>")
     }
 
     if filename.value.hasSuffix(".py") {
       let module = String(filename.value.dropLast(3))
-      return Py.intern(module)
+      return Py.intern(string: module)
     }
 
     return filename

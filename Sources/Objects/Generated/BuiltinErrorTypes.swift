@@ -309,7 +309,7 @@ public final class BuiltinErrorTypes {
   /// Insert value to type '__dict__'.
   private func insert(type: PyType, name: String, value: PyObject) {
     let dict = type.getDict()
-    let interned = Py.intern(name)
+    let interned = Py.intern(string: name)
 
     switch dict.set(key: interned, to: value) {
     case .ok:

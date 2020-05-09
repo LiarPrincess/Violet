@@ -443,7 +443,7 @@ extension PyInstance {
 
   private func printFileAndLine(error: PyBaseException,
                                 file: PyTextFile) -> PyBaseException? {
-    let print_file_and_line = self.intern("print_file_and_line")
+    let print_file_and_line = self.intern(string: "print_file_and_line")
     switch self.hasattr(object: error, name: print_file_and_line) {
     case .value(true): break
     case .value(false): return nil // Do nothing
@@ -468,7 +468,7 @@ extension PyInstance {
 
   private func getErrorAttribute(error: PyBaseException,
                                  name: String) -> PyResult<String> {
-    let key = self.intern(name)
+    let key = self.intern(string: name)
 
     let object: PyObject
     switch self.getattr(object: error, name: key) {

@@ -153,12 +153,12 @@ extension PyModuleImplementation {
   // MARK: - Helpers
 
   private var moduleToSetInFunctions: PyString {
-    return Py.intern(Self.moduleName)
+    return Py.intern(string: Self.moduleName)
   }
 
   private func intern(_ name: Properties) -> PyString {
     let value = String(describing: name)
-    return Py.intern(value)
+    return Py.intern(string: value)
   }
 
   // MARK: - Set property

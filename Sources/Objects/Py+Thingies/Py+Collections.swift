@@ -565,7 +565,7 @@ extension PyInstance {
 
     if let string = iterable as? PyString, string.checkExact() {
       let scalars = string.data.scalars
-      let characterObjects = scalars.map(self.intern(_:))
+      let characterObjects = scalars.map(self.intern(scalar:))
       return .value(characterObjects)
     }
 

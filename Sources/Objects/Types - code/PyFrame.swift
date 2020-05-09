@@ -311,7 +311,7 @@ public class PyFrame: PyObject {
   }
 
   private func createLocalsKey(name: MangledName) -> PyString {
-    return Py.intern(name.value)
+    return Py.intern(string: name.value)
   }
 
   // MARK: - Locals to fast

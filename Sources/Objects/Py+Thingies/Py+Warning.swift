@@ -98,7 +98,7 @@ extension PyInstance {
                          column: SourceColumn,
                          text: String) -> PyBaseException? {
     return self.warnSyntax(
-      filename: self.intern(filename),
+      filename: self.intern(string: filename),
       line: self.newInt(Int(line)),
       column: self.newInt(Int(column)),
       text: self.newString(text)
@@ -148,7 +148,7 @@ extension PyInstance {
                                column: SourceColumn,
                                text: String) -> PySyntaxWarning {
     return self.newSyntaxWarning(
-      filename: self.intern(filename),
+      filename: self.intern(string: filename),
       line: self.newInt(Int(line)),
       column: self.newInt(Int(column)),
       text: self.newString(text)
@@ -178,11 +178,11 @@ extension PyInstance {
       return nil
 
     case .warning:
-      let msgObject = self.intern(msg)
+      let msgObject = self.intern(string: msg)
       return self.warn(type: .bytes, msg: msgObject)
 
     case .error:
-      let msgObject = self.intern(msg)
+      let msgObject = self.intern(string: msg)
       let args = self.newTuple(msgObject)
       let error = PyBytesWarning(args: args)
       return error

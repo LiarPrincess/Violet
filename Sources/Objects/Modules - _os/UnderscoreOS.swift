@@ -45,7 +45,7 @@ public final class UnderscoreOS: PyModuleImplementation {
 
     // 'cwd' tend not to change during the program runtime, so we can cache it.
     // If we ever get different value from fileSystem we will re-intern it.
-    return Py.intern(value)
+    return Py.intern(string: value)
   }
 
   // MARK: - FSPath
@@ -104,7 +104,7 @@ public final class UnderscoreOS: PyModuleImplementation {
   private func createStat(from stat: FileStat) -> PyResult<PyNamespace> {
     let dict = Py.newDict()
 
-    let modeKey = Py.intern("st_mode")
+    let modeKey = Py.intern(string: "st_mode")
     switch dict.set(key: modeKey, to: Py.newInt(stat.st_mode)) {
     case .ok: break
     case .error(let e): return .error(e)
@@ -113,7 +113,7 @@ public final class UnderscoreOS: PyModuleImplementation {
     // Store mtime as 'seconds[.]nanoseconds'
     let mtime = stat.st_mtimespec
     let mtimeValue = Double(mtime.tv_sec) + 1e-9 * Double(mtime.tv_nsec)
-    let mtimeKey = Py.intern("st_mtime")
+    let mtimeKey = Py.intern(string: "st_mtime")
 
     switch dict.set(key: mtimeKey, to: Py.newFloat(mtimeValue)) {
     case .ok: break

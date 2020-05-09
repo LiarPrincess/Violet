@@ -67,10 +67,10 @@ public class PyTraceback: PyObject {
   /// tb_dir(PyTracebackObject *self)
   public func dir() -> PyResult<DirResult> {
     let result = DirResult()
-    result.append(Py.intern("tb_frame"))
-    result.append(Py.intern("tb_next"))
-    result.append(Py.intern("tb_lasti"))
-    result.append(Py.intern("tb_lineno"))
+    result.append(Py.intern(string: "tb_frame"))
+    result.append(Py.intern(string: "tb_next"))
+    result.append(Py.intern(string: "tb_lasti"))
+    result.append(Py.intern(string: "tb_lineno"))
     return .value(result)
   }
 

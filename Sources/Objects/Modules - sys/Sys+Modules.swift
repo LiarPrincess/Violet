@@ -70,7 +70,7 @@ extension Sys {
     case let .error(e): return e
     }
 
-    let interned = Py.intern(name)
+    let interned = Py.intern(string: name)
 
     let modulesDict: PyDict
     switch self.getModules() {
@@ -102,7 +102,7 @@ extension Sys {
         }
       }()
 
-      let interned = Py.intern(name)
+      let interned = Py.intern(string: name)
       names.append(interned)
 
       // sys.modules

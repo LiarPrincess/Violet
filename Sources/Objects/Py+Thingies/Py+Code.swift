@@ -83,7 +83,7 @@ extension PyInstance {
   public func newModule(name: String,
                         doc: String? = nil,
                         dict: PyDict? = nil) -> PyModule {
-    let nameObject = self.intern(name)
+    let nameObject = self.intern(string: name)
     let docObject = doc.map(self.newString)
     return self.newModule(name: nameObject, doc: docObject, dict: dict)
   }

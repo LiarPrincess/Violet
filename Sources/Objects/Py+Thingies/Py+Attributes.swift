@@ -300,6 +300,6 @@ extension PyInstance {
 
   /// We will intern attribute names, because they tend to be repeated a lot.
   private func asObject(name: String) -> PyString {
-    return self.intern(name)
+    return self.intern(string: name)
   }
 }

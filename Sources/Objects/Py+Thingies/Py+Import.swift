@@ -70,7 +70,7 @@ extension PyInstance {
 
     let absName: PyString
     switch self.resolveLevel(name: name, level: level, globals: globals) {
-    case let .value(s): absName = self.intern(s)
+    case let .value(s): absName = self.intern(string: s)
     case let .error(e): return .error(e)
     }
 
@@ -336,7 +336,7 @@ extension PyInstance {
                                                     nameDotIndex: nameDotIndex,
                                                     absName: absName.value)
 
-    let interned = self.intern(absTopLevel)
+    let interned = self.intern(string: absTopLevel)
     switch self.sys.getModule(name: interned) {
     case .value(let m):
       return .value(m)

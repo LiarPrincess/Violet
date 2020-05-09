@@ -206,7 +206,7 @@ public class PyType: PyObject {
   // sourcery: pyproperty = __name__, setter = setName
   public func getName() -> PyString {
     let name = self.getNameRaw()
-    return Py.intern(name)
+    return Py.intern(string: name)
   }
 
   public func getNameRaw() -> String {
@@ -243,7 +243,7 @@ public class PyType: PyObject {
   // sourcery: pyproperty = __qualname__, setter = setQualname
   public func getQualname() -> PyString {
     let qualname = self.getQualnameRaw()
-    return Py.intern(qualname)
+    return Py.intern(string: qualname)
   }
 
   public func getQualnameRaw() -> String {

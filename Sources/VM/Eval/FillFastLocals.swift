@@ -241,7 +241,7 @@ internal struct FillFastLocals {
       }
 
       let name = self.getName(self.code.variableNames[index])
-      let interned = Py.intern(name)
+      let interned = Py.intern(string: name)
 
       switch kwDefaults.get(key: interned) {
       case .value(let defaultValue):

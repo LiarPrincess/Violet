@@ -69,7 +69,7 @@ extension UnderscoreWarnings {
   private func createFilter(category: PyType,
                             action actionArg: String,
                             module moduleArg: String?) -> PyTuple {
-    let action = Py.intern(actionArg)
+    let action = Py.intern(string: actionArg)
     let module: PyObject = moduleArg.map(Py.intern) ?? Py.none
     let msg = Py.none
     let line = Py.newInt(0)

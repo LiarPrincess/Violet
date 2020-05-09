@@ -327,23 +327,23 @@ public final class PyInstance {
   /// Get cached `int`.
   /// Note that not all of the `ints` are interned.
   /// Only some of them, from a verry narrow range.
-  internal func getInterned(_ value: BigInt) -> PyInt? {
-    guard let int = Int(exactly: value) else {
+  internal func getInterned(int: BigInt) -> PyInt? {
+    guard let int = Int(exactly: int) else {
       return nil
     }
 
-    return self.getInterned(int)
+    return self.getInterned(int: int)
   }
 
   /// Get cached `int`.
   /// Note that not all of the `ints` are interned.
   /// Only some of them, from a verry narrow range.
-  internal func getInterned(_ value: Int) -> PyInt? {
-    guard PyInstance.smallIntRange.contains(value) else {
+  internal func getInterned(int: Int) -> PyInt? {
+    guard PyInstance.smallIntRange.contains(int) else {
       return nil
     }
 
-    let index = value + Swift.abs(PyInstance.smallIntRange.lowerBound)
+    let index = int + Swift.abs(PyInstance.smallIntRange.lowerBound)
     return self.smallInts[index]
   }
 
@@ -352,34 +352,39 @@ public final class PyInstance {
   private var internedStrings = [UseScalarsToHashString: PyString]()
 
   /// Get cached `PySString` value for given `String`.
-  public func getInterned(_ value: String) -> PyString? {
+  public func getInterned(string: String) -> PyString? {
     // Note that most of the time when it is invoked in the code (by us)
     // it is called on SHORT string.
     // So, even if later it has to be hashed again
     // (first for Swift dict, and then later to be used as key in 'PyDict')
     // the performance hit should be negligible
     // (also the whole string will already be in CPU cache, maybe, probably...).
-    let key = UseScalarsToHashString(value)
+    let key = UseScalarsToHashString(string)
+    return self.getInterned(key: key)
+  }
+
+  private func getInterned(key: UseScalarsToHashString) -> PyString? {
     return self.internedStrings[key]
   }
 
   /// Cache given string and return it.
   ///
   /// If it is already in cache then it will return interned value.
-  public func intern(_ value: UnicodeScalar) -> PyString {
-    return self.intern(String(value))
+  public func intern(scalar: UnicodeScalar) -> PyString {
+    return self.intern(string: String(scalar))
   }
 
   /// Cache given string and return it.
   ///
   /// If it is already in cache then it will return interned value.
-  public func intern(_ value: String) -> PyString {
-    if let interned = self.getInterned(value) {
+  public func intern(string: String) -> PyString {
+    let key = UseScalarsToHashString(string)
+
+    if let interned = self.getInterned(key: key) {
       return interned
     }
 
-    let str = self.newString(value)
-    let key = UseScalarsToHashString(value)
+    let str = self.newString(string)
     internedStrings[key] = str
     return str
   }

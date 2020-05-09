@@ -11,7 +11,7 @@ private struct ModuleSpec {
 
   fileprivate init(name: String, filename: String) {
     self.name = name
-    self.nameObject = Py.intern(name)
+    self.nameObject = Py.intern(string: name)
     self.filename = filename
   }
 }
