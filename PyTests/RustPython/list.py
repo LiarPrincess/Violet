@@ -216,7 +216,8 @@ def f(x):
     lst.append(1)
     return x
 assert_raises(ValueError, lambda: lst.sort(key=f)) # "list modified during sort"
-assert lst == [1, 2, 3, 4, 5]
+# VIOLET: Following line is not required to hold true. VIOLET will leave list as it was before.
+# assert lst == [1, 2, 3, 4, 5]
 
 # __delitem__
 x = ['a', 'b', 'c']
@@ -601,7 +602,7 @@ a += {'a': 1, 'b': 2, 'z': 51}
 assert a == [1, 2, 3, 4, 'a', 'b', 'z']
 
 # VIOLET: We do not have generators
-a == [1, 2, 3, 4, 'a', 'b', 'z', 12, 28]
+a = [1, 2, 3, 4, 'a', 'b', 'z', 12, 28]
 # class Iter:
 #     def __iter__(self):
 #         yield 12

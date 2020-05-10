@@ -286,7 +286,11 @@ public class PyList: PyObject, PySequenceType {
     }
   }
 
-  internal func sort(key: PyObject?, isReverse: PyObject?) -> PyResult<PyNone> {
+  internal func sort(key _key: PyObject?,
+                     isReverse: PyObject?) -> PyResult<PyNone> {
+    let isKeyNilOrNone = _key?.isNone ?? true
+    let key = isKeyNilOrNone ? nil : _key
+
     guard let isReverse = isReverse else {
       return self.sort(key: key, isReverse: false)
     }
@@ -299,34 +303,81 @@ public class PyList: PyObject, PySequenceType {
     }
   }
 
-  private struct SortElement {
+  private struct ElementWithKey {
+    /// Sort key (result of calling `key` function on `self.element`).
     fileprivate let key: PyObject
     fileprivate let element: PyObject
   }
 
-  /// Wrapper for `PyBaseException` so that it can be used after `throw`.
+  /// Wrapper for `PyBaseException` so that it can be used with `throw`.
   private enum SortError: Error {
     case wrapper(PyBaseException)
   }
 
   internal func sort(key: PyObject?, isReverse: Bool) -> PyResult<PyNone> {
-    var elements = [SortElement]()
-    for object in self.elements {
+    // Make list is temporarily empty to detect any modifications made by 'key' fn.
+    // CPython does the same:
+    // >>> l = [1, 2, 3]
+    // >>> def get_key(e):
+    // ...   print(l)
+    // ...   return e
+    // ...
+    // >>> l.sort(key=get_key)
+    // []
+    // []
+    // []
+    var copy = self.data.elements
+    _ = self.data.clear()
+
+    // Cache keys (for a brief moment we will use 3*memory)
+    var keyedElements = [ElementWithKey]()
+    for object in copy {
       switch Py.selectKey(object: object, key: key) {
-      case let .value(k): elements.append(SortElement(key: k, element: object))
-      case let .error(e): return .error(e)
+      case let .value(k):
+        keyedElements.append(ElementWithKey(key: k, element: object))
+      case let .error(e):
+        self.data = PySequenceData(elements: copy) // Go back to elements before keys
+        return .error(e)
       }
     }
 
+    guard self.data.isEmpty else {
+      self.data = PySequenceData(elements: copy) // Go back to elements before keys
+      return .error(self.createListModifiedDuringSortError())
+    }
+
+    // On exit we will assign sorted elements to 'self.data'.
+    // Even if sort fails we will assign partially sorted elements.
+    // Also, we no longer need 'copy' (we moved data to 'keyedElements').
+    defer { self.data = PySequenceData(elements: keyedElements.map { $0.element }) }
+    copy = []
+
     do {
-      // Note that Python requires STABLE sort, but Swift does not guarantee
-      // that! We will ignore this. (Because reasons...)
+      let fn = self.createSortFn()
+
+      // Reverse sort stability achieved by initially reversing the list,
+      // applying a forward sort, then reversing the final result.
+      //
+      // Remember that the last declared 'defer' will run first!
+      // So it will be:
+      // 1. undo reversal
+      // 2. assign to 'self.data.elements'
+      if isReverse { keyedElements.reverse() }
+      defer { if isReverse { keyedElements.reverse() } }
+
+      // Note that Python requires STABLE sort, which Swift does not guarantee!
+      // But we will conveniently ignore this fact... because reasons...
       // Btw. under certain conditions Swift sort is actually stable
       // (at the time of writting this comment), but that's an implementation detail.
+      try keyedElements.sort(by: fn)
 
-      let fn = self.createSortFn(isReverse: isReverse)
-      try elements.sort(by: fn)
-      self.data = PySequenceData(elements: elements.map { $0.element })
+      // Check if user tried to touch our list.
+      // Remember that 'self.data' was set to []
+      // (and it still should be empty because 'defer' did not run yet)!
+      guard self.data.isEmpty else {
+        return .error(self.createListModifiedDuringSortError())
+      }
+
       return .value(Py.none)
     } catch let SortError.wrapper(e) {
       return .error(e)
@@ -335,15 +386,19 @@ public class PyList: PyObject, PySequenceType {
     }
   }
 
-  private typealias SortFn = (SortElement, SortElement) throws -> Bool
+  private typealias SortFn = (ElementWithKey, ElementWithKey) throws -> Bool
 
-  private func createSortFn(isReverse: Bool) -> SortFn {
-    return { (lhs: SortElement, rhs: SortElement) -> Bool in
+  private func createSortFn() -> SortFn {
+    return { (lhs: ElementWithKey, rhs: ElementWithKey) -> Bool in
       switch Py.isLessBool(left: lhs.key, right: rhs.key) {
-      case let .value(b): return isReverse ? !b : b // ignore stability (again)
+      case let .value(b): return b
       case let .error(e): throw SortError.wrapper(e)
       }
     }
+  }
+
+  private func createListModifiedDuringSortError() -> PyBaseException {
+    return Py.newValueError(msg: "list modified during sort")
   }
 
   // MARK: - Reverse
