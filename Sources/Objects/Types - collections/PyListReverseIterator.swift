@@ -61,9 +61,8 @@ public class PyListReverseIterator: PyObject {
 
   // sourcery: pymethod = __length_hint__
   public func lengthHint() -> PyInt {
-    let data = self.list.data
-    let result = data.count - self.index
-    return Py.newInt(result)
+    // '+1' because users start counting from 1, not from 0
+    return Py.newInt(self.index + 1)
   }
 
   // MARK: - Python new

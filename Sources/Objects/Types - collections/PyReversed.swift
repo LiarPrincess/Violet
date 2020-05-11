@@ -83,15 +83,9 @@ public class PyReversed: PyObject {
   // MARK: - Length hint
 
   // sourcery: pymethod = __length_hint__
-  public func lengthHint() -> PyResult<PyInt> {
-    let len: BigInt
-    switch Py.lenBigInt(iterable: self.sequence) {
-    case let .value(l): len = l
-    case let .error(e): return .error(e)
-    }
-
-    let result = len - BigInt(self.index)
-    return .value(Py.newInt(result))
+  public func lengthHint() -> PyInt {
+    // '+1' because users start counting from 1, not from 0
+    return Py.newInt(self.index + 1)
   }
 
   // MARK: - Python new
