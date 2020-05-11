@@ -785,9 +785,9 @@ extension Builtins {
 
   /// iter(object[, sentinel])
   /// See [this](https://docs.python.org/3/library/functions.html#iter)
-  internal static func iter(from object: PyObject,
+  internal static func iter(object: PyObject,
                             sentinel: PyObject?) -> PyResult<PyObject> {
-    return Py.iter(from: object, sentinel: sentinel)
+    return Py.iter(object: object, sentinel: sentinel)
   }
 }
 

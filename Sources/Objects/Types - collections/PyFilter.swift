@@ -113,7 +113,7 @@ public class PyFilter: PyObject {
     let seq = args[1]
 
     let iter: PyObject
-    switch Py.iter(from: seq) {
+    switch Py.iter(object: seq) {
     case let .value(i): iter = i
     case let .error(e): return .error(e)
     }

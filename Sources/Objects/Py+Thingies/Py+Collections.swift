@@ -285,7 +285,7 @@ extension PyInstance {
   public func newEnumerate(iterable: PyObject,
                            startFrom index: BigInt) -> PyResult<PyEnumerate> {
     let iter: PyObject
-    switch self.iter(from: iterable) {
+    switch self.iter(object: iterable) {
     case let .value(i): iter = i
     case let .error(e): return .error(e)
     }
@@ -471,7 +471,7 @@ extension PyInstance {
                           initial: Acc,
                           fn: ReduceFn<Acc>) -> PyResult<Acc> {
     let iter: PyObject
-    switch self.iter(from: iterable) {
+    switch self.iter(object: iterable) {
     case let .value(i): iter = i
     case let .error(e): return .error(e)
     }
@@ -516,7 +516,7 @@ extension PyInstance {
                           into initial: Acc,
                           fn: ReduceIntoFn<Acc>) -> PyResult<Acc> {
     let iter: PyObject
-    switch self.iter(from: iterable) {
+    switch self.iter(object: iterable) {
     case let .value(i): iter = i
     case let .error(e): return .error(e)
     }

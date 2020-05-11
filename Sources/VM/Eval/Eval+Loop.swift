@@ -21,7 +21,7 @@ extension Eval {
   internal func getIter() -> InstructionResult {
     let iterable = self.stack.top
 
-    switch Py.iter(from: iterable) {
+    switch Py.iter(object: iterable) {
     case let .value(iter):
       self.stack.top = iter
     return .ok

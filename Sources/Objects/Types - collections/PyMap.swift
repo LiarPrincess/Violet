@@ -98,7 +98,7 @@ public class PyMap: PyObject {
     var iters = [PyObject]()
 
     for object in args[1...] {
-      switch Py.iter(from: object) {
+      switch Py.iter(object: object) {
       case let .value(i): iters.append(i)
       case let .error(e): return .error(e)
       }

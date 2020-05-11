@@ -153,7 +153,7 @@ extension Builtins {
 //    self.setOrTrap(.input, doc: Self.inputDoc, fn: Self.input)
     self.setOrTrap(.isinstance, doc: Self.isinstanceDoc, fn: Self.isinstance(object:of:))
     self.setOrTrap(.issubclass, doc: Self.issubclassDoc, fn: Self.issubclass(object:of:))
-    self.setOrTrap(.iter, doc: Self.iterDoc, fn: Self.iter(from:sentinel:))
+    self.setOrTrap(.iter, doc: Self.iterDoc, fn: Self.iter(object:sentinel:))
     self.setOrTrap(.len, doc: Self.lenDoc, fn: Self.len(iterable:))
     self.setOrTrap(.locals, doc: Self.localsDoc, fn: Self.locals)
     self.setOrTrap(.max, doc: Self.maxDoc, fn: Self.max(args:kwargs:))

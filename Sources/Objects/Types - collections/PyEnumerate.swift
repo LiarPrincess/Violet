@@ -142,7 +142,7 @@ public class PyEnumerate: PyObject {
     }
 
     let iter: PyObject
-    switch Py.iter(from: iterable) {
+    switch Py.iter(object: iterable) {
     case let .value(i): iter = i
     case let .error(e): return .error(e)
     }

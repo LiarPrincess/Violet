@@ -36,15 +36,10 @@ extension PyInstance {
 
   // MARK: - Iter
 
-  /// iter(object[, sentinel])
-  /// See [this](https://docs.python.org/3/library/functions.html#iter)
-  public func iter(from object: PyObject,
-                   sentinel: PyObject? = nil) -> PyResult<PyObject> {
-    if let sentinel = sentinel {
-      let result = PyCallableIterator(callable: object, sentinel: sentinel)
-      return .value(result)
-    }
-
+  /// This is the version of `iter` that you probably want to use!
+  /// (as opposed to the one with `sentinel` argument)
+  public func iter(object: PyObject) -> PyResult<PyObject> {
+    // Check for '__iter__'.
     if let result = Fast.__iter__(object) {
       return .value(result)
     }
@@ -53,14 +48,49 @@ extension PyInstance {
     case .value(let o):
       return .value(o)
     case .missingMethod:
-      return .typeError("'\(object.typeName)' object is not an iterable")
+      break
     case .error(let e), .notCallable(let e):
+      return .error(e)
+    }
+
+    // Having '__getitem__' is also acceptable.
+    switch self.hasMethod(object: object, selector: .__getitem__) {
+    case .value(true):
+      let iter = PyIterator(sequence: object)
+      return .value(iter)
+    case .value(false):
+      return .typeError("'\(object.typeName)' object is not an iterable")
+    case .error(let e):
       return .error(e)
     }
   }
 
+  /// This is the builtin version of `iter` (the one with `sentinel`).
+  ///
+  /// iter(object[, sentinel])
+  /// See [this](https://docs.python.org/3/library/functions.html#iter)
+  public func iter(object: PyObject, sentinel: PyObject?) -> PyResult<PyObject> {
+    guard let sentinel = sentinel else {
+      return self.iter(object: object)
+    }
+
+    switch self.callable(object: object) {
+    case .value(true):
+      break
+    case .value(false):
+      return .typeError("iter(v, w): v must be callable")
+    case .error(let e):
+      return .error(e)
+    }
+
+    let result = PyCallableIterator(callable: object, sentinel: sentinel)
+    return .value(result)
+  }
+
+  // MARK: - Has iter
+
   public func hasIter(object: PyObject) -> Bool {
-    switch self.iter(from: object) {
+    switch self.iter(object: object) {
     case .value: return true
     case .error: return false
     }

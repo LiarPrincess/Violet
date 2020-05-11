@@ -93,7 +93,7 @@ public class PyZip: PyObject {
     var iters = [PyObject]()
 
     for (index, object) in args.enumerated() {
-      switch Py.iter(from: object) {
+      switch Py.iter(object: object) {
       case .value(let i):
         iters.append(i)
 
