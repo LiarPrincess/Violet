@@ -1,5 +1,6 @@
 from testutils import assert_raises
-import itertools
+# VIOLET: We do not have 'itertools' module (also it is never used)
+# import itertools
 
 a = slice(10)
 assert a.start == None
