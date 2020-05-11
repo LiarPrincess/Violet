@@ -6,7 +6,7 @@ import VioletCore
 
 // sourcery: pytype = NoneType, default
 /// The Python None object, denoting lack of value.
-public class PyNone: PyObject {
+public class PyNone: PyObject, HasCustomGetMethod {
 
   override public var description: String {
     return "PyNone()"
@@ -101,6 +101,26 @@ public class PyNone: PyObject {
 
     // No re-binding needed.
     return .value(object)
+  }
+
+  // MARK: - Get method
+
+  public func getMethod(
+    selector: PyString,
+    allowsCallableFromDict: Bool
+  ) -> PyInstance.GetMethodResult {
+    // Ignore 'allowsCallableFromDict' because... well we do not have '__dict__'.
+    let result = self.getAttribute(name: selector)
+    switch result {
+    case let .value(o):
+      return .value(o)
+    case let .error(e):
+      if e.isAttributeError {
+        return .notFound(e)
+      }
+
+      return .error(e)
+    }
   }
 
   // MARK: - Python new

@@ -68,7 +68,7 @@ internal struct PyTypeWeakRef {
 // MARK: - Type
 
 // sourcery: pytype = type, default, hasGC, baseType, typeSubclass
-public class PyType: PyObject {
+public class PyType: PyObject, HasCustomGetMethod {
 
   internal static let doc: String = """
     type(object_or_name, bases, dict)
@@ -479,14 +479,19 @@ public class PyType: PyObject {
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.extractName(from: name)
       .flatMap(self.getAttribute(name:))
   }
 
   public func getAttribute(name: PyString) -> PyResult<PyObject> {
+    return self.getAttribute(name: name, searchDict: true)
+  }
+
+  private func getAttribute(name: PyString,
+                            searchDict: Bool) -> PyResult<PyObject> {
     let metaAttribute: PyObject?
-    var metaDescriptor: GetDescriptor?
+    let metaDescriptor: GetDescriptor?
 
     // Look for the attribute in the metatype
     switch self.type.lookup(name: name) {
@@ -505,16 +510,18 @@ public class PyType: PyObject {
     }
 
     // No data descriptor found on metatype.
-    // Look in __dict__ of this type and its bases
-    switch self.lookup(name: name) {
-    case .value(let attribute):
-      if let descr = GetDescriptor(type: self, attribute: attribute) {
-        return descr.call()
-      }
+    // Look in __dict__ of this type and its bases.
+    if searchDict {
+      switch self.lookup(name: name) {
+      case .value(let attribute):
+        if let descr = GetDescriptor(type: self, attribute: attribute) {
+          return descr.call()
+        }
 
-      return .value(attribute)
-    case .notFound: break
-    case .error(let e): return .error(e)
+        return .value(attribute)
+      case .notFound: break
+      case .error(let e): return .error(e)
+      }
     }
 
     // No attribute found in __dict__ (or bases):
@@ -534,7 +541,7 @@ public class PyType: PyObject {
   }
 
   // sourcery: pymethod = __setattr__
-  internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
+  public func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
     if let error = self.preventSetAttributeOnBuiltin() {
       return .error(error)
     }
@@ -563,6 +570,27 @@ public class PyType: PyObject {
   // sourcery: pymethod = __delattr__
   public func delAttribute(name: PyObject) -> PyResult<PyNone> {
     return self.setAttribute(name: name, value: nil)
+  }
+
+  // MARK: - Get method
+
+  public func getMethod(
+    selector: PyString,
+    allowsCallableFromDict: Bool
+  ) -> PyInstance.GetMethodResult {
+    let result = self.getAttribute(name: selector,
+                                   searchDict: allowsCallableFromDict)
+
+    switch result {
+    case let .value(o):
+      return .value(o)
+    case let .error(e):
+      if e.isAttributeError {
+        return .notFound(e)
+      }
+
+      return .error(e)
+    }
   }
 
   // MARK: - Dir
@@ -662,7 +690,7 @@ public class PyType: PyObject {
   // sourcery: pymethod = __call__
   /// static PyObject *
   /// type_call(PyTypeObject *type, PyObject *args, PyObject *kwds)
-  internal func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+  public func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
     let object: PyObject
     switch self.call__new__(args: args, kwargs: kwargs) {
     case let .value(o):
@@ -733,7 +761,8 @@ public class PyType: PyObject {
     let result = Py.callMethod(object: object,
                                selector: .__init__,
                                args: args,
-                               kwargs: kwargs)
+                               kwargs: kwargs,
+                               allowsCallableFromDict: false)
 
     switch result {
     case .value,

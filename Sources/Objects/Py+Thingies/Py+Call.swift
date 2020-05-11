@@ -99,42 +99,9 @@ extension PyInstance {
   }
 }
 
-// MARK: - Get method
-
-internal protocol HasCustomGetMethod {
-  func getMethod(selector: PyString) -> PyInstance.GetMethodResult
-}
+// MARK: - Has method
 
 extension PyInstance {
-
-  public enum GetMethodResult {
-    /// Method found (_yay!_), here is its value (_double yay!_).
-    case value(PyObject)
-    /// Such method does not exist.
-    case notFound(PyBaseException)
-    /// Raise error in VM.
-    case error(PyBaseException)
-  }
-
-  /// Helper for `getMethod`.
-  private enum FunctionAttribute {
-    case function(PyFunction)
-    case builtinFunction(PyBuiltinFunction)
-  }
-
-  /// Helper for `getMethod`.
-  private enum CallableFromDict {
-    case value(PyObject)
-    case notFound
-    case error(PyBaseException)
-
-    fileprivate init(result: PyResult<PyObject>) {
-      switch result {
-      case let .value(o): self = .value(o)
-      case let .error(e): self = .error(e)
-      }
-    }
-  }
 
   public func hasMethod(object: PyObject,
                         selector: IdString) -> PyResult<Bool> {
@@ -156,6 +123,34 @@ extension PyInstance {
       return .error(e)
     }
   }
+}
+
+// MARK: - Get method
+
+internal protocol HasCustomGetMethod {
+  func getMethod(selector: PyString,
+                 allowsCallableFromDict: Bool) -> PyInstance.GetMethodResult
+}
+
+extension PyInstance {
+
+  public enum GetMethodResult {
+    /// Method found (_yay!_), here is its value (_double yay!_).
+    case value(PyObject)
+    /// Such method does not exist.
+    case notFound(PyBaseException)
+    /// Raise error in VM.
+    case error(PyBaseException)
+
+    internal init(result: PyResult<PyObject>) {
+      switch result {
+      case let .value(o):
+        self = .value(o)
+      case let .error(e):
+        self = .error(e)
+      }
+    }
+  }
 
   /// DO NOT USE THIS METHOD!
   /// It is only there for `LOAD_METHOD` instruction.
@@ -170,59 +165,50 @@ extension PyInstance {
                           allowsCallableFromDict: true)
   }
 
-  // swiftlint:disable function_body_length
-
   /// int
   /// _PyObject_GetMethod(PyObject *obj, PyObject *name, PyObject **method)
   public func getMethod(object: PyObject,
                         selector: PyString,
                         allowsCallableFromDict: Bool = false) -> GetMethodResult {
-    // swiftlint:enable function_body_length
-
     if let obj = object as? HasCustomGetMethod {
-      return obj.getMethod(selector: selector)
+      return obj.getMethod(selector: selector,
+                           allowsCallableFromDict: allowsCallableFromDict)
     }
 
     let staticProperty: PyObject?
-    var descriptor: GetDescriptor?
-    var functionAttribute: FunctionAttribute?
+    let staticDescriptor: GetDescriptor?
 
     switch object.type.lookup(name: selector) {
     case .value(let attr):
       staticProperty = attr
-      if let fn = attr as? PyFunction {
-        functionAttribute = .function(fn)
-      } else if let fn = attr as? PyBuiltinFunction {
-        functionAttribute = .builtinFunction(fn)
-      } else {
-        descriptor = GetDescriptor(object: object, attribute: attr)
-      }
+      staticDescriptor = GetDescriptor(object: object, attribute: attr)
     case .notFound:
       staticProperty = nil
+      staticDescriptor = nil
     case .error(let e):
       return .error(e)
     }
 
-    if let descr = descriptor, descr.isData {
-      return self.getMethod(descriptor: descr)
+    if let descr = staticDescriptor, descr.isData {
+      let result = descr.call()
+      return GetMethodResult(result: result)
     }
 
+    // This basically combines attribute access + method load.
+    // Do not bind the result! It is 'just' a callable entry in '__dict__'.
     if allowsCallableFromDict {
-      switch self.getCallableFromDict(object: object, selector: selector) {
-      case .value(let attr): return .value(attr)
-      case .notFound: break // try other
-      case .error(let e): return .error(e)
+      if let dict = self.get__dict__(object: object) {
+        switch dict.get(key: selector) {
+        case .value(let attr): return .value(attr)
+        case .notFound: break
+        case .error(let e): return .error(e)
+        }
       }
     }
 
-    switch functionAttribute {
-    case .some(.function(let fn)): return .value(fn.bind(to: object))
-    case .some(.builtinFunction(let fn)): return .value(fn.bind(to: object))
-    case .none: break // try other
-    }
-
-    if let descr = descriptor {
-      return self.getMethod(descriptor: descr)
+    if let descr = staticDescriptor {
+      let result = descr.call()
+      return GetMethodResult(result: result)
     }
 
     if let p = staticProperty {
@@ -231,47 +217,6 @@ extension PyInstance {
 
     let e = self.newAttributeError(object: object, hasNoAttribute: selector.value)
     return .notFound(e)
-  }
-
-  private func getMethod(descriptor: GetDescriptor) -> GetMethodResult {
-    let result = descriptor.call()
-    switch result {
-    case let .value(o):
-      return .value(o)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  private func getCallableFromDict(object: PyObject,
-                                   selector: PyString) -> CallableFromDict {
-    guard let dict = self.get__dict__(object: object) else {
-      return .notFound
-    }
-
-    switch dict.get(key: selector) {
-    case .value(let attr):
-      // If we are dealing with classmethod/staticmethod on type then we have
-      // to bind it.
-      if let type = object as? PyType,
-         let classMethod = attr as? PyClassMethod {
-        let bound = classMethod.get(object: descriptorStaticMarker, type: type)
-        return CallableFromDict(result: bound)
-      }
-
-      if let type = object as? PyType,
-         let classMethod = attr as? PyStaticMethod {
-        let bound = classMethod.get(object: descriptorStaticMarker, type: type)
-        return CallableFromDict(result: bound)
-      }
-
-      return .value(attr)
-
-    case .notFound:
-      return .notFound
-    case .error(let e):
-      return .error(e)
-    }
   }
 
   // MARK: - Call method
@@ -300,7 +245,7 @@ extension PyInstance {
   public func callMethod(object: PyObject,
                          selector: IdString,
                          arg: PyObject) -> CallMethodResult {
-    return self.callMethod(object: object, selector: selector.value, arg: arg)
+    return self.callMethod(object: object, selector: selector, args: [arg])
   }
 
   /// Call method with single positional argument.
@@ -364,11 +309,13 @@ extension PyInstance {
   public func callMethod(object: PyObject,
                          selector: IdString,
                          args: [PyObject] = [],
-                         kwargs: PyDict? = nil) -> CallMethodResult {
+                         kwargs: PyDict? = nil,
+                         allowsCallableFromDict: Bool = false) -> CallMethodResult {
     return self.callMethod(object: object,
                            selector: selector.value,
                            args: args,
-                           kwargs: kwargs)
+                           kwargs: kwargs,
+                           allowsCallableFromDict: allowsCallableFromDict)
   }
 
   /// Call with positional arguments and optional keyword arguments.

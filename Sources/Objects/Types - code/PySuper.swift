@@ -149,7 +149,10 @@ public class PySuper: PyObject, HasCustomGetMethod {
 
   // MARK: - Get method
 
-  internal func getMethod(selector: PyString) -> PyInstance.GetMethodResult {
+  internal func getMethod(
+    selector: PyString,
+    allowsCallableFromDict: Bool
+  ) -> PyInstance.GetMethodResult {
     switch self.getAttribute(name: selector) {
     case let .value(o):
       return .value(o)
