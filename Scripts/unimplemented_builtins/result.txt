@@ -187,10 +187,6 @@ ImportError
     name
     path
 
-KeyError
-  Unimplemented:
-    __str__
-
 OSError
   Unimplemented:
     __str__

@@ -1220,6 +1220,7 @@ types = {
   KeyError: [
     '__class__',
     '__dict__',
+    '__str__',
     '__init__',
     '__new__',
   ],

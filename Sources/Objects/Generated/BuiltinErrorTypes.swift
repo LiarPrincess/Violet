@@ -859,6 +859,8 @@ public final class BuiltinErrorTypes {
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyKeyError.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyKeyError.pyInit(args:kwargs:)))
+
+    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyKeyError.str, castSelf: Self.asKeyError))
   }
 
   private static func asKeyError(_ object: PyObject, methodName: String) -> PyResult<PyKeyError> {

@@ -64,8 +64,7 @@ def print_class_epilog(t):
 def print_new(t):
   class_name = get_class_name(t)
 
-  print(f'''\
-
+  print(f'''
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
@@ -76,8 +75,7 @@ def print_new(t):
 ''')
 
 def print_init(t):
-  print(f'''\
-
+  print(f'''
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {{
     return super.pyInit(args: args, kwargs: kwargs)
@@ -102,7 +100,36 @@ if __name__ == '__main__':
     if name == 'BaseException':
       continue
 
-    print_class_prolog(t)
-    print_new(t)
-    print_init(t)
-    print_class_epilog(t)
+    if name == 'KeyError':
+      print_class_prolog(t)
+      print('''
+  // sourcery: pymethod = __str__
+  override public func str() -> PyResult<String> {
+    // If args is a tuple of exactly one item, apply repr to args[0].
+    // This is done so that e.g. the exception raised by {{}}[''] prints
+    //     KeyError: ''
+    // rather than the confusing
+    //     KeyError
+    // alone.  The downside is that if KeyError is raised with an explanatory
+    // string, that string will be displayed in quotes.  Too bad.
+    // If args is anything else, use the default BaseException__str__().
+
+    let args = self.getArgs()
+
+    switch args.getLength() {
+    case 1:
+      let first = args.elements[0]
+      return Py.repr(object: first)
+    default:
+      return super.str()
+    }
+  }\
+''')
+      print_new(t)
+      print_init(t)
+      print_class_epilog(t)
+    else:
+      print_class_prolog(t)
+      print_new(t)
+      print_init(t)
+      print_class_epilog(t)

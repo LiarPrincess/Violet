@@ -814,6 +814,28 @@ public final class PyKeyError: PyLookupError {
      return self.__dict__
    }
 
+  // sourcery: pymethod = __str__
+  override public func str() -> PyResult<String> {
+    // If args is a tuple of exactly one item, apply repr to args[0].
+    // This is done so that e.g. the exception raised by {{}}[''] prints
+    //     KeyError: ''
+    // rather than the confusing
+    //     KeyError
+    // alone.  The downside is that if KeyError is raised with an explanatory
+    // string, that string will be displayed in quotes.  Too bad.
+    // If args is anything else, use the default BaseException__str__().
+
+    let args = self.getArgs()
+
+    switch args.getLength() {
+    case 1:
+      let first = args.elements[0]
+      return Py.repr(object: first)
+    default:
+      return super.str()
+    }
+  }
+
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
