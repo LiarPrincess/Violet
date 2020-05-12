@@ -52,8 +52,9 @@ public {final}class {class_name}: Py{base} {{
     return "Py{name}(\(msg))"
   }}
 
-  override internal func setType() {{
-    self.setType(to: Py.errorTypes.{builtins_type_variable})
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {{
+    return Py.errorTypes.{builtins_type_variable}
   }}
 
    // sourcery: pyproperty = __class__
@@ -76,7 +77,7 @@ public {final}class {class_name}: Py{base} {{
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {{
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }}
 }}
 ''')

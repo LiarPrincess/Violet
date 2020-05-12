@@ -62,11 +62,11 @@ public class PyBaseException: PyObject {
     self.context = exceptionContext
     self.suppressContext = suppressExceptionContext
 
-    super.init()
-    self.setType()
+    super.init(type: Self.pythonType)
   }
 
-  /// Override this function in every exception class!
+  /// Type to set in `init`.
+  /// Override this property in every exception class!
   ///
   /// This is a terrible HACK!.
   /// Our goal is to set proper `type` in each PyObject and to do this we can:
@@ -80,9 +80,9 @@ public class PyBaseException: PyObject {
   ///    It also forces us to drop 'final' in 'PyObject.type'.
   /// 3. Use the same `init` in every exception and inject proper type to assign.
   ///
-  /// We went with 3 using dynamic dyspatch.
-  internal func setType() {
-    self.setType(to: Py.errorTypes.baseException)
+  /// We went with 3 using `class` property.
+  internal class var pythonType: PyType {
+    return Py.errorTypes.baseException
   }
 
   // MARK: - Msg
@@ -172,9 +172,9 @@ public class PyBaseException: PyObject {
       return .value("")
     case 1:
       let first = args.elements[0]
-      return Py.repr(object: first)
+      return Py.strValue(object: first)
     default:
-      return Py.repr(object: args)
+      return Py.strValue(object: args)
     }
   }
 
@@ -488,11 +488,6 @@ public class PyBaseException: PyObject {
 
   // sourcery: pymethod = __init__
   internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
-  }
-
-  /// `pyInit` in all of the exception classes will call this shared method.
-  internal func pyInitShared(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
     // Copy args if needed
     let selfArgs = self.args.elements
     let hasAssignedArgsIn__new__ = selfArgs.count == args.count

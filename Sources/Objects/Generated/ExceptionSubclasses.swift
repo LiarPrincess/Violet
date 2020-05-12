@@ -25,8 +25,9 @@ public final class PySystemExit: PyBaseException {
     return "PySystemExit(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.systemExit)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.systemExit
   }
 
    // sourcery: pyproperty = __class__
@@ -49,7 +50,7 @@ public final class PySystemExit: PyBaseException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -67,8 +68,9 @@ public final class PyKeyboardInterrupt: PyBaseException {
     return "PyKeyboardInterrupt(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.keyboardInterrupt)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.keyboardInterrupt
   }
 
    // sourcery: pyproperty = __class__
@@ -91,7 +93,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -109,8 +111,9 @@ public final class PyGeneratorExit: PyBaseException {
     return "PyGeneratorExit(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.generatorExit)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.generatorExit
   }
 
    // sourcery: pyproperty = __class__
@@ -133,7 +136,7 @@ public final class PyGeneratorExit: PyBaseException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -151,8 +154,9 @@ public class PyException: PyBaseException {
     return "PyException(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.exception)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.exception
   }
 
    // sourcery: pyproperty = __class__
@@ -175,7 +179,7 @@ public class PyException: PyBaseException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -193,8 +197,9 @@ public final class PyStopIteration: PyException {
     return "PyStopIteration(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.stopIteration)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.stopIteration
   }
 
    // sourcery: pyproperty = __class__
@@ -217,7 +222,7 @@ public final class PyStopIteration: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -235,8 +240,9 @@ public final class PyStopAsyncIteration: PyException {
     return "PyStopAsyncIteration(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.stopAsyncIteration)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.stopAsyncIteration
   }
 
    // sourcery: pyproperty = __class__
@@ -259,7 +265,7 @@ public final class PyStopAsyncIteration: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -277,8 +283,9 @@ public class PyArithmeticError: PyException {
     return "PyArithmeticError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.arithmeticError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.arithmeticError
   }
 
    // sourcery: pyproperty = __class__
@@ -301,7 +308,7 @@ public class PyArithmeticError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -319,8 +326,9 @@ public final class PyFloatingPointError: PyArithmeticError {
     return "PyFloatingPointError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.floatingPointError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.floatingPointError
   }
 
    // sourcery: pyproperty = __class__
@@ -343,7 +351,7 @@ public final class PyFloatingPointError: PyArithmeticError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -361,8 +369,9 @@ public final class PyOverflowError: PyArithmeticError {
     return "PyOverflowError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.overflowError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.overflowError
   }
 
    // sourcery: pyproperty = __class__
@@ -385,7 +394,7 @@ public final class PyOverflowError: PyArithmeticError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -403,8 +412,9 @@ public final class PyZeroDivisionError: PyArithmeticError {
     return "PyZeroDivisionError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.zeroDivisionError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.zeroDivisionError
   }
 
    // sourcery: pyproperty = __class__
@@ -427,7 +437,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -445,8 +455,9 @@ public final class PyAssertionError: PyException {
     return "PyAssertionError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.assertionError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.assertionError
   }
 
    // sourcery: pyproperty = __class__
@@ -469,7 +480,7 @@ public final class PyAssertionError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -487,8 +498,9 @@ public final class PyAttributeError: PyException {
     return "PyAttributeError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.attributeError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.attributeError
   }
 
    // sourcery: pyproperty = __class__
@@ -511,7 +523,7 @@ public final class PyAttributeError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -529,8 +541,9 @@ public final class PyBufferError: PyException {
     return "PyBufferError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.bufferError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.bufferError
   }
 
    // sourcery: pyproperty = __class__
@@ -553,7 +566,7 @@ public final class PyBufferError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -571,8 +584,9 @@ public final class PyEOFError: PyException {
     return "PyEOFError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.eofError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.eofError
   }
 
    // sourcery: pyproperty = __class__
@@ -595,7 +609,7 @@ public final class PyEOFError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -613,8 +627,9 @@ public class PyImportError: PyException {
     return "PyImportError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.importError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.importError
   }
 
    // sourcery: pyproperty = __class__
@@ -637,7 +652,7 @@ public class PyImportError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -655,8 +670,9 @@ public final class PyModuleNotFoundError: PyImportError {
     return "PyModuleNotFoundError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.moduleNotFoundError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.moduleNotFoundError
   }
 
    // sourcery: pyproperty = __class__
@@ -679,7 +695,7 @@ public final class PyModuleNotFoundError: PyImportError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -697,8 +713,9 @@ public class PyLookupError: PyException {
     return "PyLookupError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.lookupError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.lookupError
   }
 
    // sourcery: pyproperty = __class__
@@ -721,7 +738,7 @@ public class PyLookupError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -739,8 +756,9 @@ public final class PyIndexError: PyLookupError {
     return "PyIndexError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.indexError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.indexError
   }
 
    // sourcery: pyproperty = __class__
@@ -763,7 +781,7 @@ public final class PyIndexError: PyLookupError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -781,8 +799,9 @@ public final class PyKeyError: PyLookupError {
     return "PyKeyError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.keyError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.keyError
   }
 
    // sourcery: pyproperty = __class__
@@ -805,7 +824,7 @@ public final class PyKeyError: PyLookupError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -823,8 +842,9 @@ public final class PyMemoryError: PyException {
     return "PyMemoryError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.memoryError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.memoryError
   }
 
    // sourcery: pyproperty = __class__
@@ -847,7 +867,7 @@ public final class PyMemoryError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -865,8 +885,9 @@ public class PyNameError: PyException {
     return "PyNameError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.nameError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.nameError
   }
 
    // sourcery: pyproperty = __class__
@@ -889,7 +910,7 @@ public class PyNameError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -907,8 +928,9 @@ public final class PyUnboundLocalError: PyNameError {
     return "PyUnboundLocalError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.unboundLocalError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.unboundLocalError
   }
 
    // sourcery: pyproperty = __class__
@@ -931,7 +953,7 @@ public final class PyUnboundLocalError: PyNameError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -949,8 +971,9 @@ public class PyOSError: PyException {
     return "PyOSError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.osError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.osError
   }
 
    // sourcery: pyproperty = __class__
@@ -973,7 +996,7 @@ public class PyOSError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -991,8 +1014,9 @@ public final class PyBlockingIOError: PyOSError {
     return "PyBlockingIOError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.blockingIOError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.blockingIOError
   }
 
    // sourcery: pyproperty = __class__
@@ -1015,7 +1039,7 @@ public final class PyBlockingIOError: PyOSError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1033,8 +1057,9 @@ public final class PyChildProcessError: PyOSError {
     return "PyChildProcessError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.childProcessError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.childProcessError
   }
 
    // sourcery: pyproperty = __class__
@@ -1057,7 +1082,7 @@ public final class PyChildProcessError: PyOSError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1075,8 +1100,9 @@ public class PyConnectionError: PyOSError {
     return "PyConnectionError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.connectionError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.connectionError
   }
 
    // sourcery: pyproperty = __class__
@@ -1099,7 +1125,7 @@ public class PyConnectionError: PyOSError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1117,8 +1143,9 @@ public final class PyBrokenPipeError: PyConnectionError {
     return "PyBrokenPipeError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.brokenPipeError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.brokenPipeError
   }
 
    // sourcery: pyproperty = __class__
@@ -1141,7 +1168,7 @@ public final class PyBrokenPipeError: PyConnectionError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1159,8 +1186,9 @@ public final class PyConnectionAbortedError: PyConnectionError {
     return "PyConnectionAbortedError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.connectionAbortedError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.connectionAbortedError
   }
 
    // sourcery: pyproperty = __class__
@@ -1183,7 +1211,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1201,8 +1229,9 @@ public final class PyConnectionRefusedError: PyConnectionError {
     return "PyConnectionRefusedError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.connectionRefusedError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.connectionRefusedError
   }
 
    // sourcery: pyproperty = __class__
@@ -1225,7 +1254,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1243,8 +1272,9 @@ public final class PyConnectionResetError: PyConnectionError {
     return "PyConnectionResetError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.connectionResetError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.connectionResetError
   }
 
    // sourcery: pyproperty = __class__
@@ -1267,7 +1297,7 @@ public final class PyConnectionResetError: PyConnectionError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1285,8 +1315,9 @@ public final class PyFileExistsError: PyOSError {
     return "PyFileExistsError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.fileExistsError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.fileExistsError
   }
 
    // sourcery: pyproperty = __class__
@@ -1309,7 +1340,7 @@ public final class PyFileExistsError: PyOSError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1327,8 +1358,9 @@ public final class PyFileNotFoundError: PyOSError {
     return "PyFileNotFoundError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.fileNotFoundError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.fileNotFoundError
   }
 
    // sourcery: pyproperty = __class__
@@ -1351,7 +1383,7 @@ public final class PyFileNotFoundError: PyOSError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1369,8 +1401,9 @@ public final class PyInterruptedError: PyOSError {
     return "PyInterruptedError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.interruptedError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.interruptedError
   }
 
    // sourcery: pyproperty = __class__
@@ -1393,7 +1426,7 @@ public final class PyInterruptedError: PyOSError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1411,8 +1444,9 @@ public final class PyIsADirectoryError: PyOSError {
     return "PyIsADirectoryError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.isADirectoryError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.isADirectoryError
   }
 
    // sourcery: pyproperty = __class__
@@ -1435,7 +1469,7 @@ public final class PyIsADirectoryError: PyOSError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1453,8 +1487,9 @@ public final class PyNotADirectoryError: PyOSError {
     return "PyNotADirectoryError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.notADirectoryError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.notADirectoryError
   }
 
    // sourcery: pyproperty = __class__
@@ -1477,7 +1512,7 @@ public final class PyNotADirectoryError: PyOSError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1495,8 +1530,9 @@ public final class PyPermissionError: PyOSError {
     return "PyPermissionError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.permissionError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.permissionError
   }
 
    // sourcery: pyproperty = __class__
@@ -1519,7 +1555,7 @@ public final class PyPermissionError: PyOSError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1537,8 +1573,9 @@ public final class PyProcessLookupError: PyOSError {
     return "PyProcessLookupError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.processLookupError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.processLookupError
   }
 
    // sourcery: pyproperty = __class__
@@ -1561,7 +1598,7 @@ public final class PyProcessLookupError: PyOSError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1579,8 +1616,9 @@ public final class PyTimeoutError: PyOSError {
     return "PyTimeoutError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.timeoutError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.timeoutError
   }
 
    // sourcery: pyproperty = __class__
@@ -1603,7 +1641,7 @@ public final class PyTimeoutError: PyOSError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1621,8 +1659,9 @@ public final class PyReferenceError: PyException {
     return "PyReferenceError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.referenceError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.referenceError
   }
 
    // sourcery: pyproperty = __class__
@@ -1645,7 +1684,7 @@ public final class PyReferenceError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1663,8 +1702,9 @@ public class PyRuntimeError: PyException {
     return "PyRuntimeError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.runtimeError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.runtimeError
   }
 
    // sourcery: pyproperty = __class__
@@ -1687,7 +1727,7 @@ public class PyRuntimeError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1705,8 +1745,9 @@ public final class PyNotImplementedError: PyRuntimeError {
     return "PyNotImplementedError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.notImplementedError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.notImplementedError
   }
 
    // sourcery: pyproperty = __class__
@@ -1729,7 +1770,7 @@ public final class PyNotImplementedError: PyRuntimeError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1747,8 +1788,9 @@ public final class PyRecursionError: PyRuntimeError {
     return "PyRecursionError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.recursionError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.recursionError
   }
 
    // sourcery: pyproperty = __class__
@@ -1771,7 +1813,7 @@ public final class PyRecursionError: PyRuntimeError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1789,8 +1831,9 @@ public class PySyntaxError: PyException {
     return "PySyntaxError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.syntaxError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.syntaxError
   }
 
    // sourcery: pyproperty = __class__
@@ -1813,7 +1856,7 @@ public class PySyntaxError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1831,8 +1874,9 @@ public class PyIndentationError: PySyntaxError {
     return "PyIndentationError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.indentationError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.indentationError
   }
 
    // sourcery: pyproperty = __class__
@@ -1855,7 +1899,7 @@ public class PyIndentationError: PySyntaxError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1873,8 +1917,9 @@ public final class PyTabError: PyIndentationError {
     return "PyTabError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.tabError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.tabError
   }
 
    // sourcery: pyproperty = __class__
@@ -1897,7 +1942,7 @@ public final class PyTabError: PyIndentationError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1918,8 +1963,9 @@ public final class PySystemError: PyException {
     return "PySystemError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.systemError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.systemError
   }
 
    // sourcery: pyproperty = __class__
@@ -1942,7 +1988,7 @@ public final class PySystemError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1960,8 +2006,9 @@ public final class PyTypeError: PyException {
     return "PyTypeError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.typeError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.typeError
   }
 
    // sourcery: pyproperty = __class__
@@ -1984,7 +2031,7 @@ public final class PyTypeError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2002,8 +2049,9 @@ public class PyValueError: PyException {
     return "PyValueError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.valueError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.valueError
   }
 
    // sourcery: pyproperty = __class__
@@ -2026,7 +2074,7 @@ public class PyValueError: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2044,8 +2092,9 @@ public class PyUnicodeError: PyValueError {
     return "PyUnicodeError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.unicodeError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.unicodeError
   }
 
    // sourcery: pyproperty = __class__
@@ -2068,7 +2117,7 @@ public class PyUnicodeError: PyValueError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2086,8 +2135,9 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
     return "PyUnicodeDecodeError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.unicodeDecodeError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.unicodeDecodeError
   }
 
    // sourcery: pyproperty = __class__
@@ -2110,7 +2160,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2128,8 +2178,9 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
     return "PyUnicodeEncodeError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.unicodeEncodeError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.unicodeEncodeError
   }
 
    // sourcery: pyproperty = __class__
@@ -2152,7 +2203,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2170,8 +2221,9 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
     return "PyUnicodeTranslateError(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.unicodeTranslateError)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.unicodeTranslateError
   }
 
    // sourcery: pyproperty = __class__
@@ -2194,7 +2246,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2212,8 +2264,9 @@ public class PyWarning: PyException {
     return "PyWarning(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.warning)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.warning
   }
 
    // sourcery: pyproperty = __class__
@@ -2236,7 +2289,7 @@ public class PyWarning: PyException {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2254,8 +2307,9 @@ public final class PyDeprecationWarning: PyWarning {
     return "PyDeprecationWarning(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.deprecationWarning)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.deprecationWarning
   }
 
    // sourcery: pyproperty = __class__
@@ -2278,7 +2332,7 @@ public final class PyDeprecationWarning: PyWarning {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2297,8 +2351,9 @@ public final class PyPendingDeprecationWarning: PyWarning {
     return "PyPendingDeprecationWarning(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.pendingDeprecationWarning)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.pendingDeprecationWarning
   }
 
    // sourcery: pyproperty = __class__
@@ -2321,7 +2376,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2339,8 +2394,9 @@ public final class PyRuntimeWarning: PyWarning {
     return "PyRuntimeWarning(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.runtimeWarning)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.runtimeWarning
   }
 
    // sourcery: pyproperty = __class__
@@ -2363,7 +2419,7 @@ public final class PyRuntimeWarning: PyWarning {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2381,8 +2437,9 @@ public final class PySyntaxWarning: PyWarning {
     return "PySyntaxWarning(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.syntaxWarning)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.syntaxWarning
   }
 
    // sourcery: pyproperty = __class__
@@ -2405,7 +2462,7 @@ public final class PySyntaxWarning: PyWarning {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2423,8 +2480,9 @@ public final class PyUserWarning: PyWarning {
     return "PyUserWarning(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.userWarning)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.userWarning
   }
 
    // sourcery: pyproperty = __class__
@@ -2447,7 +2505,7 @@ public final class PyUserWarning: PyWarning {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2466,8 +2524,9 @@ public final class PyFutureWarning: PyWarning {
     return "PyFutureWarning(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.futureWarning)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.futureWarning
   }
 
    // sourcery: pyproperty = __class__
@@ -2490,7 +2549,7 @@ public final class PyFutureWarning: PyWarning {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2508,8 +2567,9 @@ public final class PyImportWarning: PyWarning {
     return "PyImportWarning(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.importWarning)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.importWarning
   }
 
    // sourcery: pyproperty = __class__
@@ -2532,7 +2592,7 @@ public final class PyImportWarning: PyWarning {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2551,8 +2611,9 @@ public final class PyUnicodeWarning: PyWarning {
     return "PyUnicodeWarning(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.unicodeWarning)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.unicodeWarning
   }
 
    // sourcery: pyproperty = __class__
@@ -2575,7 +2636,7 @@ public final class PyUnicodeWarning: PyWarning {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2594,8 +2655,9 @@ public final class PyBytesWarning: PyWarning {
     return "PyBytesWarning(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.bytesWarning)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.bytesWarning
   }
 
    // sourcery: pyproperty = __class__
@@ -2618,7 +2680,7 @@ public final class PyBytesWarning: PyWarning {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2636,8 +2698,9 @@ public final class PyResourceWarning: PyWarning {
     return "PyResourceWarning(\(msg))"
   }
 
-  override internal func setType() {
-    self.setType(to: Py.errorTypes.resourceWarning)
+  /// Tupe to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.resourceWarning
   }
 
    // sourcery: pyproperty = __class__
@@ -2660,7 +2723,7 @@ public final class PyResourceWarning: PyWarning {
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return self.pyInitShared(args: args, kwargs: kwargs)
+    return super.pyInit(args: args, kwargs: kwargs)
   }
 }
 
