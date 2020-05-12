@@ -132,6 +132,62 @@ if __name__ == '__main__':
       print_new(t)
       print_init(t)
       print_class_epilog(t)
+    elif name == 'StopIteration':
+      print_class_prolog(t)
+      print('''
+  private var value: PyObject
+
+  internal convenience init(value: PyObject,
+                            traceback: PyTraceback? = nil,
+                            cause: PyBaseException? = nil,
+                            context: PyBaseException? = nil,
+                            suppressContext: Bool = false,
+                            type: PyType? = nil) {
+    let args = Py.newTuple(value)
+    self.init(args: args,
+              traceback: traceback,
+              cause: cause,
+              context: context,
+              suppressContext: suppressContext,
+              type: type)
+  }
+
+  override internal init(args: PyTuple,
+                         traceback: PyTraceback? = nil,
+                         cause: PyBaseException? = nil,
+                         context: PyBaseException? = nil,
+                         suppressContext: Bool = false,
+                         type: PyType? = nil) {
+    self.value = args.elements.first ?? Py.none
+    super.init(args: args,
+               traceback: traceback,
+               cause: cause,
+               context: context,
+               suppressContext: suppressContext,
+               type: type)
+  }\
+''')
+      print_common_properties(t)
+      print('''
+  // sourcery: pyproperty = value, setter = setValue
+  public func getValue() -> PyObject {
+    return self.value
+  }
+
+  public func setValue(_ value: PyObject) -> PyResult<Void> {
+    self.value = value
+    return .value()
+  }\
+''')
+      print_new(t)
+      print('''
+  // sourcery: pymethod = __init__
+  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+    self.value = args.first ?? Py.none
+    return super.pyInit(args: args, kwargs: kwargs)
+  }\
+''')
+      print_class_epilog(t)
     else:
       print_class_prolog(t)
       print_common_properties(t)

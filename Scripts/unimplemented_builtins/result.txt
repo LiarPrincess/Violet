@@ -196,10 +196,6 @@ OSError
     filename2
     strerror
 
-StopIteration
-  Unimplemented:
-    value
-
 SyntaxError
   Unimplemented:
     __str__

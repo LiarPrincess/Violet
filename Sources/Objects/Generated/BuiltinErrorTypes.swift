@@ -492,6 +492,7 @@ public final class BuiltinErrorTypes {
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyStopIteration.getClass, castSelf: Self.asStopIteration))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyStopIteration.getDict, castSelf: Self.asStopIteration))
+    self.insert(type: type, name: "value", value: PyProperty.wrap(doc: nil, get: PyStopIteration.getValue, set: PyStopIteration.setValue, castSelf: Self.asStopIteration))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyStopIteration.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStopIteration.pyInit(args:kwargs:)))

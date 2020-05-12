@@ -403,8 +403,9 @@ extension PyType {
     public static let PyRuntimeWarning = MemoryLayout.PyWarning
     /// `PyStopAsyncIteration` uses the same layout as it s base type (`PyException`).
     public static let PyStopAsyncIteration = MemoryLayout.PyException
-    /// `PyStopIteration` uses the same layout as it s base type (`PyException`).
-    public static let PyStopIteration = MemoryLayout.PyException
+    /// Fields:
+    /// - `value: PyObject`
+    public static let PyStopIteration = MemoryLayout(base: MemoryLayout.PyException)
     /// `PySyntaxError` uses the same layout as it s base type (`PyException`).
     public static let PySyntaxError = MemoryLayout.PyException
     /// `PySyntaxWarning` uses the same layout as it s base type (`PyWarning`).

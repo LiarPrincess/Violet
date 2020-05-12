@@ -1335,6 +1335,7 @@ types = {
   StopIteration: [
     '__class__',
     '__dict__',
+    'value',
     '__init__',
     '__new__',
   ],
