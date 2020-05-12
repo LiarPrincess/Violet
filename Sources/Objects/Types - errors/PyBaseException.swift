@@ -32,8 +32,12 @@ public class PyBaseException: PyObject {
   internal lazy var __dict__ = Py.newDict()
 
   override public var description: String {
+    return self.createDescription(typeName: "PyBaseException")
+  }
+
+  internal func createDescription(typeName: String) -> String {
     let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyBaseException(\(msg))"
+    return "\(typeName)(\(msg))"
   }
 
   /// Type to set in `init`.

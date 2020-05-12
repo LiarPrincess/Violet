@@ -21,8 +21,7 @@ public final class PySystemExit: PyBaseException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PySystemExit(\(msg))"
+    return self.createDescription(typeName: "PySystemExit")
   }
 
   /// Type to set in `init`.
@@ -30,15 +29,15 @@ public final class PySystemExit: PyBaseException {
     return Py.errorTypes.systemExit
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -49,7 +48,8 @@ public final class PySystemExit: PyBaseException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -64,8 +64,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyKeyboardInterrupt(\(msg))"
+    return self.createDescription(typeName: "PyKeyboardInterrupt")
   }
 
   /// Type to set in `init`.
@@ -73,15 +72,15 @@ public final class PyKeyboardInterrupt: PyBaseException {
     return Py.errorTypes.keyboardInterrupt
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -92,7 +91,8 @@ public final class PyKeyboardInterrupt: PyBaseException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -107,8 +107,7 @@ public final class PyGeneratorExit: PyBaseException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyGeneratorExit(\(msg))"
+    return self.createDescription(typeName: "PyGeneratorExit")
   }
 
   /// Type to set in `init`.
@@ -116,15 +115,15 @@ public final class PyGeneratorExit: PyBaseException {
     return Py.errorTypes.generatorExit
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -135,7 +134,8 @@ public final class PyGeneratorExit: PyBaseException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -150,8 +150,7 @@ public class PyException: PyBaseException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyException(\(msg))"
+    return self.createDescription(typeName: "PyException")
   }
 
   /// Type to set in `init`.
@@ -159,15 +158,15 @@ public class PyException: PyBaseException {
     return Py.errorTypes.exception
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -178,93 +177,8 @@ public class PyException: PyBaseException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return super.pyInit(args: args, kwargs: kwargs)
-  }
-}
-
-// MARK: - StopIteration
-
-// sourcery: pyerrortype = StopIteration, default, baseType, hasGC, baseExceptionSubclass
-public final class PyStopIteration: PyException {
-
-  override internal class var doc: String {
-    return "Signal the end from iterator.__next__()."
-  }
-
-  override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyStopIteration(\(msg))"
-  }
-
-  /// Type to set in `init`.
-  override internal class var pythonType: PyType {
-    return Py.errorTypes.stopIteration
-  }
-
-  private var value: PyObject
-
-  internal convenience init(value: PyObject,
-                            traceback: PyTraceback? = nil,
-                            cause: PyBaseException? = nil,
-                            context: PyBaseException? = nil,
-                            suppressContext: Bool = false,
-                            type: PyType? = nil) {
-    let args = Py.newTuple(value)
-    self.init(args: args,
-              traceback: traceback,
-              cause: cause,
-              context: context,
-              suppressContext: suppressContext,
-              type: type)
-  }
-
-  override internal init(args: PyTuple,
-                         traceback: PyTraceback? = nil,
-                         cause: PyBaseException? = nil,
-                         context: PyBaseException? = nil,
-                         suppressContext: Bool = false,
-                         type: PyType? = nil) {
-    self.value = args.elements.first ?? Py.none
-    super.init(args: args,
-               traceback: traceback,
-               cause: cause,
-               context: context,
-               suppressContext: suppressContext,
-               type: type)
-  }
-
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
-
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
-
-  // sourcery: pyproperty = value, setter = setValue
-  public func getValue() -> PyObject {
-    return self.value
-  }
-
-  public func setValue(_ value: PyObject) -> PyResult<Void> {
-    self.value = value
-    return .value()
-  }
-
-  // sourcery: pystaticmethod = __new__
-  override internal class func pyNew(type: PyType,
-                                     args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyBaseException> {
-    let argsTuple = Py.newTuple(args)
-    return .value(PyStopIteration(args: argsTuple, type: type))
-  }
-
-  // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    self.value = args.first ?? Py.none
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -279,8 +193,7 @@ public final class PyStopAsyncIteration: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyStopAsyncIteration(\(msg))"
+    return self.createDescription(typeName: "PyStopAsyncIteration")
   }
 
   /// Type to set in `init`.
@@ -288,15 +201,15 @@ public final class PyStopAsyncIteration: PyException {
     return Py.errorTypes.stopAsyncIteration
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -307,7 +220,8 @@ public final class PyStopAsyncIteration: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -322,8 +236,7 @@ public class PyArithmeticError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyArithmeticError(\(msg))"
+    return self.createDescription(typeName: "PyArithmeticError")
   }
 
   /// Type to set in `init`.
@@ -331,15 +244,15 @@ public class PyArithmeticError: PyException {
     return Py.errorTypes.arithmeticError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -350,7 +263,8 @@ public class PyArithmeticError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -365,8 +279,7 @@ public final class PyFloatingPointError: PyArithmeticError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyFloatingPointError(\(msg))"
+    return self.createDescription(typeName: "PyFloatingPointError")
   }
 
   /// Type to set in `init`.
@@ -374,15 +287,15 @@ public final class PyFloatingPointError: PyArithmeticError {
     return Py.errorTypes.floatingPointError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -393,7 +306,8 @@ public final class PyFloatingPointError: PyArithmeticError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -408,8 +322,7 @@ public final class PyOverflowError: PyArithmeticError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyOverflowError(\(msg))"
+    return self.createDescription(typeName: "PyOverflowError")
   }
 
   /// Type to set in `init`.
@@ -417,15 +330,15 @@ public final class PyOverflowError: PyArithmeticError {
     return Py.errorTypes.overflowError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -436,7 +349,8 @@ public final class PyOverflowError: PyArithmeticError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -451,8 +365,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyZeroDivisionError(\(msg))"
+    return self.createDescription(typeName: "PyZeroDivisionError")
   }
 
   /// Type to set in `init`.
@@ -460,15 +373,15 @@ public final class PyZeroDivisionError: PyArithmeticError {
     return Py.errorTypes.zeroDivisionError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -479,7 +392,8 @@ public final class PyZeroDivisionError: PyArithmeticError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -494,8 +408,7 @@ public final class PyAssertionError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyAssertionError(\(msg))"
+    return self.createDescription(typeName: "PyAssertionError")
   }
 
   /// Type to set in `init`.
@@ -503,15 +416,15 @@ public final class PyAssertionError: PyException {
     return Py.errorTypes.assertionError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -522,7 +435,8 @@ public final class PyAssertionError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -537,8 +451,7 @@ public final class PyAttributeError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyAttributeError(\(msg))"
+    return self.createDescription(typeName: "PyAttributeError")
   }
 
   /// Type to set in `init`.
@@ -546,15 +459,15 @@ public final class PyAttributeError: PyException {
     return Py.errorTypes.attributeError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -565,7 +478,8 @@ public final class PyAttributeError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -580,8 +494,7 @@ public final class PyBufferError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyBufferError(\(msg))"
+    return self.createDescription(typeName: "PyBufferError")
   }
 
   /// Type to set in `init`.
@@ -589,15 +502,15 @@ public final class PyBufferError: PyException {
     return Py.errorTypes.bufferError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -608,7 +521,8 @@ public final class PyBufferError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -623,8 +537,7 @@ public final class PyEOFError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyEOFError(\(msg))"
+    return self.createDescription(typeName: "PyEOFError")
   }
 
   /// Type to set in `init`.
@@ -632,15 +545,15 @@ public final class PyEOFError: PyException {
     return Py.errorTypes.eofError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -651,7 +564,8 @@ public final class PyEOFError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -666,8 +580,7 @@ public class PyImportError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyImportError(\(msg))"
+    return self.createDescription(typeName: "PyImportError")
   }
 
   /// Type to set in `init`.
@@ -675,15 +588,15 @@ public class PyImportError: PyException {
     return Py.errorTypes.importError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -694,7 +607,8 @@ public class PyImportError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -709,8 +623,7 @@ public final class PyModuleNotFoundError: PyImportError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyModuleNotFoundError(\(msg))"
+    return self.createDescription(typeName: "PyModuleNotFoundError")
   }
 
   /// Type to set in `init`.
@@ -718,15 +631,15 @@ public final class PyModuleNotFoundError: PyImportError {
     return Py.errorTypes.moduleNotFoundError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -737,7 +650,8 @@ public final class PyModuleNotFoundError: PyImportError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -752,8 +666,7 @@ public class PyLookupError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyLookupError(\(msg))"
+    return self.createDescription(typeName: "PyLookupError")
   }
 
   /// Type to set in `init`.
@@ -761,15 +674,15 @@ public class PyLookupError: PyException {
     return Py.errorTypes.lookupError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -780,7 +693,8 @@ public class PyLookupError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -795,8 +709,7 @@ public final class PyIndexError: PyLookupError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyIndexError(\(msg))"
+    return self.createDescription(typeName: "PyIndexError")
   }
 
   /// Type to set in `init`.
@@ -804,15 +717,15 @@ public final class PyIndexError: PyLookupError {
     return Py.errorTypes.indexError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -823,72 +736,8 @@ public final class PyIndexError: PyLookupError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
-    return super.pyInit(args: args, kwargs: kwargs)
-  }
-}
-
-// MARK: - KeyError
-
-// sourcery: pyerrortype = KeyError, default, baseType, hasGC, baseExceptionSubclass
-public final class PyKeyError: PyLookupError {
-
-  override internal class var doc: String {
-    return "Mapping key not found."
-  }
-
-  override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyKeyError(\(msg))"
-  }
-
-  /// Type to set in `init`.
-  override internal class var pythonType: PyType {
-    return Py.errorTypes.keyError
-  }
-
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
-
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
-
-  // sourcery: pymethod = __str__
-  override public func str() -> PyResult<String> {
-    // If args is a tuple of exactly one item, apply repr to args[0].
-    // This is done so that e.g. the exception raised by {{}}[''] prints
-    //     KeyError: ''
-    // rather than the confusing
-    //     KeyError
-    // alone.  The downside is that if KeyError is raised with an explanatory
-    // string, that string will be displayed in quotes.  Too bad.
-    // If args is anything else, use the default BaseException__str__().
-
-    let args = self.getArgs()
-
-    switch args.getLength() {
-    case 1:
-      let first = args.elements[0]
-      return Py.repr(object: first)
-    default:
-      return super.str()
-    }
-  }
-
-  // sourcery: pystaticmethod = __new__
-  override internal class func pyNew(type: PyType,
-                                     args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyBaseException> {
-    let argsTuple = Py.newTuple(args)
-    return .value(PyKeyError(args: argsTuple, type: type))
-  }
-
-  // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -903,8 +752,7 @@ public final class PyMemoryError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyMemoryError(\(msg))"
+    return self.createDescription(typeName: "PyMemoryError")
   }
 
   /// Type to set in `init`.
@@ -912,15 +760,15 @@ public final class PyMemoryError: PyException {
     return Py.errorTypes.memoryError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -931,7 +779,8 @@ public final class PyMemoryError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -946,8 +795,7 @@ public class PyNameError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyNameError(\(msg))"
+    return self.createDescription(typeName: "PyNameError")
   }
 
   /// Type to set in `init`.
@@ -955,15 +803,15 @@ public class PyNameError: PyException {
     return Py.errorTypes.nameError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -974,7 +822,8 @@ public class PyNameError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -989,8 +838,7 @@ public final class PyUnboundLocalError: PyNameError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyUnboundLocalError(\(msg))"
+    return self.createDescription(typeName: "PyUnboundLocalError")
   }
 
   /// Type to set in `init`.
@@ -998,15 +846,15 @@ public final class PyUnboundLocalError: PyNameError {
     return Py.errorTypes.unboundLocalError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1017,7 +865,8 @@ public final class PyUnboundLocalError: PyNameError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1032,8 +881,7 @@ public class PyOSError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyOSError(\(msg))"
+    return self.createDescription(typeName: "PyOSError")
   }
 
   /// Type to set in `init`.
@@ -1041,15 +889,15 @@ public class PyOSError: PyException {
     return Py.errorTypes.osError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1060,7 +908,8 @@ public class PyOSError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1075,8 +924,7 @@ public final class PyBlockingIOError: PyOSError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyBlockingIOError(\(msg))"
+    return self.createDescription(typeName: "PyBlockingIOError")
   }
 
   /// Type to set in `init`.
@@ -1084,15 +932,15 @@ public final class PyBlockingIOError: PyOSError {
     return Py.errorTypes.blockingIOError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1103,7 +951,8 @@ public final class PyBlockingIOError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1118,8 +967,7 @@ public final class PyChildProcessError: PyOSError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyChildProcessError(\(msg))"
+    return self.createDescription(typeName: "PyChildProcessError")
   }
 
   /// Type to set in `init`.
@@ -1127,15 +975,15 @@ public final class PyChildProcessError: PyOSError {
     return Py.errorTypes.childProcessError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1146,7 +994,8 @@ public final class PyChildProcessError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1161,8 +1010,7 @@ public class PyConnectionError: PyOSError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyConnectionError(\(msg))"
+    return self.createDescription(typeName: "PyConnectionError")
   }
 
   /// Type to set in `init`.
@@ -1170,15 +1018,15 @@ public class PyConnectionError: PyOSError {
     return Py.errorTypes.connectionError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1189,7 +1037,8 @@ public class PyConnectionError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1204,8 +1053,7 @@ public final class PyBrokenPipeError: PyConnectionError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyBrokenPipeError(\(msg))"
+    return self.createDescription(typeName: "PyBrokenPipeError")
   }
 
   /// Type to set in `init`.
@@ -1213,15 +1061,15 @@ public final class PyBrokenPipeError: PyConnectionError {
     return Py.errorTypes.brokenPipeError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1232,7 +1080,8 @@ public final class PyBrokenPipeError: PyConnectionError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1247,8 +1096,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyConnectionAbortedError(\(msg))"
+    return self.createDescription(typeName: "PyConnectionAbortedError")
   }
 
   /// Type to set in `init`.
@@ -1256,15 +1104,15 @@ public final class PyConnectionAbortedError: PyConnectionError {
     return Py.errorTypes.connectionAbortedError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1275,7 +1123,8 @@ public final class PyConnectionAbortedError: PyConnectionError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1290,8 +1139,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyConnectionRefusedError(\(msg))"
+    return self.createDescription(typeName: "PyConnectionRefusedError")
   }
 
   /// Type to set in `init`.
@@ -1299,15 +1147,15 @@ public final class PyConnectionRefusedError: PyConnectionError {
     return Py.errorTypes.connectionRefusedError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1318,7 +1166,8 @@ public final class PyConnectionRefusedError: PyConnectionError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1333,8 +1182,7 @@ public final class PyConnectionResetError: PyConnectionError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyConnectionResetError(\(msg))"
+    return self.createDescription(typeName: "PyConnectionResetError")
   }
 
   /// Type to set in `init`.
@@ -1342,15 +1190,15 @@ public final class PyConnectionResetError: PyConnectionError {
     return Py.errorTypes.connectionResetError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1361,7 +1209,8 @@ public final class PyConnectionResetError: PyConnectionError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1376,8 +1225,7 @@ public final class PyFileExistsError: PyOSError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyFileExistsError(\(msg))"
+    return self.createDescription(typeName: "PyFileExistsError")
   }
 
   /// Type to set in `init`.
@@ -1385,15 +1233,15 @@ public final class PyFileExistsError: PyOSError {
     return Py.errorTypes.fileExistsError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1404,7 +1252,8 @@ public final class PyFileExistsError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1419,8 +1268,7 @@ public final class PyFileNotFoundError: PyOSError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyFileNotFoundError(\(msg))"
+    return self.createDescription(typeName: "PyFileNotFoundError")
   }
 
   /// Type to set in `init`.
@@ -1428,15 +1276,15 @@ public final class PyFileNotFoundError: PyOSError {
     return Py.errorTypes.fileNotFoundError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1447,7 +1295,8 @@ public final class PyFileNotFoundError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1462,8 +1311,7 @@ public final class PyInterruptedError: PyOSError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyInterruptedError(\(msg))"
+    return self.createDescription(typeName: "PyInterruptedError")
   }
 
   /// Type to set in `init`.
@@ -1471,15 +1319,15 @@ public final class PyInterruptedError: PyOSError {
     return Py.errorTypes.interruptedError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1490,7 +1338,8 @@ public final class PyInterruptedError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1505,8 +1354,7 @@ public final class PyIsADirectoryError: PyOSError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyIsADirectoryError(\(msg))"
+    return self.createDescription(typeName: "PyIsADirectoryError")
   }
 
   /// Type to set in `init`.
@@ -1514,15 +1362,15 @@ public final class PyIsADirectoryError: PyOSError {
     return Py.errorTypes.isADirectoryError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1533,7 +1381,8 @@ public final class PyIsADirectoryError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1548,8 +1397,7 @@ public final class PyNotADirectoryError: PyOSError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyNotADirectoryError(\(msg))"
+    return self.createDescription(typeName: "PyNotADirectoryError")
   }
 
   /// Type to set in `init`.
@@ -1557,15 +1405,15 @@ public final class PyNotADirectoryError: PyOSError {
     return Py.errorTypes.notADirectoryError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1576,7 +1424,8 @@ public final class PyNotADirectoryError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1591,8 +1440,7 @@ public final class PyPermissionError: PyOSError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyPermissionError(\(msg))"
+    return self.createDescription(typeName: "PyPermissionError")
   }
 
   /// Type to set in `init`.
@@ -1600,15 +1448,15 @@ public final class PyPermissionError: PyOSError {
     return Py.errorTypes.permissionError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1619,7 +1467,8 @@ public final class PyPermissionError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1634,8 +1483,7 @@ public final class PyProcessLookupError: PyOSError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyProcessLookupError(\(msg))"
+    return self.createDescription(typeName: "PyProcessLookupError")
   }
 
   /// Type to set in `init`.
@@ -1643,15 +1491,15 @@ public final class PyProcessLookupError: PyOSError {
     return Py.errorTypes.processLookupError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1662,7 +1510,8 @@ public final class PyProcessLookupError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1677,8 +1526,7 @@ public final class PyTimeoutError: PyOSError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyTimeoutError(\(msg))"
+    return self.createDescription(typeName: "PyTimeoutError")
   }
 
   /// Type to set in `init`.
@@ -1686,15 +1534,15 @@ public final class PyTimeoutError: PyOSError {
     return Py.errorTypes.timeoutError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1705,7 +1553,8 @@ public final class PyTimeoutError: PyOSError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1720,8 +1569,7 @@ public final class PyReferenceError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyReferenceError(\(msg))"
+    return self.createDescription(typeName: "PyReferenceError")
   }
 
   /// Type to set in `init`.
@@ -1729,15 +1577,15 @@ public final class PyReferenceError: PyException {
     return Py.errorTypes.referenceError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1748,7 +1596,8 @@ public final class PyReferenceError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1763,8 +1612,7 @@ public class PyRuntimeError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyRuntimeError(\(msg))"
+    return self.createDescription(typeName: "PyRuntimeError")
   }
 
   /// Type to set in `init`.
@@ -1772,15 +1620,15 @@ public class PyRuntimeError: PyException {
     return Py.errorTypes.runtimeError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1791,7 +1639,8 @@ public class PyRuntimeError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1806,8 +1655,7 @@ public final class PyNotImplementedError: PyRuntimeError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyNotImplementedError(\(msg))"
+    return self.createDescription(typeName: "PyNotImplementedError")
   }
 
   /// Type to set in `init`.
@@ -1815,15 +1663,15 @@ public final class PyNotImplementedError: PyRuntimeError {
     return Py.errorTypes.notImplementedError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1834,7 +1682,8 @@ public final class PyNotImplementedError: PyRuntimeError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1849,8 +1698,7 @@ public final class PyRecursionError: PyRuntimeError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyRecursionError(\(msg))"
+    return self.createDescription(typeName: "PyRecursionError")
   }
 
   /// Type to set in `init`.
@@ -1858,15 +1706,15 @@ public final class PyRecursionError: PyRuntimeError {
     return Py.errorTypes.recursionError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1877,7 +1725,8 @@ public final class PyRecursionError: PyRuntimeError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1892,8 +1741,7 @@ public class PySyntaxError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PySyntaxError(\(msg))"
+    return self.createDescription(typeName: "PySyntaxError")
   }
 
   /// Type to set in `init`.
@@ -1901,15 +1749,15 @@ public class PySyntaxError: PyException {
     return Py.errorTypes.syntaxError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1920,7 +1768,8 @@ public class PySyntaxError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1935,8 +1784,7 @@ public class PyIndentationError: PySyntaxError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyIndentationError(\(msg))"
+    return self.createDescription(typeName: "PyIndentationError")
   }
 
   /// Type to set in `init`.
@@ -1944,15 +1792,15 @@ public class PyIndentationError: PySyntaxError {
     return Py.errorTypes.indentationError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -1963,7 +1811,8 @@ public class PyIndentationError: PySyntaxError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -1978,8 +1827,7 @@ public final class PyTabError: PyIndentationError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyTabError(\(msg))"
+    return self.createDescription(typeName: "PyTabError")
   }
 
   /// Type to set in `init`.
@@ -1987,15 +1835,15 @@ public final class PyTabError: PyIndentationError {
     return Py.errorTypes.tabError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2006,7 +1854,8 @@ public final class PyTabError: PyIndentationError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2024,8 +1873,7 @@ public final class PySystemError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PySystemError(\(msg))"
+    return self.createDescription(typeName: "PySystemError")
   }
 
   /// Type to set in `init`.
@@ -2033,15 +1881,15 @@ public final class PySystemError: PyException {
     return Py.errorTypes.systemError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2052,7 +1900,8 @@ public final class PySystemError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2067,8 +1916,7 @@ public final class PyTypeError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyTypeError(\(msg))"
+    return self.createDescription(typeName: "PyTypeError")
   }
 
   /// Type to set in `init`.
@@ -2076,15 +1924,15 @@ public final class PyTypeError: PyException {
     return Py.errorTypes.typeError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2095,7 +1943,8 @@ public final class PyTypeError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2110,8 +1959,7 @@ public class PyValueError: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyValueError(\(msg))"
+    return self.createDescription(typeName: "PyValueError")
   }
 
   /// Type to set in `init`.
@@ -2119,15 +1967,15 @@ public class PyValueError: PyException {
     return Py.errorTypes.valueError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2138,7 +1986,8 @@ public class PyValueError: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2153,8 +2002,7 @@ public class PyUnicodeError: PyValueError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyUnicodeError(\(msg))"
+    return self.createDescription(typeName: "PyUnicodeError")
   }
 
   /// Type to set in `init`.
@@ -2162,15 +2010,15 @@ public class PyUnicodeError: PyValueError {
     return Py.errorTypes.unicodeError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2181,7 +2029,8 @@ public class PyUnicodeError: PyValueError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2196,8 +2045,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyUnicodeDecodeError(\(msg))"
+    return self.createDescription(typeName: "PyUnicodeDecodeError")
   }
 
   /// Type to set in `init`.
@@ -2205,15 +2053,15 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
     return Py.errorTypes.unicodeDecodeError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2224,7 +2072,8 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2239,8 +2088,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyUnicodeEncodeError(\(msg))"
+    return self.createDescription(typeName: "PyUnicodeEncodeError")
   }
 
   /// Type to set in `init`.
@@ -2248,15 +2096,15 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
     return Py.errorTypes.unicodeEncodeError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2267,7 +2115,8 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2282,8 +2131,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyUnicodeTranslateError(\(msg))"
+    return self.createDescription(typeName: "PyUnicodeTranslateError")
   }
 
   /// Type to set in `init`.
@@ -2291,15 +2139,15 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
     return Py.errorTypes.unicodeTranslateError
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2310,7 +2158,8 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2325,8 +2174,7 @@ public class PyWarning: PyException {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyWarning(\(msg))"
+    return self.createDescription(typeName: "PyWarning")
   }
 
   /// Type to set in `init`.
@@ -2334,15 +2182,15 @@ public class PyWarning: PyException {
     return Py.errorTypes.warning
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2353,7 +2201,8 @@ public class PyWarning: PyException {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2368,8 +2217,7 @@ public final class PyDeprecationWarning: PyWarning {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyDeprecationWarning(\(msg))"
+    return self.createDescription(typeName: "PyDeprecationWarning")
   }
 
   /// Type to set in `init`.
@@ -2377,15 +2225,15 @@ public final class PyDeprecationWarning: PyWarning {
     return Py.errorTypes.deprecationWarning
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2396,7 +2244,8 @@ public final class PyDeprecationWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2412,8 +2261,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyPendingDeprecationWarning(\(msg))"
+    return self.createDescription(typeName: "PyPendingDeprecationWarning")
   }
 
   /// Type to set in `init`.
@@ -2421,15 +2269,15 @@ public final class PyPendingDeprecationWarning: PyWarning {
     return Py.errorTypes.pendingDeprecationWarning
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2440,7 +2288,8 @@ public final class PyPendingDeprecationWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2455,8 +2304,7 @@ public final class PyRuntimeWarning: PyWarning {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyRuntimeWarning(\(msg))"
+    return self.createDescription(typeName: "PyRuntimeWarning")
   }
 
   /// Type to set in `init`.
@@ -2464,15 +2312,15 @@ public final class PyRuntimeWarning: PyWarning {
     return Py.errorTypes.runtimeWarning
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2483,7 +2331,8 @@ public final class PyRuntimeWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2498,8 +2347,7 @@ public final class PySyntaxWarning: PyWarning {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PySyntaxWarning(\(msg))"
+    return self.createDescription(typeName: "PySyntaxWarning")
   }
 
   /// Type to set in `init`.
@@ -2507,15 +2355,15 @@ public final class PySyntaxWarning: PyWarning {
     return Py.errorTypes.syntaxWarning
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2526,7 +2374,8 @@ public final class PySyntaxWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2541,8 +2390,7 @@ public final class PyUserWarning: PyWarning {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyUserWarning(\(msg))"
+    return self.createDescription(typeName: "PyUserWarning")
   }
 
   /// Type to set in `init`.
@@ -2550,15 +2398,15 @@ public final class PyUserWarning: PyWarning {
     return Py.errorTypes.userWarning
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2569,7 +2417,8 @@ public final class PyUserWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2585,8 +2434,7 @@ public final class PyFutureWarning: PyWarning {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyFutureWarning(\(msg))"
+    return self.createDescription(typeName: "PyFutureWarning")
   }
 
   /// Type to set in `init`.
@@ -2594,15 +2442,15 @@ public final class PyFutureWarning: PyWarning {
     return Py.errorTypes.futureWarning
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2613,7 +2461,8 @@ public final class PyFutureWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2628,8 +2477,7 @@ public final class PyImportWarning: PyWarning {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyImportWarning(\(msg))"
+    return self.createDescription(typeName: "PyImportWarning")
   }
 
   /// Type to set in `init`.
@@ -2637,15 +2485,15 @@ public final class PyImportWarning: PyWarning {
     return Py.errorTypes.importWarning
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2656,7 +2504,8 @@ public final class PyImportWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2672,8 +2521,7 @@ public final class PyUnicodeWarning: PyWarning {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyUnicodeWarning(\(msg))"
+    return self.createDescription(typeName: "PyUnicodeWarning")
   }
 
   /// Type to set in `init`.
@@ -2681,15 +2529,15 @@ public final class PyUnicodeWarning: PyWarning {
     return Py.errorTypes.unicodeWarning
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2700,7 +2548,8 @@ public final class PyUnicodeWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2716,8 +2565,7 @@ public final class PyBytesWarning: PyWarning {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyBytesWarning(\(msg))"
+    return self.createDescription(typeName: "PyBytesWarning")
   }
 
   /// Type to set in `init`.
@@ -2725,15 +2573,15 @@ public final class PyBytesWarning: PyWarning {
     return Py.errorTypes.bytesWarning
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2744,7 +2592,8 @@ public final class PyBytesWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
@@ -2759,8 +2608,7 @@ public final class PyResourceWarning: PyWarning {
   }
 
   override public var description: String {
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "PyResourceWarning(\(msg))"
+    return self.createDescription(typeName: "PyResourceWarning")
   }
 
   /// Type to set in `init`.
@@ -2768,15 +2616,15 @@ public final class PyResourceWarning: PyWarning {
     return Py.errorTypes.resourceWarning
   }
 
-   // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
 
-   // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
@@ -2787,7 +2635,8 @@ public final class PyResourceWarning: PyWarning {
   }
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }
