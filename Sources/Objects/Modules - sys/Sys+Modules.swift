@@ -65,7 +65,7 @@ extension Sys {
 
   public func addModule(module: PyModule) -> PyBaseException? {
     let name: String
-    switch module.name {
+    switch module.getName() {
     case let .value(n): name = n
     case let .error(e): return e
     }
@@ -93,7 +93,7 @@ extension Sys {
 
     for module in modules {
       let name: String = {
-        switch module.name {
+        switch module.getName() {
         case .value(let s):
           return s
         case .error(let e):

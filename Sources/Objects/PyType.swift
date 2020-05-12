@@ -343,7 +343,7 @@ public class PyType: PyObject, HasCustomGetMethod {
         }
       }
 
-      switch module.name {
+      switch module.getName() {
       case let .value(name):
         return .module(name)
       case let .error(e):

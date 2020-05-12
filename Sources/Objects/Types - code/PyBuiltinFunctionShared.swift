@@ -73,7 +73,7 @@ extension PyBuiltinFunctionShared where Self: PyObject {
     }
 
     if let module = moduleObject as? PyModule {
-      return module.name
+      return module.getName()
     }
 
     return Py.strValue(object: moduleObject)

@@ -285,7 +285,7 @@ public class PyFunction: PyObject {
   // sourcery: pyproperty = __module__, setter = setModule
   public func getModule() -> PyResult<String> {
     if let module = self.module as? PyModule {
-      return module.name
+      return module.getName()
     }
 
     return Py.strValue(object: self.module)

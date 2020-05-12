@@ -14,18 +14,8 @@ public class PyModule: PyObject {
 
   internal let __dict__: PyDict
 
-  /// PyObject*
-  /// PyModule_GetNameObject(PyObject *m)
-  internal var name: PyResult<String> {
-    if let name = self.__dict__.get(id: .__name__) {
-      return Py.strValue(object: name)
-    }
-
-    return .systemError("nameless module")
-  }
-
   override public var description: String {
-    switch self.name {
+    switch self.getName() {
     case .value(let name):
       return "PyModule(name: \(name))"
     case .error:
@@ -68,7 +58,29 @@ public class PyModule: PyObject {
 
   // sourcery: pymethod = __repr__
   public func repr() -> PyResult<String> {
-    return self.name.map { "<module \($0)>" }
+    return self.getName().map { "<module \($0)>" }
+  }
+
+  // MARK: - Name
+
+  /// PyObject*
+  /// PyModule_GetNameObject(PyObject *m)
+  public func getName() -> PyResult<String> {
+    if let name = self.__dict__.get(id: .__name__) {
+      return Py.strValue(object: name)
+    }
+
+    return .systemError("nameless module")
+  }
+
+  /// Just like `self.getName`, but ignores error and returns `nil`.
+  public func getNameOrNil() -> String? {
+    switch self.getName() {
+    case .value(let n):
+      return n
+    case .error:
+      return nil
+    }
   }
 
   // MARK: - Attributes
@@ -105,7 +117,8 @@ public class PyModule: PyObject {
     }
 
     let nameQuoted = name.reprRaw().quoted
-    let msg = "module \(self.name) has no attribute '\(nameQuoted)'"
+    let moduleName = self.getNameOrNil() ?? "<unknown module name>"
+    let msg = "module \(moduleName) has no attribute '\(nameQuoted)'"
     return .attributeError(msg)
   }
 
