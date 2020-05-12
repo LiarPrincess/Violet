@@ -388,6 +388,7 @@ public final class BuiltinErrorTypes {
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySystemExit.getClass, castSelf: Self.asSystemExit))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PySystemExit.getDict, castSelf: Self.asSystemExit))
+    self.insert(type: type, name: "code", value: PyProperty.wrap(doc: nil, get: PySystemExit.getCode, set: PySystemExit.setCode, castSelf: Self.asSystemExit))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PySystemExit.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySystemExit.pyInit(args:kwargs:)))
@@ -753,9 +754,14 @@ public final class BuiltinErrorTypes {
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyImportError.getClass, castSelf: Self.asImportError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyImportError.getDict, castSelf: Self.asImportError))
+    self.insert(type: type, name: "msg", value: PyProperty.wrap(doc: nil, get: PyImportError.getMsg, set: PyImportError.setMsg, castSelf: Self.asImportError))
+    self.insert(type: type, name: "name", value: PyProperty.wrap(doc: nil, get: PyImportError.getName, set: PyImportError.setName, castSelf: Self.asImportError))
+    self.insert(type: type, name: "path", value: PyProperty.wrap(doc: nil, get: PyImportError.getPath, set: PyImportError.setPath, castSelf: Self.asImportError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyImportError.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyImportError.pyInit(args:kwargs:)))
+
+    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyImportError.str, castSelf: Self.asImportError))
   }
 
   private static func asImportError(_ object: PyObject, methodName: String) -> PyResult<PyImportError> {

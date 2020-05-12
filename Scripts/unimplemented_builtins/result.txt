@@ -180,13 +180,6 @@ TextIOWrapper
     __enter__
     __exit__
 
-ImportError
-  Unimplemented:
-    __str__
-    msg
-    name
-    path
-
 OSError
   Unimplemented:
     __str__
@@ -205,10 +198,6 @@ SyntaxError
     offset
     print_file_and_line
     text
-
-SystemExit
-  Unimplemented:
-    code
 
 UnicodeDecodeError
   Unimplemented:

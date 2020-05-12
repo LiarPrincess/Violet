@@ -353,8 +353,11 @@ extension PyType {
     public static let PyFutureWarning = MemoryLayout.PyWarning
     /// `PyGeneratorExit` uses the same layout as it s base type (`PyBaseException`).
     public static let PyGeneratorExit = MemoryLayout.PyBaseException
-    /// `PyImportError` uses the same layout as it s base type (`PyException`).
-    public static let PyImportError = MemoryLayout.PyException
+    /// Fields:
+    /// - `msg: PyObject?`
+    /// - `moduleName: PyObject?`
+    /// - `modulePath: PyObject?`
+    public static let PyImportError = MemoryLayout(base: MemoryLayout.PyException)
     /// `PyImportWarning` uses the same layout as it s base type (`PyWarning`).
     public static let PyImportWarning = MemoryLayout.PyWarning
     /// `PyIndentationError` uses the same layout as it s base type (`PySyntaxError`).

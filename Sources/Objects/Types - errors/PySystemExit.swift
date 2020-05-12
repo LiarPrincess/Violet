@@ -39,8 +39,7 @@ public final class PySystemExit: PyBaseException {
       argsElements.append(c)
     }
 
-    let args = Py.newTuple(argsElements)
-    self.init(args: args,
+    self.init(args: Py.newTuple(argsElements),
               traceback: traceback,
               cause: cause,
               context: context,
@@ -83,6 +82,18 @@ public final class PySystemExit: PyBaseException {
   // sourcery: pyproperty = __dict__
   override public func getDict() -> PyDict {
     return self.__dict__
+  }
+
+  // MARK: - Code
+
+  // sourcery: pyproperty = code, setter = setCode
+  public func getCode() -> PyObject? {
+    return self.code
+  }
+
+  public func setCode(_ value: PyObject?) -> PyResult<Void> {
+    self.code = value
+    return .value()
   }
 
   // MARK: - Python new

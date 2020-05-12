@@ -1184,6 +1184,10 @@ types = {
   ImportError: [
     '__class__',
     '__dict__',
+    'msg',
+    'name',
+    'path',
+    '__str__',
     '__init__',
     '__new__',
   ],
@@ -1360,6 +1364,7 @@ types = {
   SystemExit: [
     '__class__',
     '__dict__',
+    'code',
     '__init__',
     '__new__',
   ],

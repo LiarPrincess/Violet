@@ -527,49 +527,6 @@ public final class PyEOFError: PyException {
   }
 }
 
-// MARK: - ImportError
-
-// sourcery: pyerrortype = ImportError, default, baseType, hasGC, baseExceptionSubclass
-public class PyImportError: PyException {
-
-  override internal class var doc: String {
-    return "Import can't find module, or can't find name in module."
-  }
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyImportError")
-  }
-
-  /// Type to set in `init`.
-  override internal class var pythonType: PyType {
-    return Py.errorTypes.importError
-  }
-
-  // sourcery: pyproperty = __class__
-  override public func getClass() -> PyType {
-    return self.type
-  }
-
-  // sourcery: pyproperty = __dict__
-  override public func getDict() -> PyDict {
-    return self.__dict__
-  }
-
-  // sourcery: pystaticmethod = __new__
-  override internal class func pyNew(type: PyType,
-                                     args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyBaseException> {
-    let argsTuple = Py.newTuple(args)
-    return .value(PyImportError(args: argsTuple, type: type))
-  }
-
-  // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyNone> {
-    return super.pyInit(args: args, kwargs: kwargs)
-  }
-}
-
 // MARK: - ModuleNotFoundError
 
 // sourcery: pyerrortype = ModuleNotFoundError, default, baseType, hasGC, baseExceptionSubclass
