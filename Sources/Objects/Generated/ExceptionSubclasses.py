@@ -12,32 +12,21 @@ def is_final(name):
 
   return True
 
-if __name__ == '__main__':
+def get_class_name(t):
+  name = t.class_name
+  return 'Py' + name
+
+def print_class_prolog(t):
+  name = t.class_name
+  base = t.base_class
+  doc = t.doc
+
+  class_name = get_class_name(t)
+  doc = doc.replace('\n', ' " +\n"')
+  final = 'final ' if is_final(name) else ''
+  builtins_type_variable = get_builtins_type_property_name(name)
+
   print(f'''\
-// swiftlint:disable line_length
-// swiftlint:disable trailing_newline
-// swiftlint:disable file_length
-
-{generated_warning}
-
-{where_to_find_it_in_cpython}
-''')
-
-  for e in data:
-    name = e.class_name
-    base = e.base_class
-    doc = e.doc
-
-    if name == 'BaseException':
-      continue
-
-    doc = doc.replace('\n', ' " +\n"')
-    final = 'final ' if is_final(name) else ''
-    builtins_type_variable = get_builtins_type_property_name(name)
-
-    class_name = 'Py' + name
-
-    print(f'''\
 // MARK: - {name}
 
 // sourcery: pyerrortype = {name}, default, baseType, hasGC, baseExceptionSubclass
@@ -49,7 +38,7 @@ public {final}class {class_name}: Py{base} {{
 
   override public var description: String {{
     let msg = self.message.map {{ "msg: \($0)" }} ?? ""
-    return "Py{name}(\(msg))"
+    return "{class_name}(\(msg))"
   }}
 
   /// Tupe to set in `init`.
@@ -65,19 +54,55 @@ public {final}class {class_name}: Py{base} {{
    // sourcery: pyproperty = __dict__
    override public func getDict() -> PyDict {{
      return self.__dict__
-   }}
+   }}\
+''')
+
+def print_class_epilog(t):
+  print('}')
+  print()
+
+def print_new(t):
+  class_name = get_class_name(t)
+
+  print(f'''\
 
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {{
     let argsTuple = Py.newTuple(args)
-    return .value(Py{name}(args: argsTuple))
-  }}
+    return .value({class_name}(args: argsTuple))
+  }}\
+''')
+
+def print_init(t):
+  print(f'''\
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {{
     return super.pyInit(args: args, kwargs: kwargs)
-  }}
-}}
+  }}\
 ''')
+
+if __name__ == '__main__':
+  print(f'''\
+// swiftlint:disable line_length
+// swiftlint:disable trailing_newline
+// swiftlint:disable file_length
+
+{generated_warning}
+
+{where_to_find_it_in_cpython}
+''')
+
+  for t in data:
+    name = t.class_name
+
+    # We already have 'BaseException' (manually written)
+    if name == 'BaseException':
+      continue
+
+    print_class_prolog(t)
+    print_new(t)
+    print_init(t)
+    print_class_epilog(t)
