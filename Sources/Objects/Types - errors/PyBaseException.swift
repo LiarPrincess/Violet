@@ -36,35 +36,6 @@ public class PyBaseException: PyObject {
     return "PyBaseException(\(msg))"
   }
 
-  // MARK: - Init
-
-  internal convenience init(msg: String,
-                            traceback: PyTraceback? = nil,
-                            cause: PyBaseException? = nil,
-                            exceptionContext: PyBaseException? = nil,
-                            suppressExceptionContext: Bool = false) {
-    let args = Py.newTuple(Py.newString(msg))
-    self.init(args: args,
-              traceback: traceback,
-              cause: cause,
-              exceptionContext: exceptionContext,
-              suppressExceptionContext: suppressExceptionContext)
-  }
-
-  internal init(args: PyTuple,
-                traceback: PyTraceback? = nil,
-                cause: PyBaseException? = nil,
-                exceptionContext: PyBaseException? = nil,
-                suppressExceptionContext: Bool = false) {
-    self.args = args
-    self.traceback = traceback
-    self.cause = cause
-    self.context = exceptionContext
-    self.suppressContext = suppressExceptionContext
-
-    super.init(type: Self.pythonType)
-  }
-
   /// Type to set in `init`.
   /// Override this property in every exception class!
   ///
@@ -83,6 +54,38 @@ public class PyBaseException: PyObject {
   /// We went with 3 using `class` property.
   internal class var pythonType: PyType {
     return Py.errorTypes.baseException
+  }
+
+  // MARK: - Init
+
+  internal convenience init(msg: String,
+                            traceback: PyTraceback? = nil,
+                            cause: PyBaseException? = nil,
+                            context: PyBaseException? = nil,
+                            suppressContext: Bool = false,
+                            type: PyType? = nil) {
+    let args = Py.newTuple(Py.newString(msg))
+    self.init(args: args,
+              traceback: traceback,
+              cause: cause,
+              context: context,
+              suppressContext: suppressContext,
+              type: type)
+  }
+
+  internal init(args: PyTuple,
+                traceback: PyTraceback? = nil,
+                cause: PyBaseException? = nil,
+                context: PyBaseException? = nil,
+                suppressContext: Bool = false,
+                type: PyType? = nil) {
+    self.args = args
+    self.traceback = traceback
+    self.cause = cause
+    self.context = context
+    self.suppressContext = suppressContext
+
+    super.init(type: type ?? Self.pythonType)
   }
 
   // MARK: - Msg
@@ -481,7 +484,7 @@ public class PyBaseException: PyObject {
                             args: [PyObject],
                             kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyBaseException(args: argsTuple))
+    return .value(PyBaseException(args: argsTuple, type: type))
   }
 
   // MARK: - Python init
@@ -489,14 +492,7 @@ public class PyBaseException: PyObject {
   // sourcery: pymethod = __init__
   internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
     // Copy args if needed
-    let selfArgs = self.args.elements
-    let hasAssignedArgsIn__new__ = selfArgs.count == args.count
-        && zip(selfArgs, args).allSatisfy { $0.0 === $0.1 }
-
-    if !hasAssignedArgsIn__new__ {
-      let argsTuple = Py.newTuple(args)
-      self.setArgs(argsTuple)
-    }
+    self.setArgsIfDifferent(args: args)
 
     // Copy kwargs
     if let kwargs = kwargs {
@@ -507,5 +503,17 @@ public class PyBaseException: PyObject {
     }
 
     return .value(Py.none)
+  }
+
+  private func setArgsIfDifferent(args: [PyObject]) {
+    let selfArgs = self.args.elements
+
+    let areEqual = selfArgs.count == args.count
+        && zip(selfArgs, args).allSatisfy { $0.0 === $0.1 }
+
+    if !areEqual {
+      let argsTuple = Py.newTuple(args)
+      self.setArgs(argsTuple)
+    }
   }
 }

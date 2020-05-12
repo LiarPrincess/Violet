@@ -25,7 +25,7 @@ public final class PySystemExit: PyBaseException {
     return "PySystemExit(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.systemExit
   }
@@ -45,7 +45,7 @@ public final class PySystemExit: PyBaseException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PySystemExit(args: argsTuple))
+    return .value(PySystemExit(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -68,7 +68,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
     return "PyKeyboardInterrupt(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.keyboardInterrupt
   }
@@ -88,7 +88,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyKeyboardInterrupt(args: argsTuple))
+    return .value(PyKeyboardInterrupt(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -111,7 +111,7 @@ public final class PyGeneratorExit: PyBaseException {
     return "PyGeneratorExit(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.generatorExit
   }
@@ -131,7 +131,7 @@ public final class PyGeneratorExit: PyBaseException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyGeneratorExit(args: argsTuple))
+    return .value(PyGeneratorExit(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -154,7 +154,7 @@ public class PyException: PyBaseException {
     return "PyException(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.exception
   }
@@ -174,7 +174,7 @@ public class PyException: PyBaseException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyException(args: argsTuple))
+    return .value(PyException(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -197,7 +197,7 @@ public final class PyStopIteration: PyException {
     return "PyStopIteration(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.stopIteration
   }
@@ -217,7 +217,7 @@ public final class PyStopIteration: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyStopIteration(args: argsTuple))
+    return .value(PyStopIteration(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -240,7 +240,7 @@ public final class PyStopAsyncIteration: PyException {
     return "PyStopAsyncIteration(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.stopAsyncIteration
   }
@@ -260,7 +260,7 @@ public final class PyStopAsyncIteration: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyStopAsyncIteration(args: argsTuple))
+    return .value(PyStopAsyncIteration(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -283,7 +283,7 @@ public class PyArithmeticError: PyException {
     return "PyArithmeticError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.arithmeticError
   }
@@ -303,7 +303,7 @@ public class PyArithmeticError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyArithmeticError(args: argsTuple))
+    return .value(PyArithmeticError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -326,7 +326,7 @@ public final class PyFloatingPointError: PyArithmeticError {
     return "PyFloatingPointError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.floatingPointError
   }
@@ -346,7 +346,7 @@ public final class PyFloatingPointError: PyArithmeticError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyFloatingPointError(args: argsTuple))
+    return .value(PyFloatingPointError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -369,7 +369,7 @@ public final class PyOverflowError: PyArithmeticError {
     return "PyOverflowError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.overflowError
   }
@@ -389,7 +389,7 @@ public final class PyOverflowError: PyArithmeticError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyOverflowError(args: argsTuple))
+    return .value(PyOverflowError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -412,7 +412,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
     return "PyZeroDivisionError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.zeroDivisionError
   }
@@ -432,7 +432,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyZeroDivisionError(args: argsTuple))
+    return .value(PyZeroDivisionError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -455,7 +455,7 @@ public final class PyAssertionError: PyException {
     return "PyAssertionError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.assertionError
   }
@@ -475,7 +475,7 @@ public final class PyAssertionError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyAssertionError(args: argsTuple))
+    return .value(PyAssertionError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -498,7 +498,7 @@ public final class PyAttributeError: PyException {
     return "PyAttributeError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.attributeError
   }
@@ -518,7 +518,7 @@ public final class PyAttributeError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyAttributeError(args: argsTuple))
+    return .value(PyAttributeError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -541,7 +541,7 @@ public final class PyBufferError: PyException {
     return "PyBufferError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.bufferError
   }
@@ -561,7 +561,7 @@ public final class PyBufferError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyBufferError(args: argsTuple))
+    return .value(PyBufferError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -584,7 +584,7 @@ public final class PyEOFError: PyException {
     return "PyEOFError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.eofError
   }
@@ -604,7 +604,7 @@ public final class PyEOFError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyEOFError(args: argsTuple))
+    return .value(PyEOFError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -627,7 +627,7 @@ public class PyImportError: PyException {
     return "PyImportError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.importError
   }
@@ -647,7 +647,7 @@ public class PyImportError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyImportError(args: argsTuple))
+    return .value(PyImportError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -670,7 +670,7 @@ public final class PyModuleNotFoundError: PyImportError {
     return "PyModuleNotFoundError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.moduleNotFoundError
   }
@@ -690,7 +690,7 @@ public final class PyModuleNotFoundError: PyImportError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyModuleNotFoundError(args: argsTuple))
+    return .value(PyModuleNotFoundError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -713,7 +713,7 @@ public class PyLookupError: PyException {
     return "PyLookupError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.lookupError
   }
@@ -733,7 +733,7 @@ public class PyLookupError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyLookupError(args: argsTuple))
+    return .value(PyLookupError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -756,7 +756,7 @@ public final class PyIndexError: PyLookupError {
     return "PyIndexError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.indexError
   }
@@ -776,7 +776,7 @@ public final class PyIndexError: PyLookupError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyIndexError(args: argsTuple))
+    return .value(PyIndexError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -799,7 +799,7 @@ public final class PyKeyError: PyLookupError {
     return "PyKeyError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.keyError
   }
@@ -841,7 +841,7 @@ public final class PyKeyError: PyLookupError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyKeyError(args: argsTuple))
+    return .value(PyKeyError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -864,7 +864,7 @@ public final class PyMemoryError: PyException {
     return "PyMemoryError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.memoryError
   }
@@ -884,7 +884,7 @@ public final class PyMemoryError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyMemoryError(args: argsTuple))
+    return .value(PyMemoryError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -907,7 +907,7 @@ public class PyNameError: PyException {
     return "PyNameError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.nameError
   }
@@ -927,7 +927,7 @@ public class PyNameError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyNameError(args: argsTuple))
+    return .value(PyNameError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -950,7 +950,7 @@ public final class PyUnboundLocalError: PyNameError {
     return "PyUnboundLocalError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.unboundLocalError
   }
@@ -970,7 +970,7 @@ public final class PyUnboundLocalError: PyNameError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyUnboundLocalError(args: argsTuple))
+    return .value(PyUnboundLocalError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -993,7 +993,7 @@ public class PyOSError: PyException {
     return "PyOSError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.osError
   }
@@ -1013,7 +1013,7 @@ public class PyOSError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyOSError(args: argsTuple))
+    return .value(PyOSError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1036,7 +1036,7 @@ public final class PyBlockingIOError: PyOSError {
     return "PyBlockingIOError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.blockingIOError
   }
@@ -1056,7 +1056,7 @@ public final class PyBlockingIOError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyBlockingIOError(args: argsTuple))
+    return .value(PyBlockingIOError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1079,7 +1079,7 @@ public final class PyChildProcessError: PyOSError {
     return "PyChildProcessError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.childProcessError
   }
@@ -1099,7 +1099,7 @@ public final class PyChildProcessError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyChildProcessError(args: argsTuple))
+    return .value(PyChildProcessError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1122,7 +1122,7 @@ public class PyConnectionError: PyOSError {
     return "PyConnectionError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.connectionError
   }
@@ -1142,7 +1142,7 @@ public class PyConnectionError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyConnectionError(args: argsTuple))
+    return .value(PyConnectionError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1165,7 +1165,7 @@ public final class PyBrokenPipeError: PyConnectionError {
     return "PyBrokenPipeError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.brokenPipeError
   }
@@ -1185,7 +1185,7 @@ public final class PyBrokenPipeError: PyConnectionError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyBrokenPipeError(args: argsTuple))
+    return .value(PyBrokenPipeError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1208,7 +1208,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
     return "PyConnectionAbortedError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.connectionAbortedError
   }
@@ -1228,7 +1228,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyConnectionAbortedError(args: argsTuple))
+    return .value(PyConnectionAbortedError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1251,7 +1251,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
     return "PyConnectionRefusedError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.connectionRefusedError
   }
@@ -1271,7 +1271,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyConnectionRefusedError(args: argsTuple))
+    return .value(PyConnectionRefusedError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1294,7 +1294,7 @@ public final class PyConnectionResetError: PyConnectionError {
     return "PyConnectionResetError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.connectionResetError
   }
@@ -1314,7 +1314,7 @@ public final class PyConnectionResetError: PyConnectionError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyConnectionResetError(args: argsTuple))
+    return .value(PyConnectionResetError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1337,7 +1337,7 @@ public final class PyFileExistsError: PyOSError {
     return "PyFileExistsError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.fileExistsError
   }
@@ -1357,7 +1357,7 @@ public final class PyFileExistsError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyFileExistsError(args: argsTuple))
+    return .value(PyFileExistsError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1380,7 +1380,7 @@ public final class PyFileNotFoundError: PyOSError {
     return "PyFileNotFoundError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.fileNotFoundError
   }
@@ -1400,7 +1400,7 @@ public final class PyFileNotFoundError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyFileNotFoundError(args: argsTuple))
+    return .value(PyFileNotFoundError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1423,7 +1423,7 @@ public final class PyInterruptedError: PyOSError {
     return "PyInterruptedError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.interruptedError
   }
@@ -1443,7 +1443,7 @@ public final class PyInterruptedError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyInterruptedError(args: argsTuple))
+    return .value(PyInterruptedError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1466,7 +1466,7 @@ public final class PyIsADirectoryError: PyOSError {
     return "PyIsADirectoryError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.isADirectoryError
   }
@@ -1486,7 +1486,7 @@ public final class PyIsADirectoryError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyIsADirectoryError(args: argsTuple))
+    return .value(PyIsADirectoryError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1509,7 +1509,7 @@ public final class PyNotADirectoryError: PyOSError {
     return "PyNotADirectoryError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.notADirectoryError
   }
@@ -1529,7 +1529,7 @@ public final class PyNotADirectoryError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyNotADirectoryError(args: argsTuple))
+    return .value(PyNotADirectoryError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1552,7 +1552,7 @@ public final class PyPermissionError: PyOSError {
     return "PyPermissionError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.permissionError
   }
@@ -1572,7 +1572,7 @@ public final class PyPermissionError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyPermissionError(args: argsTuple))
+    return .value(PyPermissionError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1595,7 +1595,7 @@ public final class PyProcessLookupError: PyOSError {
     return "PyProcessLookupError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.processLookupError
   }
@@ -1615,7 +1615,7 @@ public final class PyProcessLookupError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyProcessLookupError(args: argsTuple))
+    return .value(PyProcessLookupError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1638,7 +1638,7 @@ public final class PyTimeoutError: PyOSError {
     return "PyTimeoutError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.timeoutError
   }
@@ -1658,7 +1658,7 @@ public final class PyTimeoutError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyTimeoutError(args: argsTuple))
+    return .value(PyTimeoutError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1681,7 +1681,7 @@ public final class PyReferenceError: PyException {
     return "PyReferenceError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.referenceError
   }
@@ -1701,7 +1701,7 @@ public final class PyReferenceError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyReferenceError(args: argsTuple))
+    return .value(PyReferenceError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1724,7 +1724,7 @@ public class PyRuntimeError: PyException {
     return "PyRuntimeError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.runtimeError
   }
@@ -1744,7 +1744,7 @@ public class PyRuntimeError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyRuntimeError(args: argsTuple))
+    return .value(PyRuntimeError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1767,7 +1767,7 @@ public final class PyNotImplementedError: PyRuntimeError {
     return "PyNotImplementedError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.notImplementedError
   }
@@ -1787,7 +1787,7 @@ public final class PyNotImplementedError: PyRuntimeError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyNotImplementedError(args: argsTuple))
+    return .value(PyNotImplementedError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1810,7 +1810,7 @@ public final class PyRecursionError: PyRuntimeError {
     return "PyRecursionError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.recursionError
   }
@@ -1830,7 +1830,7 @@ public final class PyRecursionError: PyRuntimeError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyRecursionError(args: argsTuple))
+    return .value(PyRecursionError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1853,7 +1853,7 @@ public class PySyntaxError: PyException {
     return "PySyntaxError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.syntaxError
   }
@@ -1873,7 +1873,7 @@ public class PySyntaxError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PySyntaxError(args: argsTuple))
+    return .value(PySyntaxError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1896,7 +1896,7 @@ public class PyIndentationError: PySyntaxError {
     return "PyIndentationError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.indentationError
   }
@@ -1916,7 +1916,7 @@ public class PyIndentationError: PySyntaxError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyIndentationError(args: argsTuple))
+    return .value(PyIndentationError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1939,7 +1939,7 @@ public final class PyTabError: PyIndentationError {
     return "PyTabError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.tabError
   }
@@ -1959,7 +1959,7 @@ public final class PyTabError: PyIndentationError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyTabError(args: argsTuple))
+    return .value(PyTabError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -1985,7 +1985,7 @@ public final class PySystemError: PyException {
     return "PySystemError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.systemError
   }
@@ -2005,7 +2005,7 @@ public final class PySystemError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PySystemError(args: argsTuple))
+    return .value(PySystemError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2028,7 +2028,7 @@ public final class PyTypeError: PyException {
     return "PyTypeError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.typeError
   }
@@ -2048,7 +2048,7 @@ public final class PyTypeError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyTypeError(args: argsTuple))
+    return .value(PyTypeError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2071,7 +2071,7 @@ public class PyValueError: PyException {
     return "PyValueError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.valueError
   }
@@ -2091,7 +2091,7 @@ public class PyValueError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyValueError(args: argsTuple))
+    return .value(PyValueError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2114,7 +2114,7 @@ public class PyUnicodeError: PyValueError {
     return "PyUnicodeError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.unicodeError
   }
@@ -2134,7 +2134,7 @@ public class PyUnicodeError: PyValueError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyUnicodeError(args: argsTuple))
+    return .value(PyUnicodeError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2157,7 +2157,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
     return "PyUnicodeDecodeError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.unicodeDecodeError
   }
@@ -2177,7 +2177,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyUnicodeDecodeError(args: argsTuple))
+    return .value(PyUnicodeDecodeError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2200,7 +2200,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
     return "PyUnicodeEncodeError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.unicodeEncodeError
   }
@@ -2220,7 +2220,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyUnicodeEncodeError(args: argsTuple))
+    return .value(PyUnicodeEncodeError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2243,7 +2243,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
     return "PyUnicodeTranslateError(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.unicodeTranslateError
   }
@@ -2263,7 +2263,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyUnicodeTranslateError(args: argsTuple))
+    return .value(PyUnicodeTranslateError(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2286,7 +2286,7 @@ public class PyWarning: PyException {
     return "PyWarning(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.warning
   }
@@ -2306,7 +2306,7 @@ public class PyWarning: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyWarning(args: argsTuple))
+    return .value(PyWarning(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2329,7 +2329,7 @@ public final class PyDeprecationWarning: PyWarning {
     return "PyDeprecationWarning(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.deprecationWarning
   }
@@ -2349,7 +2349,7 @@ public final class PyDeprecationWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyDeprecationWarning(args: argsTuple))
+    return .value(PyDeprecationWarning(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2373,7 +2373,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
     return "PyPendingDeprecationWarning(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.pendingDeprecationWarning
   }
@@ -2393,7 +2393,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyPendingDeprecationWarning(args: argsTuple))
+    return .value(PyPendingDeprecationWarning(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2416,7 +2416,7 @@ public final class PyRuntimeWarning: PyWarning {
     return "PyRuntimeWarning(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.runtimeWarning
   }
@@ -2436,7 +2436,7 @@ public final class PyRuntimeWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyRuntimeWarning(args: argsTuple))
+    return .value(PyRuntimeWarning(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2459,7 +2459,7 @@ public final class PySyntaxWarning: PyWarning {
     return "PySyntaxWarning(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.syntaxWarning
   }
@@ -2479,7 +2479,7 @@ public final class PySyntaxWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PySyntaxWarning(args: argsTuple))
+    return .value(PySyntaxWarning(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2502,7 +2502,7 @@ public final class PyUserWarning: PyWarning {
     return "PyUserWarning(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.userWarning
   }
@@ -2522,7 +2522,7 @@ public final class PyUserWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyUserWarning(args: argsTuple))
+    return .value(PyUserWarning(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2546,7 +2546,7 @@ public final class PyFutureWarning: PyWarning {
     return "PyFutureWarning(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.futureWarning
   }
@@ -2566,7 +2566,7 @@ public final class PyFutureWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyFutureWarning(args: argsTuple))
+    return .value(PyFutureWarning(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2589,7 +2589,7 @@ public final class PyImportWarning: PyWarning {
     return "PyImportWarning(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.importWarning
   }
@@ -2609,7 +2609,7 @@ public final class PyImportWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyImportWarning(args: argsTuple))
+    return .value(PyImportWarning(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2633,7 +2633,7 @@ public final class PyUnicodeWarning: PyWarning {
     return "PyUnicodeWarning(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.unicodeWarning
   }
@@ -2653,7 +2653,7 @@ public final class PyUnicodeWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyUnicodeWarning(args: argsTuple))
+    return .value(PyUnicodeWarning(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2677,7 +2677,7 @@ public final class PyBytesWarning: PyWarning {
     return "PyBytesWarning(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.bytesWarning
   }
@@ -2697,7 +2697,7 @@ public final class PyBytesWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyBytesWarning(args: argsTuple))
+    return .value(PyBytesWarning(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__
@@ -2720,7 +2720,7 @@ public final class PyResourceWarning: PyWarning {
     return "PyResourceWarning(\(msg))"
   }
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.resourceWarning
   }
@@ -2740,7 +2740,7 @@ public final class PyResourceWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyResourceWarning(args: argsTuple))
+    return .value(PyResourceWarning(args: argsTuple, type: type))
   }
 
   // sourcery: pymethod = __init__

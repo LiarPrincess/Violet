@@ -41,11 +41,18 @@ public {final}class {class_name}: Py{base} {{
     return "{class_name}(\(msg))"
   }}
 
-  /// Tupe to set in `init`.
+  /// Type to set in `init`.
   override internal class var pythonType: PyType {{
     return Py.errorTypes.{builtins_type_variable}
-  }}
+  }}\
+''')
 
+def print_class_epilog(t):
+  print('}')
+  print()
+
+def print_common_properties(t):
+  print(f'''
    // sourcery: pyproperty = __class__
    override public func getClass() -> PyType {{
      return self.type
@@ -57,10 +64,6 @@ public {final}class {class_name}: Py{base} {{
    }}\
 ''')
 
-def print_class_epilog(t):
-  print('}')
-  print()
-
 def print_new(t):
   class_name = get_class_name(t)
 
@@ -70,7 +73,7 @@ def print_new(t):
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {{
     let argsTuple = Py.newTuple(args)
-    return .value({class_name}(args: argsTuple))
+    return .value({class_name}(args: argsTuple, type: type))
   }}\
 ''')
 
@@ -102,6 +105,7 @@ if __name__ == '__main__':
 
     if name == 'KeyError':
       print_class_prolog(t)
+      print_common_properties(t)
       print('''
   // sourcery: pymethod = __str__
   override public func str() -> PyResult<String> {
@@ -130,6 +134,7 @@ if __name__ == '__main__':
       print_class_epilog(t)
     else:
       print_class_prolog(t)
+      print_common_properties(t)
       print_new(t)
       print_init(t)
       print_class_epilog(t)
