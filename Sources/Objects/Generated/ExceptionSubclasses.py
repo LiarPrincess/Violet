@@ -28,6 +28,7 @@ if __name__ == '__main__':
     'BaseException',
     'KeyError', # Custom '__str__' method
     'StopIteration', # 'value' property
+    'SystemExit', # 'code' property
   ]
 
   for t in data:

@@ -412,8 +412,9 @@ extension PyType {
     public static let PySyntaxWarning = MemoryLayout.PyWarning
     /// `PySystemError` uses the same layout as it s base type (`PyException`).
     public static let PySystemError = MemoryLayout.PyException
-    /// `PySystemExit` uses the same layout as it s base type (`PyBaseException`).
-    public static let PySystemExit = MemoryLayout.PyBaseException
+    /// Fields:
+    /// - `code: PyObject?`
+    public static let PySystemExit = MemoryLayout(base: MemoryLayout.PyBaseException)
     /// `PyTabError` uses the same layout as it s base type (`PyIndentationError`).
     public static let PyTabError = MemoryLayout.PyIndentationError
     /// `PyTimeoutError` uses the same layout as it s base type (`PyOSError`).

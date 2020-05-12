@@ -11,49 +11,6 @@
 // https://docs.python.org/3.7/library/exceptions.html
 // https://docs.python.org/3.7/c-api/exceptions.html
 
-// MARK: - SystemExit
-
-// sourcery: pyerrortype = SystemExit, default, baseType, hasGC, baseExceptionSubclass
-public final class PySystemExit: PyBaseException {
-
-  override internal class var doc: String {
-    return "Request to exit from the interpreter."
-  }
-
-  override public var description: String {
-    return self.createDescription(typeName: "PySystemExit")
-  }
-
-  /// Type to set in `init`.
-  override internal class var pythonType: PyType {
-    return Py.errorTypes.systemExit
-  }
-
-  // sourcery: pyproperty = __class__
-  override public func getClass() -> PyType {
-    return self.type
-  }
-
-  // sourcery: pyproperty = __dict__
-  override public func getDict() -> PyDict {
-    return self.__dict__
-  }
-
-  // sourcery: pystaticmethod = __new__
-  override internal class func pyNew(type: PyType,
-                                     args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyBaseException> {
-    let argsTuple = Py.newTuple(args)
-    return .value(PySystemExit(args: argsTuple, type: type))
-  }
-
-  // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyNone> {
-    return super.pyInit(args: args, kwargs: kwargs)
-  }
-}
-
 // MARK: - KeyboardInterrupt
 
 // sourcery: pyerrortype = KeyboardInterrupt, default, baseType, hasGC, baseExceptionSubclass

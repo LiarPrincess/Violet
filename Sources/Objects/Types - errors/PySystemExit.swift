@@ -6,35 +6,40 @@ import VioletCore
 // https://docs.python.org/3.7/c-api/exceptions.html
 // https://www.python.org/dev/peps/pep-0415/#proposal
 
-// sourcery: pyerrortype = StopIteration, default, baseType, hasGC, baseExceptionSubclass
-public final class PyStopIteration: PyException {
+// sourcery: pyerrortype = SystemExit, default, baseType, hasGC, baseExceptionSubclass
+public final class PySystemExit: PyBaseException {
 
   override internal class var doc: String {
-    return "Signal the end from iterator.__next__()."
+    return "Request to exit from the interpreter."
   }
 
   override public var description: String {
-    return self.createDescription(typeName: "PyStopIteration")
+    return self.createDescription(typeName: "PySystemExit")
   }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
-    return Py.errorTypes.stopIteration
+    return Py.errorTypes.systemExit
   }
 
   // MARK: - Properties
 
-  private var value: PyObject
+  private var code: PyObject?
 
   // MARK: - Init
 
-  internal convenience init(value: PyObject,
+  internal convenience init(code: PyObject?,
                             traceback: PyTraceback? = nil,
                             cause: PyBaseException? = nil,
                             context: PyBaseException? = nil,
                             suppressContext: Bool = false,
                             type: PyType? = nil) {
-    let args = Py.newTuple(value)
+    var argsElements = [PyObject]()
+    if let c = code {
+      argsElements.append(c)
+    }
+
+    let args = Py.newTuple(argsElements)
     self.init(args: args,
               traceback: traceback,
               cause: cause,
@@ -49,17 +54,21 @@ public final class PyStopIteration: PyException {
                          context: PyBaseException? = nil,
                          suppressContext: Bool = false,
                          type: PyType? = nil) {
-    self.value = Self.extractValue(args: args.elements)
+    switch args.elements.count {
+    case 0:
+      self.code = nil
+    case 1:
+      self.code = args.elements[0]
+    default:
+      self.code = args
+    }
+
     super.init(args: args,
                traceback: traceback,
                cause: cause,
                context: context,
                suppressContext: suppressContext,
                type: type)
-  }
-
-  private static func extractValue(args: [PyObject]) -> PyObject {
-    return args.first ?? Py.none
   }
 
   // MARK: - Class
@@ -76,18 +85,6 @@ public final class PyStopIteration: PyException {
     return self.__dict__
   }
 
-  // MARK: - Value
-
-  // sourcery: pyproperty = value, setter = setValue
-  public func getValue() -> PyObject {
-    return self.value
-  }
-
-  public func setValue(_ value: PyObject) -> PyResult<Void> {
-    self.value = value
-    return .value()
-  }
-
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
@@ -95,7 +92,7 @@ public final class PyStopIteration: PyException {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(args)
-    return .value(PyStopIteration(args: argsTuple, type: type))
+    return .value(PySystemExit(args: argsTuple, type: type))
   }
 
   // MARK: - Python init
@@ -103,7 +100,28 @@ public final class PyStopIteration: PyException {
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject],
                                 kwargs: PyDict?) -> PyResult<PyNone> {
-    self.value = Self.extractValue(args: args)
+    switch args.count {
+    case 0:
+      self.code = nil
+    case 1:
+      self.code = args[0]
+    default:
+      // Check if we aready are this tuple (to avoid allocation)
+      if !self.isCodeTupleEqual(to: args) {
+        self.code = Py.newTuple(args)
+      }
+    }
+
     return super.pyInit(args: args, kwargs: kwargs)
+  }
+
+  private func isCodeTupleEqual(to args: [PyObject]) -> Bool {
+    guard let codeTuple = self.code as? PyTuple else {
+      return false
+    }
+
+    let codeElements = codeTuple.elements
+    return codeElements.count == args.count &&
+      zip(codeElements, args).allSatisfy { $0.0 === $0.1 }
   }
 }

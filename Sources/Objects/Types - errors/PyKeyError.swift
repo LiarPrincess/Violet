@@ -1,3 +1,11 @@
+import VioletCore
+
+// In CPython:
+// Objects -> exceptions.c
+// Lib->test->exception_hierarchy.txt <-- this is amazing
+// https://docs.python.org/3.7/c-api/exceptions.html
+// https://www.python.org/dev/peps/pep-0415/#proposal
+
 // sourcery: pyerrortype = KeyError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyKeyError: PyLookupError {
 
@@ -14,15 +22,21 @@ public final class PyKeyError: PyLookupError {
     return Py.errorTypes.keyError
   }
 
+  // MARK: - Class
+
    // sourcery: pyproperty = __class__
    override public func getClass() -> PyType {
      return self.type
    }
 
+  // MARK: - Dict
+
    // sourcery: pyproperty = __dict__
    override public func getDict() -> PyDict {
      return self.__dict__
    }
+
+  // MARK: - String
 
   // sourcery: pymethod = __str__
   override public func str() -> PyResult<String> {
@@ -46,6 +60,8 @@ public final class PyKeyError: PyLookupError {
     }
   }
 
+  // MARK: - Python new
+
   // sourcery: pystaticmethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
@@ -53,6 +69,8 @@ public final class PyKeyError: PyLookupError {
     let argsTuple = Py.newTuple(args)
     return .value(PyKeyError(args: argsTuple, type: type))
   }
+
+  // MARK: - Python init
 
   // sourcery: pymethod = __init__
   override internal func pyInit(args: [PyObject],
