@@ -96,20 +96,11 @@ extension PyInstance {
     return PySystemError(msg: msg)
   }
 
+  // MARK: - System exit
+
   /// Request to exit from the interpreter.
-  public func newSystemExit(status: PyObject?) -> PySystemExit {
-    var args = [PyObject]()
-    if let s = status {
-      args.append(s)
-    }
-
-    let result = PySystemExit(args: self.newTuple(args))
-
-    let dict = result.__dict__
-    let codeValue = status ?? self.none
-    self.insertOrTrap(dict: dict, key: "code", value: codeValue)
-
-    return result
+  public func newSystemExit(code: PyObject?) -> PySystemExit {
+    return PySystemExit(code: code)
   }
 
   // MARK: - Runtime error
@@ -195,8 +186,7 @@ extension PyInstance {
 
   /// Signal the end from iterator.__next__().
   public func newStopIteration(value: PyObject? = nil) -> PyStopIteration {
-    let args = self.newTuple(value ?? self.none)
-    return PyStopIteration(args: args)
+    return PyStopIteration(value: value)
   }
 
   // MARK: - Name errors
@@ -272,8 +262,12 @@ extension PyInstance {
   // MARK: - Import error
 
   /// Import failed.
-  public func newPyImportError(msg: String) -> PyImportError {
-    return PyImportError(msg: msg)
+  public func newImportError(msg: String,
+                             moduleName: String? = nil,
+                             modulePath: String? = nil) -> PyImportError {
+    return PyImportError(msg: msg,
+                         moduleName: moduleName,
+                         modulePath: modulePath)
   }
 
   // MARK: - Syntax error
@@ -281,70 +275,67 @@ extension PyInstance {
   public func newSyntaxError(filename: String,
                              error: LexerError) -> PySyntaxError {
     return self.newSyntaxError(
+      msg: String(describing: error.kind),
       filename: filename,
-      line: error.location.line,
-      column: error.location.column,
-      text: String(describing: error)
+      lineno: BigInt(error.location.line),
+      offset: BigInt(error.location.column),
+      text: String(describing: error),
+      printFileAndLine: Py.true
     )
   }
 
   public func newSyntaxError(filename: String,
                              error: ParserError) -> PySyntaxError {
     return self.newSyntaxError(
+      msg: String(describing: error.kind),
       filename: filename,
-      line: error.location.line,
-      column: error.location.column,
-      text: String(describing: error)
+      lineno: BigInt(error.location.line),
+      offset: BigInt(error.location.column),
+      text: String(describing: error),
+      printFileAndLine: Py.true
     )
   }
 
   public func newSyntaxError(filename: String,
                              error: CompilerError) -> PySyntaxError {
     return self.newSyntaxError(
+      msg: String(describing: error.kind),
       filename: filename,
-      line: error.location.line,
-      column: error.location.column,
-      text: String(describing: error)
+      lineno: BigInt(error.location.line),
+      offset: BigInt(error.location.column),
+      text: String(describing: error),
+      printFileAndLine: Py.true
     )
   }
 
-  public func newSyntaxError(filename: String,
-                             line: SourceLine,
-                             column: SourceColumn,
-                             text: String) -> PySyntaxError {
-    return self.newSyntaxError(
-      filename: self.intern(string: filename),
-      line: self.newInt(Int(line)),
-      column: self.newInt(Int(column)),
-      text: self.newString(text)
-    )
+  // swiftlint:disable:next function_parameter_count
+  public func newSyntaxError(msg: String?,
+                             filename: String?,
+                             lineno: BigInt?,
+                             offset: BigInt?,
+                             text: String?,
+                             printFileAndLine: PyObject?) -> PySyntaxError {
+    return PySyntaxError(msg: msg,
+                         filename: filename,
+                         lineno: lineno,
+                         offset: offset,
+                         text: text,
+                         printFileAndLine: printFileAndLine)
   }
 
-  public func newSyntaxError(filename: PyString,
-                             line: PyInt,
-                             column: PyInt,
-                             text: PyString) -> PySyntaxError {
-    let args = self.newTuple(text)
-    let e = PySyntaxError(args: args)
-    self.fillSyntaxErrorDict(error: e,
-                             filename: filename,
-                             line: line,
-                             column: column,
-                             text: text)
-    return e
-  }
-
-  internal func fillSyntaxErrorDict(error: PyBaseException,
-                                    filename: PyString,
-                                    line: PyInt,
-                                    column: PyInt,
-                                    text: PyString) {
-    let dict = error.__dict__
-    self.insertOrTrap(dict: dict, key: "filename", value: filename)
-    self.insertOrTrap(dict: dict, key: "lineno", value: line)
-    self.insertOrTrap(dict: dict, key: "offset", value: column)
-    self.insertOrTrap(dict: dict, key: "text", value: text)
-    self.insertOrTrap(dict: dict, key: "print_file_and_line", value: self.none)
+  // swiftlint:disable:next function_parameter_count
+  public func newSyntaxError(msg: PyString?,
+                             filename: PyString?,
+                             lineno: PyInt?,
+                             offset: PyInt?,
+                             text: PyString?,
+                             printFileAndLine: PyObject?) -> PySyntaxError {
+    return PySyntaxError(msg: msg,
+                         filename: filename,
+                         lineno: lineno,
+                         offset: offset,
+                         text: text,
+                         printFileAndLine: printFileAndLine)
   }
 
   // MARK: - Keyboard interrupt
@@ -501,17 +492,5 @@ extension PyInstance {
     let current = error.getTraceback()
     let new = self.newTraceback(frame: frame, next: current)
     error.setTraceback(traceback: new)
-  }
-
-  // MARK: - Helpers
-
-  private func insertOrTrap(dict: PyDict, key: String, value: PyObject) {
-    let keyObject = self.intern(string: key)
-    switch dict.set(key: keyObject, to: value) {
-    case .ok:
-      break
-    case .error(let e):
-      trap("Error when inserting '\(key)' to SyntaxError: \(e)")
-    }
   }
 }

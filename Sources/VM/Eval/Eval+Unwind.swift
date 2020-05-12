@@ -112,11 +112,14 @@ extension Eval {
       return .continueCodeExecution
 
     case .continue:
+      let msg = Py.newString("'continue' not properly in loop")
       let e = Py.newSyntaxError(
+        msg: msg,
         filename: self.code.filename,
-        line: Py.newInt(self.frame.currentInstructionLine),
-        column: Py.newInt(0),
-        text: Py.newString("'continue' not properly in loop")
+        lineno: Py.newInt(self.frame.currentInstructionLine),
+        offset: Py.newInt(0),
+        text: msg,
+        printFileAndLine: Py.true
       )
       return .reportExceptionToParentFrame(e)
 

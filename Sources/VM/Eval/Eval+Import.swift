@@ -143,8 +143,9 @@ extension Eval {
         case let .error(e): return .error(e)
         }
       case .notFound:
+        let moduleName = (module as? PyModule)?.getNameOrNil()
         let msg = "from-import-* object has no __dict__ and no __all__"
-        return .error(Py.newPyImportError(msg: msg))
+        return .error(Py.newImportError(msg: msg, moduleName: moduleName))
       case .error(let e):
          return .error(e)
       }
@@ -248,7 +249,7 @@ extension Eval {
     }()
 
     let msg = "cannot import name \(name) from \(package) (\(path))"
-    return Py.newPyImportError(msg: msg)
+    return Py.newImportError(msg: msg, moduleName: name, modulePath: path)
   }
 
   private enum GetString {

@@ -136,6 +136,6 @@ extension PyResult {
   }
 
   public static func importError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newPyImportError(msg: msg))
+    return PyResult.error(Py.newImportError(msg: msg))
   }
 }

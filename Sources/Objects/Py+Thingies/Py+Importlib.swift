@@ -1,6 +1,8 @@
 import Foundation
 import VioletCore
 
+// swiftlint:disable file_length
+
 /// Importlib module spec, so that we can share code between
 /// `importlib` and `importlib_external`.
 private struct ModuleSpec {
@@ -16,7 +18,26 @@ private struct ModuleSpec {
   }
 }
 
+/// When we find module on disc we will add `path` to spec
+/// (to add it to eventual `ImportError`).
+private struct ModuleSpecWithPath {
+
+  private let spec: ModuleSpec
+
+  fileprivate var name: String { return self.spec.name }
+  fileprivate var nameObject: PyString { return self.spec.nameObject }
+  fileprivate var filename: String { return self.spec.filename }
+  fileprivate let path: String
+
+  fileprivate init(spec: ModuleSpec, path: String) {
+    self.spec = spec
+    self.path = path
+  }
+}
+
 /// Just like `PyResult`, but it will force `error` to always be `PyImportError`.
+///
+/// (Just for additional type-safety, so that we don't return any other error type)
 private enum ImportlibResult<Wrapped> {
   case value(Wrapped)
   case error(PyImportError)
@@ -111,27 +132,32 @@ extension PyInstance {
     case let .error(e): return .error(e)
     }
 
+    let specPath = ModuleSpecWithPath(spec: spec, path: path)
+
     let code: PyCode
     switch self.compile(path: path, mode: .fileInput) {
     case let .value(c): code = c
     case let .error(e):
       let msg = "can't compile \(spec.name)"
-      return .error(self.newPyImportError(msg: msg, cause: e))
+      let e = self.newImportError(msg: msg, spec: specPath, cause: e)
+      return .error(e)
     }
 
     let module: PyModule
-    switch self.createModule(spec: spec, code: code) {
+    switch self.createModule(spec: specPath, code: code) {
     case let .value(m): module = m
     case let .error(e): return .error(e)
     }
 
-    if let e = self.callInstall(spec: spec, module: module, args: installArgs) {
+    if let e = self.callInstall(spec: specPath, module: module, args: installArgs) {
       return .error(e)
     }
 
     return .value(module)
   }
 }
+
+// MARK: - Get from sys
 
 private enum GetModuleFromSysResult {
   case value(PyModule)
@@ -156,21 +182,21 @@ extension PyInstance {
       return .notFound
 
     case .error(let e):
-      let e = self.newPyImportError(
-        msg: "error when checking if '\(spec.name)' was already initialized",
-        cause: e
-      )
-
+      let msg = "error when checking if '\(spec.name)' was already initialized"
+      let e = self.newImportError(msg: msg, spec: spec, cause: e)
       return .error(e)
     }
   }
+
+  // MARK: - Find on disc
 
   private func findModuleOnDisc(spec: ModuleSpec) -> ImportlibResult<String> {
     let moduleSearchPaths: PyList
     switch Py.sys.getPath() {
     case let .value(l): moduleSearchPaths = l
     case let .error(e):
-      let e = self.newPyImportError(msg: "Unable to obtain 'sys.path'", cause: e)
+      let msg = "Unable to obtain 'sys.path'"
+      let e = self.newImportError(msg: msg, spec: spec, cause: e)
       return .error(e)
     }
 
@@ -190,11 +216,8 @@ extension PyInstance {
       case .value(let s): stat = s
       case .enoent: continue // No such file - just try next 'path'
       case .error(let e):
-        let e = self.newPyImportError(
-          msg: "\(spec.name) spec error for '\(path.value)'",
-          cause: e
-        )
-
+        let msg = "\(spec.name) spec error for '\(path.value)'"
+        let e = self.newImportError(msg: msg, spec: spec, cause: e)
         return .error(e)
       }
 
@@ -207,10 +230,12 @@ extension PyInstance {
 
     let paths = triedPaths.joined(separator: ", ")
     let msg = "'\(spec.name)' not found, tried: \(paths)."
-    return .error(self.newPyImportError(msg: msg))
+    return .error(self.newImportError(msg: msg, moduleName: spec.name))
   }
 
-  private func createModule(spec: ModuleSpec,
+  // MARK: - Create module
+
+  private func createModule(spec: ModuleSpecWithPath,
                             code: PyCode) -> ImportlibResult<PyModule> {
     let module = Py.newModule(name: spec.name)
 
@@ -244,14 +269,16 @@ extension PyInstance {
     }
   }
 
-  private func createModuleError(spec: ModuleSpec,
+  private func createModuleError(spec: ModuleSpecWithPath,
                                  cause: PyBaseException) -> PyImportError {
     let msg = "can't create '\(spec.name)' module"
-    return self.newPyImportError(msg: msg, cause: cause)
+    return self.newImportError(msg: msg, spec: spec, cause: cause)
   }
 
+  // MARK: - Install
+
   /// Call the `_install` function from given module with sepcified `args`.
-  private func callInstall(spec: ModuleSpec,
+  private func callInstall(spec: ModuleSpecWithPath,
                            module: PyModule,
                            args: [PyObject]) -> PyImportError? {
     switch Py.getattr(object: module, name: "_install") {
@@ -269,15 +296,28 @@ extension PyInstance {
     }
   }
 
-  private func createInstallError(spec: ModuleSpec,
+  private func createInstallError(spec: ModuleSpecWithPath,
                                   cause: PyBaseException) -> PyImportError {
     let msg = "can't install \(spec.name)"
-    return self.newPyImportError(msg: msg, cause: cause)
+    return self.newImportError(msg: msg, spec: spec, cause: cause)
   }
 
-  private func newPyImportError(msg: String,
-                                cause: PyBaseException) -> PyImportError {
-    let result = Py.newPyImportError(msg: msg)
+  // MARK: - Create errors
+
+  private func newImportError(msg: String,
+                              spec: ModuleSpec,
+                              cause: PyBaseException) -> PyImportError {
+    let result = Py.newImportError(msg: msg, moduleName: spec.name)
+    result.setCause(cause)
+    return result
+  }
+
+  private func newImportError(msg: String,
+                              spec: ModuleSpecWithPath,
+                              cause: PyBaseException) -> PyImportError {
+    let result = Py.newImportError(msg: msg,
+                                   moduleName: spec.name,
+                                   modulePath: spec.path)
     result.setCause(cause)
     return result
   }

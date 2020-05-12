@@ -44,10 +44,43 @@ public class PySyntaxError: PyException {
                             context: PyBaseException? = nil, // who
                             suppressContext: Bool = false,   // cares?
                             type: PyType? = nil) {           // Not me!
+    let msg = msg.map(Py.newString(_:))
+    let filename = filename.map(Py.newString(_:))
+    let lineno = lineno.map(Py.newInt(_:))
+    let offset = offset.map(Py.newInt(_:))
+    let text = text.map(Py.newString(_:))
+    let printFileAndLine = printFileAndLine
+
+    self.init(
+      msg: msg,
+      filename: filename,
+      lineno: lineno,
+      offset: offset,
+      text: text,
+      printFileAndLine: printFileAndLine,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext,
+      type: type
+    )
+  }
+
+  internal convenience init(msg: PyString?,
+                            filename: PyString?,
+                            lineno: PyInt?,
+                            offset: PyInt?,
+                            text: PyString?,
+                            printFileAndLine: PyObject?,
+                            traceback: PyTraceback? = nil,
+                            cause: PyBaseException? = nil,
+                            context: PyBaseException? = nil,
+                            suppressContext: Bool = false,
+                            type: PyType? = nil) {
     // Only 'msg' goes to args
     var argsElements = [PyObject]()
     if let m = msg {
-      argsElements.append(Py.newString(m))
+      argsElements.append(m)
     }
 
     self.init(args: Py.newTuple(argsElements),
@@ -62,10 +95,10 @@ public class PySyntaxError: PyException {
       assert(self.msg != nil)
     }
 
-    self.filename = filename.map(Py.newString(_:))
-    self.lineno = lineno.map(Py.newInt(_:))
-    self.offset = offset.map(Py.newInt(_:))
-    self.text = text.map(Py.newString(_:))
+    self.filename = filename
+    self.lineno = lineno
+    self.offset = offset
+    self.text = text
     self.printFileAndLine = printFileAndLine
   }
 

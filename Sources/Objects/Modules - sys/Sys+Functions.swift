@@ -56,7 +56,7 @@ extension Sys {
   /// sys.exit([arg])
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.exit).
   public func exit(status: PyObject? = nil) -> PyResult<PyNone> {
-    let e = Py.newSystemExit(status: status)
+    let e = Py.newSystemExit(code: status)
     return .error(e)
   }
 

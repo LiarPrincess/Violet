@@ -144,29 +144,23 @@ extension PyInstance {
   }
 
   public func newSyntaxWarning(filename: String,
-                               line: SourceLine,
-                               column: SourceColumn,
+                               line: BigInt,
+                               column: BigInt,
                                text: String) -> PySyntaxWarning {
-    return self.newSyntaxWarning(
-      filename: self.intern(string: filename),
-      line: self.newInt(Int(line)),
-      column: self.newInt(Int(column)),
-      text: self.newString(text)
-    )
+    let msg = "\(text) (\(filename), line \(line), offset: \(column))"
+    return PySyntaxWarning(msg: msg)
   }
 
   public func newSyntaxWarning(filename: PyString,
                                line: PyInt,
                                column: PyInt,
                                text: PyString) -> PySyntaxWarning {
-    let args = self.newTuple(text)
-    let e = PySyntaxWarning(args: args)
-    self.fillSyntaxErrorDict(error: e,
-                             filename: filename,
-                             line: line,
-                             column: column,
-                             text: text)
-    return e
+    return self.newSyntaxWarning(
+      filename: filename.value,
+      line: line.value,
+      column: column.value,
+      text: text.value
+    )
   }
 
   // MARK: - Bytes

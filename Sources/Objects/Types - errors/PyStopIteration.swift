@@ -28,13 +28,13 @@ public final class PyStopIteration: PyException {
 
   // MARK: - Init
 
-  internal convenience init(value: PyObject,
+  internal convenience init(value: PyObject?,
                             traceback: PyTraceback? = nil,
                             cause: PyBaseException? = nil,
                             context: PyBaseException? = nil,
                             suppressContext: Bool = false,
                             type: PyType? = nil) {
-    let args = Py.newTuple(value)
+    let args = Py.newTuple(value ?? Py.none)
     self.init(args: args,
               traceback: traceback,
               cause: cause,
