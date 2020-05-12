@@ -1489,9 +1489,17 @@ public final class BuiltinErrorTypes {
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySyntaxError.getClass, castSelf: Self.asSyntaxError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PySyntaxError.getDict, castSelf: Self.asSyntaxError))
+    self.insert(type: type, name: "msg", value: PyProperty.wrap(doc: nil, get: PySyntaxError.getMsg, set: PySyntaxError.setMsg, castSelf: Self.asSyntaxError))
+    self.insert(type: type, name: "filename", value: PyProperty.wrap(doc: nil, get: PySyntaxError.getFilename, set: PySyntaxError.setFilename, castSelf: Self.asSyntaxError))
+    self.insert(type: type, name: "lineno", value: PyProperty.wrap(doc: nil, get: PySyntaxError.getLineno, set: PySyntaxError.setLineno, castSelf: Self.asSyntaxError))
+    self.insert(type: type, name: "offset", value: PyProperty.wrap(doc: nil, get: PySyntaxError.getOffset, set: PySyntaxError.setOffset, castSelf: Self.asSyntaxError))
+    self.insert(type: type, name: "text", value: PyProperty.wrap(doc: nil, get: PySyntaxError.getText, set: PySyntaxError.setText, castSelf: Self.asSyntaxError))
+    self.insert(type: type, name: "print_file_and_line", value: PyProperty.wrap(doc: nil, get: PySyntaxError.getPrintFileAndLine, set: PySyntaxError.setPrintFileAndLine, castSelf: Self.asSyntaxError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PySyntaxError.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySyntaxError.pyInit(args:kwargs:)))
+
+    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PySyntaxError.str, castSelf: Self.asSyntaxError))
   }
 
   private static func asSyntaxError(_ object: PyObject, methodName: String) -> PyResult<PySyntaxError> {

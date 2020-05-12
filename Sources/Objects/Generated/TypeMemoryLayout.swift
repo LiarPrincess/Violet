@@ -409,8 +409,14 @@ extension PyType {
     /// Fields:
     /// - `value: PyObject`
     public static let PyStopIteration = MemoryLayout(base: MemoryLayout.PyException)
-    /// `PySyntaxError` uses the same layout as it s base type (`PyException`).
-    public static let PySyntaxError = MemoryLayout.PyException
+    /// Fields:
+    /// - `msg: PyObject?`
+    /// - `filename: PyObject?`
+    /// - `lineno: PyObject?`
+    /// - `offset: PyObject?`
+    /// - `text: PyObject?`
+    /// - `print_file_and_line: PyObject?`
+    public static let PySyntaxError = MemoryLayout(base: MemoryLayout.PyException)
     /// `PySyntaxWarning` uses the same layout as it s base type (`PyWarning`).
     public static let PySyntaxWarning = MemoryLayout.PyWarning
     /// `PySystemError` uses the same layout as it s base type (`PyException`).

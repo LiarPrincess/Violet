@@ -189,16 +189,6 @@ OSError
     filename2
     strerror
 
-SyntaxError
-  Unimplemented:
-    __str__
-    filename
-    lineno
-    msg
-    offset
-    print_file_and_line
-    text
-
 UnicodeDecodeError
   Unimplemented:
     __str__

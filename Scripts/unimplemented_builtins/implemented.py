@@ -1346,6 +1346,13 @@ types = {
   SyntaxError: [
     '__class__',
     '__dict__',
+    'msg',
+    'filename',
+    'lineno',
+    'offset',
+    'text',
+    'print_file_and_line',
+    '__str__',
     '__init__',
     '__new__',
   ],

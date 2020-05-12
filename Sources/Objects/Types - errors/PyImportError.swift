@@ -60,22 +60,27 @@ public class PyImportError: PyException {
     self.modulePath = modulePath.map(Py.newString(_:))
   }
 
+  /// Important: You have to manually fill `name` and `path` later!
   override internal init(args: PyTuple,
                          traceback: PyTraceback? = nil,
                          cause: PyBaseException? = nil,
                          context: PyBaseException? = nil,
                          suppressContext: Bool = false,
                          type: PyType? = nil) {
-    if args.elements.count == 1 {
-      self.msg = args.elements[0]
-    }
-
     super.init(args: args,
                traceback: traceback,
                cause: cause,
                context: context,
                suppressContext: suppressContext,
                type: type)
+
+    self.fillMsgFromArgs(args: args.elements)
+  }
+
+  private func fillMsgFromArgs(args: [PyObject]) {
+    if args.count == 1 {
+      self.msg = args[0]
+    }
   }
 
   // MARK: - Class
@@ -179,10 +184,7 @@ public class PyImportError: PyException {
       return .error(e)
     }
 
-    if args.count == 1 {
-      self.msg = args[0]
-    }
-
+    self.fillMsgFromArgs(args: args)
     return .value(Py.none)
   }
 }

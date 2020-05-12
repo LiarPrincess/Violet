@@ -29,7 +29,8 @@ if __name__ == '__main__':
     'KeyError', # Custom '__str__' method
     'StopIteration', # 'value' property
     'SystemExit', # 'code' property
-    'ImportError', # tons of customization (msg, name, path etc.)
+    'ImportError', # tons of customization (msg, name, path)
+    'SyntaxError', # another ton of customization (msg, filename, lineno, offset, text, print_file_and_line)
   ]
 
   for t in data:

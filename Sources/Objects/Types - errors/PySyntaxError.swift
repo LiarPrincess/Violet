@@ -1,0 +1,267 @@
+import VioletCore
+
+// In CPython:
+// Objects -> exceptions.c
+// Lib->test->exception_hierarchy.txt <-- this is amazing
+// https://docs.python.org/3.7/c-api/exceptions.html
+// https://www.python.org/dev/peps/pep-0415/#proposal
+
+// sourcery: pyerrortype = SyntaxError, default, baseType, hasGC, baseExceptionSubclass
+public class PySyntaxError: PyException {
+
+  override internal class var doc: String {
+    return "Invalid syntax."
+  }
+
+  override public var description: String {
+    return self.createDescription(typeName: "PySyntaxError")
+  }
+
+  /// Type to set in `init`.
+  override internal class var pythonType: PyType {
+    return Py.errorTypes.syntaxError
+  }
+
+  // MARK: - Properties
+
+  private var msg: PyObject?
+  private var filename: PyObject?
+  private var lineno: PyObject?
+  private var offset: PyObject?
+  private var text: PyObject?
+  private var printFileAndLine: PyObject?
+
+  // MARK: - Init
+
+  internal convenience init(msg: String?,                    // Wow,
+                            filename: String?,               // this
+                            lineno: BigInt?,                 // is
+                            offset: BigInt?,                 // a
+                            text: String?,                   // lot
+                            printFileAndLine: PyObject?,     // of
+                            traceback: PyTraceback? = nil,   // arguments!
+                            cause: PyBaseException? = nil,   // But
+                            context: PyBaseException? = nil, // who
+                            suppressContext: Bool = false,   // cares?
+                            type: PyType? = nil) {           // Not me!
+    // Only 'msg' goes to args
+    var argsElements = [PyObject]()
+    if let m = msg {
+      argsElements.append(Py.newString(m))
+    }
+
+    self.init(args: Py.newTuple(argsElements),
+              traceback: traceback,
+              cause: cause,
+              context: context,
+              suppressContext: suppressContext,
+              type: type)
+
+    // 'self.msg' should be filled from args
+    if msg != nil {
+      assert(self.msg != nil)
+    }
+
+    self.filename = filename.map(Py.newString(_:))
+    self.lineno = lineno.map(Py.newInt(_:))
+    self.offset = offset.map(Py.newInt(_:))
+    self.text = text.map(Py.newString(_:))
+    self.printFileAndLine = printFileAndLine
+  }
+
+  /// Important: You have to manually fill `filename`, `lineno`, `offset`,
+  /// `text` and `print_file_and_line` later!
+  override internal init(args: PyTuple,
+                         traceback: PyTraceback? = nil,
+                         cause: PyBaseException? = nil,
+                         context: PyBaseException? = nil,
+                         suppressContext: Bool = false,
+                         type: PyType? = nil) {
+    super.init(args: args,
+               traceback: traceback,
+               cause: cause,
+               context: context,
+               suppressContext: suppressContext,
+               type: type)
+
+    self.fillMsgFromArgs(args: args.elements)
+  }
+
+  private func fillMsgFromArgs(args: [PyObject]) {
+    if args.count >= 1 {
+      self.msg = args[0]
+    }
+  }
+
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  override public func getClass() -> PyType {
+    return self.type
+  }
+
+  // MARK: - Dict
+
+  // sourcery: pyproperty = __dict__
+  override public func getDict() -> PyDict {
+    return self.__dict__
+  }
+
+  // MARK: - String
+
+  // sourcery: pymethod = __str__
+  override public func str() -> PyResult<String> {
+    let filenameOrNil: String? = {
+      guard let path = self.filename as? PyString else {
+        return nil
+      }
+
+      return Py.fileSystem.basename(path: path.value)
+    }()
+
+    // Redundant type annotation is not that redundant.
+    // It is there so that we know that we are printing 'BigInt' not 'PyInt'.
+    // User should never see 'PyInt' description, is is for debug only.
+    let linenoOrNil: BigInt? = (self.lineno as? PyInt)?.value
+
+    let msg: String
+    switch Py.strValue(object: self.msg ?? Py.none) {
+    case let .value(m): msg = m
+    case let .error(e): return .error(e)
+    }
+
+    if let filename = filenameOrNil, let lineno = linenoOrNil {
+      return .value("\(msg) (\(filename), line \(lineno))")
+    }
+
+    if let filename = filenameOrNil {
+      return .value("\(msg) (\(filename))")
+    }
+
+    if let lineno = linenoOrNil {
+      return .value("\(msg) (line \(lineno))")
+    }
+
+    return .value(msg)
+  }
+
+  // MARK: - Msg
+
+  // sourcery: pyproperty = msg, setter = setMsg
+  public func getMsg() -> PyObject? {
+    return self.msg
+  }
+
+  public func setMsg(_ value: PyObject?) -> PyResult<Void> {
+    self.msg = value
+    return .value()
+  }
+
+  // MARK: - Filename
+
+  // sourcery: pyproperty = filename, setter = setFilename
+  public func getFilename() -> PyObject? {
+    return self.filename
+  }
+
+  public func setFilename(_ value: PyObject?) -> PyResult<Void> {
+    self.filename = value
+    return .value()
+  }
+
+  // MARK: - Lineno
+
+  // sourcery: pyproperty = lineno, setter = setLineno
+  public func getLineno() -> PyObject? {
+    return self.lineno
+  }
+
+  public func setLineno(_ value: PyObject?) -> PyResult<Void> {
+    self.lineno = value
+    return .value()
+  }
+
+  // MARK: - Offset
+
+  // sourcery: pyproperty = offset, setter = setOffset
+  public func getOffset() -> PyObject? {
+    return self.offset
+  }
+
+  public func setOffset(_ value: PyObject?) -> PyResult<Void> {
+    self.offset = value
+    return .value()
+  }
+
+  // MARK: - Text
+
+  // sourcery: pyproperty = text, setter = setText
+  public func getText() -> PyObject? {
+    return self.text
+  }
+
+  public func setText(_ value: PyObject?) -> PyResult<Void> {
+    self.text = value
+    return .value()
+  }
+
+  // MARK: - Print file and line
+
+  // sourcery: pyproperty = print_file_and_line, setter = setPrintFileAndLine
+  public func getPrintFileAndLine() -> PyObject? {
+    return self.printFileAndLine
+  }
+
+  public func setPrintFileAndLine(_ value: PyObject?) -> PyResult<Void> {
+    self.printFileAndLine = value
+    return .value()
+  }
+
+  // MARK: - Python new
+
+  // sourcery: pystaticmethod = __new__
+  override internal class func pyNew(type: PyType,
+                                     args: [PyObject],
+                                     kwargs: PyDict?) -> PyResult<PyBaseException> {
+    let argsTuple = Py.newTuple(args)
+    return .value(PySyntaxError(args: argsTuple, type: type))
+  }
+
+  // MARK: - Python init
+
+  // sourcery: pymethod = __init__
+  override internal func pyInit(args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyNone> {
+    // Run 'super.pyInit' before our custom code, to avoid situation where
+    // 'super.pyInit' erros but we already mutated enity.
+    switch super.pyInit(args: args, kwargs: kwargs) {
+    case .value:
+      break
+    case .error(let e):
+      return .error(e)
+    }
+
+    self.fillMsgFromArgs(args: args)
+
+    if args.count == 2 {
+      let info: [PyObject]
+      switch Py.toArray(iterable: args[1]) {
+      case let .value(i):
+        info = i
+      case let .error(e):
+        return .error(e)
+      }
+
+      guard info.count == 4 else {
+        return .indexError("tuple index out of range")
+      }
+
+      self.filename = info[0]
+      self.lineno = info[1]
+      self.offset = info[2]
+      self.text = info[3]
+    }
+
+    return .value(Py.none)
+  }
+}

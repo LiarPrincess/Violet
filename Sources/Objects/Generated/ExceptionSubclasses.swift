@@ -1645,49 +1645,6 @@ public final class PyRecursionError: PyRuntimeError {
   }
 }
 
-// MARK: - SyntaxError
-
-// sourcery: pyerrortype = SyntaxError, default, baseType, hasGC, baseExceptionSubclass
-public class PySyntaxError: PyException {
-
-  override internal class var doc: String {
-    return "Invalid syntax."
-  }
-
-  override public var description: String {
-    return self.createDescription(typeName: "PySyntaxError")
-  }
-
-  /// Type to set in `init`.
-  override internal class var pythonType: PyType {
-    return Py.errorTypes.syntaxError
-  }
-
-  // sourcery: pyproperty = __class__
-  override public func getClass() -> PyType {
-    return self.type
-  }
-
-  // sourcery: pyproperty = __dict__
-  override public func getDict() -> PyDict {
-    return self.__dict__
-  }
-
-  // sourcery: pystaticmethod = __new__
-  override internal class func pyNew(type: PyType,
-                                     args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyBaseException> {
-    let argsTuple = Py.newTuple(args)
-    return .value(PySyntaxError(args: argsTuple, type: type))
-  }
-
-  // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyNone> {
-    return super.pyInit(args: args, kwargs: kwargs)
-  }
-}
-
 // MARK: - IndentationError
 
 // sourcery: pyerrortype = IndentationError, default, baseType, hasGC, baseExceptionSubclass
