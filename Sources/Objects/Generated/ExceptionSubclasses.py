@@ -90,7 +90,7 @@ public {final}class {class_name}: Py{base} {{
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {{
-    return super.pyInit(args: args, kwargs: kwargs)
+    return super.py{base}Init(args: args, kwargs: kwargs)
   }}
 }}
 ''')

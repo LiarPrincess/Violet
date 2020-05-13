@@ -123,7 +123,7 @@ public final class PySystemExit: PyBaseException {
       }
     }
 
-    return super.pyInit(args: args, kwargs: kwargs)
+    return super.pyBaseExceptionInit(args: args, kwargs: kwargs)
   }
 
   private func isCodeTupleEqual(to args: [PyObject]) -> Bool {

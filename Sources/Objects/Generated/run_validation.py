@@ -86,7 +86,7 @@ def check_for_overridden_pymethod(types: [TypeInfo]) -> bool:
   if overridden_pymethods:
     print('''\
 !!! Error !!!
-Following methods we found to be both 'pymethod' and Swift method overrides
+Following methods were found to be both 'pymethod' and Swift method overrides
 (function with 'override' keyword):\
 ''')
 

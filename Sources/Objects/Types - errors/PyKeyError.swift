@@ -75,6 +75,6 @@ public final class PyKeyError: PyLookupError {
   // sourcery: pymethod = __init__
   internal func pyKeyErrorInit(args: [PyObject],
                                kwargs: PyDict?) -> PyResult<PyNone> {
-    return super.pyInit(args: args, kwargs: kwargs)
+    return super.pyLookupErrorInit(args: args, kwargs: kwargs)
   }
 }
