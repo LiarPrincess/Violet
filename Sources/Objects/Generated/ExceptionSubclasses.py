@@ -76,16 +76,20 @@ public {final}class {class_name}: Py{base} {{
   }}
 
   // sourcery: pystaticmethod = __new__
-  override internal class func pyNew(type: PyType,
-                                     args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyBaseException> {{
+  internal class func py{name}New(
+    type: PyType,
+    args: [PyObject],
+    kwargs: PyDict?
+  ) -> PyResult<{class_name}> {{
     let argsTuple = Py.newTuple(args)
     return .value({class_name}(args: argsTuple, type: type))
   }}
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyNone> {{
+  internal func py{name}Init(
+    args: [PyObject],
+    kwargs: PyDict?
+  ) -> PyResult<PyNone> {{
     return super.pyInit(args: args, kwargs: kwargs)
   }}
 }}

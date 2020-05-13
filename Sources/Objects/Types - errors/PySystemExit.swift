@@ -99,9 +99,9 @@ public final class PySystemExit: PyBaseException {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  override internal class func pyNew(type: PyType,
-                                     args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyBaseException> {
+  internal class func pySystemExitNew(type: PyType,
+                                      args: [PyObject],
+                                      kwargs: PyDict?) -> PyResult<PySystemExit> {
     let argsTuple = Py.newTuple(args)
     return .value(PySystemExit(args: argsTuple, type: type))
   }
@@ -109,8 +109,8 @@ public final class PySystemExit: PyBaseException {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyNone> {
+  internal func pySystemExitInit(args: [PyObject],
+                                 kwargs: PyDict?) -> PyResult<PyNone> {
     switch args.count {
     case 0:
       self.code = nil

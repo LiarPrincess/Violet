@@ -63,9 +63,9 @@ public final class PyKeyError: PyLookupError {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  override internal class func pyNew(type: PyType,
-                                     args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyBaseException> {
+  internal class func pyKeyErrorNew(type: PyType,
+                                    args: [PyObject],
+                                    kwargs: PyDict?) -> PyResult<PyKeyError> {
     let argsTuple = Py.newTuple(args)
     return .value(PyKeyError(args: argsTuple, type: type))
   }
@@ -73,8 +73,8 @@ public final class PyKeyError: PyLookupError {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyNone> {
+  internal func pyKeyErrorInit(args: [PyObject],
+                               kwargs: PyDict?) -> PyResult<PyNone> {
     return super.pyInit(args: args, kwargs: kwargs)
   }
 }

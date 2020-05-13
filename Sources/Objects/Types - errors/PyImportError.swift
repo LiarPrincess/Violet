@@ -147,9 +147,9 @@ public class PyImportError: PyException {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  override internal class func pyNew(type: PyType,
-                                     args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyBaseException> {
+  internal class func pyImportErrorNew(type: PyType,
+                                       args: [PyObject],
+                                       kwargs: PyDict?) -> PyResult<PyImportError> {
     let argsTuple = Py.newTuple(args)
     return .value(PyImportError(args: argsTuple, type: type))
   }
@@ -162,8 +162,8 @@ public class PyImportError: PyException {
   )
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyNone> {
+  internal func pyImportErrorInit(args: [PyObject],
+                                  kwargs: PyDict?) -> PyResult<PyNone> {
     // Run 'super.pyInit' before our custom code, to avoid situation where
     // 'super.pyInit' erros but we already mutated enity.
     switch super.pyInit(args: args, kwargs: kwargs) {

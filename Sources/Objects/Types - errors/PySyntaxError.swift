@@ -253,9 +253,9 @@ public class PySyntaxError: PyException {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  override internal class func pyNew(type: PyType,
-                                     args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyBaseException> {
+  internal class func pySyntaxErrorNew(type: PyType,
+                                       args: [PyObject],
+                                       kwargs: PyDict?) -> PyResult<PySyntaxError> {
     let argsTuple = Py.newTuple(args)
     return .value(PySyntaxError(args: argsTuple, type: type))
   }
@@ -263,8 +263,8 @@ public class PySyntaxError: PyException {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyNone> {
+  internal func pySyntaxErrorInit(args: [PyObject],
+                                  kwargs: PyDict?) -> PyResult<PyNone> {
     // Run 'super.pyInit' before our custom code, to avoid situation where
     // 'super.pyInit' erros but we already mutated enity.
     switch super.pyInit(args: args, kwargs: kwargs) {

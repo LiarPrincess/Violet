@@ -91,9 +91,9 @@ public final class PyStopIteration: PyException {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  override internal class func pyNew(type: PyType,
-                                     args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyBaseException> {
+  internal class func pyStopIterationNew(type: PyType,
+                                         args: [PyObject],
+                                         kwargs: PyDict?) -> PyResult<PyStopIteration> {
     let argsTuple = Py.newTuple(args)
     return .value(PyStopIteration(args: argsTuple, type: type))
   }
@@ -101,8 +101,8 @@ public final class PyStopIteration: PyException {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
-  override internal func pyInit(args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyNone> {
+  internal func pyStopIterationInit(args: [PyObject],
+                                    kwargs: PyDict?) -> PyResult<PyNone> {
     self.value = Self.extractValue(args: args)
     return super.pyInit(args: args, kwargs: kwargs)
   }

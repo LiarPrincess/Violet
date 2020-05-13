@@ -1,3 +1,29 @@
+'''
+This tool will detect 'pymethods' that are also Swift method overrides
+(functions with 'override' keyword).
+This is illegal because Swift always resolves virtual method
+(even when calling using base type definition).
+For example:
+
+class PyInt {
+  func f() -> String { return "int" }
+}
+
+class PyBool: PyInt {
+  override func f() -> String { return "bool" }
+}
+
+let int = PyInt()
+let bool = PyBool()
+
+print("PyInt.f(int)()           =", PyInt.f(int)())   // 'int',  as expected
+print("PyBool.f(bool)()         =", PyBool.f(bool)()) // 'bool', as expected
+print("PyInt.f(bool as PyInt)() =", PyInt.f(bool as PyInt)()) // 'bool', ehh...
+
+So we called 'PyInt.f' with 'bool' and it returned 'bool'.
+In Python this would return 'int'.
+'''
+
 from Data.types import get_types, TypeInfo, PyFunctionInfo
 
 # -------------------

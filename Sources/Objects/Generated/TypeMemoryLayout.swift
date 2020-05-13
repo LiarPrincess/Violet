@@ -415,7 +415,7 @@ extension PyType {
     /// - `lineno: PyObject?`
     /// - `offset: PyObject?`
     /// - `text: PyObject?`
-    /// - `print_file_and_line: PyObject?`
+    /// - `printFileAndLine: PyObject?`
     public static let PySyntaxError = MemoryLayout(base: MemoryLayout.PyException)
     /// `PySyntaxWarning` uses the same layout as it s base type (`PyWarning`).
     public static let PySyntaxWarning = MemoryLayout.PyWarning
