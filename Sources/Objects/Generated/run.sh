@@ -29,6 +29,10 @@ sourcery \
   --output $GENERATED/Data/types.txt
 echo ''
 
+echo 'Validating Swift definitions'
+python3 $GENERATED/run_validation.py
+echo ''
+
 # === Builtin types ===
 # This will generate class that will create 'PyType' object
 # for each of the builtin types.
