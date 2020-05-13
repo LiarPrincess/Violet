@@ -362,7 +362,7 @@ public final class BuiltinTypes {
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBool.getClass, castSelf: Self.asBool))
 
-    self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyBool.pyNew(type:args:kwargs:)))
+    self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyBool.pyBoolNew(type:args:kwargs:)))
 
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyBool.repr, castSelf: Self.asBool))
     self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyBool.str, castSelf: Self.asBool))
@@ -1352,7 +1352,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "numerator", value: PyProperty.wrap(doc: nil, get: PyInt.numerator, castSelf: Self.asInt))
     self.insert(type: type, name: "denominator", value: PyProperty.wrap(doc: nil, get: PyInt.denominator, castSelf: Self.asInt))
 
-    self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyInt.pyNew(type:args:kwargs:)))
+    self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyInt.pyIntNew(type:args:kwargs:)))
 
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyInt.isEqual(_:), castSelf: Self.asInt))
     self.insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyInt.isNotEqual(_:), castSelf: Self.asInt))

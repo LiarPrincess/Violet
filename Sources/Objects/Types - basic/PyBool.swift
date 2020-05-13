@@ -114,9 +114,9 @@ public class PyBool: PyInt {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  override internal class func pyNew(type: PyType,
-                                     args: [PyObject],
-                                     kwargs: PyDict?) -> PyResult<PyInt> {
+  internal static func pyBoolNew(type: PyType,
+                                 args: [PyObject],
+                                 kwargs: PyDict?) -> PyResult<PyInt> {
     if let e = ArgumentParser.noKwargsOrError(fnName: "bool", kwargs: kwargs) {
       return .error(e)
     }

@@ -870,9 +870,9 @@ public class PyInt: PyObject {
   )
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyNew(type: PyType,
-                            args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyInt> {
+  internal static func pyIntNew(type: PyType,
+                                args: [PyObject],
+                                kwargs: PyDict?) -> PyResult<PyInt> {
     switch self.newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
@@ -880,15 +880,15 @@ public class PyInt: PyObject {
 
       let object = binding.optional(at: 0)
       let base = binding.optional(at: 1)
-      return PyInt.pyNew(type: type, object: object, base: base)
+      return PyInt.pyIntNew(type: type, object: object, base: base)
     case let .error(e):
       return .error(e)
     }
   }
 
-  private static func pyNew(type: PyType,
-                            object: PyObject?,
-                            base: PyObject?) -> PyResult<PyInt> {
+  private static func pyIntNew(type: PyType,
+                               object: PyObject?,
+                               base: PyObject?) -> PyResult<PyInt> {
     let isBuiltin = type === Py.types.int
     let alloca = isBuiltin ? self.newInt(type:value:) : PyIntHeap.init(type:value:)
 
