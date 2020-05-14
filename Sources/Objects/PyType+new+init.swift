@@ -152,8 +152,7 @@ extension PyType {
     let mro: MRO
     switch MRO.linearize(baseClasses: bases) {
     case let .value(r): mro = r
-    case let .typeError(msg): return .typeError(msg)
-    case let .valueError(msg): return .valueError(msg)
+    case let .error(e): return .error(e)
     }
 
     // Create type object

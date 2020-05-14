@@ -1,11 +1,9 @@
 import Foundation
 
-// TODO: Do we have custom mro? (mro_invoke(PyTypeObject *type))
-internal enum LinearizationResult {
-  case value(MRO)
-  case typeError(String)
-  case valueError(String)
-}
+// In CPython:
+// Objects -> typeobject.c
+
+// TODO: What if we have custom mro? (mro_invoke(PyTypeObject *type))
 
 /// Method Resolution Order
 internal struct MRO {
@@ -33,7 +31,7 @@ internal struct MRO {
   /// /// [doc](https://www.python.org/download/releases/2.3/mro/)
   ///
   /// It will not take into account `self` (which should be 1st in MRO)!
-  internal static func linearize(baseClasses: [PyObject]) -> LinearizationResult {
+  internal static func linearize(baseClasses: [PyObject]) -> PyResult<MRO> {
     guard let baseTypes = MRO.asTypeArray(baseClasses) else {
       return .typeError("bases must be types")
     }
@@ -53,7 +51,7 @@ internal struct MRO {
     return result
   }
 
-  internal static func linearize(baseClasses: [PyType]) -> LinearizationResult {
+  internal static func linearize(baseClasses: [PyType]) -> PyResult<MRO> {
     // No base classes? Empty MRO.
     if baseClasses.isEmpty {
       return .value(MRO(baseClasses: [], resolutionOrder: []))
@@ -76,7 +74,7 @@ internal struct MRO {
     while MRO.hasAnyClassRemaining(mros) {
       guard let base = MRO.getNextBase(mros) else {
         let msg = "Cannot create a consistent method resolution order (MRO) for bases"
-        return .valueError(msg)
+        return .typeError(msg)
       }
 
       result.append(base)
