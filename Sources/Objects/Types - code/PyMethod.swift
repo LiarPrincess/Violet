@@ -158,7 +158,7 @@ public class PyMethod: PyObject {
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  public func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
+  public func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
     if object.isDescriptorStaticMarker {
       return .value(self)
     }

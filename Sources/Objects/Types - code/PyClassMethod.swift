@@ -70,12 +70,13 @@ public class PyClassMethod: PyObject {
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  public func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
+  public func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
     guard let callable = self.callable else {
       return .runtimeError("uninitialized classmethod object")
     }
 
-    return Py.newMethod(fn: callable, object: type)
+    let t = type ?? object.type
+    return Py.newMethod(fn: callable, object: t)
   }
 
   // MARK: - Is abstract method

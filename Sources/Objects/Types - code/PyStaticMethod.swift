@@ -67,7 +67,7 @@ public class PyStaticMethod: PyObject {
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  public func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
+  public func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
     guard let callable = self.callable else {
       return .runtimeError("uninitialized staticmethod object")
     }

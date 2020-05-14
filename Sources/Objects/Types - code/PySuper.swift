@@ -191,7 +191,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  public func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
+  public func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
     // Basically 'object.isNone'
     if object.isDescriptorStaticMarker {
       return .value(self)
