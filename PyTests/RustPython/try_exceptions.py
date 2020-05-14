@@ -220,19 +220,19 @@ try:
 except NameError as ex:
     assert ex.__context__ == None
 
+# VIOLET: We do not have 'yield'
+# def y():
+#     try:
+#         1/0
+#     except ArithmeticError:
+#         yield 5
 
-def y():
-    try:
-        1/0
-    except ArithmeticError:
-        yield 5
 
-
-try:
-    y()
-    raise NameError
-except NameError as ex:
-    assert ex.__context__ == None
+# try:
+#     y()
+#     raise NameError
+# except NameError as ex:
+#     assert ex.__context__ == None
 
 
 try:
