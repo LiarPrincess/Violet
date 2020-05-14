@@ -119,24 +119,24 @@ public class PyInt: PyObject {
 
   // MARK: - String
 
-  // sourcery: pymethod = __repr__
-  /// Python method! Use `reprRaw` instead.
   public func repr() -> PyResult<String> {
-    return .value(self.reprRaw())
+    return Self.repr(int: self)
   }
 
-  public func reprRaw() -> String {
-    return String(describing: self.value)
+  // sourcery: pymethod = __repr__
+  internal static func repr(int zelf: PyInt) -> PyResult<String> {
+    // Why static? See comment at the top of 'PyBool'.
+    return .value(String(describing: zelf.value))
+  }
+
+  public func str() -> PyResult<String> {
+    return Self.str(int: self)
   }
 
   // sourcery: pymethod = __str__
-  /// Python method! Use `strRaw` instead.
-  public func str() -> PyResult<String> {
-    return self.repr()
-  }
-
-  public func strRaw() -> String {
-    return self.reprRaw()
+  internal static func str(int zelf: PyInt) -> PyResult<String> {
+    // Why static? See comment at the top of 'PyBool'.
+    return .value(String(describing: zelf.value))
   }
 
   // MARK: - Convertible
@@ -708,50 +708,84 @@ public class PyInt: PyObject {
 
   // MARK: - And
 
-  // sourcery: pymethod = __and__
   public func and(_ other: PyObject) -> PyResult<PyObject> {
+    return Self.and(int: self, other: other)
+  }
+
+  // sourcery: pymethod = __and__
+  internal static func and(int zelf: PyInt,
+                           other: PyObject) -> PyResult<PyObject> {
+    // Why static? See comment at the top of 'PyBool'.
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
 
-    return .value(Py.newInt(self.value & other.value))
+    return .value(Py.newInt(zelf.value & other.value))
+  }
+
+  public func rand(_ other: PyObject) -> PyResult<PyObject> {
+    return Self.rand(int: self, other: other)
   }
 
   // sourcery: pymethod = __rand__
-  public func rand(_ other: PyObject) -> PyResult<PyObject> {
-    return self.and(other)
+  internal static func rand(int zelf: PyInt,
+                            other: PyObject) -> PyResult<PyObject> {
+    // Why static? See comment at the top of 'PyBool'.
+    return Self.and(int: zelf, other: other)
   }
 
   // MARK: - Or
 
-  // sourcery: pymethod = __or__
   public func or(_ other: PyObject) -> PyResult<PyObject> {
+    return Self.or(int: self, other: other)
+  }
+
+  // sourcery: pymethod = __or__
+  internal static func or(int zelf: PyInt,
+                          other: PyObject) -> PyResult<PyObject> {
+    // Why static? See comment at the top of 'PyBool'.
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
 
-    return .value(Py.newInt(self.value | other.value))
+    return .value(Py.newInt(zelf.value | other.value))
+  }
+
+  public func ror(_ other: PyObject) -> PyResult<PyObject> {
+    return Self.ror(int: self, other: other)
   }
 
   // sourcery: pymethod = __ror__
-  public func ror(_ other: PyObject) -> PyResult<PyObject> {
-    return self.or(other)
+  internal static func ror(int zelf: PyInt,
+                           other: PyObject) -> PyResult<PyObject> {
+    // Why static? See comment at the top of 'PyBool'.
+    return Self.or(int: zelf, other: other)
   }
 
   // MARK: - Xor
 
-  // sourcery: pymethod = __xor__
   public func xor(_ other: PyObject) -> PyResult<PyObject> {
+    return Self.xor(int: self, other: other)
+  }
+
+  // sourcery: pymethod = __xor__
+  internal static func xor(int zelf: PyInt,
+                           other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
 
-    return .value(Py.newInt(self.value ^ other.value))
+    return .value(Py.newInt(zelf.value ^ other.value))
+  }
+
+  public func rxor(_ other: PyObject) -> PyResult<PyObject> {
+    return Self.rxor(int: self, other: other)
   }
 
   // sourcery: pymethod = __rxor__
-  public func rxor(_ other: PyObject) -> PyResult<PyObject> {
-    return self.xor(other)
+  internal static func rxor(int zelf: PyInt,
+                            other: PyObject) -> PyResult<PyObject> {
+    return Self.xor(int: zelf, other: other)
   }
 
   // MARK: - Invert

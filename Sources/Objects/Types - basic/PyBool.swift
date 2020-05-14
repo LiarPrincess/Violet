@@ -4,13 +4,14 @@ import VioletCore
 // Objects -> boolobject.c
 // https://docs.python.org/3.7/c-api/bool.html
 
-extension BigInt {
-  internal var isTrue: Bool {
-    return self != 0
-  }
-}
+// !!! IMPORTANT !!!
+// 'PyBool' is a special (and unusual) place where we override 'pymethods' from
+// 'PyInt'
+// But we can't do that because Swift would always call the
+// overriden function (even if we did 'PyInt.fn(boolInstance)').
+// So, we have to introduce separate selectors for each override.
 
-extension Int {
+extension BigInt {
   internal var isTrue: Bool {
     return self != 0
   }
@@ -43,14 +44,25 @@ public class PyBool: PyInt {
 
   // MARK: - String
 
-  // sourcery: pymethod = __repr__
   override public func repr() -> PyResult<String> {
-    return .value(self.value.isTrue ? "True" : "False")
+    return Self.repr(bool: self)
+  }
+
+  // sourcery: pymethod = __repr__
+  internal static func repr(bool zelf: PyBool) -> PyResult<String> {
+    // Why static? See comment at the top of this file.
+    let result = zelf.value.isTrue ? "True" : "False"
+    return .value(result)
+  }
+
+  override public func str() -> PyResult<String> {
+    return Self.str(bool: self)
   }
 
   // sourcery: pymethod = __str__
-  override public func str() -> PyResult<String> {
-    return self.repr()
+  internal static func str(bool zelf: PyBool) -> PyResult<String> {
+    // Why static? See comment at the top of this file.
+    return Self.repr(bool: zelf)
   }
 
   // MARK: - Class
@@ -62,53 +74,89 @@ public class PyBool: PyInt {
 
   // MARK: - And
 
-  // sourcery: pymethod = __and__
   override public func and(_ other: PyObject) -> PyResult<PyObject> {
+    return Self.and(bool: self, other: other)
+  }
+
+  // sourcery: pymethod = __and__
+  internal static func and(bool zelf: PyBool,
+                           other: PyObject) -> PyResult<PyObject> {
+    // Why static? See comment at the top of this file.
     if let other = other as? PyBool {
-      let result = self.value.isTrue && other.value.isTrue
+      let result = zelf.value.isTrue && other.value.isTrue
       return .value(Py.newBool(result))
     }
 
-    return super.and(other)
+    return Self.and(int: zelf, other: other)
+  }
+
+  override public func rand(_ other: PyObject) -> PyResult<PyObject> {
+    return Self.rand(bool: self, other: other)
   }
 
   // sourcery: pymethod = __rand__
-  override public func rand(_ other: PyObject) -> PyResult<PyObject> {
-    return self.and(other)
+  internal static func rand(bool zelf: PyBool,
+                            other: PyObject) -> PyResult<PyObject> {
+    // Why static? See comment at the top of this file.
+    return Self.and(bool: zelf, other: other)
   }
 
   // MARK: - Or
 
-  // sourcery: pymethod = __or__
   override public func or(_ other: PyObject) -> PyResult<PyObject> {
+    return Self.or(bool: self, other: other)
+  }
+
+  // sourcery: pymethod = __or__
+  internal static func or(bool zelf: PyBool,
+                          other: PyObject) -> PyResult<PyObject> {
+    // Why static? See comment at the top of this file.
     if let other = other as? PyBool {
-      let result = self.value.isTrue || other.value.isTrue
+      let result = zelf.value.isTrue || other.value.isTrue
       return .value(Py.newBool(result))
     }
 
-    return super.or(other)
+    return Self.or(int: zelf, other: other)
+  }
+
+  override public func ror(_ other: PyObject) -> PyResult<PyObject> {
+    return Self.ror(bool: self, other: other)
   }
 
   // sourcery: pymethod = __ror__
-  override public func ror(_ other: PyObject) -> PyResult<PyObject> {
-    return self.or(other)
+  internal static func ror(bool zelf: PyBool,
+                           other: PyObject) -> PyResult<PyObject> {
+    // Why static? See comment at the top of this file.
+    return Self.or(bool: zelf, other: other)
   }
 
   // MARK: - Xor
 
-  // sourcery: pymethod = __xor__
   override public func xor(_ other: PyObject) -> PyResult<PyObject> {
+    return Self.xor(bool: self, other: other)
+  }
+
+  // sourcery: pymethod = __xor__
+  internal static func xor(bool zelf: PyBool,
+                           other: PyObject) -> PyResult<PyObject> {
+    // Why static? See comment at the top of this file.
     if let other = other as? PyBool {
-      let result = self.value.isTrue != other.value.isTrue
+      let result = zelf.value.isTrue != other.value.isTrue
       return .value(Py.newBool(result))
     }
 
-    return super.xor(other)
+    return Self.xor(int: zelf, other: other)
+  }
+
+  override public func rxor(_ other: PyObject) -> PyResult<PyObject> {
+    return Self.rxor(bool: self, other: other)
   }
 
   // sourcery: pymethod = __rxor__
-  override public func rxor(_ other: PyObject) -> PyResult<PyObject> {
-    return self.xor(other)
+  internal static func rxor(bool zelf: PyBool,
+                            other: PyObject) -> PyResult<PyObject> {
+    // Why static? See comment at the top of this file.
+    return Self.xor(bool: zelf, other: other)
   }
 
   // MARK: - Python new

@@ -176,7 +176,7 @@ public class PyBaseException: PyObject {
     // This is a special (and unusual) place where normally we would override
     // 'pymethod'. But we can't do that because Swift would always call the
     // overriden function (even if we did 'BaseClass.fn(childInstance)').
-    // So we have to have separate selectors for each override.
+    // So, we have to introduce separate selectors for each override.
 
     let args = zelf.args
 

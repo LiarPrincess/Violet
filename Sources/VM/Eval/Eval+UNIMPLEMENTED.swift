@@ -75,14 +75,12 @@ extension Eval {
     // Fast path for common types
     let isFormatEmpty = format?.value.isEmpty ?? true
     if isFormatEmpty {
-      if let str = value as? PyString {
+      if let str = value as? PyString, str.checkExact() {
         return .value(str)
       }
 
-      if let int = value as? PyInt {
-        let str = int.reprRaw()
-        return .value(Py.newString(str))
-      }
+      let result = Py.strValue(object: value)
+      return result.map(Py.newString(_:))
     }
 
     self.unimplemented()

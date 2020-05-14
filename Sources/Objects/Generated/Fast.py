@@ -209,6 +209,13 @@ internal protocol __dict__Owner {{
       swift_name_full = meth.swift_name_full
       swift_return_type = meth.swift_return_type
       protocol_name = func_protocol_name(python_name)
+
+      # 'int' and 'bool' have static versions of some methods
+      # (because we can't override pymethods).
+      # But they provide correct methods for protocol conformance.
+      if t.python_type in ('int', 'bool') and python_name in ('__repr__', '__str__', '__and__', '__rand__', '__or__', '__ror__', '__xor__', '__rxor__'):
+        continue
+
       add_protocol(python_name, protocol_name, swift_name_full, swift_return_type)
 
     # From static methods we have hand-written '__new__' and '__init__'.
