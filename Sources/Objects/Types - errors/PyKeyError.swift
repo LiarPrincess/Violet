@@ -38,8 +38,14 @@ public final class PyKeyError: PyLookupError {
 
   // MARK: - String
 
-  // sourcery: pymethod = __str__
   override public func str() -> PyResult<String> {
+    return Self.str(keyError: self)
+  }
+
+  // sourcery: pymethod = __str__
+  internal static func str(keyError zelf: PyKeyError) -> PyResult<String> {
+    // Why this is static? See comment in 'PyBaseException.str'.
+
     // If args is a tuple of exactly one item, apply repr to args[0].
     // This is done so that e.g. the exception raised by {{}}[''] prints
     //     KeyError: ''
@@ -49,14 +55,14 @@ public final class PyKeyError: PyLookupError {
     // string, that string will be displayed in quotes.  Too bad.
     // If args is anything else, use the default BaseException__str__().
 
-    let args = self.getArgs()
+    let args = zelf.getArgs()
 
     switch args.getLength() {
     case 1:
       let first = args.elements[0]
       return Py.repr(object: first)
     default:
-      return super.str()
+      return self.str(baseException: zelf)
     }
   }
 

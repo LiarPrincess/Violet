@@ -360,7 +360,7 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBaseException.pyBaseExceptionInit(args:kwargs:)))
 
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyBaseException.repr, castSelf: Self.asBaseException))
-    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyBaseException.str, castSelf: Self.asBaseException))
+    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyBaseException.str(baseException:), castSelf: Self.asBaseException))
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyBaseException.getAttribute(name:), castSelf: Self.asBaseException))
     self.insert(type: type, name: "__setattr__", value: PyBuiltinFunction.wrap(name: "__setattr__", doc: nil, fn: PyBaseException.setAttribute(name:value:), castSelf: Self.asBaseException))
     self.insert(type: type, name: "__delattr__", value: PyBuiltinFunction.wrap(name: "__delattr__", doc: nil, fn: PyBaseException.delAttribute(name:), castSelf: Self.asBaseException))
@@ -761,7 +761,7 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyImportError.pyImportErrorNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyImportError.pyImportErrorInit(args:kwargs:)))
 
-    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyImportError.str, castSelf: Self.asImportError))
+    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyImportError.str(importError:), castSelf: Self.asImportError))
   }
 
   private static func asImportError(_ object: PyObject, methodName: String) -> PyResult<PyImportError> {
@@ -867,7 +867,7 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyKeyError.pyKeyErrorNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyKeyError.pyKeyErrorInit(args:kwargs:)))
 
-    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyKeyError.str, castSelf: Self.asKeyError))
+    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyKeyError.str(keyError:), castSelf: Self.asKeyError))
   }
 
   private static func asKeyError(_ object: PyObject, methodName: String) -> PyResult<PyKeyError> {
@@ -1499,7 +1499,7 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PySyntaxError.pySyntaxErrorNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySyntaxError.pySyntaxErrorInit(args:kwargs:)))
 
-    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PySyntaxError.str, castSelf: Self.asSyntaxError))
+    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PySyntaxError.str(syntaxError:), castSelf: Self.asSyntaxError))
   }
 
   private static func asSyntaxError(_ object: PyObject, methodName: String) -> PyResult<PySyntaxError> {

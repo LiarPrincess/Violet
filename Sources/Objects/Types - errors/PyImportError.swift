@@ -99,13 +99,19 @@ public class PyImportError: PyException {
 
   // MARK: - String
 
-  // sourcery: pymethod = __str__
   override public func str() -> PyResult<String> {
-    if let msg = self.msg as? PyString {
+    return Self.str(importError: self)
+  }
+
+  // sourcery: pymethod = __str__
+  internal static func str(importError zelf: PyImportError) -> PyResult<String> {
+    // Why this is static? See comment in 'PyBaseException.str'.
+
+    if let msg = zelf.msg as? PyString {
       return .value(msg.value)
     }
 
-    return super.str()
+    return Self.str(baseException: zelf)
   }
 
   // MARK: - Msg

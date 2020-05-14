@@ -1,5 +1,7 @@
 import VioletCore
 
+// swiftlint:disable file_length
+
 // In CPython:
 // Objects -> exceptions.c
 // Lib->test->exception_hierarchy.txt <-- this is amazing
@@ -142,10 +144,16 @@ public class PySyntaxError: PyException {
 
   // MARK: - String
 
-  // sourcery: pymethod = __str__
   override public func str() -> PyResult<String> {
+    return Self.str(syntaxError: self)
+  }
+
+  // sourcery: pymethod = __str__
+  internal static func str(syntaxError zelf: PySyntaxError) -> PyResult<String> {
+    // Why this is static? See comment in 'PyBaseException.str'.
+
     let filenameOrNil: String? = {
-      guard let path = self.filename as? PyString else {
+      guard let path = zelf.filename as? PyString else {
         return nil
       }
 
@@ -153,12 +161,13 @@ public class PySyntaxError: PyException {
     }()
 
     // Redundant type annotation is not that redundant.
-    // It is there so that we know that we are printing 'BigInt' not 'PyInt'.
+    // It is there so that we (as a human beeings - readers of this code)
+    // know that we are printing 'BigInt' not 'PyInt'.
     // User should never see 'PyInt' description, is is for debug only.
-    let linenoOrNil: BigInt? = (self.lineno as? PyInt)?.value
+    let linenoOrNil: BigInt? = (zelf.lineno as? PyInt)?.value
 
     let msg: String
-    switch Py.strValue(object: self.msg ?? Py.none) {
+    switch Py.strValue(object: zelf.msg ?? Py.none) {
     case let .value(m): msg = m
     case let .error(e): return .error(e)
     }

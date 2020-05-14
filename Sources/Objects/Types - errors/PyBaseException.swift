@@ -167,9 +167,18 @@ public class PyBaseException: PyObject {
     }
   }
 
-  // sourcery: pymethod = __str__
   public func str() -> PyResult<String> {
-    let args = self.args
+    return Self.str(baseException: self)
+  }
+
+  // sourcery: pymethod = __str__
+  internal static func str(baseException zelf: PyBaseException) -> PyResult<String> {
+    // This is a special (and unusual) place where normally we would override
+    // 'pymethod'. But we can't do that because Swift would always call the
+    // overriden function (even if we did 'BaseClass.fn(childInstance)').
+    // So we have to have separate selectors for each override.
+
+    let args = zelf.args
 
     switch args.getLength() {
     case 0:
