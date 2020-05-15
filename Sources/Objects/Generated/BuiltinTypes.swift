@@ -1795,6 +1795,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyRange.iter, castSelf: Self.asRange))
     self.insert(type: type, name: "count", value: PyBuiltinFunction.wrap(name: "count", doc: nil, fn: PyRange.count(element:), castSelf: Self.asRange))
     self.insert(type: type, name: "index", value: PyBuiltinFunction.wrap(name: "index", doc: nil, fn: PyRange.index(of:), castSelf: Self.asRange))
+    self.insert(type: type, name: "__reduce__", value: PyBuiltinFunction.wrap(name: "__reduce__", doc: nil, fn: PyRange.reduce(args:kwargs:), castSelf: Self.asRange))
   }
 
   private static func asRange(_ object: PyObject, methodName: String) -> PyResult<PyRange> {

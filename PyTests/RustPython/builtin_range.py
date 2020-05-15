@@ -1,6 +1,7 @@
 from testutils import assert_raises
 
-assert range(2**63+1)[2**63] == 9223372036854775808
+# VIOLET: We do not have BigInt
+# assert range(2**63+1)[2**63] == 9223372036854775808
 
 # len tests
 assert len(range(10, 5)) == 0, 'Range with no elements should have length = 0'
@@ -115,8 +116,9 @@ assert range(10, 1, -2).__reduce__()[0] == range
 assert range(10, 1, -2).__reduce__()[1] == (10, 1, -2)
 
 # range retains the original int refs
-i = 2**64
-assert range(i).stop is i
+# VIOLET: We do not have BigInt
+# i = 2**64
+# assert range(i).stop is i
 
 # negative index
 assert range(10)[-1] == 9

@@ -792,6 +792,7 @@ types = {
     '__iter__',
     'count',
     'index',
+    '__reduce__',
     '__new__',
   ],
   range_iterator: [
