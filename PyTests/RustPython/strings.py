@@ -42,7 +42,8 @@ assert 3 * "xy" == "xyxyxy"
 assert 0 * "x" == ""
 assert -1 * "x" == ""
 
-assert_raises(OverflowError, lambda: 'xy' * 234234234234234234234234234234)
+# VIOLET: We do not have 'BigInt'
+# assert_raises(OverflowError, lambda: 'xy' * 234234234234234234234234234234)
 
 a = 'Hallo'
 assert a.lower() == 'hallo'
@@ -93,7 +94,9 @@ assert_raises(TypeError, lambda: s.rjust(12, '__'))
 c = 'hallo'
 assert c.capitalize() == 'Hallo'
 assert c.center(11, '-') == '---hallo---'
-assert ["koki".center(i, "|") for i in range(3, 10)] == [
+# VIOLET: We do not have comprehensions, changed to map
+# assert ["koki".center(i, "|") for i in range(3, 10)] == [
+assert list(map(lambda i: "koki".center(i, "|"), range(3, 10))) == [
     "koki",
     "koki",
     "|koki",
@@ -104,7 +107,8 @@ assert ["koki".center(i, "|") for i in range(3, 10)] == [
 ]
 
 
-assert ["kok".center(i, "|") for i in range(2, 10)] == [
+# assert ["kok".center(i, "|") for i in range(2, 10)] == [
+assert list(map(lambda i: "kok".center(i, "|"), range(2, 10))) == [
     "kok",
     "kok",
     "kok|",
@@ -190,48 +194,51 @@ assert not '😂'.isidentifier()
 assert not '123'.isidentifier()
 
 # String Formatting
-assert "{} {}".format(1, 2) == "1 2"
-assert "{0} {1}".format(2, 3) == "2 3"
-assert "--{:s>4}--".format(1) == "--sss1--"
-assert "{keyword} {0}".format(1, keyword=2) == "2 1"
-assert "repr() shows quotes: {!r}; str() doesn't: {!s}".format(
-    'test1', 'test2'
-) == "repr() shows quotes: 'test1'; str() doesn't: test2", 'Output: {!r}, {!s}'.format('test1', 'test2')
+# VIOLET: We do not have string formatting
+# assert "{} {}".format(1, 2) == "1 2"
+# assert "{0} {1}".format(2, 3) == "2 3"
+# assert "--{:s>4}--".format(1) == "--sss1--"
+# assert "{keyword} {0}".format(1, keyword=2) == "2 1"
+# assert "repr() shows quotes: {!r}; str() doesn't: {!s}".format(
+#     'test1', 'test2'
+# ) == "repr() shows quotes: 'test1'; str() doesn't: test2", 'Output: {!r}, {!s}'.format('test1', 'test2')
 
 
-class Foo:
-    def __str__(self):
-        return 'str(Foo)'
+# class Foo:
+#     def __str__(self):
+#         return 'str(Foo)'
 
-    def __repr__(self):
-        return 'repr(Foo)'
+#     def __repr__(self):
+#         return 'repr(Foo)'
 
-
-f = Foo()
-assert "{} {!s} {!r} {!a}".format(f, f, f, f) == 'str(Foo) str(Foo) repr(Foo) repr(Foo)'
-assert "{foo} {foo!s} {foo!r} {foo!a}".format(foo=f) == 'str(Foo) str(Foo) repr(Foo) repr(Foo)'
+# VIOLET: We do not have string formatting
+# f = Foo()
+# assert "{} {!s} {!r} {!a}".format(f, f, f, f) == 'str(Foo) str(Foo) repr(Foo) repr(Foo)'
+# assert "{foo} {foo!s} {foo!r} {foo!a}".format(foo=f) == 'str(Foo) str(Foo) repr(Foo) repr(Foo)'
 # assert '{} {!r} {:10} {!r:10} {foo!r:10} {foo!r} {foo}'.format('txt1', 'txt2', 'txt3', 'txt4', 'txt5', foo='bar')
 
 
 # Printf-style String formatting
-assert "%d %d" % (1, 2) == "1 2"
-assert "%*c  " % (3, '❤') == "  ❤  "
-assert "%(first)s %(second)s" % {'second': 'World!', 'first': "Hello,"} == "Hello, World!"
-assert "%(key())s" % {'key()': 'aaa'}
-assert "%s %a %r" % (f, f, f) == "str(Foo) repr(Foo) repr(Foo)"
-assert "repr() shows quotes: %r; str() doesn't: %s" % ("test1", "test2") == "repr() shows quotes: 'test1'; str() doesn't: test2"
-assert "%f" % (1.2345) == "1.234500"
-assert "%+f" % (1.2345) == "+1.234500"
-assert "% f" % (1.2345) == " 1.234500"
-assert "%f" % (-1.2345) == "-1.234500"
-assert "%f" % (1.23456789012) == "1.234568"
-assert "%f" % (123) == "123.000000"
-assert "%f" % (-123) == "-123.000000"
+# VIOLET: We do not have string formatting
+# assert "%d %d" % (1, 2) == "1 2"
+# assert "%*c  " % (3, '❤') == "  ❤  "
+# assert "%(first)s %(second)s" % {'second': 'World!', 'first': "Hello,"} == "Hello, World!"
+# assert "%(key())s" % {'key()': 'aaa'}
+# assert "%s %a %r" % (f, f, f) == "str(Foo) repr(Foo) repr(Foo)"
+# assert "repr() shows quotes: %r; str() doesn't: %s" % ("test1", "test2") == "repr() shows quotes: 'test1'; str() doesn't: test2"
+# assert "%f" % (1.2345) == "1.234500"
+# assert "%+f" % (1.2345) == "+1.234500"
+# assert "% f" % (1.2345) == " 1.234500"
+# assert "%f" % (-1.2345) == "-1.234500"
+# assert "%f" % (1.23456789012) == "1.234568"
+# assert "%f" % (123) == "123.000000"
+# assert "%f" % (-123) == "-123.000000"
 
-assert_raises(TypeError, lambda: "My name is %s and I'm %(age)d years old" % ("Foo", 25), _msg='format requires a mapping')
-assert_raises(TypeError, lambda: "My name is %(name)s" % "Foo", _msg='format requires a mapping')
-assert_raises(ValueError, lambda: "This %(food}s is great!" % {"food": "cookie"}, _msg='incomplete format key')
-assert_raises(ValueError, lambda: "My name is %" % "Foo", _msg='incomplete format')
+# VIOLET: We do not have string formatting
+# assert_raises(TypeError, lambda: "My name is %s and I'm %(age)d years old" % ("Foo", 25), _msg='format requires a mapping')
+# assert_raises(TypeError, lambda: "My name is %(name)s" % "Foo", _msg='format requires a mapping')
+# assert_raises(ValueError, lambda: "This %(food}s is great!" % {"food": "cookie"}, _msg='incomplete format key')
+# assert_raises(ValueError, lambda: "My name is %" % "Foo", _msg='incomplete format')
 
 assert 'a' < 'b'
 assert 'a' <= 'b'
@@ -241,11 +248,13 @@ assert 'z' >= 'b'
 assert 'a' >= 'a'
 
 # str.translate
-assert "abc".translate({97: '🎅', 98: None, 99: "xd"}) == "🎅xd"
+# VIOLET: We do not have 'translate'
+# assert "abc".translate({97: '🎅', 98: None, 99: "xd"}) == "🎅xd"
 
 # str.maketrans
-assert str.maketrans({"a": "abc", "b": None, "c": 33}) == {97: "abc", 98: None, 99: 33}
-assert str.maketrans("hello", "world", "rust") == {104: 119, 101: 111, 108: 108, 111: 100, 114: None, 117: None, 115: None, 116: None}
+# VIOLET: We do not have 'maketrans'
+# assert str.maketrans({"a": "abc", "b": None, "c": 33}) == {97: "abc", 98: None, 99: 33}
+# assert str.maketrans("hello", "world", "rust") == {104: 119, 101: 111, 108: 108, 111: 100, 114: None, 117: None, 115: None, 116: None}
 
 def try_mutate_str():
    word = "word"
@@ -256,11 +265,12 @@ assert_raises(TypeError, try_mutate_str)
 ss = ['Hello', '안녕', '👋']
 bs = [b'Hello', b'\xec\x95\x88\xeb\x85\x95', b'\xf0\x9f\x91\x8b']
 
-for s, b in zip(ss, bs):
-    assert s.encode() == b
+# VIOLET: We do not have 'encode'
+# for s, b in zip(ss, bs):
+#     assert s.encode() == b
 
-for s, b, e in zip(ss, bs, ['u8', 'U8', 'utf-8', 'UTF-8', 'utf_8']):
-    assert s.encode(e) == b
+# for s, b, e in zip(ss, bs, ['u8', 'U8', 'utf-8', 'UTF-8', 'utf_8']):
+#     assert s.encode(e) == b
     # assert s.encode(encoding=e) == b
 
 # str.isisprintable
@@ -309,8 +319,9 @@ assert next(str_iter_reversed) == "1"
 assert next(str_iter_reversed, None) == None
 assert_raises(StopIteration, next, str_iter_reversed)
 
-assert str.__rmod__('%i', 30) == NotImplemented
-assert_raises(TypeError, lambda: str.__rmod__(30, '%i'))
+# VIOLET: We do not have string formatting
+# assert str.__rmod__('%i', 30) == NotImplemented
+# assert_raises(TypeError, lambda: str.__rmod__(30, '%i'))
 
 # test str index
 index_str = 'Rust Python'
@@ -343,6 +354,7 @@ assert "가나다a".islower()
 assert "가나다A".isupper()
 
 # test str.format_map()
+# VIOLET: We do not have 'format_map'
 #
 # The following tests were performed in Python 3.7.5:
 # Python 3.7.5 (default, Dec 19 2019, 17:11:32)
@@ -350,124 +362,127 @@ assert "가나다A".isupper()
 
 # >>> '{x} {y}'.format_map({'x': 1, 'y': 2})
 # '1 2'
-assert '{x} {y}'.format_map({'x': 1, 'y': 2}) == '1 2'
+# assert '{x} {y}'.format_map({'x': 1, 'y': 2}) == '1 2'
 
 # >>> '{x:04d}'.format_map({'x': 1})
 # '0001'
-assert '{x:04d}'.format_map({'x': 1}) == '0001'
+# assert '{x:04d}'.format_map({'x': 1}) == '0001'
 
 # >>> '{x} {y}'.format_map('foo')
 # Traceback (most recent call last):
 #   File "<stdin>", line 1, in <module>
 # TypeError: string indices must be integers
-with AssertRaises(TypeError, None):
-    '{x} {y}'.format_map('foo')
+# with AssertRaises(TypeError, None):
+#     '{x} {y}'.format_map('foo')
 
 # >>> '{x} {y}'.format_map(['foo'])
 # Traceback (most recent call last):
 #   File "<stdin>", line 1, in <module>
 # TypeError: list indices must be integers or slices, not str
-with AssertRaises(TypeError, None):
-    '{x} {y}'.format_map(['foo'])
+# with AssertRaises(TypeError, None):
+#     '{x} {y}'.format_map(['foo'])
 
 # >>> '{x} {y}'.format_map()
 # Traceback (most recent call last):
 #   File "<stdin>", line 1, in <module>
 # TypeError: format_map() takes exactly one argument (0 given)
-with AssertRaises(TypeError, msg='TypeError: format_map() takes exactly one argument (0 given)'):
-    '{x} {y}'.format_map(),
+# with AssertRaises(TypeError, msg='TypeError: format_map() takes exactly one argument (0 given)'):
+#     '{x} {y}'.format_map(),
 
 # >>> '{x} {y}'.format_map('foo', 'bar')
 # Traceback (most recent call last):
 #   File "<stdin>", line 1, in <module>
 # TypeError: format_map() takes exactly one argument (2 given)
-with AssertRaises(TypeError, msg='TypeError: format_map() takes exactly one argument (2 given)'):
-    '{x} {y}'.format_map('foo', 'bar')
+# with AssertRaises(TypeError, msg='TypeError: format_map() takes exactly one argument (2 given)'):
+#     '{x} {y}'.format_map('foo', 'bar')
 
 # >>> '{x} {y}'.format_map({'x': 1})
 # Traceback (most recent call last):
 #   File "<stdin>", line 1, in <module>
 # KeyError: 'y'
-with AssertRaises(KeyError, msg="KeyError: 'y'"):
-    '{x} {y}'.format_map({'x': 1})
+# with AssertRaises(KeyError, msg="KeyError: 'y'"):
+#     '{x} {y}'.format_map({'x': 1})
 
 # >>> '{x} {y}'.format_map({'x': 1, 'z': 2})
 # Traceback (most recent call last):
 #   File "<stdin>", line 1, in <module>
 # KeyError: 'y'
-with AssertRaises(KeyError, msg="KeyError: 'y'"):
-    '{x} {y}'.format_map({'x': 1, 'z': 2})
+# with AssertRaises(KeyError, msg="KeyError: 'y'"):
+#     '{x} {y}'.format_map({'x': 1, 'z': 2})
 
 # >>> '{{literal}}'.format_map('foo')
 # '{literal}'
-assert '{{literal}}'.format_map('foo') == '{literal}'
+# assert '{{literal}}'.format_map('foo') == '{literal}'
 
 # test formatting float values
-assert f'{5:f}' == '5.000000'
-assert f'{-5:f}' == '-5.000000'
-assert f'{5.0:f}' == '5.000000'
-assert f'{-5.0:f}' == '-5.000000'
-assert f'{5:.2f}' == '5.00'
-assert f'{5.0:.2f}' == '5.00'
-assert f'{-5:.2f}' == '-5.00'
-assert f'{-5.0:.2f}' == '-5.00'
-assert f'{5.0:04f}' == '5.000000'
-assert f'{5.1234:+f}' == '+5.123400'
-assert f'{5.1234: f}' == ' 5.123400'
-assert f'{5.1234:-f}' == '5.123400'
-assert f'{-5.1234:-f}' == '-5.123400'
-assert f'{1.0:+}' == '+1.0'
-assert f'--{1.0:f>4}--' == '--f1.0--'
-assert f'--{1.0:f<4}--' == '--1.0f--'
-assert f'--{1.0:d^4}--' == '--1.0d--'
-assert f'--{1.0:d^5}--' == '--d1.0d--'
-assert f'--{1.1:f>6}--' == '--fff1.1--'
-assert '{}'.format(float('nan')) == 'nan'
-assert '{:f}'.format(float('nan')) == 'nan'
-assert '{:f}'.format(float('-nan')) == 'nan'
-assert '{:F}'.format(float('nan')) == 'NAN'
-assert '{}'.format(float('inf')) == 'inf'
-assert '{:f}'.format(float('inf')) == 'inf'
-assert '{:f}'.format(float('-inf')) == '-inf'
-assert '{:F}'.format(float('inf')) == 'INF'
-assert f'{1234567890.1234:,.2f}' == '1,234,567,890.12'
-assert f'{1234567890.1234:_.2f}' == '1_234_567_890.12'
-with AssertRaises(ValueError, msg="Unknown format code 'd' for object of type 'float'"):
-    f'{5.0:04d}'
+# VIOLET: We do not have string formatting
+# assert f'{5:f}' == '5.000000'
+# assert f'{-5:f}' == '-5.000000'
+# assert f'{5.0:f}' == '5.000000'
+# assert f'{-5.0:f}' == '-5.000000'
+# assert f'{5:.2f}' == '5.00'
+# assert f'{5.0:.2f}' == '5.00'
+# assert f'{-5:.2f}' == '-5.00'
+# assert f'{-5.0:.2f}' == '-5.00'
+# assert f'{5.0:04f}' == '5.000000'
+# assert f'{5.1234:+f}' == '+5.123400'
+# assert f'{5.1234: f}' == ' 5.123400'
+# assert f'{5.1234:-f}' == '5.123400'
+# assert f'{-5.1234:-f}' == '-5.123400'
+# assert f'{1.0:+}' == '+1.0'
+# assert f'--{1.0:f>4}--' == '--f1.0--'
+# assert f'--{1.0:f<4}--' == '--1.0f--'
+# assert f'--{1.0:d^4}--' == '--1.0d--'
+# assert f'--{1.0:d^5}--' == '--d1.0d--'
+# assert f'--{1.1:f>6}--' == '--fff1.1--'
+# assert '{}'.format(float('nan')) == 'nan'
+# assert '{:f}'.format(float('nan')) == 'nan'
+# assert '{:f}'.format(float('-nan')) == 'nan'
+# assert '{:F}'.format(float('nan')) == 'NAN'
+# assert '{}'.format(float('inf')) == 'inf'
+# assert '{:f}'.format(float('inf')) == 'inf'
+# assert '{:f}'.format(float('-inf')) == '-inf'
+# assert '{:F}'.format(float('inf')) == 'INF'
+# assert f'{1234567890.1234:,.2f}' == '1,234,567,890.12'
+# assert f'{1234567890.1234:_.2f}' == '1_234_567_890.12'
+# with AssertRaises(ValueError, msg="Unknown format code 'd' for object of type 'float'"):
+#     f'{5.0:04d}'
 
 # Test % formatting
-assert f'{10:%}' == '1000.000000%'
-assert f'{10.0:%}' == '1000.000000%'
-assert f'{10.0:.2%}' == '1000.00%'
-assert f'{10.0:.8%}' == '1000.00000000%'
-assert f'{-10:%}' == '-1000.000000%'
-assert f'{-10.0:%}' == '-1000.000000%'
-assert f'{-10.0:.2%}' == '-1000.00%'
-assert f'{-10.0:.8%}' == '-1000.00000000%'
-assert '{:%}'.format(float('nan')) == 'nan%'
-assert '{:.2%}'.format(float('nan')) == 'nan%'
-assert '{:%}'.format(float('inf')) == 'inf%'
-assert '{:.2%}'.format(float('inf')) == 'inf%'
-with AssertRaises(ValueError, msg='Invalid format specifier'):
-    f'{10.0:%3}'
+# VIOLET: We do not have string formatting
+# assert f'{10:%}' == '1000.000000%'
+# assert f'{10.0:%}' == '1000.000000%'
+# assert f'{10.0:.2%}' == '1000.00%'
+# assert f'{10.0:.8%}' == '1000.00000000%'
+# assert f'{-10:%}' == '-1000.000000%'
+# assert f'{-10.0:%}' == '-1000.000000%'
+# assert f'{-10.0:.2%}' == '-1000.00%'
+# assert f'{-10.0:.8%}' == '-1000.00000000%'
+# assert '{:%}'.format(float('nan')) == 'nan%'
+# assert '{:.2%}'.format(float('nan')) == 'nan%'
+# assert '{:%}'.format(float('inf')) == 'inf%'
+# assert '{:.2%}'.format(float('inf')) == 'inf%'
+# with AssertRaises(ValueError, msg='Invalid format specifier'):
+#     f'{10.0:%3}'
 
 # Test e & E formatting
-assert '{:e}'.format(10) == '1.000000e+01'
-assert '{:.2e}'.format(11) == '1.10e+01'
-assert '{:e}'.format(10.0) == '1.000000e+01'
-assert '{:e}'.format(-10.0) == '-1.000000e+01'
-assert '{:.2e}'.format(10.0) == '1.00e+01'
-assert '{:.2e}'.format(-10.0) == '-1.00e+01'
-assert '{:.2e}'.format(10.1) == '1.01e+01'
-assert '{:.2e}'.format(-10.1) == '-1.01e+01'
-assert '{:.2e}'.format(10.001) == '1.00e+01'
-assert '{:.4e}'.format(100.234) == '1.0023e+02'
-assert '{:.5e}'.format(100.234) == '1.00234e+02'
-assert '{:.2E}'.format(10.0) == '1.00E+01'
-assert '{:.2E}'.format(-10.0) == '-1.00E+01'
-assert '{:e}'.format(float('nan')) == 'nan'
-assert '{:e}'.format(float('-nan')) == 'nan'
-assert '{:E}'.format(float('nan')) == 'NAN'
-assert '{:e}'.format(float('inf')) == 'inf'
-assert '{:e}'.format(float('-inf')) == '-inf'
-assert '{:E}'.format(float('inf')) == 'INF'
+# VIOLET: We do not have string formatting
+# assert '{:e}'.format(10) == '1.000000e+01'
+# assert '{:.2e}'.format(11) == '1.10e+01'
+# assert '{:e}'.format(10.0) == '1.000000e+01'
+# assert '{:e}'.format(-10.0) == '-1.000000e+01'
+# assert '{:.2e}'.format(10.0) == '1.00e+01'
+# assert '{:.2e}'.format(-10.0) == '-1.00e+01'
+# assert '{:.2e}'.format(10.1) == '1.01e+01'
+# assert '{:.2e}'.format(-10.1) == '-1.01e+01'
+# assert '{:.2e}'.format(10.001) == '1.00e+01'
+# assert '{:.4e}'.format(100.234) == '1.0023e+02'
+# assert '{:.5e}'.format(100.234) == '1.00234e+02'
+# assert '{:.2E}'.format(10.0) == '1.00E+01'
+# assert '{:.2E}'.format(-10.0) == '-1.00E+01'
+# assert '{:e}'.format(float('nan')) == 'nan'
+# assert '{:e}'.format(float('-nan')) == 'nan'
+# assert '{:E}'.format(float('nan')) == 'NAN'
+# assert '{:e}'.format(float('inf')) == 'inf'
+# assert '{:e}'.format(float('-inf')) == '-inf'
+# assert '{:E}'.format(float('inf')) == 'INF'
