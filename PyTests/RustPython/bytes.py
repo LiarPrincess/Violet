@@ -135,19 +135,23 @@ assert b"AaBbCc123'@/".swapcase().swapcase() == b"AaBbCc123'@/"
 assert b"AaBbCc123'@/".swapcase() == b"aAbBcC123'@/"
 
 # hex from hex
-assert bytes([0, 1, 9, 23, 90, 234]).hex() == "000109175aea"
+# VIOLET: We do not have 'hex' and 'fromhex'
+# assert bytes([0, 1, 9, 23, 90, 234]).hex() == "000109175aea"
 
-bytes.fromhex("62 6c7a 34350a ") == b"blz45\n"
-try:
-    bytes.fromhex("62 a 21")
-except ValueError as e:
-    str(e) == "non-hexadecimal number found in fromhex() arg at position 4"
-try:
-    bytes.fromhex("6Z2")
-except ValueError as e:
-    str(e) == "non-hexadecimal number found in fromhex() arg at position 1"
-with assert_raises(TypeError):
-    bytes.fromhex(b"hhjjk")
+# bytes.fromhex("62 6c7a 34350a ") == b"blz45\n"
+
+# try:
+#     bytes.fromhex("62 a 21")
+# except ValueError as e:
+#     str(e) == "non-hexadecimal number found in fromhex() arg at position 4"
+
+# try:
+#     bytes.fromhex("6Z2")
+# except ValueError as e:
+#     str(e) == "non-hexadecimal number found in fromhex() arg at position 1"
+# with assert_raises(TypeError):
+#     bytes.fromhex(b"hhjjk")
+
 # center
 # VIOLET: We do not have comprehensions, changed to map
 # assert [b"koki".center(i, b"|") for i in range(3, 10)] == [
@@ -259,8 +263,9 @@ assert b"azeazerazeazopia".count(b"az") == 4
 assert b"azeazerazeazopia".count(b"a") == 5
 assert b"123456789".count(b"") == 10
 assert b"azeazerazeazopia".count(bytearray(b"aze")) == 3
-assert b"azeazerazeazopia".count(memoryview(b"aze")) == 3
-assert b"azeazerazeazopia".count(memoryview(b"aze"), 1, 9) == 1
+# VIOLET: We do not have 'memoryview'
+# assert b"azeazerazeazopia".count(memoryview(b"aze")) == 3
+# assert b"azeazerazeazopia".count(memoryview(b"aze"), 1, 9) == 1
 assert b"azeazerazeazopia".count(b"aze", None, None) == 3
 assert b"azeazerazeazopia".count(b"aze", 2, None) == 2
 assert b"azeazerazeazopia".count(b"aze", 2) == 2
@@ -274,10 +279,15 @@ with assert_raises(ValueError):
 assert b"azeazerazeazopia".count(97) == 5
 
 # join
+# VIOLET: We do not have 'memoryview', removed from test
+# assert (
+#     b"".join((b"jiljl", bytearray(b"kmoomk"), memoryview(b"aaaa")))
+#     == b"jiljlkmoomkaaaa"
+# )
 assert (
-    b"".join((b"jiljl", bytearray(b"kmoomk"), memoryview(b"aaaa")))
-    == b"jiljlkmoomkaaaa"
+    b"".join((b"jiljl", bytearray(b"kmoomk"))) == b"jiljlkmoomk"
 )
+
 with assert_raises(TypeError):
     b"".join((b"km", "kl"))
 
@@ -334,21 +344,23 @@ assert b"abcdabcda".rindex(b"a") == 8
 
 
 # make trans
+# VIOLET: We do not have 'maketrans' and 'memoryview'
 # fmt: off
-assert (
-    bytes.maketrans(memoryview(b"abc"), bytearray(b"zzz"))
-    == bytes([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 122, 122, 122, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255])
-)
+# assert (
+#     bytes.maketrans(memoryview(b"abc"), bytearray(b"zzz"))
+#     == bytes([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 122, 122, 122, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255])
+# )
 # fmt: on
 
 # translate
-assert b"hjhtuyjyujuyj".translate(bytes.maketrans(b"hj", b"ab"), b"h") == b"btuybyubuyb"
-assert (
-    b"hjhtuyjyujuyj".translate(bytes.maketrans(b"hj", b"ab"), b"a") == b"abatuybyubuyb"
-)
-assert b"hjhtuyjyujuyj".translate(bytes.maketrans(b"hj", b"ab")) == b"abatuybyubuyb"
-assert b"hjhtuyfjtyhuhjuyj".translate(None, b"ht") == b"juyfjyujuyj"
-assert b"hjhtuyfjtyhuhjuyj".translate(None, delete=b"ht") == b"juyfjyujuyj"
+# VIOLET: We do not have 'translate'
+# assert b"hjhtuyjyujuyj".translate(bytes.maketrans(b"hj", b"ab"), b"h") == b"btuybyubuyb"
+# assert (
+#     b"hjhtuyjyujuyj".translate(bytes.maketrans(b"hj", b"ab"), b"a") == b"abatuybyubuyb"
+# )
+# assert b"hjhtuyjyujuyj".translate(bytes.maketrans(b"hj", b"ab")) == b"abatuybyubuyb"
+# assert b"hjhtuyfjtyhuhjuyj".translate(None, b"ht") == b"juyfjyujuyj"
+# assert b"hjhtuyfjtyhuhjuyj".translate(None, delete=b"ht") == b"juyfjyujuyj"
 
 
 # strip lstrip rstrip
@@ -562,16 +574,18 @@ assert b"123456789".partition(b"45") == (b"123", b"45", b"6789")
 assert b"14523456789".partition(b"45") == (b"1", b"45", b"23456789")
 a = b"14523456789".partition(bytearray(b"45"))
 assert isinstance(a[1], bytearray)
-a = b"14523456789".partition(memoryview(b"45"))
-assert isinstance(a[1], memoryview)
+# VIOLET: We do not have 'memoryview'
+# a = b"14523456789".partition(memoryview(b"45"))
+# assert isinstance(a[1], memoryview)
 
 # partition
 assert b"123456789".rpartition(b"45") == (b"123", b"45", b"6789")
 assert b"14523456789".rpartition(b"45") == (b"14523", b"45", b"6789")
 a = b"14523456789".rpartition(bytearray(b"45"))
 assert isinstance(a[1], bytearray)
-a = b"14523456789".rpartition(memoryview(b"45"))
-assert isinstance(a[1], memoryview)
+# VIOLET: We do not have 'memoryview'
+# a = b"14523456789".rpartition(memoryview(b"45"))
+# assert isinstance(a[1], memoryview)
 
 # splitlines
 assert b"ab c\n\nde fg\rkl\r\n".splitlines() == [b"ab c", b"", b"de fg", b"kl"]
@@ -618,19 +632,21 @@ assert a * 3 == b'abcdabcdabcd'
 assert 3 * a == b'abcdabcdabcd'
 
 # decode
-assert b'\x72\x75\x73\x74'.decode('ascii') == 'rust'
-assert b'\xc2\xae\x75\x73\x74'.decode('ascii', 'replace') == '��ust'
-assert b'\xc2\xae\x75\x73\x74'.decode('ascii', 'ignore') == 'ust'
-assert b'\xc2\xae\x75\x73\x74'.decode('utf-8') == '®ust'
-assert b'\xc2\xae\x75\x73\x74'.decode() == '®ust'
-assert b'\xe4\xb8\xad\xe6\x96\x87\xe5\xad\x97'.decode('utf-8') == '中文字'
+# VIOLET: We do not have 'decode'
+# assert b'\x72\x75\x73\x74'.decode('ascii') == 'rust'
+# assert b'\xc2\xae\x75\x73\x74'.decode('ascii', 'replace') == '��ust'
+# assert b'\xc2\xae\x75\x73\x74'.decode('ascii', 'ignore') == 'ust'
+# assert b'\xc2\xae\x75\x73\x74'.decode('utf-8') == '®ust'
+# assert b'\xc2\xae\x75\x73\x74'.decode() == '®ust'
+# assert b'\xe4\xb8\xad\xe6\x96\x87\xe5\xad\x97'.decode('utf-8') == '中文字'
 
 # mod
-assert b'rust%bpython%b' % (b' ', b'!') == b'rust python!'
-assert b'x=%i y=%f' % (1, 2.5) == b'x=1 y=2.500000'
+# VIOLET: We do not have string formatting
+# assert b'rust%bpython%b' % (b' ', b'!') == b'rust python!'
+# assert b'x=%i y=%f' % (1, 2.5) == b'x=1 y=2.500000'
 
-class A:
-    def __bytes__(self):
-        return b"bytess"
+# class A:
+#     def __bytes__(self):
+#         return b"bytess"
 
-assert bytes(A()) == b"bytess"
+# assert bytes(A()) == b"bytess"

@@ -1589,13 +1589,29 @@ extension PyStringImpl {
       let groupEnd = index // Include character at this index!
       self.formIndex(before: &index) { !self[$0...].starts(with: separator.scalars) }
 
-      // Consume group
-      let groupStart = self.index(index, offsetBy: separator.count)
-      result.append(self[groupStart...groupEnd])
+      // 'index' is 1st character of 'separator' or start of the string.
+      // It may be both!
+      let groupStartsWithSeparator = self[index...].starts(with: separator.scalars)
+      let groupStart = groupStartsWithSeparator ?
+        self.index(index, offsetBy: separator.count) :
+        index // We are at the start of string and we do not start with 'separator'
+
+      // Group may be empty when:
+      // - self has 'separator' as suffix
+      // - we have multiple separators in a row
+      let isGroupEmpty = groupStart > groupEnd
+      if isGroupEmpty {
+        result.append(self[groupEnd..<groupStart])
+      } else {
+        result.append(self[groupStart...groupEnd])
+      }
 
       if index == self.startIndex {
         break
       }
+
+      // Move our index, so that it points to last character of next group
+      self.formIndex(before: &index)
     }
 
     if index != self.startIndex {
