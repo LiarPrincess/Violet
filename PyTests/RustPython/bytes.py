@@ -533,26 +533,39 @@ n_sp = 0
 while n_sp < len(SPLIT_FIXTURES):
     i = SPLIT_FIXTURES[n_sp]
     sep = None if i[1] == None else bytes(i[1])
+    data = i[0]
+    maxsplit = i[4]
+
+    result = bytes(data).split(sep=sep, maxsplit=maxsplit)
+    expected = i[2]
+    rresult = bytes(data).rsplit(sep=sep, maxsplit=maxsplit)
+    rexpected = i[3]
+
     try:
         # assert bytes(i[0]).split(sep=sep, maxsplit=i[4]) == [bytes(j) for j in i[2]]
-        assert bytes(i[0]).split(sep=sep, maxsplit=i[4]) == list(map(lambda b: bytes(b), i[2]))
+        assert result == list(map(lambda b: bytes(b), expected))
     except AssertionError:
-        print(i[0], i[1], i[2])
-        # print(
-        #     "Expected : ", [list(x) for x in bytes(i[0]).split(sep=sep, maxsplit=i[4])]
-        # )
-        break
+        print("Error in split:")
+        print("Data:", data)
+        print("Separator:", sep)
+        print("Maxsplit:", maxsplit)
+        print("Result:  ", result)
+        print("Expected:", expected)
+        print()
+        raise
 
     try:
         # assert bytes(i[0]).rsplit(sep=sep, maxsplit=i[4]) == [bytes(j) for j in i[3]]
-        assert bytes(i[0]).rsplit(sep=sep, maxsplit=i[4]) == list(map(lambda b: bytes(b), i[3]))
+        assert rresult == list(map(lambda b: bytes(b), rexpected))
     except AssertionError:
-        print(i[0], i[1], i[2])
-        # print(
-        #     "Expected Rev : ",
-        #     [list(x) for x in bytes(i[0]).rsplit(sep=sep, maxsplit=i[4])],
-        # )
-        break
+        print("Error in rsplit:")
+        print("Data:", data)
+        print("Separator:", sep)
+        print("Maxsplit:", maxsplit)
+        print("Result:  ", rresult)
+        print("Expected:", rexpected)
+        print()
+        raise
 
     n_sp += 1
 

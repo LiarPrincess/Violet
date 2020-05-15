@@ -1495,7 +1495,7 @@ extension PyStringImpl {
       index = self.index(index, offsetBy: separator.count)
     }
 
-    if index != self.endIndex {
+    if index != self.endIndex && remainingCount == 0 {
       result.append(self[index...])
     }
 
@@ -1525,7 +1525,7 @@ extension PyStringImpl {
       result.append(s)
     }
 
-    if index != self.endIndex {
+    if index != self.endIndex && remainingCount == 0 {
       // Only occurs when maxcount was reached
       // Skip any remaining whitespace and copy to end of string
       self.formIndex(after: &index) { Self.isWhitespace(self[$0]) }
@@ -1537,6 +1537,8 @@ extension PyStringImpl {
 
     return result
   }
+
+  // MARK: - RSplit
 
   internal func rsplit(args: [PyObject],
                        kwargs: PyDict?) -> PyResult<[SubSequence]> {
@@ -1580,7 +1582,7 @@ extension PyStringImpl {
     var index = scalars.endIndex
 
     // `endIndex` is AFTER the collection
-    scalars.formIndex(before: &index)
+    self.formIndex(before: &index)
 
     var remainingCount = maxCount
     while remainingCount > 0 {
@@ -1588,34 +1590,45 @@ extension PyStringImpl {
 
       let groupEnd = index // Include character at this index!
       self.formIndex(before: &index) { !self[$0...].starts(with: separator.scalars) }
+      // At this point 'index' is 1st character of 'separator' or start of the string
+      // (it may be bot at the same time!).
 
-      // 'index' is 1st character of 'separator' or start of the string.
-      // It may be both!
-      let groupStartsWithSeparator = self[index...].starts(with: separator.scalars)
-      let groupStart = groupStartsWithSeparator ?
-        self.index(index, offsetBy: separator.count) :
-        index // We are at the start of string and we do not start with 'separator'
+      // Arrived at front - add group and break
+      if index == self.startIndex {
+        let startsWithSeparator = self[index...].starts(with: separator.scalars)
+
+        if startsWithSeparator {
+          let groupStart = self.index(index, offsetBy: separator.count)
+          result.append(self[groupStart...groupEnd])
+
+          // If 'self' starts with separator then we need to append empty
+          result.append(self[self.startIndex..<self.startIndex])
+        } else {
+          result.append(self[self.startIndex...groupEnd])
+        }
+
+        break
+      }
+
+      // We are in the middle - index is 1st character of separator
+      let groupStart = self.index(index, offsetBy: separator.count)
 
       // Group may be empty when:
       // - self has 'separator' as suffix
       // - we have multiple separators in a row
       let isGroupEmpty = groupStart > groupEnd
       if isGroupEmpty {
-        result.append(self[groupEnd..<groupStart])
+        result.append(self[groupStart..<groupStart])
       } else {
         result.append(self[groupStart...groupEnd])
-      }
-
-      if index == self.startIndex {
-        break
       }
 
       // Move our index, so that it points to last character of next group
       self.formIndex(before: &index)
     }
 
-    if index != self.startIndex {
-      result.append(self[self.startIndex..<index])
+    if index != self.startIndex && remainingCount == 0 {
+      result.append(self[self.startIndex...index])
     }
 
     // Because we were going from end we appended in a reverse order.
@@ -1629,6 +1642,8 @@ extension PyStringImpl {
   internal func rsplitWhitespace(maxCount: Int) -> [SubSequence] {
     var result = [SubSequence]()
     var index = self.endIndex
+
+    // `endIndex` is AFTER the collection
     self.formIndex(before: &index)
 
     var remainingCount = maxCount
@@ -1638,33 +1653,44 @@ extension PyStringImpl {
       // Consume whitespaces
       self.formIndex(before: &index) { Self.isWhitespace(self[$0]) }
 
-      if index == self.startIndex {
+      // If we arrived at the start and we are still whitespace - no more groups
+      if index == self.startIndex && Self.isWhitespace(self[index]) {
         break
       }
 
       // Consume group
       let groupEnd = index // Include character at this index!
-      var groupStart = index
-      while index != self.startIndex && !Self.isWhitespace(self[index]) {
-        groupStart = index // 'groupStart' is always 1 step behind 'index'
-        self.formIndex(before: &index)
+      self.formIndex(before: &index) { !Self.isWhitespace(self[$0]) }
+      // At this point 'index' is 1st non-whitespace or start of the string
+      // (it may be bot at the same time!).
+
+      // Arrived at front - add group and break
+      if index == self.startIndex {
+        let isFirstWhitespace = Self.isWhitespace(self[index])
+        let groupStart = isFirstWhitespace ?
+          self.index(after: index) :
+          index
+
+        let part = self[groupStart...groupEnd]
+        result.append(part)
+        break
       }
 
-      /// Index may be non-whitespace when we arrive at startIndex
-      let s = Self.isWhitespace(self[index]) ?
-        self[groupStart...groupEnd] :
-        self[index...groupEnd]
-
-      result.append(s)
+      // We are in the middle - index is 1st whitespace, group starts after it
+      let groupStart = self.index(after: index)
+      let part = self[groupStart...groupEnd]
+      result.append(part)
     }
 
-    if index != self.startIndex {
+    if index != self.startIndex && remainingCount == 0 {
       // Only occurs when maxcount was reached
       // Skip any remaining whitespace and copy to end of string
       self.formIndex(before: &index) { Self.isWhitespace(self[$0]) }
       result.append(self[...index])
     }
 
+    // See comment in 'self.rsplit', why we need to reverse
+    result.reverse()
     return result
   }
 

@@ -539,31 +539,45 @@ SPLIT_FIXTURES = [
 
 
 # VIOLET: We do not have comprehensions, in a few places we changed them to lists
+# VIOLET-RP: added better debug
 # for i in SPLIT_FIXTURES:  # for not yet implemented : TypeError: Unsupported method: __next__
 n_sp = 0
 while n_sp < len(SPLIT_FIXTURES):
     i = SPLIT_FIXTURES[n_sp]
     sep = None if i[1] == None else bytearray(i[1])
+    data = i[0]
+    maxsplit = i[4]
+
+    result = bytearray(data).split(sep=sep, maxsplit=maxsplit)
+    expected = i[2]
+    rresult = bytearray(data).rsplit(sep=sep, maxsplit=maxsplit)
+    rexpected = i[3]
+
     try:
         # assert bytearray(i[0]).split(sep=sep, maxsplit=i[4]) == [bytearray(j) for j in i[2]]
-        assert bytearray(i[0]).split(sep=sep, maxsplit=i[4]) == list(map(lambda b: bytearray(b), i[2]))
+        assert result == list(map(lambda b: bytearray(b), expected))
     except AssertionError:
-        print(i[0], i[1], i[2])
-        # print(
-        #     "Expected : ", [list(x) for x in bytearray(i[0]).split(sep=sep, maxsplit=i[4])]
-        # )
-        assert False
+        print("Error in split:")
+        print("Data:", data)
+        print("Separator:", sep)
+        print("Maxsplit:", maxsplit)
+        print("Result:  ", result)
+        print("Expected:", expected)
+        print()
+        raise
 
     try:
         # assert bytearray(i[0]).rsplit(sep=sep, maxsplit=i[4]) == [bytearray(j) for j in i[3]]
-        assert bytearray(i[0]).rsplit(sep=sep, maxsplit=i[4]) == list(map(lambda b: bytearray(b), i[3]))
+        assert rresult == list(map(lambda b: bytearray(b), rexpected))
     except AssertionError:
-        print(i[0], i[1], i[2])
-        # print(
-        #     "Expected Rev : ",
-        #     [list(x) for x in bytearray(i[0]).rsplit(sep=sep, maxsplit=i[4])],
-        # )
-        assert False
+        print("Error in rsplit:")
+        print("Data:", data)
+        print("Separator:", sep)
+        print("Maxsplit:", maxsplit)
+        print("Result:  ", rresult)
+        print("Expected:", rexpected)
+        print()
+        raise
 
     n_sp += 1
 
