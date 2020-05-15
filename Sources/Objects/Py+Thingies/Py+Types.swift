@@ -14,6 +14,11 @@ extension PyInstance {
       return .value(true)
     }
 
+    if let type = typeOrTuple as? PyType, type.checkExact() {
+      let result = type.isType(of: object)
+      return .value(result)
+    }
+
     if let tuple = typeOrTuple as? PyTuple {
       for type in tuple.elements {
         switch self.isInstance(object: object, of: type) {
@@ -51,8 +56,13 @@ extension PyInstance {
   /// See [this](https://docs.python.org/3/library/functions.html#issubclass)
   public func isSubclass(object: PyObject,
                          of typeOrTuple: PyObject) -> PyResult<Bool> {
-    if object.type === typeOrTuple {
-      return .value(true)
+    if let `super` = typeOrTuple as? PyType, `super`.checkExact() {
+      guard let type = object as? PyType else {
+        return .typeError("issubclass() arg 1 must be a class")
+      }
+
+      let result = type.isSubtype(of: `super`)
+      return .value(result)
     }
 
     if let tuple = typeOrTuple as? PyTuple {
@@ -70,18 +80,20 @@ extension PyInstance {
 
   private func call__subclasscheck__(type: PyObject,
                                      super: PyObject) -> PyResult<Bool> {
-    if let result = Fast.__subclasscheck__(type, of: `super`) {
+    // This method is called on 'super'! Not on object!
+    if let result = Fast.__subclasscheck__(`super`, of: type) {
       return result
     }
 
-    switch self.callMethod(object: type,
+    switch self.callMethod(object: `super`,
                            selector: .__subclasscheck__,
-                           arg: `super`) {
+                           arg: type) {
     case .value(let o):
       return self.isTrueBool(o)
     case .missingMethod:
-      return .typeError("issubclass() arg 1 must be a class")
-    case .error(let e), .notCallable(let e):
+      return .typeError("issubclass() arg 2 must be a class or tuple of classes")
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }

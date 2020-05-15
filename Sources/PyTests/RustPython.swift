@@ -64,6 +64,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("inplace_ops.py"))
 //  runTest(file: dir.appendingPathComponent("ints.py"))
 //  runTest(file: dir.appendingPathComponent("isinstance.py"))
+//  runTest(file: dir.appendingPathComponent("issubclass.py"))
 //  runTest(file: dir.appendingPathComponent("iterable.py"))
 //  runTest(file: dir.appendingPathComponent("iterations.py"))
 //  runTest(file: dir.appendingPathComponent("list.py"))
@@ -97,7 +98,6 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("builtin_round.py"))
 //  runTest(file: dir.appendingPathComponent("delete.py"))
 //  runTest(file: dir.appendingPathComponent("index_overflow.py"))
-//  runTest(file: dir.appendingPathComponent("issubclass.py"))
 //  runTest(file: dir.appendingPathComponent("property.py"))
 
 //  runTest(file: dir.appendingPathComponent("builtin_callable.py"))
