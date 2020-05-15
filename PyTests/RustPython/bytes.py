@@ -57,7 +57,9 @@ assert b"foobar".__le__(2) == NotImplemented
 hash(a) == hash(b"abcd")
 
 # iter
-[i for i in b"abcd"] == ["a", "b", "c", "d"]
+# VIOLET: We do not have comprehensions, changed to list
+# [i for i in b"abcd"] == ["a", "b", "c", "d"]
+assert list(b"abcd") == [97, 98, 99, 100]
 assert list(bytes(3)) == [0, 0, 0]
 
 # add
@@ -147,7 +149,9 @@ except ValueError as e:
 with assert_raises(TypeError):
     bytes.fromhex(b"hhjjk")
 # center
-assert [b"koki".center(i, b"|") for i in range(3, 10)] == [
+# VIOLET: We do not have comprehensions, changed to map
+# assert [b"koki".center(i, b"|") for i in range(3, 10)] == [
+assert list(map(lambda i: b"koki".center(i, b"|"), range(3, 10))) == [
     b"koki",
     b"koki",
     b"|koki",
@@ -157,7 +161,8 @@ assert [b"koki".center(i, b"|") for i in range(3, 10)] == [
     b"|||koki||",
 ]
 
-assert [b"kok".center(i, b"|") for i in range(2, 10)] == [
+# assert [b"kok".center(i, b"|") for i in range(2, 10)] == [
+assert list(map(lambda i: b"kok".center(i, b"|"), range(2, 10))) == [
     b"kok",
     b"kok",
     b"kok|",
@@ -179,7 +184,9 @@ b"kok".center(-5) == b"kok"
 
 
 # ljust
-assert [b"koki".ljust(i, b"|") for i in range(3, 10)] == [
+# VIOLET: We do not have comprehensions, changed to list
+# assert [b"koki".ljust(i, b"|") for i in range(3, 10)] == [
+assert list(map(lambda i: b"koki".ljust(i, b"|"), range(3, 10))) == [
     b"koki",
     b"koki",
     b"koki|",
@@ -188,7 +195,8 @@ assert [b"koki".ljust(i, b"|") for i in range(3, 10)] == [
     b"koki||||",
     b"koki|||||",
 ]
-assert [b"kok".ljust(i, b"|") for i in range(2, 10)] == [
+# assert [b"kok".ljust(i, b"|") for i in range(2, 10)] == [
+assert list(map(lambda i: b"kok".ljust(i, b"|"), range(2, 10))) == [
     b"kok",
     b"kok",
     b"kok|",
@@ -210,7 +218,9 @@ assert b"kok".ljust(5, bytearray(b"x")) == b"kokxx"
 assert b"kok".ljust(-5) == b"kok"
 
 # rjust
-assert [b"koki".rjust(i, b"|") for i in range(3, 10)] == [
+# VIOLET: We do not have comprehensions, changed to list
+# assert [b"koki".rjust(i, b"|") for i in range(3, 10)] == [
+assert list(map(lambda i: b"koki".rjust(i, b"|"), range(3, 10))) == [
     b"koki",
     b"koki",
     b"|koki",
@@ -219,7 +229,8 @@ assert [b"koki".rjust(i, b"|") for i in range(3, 10)] == [
     b"||||koki",
     b"|||||koki",
 ]
-assert [b"kok".rjust(i, b"|") for i in range(2, 10)] == [
+# assert [b"kok".rjust(i, b"|") for i in range(2, 10)] == [
+assert list(map(lambda i: b"kok".rjust(i, b"|"), range(2, 10))) == [
     b"kok",
     b"kok",
     b"|kok",
@@ -504,28 +515,31 @@ SPLIT_FIXTURES = [
 ]
 
 
+# VIOLET: We do not have comprehensions, in a few places we changed them to lists
 # for i in SPLIT_FIXTURES:  # for not yet implemented : TypeError: Unsupported method: __next__
 n_sp = 0
 while n_sp < len(SPLIT_FIXTURES):
     i = SPLIT_FIXTURES[n_sp]
     sep = None if i[1] == None else bytes(i[1])
     try:
-        assert bytes(i[0]).split(sep=sep, maxsplit=i[4]) == [bytes(j) for j in i[2]]
+        # assert bytes(i[0]).split(sep=sep, maxsplit=i[4]) == [bytes(j) for j in i[2]]
+        assert bytes(i[0]).split(sep=sep, maxsplit=i[4]) == list(map(lambda b: bytes(b), i[2]))
     except AssertionError:
         print(i[0], i[1], i[2])
-        print(
-            "Expected : ", [list(x) for x in bytes(i[0]).split(sep=sep, maxsplit=i[4])]
-        )
+        # print(
+        #     "Expected : ", [list(x) for x in bytes(i[0]).split(sep=sep, maxsplit=i[4])]
+        # )
         break
 
     try:
-        assert bytes(i[0]).rsplit(sep=sep, maxsplit=i[4]) == [bytes(j) for j in i[3]]
+        # assert bytes(i[0]).rsplit(sep=sep, maxsplit=i[4]) == [bytes(j) for j in i[3]]
+        assert bytes(i[0]).rsplit(sep=sep, maxsplit=i[4]) == list(map(lambda b: bytes(b), i[3]))
     except AssertionError:
         print(i[0], i[1], i[2])
-        print(
-            "Expected Rev : ",
-            [list(x) for x in bytes(i[0]).rsplit(sep=sep, maxsplit=i[4])],
-        )
+        # print(
+        #     "Expected Rev : ",
+        #     [list(x) for x in bytes(i[0]).rsplit(sep=sep, maxsplit=i[4])],
+        # )
         break
 
     n_sp += 1
