@@ -41,12 +41,6 @@ extension String: PyFunctionResultConvertible {
   }
 }
 
-extension Data: PyFunctionResultConvertible {
-  internal var asFunctionResult: PyFunctionResult {
-    return .value(Py.newBytes(self))
-  }
-}
-
 // MARK: - Collections
 
 extension Array: PyFunctionResultConvertible
