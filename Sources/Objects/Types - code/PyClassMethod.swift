@@ -49,7 +49,7 @@ public class PyClassMethod: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
@@ -63,7 +63,7 @@ public class PyClassMethod: PyObject {
   // MARK: - Func
 
   // sourcery: pyproperty = __func__
-  internal func getFunc() -> PyObject? {
+  public func getFunc() -> PyObject? {
     return self.callable
   }
 

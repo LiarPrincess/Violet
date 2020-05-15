@@ -1,6 +1,8 @@
 import VioletBytecode
 import VioletObjects
 
+// swiftlint:disable file_length
+
 extension Eval {
 
   // MARK: - Unpack tuple/list
@@ -89,10 +91,26 @@ extension Eval {
       return result.value
     }
 
+    if let fn = object as? PyBuiltinFunction {
+      return fn.getName()
+    }
+
     if let method = object as? PyMethod {
       let fn = method.getFunc()
       let result = fn.getName()
       return result.value
+    }
+
+     if let fn = object as? PyBuiltinMethod {
+      return fn.getName()
+    }
+
+    if let fn = object as? PyStaticMethod, let callable = fn.getFunc() {
+      return self.getFunctionName(object: callable)
+    }
+
+    if let fn = object as? PyClassMethod, let callable = fn.getFunc() {
+      return self.getFunctionName(object: callable)
     }
 
     return nil
@@ -153,10 +171,15 @@ extension Eval {
     let iterables = self.stack.popElementsInPushOrder(count: elementCount)
 
     for object in iterables {
-      switch dict.update(from: object) {
+      switch dict.update(from: object, onKeyDuplicate: .error) {
       case .value:
         break // just go to the next element
       case .error(let e):
+        if e.isKeyError {
+          let e2 = self.mapUnpackWithCallDuplicateError(keyError: e)
+          return .exception(e2)
+        }
+
         // Try to be a bit more precise in the error message.
         let e2 = self.mapUnpackWithCallError(iterable: object, error: e) ?? e
         return .exception(e2)
@@ -165,6 +188,37 @@ extension Eval {
 
     self.stack.push(dict)
     return .ok
+  }
+
+  private func mapUnpackWithCallDuplicateError(
+    keyError: PyBaseException
+  ) -> PyBaseException {
+    /// Template: function_name() got multiple values for keyword argument 'key_str'
+    var msg = ""
+
+    if self.stack.count >= 2 {
+      let fnObject = self.stack.second
+
+      if let name = self.getFunctionName(object: fnObject) {
+        msg.append(name + "() ")
+      } else {
+        msg.append(fnObject.typeName + "object ")
+      }
+    }
+
+    msg.append("got multiple values for keyword argument")
+
+    let args = keyError.getArgs()
+    if let firstArg = args.elements.first {
+      switch Py.strValue(object: firstArg) {
+      case .value(let s):
+        msg.append(" \(s.quoted)")
+      case .error:
+        break
+      }
+    }
+
+    return Py.newTypeError(msg: msg)
   }
 
   private func mapUnpackWithCallError(

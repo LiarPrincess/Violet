@@ -564,14 +564,14 @@ public class PyDict: PyObject {
     }
 
     if let arg = args.first {
-      switch self.update(from: arg) {
+      switch self.update(from: arg, onKeyDuplicate: .continue) {
       case .value: break
       case .error(let e): return .error(e)
       }
     }
 
     if let kwargs = kwargs {
-      switch self.update(from: kwargs) {
+      switch self.update(from: kwargs, onKeyDuplicate: .continue) {
       case .value: break
       case .error(let e): return .error(e)
       }
@@ -580,17 +580,33 @@ public class PyDict: PyObject {
     return .value(Py.none)
   }
 
-  public func update(from object: PyObject) -> PyResult<PyNone> {
-    if let dict = object as? PyDict {
-      return self.update(from: dict.data)
+  public enum UpdateKeyDuplicate {
+    case `continue`
+    case error
+
+    public static var `default`: UpdateKeyDuplicate {
+      return .continue
+    }
+  }
+
+  public func update(
+    from object: PyObject,
+    onKeyDuplicate: UpdateKeyDuplicate = .default
+  ) -> PyResult<PyNone> {
+    if let dict = object as? PyDict, dict.checkExact() {
+      return self.update(from: dict.data,
+                         onKeyDuplicate: onKeyDuplicate)
     }
 
     switch self.callKeys(on: object) {
     case .value(let keys): // We have keys -> dict-like object
-      return self.update(fromKeysOwner: object, keys: keys)
+      return self.update(fromKeysOwner: object,
+                         keys: keys,
+                         onKeyDuplicate: onKeyDuplicate)
 
     case .missingMethod: // We don't have keys -> try iterable
-      return self.update(fromIterableOfPairs: object)
+      return self.update(fromIterableOfPairs: object,
+                         onKeyDuplicate: onKeyDuplicate)
 
     case .error(let e):
       return .error(e)
@@ -618,23 +634,34 @@ public class PyDict: PyObject {
     }
   }
 
-  public func update(from data: PyDictData) -> PyResult<PyNone> {
+  public func update(
+    from data: PyDictData,
+    onKeyDuplicate: UpdateKeyDuplicate = .default
+  ) -> PyResult<PyNone> {
     for entry in data {
-      switch self.insert(key: entry.key, value: entry.value) {
-      case .value: break
-      case .error(let e): return .error(e)
+      if let e = self.update(key: entry.key,
+                             value: entry.value,
+                             onKeyDuplicate: onKeyDuplicate) {
+        return .error(e)
       }
     }
 
     return .value(Py.none)
   }
 
-  private func insert(key: PyDictKey, value: PyObject) -> PyResult<Void> {
+  private func update(key: PyDictKey,
+                      value: PyObject,
+                      onKeyDuplicate: UpdateKeyDuplicate) -> PyBaseException? {
     switch self.data.insert(key: key, value: value) {
-    case .inserted, .updated:
-      return .value()
+    case .inserted:
+      return nil
+    case .updated:
+      switch onKeyDuplicate {
+      case .continue: return nil
+      case .error: return Py.newKeyError(key: key.object)
+      }
     case .error(let e):
-      return .error(e)
+      return e
     }
   }
 
@@ -644,7 +671,8 @@ public class PyDict: PyObject {
   /// PyDict_MergeFromSeq2(PyObject *d, PyObject *seq2, int override)
   ///
   /// Iterable of sequences with 2 elements (key and value).
-  private func update(fromIterableOfPairs iterable: PyObject) -> PyResult<PyNone> {
+  private func update(fromIterableOfPairs iterable: PyObject,
+                      onKeyDuplicate: UpdateKeyDuplicate) -> PyResult<PyNone> {
     let kvs = Py.reduce(iterable: iterable, into: [KeyValue]()) { acc, object in
       switch self.unpackKeyValue(fromIterable: object) {
       case let .value(keyValue):
@@ -658,9 +686,10 @@ public class PyDict: PyObject {
     switch kvs {
     case let .value(keyValues):
       for (key, value) in keyValues {
-        switch self.insert(key: key, value: value) {
-        case .value: break
-        case .error(let e): return .error(e)
+        if let e = self.update(key: key,
+                               value: value,
+                               onKeyDuplicate: onKeyDuplicate) {
+          return .error(e)
         }
       }
 
@@ -692,7 +721,8 @@ public class PyDict: PyObject {
   /// static int
   /// dict_merge(PyObject *a, PyObject *b, int override)
   private func update(fromKeysOwner dict: PyObject,
-                      keys keyIterable: PyObject) -> PyResult<PyNone> {
+                      keys keyIterable: PyObject,
+                      onKeyDuplicate: UpdateKeyDuplicate) -> PyResult<PyNone> {
     let keys: [PyObject]
     switch Py.toArray(iterable: keyIterable) {
     case let .value(k): keys = k
@@ -712,9 +742,10 @@ public class PyDict: PyObject {
       case let .error(e): return .error(e)
       }
 
-      switch self.insert(key: key, value: value) {
-      case .value: break
-      case .error(let e): return .error(e)
+      if let e = self.update(key: key,
+                             value: value,
+                             onKeyDuplicate: onKeyDuplicate) {
+        return .error(e)
       }
     }
 
@@ -798,7 +829,7 @@ public class PyDict: PyObject {
       return .error(e)
     }
 
-    // Fast path for 'dict'
+    // Fast path for empty 'dict'
     if let dict = dictObject as? PyDict, dict.checkExact(), dict.data.isEmpty {
       if let iterDict = iterable as? PyDict, iterDict.checkExact() {
         return self.fillFromKeys(dict: dict, iterable: iterDict, value: value)
@@ -830,14 +861,12 @@ public class PyDict: PyObject {
     assert(dict.checkExact())
     assert(iterable.checkExact())
 
-    for entry in iterable.data {
-      switch dict.insert(key: entry.key, value: value) {
-      case .value: break // go to next
-      case .error(let e): return .error(e)
-      }
+    switch dict.update(from: iterable, onKeyDuplicate: .continue) {
+    case .value:
+      return .value(dict)
+    case .error(let e):
+      return .error(e)
     }
-
-    return .value(dict)
   }
 
   private static func fillFromKeys(dict: PyDict,
@@ -848,9 +877,8 @@ public class PyDict: PyObject {
 
     for entry in iterable.data.dict {
       let key = PyDictKey(hash: entry.key.hash, object: entry.key.object)
-      switch dict.insert(key: key, value: value) {
-      case .value: break // go to next
-      case .error(let e): return .error(e)
+      if let e = dict.update(key: key, value: value, onKeyDuplicate: .continue) {
+        return .error(e)
       }
     }
 
