@@ -837,6 +837,10 @@ public class PyInt: PyObject {
       return .value(0)
     }
 
+    if object.isNone {
+      return .value(0)
+    }
+
     return IndexHelper.bigInt(object)
   }
 
