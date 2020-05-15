@@ -61,8 +61,9 @@ with assert_raises(TypeError):
 
 # # iter
 # VIOLET: We do not have comprehensions, changed to list
-# assert [i for i in bytearray(b"abcd")] == ["a", "b", "c", "d"]
-assert list(bytearray(b"abcd")) == ["a", "b", "c", "d"]
+# VIOLET-RP: added missing 'assert', result should be '[97, 98, 99, 100]' not '["a", "b", "c", "d"]'
+# [i for i in bytearray(b"abcd")] == ["a", "b", "c", "d"]
+assert list(bytearray(b"abcd")) == [97, 98, 99, 100]
 assert list(bytearray(3)) == [0, 0, 0]
 
 # add
@@ -264,8 +265,9 @@ assert bytearray(b"azeazerazeazopia").count(b"az") == 4
 assert bytearray(b"azeazerazeazopia").count(b"a") == 5
 assert bytearray(b"123456789").count(b"") == 10
 assert bytearray(b"azeazerazeazopia").count(bytearray(b"aze")) == 3
-assert bytearray(b"azeazerazeazopia").count(memoryview(b"aze")) == 3
-assert bytearray(b"azeazerazeazopia").count(memoryview(b"aze"), 1, 9) == 1
+# VIOLET: We do not have 'memoryview'
+# assert bytearray(b"azeazerazeazopia").count(memoryview(b"aze")) == 3
+# assert bytearray(b"azeazerazeazopia").count(memoryview(b"aze"), 1, 9) == 1
 assert bytearray(b"azeazerazeazopia").count(b"aze", None, None) == 3
 assert bytearray(b"azeazerazeazopia").count(b"aze", 2, None) == 2
 assert bytearray(b"azeazerazeazopia").count(b"aze", 2) == 2
@@ -279,9 +281,14 @@ with assert_raises(ValueError):
 assert bytearray(b"azeazerazeazopia").count(97) == 5
 
 # join
+# VIOLET: We do not have 'memoryview', removed from test
+# assert bytearray(b"").join(
+#     (b"jiljl", bytearray(b"kmoomk"), memoryview(b"aaaa"))
+# ) == bytearray(b"jiljlkmoomkaaaa")
 assert bytearray(b"").join(
-    (b"jiljl", bytearray(b"kmoomk"), memoryview(b"aaaa"))
-) == bytearray(b"jiljlkmoomkaaaa")
+    (b"jiljl", bytearray(b"kmoomk"))
+) == bytearray(b"jiljlkmoomk")
+
 with assert_raises(TypeError):
     bytearray(b"").join((b"km", "kl"))
 assert bytearray(b"abc").join((
@@ -339,29 +346,31 @@ assert bytearray(b"abcdabcda").rindex(b"a") == 8
 
 
 # make trans
+# VIOLET: We do not have 'maketrans' and 'memoryview'
 # fmt: off
-assert (
-    bytearray.maketrans(memoryview(b"abc"), bytearray(b"zzz"))
-    == bytes([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 122, 122, 122, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255])
-)
+# assert (
+#     bytearray.maketrans(memoryview(b"abc"), bytearray(b"zzz"))
+#     == bytes([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 122, 122, 122, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255])
+# )
 # fmt: on
 
 # translate
-assert bytearray(b"hjhtuyjyujuyj").translate(
-    bytearray.maketrans(b"hj", bytearray(b"ab")), bytearray(b"h")
-) == bytearray(b"btuybyubuyb")
-assert bytearray(b"hjhtuyjyujuyj").translate(
-    bytearray.maketrans(b"hj", bytearray(b"ab")), bytearray(b"a")
-) == bytearray(b"abatuybyubuyb")
-assert bytearray(b"hjhtuyjyujuyj").translate(
-    bytearray.maketrans(b"hj", bytearray(b"ab"))
-) == bytearray(b"abatuybyubuyb")
-assert bytearray(b"hjhtuyfjtyhuhjuyj").translate(None, bytearray(b"ht")) == bytearray(
-    b"juyfjyujuyj"
-)
-assert bytearray(b"hjhtuyfjtyhuhjuyj").translate(None, delete=b"ht") == bytearray(
-    b"juyfjyujuyj"
-)
+# VIOLET: We do not have 'translate'
+# assert bytearray(b"hjhtuyjyujuyj").translate(
+#     bytearray.maketrans(b"hj", bytearray(b"ab")), bytearray(b"h")
+# ) == bytearray(b"btuybyubuyb")
+# assert bytearray(b"hjhtuyjyujuyj").translate(
+#     bytearray.maketrans(b"hj", bytearray(b"ab")), bytearray(b"a")
+# ) == bytearray(b"abatuybyubuyb")
+# assert bytearray(b"hjhtuyjyujuyj").translate(
+#     bytearray.maketrans(b"hj", bytearray(b"ab"))
+# ) == bytearray(b"abatuybyubuyb")
+# assert bytearray(b"hjhtuyfjtyhuhjuyj").translate(None, bytearray(b"ht")) == bytearray(
+#     b"juyfjyujuyj"
+# )
+# assert bytearray(b"hjhtuyfjtyhuhjuyj").translate(None, delete=b"ht") == bytearray(
+#     b"juyfjyujuyj"
+# )
 
 
 # strip lstrip rstrip
@@ -543,7 +552,7 @@ while n_sp < len(SPLIT_FIXTURES):
         # print(
         #     "Expected : ", [list(x) for x in bytearray(i[0]).split(sep=sep, maxsplit=i[4])]
         # )
-        break
+        assert False
 
     try:
         # assert bytearray(i[0]).rsplit(sep=sep, maxsplit=i[4]) == [bytearray(j) for j in i[3]]
@@ -554,7 +563,7 @@ while n_sp < len(SPLIT_FIXTURES):
         #     "Expected Rev : ",
         #     [list(x) for x in bytearray(i[0]).rsplit(sep=sep, maxsplit=i[4])],
         # )
-        break
+        assert False
 
     n_sp += 1
 
@@ -576,7 +585,8 @@ assert bytearray(b"123456789").partition(b"45") == ((b"123"), bytearray(b"45"), 
 assert bytearray(b"14523456789").partition(b"45") == ((b"1"), bytearray(b"45"), bytearray(b"23456789"))
 a = bytearray(b"14523456789").partition(b"45")
 assert isinstance(a[1], bytearray)
-a = bytearray(b"14523456789").partition(memoryview(b"45"))
+# VIOLET: We do not have 'memoryview'
+# a = bytearray(b"14523456789").partition(memoryview(b"45"))
 assert isinstance(a[1], bytearray)
 
 # partition
@@ -584,7 +594,8 @@ assert bytearray(b"123456789").rpartition(bytearray(b"45")) == ((bytearray(b"123
 assert bytearray(b"14523456789").rpartition(bytearray(b"45")) == ((bytearray(b"14523")), bytearray(b"45"), bytearray(b"6789"))
 a = bytearray(b"14523456789").rpartition(b"45")
 assert isinstance(a[1], bytearray)
-a = bytearray(b"14523456789").rpartition(memoryview(b"45"))
+# VIOLET: We do not have 'memoryview'
+# a = bytearray(b"14523456789").rpartition(memoryview(b"45"))
 assert isinstance(a[1], bytearray)
 
 # splitlines
@@ -717,15 +728,18 @@ a[0] = 1
 assert a == bytearray(b'\x01est')
 with assert_raises(TypeError):
     a[0] = b'a'
-with assert_raises(TypeError):
-    a[0] = memoryview(b'a')
+# VIOLET: We do not have 'memoryview'
+# with assert_raises(TypeError):
+#     a[0] = memoryview(b'a')
 a[:2] = [0, 9]
 assert a == bytearray(b'\x00\x09st')
 a[1:3] = b'test'
 assert a == bytearray(b'\x00testt')
-a[:6] = memoryview(b'test')
-assert a == bytearray(b'test')
+# VIOLET: We do not have 'memoryview'
+# a[:6] = memoryview(b'test')
+# assert a == bytearray(b'test')
 
 # mod
-assert bytearray('rust%bpython%b', 'utf-8') % (b' ', b'!') == bytearray(b'rust python!')
-assert bytearray('x=%i y=%f', 'utf-8') % (1, 2.5) == bytearray(b'x=1 y=2.500000')
+# VIOLET: We do not have string formatting
+# assert bytearray('rust%bpython%b', 'utf-8') % (b' ', b'!') == bytearray(b'rust python!')
+# assert bytearray('x=%i y=%f', 'utf-8') % (1, 2.5) == bytearray(b'x=1 y=2.500000')
