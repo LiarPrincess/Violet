@@ -60,7 +60,9 @@ with assert_raises(TypeError):
     hash(bytearray(b"abcd"))  # unashable
 
 # # iter
-[i for i in bytearray(b"abcd")] == ["a", "b", "c", "d"]
+# VIOLET: We do not have comprehensions, changed to list
+# assert [i for i in bytearray(b"abcd")] == ["a", "b", "c", "d"]
+assert list(bytearray(b"abcd")) == ["a", "b", "c", "d"]
 assert list(bytearray(3)) == [0, 0, 0]
 
 # add
@@ -136,21 +138,27 @@ assert b"AaBbCc123'@/".swapcase().swapcase() == b"AaBbCc123'@/"
 assert b"AaBbCc123'@/".swapcase() == b"aAbBcC123'@/"
 
 # # hex from hex
-assert bytearray([0, 1, 9, 23, 90, 234]).hex() == "000109175aea"
+# VIOLET: We do not have 'hex' and 'fromhex'
+# assert bytearray([0, 1, 9, 23, 90, 234]).hex() == "000109175aea"
 
-bytearray.fromhex("62 6c7a 34350a ") == b"blz45\n"
-try:
-    bytearray.fromhex("62 a 21")
-except ValueError as e:
-    str(e) == "non-hexadecimal number found in fromhex() arg at position 4"
-try:
-    bytearray.fromhex("6Z2")
-except ValueError as e:
-    str(e) == "non-hexadecimal number found in fromhex() arg at position 1"
-with assert_raises(TypeError):
-    bytearray.fromhex(b"hhjjk")
+# bytearray.fromhex("62 6c7a 34350a ") == b"blz45\n"
+
+# try:
+#     bytearray.fromhex("62 a 21")
+# except ValueError as e:
+#     str(e) == "non-hexadecimal number found in fromhex() arg at position 4"
+
+# try:
+#     bytearray.fromhex("6Z2")
+# except ValueError as e:
+#     str(e) == "non-hexadecimal number found in fromhex() arg at position 1"
+# with assert_raises(TypeError):
+#     bytearray.fromhex(b"hhjjk")
+
 # center
-assert [bytearray(b"koki").center(i, b"|") for i in range(3, 10)] == [
+# VIOLET: We do not have comprehensions, changed to map
+# assert [bytearray(b"koki").center(i, b"|") for i in range(3, 10)] == [
+assert list(map(lambda i: bytearray(b"koki").center(i, b"|"), range(3, 10))) == [
     b"koki",
     b"koki",
     b"|koki",
@@ -160,7 +168,8 @@ assert [bytearray(b"koki").center(i, b"|") for i in range(3, 10)] == [
     b"|||koki||",
 ]
 
-assert [bytearray(b"kok").center(i, b"|") for i in range(2, 10)] == [
+# assert [bytearray(b"kok").center(i, b"|") for i in range(2, 10)] == [
+assert list(map(lambda i: bytearray(b"kok").center(i, b"|"), range(2, 10))) == [
     b"kok",
     b"kok",
     b"kok|",
@@ -182,7 +191,8 @@ bytearray(b"kok").center(-5) == b"kok"
 
 
 # ljust
-assert [bytearray(b"koki").ljust(i, b"|") for i in range(3, 10)] == [
+# assert [bytearray(b"koki").ljust(i, b"|") for i in range(3, 10)] == [
+assert list(map(lambda i: bytearray(b"koki").ljust(i, b"|"), range(3, 10))) == [
     b"koki",
     b"koki",
     b"koki|",
@@ -191,7 +201,8 @@ assert [bytearray(b"koki").ljust(i, b"|") for i in range(3, 10)] == [
     b"koki||||",
     b"koki|||||",
 ]
-assert [bytearray(b"kok").ljust(i, b"|") for i in range(2, 10)] == [
+# assert [bytearray(b"kok").ljust(i, b"|") for i in range(2, 10)] == [
+assert list(map(lambda i: bytearray(b"kok").ljust(i, b"|"), range(2, 10))) == [
     b"kok",
     b"kok",
     b"kok|",
@@ -213,7 +224,8 @@ assert bytearray(b"kok").ljust(5, bytearray(b"x")) == b"kokxx"
 assert bytearray(b"kok").ljust(-5) == b"kok"
 
 # rjust
-assert [bytearray(b"koki").rjust(i, b"|") for i in range(3, 10)] == [
+# assert [bytearray(b"koki").rjust(i, b"|") for i in range(3, 10)] == [
+assert list(map(lambda i: bytearray(b"koki").rjust(i, b"|"), range(3, 10))) == [
     b"koki",
     b"koki",
     b"|koki",
@@ -222,7 +234,8 @@ assert [bytearray(b"koki").rjust(i, b"|") for i in range(3, 10)] == [
     b"||||koki",
     b"|||||koki",
 ]
-assert [bytearray(b"kok").rjust(i, b"|") for i in range(2, 10)] == [
+# assert [bytearray(b"kok").rjust(i, b"|") for i in range(2, 10)] == [
+assert list(map(lambda i: bytearray(b"kok").rjust(i, b"|"), range(2, 10))) == [
     b"kok",
     b"kok",
     b"|kok",
@@ -516,28 +529,31 @@ SPLIT_FIXTURES = [
 ]
 
 
+# VIOLET: We do not have comprehensions, in a few places we changed them to lists
 # for i in SPLIT_FIXTURES:  # for not yet implemented : TypeError: Unsupported method: __next__
 n_sp = 0
 while n_sp < len(SPLIT_FIXTURES):
     i = SPLIT_FIXTURES[n_sp]
     sep = None if i[1] == None else bytearray(i[1])
     try:
-        assert bytearray(i[0]).split(sep=sep, maxsplit=i[4]) == [bytearray(j) for j in i[2]]
+        # assert bytearray(i[0]).split(sep=sep, maxsplit=i[4]) == [bytearray(j) for j in i[2]]
+        assert bytearray(i[0]).split(sep=sep, maxsplit=i[4]) == list(map(lambda b: bytearray(b), i[2]))
     except AssertionError:
         print(i[0], i[1], i[2])
-        print(
-            "Expected : ", [list(x) for x in bytearray(i[0]).split(sep=sep, maxsplit=i[4])]
-        )
+        # print(
+        #     "Expected : ", [list(x) for x in bytearray(i[0]).split(sep=sep, maxsplit=i[4])]
+        # )
         break
 
     try:
-        assert bytearray(i[0]).rsplit(sep=sep, maxsplit=i[4]) == [bytearray(j) for j in i[3]]
+        # assert bytearray(i[0]).rsplit(sep=sep, maxsplit=i[4]) == [bytearray(j) for j in i[3]]
+        assert bytearray(i[0]).rsplit(sep=sep, maxsplit=i[4]) == list(map(lambda b: bytearray(b), i[3]))
     except AssertionError:
         print(i[0], i[1], i[2])
-        print(
-            "Expected Rev : ",
-            [list(x) for x in bytearray(i[0]).rsplit(sep=sep, maxsplit=i[4])],
-        )
+        # print(
+        #     "Expected Rev : ",
+        #     [list(x) for x in bytearray(i[0]).rsplit(sep=sep, maxsplit=i[4])],
+        # )
         break
 
     n_sp += 1
