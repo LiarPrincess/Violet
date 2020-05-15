@@ -62,9 +62,14 @@ internal struct PyStringData: PyStringImpl, CustomStringConvertible {
     return element
   }
 
-  internal static func extractSelf(from object: PyObject) -> PyStringData? {
-    let string = object as? PyString
-    return string?.data
+  internal static func extractSelf(
+    from object: PyObject
+  ) -> PyStringImplExtractedSelf<Self> {
+    if let string = object as? PyString {
+      return .value(string.data)
+    }
+
+    return .notSelf
   }
 
   // MARK: - Repr

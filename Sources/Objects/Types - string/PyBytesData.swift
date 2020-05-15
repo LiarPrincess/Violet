@@ -71,17 +71,25 @@ internal struct PyBytesData: PyStringImpl {
     return UnicodeScalar(element)
   }
 
-  internal static func extractSelf(from object: PyObject) -> PyBytesData? {
+  internal static func extractSelf(
+    from object: PyObject
+  ) -> PyStringImplExtractedSelf<Self> {
     // Most of the `bytes` functions also accept `int`.
     // For example: `49 in b'123'`.
-    if let pyInt = object as? PyInt,
-       let byte = UInt8(exactly: pyInt.value) {
+    if let pyInt = object as? PyInt {
+      guard let byte = UInt8(exactly: pyInt.value) else {
+        let msg = "byte must be in range(0, 256)"
+        return .error(Py.newValueError(msg: msg))
+      }
 
-      return PyBytesData(Data([byte]))
+      return .value(PyBytesData(Data([byte])))
     }
 
-    let bytes = object as? PyBytesType
-    return bytes?.data
+    if let bytes = object as? PyBytesType {
+      return .value(bytes.data)
+    }
+
+    return .notSelf
   }
 
   // MARK: - Equatable
@@ -241,9 +249,14 @@ internal struct PyBytesData: PyStringImpl {
 
   internal mutating func extend(iterable: PyObject) -> PyResult<Void> {
     // Fast path: adding bytes
-    if let bytes = Self.extractSelf(from: iterable) {
+    switch Self.extractSelf(from: iterable) {
+    case .value(let bytes):
       self.values.append(contentsOf: bytes.scalars)
       return .value()
+    case .notSelf:
+      break // Try other
+    case .error(let e):
+      return .error(e)
     }
 
     // Slow path: iterable
@@ -580,9 +593,9 @@ internal struct PyBytesData: PyStringImpl {
         case let .error(e):
           return .error(e)
         }
-
-        return .bytes(result)
       }
+
+      return .bytes(result)
     }
 
     let acc = Py.reduce(iterable: iterable, into: Data()) { data, object in
