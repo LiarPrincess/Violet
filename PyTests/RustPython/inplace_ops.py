@@ -2,7 +2,7 @@ class InPlace:
     def __init__(self, val):
         self.val = val
 
-    def __ipow__(self, other):
+    def __ipow__(self, other, mod):
         self.val **= other
         return self
 
