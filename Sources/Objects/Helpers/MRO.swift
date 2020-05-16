@@ -52,7 +52,7 @@ internal struct MRO {
   // MARK: - From objects
 
   /// Create C3 linearisation of given base classes.
-  /// /// [doc](https://www.python.org/download/releases/2.3/mro/)
+  /// [doc](https://www.python.org/download/releases/2.3/mro/)
   ///
   /// It will not take into account `self` (which should be 1st in MRO)!
   internal static func linearize(baseClasses: [PyObject]) -> PyResult<MRO> {
@@ -60,7 +60,7 @@ internal struct MRO {
       return .typeError("bases must be types")
     }
 
-    return MRO.linearize(baseClasses: baseTypes)
+    return Self.linearize(baseClasses: baseTypes)
   }
 
   // MARK: - From types
@@ -73,15 +73,15 @@ internal struct MRO {
 
     // Fast path: if there is a single base, constructing the MRO is trivial.
     if baseClasses.count == 1 {
-      return MRO.linearize(baseClass: baseClasses[0])
+      return Self.linearize(baseClass: baseClasses[0])
     }
 
     // Sanity check.
-    if let duplicate = MRO.getDuplicateBaseClass(baseClasses) {
+    if let duplicate = Self.getDuplicateBaseClass(baseClasses) {
       return .typeError("duplicate base class \(duplicate.getQualname())")
     }
 
-    // Prepare mro matrix.
+    // Get mros to linearise.
     var mros = [[PyType]]()
     for type in baseClasses {
       switch Self.getMro(type: type) {
@@ -91,24 +91,25 @@ internal struct MRO {
     }
 
     mros.append(baseClasses)
+    let expectedMroCount = Self.countUniqueTypes(mros: mros)
 
     // Perform C3 linearisation.
     var result = [PyType]()
-    while MRO.hasAnyClassRemaining(mros) {
-      guard let base = MRO.getNextBase(mros) else {
+    while Self.hasAnyClassRemaining(mros) {
+      guard let base = Self.getNextBase(mros) else {
         let msg = "Cannot create a consistent method resolution order (MRO) for bases"
         return .typeError(msg)
       }
 
       result.append(base)
 
-      // Not the best performance, but we do not expect huge MROs.
+      // Not the best performance, but we do not expect big MROs.
       for index in 0..<mros.count {
         mros[index].removeAll { $0 === base }
       }
     }
 
-    assert(result.count == MRO.expectedCount(baseClasses: baseClasses))
+    assert(result.count == expectedMroCount)
     return .value(MRO(baseClasses: baseClasses, resolutionOrder: result))
   }
 
@@ -155,17 +156,16 @@ internal struct MRO {
     return nil
   }
 
-  private static func expectedCount(baseClasses: [PyType]) -> Int {
+  private static func countUniqueTypes(mros: [[PyType]]) -> Int {
     var result = 0
-    var visitedTypes = Set<ObjectIdentifier>()
+    var visited = Set<ObjectIdentifier>()
 
-    for base in baseClasses {
-      let mro = base.getMRO()
-      for type in mro {
+    for classList in mros {
+      for type in classList {
         let id = ObjectIdentifier(type)
-        if !visitedTypes.contains(id) {
+        if !visited.contains(id) {
           result += 1
-          visitedTypes.insert(id)
+          visited.insert(id)
         }
       }
     }
@@ -177,16 +177,21 @@ internal struct MRO {
 
   private static func getMro(type: PyType) -> PyResult<[PyType]> {
     // If this is just a boring type which has 'Py.types.type' as type
-    // (for example 'int' type has 'type' set to 'Py.types.type')
     // then we know exectly what method should be called.
+    // For example 'int' type has 'type' set to 'Py.types.type'
     if type.type === Py.types.type {
       // We will end up here in 99% of the cases.
       let result = type.getMRO()
       return .value(result)
     }
 
-    // Otherwise it is a 'type' which is an instance of 'god knows what type'.
-    // Yep, metaprogramming as its finest...
+    // Otherwise it is a 'type' which is an instance of 'god knows what':
+    // >>> class GodKnows(type): pass
+    // >>> my_type_is_GodKnows = GodKnows('Princess', (GodKnows,), {})
+    // >>> class Elsa(my_type_is_GodKnows): pass
+    //
+    // That was easy!
+    // We should use it instead of 'hello world' when teaching programming...
 
     let mroObject: PyObject
     switch Py.callMethod(object: type, selector: .mro) {

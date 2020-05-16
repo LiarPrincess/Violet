@@ -106,12 +106,12 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("try_exceptions.py"))
 //  runTest(file: dir.appendingPathComponent("tuple.py"))
 //  runTest(file: dir.appendingPathComponent("type_hints.py"))
+//  runTest(file: dir.appendingPathComponent("types_snippet.py"))
 //  runTest(file: dir.appendingPathComponent("unicode_slicing.py"))
 //  runTest(file: dir.appendingPathComponent("variables.py"))
 //  runTest(file: dir.appendingPathComponent("with.py"))
 
   // Failing tests:
-//  runTest(file: dir.appendingPathComponent("index_overflow.py"))
 //  runTest(file: dir.appendingPathComponent("invalid_syntax.py"))
 //  runTest(file: dir.appendingPathComponent("property.py"))
 
