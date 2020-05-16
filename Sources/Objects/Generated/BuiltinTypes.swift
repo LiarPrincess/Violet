@@ -2300,7 +2300,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyType.getDict, castSelf: Self.asType))
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyType.getClass, castSelf: Self.asType))
     self.insert(type: type, name: "__base__", value: PyProperty.wrap(doc: nil, get: PyType.getBase, castSelf: Self.asType))
-    self.insert(type: type, name: "__mro__", value: PyProperty.wrap(doc: nil, get: PyType.getMRO, castSelf: Self.asType))
+    self.insert(type: type, name: "__mro__", value: PyProperty.wrap(doc: nil, get: PyType.get__mro__, castSelf: Self.asType))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyType.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyType.pyInit(args:kwargs:)))

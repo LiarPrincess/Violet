@@ -104,7 +104,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
     // The 'self.objectType' determines the method resolution order to be searched.
     // The search starts from the class right after the 'self.type'.
     // https://docs.python.org/3/library/functions.html#super
-    let mro = startType.getMRORaw()
+    let mro = startType.getMRO()
     let typeIndex = mro.firstIndex { $0 === suType } ?? mro.count
     let indexAfterTypeIndex = typeIndex + 1
 

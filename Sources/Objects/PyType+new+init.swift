@@ -419,7 +419,7 @@ extension PyType {
       return value != nil
     }
 
-    let mro = type.getMRORaw()
+    let mro = type.getMRO()
     return mro.contains(where: has(base:))
   }
 

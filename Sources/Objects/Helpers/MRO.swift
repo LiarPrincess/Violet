@@ -23,7 +23,7 @@ internal struct MRO {
   ///
   /// It will not take into account `self` (which should be 1st in MRO)!
   internal static func linearize(baseClass: PyType) -> MRO {
-    let mro = baseClass.getMRORaw()
+    let mro = baseClass.getMRO()
     return MRO(baseClasses: [baseClass], resolutionOrder: mro)
   }
 
@@ -69,7 +69,7 @@ internal struct MRO {
 
     // Perform C3 linearisation.
     var result = [PyType]()
-    var mros = baseClasses.map { $0.getMRORaw() } + [baseClasses]
+    var mros = baseClasses.map { $0.getMRO() } + [baseClasses]
 
     while MRO.hasAnyClassRemaining(mros) {
       guard let base = MRO.getNextBase(mros) else {
@@ -137,7 +137,7 @@ internal struct MRO {
     var visitedTypes = Set<ObjectIdentifier>()
 
     for base in baseClasses {
-      let mro = base.getMRORaw()
+      let mro = base.getMRO()
       for type in mro {
         let id = ObjectIdentifier(type)
         if !visitedTypes.contains(id) {

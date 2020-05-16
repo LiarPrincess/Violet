@@ -17,8 +17,8 @@
 Type|object|PyObject|
 Field|_type|PyType!
 Field|flags|PyObjectFlags
-Annotation|baseType
 Annotation|default
+Annotation|baseType
 Doc|doc
 PyProperty|__class__|getClass(zelf:)||PyType|
 PyMethod|__eq__|isEqual|isEqual(zelf: PyObject,                               other: PyObject)|isEqual(zelf:other:)|CompareResult|
@@ -47,8 +47,8 @@ PyClassMethod|__subclasshook__|subclasshook|subclasshook(args: [PyObject],      
 ############
 
 Type|bool|PyBool|PyInt
-Annotation|pytype
 Annotation|default
+Annotation|pytype
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyMethod|__repr__|repr|repr(bool zelf: PyBool)|repr(bool:)|PyResult<String>|
@@ -66,9 +66,9 @@ PyStaticMethod|__new__|pyBoolNew|pyBoolNew(type: PyType,                        
 ############
 
 Type|builtinFunction|PyBuiltinFunction|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|function|FunctionWrapper
 Field|module|PyObject?
 Field|doc|String?
@@ -95,9 +95,9 @@ PyMethod|__call__|call|call(args: [PyObject], kwargs: PyDict?)|call(args:kwargs:
 ############
 
 Type|builtinMethod|PyBuiltinMethod|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|function|FunctionWrapper
 Field|object|PyObject
 Field|module|PyObject?
@@ -124,9 +124,9 @@ PyMethod|__call__|call|call(args: [PyObject], kwargs: PyDict?)|call(args:kwargs:
 ############
 
 Type|bytearray|PyByteArray|PyObject
-Annotation|baseType
 Annotation|pytype
 Annotation|default
+Annotation|baseType
 Doc|doc
 Field|data|PyBytesData
 PyProperty|__class__|getClass||PyType|
@@ -202,9 +202,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|bytearray_iterator|PyByteArrayIterator|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|bytes|PyByteArray
 Field|index|Int
 PyProperty|__class__|getClass||PyType|
@@ -219,10 +219,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|bytes|PyBytes|PyObject
-Annotation|baseType
-Annotation|bytesSubclass
 Annotation|pytype
+Annotation|baseType
 Annotation|default
+Annotation|bytesSubclass
 Doc|doc
 Field|data|PyBytesData
 PyProperty|__class__|getClass||PyType|
@@ -285,9 +285,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|bytes_iterator|PyBytesIterator|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|bytes|PyBytes
 Field|index|Int
 PyProperty|__class__|getClass||PyType|
@@ -302,9 +302,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|callable_iterator|PyCallableIterator|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|callable|PyObject
 Field|sentinel|PyObject
 PyProperty|__class__|getClass||PyType|
@@ -317,9 +317,9 @@ PyMethod|__next__|next|next()|next|PyResult<PyObject>|
 ############
 
 Type|cell|PyCell|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|content|PyObject?
 PyMethod|__eq__|isEqual|isEqual(_ other: PyObject)|isEqual(_:)|CompareResult|
 PyMethod|__ne__|isNotEqual|isNotEqual(_ other: PyObject)|isNotEqual(_:)|CompareResult|
@@ -335,9 +335,9 @@ PyMethod|__getattribute__|getAttribute|getAttribute(name: PyObject)|getAttribute
 ############
 
 Type|classmethod|PyClassMethod|PyObject
+Annotation|pytype
 Annotation|baseType
 Annotation|default
-Annotation|pytype
 Annotation|hasGC
 Doc|doc
 Field|callable|PyObject?
@@ -355,8 +355,8 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|code|PyCode|PyObject
-Annotation|pytype
 Annotation|default
+Annotation|pytype
 Doc|doc
 Field|codeObject|CodeObject
 Field|name|PyString
@@ -386,9 +386,9 @@ PyMethod|__getattribute__|getAttribute|getAttribute(name: PyObject)|getAttribute
 ############
 
 Type|complex|PyComplex|PyObject
-Annotation|baseType
 Annotation|pytype
 Annotation|default
+Annotation|baseType
 Doc|doc
 Field|real|Double
 Field|imag|Double
@@ -435,10 +435,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|dict|PyDict|PyObject
-Annotation|baseType
-Annotation|default
-Annotation|dictSubclass
 Annotation|pytype
+Annotation|baseType
+Annotation|dictSubclass
+Annotation|default
 Annotation|hasGC
 Doc|doc
 Field|data|PyDictData
@@ -477,9 +477,9 @@ PyClassMethod|fromkeys|fromKeys|fromKeys(type: PyType,                          
 ############
 
 Type|dict_itemiterator|PyDictItemIterator|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|object|PyDict
 Field|index|Int
 Field|initCount|Int
@@ -495,9 +495,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|dict_items|PyDictItems|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|dict|PyDict
 PyProperty|__class__|getClass||PyType|
 PyMethod|__eq__|isEqual|isEqual(_ other: PyObject)|isEqual(_:)|CompareResult|
@@ -519,9 +519,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|dict_keyiterator|PyDictKeyIterator|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|object|PyDict
 Field|index|Int
 Field|initCount|Int
@@ -537,9 +537,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|dict_keys|PyDictKeys|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|dict|PyDict
 PyProperty|__class__|getClass||PyType|
 PyMethod|__eq__|isEqual|isEqual(_ other: PyObject)|isEqual(_:)|CompareResult|
@@ -561,9 +561,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|dict_valueiterator|PyDictValueIterator|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|object|PyDict
 Field|index|Int
 Field|initCount|Int
@@ -579,9 +579,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|dict_values|PyDictValues|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|dict|PyDict
 PyMethod|__repr__|repr|repr()|repr|PyResult<String>|
 PyMethod|__getattribute__|getAttribute|getAttribute(name: PyObject)|getAttribute(name:)|PyResult<PyObject>|
@@ -593,8 +593,8 @@ PyMethod|__iter__|iter|iter()|iter|PyObject|
 ############
 
 Type|ellipsis|PyEllipsis|PyObject
-Annotation|pytype
 Annotation|default
+Annotation|pytype
 PyProperty|__class__|getClass||PyType|
 PyMethod|__repr__|repr|repr()|repr|PyResult<String>|
 PyMethod|__reduce__|reduce|reduce()|reduce|String|
@@ -606,9 +606,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|enumerate|PyEnumerate|PyObject
+Annotation|pytype
 Annotation|baseType
 Annotation|default
-Annotation|pytype
 Annotation|hasGC
 Doc|doc
 Field|iterator|PyObject
@@ -624,9 +624,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|filter|PyFilter|PyObject
+Annotation|pytype
 Annotation|baseType
 Annotation|default
-Annotation|pytype
 Annotation|hasGC
 Doc|doc
 Field|fn|PyObject
@@ -642,9 +642,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|float|PyFloat|PyObject
-Annotation|baseType
 Annotation|pytype
 Annotation|default
+Annotation|baseType
 Doc|doc
 Field|value|Double
 PyProperty|real|asReal||PyObject|
@@ -696,9 +696,9 @@ PyClassMethod|fromhex|fromHex|fromHex(type: PyType,                             
 ############
 
 Type|frame|PyFrame|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|code|PyCode
 Field|parent|PyFrame?
 Field|stack|ObjectStack
@@ -728,9 +728,9 @@ PyMethod|__delattr__|delAttribute|delAttribute(name: PyObject)|delAttribute(name
 ############
 
 Type|frozenset|PyFrozenSet|PyObject
+Annotation|pytype
 Annotation|baseType
 Annotation|default
-Annotation|pytype
 Annotation|hasGC
 Doc|doc
 Field|data|PySetData
@@ -770,9 +770,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|function|PyFunction|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Doc|doc
 Field|name|PyString
 Field|qualname|PyString
@@ -806,10 +806,10 @@ PyMethod|__call__|call|call(args: [PyObject], kwargs: PyDict?)|call(args:kwargs:
 ############
 
 Type|int|PyInt|PyObject
-Annotation|baseType
-Annotation|default
 Annotation|pytype
+Annotation|baseType
 Annotation|longSubclass
+Annotation|default
 Doc|doc
 Field|value|BigInt
 PyProperty|__class__|getClass||PyType|
@@ -874,9 +874,9 @@ PyStaticMethod|__new__|pyIntNew|pyIntNew(type: PyType,                          
 ############
 
 Type|iterator|PyIterator|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|sequence|PyObject
 Field|index|Int
 PyProperty|__class__|getClass||PyType|
@@ -890,11 +890,11 @@ PyMethod|__length_hint__|lengthHint|lengthHint()|lengthHint|PyResult<PyInt>|
 ############
 
 Type|list|PyList|PyObject
-Annotation|baseType
-Annotation|listSubclass
-Annotation|default
 Annotation|pytype
+Annotation|baseType
+Annotation|default
 Annotation|hasGC
+Annotation|listSubclass
 Doc|doc
 Field|data|PySequenceData
 PyProperty|__class__|getClass||PyType|
@@ -938,9 +938,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|list_iterator|PyListIterator|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|list|PyList
 Field|index|Int
 PyProperty|__class__|getClass||PyType|
@@ -955,9 +955,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|list_reverseiterator|PyListReverseIterator|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|list|PyList
 Field|index|Int
 PyProperty|__class__|getClass||PyType|
@@ -972,9 +972,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|map|PyMap|PyObject
+Annotation|pytype
 Annotation|baseType
 Annotation|default
-Annotation|pytype
 Annotation|hasGC
 Doc|doc
 Field|fn|PyObject
@@ -990,9 +990,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|method|PyMethod|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Doc|doc
 Field|function|PyFunction
 Field|object|PyObject
@@ -1019,9 +1019,9 @@ PyMethod|__call__|call|call(args: [PyObject], kwargs: PyDict?)|call(args:kwargs:
 ############
 
 Type|module|PyModule|PyObject
+Annotation|pytype
 Annotation|baseType
 Annotation|default
-Annotation|pytype
 Annotation|hasGC
 Doc|doc
 Field|__dict__|PyDict
@@ -1040,9 +1040,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|types.SimpleNamespace|PyNamespace|PyObject
+Annotation|pytype
 Annotation|baseType
 Annotation|default
-Annotation|pytype
 Annotation|hasGC
 Doc|doc
 Field|__dict__|PyDict
@@ -1064,8 +1064,8 @@ PyMethod|__init__|pyInit|pyInit(args: [PyObject], kwargs: PyDict?)|pyInit(args:k
 ############
 
 Type|NoneType|PyNone|PyObject
-Annotation|pytype
 Annotation|default
+Annotation|pytype
 PyProperty|__class__|getClass||PyType|
 PyMethod|__repr__|repr|repr()|repr|PyResult<String>|
 PyMethod|__bool__|asBool|asBool()|asBool|Bool|
@@ -1077,8 +1077,8 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|NotImplementedType|PyNotImplemented|PyObject
-Annotation|pytype
 Annotation|default
+Annotation|pytype
 PyProperty|__class__|getClass||PyType|
 PyMethod|__repr__|repr|repr()|repr|PyResult<String>|
 PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?)|pyNew(type:args:kwargs:)|PyResult<PyNotImplemented>|
@@ -1088,9 +1088,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|property|PyProperty|PyObject
+Annotation|pytype
 Annotation|baseType
 Annotation|default
-Annotation|pytype
 Annotation|hasGC
 Doc|doc
 Field|_get|PyObject?
@@ -1116,8 +1116,8 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|range|PyRange|PyObject
-Annotation|pytype
 Annotation|default
+Annotation|pytype
 Doc|doc
 Field|start|PyInt
 Field|stop|PyInt
@@ -1153,8 +1153,8 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|range_iterator|PyRangeIterator|PyObject
-Annotation|pytype
 Annotation|default
+Annotation|pytype
 Field|start|BigInt
 Field|step|BigInt
 Field|length|BigInt
@@ -1171,9 +1171,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|reversed|PyReversed|PyObject
+Annotation|pytype
 Annotation|baseType
 Annotation|default
-Annotation|pytype
 Annotation|hasGC
 Doc|doc
 Field|sequence|PyObject
@@ -1190,9 +1190,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|set|PySet|PyObject
+Annotation|pytype
 Annotation|baseType
 Annotation|default
-Annotation|pytype
 Annotation|hasGC
 Doc|doc
 Field|data|PySetData
@@ -1239,9 +1239,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|set_iterator|PySetIterator|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|set|PySetType
 Field|index|Int
 Field|initCount|Int
@@ -1257,9 +1257,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|slice|PySlice|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Doc|doc
 Field|start|PyObject
 Field|stop|PyObject
@@ -1285,9 +1285,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|staticmethod|PyStaticMethod|PyObject
+Annotation|pytype
 Annotation|baseType
 Annotation|default
-Annotation|pytype
 Annotation|hasGC
 Doc|doc
 Field|callable|PyObject?
@@ -1305,10 +1305,10 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|str|PyString|PyObject
-Annotation|baseType
-Annotation|default
 Annotation|pytype
+Annotation|baseType
 Annotation|unicodeSubclass
+Annotation|default
 Doc|doc
 Field|data|PyStringData
 PyProperty|__class__|getClass||PyType|
@@ -1376,9 +1376,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|str_iterator|PyStringIterator|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|string|PyString
 Field|index|Int
 PyProperty|__class__|getClass||PyType|
@@ -1393,9 +1393,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                            args
 ############
 
 Type|super|PySuper|PyObject
+Annotation|pytype
 Annotation|baseType
 Annotation|default
-Annotation|pytype
 Annotation|hasGC
 Doc|doc
 Field|thisClass|PyType?
@@ -1415,9 +1415,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|TextFile|PyTextFile|PyObject
+Annotation|pytype
 Annotation|hasFinalize
 Annotation|default
-Annotation|pytype
 Annotation|hasGC
 Doc|doc
 Field|name|String?
@@ -1443,9 +1443,9 @@ PyMethod|__exit__|exit|exit(exceptionType: PyObject,                   exception
 ############
 
 Type|traceback|PyTraceback|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Doc|doc
 Field|next|PyTraceback?
 Field|frame|PyFrame
@@ -1465,11 +1465,11 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|tuple|PyTuple|PyObject
-Annotation|baseType
-Annotation|tupleSubclass
-Annotation|default
 Annotation|pytype
+Annotation|baseType
+Annotation|default
 Annotation|hasGC
+Annotation|tupleSubclass
 Doc|doc
 Field|data|PySequenceData
 PyProperty|__class__|getClass||PyType|
@@ -1498,9 +1498,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|tuple_iterator|PyTupleIterator|PyObject
-Annotation|pytype
 Annotation|hasGC
 Annotation|default
+Annotation|pytype
 Field|tuple|PyTuple
 Field|index|Int
 PyProperty|__class__|getClass||PyType|
@@ -1515,11 +1515,11 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|type|PyType|PyObject
-Annotation|baseType
-Annotation|default
 Annotation|pytype
-Annotation|hasGC
+Annotation|baseType
 Annotation|typeSubclass
+Annotation|default
+Annotation|hasGC
 Doc|doc
 Field|name|String
 Field|qualname|String
@@ -1538,7 +1538,7 @@ PyProperty|__bases__|getBases|setBases|PyTuple|
 PyProperty|__dict__|getDict||PyDict|
 PyProperty|__class__|getClass||PyType|
 PyProperty|__base__|getBase||PyType?|
-PyProperty|__mro__|getMRO||PyTuple|
+PyProperty|__mro__|get__mro__||PyTuple|
 PyMethod|__repr__|repr|repr()|repr|PyResult<String>|
 PyMethod|mro|getMROFn|getMROFn()|getMROFn|PyList|mroFnDoc
 PyMethod|__subclasscheck__|isSubtype|isSubtype(of object: PyObject)|isSubtype(of:)|PyResult<Bool>|
@@ -1557,9 +1557,9 @@ PyStaticMethod|__new__|pyNew|pyNew(type: PyType,                             arg
 ############
 
 Type|zip|PyZip|PyObject
+Annotation|pytype
 Annotation|baseType
 Annotation|default
-Annotation|pytype
 Annotation|hasGC
 Doc|doc
 Field|iterators|[PyObject]
@@ -1579,8 +1579,8 @@ ErrorType|ArithmeticError|PyArithmeticError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1595,8 +1595,8 @@ ErrorType|AssertionError|PyAssertionError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1611,8 +1611,8 @@ ErrorType|AttributeError|PyAttributeError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1627,8 +1627,8 @@ ErrorType|BaseException|PyBaseException|PyObject
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 Field|args|PyTuple
 Field|traceback|PyTraceback?
@@ -1660,8 +1660,8 @@ ErrorType|BlockingIOError|PyBlockingIOError|PyOSError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1676,8 +1676,8 @@ ErrorType|BrokenPipeError|PyBrokenPipeError|PyConnectionError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1692,8 +1692,8 @@ ErrorType|BufferError|PyBufferError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1708,8 +1708,8 @@ ErrorType|BytesWarning|PyBytesWarning|PyWarning
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1724,8 +1724,8 @@ ErrorType|ChildProcessError|PyChildProcessError|PyOSError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1740,8 +1740,8 @@ ErrorType|ConnectionAbortedError|PyConnectionAbortedError|PyConnectionError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1756,8 +1756,8 @@ ErrorType|ConnectionError|PyConnectionError|PyOSError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1772,8 +1772,8 @@ ErrorType|ConnectionRefusedError|PyConnectionRefusedError|PyConnectionError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1788,8 +1788,8 @@ ErrorType|ConnectionResetError|PyConnectionResetError|PyConnectionError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1804,8 +1804,8 @@ ErrorType|DeprecationWarning|PyDeprecationWarning|PyWarning
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1820,8 +1820,8 @@ ErrorType|EOFError|PyEOFError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1836,8 +1836,8 @@ ErrorType|Exception|PyException|PyBaseException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1852,8 +1852,8 @@ ErrorType|FileExistsError|PyFileExistsError|PyOSError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1868,8 +1868,8 @@ ErrorType|FileNotFoundError|PyFileNotFoundError|PyOSError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1884,8 +1884,8 @@ ErrorType|FloatingPointError|PyFloatingPointError|PyArithmeticError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1900,8 +1900,8 @@ ErrorType|FutureWarning|PyFutureWarning|PyWarning
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1916,8 +1916,8 @@ ErrorType|GeneratorExit|PyGeneratorExit|PyBaseException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1932,8 +1932,8 @@ ErrorType|ImportError|PyImportError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 Field|msg|PyObject?
 Field|moduleName|PyObject?
@@ -1955,8 +1955,8 @@ ErrorType|ImportWarning|PyImportWarning|PyWarning
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1971,8 +1971,8 @@ ErrorType|IndentationError|PyIndentationError|PySyntaxError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -1987,8 +1987,8 @@ ErrorType|IndexError|PyIndexError|PyLookupError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2003,8 +2003,8 @@ ErrorType|InterruptedError|PyInterruptedError|PyOSError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2019,8 +2019,8 @@ ErrorType|IsADirectoryError|PyIsADirectoryError|PyOSError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2035,8 +2035,8 @@ ErrorType|KeyError|PyKeyError|PyLookupError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2052,8 +2052,8 @@ ErrorType|KeyboardInterrupt|PyKeyboardInterrupt|PyBaseException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2068,8 +2068,8 @@ ErrorType|LookupError|PyLookupError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2084,8 +2084,8 @@ ErrorType|MemoryError|PyMemoryError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2100,8 +2100,8 @@ ErrorType|ModuleNotFoundError|PyModuleNotFoundError|PyImportError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2116,8 +2116,8 @@ ErrorType|NameError|PyNameError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2132,8 +2132,8 @@ ErrorType|NotADirectoryError|PyNotADirectoryError|PyOSError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2148,8 +2148,8 @@ ErrorType|NotImplementedError|PyNotImplementedError|PyRuntimeError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2164,8 +2164,8 @@ ErrorType|OSError|PyOSError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2180,8 +2180,8 @@ ErrorType|OverflowError|PyOverflowError|PyArithmeticError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2196,8 +2196,8 @@ ErrorType|PendingDeprecationWarning|PyPendingDeprecationWarning|PyWarning
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2212,8 +2212,8 @@ ErrorType|PermissionError|PyPermissionError|PyOSError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2228,8 +2228,8 @@ ErrorType|ProcessLookupError|PyProcessLookupError|PyOSError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2244,8 +2244,8 @@ ErrorType|RecursionError|PyRecursionError|PyRuntimeError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2260,8 +2260,8 @@ ErrorType|ReferenceError|PyReferenceError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2276,8 +2276,8 @@ ErrorType|ResourceWarning|PyResourceWarning|PyWarning
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2292,8 +2292,8 @@ ErrorType|RuntimeError|PyRuntimeError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2308,8 +2308,8 @@ ErrorType|RuntimeWarning|PyRuntimeWarning|PyWarning
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2324,8 +2324,8 @@ ErrorType|StopAsyncIteration|PyStopAsyncIteration|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2340,8 +2340,8 @@ ErrorType|StopIteration|PyStopIteration|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 Field|value|PyObject
 PyProperty|__class__|getClass||PyType|
@@ -2358,8 +2358,8 @@ ErrorType|SyntaxError|PySyntaxError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 Field|msg|PyObject?
 Field|filename|PyObject?
@@ -2387,8 +2387,8 @@ ErrorType|SyntaxWarning|PySyntaxWarning|PyWarning
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2403,8 +2403,8 @@ ErrorType|SystemError|PySystemError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2419,8 +2419,8 @@ ErrorType|SystemExit|PySystemExit|PyBaseException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 Field|code|PyObject?
 PyProperty|__class__|getClass||PyType|
@@ -2437,8 +2437,8 @@ ErrorType|TabError|PyTabError|PyIndentationError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2453,8 +2453,8 @@ ErrorType|TimeoutError|PyTimeoutError|PyOSError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2469,8 +2469,8 @@ ErrorType|TypeError|PyTypeError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2485,8 +2485,8 @@ ErrorType|UnboundLocalError|PyUnboundLocalError|PyNameError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2501,8 +2501,8 @@ ErrorType|UnicodeDecodeError|PyUnicodeDecodeError|PyUnicodeError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2517,8 +2517,8 @@ ErrorType|UnicodeEncodeError|PyUnicodeEncodeError|PyUnicodeError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2533,8 +2533,8 @@ ErrorType|UnicodeError|PyUnicodeError|PyValueError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2549,8 +2549,8 @@ ErrorType|UnicodeTranslateError|PyUnicodeTranslateError|PyUnicodeError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2565,8 +2565,8 @@ ErrorType|UnicodeWarning|PyUnicodeWarning|PyWarning
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2581,8 +2581,8 @@ ErrorType|UserWarning|PyUserWarning|PyWarning
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2597,8 +2597,8 @@ ErrorType|ValueError|PyValueError|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2613,8 +2613,8 @@ ErrorType|Warning|PyWarning|PyException
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
@@ -2629,8 +2629,8 @@ ErrorType|ZeroDivisionError|PyZeroDivisionError|PyArithmeticError
 Annotation|baseType
 Annotation|baseExceptionSubclass
 Annotation|default
-Annotation|hasGC
 Annotation|pyerrortype
+Annotation|hasGC
 Doc|doc
 PyProperty|__class__|getClass||PyType|
 PyProperty|__dict__|getDict||PyDict|
