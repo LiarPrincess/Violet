@@ -63,7 +63,9 @@ attrs = {}
 
 class CustomLookup:
     def __getattr__(self, item):
-        return "value_{}".format(item)
+        # VIOLET: We do not have string formating
+        # return "value_{}".format(item)
+        return "value_" + str(item)
 
     def __setattr__(self, key, value):
         attrs[key] = value
