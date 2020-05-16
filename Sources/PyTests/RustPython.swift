@@ -31,6 +31,8 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("builtin_len.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_locals.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_map.py"))
+//  runTest(file: dir.appendingPathComponent("builtin_max.py"))
+//  runTest(file: dir.appendingPathComponent("builtin_min.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_ord.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_range.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_reversed.py"))
@@ -106,8 +108,6 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("with.py"))
 
   // Failing tests:
-//  runTest(file: dir.appendingPathComponent("builtin_max.py"))
-//  runTest(file: dir.appendingPathComponent("builtin_min.py"))
 //  runTest(file: dir.appendingPathComponent("index_overflow.py"))
 //  runTest(file: dir.appendingPathComponent("invalid_syntax.py"))
 //  runTest(file: dir.appendingPathComponent("property.py"))

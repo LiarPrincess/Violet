@@ -40,7 +40,8 @@ extension MinMaxImpl {
 
       switch args.count {
       case 0:
-        return Self.emptyCollectionError()
+        let msg = "\(Self.fnName) expected 1 arguments, got 0"
+        return .typeError(msg)
       case 1:
         return Self.iterable(iterable: args[0], key: key, default: default_)
       default:
