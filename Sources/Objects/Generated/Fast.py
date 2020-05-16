@@ -13,6 +13,7 @@ generated_protocols = set([
   '__call__',
   '__contains__',
   '__del__',
+  '__delattr__',
   '__delitem__',
   '__dir__',
   '__divmod__',

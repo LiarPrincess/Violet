@@ -227,20 +227,47 @@ extension PyInstance {
     case .value:
       return .value(self.none)
     case .missingMethod:
-      let t = object.typeName
-      let operation = value.isNone ? "del" : "assign to"
-      let details = "(\(operation) \(name.reprRaw()))"
+      let operation: AttributeOperation = value.isNone ? .del : .set
+      let error = self.attributeModificationError(object: object,
+                                                  name: name,
+                                                  operation: operation)
 
-      switch self.hasattr(object: object, name: name) {
-      case .value(true):
-        return .typeError("'\(t)' object has only read-only attributes \(details)")
-      case .value(false):
-        return .typeError("'\(t)' object has no attributes \(details)")
-      case let .error(e):
-        return .error(e)
-      }
-    case .error(let e), .notCallable(let e):
+      return .error(error)
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
+    }
+  }
+
+  private enum AttributeOperation {
+    case del
+    case set
+  }
+
+  private func attributeModificationError(
+    object: PyObject,
+    name: PyString,
+    operation: AttributeOperation
+  ) -> PyBaseException {
+    let t = object.typeName
+    let name = name.reprRaw()
+
+    let details: String = {
+      switch operation {
+      case .del: return "(del \(name))"
+      case .set: return "(assign to \(name))"
+      }
+    }()
+
+    switch self.hasattr(object: object, name: name) {
+    case .value(true):
+      let msg = "'\(t)' object has only read-only attributes \(details)"
+      return Py.newTypeError(msg: msg)
+    case .value(false):
+      let msg = "'\(t)' object has no attributes \(details)"
+      return Py.newTypeError(msg: msg)
+    case let .error(e):
+      return e
     }
   }
 
@@ -266,7 +293,22 @@ extension PyInstance {
       return .typeError("delattr(): attribute name must be string")
     }
 
-    return self.setattr(object: object, name: name, value: self.none)
+    if let result = Fast.__delattr__(object, name: name) {
+      return result
+    }
+
+    switch self.callMethod(object: object, selector: .__delattr__, arg: name) {
+    case .value:
+      return .value(self.none)
+    case .missingMethod:
+      let error = self.attributeModificationError(object: object,
+                                                  name: name,
+                                                  operation: .del)
+      return .error(error)
+    case .error(let e),
+       .notCallable(let e):
+    return .error(e)
+    }
   }
 
   // MARK: - Lookup

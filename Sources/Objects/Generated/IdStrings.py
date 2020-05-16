@@ -26,7 +26,7 @@ ids = [
   '__complex__',
   '__contains__',
   '__del__',
-  # '__delattr__',
+  '__delattr__',
   # '__delete__',
   '__delitem__',
   '__dict__',

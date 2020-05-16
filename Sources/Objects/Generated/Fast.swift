@@ -76,6 +76,7 @@ private protocol __call__Owner { func call(args: [PyObject], kwargs: PyDict?) ->
 private protocol __complex__Owner { func asComplex() -> PyObject }
 private protocol __contains__Owner { func contains(element: PyObject) -> PyResult<Bool> }
 private protocol __del__Owner { func del() -> PyResult<PyNone> }
+private protocol __delattr__Owner { func delAttribute(name: PyObject) -> PyResult<PyNone> }
 private protocol __delitem__Owner { func delItem(index: PyObject) -> PyResult<PyNone> }
 private protocol __dir__Owner { func dir() -> PyResult<DirResult> }
 private protocol __divmod__Owner { func divmod(_ other: PyObject) -> PyResult<PyObject> }
@@ -244,6 +245,15 @@ internal enum Fast {
     if let owner = zelf as? __del__Owner,
        !hasOverridenBuiltinMethod(object: zelf, selector: .__del__) {
       return owner.del()
+    }
+
+    return nil
+  }
+
+  internal static func __delattr__(_ zelf: PyObject, name: PyObject) -> PyResult<PyNone>? {
+    if let owner = zelf as? __delattr__Owner,
+       !hasOverridenBuiltinMethod(object: zelf, selector: .__delattr__) {
+      return owner.delAttribute(name: name)
     }
 
     return nil
@@ -1185,7 +1195,8 @@ extension PyFloat:
 extension PyFrame:
   __repr__Owner,
   __getattribute__Owner,
-  __setattr__Owner
+  __setattr__Owner,
+  __delattr__Owner
 { }
 
 extension PyFrozenSet:
@@ -1325,6 +1336,7 @@ extension PyMethod:
   __hash__Owner,
   __getattribute__Owner,
   __setattr__Owner,
+  __delattr__Owner,
   __call__Owner
 { }
 
@@ -1333,6 +1345,7 @@ extension PyModule:
   __repr__Owner,
   __getattribute__Owner,
   __setattr__Owner,
+  __delattr__Owner,
   __dir__Owner
 { }
 
@@ -1346,7 +1359,8 @@ extension PyNamespace:
   __ge__Owner,
   __repr__Owner,
   __getattribute__Owner,
-  __setattr__Owner
+  __setattr__Owner,
+  __delattr__Owner
 { }
 
 extension PyNone:
@@ -1512,6 +1526,7 @@ extension PyType:
   __instancecheck__Owner,
   __getattribute__Owner,
   __setattr__Owner,
+  __delattr__Owner,
   __dir__Owner,
   __call__Owner
 { }
@@ -1536,7 +1551,8 @@ extension PyBaseException:
   __repr__Owner,
   __str__Owner,
   __getattribute__Owner,
-  __setattr__Owner
+  __setattr__Owner,
+  __delattr__Owner
 { }
 
 // PyBlockingIOError does not add any new protocols to PyOSError

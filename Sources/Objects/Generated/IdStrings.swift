@@ -51,6 +51,7 @@ public struct IdString {
   public static let __complex__ = Self.impl.__complex__
   public static let __contains__ = Self.impl.__contains__
   public static let __del__ = Self.impl.__del__
+  public static let __delattr__ = Self.impl.__delattr__
   public static let __delitem__ = Self.impl.__delitem__
   public static let __dict__ = Self.impl.__dict__
   public static let __dir__ = Self.impl.__dir__
@@ -170,6 +171,7 @@ private struct IdStringImpl {
   fileprivate let __complex__ = IdString(value: "__complex__")
   fileprivate let __contains__ = IdString(value: "__contains__")
   fileprivate let __del__ = IdString(value: "__del__")
+  fileprivate let __delattr__ = IdString(value: "__delattr__")
   fileprivate let __delitem__ = IdString(value: "__delitem__")
   fileprivate let __dict__ = IdString(value: "__dict__")
   fileprivate let __dir__ = IdString(value: "__dir__")
