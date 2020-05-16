@@ -27,6 +27,8 @@ extension PyInstance {
         case .error(let e): return .error(e)
         }
       }
+
+      return .value(false)
     }
 
     return self.call__instancecheck__(instance: object, type: typeOrTuple)
@@ -73,6 +75,8 @@ extension PyInstance {
         case .error(let e): return .error(e)
         }
       }
+
+      return .value(false)
     }
 
     return self.call__subclasscheck__(type: object, super: typeOrTuple)
