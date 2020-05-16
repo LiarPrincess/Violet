@@ -166,7 +166,7 @@ ids = [
   # 'little',
   # 'meta_path',
   'metaclass',
-  # 'mro',
+  'mro',
   # 'n_fields',
   # 'n_sequence_fields',
   # 'n_unnamed_fields',

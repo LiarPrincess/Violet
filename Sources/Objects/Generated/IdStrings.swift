@@ -151,6 +151,7 @@ public struct IdString {
   public static let encoding = Self.impl.encoding
   public static let keys = Self.impl.keys
   public static let metaclass = Self.impl.metaclass
+  public static let mro = Self.impl.mro
   public static let name = Self.impl.name
   public static let object = Self.impl.object
   public static let origin = Self.impl.origin
@@ -271,6 +272,7 @@ private struct IdStringImpl {
   fileprivate let encoding = IdString(value: "encoding")
   fileprivate let keys = IdString(value: "keys")
   fileprivate let metaclass = IdString(value: "metaclass")
+  fileprivate let mro = IdString(value: "mro")
   fileprivate let name = IdString(value: "name")
   fileprivate let object = IdString(value: "object")
   fileprivate let origin = IdString(value: "origin")

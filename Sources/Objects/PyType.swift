@@ -178,7 +178,8 @@ public class PyType: PyObject, HasCustomGetMethod {
   /// It will not set `self.type` property!
   internal static func initTypeType(objectType: PyType) -> PyType {
     let name = "type"
-    let mro = MRO.linearize(baseClass: objectType)
+    let mro = MRO.linearizeForBuiltinType(baseClass: objectType)
+
     return PyType(name: name,
                   qualname: name,
                   base: objectType,
@@ -192,7 +193,7 @@ public class PyType: PyObject, HasCustomGetMethod {
                                        type: PyType,
                                        base: PyType,
                                        layout: MemoryLayout) -> PyType {
-    let mro = MRO.linearize(baseClass: base)
+    let mro = MRO.linearizeForBuiltinType(baseClass: base)
     return PyType(name: name,
                   qualname: name,
                   type: type,
