@@ -40,20 +40,22 @@ assert pow(0, 0) == 1
 assert pow(2, 2) == 4
 assert pow(1, 2.0) == 1.0
 assert pow(2.0, 1) == 2.0
-assert pow(0, 10**1000) == 0
-assert pow(1, 10**1000) == 1
-assert pow(-1, 10**1000+1) == -1
-assert pow(-1, 10**1000) == 1
+# VIOLET: We do not have 'BigInt'
+# assert pow(0, 10**1000) == 0
+# assert pow(1, 10**1000) == 1
+# assert pow(-1, 10**1000+1) == -1
+# assert pow(-1, 10**1000) == 1
 
 assert pow(2, 4, 5) == 1
 assert_raises(TypeError, pow, 2, 4, 5.0)
 assert_raises(TypeError, pow, 2, 4.0, 5)
 assert_raises(TypeError, pow, 2.0, 4, 5)
-from sys import version_info
-if version_info < (3, 8):
-  assert_raises(ValueError, pow, 2, -1, 5)
-else:  # https://docs.python.org/3/whatsnew/3.8.html#other-language-changes
-  assert pow(2, -1, 5) == 3 
+# VIOLET: We do not implement 'Python 3.8', we also store 'sys.version_info' in namespace
+# from sys import version_info
+# if version_info < (3, 8):
+#   assert_raises(ValueError, pow, 2, -1, 5)
+# else:  # https://docs.python.org/3/whatsnew/3.8.html#other-language-changes
+#   assert pow(2, -1, 5) == 3
 assert_raises(ValueError, pow, 2, 2, 0)
 
 # bitwise

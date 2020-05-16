@@ -79,6 +79,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("import.py"))
 //  runTest(file: dir.appendingPathComponent("indentation.py"))
 //  runTest(file: dir.appendingPathComponent("inplace_ops.py"))
+//  runTest(file: dir.appendingPathComponent("int_float_comparisons.py"))
 //  runTest(file: dir.appendingPathComponent("ints.py"))
 //  runTest(file: dir.appendingPathComponent("isinstance.py"))
 //  runTest(file: dir.appendingPathComponent("issubclass.py"))
@@ -88,6 +89,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("literals.py"))
 //  runTest(file: dir.appendingPathComponent("loop.py"))
 //  runTest(file: dir.appendingPathComponent("mappingproxy.py"))
+//  runTest(file: dir.appendingPathComponent("math_basics.py"))
 //  runTest(file: dir.appendingPathComponent("membership.py"))
 //  runTest(file: dir.appendingPathComponent("metaclasses.py"))
 //  runTest(file: dir.appendingPathComponent("minimum.py"))
@@ -135,6 +137,4 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("builtin_dir.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_enumerate.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_slice.py"))
-//  runTest(file: dir.appendingPathComponent("int_float_comparisons.py"))
-//  runTest(file: dir.appendingPathComponent("math_basics.py"))
 }
