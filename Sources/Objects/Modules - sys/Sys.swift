@@ -169,6 +169,7 @@ public final class Sys: PyModuleImplementation {
     self.setOrTrap(.copyright, to: Py.newString(self.copyright))
     self.setOrTrap(.hash_info, to: self.createInitialHashInfo())
     self.setOrTrap(.tracebacklimit, to: Py.newInt(1_000))
+    self.setOrTrap(.maxsize, to: Py.newInt(Int.max))
 
     self.setOrTrap(.modules, to: Py.newDict())
     self.setOrTrap(.builtin_module_names, to: Py.emptyTuple)
@@ -233,6 +234,7 @@ public final class Sys: PyModuleImplementation {
     internal static let platform = Properties(value: "platform")
     internal static let copyright = Properties(value: "copyright")
     internal static let hash_info = Properties(value: "hash_info")
+    internal static let maxsize = Properties(value: "maxsize")
 
     internal static let modules = Properties(value: "modules")
     internal static let builtin_module_names =

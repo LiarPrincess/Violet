@@ -152,10 +152,6 @@ extension Sys {
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.last_type).
   internal var lastType: PyObject { }
 
-  /// sys.maxsize
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.maxsize).
-  internal var maxSize: PyObject { }
-
   /// sys.maxunicode
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.maxunicode).
   internal var maxUnicode: PyObject { }
