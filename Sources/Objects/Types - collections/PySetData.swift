@@ -151,22 +151,30 @@ internal struct PySetData {
 
   internal func repr(typeName: String) -> PyResult<String> {
     if self.isEmpty {
-      return .value("()")
+      return .value(typeName + "()")
     }
 
-    var result = "\(typeName)("
+    var commaSeparatedElements = ""
     for (index, element) in self.dict.enumerated() {
       if index > 0 {
-        result += ", " // so that we don't have ', )'.
+        commaSeparatedElements.append(", ") // so that we don't have ', )'.
       }
 
       switch Py.repr(object: element.key.object) {
-      case let .value(s): result += s
+      case let .value(s): commaSeparatedElements.append(s)
       case let .error(e): return .error(e)
       }
     }
 
-    result += self.count > 1 ? ")" : ",)"
+    if self.count > 1 {
+      commaSeparatedElements.append(",")
+    }
+
+    let isExactlySet = typeName == Py.types.set.getName().value
+    let result = isExactlySet ?
+      "{\(commaSeparatedElements)}" :
+      "\(typeName)({\(commaSeparatedElements)})"
+
     return .value(result)
   }
 

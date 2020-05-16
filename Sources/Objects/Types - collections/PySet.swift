@@ -89,7 +89,7 @@ public class PySet: PyObject, PySetType {
   // sourcery: pymethod = __repr__
   public func repr() -> PyResult<String> {
     if self.hasReprLock {
-      return .value("(...)")
+      return .value(self.typeName + "(...)")
     }
 
     return self.withReprLock {
