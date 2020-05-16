@@ -100,7 +100,7 @@ internal enum PyObjectType {
 
   // MARK: - Class
 
-  // sourcery: pymethod = __class__
+  // sourcery: pyproperty = __class__
   internal static func getClass(zelf: PyObject) -> PyType {
     return zelf.type
   }

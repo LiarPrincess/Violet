@@ -29,7 +29,7 @@ Field|{{field.name}}|{{field.typeName}}
 {% endmacro %}
 
 {% macro print_properties type %}
-{% for prop in type.instanceMethods|annotated:"pyproperty" %}
+{% for prop in type.methods|annotated:"pyproperty" %}
 {% set python_name %}{{ prop.annotations.pyproperty }}{% endset %}
 {% set swift_getter_fn %}{{ prop.selectorName }}{% endset %}
 {% set swift_setter_fn %}{{ prop.annotations.setter }}{% endset %}
@@ -86,6 +86,7 @@ PyClassMethod|{{python_name}}|{{swift_name}}|{{swift_name_full}}|{{swift_selecto
 {% for type in types.enums where type.name == "PyObjectType" %}
 {% call print_annotations type %}
 {% call print_doc type %}
+{% call print_properties type %}
 {% call print_methods type %}
 {% call print_static_methods type %}
 {% call print_class_methods type %}

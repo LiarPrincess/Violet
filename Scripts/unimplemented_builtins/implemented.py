@@ -46,6 +46,7 @@ TextFile = _io.TextIOWrapper
 
 types = {
   object: [
+    '__class__',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -56,7 +57,6 @@ types = {
     '__repr__',
     '__str__',
     '__format__',
-    '__class__',
     '__dir__',
     '__getattribute__',
     '__setattr__',

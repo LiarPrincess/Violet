@@ -6,9 +6,23 @@ extension PyProperty {
 
   // MARK: - Wrap read only property
 
+  /// Getter is an instance method.
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
     doc: String?,
     get: @escaping (Zelf) -> () -> R,
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>
+  ) -> PyProperty {
+    return PyProperty(
+      get: self.wrapGetter(get: get, castSelf: castSelf),
+      set: nil,
+      del: nil
+    )
+  }
+
+  /// Getter is a static method.
+  internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
+    doc: String?,
+    get: @escaping (Zelf) -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>
   ) -> PyProperty {
     return PyProperty(
@@ -68,6 +82,18 @@ extension PyProperty {
 
   private static func wrapGetter<Zelf, R: PyFunctionResultConvertible>(
     get: @escaping (Zelf) -> () -> R,
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>
+  ) -> PyBuiltinFunction {
+    return PyBuiltinFunction.wrap(
+      name: "__get__",
+      doc: nil,
+      fn: get,
+      castSelf: castSelf
+    )
+  }
+
+  private static func wrapGetter<Zelf, R: PyFunctionResultConvertible>(
+    get: @escaping (Zelf) -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>
   ) -> PyBuiltinFunction {
     return PyBuiltinFunction.wrap(
