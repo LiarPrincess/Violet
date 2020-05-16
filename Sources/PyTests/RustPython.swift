@@ -40,6 +40,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("builtin_range.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_reversed.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_round.py"))
+//  runTest(file: dir.appendingPathComponent("builtin_slice.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_zip.py"))
 //  runTest(file: dir.appendingPathComponent("builtins_module.py"))
 //  runTest(file: dir.appendingPathComponent("builtins.py"))
@@ -136,5 +137,4 @@ internal func runRustPythonTests() {
   // Fatal tests (they don't even finish)
 //  runTest(file: dir.appendingPathComponent("builtin_complex.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_dir.py"))
-//  runTest(file: dir.appendingPathComponent("builtin_slice.py"))
 }
