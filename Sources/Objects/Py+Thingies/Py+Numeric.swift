@@ -10,11 +10,20 @@ extension PyInstance {
   /// See [this](https://docs.python.org/3/library/functions.html#round)
   public func round(number: PyObject,
                     nDigits: PyObject? = nil) -> PyResult<PyObject> {
+    let isDigitsNilOrNone = nDigits?.isNone ?? true
+    let nDigits = isDigitsNilOrNone ? nil : nDigits
+
     if let result = Fast.__round__(number, nDigits: nDigits) {
       return result
     }
 
-    let args = self.get__round__Args(nDigits: nDigits)
+    let args: [PyObject] = {
+      guard let n = nDigits else {
+        return []
+      }
+
+      return [n]
+    }()
 
     let result = self.callMethod(object: number, selector: .__round__, args: args)
     switch result {
@@ -27,17 +36,5 @@ extension PyInstance {
          .notCallable(let e):
       return .error(e)
     }
-  }
-
-  private func get__round__Args(nDigits: PyObject?) -> [PyObject] {
-    guard let nDigits = nDigits else {
-      return []
-    }
-
-    if nDigits is PyNone {
-      return []
-    }
-
-    return [nDigits]
   }
 }
