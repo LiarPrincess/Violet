@@ -95,6 +95,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("none.py"))
 //  runTest(file: dir.appendingPathComponent("numbers.py"))
 //  runTest(file: dir.appendingPathComponent("object.py"))
+//  runTest(file: dir.appendingPathComponent("set.py"))
 //  runTest(file: dir.appendingPathComponent("short_circuit_evaluations.py"))
 //  runTest(file: dir.appendingPathComponent("slice.py"))
 //  runTest(file: dir.appendingPathComponent("statements.py"))
@@ -111,7 +112,6 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("index_overflow.py"))
 //  runTest(file: dir.appendingPathComponent("invalid_syntax.py"))
 //  runTest(file: dir.appendingPathComponent("property.py"))
-//  runTest(file: dir.appendingPathComponent("set.py"))
 
 //  runTest(file: dir.appendingPathComponent("builtin_callable.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_format.py"))
