@@ -26,6 +26,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("builtin_chr.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_dict.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_divmod.py"))
+//  runTest(file: dir.appendingPathComponent("builtin_enumerate.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_exec.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_file.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_filter.py"))
@@ -135,6 +136,5 @@ internal func runRustPythonTests() {
   // Fatal tests (they don't even finish)
 //  runTest(file: dir.appendingPathComponent("builtin_complex.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_dir.py"))
-//  runTest(file: dir.appendingPathComponent("builtin_enumerate.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_slice.py"))
 }
