@@ -3,7 +3,7 @@ import Foundation
 // In CPython:
 // Objects -> typeobject.c
 
-// TODO: What if we have custom mro? (mro_invoke(PyTypeObject *type))
+// TODO: What if we have custom mro? (mro_invoke(PyTypeObject *type)) - call type.mro()
 
 /// Method Resolution Order
 internal struct MRO {

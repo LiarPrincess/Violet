@@ -2306,6 +2306,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyType.pyInit(args:kwargs:)))
 
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyType.repr, castSelf: Self.asType))
+    self.insert(type: type, name: "mro", value: PyBuiltinFunction.wrap(name: "mro", doc: PyType.mroFnDoc, fn: PyType.getMROFn, castSelf: Self.asType))
     self.insert(type: type, name: "__subclasscheck__", value: PyBuiltinFunction.wrap(name: "__subclasscheck__", doc: nil, fn: PyType.isSubtype(of:), castSelf: Self.asType))
     self.insert(type: type, name: "__instancecheck__", value: PyBuiltinFunction.wrap(name: "__instancecheck__", doc: nil, fn: PyType.isType(of:), castSelf: Self.asType))
     self.insert(type: type, name: "__subclasses__", value: PyBuiltinFunction.wrap(name: "__subclasses__", doc: nil, fn: PyType.getSubclasses, castSelf: Self.asType))

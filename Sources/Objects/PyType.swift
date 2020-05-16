@@ -428,6 +428,9 @@ public class PyType: PyObject, HasCustomGetMethod {
   // MARK: - Mro
 
   // sourcery: pyproperty = __mro__
+  /// This is an implementation of `__mro__` property.
+  ///
+  /// Use `self.getMRORaw` instead.
   internal func getMRO() -> PyTuple {
     return Py.newTuple(self.getMRORaw())
   }
@@ -435,6 +438,22 @@ public class PyType: PyObject, HasCustomGetMethod {
   /// Get `mro` as types (because `getMRO` returns tuple of objects).
   public func getMRORaw() -> [PyType] {
     return self.mro
+  }
+
+  internal static let mroFnDoc = """
+    mro($self, /)
+    --
+
+    Return a type's method resolution order.
+    """
+
+  // sourcery: pymethod = mro, doc = mroFnDoc
+  /// Return a type's method resolution order.
+  ///
+  /// This is an implementation of `mro` function.
+  /// Use `self.getMRORaw` instead.
+  internal func getMROFn() -> PyList {
+    return Py.newList(self.mro)
   }
 
   // MARK: - Subtypes

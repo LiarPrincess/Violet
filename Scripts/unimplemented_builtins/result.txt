@@ -3,20 +3,6 @@ object
     __init_subclass__
     __subclasshook__
 
-type
-  Unimplemented:
-    __basicsize__ - <class 'int'>
-    __dictoffset__ - <class 'int'>
-    __flags__ - <class 'int'>
-    __itemsize__ - <class 'int'>
-    __prepare__ - <class 'builtin_function_or_method'>
-    __text_signature__ - <class 'NoneType'>
-    __weakrefoffset__ - <class 'int'>
-    __abstractmethods__
-    mro
-  Why do we even have this?
-    __doc__
-
 builtin_function_or_method
   Why do we even have this?
     __get__
@@ -183,6 +169,19 @@ TextIOWrapper
     __del__
     __enter__
     __exit__
+
+type
+  Unimplemented:
+    __basicsize__ - <class 'int'>
+    __dictoffset__ - <class 'int'>
+    __flags__ - <class 'int'>
+    __itemsize__ - <class 'int'>
+    __prepare__ - <class 'builtin_function_or_method'>
+    __text_signature__ - <class 'NoneType'>
+    __weakrefoffset__ - <class 'int'>
+    __abstractmethods__
+  Why do we even have this?
+    __doc__
 
 OSError
   Unimplemented:

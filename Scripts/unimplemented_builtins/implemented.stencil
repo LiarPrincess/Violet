@@ -66,12 +66,6 @@ types = {
     {% call printMethods type.staticMethods %}
   ],
 {% endfor %}
-{% for type in types.classes where type.name == "PyType" %}
-  type: [
-    {% call printProperties type.methods %}
-    {% call printMethods type.methods %}
-  ],
-{% endfor %}
 {% for type in types.classes|annotated:"pytype" %}
   {% if type.name == "PyCell" %}
   # 'cell' is not available in Python (it is only in CPython).
