@@ -328,6 +328,7 @@ types = {
     '__rmod__',
     '__divmod__',
     '__rdivmod__',
+    '__getnewargs__',
     '__new__',
   ],
   dict: [

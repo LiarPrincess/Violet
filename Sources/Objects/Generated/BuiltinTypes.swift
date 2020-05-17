@@ -837,6 +837,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__rmod__", value: PyBuiltinFunction.wrap(name: "__rmod__", doc: nil, fn: PyComplex.rmod(_:), castSelf: Self.asComplex))
     self.insert(type: type, name: "__divmod__", value: PyBuiltinFunction.wrap(name: "__divmod__", doc: nil, fn: PyComplex.divmod(_:), castSelf: Self.asComplex))
     self.insert(type: type, name: "__rdivmod__", value: PyBuiltinFunction.wrap(name: "__rdivmod__", doc: nil, fn: PyComplex.rdivmod(_:), castSelf: Self.asComplex))
+    self.insert(type: type, name: "__getnewargs__", value: PyBuiltinFunction.wrap(name: "__getnewargs__", doc: nil, fn: PyComplex.getNewArgs, castSelf: Self.asComplex))
   }
 
   private static func asComplex(_ object: PyObject, methodName: String) -> PyResult<PyComplex> {

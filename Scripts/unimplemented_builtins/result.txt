@@ -44,6 +44,8 @@ code
 complex
   Unimplemented:
     __format__
+  Why do we even have this?
+    __getnewargs__
 
 dict_items
   Unimplemented:

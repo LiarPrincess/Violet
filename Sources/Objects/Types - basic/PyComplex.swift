@@ -428,6 +428,15 @@ public class PyComplex: PyObject {
     return self.divmod(other)
   }
 
+  // MARK: - Newargs
+
+  // sourcery: pymethod = __getnewargs__
+  internal func getNewArgs() -> PyTuple {
+    let r = Py.newFloat(self.real)
+    let i = Py.newFloat(self.imag)
+    return Py.newTuple(r, i)
+  }
+
   // MARK: - Python new
 
   private static let newArguments = ArgumentParser.createOrTrap(
