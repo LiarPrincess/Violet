@@ -129,7 +129,8 @@ internal struct FString {
   /// CPython: `fstring_find_literal`.
   private func consumeLiteral(
     in view: String.UnicodeScalarView,
-    advancing index: inout String.UnicodeScalarIndex) throws -> String? {
+    advancing index: inout String.UnicodeScalarIndex
+  ) throws -> String? {
 
     var scalars = [UnicodeScalar]()
     while index != view.endIndex {
@@ -183,14 +184,15 @@ internal struct FString {
   /// CPython: `fstring_find_expr`
   private func consumeExpr(
     in view: String.UnicodeScalarView,
-    advancing index: inout String.UnicodeScalarIndex) throws -> FStringFragment {
+    advancing index: inout String.UnicodeScalarIndex
+  ) throws -> FStringFragment {
 
     assert(view[index] == "{")
     view.formIndex(after: &index) // consume '{'
 
     // We have to eval right now (not later), to output errors in correct order.
     let exprString = try self.consumeExprValue(in: view, advancing: &index)
-    let expr = try self.eval(exprString)
+    let expr = try self.eval(source: exprString)
 
     assert(index == view.endIndex
       || view[index] == "!"
@@ -218,13 +220,15 @@ internal struct FString {
     return .formattedValue(expr, conversion: conversion, spec: formatSpec)
   }
 
-  private func eval(_ s: String) throws -> Expression {
-    if s.isEmpty {
+  private func eval(source: String) throws -> Expression {
+    let trimmed = source.trimmingCharacters(in: .whitespacesAndNewlines)
+
+    if trimmed.isEmpty {
       throw FStringError.emptyExpression
     }
 
     do {
-      let lexer = Lexer(for: s, delegate: self.lexerDelegate)
+      let lexer = Lexer(for: trimmed, delegate: self.lexerDelegate)
       let parser = Parser(mode: .eval,
                           tokenSource: lexer,
                           delegate: self.parserDelegate,
@@ -273,8 +277,8 @@ internal struct FString {
   /// But still, you can break it if you try long enough.
   private func consumeExprValue(
     in view: String.UnicodeScalarView,
-    advancing index: inout String.UnicodeScalarIndex) throws -> String {
-
+    advancing index: inout String.UnicodeScalarIndex
+  ) throws -> String {
     var quote: Quote?
     var nestedDepth = 0 // nesting level for braces/parens/brackets
 
@@ -368,7 +372,8 @@ internal struct FString {
   /// Returns 1 for short (") quote and 3 for long (""").
   private func getQuoteType(
     in view: String.UnicodeScalarView,
-    startingFrom index: String.UnicodeScalarIndex) throws -> Quote {
+    startingFrom index: String.UnicodeScalarIndex
+  ) throws -> Quote {
 
     let quote = view[index]
     assert(quote == "'" || quote == "\"")
@@ -392,7 +397,8 @@ internal struct FString {
   private func isQuoteEnd(
     quote: Quote,
     view: String.UnicodeScalarView,
-    startingFrom index: String.UnicodeScalarIndex) throws -> Bool {
+    startingFrom index: String.UnicodeScalarIndex
+  ) throws -> Bool {
 
     let scalar = quote.type.scalar
     assert(view[index] == scalar)
@@ -449,7 +455,8 @@ internal struct FString {
 
   private func consumeFormatSpec(
     in view: String.UnicodeScalarView,
-    advancing index: inout String.UnicodeScalarIndex) throws -> String {
+    advancing index: inout String.UnicodeScalarIndex
+  ) throws -> String {
 
     assert(view[index] == ":")
     view.formIndex(after: &index) // consume ':'

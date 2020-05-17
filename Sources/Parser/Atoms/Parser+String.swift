@@ -53,7 +53,7 @@ extension Parser {
         string.append(s)
       case let .formatString(s):
         do {
-        try string.appendFormatString(s)
+          try string.appendFormatString(s)
         } catch let error as FStringError {
           throw self.error(.fStringError(error))
         }
