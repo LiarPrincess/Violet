@@ -274,38 +274,91 @@ extension PyInstance {
 
   public func newSyntaxError(filename: String,
                              error: LexerError) -> PySyntaxError {
-    return self.newSyntaxError(
-      msg: String(describing: error.kind),
-      filename: filename,
-      lineno: BigInt(error.location.line),
-      offset: BigInt(error.location.column),
-      text: String(describing: error),
-      printFileAndLine: Py.true
-    )
+    let msg = String(describing: error.kind)
+    let lineno = BigInt(error.location.line)
+    let offset = BigInt(error.location.column)
+    let text = String(describing: error)
+    let printFileAndLine = Py.true
+
+    switch error.kind {
+    case .tooManyIndentationLevels,
+         .noMatchingDedent:
+      return self.newIndentationError(msg: msg,
+                                      filename: filename,
+                                      lineno: lineno,
+                                      offset: offset,
+                                      text: text,
+                                      printFileAndLine: printFileAndLine)
+    default:
+      return self.newSyntaxError(msg: msg,
+                                 filename: filename,
+                                 lineno: lineno,
+                                 offset: offset,
+                                 text: text,
+                                 printFileAndLine: printFileAndLine)
+    }
   }
 
   public func newSyntaxError(filename: String,
                              error: ParserError) -> PySyntaxError {
-    return self.newSyntaxError(
-      msg: String(describing: error.kind),
-      filename: filename,
-      lineno: BigInt(error.location.line),
-      offset: BigInt(error.location.column),
-      text: String(describing: error),
-      printFileAndLine: Py.true
-    )
+    let msg = String(describing: error.kind)
+    let lineno = BigInt(error.location.line)
+    let offset = BigInt(error.location.column)
+    let text = String(describing: error)
+    let printFileAndLine = Py.true
+
+    switch error.kind {
+    case let .unexpectedToken(token, expected: expected):
+      let gotUnexpectedIndent = token == .indent || token == .dedent
+      let missingIndent = expected.contains { $0 == .indent || $0 == .dedent }
+
+      guard gotUnexpectedIndent || missingIndent else {
+        break
+      }
+
+      return self.newIndentationError(msg: msg,
+                                      filename: filename,
+                                      lineno: lineno,
+                                      offset: offset,
+                                      text: text,
+                                      printFileAndLine: printFileAndLine)
+
+    default:
+      break
+    }
+
+    return self.newSyntaxError(msg: msg,
+                               filename: filename,
+                               lineno: lineno,
+                               offset: offset,
+                               text: text,
+                               printFileAndLine: printFileAndLine)
+  }
+
+  private static func isIndentDedent(token: ExpectedToken) -> Bool {
+    switch token {
+    case .indent,
+         .dedent:
+      return true
+    default:
+      return false
+    }
   }
 
   public func newSyntaxError(filename: String,
                              error: CompilerError) -> PySyntaxError {
-    return self.newSyntaxError(
-      msg: String(describing: error.kind),
-      filename: filename,
-      lineno: BigInt(error.location.line),
-      offset: BigInt(error.location.column),
-      text: String(describing: error),
-      printFileAndLine: Py.true
-    )
+    let msg = String(describing: error.kind)
+    let lineno = BigInt(error.location.line)
+    let offset = BigInt(error.location.column)
+    let text = String(describing: error)
+    let printFileAndLine = Py.true
+
+    return self.newSyntaxError(msg: msg,
+                               filename: filename,
+                               lineno: lineno,
+                               offset: offset,
+                               text: text,
+                               printFileAndLine: printFileAndLine)
   }
 
   // swiftlint:disable:next function_parameter_count
@@ -336,6 +389,38 @@ extension PyInstance {
                          offset: offset,
                          text: text,
                          printFileAndLine: printFileAndLine)
+  }
+
+  // MARK: - Indentation error
+
+  // swiftlint:disable:next function_parameter_count
+  public func newIndentationError(msg: String?,
+                                  filename: String?,
+                                  lineno: BigInt?,
+                                  offset: BigInt?,
+                                  text: String?,
+                                  printFileAndLine: PyObject?) -> PySyntaxError {
+    return PyIndentationError(msg: msg,
+                              filename: filename,
+                              lineno: lineno,
+                              offset: offset,
+                              text: text,
+                              printFileAndLine: printFileAndLine)
+  }
+
+  // swiftlint:disable:next function_parameter_count
+  public func newIndentationError(msg: PyString?,
+                                  filename: PyString?,
+                                  lineno: PyInt?,
+                                  offset: PyInt?,
+                                  text: PyString?,
+                                  printFileAndLine: PyObject?) -> PySyntaxError {
+    return PyIndentationError(msg: msg,
+                              filename: filename,
+                              lineno: lineno,
+                              offset: offset,
+                              text: text,
+                              printFileAndLine: printFileAndLine)
   }
 
   // MARK: - Keyboard interrupt

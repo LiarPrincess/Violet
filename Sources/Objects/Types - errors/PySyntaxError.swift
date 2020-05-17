@@ -153,7 +153,7 @@ public class PySyntaxError: PyException {
     // Why this is static? See comment in 'PyBaseException.str'.
 
     let filenameOrNil: String? = {
-      guard let path = zelf.filename as? PyString else {
+      guard let path = zelf.filename as? PyString, path.value.any else {
         return nil
       }
 
