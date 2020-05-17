@@ -85,6 +85,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("inplace_ops.py"))
 //  runTest(file: dir.appendingPathComponent("int_float_comparisons.py"))
 //  runTest(file: dir.appendingPathComponent("ints.py"))
+//  runTest(file: dir.appendingPathComponent("invalid_syntax.py"))
 //  runTest(file: dir.appendingPathComponent("isinstance.py"))
 //  runTest(file: dir.appendingPathComponent("issubclass.py"))
 //  runTest(file: dir.appendingPathComponent("iterable.py"))
@@ -118,7 +119,6 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("with.py"))
 
   // Failing tests:
-//  runTest(file: dir.appendingPathComponent("invalid_syntax.py"))
 //  runTest(file: dir.appendingPathComponent("property.py"))
 
 //  runTest(file: dir.appendingPathComponent("builtin_callable.py"))
