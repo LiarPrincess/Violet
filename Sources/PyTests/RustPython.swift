@@ -129,7 +129,6 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("funky_syntax.py"))
 //  runTest(file: dir.appendingPathComponent("getframe.py"))
 //  runTest(file: dir.appendingPathComponent("imp.py"))
-//  runTest(file: dir.appendingPathComponent("memoryview.py"))
 //  runTest(file: dir.appendingPathComponent("printing.py"))
 //  runTest(file: dir.appendingPathComponent("stdlib_sys.py"))
 //  runTest(file: dir.appendingPathComponent("subclass_str.py"))
