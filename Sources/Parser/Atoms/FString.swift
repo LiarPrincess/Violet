@@ -64,7 +64,7 @@ internal struct FString {
     while index != view.endIndex {
       // Literal is optional, because we may start with expr
       // and we can't just add a node!
-      if let literal = try self.consumeLiteral(in: view, advancing: &index) {
+      if let literal = try self.consumeLiteral(view: view, advancing: &index) {
         self.append(literal)
       }
 
@@ -77,7 +77,7 @@ internal struct FString {
           self.lastStr = nil
         }
 
-        let fragment = try self.consumeExpr(in: view, advancing: &index)
+        let fragment = try self.consumeExpr(view: view, advancing: &index)
         self.fragments.append(fragment)
 
         if index != view.endIndex {
@@ -128,7 +128,7 @@ internal struct FString {
   ///
   /// CPython: `fstring_find_literal`.
   private func consumeLiteral(
-    in view: String.UnicodeScalarView,
+    view: String.UnicodeScalarView,
     advancing index: inout String.UnicodeScalarIndex
   ) throws -> String? {
 
@@ -183,7 +183,7 @@ internal struct FString {
   ///
   /// CPython: `fstring_find_expr`
   private func consumeExpr(
-    in view: String.UnicodeScalarView,
+    view: String.UnicodeScalarView,
     advancing index: inout String.UnicodeScalarIndex
   ) throws -> FStringFragment {
 
@@ -191,7 +191,7 @@ internal struct FString {
     view.formIndex(after: &index) // consume '{'
 
     // We have to eval right now (not later), to output errors in correct order.
-    let exprString = try self.consumeExprValue(in: view, advancing: &index)
+    let exprString = try self.consumeExprValue(view: view, advancing: &index)
     let expr = try self.eval(source: exprString)
 
     assert(index == view.endIndex
@@ -202,7 +202,7 @@ internal struct FString {
 
     var conversion: StringExpr.Conversion?
     if index != view.endIndex && view[index] == "!" {
-      conversion = try self.consumeExprConversion(in: view, advancing: &index)
+      conversion = try self.consumeExprConversion(view: view, advancing: &index)
     }
 
     assert(index == view.endIndex
@@ -212,7 +212,7 @@ internal struct FString {
 
     var formatSpec: String?
     if index != view.endIndex && view[index] == ":" {
-      formatSpec = try self.consumeFormatSpec(in: view, advancing: &index)
+      formatSpec = try self.consumeFormatSpec(view: view, advancing: &index)
     }
 
     assert(index == view.endIndex || view[index] == "}")
@@ -248,8 +248,10 @@ internal struct FString {
   // MARK: - Consume expr - value
 
   private enum QuoteType {
-    /** ' */ case single
-    /** " */ case double
+    /// `'`
+    case single
+    /// `"`
+    case double
 
     fileprivate var scalar: UnicodeScalar {
       switch self {
@@ -260,108 +262,118 @@ internal struct FString {
   }
 
   private enum QuoteCount {
-    /** " */ case short
-    /** """ */ case long
+    /// `'` or `"`
+    case short
+    /// `'''` or `"""`
+    case long
   }
 
   // CPython: char * int, Violet 2 * 2 (we avoid asserts this way)
   private typealias Quote = (type: QuoteType, count: QuoteCount)
 
+  // swiftlint:disable cyclomatic_complexity
+  // ^^^ Things are about to get very complicated!
+
   /// Consume first part of the expression.
   ///
   /// Will advance index up until:
   /// - end of string
-  /// - end of expression (in this case view[index] = '!', ':' or '}')
+  /// - end of expression (in this case `view[index] = '!', ':' or '}'`)
   ///
   /// This is almost 1:1 from CPython `fstring_find_expr`.
   /// But still, you can break it if you try long enough.
   private func consumeExprValue(
-    in view: String.UnicodeScalarView,
+    view: String.UnicodeScalarView,
     advancing index: inout String.UnicodeScalarIndex
   ) throws -> String {
+    // swiftlint:enable cyclomatic_complexity
+
     var quote: Quote?
-    var nestedDepth = 0 // nesting level for braces/parens/brackets
+    var parenStackDepth = 0
 
     let startIndex = index
-    whileLoop: while index != view.endIndex {
-      let isInsideParen = nestedDepth > 0
-      let isInsideString = quote != nil
-      let isInsideSomething = isInsideParen || isInsideString
+    while index != view.endIndex {
+      let scalar = view[index]
 
-      switch view[index] {
-      case "\\":
+      // Backslash is not allowed inside expression
+      if scalar == "\\" {
         throw FStringError.backslashInExpression
+      }
 
-      case "[", "{", "(":
-        nestedDepth += 1
-
-      case "]" where isInsideParen,
-           "}" where isInsideParen,
-           ")" where isInsideParen:
-        nestedDepth -= 1
-
-      case "'" where !isInsideString, // string start
-           "\"" where !isInsideString:
-
-        /// We dont know if it is short (") or long (""") quote.
-        quote = try self.getQuoteType(in: view, startingFrom: index)
-
-        if quote?.count == .some(.long) {
-          view.formIndex(after: &index) // 1st quote
-          view.formIndex(after: &index) // 2nd quote
-          // 3rd quote will be advanced after switch
+      // Are we ending string?
+      else if let q = quote {
+        switch self.consumeStringEnd(view: view, index: &index, quote: q) {
+        case .consumed:
+          quote = nil // We finished string
+        case .notStringEnd:
+          view.formIndex(after: &index) // Consume this character
         }
+      }
 
-      case quote?.type.scalar: // string end
-        guard let q = quote else { trap("?") }
+      // Are we starting string?
+      else if scalar == "'" || scalar == "\"" {
+        assert(quote == nil)
+        quote = self.consumeStringStart(view: view, index: &index)
+      }
 
-        let isEnd = try self.isQuoteEnd(quote: q, view: view, startingFrom: index)
-        if isEnd {
-          quote = nil
-
-          if q.count == .long {
-            view.formIndex(after: &index) // 1st quote
-            view.formIndex(after: &index) // 2nd quote
-            // 3rd quote will be advanced after switch
-          }
-        }
-
-      case "#":
+      // Comments are not allowed in expression
+      // (but they are allowed in strings, so this has to be after quote checking)
+      else if scalar == "#" {
         throw FStringError.commentInExpression
+      }
 
-      case "!" where !isInsideSomething:
-        let nextIndex = view.index(after: index)
+      // Are we starting paren pair?
+      else if scalar == "(" || scalar == "[" || scalar == "{" {
+        parenStackDepth += 1
+        view.formIndex(after: &index) // Consume paren
+      }
 
-        // '!=' is a special case mentioned in PEP-0498.
-        let isNotEqual = nextIndex < view.endIndex && view[nextIndex] == "="
-        if !isNotEqual {
-          break whileLoop
-        }
+      // Are we closing paren pair?
+      else if parenStackDepth > 0 && (scalar == ")" || scalar == "]" || scalar == "}") {
+        parenStackDepth -= 1
+        view.formIndex(after: &index) // Consume paren
+      }
 
-      case ":" where !isInsideSomething,
-           "}" where !isInsideSomething:
-        break whileLoop
-
-      default:
+      // Format characters (one of  ':}!') end the loop
+      // We will NOT consume them because we need to know if we should parse
+      // conversion/format AFTER we exit from this fn.
+      else if parenStackDepth == 0 && (scalar == ":" || scalar == "}") {
         break
       }
 
-      view.formIndex(after: &index)
+      // '!' is a special case, because it may also be '!=' (see PEP-0498)
+      else if parenStackDepth == 0 && scalar == "!" {
+        let nextIndex = view.index(after: index)
+        let isNotEqual = nextIndex != view.endIndex && view[nextIndex] == "="
+
+        if isNotEqual {
+          view.formIndex(after: &index) // consume '!'
+          view.formIndex(after: &index) // consume '='
+        } else {
+          break
+        }
+      }
+
+      // Nothing interesting, just go to next character
+      else {
+        view.formIndex(after: &index)
+      }
     }
 
     guard quote == nil else {
       throw FStringError.unterminatedString
     }
 
-    // f"Let it go, {(let} it go" <- will not trigger it, we got +1 from '(' and
-    //                               -1 from '}', it is 'unexpectedEnd' instead
-    // f"Let it go, {((let} it go" <- will trigger it
+    // f"{(let} it go" <- will not trigger it, we got +1 from '(' and -1 from '}',
+    //                    it will trigger 'unexpectedEnd' instead
+    // f"{((let} it go" <- will trigger it, we got +2 from '(' and -1 from '}'
     // This is how CPython works (kind of surprising).
-    guard nestedDepth == 0 else {
+    guard parenStackDepth == 0 else {
       throw FStringError.mismatchedParen
     }
 
-    if index == view.endIndex {
+    // We are expecting one of ':}!', not string end!
+    guard index != view.endIndex else {
       throw FStringError.unexpectedEnd
     }
 
@@ -369,63 +381,81 @@ internal struct FString {
     return String(s)
   }
 
-  /// Returns 1 for short (") quote and 3 for long (""").
-  private func getQuoteType(
-    in view: String.UnicodeScalarView,
-    startingFrom index: String.UnicodeScalarIndex
-  ) throws -> Quote {
-
+  private func consumeStringStart(
+    view: String.UnicodeScalarView,
+    index: inout String.UnicodeScalarIndex
+  ) -> Quote {
     let quote = view[index]
     assert(quote == "'" || quote == "\"")
-    let type = quote == "'" ? QuoteType.single : .double
 
-    let index2 = view.index(after: index) // 2nd char (the one after index)
-    if index2 == view.endIndex {
-      throw FStringError.unterminatedString
+    let type: QuoteType = quote == "'" ? .single : .double
+    view.formIndex(after: &index) // consume 'quote'
+
+    // 2nd character
+    if index == view.endIndex || view[index] != quote {
+      return Quote(type: type, count: .short)
     }
 
-    let index3 = view.index(after: index2) // 3rd char
-    if index3 == view.endIndex {
+    // Do not advance index!
+    // If 3rd character is not quote then we should consume only 1st quote!
+
+    // 3rd character
+    let index3 = view.index(after: index)
+    if index3 == view.endIndex || view[index3] != quote {
       // something like "elsa''" <- '' is at end
       return Quote(type: type, count: .short)
     }
 
-    let isLong = view[index2] == quote && view[index3] == quote
-    return Quote(type: type, count: isLong ? .long : .short)
+    // We have long quote, now we can advance 2nd and 3rd character.
+    view.formIndex(after: &index)
+    view.formIndex(after: &index)
+    return Quote(type: type, count: .long)
   }
 
-  private func isQuoteEnd(
-    quote: Quote,
-    view: String.UnicodeScalarView,
-    startingFrom index: String.UnicodeScalarIndex
-  ) throws -> Bool {
+  private enum ConsumeQuoteEnd {
+    case consumed
+    case notStringEnd
+  }
 
-    let scalar = quote.type.scalar
-    assert(view[index] == scalar)
+  private func consumeStringEnd(
+    view: String.UnicodeScalarView,
+    index: inout String.UnicodeScalarIndex,
+    quote: Quote
+  ) -> ConsumeQuoteEnd {
+    let quoteScalar = quote.type.scalar
+
+    guard view[index] == quoteScalar else {
+      return .notStringEnd
+    }
 
     switch quote.count {
+    case .short:
+      view.formIndex(after: &index) // Consume ending
+      return .consumed
+
     case .long:
-      let index2 = view.index(after: index) // 2nd char (the one after index)
-      if index2 == view.endIndex {
-        throw FStringError.unterminatedString
+      let index2 = view.index(after: index) // 2nd char
+      guard index2 != view.endIndex && view[index2] == quoteScalar else {
+        return .notStringEnd
       }
 
       let index3 = view.index(after: index2) // 3rd char
-      if index3 == view.endIndex {
-        throw FStringError.unterminatedString
+      guard index3 != view.endIndex && view[index3] == quoteScalar else {
+        return .notStringEnd
       }
 
-      return view[index2] == scalar && view[index3] == scalar
-
-    case .short:
-      return true
+      // We found proper ending!
+      view.formIndex(after: &index) // 1st char
+      view.formIndex(after: &index) // 2nd char
+      view.formIndex(after: &index) // 3rd char
+      return .consumed
     }
   }
 
   // MARK: - Consume expr - conversion
 
   private func consumeExprConversion(
-    in view: String.UnicodeScalarView,
+    view: String.UnicodeScalarView,
     advancing index: inout String.UnicodeScalarIndex
   ) throws -> StringExpr.Conversion {
 
@@ -454,7 +484,7 @@ internal struct FString {
   // MARK: - Consume expr - format spec
 
   private func consumeFormatSpec(
-    in view: String.UnicodeScalarView,
+    view: String.UnicodeScalarView,
     advancing index: inout String.UnicodeScalarIndex
   ) throws -> String {
 
