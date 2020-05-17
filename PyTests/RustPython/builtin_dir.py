@@ -24,15 +24,17 @@ assert ['h', 'q'] == dir(B())
 assert 'test' in dir(A)
 
 # eval() takes any mapping-like type, so dir() must support them
+# VIOLET: We do not have 'yield'
 # TODO: eval() should take any mapping as locals, not just dict-derived types
-class A(dict):
-	def __getitem__(self, x):
-		return dir
-	def keys(self):
-		yield 6
-		yield 5
-assert eval("dir()", {}, A()) == [5, 6]
+# class A(dict):
+# 	def __getitem__(self, x):
+# 		return dir
+# 	def keys(self):
+# 		yield 6
+# 		yield 5
+# assert eval("dir()", {}, A()) == [5, 6]
 
-import socket
+# VIOLET: We do not have 'socket' module
+# import socket
 
-assert "AF_INET" in dir(socket)
+# assert "AF_INET" in dir(socket)
