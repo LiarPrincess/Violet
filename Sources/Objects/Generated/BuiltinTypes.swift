@@ -1744,6 +1744,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "fget", value: PyProperty.wrap(doc: nil, get: PyProperty.getFGet, castSelf: Self.asProperty))
     self.insert(type: type, name: "fset", value: PyProperty.wrap(doc: nil, get: PyProperty.getFSet, castSelf: Self.asProperty))
     self.insert(type: type, name: "fdel", value: PyProperty.wrap(doc: nil, get: PyProperty.getFDel, castSelf: Self.asProperty))
+    self.insert(type: type, name: "__doc__", value: PyProperty.wrap(doc: nil, get: PyProperty.getDoc, set: PyProperty.setDoc, castSelf: Self.asProperty))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyProperty.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyProperty.pyInit(args:kwargs:)))

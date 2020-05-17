@@ -104,6 +104,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("none.py"))
 //  runTest(file: dir.appendingPathComponent("numbers.py"))
 //  runTest(file: dir.appendingPathComponent("object.py"))
+//  runTest(file: dir.appendingPathComponent("property.py"))
 //  runTest(file: dir.appendingPathComponent("set.py"))
 //  runTest(file: dir.appendingPathComponent("short_circuit_evaluations.py"))
 //  runTest(file: dir.appendingPathComponent("slice.py"))
@@ -117,9 +118,6 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("unicode_slicing.py"))
 //  runTest(file: dir.appendingPathComponent("variables.py"))
 //  runTest(file: dir.appendingPathComponent("with.py"))
-
-  // Failing tests:
-//  runTest(file: dir.appendingPathComponent("property.py"))
 
 //  runTest(file: dir.appendingPathComponent("builtin_callable.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_format.py"))

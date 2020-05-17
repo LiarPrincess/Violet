@@ -190,6 +190,23 @@ public class PyProperty: PyObject {
     self.set(object: object, value: Py.none)
   }
 
+  // MARK: - Doc
+
+  // sourcery: pyproperty = __doc__, setter = setDoc
+  public func getDoc() -> PyObject? {
+    return self.doc
+  }
+
+  public func setDoc(_ object: PyObject) -> PyResult<Void> {
+    if object.isNone {
+      self.doc = nil
+      return .value()
+    }
+
+    self.doc = object
+    return .value()
+  }
+
   // MARK: - Getter, setter, deleter
 
   internal static let getterDoc = "Descriptor to change the getter on a property."

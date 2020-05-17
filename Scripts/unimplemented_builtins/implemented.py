@@ -739,6 +739,7 @@ types = {
     'fget',
     'fset',
     'fdel',
+    '__doc__',
     '__getattribute__',
     '__get__',
     '__set__',

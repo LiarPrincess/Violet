@@ -115,6 +115,8 @@ NoneType
 property
   Unimplemented:
     __isabstractmethod__
+  Why do we even have this?
+    __doc__
 
 range
   Why do we even have this?
