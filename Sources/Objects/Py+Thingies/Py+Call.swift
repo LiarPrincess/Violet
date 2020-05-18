@@ -95,7 +95,11 @@ extension PyInstance {
   /// callable(object)
   /// See [this](https://docs.python.org/3/library/functions.html#callable)
   public func callable(object: PyObject) -> PyResult<Bool> {
-    return self.hasattr(object: object, name: .__call__)
+    if object.type.lookup(name: .__call__) != nil {
+      return .value(true)
+    }
+
+    return .value(false)
   }
 }
 

@@ -23,6 +23,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("builtin_any.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_ascii.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_bin.py"))
+//  runTest(file: dir.appendingPathComponent("builtin_callable.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_chr.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_complex.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_dict.py"))
@@ -122,7 +123,6 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("variables.py"))
 //  runTest(file: dir.appendingPathComponent("with.py"))
 
-//  runTest(file: dir.appendingPathComponent("builtin_callable.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_format.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_open.py"))
 //  runTest(file: dir.appendingPathComponent("code.py"))
