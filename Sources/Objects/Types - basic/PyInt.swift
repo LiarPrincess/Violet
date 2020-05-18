@@ -348,7 +348,7 @@ public class PyInt: PyObject {
 
       switch self.pow(base: self.value, exp: exp.value) {
       case let .int(powInt):
-        let result = powInt % modPyInt.value
+        let result = self.modRaw(left: powInt, right: modPyInt.value)
         return .value(Py.newInt(result))
       case let .fraction(powDouble):
         let modDouble = Double(modPyInt.value)
