@@ -106,6 +106,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("none.py"))
 //  runTest(file: dir.appendingPathComponent("numbers.py"))
 //  runTest(file: dir.appendingPathComponent("object.py"))
+//  runTest(file: dir.appendingPathComponent("printing.py"))
 //  runTest(file: dir.appendingPathComponent("property.py"))
 //  runTest(file: dir.appendingPathComponent("set.py"))
 //  runTest(file: dir.appendingPathComponent("short_circuit_evaluations.py"))
@@ -129,7 +130,6 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("funky_syntax.py"))
 //  runTest(file: dir.appendingPathComponent("getframe.py"))
 //  runTest(file: dir.appendingPathComponent("imp.py"))
-//  runTest(file: dir.appendingPathComponent("printing.py"))
 //  runTest(file: dir.appendingPathComponent("stdlib_sys.py"))
 //  runTest(file: dir.appendingPathComponent("subclass_str.py"))
 }
