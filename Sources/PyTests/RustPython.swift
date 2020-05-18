@@ -123,7 +123,6 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("variables.py"))
 //  runTest(file: dir.appendingPathComponent("with.py"))
 
-//  runTest(file: dir.appendingPathComponent("builtin_format.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_open.py"))
 //  runTest(file: dir.appendingPathComponent("code.py"))
 //  runTest(file: dir.appendingPathComponent("extra_bool_eval.py")) // needs peephole
