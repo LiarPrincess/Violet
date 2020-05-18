@@ -562,14 +562,21 @@ extension PyFloat {
   // sourcery: pymethod = __pow__
   public func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     guard self.isNilOrNone(mod) else {
-      return .typeError("pow() 3rd argument not allowed unless all arguments are integers")
+      let msg = "pow() 3rd argument not allowed unless all arguments are integers"
+      return .typeError(msg)
     }
 
     guard let exp = PyFloat.asDouble(exp) else {
       return .value(Py.notImplemented)
     }
 
-    let result = Foundation.pow(self.value, exp)
+    let base = self.value
+
+    if let e = self.checkPowInvariants(base: base, exp: exp) {
+      return .error(e)
+    }
+
+    let result = Foundation.pow(base, exp)
     return .value(Py.newFloat(result))
   }
 
@@ -587,8 +594,23 @@ extension PyFloat {
       return .value(Py.notImplemented)
     }
 
-    let result = Foundation.pow(base, self.value)
+    let exp = self.value
+
+    if let e = self.checkPowInvariants(base: base, exp: exp) {
+      return .error(e)
+    }
+
+    let result = Foundation.pow(base, exp)
     return .value(Py.newFloat(result))
+  }
+
+  private func checkPowInvariants(base: Double, exp: Double) -> PyBaseException? {
+    if base.isZero && exp < 0 {
+      let msg = "0.0 cannot be raised to a negative power"
+      return Py.newZeroDivisionError(msg: msg)
+    }
+
+    return nil
   }
 
   private func isNilOrNone(_ value: PyObject?) -> Bool {
