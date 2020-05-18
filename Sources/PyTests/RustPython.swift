@@ -39,6 +39,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("builtin_max.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_min.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_ord.py"))
+//  runTest(file: dir.appendingPathComponent("builtin_pow.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_range.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_reversed.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_round.py"))
@@ -123,9 +124,8 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("builtin_callable.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_format.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_open.py"))
-//  runTest(file: dir.appendingPathComponent("builtin_pow.py"))
 //  runTest(file: dir.appendingPathComponent("code.py"))
-//  runTest(file: dir.appendingPathComponent("extra_bool_eval.py"))
+//  runTest(file: dir.appendingPathComponent("extra_bool_eval.py")) // needs peephole
 //  runTest(file: dir.appendingPathComponent("funky_syntax.py"))
 //  runTest(file: dir.appendingPathComponent("getframe.py"))
 //  runTest(file: dir.appendingPathComponent("imp.py"))

@@ -49,7 +49,9 @@ def _assert_print(f, args):
             print('Assertion Failure:', *args)
 
 def _typed(obj):
-    return '{}({})'.format(type(obj), obj)
+    # VIOLET: We do not have 'str.format'
+    # return '{}({})'.format(type(obj), obj)
+    return f'{type(obj)}({obj})'
 
 
 def assert_equal(a, b):
