@@ -223,7 +223,7 @@ public final class PyInstance {
 
   // MARK: - Initialize
 
-  private var isInitialized: Bool {
+  public var isInitialized: Bool {
     return self._config != nil && self._delegate != nil
   }
 

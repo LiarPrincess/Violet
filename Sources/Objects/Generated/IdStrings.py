@@ -194,12 +194,18 @@ ids = [
 # Main
 # ----
 
+def field_name(s):
+  return '_' + s
+
 def escaped(s):
   return '`throw`' if id == 'throw' else id
 
 if __name__ == '__main__':
   print(f'''\
 {generated_warning}
+
+// swiftlint:disable file_length
+// swiftlint:disable function_body_length
 
 /// Predefined commonly used `__dict__` keys.
 /// Similiar to `_Py_IDENTIFIER` in `CPython`.
@@ -220,32 +226,45 @@ public struct IdString {{
   fileprivate init(value: String) {{
     self.value = Py.newString(value)
     self.hash = self.value.hashRaw()
-  }}
+  }}\
+''')
 
-  private static var _impl: IdStringImpl?
-  private static var impl: IdStringImpl {{
-    if let i = Self._impl {{ return i }}
+  # ==========
+  # === GC ===
+  # ==========
 
-    let i = IdStringImpl()
-    Self._impl = i
-    return i
-  }}
+  print('''
+  // MARK: - GC
 
   /// Clean when `Py` gets destroyed.
-  internal static func gcClean() {{
-    Self._impl = nil
-  }}
+  internal static func gcClean() {\
 ''')
 
   for id in ids:
-    print(f'  public static let {escaped(id)} = Self.impl.{escaped(id)}')
+    print(f'    Self.{field_name(id)} = nil')
 
-  print('}')
+  print('  }')
 
-  # Impl
-  print('private struct IdStringImpl {')
+  # ===========
+  # === Ids ===
+  # ===========
 
   for id in ids:
-    print(f'  fileprivate let {escaped(id)} = IdString(value: "{id}")')
+    print(f'''
+  // MARK: - {id}
+
+  private static var {field_name(id)}: IdString?
+  public static var {escaped(id)}: IdString {{
+    assert(Py.isInitialized)
+
+    if let value = Self.{field_name(id)} {{
+      return value
+    }}
+
+    let value = IdString(value: "{id}")
+    Self.{field_name(id)} = value
+    return value
+  }}\
+''')
 
   print('}')
