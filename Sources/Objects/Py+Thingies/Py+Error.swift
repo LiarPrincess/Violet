@@ -119,29 +119,63 @@ extension PyInstance {
     return PyOSError(msg: msg)
   }
 
-  public func newOSError(errno: Int32) -> PyOSError {
-    let args = self.createOSErrorArgs(errno: errno, filename: nil)
-    let tuple = self.newTuple(args)
-    return PyOSError(args: tuple)
-  }
-
   /// Base class for I/O related errors.
-  public func newOSError(errno: Int32, filename: String) -> PyOSError {
-    let args = self.createOSErrorArgs(errno: errno, filename: filename)
-    let tuple = self.newTuple(args)
-    return PyOSError(args: tuple)
-  }
-
-  /// Base class for I/O related errors.
-  public func newOSError(errno: Int32, path: String) -> PyOSError {
-    // If we can't get filename then we will use full path.
-    // It is still better than not providing anything.
-    let filename = self.fileSystem.basename(path: path)
-    return self.newOSError(errno: errno, filename: filename)
-  }
-
+  ///
   /// https://docs.python.org/3/library/exceptions.html#OSError
-  private func createOSErrorArgs(errno: Int32, filename: String?) -> [PyObject] {
+  public func newOSError(errno: Int32) -> PyOSError {
+    return self.createOSError(errno: errno, filename: nil)
+  }
+
+  /// Base class for I/O related errors.
+  ///
+  /// https://docs.python.org/3/library/exceptions.html#OSError
+  public func newOSError(errno: Int32, filename: String) -> PyOSError {
+    return self.createOSError(errno: errno, filename: filename)
+  }
+
+  /// Base class for I/O related errors.
+  ///
+  /// https://docs.python.org/3/library/exceptions.html#OSError
+  public func newOSError(errno: Int32, path: String) -> PyOSError {
+    let filename = self.fileSystem.basename(path: path)
+    return self.createOSError(errno: errno, filename: filename)
+  }
+
+  /// void
+  /// _PyExc_Init(PyObject *bltinmod) <-- seriously check this
+  /// https://docs.python.org/3/library/exceptions.html#OSError
+  private func createOSError(errno: Int32, filename: String?) -> PyOSError {
+    // 'ENOENT' handles its arguments differently than other
+    if errno == ENOENT {
+      return self.newFileNotFoundError(filename: filename)
+    }
+
+    let args = self.createOSErrorArgs(errno: errno, filename: filename)
+    switch errno {
+    case EAGAIN,
+         EALREADY,
+         EINPROGRESS,
+         EWOULDBLOCK: return PyBlockingIOError(args: args)
+    case EPIPE,
+         ESHUTDOWN: return PyBrokenPipeError(args: args)
+    case ECHILD: return PyChildProcessError(args: args)
+    case ECONNABORTED: return PyConnectionAbortedError(args: args)
+    case ECONNREFUSED: return PyConnectionRefusedError(args: args)
+    case ECONNRESET: return PyConnectionResetError(args: args)
+    case EEXIST: return PyFileExistsError(args: args)
+    case ENOENT: return PyFileNotFoundError(args: args)
+    case EISDIR: return PyIsADirectoryError(args: args)
+    case ENOTDIR: return PyNotADirectoryError(args: args)
+    case EINTR: return PyInterruptedError(args: args)
+    case EACCES,
+         EPERM: return PyPermissionError(args: args)
+    case ESRCH: return PyProcessLookupError(args: args)
+    case ETIMEDOUT: return PyTimeoutError(args: args)
+    default: return PyOSError(args: args)
+    }
+  }
+
+  private func createOSErrorArgs(errno: Int32, filename: String?) -> PyTuple {
     var result = [PyObject]()
     result.append(self.newInt(errno))
 
@@ -152,14 +186,32 @@ extension PyInstance {
       result.append(self.newString(filename))
     }
 
-    return result
+    return self.newTuple(result)
   }
 
   // MARK: - File not found
 
-  public func newFileNotFoundError() -> PyFileNotFoundError {
-    let result = PyFileNotFoundError(msg: "No such file or directory")
-    return result
+  public func newFileNotFoundError(path: String?) -> PyFileNotFoundError {
+    let filename = path.map(self.fileSystem.basename(path:))
+    return self.newFileNotFoundError(filename: filename)
+  }
+
+  public func newFileNotFoundError(filename: String?) -> PyFileNotFoundError {
+    var msg = "No such file or directory"
+
+    if let f = filename {
+      msg.append(" (file: \(f))")
+    }
+
+    var args = [PyObject]()
+    args.append(self.newString(msg))
+
+    if let f = filename {
+      args.append(self.newString(f))
+    }
+
+    let argsTuple = self.newTuple(args)
+    return PyFileNotFoundError(args: argsTuple)
   }
 
   // MARK: - Key error

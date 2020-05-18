@@ -69,7 +69,7 @@ internal class FileSystemImpl: PyFileSystem {
     // When we get raw descriptor we assume that the user knows what they
     // are doing, which means that we can ignore 'mode'.
     let result = FileDescriptor(fileDescriptor: fd, closeOnDealloc: false)
-    return .value(FileDescriptorAdapter(for: result))
+    return .value(FileDescriptorAdapter(fd: result, path: nil))
   }
 
   /// static int
@@ -89,10 +89,17 @@ internal class FileSystemImpl: PyFileSystem {
     if let fd = FileDescriptor(path: path,
                                flags: flags,
                                createMode: createMode) {
-      return .value(FileDescriptorAdapter(for: fd))
+      return .value(FileDescriptorAdapter(fd: fd, path: path))
     }
 
-    return .osError("unable to open '\(path)' (mode: \(mode))")
+    switch self.stat(path: path) {
+    case .enoent:
+      return .error(Py.newFileNotFoundError(path: path))
+    case .value,
+         .error:
+      // Maybe we could check 'stat' for permissions?
+      return .osError("unable to open '\(path)' (mode: \(mode))")
+    }
   }
 
   // MARK: - Stat

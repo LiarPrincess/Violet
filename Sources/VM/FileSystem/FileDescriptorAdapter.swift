@@ -9,13 +9,16 @@ internal struct FileDescriptorAdapter:
   CustomStringConvertible, FileDescriptorType {
 
   private let fd: FileDescriptor
+  /// Path for error messages
+  private let path: String?
 
   internal var description: String {
     return self.fd.description
   }
 
-  internal init(for fd: FileDescriptor) {
+  internal init(fd: FileDescriptor, path: String?) {
     self.fd = fd
+    self.path = path
   }
 
   // MARK: - FileDescriptorType
@@ -109,9 +112,18 @@ internal struct FileDescriptorAdapter:
   private func osError(from error: Error) -> PyBaseException {
     if let descriptorError = error as? FileDescriptor.Error {
       let errno = descriptorError.errno
+      if let p = self.path {
+        return Py.newOSError(errno: errno, path: p)
+      }
+
       return Py.newOSError(errno: errno)
     }
 
-    return Py.newOSError(msg: "unknown IO error")
+    var msg = "unknown IO error"
+    if let p = self.path {
+      msg.append(" (file: \(p))")
+    }
+
+    return Py.newOSError(msg: msg)
   }
 }

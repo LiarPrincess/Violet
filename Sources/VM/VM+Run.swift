@@ -217,7 +217,7 @@ extension VM {
     case .value(let s):
       stat = s
     case .enoent:
-      return .error(Py.newFileNotFoundError())
+      return .error(Py.newFileNotFoundError(path: path))
     case .error(let e):
       return .error(e)
     }
@@ -248,7 +248,7 @@ extension VM {
       return .error(Py.newOSError(msg: msg))
 
     case .enoent:
-      return .error(Py.newFileNotFoundError())
+      return .error(Py.newFileNotFoundError(path: main))
     case .error(let e):
       return .error(e)
     }

@@ -95,7 +95,7 @@ public final class UnderscoreOS: PyModuleImplementation {
       return result.map { $0 as PyObject }
 
     case .enoent:
-      return .error(Py.newFileNotFoundError())
+      return .error(Py.newFileNotFoundError(path: path))
     case .error(let e):
       return .error(e)
     }
@@ -135,11 +135,11 @@ public final class UnderscoreOS: PyModuleImplementation {
     switch self.parseListDirPath(path: path) {
     case let .descriptor(fd):
       let result = Py.fileSystem.listDir(fd: fd)
-      return self.handleListDirResult(result: result)
+      return self.handleListDirResult(result: result, path: nil)
 
     case let .path(path):
       let result = Py.fileSystem.listDir(path: path)
-      return self.handleListDirResult(result: result)
+      return self.handleListDirResult(result: result, path: path)
 
     case let .error(e):
       return .error(e)
@@ -154,14 +154,15 @@ public final class UnderscoreOS: PyModuleImplementation {
     return self.parsePathOrDescriptor(object: path)
   }
 
-  private func handleListDirResult(result: ListDirResult) -> PyResult<PyObject> {
+  private func handleListDirResult(result: ListDirResult,
+                                   path: String?) -> PyResult<PyObject> {
     switch result {
     case .entries(let entries):
       let elements = entries.map(Py.newString(_:))
       let list = Py.newList(elements)
       return .value(list)
     case .enoent:
-      return .error(Py.newFileNotFoundError())
+      return .error(Py.newFileNotFoundError(path: path))
     case .error(let e):
       return .error(e)
     }

@@ -50,9 +50,9 @@ public final class VM: PyDelegate {
       arguments: arguments,
       environment: environment,
       executablePath: executablePath,
-      standardInput: FileDescriptorAdapter(for: .standardInput),
-      standardOutput: FileDescriptorAdapter(for: .standardOutput),
-      standardError: FileDescriptorAdapter(for: .standardError)
+      standardInput: FileDescriptorAdapter(fd: .standardInput, path: "stdin"),
+      standardOutput: FileDescriptorAdapter(fd: .standardOutput, path: "stdin"),
+      standardError: FileDescriptorAdapter(fd: .standardError, path: "stderr")
     )
 
     Py.initialize(
