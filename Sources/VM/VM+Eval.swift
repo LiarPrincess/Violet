@@ -31,6 +31,7 @@ extension VM {
   }
 
 // swiftlint:disable function_parameter_count
+// ^^^ Well... yep... we will need this one
 
   /// Run given code object using specified environment.
   ///

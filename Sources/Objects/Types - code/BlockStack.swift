@@ -84,7 +84,6 @@ public struct BlockStack {
   }
 
   public mutating func pop() -> Block? {
-    let block = self.elements.popLast()
-    return block
+    return self.elements.popLast()
   }
 }

@@ -32,8 +32,14 @@ internal final class Eval {
   /// Code to run.
   internal var code: PyCode { return self.frame.code }
 
-  /// Parent frame.
-  internal var parent: PyFrame? { return self.frame.parent }
+  // MARK: - Init
+
+  internal init(vm: VM, frame: PyFrame) {
+    self.vm = vm
+    self.frame = frame
+  }
+
+  // MARK: - Stack
 
   /// Stack of `PyObjects`.
   internal var stack: ObjectStack {
@@ -45,11 +51,22 @@ internal final class Eval {
     return self.frame.stack.count
   }
 
+  // MARK: - Blocks
+
   /// Stack of blocks (for loops, exception handlers etc.).
   internal var blocks: BlockStack {
-    get { return self.frame.blocks }
-    set { self.frame.blocks = newValue }
+    return self.frame.blocks
   }
+
+  internal func popBlock() -> Block? {
+    return self.frame.blocks.pop()
+  }
+
+  internal func pushBlock(block: Block) {
+    self.frame.blocks.push(block: block)
+  }
+
+  // MARK: - Locals, globals, builtins
 
   /// Local variables.
   internal var localSymbols: PyDict { return self.frame.locals }
@@ -72,6 +89,8 @@ internal final class Eval {
     get { return self.frame.fastLocals }
     set { self.frame.fastLocals = newValue }
   }
+
+  // MARK: - Cells and free
 
   /// Free variables (variables from upper scopes).
   ///
@@ -115,13 +134,6 @@ internal final class Eval {
     return self.code.labels[index]
   }
 
-  // MARK: - Init
-
-  internal init(vm: VM, frame: PyFrame) {
-    self.vm = vm
-    self.frame = frame
-  }
-
   // MARK: - Run
 
   internal func run() -> PyResult<PyObject> {
@@ -153,6 +165,17 @@ internal final class Eval {
     }
   }
 
+  private func fillContextAndTraceback(error: PyBaseException) {
+    // Context - another exception during whose handling this exception was raised.
+    Py.setContextUsingCurrentlyHandledExceptionFromDelegate(
+      on: error,
+      overrideCurrent: false
+    )
+
+    // Traceback - stack trace, call stack etc.
+    Py.addTraceback(to: error, frame: self.frame)
+  }
+
   private func fillContextAndTracebackIfNotExceptionFromUnwind(
     error: PyBaseException,
     unwindReason: UnwindReason
@@ -174,17 +197,6 @@ internal final class Eval {
     }
 
     self.fillContextAndTraceback(error: error)
-  }
-
-  private func fillContextAndTraceback(error: PyBaseException) {
-    // Context - another exception during whose handling this exception was raised.
-    Py.setContextUsingCurrentlyHandledExceptionFromDelegate(
-      on: error,
-      overrideCurrent: false
-    )
-
-    // Traceback - stack trace, call stack etc.
-    Py.addTraceback(to: error, frame: self.frame)
   }
 
   // MARK: - Execute instruction
@@ -542,7 +554,7 @@ internal final class Eval {
     case .setupAnnotations:
       return self.setupAnnotations()
     case .popBlock:
-      return self.popBlock()
+      return self.popBlockInstruction()
     case let .loadClosure(cellOrFreeIndex):
       let extended = self.extend(base: extendedArg, arg: cellOrFreeIndex)
       return self.loadClosure(cellOrFreeIndex: extended)

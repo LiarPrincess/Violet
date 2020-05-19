@@ -236,8 +236,7 @@ public class PyCode: PyObject {
     self.filename = Py.intern(string: code.filename)
 
     // We will convert constants and names here.
-    // Otherwise we would have to convert them (`O(1)` + massive constants)
-    // on each use.
+    // Otherwise we would have to convert them on each use.
     self.constants = code.constants.map(PyCode.intern(constant:))
     self.names = code.names.map(Py.intern)
 

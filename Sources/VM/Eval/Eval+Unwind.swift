@@ -62,7 +62,7 @@ extension Eval {
           return .continueCodeExecution
         }
 
-        _ = self.blocks.pop()
+        _ = self.popBlock()
         self.unwindBlock(block: block)
 
         if case .break = reason {
@@ -71,7 +71,7 @@ extension Eval {
         }
 
       case let .setupExcept(firstExceptLabel):
-        _ = self.blocks.pop()
+        _ = self.popBlock()
         self.unwindBlock(block: block)
 
         if case let .exception(e, _) = reason {
@@ -81,7 +81,7 @@ extension Eval {
         }
 
       case let .setupFinally(finallyStartLabel):
-        _ = self.blocks.pop()
+        _ = self.popBlock()
         self.unwindBlock(block: block)
 
         if case let .exception(e, _) = reason {
@@ -96,7 +96,7 @@ extension Eval {
         return .continueCodeExecution
 
       case .exceptHandler:
-        _ = self.blocks.pop()
+        _ = self.popBlock()
         self.unwindExceptHandler(block: block)
       }
     }
@@ -138,7 +138,7 @@ extension Eval {
 
   private func prepareForExceptionHandling(exception: PyBaseException) {
     let exceptHandler = Block(type: .exceptHandler, stackLevel: self.stackLevel)
-    self.blocks.push(block: exceptHandler)
+    self.pushBlock(block: exceptHandler)
 
     // Remember current exception on stack
     let currentOrNil = self.currentlyHandledException

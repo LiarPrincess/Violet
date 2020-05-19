@@ -18,9 +18,9 @@ extension Eval {
   ///
   /// - Note:
   /// This is an instruction implementation!
-  /// If you want to just `popBlock` then use `self.blocks.pop()`!
-  internal func popBlock() -> InstructionResult {
-    if let block = self.blocks.pop() {
+  /// If you want to just `popBlock` then use `self.popBlock()`!
+  internal func popBlockInstruction() -> InstructionResult {
+    if let block = self.popBlock() {
       self.unwindBlock(block: block)
       return .ok
     }

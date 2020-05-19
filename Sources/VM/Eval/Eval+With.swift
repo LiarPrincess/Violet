@@ -40,7 +40,7 @@ extension Eval {
       let label = self.getLabel(index: afterBodyLabelIndex)
       let type = BlockType.setupFinally(finallyStartLabel: label)
       let block = Block(type: type, stackLevel: self.stackLevel)
-      self.blocks.push(block: block)
+      self.pushBlock(block: block)
 
       self.stack.push(res)
       return .ok
@@ -121,14 +121,14 @@ extension Eval {
       self.stack.push(previousException)
       self.stack.push(exception)
 
-      guard let block = self.blocks.pop() else {
+      guard let block = self.popBlock() else {
         let e = Py.newSystemError(msg: "XXX block stack underflow")
         return .exception(e)
       }
 
       assert(block.isExceptHandler)
       let levelWithoutExit = block.stackLevel - 1
-      self.blocks.push(block: Block(type: .exceptHandler, stackLevel: levelWithoutExit))
+      self.pushBlock(block: Block(type: .exceptHandler, stackLevel: levelWithoutExit))
 
     case .silenced:
       __exit__ = self.stack.pop()
