@@ -86,8 +86,12 @@ internal final class Eval {
   ///
   /// CPython: `f_localsplus`.
   internal var fastLocals: [PyObject?] {
-    get { return self.frame.fastLocals }
-    set { self.frame.fastLocals = newValue }
+    return self.frame.fastLocals
+  }
+
+  internal func setFastLocal(index: Int, value: PyObject?) {
+    assert(0 <= index && index < self.fastLocals.count)
+    self.frame.fastLocals[index] = value
   }
 
   // MARK: - Cells and free
@@ -105,9 +109,10 @@ internal final class Eval {
   ///
   /// CPython: `f_lasti`.
   internal var cellsAndFreeVariables: [PyCell] {
-    get { return self.frame.cellsAndFreeVariables }
-    set { self.frame.cellsAndFreeVariables = newValue }
+    return self.frame.cellsAndFreeVariables
   }
+
+  // MARK: - Currently handled exception
 
   internal var currentlyHandledException: PyBaseException? {
     get { return self.vm.currentlyHandledException }
