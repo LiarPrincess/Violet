@@ -25,20 +25,20 @@ extension Eval {
   internal func storeName(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
     let value = self.pop()
-    return self.store(dict: self.localSymbols, name: name, value: value)
+    return self.store(dict: self.locals, name: name, value: value)
   }
 
   /// Pushes the value associated with `name` onto the stack.
   internal func loadName(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-    let dicts = [self.localSymbols, self.globalSymbols, self.builtinSymbols]
+    let dicts = [self.locals, self.globals, self.builtins]
     return self.load(dicts: dicts, name: name)
   }
 
   /// Implements `del name`.
   internal func deleteName(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-    return self.del(dict: self.localSymbols, name: name)
+    return self.del(dict: self.locals, name: name)
   }
 
   // MARK: - Attribute
@@ -133,20 +133,20 @@ extension Eval {
   internal func storeGlobal(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
     let value = self.pop()
-    return self.store(dict: self.globalSymbols, name: name, value: value)
+    return self.store(dict: self.globals, name: name, value: value)
   }
 
   /// Loads the global named `name` onto the stack.
   internal func loadGlobal(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-    let dicts = [self.globalSymbols, self.builtinSymbols]
+    let dicts = [self.globals, self.builtins]
     return self.load(dicts: dicts, name: name)
   }
 
   /// Works as DeleteName, but deletes a global name.
   internal func deleteGlobal(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-    return self.del(dict: self.globalSymbols, name: name)
+    return self.del(dict: self.globals, name: name)
   }
 
   // MARK: - Fast
@@ -241,7 +241,7 @@ extension Eval {
     let name = Py.intern(string: mangled.value)
 
     let value: PyObject
-    switch self.load(dict: self.localSymbols, name: name) {
+    switch self.load(dict: self.locals, name: name) {
     case .value(let o):
       value = o
     case .notFound:

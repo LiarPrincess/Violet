@@ -21,7 +21,7 @@ extension Eval {
   internal func makeFunction(flags: Instruction.FunctionFlags) -> InstructionResult {
     let qualname = self.pop()
     let code = self.pop()
-    let globals = self.globalSymbols
+    let globals = self.globals
 
     let fn: PyFunction
     switch Py.newFunction(qualname: qualname, code: code, globals: globals) {

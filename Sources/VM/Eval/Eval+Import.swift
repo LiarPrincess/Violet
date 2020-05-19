@@ -30,8 +30,8 @@ extension Eval {
   private func importName(name: PyString,
                           fromList: PyObject,
                           level: PyObject) -> PyResult<PyObject> {
-    let globals = self.globalSymbols
-    let locals = self.localSymbols
+    let globals = self.globals
+    let locals = self.locals
 
     let __import__: PyObject
     switch Py.get__import__() {
@@ -104,7 +104,7 @@ extension Eval {
 
       switch Py.getattr(object: module, name: name) {
       case let .value(value):
-        switch self.localSymbols.setItem(index: name, value: value) {
+        switch self.locals.setItem(index: name, value: value) {
         case .value: break
         case .error(let e): return .error(e)
         }

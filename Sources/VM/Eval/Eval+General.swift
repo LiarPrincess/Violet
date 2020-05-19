@@ -94,7 +94,7 @@ extension Eval {
   /// This opcode is only emitted if a class or module body contains variable
   /// annotations statically.
   internal func setupAnnotations() -> InstructionResult {
-    let locals = self.localSymbols
+    let locals = self.locals
 
     if let object = locals.get(id: .__annotations__) {
       guard object is PyDict else {

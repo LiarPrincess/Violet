@@ -109,11 +109,11 @@ internal struct Eval {
   // MARK: - Locals, globals, builtins
 
   /// Local variables.
-  internal var localSymbols: PyDict { return self.frame.locals }
+  internal var locals: PyDict { return self.frame.locals }
   /// Global variables.
-  internal var globalSymbols: PyDict { return self.frame.globals }
+  internal var globals: PyDict { return self.frame.globals }
   /// Builtin symbols (most of the time it would be `Py.builtinsModule.__dict__`).
-  internal var builtinSymbols: PyDict { return self.frame.builtins }
+  internal var builtins: PyDict { return self.frame.builtins }
 
   /// Function args and local variables.
   ///
