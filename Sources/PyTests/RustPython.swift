@@ -73,6 +73,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("function_args.py"))
 //  runTest(file: dir.appendingPathComponent("function_nested.py"))
 //  runTest(file: dir.appendingPathComponent("function.py"))
+//  runTest(file: dir.appendingPathComponent("funky_syntax.py"))
 //  runTest(file: dir.appendingPathComponent("global_nonlocal.py"))
 //  runTest(file: dir.appendingPathComponent("hash.py"))
 //  runTest(file: dir.appendingPathComponent("if_expressions.py"))
@@ -125,7 +126,6 @@ internal func runRustPythonTests() {
 
 //  runTest(file: dir.appendingPathComponent("code.py"))
 //  runTest(file: dir.appendingPathComponent("extra_bool_eval.py")) // needs peephole
-//  runTest(file: dir.appendingPathComponent("funky_syntax.py"))
 //  runTest(file: dir.appendingPathComponent("getframe.py"))
 //  runTest(file: dir.appendingPathComponent("subclass_str.py"))
 }
