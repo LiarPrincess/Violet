@@ -201,8 +201,12 @@ public class PyFrame: PyObject {
    }
 
    // sourcery: pyproperty = f_locals
-   internal func getLocals() -> PyDict {
-    return self.locals
+   internal func getLocals() -> PyResult<PyDict> {
+    if let e = self.copyFastToLocals() {
+      return .error(e)
+    }
+
+    return .value(self.locals)
    }
 
   // sourcery: pyproperty = f_code

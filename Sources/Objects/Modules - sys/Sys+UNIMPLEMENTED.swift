@@ -108,10 +108,6 @@ extension Sys {
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.getswitchinterval).
   internal func getSwitchInterval() -> PyObject { }
 
-  /// sys._getframe([depth])
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys._getframe).
-  internal func _getFrame() -> PyObject { }
-
   /// sys.getprofile()
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.getprofile).
   internal func getProfile() -> PyObject { }

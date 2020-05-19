@@ -213,6 +213,9 @@ public final class Sys: PyModuleImplementation {
     self.setOrTrap(.excepthook,
                    doc: Self.excepthookDoc,
                    fn: self.excepthook(type:value:traceback:))
+    self.setOrTrap(._getframe,
+                   doc: Self.getFrameDoc,
+                   fn: self._getFrame(depth:))
     self.setOrTrap(.getrecursionlimit,
                    doc: Self.getRecursionLimitDoc,
                    fn: self.getRecursionLimit)
@@ -264,6 +267,7 @@ public final class Sys: PyModuleImplementation {
     internal static let intern = Properties(value: "intern")
     internal static let getdefaultencoding = Properties(value: "getdefaultencoding")
     internal static let excepthook = Properties(value: "excepthook")
+    internal static let _getframe = Properties(value: "_getframe")
 
     internal static let getrecursionlimit = Properties(value: "getrecursionlimit")
     internal static let setrecursionlimit = Properties(value: "setrecursionlimit")

@@ -76,4 +76,58 @@ extension Sys {
   public func getDefaultEncoding() -> PyObject {
     return Py.newString(self.defaultEncoding)
   }
+
+  // MARK: - Get frame
+
+  internal static var getFrameDoc: String {
+    return """
+    _getframe([depth]) -> frameobject
+
+    Return a frame object from the call stack.  If optional integer depth is
+    given, return the frame object that many calls below the top of the stack.
+    If that is deeper than the call stack, ValueError is raised.  The default
+    for depth is zero, returning the frame at the top of the call stack.
+
+    This function should be used for internal and specialized
+    purposes only."
+    """
+  }
+
+  /// sys._getframe([depth])
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys._getframe).
+  internal func _getFrame(depth depthObject: PyObject?) -> PyResult<PyFrame> {
+    var depth: BigInt
+    switch self.parseFrameDepth(object: depthObject) {
+    case let .value(d): depth = d
+    case let .error(e): return .error(e)
+    }
+
+    guard let initialFrame = Py.delegate.frame else {
+      return .runtimeError("_getFrame(): no current frame")
+    }
+
+    var frame: PyFrame? = initialFrame
+    while let f = frame, depth > 0 {
+      frame = f.parent
+      depth -= 1
+    }
+
+    guard let result = frame else {
+      return .valueError("call stack is not deep enough")
+    }
+
+    return .value(result)
+  }
+
+  private func parseFrameDepth(object: PyObject?) -> PyResult<BigInt> {
+    guard let object = object else {
+      return .value(-1)
+    }
+
+    guard let depth = object as? PyInt else {
+      return .typeError("an integer is required (got type \(object.typeName))")
+    }
+
+    return .value(depth.value)
+  }
 }

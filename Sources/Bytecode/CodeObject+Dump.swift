@@ -135,7 +135,7 @@ extension CodeObject {
     case .inplaceOr: return "inplaceOr"
 
     case let .compareOp(arg):
-      return "compareOp: \(self.toString(arg))"
+      return "compareOp \(self.toString(arg))"
 
     case .getAwaitable: return "getAwaitable"
     case .getAIter: return "getAIter"
