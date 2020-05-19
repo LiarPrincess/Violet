@@ -115,6 +115,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("slice.py"))
 //  runTest(file: dir.appendingPathComponent("statements.py"))
 //  runTest(file: dir.appendingPathComponent("strings.py"))
+//  runTest(file: dir.appendingPathComponent("subclass_str.py"))
 //  runTest(file: dir.appendingPathComponent("test_warnings.py"))
 //  runTest(file: dir.appendingPathComponent("try_exceptions.py"))
 //  runTest(file: dir.appendingPathComponent("tuple.py"))
@@ -127,5 +128,4 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("code.py"))
 //  runTest(file: dir.appendingPathComponent("extra_bool_eval.py")) // needs peephole
 //  runTest(file: dir.appendingPathComponent("getframe.py"))
-//  runTest(file: dir.appendingPathComponent("subclass_str.py"))
 }

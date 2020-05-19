@@ -772,6 +772,18 @@ public class PyString: PyObject {
 
     // Fast path when we don't have encoding and kwargs
     if encodingObj == nil && errorObj == nil {
+      // Is this object already a 'str'?
+      if let str = object as? PyString {
+        // If we are builtin 'str' (not a subclass) -> return itself
+        if str.checkExact() {
+          return .value(str)
+        }
+
+        let result = Py.newString(str.value)
+        return .value(result)
+      }
+
+      // 'str' of a str-subtype should be a 'str', not this subtype
       return Py.strValue(object: object).map { alloca(type, $0) }
     }
 
