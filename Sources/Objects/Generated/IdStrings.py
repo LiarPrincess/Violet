@@ -204,6 +204,8 @@ if __name__ == '__main__':
   print(f'''\
 {generated_warning}
 
+// swiftlint:disable force_unwrapping
+// swiftlint:disable implicitly_unwrapped_optional
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
@@ -229,6 +231,22 @@ public struct IdString {{
   }}\
 ''')
 
+  # ==================
+  # === Initialize ===
+  # ==================
+
+  print('''
+  // MARK: - Initialize
+
+  /// Create new set of `ids`.
+  internal static func initialize() {\
+''')
+
+  for id in ids:
+    print(f'    Self.{field_name(id)} = IdString(value: "{id}")')
+
+  print('  }')
+
   # ==========
   # === GC ===
   # ==========
@@ -249,21 +267,21 @@ public struct IdString {{
   # === Ids ===
   # ===========
 
+  print('''
+  private static func nilPropertyMessage(id: String) -> String {
+    return "Missing 'IdString.\(id)' " +
+           "Are you trying to use IdStrings without initializing 'Py'?"
+  }\
+''')
+
   for id in ids:
     print(f'''
   // MARK: - {id}
 
-  private static var {field_name(id)}: IdString?
+  private static var {field_name(id)}: IdString!
   public static var {escaped(id)}: IdString {{
-    assert(Py.isInitialized)
-
-    if let value = Self.{field_name(id)} {{
-      return value
-    }}
-
-    let value = IdString(value: "{id}")
-    Self.{field_name(id)} = value
-    return value
+    precondition(Self.{field_name(id)} != nil, nilPropertyMessage(id: "{id})"))
+    return Self.{field_name(id)}!
   }}\
 ''')
 

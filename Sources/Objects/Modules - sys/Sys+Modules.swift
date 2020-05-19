@@ -86,7 +86,7 @@ extension Sys {
 
   // MARK: - Builtin modules
 
-  internal func setBuiltinModules(_ modules: PyModule...) {
+  internal func setBuiltinModules(modules: [PyModule]) {
     assert(!self.hasAlreadyCalled_setBuiltinModules)
 
     var names = [PyString]()

@@ -180,11 +180,13 @@ public final class PyInstance {
 
   // MARK: - Types
 
+  /// Container for all of the non-error Python types (as `PyType` instances).
   public private(set) lazy var types: BuiltinTypes = {
     self.ensureInitialized()
     return BuiltinTypes()
   }()
 
+  /// Container for all of the error Python types (as `PyType` instances).
   public private(set) lazy var errorTypes: BuiltinErrorTypes = {
     self.ensureInitialized()
     return BuiltinErrorTypes()
@@ -212,7 +214,7 @@ public final class PyInstance {
 
   private weak var _fileSystem: PyFileSystem?
   public var fileSystem: PyFileSystem {
-    if let c = self._fileSystem { return c }
+    if let f = self._fileSystem { return f }
     if self.isInitialized { trap("Py.fileSystem was deallocated!") }
     self.trapUninitialized()
   }
@@ -224,7 +226,7 @@ public final class PyInstance {
   // MARK: - Initialize
 
   public var isInitialized: Bool {
-    return self._config != nil && self._delegate != nil
+    return self._config != nil
   }
 
   /// Configure `Py` instance.
@@ -244,20 +246,31 @@ public final class PyInstance {
 
     // At this point everything should be initialized,
     // which means that from now on we are able to create PyObjects.
-    // So let start with finishing our type hierarchy:
+    // So let start with creating our type hierarchy
+    // (but only hierarchy, we will fill '__dict__' later):
+    _ = self.types
+    _ = self.errorTypes
+
+    // Now we have 'Py.types.str' which means that we can create 'IdStrings'
+    IdString.initialize()
+
+    // Filling '__dict__' may use 'IdString', so there may be a dependency here
+    // (probably, I don't know, it is safer to do it in this order).
     self.types.fill__dict__()
     self.errorTypes.fill__dict__()
 
     // And now modules.
     // Note that property getter will create module which will also fill '__dict__'
     // (because we now can - we have basic types).
-    self.sys.setBuiltinModules(
+    let builtinModules = [
       self.builtinsModule,
       self.sysModule,
       self._impModule,
       self._warningsModule,
       self._osModule
-    )
+    ]
+
+    self.sys.setBuiltinModules(modules: builtinModules)
   }
 
   private func ensureInitialized() {
@@ -267,7 +280,7 @@ public final class PyInstance {
   }
 
   private func trapUninitialized() -> Never {
-    let fn = "Py.initialize(config:delegate:)"
+    let fn = "Py.initialize(config:delegate:fileSystem:)"
     trap("Python context must first be initialized with '\(fn)'.")
   }
 
@@ -295,15 +308,15 @@ public final class PyInstance {
       type.gcClean()
     }
 
-    // Ids:
-    IdString.gcClean()
-
     // And also modules:
     self.builtinsModule.gcClean()
     self.sysModule.gcClean()
     self._impModule.gcClean()
     self._warningsModule.gcClean()
     self._osModule.gcClean()
+
+    // Ids:
+    IdString.gcClean()
 
     // TODO: Uncomment this when we have GC.
     // weak var old = Py
