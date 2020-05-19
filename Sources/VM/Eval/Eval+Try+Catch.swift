@@ -50,7 +50,7 @@ extension Eval {
   /// or whether the function returns, and continues with the outer-next block.
   internal func endFinally() -> InstructionResult {
     // See 'PushFinallyReason' type for comment about what this is.
-    switch PushFinallyReason.pop(from: &self.stack) {
+    switch PushFinallyReason.pop(from: &self.frame.stack) {
     case let .return(value):
       return .return(value) // We are still returning value
 
@@ -102,10 +102,10 @@ extension Eval {
 
     switch arg {
     case .exceptionAndCause:
-      cause = self.stack.pop()
+      cause = self.pop()
       fallthrough // swiftlint:disable:this fallthrough
     case .exceptionOnly:
-      value = self.stack.pop()
+      value = self.pop()
       fallthrough // swiftlint:disable:this fallthrough
     case .reRaise:
       let e = self.createException(value: value, cause: cause)

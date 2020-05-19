@@ -23,7 +23,7 @@ extension Eval {
 
     switch Py.iter(object: iterable) {
     case let .value(iter):
-      self.stack.top = iter
+      self.setTop(iter)
     return .ok
     case let .error(e):
       return .exception(e)
@@ -39,12 +39,12 @@ extension Eval {
 
     switch Py.next(iterator: iter) {
     case .value(let o):
-      self.stack.push(o)
+      self.push(o)
       return .ok
 
     case .error(let e):
       if e.isStopIteration {
-        _ = self.stack.pop() // iter
+        _ = self.pop() // iter
         self.jumpTo(labelIndex: ifEmptyLabelIndex)
         return .ok
       }

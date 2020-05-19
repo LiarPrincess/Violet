@@ -15,7 +15,7 @@ extension Eval {
   internal func loadConst(index: Int) -> InstructionResult {
     let constant = self.getConstant(index: index)
     let object = constant.asObject
-    self.stack.push(object)
+    self.push(object)
     return .ok
   }
 
@@ -24,7 +24,7 @@ extension Eval {
   /// Implements `name = TOS`.
   internal func storeName(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-    let value = self.stack.pop()
+    let value = self.pop()
     return self.store(dict: self.localSymbols, name: name, value: value)
   }
 
@@ -46,8 +46,8 @@ extension Eval {
   /// Implements `TOS.name = TOS1`.
   internal func storeAttribute(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-    let object = self.stack.pop()
-    let value = self.stack.pop()
+    let object = self.pop()
+    let value = self.pop()
 
     switch Py.setattr(object: object, name: name, value: value) {
     case .value:
@@ -64,7 +64,7 @@ extension Eval {
 
     switch Py.getattr(object: object, name: name) {
     case let .value(r):
-      self.stack.top = r
+      self.setTop(r)
       return .ok
     case let .error(e):
       return .exception(e)
@@ -74,7 +74,7 @@ extension Eval {
   /// Implements `del TOS.name`.
   internal func deleteAttribute(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-    let object = self.stack.pop()
+    let object = self.pop()
 
     switch Py.delattr(object: object, name: name) {
     case .value:
@@ -88,12 +88,12 @@ extension Eval {
 
   /// Implements `TOS = TOS1[TOS]`.
   internal func binarySubscript() -> InstructionResult {
-    let index = self.stack.pop()
+    let index = self.pop()
     let object = self.stack.top
 
     switch Py.getItem(object: object, index: index) {
     case let .value(r):
-      self.stack.top = r
+      self.setTop(r)
       return .ok
     case let .error(e):
       return .exception(e)
@@ -102,9 +102,9 @@ extension Eval {
 
   /// Implements `TOS1[TOS] = TOS2`.
   internal func storeSubscript() -> InstructionResult {
-    let index = self.stack.pop()
-    let object = self.stack.pop()
-    let value = self.stack.pop()
+    let index = self.pop()
+    let object = self.pop()
+    let value = self.pop()
 
     switch Py.setItem(object: object, index: index, value: value) {
     case .value:
@@ -116,8 +116,8 @@ extension Eval {
 
   /// Implements `del TOS1[TOS]`.
   internal func deleteSubscript() -> InstructionResult {
-    let index = self.stack.pop()
-    let object = self.stack.pop()
+    let index = self.pop()
+    let object = self.pop()
 
     switch Py.deleteItem(object: object, index: index) {
     case .value:
@@ -132,7 +132,7 @@ extension Eval {
   /// Works as StoreName, but stores the name as a global.
   internal func storeGlobal(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-    let value = self.stack.pop()
+    let value = self.pop()
     return self.store(dict: self.globalSymbols, name: name, value: value)
   }
 
@@ -155,7 +155,7 @@ extension Eval {
     assert(0 <= index && index < self.fastLocals.count)
 
     if let object = self.fastLocals[index] {
-      self.stack.push(object)
+      self.push(object)
       return .ok
     }
 
@@ -165,7 +165,7 @@ extension Eval {
   internal func storeFast(index: Int) -> InstructionResult {
     assert(0 <= index && index < self.fastLocals.count)
 
-    let value = self.stack.pop()
+    let value = self.pop()
     self.setFastLocal(index: index, value: value)
     return .ok
   }
@@ -197,7 +197,7 @@ extension Eval {
     let cell = self.getCellOrFree(at: index)
 
     if let content = cell.content {
-      self.stack.push(content)
+      self.push(content)
       return .ok
     }
 
@@ -209,7 +209,7 @@ extension Eval {
   internal func storeDeref(cellOrFreeIndex index: Int) -> InstructionResult {
     let cell = self.getCellOrFree(at: index)
 
-    let value = self.stack.pop()
+    let value = self.pop()
     cell.content = value
     return .ok
   }
@@ -255,7 +255,7 @@ extension Eval {
       return .exception(e)
     }
 
-    self.stack.push(value)
+    self.push(value)
     return .ok
   }
 
@@ -290,7 +290,7 @@ extension Eval {
   /// otherwise:               name is freeVars[i - cellVars.count].
   internal func loadClosure(cellOrFreeIndex: Int) -> InstructionResult {
     let cell = self.cellsAndFreeVariables[cellOrFreeIndex]
-    self.stack.push(cell)
+    self.push(cell)
     return .ok
   }
 
@@ -341,7 +341,7 @@ extension Eval {
     for dict in dicts {
       switch load(dict: dict, name: name) {
       case .value(let o):
-        self.stack.push(o)
+        self.push(o)
         return .ok
       case .notFound:
         break // try in the next 'dict'

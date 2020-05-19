@@ -91,7 +91,7 @@ extension Eval {
         }
 
         // See 'PushFinallyReason' type for comment about what this is.
-        PushFinallyReason.push(reason: reason, on: &self.stack)
+        PushFinallyReason.push(reason: reason, on: &self.frame.stack)
         self.jumpTo(instructionIndex: finallyStartLabel) // execute finally
         return .continueCodeExecution
 
@@ -142,16 +142,16 @@ extension Eval {
 
     // Remember current exception on stack
     let currentOrNil = self.currentlyHandledException
-    PushExceptionBeforeExcept.push(currentOrNil, on: &self.stack)
+    PushExceptionBeforeExcept.push(currentOrNil, on: &self.frame.stack)
 
     // Make 'exception' current
-    self.currentlyHandledException = exception
-    self.stack.push(exception)
+    self.setCurrentlyHandledException(exception: exception)
+    self.push(exception)
   }
 
   /// \#define UNWIND_BLOCK(b)
   internal func unwindBlock(block: Block) {
-    self.stack.pop(untilCount: block.stackLevel)
+    self.pop(untilCount: block.stackLevel)
   }
 
   /// \#define UNWIND_EXCEPT_HANDLER(b)
@@ -161,14 +161,14 @@ extension Eval {
     let stackCountIncludingException = block.stackLevel + 1
     assert(self.stack.count >= stackCountIncludingException)
 
-    self.stack.pop(untilCount: stackCountIncludingException)
+    self.pop(untilCount: stackCountIncludingException)
 
     // Pop new 'current' exception
-    switch PushExceptionBeforeExcept.pop(from: &self.stack) {
+    switch PushExceptionBeforeExcept.pop(from: &self.frame.stack) {
     case .exception(let e):
-      self.currentlyHandledException = e
+      self.setCurrentlyHandledException(exception: e)
     case .noException:
-      self.currentlyHandledException = nil
+      self.setCurrentlyHandledException(exception: nil)
     case .invalidValue(let o):
       assert(false, "Expected to pop exception (or None), but popped '\(o)'.")
     }

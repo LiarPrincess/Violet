@@ -19,8 +19,8 @@ extension Eval {
   ///            making a closure the code associated with the function (at TOS1)
   ///            the qualified name of the function (at TOS)
   internal func makeFunction(flags: Instruction.FunctionFlags) -> InstructionResult {
-    let qualname = self.stack.pop()
-    let code = self.stack.pop()
+    let qualname = self.pop()
+    let code = self.pop()
     let globals = self.globalSymbols
 
     let fn: PyFunction
@@ -30,7 +30,7 @@ extension Eval {
     }
 
     if flags.contains(.hasFreeVariables) {
-      let value = self.stack.pop()
+      let value = self.pop()
       switch fn.setClosure(value) {
       case .value: break
       case .error(let e): return .exception(e)
@@ -38,7 +38,7 @@ extension Eval {
     }
 
     if flags.contains(.hasAnnotations) {
-      let value = self.stack.pop()
+      let value = self.pop()
       switch fn.setAnnotations(value) {
       case .value: break
       case .error(let e): return .exception(e)
@@ -46,7 +46,7 @@ extension Eval {
     }
 
     if flags.contains(.hasKwOnlyArgDefaults) {
-      let value = self.stack.pop()
+      let value = self.pop()
       switch fn.setKeywordDefaults(value) {
       case .value: break
       case .error(let e): return .exception(e)
@@ -54,14 +54,14 @@ extension Eval {
     }
 
     if flags.contains(.hasPositionalArgDefaults) {
-      let value = self.stack.pop()
+      let value = self.pop()
       switch fn.setDefaults(value) {
       case .value: break
       case .error(let e): return .exception(e)
       }
     }
 
-    self.stack.push(fn)
+    self.push(fn)
     return .ok
   }
 
@@ -69,7 +69,7 @@ extension Eval {
 
   /// Returns with TOS to the caller of the function.
   internal func doReturn() -> InstructionResult {
-    let value = self.stack.pop()
+    let value = self.pop()
     return .return(value)
   }
 
@@ -98,7 +98,7 @@ extension Eval {
 
     switch result {
     case let .value(o):
-      self.stack.push(o)
+      self.push(o)
       return .ok
     case let .error(e),
          let .notCallable(e):
@@ -120,7 +120,7 @@ extension Eval {
   /// 2. call the callable object with those arguments
   /// 3. push the return value returned by the callable object.
   internal func callFunctionKw(argumentCount: Int) -> InstructionResult {
-    let kwNamesObject = self.stack.pop()
+    let kwNamesObject = self.pop()
 
     guard let kwNames = kwNamesObject as? PyTuple else {
       let t = kwNamesObject.typeName
@@ -138,7 +138,7 @@ extension Eval {
 
     switch result {
     case let .value(o):
-      self.stack.push(o)
+      self.push(o)
       return .ok
     case let .error(e),
          let .notCallable(e):
@@ -150,15 +150,15 @@ extension Eval {
   private func callFunction(argAndKwargCount: Int,
                             kwNames: PyTuple?) -> PyInstance.CallResult {
     guard let kwNames = kwNames else {
-      let args = stack.popElementsInPushOrder(count: argAndKwargCount)
-      let fn = self.stack.pop()
+      let args = self.popElementsInPushOrder(count: argAndKwargCount)
+      let fn = self.pop()
       let result = Py.call(callable: fn, args: args)
       Debug.callFunction(fn: fn, args: args, kwargs: nil, result: result)
       return result
     }
 
     let nKwargs = kwNames.elements.count
-    let kwValues = self.stack.popElementsInPushOrder(count: nKwargs)
+    let kwValues = self.popElementsInPushOrder(count: nKwargs)
     assert(kwValues.count == nKwargs)
 
     let kwargs: PyDict
@@ -168,10 +168,10 @@ extension Eval {
     }
 
     let nArgs = argAndKwargCount - nKwargs
-    let args = stack.popElementsInPushOrder(count: nArgs)
+    let args = self.popElementsInPushOrder(count: nArgs)
     assert(args.count == nArgs)
 
-    let fn = self.stack.pop()
+    let fn = self.pop()
     return Py.call(callable: fn, args: args, kwargs: kwargs)
   }
 
@@ -217,14 +217,14 @@ extension Eval {
   internal func callFunctionEx(hasKeywordArguments: Bool) -> InstructionResult {
     var kwargs: PyDict?
     if hasKeywordArguments {
-      let kwargsObject = self.stack.pop()
+      let kwargsObject = self.pop()
       switch self.extractKwargs(from: kwargsObject) {
       case let .value(d): kwargs = d
       case let .error(e): return .exception(e)
       }
     }
 
-    let argsObject = self.stack.pop()
+    let argsObject = self.pop()
     let fn = self.stack.top
 
     let args: [PyObject]
@@ -239,7 +239,7 @@ extension Eval {
     switch result {
     case let .value(o):
       assert(self.stackLevel == level)
-      self.stack.top = o
+      self.setTop(o)
       return .ok
     case let .error(e),
          let .notCallable(e):
@@ -291,7 +291,7 @@ extension Eval {
 
     switch Py.loadMethod(object: object, selector: name) {
     case let .value(o):
-      self.stack.top = o
+      self.setTop(o)
       return .ok
     case let .error(e),
          let .notFound(e):
@@ -310,7 +310,7 @@ extension Eval {
   /// Below them, two items described in `LoadMethod` on the stack.
   /// All of them are popped and return value is pushed.
   internal func callMethod(argumentCount: Int) -> InstructionResult {
-    let args = stack.popElementsInPushOrder(count: argumentCount)
+    let args = self.popElementsInPushOrder(count: argumentCount)
     assert(args.count == argumentCount)
 
     let level = self.stackLevel
@@ -322,7 +322,7 @@ extension Eval {
 
     switch result {
     case let .value(o):
-      self.stack.top = o
+      self.setTop(o)
       return .ok
     case let .error(e),
          let .notCallable(e):

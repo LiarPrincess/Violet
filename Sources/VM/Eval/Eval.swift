@@ -8,18 +8,27 @@ import VioletObjects
 
 // swiftlint:disable file_length
 
-/// Dummy namespace for `eval` function, just so we don't pollute `VM` with all
-/// of that nonsense (but don't worry, we use `VM` as a 'catch them all'
+/// Dummy namespace for `eval` function, just so we don't pollute `VM`
+/// with all that nonsense (but don't worry, we use `VM` as a 'catch them all'
 /// for all of the code that does not fit anywhere else, so it is still a mess).
-///
-/// Technically `Eval` should be a `struct`.
-/// But then we would have to mark tons of methods as `mutating`
-/// (and we are way too lazy for that).
 ///
 /// But wait a sec, it gets even worse:
 /// It will hold strong reference to `VM`!
-/// So... just do not store `Eval` as property.
-internal final class Eval {
+/// So... just do not store `Eval` as property on `VM`.
+///
+/// # Implementation note
+/// We really wanted for `Eval` to be a `struct`.
+///
+/// But then if we used proxy property (property that gets/sets property
+/// on `self.frame`) we would have to mark EVERY METHOD as `mutating`
+/// and we are waaaay too lazy for this.
+/// Also 'technically' we are not mutating our struct, we are mutating the thing
+/// at the other side of the pointer and we do not need `inout` for this.
+/// So this 'mutating' annotation if not exactly true.
+///
+/// To side-step this we will use 1-line proxy methods that will apply mutation.
+/// For example `self.popBlock` will call `self.frame.blocks.pop()`.
+internal struct Eval {
 
   // MARK: - Properties
 
@@ -43,12 +52,43 @@ internal final class Eval {
 
   /// Stack of `PyObjects`.
   internal var stack: ObjectStack {
-    get { return self.frame.stack }
-    set { self.frame.stack = newValue }
+    return self.frame.stack
   }
 
   internal var stackLevel: Int {
     return self.frame.stack.count
+  }
+
+  internal func pop() -> PyObject {
+    return self.frame.stack.pop()
+  }
+
+  internal func pop(untilCount count: Int) {
+    self.frame.stack.pop(untilCount: count)
+  }
+
+  internal func popElementsInPushOrder(count: Int) -> [PyObject] {
+    return self.frame.stack.popElementsInPushOrder(count: count)
+  }
+
+  internal func push(_ object: PyObject) {
+    self.frame.stack.push(object)
+  }
+
+  internal func push<S: Sequence>(contentsOf objects: S) where S.Element == PyObject {
+    self.frame.stack.push(contentsOf: objects)
+  }
+
+  internal func setTop(_ object: PyObject) {
+    self.frame.stack.top = object
+  }
+
+  internal func setSecond(_ object: PyObject) {
+    self.frame.stack.second = object
+  }
+
+  internal func setThird(_ object: PyObject) {
+    self.frame.stack.third = object
   }
 
   // MARK: - Blocks
@@ -115,8 +155,11 @@ internal final class Eval {
   // MARK: - Currently handled exception
 
   internal var currentlyHandledException: PyBaseException? {
-    get { return self.vm.currentlyHandledException }
-    set { self.vm.currentlyHandledException = newValue }
+    return self.vm.currentlyHandledException
+  }
+
+  internal func setCurrentlyHandledException(exception: PyBaseException?) {
+    self.vm.currentlyHandledException = exception
   }
 
   // MARK: - Code object getters
