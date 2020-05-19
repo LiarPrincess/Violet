@@ -6,7 +6,6 @@ internal func runRustPythonTests() {
   // Not a test by itself, but we will try it anyway just to see it it runs:
 //  runTest(file: dir.appendingPathComponent("testutils.py"))
 
-  // Passing tests:
 //  runTest(file: dir.appendingPathComponent("3.1.2.13.py"))
 //  runTest(file: dir.appendingPathComponent("3.1.2.16.py"))
 //  runTest(file: dir.appendingPathComponent("3.1.2.18.py"))
@@ -39,6 +38,7 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("builtin_map.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_max.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_min.py"))
+//  runTest(file: dir.appendingPathComponent("builtin_open.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_ord.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_pow.py"))
 //  runTest(file: dir.appendingPathComponent("builtin_range.py"))
@@ -123,12 +123,9 @@ internal func runRustPythonTests() {
 //  runTest(file: dir.appendingPathComponent("variables.py"))
 //  runTest(file: dir.appendingPathComponent("with.py"))
 
-//  runTest(file: dir.appendingPathComponent("builtin_open.py"))
 //  runTest(file: dir.appendingPathComponent("code.py"))
 //  runTest(file: dir.appendingPathComponent("extra_bool_eval.py")) // needs peephole
 //  runTest(file: dir.appendingPathComponent("funky_syntax.py"))
 //  runTest(file: dir.appendingPathComponent("getframe.py"))
-//  runTest(file: dir.appendingPathComponent("imp.py"))
-//  runTest(file: dir.appendingPathComponent("stdlib_sys.py"))
 //  runTest(file: dir.appendingPathComponent("subclass_str.py"))
 }
