@@ -8,7 +8,7 @@ assert i.x == 5
 assert getattr(i, 'x') == 5
 
 del i.x
-# assert not hasattr(i, 'x')
+assert not hasattr(i, 'x')
 
 error_a = AttributeError('a')
 error_b = AttributeError('b')

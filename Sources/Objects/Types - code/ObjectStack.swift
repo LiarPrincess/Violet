@@ -57,14 +57,14 @@ public struct ObjectStack {
 
   // MARK: - Push
 
-  public mutating func push(_ value: PyObject) {
-    self.elements.append(value)
+  public mutating func push(_ object: PyObject) {
+    self.elements.append(object)
   }
 
   public mutating func push<S: Sequence>(
-    contentsOf values: S
+    contentsOf objects: S
   ) where S.Element == PyObject {
-    self.elements.append(contentsOf: values)
+    self.elements.append(contentsOf: objects)
   }
 
   // MARK: - Pop
@@ -81,8 +81,8 @@ public struct ObjectStack {
   /// Pop `count` elements and then reverse,
   /// so that first pushed element is at `0` index.
   ///
-  /// - Note:
-  /// Actual implementation is faster and does not require reversal.
+  /// So, basically it will slice stack `count` elements from the end
+  /// and return this slice.
   public mutating func popElementsInPushOrder(count requestedCount: Int) -> [PyObject] {
     // Fast check to avoid allocation.
     if requestedCount == 0 {
