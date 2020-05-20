@@ -18,9 +18,6 @@ guard FileManager.default.changeCurrentDirectoryPath(rootDir.path) else {
   trap("Failed to set cwd to: '\(rootDir.path)'")
 }
 
-// runOldTypes()
-// runOldBuiltins()
 runRustPythonTests()
-// runVioletTests()
-
+runVioletTests()
 printSummary()
