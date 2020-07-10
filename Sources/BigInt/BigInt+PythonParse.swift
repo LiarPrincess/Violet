@@ -6,6 +6,8 @@
 
 // swiftlint:disable file_length
 
+// TODO: [BigInt] Add 'PythonParse'
+/*
 extension BigInt {
 
   // MARK: - Inits
@@ -316,3 +318,4 @@ extension BigInt {
     return Storage(exactly: int)
   }
 }
+*/

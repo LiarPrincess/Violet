@@ -4,6 +4,8 @@ import XCTest
 // Tests were partialy copied from:
 // https://github.com/apple/swift/blob/master/test/Prototypes/BigInt.swift
 
+// TODO: [BigInt] Enable additional tests
+/*
 class BigIntTests: XCTestCase {
 
   // MARK: - Initialization
@@ -257,3 +259,4 @@ class BigIntTests: XCTestCase {
     }
   }
 }
+*/

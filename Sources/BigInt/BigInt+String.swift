@@ -49,7 +49,7 @@ extension BigInt {
       case .underscoreSuffix:
         return "Underscore suffix is not allowed"
       case .notDigit(let scalar):
-        // TODO: [Violet] Use proper 'U+XXXX'
+        // TODO: [BigInt] Use proper 'U+XXXX'
         return "'\(scalar)' is not a valid digit for given radix"
       }
     }
