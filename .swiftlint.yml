@@ -2,6 +2,7 @@ included:
   - Sources
   - Tests
 
+# Try to stay below 80
 line_length:
   warning: 100
   error:   120
