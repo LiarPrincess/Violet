@@ -1,5 +1,5 @@
 import XCTest
-@testable import Core
+@testable import BigInt
 
 // Tests taken from:
 // https://github.com/benrimmington/swift-numerics/blob/BigInt/Tests/BigIntTests/BigIntTests.swift

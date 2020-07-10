@@ -1,4 +1,4 @@
-@testable import Core
+@testable import BigInt
 
 private typealias Word = BigIntStorage.Word
 

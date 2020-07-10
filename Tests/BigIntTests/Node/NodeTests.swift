@@ -2,7 +2,7 @@
 // Ehh...
 
 import XCTest
-@testable import Core
+@testable import BigInt
 
 // swiftlint:disable line_length
 // swiftlint:disable file_length

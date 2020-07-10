@@ -1,5 +1,5 @@
 import XCTest
-@testable import Core
+@testable import BigInt
 
 // Well… actually… hash and equatable
 class BigIntHashTests: XCTestCase {

@@ -1,5 +1,5 @@
 import XCTest
-@testable import Core
+@testable import BigInt
 
 private typealias Word = BigIntStorage.Word
 private let mostSignificantBit1 = Word(1) << (Word.bitWidth - 1)

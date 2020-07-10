@@ -1,5 +1,5 @@
 import XCTest
-@testable import Core
+@testable import BigInt
 
 class BigIntPowerTests: XCTestCase {
 

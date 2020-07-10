@@ -1,4 +1,4 @@
-@testable import Core
+@testable import BigInt
 
 // swiftlint:disable number_separator
 // swiftlint:disable line_length

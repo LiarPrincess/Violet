@@ -1,5 +1,5 @@
 import XCTest
-import Core
+import BigInt
 
 // swiftlint:disable file_length
 // swiftlint:disable function_parameter_count

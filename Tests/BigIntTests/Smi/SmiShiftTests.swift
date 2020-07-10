@@ -1,5 +1,5 @@
 import XCTest
-@testable import Core
+@testable import BigInt
 
 private typealias Storage = Smi.Storage
 

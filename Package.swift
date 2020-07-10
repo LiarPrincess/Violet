@@ -39,6 +39,11 @@ let package = Package(
     .target(name: "VioletCore", dependencies: [], path: "Sources/Core"),
     .testTarget(name: "VioletCoreTests", dependencies: ["VioletCore"], path: "Tests/CoreTests"),
 
+    // Apparently we have our own implementation of unlimited integers…
+    // Ehh…
+    .target(name: "BigInt", dependencies: ["VioletCore"]),
+    .testTarget(name: "BigIntTests", dependencies: ["BigInt"]),
+
     // String -> Tokens
     .target(name: "VioletLexer", dependencies: ["VioletCore"], path: "Sources/Lexer"),
     .testTarget(name: "VioletLexerTests", dependencies: ["VioletLexer"], path: "Tests/LexerTests"),
