@@ -6,7 +6,7 @@
 
 // swiftlint:disable file_length
 
-// TODO: [BigInt] Add 'PythonParse'
+// TODO: [BigInt] Add 'PythonParse' + rename file 'BigInt+PythonString'
 /*
 extension BigInt {
 

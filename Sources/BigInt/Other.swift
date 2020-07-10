@@ -1,33 +1,3 @@
-// TODO: [BigInt] Cleanup
-
-// MARK: - Bin
-
-internal func bin(_ value: Int32) -> String {
-  return bin(UInt32(bitPattern: value))
-}
-
-internal func bin(_ value: UInt32) -> String {
-  return String(value, radix: 2, uppercase: false)
-}
-
-internal func bin(_ value: Int) -> String {
-  return bin(UInt(bitPattern: value))
-}
-
-internal func bin(_ value: UInt) -> String {
-  return String(value, radix: 2, uppercase: false)
-}
-
-// MARK: - Trap
-
-// swiftlint:disable:next unavailable_function
-public func trap(_ msg: String,
-                 file: StaticString = #file,
-                 function: StaticString = #function,
-                 line: Int = #line) -> Never {
-  fatalError("\(file):\(line) - \(msg)")
-}
-
 // MARK: - BinaryInteger + predicates
 
 extension BinaryInteger {
@@ -48,31 +18,7 @@ extension BinaryInteger {
 
 // MARK: - FixedWidthInteger + full width
 
-private let bitLengthTable = [
-  0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4,
-  5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5
-]
-
 extension FixedWidthInteger {
-
-  /// Returns the unique integer `k` such that
-  /// `2**(k-1) <= d < 2**k` if d is nonzero, else `0`.
-  ///
-  /// CPython:
-  /// static int
-  /// bits_in_digit(digit d)
-  internal func bitsInDigit() -> Int {
-    var result = 0
-    var d = self.magnitude
-
-    while d >= 32 {
-      result += 6
-      d >>= 6
-    }
-
-    result += bitLengthTable[Int(d)]
-    return result
-  }
 
   internal typealias FullWidthAdd = (carry: Self, result: Self)
 
@@ -107,6 +53,40 @@ extension FixedWidthInteger {
     let borrow: Self = (overflow1 ? 1 : 0) + (overflow2 ? 1 : 0)
     return (borrow, xyz)
   }
+}
+
+// MARK: - FixedWidthInteger + bitsInDigit
+
+private let bitLengthTable = [
+  0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4,
+  5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5
+]
+
+extension FixedWidthInteger {
+
+  /// Returns the unique integer `k` such that
+  /// `2**(k-1) <= d < 2**k` if d is nonzero, else `0`.
+  ///
+  /// CPython:
+  /// static int
+  /// bits_in_digit(digit d)
+  internal func bitsInDigit() -> Int {
+    var result = 0
+    var d = self.magnitude
+
+    while d >= 32 {
+      result += 6
+      d >>= 6
+    }
+
+    result += bitLengthTable[Int(d)]
+    return result
+  }
+}
+
+// MARK: - FixedWidthInteger + maxRepresentablePower
+
+extension FixedWidthInteger {
 
   /// Returns the highest number that satisfy `radix^n <= 2^Self.bitWidth`
   internal static func maxRepresentablePower(of radix: Int) -> (n: Int, power: Self) {
@@ -126,7 +106,7 @@ extension FixedWidthInteger {
   }
 }
 
-// MARK: - UInt + as Smi
+// MARK: - UInt + asSmi
 
 extension UInt {
 

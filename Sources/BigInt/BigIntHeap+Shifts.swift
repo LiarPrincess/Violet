@@ -1,3 +1,5 @@
+import VioletCore
+
 // Sources:
 // - mini-gmp: https://gmplib.org
 //

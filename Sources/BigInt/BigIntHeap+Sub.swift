@@ -1,3 +1,5 @@
+import VioletCore
+
 extension BigIntHeap {
 
   // MARK: - Smi
