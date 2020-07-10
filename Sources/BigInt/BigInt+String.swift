@@ -1,8 +1,8 @@
-// Most of the code was taken from: https://github.com/attaswift/BigInt
+// Some code was taken from: https://github.com/attaswift/BigInt
 
-// swiftlint:disable function_body_length
+// swiftlint:disable file_length
 
-// MARK: - To string
+// MARK: - String.init
 
 extension String {
 
@@ -16,9 +16,9 @@ extension BigInt {
 
   private typealias Word = BigIntHeap.Word
 
-  // MARK: - Error
+  // MARK: - BigInt.init
 
-  public enum ParsingError: Error, CustomStringConvertible {
+  public enum ParsingError: Error, Equatable, CustomStringConvertible {
     /// String is empty
     case emptyString
     /// String is not empty, but does not contain any digit (for example `+`)
@@ -37,11 +37,11 @@ extension BigInt {
     public var description: String {
       switch self {
       case .emptyString:
-        return "Empty is not allowed"
+        return "Empty string is not allowed"
       case .signWithoutDigits:
-        return "Sign without any digits is not allowed"
+        return "Sign without any digit is not allowed"
       case .doubleUnderscore:
-        return "Double underscore is not allowed"
+        return "Multiple underscores in a row are not allowed"
       case .underscorePrefix:
         return "Underscore prefix is not allowed"
       case .underscoreAfterSign:
@@ -49,47 +49,108 @@ extension BigInt {
       case .underscoreSuffix:
         return "Underscore suffix is not allowed"
       case .notDigit(let scalar):
-        // TODO: [BigInt] Use proper 'U+XXXX'
-        return "'\(scalar)' is not a valid digit for given radix"
+        let codePoint = scalar.codePointNotation
+        return "'\(scalar)' (unicode: \(codePoint)) is not a valid digit for given radix"
       }
     }
   }
 
-  // MARK: - Init
+  // 'String.UnicodeScalarView' and 'String.UnicodeScalarView.SubSequence'
+  // do not share common protocol (that we would be interested in).
+  // But we can easly convert 'UnicodeScalarView' to 'UnicodeScalarView.SubSequence'
+  // by using 'scalars[...]', so we will use this as our common ground.
+  private typealias Scalars = String.UnicodeScalarView.SubSequence
 
   public init(_ string: String, radix: Int = 10) throws {
+    try self.init(string.unicodeScalars, radix: radix)
+  }
+
+  public init(_ scalars: String.UnicodeScalarView, radix: Int = 10) throws {
+    let substring = scalars[...]
+    try self.init(substring, radix: radix)
+  }
+
+  public init(
+    _ scalars: String.UnicodeScalarView.SubSequence,
+    radix: Int = 10
+  ) throws {
     precondition(2 <= radix && radix <= 36, "Radix not in range 2...36.")
 
-    // We need '[...]' because later we will skip sign (if present)
-    var scalars = string.unicodeScalars[...]
-
-    // This will also handle empty string
-    guard let first = scalars.first else {
+    if scalars.isEmpty {
       throw ParsingError.emptyString
     }
 
-    // Sign.
-    // We will deal with prefix underscore later.
-    var isNegative = false
-    var hasSign = false
-    if first == "+" {
-      scalars = scalars.dropFirst()
-      hasSign = true
-    } else if first == "-" {
-      scalars = scalars.dropFirst()
-      hasSign = true
-      isNegative = true
-    }
+    var scalars = scalars
+    let sign = try Self.parseSign(advancingIfFound: &scalars)
 
     guard let firstDigit = scalars.first else {
+      // We already checked for empty, so the only remainig possibility is:
       throw ParsingError.signWithoutDigits
     }
 
     if firstDigit == "_" {
-      throw hasSign ?
-        ParsingError.underscoreAfterSign :
-        ParsingError.underscorePrefix
+      switch sign {
+      case .positive, .negative:
+        throw ParsingError.underscoreAfterSign
+      case .notSpecified:
+        throw ParsingError.underscorePrefix
+      }
     }
+
+    let result = try Self.parseMagnitude(scalars: scalars,
+                                         radix: radix,
+                                         sign: sign)
+
+    self = result
+  }
+
+  // MARK: - Sign
+
+  private enum Sign {
+    case positive
+    case negative
+    /// No sign in string, use `positive`.
+    case notSpecified
+  }
+
+  /// Parse sign and advance `scalars` if needed.
+  private static func parseSign(
+    advancingIfFound scalars: inout Scalars
+  ) throws -> Sign {
+    guard let first = scalars.first else {
+      throw ParsingError.emptyString
+    }
+
+    if first == "+" {
+      scalars = scalars.dropFirst()
+      return .positive
+    }
+
+    if first == "-" {
+      scalars = scalars.dropFirst()
+      return .negative
+    }
+
+    return .notSpecified
+  }
+
+  // MARK: - Magnitude
+
+  /// Parse number without sign.
+  ///
+  /// Will skip prefix underscore, so if this is an error in your scenario then
+  /// handle it before calling this method.
+  private static func parseMagnitude(
+    scalars: String.UnicodeScalarView.SubSequence,
+    radix: Int,
+    sign: Sign
+  ) throws -> BigInt {
+    let isNegative: Bool = {
+      switch sign {
+      case .positive, .notSpecified: return false
+      case .negative: return true
+      }
+    }()
 
     // Instead of using a single 'BigInt' and multipling it by 'radix',
     // we will group scalars into words-sized chunks.
@@ -107,20 +168,17 @@ extension BigInt {
     // 'groups' are in in right-to-left (lowest power first) order.
     let groups = try Self.parseGroups(scalars: scalars,
                                       radix: radix,
-                                      scalarCountPerGroup: scalarCountPerGroup,
-                                      hasSign: hasSign)
+                                      scalarCountPerGroup: scalarCountPerGroup)
 
     // Fast path: no groups -> 0
     guard let mostSignificantGroup = groups.last else {
-      self.init()
-      return
+      return self.init()
     }
 
-    // Fast path for 'Smi' (no allocation for 'BigIntHeap')
+    // Fast path for 'Smi' (avoids allocation for 'BigIntHeap')
     if groups.count == 1 {
       if let smi = mostSignificantGroup.asSmiIfPossible(isNegative: isNegative) {
-        self.init(smi: smi)
-        return
+        return self.init(smi: smi)
       }
     }
 
@@ -136,18 +194,19 @@ extension BigInt {
     }
 
     result.fixInvariants()
-    self.init(result)
+    return self.init(result)
   }
 
-  // MARK: - Groups
+  // swiftlint:disable function_body_length
 
   /// Returns groups in right-to-left order!
   private static func parseGroups(
     scalars: String.UnicodeScalarView.SubSequence,
     radix: Word,
-    scalarCountPerGroup: Int,
-    hasSign: Bool
+    scalarCountPerGroup: Int
   ) throws -> [Word] {
+    // swiftlint:enable function_body_length
+
     var result = [Word]()
 
     let minimumCapacity = (scalars.count / scalarCountPerGroup) + 1
@@ -165,7 +224,6 @@ extension BigInt {
     // Position in string, starting from the right
     var indexExcludingUnderscores = 0
 
-    // Note that the 'index' is from the end on the string!
     for scalar in scalars.reversed() {
       let isUnderscore = scalar == "_"
       defer { isPreviousUnderscore = isUnderscore }
