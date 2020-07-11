@@ -9,6 +9,7 @@ from Common.builtin_types import (
 
 if __name__ == '__main__':
   print(f'''\
+import BigInt
 import VioletCore
 
 // swiftlint:disable line_length

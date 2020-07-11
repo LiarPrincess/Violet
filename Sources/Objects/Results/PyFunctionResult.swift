@@ -1,4 +1,5 @@
 import Foundation
+import BigInt
 import VioletCore
 
 /// Return type of a Python function.

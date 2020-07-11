@@ -1,3 +1,4 @@
+import BigInt
 import VioletCore
 
 private typealias UnicodeScalarView = String.UnicodeScalarView

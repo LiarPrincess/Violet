@@ -1,4 +1,5 @@
 import Foundation
+import BigInt
 import VioletCore
 
 // In CPython:
@@ -1077,11 +1078,12 @@ public class PyInt: PyObject {
       return .notString
     }
 
-    guard let value = BigInt(parseUsingPythonRules: string, radix: base) else {
-      let msg = "int() '\(string)' cannot be interpreted as int"
+    do {
+      let result = try BigInt(parseUsingPythonRules: string, base: base)
+      return .value(result)
+    } catch {
+      let msg = "int() '\(string)' cannot be interpreted as int: \(error)"
       return .error(Py.newValueError(msg: msg))
     }
-
-    return .value(value)
   }
 }

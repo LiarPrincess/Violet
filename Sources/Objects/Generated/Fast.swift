@@ -1,3 +1,4 @@
+import BigInt
 import VioletCore
 
 // swiftlint:disable line_length
