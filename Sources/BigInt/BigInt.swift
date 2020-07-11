@@ -143,6 +143,19 @@ public struct BigInt:
     }
   }
 
+  /// Including `0`!
+  public var isPositive: Bool {
+    return !self.isNegative
+  }
+
+  public var isNegative: Bool {
+    switch self.value {
+    case let .smi(smi):
+      return smi.isNegative
+    case let .heap(heap):
+      return heap.isNegative
+    }
+  }
   /// The magnitude of this value.
   ///
   /// For any numeric value `x`, `x.magnitude` is the absolute value of `x`.
@@ -492,7 +505,7 @@ public struct BigInt:
 
   public typealias DivMod = (quotient: BigInt, remainder: BigInt)
 
-  // TODO: [BigInt] Use quotientAndRemainder + power
+  // TODO: [BigInt] Use quotientAndRemainder
   public func quotientAndRemainder(dividingBy other: BigInt) -> DivMod {
     func bothHeap(lhs: BigIntHeap, rhs: BigIntHeap) -> DivMod {
       let result = lhs.divMod(other: rhs)
@@ -531,6 +544,15 @@ public struct BigInt:
 
     if exponent.isZero {
       return BigInt(1)
+    }
+
+    if exponent.isOne {
+      return self
+    }
+
+    // This has to be after 'exp == 0', because 'pow(0, 0) -> 1'
+    if self.isZero {
+      return 0
     }
 
     var base = self

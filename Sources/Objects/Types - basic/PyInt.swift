@@ -343,7 +343,7 @@ public class PyInt: PyObject {
       return result.convertToObject()
 
     case .int(let modPyInt):
-      if modPyInt.value == 0 {
+      if modPyInt.value.isZero {
         return .valueError("pow() 3rd argument cannot be 0")
       }
 
@@ -426,7 +426,7 @@ public class PyInt: PyObject {
   }
 
   private func pow(base: BigInt, exp: BigInt) -> PowResult {
-    if base == 0 && exp < 0 {
+    if base.isZero && exp.isNegative {
       let msg = "0.0 cannot be raised to a negative power"
       return .error(Py.newZeroDivisionError(msg: msg))
     }
@@ -441,46 +441,8 @@ public class PyInt: PyObject {
   ///
   /// This will always return some `BigInt`, never fraction or `ZeroDivisionError`.
   private func powNonNegativeExp(base: BigInt, exp: BigInt) -> BigInt {
-    precondition(exp >= 0)
-
-    // Order of the following checks matters!
-    if exp == 0 {
-      return 1
-    }
-
-    if exp == 1 {
-      return base
-    }
-
-    // This has to be after 'exp == 0', because 'pow(0, 0) -> 1'
-    if base == 0 {
-      return 0
-    }
-
-    return self.exponentiationBySquaring(1, base, Swift.abs(exp))
-  }
-
-  /// Source:
-  /// https://stackoverflow.com/questions/24196689
-  /// https://en.wikipedia.org/wiki/Exponentiation_by_squaring#Basic_method
-  private func exponentiationBySquaring(_ y: BigInt,
-                                        _ x: BigInt,
-                                        _ n: BigInt) -> BigInt {
-    precondition(n >= 0)
-
-    if n == 0 {
-      return y
-    }
-
-    if n == 1 {
-      return y * x
-    }
-
-    // swiftlint:disable:next legacy_multiple
-    let isMultipleOf2 = n % 2 == 0
-    return isMultipleOf2 ?
-      self.exponentiationBySquaring(y, x * x, n / 2) :
-      self.exponentiationBySquaring(y * x, x * x, (n - 1) / 2)
+    precondition(exp.isPositive)
+    return base.power(exponent: exp)
   }
 
   // MARK: - True div
