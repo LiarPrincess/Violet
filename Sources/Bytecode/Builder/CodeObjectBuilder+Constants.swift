@@ -1,4 +1,5 @@
 import Foundation
+import BigInt
 import VioletCore
 
 extension CodeObjectBuilder {
