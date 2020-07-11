@@ -7,7 +7,6 @@ import XCTest
 // swiftlint:disable line_length
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
-// swiftlint:disable vertical_whitespace_closing_braces
 
 private typealias Word = BigIntHeap.Word
 
@@ -21407,5 +21406,4 @@ class NodeTests: XCTestCase {
     self.shiftRightTest(value: "18446744073709551635", count: 121, expecting: "0")
     self.shiftRightTest(value: "-18446744073709551635", count: 121, expecting: "-1")
   }
-
 }

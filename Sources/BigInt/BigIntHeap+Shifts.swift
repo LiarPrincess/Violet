@@ -72,11 +72,11 @@ extension BigIntHeap {
       let indexAfterWordShift = i + wordShift
 
       let word = self.storage[indexAfterWordShift] // In example: [1011]
-      let lowPart = word << lowShift               // In example: [1011] << 1 = [0110]
-      let highPart = word >> highShift             // In example: [1011] >> 3 = [0001]
+      let lowPart = word << lowShift // In example: [1011] << 1 = [0110]
+      let highPart = word >> highShift // In example: [1011] >> 3 = [0001]
 
       let lowIndex = indexAfterWordShift // In example: 1 + 0 = 1, [0000][this][0000]
-      let highIndex = lowIndex + 1       // In example: 1 + 1 = 2, [0000][1011][this]
+      let highIndex = lowIndex + 1 // In example: 1 + 1 = 2, [0000][1011][this]
 
       self.storage[lowIndex] = lowPart
       self.storage[highIndex] = self.storage[highIndex] | highPart
@@ -205,10 +205,10 @@ extension BigIntHeap {
     for i in 0..<self.storage.count {
       let word = self.storage[i] // In example (for i = 1): [1011]
 
-      let lowPart = word << lowShift   // In example: [1011] << 1 = [0110]
+      let lowPart = word << lowShift // In example: [1011] << 1 = [0110]
       let highPart = word >> highShift // In example: [1011] >> 3 = [0001]
 
-      let highIndex = i            // In example: 1 + 1 = 2, [0000][1011][this]
+      let highIndex = i // In example: 1 + 1 = 2, [0000][1011][this]
       let lowIndex = highIndex - 1 // In example: 1 + 0 = 1, [0000][this][0000]
 
       self.storage[highIndex] = highPart

@@ -60,7 +60,7 @@ class BigIntFloatingPointTests: XCTestCase {
   }
 
   func test_random() {
-    for _ in 0 ..< 100 {
+    for _ in 0..<100 {
       let small = Float32.random(in: -10 ... +10)
       XCTAssertEqual(BigInt(small), BigInt(Int64(small)))
 
@@ -68,7 +68,7 @@ class BigIntFloatingPointTests: XCTestCase {
       XCTAssertEqual(BigInt(large), BigInt(Int64(large)))
     }
 
-    for _ in 0 ..< 100 {
+    for _ in 0..<100 {
       let small = Float64.random(in: -10 ... +10)
       XCTAssertEqual(BigInt(small), BigInt(Int64(small)))
 

@@ -222,7 +222,7 @@ extension BidirectionalCollection {
 // MARK: - [Mutable/RangeReplaceable]Collection + remove duplicates
 
 extension Collection where
-  Self:MutableCollection,
+  Self: MutableCollection,
   Self: RangeReplaceableCollection,
   Element: Hashable {
 

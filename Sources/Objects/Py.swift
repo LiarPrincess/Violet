@@ -399,7 +399,7 @@ public final class PyInstance {
     }
 
     let str = self.newString(string)
-    internedStrings[key] = str
+    self.internedStrings[key] = str
     return str
   }
 }

@@ -135,7 +135,7 @@ class BigIntStorageTests: XCTestCase {
     XCTAssertTrue(storage.isZero)
     XCTAssertEqual(storage.count, 0)
 
-    let words: [Word] = [.min, 1 , 5, .max, 7]
+    let words: [Word] = [.min, 1, 5, .max, 7]
     storage.append(contentsOf: words)
 
     XCTAssertFalse(storage.isZero)
@@ -150,7 +150,7 @@ class BigIntStorageTests: XCTestCase {
   }
 
   func test_appendCollection_toNonZero() {
-    let initialWords: [Word] = [.min, 1 , 5, .max, 7]
+    let initialWords: [Word] = [.min, 1, 5, .max, 7]
     var storage = BigIntStorage(isNegative: false, words: initialWords)
     XCTAssertEqual(storage.count, initialWords.count)
 
@@ -166,7 +166,7 @@ class BigIntStorageTests: XCTestCase {
   }
 
   func test_appendCollection_cow() {
-    let initialWords: [Word] = [.min, 1 , 5, .max, 7]
+    let initialWords: [Word] = [.min, 1, 5, .max, 7]
     let orginal = BigIntStorage(isNegative: false, words: initialWords)
 
     let newWords: [Word] = [.min, .max, 7, .min, .max, 7, .min, .max, 7]
@@ -181,7 +181,7 @@ class BigIntStorageTests: XCTestCase {
   // MARK: - Prepend
 
   func test_prepend_insideExistingBuffer() {
-    let initialWords: [Word] = [.max, 1 , .min, 7]
+    let initialWords: [Word] = [.max, 1, .min, 7]
     var storage = BigIntStorage(isNegative: false, words: initialWords)
 
     let prependCount = storage.capacity - storage.count
@@ -199,7 +199,7 @@ class BigIntStorageTests: XCTestCase {
   }
 
   func test_prepend_inNewBuffer() {
-    let initialWords: [Word] = [.max, 1 , .min, 7]
+    let initialWords: [Word] = [.max, 1, .min, 7]
     var storage = BigIntStorage(isNegative: false, words: initialWords)
 
     let prependCount = storage.capacity // This will force allocation
@@ -211,7 +211,7 @@ class BigIntStorageTests: XCTestCase {
   }
 
   func test_prepend_cow() {
-    let initialWords: [Word] = [.max, 1 , .min, 7]
+    let initialWords: [Word] = [.max, 1, .min, 7]
     let orginal = BigIntStorage(isNegative: false, words: initialWords)
 
     var copy = orginal
@@ -231,7 +231,7 @@ class BigIntStorageTests: XCTestCase {
   // MARK: - Drop first
 
   func test_dropFirst_zero() {
-    let initialWords: [Word] = [.max, 1 , .min, 7]
+    let initialWords: [Word] = [.max, 1, .min, 7]
     var storage = BigIntStorage(isNegative: false, words: initialWords)
 
     storage.dropFirst(wordCount: 0)
@@ -244,7 +244,7 @@ class BigIntStorageTests: XCTestCase {
   }
 
   func test_dropFirst_moreThanCount() {
-    let initialWords: [Word] = [.max, 1 , .min, 7]
+    let initialWords: [Word] = [.max, 1, .min, 7]
     var storage = BigIntStorage(isNegative: false, words: initialWords)
 
     storage.dropFirst(wordCount: initialWords.count * 2)
@@ -253,7 +253,7 @@ class BigIntStorageTests: XCTestCase {
   }
 
   func test_dropFirst_moreThanCount_cow() {
-    let initialWords: [Word] = [.max, 1 , .min, 7]
+    let initialWords: [Word] = [.max, 1, .min, 7]
     let orginal = BigIntStorage(isNegative: false, words: initialWords)
 
     var copy = orginal
@@ -267,7 +267,7 @@ class BigIntStorageTests: XCTestCase {
   }
 
   func test_dropFirst_lessThanCount() {
-    let initialWords: [Word] = [.max, 1 , .min, 7, 42]
+    let initialWords: [Word] = [.max, 1, .min, 7, 42]
     var storage = BigIntStorage(isNegative: false, words: initialWords)
 
     let dropCount = 3
@@ -282,7 +282,7 @@ class BigIntStorageTests: XCTestCase {
   }
 
   func test_dropFirst_lessThanCount_cow() {
-    let initialWords: [Word] = [.max, 1 , .min, 7, 42]
+    let initialWords: [Word] = [.max, 1, .min, 7, 42]
     let orginal = BigIntStorage(isNegative: false, words: initialWords)
 
     var copy = orginal

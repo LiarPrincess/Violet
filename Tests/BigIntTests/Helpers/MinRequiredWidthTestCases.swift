@@ -1,6 +1,7 @@
 @testable import BigInt
 
 // swiftlint:disable number_separator
+// swiftformat:disable numberFormatting
 
 internal enum MinRequiredWidthTestCases {
 

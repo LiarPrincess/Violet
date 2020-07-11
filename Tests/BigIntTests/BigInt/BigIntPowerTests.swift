@@ -104,6 +104,7 @@ class BigIntPowerTests: XCTestCase {
       XCTAssertEqual(result, expected, "\(base) ^ 3")
     }
   }
+
   // MARK: - Smi
 
   func test_againstFoundationPow() {
@@ -114,7 +115,7 @@ class BigIntPowerTests: XCTestCase {
 
     // 'smi ^ 2' has greater possibility of beeing in 'Double' range than 'Int'
     var values = generateSmiValues(countButNotReally: 20)
-    for i in (-10...10) {
+    for i in -10...10 {
       values.append(Smi.Storage(i))
     }
 

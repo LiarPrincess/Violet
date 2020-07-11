@@ -2,6 +2,7 @@
 
 // swiftlint:disable number_separator
 // swiftlint:disable line_length
+// swiftformat:disable numberFormatting
 
 internal enum StringTestCases {
 

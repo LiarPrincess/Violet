@@ -36,17 +36,21 @@ public class PySyntaxError: PyException {
 
   // MARK: - Init
 
-  internal convenience init(msg: String?,                    // Wow,
-                            filename: String?,               // this
-                            lineno: BigInt?,                 // is
-                            offset: BigInt?,                 // a
-                            text: String?,                   // lot
-                            printFileAndLine: PyObject?,     // of
-                            traceback: PyTraceback? = nil,   // arguments!
-                            cause: PyBaseException? = nil,   // But
-                            context: PyBaseException? = nil, // who
-                            suppressContext: Bool = false,   // cares?
-                            type: PyType? = nil) {           // Not me!
+  // Wow, this is a lot of arguments!
+  // But who cares?
+  // Not me!
+
+  internal convenience init(msg: String?,
+                            filename: String?,
+                            lineno: BigInt?,
+                            offset: BigInt?,
+                            text: String?,
+                            printFileAndLine: PyObject?,
+                            traceback: PyTraceback? = nil,
+                            cause: PyBaseException? = nil,
+                            context: PyBaseException? = nil,
+                            suppressContext: Bool = false,
+                            type: PyType? = nil) {
     let msg = msg.map(Py.newString(_:))
     let filename = filename.map(Py.newString(_:))
     let lineno = lineno.map(Py.newInt(_:))

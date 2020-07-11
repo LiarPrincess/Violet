@@ -200,7 +200,7 @@ extension BigIntHeap {
       let ul = (u[i] ^ uMask) &+ uIsNegative
       uIsNegative = (ul < uIsNegative).asWord
 
-      let rl = ( (ul & vMask) ^ bothNegativeMask) &+ bothNegative
+      let rl = ((ul & vMask) ^ bothNegativeMask) &+ bothNegative
       bothNegative = (rl < bothNegative).asWord
 
       result[i] = rl
@@ -299,7 +299,7 @@ extension BigIntHeap {
       let ul = (u[i] ^ uMask) &+ uIsNegative
       uIsNegative = (ul < uIsNegative).asWord
 
-      let rl = ( (ul | vMask) ^ anyNegativeMask) &+ anyNegative
+      let rl = ((ul | vMask) ^ anyNegativeMask) &+ anyNegative
       anyNegative = (rl < anyNegative).asWord
 
       result[i] = rl

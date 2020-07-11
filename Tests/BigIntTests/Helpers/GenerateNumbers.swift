@@ -83,11 +83,11 @@ internal struct HeapPrototype {
 internal func generateHeapValues(countButNotReally: Int,
                                  maxWordCount: Int = 3) -> [HeapPrototype] {
   var result = [HeapPrototype]()
-  result.append(HeapPrototype(isNegative: false, words: []))  //  0
+  result.append(HeapPrototype(isNegative: false, words: [])) //  0
   result.append(HeapPrototype(isNegative: false, words: [1])) //  1
-  result.append(HeapPrototype(isNegative: true,  words: [1])) // -1
+  result.append(HeapPrototype(isNegative: true, words: [1])) // -1
   result.append(HeapPrototype(isNegative: false, words: [.max])) //  Word.max
-  result.append(HeapPrototype(isNegative: true,  words: [.max])) // -Word.max
+  result.append(HeapPrototype(isNegative: true, words: [.max])) // -Word.max
 
   var word = Word(2) // Start from '2' and go up
   for i in 0..<countButNotReally {

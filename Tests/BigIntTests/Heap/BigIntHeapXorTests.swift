@@ -2,6 +2,7 @@ import XCTest
 @testable import BigInt
 
 // swiftlint:disable number_separator
+// swiftformat:disable numberFormatting
 
 private typealias Word = BigIntStorage.Word
 

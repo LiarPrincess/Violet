@@ -184,7 +184,7 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
     return Buffer(
       bufferClass: LetItGo.self,
       minimumCapacity: minimumCapacity,
-      makingHeaderWith: { _, _  in header }
+      makingHeaderWith: { _, _ in header }
     )
   }
 

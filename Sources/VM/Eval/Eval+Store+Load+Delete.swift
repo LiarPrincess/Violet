@@ -339,7 +339,7 @@ extension Eval {
 
   private func load(dicts: [PyDict], name: PyString) -> InstructionResult {
     for dict in dicts {
-      switch load(dict: dict, name: name) {
+      switch self.load(dict: dict, name: name) {
       case .value(let o):
         self.push(o)
         return .ok

@@ -158,6 +158,7 @@ class BigIntPropertyTests: XCTestCase {
       XCTAssertEqual(int.isOdd, !expectedEven, "\(heap)")
     }
   }
+
   // MARK: - Magnitude
 
   func test_magnitude_int() {

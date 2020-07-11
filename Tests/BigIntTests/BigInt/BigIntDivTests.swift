@@ -41,7 +41,7 @@ class BigIntDivTests: XCTestCase {
   ]
 
   func test_run() {
-    for testCaseStrings in testCases {
+    for testCaseStrings in self.testCases {
       let msg = "\(testCaseStrings.x) / \(testCaseStrings.y)"
 
       do {

@@ -7,6 +7,7 @@ import XCTest
 // swiftlint:disable number_separator
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
+// swiftformat:disable numberFormatting
 
 // Below the test class there is a layer of adapters!
 
@@ -32,13 +33,13 @@ class BigIntPythonStringInitTests: XCTestCase {
 
   /// CPython: `L`
   private let valuesError = [
-    ("  1x"),
+    "  1x",
 //    ("  1  "), skip  because it is an error only if we have sign, otherwise 1
-    ("  1\02  "),
-    (""),
-    (" "),
-    ("  \t\t  "),
-    ("\u{0200}")
+    "  1\02  ",
+    "",
+    " ",
+    "  \t\t  ",
+    "\u{0200}"
   ]
 
   /// def test_basic(self)
