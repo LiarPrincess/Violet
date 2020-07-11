@@ -100,6 +100,7 @@ def func_protocol_name(name):
 
 if __name__ == '__main__':
   print(f'''\
+import BigInt
 import VioletCore
 
 // swiftlint:disable line_length
