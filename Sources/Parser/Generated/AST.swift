@@ -2,6 +2,7 @@
 // DO NOT EDIT!
 
 import Foundation
+import BigInt
 import VioletCore
 import VioletLexer
 

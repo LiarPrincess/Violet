@@ -1,4 +1,5 @@
 import XCTest
+import BigInt
 import VioletCore
 import VioletLexer
 @testable import VioletParser

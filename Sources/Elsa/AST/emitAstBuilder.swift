@@ -10,6 +10,7 @@ private func emitAstBuilder(inputFile: URL) {
   print(createHeader(inputFile: inputFile))
 
   print("import Foundation")
+  print("import BigInt")
   print("import VioletCore")
   print()
 
