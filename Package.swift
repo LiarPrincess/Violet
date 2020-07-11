@@ -45,7 +45,7 @@ let package = Package(
     .testTarget(name: "BigIntTests", dependencies: ["BigInt"]),
 
     // String -> Tokens
-    .target(name: "VioletLexer", dependencies: ["VioletCore"], path: "Sources/Lexer"),
+    .target(name: "VioletLexer", dependencies: ["VioletCore", "BigInt"], path: "Sources/Lexer"),
     .testTarget(name: "VioletLexerTests", dependencies: ["VioletLexer"], path: "Tests/LexerTests"),
 
     // Tokens -> AST
