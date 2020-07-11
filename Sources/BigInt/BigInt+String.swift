@@ -19,38 +19,48 @@ extension BigInt {
   // MARK: - Parsing error
 
   public enum ParsingError: Error, Equatable, CustomStringConvertible {
+    /// Radix not in range 2...36
+    case invalidRadix
+
     /// String is empty
     case emptyString
-    /// String is not empty, but does not contain any digit (for example `+`)
-    case signWithoutDigits
-    /// String contains `__`
-    case doubleUnderscore
+
     /// String starts with `_`
     case underscorePrefix
     /// String has `_` just after sign
     case underscoreAfterSign
     /// String ends with `_`
     case underscoreSuffix
+    /// String contains `__`
+    case doubleUnderscore
+
+    /// String is not empty, but does not contain any digit (for example `+`)
+    case signWithoutDigits
     /// '\(scalar)' is not a valid digit for given radix
-    case notDigit(UnicodeScalar)
+    case notDigit(scalar: UnicodeScalar, radix: Int)
 
     public var description: String {
       switch self {
+      case .invalidRadix:
+        return "Radix not in range 2...36"
       case .emptyString:
         return "Empty string is not allowed"
-      case .signWithoutDigits:
-        return "Sign without any digit is not allowed"
-      case .doubleUnderscore:
-        return "Multiple underscores in a row are not allowed"
+
       case .underscorePrefix:
         return "Underscore prefix is not allowed"
       case .underscoreAfterSign:
         return "Underscore just after sign is not allowed"
       case .underscoreSuffix:
         return "Underscore suffix is not allowed"
-      case .notDigit(let scalar):
+      case .doubleUnderscore:
+        return "Multiple underscores in a row are not allowed"
+
+      case .signWithoutDigits:
+        return "Expected digits after sign"
+      case let .notDigit(scalar, radix):
         let codePoint = scalar.codePointNotation
-        return "'\(scalar)' (unicode: \(codePoint)) is not a valid digit for given radix"
+        let char = "'\(scalar)' (unicode: \(codePoint))"
+        return "\(char) is not a valid digit for given radix (\(radix))"
       }
     }
   }
@@ -75,7 +85,10 @@ extension BigInt {
     _ scalars: String.UnicodeScalarView.SubSequence,
     radix: Int = 10
   ) throws {
-    precondition(2 <= radix && radix <= 36, "Radix not in range 2...36.")
+    // swiftlint:disable:next yoda_condition
+    guard 2 <= radix && radix <= 36 else {
+      throw ParsingError.invalidRadix
+    }
 
     var scalars = scalars
 
@@ -93,12 +106,11 @@ extension BigInt {
     }
 
     if firstDigit == "_" {
-      switch sign {
-      case .positive, .negative:
+      if sign.wasExplicitlyProvided {
         throw ParsingError.underscoreAfterSign
-      case .notSpecified:
-        throw ParsingError.underscorePrefix
       }
+
+      throw ParsingError.underscorePrefix
     }
 
     switch Self.parseMagnitude(scalars: scalars, radix: radix, sign: sign) {
@@ -109,7 +121,7 @@ extension BigInt {
     case .underscoreSuffix:
       throw ParsingError.underscoreSuffix
     case .notDigit(let s):
-      throw ParsingError.notDigit(s)
+      throw ParsingError.notDigit(scalar: s, radix: radix)
     }
   }
 
@@ -123,11 +135,19 @@ extension BigInt {
 
     fileprivate var isNegative: Bool {
       switch self {
-      case .positive,
-           .notSpecified:
+      case .positive, .notSpecified:
         return false
       case .negative:
         return true
+      }
+    }
+
+    internal var wasExplicitlyProvided: Bool {
+      switch self {
+      case .positive, .negative:
+        return true
+      case .notSpecified:
+        return false
       }
     }
   }
@@ -236,7 +256,7 @@ extension BigInt {
     case notDigit(UnicodeScalar)
   }
 
-  // swiftlint:disable function_body_length
+// swiftlint:disable function_body_length
 
   /// Returns groups in right-to-left order!
   private static func parseGroups(
@@ -244,7 +264,7 @@ extension BigInt {
     radix: Word,
     scalarCountPerGroup: Int
   ) -> ParseGroupsResult {
-    // swiftlint:enable function_body_length
+// swiftlint:enable function_body_length
 
     var result = [Word]()
 

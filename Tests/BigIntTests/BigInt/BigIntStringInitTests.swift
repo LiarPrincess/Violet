@@ -389,8 +389,9 @@ class BigIntStringInitTests: XCTestCase {
       do {
         _ = try self.create(string: "01\(emoji)01", radix: radix)
         XCTFail("No error")
-      } catch BigInt.ParsingError.notDigit(let s) {
+      } catch let BigInt.ParsingError.notDigit(s, r) {
         XCTAssertEqual(s, emoji.unicodeScalars.first)
+        XCTAssertEqual(r, radix)
       } catch {
         XCTFail("Error: \(error), radix: \(radix)")
       }
@@ -410,8 +411,9 @@ class BigIntStringInitTests: XCTestCase {
       do {
         _ = try self.create(string: "01\(biggerThanRadix)01", radix: radix)
         XCTFail("No error")
-      } catch BigInt.ParsingError.notDigit(let s) {
+      } catch let BigInt.ParsingError.notDigit(s, r) {
         XCTAssertEqual(s, biggerThanRadix)
+        XCTAssertEqual(r, radix)
       } catch {
         XCTFail("Error: \(error), radix: \(radix)")
       }

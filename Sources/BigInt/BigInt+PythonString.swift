@@ -10,16 +10,30 @@ extension BigInt {
   public enum PythonParsingError: Error, Equatable, CustomStringConvertible {
     /// Str is empty
     case emptyString
-    /// Str does not contain base
+
+    /// Base should be 0 or in 2...36 range
+    case invalidBase
+    /// Str does not contain base (only if `base` argument was `0`)
     case missingBase
+
+    /// String starts with `_`
+    case underscorePrefix
+    /// String has `_` just after sign
+    case underscoreAfterSign
+    /// Only a single underscore is acceptable after base
+    case multipleUnderscoresAfterBase
     /// String contains `__`
     case doubleUnderscore
-    /// Number part starts with `_`
-    case underscorePrefix
     /// String ends with `_`
     case underscoreSuffix
+
+    /// String is not empty, but does not contain any digit (for example `+`)
+    case signWithoutDigits
+    /// String is not empty, but does not contain any digit (for example `0x`)
+    case baseWithoutDigits
     /// '\(scalar)' is not a valid digit for given base
-    case notDigit(UnicodeScalar)
+    case notDigit(scalar: UnicodeScalar, base: Int)
+
     /// Octal numbers with `0` prefix (for example `0123`) are not allowed
     case octalNonZero
 
@@ -27,17 +41,32 @@ extension BigInt {
       switch self {
       case .emptyString:
         return "Empty str is not allowed"
+
+      case .invalidBase:
+        return "Base should be 0 or in 2...36 range"
       case .missingBase:
         return "Str does not contain base"
+
+      case .underscorePrefix:
+        return "Underscore prefix is not allowed"
+      case .underscoreAfterSign:
+        return "Underscore just after sign is not allowed"
+      case .multipleUnderscoresAfterBase:
+        return "Only a single underscore is acceptable after base"
       case .doubleUnderscore:
         return "Multiple underscores in a row are not allowed"
-      case .underscorePrefix:
-        return "Number cannot start with underscore"
       case .underscoreSuffix:
         return "Underscore suffix is not allowed"
-      case .notDigit(let scalar):
+
+      case .signWithoutDigits:
+        return "Expected digits after sign"
+      case .baseWithoutDigits:
+        return "Expected digits after base"
+      case let .notDigit(scalar, base):
         let codePoint = scalar.codePointNotation
-        return "'\(scalar)' (unicode: \(codePoint)) is not a valid digit for given base"
+        let char = "'\(scalar)' (unicode: \(codePoint))"
+        return "\(char) is not a valid digit for given base (\(base))"
+
       case .octalNonZero:
         return "Octal numbers with '0' prefix (for example '0123') are not allowed"
       }
@@ -68,6 +97,8 @@ extension BigInt {
     try self.init(parseUsingPythonRules: substring, base: base)
   }
 
+// swiftlint:disable function_body_length
+
   /// This implements `Python` parsing rules, not `Swift`!
   ///
   /// PyObject *
@@ -76,14 +107,17 @@ extension BigInt {
     parseUsingPythonRules scalars: String.UnicodeScalarView.SubSequence,
     base _base: Int = 10
   ) throws {
-    precondition(_base == 0 || _base >= 2, "Base should be 0 or in 2...36 range.")
-    precondition(_base <= 36, "Base should be 0 or in 2...36 range.")
+// swiftlint:enable function_body_length
+
+    guard _base == 0 || (2 <= _base && _base <= 36) else {
+      throw PythonParsingError.invalidBase
+    }
+
+    var scalars = Self.trim(scalars: scalars)
 
     if scalars.isEmpty {
       throw PythonParsingError.emptyString // >>> int('') -> ValueError
     }
-
-    var scalars = Self.trim(scalars: scalars)
 
     let sign: ParsedSign
     switch Self.parseSign(advancingIfFound: &scalars) {
@@ -98,12 +132,22 @@ extension BigInt {
     let base = parsedBase.base
     let octalErrorIfNonZero = parsedBase.octalErrorIfNonZero
 
-    // '0[xXoObB]' thingie
-    Self.consumeBasePrefixIfEqualToBase(scalars: &scalars, base: base)
+    // '0[xXoObB]' thingie + single optional '_'
+    let hadBasePrefix = Self.consumeBasePrefixIfEqualToBase(scalars: &scalars,
+                                                            base: base)
 
     // Well, after all of that nonsense we can start parsing actual number
-    // (which may not start with underscores).
-    if let first = scalars.first, first == "_" {
+    // (which may not start with underscore).
+    guard let firstDigit = scalars.first else {
+      if hadBasePrefix { throw PythonParsingError.baseWithoutDigits }
+
+      // We already checked for empty, so the only remainig possibility is:
+      throw PythonParsingError.signWithoutDigits
+    }
+
+    if firstDigit == "_" {
+      if hadBasePrefix { throw PythonParsingError.multipleUnderscoresAfterBase }
+      if sign.wasExplicitlyProvided { throw PythonParsingError.underscoreAfterSign }
       throw PythonParsingError.underscorePrefix
     }
 
@@ -119,7 +163,7 @@ extension BigInt {
      case .underscoreSuffix:
        throw PythonParsingError.underscoreSuffix
      case .notDigit(let s):
-       throw PythonParsingError.notDigit(s)
+       throw PythonParsingError.notDigit(scalar: s, base: base)
      }
 
     if octalErrorIfNonZero && !self.isZero {
@@ -197,25 +241,26 @@ extension BigInt {
   }
 
   /// Consume prefix `0[xXoObB]` + optional `_`.
+  /// Returns `true` if prefix was consumed.
   private static func consumeBasePrefixIfEqualToBase(
     scalars: inout Scalars,
     base: Int
-  ) {
+  ) -> Bool {
     let firstIndex = scalars.startIndex
     guard firstIndex != scalars.endIndex else {
-      return
+      return false
     }
 
     let secondIndex = scalars.index(after: firstIndex)
     guard secondIndex != scalars.endIndex else {
-      return
+      return false
     }
 
     let first = scalars[firstIndex]
     let second = scalars[secondIndex]
 
     guard first == "0" else {
-      return
+      return false
     }
 
     let isBinary = base == 2 && (second == "b" || second == "B")
@@ -223,7 +268,7 @@ extension BigInt {
     let isHex = base == 16 && (second == "x" || second == "X")
 
     guard isBinary || isOctal || isHex else {
-      return
+      return false
     }
 
     let thirdIndex = scalars.index(after: secondIndex)
@@ -234,5 +279,7 @@ extension BigInt {
       let fourthIndex = scalars.index(after: thirdIndex)
       scalars = scalars[fourthIndex...]
     }
+
+    return true
   }
 }
