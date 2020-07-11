@@ -1,5 +1,5 @@
-import BigInt
 import XCTest
+import BigInt
 import VioletCore
 @testable import VioletLexer
 

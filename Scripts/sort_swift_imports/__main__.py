@@ -7,6 +7,7 @@ sorted_imports = [
   'import Foundation',
   'import ArgumentParser',
 
+  'import BigInt',
   'import VioletCore',
   'import VioletLexer',
   'import VioletParser',
@@ -15,6 +16,7 @@ sorted_imports = [
   'import VioletObjects',
   'import VioletVM',
 
+  '@testable import BigInt',
   '@testable import VioletCore',
   '@testable import VioletLexer',
   '@testable import VioletParser',
@@ -89,7 +91,7 @@ def get_import_line_index(line: str):
     if candidate == line_strip:
       return index
 
-  assert False, f"Wild '{line_strip}' appears! 'sort_swift_imports' is ineffective!"
+  assert False, f"\n\nWild '{line_strip}' appears! 'sort_swift_imports' is ineffective!"
 
 def sort_import_lines(file, lines):
   result = [None] * len(sorted_imports)

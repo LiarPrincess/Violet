@@ -1,5 +1,5 @@
-import VioletCore
 import Foundation
+import VioletCore
 
 // In CPython:
 // Objects -> typeobject.c

@@ -1,5 +1,5 @@
-import BigInt
 import Foundation
+import BigInt
 import VioletCore
 
 // In CPython:
