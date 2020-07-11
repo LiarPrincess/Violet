@@ -162,12 +162,27 @@ class IntegerTests: XCTestCase, Common {
   }
 
   func test_hex_lastUnderscore_isNotAPartOfTheNumber() {
-    let s = "0x123_"
-    let lexer = self.createLexer(for: s)
+    let input = "0x123_"
+    let lexer = self.createLexer(for: input)
 
     if let error = self.error(lexer) {
-      XCTAssertEqual(error.kind, LexerErrorKind.danglingIntegerUnderscore)
-      XCTAssertEqual(error.location, SourceLocation(line: 1, column: 6))
+      switch error.kind {
+      case let .unableToParseInteger(s, type, parsingError):
+        XCTAssertEqual(s, input)
+        XCTAssertEqual(type, .hexadecimal)
+
+        switch parsingError {
+        case .underscoreSuffix:
+          break
+        default:
+          XCTFail("\(parsingError)")
+        }
+
+      default:
+        XCTFail("\(error.kind)")
+      }
+
+      XCTAssertEqual(error.location, SourceLocation(line: 1, column: 0))
     }
   }
 }

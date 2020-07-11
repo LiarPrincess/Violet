@@ -1,3 +1,4 @@
+import BigInt
 import VioletCore
 
 // MARK: - Error
@@ -48,17 +49,10 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
   /// Bytes can only contain `'0 <= x < 256'` values
   case badByte(UnicodeScalar)
 
-  /// Digit is required after underscore
-  case danglingIntegerUnderscore
-  /// Character 'x' is not an valid hexadecimal digit
-  case invalidIntegerDigit(NumberType, UnicodeScalar)
-  /// Unable to parse integer from 'x'
-  case unableToParseInteger(NumberType, String)
-
-  /// Character 'x' is not an valid decimal digit
-  case invalidDecimalDigit(UnicodeScalar)
-  /// Unable to parse integer from 'x'
-  case unableToParseDecimal(String)
+  /// Unable to parse integer from 'string'
+  case unableToParseInteger(String, NumberType, BigInt.PythonParsingError)
+  /// Unable to parse float from 'string'
+  case unableToParseFloat(String)
 
   // Expected new line after '\'.
   case missingNewLineAfterBackslashEscape
@@ -71,8 +65,8 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
     case .eof:
       return "Unexpected end of file."
     case .unexpectedCharacter(let scalar):
-      let codePoint = scalar.codePointNotation
-      return "Unexpected character '\(scalar)' (unicode: \(codePoint))."
+      let char = self.scalarDescription(scalar: scalar)
+      return "Unexpected character \(char)."
 
 //    case .tabSpace:
 //      return "Inconsistent mixing of tabs and spaces"
@@ -82,30 +76,23 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
       return "Unindent does not match any outer indentation level."
 
     case .invalidCharacterInIdentifier(let scalar):
-      let codePoint = scalar.codePointNotation
-      return "Invalid character '\(scalar)' (unicode: \(codePoint)) in identifier."
+      let char = self.scalarDescription(scalar: scalar)
+      return "Invalid character \(char) in identifier."
 
     case .unfinishedShortString:
       return "EOL while scanning string literal."
     case .unfinishedLongString:
       return "EOF while scanning triple-quoted string literal."
-    case .badByte(let c):
-      return "Invalid character '\(c)' (value: \(c.value)). " +
+    case .badByte(let scalar):
+      return "Invalid character '\(scalar)' (value: \(scalar.value)). " +
              "Bytes can only contain '0 <= x < 256' values."
     case .invalidUnicodeEscape:
       return "Unable to decode string escape sequence."
 
-    case .danglingIntegerUnderscore:
-      return "Digit is required after underscore."
-    case let .invalidIntegerDigit(type, c):
-      return "Character '\(c)' (unicode: \(c.codePointNotation)) is not valid \(type) digit."
-    case let .unableToParseInteger(type, s):
-      return "Unable to parse \(type) integer from '\(s)'."
-
-    case .invalidDecimalDigit(let c):
-      return "Character '\(c)' (unicode: \(c.codePointNotation)) is not valid decimal digit."
-    case .unableToParseDecimal(let s):
-      return "Unable to parse decimal from '\(s)'."
+    case let .unableToParseInteger(s, type, error):
+      return "Unable to parse \(type) integer from '\(s)': \(error)."
+    case let .unableToParseFloat(s):
+      return "Unable to parse float from '\(s)'"
 
     case .missingNewLineAfterBackslashEscape:
       return "Expected new line after backslash escape ('\\')."
@@ -113,5 +100,9 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
     case .unimplemented(let u):
       return "UNIMPLEMENTED IN VIOLET: " + String(describing: u)
     }
+  }
+
+  private func scalarDescription(scalar: UnicodeScalar) -> String {
+    return "'\(scalar)' (unicode: \(scalar.codePointNotation))"
   }
 }

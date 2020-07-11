@@ -127,7 +127,7 @@ extension BigInt {
       sign = s
     }
 
-    let parsedBase = try Self.parseBaseFromStringIfBaseIsZero(scalars: &scalars,
+    let parsedBase = try Self.parseBaseFromStringIfBaseIsZero(scalars: scalars,
                                                               base: _base)
     let base = parsedBase.base
     let octalErrorIfNonZero = parsedBase.octalErrorIfNonZero
@@ -200,7 +200,7 @@ extension BigInt {
   /// When base is `0` we get base from prefix,
   /// otherwise the user-provided `base` is ok.
   private static func parseBaseFromStringIfBaseIsZero(
-    scalars: inout Scalars,
+    scalars: Scalars,
     base: Int
   ) throws -> PythonBase {
     assert(base == 0 || base >= 2)

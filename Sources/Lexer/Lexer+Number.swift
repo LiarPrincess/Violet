@@ -1,7 +1,14 @@
+import BigInt
 import VioletCore
 
 // https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
 // https://github.molgen.mpg.de/git-mirror/glibc/blob/master/stdlib/strtod_l.c
+
+// Tip: use 'man ascii':
+private let asciia: UInt32 = 0x61, asciiz: UInt32 = 0x7a
+private let asciiA: UInt32 = 0x41, asciiZ: UInt32 = 0x5a
+private let ascii0: UInt32 = 0x30, ascii9: UInt32 = 0x39
+private let asciiUnderscore: UInt32 = 0x5f
 
 extension Lexer {
 
@@ -18,66 +25,88 @@ extension Lexer {
     if self.peek == "0" {
       switch self.peekNext {
       case "B", "b":
-        self.advance() // 0
-        self.advance() // Bb
-        return try self.integer(start: start, base: BinaryNumber.self)
+        return try self.integerWithBase(start: start, base: BinaryNumber.self)
       case "O", "o":
-        self.advance() // 0
-        self.advance() // Oo
-        return try self.integer(start: start, base: OctalNumber.self)
+        return try self.integerWithBase(start: start, base: OctalNumber.self)
       case "X", "x":
-        self.advance() // 0
-        self.advance() // Xx
-        return try self.integer(start: start, base: HexNumber.self)
+        return try self.integerWithBase(start: start, base: HexNumber.self)
       default:
-        return try self.decimalIntegerOrFloat(start: start)
+        break
       }
     }
 
     return try self.decimalIntegerOrFloat(start: start)
   }
 
-  private func integer<T: NumberBase>(start: SourceLocation,
-                                      base: T.Type) throws -> Token {
+  // MARK: - Integer with base
+
+  private func integerWithBase<T: NumberBase>(
+    start: SourceLocation,
+    base: T.Type
+  ) throws -> Token {
+    assert(self.peek == "0")
+    assert(self.isBbOoXx(scalar: self.peekNext))
+
     let startIndex = self.sourceIndex
-    repeat {
-      if self.peek == "_" {
-        self.advance()
-      }
+    self.advance() // 0
+    self.advance() // BbOoXx
 
-      // we need to have digit after underscore
-      guard let digitPeek = self.peek else {
-        throw self.error(.danglingIntegerUnderscore)
-      }
-
-      guard base.isDigit(digitPeek) else {
-        throw self.error(.invalidIntegerDigit(base.type, digitPeek))
-      }
-
-      while let digit = self.peek, base.isDigit(digit) {
-        self.advance()
-      }
-    } while self.peek == "_"
+    // 'self.parseInt' will actually validate if this digit/letter
+    // is valid for given 'base'
+    self.advanceWhileDigitLetterOrUnderscore()
 
     let scalars = self.source[startIndex..<self.sourceIndex]
     let value = try self.parseInt(scalars: scalars, base: base, start: start)
     return self.token(.int(value), start: start)
   }
 
+  private func isBbOoXx(scalar: UnicodeScalar?) -> Bool {
+    // We actually do not need this guard (compare with 'nil' is always 'false'),
+    // but it is more readable this way.
+    guard let s = scalar else {
+      return false
+    }
+
+    return s == "B" || s == "b"
+        || s == "O" || s == "o"
+        || s == "X" || s == "x"
+  }
+
+  /// Acceptable values:
+  /// - ascii numbers
+  /// - ascii lowercase letters (a - z)
+  /// - ascii uppercase letters (A - Z)
+  /// - underscore
+  private func advanceWhileDigitLetterOrUnderscore() {
+    func isValid(scalar: UnicodeScalar) -> Bool {
+      let value = scalar.value
+      return (ascii0 <= value && value <= ascii9)
+          || (asciia <= value && value <= asciiz)
+          || (asciiA <= value && value <= asciiZ)
+          || value == asciiUnderscore
+    }
+
+    while let p = self.peek, isValid(scalar: p) {
+      self.advance()
+    }
+  }
+
+  // MARK: - Decimal integer or float
+
   private func decimalIntegerOrFloat(start: SourceLocation) throws -> Token {
-    // it can't be nil, otherwise we would never call self.number().
+    // It can't be 'nil', otherwise we would never call 'self.number()'.
     guard let first = self.peek else { throw self.error(.eof) }
 
     let startIndex = self.sourceIndex
 
     if DecimalNumber.isDigit(first) {
-      try self.advanceDecimals()
+      self.advanceWhileDigitOrUnderscore()
     }
-    let integerEnd = self.sourceIndex
+    let integerEndIndex = self.sourceIndex
 
     if self.peek == "." {
       self.advance() // .
-      try self.advanceDecimals()
+      self.advanceWhileDigitOrUnderscore()
     }
 
     if self.peek == "E" || self.peek == "e" {
@@ -87,7 +116,7 @@ extension Lexer {
         self.advance() // +-
       }
 
-      try self.advanceDecimals()
+      self.advanceWhileDigitOrUnderscore()
     }
 
     let scalars = self.source[startIndex..<self.sourceIndex]
@@ -98,7 +127,7 @@ extension Lexer {
       return self.token(.imaginary(value), start: start)
     }
 
-    let isInteger = self.sourceIndex == integerEnd
+    let isInteger = self.sourceIndex == integerEndIndex
     if isInteger {
       let base = DecimalNumber.self
       let value = try self.parseInt(scalars: scalars, base: base, start: start)
@@ -109,27 +138,17 @@ extension Lexer {
     return self.token(.float(value), start: start)
   }
 
-  private func advanceDecimals() throws {
-    let type = DecimalNumber.self
-
-    guard let first = self.peek, type.isDigit(first) else {
-      return // just point, no fraction
+  /// Acceptable values:
+  /// - ascii numbers
+  /// - underscore
+  private func advanceWhileDigitOrUnderscore() {
+    func isValid(scalar: UnicodeScalar) -> Bool {
+      let value = scalar.value
+      return (ascii0 <= value && value <= ascii9) || value == asciiUnderscore
     }
 
-    while true {
-      while let digit = self.peek, type.isDigit(digit) {
-        self.advance()
-      }
-
-      // if '_' then continue else break
-      guard let underscore = self.peek, underscore == "_" else {
-        break
-      }
-
-      // if we have more, then it must be an digit
-      if let digit = self.advance(), !type.isDigit(digit) {
-        throw self.error(.invalidDecimalDigit(digit))
-      }
+    while let p = self.peek, isValid(scalar: p) {
+      self.advance()
     }
   }
 
@@ -140,30 +159,23 @@ extension Lexer {
     base: T.Type,
     start: SourceLocation
   ) throws -> BigInt {
-
-    guard let value = BigInt(
-      parseUsingPythonRules: self.removeUnderscores(scalars: scalars),
-      radix: base.radix
-    ) else {
-      // After we add proper ints:
-      // let kind = LexerErrorKind.unableToParseInteger(base.type, string)
-      // throw self.error(kind, location: start)
-      throw self.unimplmented(
-        .unlimitedInteger(valueToParse: String(scalars)),
-        location: start
-      )
+    do {
+      return try BigInt(parseUsingPythonRules: scalars, base: base.radix)
+    } catch let error as BigInt.PythonParsingError {
+      let string = String(scalars)
+      let kind = LexerErrorKind.unableToParseInteger(string, base.type, error)
+      throw self.error(kind, location: start)
     }
-
-    return value
   }
 
   private func parseDouble(scalars: UnicodeScalarView.SubSequence,
                            start: SourceLocation) throws -> Double {
-    guard let value = Double(
-      parseUsingPythonRules: self.removeUnderscores(scalars: scalars)
-    ) else {
+    let noUnderscores = self.removeUnderscores(scalars: scalars)
+
+    guard let value = Double(parseUsingPythonRules: noUnderscores) else {
       let string = String(scalars)
-      throw self.error(.unableToParseDecimal(string), location: start)
+      let kind = LexerErrorKind.unableToParseFloat(string)
+      throw self.error(kind, location: start)
     }
 
     return value
@@ -172,7 +184,8 @@ extension Lexer {
   private func removeUnderscores(
     scalars: UnicodeScalarView.SubSequence
   ) -> UnicodeScalarView.SubSequence {
-    // Not really sure if 'filter' should return 'UnicodeScalarView.SubSequence'
+    // Not really sure if 'filter' should return 'UnicodeScalarView.SubSequence',
+    // but if stdlib says so...
     return scalars.filter { $0 != "_" }
   }
 }
