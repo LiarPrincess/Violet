@@ -338,23 +338,27 @@ public class PyInt: PyObject {
     }
 
     switch self.parsePowMod(mod: mod) {
-    case .none:
+    case .none: // No modulo, just pow
       let result = self.pow(base: self.value, exp: exp.value)
       return result.convertToObject()
 
-    case .int(let modPyInt):
-      if modPyInt.value.isZero {
+    case .int(let moduloPy): // pow and then modulo
+      let modulo = moduloPy.value
+
+      if modulo.isZero {
         return .valueError("pow() 3rd argument cannot be 0")
       }
 
       switch self.pow(base: self.value, exp: exp.value) {
       case let .int(powInt):
-        let result = self.modRaw(left: powInt, right: modPyInt.value)
-        return .value(Py.newInt(result))
+        let divMod = self.divmodWithUncheckedZero(left: powInt, right: modulo)
+        return .value(Py.newInt(divMod.mod))
+
       case let .fraction(powDouble):
-        let modDouble = Double(modPyInt.value)
+        let modDouble = Double(modulo)
         let result = powDouble.truncatingRemainder(dividingBy: modDouble)
         return .value(Py.newFloat(result))
+
       case let .error(e):
         return .error(e)
       }
@@ -466,7 +470,7 @@ public class PyInt: PyObject {
   }
 
   private func truediv(left: BigInt, right: BigInt) -> PyResult<PyObject> {
-    if right == 0 {
+    if right.isZero {
       return .zeroDivisionError("division by zero")
     }
 
@@ -494,32 +498,12 @@ public class PyInt: PyObject {
   }
 
   private func floordiv(left: BigInt, right: BigInt) -> PyResult<PyObject> {
-    if right == 0 {
+    if right.isZero {
       return .zeroDivisionError("division by zero")
     }
 
-    let result = self.floordivRaw(left: left, right: right)
-    return .value(Py.newInt(result))
-  }
-
-  /// (Not so) fun fact: (-2).__floordiv__(3) == -1
-  ///
-  /// To be really honest: I have no idea how this works.
-  /// But we have test for this, so it must be true.
-  private func floordivRaw(left: BigInt, right: BigInt) -> BigInt {
-    if self.sameSign(left: left, right: right) {
-      return left / right
-    }
-
-    let leftAbs = Swift.abs(left)
-    let rightAbs = Swift.abs(right)
-    return -1 - (leftAbs - 1) / rightAbs
-  }
-
-  private func sameSign(left: BigInt, right: BigInt) -> Bool {
-    let bothPositive = left >= 0 && right >= 0
-    let bothNegative = left <= 0 && right <= 0
-    return bothPositive || bothNegative
+    let divMod = self.divmod(left: left, right: right)
+    return divMod.map { Py.newInt($0.div) }
   }
 
   // MARK: - Mod
@@ -543,30 +527,12 @@ public class PyInt: PyObject {
   }
 
   private func mod(left: BigInt, right: BigInt) -> PyResult<PyObject> {
-    if right == 0 {
+    if right.isZero {
       return .zeroDivisionError("modulo by zero")
     }
 
-    let result = self.modRaw(left: left, right: right)
-    return .value(Py.newInt(result))
-  }
-
-  /// -2 % 3 == 1
-  private func modRaw(left: BigInt, right: BigInt) -> BigInt {
-    if self.sameSign(left: left, right: right) {
-      return left % right
-    }
-
-    // x = (x // y) * y + (x % y)
-    // which gives us:
-    // (x % y) = x - (x // y) * y
-
-    let leftAbs = Swift.abs(left)
-    let rightAbs = Swift.abs(right)
-    let partial = rightAbs - 1 - (leftAbs - 1) % rightAbs
-
-    let sign = BigInt(right < 0 ? -1 : 1)
-    return sign * partial
+    let divMod = self.divmod(left: left, right: right)
+    return divMod.map { Py.newInt($0.mod) }
   }
 
   // MARK: - Div mod
@@ -578,7 +544,7 @@ public class PyInt: PyObject {
     }
 
     let result = self.divmod(left: self.value, right: other.value)
-    return result.map { $0.asObject() }
+    return result.map { $0.asTuple() }
   }
 
   // sourcery: pymethod = __rdivmod__
@@ -588,29 +554,71 @@ public class PyInt: PyObject {
     }
 
     let result = self.divmod(left: other.value, right: self.value)
-    return result.map { $0.asObject() }
+    return result.map { $0.asTuple() }
   }
 
   private struct Divmod {
-    fileprivate var quotient: BigInt
-    fileprivate var remainder: BigInt
+    fileprivate var div: BigInt
+    fileprivate var mod: BigInt
 
-    fileprivate func asObject() -> PyTuple {
-      let q = Py.newInt(self.quotient)
-      let r = Py.newInt(self.remainder)
+    fileprivate func asTuple() -> PyTuple {
+      let q = Py.newInt(self.div)
+      let r = Py.newInt(self.mod)
       return Py.newTuple(q, r)
     }
   }
 
   private func divmod(left: BigInt, right: BigInt) -> PyResult<Divmod> {
-    if right == 0 {
+    if right.isZero {
       return .zeroDivisionError("divmod() by zero")
     }
 
-    // Let's pray to inlining god for performance...
-    let quotient = self.floordivRaw(left: left, right: right)
-    let remainder = self.modRaw(left: left, right: right)
-    return .value(Divmod(quotient: quotient, remainder: remainder))
+    let result = self.divmodWithUncheckedZero(left: left, right: right)
+    return .value(result)
+  }
+
+  /// `Div` and `mod` in a single (and hopefully fast) package.
+  /// It will not check if `right` is `0`! Caller is responsible fot this.
+  /// Also, note that this is `divmod` not `divrem` (see below).
+  ///
+  /// The expression `a mod b` has the value `a - b * floor(a / b)`.
+  /// This is also expressed as `a - b * trunc(a / b)`,
+  /// if `trunc` truncates towards zero.
+  ///
+  /// Some examples:
+  /// ```
+  ///  a           b      a rem b         a mod b
+  ///  13          10      3               3
+  /// -13          10     -3               7
+  ///  13         -10      3              -7
+  /// -13         -10     -3              -3
+  /// ```
+  /// So, to get from `rem` to `mod`, we have to add `b` if `a` and `b`
+  /// have different signs.
+  ///
+  /// This is different than what Swift does
+  /// (even the method is named `quotientAndRemainder` not `quotientAndModulo`).
+  private func divmodWithUncheckedZero(left: BigInt, right: BigInt) -> Divmod {
+    assert(
+      !right.isZero,
+      "div by 0 should be handled before calling 'BigInt.divmodRaw'"
+    )
+
+    var (quotient, remainder) = left.quotientAndRemainder(dividingBy: right)
+
+    // See comment above this method.
+    if !self.sameSign(left: left, right: right) {
+      remainder += right
+      quotient -= 1
+    }
+
+    return Divmod(div: quotient, mod: remainder)
+  }
+
+  private func sameSign(left: BigInt, right: BigInt) -> Bool {
+    let bothPositive = left.isPositive && right.isPositive
+    let bothNegative = left.isNegative && right.isNegative
+    return bothPositive || bothNegative
   }
 
   // MARK: - LShift
@@ -836,7 +844,7 @@ public class PyInt: PyObject {
       return .error(e)
     }
 
-    var twiceRem = result.remainder << 2
+    var twiceRem = result.mod << 2
     if quotientIsNegative {
       twiceRem = -twiceRem
     }

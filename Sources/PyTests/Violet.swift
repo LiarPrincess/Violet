@@ -6,4 +6,5 @@ internal func runVioletTests() {
   runTest(file: dir.appendingPathComponent("traceback.py"))
   runTest(file: dir.appendingPathComponent("type_hints.py"))
   runTest(file: dir.appendingPathComponent("unbound_methods.py"))
+  runTest(file: dir.appendingPathComponent("int_divmod_sign.py"))
 }
