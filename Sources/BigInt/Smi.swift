@@ -194,7 +194,7 @@ internal struct Smi: Hashable, CustomStringConvertible, CustomDebugStringConvert
 
   // MARK: - Mod
 
-  internal func mod(other: Smi) -> BigInt {
+  internal func rem(other: Smi) -> BigInt {
     let (result, overflow) =
       self.value.remainderReportingOverflow(dividingBy: other.value)
 

@@ -391,7 +391,7 @@ class SmiBinaryTests: XCTestCase {
     let expected = expecting.map(BigInt.init(smi:)) ?? BigInt(Int(_lhs) % Int(_rhs))
     let msg = "\(lhs) % \(rhs)"
 
-    let lThingie = lhs.mod(other: rhs)
+    let lThingie = lhs.rem(other: rhs)
     XCTAssert(lThingie.isSmi, msg, file: file, line: line)
     XCTAssertEqual(lThingie, expected, msg, file: file, line: line)
   }
@@ -407,7 +407,7 @@ class SmiBinaryTests: XCTestCase {
     let expected = BigInt(Int(_lhs) % Int(_rhs))
     XCTAssertEqual(expected, BigInt(0))
 
-    let lThingie = lhs.mod(other: rhs)
+    let lThingie = lhs.rem(other: rhs)
     XCTAssert(lThingie.isSmi) // 0 is smi
     XCTAssertEqual(lThingie, expected)
   }

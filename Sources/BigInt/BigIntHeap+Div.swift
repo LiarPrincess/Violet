@@ -27,8 +27,6 @@ extension BigIntHeap {
   // print("-\(x) /  \(y) =", (-x) /   y,  "rem", (-x) %   y)  // -10 /  3 = -3 rem -1
   // print("-\(x) / -\(y) =", (-x) / (-y), "rem", (-x) % (-y)) // -10 / -3 =  3 rem -1
   // ```
-  //
-  // In Python remainder sign acts a bit differently.
 
   /// If the signs are the same then result is positive:
   /// `2/1 = 2` and also `(-2)/(-1) = 2`
@@ -39,7 +37,7 @@ extension BigIntHeap {
   /// Remainder will have the same sign as we have now.
   ///
   /// (It will ignore the argument, but we want symmetry with `divIsNegative`)
-  private func modIsNegative(otherIsNegative: Bool) -> Bool {
+  private func remIsNegative(otherIsNegative: Bool) -> Bool {
     return self.isNegative
   }
 
@@ -55,7 +53,7 @@ extension BigIntHeap {
     }
 
     let resultIsNegative = self.divIsNegative(otherIsNegative: other.isNegative)
-    let remainderIsNegative = self.modIsNegative(otherIsNegative: other.isNegative)
+    let remainderIsNegative = self.remIsNegative(otherIsNegative: other.isNegative)
 
     let word = Word(other.magnitude)
     let wordRemainder = self.div(other: word)
@@ -101,7 +99,7 @@ extension BigIntHeap {
     }
 
     let resultIsNegative = self.divIsNegative(otherIsNegative: false)
-    let remainderIsNegative = self.modIsNegative(otherIsNegative: other.isNegative)
+    let remainderIsNegative = self.remIsNegative(otherIsNegative: other.isNegative)
 
     switch self.compareMagnitude(with: other) {
     case .equal: // 5 / 5 = 1 rem 0 and also 5 / (-5) = -1 rem 0
@@ -176,7 +174,7 @@ extension BigIntHeap {
     }
 
     let resultIsNegative = self.divIsNegative(otherIsNegative: other.isNegative)
-    let remainderIsNegative = self.modIsNegative(otherIsNegative: other.isNegative)
+    let remainderIsNegative = self.remIsNegative(otherIsNegative: other.isNegative)
 
     switch self.compareMagnitude(with: other) {
     case .equal: // 5 / 5 = 1 rem 0 and also 5 / (-5) = -1 rem 0
@@ -441,37 +439,37 @@ extension BigIntHeap {
     }
   }
 
-  // MARK: - Mod
+  // MARK: - Rem
 
-  internal mutating func mod(other: Smi.Storage) {
+  internal mutating func rem(other: Smi.Storage) {
     defer { self.checkInvariants() }
 
     var copy = self
-    let mod = copy.div(other: other)
-    self = BigIntHeap(mod)
+    let result = copy.div(other: other)
+    self = BigIntHeap(result)
   }
 
-  internal mutating func mod(other: BigIntHeap) {
+  internal mutating func rem(other: BigIntHeap) {
     defer { self.checkInvariants() }
 
     var copy = self
-    let mod = copy.div(other: other)
-    self = mod
+    let result = copy.div(other: other)
+    self = result
   }
 
-  // MARK: - Div mod
+  // MARK: - Div rem
 
-  internal typealias DivMod<Remainder> = (quotient: BigIntHeap, remainder: Remainder)
+  internal typealias DivRem<Remainder> = (quotient: BigIntHeap, remainder: Remainder)
 
-  internal func divMod(other: Smi.Storage) -> DivMod<Smi.Storage> {
+  internal func divRem(other: Smi.Storage) -> DivRem<Smi.Storage> {
     var copy = self
-    let mod = copy.div(other: other)
-    return (copy, mod)
+    let rem = copy.div(other: other)
+    return (copy, rem)
   }
 
-  internal func divMod(other: BigIntHeap) -> DivMod<BigIntHeap> {
+  internal func divRem(other: BigIntHeap) -> DivRem<BigIntHeap> {
     var copy = self
-    let mod = copy.div(other: other)
-    return (copy, mod)
+    let rem = copy.div(other: other)
+    return (copy, rem)
   }
 }

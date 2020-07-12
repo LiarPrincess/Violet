@@ -458,19 +458,19 @@ public struct BigInt:
   public static func % (lhs: BigInt, rhs: BigInt) -> BigInt {
     switch (lhs.value, rhs.value) {
     case let (.smi(lhs), .smi(rhs)):
-      return lhs.mod(other: rhs)
+      return lhs.rem(other: rhs)
 
     case let (.smi(lhsSmi), .heap(rhs)):
       var lhsHeap = BigIntHeap(lhsSmi.value)
-      lhsHeap.mod(other: rhs)
+      lhsHeap.rem(other: rhs)
       return BigInt(lhsHeap)
 
     case (.heap(var lhs), .smi(let rhs)):
-      lhs.mod(other: rhs.value)
+      lhs.rem(other: rhs.value)
       return BigInt(lhs)
 
     case (.heap(var lhs), .heap(let rhs)):
-      lhs.mod(other: rhs)
+      lhs.rem(other: rhs)
       return BigInt(lhs)
     }
   }
@@ -478,24 +478,24 @@ public struct BigInt:
   public static func %= (lhs: inout BigInt, rhs: BigInt) {
     switch (lhs.value, rhs.value) {
     case let (.smi(lhsSmi), .smi(rhs)):
-      let result = lhsSmi.mod(other: rhs)
+      let result = lhsSmi.rem(other: rhs)
       lhs.value = result.value
 
     case let (.smi(lhsSmi), .heap(rhs)):
       var lhsHeap = BigIntHeap(lhsSmi.value)
-      lhsHeap.mod(other: rhs)
+      lhsHeap.rem(other: rhs)
       lhs.value = .heap(lhsHeap)
       lhs.downgradeToSmiIfPossible()
 
     case (.heap(var lhsHeap), .smi(let rhs)):
       Self.releaseBufferToPreventCOW(&lhs)
-      lhsHeap.mod(other: rhs.value)
+      lhsHeap.rem(other: rhs.value)
       lhs.value = .heap(lhsHeap)
       lhs.downgradeToSmiIfPossible()
 
     case (.heap(var lhsHeap), .heap(let rhs)):
       Self.releaseBufferToPreventCOW(&lhs)
-      lhsHeap.mod(other: rhs)
+      lhsHeap.rem(other: rhs)
       lhs.value = .heap(lhsHeap)
       lhs.downgradeToSmiIfPossible()
     }
@@ -507,7 +507,7 @@ public struct BigInt:
 
   public func quotientAndRemainder(dividingBy other: BigInt) -> DivMod {
     func bothHeap(lhs: BigIntHeap, rhs: BigIntHeap) -> DivMod {
-      let result = lhs.divMod(other: rhs)
+      let result = lhs.divRem(other: rhs)
       let quotient = BigInt(result.quotient)
       let remainder = BigInt(result.remainder)
       return (quotient: quotient, remainder: remainder)
@@ -517,7 +517,7 @@ public struct BigInt:
     case let (.smi(lhs), .smi(rhs)):
       // This is so cheap that we can do it in a trivial way
       let quotient = lhs.div(other: rhs)
-      let remainder = lhs.mod(other: rhs)
+      let remainder = lhs.rem(other: rhs)
       return (quotient: quotient, remainder: remainder)
 
     case let (.smi(lhs), .heap(rhs)):
@@ -526,7 +526,7 @@ public struct BigInt:
       return bothHeap(lhs: lhsHeap, rhs: rhs)
 
     case let (.heap(lhs), .smi(rhs)):
-      let result = lhs.divMod(other: rhs.value)
+      let result = lhs.divRem(other: rhs.value)
       let quotient = BigInt(result.quotient)
       let remainder = BigInt(smi: result.remainder)
       return (quotient: quotient, remainder: remainder)

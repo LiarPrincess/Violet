@@ -3,9 +3,9 @@ import XCTest
 
 private typealias Word = BigIntStorage.Word
 
-// We are using the same code for 'divMod' as for 'div'.
+// We are using the same code for 'divRem' as for 'div'.
 // Just check if it uses that implementation.
-class BigIntHeapDivModTests: XCTestCase {
+class BigIntHeapDivRemTests: XCTestCase {
 
   func test_smi() {
     let values = generateSmiValues(countButNotReally: 20)
@@ -21,7 +21,7 @@ class BigIntHeapDivModTests: XCTestCase {
       }
 
       let lhsHeap = BigIntHeap(lhsSmi)
-      let result = lhsHeap.divMod(other: rhs)
+      let result = lhsHeap.divRem(other: rhs)
 
       let expectedDiv = lhsSmi / rhs
       XCTAssert(
@@ -50,7 +50,7 @@ class BigIntHeapDivModTests: XCTestCase {
 
       let lhsHeap = BigIntHeap(isNegative: false, words: lhsWord)
       let rhsHeap = BigIntHeap(isNegative: false, words: rhsWord)
-      let result = lhsHeap.divMod(other: rhsHeap)
+      let result = lhsHeap.divRem(other: rhsHeap)
 
       let expectedDivWord = lhsWord / rhsWord
       let expectedDiv = BigIntHeap(isNegative: false, words: expectedDivWord)
