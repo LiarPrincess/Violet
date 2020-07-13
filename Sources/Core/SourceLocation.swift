@@ -1,5 +1,6 @@
-public typealias SourceLine = UInt16
-public typealias SourceColumn = UInt16
+// '4_294_967_296' seems like a reasonable assumption
+public typealias SourceLine = UInt32
+public typealias SourceColumn = UInt32
 
 public struct SourceLocation: Equatable, Comparable, CustomStringConvertible {
 
