@@ -173,8 +173,8 @@ public class PyInt: PyObject {
 
   // sourcery: pyproperty = real
   public func asReal() -> PyObject {
-    // We cannot just return 'self'!
-    // If we call 'True.real' then the result should be '1' not 'True'.
+    // We cannot just return 'self' because of 'bool':
+    // if we call 'True.real' then the result should be '1' not 'True'.
     return Py.newInt(self.value)
   }
 
@@ -230,7 +230,7 @@ public class PyInt: PyObject {
 
   internal static let truncDoc = "Truncating an Integral returns itself."
 
-  // sourcery: pymethod = __trunc__, , doc = truncDoc
+  // sourcery: pymethod = __trunc__, doc = truncDoc
   public func trunc() -> PyResult<PyInt> {
     return .value(self)
   }
@@ -239,7 +239,7 @@ public class PyInt: PyObject {
 
   internal static let floorDoc = "Flooring an Integral returns itself."
 
-  // sourcery: pymethod = __floor__, , doc = floorDoc
+  // sourcery: pymethod = __floor__, doc = floorDoc
   public func floor() -> PyObject {
     return self
   }
@@ -248,7 +248,7 @@ public class PyInt: PyObject {
 
   internal static let ceilDoc = "Ceiling of an Integral returns itself."
 
-  // sourcery: pymethod = __ceil__, , doc = ceilDoc
+  // sourcery: pymethod = __ceil__, doc = ceilDoc
   public func ceil() -> PyObject {
     return self
   }
@@ -267,10 +267,9 @@ public class PyInt: PyObject {
     6
     """
 
-  // sourcery: pymethod = bit_length, , doc = bitLengthDoc
-  public func bitLength() -> PyObject {
-    let result = self.value.minRequiredWidth
-    return Py.newInt(result)
+  // sourcery: pymethod = bit_length, doc = bitLengthDoc
+  public func bitLength() -> Int {
+    return self.value.minRequiredWidth
   }
 
   // MARK: - Add
@@ -281,7 +280,8 @@ public class PyInt: PyObject {
       return .value(Py.notImplemented)
     }
 
-    return .value(Py.newInt(self.value + other.value))
+    let result = self.value + other.value
+    return .value(Py.newInt(result))
   }
 
   // sourcery: pymethod = __radd__
@@ -297,7 +297,8 @@ public class PyInt: PyObject {
       return .value(Py.notImplemented)
     }
 
-    return .value(Py.newInt(self.value - other.value))
+    let result = self.value - other.value
+    return .value(Py.newInt(result))
   }
 
   // sourcery: pymethod = __rsub__
@@ -306,7 +307,8 @@ public class PyInt: PyObject {
       return .value(Py.notImplemented)
     }
 
-    return .value(Py.newInt(other.value - self.value))
+    let result = other.value - self.value
+    return .value(Py.newInt(result))
   }
 
   // MARK: - Mul
@@ -317,7 +319,8 @@ public class PyInt: PyObject {
       return .value(Py.notImplemented)
     }
 
-    return .value(Py.newInt(self.value * other.value))
+    let result = self.value * other.value
+    return .value(Py.newInt(result))
   }
 
   // sourcery: pymethod = __rmul__
@@ -340,7 +343,7 @@ public class PyInt: PyObject {
     switch self.parsePowMod(mod: mod) {
     case .none: // No modulo, just pow
       let result = self.pow(base: self.value, exp: exp.value)
-      return result.convertToObject()
+      return result.asObject()
 
     case .int(let moduloPy): // pow and then modulo
       let modulo = moduloPy.value
@@ -381,9 +384,9 @@ public class PyInt: PyObject {
     switch self.parsePowMod(mod: mod) {
     case .none:
       let result = self.pow(base: base.value, exp: self.value)
-      return result.convertToObject()
+      return result.asObject()
     case .int:
-      // Three-arg power doesn't use __rpow__.
+      // 3-arg power doesn't use __rpow__.
       return .value(Py.notImplemented)
     case .notImplemented:
       return .value(Py.notImplemented)
@@ -417,7 +420,7 @@ public class PyInt: PyObject {
     case fraction(Double)
     case error(PyBaseException)
 
-    fileprivate func convertToObject() -> PyResult<PyObject> {
+    fileprivate func asObject() -> PyResult<PyObject> {
       switch self {
       case let .int(i):
         return .value(Py.newInt(i))
@@ -474,7 +477,8 @@ public class PyInt: PyObject {
       return .zeroDivisionError("division by zero")
     }
 
-    return .value(Py.newFloat(Double(left) / Double(right)))
+    let result = Double(left) / Double(right)
+    return .value(Py.newFloat(result))
   }
 
   // MARK: - Floor div
@@ -579,7 +583,7 @@ public class PyInt: PyObject {
 
   /// `Div` and `mod` in a single (and hopefully fast) package.
   /// It will not check if `right` is `0`! Caller is responsible fot this.
-  /// Also, note that this is `divmod` not `divrem` (see below).
+  /// Also, note that this is `divmod` not `divrem` (see below for details).
   ///
   /// The expression `a mod b` has the value `a - b * floor(a / b)`.
   /// This is also expressed as `a - b * trunc(a / b)`,
@@ -607,18 +611,13 @@ public class PyInt: PyObject {
     var (quotient, remainder) = left.quotientAndRemainder(dividingBy: right)
 
     // See comment above this method.
-    if !self.sameSign(left: left, right: right) {
+    let differentSign = left.isPositive != right.isPositive
+    if differentSign {
       remainder += right
       quotient -= 1
     }
 
     return Divmod(div: quotient, mod: remainder)
-  }
-
-  private func sameSign(left: BigInt, right: BigInt) -> Bool {
-    let bothPositive = left.isPositive && right.isPositive
-    let bothNegative = left.isNegative && right.isNegative
-    return bothPositive || bothNegative
   }
 
   // MARK: - LShift
@@ -642,11 +641,12 @@ public class PyInt: PyObject {
   }
 
   private func lshift(left: BigInt, right: BigInt) -> PyResult<PyObject> {
-    if right < 0 {
+    if right.isNegative {
       return .valueError("negative shift count")
     }
 
-    return .value(Py.newInt(left << right))
+    let result = left << right
+    return .value(Py.newInt(result))
   }
 
   // MARK: - RShift
@@ -670,11 +670,12 @@ public class PyInt: PyObject {
   }
 
   private func rshift(left: BigInt, right: BigInt) -> PyResult<PyObject> {
-    if right < 0 {
+    if right.isNegative {
       return .valueError("negative shift count")
     }
 
-    return .value(Py.newInt(left >> right))
+    let result = left >> right
+    return .value(Py.newInt(result))
   }
 
   // MARK: - And
@@ -691,7 +692,8 @@ public class PyInt: PyObject {
       return .value(Py.notImplemented)
     }
 
-    return .value(Py.newInt(zelf.value & other.value))
+    let result = zelf.value & other.value
+    return .value(Py.newInt(result))
   }
 
   public func rand(_ other: PyObject) -> PyResult<PyObject> {
@@ -719,7 +721,8 @@ public class PyInt: PyObject {
       return .value(Py.notImplemented)
     }
 
-    return .value(Py.newInt(zelf.value | other.value))
+    let result = zelf.value | other.value
+    return .value(Py.newInt(result))
   }
 
   public func ror(_ other: PyObject) -> PyResult<PyObject> {
@@ -746,7 +749,8 @@ public class PyInt: PyObject {
       return .value(Py.notImplemented)
     }
 
-    return .value(Py.newInt(zelf.value ^ other.value))
+    let result = zelf.value ^ other.value
+    return .value(Py.newInt(result))
   }
 
   public func rxor(_ other: PyObject) -> PyResult<PyObject> {
@@ -763,7 +767,8 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __invert__
   public func invert() -> PyObject {
-    return Py.newInt(~self.value)
+    let result = ~self.value
+    return Py.newInt(result)
   }
 
   // MARK: - Round
@@ -786,7 +791,7 @@ public class PyInt: PyObject {
     }
 
     // if digits >= 0 then no rounding is necessary; return self unchanged
-    if nDigits >= 0 {
+    if nDigits.isPositive {
       return .value(self)
     }
 
@@ -799,7 +804,7 @@ public class PyInt: PyObject {
     case let .error(e): return .error(e)
     }
 
-    let result = self.value - divMod.remainder
+    let result = self.value - divMod.mod
     return .value(Py.newInt(result))
   }
 
@@ -834,7 +839,7 @@ public class PyInt: PyObject {
     //         r -= b
     //     return q, r
 
-    let quotientIsNegative = (a < 0) != (b < 0)
+    let quotientIsNegative = a.isNegative != b.isNegative
 
     var result: Divmod
     switch self.divmod(left: a, right: b) {
@@ -852,15 +857,15 @@ public class PyInt: PyObject {
     // See Python code above
     let greaterThanHalf = b > 0 ? twiceRem > b : twiceRem < b
     let exactlyHalf = twiceRem == b
-    let quotientIsOdd = (result.quotient & 1) == 1
+    let quotientIsOdd = result.div.isOdd
 
     if greaterThanHalf || (exactlyHalf && quotientIsOdd) {
       if quotientIsNegative {
-        result.quotient -= 1
-        result.remainder += b
+        result.div -= 1
+        result.mod += b
       } else {
-        result.quotient += 1
-        result.remainder -= b
+        result.div += 1
+        result.mod -= b
       }
     }
 
@@ -885,7 +890,7 @@ public class PyInt: PyObject {
 
       let object = binding.optional(at: 0)
       let base = binding.optional(at: 1)
-      return PyInt.pyIntNew(type: type, object: object, base: base)
+      return Self.pyIntNew(type: type, object: object, base: base)
     case let .error(e):
       return .error(e)
     }
@@ -895,7 +900,7 @@ public class PyInt: PyObject {
                                object: PyObject?,
                                base: PyObject?) -> PyResult<PyInt> {
     let isBuiltin = type === Py.types.int
-    let alloca = isBuiltin ? self.newInt(type:value:) : PyIntHeap.init(type:value:)
+    let alloca = isBuiltin ? Self.newInt(type:value:) : PyIntHeap.init(type:value:)
 
     // If we do not have 1st argument -> 0
     guard let object = object else {
@@ -908,7 +913,7 @@ public class PyInt: PyObject {
 
     // If we do not have base -> try to cast 'object' as 'int'
     guard let base = base else {
-      return PyInt.parseBigInt(objectWithoutBase: object).map { alloca(type, $0) }
+      return Self.parseBigInt(objectWithoutBase: object).map { alloca(type, $0) }
     }
 
     // Check if base is 'int'
@@ -923,7 +928,7 @@ public class PyInt: PyObject {
     }
 
     // Parse 'object' with a given 'base'
-    switch PyInt.parseBigInt(string: object, base: baseInt) {
+    switch Self.parseBigInt(string: object, base: baseInt) {
     case .value(let v): return .value(alloca(type, v))
     case .notString: break
     case .error(let e): return .error(e)
@@ -945,13 +950,13 @@ public class PyInt: PyObject {
     // '__int__' and '__trunc__' have to be before 'PyInt' cast,
     // because they can be overriden
 
-    switch PyInt.call__int__(object: object) {
+    switch Self.call__int__(object: object) {
     case .value(let int): return .value(int.value)
     case .missingMethod: break // try other
     case .error(let e): return .error(e)
     }
 
-    switch PyInt.call__trunc__(object: object) {
+    switch Self.call__trunc__(object: object) {
     case .value(let int): return .value(int.value)
     case .missingMethod: break // try other
     case .error(let e): return .error(e)
@@ -961,7 +966,7 @@ public class PyInt: PyObject {
       return .value(int.value)
     }
 
-    switch PyInt.parseBigInt(string: object, base: 10) {
+    switch Self.parseBigInt(string: object, base: 10) {
     case .value(let v): return .value(v)
     case .notString: break
     case .error(let e): return .error(e)

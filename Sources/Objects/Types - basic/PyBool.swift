@@ -14,7 +14,7 @@ import VioletCore
 
 extension BigInt {
   internal var isTrue: Bool {
-    return self != 0
+    return !self.isZero
   }
 }
 
