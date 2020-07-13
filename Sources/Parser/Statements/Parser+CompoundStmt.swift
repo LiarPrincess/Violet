@@ -107,7 +107,7 @@ extension Parser {
                        orElse: NonEmptyArray<Statement>?) -> Statement {
 
     var result: Statement?
-    var pendingElse = orElse.map { Array($0) } ?? []
+    var pendingElse = orElse.map(Array.init) ?? []
 
     for ir in irs.reversed() {
       let end = pendingElse.last?.end ?? ir.body.last.end
@@ -152,7 +152,7 @@ extension Parser {
     let end = orElse?.last.end ?? body.last.end
     return self.builder.whileStmt(test: test,
                                   body: body,
-                                  orElse: orElse.map { Array($0) } ?? [],
+                                  orElse: orElse.map(Array.init) ?? [],
                                   start: start,
                                   end: end)
   }

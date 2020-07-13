@@ -1,9 +1,31 @@
+// We will store all of the elements in a single array (on the heap).
+// It is not 'ideal'.
+//
+// Alternative would be to store 'first' and 'rest' as fields.
+// Unfortunatelly we can't do this, because:
+//
+// public struct MyArray<Element> {
+//   fileprivate let first: Element
+// }
+//
+// public struct ASTNode {
+//   fileprivate let childrens: MyArray<ASTNode>
+// }
+//
+// This will not compile, because:
+// - we need to know size of 'ASTNode' to compile 'MyArray<ASTNode>'
+// - we need to know size of 'MyArray<ASTNode>' to compile 'ASTNode'
+//
+// I'm almost sure this is the reason. 'almost' because normally Swift would
+// create a nice error message for this, but Swift 5.2 just crashes in parser.
+//
+// I also don't think that we actually hit this case,
+// but our AST is is way too complicated for me to analyse.
+//
+// Btw, do not add 'ExpressibleByArrayLiteral' - it may break our invariant.
+
 /// Array that has at least 1 element.
-///
-/// Do not add 'ExpressibleByArrayLiteral' - it may break our invariant.
-public struct NonEmptyArray<Element>: Sequence,
-                                      Collection,
-                                      BidirectionalCollection,
+public struct NonEmptyArray<Element>: RandomAccessCollection,
                                       CustomStringConvertible {
 
   public private(set) var elements = [Element]()
@@ -17,7 +39,7 @@ public struct NonEmptyArray<Element>: Sequence,
   // swiftlint:disable:previous force_unwrapping
 
   public init(first: Element) {
-    self.init(first: first, rest: [])
+    self.elements.append(first)
   }
 
   public init<S: Sequence>(first: Element, rest: S) where S.Element == Element {
@@ -40,26 +62,17 @@ public struct NonEmptyArray<Element>: Sequence,
   // MARK: - Collection
 
   public typealias Index = Array<Element>.Index
-  public typealias Element = Array<Element>.Element
-  public typealias Iterator = Array<Element>.Iterator
 
-  public var startIndex: Index { return self.elements.startIndex }
-  public var endIndex: Index { return self.elements.endIndex }
+  public var startIndex: Index {
+    return self.elements.startIndex
+  }
 
-  public subscript(index: Index) -> Iterator.Element {
+  public var endIndex: Index {
+    return self.elements.endIndex
+  }
+
+  public subscript(index: Index) -> Element {
     return self.elements[index]
-  }
-
-  public func index(after i: Index) -> Index {
-    return self.elements.index(after: i)
-  }
-
-  public func index(before i: Index) -> Index {
-    return self.elements.index(before: i)
-  }
-
-  public func makeIterator() -> IndexingIterator<[Element]> {
-    return self.elements.makeIterator()
   }
 
   // MARK: - CustomStringConvertible
