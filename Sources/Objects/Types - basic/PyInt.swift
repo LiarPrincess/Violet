@@ -448,7 +448,7 @@ public class PyInt: PyObject {
   ///
   /// This will always return some `BigInt`, never fraction or `ZeroDivisionError`.
   private func powNonNegativeExp(base: BigInt, exp: BigInt) -> BigInt {
-    precondition(exp.isPositive)
+    precondition(exp.isPositiveOrZero)
     return base.power(exponent: exp)
   }
 
@@ -611,7 +611,7 @@ public class PyInt: PyObject {
     var (quotient, remainder) = left.quotientAndRemainder(dividingBy: right)
 
     // See comment above this method.
-    let differentSign = left.isPositive != right.isPositive
+    let differentSign = left.isNegative != right.isNegative
     if differentSign {
       remainder += right
       quotient -= 1
@@ -791,7 +791,7 @@ public class PyInt: PyObject {
     }
 
     // if digits >= 0 then no rounding is necessary; return self unchanged
-    if nDigits.isPositive {
+    if nDigits.isPositiveOrZero {
       return .value(self)
     }
 

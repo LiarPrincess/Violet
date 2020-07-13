@@ -143,8 +143,7 @@ public struct BigInt:
     }
   }
 
-  /// Including `0`!
-  public var isPositive: Bool {
+  public var isPositiveOrZero: Bool {
     return !self.isNegative
   }
 
