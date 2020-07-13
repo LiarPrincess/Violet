@@ -57,7 +57,7 @@ let package = Package(
     .testTarget(name: "VioletCompilerTests", dependencies: ["VioletCompiler"], path: "Tests/CompilerTests"),
 
     // VM instructions
-    .target(name: "VioletBytecode", dependencies: ["VioletCore"], path: "Sources/Bytecode"),
+    .target(name: "VioletBytecode", dependencies: ["VioletCore", "BigInt"], path: "Sources/Bytecode"),
     .testTarget(name: "VioletBytecodeTests", dependencies: ["VioletBytecode"], path: "Tests/BytecodeTests"),
 
     // Python objects
