@@ -232,7 +232,7 @@ extension Collection where
   /// - Complexity: O(*n*), where *n* is the length of the collection.
   public mutating func removeDuplicates() {
     // If you want to write this yourself then remember that 'self.partition'
-    // is not guaranteed to be stable (don't ask me how I know this...).
+    // is not guaranteed to be stable (don't ask me how I know this…).
     var alreadyProcessed = Set<Self.Element>()
 
     self.removeAll { element in

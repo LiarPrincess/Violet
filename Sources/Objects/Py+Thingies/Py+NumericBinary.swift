@@ -190,7 +190,7 @@ extension BinaryOp {
     case .value(let result):
       return .value(result)
     case .unavailable:
-      break // Try normal/slow path...
+      break // Try normal/slow path…
     case .error(let e):
       return .error(e)
     }
@@ -214,7 +214,7 @@ extension BinaryOp {
     case .value(let result):
       return .value(result)
     case .unavailable:
-      break // Try normal/slow path...
+      break // Try normal/slow path…
     case .error(let e):
       return .error(e)
     }
@@ -238,7 +238,7 @@ extension BinaryOp {
     case .value(let result):
       return .value(result)
     case .unavailable:
-      break // Try normal/slow path...
+      break // Try normal/slow path…
     case .error(let e):
       return .error(e)
     }

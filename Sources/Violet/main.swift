@@ -27,7 +27,7 @@ case .systemExit(let object):
     exit(status)
   }
 
-  // Just print this object in 'stderr' and call it a day...
+  // Just print this object in 'stderr' and call it a day…
   switch Py.sys.getStderrOrNone() {
   case .none:
     break // User requested no printing
@@ -46,8 +46,8 @@ case .error(let error):
 
   if case .value = excepthookResult {
     // Everything is 'ok' (at least in 'excepthook', the whole 'VM.run' just
-    // raised, but yeah... 'excepthook' is fine).
-    // Anyway... let's ignore whatever nonsense this function returned...
+    // raised, but yeah… 'excepthook' is fine).
+    // Anyway… let's ignore whatever nonsense this function returned…
     exit(1)
   }
 
@@ -69,7 +69,7 @@ case .error(let error):
     assert(
       false,
       "We checked that already " +
-      "(btw. you broke Swift... https://www.youtube.com/watch?v=oyFQVZ2h0V8)"
+      "(btw. you broke Swift… https://www.youtube.com/watch?v=oyFQVZ2h0V8)"
     )
 
   case .missing:
@@ -79,7 +79,7 @@ case .error(let error):
 
   case .notCallable(let hookError),
        .error(let hookError):
-    // There was an error when displaying an error... well... bad day?
+    // There was an error when displaying an error… well… bad day?
 
     write(string: "Error in sys.excepthook:\n")
     Py.printRecursive(error: hookError, file: stderr)

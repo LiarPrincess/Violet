@@ -14,7 +14,7 @@ import VioletObjects
 ///
 /// But wait a sec, it gets even worse:
 /// It will hold strong reference to `VM`!
-/// So... just do not store `Eval` as property on `VM`.
+/// So… just do not store `Eval` as property on `VM`.
 internal struct Eval {
 
   // MARK: - Properties
@@ -187,7 +187,7 @@ internal struct Eval {
 
   /// Fetch instruction at `self.frame.instructionIndex`.
   /// Will also increment `PC`
-  /// (just as the name... does not suggest, but as is customary).
+  /// (just as the name… does not suggest, but as is customary).
   private func fetchInstruction() -> Instruction {
     let index = self.frame.nextInstructionIndex
     assert(0 <= index && index < self.code.instructions.count)

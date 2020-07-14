@@ -35,7 +35,7 @@ extension UnderscoreWarnings {
     // python3 -b -Wd -Wignore
     // >>> import _warnings
     // >>> _warnings.filters
-    // [Thingies...]
+    // [Thingies…]
 
     switch Py.sys.flags.bytesWarning {
     case .ignore:

@@ -76,7 +76,7 @@ internal struct LexerAdapter {
 
     let hasTocheckForSubsequentNewLines = self.isNewLine(result)
     guard hasTocheckForSubsequentNewLines else {
-      // Just an ordinary token, nothing to do here...
+      // Just an ordinary token, nothing to do here…
       return result
     }
 

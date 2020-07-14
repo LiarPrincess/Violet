@@ -38,7 +38,7 @@ extension PyInstance {
     // {'elsa': 'let_it_go'}
     //
     // Shouldn't the 2nd line be 'into_the_unknown'?
-    // Well yes...
+    // Well yes…
     // (All this is CPython internal implementation leaking)
 
     if let e = frame.copyFastToLocals() {

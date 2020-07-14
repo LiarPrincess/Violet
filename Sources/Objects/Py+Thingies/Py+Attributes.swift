@@ -104,7 +104,7 @@ extension PyInstance {
 
     // Calling '__getattribute__' could ask for '__getattribute__' attribute.
     // That would create a cycle which we have to break.
-    // Trust me it is not a hack, it is... yeah it is a hack.
+    // Trust me it is not a hack, it is… yeah it is a hack.
     if name.value == "__getattribute__" {
       let result = AttributeHelper.getAttribute(from: object, name: name)
       return result

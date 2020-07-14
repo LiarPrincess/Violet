@@ -61,7 +61,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   /// Custom index with special reserved 'notAssigned' and 'deleted' values
   ///
   /// We could use enum, but that would cost us 2x more memory.
-  /// (It would be also more type-safe, but nobody cares about that...)
+  /// (It would be also more type-safe, but nobody cares about that…)
   ///
   /// HOT!
   /// If we want to optimize cache access (and by that performance) we can use
@@ -128,7 +128,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
     }
 
     internal init(hash: Int, mask: Int) {
-      assert(mask >= 0, "Dict size <0? Hmm... interesting.")
+      assert(mask >= 0, "Dict size <0? Hmm… interesting.")
 
       self.mask = mask
       self.pertub = Swift.abs(Swift.max(hash, Int.min + 1)) // abs(Int.min) -> trap

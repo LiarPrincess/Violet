@@ -38,7 +38,7 @@ public final class Parser {
     case notStarted
     /// Everything is ok.
     case finished(AST)
-    /// Everything is terrible and the word* hates us...
+    /// Everything is terrible and the word* hates us…
     ///
     /// (*) Microsoft Word
     case error(Error)

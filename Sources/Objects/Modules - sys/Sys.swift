@@ -141,7 +141,7 @@ public final class Sys: PyModuleImplementation {
 
   /// Initial value for `sys.copyright`.
   public var copyright: String {
-    return Lyrics.galavant // Very important...
+    return Lyrics.galavant // Very important…
   }
 
   /// This is not stored in `__dict__`!

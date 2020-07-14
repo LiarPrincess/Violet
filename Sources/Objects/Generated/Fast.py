@@ -263,7 +263,7 @@ private func hasOverridenBuiltinMethod(
   object: PyObject,
   selector: IdString
 ) -> Bool {
-  // Soo... we could actually check if if the user has overriden builtin method:
+  // Soo… we could actually check if if the user has overriden builtin method:
   // 1. Get method from MRO: let lookup = type.lookupWithType(name: selector)
   // 2. Check if type is builtin/heap type: lookup.type.isHeapType
   //    - If builtin: user has not overriden

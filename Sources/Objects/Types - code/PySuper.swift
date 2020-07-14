@@ -451,7 +451,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
   /// - If it is an instance, it must be an instance of `type`.
   ///   This is the normal case; the return value is `obj.__class__`.
   ///
-  /// But... when obj is an instance, we want to allow for the case where
+  /// But… when obj is an instance, we want to allow for the case where
   /// `Py_TYPE(obj)` is not a subclass of type, but `object.__class__` is!
   /// This will allow using `super()` with a proxy for `object`.
   private func checkSuper(type: PyType, object: PyObject) -> PyResult<PyType> {

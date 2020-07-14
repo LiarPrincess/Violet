@@ -11,7 +11,7 @@ extension Eval {
     return .ok
   }
 
-  // MARK: - Jump if...
+  // MARK: - Jump if…
 
   /// If TOS is true, sets the bytecode counter to target. TOS is popped.
   internal func popJumpIfTrue(labelIndex: Int) -> InstructionResult {

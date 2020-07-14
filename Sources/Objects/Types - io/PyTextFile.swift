@@ -249,7 +249,7 @@ public class PyTextFile: PyObject {
     //    This is why you should never rely on garbage collector to free resources.
     //    This is also why .Net has 'IDisposable' and why you should never
     //    use 'Object.finalize' to free resources in Java.
-    //    Anyway...
+    //    Anyway…
 
     guard self.closeOnDealloc else {
       return .value(Py.none)

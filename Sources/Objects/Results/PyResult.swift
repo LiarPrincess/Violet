@@ -35,8 +35,8 @@ public enum PyResult<Wrapped> {
 
 // MARK: - Function result convertible
 
-// 'PyResult' can be reurned from Python function.
-// Yeah... I know... shocking...
+// 'PyResult' can be returned from Python function.
+// Yeah… I know… shocking…
 extension PyResult: PyFunctionResultConvertible
   where Wrapped: PyFunctionResultConvertible {
 

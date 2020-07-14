@@ -7,7 +7,7 @@ import VioletCore
 // swiftlint:disable line_length
 // ^^^ This code was generated and it really makes sense in this case
 // swiftlint:disable function_body_length
-// ^^^ God knows we will need this one...
+// ^^^ God knows we will need this one…
 
 extension Builtins {
 

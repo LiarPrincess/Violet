@@ -3,7 +3,7 @@ import Foundation
 /// In CPython some values are configured in 'repo_root/configure' script.
 /// We don't have that, and it would be weird to just hard-code on by-need basis.
 ///
-/// So... we will move them to separate file.
+/// So… we will move them to separate file.
 internal enum Configure {
 
   internal static var pythonPath: [String] {

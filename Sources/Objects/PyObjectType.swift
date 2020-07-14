@@ -264,7 +264,7 @@ internal enum PyObjectType {
     guard let lookup = type.lookupWithType(name: name) else {
       let t = type.getNameRaw()
       let fn = name.value.value
-      trap("Uh... oh... So '\(fn)' lookup on \(t) failed to find anything. " +
+      trap("Uh… oh… So '\(fn)' lookup on \(t) failed to find anything. " +
            "It should not be possible sice every type derieves from 'object', " +
            "(which has this method) but here we are..."
       )

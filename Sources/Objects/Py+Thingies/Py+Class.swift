@@ -45,7 +45,7 @@ extension PyInstance {
                               kwargs: PyDict?) -> PyResult<PyObject> {
     // Type of our type. Most of the time it will be 'PyType' instance.
     // But technically you can 'class Elsa(some_object): pass'.
-    // If you try hard enough with 'some_object' it may even work...
+    // If you try hard enough with 'some_object' it may even work…
     let metatype: PyObject
     switch self.calculateMetaclass(bases: bases, kwargs: kwargs) {
     case let .value(m): metatype = m

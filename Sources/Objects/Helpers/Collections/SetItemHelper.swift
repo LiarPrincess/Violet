@@ -1,5 +1,5 @@
 /// Shared code for `__setitem__` method.
-/// Mostly because... well slices are hard.
+/// Mostly because… well slices are hard.
 internal protocol SetItemHelper {
 
   associatedtype Collection where

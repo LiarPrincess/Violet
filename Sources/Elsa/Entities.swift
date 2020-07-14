@@ -14,13 +14,13 @@ public protocol ProductType {
   /// Will generate:
   /// ``` Swift
   /// extension NestedInside {
-  ///   struct Name { ... }
+  ///   struct Name { … }
   /// }
   /// ```
   var nestedInside: String? { get }
   /// Implemented protocols
   var bases: [String] { get }
-  /// Properties (I don't know what to say...)
+  /// Properties (I don't know what to say…)
   var properties: [ProductProperty] { get }
   /// Comment above type definition
   var doc: String? { get }
@@ -124,7 +124,7 @@ public struct EnumDef {
   /// Will generate:
   /// ``` Swift
   /// extension NestedInside {
-  ///   struct Name { ... }
+  ///   struct Name { … }
   /// }
   /// ```
   public let nestedInside: String?

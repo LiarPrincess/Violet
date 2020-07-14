@@ -13,7 +13,7 @@ extension Parser {
   /// ```c
   /// atom:
   ///   '(' [yield_expr|testlist_comp] ')'
-  ///    and other stuff...
+  ///    and other stuff…
   /// ```
   /// So it is actually responsible for:
   /// - tuple

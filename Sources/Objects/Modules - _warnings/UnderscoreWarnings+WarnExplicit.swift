@@ -76,7 +76,7 @@ extension UnderscoreWarnings {
     case let .value(e):
       return e
     case let .error(e):
-      // There was an exception when creating an exception. Ehh...
+      // There was an exception when creating an exception. Ehh…
       return e
     }
   }

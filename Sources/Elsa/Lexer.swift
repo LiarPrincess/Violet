@@ -31,7 +31,7 @@ private func isValidNameCharacter(_ c: Character) -> Bool {
       // Format: 'type to nest it inside [.] type name'.
       // For example:
       // 'Instruction.StringConversion' will generate:
-      // extension Instruction { enum StringConversion { ... } }
+      // extension Instruction { enum StringConversion { … } }
       || c == "."
 }
 

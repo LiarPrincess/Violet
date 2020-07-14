@@ -64,7 +64,7 @@ extension Lexer {
       throw self.unimplmented(.nonUTF8Encoding(encoding: String(encoding)))
     }
 
-    // uff... we are safe, no BadThings™ can happen now
+    // uff… we are safe, no BadThings™ can happen now
   }
 
   private func isValidEncoding(_ encoding: Substring) -> Bool {

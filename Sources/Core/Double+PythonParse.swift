@@ -31,7 +31,7 @@ extension Double {
 
   // MARK: - Parser
 
-  /// So... there are some differences between how `Python` and `Swift`
+  /// So… there are some differences between how `Python` and `Swift`
   /// parse doubles, but it is not like we will implement this from scratch.
   /// We will just go with 'close enough'
   private static func parse(string: String) -> Double? {

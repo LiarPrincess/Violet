@@ -109,7 +109,7 @@ public class PyNone: PyObject, HasCustomGetMethod {
     selector: PyString,
     allowsCallableFromDict: Bool
   ) -> PyInstance.GetMethodResult {
-    // Ignore 'allowsCallableFromDict' because... well we do not have '__dict__'.
+    // Ignore 'allowsCallableFromDict' because… well we do not have '__dict__'.
     let result = self.getAttribute(name: selector)
     switch result {
     case let .value(o):

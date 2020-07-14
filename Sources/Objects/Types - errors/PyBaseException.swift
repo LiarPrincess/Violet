@@ -93,7 +93,7 @@ public class PyBaseException: PyObject {
 
   /// Try to get message from first `self.args`.
   ///
-  /// If it fails then...
+  /// If it fails then…
   /// Well whatever.
   public var message: String? {
     guard let firstArg = self.args.elements.first else {

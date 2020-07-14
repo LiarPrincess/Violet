@@ -8,7 +8,7 @@
 // Darwin version of 'Foundation' (macOS 10.14.6) has following problems:
 // 1) Read/write/etc. methods are not marked as throwing.
 //    This means that operating on closed/invalid files will always trap without
-//    giving us a chance to handle errors (well technically...).
+//    giving us a chance to handle errors (well technically…).
 //    As of 10.15 those methods are deprecated:
 //    https://developer.apple.com/documentation/foundation/filehandle/1410936-write
 // 2) In 10.15 new methods were introduced, for example:
@@ -240,7 +240,7 @@ internal class FileDescriptor: CustomStringConvertible {
         readBlockSize = 1_024 * 8
       }
     } else {
-      /* We get here on sockets, character special files, FIFOs ... */
+      /* We get here on sockets, character special files, FIFOs … */
       readBlockSize = 1_024 * 8
     }
 

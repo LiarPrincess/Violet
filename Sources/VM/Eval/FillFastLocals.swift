@@ -105,7 +105,7 @@ internal struct FillFastLocals {
   // MARK: - Args
 
   private func fillFromArgs() {
-    // Name taken from `CPython`...
+    // Name taken from 'CPython'
     let n = Swift.min(self.args.count, self.code.argCount)
 
     // Copy positional arguments into local variables

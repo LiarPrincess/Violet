@@ -31,7 +31,7 @@ extension VM {
   }
 
 // swiftlint:disable function_parameter_count
-// ^^^ Well... yep... we will need this one
+// ^^^ Well… yep… we will need this one
 
   /// Run given code object using specified environment.
   ///
@@ -39,7 +39,7 @@ extension VM {
   ///
   /// CPython:
   /// PyObject *
-  /// _PyEval_EvalCodeWithName(PyObject *_co, PyObject *globals, PyObject *locals...)
+  /// _PyEval_EvalCodeWithName(PyObject *_co, PyObject *globals, PyObject *locals…)
   public func eval(name: PyString?,
                    qualname: PyString?,
                    code: PyCode,

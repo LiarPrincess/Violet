@@ -7,7 +7,7 @@ internal enum GetItemResult<Element> {
 }
 
 /// Shared code for `__getitem__` method.
-/// Mostly because... well slices are hard.
+/// Mostly because… well slices are hard.
 internal protocol GetItemHelper {
 
   associatedtype Collection where

@@ -71,7 +71,7 @@ public final class UnderscoreOS: PyModuleImplementation {
   /// https://docs.python.org/3/library/os.html#os.DirEntry.stat
   ///
   /// static int
-  /// _io_FileIO___init___impl(fileio *self, PyObject *nameobj, ... )
+  /// _io_FileIO___init___impl(fileio *self, PyObject *nameobj, … )
   public func getStat(path: PyObject) -> PyResult<PyObject> {
     switch self.parsePathOrDescriptor(object: path) {
     case let .descriptor(fd):

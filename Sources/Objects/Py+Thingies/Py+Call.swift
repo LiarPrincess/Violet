@@ -352,7 +352,7 @@ extension PyInstance {
     //
     // In CPython:
     // - slot_tp_call(PyObject *self, PyObject *args, PyObject *kwds)
-    // - lookup_maybe_method(PyObject *self, _Py_Identifier *attrid...)
+    // - lookup_maybe_method(PyObject *self, _Py_Identifier *attrid …)
     //
     // Examples:
     // >>> o1 = int.__add__ # type attribute -> unbound function

@@ -10,7 +10,7 @@ import VioletCore
 // which would be wrapped and exposed to Python runtime.
 //
 // So when you are working on Python 'builtins' you are actually working on
-// (Scooby-Doo reveal incomming...)
+// (Scooby-Doo reveal incomming…)
 // 'Py.builtins' object (which gives us stateful modules).
 // (and we would have gotten away with it without you meddling kids!)
 // https://www.youtube.com/watch?v=b4JLLv1lE7A

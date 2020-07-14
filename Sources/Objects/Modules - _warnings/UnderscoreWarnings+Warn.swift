@@ -198,7 +198,7 @@ extension UnderscoreWarnings {
   private func isInternalFrame(frame: PyFrame) -> Bool {
     let filename = frame.code.filename
     let data = filename.data
-    // CPython uses '&&', but this seems kind of weird...
+    // CPython uses '&&', but this seems kind of weird…
     return data.contains("importlib") || data.contains("_bootstrap")
   }
 

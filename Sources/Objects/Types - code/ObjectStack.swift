@@ -77,7 +77,7 @@ public struct ObjectStack {
 
   public mutating func pop() -> PyObject {
     // Using 'isEmpty' or 'count' for assert would require another type lookup.
-    // (only in DEBUG and it depends on inling, but still...)
+    // (only in DEBUG and it depends on inling, but still…)
 
     let last = self.elements.popLast()
     assert(last != nil, "Stack pop from empty stack.")

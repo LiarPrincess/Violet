@@ -19,7 +19,7 @@ import VioletBytecode
 ///  ```
 ///
 /// We have separate `fastLocals`, `cellsAndFreeVariables` and `stack`.
-/// Our cache usage will suck (3 arrays stored on heap), but... oh well....
+/// Our cache usage will suck (3 arrays stored on heap), but… oh well….
 /// This allows us to have typed `cellsAndFreeVariables`
 /// (`[PyCell]` instead of `[PyObject]`).
 public class PyFrame: PyObject {

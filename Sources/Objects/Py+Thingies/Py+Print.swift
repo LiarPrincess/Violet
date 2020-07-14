@@ -218,7 +218,7 @@ extension PyInstance {
       }
     }
 
-    _ = self.print(error: error, file: file) // swallow error (again...)
+    _ = self.print(error: error, file: file) // swallow error (again…)
   }
 
   /// static void
@@ -231,14 +231,14 @@ extension PyInstance {
     //   File "<frozen.py>", line 2, in <elsa_walks_into_fire_module>
     // AnnaException: Then don't run into fire
     //
-    // Regular reminder that Elsa outfit at the beginning of Frozen 2 was AMAZING...
+    // Regular reminder that Elsa outfit at the beginning of Frozen 2 was AMAZING…
     // You know, the one before she ran into water.
-    // Yeah, there may be a pattern here...
+    // Yeah, there may be a pattern here…
     //
     // Also:
     // We could totally use '??' as monadic bind for errors and write this whole
     // function as a single line with just 'return' statement.
-    // But we are not monsters...
+    // But we are not monsters…
 
     if let traceback = error.getTraceback() {
       if let e = self.print(traceback: traceback, file: file) {
@@ -448,7 +448,7 @@ extension PyInstance {
     switch self.hasattr(object: error, name: print_file_and_line) {
     case .value(true): break
     case .value(false): return nil // Do nothing
-    case .error(let e): return e // Ooops...
+    case .error(let e): return e // Ooops…
     }
 
     let filename: String

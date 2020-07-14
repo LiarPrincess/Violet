@@ -9,7 +9,7 @@ extension Parser {
   /// ```c
   /// atom:
   ///   '[' [testlist_comp] ']'
-  ///    and other stuff...
+  ///    and other stuff…
   /// ```
   internal func atomList(context: ExpressionContext) throws -> Expression {
     assert(self.peek.kind == .leftSqb)

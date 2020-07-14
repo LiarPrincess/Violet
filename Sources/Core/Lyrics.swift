@@ -58,13 +58,12 @@ public enum Lyrics {
 
   /// [Opening](https://www.youtube.com/watch?v=QWnDwM0RSX4) from the Galavant
   /// TV show.
-  /// Just watch it. No, seriously... watch it.
+  /// Just watch it. No, seriously… watch it.
   ///
   /// Or [this](https://www.youtube.com/watch?v=sB6Wu-dwENM) (may be NSFW).
-  /// I seriously have no idea how they could afford Kylie Minogue,
-  /// but here we are...
+  /// I seriously have no idea how they could afford Kylie Minogue, but here we are…
   ///
-  /// Damn... I have such a weird taste.
+  /// Damn… I have such a weird taste.
   public static let galavant = """
     Way back in days of old
     There was a legend told

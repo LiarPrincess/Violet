@@ -28,7 +28,7 @@ import VioletCore
 ///
 /// Btw. in some early version of `Objects` we actually had `PyContext` type
 /// that we passed to every function (or injected in `ctor`).
-/// The user/programmer experience was... not that great.
+/// The user/programmer experience was… not that great.
 /// Most notably in functions which had 2 `PyObject` arguments that could
 /// potentially come from 2 different `PyContexts`. In such case we had to decide
 /// if we want to allocate result object (think `3` in `1 + 2 = 3`)
@@ -39,7 +39,7 @@ import VioletCore
 /// There is an interesting aternative of making `Py` static:
 /// ```Swift
 /// public enum Py {
-///   public static func getattr() { thingies... }
+///   public static func getattr() { thingies… }
 /// ).
 /// ```
 ///
@@ -60,7 +60,7 @@ import VioletCore
 /// And about that 'multiple `PyInstances`', we can do following:
 /// ```Swift
 /// public var Py: PyInstance {
-///   // get `PyInstance` from thread local storage (TLS) or something, idk...
+///   // get `PyInstance` from thread local storage (TLS) or something, idk…
 /// }
 /// ```
 ///
@@ -98,7 +98,7 @@ import VioletCore
 /// PyTypeObject PyLong_Type = {
 ///   PyVarObject_HEAD_INIT(&PyType_Type, 0)
 ///   "int",                                      /* tp_name */
-///   ... (and so on...)
+///   … (and so on…)
 /// }
 /// ```
 ///
@@ -292,7 +292,7 @@ public final class PyInstance {
   /// You don't actually need to call this method.
   /// `Py` will be destroyed when the program exists.
   ///
-  /// But....
+  /// But…
   /// You can use this to reinitialize `Py` (note that you will have to call
   /// `Py.initialize(config:,delegate:)` again).
   public func destroy() {
@@ -372,7 +372,7 @@ public final class PyInstance {
     // So, even if later it has to be hashed again
     // (first for Swift dict, and then later to be used as key in 'PyDict')
     // the performance hit should be negligible
-    // (also the whole string will already be in CPU cache, maybe, probably...).
+    // (also the whole string will already be in CPU cache, maybe, probably…).
     let key = UseScalarsToHashString(string)
     return self.getInterned(key: key)
   }

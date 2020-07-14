@@ -141,7 +141,7 @@ public class PyObject: CustomStringConvertible {
 // MARK: - Function result convertible
 
 // 'PyObject' can be returned from Python function!
-// Yeah... I know, kind of hard to believe.
+// Yeah… I know, kind of hard to believe.
 extension PyObject: PyFunctionResultConvertible {
   internal var asFunctionResult: PyFunctionResult {
     return .value(self)

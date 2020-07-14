@@ -185,7 +185,7 @@ extension Lexer {
     scalars: UnicodeScalarView.SubSequence
   ) -> UnicodeScalarView.SubSequence {
     // Not really sure if 'filter' should return 'UnicodeScalarView.SubSequence',
-    // but if stdlib says so...
+    // but if stdlib says so…
     return scalars.filter { $0 != "_" }
   }
 }

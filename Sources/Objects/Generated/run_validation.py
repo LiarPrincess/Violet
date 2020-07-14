@@ -18,7 +18,7 @@ let bool = PyBool()
 
 print("PyInt.f(int)()           =", PyInt.f(int)())   // 'int',  as expected
 print("PyBool.f(bool)()         =", PyBool.f(bool)()) // 'bool', as expected
-print("PyInt.f(bool as PyInt)() =", PyInt.f(bool as PyInt)()) // 'bool', ehh...
+print("PyInt.f(bool as PyInt)() =", PyInt.f(bool as PyInt)()) // 'bool', ehh…
 
 So we called 'PyInt.f' with 'bool' and it returned 'bool'.
 In Python this would return 'int'.

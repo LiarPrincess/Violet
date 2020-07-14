@@ -73,7 +73,7 @@ internal class FileSystemImpl: PyFileSystem {
   }
 
   /// static int
-  /// _io_FileIO___init___impl(fileio *self, PyObject *nameobj, ... )
+  /// _io_FileIO___init___impl(fileio *self, PyObject *nameobj, … )
   internal func open(path: String, mode: FileMode) -> PyResult<FileDescriptorType> {
     var flags: Int32 = 0
     let createMode: Int = 0o666
@@ -305,7 +305,7 @@ internal class FileSystemImpl: PyFileSystem {
   /// We will prevent that on the type level.
   ///
   /// Otherwise we would have 'to remember' to check this every time.
-  /// And you know how it works when programmers have 'to remember' stuff...
+  /// And you know how it works when programmers have 'to remember' stuff…
   private struct NonEmptyPath {
 
     fileprivate let value: String

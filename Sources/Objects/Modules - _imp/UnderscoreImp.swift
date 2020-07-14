@@ -6,7 +6,7 @@
 // https://docs.python.org/3.7/library/importlib.html
 
 /// (Extremely) low-level import machinery bits as used by importlib and imp.
-/// Nuff said...
+/// Nuff said…
 public final class UnderscoreImp: PyModuleImplementation {
 
   internal static let moduleName = "_imp"

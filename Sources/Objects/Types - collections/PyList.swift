@@ -367,7 +367,7 @@ public class PyList: PyObject, PySequenceType {
       defer { if isReverse { keyedElements.reverse() } }
 
       // Note that Python requires STABLE sort, which Swift does not guarantee!
-      // But we will conveniently ignore this fact... because reasons...
+      // But we will conveniently ignore this fact… because reasons…
       // Btw. under certain conditions Swift sort is actually stable
       // (at the time of writting this comment), but that's an implementation detail.
       try keyedElements.sort(by: fn)

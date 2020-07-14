@@ -173,7 +173,7 @@ extension BigInt {
 
   // MARK: - Trim
 
-  /// Well... Python calls this operation `strip`. They are wrong....
+  /// Well… Python calls this operation `strip`. They are wrong….
   private static func trim(scalars: Scalars) -> Scalars {
     func isWhitespace(scalar: UnicodeScalar) -> Bool {
       return scalar.properties.isWhitespace

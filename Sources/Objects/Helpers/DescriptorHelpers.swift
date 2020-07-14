@@ -39,7 +39,7 @@ extension PyObject {
   /// as a `object/instance` parameter.
   internal var isDescriptorStaticMarker: Bool {
     // This should be faster than doing Swift runtime check 'is PyNone'.
-    // Also 'Py' is already in cache anyway...
+    // Also 'Py' is already in cache anyway…
     return self === Py.none
   }
 }

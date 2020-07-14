@@ -35,7 +35,7 @@ private enum FastCallResult {
 ///
 /// This may not be the cleanest/most idiomatic Swift, but it gets the job done.
 /// Alternatives:
-/// - function with CompareMode enum (equal, left etc...) argument and then
+/// - function with CompareMode enum (equal, left etc…) argument and then
 ///   switch on it. But then our performance heavly depends on Swift compiler,
 ///   (can it inline this and then eliminate dead code?) otherwise we pay
 ///   for each switch.
@@ -115,7 +115,7 @@ extension CompareOp {
     case .value(let bool): return .value(Py.newBool(bool))
     case .error(let e): return .error(e)
     case .notImplemented: return .value(Py.notImplemented)
-    case .unavailable: break // Try other options...
+    case .unavailable: break // Try other options…
     }
 
     // Try standard Python dispatch
@@ -123,7 +123,7 @@ extension CompareOp {
     case .value(let result):
       return .value(result)
     case .missingMethod:
-      break // Try other options...
+      break // Try other options…
     case .error(let e), .notCallable(let e):
       return .error(e)
     }

@@ -10,7 +10,7 @@ extension Parser {
   /// ```c
   /// atom:
   ///   '{' [dictorsetmaker] '}'
-  ///    and other stuff...
+  ///    and other stuff…
   ///
   /// dictorsetmaker:
   /// (

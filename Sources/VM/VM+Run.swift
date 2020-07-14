@@ -12,7 +12,7 @@ extension VM {
   // MARK: - Run
 
   public enum RunResult {
-    /// Nothing interesting happened. Boring...
+    /// Nothing interesting happened. Boring…
     case done
     /// User `raised SystemExit`.
     case systemExit(PyObject)
@@ -46,12 +46,12 @@ extension VM {
       return .done
     }
 
-    // Oh no... we will be running code! Let's prepare for this.
+    // Oh no… we will be running code! Let's prepare for this.
     if let e = self.registerSignalHandlers() {
       return .error(e)
     }
 
-    // For some reason importing stuff seems to be important in programming...
+    // For some reason importing stuff seems to be important in programming…
     if let e = self.initImportlibIfNeeded() {
       return .error(e)
     }
@@ -86,7 +86,7 @@ extension VM {
 
   private func initImportlibIfNeeded() -> PyBaseException? {
     // This is probably the first time you see our error handling approach.
-    // So... we are using 'enums' instead of Swift 'throw'.
+    // So… we are using 'enums' instead of Swift 'throw'.
     // There is a long comment about this in 'README' for 'Objects' module.
 
     // Also, both 'initImportlibIfNeeded' and 'initImportlibExternalIfNeeded'

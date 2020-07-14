@@ -195,7 +195,7 @@ extension Parser {
 
     guard let value = elements.last else {
       // Just an expr, without anything else. It does not even matter
-      // (unless it has a side-effect, like exception...).
+      // (unless it has a side-effect, like exception…).
       return self.builder.exprStmt(expression: firstTarget,
                                    start: firstTarget.start,
                                    end: firstTarget.end)

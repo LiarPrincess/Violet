@@ -191,7 +191,7 @@ internal struct MRO {
     // >>> class Elsa(my_type_is_GodKnows): pass
     //
     // That was easy!
-    // We should use it instead of 'hello world' when teaching programming...
+    // We should use it instead of 'hello world' when teaching programming…
 
     let mroObject: PyObject
     switch Py.callMethod(object: type, selector: .mro) {

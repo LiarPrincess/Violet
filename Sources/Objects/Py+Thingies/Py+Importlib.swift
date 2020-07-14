@@ -171,7 +171,7 @@ extension PyInstance {
     switch Py.sys.getModule(name: spec.nameObject) {
     case .value(let o):
       if let m = o as? PyModule {
-        return .value(m) // Already initialized. Nothing to do...
+        return .value(m) // Already initialized. Nothing to do…
       }
 
       // override whatever we have there

@@ -8,7 +8,7 @@ public enum FileStatResult {
   case value(FileStat)
   /// No such file or directory
   case enoent
-  /// Ooopps...
+  /// Ooopps…
   case error(PyOSError)
 }
 
@@ -19,7 +19,7 @@ public enum ListDirResult {
   case entries([String])
   /// No such file or directory
   case enoent
-  /// Ooopps...
+  /// Ooopps…
   case error(PyOSError)
 }
 
