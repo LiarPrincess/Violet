@@ -46,6 +46,8 @@ internal struct Eval {
 
   // MARK: - Locals, globals, builtins
 
+  // Note that those are 'PyDict' which means that they have reference semantics.
+
   /// Local variables.
   internal var locals: PyDict { return self.frame.locals }
   /// Global variables.
@@ -64,12 +66,8 @@ internal struct Eval {
   ///
   /// CPython: `f_localsplus`.
   internal var fastLocals: [PyObject?] {
-    return self.frame.fastLocals
-  }
-
-  internal func setFastLocal(index: Int, value: PyObject?) {
-    assert(0 <= index && index < self.fastLocals.count)
-    self.frame.fastLocals[index] = value
+    get { return self.frame.fastLocals } // swiftlint:disable:this implicit_getter
+    nonmutating _modify { yield &self.frame.fastLocals }
   }
 
   // MARK: - Cells and free

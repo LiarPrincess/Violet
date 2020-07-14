@@ -166,7 +166,7 @@ extension Eval {
     assert(0 <= index && index < self.fastLocals.count)
 
     let value = self.stack.pop()
-    self.setFastLocal(index: index, value: value)
+    self.fastLocals[index] = value
     return .ok
   }
 
@@ -174,7 +174,7 @@ extension Eval {
     assert(0 <= index && index < self.fastLocals.count)
 
     if self.fastLocals[index] != nil {
-      self.setFastLocal(index: index, value: nil)
+      self.fastLocals[index] = nil
       return .ok
     }
 
