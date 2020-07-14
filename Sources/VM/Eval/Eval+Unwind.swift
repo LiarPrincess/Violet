@@ -146,12 +146,12 @@ extension Eval {
 
     // Make 'exception' current
     self.setCurrentlyHandledException(exception: exception)
-    self.push(exception)
+    self.stack.push(exception)
   }
 
   /// \#define UNWIND_BLOCK(b)
   internal func unwindBlock(block: Block) {
-    self.pop(untilCount: block.stackLevel)
+    self.stack.pop(untilCount: block.stackLevel)
   }
 
   /// \#define UNWIND_EXCEPT_HANDLER(b)
@@ -161,7 +161,7 @@ extension Eval {
     let stackCountIncludingException = block.stackLevel + 1
     assert(self.stack.count >= stackCountIncludingException)
 
-    self.pop(untilCount: stackCountIncludingException)
+    self.stack.pop(untilCount: stackCountIncludingException)
 
     // Pop new 'current' exception
     switch PushExceptionBeforeExcept.pop(from: &self.frame.stack) {

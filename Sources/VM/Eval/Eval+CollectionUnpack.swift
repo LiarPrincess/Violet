@@ -13,7 +13,7 @@ extension Eval {
   internal func buildTupleUnpack(elementCount: Int) -> InstructionResult {
     switch self.unpackToArray(elementCount: elementCount) {
     case let .value(elements):
-      self.push(Py.newTuple(elements))
+      self.stack.push(Py.newTuple(elements))
       return .ok
     case let .error(e):
       return .exception(e)
@@ -25,7 +25,7 @@ extension Eval {
   internal func buildListUnpack(elementCount: Int) -> InstructionResult {
     switch self.unpackToArray(elementCount: elementCount) {
     case let .value(elements):
-      self.push(Py.newList(elements))
+      self.stack.push(Py.newList(elements))
       return .ok
     case let .error(e):
       return .exception(e)
@@ -34,7 +34,7 @@ extension Eval {
 
   private func unpackToArray(elementCount: Int) -> PyResult<[PyObject]> {
     var result = [PyObject]()
-    let iterables = self.popElementsInPushOrder(count: elementCount)
+    let iterables = self.stack.popElementsInPushOrder(count: elementCount)
 
     for iterable in iterables {
       switch Py.toArray(iterable: iterable) {
@@ -52,7 +52,7 @@ extension Eval {
   /// The stack item at position count + 1 should be the corresponding callable `f`.
   internal func buildTupleUnpackWithCall(elementCount: Int) -> InstructionResult {
     var result = [PyObject]()
-    let iterables = self.popElementsInPushOrder(count: elementCount)
+    let iterables = self.stack.popElementsInPushOrder(count: elementCount)
 
     for iterable in iterables {
       switch Py.toArray(iterable: iterable) {
@@ -65,7 +65,7 @@ extension Eval {
       }
     }
 
-    self.push(Py.newTuple(result))
+    self.stack.push(Py.newTuple(result))
     return .ok
   }
 
@@ -122,7 +122,7 @@ extension Eval {
   /// Implements iterable unpacking in set displays `{*x, *y, *z}`.
   internal func buildSetUnpack(elementCount: Int) -> InstructionResult {
     let set = Py.newSet()
-    let iterables = self.popElementsInPushOrder(count: elementCount)
+    let iterables = self.stack.popElementsInPushOrder(count: elementCount)
 
     for object in iterables {
       switch set.update(from: object) {
@@ -133,7 +133,7 @@ extension Eval {
       }
     }
 
-    self.push(set)
+    self.stack.push(set)
     return .ok
   }
 
@@ -144,7 +144,7 @@ extension Eval {
   /// Implements dictionary unpacking in dictionary displays `{**x, **y, **z}`.
   internal func buildMapUnpack(elementCount: Int) -> InstructionResult {
     let dict = Py.newDict()
-    let iterables = self.popElementsInPushOrder(count: elementCount)
+    let iterables = self.stack.popElementsInPushOrder(count: elementCount)
 
     for object in iterables {
       switch dict.update(from: object) {
@@ -160,7 +160,7 @@ extension Eval {
       }
     }
 
-    self.push(dict)
+    self.stack.push(dict)
     return .ok
   }
 
@@ -168,7 +168,7 @@ extension Eval {
   /// The stack item at position count + 2 should be the corresponding callable `f`.
   internal func buildMapUnpackWithCall(elementCount: Int) -> InstructionResult {
     let dict = Py.newDict()
-    let iterables = self.popElementsInPushOrder(count: elementCount)
+    let iterables = self.stack.popElementsInPushOrder(count: elementCount)
 
     for object in iterables {
       switch dict.update(from: object, onKeyDuplicate: .error) {
@@ -186,7 +186,7 @@ extension Eval {
       }
     }
 
-    self.push(dict)
+    self.stack.push(dict)
     return .ok
   }
 
@@ -256,7 +256,7 @@ extension Eval {
   /// Unpacks TOS into count individual values,
   /// which are put onto the stack right-to-left.
   internal func unpackSequence(elementCount: Int) -> InstructionResult {
-    let iterable = self.pop()
+    let iterable = self.stack.pop()
 
     let elements: [PyObject]
     switch Py.toArray(iterable: iterable) {
@@ -282,7 +282,7 @@ extension Eval {
     assert(elements.count == elementCount)
 
     // Reverse because we have to push them in 'right-to-left' order!
-    self.push(contentsOf: elements.reversed())
+    self.stack.push(contentsOf: elements.reversed())
     return .ok
   }
 
@@ -298,7 +298,7 @@ extension Eval {
   /// the high byte of counts the number of values after it.
   /// The resulting values are put onto the stack right-to-left.
   internal func unpackEx(arg: UnpackExArg) -> InstructionResult {
-    let iterable = self.pop()
+    let iterable = self.stack.pop()
 
     let elements: [PyObject]
     switch Py.toArray(iterable: iterable) {
@@ -327,9 +327,9 @@ extension Eval {
     assert(after.count == arg.countAfter)
 
     // Reverse because we have to push them in 'right-to-left' order!
-    self.push(contentsOf: after.reversed())
-    self.push(Py.newList(pack))
-    self.push(contentsOf: before.reversed())
+    self.stack.push(contentsOf: after.reversed())
+    self.stack.push(Py.newList(pack))
+    self.stack.push(contentsOf: before.reversed())
 
     return .ok
   }

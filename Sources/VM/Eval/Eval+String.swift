@@ -8,8 +8,8 @@ extension Eval {
   /// Used for implementing formatted literal strings (f-strings).
   internal func formatValue(conversion: Instruction.StringConversion,
                             hasFormat: Bool) -> InstructionResult {
-    let format: PyObject? = hasFormat ? self.pop() : nil
-    let rawValue = self.pop()
+    let format: PyObject? = hasFormat ? self.stack.pop() : nil
+    let rawValue = self.stack.pop()
 
     let value: PyObject
     switch self.convert(value: rawValue, conversion: conversion) {
@@ -18,13 +18,13 @@ extension Eval {
     }
 
     if value is PyString && format == nil {
-      self.push(value)
+      self.stack.push(value)
       return .ok
     }
 
     switch self.format(value: value, format: format) {
     case let .value(o):
-      self.push(o)
+      self.stack.push(o)
       return .ok
     case let .error(e):
       return .exception(e)
@@ -53,11 +53,11 @@ extension Eval {
   /// and pushes the resulting string onto the stack.
   internal func buildString(count: Int) -> InstructionResult {
     let empty = Py.emptyString
-    let elements = self.popElementsInPushOrder(count: count)
+    let elements = self.stack.popElementsInPushOrder(count: count)
 
     switch Py.join(strings: elements, separator: empty) {
     case let .value(r):
-      self.push(r)
+      self.stack.push(r)
       return .ok
     case let .error(e):
       return .exception(e)

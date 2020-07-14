@@ -8,7 +8,7 @@ extension Eval {
 
   /// Removes the top-of-stack (TOS) item.
   internal func popTop() -> InstructionResult {
-    _ = self.pop()
+    _ = self.stack.pop()
     return .ok
   }
 
@@ -35,8 +35,8 @@ extension Eval {
   internal func rotTwo() -> InstructionResult {
     let top = self.stack.top
     let second = self.stack.second
-    self.setTop(second)
-    self.setSecond(top)
+    self.stack.top = second
+    self.stack.second = top
     return .ok
   }
 
@@ -46,9 +46,9 @@ extension Eval {
     let top = self.stack.top
     let second = self.stack.second
     let third = self.stack.third
-    self.setTop(second)
-    self.setSecond(third)
-    self.setThird(top)
+    self.stack.top = second
+    self.stack.second = third
+    self.stack.third = top
     return .ok
   }
 
@@ -57,7 +57,7 @@ extension Eval {
   /// Duplicates the reference on top of the stack.
   internal func dupTop() -> InstructionResult {
     let top = self.stack.top
-    self.push(top)
+    self.stack.push(top)
     return .ok
   }
 
@@ -66,8 +66,8 @@ extension Eval {
   internal func dupTopTwo() -> InstructionResult {
     let top = self.stack.top
     let second = self.stack.second
-    self.push(second)
-    self.push(top)
+    self.stack.push(second)
+    self.stack.push(top)
     return .ok
   }
 
@@ -77,7 +77,7 @@ extension Eval {
   /// TOS is removed from the stack and printed.
   /// In non-interactive mode, an expression statement is terminated with PopTop.
   internal func printExpr() -> InstructionResult {
-    let value = self.pop()
+    let value = self.stack.pop()
 
     switch Py.print(args: [value], stream: .stdout) {
     case .value:

@@ -32,7 +32,7 @@ extension Eval {
     case .error(let e): return .exception(e)
     }
 
-    self.setTop(__exit__)
+    self.stack.top = __exit__
 
     switch Py.call(callable: __enter__) {
     case let .value(res):
@@ -42,7 +42,7 @@ extension Eval {
       let block = Block(type: type, stackLevel: self.stackLevel)
       self.pushBlock(block: block)
 
-      self.push(res)
+      self.stack.push(res)
       return .ok
     case let .notCallable(e),
          let .error(e):
@@ -95,20 +95,20 @@ extension Eval {
     case .none:
       // nothing unusual happened
       __exit__ = self.stack.top
-      self.setTop(marker)
+      self.stack.top = marker
 
     case let .return(value):
       // we were returning
-      __exit__ = self.pop()
+      __exit__ = self.stack.pop()
       PushFinallyReason.push(.return(value), on: &self.frame.stack)
 
     case let .continue(loopStartLabel: _, asObject: label):
       // we were continuing
-      __exit__ = self.pop()
+      __exit__ = self.stack.pop()
       PushFinallyReason.push(.continuePy(loopStartLabel: label), on: &self.frame.stack)
 
     case .break:
-      __exit__ = self.pop()
+      __exit__ = self.stack.pop()
       PushFinallyReason.push(.break, on: &self.frame.stack)
 
     case let .exception(e):
@@ -116,10 +116,10 @@ extension Eval {
       exception = e
       traceback = e.getTraceback() ?? Py.none
 
-      let previousException = self.pop() // may also be 'None'
-      __exit__ = self.pop()
-      self.push(previousException)
-      self.push(exception)
+      let previousException = self.stack.pop() // may also be 'None'
+      __exit__ = self.stack.pop()
+      self.stack.push(previousException)
+      self.stack.push(exception)
 
       guard let block = self.popBlock() else {
         let e = Py.newSystemError(msg: "XXX block stack underflow")
@@ -131,7 +131,7 @@ extension Eval {
       self.pushBlock(block: Block(type: .exceptHandler, stackLevel: levelWithoutExit))
 
     case .silenced:
-      __exit__ = self.pop()
+      __exit__ = self.stack.pop()
       PushFinallyReason.push(.silenced, on: &self.frame.stack)
 
     case .invalid:
@@ -142,8 +142,8 @@ extension Eval {
     let args = [exceptionType, exception, traceback]
     switch Py.call(callable: __exit__, args: args, kwargs: nil) {
     case let .value(result):
-      self.push(exception) // Duplicating the exception on the stack
-      self.push(result)
+      self.stack.push(exception) // Duplicating the exception on the stack
+      self.stack.push(result)
       return .ok
     case let .notCallable(e),
          let .error(e):
@@ -161,8 +161,8 @@ extension Eval {
   /// (But non-local gotos will still be resumed.)
   internal func withCleanupFinish() -> InstructionResult {
     // Most of the time 'result' is the result of calling '__exit__'.
-    let result = self.pop()
-    let exception = self.pop()
+    let result = self.stack.pop()
+    let exception = self.stack.pop()
 
     // From https://docs.python.org/3/reference/datamodel.html#object.__exit__:
     // If an exception is supplied, and the method wishes to suppress the exception

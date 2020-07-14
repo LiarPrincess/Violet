@@ -15,7 +15,7 @@ extension Eval {
 
   /// If TOS is true, sets the bytecode counter to target. TOS is popped.
   internal func popJumpIfTrue(labelIndex: Int) -> InstructionResult {
-    let top = self.pop()
+    let top = self.stack.pop()
 
     switch Py.isTrueBool(top) {
     case let .value(isTrue):
@@ -28,7 +28,7 @@ extension Eval {
 
   /// If TOS is false, sets the bytecode counter to target. TOS is popped.
   internal func popJumpIfFalse(labelIndex: Int) -> InstructionResult {
-    let top = self.pop()
+    let top = self.stack.pop()
 
     switch Py.isTrueBool(top) {
     case let .value(isTrue):
@@ -92,7 +92,7 @@ extension Eval {
       let label = self.getLabel(index: labelIndex)
       self.jumpTo(instructionIndex: label)
     } else {
-      _ = self.pop()
+      _ = self.stack.pop()
     }
   }
 }

@@ -13,12 +13,12 @@ extension Eval {
   /// a subsequent StoreFast instruction modifies the namespace.
   internal func importName(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-    let fromList = self.pop()
+    let fromList = self.stack.pop()
     let level = self.stack.top
 
     switch self.importName(name: name, fromList: fromList, level: level) {
     case let .value(module):
-      self.setTop(module)
+      self.stack.top = module
       return .ok
     case let .error(e):
       return .exception(e)
@@ -53,7 +53,7 @@ extension Eval {
   /// The module is popped after loading all names.
   /// This opcode implements `from module import *`.
   internal func importStar() -> InstructionResult {
-    let module = self.pop()
+    let module = self.stack.pop()
 
     if let e = self.frame.copyFastToLocals() {
       return .exception(e)
@@ -190,14 +190,14 @@ extension Eval {
 
     switch Py.getattr(object: module, name: name) {
     case .value(let o):
-      self.push(o)
+      self.stack.push(o)
       return .ok
 
     case .error:
       // Try to fallback on reading the module directly from 'sys.modules'
       switch self.importFromSys(name: name, module: module) {
       case let .value(o):
-        self.push(o)
+        self.stack.push(o)
         return .ok
       case let .error(e):
         return .exception(e)

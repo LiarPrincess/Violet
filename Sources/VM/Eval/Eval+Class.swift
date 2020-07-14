@@ -8,7 +8,7 @@ extension Eval {
   internal func loadBuildClass() -> InstructionResult {
     switch Py.get__build_class__() {
     case let .value(fn):
-      self.push(fn)
+      self.stack.push(fn)
       return .ok
     case let .error(e):
       return .exception(e)

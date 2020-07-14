@@ -102,10 +102,10 @@ extension Eval {
 
     switch arg {
     case .exceptionAndCause:
-      cause = self.pop()
+      cause = self.stack.pop()
       fallthrough // swiftlint:disable:this fallthrough
     case .exceptionOnly:
-      value = self.pop()
+      value = self.stack.pop()
       fallthrough // swiftlint:disable:this fallthrough
     case .reRaise:
       let e = self.createException(value: value, cause: cause)

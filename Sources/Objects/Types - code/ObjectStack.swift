@@ -61,9 +61,15 @@ public struct ObjectStack {
     self.elements.append(object)
   }
 
-  public mutating func push<S: Sequence>(
-    contentsOf objects: S
-  ) where S.Element == PyObject {
+  public mutating func push<C: Collection>(
+    contentsOf objects: C
+  ) where C.Element == PyObject {
+    let newCount = self.count + objects.count
+
+    if self.elements.capacity < newCount {
+      self.elements.reserveCapacity(newCount)
+    }
+
     self.elements.append(contentsOf: objects)
   }
 

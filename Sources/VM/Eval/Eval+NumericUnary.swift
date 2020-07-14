@@ -10,7 +10,7 @@ extension Eval {
     let value = self.stack.top
     switch Py.pos(object: value) {
     case let .value(result):
-      self.setTop(result)
+      self.stack.top = result
       return .ok
     case let .error(e):
       return .exception(e)
@@ -24,7 +24,7 @@ extension Eval {
     let value = self.stack.top
     switch Py.neg(object: value) {
     case let .value(result):
-      self.setTop(result)
+      self.stack.top = result
       return .ok
     case let .error(e):
       return .exception(e)
@@ -39,7 +39,7 @@ extension Eval {
 
     switch Py.not(top) {
     case let .value(not):
-      self.setTop(not)
+      self.stack.top = not
       return .ok
     case let .error(e):
       return .exception(e)
@@ -53,7 +53,7 @@ extension Eval {
     let value = self.stack.top
     switch Py.invert(object: value) {
     case let .value(result):
-      self.setTop(result)
+      self.stack.top = result
       return .ok
     case let .error(e):
       return .exception(e)

@@ -5,7 +5,7 @@ extension Eval {
 
   /// Performs a `Boolean` operation.
   internal func compareOp(type: Instruction.CompareType) -> InstructionResult {
-    let right = self.pop()
+    let right = self.stack.pop()
     let left = self.stack.top
 
     let result = self.compare(type: type, left: left, right: right)
@@ -13,7 +13,7 @@ extension Eval {
 
     switch result {
     case let .value(o):
-      self.setTop(o)
+      self.stack.top = o
       return .ok
     case let .error(e):
       return .exception(e)
