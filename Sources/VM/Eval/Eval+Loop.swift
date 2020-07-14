@@ -10,7 +10,7 @@ extension Eval {
   internal func setupLoop(loopEndLabelIndex: Int) -> InstructionResult {
     let label = self.getLabel(index: loopEndLabelIndex)
     let type = BlockType.setupLoop(endLabel: label)
-    let block = Block(type: type, stackLevel: self.stackLevel)
+    let block = Block(type: type, stackCount: self.stack.count)
     self.blockStack.push(block: block)
     return .ok
   }

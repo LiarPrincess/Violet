@@ -10,7 +10,7 @@ extension Eval {
   internal func setupExcept(firstExceptLabelIndex: Int) -> InstructionResult {
     let label = self.getLabel(index: firstExceptLabelIndex)
     let type = BlockType.setupExcept(firstExceptLabel: label)
-    let block = Block(type: type, stackLevel: self.stackLevel)
+    let block = Block(type: type, stackCount: self.stack.count)
     self.blockStack.push(block: block)
     return .ok
   }
@@ -20,7 +20,7 @@ extension Eval {
   internal func setupFinally(finallyStartLabelIndex: Int) -> InstructionResult {
     let label = self.getLabel(index: finallyStartLabelIndex)
     let type = BlockType.setupFinally(finallyStartLabel: label)
-    let block = Block(type: type, stackLevel: self.stackLevel)
+    let block = Block(type: type, stackCount: self.stack.count)
     self.blockStack.push(block: block)
     return .ok
   }

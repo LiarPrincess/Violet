@@ -4,7 +4,7 @@ public struct Block: CustomStringConvertible {
   /// The type of block.
   public let type: BlockType
   /// Stack size when the block was entered.
-  public let stackLevel: Int
+  public let stackCount: Int
 
   public var isExceptHandler: Bool {
     switch self.type {
@@ -16,12 +16,12 @@ public struct Block: CustomStringConvertible {
   }
 
   public var description: String {
-    return "Block(type: \(self.type), level: \(self.stackLevel))"
+    return "Block(type: \(self.type), level: \(self.stackCount))"
   }
 
-  public init(type: BlockType, stackLevel: Int) {
+  public init(type: BlockType, stackCount: Int) {
     self.type = type
-    self.stackLevel = stackLevel
+    self.stackCount = stackCount
   }
 }
 

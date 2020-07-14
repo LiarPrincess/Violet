@@ -38,11 +38,6 @@ internal struct Eval {
     nonmutating _modify { yield &self.frame.stack }
   }
 
-  // TODO: remove this
-  internal var stackLevel: Int {
-    return self.frame.stack.count
-  }
-
   /// Stack of blocks (for loops, exception handlers etc.).
   internal var blockStack: BlockStack {
     get { return self.frame.blocks } // swiftlint:disable:this implicit_getter

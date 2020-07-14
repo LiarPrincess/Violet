@@ -137,7 +137,7 @@ extension Eval {
   }
 
   private func prepareForExceptionHandling(exception: PyBaseException) {
-    let exceptHandler = Block(type: .exceptHandler, stackLevel: self.stackLevel)
+    let exceptHandler = Block(type: .exceptHandler, stackCount: self.stack.count)
     self.blockStack.push(block: exceptHandler)
 
     // Remember current exception on stack
@@ -151,14 +151,14 @@ extension Eval {
 
   /// \#define UNWIND_BLOCK(b)
   internal func unwindBlock(block: Block) {
-    self.stack.pop(untilCount: block.stackLevel)
+    self.stack.pop(untilCount: block.stackCount)
   }
 
   /// \#define UNWIND_EXCEPT_HANDLER(b)
   internal func unwindExceptHandler(block: Block) {
     assert(block.isExceptHandler)
 
-    let stackCountIncludingException = block.stackLevel + 1
+    let stackCountIncludingException = block.stackCount + 1
     assert(self.stack.count >= stackCountIncludingException)
 
     self.stack.pop(untilCount: stackCountIncludingException)
@@ -173,6 +173,6 @@ extension Eval {
       assert(false, "Expected to pop exception (or None), but popped '\(o)'.")
     }
 
-    assert(self.stack.count == block.stackLevel)
+    assert(self.stack.count == block.stackCount)
   }
 }

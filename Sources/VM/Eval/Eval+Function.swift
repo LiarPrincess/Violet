@@ -89,12 +89,12 @@ extension Eval {
   /// - Note:
   /// This opcode is used only for calls with positional arguments!
   internal func callFunction(argumentCount: Int) -> InstructionResult {
-    let level = self.stackLevel
+    let level = self.stack.count
     let result = self.callFunction(argAndKwargCount: argumentCount, kwNames: nil)
 
     let fnObject = 1
     let expectedLevel = level - argumentCount - fnObject
-    assert(self.stackLevel == expectedLevel)
+    assert(self.stack.count == expectedLevel)
 
     switch result {
     case let .value(o):
@@ -128,13 +128,13 @@ extension Eval {
       return .exception(Py.newSystemError(msg: msg))
     }
 
-    let level = self.stackLevel
+    let level = self.stack.count
     let result = self.callFunction(argAndKwargCount: argumentCount,
                                    kwNames: kwNames)
 
     let fnObject = 1
     let expectedLevel = level - argumentCount - fnObject
-    assert(self.stackLevel == expectedLevel)
+    assert(self.stack.count == expectedLevel)
 
     switch result {
     case let .value(o):
@@ -233,12 +233,12 @@ extension Eval {
     case let .error(e): return .exception(e)
     }
 
-    let level = self.stackLevel
+    let level = self.stack.count
     let result = Py.call(callable: fn, args: args, kwargs: kwargs)
 
     switch result {
     case let .value(o):
-      assert(self.stackLevel == level)
+      assert(self.stack.count == level)
       self.stack.top = o
       return .ok
     case let .error(e),
@@ -313,12 +313,12 @@ extension Eval {
     let args = self.stack.popElementsInPushOrder(count: argumentCount)
     assert(args.count == argumentCount)
 
-    let level = self.stackLevel
+    let level = self.stack.count
     let method = self.stack.top
 
     let result = Py.call(callable: method, args: args, kwargs: nil)
     Debug.callMethod(method: method, args: args, result: result)
-    assert(self.stackLevel == level)
+    assert(self.stack.count == level)
 
     switch result {
     case let .value(o):

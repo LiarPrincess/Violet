@@ -39,7 +39,7 @@ extension Eval {
       // Setup the finally block before pushing the result of __enter__ on the stack.
       let label = self.getLabel(index: afterBodyLabelIndex)
       let type = BlockType.setupFinally(finallyStartLabel: label)
-      let block = Block(type: type, stackLevel: self.stackLevel)
+      let block = Block(type: type, stackCount: self.stack.count)
       self.blockStack.push(block: block)
 
       self.stack.push(res)
@@ -127,8 +127,8 @@ extension Eval {
       }
 
       assert(block.isExceptHandler)
-      let levelWithoutExit = block.stackLevel - 1
-      let blockWithoutExit = Block(type: .exceptHandler, stackLevel: levelWithoutExit)
+      let levelWithoutExit = block.stackCount - 1
+      let blockWithoutExit = Block(type: .exceptHandler, stackCount: levelWithoutExit)
       self.blockStack.push(block: blockWithoutExit)
 
     case .silenced:
