@@ -11,7 +11,7 @@ extension Eval {
     let label = self.getLabel(index: firstExceptLabelIndex)
     let type = BlockType.setupExcept(firstExceptLabel: label)
     let block = Block(type: type, stackLevel: self.stackLevel)
-    self.pushBlock(block: block)
+    self.blockStack.push(block: block)
     return .ok
   }
 
@@ -21,7 +21,7 @@ extension Eval {
     let label = self.getLabel(index: finallyStartLabelIndex)
     let type = BlockType.setupFinally(finallyStartLabel: label)
     let block = Block(type: type, stackLevel: self.stackLevel)
-    self.pushBlock(block: block)
+    self.blockStack.push(block: block)
     return .ok
   }
 
@@ -33,7 +33,7 @@ extension Eval {
   /// In addition to popping extraneous values from the frame stack,
   /// the last popped value is used to restore the exception state.
   internal func popExcept() -> InstructionResult {
-    guard let block = self.popBlock(), block.isExceptHandler else {
+    guard let block = self.blockStack.pop(), block.isExceptHandler else {
       let msg = "popped block is not an except handler"
       let e = Py.newSystemError(msg: msg)
       return .exception(e)
@@ -70,7 +70,7 @@ extension Eval {
       // An exception was silenced by 'with', we must manually unwind the
       // EXCEPT_HANDLER block which was created when the exception was caught,
       // otherwise the stack will be in an inconsistent state.
-      guard let block = self.popBlock() else {
+      guard let block = self.blockStack.pop() else {
         let e = Py.newSystemError(msg: "XXX block stack underflow")
         return .exception(e)
       }

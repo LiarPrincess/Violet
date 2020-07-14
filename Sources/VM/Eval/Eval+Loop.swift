@@ -11,7 +11,7 @@ extension Eval {
     let label = self.getLabel(index: loopEndLabelIndex)
     let type = BlockType.setupLoop(endLabel: label)
     let block = Block(type: type, stackLevel: self.stackLevel)
-    self.pushBlock(block: block)
+    self.blockStack.push(block: block)
     return .ok
   }
 

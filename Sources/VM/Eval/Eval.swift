@@ -43,18 +43,10 @@ internal struct Eval {
     return self.frame.stack.count
   }
 
-  // TODO: Rename 'blockStack' + '_modify'
   /// Stack of blocks (for loops, exception handlers etc.).
-  internal var blocks: BlockStack {
-    return self.frame.blocks
-  }
-
-  internal func popBlock() -> Block? {
-    return self.frame.blocks.pop()
-  }
-
-  internal func pushBlock(block: Block) {
-    self.frame.blocks.push(block: block)
+  internal var blockStack: BlockStack {
+    get { return self.frame.blocks } // swiftlint:disable:this implicit_getter
+    nonmutating _modify { yield &self.frame.blocks }
   }
 
   // MARK: - Locals, globals, builtins
@@ -216,7 +208,7 @@ internal struct Eval {
   // swiftlint:disable:next function_body_length
   private func executeInstruction(extendedArg: Int = 0) -> InstructionResult {
     Debug.stack(stack: self.stack)
-    Debug.stack(stack: self.blocks)
+    Debug.stack(stack: self.blockStack)
     Debug.instruction(code: self.code,
                       index: self.frame.nextInstructionIndex,
                       extendedArg: extendedArg)

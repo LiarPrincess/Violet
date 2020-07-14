@@ -53,7 +53,7 @@ extension Eval {
   internal func unwind(reason: UnwindReason) -> UnwindResult {
     // swiftlint:disable:previous function_body_length
 
-    while let block = self.blocks.current {
+    while let block = self.blockStack.current {
       switch block.type {
       case let .setupLoop(endLabel):
         if case let .continue(loopStartLabel) = reason {
@@ -62,7 +62,7 @@ extension Eval {
           return .continueCodeExecution
         }
 
-        _ = self.popBlock()
+        _ = self.blockStack.pop()
         self.unwindBlock(block: block)
 
         if case .break = reason {
@@ -71,7 +71,7 @@ extension Eval {
         }
 
       case let .setupExcept(firstExceptLabel):
-        _ = self.popBlock()
+        _ = self.blockStack.pop()
         self.unwindBlock(block: block)
 
         if case let .exception(e, _) = reason {
@@ -81,7 +81,7 @@ extension Eval {
         }
 
       case let .setupFinally(finallyStartLabel):
-        _ = self.popBlock()
+        _ = self.blockStack.pop()
         self.unwindBlock(block: block)
 
         if case let .exception(e, _) = reason {
@@ -96,13 +96,13 @@ extension Eval {
         return .continueCodeExecution
 
       case .exceptHandler:
-        _ = self.popBlock()
+        _ = self.blockStack.pop()
         self.unwindExceptHandler(block: block)
       }
     }
 
     // No blocks! (kinda 'yay', kinda scarry)
-    assert(self.blocks.isEmpty)
+    assert(self.blockStack.isEmpty)
     switch reason {
     case .return(let value):
       return .return(value)
@@ -138,7 +138,7 @@ extension Eval {
 
   private func prepareForExceptionHandling(exception: PyBaseException) {
     let exceptHandler = Block(type: .exceptHandler, stackLevel: self.stackLevel)
-    self.pushBlock(block: exceptHandler)
+    self.blockStack.push(block: exceptHandler)
 
     // Remember current exception on stack
     let currentOrNil = self.currentlyHandledException
