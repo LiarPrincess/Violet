@@ -3,8 +3,6 @@ import VioletCore
 import VioletObjects
 import VioletVM
 
-checkInvariants()
-
 let arguments = Arguments()
 let environment = Environment()
 let vm = VM(arguments: arguments, environment: environment)

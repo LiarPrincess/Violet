@@ -238,6 +238,7 @@ public final class PyInstance {
     delegate: PyDelegate,
     fileSystem: PyFileSystem
   ) {
+    checkInvariants()
     precondition(!self.isInitialized, "Py was already initialized.")
 
     self._config = config
