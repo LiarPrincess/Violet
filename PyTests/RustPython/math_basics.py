@@ -40,11 +40,10 @@ assert pow(0, 0) == 1
 assert pow(2, 2) == 4
 assert pow(1, 2.0) == 1.0
 assert pow(2.0, 1) == 2.0
-# VIOLET: We do not have 'BigInt'
-# assert pow(0, 10**1000) == 0
-# assert pow(1, 10**1000) == 1
-# assert pow(-1, 10**1000+1) == -1
-# assert pow(-1, 10**1000) == 1
+assert pow(0, 10**1000) == 0
+assert pow(1, 10**1000) == 1
+assert pow(-1, 10**1000+1) == -1
+assert pow(-1, 10**1000) == 1
 
 assert pow(2, 4, 5) == 1
 assert_raises(TypeError, pow, 2, 4, 5.0)

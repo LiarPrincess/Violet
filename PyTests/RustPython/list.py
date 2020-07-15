@@ -109,8 +109,7 @@ x = ['a', 'b', 'c']
 x.insert(-100, 'z')
 assert x == ['z', 'a', 'b', 'c']
 
-# VIOLET: We do not have BigInt
-# assert_raises(OverflowError, lambda: x.insert(100000000000000000000, 'z'))
+assert_raises(OverflowError, lambda: x.insert(100000000000000000000, 'z'))
 
 x = [[], 2, {}]
 y = x.copy()

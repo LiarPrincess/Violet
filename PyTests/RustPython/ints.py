@@ -78,8 +78,7 @@ assert (10).denominator == 1
 assert (-10).numerator == -10
 assert (-10).denominator == 1
 
-# VIOLET: We do not have BigInt
-# assert_raises(OverflowError, lambda: 1 << 10 ** 100000)
+assert_raises(OverflowError, lambda: 1 << 10 ** 100000)
 
 assert (1).__eq__(1.0) == NotImplemented
 assert (1).__ne__(1.0) == NotImplemented
@@ -216,7 +215,6 @@ assert int(b'     -0XFF ', base=0) == -255
 # with assert_raises(OverflowError):
 #     (-1024).to_bytes(4, 'big')
 
-# VIOLET: We do not have BigInt
 # with assert_raises(OverflowError):
 #     (1024).to_bytes(10000000000000000000000, 'big')
 

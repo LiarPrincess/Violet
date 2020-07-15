@@ -60,7 +60,6 @@ assert a.conjugate() == a
 
 a = 12345
 
-# VIOLET: We do not have BigInt
-# b = a*a*a*a*a*a*a*a
-# assert b.bit_length() == 109
+b = a*a*a*a*a*a*a*a
+assert b.bit_length() == 109
 

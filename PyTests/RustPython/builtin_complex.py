@@ -23,8 +23,7 @@ assert bool(complex(1, 0))
 assert complex(1, 2) != complex(1, 1)
 assert complex(1, 2) != 'foo'
 assert complex(1, 2).__eq__('foo') == NotImplemented
-# VIOLET: We do not have 'BigInt'
-# assert 1j != 10 ** 1000
+assert 1j != 10 ** 1000
 
 # __mul__, __rmul__
 
@@ -125,10 +124,9 @@ assert_raises(TypeError, lambda: 'str' + 1j)
 assert_raises(TypeError, lambda: 'str' - 1j)
 
 # overflow
-# VIOLET: We do not have 'BigInt'
-# assert_raises(OverflowError, lambda: complex(10 ** 1000, 0))
-# assert_raises(OverflowError, lambda: complex(0, 10 ** 1000))
-# assert_raises(OverflowError, lambda: 0j + 10 ** 1000)
+assert_raises(OverflowError, lambda: complex(10 ** 1000, 0))
+assert_raises(OverflowError, lambda: complex(0, 10 ** 1000))
+assert_raises(OverflowError, lambda: 0j + 10 ** 1000)
 
 # str/repr
 assert '(1+1j)' == str(1+1j)

@@ -70,22 +70,21 @@ assert 6 / a == 5.0
 assert 2.0 % z == 0.0
 assert z % 2.0 == 0.0
 
-# VIOLET: We do not have BigInt
-# ov = 10 ** 1000
-# assert_raises(OverflowError, lambda: a + ov)
-# assert_raises(OverflowError, lambda: a - ov)
-# assert_raises(OverflowError, lambda: a * ov)
-# assert_raises(OverflowError, lambda: a / ov)
-# assert_raises(OverflowError, lambda: a // ov)
-# assert_raises(OverflowError, lambda: a % ov)
-# assert_raises(OverflowError, lambda: a ** ov)
-# assert_raises(OverflowError, lambda: ov + a)
-# assert_raises(OverflowError, lambda: ov - a)
-# assert_raises(OverflowError, lambda: ov * a)
-# assert_raises(OverflowError, lambda: ov / a)
-# assert_raises(OverflowError, lambda: ov // a)
-# assert_raises(OverflowError, lambda: ov % a)
-# assert_raises(OverflowError, lambda: ov ** a)
+ov = 10 ** 1000
+assert_raises(OverflowError, lambda: a + ov)
+assert_raises(OverflowError, lambda: a - ov)
+assert_raises(OverflowError, lambda: a * ov)
+assert_raises(OverflowError, lambda: a / ov)
+assert_raises(OverflowError, lambda: a // ov)
+assert_raises(OverflowError, lambda: a % ov)
+assert_raises(OverflowError, lambda: a ** ov)
+assert_raises(OverflowError, lambda: ov + a)
+assert_raises(OverflowError, lambda: ov - a)
+assert_raises(OverflowError, lambda: ov * a)
+assert_raises(OverflowError, lambda: ov / a)
+assert_raises(OverflowError, lambda: ov // a)
+assert_raises(OverflowError, lambda: ov % a)
+assert_raises(OverflowError, lambda: ov ** a)
 
 assert a < 5
 assert a <= 5
@@ -132,8 +131,7 @@ assert float(b'3.14') == 3.14
 assert float(b'2.99e-23') == 2.99e-23
 
 assert_raises(ValueError, float, 'foo')
-# VIOLET: We do not have BigInt
-# assert_raises(OverflowError, float, 2**10000)
+assert_raises(OverflowError, float, 2**10000)
 
 # check eq and hash for small numbers
 
@@ -219,8 +217,7 @@ assert_raises(OverflowError, float('inf').__round__)
 assert_raises(ValueError, float('nan').__round__)
 
 assert 1.2 ** 2 == 1.44
-# VIOLET: We do not have BigInt
-# assert_raises(OverflowError, lambda: 1.2 ** (10 ** 1000))
+assert_raises(OverflowError, lambda: 1.2 ** (10 ** 1000))
 assert 3 ** 2.0 == 9.0
 
 assert (1.7).real == 1.7
@@ -240,10 +237,9 @@ assert (2.1).as_integer_ratio() == (4728779608739021, 2251799813685248)
 assert (-2.1).as_integer_ratio() == (-4728779608739021, 2251799813685248)
 assert (-2100.0).as_integer_ratio() == (-2100, 1)
 
-# VIOLET: We do not have 'BigInt'
 assert (2.220446049250313e-16).as_integer_ratio() == (1, 4503599627370496)
-# assert (1.7976931348623157e+308).as_integer_ratio() == (179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368, 1)
-# assert (2.2250738585072014e-308).as_integer_ratio() == (1, 44942328371557897693232629769725618340449424473557664318357520289433168951375240783177119330601884005280028469967848339414697442203604155623211857659868531094441973356216371319075554900311523529863270738021251442209537670585615720368478277635206809290837627671146574559986811484619929076208839082406056034304)
+assert (1.7976931348623157e+308).as_integer_ratio() == (179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368, 1)
+assert (2.2250738585072014e-308).as_integer_ratio() == (1, 44942328371557897693232629769725618340449424473557664318357520289433168951375240783177119330601884005280028469967848339414697442203604155623211857659868531094441973356216371319075554900311523529863270738021251442209537670585615720368478277635206809290837627671146574559986811484619929076208839082406056034304)
 
 assert_raises(OverflowError, float('inf').as_integer_ratio)
 assert_raises(OverflowError, float('-inf').as_integer_ratio)

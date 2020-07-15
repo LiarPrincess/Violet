@@ -2,10 +2,9 @@ from testutils import assert_raises
 
 a = []
 assert a[:] == []
-# VIOLET: We do not have 'BigInt'
-# assert a[: 2 ** 100] == []
-# assert a[-2 ** 100 :] == []
-# assert a[:: 2 ** 100] == []
+assert a[: 2 ** 100] == []
+assert a[-2 ** 100 :] == []
+assert a[:: 2 ** 100] == []
 assert a[10:20] == []
 assert a[-20:-10] == []
 
@@ -13,11 +12,10 @@ b = [1, 2]
 
 assert b[:] == [1, 2]
 assert b[slice(None)] == [1, 2]
-# VIOLET: We do not have 'BigInt'
-# assert b[: 2 ** 100] == [1, 2]
-# assert b[-2 ** 100 :] == [1, 2]
-# assert b[2 ** 100 :] == []
-# assert b[:: 2 ** 100] == [1]
+assert b[: 2 ** 100] == [1, 2]
+assert b[-2 ** 100 :] == [1, 2]
+assert b[2 ** 100 :] == []
+assert b[:: 2 ** 100] == [1]
 assert b[-10:1] == [1]
 assert b[0:0] == []
 assert b[1:0] == []
@@ -36,8 +34,7 @@ c = list(range(10))
 assert c[9:6:-3] == [9]
 assert c[9::-3] == [9, 6, 3, 0]
 assert c[9::-4] == [9, 5, 1]
-# VIOLET: We do not have 'BigInt'
-# assert c[8 :: -2 ** 100] == [8]
+assert c[8 :: -2 ** 100] == [8]
 
 assert c[7:7:-2] == []
 assert c[7:8:-2] == []
