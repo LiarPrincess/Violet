@@ -4,4 +4,4 @@
 This script will use reference implementation (`siphash.c` file from [this repository](https://github.com/veorq/SipHash)) to generate tests for our implementation. '[I See the Light](https://genius.com/Walt-disney-records-i-see-the-light-lyrics)' from [Tangled](https://www.imdb.com/title/tt0398286/) will serve as a test data.
 
 # How to run?
-Just run `./Scripts/siphash/main.sh ` from root dir.
+Just run `./Scripts/siphash/main.sh` from root dir.
