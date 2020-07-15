@@ -87,7 +87,6 @@ extension String {
 
 // MARK: - Scalar + as digit
 
-// TODO: [BigInt] Remove this
 extension UnicodeScalar {
 
   /// Try to convert scalar to digit.
