@@ -5,6 +5,8 @@ import VioletVM
 
 // swiftlint:disable function_body_length
 
+internal var stopAtFirstFailedTest = false
+
 private var passedTests = [String]()
 private var failedTests = [String]()
 
@@ -76,6 +78,9 @@ internal func runTest(file: URL) {
     print("  ✖ Error:")
     Py.printRecursive(error: error, file: stdout)
     failedTests.append(file.lastPathComponent)
-    exit(1) // halt for inspection
+
+    if stopAtFirstFailedTest {
+      exit(1)
+    }
   }
 }

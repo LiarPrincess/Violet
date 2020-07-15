@@ -170,22 +170,12 @@ extension Lexer {
 
   private func parseDouble(scalars: UnicodeScalarView.SubSequence,
                            start: SourceLocation) throws -> Double {
-    let noUnderscores = self.removeUnderscores(scalars: scalars)
-
-    guard let value = Double(parseUsingPythonRules: noUnderscores) else {
+    guard let value = Double(parseUsingPythonRules: scalars) else {
       let string = String(scalars)
       let kind = LexerErrorKind.unableToParseFloat(string)
       throw self.error(kind, location: start)
     }
 
     return value
-  }
-
-  private func removeUnderscores(
-    scalars: UnicodeScalarView.SubSequence
-  ) -> UnicodeScalarView.SubSequence {
-    // Not really sure if 'filter' should return 'UnicodeScalarView.SubSequence',
-    // but if stdlib says so…
-    return scalars.filter { $0 != "_" }
   }
 }

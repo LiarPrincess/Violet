@@ -9,84 +9,113 @@ extension Double {
   public init?(
     parseUsingPythonRules string: String
   ) {
-    guard let value = Double.parse(string: string) else {
-      return nil
-    }
-    self = value
+    let scalarsSubSequence = string.unicodeScalars[...]
+    self.init(parseUsingPythonRules: scalarsSubSequence)
   }
 
   /// This implements `Python` parsing rules, not `Swift`!
   public init?(
     parseUsingPythonRules scalars: String.UnicodeScalarView
   ) {
-    self.init(parseUsingPythonRules: String(scalars))
+    let subSequence = scalars[...]
+    self.init(parseUsingPythonRules: subSequence)
   }
 
   /// This implements `Python` parsing rules, not `Swift`!
   public init?(
     parseUsingPythonRules scalars: String.UnicodeScalarView.SubSequence
   ) {
-    self.init(parseUsingPythonRules: String(scalars))
+    guard let value = Self.parse(scalars: scalars) else {
+      return nil
+    }
+    self = value
   }
 
-  // MARK: - Parser
+  // MARK: - Parse
+
+  private typealias Scalars = String.UnicodeScalarView.SubSequence
 
   /// So… there are some differences between how `Python` and `Swift`
   /// parse doubles, but it is not like we will implement this from scratch.
   /// We will just go with 'close enough'
-  private static func parse(string: String) -> Double? {
-    var input = string.trimmingCharacters(in: .whitespaces)
+  private static func parse(scalars: Scalars) -> Double? {
+    let scalars = Self.trim(scalars: scalars)
 
     // We do not allow starting or ending with '_'
-    if input.hasPrefix("_") || input.hasSuffix("_") {
+    if scalars.first == "_" || scalars.last == "_" {
       return nil
     }
 
-    // We do not allow '_' before and after '.'
-    if let dotIndex = input.firstIndex(of: ".") {
-      assert(dotIndex != input.endIndex)
-
-      if Self.characterBefore(string: input, index: dotIndex) == "_" {
+    // '_' before/after '.' is also a sin
+    if let dotIndex = scalars.firstIndex(of: ".") {
+      if Self.characterBefore(scalars: scalars, index: dotIndex) == "_" {
         return nil
       }
 
-      if Self.characterAfter(string: input, index: dotIndex) == "_" {
+      if Self.characterAfter(scalars: scalars, index: dotIndex) == "_" {
         return nil
       }
     }
 
-    // '__' is also a sin
-    if input.contains("__") {
-      return nil
+    // Build proper Swift input (without '_', because they do not like that).
+    // Also, look out for any invalid '__'.
+    var refinedInput = ""
+    var isPreviousUnderscore = false
+
+    for scalar in scalars {
+      let isUnderscore = scalar == "_"
+      defer { isPreviousUnderscore = isUnderscore }
+
+      if isUnderscore {
+        // '__' -> fail
+        if isPreviousUnderscore {
+          return nil
+        }
+
+        // '_' -> ignore
+        continue
+      }
+
+      refinedInput.append(scalar)
     }
 
-    // Now that we guaranteed that out '_' are in correct places
-    // we should remove them because Swift parser does not like them.
-    input.removeAll { $0 == "_" }
-    return Double(input)
+    return Double(refinedInput)
   }
 
-  private static func characterBefore(string: String,
-                                      index: String.Index) -> Character? {
-    if index == string.startIndex {
-      return nil
+  // MARK: - Helpers
+
+  /// Well… Python calls this operation `strip`. They are wrong….
+  private static func trim(scalars: Scalars) -> Scalars {
+    func isWhitespace(scalar: UnicodeScalar) -> Bool {
+      return scalar.properties.isWhitespace
     }
 
-    let indexBefore = string.index(before: index)
-    return string[indexBefore]
+    return scalars
+      .drop(while: isWhitespace(scalar:))
+      .dropLast(while: isWhitespace(scalar:))
   }
 
-  private static func characterAfter(string: String,
-                                     index: String.Index) -> Character? {
-    if index == string.endIndex {
+  private static func characterBefore(scalars: Scalars,
+                                      index: Scalars.Index) -> UnicodeScalar? {
+    if index == scalars.startIndex {
       return nil
     }
 
-    let indexAfter = string.index(after: index)
-    if indexAfter == string.endIndex {
+    let indexBefore = scalars.index(before: index)
+    return scalars[indexBefore]
+  }
+
+  private static func characterAfter(scalars: Scalars,
+                                     index: Scalars.Index) -> UnicodeScalar? {
+    if index == scalars.endIndex {
       return nil
     }
 
-    return string[indexAfter]
+    let indexAfter = scalars.index(after: index)
+    if indexAfter == scalars.endIndex {
+      return nil
+    }
+
+    return scalars[indexAfter]
   }
 }
