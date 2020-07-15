@@ -1,6 +1,6 @@
 import VioletCore
 
-// TODO: All of the set methods should have tuple as an arg
+// TODO: All of the set methods should allow tuple as an arg
 
 // swiftlint:disable file_length
 

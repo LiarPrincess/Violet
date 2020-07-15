@@ -4,11 +4,12 @@ import VioletObjects
 // swiftlint:disable file_length
 
 /// Helper structure for filling `Frame.fastLocals`.
+/// `Frame.fastLocals` holds function args and local variables.
 ///
 /// Fast locals layout:
 /// ```
-///  [object] | varArgs | varKeywords
-///           ^ totalArgs
+///  args | varArgs | varKeywords | locals
+///       ^ self.totalArgs
 /// ```
 internal struct FillFastLocals {
 
@@ -56,26 +57,30 @@ internal struct FillFastLocals {
 
   /// PyObject *
   /// _PyEval_EvalCodeWithName(PyObject *_co, PyObject *globals, ...)
-  internal mutating func run() -> PyResult<PyNone> {
+  internal mutating func run() -> PyBaseException? {
     self.fillFromArgs()
 
+    // We could totally use '??' as monadic bind for errors and write this
+    // as a single line with just 'return' statement.
+    // But we are not monsters…
+
     if let e = self.fillFromKwargs() {
-      return .error(e)
+      return e
     }
 
     if let e = self.checkPositionalCount() {
-      return .error(e)
+      return e
     }
 
     if let e = self.fillFromArgsDefaults() {
-      return .error(e)
+      return e
     }
 
     if let e = self.fillFromKwArgsDefaults() {
-      return .error(e)
+      return e
     }
 
-    return .value(Py.none)
+    return nil
   }
 
   // MARK: - Setters

@@ -65,15 +65,12 @@ extension VM {
                             globals: globals,
                             parent: parent)
 
-    var fillFastLocals = FillFastLocals(frame: frame,
-                                        args: args,
-                                        kwargs: kwargs,
-                                        defaults: defaults,
-                                        kwDefaults: kwDefaults)
-
-    switch fillFastLocals.run() {
-    case .value: break
-    case .error(let e): return .error(e)
+    if let e = self.fillFastLocals(frame: frame,
+                                   args: args,
+                                   kwargs: kwargs,
+                                   defaults: defaults,
+                                   kwDefaults: kwDefaults) {
+      return .error(e)
     }
 
     self.fillCells(in: frame, from: code)
@@ -96,6 +93,28 @@ extension VM {
 
   // MARK: - Fill
 
+  /// `Frame.fastLocals` holds function args and local variables.
+  private func fillFastLocals(frame: PyFrame,
+                              args: [PyObject],
+                              kwargs: PyDict?,
+                              defaults: [PyObject],
+                              kwDefaults: PyDict?) -> PyBaseException? {
+    // Filling args and locals is actually quite complicated,
+    // so we moved it to separate file.
+
+    var helper = FillFastLocals(frame: frame,
+                                args: args,
+                                kwargs: kwargs,
+                                defaults: defaults,
+                                kwDefaults: kwDefaults)
+
+    return helper.run()
+  }
+
+  /// Free variables (variables from upper scopes).
+  ///
+  /// Btw. `Cell` = source for `free` variable.
+  ///      `Free` = cell from upper scope.
   private func fillCells(in frame: PyFrame, from code: PyCode) {
     guard code.cellVariableNames.any else {
       return
@@ -119,6 +138,10 @@ extension VM {
     }
   }
 
+  /// Free variables (variables from upper scopes).
+  ///
+  /// Btw. `Cell` = source for `free` variable.
+  ///      `Free` = cell from upper scope.
   private func fillFree(in frame: PyFrame,
                         from code: PyCode,
                         using closure: PyTuple?) {
