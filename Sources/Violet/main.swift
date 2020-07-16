@@ -9,10 +9,16 @@ let vm = VM(arguments: arguments, environment: environment)
 
 switch vm.run() {
 case .done:
+  // It worked! Yay!
+  // https://www.youtube.com/watch?v=GH6FHQJY_f8
   exit(0)
 
 case .systemExit(let object):
+  // It worked! It failed! This one got it all!
+  // What scientific witchery is this?
+  // https://www.youtube.com/watch?v=d-nxW9qBtxQ
   // CPython: handle_system_exit(void)
+
   if object.isNone {
     exit(0)
   }
