@@ -244,13 +244,20 @@ public class PyRange: PyObject {
   // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
+  /// static PyObject *
+  /// range_subscript(rangeobject* self, PyObject* item)
   public func getItem(index: PyObject) -> PyResult<PyObject> {
-    switch IndexHelper.intOrNone(index) {
+    switch IndexHelper.int(index, onOverflow: .overflowError) {
     case .value(let int):
       // swiftlint:disable:next array_init
-      return self.getItem(index: BigInt(int)).map { $0 }
-    case .notIndex: break // Try slice
-    case .error(let e): return .error(e)
+      return self.getItem(index: int).map { $0 }
+
+    case .notIndex:
+      break // Try slice
+
+    case .error(let e),
+         .overflow(_, let e):
+      return .error(e)
     }
 
     if let slice = index as? PySlice {
@@ -285,9 +292,11 @@ public class PyRange: PyObject {
     return .value(Py.newInt(result))
   }
 
+  /// static PyObject *
+  /// compute_slice(rangeobject *r, PyObject *_slice)
   public func getItem(slice: PySlice) -> PyResult<PyRange> {
     let length: Int
-    switch IndexHelper.intOrError(self.length) {
+    switch IndexHelper.intOrError(self.length) { // TODO: self.length is PyInt
     case let .value(l): length = l
     case let .error(e): return .error(e)
     }
