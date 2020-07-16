@@ -342,7 +342,7 @@ extension PyStringImpl {
       return .value(nil)
     }
 
-    switch IndexHelper.intOrError(value) {
+    switch IndexHelper.int(value, onOverflow: .indexError) {
     case let .value(int):
       var adjustedInt = int
       if adjustedInt < 0 {
@@ -365,7 +365,9 @@ extension PyStringImpl {
 
       return .value(result)
 
-    case let .error(e):
+    case let .error(e),
+         let .notIndex(e),
+         let .overflow(_, e):
       return .error(e)
     }
   }
@@ -1175,7 +1177,7 @@ internal enum StringGetItemResult<Item, Slice> {
 extension PyStringImpl {
 
   internal func getItem(index: PyObject) -> StringGetItemResult<Element, Builder.Result> {
-    switch IndexHelper.intOrNone(index) {
+    switch IndexHelper.int(index, onOverflow: .indexError) {
     case .value(let index):
       switch self.getItem(index: index) {
       case let .value(r): return .item(r)
@@ -1183,7 +1185,8 @@ extension PyStringImpl {
       }
     case .notIndex:
       break // Try slice
-    case .error(let e):
+    case .error(let e),
+         .overflow(_, let e):
       return .error(e)
     }
 

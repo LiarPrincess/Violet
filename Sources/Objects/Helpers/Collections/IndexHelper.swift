@@ -6,27 +6,41 @@ internal enum IndexHelper {
 
   // MARK: - Int
 
-  internal enum IntOrNone {
+  internal enum IntIndex {
     case value(Int)
-    case notIndex
+    case overflow(BigInt, PyBaseException)
+    case notIndex(PyBaseException)
     case error(PyBaseException)
+  }
+
+  // We model this as '(1 * 2) + (1 * 2)' instead of '2 * 2' (errorKind * message),
+  // so that our users can just type '.overflowError' without parens.
+  internal enum OnIntOverflow {
+    case overflowError(msg: String?)
+    case indexError(msg: String?)
+
+    /// .default = .overflow
+    internal static let `default` = OnIntOverflow.overflowError(msg: nil)
+    internal static let overflowError = OnIntOverflow.overflowError(msg: nil)
+    internal static let indexError = OnIntOverflow.indexError(msg: nil)
   }
 
   /// Try to extract `Int` index from `PyObject`.
   ///
   /// When object is not convertible to index it will return `.notIndex`.
-  /// When index is out of range of `int` it will return error.
+  /// When index is out of range of `int` it will return `.overflow`.
   ///
   /// CPython:
   /// ```
   /// Py_ssize_t PyNumber_AsSsize_t(PyObject *item, PyObject *err)
   /// _PyEval_SliceIndexNotNone
   /// ```
-  internal static func intOrNone(_ value: PyObject) -> IntOrNone {
+  internal static func int(_ value: PyObject,
+                           onOverflow: OnIntOverflow) -> IntIndex {
     let bigInt: BigInt
     switch Self.bigInt(value) {
     case .value(let v): bigInt = v
-    case .notIndex: return .notIndex
+    case .notIndex(let i): return .notIndex(i)
     case .error(let e): return .error(e)
     }
 
@@ -34,24 +48,21 @@ internal enum IndexHelper {
       return .value(int)
     }
 
-    let msg = "cannot fit '\(value.typeName)' into an index-sized integer"
-    return .error(Py.newIndexError(msg: msg))
+    let e = Self.createOverflowError(object: value, type: onOverflow)
+    return .overflow(bigInt, e)
   }
 
-  /// Extract `int` index from `PyObject`.
-  ///
-  /// It will return error when:
-  /// - object is not convertible to index
-  /// - index is out of range of `int`
-  internal static func intOrError(_ value: PyObject) -> PyResult<Int> {
-    switch IndexHelper.intOrNone(value) {
-    case .value(let v):
-      return .value(v)
-    case .notIndex:
-      let msg = "'\(value.typeName)' object cannot be interpreted as an integer"
-      return .typeError(msg)
-    case .error(let e):
-      return .error(e)
+  private static func createOverflowError(object: PyObject,
+                                          type: OnIntOverflow) -> PyBaseException {
+    switch type {
+    case let .overflowError(msg):
+      let defaultMsg = "Python int too large to convert to Swift int"
+      return Py.newOverflowError(msg: msg ?? defaultMsg)
+
+    case let .indexError(msg):
+      let typeName = object.typeName
+      let defaultMsg = "cannot fit '\(typeName)' into an index-sized integer"
+      return Py.newIndexError(msg: msg ?? defaultMsg)
     }
   }
 
@@ -59,22 +70,16 @@ internal enum IndexHelper {
 
   internal enum BigIntIndex {
     case value(BigInt)
-    /// Given object is not an index.
-    /// Associated value is the 'given object'.
-    case notIndex(PyObject)
+    case notIndex(PyBaseException)
     case error(PyBaseException)
 
+    // TODO: Remove
     internal func asResult() -> PyResult<BigInt> {
       switch self {
-      case .value(let int):
+      case let .value(int):
         return .value(int)
-
-      case .notIndex(let object):
-        let typeName = object.typeName
-        let msg = "'\(typeName)' object cannot be interpreted as an integer"
-        return .typeError(msg)
-
-      case .error(let e):
+      case let .notIndex(e),
+           let .error(e):
         return .error(e)
       }
     }
@@ -119,7 +124,9 @@ internal enum IndexHelper {
       return .value(int.value)
 
     case .missingMethod:
-      return .notIndex(value)
+      let typeName = value.typeName
+      let msg = "'\(typeName)' object cannot be interpreted as an integer"
+      return .notIndex(Py.newTypeError(msg: msg))
 
     case .error(let e),
          .notCallable(let e):

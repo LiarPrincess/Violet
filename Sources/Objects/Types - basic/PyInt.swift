@@ -928,9 +928,13 @@ public class PyInt: PyObject {
 
     // Check if base is 'int'
     let baseInt: Int
-    switch IndexHelper.intOrError(base) {
-    case let .value(b): baseInt = b
-    case let .error(e): return .error(e)
+    switch IndexHelper.int(base, onOverflow: .default) {
+    case let .value(b):
+      baseInt = b
+    case let .error(e),
+         let .notIndex(e),
+         let .overflow(_, e):
+      return .error(e)
     }
 
     guard (baseInt == 0 || baseInt >= 2) && baseInt <= 36 else {

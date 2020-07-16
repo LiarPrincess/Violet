@@ -1,4 +1,5 @@
 import Foundation
+import BigInt
 import VioletCore
 
 // swiftlint:disable file_length
@@ -283,10 +284,19 @@ internal struct PyBytesData: PyStringImpl {
   // MARK: - Insert
 
   internal mutating func insert(index: PyObject, item: PyObject) -> PyResult<Void> {
+    let unwrappedIndex = IndexHelper.int(
+      index,
+      onOverflow: .overflowError(msg: "cannot add more objects to \(Self.typeName)")
+    )
+
     let parsedIndex: Int
-    switch IndexHelper.intOrError(index) {
-    case let .value(i): parsedIndex = i
-    case let .error(e): return .error(e)
+    switch unwrappedIndex {
+    case let .value(i):
+      parsedIndex = i
+    case let .error(e),
+         let .notIndex(e),
+         let .overflow(_, e):
+      return .error(e)
     }
 
     let byte: UInt8
@@ -367,7 +377,19 @@ internal struct PyBytesData: PyStringImpl {
       return .value(-1)
     }
 
-    return IndexHelper.intOrError(index)
+    let unwrappedIndex = IndexHelper.int(
+      index,
+      onOverflow: .indexError(msg: "pop index out of range")
+    )
+
+    switch unwrappedIndex {
+    case let .value(int):
+      return .value(int)
+    case let .error(e),
+          let .notIndex(e),
+          let .overflow(_, e):
+      return .error(e)
+    }
   }
 
   // MARK: - Set item
@@ -556,7 +578,7 @@ internal struct PyBytesData: PyStringImpl {
   }
 
   private static func new(fromCount object: PyObject) -> NewFromResult {
-    switch IndexHelper.intOrNone(object) {
+    switch IndexHelper.int(object, onOverflow: .overflowError) {
     case .value(let count):
       // swiftlint:disable:next empty_count
       guard count >= 0 else {
@@ -568,7 +590,8 @@ internal struct PyBytesData: PyStringImpl {
     case .notIndex:
       return .tryOther
 
-    case .error(let e):
+    case .error(let e),
+         .overflow(_, let e):
       return .error(e)
     }
   }
@@ -619,13 +642,17 @@ internal struct PyBytesData: PyStringImpl {
   // MARK: - Helpers
 
   internal static func asByte(_ value: PyObject) -> PyResult<UInt8> {
-    let int: Int
-    switch IndexHelper.intOrError(value) {
-    case let .value(i): int = i
-    case let .error(e): return .error(e)
+    let bigInt: BigInt
+
+    switch IndexHelper.bigInt(value) {
+    case let .value(b):
+      bigInt = b
+    case let .error(e),
+         let .notIndex(e):
+      return .error(e)
     }
 
-    guard let byte = UInt8(exactly: int) else {
+    guard let byte = UInt8(exactly: bigInt) else {
       return .valueError("byte must be in range(0, 256)")
     }
 

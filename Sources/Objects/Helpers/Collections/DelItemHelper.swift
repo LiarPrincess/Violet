@@ -14,12 +14,13 @@ extension DelItemHelper {
 
   internal static func delItem(collection: inout Collection,
                                index: PyObject) -> PyResult<PyNone> {
-    switch IndexHelper.intOrNone(index) {
+    switch IndexHelper.int(index, onOverflow: .indexError) {
     case .value(let int):
       return Self.delItem(collection: &collection, index: int)
     case .notIndex:
       break // Try slice
-    case .error(let e):
+    case .error(let e),
+         .overflow(_, let e):
       return .error(e)
     }
 

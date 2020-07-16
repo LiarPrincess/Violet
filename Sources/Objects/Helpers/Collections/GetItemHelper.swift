@@ -21,15 +21,18 @@ extension GetItemHelper {
     collection: Collection,
     index: PyObject
   ) -> GetItemResult<Collection.Element> {
-    switch IndexHelper.intOrNone(index) {
+    switch IndexHelper.int(index, onOverflow: .indexError) {
     case .value(let index):
       switch Self.getItem(collection: collection, index: index) {
       case let .value(v): return .single(v)
       case let .error(e): return .error(e)
       }
+
     case .notIndex:
       break // Try slice
-    case .error(let e):
+
+    case .error(let e),
+         .overflow(_, let e):
       return .error(e)
     }
 

@@ -22,12 +22,13 @@ extension SetItemHelper {
   internal static func setItem(collection: inout Collection,
                                index: PyObject,
                                value: PyObject) -> PyResult<PyNone> {
-    switch IndexHelper.intOrNone(index) {
+    switch IndexHelper.int(index, onOverflow: .indexError) {
     case .value(let int):
       return Self.setItem(collection: &collection, index: int, value: value)
     case .notIndex:
       break // Try other
-    case .error(let e):
+    case .error(let e),
+         .overflow(_, let e):
       return .error(e)
     }
 

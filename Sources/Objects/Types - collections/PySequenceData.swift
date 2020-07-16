@@ -329,14 +329,20 @@ internal struct PySequenceData {
 
   internal mutating func insert(index: PyObject,
                                 item: PyObject) -> PyResult<PyNone> {
-    var parsedIndex: Int
-    switch IndexHelper.intOrError(index) {
-    case let .value(i): parsedIndex = i
-    case let .error(e): return .error(e)
-    }
+    let unwrappedIndex = IndexHelper.int(
+      index,
+      onOverflow: .overflowError(msg: "cannot add more objects to list")
+    )
 
-    self.insert(index: parsedIndex, item: item)
-    return .value(Py.none)
+    switch unwrappedIndex {
+    case let .value(int):
+      self.insert(index: int, item: item)
+      return .value(Py.none)
+    case let .error(e),
+         let .notIndex(e),
+         let .overflow(_, e):
+      return .error(e)
+    }
   }
 
   internal mutating func insert(index: Int, item: PyObject) {
@@ -492,7 +498,19 @@ internal struct PySequenceData {
       return .value(-1)
     }
 
-    return IndexHelper.intOrError(index)
+    let unwrappedIndex = IndexHelper.int(
+      index,
+      onOverflow: .indexError(msg: "pop index out of range")
+    )
+
+    switch unwrappedIndex {
+    case let .value(int):
+      return .value(int)
+    case let .error(e),
+          let .notIndex(e),
+          let .overflow(_, e):
+      return .error(e)
+    }
   }
 
   internal mutating func pop(index: Int,
@@ -531,7 +549,7 @@ internal struct PySequenceData {
       return .none
     }
 
-    switch IndexHelper.intOrError(value) {
+    switch IndexHelper.int(value, onOverflow: .default) {
     case var .value(index):
       if index < 0 {
         index += self.elements.count
@@ -545,7 +563,9 @@ internal struct PySequenceData {
       let result = self.elements.index(start, offsetBy: index, limitedBy: end)
       return .index(result ?? end)
 
-    case let .error(e):
+    case let .error(e),
+         let .notIndex(e),
+         let .overflow(_, e):
       return .error(e)
     }
   }

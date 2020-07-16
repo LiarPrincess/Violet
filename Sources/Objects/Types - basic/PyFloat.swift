@@ -828,10 +828,12 @@ extension PyFloat {
       return .none
     }
 
-    switch IndexHelper.intOrError(object) {
+    switch IndexHelper.int(object, onOverflow: .default) {
     case let .value(i):
       return .int(i)
-    case let .error(e):
+    case let .error(e),
+         let .notIndex(e),
+         let .overflow(_, e):
       return .error(e)
     }
   }
