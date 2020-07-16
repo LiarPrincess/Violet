@@ -273,7 +273,9 @@ extension PyInstance {
       return .value(objectInt)
     }
 
-    return IndexHelper.bigIntOrError(object).map(self.newInt)
+    let index = IndexHelper.bigInt(object)
+    let indexResult = index.asResult()
+    return indexResult.map(self.newInt(_:))
   }
 
   // MARK: - Enumerate

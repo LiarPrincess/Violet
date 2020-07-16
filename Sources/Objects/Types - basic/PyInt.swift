@@ -771,6 +771,15 @@ public class PyInt: PyObject {
     return Py.newInt(result)
   }
 
+  // MARK: - Check exact
+
+  /// Is this builtin `int` type?
+  ///
+  /// Will return `false` if this is a subclass.
+  public func checkExact() -> Bool {
+    return self.type === Py.types.int
+  }
+
   // MARK: - Round
 
   // sourcery: pymethod = __round__
@@ -813,7 +822,8 @@ public class PyInt: PyObject {
       return .value(0)
     }
 
-    return IndexHelper.bigIntOrError(object)
+    let index = IndexHelper.bigInt(object)
+    return index.asResult()
   }
 
   /// Return a pair `(q, r)` such that `a = b * q + r`, and
