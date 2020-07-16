@@ -295,11 +295,7 @@ public class PyRange: PyObject {
   /// static PyObject *
   /// compute_slice(rangeobject *r, PyObject *_slice)
   public func getItem(slice: PySlice) -> PyResult<PyRange> {
-    let length: Int
-    switch IndexHelper.intOrError(self.length) { // TODO: self.length is PyInt
-    case let .value(l): length = l
-    case let .error(e): return .error(e)
-    }
+    let length = self.length.value
 
     let indices: PySlice.GetLongIndicesResult
     switch slice.getLongIndices(length: length) {
@@ -307,7 +303,7 @@ public class PyRange: PyObject {
     case let .error(e): return .error(e)
     }
 
-    let subStep = self.step.value * BigInt(indices.step)
+    let subStep = self.step.value * indices.step
     let subStart = self.computeItem(at: indices.start)
     let subStop = self.computeItem(at: indices.stop)
 
@@ -318,8 +314,8 @@ public class PyRange: PyObject {
 
   /// static PyObject *
   /// compute_item(rangeobject *r, PyObject *i)
-  private func computeItem(at index: Int) -> BigInt {
-    return self.start.value + BigInt(index) * self.step.value
+  private func computeItem(at index: BigInt) -> BigInt {
+    return self.start.value + index * self.step.value
   }
 
   // MARK: - Start

@@ -1,3 +1,4 @@
+import BigInt
 import VioletCore
 
 // In CPython:
@@ -163,10 +164,13 @@ public class PySlice: PyObject {
   /// static PyObject*
   /// slice_indices(PySliceObject* self, PyObject* len)
   internal func indicesInSequence(length: PyObject) -> PyResult<PyObject> {
-    let lengthInt: Int
-    switch IndexHelper.intOrError(length) {
-    case .value(let v): lengthInt = v
-    case .error(let e): return .error(e)
+    let lengthInt: BigInt
+    switch IndexHelper.bigInt(length) {
+    case let .value(v):
+      lengthInt = v
+    case let .error(e),
+         let .notIndex(e):
+      return .error(e)
     }
 
     if lengthInt < 0 {
@@ -182,9 +186,9 @@ public class PySlice: PyObject {
   }
 
   internal struct GetLongIndicesResult {
-    var start: Int
-    var stop: Int
-    var step: Int
+    var start: BigInt
+    var stop: BigInt
+    var step: BigInt
   }
 
   /// int _PySlice_GetLongIndices(PySliceObject *self, PyObject *length, ...)
@@ -192,12 +196,13 @@ public class PySlice: PyObject {
   /// Compute slice indices given a slice and length.
   /// Used by slice.indices and rangeobject slicing.
   /// Assumes that `len` is a nonnegative.
-  internal func getLongIndices(length: Int) -> PyResult<GetLongIndicesResult> {
+  internal func getLongIndices(length: BigInt) -> PyResult<GetLongIndicesResult> {
     // swiftlint:disable:previous function_body_length
+    assert(length.isPositiveOrZero)
 
     // Convert step to an integer; raise for zero step.
-    var step = 1
-    switch self.extractIndex(self.step) {
+    var step: BigInt = 1
+    switch self.getLongIndex(self.step) {
     case .none: break
     case .index(let value):
       if value == 0 {
@@ -211,13 +216,13 @@ public class PySlice: PyObject {
     assert(step != 0)
 
     // Find lower and upper bounds for start and stop.
-    let isStepNegative = step < 0
-    let lower = isStepNegative ? -1 : 0
-    let upper = isStepNegative ? length - 1 : length
+    let isStepNegative = step.isNegative
+    let lower: BigInt = isStepNegative ? -1 : 0
+    let upper: BigInt = isStepNegative ? length - 1 : length
 
     // Compute start.
     var start = isStepNegative ? upper : lower
-    switch self.extractIndex(self.start) {
+    switch self.getLongIndex(self.start) {
     case .none: break
     case .index(let value):
       start = value
@@ -234,7 +239,7 @@ public class PySlice: PyObject {
 
     // Compute stop.
     var stop = isStepNegative ? lower : upper
-    switch self.extractIndex(self.stop) {
+    switch self.getLongIndex(self.stop) {
     case .none: break
     case .index(let value):
       stop = value
@@ -250,6 +255,30 @@ public class PySlice: PyObject {
     }
 
     return .value(GetLongIndicesResult(start: start, stop: stop, step: step))
+  }
+
+  internal enum GetLongIndexResult {
+    case none
+    case index(BigInt)
+    case error(PyBaseException)
+  }
+
+  /// CPython: evaluate_slice_index
+  private func getLongIndex(_ value: PyObject) -> GetLongIndexResult {
+    if value.isNone {
+      return .none
+    }
+
+    switch IndexHelper.bigInt(value) {
+    case .value(let value):
+      return .index(value)
+    case .notIndex:
+      let t = self.typeName
+      let msg = "\(t) indices must be integers or None or have an __index__ method"
+      return .error(Py.newTypeError(msg: msg))
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // MARK: - Unpack
@@ -324,36 +353,78 @@ public class PySlice: PyObject {
   /// PySlice_Unpack(PyObject *_r,
   ///                Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t *step)
   internal func unpack() -> PyResult<UnpackedIndices> {
-    // Prevent trap on "step = -step" (kind of assuming internal int workings)
-    let min = Int.min + 1
+    let min = Int.min
     let max = Int.max
+    assert(min + 1 <= -max)
 
-    var step = 1
-    switch self.extractIndex(self.step) {
-    case .none: break
-    case let .index(value):
+    let step: Int
+    switch self.unpackIndex(self.step) {
+    case .none:
+      step = 1
+
+    case .index(let value):
       if value == 0 {
         return .valueError("slice step cannot be zero")
       }
-      step = value
-    case let .error(e): return .error(e)
+      // Prevent trap on 'step = -step'
+      step = Swift.max(value, -max)
+
+    case .error(let e):
+      return .error(e)
     }
 
-    var start = step < 0 ? max : 0
-    switch self.extractIndex(self.start) {
-    case .none: break
+    let start: Int
+    switch self.unpackIndex(self.start) {
+    case .none: start = step < 0 ? max : 0
     case .index(let value): start = value
     case .error(let e): return .error(e)
     }
 
-    var stop = step < 0 ? min : max
-    switch self.extractIndex(self.stop) {
-    case .none: break
+    let stop: Int
+    switch self.unpackIndex(self.stop) {
+    case .none: stop = step < 0 ? min : max
     case .index(let value): stop = value
     case .error(let e): return .error(e)
     }
 
     return .value(UnpackedIndices(start: start, stop: stop, step: step))
+  }
+
+  private enum UnpackIndexResult {
+    case none
+    case index(Int)
+    case error(PyBaseException)
+  }
+
+  /// Extract a slice index from a `PyInt` or an object with the `__index__`.
+  ///
+  /// Silently reduce values larger than `Int.max` to `Int.max`,
+  /// and silently boost values less than `Int.min` to `Int.min`.
+  ///
+  /// int
+  /// _PyEval_SliceIndex(PyObject *v, Py_ssize_t *pi)
+  private func unpackIndex(_ value: PyObject) -> UnpackIndexResult {
+    if value.isNone {
+      return .none
+    }
+
+    switch IndexHelper.bigInt(value) {
+    case .value(let bigInt):
+      if let int = Int(exactly: bigInt) {
+        return .index(int)
+      }
+
+      let clampedInt = bigInt.isNegative ? Int.min : Int.max
+      return .index(clampedInt)
+
+    case .notIndex:
+      let t = self.typeName
+      let msg = "\(t) indices must be integers or None or have an __index__ method"
+      return .error(Py.newTypeError(msg: msg))
+
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // MARK: - Python new
@@ -387,32 +458,5 @@ public class PySlice: PyObject {
 
     let result = Py.newSlice(start: start, stop: stop, step: step)
     return .value(result)
-  }
-
-  // MARK: - Helpers
-
-  internal enum ExtractIndexResult {
-    case none
-    case index(Int)
-    case error(PyBaseException)
-  }
-
-  /// _PyEval_SliceIndex
-  /// evaluate_slice_index
-  private func extractIndex(_ value: PyObject) -> ExtractIndexResult {
-    if value is PyNone {
-      return .none
-    }
-
-    switch IndexHelper.intOrNone(value) {
-    case .value(let value):
-      return .index(value)
-    case .notIndex:
-      let t = self.typeName
-      let msg = "\(t) indices must be integers or None or have an __index__ method"
-      return .error(Py.newTypeError(msg: msg))
-    case .error(let e):
-      return .error(e)
-    }
   }
 }
