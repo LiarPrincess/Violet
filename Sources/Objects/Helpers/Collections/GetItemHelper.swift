@@ -21,7 +21,7 @@ extension GetItemHelper {
     collection: Collection,
     index: PyObject
   ) -> GetItemResult<Collection.Element> {
-    switch IndexHelper.intMaybe(index) {
+    switch IndexHelper.intOrNone(index) {
     case .value(let index):
       switch Self.getItem(collection: collection, index: index) {
       case let .value(v): return .single(v)

@@ -21,9 +21,9 @@ internal enum IndexHelper {
   /// Py_ssize_t PyNumber_AsSsize_t(PyObject *item, PyObject *err)
   /// _PyEval_SliceIndexNotNone
   /// ```
-  internal static func intMaybe(_ value: PyObject) -> IndexMaybe<Int> {
+  internal static func intOrNone(_ value: PyObject) -> IndexMaybe<Int> {
     let bigInt: BigInt
-    switch self.bigIntMaybe(value) {
+    switch self.bigIntOrNone(value) {
     case .value(let v): bigInt = v
     case .notIndex: return .notIndex
     case .error(let e): return .error(e)
@@ -42,8 +42,8 @@ internal enum IndexHelper {
   /// It will return error when:
   /// - object is not convertible to index
   /// - index is out of range of `int`
-  internal static func int(_ value: PyObject) -> PyResult<Int> {
-    switch IndexHelper.intMaybe(value) {
+  internal static func intOrError(_ value: PyObject) -> PyResult<Int> {
+    switch IndexHelper.intOrNone(value) {
     case .value(let v):
       return .value(v)
     case .notIndex:
@@ -59,7 +59,7 @@ internal enum IndexHelper {
   /// Try to extract `BigInt` index from `PyObject`.
   ///
   /// When object is not convertible to index it will return `.notIndex`.
-  internal static func bigIntMaybe(_ value: PyObject) -> IndexMaybe<BigInt> {
+  internal static func bigIntOrNone(_ value: PyObject) -> IndexMaybe<BigInt> {
     if let int = value as? PyInt {
       return .value(int.value)
     }
@@ -87,8 +87,8 @@ internal enum IndexHelper {
   ///
   /// It will return error when:
   /// - object is not convertible to index
-  internal static func bigInt(_ value: PyObject) -> PyResult<BigInt> {
-    switch IndexHelper.bigIntMaybe(value) {
+  internal static func bigIntOrError(_ value: PyObject) -> PyResult<BigInt> {
+    switch IndexHelper.bigIntOrNone(value) {
     case .value(let v):
       return .value(v)
     case .notIndex:

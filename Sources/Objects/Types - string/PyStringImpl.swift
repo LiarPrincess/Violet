@@ -342,7 +342,7 @@ extension PyStringImpl {
       return .value(nil)
     }
 
-    switch IndexHelper.int(value) {
+    switch IndexHelper.intOrError(value) {
     case let .value(int):
       var adjustedInt = int
       if adjustedInt < 0 {
@@ -1175,7 +1175,7 @@ internal enum StringGetItemResult<Item, Slice> {
 extension PyStringImpl {
 
   internal func getItem(index: PyObject) -> StringGetItemResult<Element, Builder.Result> {
-    switch IndexHelper.intMaybe(index) {
+    switch IndexHelper.intOrNone(index) {
     case .value(let index):
       switch self.getItem(index: index) {
       case let .value(r): return .item(r)

@@ -828,7 +828,7 @@ extension PyFloat {
       return .none
     }
 
-    switch IndexHelper.int(object) {
+    switch IndexHelper.intOrError(object) {
     case let .value(i):
       return .int(i)
     case let .error(e):

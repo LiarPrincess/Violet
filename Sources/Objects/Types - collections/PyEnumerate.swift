@@ -136,7 +136,7 @@ public class PyEnumerate: PyObject {
                              startFrom index: PyObject?) -> PyResult<PyEnumerate> {
     var startIndex = BigInt(0)
     if let index = index {
-      switch IndexHelper.bigInt(index) {
+      switch IndexHelper.bigIntOrError(index) {
       case let .value(i): startIndex = i
       case let .error(e): return .error(e)
       }

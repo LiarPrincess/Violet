@@ -14,7 +14,7 @@ extension DelItemHelper {
 
   internal static func delItem(collection: inout Collection,
                                index: PyObject) -> PyResult<PyNone> {
-    switch IndexHelper.intMaybe(index) {
+    switch IndexHelper.intOrNone(index) {
     case .value(let int):
       return Self.delItem(collection: &collection, index: int)
     case .notIndex:

@@ -164,7 +164,7 @@ public class PySlice: PyObject {
   /// slice_indices(PySliceObject* self, PyObject* len)
   internal func indicesInSequence(length: PyObject) -> PyResult<PyObject> {
     let lengthInt: Int
-    switch IndexHelper.int(length) {
+    switch IndexHelper.intOrError(length) {
     case .value(let v): lengthInt = v
     case .error(let e): return .error(e)
     }
@@ -404,7 +404,7 @@ public class PySlice: PyObject {
       return .none
     }
 
-    switch IndexHelper.intMaybe(value) {
+    switch IndexHelper.intOrNone(value) {
     case .value(let value):
       return .index(value)
     case .notIndex:

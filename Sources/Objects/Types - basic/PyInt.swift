@@ -813,7 +813,7 @@ public class PyInt: PyObject {
       return .value(0)
     }
 
-    return IndexHelper.bigInt(object)
+    return IndexHelper.bigIntOrError(object)
   }
 
   /// Return a pair `(q, r)` such that `a = b * q + r`, and
@@ -918,7 +918,7 @@ public class PyInt: PyObject {
 
     // Check if base is 'int'
     let baseInt: Int
-    switch IndexHelper.int(base) {
+    switch IndexHelper.intOrError(base) {
     case let .value(b): baseInt = b
     case let .error(e): return .error(e)
     }

@@ -330,7 +330,7 @@ internal struct PySequenceData {
   internal mutating func insert(index: PyObject,
                                 item: PyObject) -> PyResult<PyNone> {
     var parsedIndex: Int
-    switch IndexHelper.int(index) {
+    switch IndexHelper.intOrError(index) {
     case let .value(i): parsedIndex = i
     case let .error(e): return .error(e)
     }
@@ -492,7 +492,7 @@ internal struct PySequenceData {
       return .value(-1)
     }
 
-    return IndexHelper.int(index)
+    return IndexHelper.intOrError(index)
   }
 
   internal mutating func pop(index: Int,
@@ -531,7 +531,7 @@ internal struct PySequenceData {
       return .none
     }
 
-    switch IndexHelper.int(value) {
+    switch IndexHelper.intOrError(value) {
     case var .value(index):
       if index < 0 {
         index += self.elements.count

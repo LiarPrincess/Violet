@@ -245,7 +245,7 @@ public class PyRange: PyObject {
 
   // sourcery: pymethod = __getitem__
   public func getItem(index: PyObject) -> PyResult<PyObject> {
-    switch IndexHelper.intMaybe(index) {
+    switch IndexHelper.intOrNone(index) {
     case .value(let int):
       // swiftlint:disable:next array_init
       return self.getItem(index: BigInt(int)).map { $0 }
@@ -287,7 +287,7 @@ public class PyRange: PyObject {
 
   public func getItem(slice: PySlice) -> PyResult<PyRange> {
     let length: Int
-    switch IndexHelper.int(self.length) {
+    switch IndexHelper.intOrError(self.length) {
     case let .value(l): length = l
     case let .error(e): return .error(e)
     }

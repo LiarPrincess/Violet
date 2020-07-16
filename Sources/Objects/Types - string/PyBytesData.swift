@@ -284,7 +284,7 @@ internal struct PyBytesData: PyStringImpl {
 
   internal mutating func insert(index: PyObject, item: PyObject) -> PyResult<Void> {
     let parsedIndex: Int
-    switch IndexHelper.int(index) {
+    switch IndexHelper.intOrError(index) {
     case let .value(i): parsedIndex = i
     case let .error(e): return .error(e)
     }
@@ -367,7 +367,7 @@ internal struct PyBytesData: PyStringImpl {
       return .value(-1)
     }
 
-    return IndexHelper.int(index)
+    return IndexHelper.intOrError(index)
   }
 
   // MARK: - Set item
@@ -556,7 +556,7 @@ internal struct PyBytesData: PyStringImpl {
   }
 
   private static func new(fromCount object: PyObject) -> NewFromResult {
-    switch IndexHelper.intMaybe(object) {
+    switch IndexHelper.intOrNone(object) {
     case .value(let count):
       // swiftlint:disable:next empty_count
       guard count >= 0 else {
@@ -620,7 +620,7 @@ internal struct PyBytesData: PyStringImpl {
 
   internal static func asByte(_ value: PyObject) -> PyResult<UInt8> {
     let int: Int
-    switch IndexHelper.int(value) {
+    switch IndexHelper.intOrError(value) {
     case let .value(i): int = i
     case let .error(e): return .error(e)
     }

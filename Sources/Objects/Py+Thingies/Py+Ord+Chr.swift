@@ -11,7 +11,7 @@ extension PyInstance {
     // Integer Unicode code point -> string representing a character
 
     let bigInt: BigInt
-    switch IndexHelper.bigIntMaybe(object) {
+    switch IndexHelper.bigIntOrNone(object) {
     case .value(let i):
       bigInt = i
     case .notIndex:
