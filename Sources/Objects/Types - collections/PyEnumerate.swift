@@ -136,10 +136,12 @@ public class PyEnumerate: PyObject {
                              startFrom index: PyObject?) -> PyResult<PyEnumerate> {
     var startIndex = BigInt(0)
     if let index = index {
-      let unwrappedIndex = IndexHelper.bigInt(index)
-      switch unwrappedIndex.asResult() {
-      case let .value(i): startIndex = i
-      case let .error(e): return .error(e)
+      switch IndexHelper.bigInt(index) {
+      case let .value(i):
+        startIndex = i
+      case let .error(e),
+           let .notIndex(e):
+        return .error(e)
       }
     }
 

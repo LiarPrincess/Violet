@@ -21,9 +21,7 @@ extension PyInstance {
   private func toNumberString(object: PyObject,
                               radix: Int,
                               prefix: String) -> PyResult<PyObject> {
-    let index = IndexHelper.bigInt(object)
-
-    switch index.asResult() {
+    switch IndexHelper.bigInt(object) {
     case let .value(bigInt):
       let sign = bigInt < 0 ? "-" : ""
 
@@ -33,7 +31,8 @@ extension PyInstance {
       let result = sign + prefix + number
       return .value(self.newString(result))
 
-    case let .error(e):
+    case let .error(e),
+         let .notIndex(e):
       return .error(e)
     }
   }

@@ -822,8 +822,13 @@ public class PyInt: PyObject {
       return .value(0)
     }
 
-    let index = IndexHelper.bigInt(object)
-    return index.asResult()
+    switch IndexHelper.bigInt(object) {
+    case let .value(int):
+      return .value(int)
+    case let .error(e),
+         let .notIndex(e):
+      return .error(e)
+    }
   }
 
   /// Return a pair `(q, r)` such that `a = b * q + r`, and

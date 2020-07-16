@@ -273,9 +273,13 @@ extension PyInstance {
       return .value(objectInt)
     }
 
-    let index = IndexHelper.bigInt(object)
-    let indexResult = index.asResult()
-    return indexResult.map(self.newInt(_:))
+    switch IndexHelper.bigInt(object) {
+    case let .value(int):
+      return .value(self.newInt(int))
+    case let .error(e),
+         let .notIndex(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Enumerate

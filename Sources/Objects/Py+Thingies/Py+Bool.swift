@@ -74,11 +74,11 @@ extension PyInstance {
   private func interpret__len__asBool(len: PyObject) -> PyResult<Bool> {
     // Do you even 'int', bro?
     let bigInt: BigInt
-    let index = IndexHelper.bigInt(len)
-    switch index.asResult() {
+    switch IndexHelper.bigInt(len) {
     case let .value(b):
       bigInt = b
-    case let .error(e):
+    case let .error(e),
+         let .notIndex(e):
       return .error(e)
     }
 

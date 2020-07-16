@@ -72,17 +72,6 @@ internal enum IndexHelper {
     case value(BigInt)
     case notIndex(PyBaseException)
     case error(PyBaseException)
-
-    // TODO: Remove
-    internal func asResult() -> PyResult<BigInt> {
-      switch self {
-      case let .value(int):
-        return .value(int)
-      case let .notIndex(e),
-           let .error(e):
-        return .error(e)
-      }
-    }
   }
 
   /// Try to extract `BigInt` index from `PyObject`.
