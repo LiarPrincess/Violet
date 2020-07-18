@@ -121,6 +121,46 @@ class SmiPropertyTests: XCTestCase {
     XCTAssertEqual(smi.magnitude, BigInt(expected), file: file, line: line)
   }
 
+  // MARK: - Bit width
+
+  func test_bitWidth_trivial() {
+    let zero = Smi(Smi.Storage(0))
+    XCTAssertEqual(zero.bitWidth, 1) //  0 is just 0
+
+    let plus1 = Smi(Smi.Storage(1))
+    XCTAssertEqual(plus1.bitWidth, 2) // 1 needs '0' prefix -> '01'
+
+    let minus1 = Smi(Smi.Storage(-1))
+    XCTAssertEqual(minus1.bitWidth, 1) // -1 is just 1
+  }
+
+  func test_bitWidth_positivePowersOf2() {
+    for (int, power, expected) in BitWidthTestCases.positivePowersOf2 {
+      guard let smi = Smi(int) else {
+        continue
+      }
+
+      XCTAssertEqual(smi.bitWidth, expected, "for \(int) (2^\(power))")
+    }
+  }
+
+  func test_bitWidth_negativePowersOf2() {
+    for (int, power, expected) in BitWidthTestCases.negativePowersOf2 {
+      guard let smi = Smi(int) else {
+        continue
+      }
+
+      XCTAssertEqual(smi.bitWidth, expected, "for \(int) (2^\(power))")
+    }
+  }
+
+  func test_bitWidth_smiTestCases() {
+    for (value, expected) in BitWidthTestCases.smi {
+      let smi = Smi(value)
+      XCTAssertEqual(smi.bitWidth, expected, "\(value)")
+    }
+  }
+
   // MARK: - Min required width
 
   func test_minRequiredWidth_trivial() {

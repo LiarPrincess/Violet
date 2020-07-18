@@ -41,32 +41,6 @@ class BigIntHeapBitTests: XCTestCase {
     }
   }
 
-  // MARK: - Bit width
-
-  // Just need to check if we return the same thing as 'minRequiredWidth'
-  func test_bitWidth_singleWord() {
-    for int in generateIntValues(countButNotReally: 100) {
-      let word = Word(bitPattern: int)
-
-      let positive = BigIntHeap(isNegative: false, words: word)
-      XCTAssertEqual(positive.bitWidth, positive.minRequiredWidth)
-
-      let negative = BigIntHeap(isNegative: true, words: word)
-      XCTAssertEqual(negative.bitWidth, negative.minRequiredWidth)
-    }
-  }
-
-  // Just need to check if we return the same thing as 'minRequiredWidth'
-  func test_bitWidth_multipleWords() {
-    for p in generateHeapValues(countButNotReally: 100) {
-      let positive = BigIntHeap(isNegative: false, words: p.words)
-      XCTAssertEqual(positive.bitWidth, positive.minRequiredWidth)
-
-      let negative = BigIntHeap(isNegative: true, words: p.words)
-      XCTAssertEqual(negative.bitWidth, negative.minRequiredWidth)
-    }
-  }
-
   // MARK: - Min required width
 
   func test_minRequiredWidth_smi() {

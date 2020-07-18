@@ -31,10 +31,6 @@ internal struct Smi: Hashable, CustomStringConvertible, CustomDebugStringConvert
     return self.value.words
   }
 
-  internal var bitWidth: Int {
-    return self.minRequiredWidth
-  }
-
   internal var trailingZeroBitCount: Int {
     // Exception from rule:
     // If we have infinite number of digits,

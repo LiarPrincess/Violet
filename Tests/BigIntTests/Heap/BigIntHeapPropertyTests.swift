@@ -125,4 +125,72 @@ class BigIntHeapPropertyTests: XCTestCase {
       XCTAssertFalse(negative.hasMagnitudeOfOne)
     }
   }
+
+  // MARK: - Bit width
+
+  func test_bitWidth_trivial() {
+    let zero = BigIntHeap(0)
+    XCTAssertEqual(zero.bitWidth, 1) //  0 is just 0
+
+    let plus1 = BigIntHeap(1)
+    XCTAssertEqual(plus1.bitWidth, 2) // 1 needs '0' prefix -> '01'
+
+    let minus1 = BigIntHeap(-1)
+    XCTAssertEqual(minus1.bitWidth, 1) // -1 is just 1
+  }
+
+  func test_bitWidth_positivePowersOf2() {
+    for (int, power, expected) in BitWidthTestCases.positivePowersOf2 {
+      let heap = BigIntHeap(int)
+      XCTAssertEqual(heap.bitWidth, expected, "for \(int) (2^\(power))")
+    }
+  }
+
+  func test_bitWidth_negativePowersOf2() {
+    for (int, power, expected) in BitWidthTestCases.negativePowersOf2 {
+      let heap = BigIntHeap(int)
+      XCTAssertEqual(heap.bitWidth, expected, "for \(int) (2^\(power))")
+    }
+  }
+
+  func test_bitWidth_smiTestCases() {
+    for (value, expected) in BitWidthTestCases.smi {
+      let heap = BigIntHeap(value)
+      XCTAssertEqual(heap.bitWidth, expected, "\(value)")
+    }
+  }
+
+  func test_bitWidth_multipleWords_positivePowersOf2() {
+    let correction = BitWidthTestCases.positivePowersOf2Correction
+
+    for zeroWordCount in [1, 2] {
+      let zeroWords = [Word](repeating: 0, count: zeroWordCount)
+      let zeroWordsBitWidth = zeroWordCount * Word.bitWidth
+
+      for (power, value) in allPositivePowersOf2(type: Word.self) {
+        let words = zeroWords + [value]
+        let heap = BigIntHeap(isNegative: false, words: words)
+
+        let expected = power + correction + zeroWordsBitWidth
+        XCTAssertEqual(heap.bitWidth, expected, "\(heap)")
+      }
+    }
+  }
+
+  func test_bitWidth_multipleWords_negativePowersOf2() {
+    let correction = BitWidthTestCases.negativePowersOf2Correction
+
+    for zeroWordCount in [1, 2] {
+      let zeroWords = [Word](repeating: 0, count: zeroWordCount)
+      let zeroWordsBitWidth = zeroWordCount * Word.bitWidth
+
+      for (power, value) in allPositivePowersOf2(type: Word.self) {
+        let words = zeroWords + [value]
+        let heap = BigIntHeap(isNegative: true, words: words)
+
+        let expected = power + correction + zeroWordsBitWidth
+        XCTAssertEqual(heap.bitWidth, expected, "\(heap)")
+      }
+    }
+  }
 }

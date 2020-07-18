@@ -53,13 +53,6 @@ extension BigIntHeap {
     return self.asTwoComplement()
   }
 
-  // MARK: - Bit width
-
-  /// The minimum number of bits required to represent this integer in binary.
-  internal var bitWidth: Int {
-    return self.minRequiredWidth
-  }
-
   internal var minRequiredWidth: Int {
     guard let last = self.storage.last else {
       assert(self.isZero)

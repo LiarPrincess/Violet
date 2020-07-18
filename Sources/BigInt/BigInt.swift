@@ -69,19 +69,6 @@ public struct BigInt:
     return Words(self)
   }
 
-  /// The number of bits used for the underlying binary representation of
-  /// values of this type.
-  ///
-  /// For example: bit width of a `Int64` instance is 64.
-  public var bitWidth: Int {
-    switch self.value {
-    case let .smi(smi):
-      return smi.bitWidth
-    case let .heap(heap):
-      return heap.bitWidth
-    }
-  }
-
   /// The number of trailing zeros in this value’s binary representation.
   ///
   /// Will return `0` for `0`.
