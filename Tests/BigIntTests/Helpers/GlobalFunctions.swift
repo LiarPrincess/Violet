@@ -63,32 +63,49 @@ internal func allPossiblePairings<T, S>(lhs: [T], rhs: [S]) -> PossiblePairings<
 internal typealias PowerOf2<T> = (power: Int, value: T)
 
 /// `1, 2, 4, 8, 16, 32, 64, 128, 256, 512, etc…`
-internal func allPositivePowersOf2<T: FixedWidthInteger & BinaryInteger>(
+internal func allPositivePowersOf2<T: FixedWidthInteger>(
   type: T.Type
 ) -> [PowerOf2<T>] {
   var result = [PowerOf2<T>]()
   result.reserveCapacity(T.bitWidth)
 
-  for shift in 0..<(T.bitWidth - 1) {
-    let value = T(1 << shift)
-    result.append(PowerOf2(power: shift, value: value))
-  }
+  var value = T(1)
+  var power = 0
+  result.append(PowerOf2(power: power, value: value))
 
-  return result
+  while true {
+    let (newValue, overflow) = value.multipliedReportingOverflow(by: 2)
+    if overflow {
+      return result
+    }
+
+    value = newValue
+    power += 1
+    result.append(PowerOf2(power: power, value: value))
+  }
 }
 
 /// `-1, -2, -4, -8, -16, -32, -64, -128, -256, -512, etc…`
-internal func allNegativePowersOf2<T: FixedWidthInteger & BinaryInteger>(
+internal func allNegativePowersOf2<T: FixedWidthInteger>(
   type: T.Type
 ) -> [PowerOf2<T>] {
+  assert(T.isSigned)
+
   var result = [PowerOf2<T>]()
   result.reserveCapacity(T.bitWidth)
 
-  for shift in 0..<T.bitWidth {
-    let int = -(1 << shift)
-    let value = T(int)
-    result.append(PowerOf2(power: shift, value: value))
-  }
+  var value = T(-1)
+  var power = 0
+  result.append(PowerOf2(power: power, value: value))
 
-  return result
+  while true {
+    let (newValue, overflow) = value.multipliedReportingOverflow(by: 2)
+    if overflow {
+      return result
+    }
+
+    value = newValue
+    power += 1
+    result.append(PowerOf2(power: power, value: value))
+  }
 }
