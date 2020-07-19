@@ -719,12 +719,18 @@ public struct BigInt:
   }
 
   public var debugDescription: String {
-    switch self.value {
-    case let .smi(smi):
-      return smi.debugDescription
-    case let .heap(heap):
-      return heap.debugDescription
-    }
+    let value = String(self, radix: 10, uppercase: false)
+
+    let storage: String = {
+      switch self.value {
+      case let .smi(smi):
+        return smi.debugDescription
+      case let .heap(heap):
+        return heap.debugDescription
+      }
+    }()
+
+    return "\(value) (storage: \(storage))"
   }
 
   // 'toString' because we Java now
