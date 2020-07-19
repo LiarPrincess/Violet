@@ -121,6 +121,17 @@ class SmiPropertyTests: XCTestCase {
     XCTAssertEqual(smi.magnitude, BigInt(expected), file: file, line: line)
   }
 
+  // MARK: - Words
+
+  func test_words() {
+    for storage in generateSmiValues(countButNotReally: 100) {
+      let smi = Smi(storage)
+      let result = Array(smi.words)
+      let expected = Array(storage.words)
+      XCTAssertEqual(result, expected, "\(storage)")
+    }
+  }
+
   // MARK: - Bit width
 
   func test_bitWidth_trivial() {

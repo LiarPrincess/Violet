@@ -16,18 +16,40 @@ class BigIntPropertyTests: XCTestCase {
 
   // MARK: - Words
 
-  func test_words() {
-    for int in generateIntValues(countButNotReally: 100) {
-      let value = BigInt(int)
+  func test_words_zero() {
+    let value = BigInt(0)
+    XCTAssertWords(value, WordsTestCases.zeroWords)
+  }
 
-      let result = value.words
-      let expected = int.words
+  func test_words_int() {
+    for (value, expected) in WordsTestCases.int {
+      let heap = BigIntHeap(value)
+      let bigInt = BigInt(heap)
+      XCTAssertWords(bigInt, expected)
+    }
+  }
 
-      XCTAssertEqual(result.count, expected.count, "\(int)")
+  func test_words_multipleWords_positive() {
+    for (words, expected) in WordsTestCases.heapPositive {
+      let heap = BigIntHeap(isNegative: false, words: words)
+      let bigInt = BigInt(heap)
+      XCTAssertWords(bigInt, expected)
+    }
+  }
 
-      for (r, e) in zip(result, expected) {
-        XCTAssertEqual(r, e, "\(int)")
-      }
+  func test_words_multipleWords_negative_powerOf2() {
+    for (words, expected) in WordsTestCases.heapNegative_powerOf2 {
+      let heap = BigIntHeap(isNegative: true, words: words)
+      let bigInt = BigInt(heap)
+      XCTAssertWords(bigInt, expected)
+    }
+  }
+
+  func test_words_multipleWords_negative_notPowerOf2() {
+    for (words, expected) in WordsTestCases.heapNegative_notPowerOf2 {
+      let heap = BigIntHeap(isNegative: true, words: words)
+      let bigInt = BigInt(heap)
+      XCTAssertWords(bigInt, expected)
     }
   }
 

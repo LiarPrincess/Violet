@@ -1,6 +1,8 @@
 import XCTest
 @testable import BigInt
 
+// swiftlint:disable file_length
+
 private typealias Word = BigIntStorage.Word
 
 class BigIntHeapPropertyTests: XCTestCase {
@@ -123,6 +125,41 @@ class BigIntHeapPropertyTests: XCTestCase {
 
       let negative = BigIntHeap(isNegative: true, words: word0, word1)
       XCTAssertFalse(negative.hasMagnitudeOfOne)
+    }
+  }
+
+  // MARK: - Words
+
+  func test_words_zero() {
+    let value = BigIntHeap(0)
+    XCTAssertWords(value, WordsTestCases.zeroWords)
+  }
+
+  func test_words_int() {
+    for (value, expected) in WordsTestCases.int {
+      let heap = BigIntHeap(value)
+      XCTAssertWords(heap, expected)
+    }
+  }
+
+  func test_words_multipleWords_positive() {
+    for (words, expected) in WordsTestCases.heapPositive {
+      let heap = BigIntHeap(isNegative: false, words: words)
+      XCTAssertWords(heap, expected)
+    }
+  }
+
+  func test_words_multipleWords_negative_powerOf2() {
+    for (words, expected) in WordsTestCases.heapNegative_powerOf2 {
+      let heap = BigIntHeap(isNegative: true, words: words)
+      XCTAssertWords(heap, expected)
+    }
+  }
+
+  func test_words_multipleWords_negative_notPowerOf2() {
+    for (words, expected) in WordsTestCases.heapNegative_notPowerOf2 {
+      let heap = BigIntHeap(isNegative: true, words: words)
+      XCTAssertWords(heap, expected)
     }
   }
 

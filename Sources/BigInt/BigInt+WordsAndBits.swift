@@ -272,7 +272,7 @@ extension BigIntHeap {
 
       let bitWidth = heap.bitWidth
       let (q, r) = bitWidth.quotientAndRemainder(dividingBy: Word.bitWidth)
-      let signWord = r == 0 ? 0 : 1 // This also handles '0' case
+      let signWord = r == 0 ? 0 : 1 // This also handles additional word for '0'
       self._count = q + signWord
 
       switch heap.isPositive {
