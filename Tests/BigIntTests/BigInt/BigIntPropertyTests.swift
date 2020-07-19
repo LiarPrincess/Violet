@@ -83,6 +83,24 @@ class BigIntPropertyTests: XCTestCase {
     }
   }
 
+  func test_bitWidth_multipleWords_negativePowersOf2() {
+    let correction = BitWidthTestCases.negativePowersOf2Correction
+
+    for zeroWordCount in [1, 2] {
+      let zeroWords = [Word](repeating: 0, count: zeroWordCount)
+      let zeroWordsBitWidth = zeroWordCount * Word.bitWidth
+
+      for (power, value) in allPositivePowersOf2(type: Word.self) {
+        let words = zeroWords + [value]
+        let heap = BigIntHeap(isNegative: true, words: words)
+        let bigInt = BigInt(heap)
+
+        let expected = power + correction + zeroWordsBitWidth
+        XCTAssertEqual(bigInt.bitWidth, expected, "\(heap)")
+      }
+    }
+  }
+
   // MARK: - Min required width
 
   func test_minRequiredWidth_smi() {
@@ -102,6 +120,20 @@ class BigIntPropertyTests: XCTestCase {
       } catch {
         XCTFail("\(string), error: \(error)")
       }
+    }
+  }
+
+  func test_minRequiredWidth_positivePowersOf2() {
+    for (int, power, expected) in MinRequiredWidthTestCases.positivePowersOf2 {
+      let heap = BigInt(int)
+      XCTAssertEqual(heap.minRequiredWidth, expected, "for \(int) (2^\(power))")
+    }
+  }
+
+  func test_minRequiredWidth_negativePowersOf2() {
+    for (int, power, expected) in MinRequiredWidthTestCases.negativePowersOf2 {
+      let heap = BigInt(int)
+      XCTAssertEqual(heap.minRequiredWidth, expected, "for \(int) (2^\(power))")
     }
   }
 

@@ -164,53 +164,37 @@ class SmiPropertyTests: XCTestCase {
   // MARK: - Min required width
 
   func test_minRequiredWidth_trivial() {
-    self.minRequiredWidth(all0, expected: 0)
-    self.minRequiredWidth(all1, expected: 1) // -1 requires 1 bit
+    let zero = Smi(all0)
+    XCTAssertEqual(zero.minRequiredWidth, 0)
+
+    let minus1 = Smi(all1)
+    XCTAssertEqual(minus1.minRequiredWidth, 1) // -1 requires 1 bit
   }
 
-  func test_minRequiredWidth_allPositivePowersOf2() {
-    for (power, value) in allPositivePowersOf2(type: Storage.self) {
-      // >>> for i in range(1, 10):
-      // ...     value = 1 << i
-      // ...     print(i, value, value.bit_length())
-      // ...
-      // 1 2 2
-      // 2 4 3
-      // 3 8 4
-      // 4 16 5
-      let minRequiredWidth = power + 1
-      self.minRequiredWidth(value, expected: minRequiredWidth)
+  func test_minRequiredWidth_positivePowersOf2() {
+    for (int, power, expected) in MinRequiredWidthTestCases.positivePowersOf2 {
+      guard let smi = Smi(int) else {
+        continue
+      }
+
+      XCTAssertEqual(smi.minRequiredWidth, expected, "for \(int) (2^\(power))")
     }
   }
 
-  func test_minRequiredWidth_allNegativePowersOf2() {
-    for (power, value) in allNegativePowersOf2(type: Storage.self) {
-      // >>> for i in range(1, 10):
-      // ...     value = 1 << i
-      // ...     print(i, (-value).bit_length())
-      //
-      // 1 2
-      // 2 3
-      // 3 4
-      // (etc)
-      let minRequiredWidth = power + 1
-      self.minRequiredWidth(value, expected: minRequiredWidth)
+  func test_minRequiredWidth_negativePowersOf2() {
+    for (int, power, expected) in MinRequiredWidthTestCases.negativePowersOf2 {
+      guard let smi = Smi(int) else {
+        continue
+      }
+
+      XCTAssertEqual(smi.minRequiredWidth, expected, "for \(int) (2^\(power))")
     }
   }
 
-  func test_minRequiredWidth_predefined() {
-    for (smi, expected) in MinRequiredWidthTestCases.smi {
-      let int = BigInt(smi)
-      let result = int.minRequiredWidth
-      XCTAssertEqual(result, expected, "\(smi)")
+  func test_minRequiredWidth_smiTestCases() {
+    for (value, expected) in MinRequiredWidthTestCases.smi {
+      let smi = Smi(value)
+      XCTAssertEqual(smi.minRequiredWidth, expected, "\(value)")
     }
-  }
-
-  private func minRequiredWidth(_ value: Int32,
-                                expected: Int,
-                                file: StaticString = #file,
-                                line: UInt = #line) {
-    let smi = Smi(value)
-    XCTAssertEqual(smi.minRequiredWidth, expected, file: file, line: line)
   }
 }

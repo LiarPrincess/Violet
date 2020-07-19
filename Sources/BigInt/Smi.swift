@@ -47,14 +47,6 @@ internal struct Smi: Hashable, CustomStringConvertible, CustomDebugStringConvert
     return BigInt(result)
   }
 
-  internal var minRequiredWidth: Int {
-    if self.isZero {
-      return 0
-    }
-
-    return self.value.bitsInDigit()
-  }
-
   // MARK: - Init
 
   internal init(_ value: Storage) {

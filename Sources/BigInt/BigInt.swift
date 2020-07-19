@@ -80,25 +80,6 @@ public struct BigInt:
       return heap.trailingZeroBitCount
     }
   }
-
-  /// Minimal number of bits necessary to represent `self` in binary.
-  /// `bit_length` in Python.
-  ///
-  /// ```py
-  /// >>> bin(37)
-  /// '0b100101'
-  /// >>> (37).bit_length()
-  /// 6
-  /// ```
-  public var minRequiredWidth: Int {
-    switch self.value {
-    case let .smi(smi):
-      return smi.minRequiredWidth
-    case let .heap(heap):
-      return heap.minRequiredWidth
-    }
-  }
-
   public var isOdd: Bool {
     return !self.isEven
   }

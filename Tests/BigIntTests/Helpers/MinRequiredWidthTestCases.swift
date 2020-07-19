@@ -147,4 +147,51 @@ internal enum MinRequiredWidthTestCases {
     ("199490024251093353013717703219814220032216652412483", 168),
     ("-199490024251093353013717703219814220032216652412483", 168)
   ]
+
+  // MARK: - Powers of 2
+
+  internal typealias PowerTestCase = (value: Int, power: Int, expected: Int)
+
+  internal static var positivePowersOf2: [PowerTestCase] = {
+    // >>> for i in range(1, 10):
+    // ...     value = 1 << i
+    // ...     print(i, value, value.bit_length())
+    // ...
+    // 1 2 2
+    // 2 4 3
+    // 3 8 4
+    // 4 16 5
+    // (etc)
+
+    var result = [PowerTestCase]()
+
+    for (power, value) in allPositivePowersOf2(type: Int.self) {
+      let minRequiredWidth = power + 1
+      let tuple = (value, power, minRequiredWidth)
+      result.append(tuple)
+    }
+
+    return result
+  }()
+
+  internal static var negativePowersOf2: [PowerTestCase] = {
+    // >>> for i in range(1, 10):
+    // ...     value = 1 << i
+    // ...     print(i, (-value).bit_length())
+    //
+    // 1 2
+    // 2 3
+    // 3 4
+    // (etc)
+
+    var result = [PowerTestCase]()
+
+    for (power, value) in allNegativePowersOf2(type: Int.self) {
+      let minRequiredWidth = power + 1
+      let tuple = (value, power, minRequiredWidth)
+      result.append(tuple)
+    }
+
+    return result
+  }()
 }

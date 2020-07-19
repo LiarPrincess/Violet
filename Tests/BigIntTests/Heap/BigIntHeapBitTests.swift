@@ -41,34 +41,6 @@ class BigIntHeapBitTests: XCTestCase {
     }
   }
 
-  // MARK: - Min required width
-
-  func test_minRequiredWidth_smi() {
-    for (smi, expected) in MinRequiredWidthTestCases.smi {
-      let heap = BigIntHeap(smi)
-      let result = heap.minRequiredWidth
-      XCTAssertEqual(result, expected, "\(smi)")
-    }
-  }
-
-  func test_minRequiredWidth_heap() {
-    for (string, expected) in MinRequiredWidthTestCases.heap {
-      do {
-        let int = try BigInt(string)
-
-        switch int.value {
-        case .smi:
-          assert(false) // We have separate test for this
-        case .heap(let h):
-          let result = h.minRequiredWidth
-          XCTAssertEqual(result, expected, string)
-        }
-      } catch {
-        XCTFail("\(string), error: \(error)")
-      }
-    }
-  }
-
   // MARK: - Trailing zero bit count
 
   func test_trailingZeroBitCount_zero() {

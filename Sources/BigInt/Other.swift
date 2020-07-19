@@ -55,35 +55,6 @@ extension FixedWidthInteger {
   }
 }
 
-// MARK: - FixedWidthInteger + bitsInDigit
-
-private let bitLengthTable = [
-  0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4,
-  5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5
-]
-
-extension FixedWidthInteger {
-
-  /// Returns the unique integer `k` such that
-  /// `2**(k-1) <= d < 2**k` if d is nonzero, else `0`.
-  ///
-  /// CPython:
-  /// static int
-  /// bits_in_digit(digit d)
-  internal func bitsInDigit() -> Int {
-    var result = 0
-    var d = self.magnitude
-
-    while d >= 32 {
-      result += 6
-      d >>= 6
-    }
-
-    result += bitLengthTable[Int(d)]
-    return result
-  }
-}
-
 // MARK: - FixedWidthInteger + maxRepresentablePower
 
 extension FixedWidthInteger {

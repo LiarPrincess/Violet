@@ -193,4 +193,46 @@ class BigIntHeapPropertyTests: XCTestCase {
       }
     }
   }
+
+  // MARK: - Min required width
+
+  func test_minRequiredWidth_smi() {
+    for (smi, expected) in MinRequiredWidthTestCases.smi {
+      let heap = BigIntHeap(smi)
+      let result = heap.minRequiredWidth
+      XCTAssertEqual(result, expected, "\(smi)")
+    }
+  }
+
+  func test_minRequiredWidth_heap() {
+    for (string, expected) in MinRequiredWidthTestCases.heap {
+      do {
+        let int = try BigInt(string)
+
+        switch int.value {
+        case .smi:
+          assert(false) // We have separate test for this
+        case .heap(let h):
+          let result = h.minRequiredWidth
+          XCTAssertEqual(result, expected, string)
+        }
+      } catch {
+        XCTFail("\(string), error: \(error)")
+      }
+    }
+  }
+
+  func test_minRequiredWidth_positivePowersOf2() {
+    for (int, power, expected) in MinRequiredWidthTestCases.positivePowersOf2 {
+      let heap = BigIntHeap(int)
+      XCTAssertEqual(heap.minRequiredWidth, expected, "for \(int) (2^\(power))")
+    }
+  }
+
+  func test_minRequiredWidth_negativePowersOf2() {
+    for (int, power, expected) in MinRequiredWidthTestCases.negativePowersOf2 {
+      let heap = BigIntHeap(int)
+      XCTAssertEqual(heap.minRequiredWidth, expected, "for \(int) (2^\(power))")
+    }
+  }
 }

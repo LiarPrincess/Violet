@@ -53,19 +53,6 @@ extension BigIntHeap {
     return self.asTwoComplement()
   }
 
-  internal var minRequiredWidth: Int {
-    guard let last = self.storage.last else {
-      assert(self.isZero)
-      return 0
-    }
-
-    assert(!last.isZero)
-
-    let fullWordWidth = (self.storage.count - 1) * Word.bitWidth
-    let partialWordWidth = last.bitsInDigit()
-    return fullWordWidth + partialWordWidth
-  }
-
   // MARK: - Trailing zero bit count
 
   /// The number of trailing zero bits in the binary representation of this integer.
