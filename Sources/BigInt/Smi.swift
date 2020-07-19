@@ -30,18 +30,6 @@ internal struct Smi: Hashable, CustomStringConvertible, CustomDebugStringConvert
   internal var words: Words {
     return self.value.words
   }
-
-  internal var trailingZeroBitCount: Int {
-    // Exception from rule:
-    // If we have infinite number of digits,
-    // then the only thing that we can return is '0'.
-    if self.isZero {
-      return 0
-    }
-
-    return self.value.trailingZeroBitCount
-  }
-
   internal var magnitude: BigInt {
     let result = self.value.magnitude
     return BigInt(result)

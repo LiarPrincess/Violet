@@ -68,18 +68,6 @@ public struct BigInt:
   public var words: Words {
     return Words(self)
   }
-
-  /// The number of trailing zeros in this value’s binary representation.
-  ///
-  /// Will return `0` for `0`.
-  public var trailingZeroBitCount: Int {
-    switch self.value {
-    case let .smi(smi):
-      return smi.trailingZeroBitCount
-    case let .heap(heap):
-      return heap.trailingZeroBitCount
-    }
-  }
   public var isOdd: Bool {
     return !self.isEven
   }
