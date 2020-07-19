@@ -39,37 +39,6 @@ extension BigIntStorage.Word {
 
 extension BigIntHeap {
 
-  // MARK: - Words
-
-  /// A collection containing the words of this value’s binary representation,
-  /// in order from the least significant to most significant.
-  internal var words: BigIntStorage {
-    if self.isZero {
-      var singleZeroElement = BigIntStorage(minimumCapacity: 1)
-      singleZeroElement.append(0)
-      return singleZeroElement
-    }
-
-    return self.asTwoComplement()
-  }
-
-  // MARK: - Trailing zero bit count
-
-  /// The number of trailing zero bits in the binary representation of this integer.
-  ///
-  /// - Important:
-  /// `0` is considered to have zero trailing zero bits.
-  internal var trailingZeroBitCount: Int {
-    for (index, word) in self.storage.enumerated() {
-      if word != 0 { // swiftlint:disable:this for_where
-        return index * Word.bitWidth + word.trailingZeroBitCount
-      }
-    }
-
-    assert(self.isZero)
-    return 0
-  }
-
   // MARK: - Negate
 
   internal mutating func negate() {

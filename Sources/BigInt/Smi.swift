@@ -5,7 +5,6 @@
 internal struct Smi: Hashable, CustomStringConvertible, CustomDebugStringConvertible {
 
   internal typealias Storage = Int32
-  internal typealias Words = Storage.Words
 
   // MARK: - Properties
 
@@ -27,9 +26,6 @@ internal struct Smi: Hashable, CustomStringConvertible, CustomDebugStringConvert
     return self.value & 0b1 == 0
   }
 
-  internal var words: Words {
-    return self.value.words
-  }
   internal var magnitude: BigInt {
     let result = self.value.magnitude
     return BigInt(result)

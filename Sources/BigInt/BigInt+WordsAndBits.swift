@@ -45,29 +45,6 @@
 // |  15 | 0000 1111 |        yes |     5 |  -15 |  1111 0001 |        yes |     5 |
 // +-----+-----------+------------+-------+------+------------+------------+-------+
 
-// From table above:
-private func needsSignBit(value: BigIntHeap) -> Bool {
-  guard let last = value.storage.last else {
-    assert(value.isZero)
-    return false
-  }
-
-  if last.isPositive {
-    return hasMostSignificantBit1(value: last)
-  }
-
-  // We are negative
-  // We only care about numbers with '1' as most significant bit
-  // (we store magnitude - look at the 'positive - bin' column)
-  guard hasMostSignificantBit1(value: last) else {
-    return false
-  }
-
-  // Special case for row with decimal value of 8 (1 followed by 0000000…)
-  let withoutMostSignificant = last << 1
-  return withoutMostSignificant != 0
-}
-
 private func hasMostSignificantBit1<T: FixedWidthInteger>(value: T) -> Bool {
   let mostSignificantBit = value >> (T.bitWidth - 1)
   return mostSignificantBit == 1
@@ -191,7 +168,7 @@ extension BigIntHeap {
     // the inversion. Basically all of the numbers do this except for the word
     // that has all bits set to 1 (example for 4-bit word: 1111 + 1 = 1 0000).
     // So… inverse of which number has all bits set to '1'? Well… '0'!
-    // let indexWhichSwallowsPlus1 = self.storage.firstIndex { $0 != 0 } ??
+    // let indexWhichSwallowsPlus1 = self.storage.firstIndex { $0 != 0 } ?? nope
     //
     // Step 2: If it was not the last word
     // If one of our 'inner words' swallowed '1' then we definitelly do not need
@@ -200,7 +177,7 @@ extension BigIntHeap {
     //   let leadingZeroBitCount = complement.leadingZeroBitCount
     //   return wordsWidth - leadingZeroBitCount
     //
-    // Step 3: If 'last' is the one that handles '+1' thwn we may need additional bit
+    // Step 3: If 'last' is the one that handles '+1' then we may need additional bit
     // Our last word will handle '+1', we can calculate full 2 complement in place:
     //   let inverted = ~last
     //   let complement = inverted + 1 // Will not overflow, because we checked for 0
@@ -212,9 +189,6 @@ extension BigIntHeap {
 }
 
 // MARK: - Words
-
-// TODO: 0 should return single Word '0'
-// TODO: Is the 'needs sign bit' incorrect?
 
 extension BigInt {
 
@@ -284,6 +258,9 @@ extension BigIntHeap {
 
   // Some parts of this code were taken from:
   // https://github.com/attaswift/BigInt
+  //
+  // Remember that for '0' we have return single '0' word,
+  // even though 'BigIntHeap' is empty.
   internal struct Words: RandomAccessCollection {
 
     private let _heap: BigIntHeap
@@ -293,8 +270,10 @@ extension BigIntHeap {
     fileprivate init(_ heap: BigIntHeap) {
       self._heap = heap
 
-      let needsSign = needsSignBit(value: heap)
-      self._count = heap.storage.count + (needsSign ? 1 : 0)
+      let bitWidth = heap.bitWidth
+      let (q, r) = bitWidth.quotientAndRemainder(dividingBy: Word.bitWidth)
+      let signWord = r == 0 ? 0 : 1 // This also handles '0' case
+      self._count = q + signWord
 
       switch heap.isPositive {
       case true:
