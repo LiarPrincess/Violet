@@ -247,16 +247,13 @@ public class PyRange: PyObject {
   /// static PyObject *
   /// range_subscript(rangeobject* self, PyObject* item)
   public func getItem(index: PyObject) -> PyResult<PyObject> {
-    switch IndexHelper.int(index, onOverflow: .overflowError) {
+    switch IndexHelper.bigInt(index) {
     case .value(let int):
       // swiftlint:disable:next array_init
       return self.getItem(index: int).map { $0 }
-
     case .notIndex:
       break // Try slice
-
-    case .error(let e),
-         .overflow(_, let e):
+    case .error(let e):
       return .error(e)
     }
 

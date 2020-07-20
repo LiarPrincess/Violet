@@ -33,7 +33,7 @@ internal func runAllTests(from dir: URL, skip: [String] = []) throws {
 
 /// This will leak memory on every call!
 /// (because we do not have GC to break circular references)
-private func runTest(testName: String, path: URL) {
+internal func runTest(testName: String, path: URL) {
   print(testName)
 
   var arguments = Arguments()
