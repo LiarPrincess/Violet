@@ -154,7 +154,12 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __float__
   public func asFloat() -> PyResult<PyFloat> {
-    return .value(Py.newFloat(Double(self.value)))
+    switch Self.asDouble(int: self.value) {
+    case let .value(d):
+      return .value(Py.newFloat(d))
+    case let .overflow(e):
+      return .error(e)
+    }
   }
 
   // sourcery: pymethod = __index__
@@ -358,9 +363,13 @@ public class PyInt: PyObject {
         return .value(Py.newInt(divMod.mod))
 
       case let .fraction(powDouble):
-        let modDouble = Double(modulo)
-        let result = powDouble.truncatingRemainder(dividingBy: modDouble)
-        return .value(Py.newFloat(result))
+        switch Self.asDouble(int: modulo) {
+        case let .value(d):
+          let result = powDouble.truncatingRemainder(dividingBy: d)
+          return .value(Py.newFloat(result))
+        case let .overflow(e):
+          return .error(e)
+        }
 
       case let .error(e):
         return .error(e)
@@ -439,9 +448,17 @@ public class PyInt: PyObject {
     }
 
     let result = self.powNonNegativeExp(base: base, exp: Swift.abs(exp))
-    return exp > 0 ?
-      .int(result) :
-      .fraction(Double(1.0) / Double(result))
+    if exp > 0 {
+      return .int(result)
+    }
+
+    // exp is negative: return 1 / result
+    switch Self.asDouble(int: result) {
+    case .value(let d):
+      return .fraction(Double(1.0) / d)
+    case .overflow:
+      return .fraction(1.0) // fraction! not int!
+    }
   }
 
   /// Specialized version of `pow` that assumes `exp >= 0`.
@@ -472,12 +489,30 @@ public class PyInt: PyObject {
     return self.truediv(left: other.value, right: self.value)
   }
 
+  /// static PyObject *
+  /// long_true_divide(PyObject *v, PyObject *w)
   private func truediv(left: BigInt, right: BigInt) -> PyResult<PyObject> {
-    if right.isZero {
+    // This is not the 'correct' implementation!
+    // We are waaay to trigger-happy on overflow.
+    // But it is 'close enough' for most of the cases.
+
+    let l: Double
+    switch Self.asDouble(int: left) {
+    case let .value(d): l = d
+    case let .overflow(e): return .error(e)
+    }
+
+    let r: Double
+    switch Self.asDouble(int: left) {
+    case let .value(d): r = d
+    case let .overflow(e): return .error(e)
+    }
+
+    if r.isZero {
       return .zeroDivisionError("division by zero")
     }
 
-    let result = Double(left) / Double(right)
+    let result = l / r
     return .value(Py.newFloat(result))
   }
 
@@ -1079,5 +1114,15 @@ public class PyInt: PyObject {
       let msg = "int() '\(string)' cannot be interpreted as int: \(error)"
       return .error(Py.newValueError(msg: msg))
     }
+  }
+
+  // MARK: - Helpers
+
+  internal static func asDouble(int: PyInt) -> PyFloat.IntAsDouble {
+    return Self.asDouble(int: int.value)
+  }
+
+  internal static func asDouble(int: BigInt) -> PyFloat.IntAsDouble {
+    return PyFloat.asDouble(int: int)
   }
 }

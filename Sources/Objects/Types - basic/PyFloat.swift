@@ -134,7 +134,6 @@ extension FloatCompare {
 
   private static func compare(left: Double, right: BigInt) -> CompareResult {
     // Easy case: different signs
-
     let leftSign = Self.getSign(left)
     let rightSign = Self.getSign(right)
 
@@ -144,13 +143,18 @@ extension FloatCompare {
     }
 
     // Scarry case: one is float, one is int, they have the same sign
-
+    // Tbh. I don't know why we use '48' instead of '53',
+    // but that's what CPython does.
     let nBits = right.minRequiredWidth
     if nBits <= 48 {
-      // It's impossible that <= 48 bits overflowed.
-      let d = Double(right)
-      let result = Self.compare(left: left, right: d)
-      return .value(result)
+      switch PyFloat.asDouble(int: right) {
+      case .value(let d):
+        let result = Self.compare(left: left, right: d)
+        return .value(result)
+      case .overflow:
+        // It's impossible that <= 48 bits overflowed
+        assert(false)
+      }
     }
 
     // Horror case: we are waaaay out of Double precision
@@ -507,7 +511,7 @@ extension PyFloat {
 
   // sourcery: pymethod = __add__
   public func add(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(other) {
+    switch Self.asDouble(object: other) {
     case let .float(d),
          let .int(_, d):
       let result = self.value + d
@@ -530,7 +534,7 @@ extension PyFloat {
 
   // sourcery: pymethod = __sub__
   public func sub(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(other) {
+    switch Self.asDouble(object: other) {
     case let .float(d),
          let .int(_, d):
       let result = self.value - d
@@ -546,7 +550,7 @@ extension PyFloat {
 
   // sourcery: pymethod = __rsub__
   public func rsub(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(other) {
+    switch Self.asDouble(object: other) {
     case let .float(d),
          let .int(_, d):
       let result = d - self.value
@@ -564,7 +568,7 @@ extension PyFloat {
 
   // sourcery: pymethod = __mul__
   public func mul(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(other) {
+    switch Self.asDouble(object: other) {
     case let .float(d),
          let .int(_, d):
       let result = self.value * d
@@ -595,7 +599,7 @@ extension PyFloat {
       return .error(e)
     }
 
-    switch Self.asDouble(exp) {
+    switch Self.asDouble(object: exp) {
     case let .float(exp),
          let .int(_, exp):
       let base = self.value
@@ -625,7 +629,7 @@ extension PyFloat {
       return .error(e)
     }
 
-    switch Self.asDouble(base) {
+    switch Self.asDouble(object: base) {
     case let .float(base),
          let .int(_, base):
       let exp = self.value
@@ -668,7 +672,7 @@ extension PyFloat {
 
   // sourcery: pymethod = __truediv__
   public func truediv(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(other) {
+    switch Self.asDouble(object: other) {
     case let .float(d),
          let .int(_, d):
       return self.truediv(left: self.value, right: d)
@@ -681,7 +685,7 @@ extension PyFloat {
 
   // sourcery: pymethod = __rtruediv__
   public func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(other) {
+    switch Self.asDouble(object: other) {
     case let .float(d),
          let .int(_, d):
       return self.truediv(left: d, right: self.value)
@@ -704,7 +708,7 @@ extension PyFloat {
 
   // sourcery: pymethod = __floordiv__
   public func floordiv(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(other) {
+    switch Self.asDouble(object: other) {
     case let .float(d),
          let .int(_, d):
       return self.floordiv(left: self.value, right: d)
@@ -717,7 +721,7 @@ extension PyFloat {
 
   // sourcery: pymethod = __rfloordiv__
   public func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(other) {
+    switch Self.asDouble(object: other) {
     case let .float(d),
          let .int(_, d):
       return self.floordiv(left: d, right: self.value)
@@ -745,7 +749,7 @@ extension PyFloat {
 
   // sourcery: pymethod = __mod__
   public func mod(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(other) {
+    switch Self.asDouble(object: other) {
     case let .float(d),
          let .int(_, d):
       return self.mod(left: self.value, right: d)
@@ -758,7 +762,7 @@ extension PyFloat {
 
   // sourcery: pymethod = __rmod__
   public func rmod(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(other) {
+    switch Self.asDouble(object: other) {
     case let .float(d),
          let .int(_, d):
       return self.mod(left: d, right: self.value)
@@ -786,7 +790,7 @@ extension PyFloat {
 
   // sourcery: pymethod = __divmod__
   public func divmod(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(other) {
+    switch Self.asDouble(object: other) {
     case let .float(d),
          let .int(_, d):
       return self.divmod(left: self.value, right: d)
@@ -799,7 +803,7 @@ extension PyFloat {
 
   // sourcery: pymethod = __rdivmod__
   public func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
-    switch Self.asDouble(other) {
+    switch Self.asDouble(object: other) {
     case let .float(d),
          let .int(_, d):
       return self.divmod(left: d, right: self.value)
@@ -1025,13 +1029,20 @@ extension PyFloat {
     }
 
     let arg0 = args[0]
-    switch PyFloat.parseDouble(string: arg0) {
+    switch Self.pyNew(fromString: arg0) {
     case .value(let d): return .value(alloca(type, d))
     case .notString: break
     case .error(let e): return .error(e)
     }
 
-    return PyFloat.extractDouble(arg0).map { alloca(type, $0) }
+    switch Self.pyNew(fromNumber: arg0) {
+    case .value(let d): return .value(alloca(type, d))
+    case .notNumber: break
+    case .error(let e): return .error(e)
+    }
+
+    let msg = "float() argument must be a string, or a number, not '\(arg0.typeName)'"
+    return .typeError(msg)
   }
 
   private enum DoubleFromString {
@@ -1040,37 +1051,42 @@ extension PyFloat {
     case error(PyBaseException)
   }
 
-  private static func parseDouble(string object: PyObject) -> DoubleFromString {
-    let string: String
+  private static func pyNew(fromString object: PyObject) -> DoubleFromString {
     switch Py.extractString(object: object) {
     case .string(_, let s),
          .bytes(_, let s):
-      string = s
+      guard let value = Double(parseUsingPythonRules: s) else {
+        let msg = "float() '\(s)' cannot be interpreted as float"
+        return .error(Py.newValueError(msg: msg))
+      }
+
+      return .value(value)
+
     case .byteDecodingError(let bytes):
       let msg = "float() bytes at '\(bytes.ptr)' cannot be interpreted as str"
       return .error(Py.newValueError(msg: msg))
+
     case .notStringOrBytes:
       return .notString
     }
+  }
 
-    guard let value = Double(parseUsingPythonRules: string) else {
-      let msg = "float() '\(string)' cannot be interpreted as float"
-      return .error(Py.newValueError(msg: msg))
-    }
-
-    return .value(value)
+  private enum DoubleFromNumber {
+    case value(Double)
+    case error(PyBaseException)
+    case notNumber
   }
 
   /// PyObject *
   /// PyNumber_Float(PyObject *o)
-  private static func extractDouble(_ object: PyObject) -> PyResult<Double> {
-    // Call has to be before 'PyFloat.asDouble', because it can override
-    switch PyFloat.callFloat(object) {
+  private static func pyNew(fromNumber object: PyObject) -> DoubleFromNumber {
+    // Call has to be before 'Self.asDouble', because it can override
+    switch Self.callFloat(object) {
     case .value(let o):
       guard let f = o as? PyFloat else {
         let ot = o.typeName
         let msg = "\(object.typeName).__float__ returned non-float (type \(ot))"
-        return .typeError(msg)
+        return .error(Py.newTypeError(msg: msg))
       }
       return .value(f.value)
     case .missingMethod:
@@ -1080,16 +1096,14 @@ extension PyFloat {
       return .error(e)
     }
 
-    switch Self.asDouble(object) {
+    switch Self.asDouble(object: object) {
     case let .float(d),
          let .int(_, d):
       return .value(d)
     case let .intOverflow(_, e):
       return .error(e)
     case .notDouble:
-      let t = object.typeName
-      let msg = "float() argument must be a string, or a number, not '\(t)'"
-      return .typeError(msg)
+      return .notNumber
     }
   }
 
@@ -1104,7 +1118,7 @@ extension PyFloat {
     return Py.callMethod(object: object, selector: .__float__)
   }
 
-  // MARK: - Helpers
+  // MARK: - As double
 
   internal enum AsDouble {
     case float(Double)
@@ -1113,28 +1127,48 @@ extension PyFloat {
     case notDouble
   }
 
-  /// define CONVERT_TO_DOUBLE(obj, dbl)
-  internal static func asDouble(_ object: PyObject) -> AsDouble {
+  /// Try to extract `double` from `float` or `int`.
+  ///
+  /// CPython: `define CONVERT_TO_DOUBLE(obj, dbl)`
+  internal static func asDouble(object: PyObject) -> AsDouble {
     if let pyFloat = object as? PyFloat {
       return .float(pyFloat.value)
     }
 
-    if let pyInt = object as? PyInt {
-      // This is not the best way…
-      // But in general conversion 'Int -> Double' is a very complicated thing.
-      // But it fals onto 'close enough' category.
-
-      let result = Double(pyInt.value)
-      assert(!result.isNaN && !result.isSubnormal)
-
-      guard result.isFinite else {
-        let e = Py.newOverflowError(msg: "int too large to convert to float")
-        return .intOverflow(pyInt, e)
+    if let int = object as? PyInt {
+      switch Self.asDouble(int: int) {
+      case let .value(d):
+        return .int(int, d)
+      case let .overflow(e):
+        return .intOverflow(int, e)
       }
-
-      return .int(pyInt, result)
     }
 
     return .notDouble
+  }
+
+  internal enum IntAsDouble {
+    case value(Double)
+    case overflow(PyBaseException)
+  }
+
+  internal static func asDouble(int: PyInt) -> IntAsDouble {
+    return Self.asDouble(int: int.value)
+  }
+
+  internal static func asDouble(int: BigInt) -> IntAsDouble {
+    // This is not the best way…
+    // But in general conversion 'Int -> Double' is a very complicated thing.
+    // But it fals onto 'close enough' category.
+
+    let result = Double(int)
+    assert(!result.isNaN && !result.isSubnormal)
+
+    guard result.isFinite else {
+      let e = Py.newOverflowError(msg: "int too large to convert to float")
+      return .overflow(e)
+    }
+
+    return .value(result)
   }
 }
