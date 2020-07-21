@@ -43,6 +43,7 @@ internal let DBL_MAX_EXP = Double.greatestFiniteMagnitude.exponent + 1 // 1024
 /// If we start with uppercase then everyone will be like:
 /// `wtf? uppercase? what is this? <surprised Pikachu face>`.
 internal struct Frexp {
+
   internal let exponent: Int
   /// Negative if input number was negative!
   internal let mantissa: Double
@@ -506,11 +507,18 @@ extension PyFloat {
 
   // sourcery: pymethod = __add__
   public func add(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyFloat.asDouble(other) else {
+    switch Self.asDouble(other) {
+    case let .float(d),
+         let .int(_, d):
+      let result = self.value + d
+      return .value(Py.newFloat(result))
+
+    case let .intOverflow(_, e):
+      return .error(e)
+
+    case .notDouble:
       return .value(Py.notImplemented)
     }
-
-    return .value(Py.newFloat(self.value + other))
   }
 
   // sourcery: pymethod = __radd__
@@ -522,31 +530,52 @@ extension PyFloat {
 
   // sourcery: pymethod = __sub__
   public func sub(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyFloat.asDouble(other) else {
+    switch Self.asDouble(other) {
+    case let .float(d),
+         let .int(_, d):
+      let result = self.value - d
+      return .value(Py.newFloat(result))
+
+    case let .intOverflow(_, e):
+      return .error(e)
+
+    case .notDouble:
       return .value(Py.notImplemented)
     }
-
-    return .value(Py.newFloat(self.value - other))
   }
 
   // sourcery: pymethod = __rsub__
   public func rsub(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyFloat.asDouble(other) else {
+    switch Self.asDouble(other) {
+    case let .float(d),
+         let .int(_, d):
+      let result = d - self.value
+      return .value(Py.newFloat(result))
+
+    case let .intOverflow(_, e):
+      return .error(e)
+
+    case .notDouble:
       return .value(Py.notImplemented)
     }
-
-    return .value(Py.newFloat(other - self.value))
   }
 
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
   public func mul(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyFloat.asDouble(other) else {
+    switch Self.asDouble(other) {
+    case let .float(d),
+         let .int(_, d):
+      let result = self.value * d
+      return .value(Py.newFloat(result))
+
+    case let .intOverflow(_, e):
+      return .error(e)
+
+    case .notDouble:
       return .value(Py.notImplemented)
     }
-
-    return .value(Py.newFloat(self.value * other))
   }
 
   // sourcery: pymethod = __rmul__
@@ -562,23 +591,28 @@ extension PyFloat {
 
   // sourcery: pymethod = __pow__
   public func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
-    guard self.isNilOrNone(mod) else {
-      let msg = "pow() 3rd argument not allowed unless all arguments are integers"
-      return .typeError(msg)
-    }
-
-    guard let exp = PyFloat.asDouble(exp) else {
-      return .value(Py.notImplemented)
-    }
-
-    let base = self.value
-
-    if let e = self.checkPowInvariants(base: base, exp: exp) {
+    if let e = self.disallowPowMod(mod: mod) {
       return .error(e)
     }
 
-    let result = Foundation.pow(base, exp)
-    return .value(Py.newFloat(result))
+    switch Self.asDouble(exp) {
+    case let .float(exp),
+         let .int(_, exp):
+      let base = self.value
+
+      if let e = self.checkPowInvariants(base: base, exp: exp) {
+        return .error(e)
+      }
+
+      let result = Foundation.pow(base, exp)
+      return .value(Py.newFloat(result))
+
+    case let .intOverflow(_, e):
+      return .error(e)
+
+    case .notDouble:
+      return .value(Py.notImplemented)
+    }
   }
 
   public func rpow(base: PyObject) -> PyResult<PyObject> {
@@ -587,22 +621,38 @@ extension PyFloat {
 
   // sourcery: pymethod = __rpow__
   public func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
-    guard self.isNilOrNone(mod) else {
-      return .typeError("pow() 3rd argument not allowed unless all arguments are integers")
-    }
-
-    guard let base = PyFloat.asDouble(base) else {
-      return .value(Py.notImplemented)
-    }
-
-    let exp = self.value
-
-    if let e = self.checkPowInvariants(base: base, exp: exp) {
+    if let e = self.disallowPowMod(mod: mod) {
       return .error(e)
     }
 
-    let result = Foundation.pow(base, exp)
-    return .value(Py.newFloat(result))
+    switch Self.asDouble(base) {
+    case let .float(base),
+         let .int(_, base):
+      let exp = self.value
+
+      if let e = self.checkPowInvariants(base: base, exp: exp) {
+        return .error(e)
+      }
+
+      let result = Foundation.pow(base, exp)
+      return .value(Py.newFloat(result))
+
+    case let .intOverflow(_, e):
+      return .error(e)
+
+    case .notDouble:
+      return .value(Py.notImplemented)
+    }
+  }
+
+  private func disallowPowMod(mod: PyObject?) -> PyBaseException? {
+    let isNilOrNone = mod?.isNone ?? true
+    if isNilOrNone {
+      return nil
+    }
+
+    let msg = "pow() 3rd argument not allowed unless all arguments are integers"
+    return Py.newTypeError(msg: msg)
   }
 
   private func checkPowInvariants(base: Double, exp: Double) -> PyBaseException? {
@@ -614,28 +664,32 @@ extension PyFloat {
     return nil
   }
 
-  private func isNilOrNone(_ value: PyObject?) -> Bool {
-    return value == nil || value is PyNone
-  }
-
   // MARK: - True div
 
   // sourcery: pymethod = __truediv__
   public func truediv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyFloat.asDouble(other) else {
+    switch Self.asDouble(other) {
+    case let .float(d),
+         let .int(_, d):
+      return self.truediv(left: self.value, right: d)
+    case let .intOverflow(_, e):
+      return .error(e)
+    case .notDouble:
       return .value(Py.notImplemented)
     }
-
-    return self.truediv(left: self.value, right: other)
   }
 
   // sourcery: pymethod = __rtruediv__
   public func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyFloat.asDouble(other) else {
+    switch Self.asDouble(other) {
+    case let .float(d),
+         let .int(_, d):
+      return self.truediv(left: d, right: self.value)
+    case let .intOverflow(_, e):
+      return .error(e)
+    case .notDouble:
       return .value(Py.notImplemented)
     }
-
-    return self.truediv(left: other, right: self.value)
   }
 
   private func truediv(left: Double, right: Double) -> PyResult<PyObject> {
@@ -650,20 +704,28 @@ extension PyFloat {
 
   // sourcery: pymethod = __floordiv__
   public func floordiv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyFloat.asDouble(other) else {
+    switch Self.asDouble(other) {
+    case let .float(d),
+         let .int(_, d):
+      return self.floordiv(left: self.value, right: d)
+    case let .intOverflow(_, e):
+      return .error(e)
+    case .notDouble:
       return .value(Py.notImplemented)
     }
-
-    return self.floordiv(left: self.value, right: other)
   }
 
   // sourcery: pymethod = __rfloordiv__
   public func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyFloat.asDouble(other) else {
+    switch Self.asDouble(other) {
+    case let .float(d),
+         let .int(_, d):
+      return self.floordiv(left: d, right: self.value)
+    case let .intOverflow(_, e):
+      return .error(e)
+    case .notDouble:
       return .value(Py.notImplemented)
     }
-
-    return self.floordiv(left: other, right: self.value)
   }
 
   private func floordiv(left: Double, right: Double) -> PyResult<PyObject> {
@@ -683,20 +745,28 @@ extension PyFloat {
 
   // sourcery: pymethod = __mod__
   public func mod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyFloat.asDouble(other) else {
+    switch Self.asDouble(other) {
+    case let .float(d),
+         let .int(_, d):
+      return self.mod(left: self.value, right: d)
+    case let .intOverflow(_, e):
+      return .error(e)
+    case .notDouble:
       return .value(Py.notImplemented)
     }
-
-    return self.mod(left: self.value, right: other)
   }
 
   // sourcery: pymethod = __rmod__
   public func rmod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyFloat.asDouble(other) else {
+    switch Self.asDouble(other) {
+    case let .float(d),
+         let .int(_, d):
+      return self.mod(left: d, right: self.value)
+    case let .intOverflow(_, e):
+      return .error(e)
+    case .notDouble:
       return .value(Py.notImplemented)
     }
-
-    return self.mod(left: other, right: self.value)
   }
 
   private func mod(left: Double, right: Double) -> PyResult<PyObject> {
@@ -716,20 +786,28 @@ extension PyFloat {
 
   // sourcery: pymethod = __divmod__
   public func divmod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyFloat.asDouble(other) else {
+    switch Self.asDouble(other) {
+    case let .float(d),
+         let .int(_, d):
+      return self.divmod(left: self.value, right: d)
+    case let .intOverflow(_, e):
+      return .error(e)
+    case .notDouble:
       return .value(Py.notImplemented)
     }
-
-    return self.divmod(left: self.value, right: other)
   }
 
   // sourcery: pymethod = __rdivmod__
   public func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyFloat.asDouble(other) else {
+    switch Self.asDouble(other) {
+    case let .float(d),
+         let .int(_, d):
+      return self.divmod(left: d, right: self.value)
+    case let .intOverflow(_, e):
+      return .error(e)
+    case .notDouble:
       return .value(Py.notImplemented)
     }
-
-    return self.divmod(left: other, right: self.value)
   }
 
   private func divmod(left: Double, right: Double) -> PyResult<PyObject> {
@@ -997,17 +1075,22 @@ extension PyFloat {
       return .value(f.value)
     case .missingMethod:
       break // try other possibilities
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
 
-    if let d = PyFloat.asDouble(object) {
+    switch Self.asDouble(object) {
+    case let .float(d),
+         let .int(_, d):
       return .value(d)
+    case let .intOverflow(_, e):
+      return .error(e)
+    case .notDouble:
+      let t = object.typeName
+      let msg = "float() argument must be a string, or a number, not '\(t)'"
+      return .typeError(msg)
     }
-
-    let t = object.typeName
-    let msg = "float() argument must be a string, or a number, not '\(t)'"
-    return .typeError(msg)
   }
 
   private static func callFloat(_ object: PyObject) -> PyInstance.CallMethodResult {
@@ -1023,17 +1106,35 @@ extension PyFloat {
 
   // MARK: - Helpers
 
-  private static func asDouble(_ object: PyObject) -> Double? {
+  internal enum AsDouble {
+    case float(Double)
+    case int(PyInt, Double)
+    case intOverflow(PyInt, PyBaseException)
+    case notDouble
+  }
+
+  /// define CONVERT_TO_DOUBLE(obj, dbl)
+  internal static func asDouble(_ object: PyObject) -> AsDouble {
     if let pyFloat = object as? PyFloat {
-      return pyFloat.value
+      return .float(pyFloat.value)
     }
 
     if let pyInt = object as? PyInt {
-      // This will not work in a looooot of the cases.
-      // But in most of the cases it will, so we will do it anyway.
-      return Double(pyInt.value)
+      // This is not the best way…
+      // But in general conversion 'Int -> Double' is a very complicated thing.
+      // But it fals onto 'close enough' category.
+
+      let result = Double(pyInt.value)
+      assert(!result.isNaN && !result.isSubnormal)
+
+      guard result.isFinite else {
+        let e = Py.newOverflowError(msg: "int too large to convert to float")
+        return .intOverflow(pyInt, e)
+      }
+
+      return .int(pyInt, result)
     }
 
-    return nil
+    return .notDouble
   }
 }
