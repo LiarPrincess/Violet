@@ -46,11 +46,15 @@ public class PyComplex: PyObject {
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    if let o = PyComplex.asComplex(other) {
-      return .value(self.real == o.real && self.imag == o.imag)
+    switch Self.asComplex(object: other) {
+    case .value(let r):
+      let result = self.real == r.real && self.imag == r.imag
+      return .value(result)
+    case .intOverflow(_, let e):
+      return .error(e)
+    case .notComplex:
+      return .notImplemented
     }
-
-    return .notImplemented
   }
 
   // sourcery: pymethod = __ne__
@@ -219,13 +223,16 @@ public class PyComplex: PyObject {
 
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyComplex.asComplex(other) else {
+    switch Self.asComplex(object: other) {
+    case .value(let r):
+      let real = self.real + r.real
+      let imag = self.imag + r.imag
+      return .value(Py.newComplex(real: real, imag: imag))
+    case .intOverflow(_, let e):
+      return .error(e)
+    case .notComplex:
       return .value(Py.notImplemented)
     }
-
-    let real = self.real + other.real
-    let imag = self.imag + other.imag
-    return .value(Py.newComplex(real: real, imag: imag))
   }
 
   // sourcery: pymethod = __radd__
@@ -237,20 +244,28 @@ public class PyComplex: PyObject {
 
   // sourcery: pymethod = __sub__
   internal func sub(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyComplex.asComplex(other) else {
+    switch Self.asComplex(object: other) {
+    case .value(let r):
+      let result = self.sub(left: self.raw, right: r)
+      return .value(result)
+    case .intOverflow(_, let e):
+      return .error(e)
+    case .notComplex:
       return .value(Py.notImplemented)
     }
-
-    return .value(self.sub(left: self.raw, right: other))
   }
 
   // sourcery: pymethod = __rsub__
   internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyComplex.asComplex(other) else {
+    switch Self.asComplex(object: other) {
+    case .value(let r):
+      let result = self.sub(left: r, right: self.raw)
+      return .value(result)
+    case .intOverflow(_, let e):
+      return .error(e)
+    case .notComplex:
       return .value(Py.notImplemented)
     }
-
-    return .value(self.sub(left: other, right: self.raw))
   }
 
   private func sub(left: Raw, right: Raw) -> PyComplex {
@@ -263,20 +278,28 @@ public class PyComplex: PyObject {
 
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyComplex.asComplex(other) else {
+    switch Self.asComplex(object: other) {
+    case .value(let r):
+      let result = self.mul(left: self.raw, right: r)
+      return .value(result)
+    case .intOverflow(_, let e):
+      return .error(e)
+    case .notComplex:
       return .value(Py.notImplemented)
     }
-
-    return .value(self.mul(left: self.raw, right: other))
   }
 
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyComplex.asComplex(other) else {
+    switch Self.asComplex(object: other) {
+    case .value(let r):
+      let result = self.mul(left: r, right: self.raw)
+      return .value(result)
+    case .intOverflow(_, let e):
+      return .error(e)
+    case .notComplex:
       return .value(Py.notImplemented)
     }
-
-    return .value(self.mul(left: other, right: self.raw))
   }
 
   private func mul(left: Raw, right: Raw) -> PyComplex {
@@ -302,11 +325,14 @@ public class PyComplex: PyObject {
       return .valueError("complex modulo")
     }
 
-    guard let exp = PyComplex.asComplex(exp) else {
+    switch Self.asComplex(object: exp) {
+    case .value(let exp):
+      return self.pow(base: self.raw, exp: exp)
+    case .intOverflow(_, let e):
+      return .error(e)
+    case .notComplex:
       return .value(Py.notImplemented)
     }
-
-    return self.pow(base: self.raw, exp: exp)
   }
 
   internal func rpow(base: PyObject) -> PyResult<PyObject> {
@@ -319,11 +345,14 @@ public class PyComplex: PyObject {
       return .valueError("complex modulo")
     }
 
-    guard let base = PyComplex.asComplex(base) else {
+    switch Self.asComplex(object: base) {
+    case .value(let base):
+      return self.pow(base: base, exp: self.raw)
+    case .intOverflow(_, let e):
+      return .error(e)
+    case .notComplex:
       return .value(Py.notImplemented)
     }
-
-    return self.pow(base: base, exp: self.raw)
   }
 
   private func isNilOrNone(_ value: PyObject?) -> Bool {
@@ -362,20 +391,26 @@ public class PyComplex: PyObject {
 
   // sourcery: pymethod = __truediv__
   internal func truediv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyComplex.asComplex(other) else {
+    switch Self.asComplex(object: other) {
+    case .value(let r):
+      return self.truediv(left: self.raw, right: r)
+    case .intOverflow(_, let e):
+      return .error(e)
+    case .notComplex:
       return .value(Py.notImplemented)
     }
-
-    return self.truediv(left: self.raw, right: other)
   }
 
   // sourcery: pymethod = __rtruediv__
   internal func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = PyComplex.asComplex(other) else {
+    switch Self.asComplex(object: other) {
+    case .value(let r):
+      return self.truediv(left: r, right: self.raw)
+    case .intOverflow(_, let e):
+      return .error(e)
+    case .notComplex:
       return .value(Py.notImplemented)
     }
-
-    return self.truediv(left: other, right: self.raw)
   }
 
   private func truediv(left: Raw, right: Raw) -> PyResult<PyObject> {
@@ -591,7 +626,7 @@ public class PyComplex: PyObject {
       return .value(Raw(real: 0.0, imag: 0.0))
     }
 
-    // Call has to be before 'PyComplex.asComplex', because it can override
+    // Call has to be before 'Self.asComplex', because it can override
     switch PyComplex.callComplex(object) {
     case .value(let o):
       guard let complex = o as? PyComplex else {
@@ -604,12 +639,18 @@ public class PyComplex: PyObject {
       return .error(e)
     }
 
-    if let raw = PyComplex.asComplex(object) {
-      return .value(raw)
+    switch Self.asComplex(object: object) {
+    case .value(let r):
+      return .value(r)
+    case .intOverflow(_, let e):
+      return .error(e)
+    case .notComplex:
+      break
     }
 
     let t = object.type
-    return .typeError("complex() argument must be a string or a number, not '\(t)'")
+    let msg = "complex() argument must be a string or a number, not '\(t)'"
+    return .typeError(msg)
   }
 
   private static func callComplex(
@@ -622,31 +663,62 @@ public class PyComplex: PyObject {
     return Py.callMethod(object: object, selector: .__complex__)
   }
 
-  // MARK: - Helpers
+  // MARK: - As complex
 
-  /// Simple light-weight container for 'real' and 'imag'.
+  /// Simple light-weight stack-allocated container for `real` and `imag`.
   internal struct Raw {
     internal let real: Double
     internal let imag: Double
+  }
+
+  internal enum AsComplex {
+    case value(Raw)
+    case intOverflow(PyInt, PyBaseException)
+    case notComplex
   }
 
   private var raw: Raw {
     return Raw(real: self.real, imag: self.imag)
   }
 
-  private static func asComplex(_ object: PyObject) -> Raw? {
+  private static func asComplex(object: PyObject) -> AsComplex {
     if let pyComplex = object as? PyComplex {
-      return Raw(real: pyComplex.real, imag: pyComplex.imag)
+      let result = Raw(real: pyComplex.real, imag: pyComplex.imag)
+      return .value(result)
     }
 
     if let pyFloat = object as? PyFloat {
-      return Raw(real: pyFloat.value, imag: 0)
+      let result = Self.asComplex(float: pyFloat)
+      return .value(result)
     }
 
-    if let pyInt = object as? PyInt {
-      return Raw(real: Double(pyInt.value), imag: 0)
+    if let int = object as? PyInt {
+      switch Self.asComplex(int: int) {
+      case let .value(r):
+        return .value(r)
+      case let .overflow(e):
+        return .intOverflow(int, e)
+      }
     }
 
-    return nil
+    return .notComplex
+  }
+
+  internal static func asComplex(float: PyFloat) -> Raw {
+    return Raw(real: float.value, imag: 0)
+  }
+
+  internal enum IntAsComplex {
+    case value(Raw)
+    case overflow(PyBaseException)
+  }
+
+  internal static func asComplex(int: PyInt) -> IntAsComplex {
+    switch PyInt.asDouble(int: int) {
+    case let .value(d):
+      return .value(Raw(real: d, imag: 0))
+    case let .overflow(e):
+      return .overflow(e)
+    }
   }
 }
