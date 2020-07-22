@@ -46,15 +46,28 @@ public class PyComplex: PyObject {
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    switch Self.asComplex(object: other) {
-    case .value(let r):
-      let result = self.real == r.real && self.imag == r.imag
+    if let complex = other as? PyComplex {
+      let result = self.real == complex.real && self.imag == complex.imag
       return .value(result)
-    case .intOverflow(_, let e):
-      return .error(e)
-    case .notComplex:
-      return .notImplemented
     }
+
+    if let float = other as? PyFloat {
+      guard self.imag.isZero else {
+        return .value(false)
+      }
+
+      return FloatCompareHelper.isEqual(left: self.real, right: float)
+    }
+
+    if let int = other as? PyInt {
+      guard self.imag.isZero else {
+        return .value(false)
+      }
+
+      return FloatCompareHelper.isEqual(left: self.real, right: int)
+    }
+
+    return .notImplemented
   }
 
   // sourcery: pymethod = __ne__
@@ -682,13 +695,13 @@ public class PyComplex: PyObject {
   }
 
   private static func asComplex(object: PyObject) -> AsComplex {
-    if let pyComplex = object as? PyComplex {
-      let result = Raw(real: pyComplex.real, imag: pyComplex.imag)
+    if let complex = object as? PyComplex {
+      let result = Raw(real: complex.real, imag: complex.imag)
       return .value(result)
     }
 
-    if let pyFloat = object as? PyFloat {
-      let result = Self.asComplex(float: pyFloat)
+    if let float = object as? PyFloat {
+      let result = Self.asComplex(float: float)
       return .value(result)
     }
 
