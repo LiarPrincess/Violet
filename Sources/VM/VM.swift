@@ -44,7 +44,7 @@ public final class VM: PyDelegate {
 
     let executablePath = self.fileSystem.executablePath ??
         arguments.raw.first ??
-        "Violet"
+        Py.sys.implementation.name
 
     let config = PyConfig(
       arguments: arguments,

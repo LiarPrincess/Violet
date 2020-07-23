@@ -19,6 +19,9 @@ internal struct ArgumentBinding: ParsableCommand {
   // MARK: - Configuration
 
   internal static let configuration = CommandConfiguration(
+    commandName: Configure.implementation.name,
+    abstract: Configure.implementation.abstract,
+    discussion: Configure.implementation.discussion,
     helpNames: []
   )
 

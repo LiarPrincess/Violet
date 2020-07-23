@@ -20,7 +20,7 @@ internal enum Configure {
     return Configure.prefix
   }
 
-  internal static var versionInfo = VersionInfo(
+  internal static var pythonVersion = VersionInfo(
     major: 3,
     minor: 7,
     micro: 2,
@@ -28,8 +28,14 @@ internal enum Configure {
     serial: 0
   )
 
-  internal static var implementationInfo = ImplementationInfo(
+  internal static var implementation = ImplementationInfo(
     name: "Violet",
+    abstract: "Violet - Python VM written in Swift",
+    discussion: """
+If a client requests it, we shall go anywhere.
+Representing the Auto Memoir Doll service,
+I am Violet Evergarden.
+""",
     version: VersionInfo(
       major: 0,
       minor: 0,

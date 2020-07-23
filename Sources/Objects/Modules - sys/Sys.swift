@@ -92,7 +92,7 @@ public final class Sys: PyModuleImplementation {
 
   /// Initial value for `sys.version_info`.
   public var versionInfo: VersionInfo {
-    return Configure.versionInfo
+    return Configure.pythonVersion
   }
 
   /// Initial value for `sys.hex_version`.
@@ -102,7 +102,7 @@ public final class Sys: PyModuleImplementation {
 
   /// Initial value for `sys.implementation`.
   public var implementation: ImplementationInfo {
-    return Configure.implementationInfo
+    return Configure.implementation
   }
 
   /// Initial value for `sys.version`.

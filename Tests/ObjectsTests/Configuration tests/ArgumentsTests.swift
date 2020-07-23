@@ -335,7 +335,13 @@ class ArgumentsTests: XCTestCase {
   // swiftlint:disable:next function_body_length
   func test_usage() {
     XCTAssertEqual(Arguments.helpMessage, """
-USAGE: argument-binding <options>
+OVERVIEW: Violet - Python VM written in Swift
+
+If a client requests it, we shall go anywhere.
+Representing the Auto Memoir Doll service,
+I am Violet Evergarden.
+
+USAGE: Violet <options>
 
 ARGUMENTS:
   <script>                execute the code contained in script (terminates

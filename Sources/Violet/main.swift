@@ -3,8 +3,8 @@ import VioletCore
 import VioletObjects
 import VioletVM
 
-let arguments = Arguments()
-let environment = Environment()
+let arguments = try Arguments(from: CommandLine.arguments)
+let environment = Environment(from: ProcessInfo.processInfo.environment)
 let vm = VM(arguments: arguments, environment: environment)
 
 switch vm.run() {
