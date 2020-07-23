@@ -1,6 +1,6 @@
 public enum Lyrics {
 
-  /// `Let it go` from `Frozen`.
+  /// '[Let it go](https://www.youtube.com/watch?v=L0MK7qz13bU)' from Frozen.
   public static let letItGo = """
     The snow glows white on the mountain tonight
     Not a footprint to be seen
@@ -110,5 +110,122 @@ public enum Lyrics {
     So, huzzah and tally ho!
     Sit back and here we go!
     Attend the tale of Galavant
+    """
+
+  /// '[Ga1ahad and Scientific Witchery](https://youtu.be/d-nxW9qBtxQ)'
+  /// by Mili (which is basically the best band ever).
+  ///
+  /// [Summoning 101](https://youtu.be/x6q41EnhPnU) is also very good.
+  ///
+  /// Lata lulila lulula lulalila…
+  public static let ga1ahadAndScientificWitchery = """
+    (Witch)
+    The magical potion of reanimation
+    (Ga1ahad)
+    Bittersweet cranberry flavored euphoria
+    (Witch)
+    Rise from bed, my darling
+    (Both)
+    So I can see you again!
+    So I can kill you again!
+
+    (Ga1ahad)
+    My brains accelerate
+    (Witch)
+    And I'll
+    (Both)
+    Reassemble you again
+
+    (Ga1ahad)
+    The witches can't be loved
+    So bravely I fought
+    They fell and failed
+    My Lady doesn't wilt
+
+    (Witch)
+    Lata lulila lulula lulila ta
+    Lata lulila lulula lulalila
+    Lata lulila lulula lulila ta
+    Lata lulila lulula lulalila
+
+    (Witch)
+    Poisoned sandwich tea party starts now!
+    Eat up, if you're lucky you won't rot
+    (Ga1ahad)
+    Eat up, it's your turn, eat till you drop
+    (Witch)
+    Eat up, maybe this time you'll be caught
+    (Ga1ahad)
+    Eat up, fill your stomach till it pops
+    (Both)
+    Eat up, eat it all, just eat it all
+    'Cause there's no poison after all
+
+    (Ga1ahad)
+    I've cleared mountains and dungeons
+    Iron maiden, my Lady has spoken,
+    "Ga1ahad, you shall never collapse,"
+    So I charged up my lasers
+
+    (Witch)
+    Talila lulila;
+    That makes your bones stronger than steel
+    Tulila talila;
+    That backs up your thoughts to the cloud
+
+    (Witch)
+    Truth or false, it's the logic that dictates it all
+    Rising edge ticks the clock
+    Stimulates your flip flop
+    Generate, oscillate, let your blood fill the gates
+    Multiplex, process registration
+
+    (Witch)
+    Wipe off your pus, grind down your vitamins
+    The end justifies the means
+    Open the book, turn to page six-seventeen
+    Scientific Witchery!
+
+    (Ga1ahad)
+    Someday I'll conquer the land and have you slayed
+    (Witch)
+    Blast away, blast away,
+    Don't be like Lance10t, you are the new upgrade
+    (Ga1ahad)
+    I appreciate your thoughts,
+    But you've given me too much to tolerate
+    (Witch)
+    I've done so much for you, but you treat me this way?
+
+    (Both)
+    No forgiveness for this endless love
+    My goddess never looked at me
+
+    (Ga1ahad)
+    Finally our wounds closed
+    (Witch)
+    Our wounds closed
+    (Ga1ahad)
+    Turned into
+    (Both)
+    Purple scabs
+
+    (Both)
+    Kiss me,
+    Tenderly
+    Gently
+    Violently
+
+    (Witch)
+    There's no undo
+    And there's no repeat
+    (Ga1ahad)
+    Can't go back to
+    How we used to be
+    (Both)
+    There's no restart,
+    But only proceed
+    Take up from where
+    We've left off and see
     """
 }
