@@ -60,25 +60,35 @@ extension Sys {
     return self.set(.stderr, to: value)
   }
 
-  public enum GetStderrOrNoneResult {
+  // MARK: - Stream or none
+
+  public enum StreamOrNone {
+    case value(PyTextFile)
     case none
-    case file(PyTextFile)
     case error(PyBaseException)
   }
 
-  public func getStderrOrNone() -> GetStderrOrNoneResult {
-    switch self.get(.stderr) {
+  public func getStderrOrNone() -> StreamOrNone {
+    return self.getStreamOrNone(property: .stderr)
+  }
+
+  public func getStdoutOrNone() -> StreamOrNone {
+    return self.getStreamOrNone(property: .stdout)
+  }
+
+  private func getStreamOrNone(property: Sys.Properties) -> StreamOrNone {
+    switch self.get(property) {
     case .value(let object):
       if object.isNone {
         return .none
       }
 
       if let file = object as? PyTextFile {
-        return .file(file)
+        return .value(file)
       }
 
       let msg = self.createPropertyTypeError(
-        .stderr,
+        property,
         got: object,
         expectedType: "textFile"
       )

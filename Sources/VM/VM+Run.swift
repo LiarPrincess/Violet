@@ -37,13 +37,11 @@ extension VM {
   /// pymain_run_python(_PyMain *pymain)
   public func run() -> RunResult {
     if self.arguments.help {
-      print(Arguments.helpMessage)
-      return .done
+      return self.printToStdoutAndFinish(msg: Arguments.helpMessage)
     }
 
     if self.arguments.version {
-      print(Py.sys.version)
-      return .done
+      return self.printToStdoutAndFinish(msg: Py.sys.version)
     }
 
     // Oh no… we will be running code! Let's prepare for this.
@@ -51,7 +49,8 @@ extension VM {
       return .error(e)
     }
 
-    // For some reason importing stuff seems to be important in programming…
+    // For some reason importing stuff seems to be important* in programming…
+    // * - intended (sorry!)
     if let e = self.initImportlibIfNeeded() {
       return .error(e)
     }
@@ -84,12 +83,33 @@ extension VM {
     return .done
   }
 
-  private func initImportlibIfNeeded() -> PyBaseException? {
+  private func printToStdoutAndFinish(msg: String) -> RunResult {
     // This is probably the first time you see our error handling approach.
     // So… we are using 'enums' instead of Swift 'throw'.
     // There is a long comment about this in 'README' for 'Objects' module.
 
-    // Also, both 'initImportlibIfNeeded' and 'initImportlibExternalIfNeeded'
+    switch Py.sys.getStdoutOrNone() {
+    case .value(let file):
+      switch file.write(string: msg) {
+      case .value:
+        return .done
+      case .error(let e):
+        return .error(e)
+      }
+
+    case .none:
+      // We will just assume that by setting 'sys.stdout = None'
+      // (or its equivalent in Swift) user explicitly asked for no messages.
+      return .done
+
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  /// 'IfNeeded' roughly translates to 'if it was not already initialized'.
+  private func initImportlibIfNeeded() -> PyBaseException? {
+    // Both 'initImportlibIfNeeded' and 'initImportlibExternalIfNeeded'
     // are idempotent, so we can call them as many times as we want.
     // Unless you do something like 'sys.modules['importlib'] = "let it go"',
     // in such case we will reinitialize the whole thing.
