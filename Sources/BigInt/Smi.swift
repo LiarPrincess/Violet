@@ -1,5 +1,4 @@
 // swiftlint:disable empty_count
-// swiftlint:disable file_length
 
 /// Small integer, named after similiar type in `V8`.
 internal struct Smi: Hashable, CustomStringConvertible, CustomDebugStringConvertible {

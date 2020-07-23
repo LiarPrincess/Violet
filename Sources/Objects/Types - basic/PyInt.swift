@@ -503,7 +503,7 @@ public class PyInt: PyObject {
     }
 
     let r: Double
-    switch Self.asDouble(int: left) {
+    switch Self.asDouble(int: right) {
     case let .value(d): r = d
     case let .overflow(e): return .error(e)
     }
@@ -658,29 +658,43 @@ public class PyInt: PyObject {
   // MARK: - LShift
 
   // sourcery: pymethod = __lshift__
+  /// static PyObject *
+  /// long_lshift(PyObject *v, PyObject *w)
   public func lshift(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
 
-    return self.lshift(left: self.value, right: other.value)
+    return self.lshift(value: self.value, count: other.value)
   }
 
   // sourcery: pymethod = __rlshift__
+  /// static PyObject *
+  /// long_rshift(PyLongObject *a, PyLongObject *b)
   public func rlshift(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
 
-    return self.lshift(left: other.value, right: self.value)
+    return self.lshift(value: other.value, count: self.value)
   }
 
-  private func lshift(left: BigInt, right: BigInt) -> PyResult<PyObject> {
-    if right.isNegative {
+  private func lshift(value: BigInt,
+                      count countBig: BigInt) -> PyResult<PyObject> {
+    if countBig.isNegative {
       return .valueError("negative shift count")
     }
 
-    let result = left << right
+    if value.isZero {
+      let result = Py.newInt(0)
+      return .value(result)
+    }
+
+    guard let count = Int(exactly: countBig) else {
+      return .overflowError("too many digits in integer")
+    }
+
+    let result = value << count
     return .value(Py.newInt(result))
   }
 
