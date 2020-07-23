@@ -19,7 +19,7 @@ guard FileManager.default.changeCurrentDirectoryPath(rootDir.path) else {
 
 // MARK: - Config
 
-stopAtFirstFailedTest = true
+stopAtFirstFailedTest = false
 
 // MARK: - Rust tests
 
