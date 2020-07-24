@@ -63,7 +63,7 @@ class LexerAdapterTests: XCTestCase {
     ])
   }
 
-  func test_populatePeeks_ignoresNewLinesAndComments() {
+  func test_populatePeeks_ignoresComments() {
     var adapter = self.createAdapter(tokens: [
       self.token(.newLine),
       self.token(.comment("Way back in days of old")),
@@ -72,6 +72,8 @@ class LexerAdapterTests: XCTestCase {
     ])
 
     XCTAssertTokens(&adapter, [
+      .newLine,
+      .newLine,
       .string("There was a legend told")
     ])
   }

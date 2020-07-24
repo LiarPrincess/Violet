@@ -26,12 +26,7 @@ internal struct LexerAdapter {
   // MARK: - Populate peeks
 
   internal mutating func populatePeeks() throws {
-    self.peek = try self.getNextToken()
-
-    // Advance 'self.peek' until first not comment or new line
-    while self.isComment(self.peek) || self.isNewLine(self.peek) {
-      self.peek = try self.getNextToken()
-    }
+    self.peek = try self.getNextNonCommentToken()
 
     // If we have empty source -> both eof
     if self.isEOF(self.peek) {

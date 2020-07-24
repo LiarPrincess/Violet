@@ -19,7 +19,7 @@ class ParseComment: XCTestCase, Common {
     guard let ast = self.parse(parser) else { return }
 
     XCTAssertAST(ast, """
-    ModuleAST(start: 4:4, end: 5:10)
+    ModuleAST(start: 2:2, end: 5:10)
       PassStmt(start: 4:4, end: 5:10)
     """)
   }
@@ -39,7 +39,7 @@ class ParseComment: XCTestCase, Common {
     guard let ast = self.parse(parser) else { return }
 
     XCTAssertAST(ast, """
-    ModuleAST(start: 4:4, end: 9:14)
+    ModuleAST(start: 2:2, end: 9:14)
       PassStmt(start: 4:4, end: 5:10)
       PassStmt(start: 8:8, end: 9:14)
     """)
