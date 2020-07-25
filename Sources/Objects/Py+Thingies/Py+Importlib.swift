@@ -132,10 +132,11 @@ extension PyInstance {
     case let .error(e): return .error(e)
     }
 
+    let code: PyCode
+    let compileResult = self.compile(path: path, mode: .fileInput)
     let specPath = ModuleSpecWithPath(spec: spec, path: path)
 
-    let code: PyCode
-    switch self.compile(path: path, mode: .fileInput) {
+    switch compileResult.asResult() {
     case let .value(c): code = c
     case let .error(e):
       let msg = "can't compile \(spec.name)"

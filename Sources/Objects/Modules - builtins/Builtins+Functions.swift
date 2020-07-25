@@ -970,12 +970,15 @@ extension Builtins {
       let flags = binding.optional(at: 3)
       let dontInherit = binding.optional(at: 4)
       let optimize = binding.optional(at: 5)
-      return Py.compile(source: source,
-                        filename: filename,
-                        mode: mode,
-                        flags: flags,
-                        dontInherit: dontInherit,
-                        optimize: optimize)
+
+      let compileResult = Py.compile(source: source,
+                                     filename: filename,
+                                     mode: mode,
+                                     flags: flags,
+                                     dontInherit: dontInherit,
+                                     optimize: optimize)
+
+      return compileResult.asResult()
 
     case let .error(e):
       return .error(e)

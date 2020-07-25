@@ -152,12 +152,12 @@ extension ExecEval {
     switch Py.extractString(object: arg) {
     case .string(_, let source),
          .bytes(_, let source):
-      return Py.compile(
-        source: source,
-        filename: Self.filename,
-        mode: Self.parserMode,
-        optimize: OptimizationLevel.none
-      )
+      let compileResult = Py.compile(source: source,
+                                     filename: Self.filename,
+                                     mode: Self.parserMode,
+                                     optimize: OptimizationLevel.none)
+
+      return compileResult.asResult()
 
     case .byteDecodingError:
       return .typeError(Self.createSourceArgumentHasInvalidTypeError())
