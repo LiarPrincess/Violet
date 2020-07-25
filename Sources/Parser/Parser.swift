@@ -137,15 +137,18 @@ public final class Parser {
     }
 
     if let stmt = try self.compoundStmtOrNop() {
-      let end = self.peek.end
-      try self.consumeOrThrow(.newLine)
+      // We need to also report 'newLine' as expected!
+      try self.consumeNewLines()
+      try self.assertEOF(expected: .newLine, .eof)
 
       return self.builder.interactiveAST(statements: [stmt],
                                          start: start,
-                                         end: end)
+                                         end: self.peek.end)
     }
 
     let stmts = try self.simpleStmt()
+    try self.assertEOF()
+
     return self.builder.interactiveAST(statements: Array(stmts),
                                        start: start,
                                        end: stmts.last.end)
@@ -166,7 +169,10 @@ public final class Parser {
       }
     }
 
-    // We know that 'self.peek.kind == .eof' (because of 'while' condition)
+    // We know that 'self.peek.kind == .eof' (because of 'while' condition),
+    // but we can check anyway:
+    try self.assertEOF()
+
     return self.builder.moduleAST(statements: result,
                                   start: first.start,
                                   end: result.last?.end ?? first.end)
@@ -178,14 +184,23 @@ public final class Parser {
     let list = try self.testList(context: .load, closingTokens: [.newLine, .eof])
 
     try self.consumeNewLines()
-
-    let end = self.peek.end
-    guard self.peek.kind == .eof else {
-      throw self.unexpectedToken(expected: [.eof])
-    }
+    try self.assertEOF()
 
     let expr = list.toExpression(using: &self.builder, start: start)
-    return self.builder.expressionAST(expression: expr, start: start, end: end)
+    return self.builder.expressionAST(expression: expr,
+                                      start: start,
+                                      end: self.peek.end)
+  }
+
+  private func assertEOF(expected: ExpectedToken...) throws {
+    var expected = expected
+    if !expected.contains(.eof) {
+      expected.append(.eof)
+    }
+
+    guard case .eof = self.peek.kind else {
+      throw self.unexpectedToken(expected: expected)
+    }
   }
 
   // MARK: - Naming
@@ -255,11 +270,11 @@ public final class Parser {
   internal func unexpectedToken(token: Token? = nil,
                                 location: SourceLocation? = nil,
                                 expected: [ExpectedToken]) -> ParserError {
-    let tok = token ?? self.peek
+    let token = token ?? self.peek
 
-    let kind = tok.kind == .eof ?
+    let kind = token.kind == .eof ?
       ParserErrorKind.unexpectedEOF(expected: expected) :
-      ParserErrorKind.unexpectedToken(tok.kind, expected: expected)
+      ParserErrorKind.unexpectedToken(token.kind, expected: expected)
 
     return self.error(kind, location: location)
   }
