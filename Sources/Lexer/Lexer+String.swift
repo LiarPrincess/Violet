@@ -57,7 +57,7 @@ extension Lexer {
     assert(self.peek == "\"" || self.peek == "'")
 
     guard let quote = self.peek else {
-      throw self.error(.eof)
+      throw self.error(.unexpectedEOF)
     }
 
     var quoteType = QuoteType.single

@@ -95,7 +95,7 @@ extension Lexer {
 
   private func decimalIntegerOrFloat(start: SourceLocation) throws -> Token {
     // It can't be 'nil', otherwise we would never call 'self.number()'.
-    guard let first = self.peek else { throw self.error(.eof) }
+    guard let first = self.peek else { throw self.error(.unexpectedEOF) }
 
     let startIndex = self.sourceIndex
 

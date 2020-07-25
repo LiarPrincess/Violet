@@ -26,7 +26,7 @@ public struct LexerError: Error, Equatable, CustomStringConvertible {
 public enum LexerErrorKind: Equatable, CustomStringConvertible {
 
   /// Unexpected end of file
-  case eof
+  case unexpectedEOF
   /// Unexpected character
   case unexpectedCharacter(UnicodeScalar)
 
@@ -62,7 +62,7 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
 
   public var description: String {
     switch self {
-    case .eof:
+    case .unexpectedEOF:
       return "Unexpected end of file."
     case .unexpectedCharacter(let scalar):
       let char = self.scalarDescription(scalar: scalar)
