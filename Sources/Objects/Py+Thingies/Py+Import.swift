@@ -239,16 +239,11 @@ extension PyInstance {
   /// PyImport_GetModule(PyObject *name)
   private func getExistingOrLoadModule(absName: PyString) -> PyResult<PyObject> {
     switch self.sys.getModule(name: absName) {
-    case let .value(m):
-      if m.isNone {
-        return self.call_find_and_load(absName: absName)
-      }
-
+    case let .module(m):
       return .value(m)
-
-    case .notFound:
+    case .notModule,
+         .notFound:
       return self.call_find_and_load(absName: absName)
-
     case let .error(e):
       assert(!e.isKeyError, "KeyError means not found")
       return .error(e)
@@ -338,8 +333,12 @@ extension PyInstance {
 
     let interned = self.intern(string: absTopLevel)
     switch self.sys.getModule(name: interned) {
-    case .value(let m):
+    case .module(let m):
       return .value(m)
+    case .notModule(let o):
+      // This is an interesting case,
+      // but we will trust that import knows its stuff.
+      return .value(o)
     case .notFound:
       let msg = "\(absTopLevel) not in sys.modules as expected"
       return .error(self.newKeyError(msg: msg))

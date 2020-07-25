@@ -24,12 +24,6 @@ extension Sys {
 
 // MARK: - Modules
 
-public enum GetModuleResult {
-  case value(PyObject)
-  case notFound(PyBaseException)
-  case error(PyBaseException)
-}
-
 extension Sys {
 
   /// sys.modules
@@ -45,6 +39,14 @@ extension Sys {
     return self.set(.modules, to: value)
   }
 
+  public enum GetModuleResult {
+    case module(PyModule)
+    /// Value was found in `modules`, but it is not an `module` object.
+    case notModule(PyObject)
+    case notFound(PyBaseException)
+    case error(PyBaseException)
+  }
+
   public func getModule(name: PyObject) -> GetModuleResult {
     let modules: PyDict
     switch self.getModules() {
@@ -54,10 +56,16 @@ extension Sys {
 
     switch modules.get(key: name) {
     case .value(let o):
-      return .value(o)
+      if let m = o as? PyModule {
+        return .module(m)
+      }
+
+      return .notModule(o)
+
     case .notFound:
       let e = Py.newKeyError(key: name)
       return .notFound(e)
+
     case .error(let e):
       return .error(e)
     }

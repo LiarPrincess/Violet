@@ -221,7 +221,11 @@ extension Eval {
 
     let fullName = "\(package.value).\(name.value)"
     switch Py.sys.getModule(name: Py.newString(fullName)) {
-    case .value(let o):
+    case .module(let m):
+      return .value(m)
+    case .notModule(let o):
+      // This is an interesting case,
+      // but we will trust that import knows its stuff.
       return .value(o)
     case .notFound,
          .error:

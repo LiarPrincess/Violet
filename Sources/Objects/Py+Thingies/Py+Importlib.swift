@@ -170,18 +170,11 @@ extension PyInstance {
 
   private func getModuleFromSys(spec: ModuleSpec) -> GetModuleFromSysResult {
     switch Py.sys.getModule(name: spec.nameObject) {
-    case .value(let o):
-      if let m = o as? PyModule {
-        return .value(m) // Already initialized. Nothing to do…
-      }
-
-      // override whatever we have there
+    case .module(let m): // Already initialized. Nothing to do…
+      return .value(m)
+    case .notModule, // Override whatever we have there
+         .notFound:  // We have to initialize it
       return .notFound
-
-    case .notFound:
-      // We have to initialize it
-      return .notFound
-
     case .error(let e):
       let msg = "error when checking if '\(spec.name)' was already initialized"
       let e = self.newImportError(msg: msg, spec: spec, cause: e)

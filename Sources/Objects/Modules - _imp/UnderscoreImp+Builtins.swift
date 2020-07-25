@@ -48,7 +48,7 @@ extension UnderscoreImp {
 
   /// static PyObject *
   /// _imp_create_builtin(PyObject *module, PyObject *spec)
-  public func createBuiltin(spec: PyObject) -> PyResult<PyObject> {
+  public func createBuiltin(spec: PyObject) -> PyResult<PyModule> {
     // Note that we do not have to 'create' new module here!
     // We already did that in 'Py.initialize'.
 
@@ -60,9 +60,10 @@ extension UnderscoreImp {
 
     // Check if we already have this module (we will not check if it is builtin).
     switch Py.sys.getModule(name: name) {
-    case .value(let m):
+    case .module(let m):
       return .value(m)
-    case .notFound:
+    case .notFound,
+         .notModule:
       let msg = "'\(name.value)' module is not a correct builtin module."
       return .error(Py.newRuntimeError(msg: msg))
     case .error(let e):
