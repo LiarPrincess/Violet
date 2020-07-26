@@ -16,11 +16,6 @@ extension Sys {
     return self.get(.ps1)
   }
 
-  public func getPS1ToDisplayInInteractive() -> String {
-    let ps1 = self.getPS1()
-    return self.asStringToDisplayInInteractive(value: ps1)
-  }
-
   public func setPS1(to value: PyObject) -> PyBaseException? {
     return self.set(.ps1, to: value)
   }
@@ -35,28 +30,7 @@ extension Sys {
     return self.get(.ps2)
   }
 
-  /// String that should be printed in interactive mode.
-  public func getPS2ToDisplayInInteractive() -> String {
-    let ps2 = self.getPS2()
-    return self.asStringToDisplayInInteractive(value: ps2)
-  }
-
   public func setPS2(to value: PyObject) -> PyBaseException? {
     return self.set(.ps2, to: value)
-  }
-
-  // MARK: - Helpers
-
-  private func asStringToDisplayInInteractive(
-    value: PyResult<PyObject>
-  ) -> String {
-    let string = value.flatMap(Py.strValue)
-
-    switch string {
-    case .value(let s):
-      return s
-    case .error:
-      return ""
-    }
   }
 }

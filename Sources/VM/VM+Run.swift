@@ -37,11 +37,11 @@ extension VM {
   /// pymain_run_python(_PyMain *pymain)
   public func run() -> RunResult {
     if self.arguments.help {
-      return self.printToStdoutAndFinish(msg: Arguments.helpMessage)
+      return self.writeToStdoutAndFinish(msg: Arguments.helpMessage)
     }
 
     if self.arguments.version {
-      return self.printToStdoutAndFinish(msg: Py.sys.version)
+      return self.writeToStdoutAndFinish(msg: Py.sys.version)
     }
 
     // Oh no… we will be running code! Let's prepare for this.
@@ -77,31 +77,21 @@ extension VM {
     }
 
     if runRepl {
-      self.runRepl()
+      let e = self.runRepl()
+      return self.handleErrorOrSystemExit(error: e)
     }
 
     return .done
   }
 
-  private func printToStdoutAndFinish(msg: String) -> RunResult {
-    // This is probably the first time you see our error handling approach.
-    // So… we are using 'enums' instead of Swift 'throw'.
-    // There is a long comment about this in 'README' for 'Objects' module.
-
-    switch Py.sys.getStdoutOrNone() {
-    case .value(let file):
-      switch file.write(string: msg) {
-      case .value:
-        return .done
-      case .error(let e):
-        return .error(e)
-      }
-
-    case .none:
+  private func writeToStdoutAndFinish(msg: String) -> RunResult {
+    switch self.writeToStdout(msg: msg) {
+    case .ok:
+      return .done
+    case .streamIsNone:
       // We will just assume that by setting 'sys.stdout = None'
       // (or its equivalent in Swift) user explicitly asked for no messages.
       return .done
-
     case .error(let e):
       return .error(e)
     }
@@ -109,6 +99,10 @@ extension VM {
 
   /// 'IfNeeded' roughly translates to 'if it was not already initialized'.
   private func initImportlibIfNeeded() -> PyBaseException? {
+    // This is probably the first time you see our error handling approach.
+    // So… we are using 'enums' instead of Swift 'throw'.
+    // There is a long comment about this in 'README' for 'Objects' module.
+    //
     // Both 'initImportlibIfNeeded' and 'initImportlibExternalIfNeeded'
     // are idempotent, so we can call them as many times as we want.
     // Unless you do something like 'sys.modules['importlib'] = "let it go"',
@@ -196,7 +190,8 @@ extension VM {
     }
 
     let code: PyCode
-    switch Py.compile(path: script.__main__, mode: .fileInput) {
+    let compileResult = Py.compile(path: script.__main__, mode: .fileInput)
+    switch compileResult.asResult() {
     case let .value(c): code = c
     case let .error(e): return .error(e)
     }
@@ -210,7 +205,7 @@ extension VM {
     }
 
     let main: PyModule
-    switch self.add__main__Module(loader: .sourceFileLoader) {
+    switch self.add__main__Module(loader: .sourceFileLoader, ifAlreadyExists: .use) {
     case let .value(m): main = m
     case let .error(e): return .error(e)
     }
@@ -274,7 +269,7 @@ extension VM {
     }
   }
 
-  // MARK: - No args
+  // MARK: - Interactive without args
 
   private func prepareForInteractiveWithoutArgs() -> PyResult<PyObject> {
     // From 'https://docs.python.org/3.7/using/cmdline.html'
@@ -297,82 +292,297 @@ extension VM {
 
   // MARK: - Run REPL
 
+  /// Run read-eval-print-loop.
+  /// We will always return exception, but sometimes this exception
+  /// is 'SystemExit' (which is intended way of exiting this loop).
+  ///
+  /// CPython:
   /// static void
   /// pymain_repl(_PyMain *pymain, PyCompilerFlags *cf)
-  private func runRepl() {
-//    var input = ""
-//    var isContinuing = false
-//
-//    while true {
-//      let prompt = isContinuing ? self.sys.ps2String : self.sys.ps1String
-//      print(prompt, terminator: "")
-//
-//      switch readLine() {
-//      case let .some(line):
-//        let stopContinuing = line.isEmpty
-//
-//        if input.isEmpty {
-//          input = line
-//        } else {
-//          input.append(line)
-//        }
-//        input.append("\n")
-//
-//        if isContinuing {
-//          if stopContinuing {
-//            isContinuing = false
-//          } else {
-//            continue
-//          }
-//        }
-//
-//        switch self.runInteractive(input: input) {
-//        case .ok:
-//          input = ""
-//        case .notFinished:
-//          isContinuing = true
-//        case let .error(e):
-//          throw e
-//        }
-//
-//      case .none:
-//        return
-//      }
-//    }
-    self.unimplemented()
+  /// int
+  /// PyRun_InteractiveLoopFlags(FILE *fp, const char *filename_str, ...)
+  /// static int
+  /// PyRun_InteractiveOneObjectEx(FILE *fp, PyObject *filename, ...)
+  private func runRepl() -> PyBaseException {
+    while true {
+      let code: PyCode
+      switch self.readStdinForNextInteractiveInput() {
+      case .code(let c):
+        code = c
+      case .syntaxError(let e):
+        switch self.writeToStderr(error: e) {
+        case .ok, .streamIsNone: continue
+        case .error(let e): return e
+        }
+      case .keyboardInterrupt:
+        // On 'KeyboardInterrupt' we should just print 'KeyboardInterrupt'
+        // and wait for next input.
+        let type = Py.errorTypes.keyboardInterrupt
+        let typeName = type.getNameRaw()
+
+        switch self.writeToStdout(msg: typeName) {
+        case .ok, .streamIsNone: continue
+        case .error(let e): return e
+        }
+
+      case .error(let e):
+        return e
+      }
+
+      let main: PyModule
+      switch self.add__main__Module(loader: .builtinImporter, ifAlreadyExists: .use) {
+      case let .value(m): main = m
+      case let .error(e): return e
+      }
+
+      let mainDict = main.getDict()
+      switch self.eval(code: code, globals: mainDict, locals: mainDict) {
+      case let .value(o):
+        // TODO: defer { flush_io(); }
+
+        if !o.isNone {
+          switch self.writeToStdout(object: o) {
+          case .ok, .streamIsNone: break
+          case .error(let e): return e
+          }
+        }
+
+      case let .error(e):
+        // Line resulted in an error!
+        // But that does not mean that we should stop 'repl'!
+        // Just print this error and wait for next input.
+        switch self.writeToStderr(error: e) {
+        case .ok, .streamIsNone: break
+        case .error(let e): return e
+        }
+      }
+    }
   }
 
-//  private enum RunInteractiveResult {
-//    case ok
-//    case notFinished
-//    case error(Error)
-//  }
-//
-//  private func runInteractive(input: String) -> RunInteractiveResult {
-//    do {
-//      let code = try self.compile(filename: "<stdin>", source: input, mode: .interactive)
-//
-//      let module = self.builtins.newModule(name: "__main__")
-//      let moduleDict = self.builtins.getDict(module)
-//
-//      self.run(code: code, globals: moduleDict, locals: moduleDict)
-//      return .ok
-//    } catch let error as LexerError {
-//      switch error.kind {
-//      case .eof, .unfinishedLongString: return .notFinished
-//      default: return .error(error)
-//      }
-//    } catch let error as ParserError {
-//      switch error.kind {
-//      case .unexpectedEOF: return .notFinished
-//      default: return .error(error)
-//      }
-//    } catch {
-//      return .error(error)
-//    }
-//  }
+  private enum InteractiveInput {
+    case code(PyCode)
+    case syntaxError(PyBaseException)
+    case keyboardInterrupt
+    case error(PyBaseException)
+  }
 
-  // MARK: - Helpers
+  /// static int
+  /// PyRun_InteractiveOneObjectEx(FILE *fp, PyObject *filename, ...)
+  private func readStdinForNextInteractiveInput() -> InteractiveInput {
+    // TODO: Read input from 'stdin'
+//    let stdin: PyTextFile
+//    switch Py.sys.getStdin() {
+//    case let .value(f): stdin = f
+//    case let .error(e): return .error(e)
+//    }
+
+    let ps1 = self.getInteractivePrompt(type: .ps1)
+    let ps2 = self.getInteractivePrompt(type: .ps2)
+
+    var input = ""
+    var isFirstLine = true
+
+    while true {
+      defer { isFirstLine = false }
+
+      if hasKeyboardInterrupt {
+        hasKeyboardInterrupt = false
+        return .keyboardInterrupt
+      }
+
+      switch self.writeToStdout(msg: isFirstLine ? ps1 : ps2) {
+      case .ok, .streamIsNone: break
+      case .error(let e): return .error(e)
+      }
+
+      guard let line = readLine() else {
+        self.unimplemented()
+      }
+
+      assert(!line.hasSuffix("\n"))
+      input.append(line)
+      input.append("\n")
+
+      // There are 2 major cases when we want to try compile the code:
+      // - we are 1st line - this is primary designed for single line statements,
+      //   for example: 'elsa = princess + ice'.
+      //   It may fail for multiline statements, for example 'class Elsa:'
+      //   will result in unexpected EOF.
+      // - multiline statement - so basically compile when user enters empty line.
+      //   There are some false-positives (for example: empty line inside multiline
+      //   string), but otherwise this is it.
+      if isFirstLine || line.isEmpty {
+        switch self.compileInteractive(input: input) {
+        case .code(let c):
+          return .code(c)
+        case .unfinishedLongString:
+          break  // We want continue our loop!
+        case .unexpectedEOF(let e):
+          // - single line statement -> well… apparently it is multiline
+          // - multiline statement   -> we expected correct statement
+          if !isFirstLine {
+            return .syntaxError(e)
+          }
+        case .syntaxError(let e):
+          return .syntaxError(e)
+        case .error(let e):
+          return .error(e)
+        }
+      }
+    }
+  }
+
+  private enum PromptType {
+    case ps1
+    case ps2
+  }
+
+  private var defaultInteractivePrompt: String {
+    return ""
+  }
+
+  /// String that should be printed in interactive mode.
+  private func getInteractivePrompt(type: PromptType) -> String {
+    let objectResult: PyResult<PyObject>
+    switch type {
+    case .ps1:
+      objectResult = Py.sys.getPS1()
+    case .ps2:
+      objectResult = Py.sys.getPS2()
+    }
+
+    let object: PyObject
+    switch objectResult {
+    case .value(let o):
+      object = o
+    case .error:
+      return self.defaultInteractivePrompt
+    }
+
+    if let s = object as? PyString {
+      return s.value
+    }
+
+    switch Py.strValue(object: object) {
+    case .value(let s):
+      return s
+    case .error:
+      return self.defaultInteractivePrompt
+    }
+  }
+
+  private enum CompileInteractiveResult {
+    case code(PyCode)
+    case unfinishedLongString(PyBaseException)
+    /// Input is not complete,
+    /// user should provide the rest of it in the next line.
+    case unexpectedEOF(PyBaseException)
+    /// Statement is complete, but not correct.
+    /// Umbrella case for lexer/parser/compiler error.
+    case syntaxError(PyBaseException)
+    /// Other (possibly non-trivial) error
+    case error(PyBaseException)
+  }
+
+  private func compileInteractive(input: String) -> CompileInteractiveResult {
+    let compileResult = Py.compile(source: input,
+                                   filename: "<stdin>",
+                                   mode: .interactive)
+
+    switch compileResult {
+    case let .code(code):
+      return .code(code)
+
+    case let .lexerError(lexerError, e):
+        switch lexerError.kind {
+        case .unfinishedLongString:
+          return .unfinishedLongString(e)
+        case .unexpectedEOF:
+          return .unexpectedEOF(e)
+        default:
+          return .syntaxError(e)
+        }
+
+    case let .parserError(parserError, e):
+        switch parserError.kind {
+        case .unexpectedEOF:
+          return .unexpectedEOF(e)
+        default:
+          return .syntaxError(e)
+        }
+
+    case let .lexerWarning(_, e),
+         let .parserWarning(_, e),
+         let .compilerWarning(_, e),
+         let .compilerError(_, e):
+      return .syntaxError(e)
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Helpers - write to stream
+
+  private enum WriteToStreamResult {
+    case ok
+    case streamIsNone
+    case error(PyBaseException)
+  }
+
+  private func writeToStdout(object: PyObject) -> WriteToStreamResult {
+    switch Py.sys.getStdoutOrNone() {
+    case .value(let file):
+
+      switch Py.print(args: [object], file: file) {
+      case .value:
+        return .ok
+      case .error(let e):
+        return .error(e)
+      }
+
+    case .none:
+      return .streamIsNone
+
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  private func writeToStdout(msg: String) -> WriteToStreamResult {
+    switch Py.sys.getStdoutOrNone() {
+    case .value(let file):
+      switch file.write(string: msg) {
+      case .value:
+        return .ok
+      case .error(let e):
+        return .error(e)
+      }
+
+    case .none:
+      return .streamIsNone
+
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  private func writeToStderr(error: PyBaseException) -> WriteToStreamResult {
+    switch Py.sys.getStderrOrNone() {
+    case .value(let file):
+      // 'printRecursive' swallows any error
+      Py.printRecursive(error: error, file: file)
+      return .ok
+
+    case .none:
+      return.streamIsNone
+
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Helpers - set argv0
 
   /// Set given value as `sys.argv[0]`.
   private func setArgv0(value: String) -> PyBaseException? {
@@ -384,23 +594,24 @@ extension VM {
     }
   }
 
+  // MARK: - Helpers - prepend path
+
   /// Prepend given value to `sys.path`.
   private func prependPath(value: String) -> PyBaseException? {
     return Py.sys.prependPath(value: value)
   }
 
+  // MARK: - Helpers - add __main__
+
   /// Type of the `__loader__` to set on `__main__`module.
   private enum MainLoader {
     /// Will use `Importlib.BuiltinImporter` as `__loader__`.
-    ///
     /// Use this it you have input from `<stdin>` (repl etc.).
     case builtinImporter
     /// Will use `ImportlibExternal.SourceFileLoader` as `__loader__`.
-    ///
     /// Use this if the code comes from `.py` file.
     case sourceFileLoader
     /// Will use `ImportlibExternal.SourcelessFileLoader` as `__loader__`.
-    ///
     /// Use this if the code comes from Violet equivalent of `.pyc` file.
     case sourcelessFileLoader
 
@@ -428,10 +639,32 @@ extension VM {
     }
   }
 
+  // swiftlint:disable:next type_name
+  private enum Existing__main__ModulePolicy {
+    case use
+    case replace
+  }
+
+  private var __main__ModuleName: PyString {
+    return Py.intern(string: "__main__")
+  }
+
   /// static _PyInitError
   /// add_main_module(PyInterpreterState *interp)
-  private func add__main__Module(loader: MainLoader) -> PyResult<PyModule> {
-    let name = Py.intern(string: "__main__")
+  private func add__main__Module(
+    loader: MainLoader,
+    ifAlreadyExists existsPolicy: Existing__main__ModulePolicy
+  ) -> PyResult<PyModule> {
+    switch self.handleExisting__main__Module(policy: existsPolicy) {
+    case .value(let m):
+      return .value(m)
+    case .notFound:
+      break
+    case .error(let e):
+      return .error(e)
+    }
+
+    let name = self.__main__ModuleName
     let module = Py.newModule(name: name)
     let dict = module.getDict()
 
@@ -459,12 +692,52 @@ extension VM {
     return .value(module)
   }
 
+  // swiftlint:disable:next type_name
+  private enum Existing__main__Module {
+    case value(PyModule)
+    case notFound
+    case error(PyBaseException)
+  }
+
+  private func handleExisting__main__Module(
+    policy: Existing__main__ModulePolicy
+  ) -> Existing__main__Module {
+    let name = self.__main__ModuleName
+
+    switch policy {
+    case .use:
+      switch Py.sys.getModule(name: name) {
+      case .module(let m):
+        return .value(m)
+
+      case .notModule(let o):
+        let msg = "Tried to reuse existing '__main__' module, " +
+          "but 'sys.modules' contains \(o.typeName) instead of module"
+        let e = Py.newRuntimeError(msg: msg)
+        return .error(e)
+
+      case .notFound:
+        return .notFound
+      case .error(let e):
+        return .error(e)
+      }
+
+    case .replace:
+      return .notFound
+    }
+  }
+
   private func getLoader(type: MainLoader) -> PyResult<PyObject> {
     let module: PyObject
     let moduleName = Py.intern(string: type.module)
+
     switch Py.sys.getModule(name: moduleName) {
-    case let .value(m):
+    case let .module(m):
       module = m
+    case .notModule(let o):
+      // This is an interesting case,
+      // but we will trust that import knows its stuff.
+      module = o
     case let .notFound(e),
          let .error(e):
       return .error(e)
