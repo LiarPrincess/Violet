@@ -216,7 +216,6 @@ internal class FileDescriptor: CustomStringConvertible {
 
   // MARK: - Helpers - read
 
-  // swiftlint:disable:next function_body_length
   private func _readDataOfLength(_ length: Int, untilEOF: Bool) throws -> Data {
     guard self._isValid else {
       throw Error.fileReadUnknown
@@ -227,23 +226,7 @@ internal class FileDescriptor: CustomStringConvertible {
       return Data()
     }
 
-    var statbuf = stat()
-    if fstat(self._fd, &statbuf) < 0 {
-      throw _NSErrorWithErrno(errno, reading: true)
-    }
-
-    let readBlockSize: Int
-    if statbuf.st_mode & S_IFMT == S_IFREG {
-      if statbuf.st_blksize > 0 {
-        readBlockSize = Int(clamping: statbuf.st_blksize)
-      } else {
-        readBlockSize = 1_024 * 8
-      }
-    } else {
-      /* We get here on sockets, character special files, FIFOs … */
-      readBlockSize = 1_024 * 8
-    }
-
+    let readBlockSize = try self.determineReadBlockSize()
     var currentAllocationSize = readBlockSize
     var dynamicBuffer = malloc(currentAllocationSize)!
     var total = 0
@@ -279,6 +262,33 @@ internal class FileDescriptor: CustomStringConvertible {
     dynamicBuffer = _CFReallocf(dynamicBuffer, total)
     let bytePtr = dynamicBuffer.bindMemory(to: UInt8.self, capacity: total)
     return Data(bytesNoCopy: bytePtr, count: total, deallocator: .free)
+  }
+
+  // This code was taken from '_readDataOfLength' and moved to separate function,
+  // because we also need it in 'readLine'.
+  private func determineReadBlockSize() throws -> Int {
+    guard self._isValid else {
+      throw Error.fileReadUnknown
+    }
+
+    var statbuf = stat()
+    if fstat(self._fd, &statbuf) < 0 {
+      throw _NSErrorWithErrno(errno, reading: true)
+    }
+
+    let readBlockSize: Int
+    if statbuf.st_mode & S_IFMT == S_IFREG {
+      if statbuf.st_blksize > 0 {
+        readBlockSize = Int(clamping: statbuf.st_blksize)
+      } else {
+        readBlockSize = 1_024 * 8
+      }
+    } else {
+      /* We get here on sockets, character special files, FIFOs … */
+      readBlockSize = 1_024 * 8
+    }
+
+    return readBlockSize
   }
 
   private func _readBytes(into buffer: UnsafeMutablePointer<UInt8>,
@@ -338,6 +348,45 @@ internal class FileDescriptor: CustomStringConvertible {
   }
 
   // MARK: - Read
+
+  internal func readLine() throws -> Data {
+    guard self._isValid else {
+      throw Error.fileReadUnknown
+    }
+
+    let readBlockSize = try self.determineReadBlockSize()
+    let bufferPtr = malloc(readBlockSize)!
+    defer { free(bufferPtr) }
+
+    var result = Data()
+    let newLines = CharacterSet.newlines
+
+    while true {
+      // Hmm… I'm not sure that this is the best way
+      let requestedReadCount = 1
+      let readCount = _read(self._fd, bufferPtr, requestedReadCount)
+
+      if readCount < 0 {
+        throw _NSErrorWithErrno(errno, reading: true)
+      }
+
+      let isEnd = readCount == 0
+      if isEnd {
+        return result
+      }
+
+      let buffer = UnsafeRawBufferPointer(start: bufferPtr, count: readCount)
+      for byte in buffer {
+        let scalar = UnicodeScalar(byte)
+
+        if newLines.contains(scalar) {
+          return result
+        }
+
+        result.append(byte)
+      }
+    }
+  }
 
   internal func readToEnd() throws -> Data {
     return try self.read(upToCount: Int.max)

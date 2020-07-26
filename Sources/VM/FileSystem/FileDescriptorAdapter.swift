@@ -30,29 +30,9 @@ internal struct FileDescriptorAdapter:
   // MARK: - Read
 
   internal func readLine() -> PyResult<Data> {
-    var result = Data()
-    let newLines = CharacterSet.newlines
-
     do {
-      while true {
-        // Peak of performance right here:
-        let buffer = try self.fd.read(upToCount: 1)
-
-        let isEnd = buffer.isEmpty
-        if isEnd {
-          return .value(result)
-        }
-
-        for byte in buffer {
-          let scalar = UnicodeScalar(byte)
-
-          if newLines.contains(scalar) {
-            return .value(result)
-          }
-
-          result.append(byte)
-        }
-      }
+      let data = try self.fd.readLine()
+      return .value(data)
     } catch {
       let e = self.osError(from: error)
       return .error(e)
