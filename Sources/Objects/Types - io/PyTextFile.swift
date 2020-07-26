@@ -128,6 +128,18 @@ public class PyTextFile: PyObject {
     }
   }
 
+  public func readLine() -> PyResult<String> {
+    // We do not need this as pymethod.
+
+    if let e = self.assertFileIsOpenAndReadable() {
+      return .error(e)
+    }
+
+    let data = self.fd.readLine()
+    let string = data.flatMap(self.decode(data:))
+    return string
+  }
+
   // sourcery: pymethod = read
   /// static PyObject *
   /// _io_TextIOWrapper_read_impl(textio *self, Py_ssize_t n)
@@ -153,12 +165,8 @@ public class PyTextFile: PyObject {
   }
 
   internal func readRaw(size: Int) -> PyResult<String> {
-    guard !self.isClosed() else {
-      return .valueError("I/O operation on closed file.")
-    }
-
-    guard self.isReadable() else {
-      return .error(self.modeError("not readable"))
+    if let e = self.assertFileIsOpenAndReadable() {
+      return .error(e)
     }
 
     if size == 0 {
@@ -169,11 +177,24 @@ public class PyTextFile: PyObject {
       self.fd.read(upToCount: size) :
       self.fd.readToEnd()
 
-    let string = data.flatMap {
-      self.encoding.decode(data: $0, errors: self.errors)
+    let string = data.flatMap(self.decode(data:))
+    return string
+  }
+
+  private func assertFileIsOpenAndReadable() -> PyBaseException? {
+    guard !self.isClosed() else {
+      return Py.newValueError(msg: "I/O operation on closed file.")
     }
 
-    return string
+    guard self.isReadable() else {
+      return self.modeError("not readable")
+    }
+
+    return nil
+  }
+
+  private func decode(data: Data) -> PyResult<String> {
+    return self.encoding.decode(data: data, errors: self.errors)
   }
 
   // MARK: - Write

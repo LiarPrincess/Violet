@@ -21,10 +21,42 @@ internal struct FileDescriptorAdapter:
     self.path = path
   }
 
-  // MARK: - FileDescriptorType
+  // MARK: - Raw
 
   internal var raw: Int32 {
     return self.fd.raw
+  }
+
+  // MARK: - Read
+
+  internal func readLine() -> PyResult<Data> {
+    var result = Data()
+    let newLines = CharacterSet.newlines
+
+    do {
+      while true {
+        // Peak of performance right here:
+        let buffer = try self.fd.read(upToCount: 1)
+
+        let isEnd = buffer.isEmpty
+        if isEnd {
+          return .value(result)
+        }
+
+        for byte in buffer {
+          let scalar = UnicodeScalar(byte)
+
+          if newLines.contains(scalar) {
+            return .value(result)
+          }
+
+          result.append(byte)
+        }
+      }
+    } catch {
+      let e = self.osError(from: error)
+      return .error(e)
+    }
   }
 
   internal func readToEnd() -> PyResult<Data> {
@@ -47,6 +79,8 @@ internal struct FileDescriptorAdapter:
     }
   }
 
+  // MARK: - Write
+
   internal func write<T: DataProtocol>(contentsOf data: T) -> PyResult<PyNone> {
     do {
       try self.fd.write(contentsOf: data)
@@ -56,6 +90,8 @@ internal struct FileDescriptorAdapter:
       return .error(e)
     }
   }
+
+  // MARK: - Synchronize
 
   internal func synchronize() -> PyResult<PyNone> {
     do {
@@ -67,6 +103,8 @@ internal struct FileDescriptorAdapter:
     }
   }
 
+  // MARK: - Offset
+
   internal func offset() -> PyResult<UInt64> {
     do {
       let result = try self.fd.offset()
@@ -76,6 +114,8 @@ internal struct FileDescriptorAdapter:
       return .error(e)
     }
   }
+
+  // MARK: - Seek
 
   internal func seekToEnd() -> PyResult<UInt64> {
     do {
@@ -96,6 +136,8 @@ internal struct FileDescriptorAdapter:
       return .error(e)
     }
   }
+
+  // MARK: - Close
 
   internal func close() -> PyResult<PyNone> {
     do {

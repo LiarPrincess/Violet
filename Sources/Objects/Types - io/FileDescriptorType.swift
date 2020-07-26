@@ -6,6 +6,7 @@ public protocol FileDescriptorType {
   /// It should be set to `-1` when file is closed.
   var raw: Int32 { get }
 
+  func readLine() -> PyResult<Data>
   func readToEnd() -> PyResult<Data>
   func read(upToCount count: Int) -> PyResult<Data>
 

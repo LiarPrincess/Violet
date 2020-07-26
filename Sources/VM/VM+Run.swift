@@ -324,7 +324,6 @@ extension VM {
         case .ok, .streamIsNone: continue
         case .error(let e): return e
         }
-
       case .error(let e):
         return e
       }
@@ -366,15 +365,19 @@ extension VM {
     case error(PyBaseException)
   }
 
+// TODO: remove this
+// swiftlint:disable function_body_length
+
   /// static int
   /// PyRun_InteractiveOneObjectEx(FILE *fp, PyObject *filename, ...)
   private func readStdinForNextInteractiveInput() -> InteractiveInput {
-    // TODO: Read input from 'stdin'
-//    let stdin: PyTextFile
-//    switch Py.sys.getStdin() {
-//    case let .value(f): stdin = f
-//    case let .error(e): return .error(e)
-//    }
+// swiftlint:enable function_body_length
+
+    let stdin: PyTextFile
+    switch Py.sys.getStdin() {
+    case let .value(f): stdin = f
+    case let .error(e): return .error(e)
+    }
 
     let ps1 = self.getInteractivePrompt(type: .ps1)
     let ps2 = self.getInteractivePrompt(type: .ps2)
@@ -395,8 +398,15 @@ extension VM {
       case .error(let e): return .error(e)
       }
 
-      guard let line = readLine() else {
-        self.unimplemented()
+      // This has an interesting interaction with autocompletion in XCode
+      // integrated terminal:
+      // 1. We type: 'print("abc'
+      // 2. XCode autocompletes it to: 'print("abc")'
+      // 3. We will never get the '")' part and fail to compile
+      let line: String
+      switch stdin.readLine() {
+      case let .value(s): line = s
+      case let .error(e): return .error(e)
       }
 
       assert(!line.hasSuffix("\n"))
