@@ -288,6 +288,7 @@ extension PyInstance {
 
   // MARK: - Handle 'from'
 
+  // swiftlint:disable:next function_body_length
   private func handleFromList(name: PyString,
                               absName: PyString,
                               level: PyInt,
@@ -347,6 +348,8 @@ extension PyInstance {
     }
   }
 
+  /// And yes, `_handle_fromlist` is the `Python` selector.
+  /// We have not changed our naming convention.
   private func call_handle_fromlist(module: PyObject,
                                     fromList: PyObject) -> PyResult<PyObject> {
      let __import__: PyObject
