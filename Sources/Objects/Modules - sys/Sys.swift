@@ -207,6 +207,9 @@ public final class Sys: PyModuleImplementation {
     self.setOrTrap(.intern,
                    doc: Self.internDoc,
                    fn: self.intern(value:))
+    self.setOrTrap(.displayhook,
+                   doc: Self.displayhookDoc,
+                   fn: self.displayhook(value:))
     self.setOrTrap(.getdefaultencoding,
                    doc: Self.getDefaultEncodingDoc,
                    fn: self.getDefaultEncoding)
@@ -265,6 +268,7 @@ public final class Sys: PyModuleImplementation {
 
     internal static let exit = Properties(value: "exit")
     internal static let intern = Properties(value: "intern")
+    internal static let displayhook = Properties(value: "displayhook")
     internal static let getdefaultencoding = Properties(value: "getdefaultencoding")
     internal static let excepthook = Properties(value: "excepthook")
     internal static let _getframe = Properties(value: "_getframe")

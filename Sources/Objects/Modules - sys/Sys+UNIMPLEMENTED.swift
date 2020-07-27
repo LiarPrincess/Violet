@@ -44,10 +44,6 @@ extension Sys {
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.dllhandle).
   internal var dllHandle: PyObject { }
 
-  /// sys.displayhook(value)
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.displayhook).
-  internal func displayHook() -> PyObject { }
-
   /// sys.dont_write_bytecode
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.dont_write_bytecode).
   internal var dontWriteBytecode: PyObject { }

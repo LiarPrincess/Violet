@@ -336,17 +336,13 @@ extension VM {
 
       let mainDict = main.getDict()
       switch self.eval(code: code, globals: mainDict, locals: mainDict) {
-      case let .value(o):
+      case .value:
+        // We are not responsible for printing value, 'printExpr' instruction is
+        // (see: PEP-217 for details).
         // TODO: defer { flush_io(); }
+        break
 
-        if !o.isNone {
-          switch self.writeToStdout(object: o) {
-          case .ok, .streamIsNone: break
-          case .error(let e): return e
-          }
-        }
-
-      case let .error(e):
+      case .error(let e):
         // Line resulted in an error!
         // But that does not mean that we should stop 'repl'!
         // Just print this error and wait for next input.

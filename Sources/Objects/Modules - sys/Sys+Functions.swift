@@ -40,6 +40,71 @@ extension Sys {
     return Py.intern(string: value)
   }
 
+  // MARK: - Displayhook
+
+  internal static var displayhookDoc: String {
+    return """
+    displayhook(object) -> None
+
+    Print an object to sys.stdout and also save it in builtins._
+    """
+  }
+
+  public func getDisplayhook() -> PyResult<PyObject> {
+    return self.get(.displayhook)
+  }
+
+  /// sys.displayhook(value)
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.displayhook).
+  ///
+  /// static PyObject *
+  /// sys_displayhook(PyObject *self, PyObject *o)
+  public func displayhook(value: PyObject) -> PyResult<PyNone> {
+    // Print value except if None
+    // After printing, also assign to '_'
+    // Before, set '_' to None to avoid recursion
+    if value.isNone {
+      return .value(Py.none)
+    }
+
+    let builtins = Py.builtinsModule
+    let underscore = Py.intern(string: "_")
+
+    switch builtins.setAttribute(name: underscore, value: Py.none) {
+    case .value: break
+    case .error(let e): return .error(e)
+    }
+
+    let stdout: PyTextFile
+    switch self.getStdout() {
+    case let .value(s): stdout = s
+    case let .error(e): return .error(e)
+    }
+
+    // We are using 'print', so '\n' will be added automatically.
+    switch Py.print(args: [value], file: stdout) {
+    case .value: break
+    case .error(let e): return .error(e)
+    }
+
+    switch builtins.setAttribute(name: underscore, value: value) {
+    case .value: break
+    case .error(let e): return .error(e)
+    }
+
+    return .value(Py.none)
+  }
+
+  public func callDisplayhook(value: PyObject) -> PyResult<PyObject> {
+    switch self.getDisplayhook() {
+    case let .value(hook):
+      let callResult = Py.call(callable: hook, arg: value)
+      return callResult.asResult
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
   // MARK: - Exit
 
   internal static var exitDoc: String {

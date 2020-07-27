@@ -1172,7 +1172,6 @@ public final class BuiltinTypes {
 
     self.insert(type: type, name: "fromhex", value: PyClassMethod.wrap(name: "fromhex", doc: PyFloat.fromHexDoc, fn: PyFloat.fromHex(type:value:)))
 
-    self.insert(type: type, name: "hex", value: PyBuiltinFunction.wrap(name: "hex", doc: PyFloat.hexDoc, fn: PyFloat.hex, castSelf: Self.asFloat))
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyFloat.isEqual(_:), castSelf: Self.asFloat))
     self.insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyFloat.isNotEqual(_:), castSelf: Self.asFloat))
     self.insert(type: type, name: "__lt__", value: PyBuiltinFunction.wrap(name: "__lt__", doc: nil, fn: PyFloat.isLess(_:), castSelf: Self.asFloat))
@@ -1210,6 +1209,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__rdivmod__", value: PyBuiltinFunction.wrap(name: "__rdivmod__", doc: nil, fn: PyFloat.rdivmod(_:), castSelf: Self.asFloat))
     self.insert(type: type, name: "__round__", value: PyBuiltinFunction.wrap(name: "__round__", doc: PyFloat.roundDoc, fn: PyFloat.round(nDigits:), castSelf: Self.asFloat))
     self.insert(type: type, name: "__trunc__", value: PyBuiltinFunction.wrap(name: "__trunc__", doc: PyFloat.truncDoc, fn: PyFloat.trunc, castSelf: Self.asFloat))
+    self.insert(type: type, name: "hex", value: PyBuiltinFunction.wrap(name: "hex", doc: PyFloat.hexDoc, fn: PyFloat.hex, castSelf: Self.asFloat))
   }
 
   private static func asFloat(_ object: PyObject, methodName: String) -> PyResult<PyFloat> {

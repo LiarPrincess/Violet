@@ -122,14 +122,26 @@ public class PyModule: PyObject {
     return .attributeError(msg)
   }
 
+  private func getAttribute(id: IdString) -> PyResult<PyObject> {
+    return self.getAttribute(name: id.value)
+  }
+
   // sourcery: pymethod = __setattr__
   public func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(on: self, name: name, to: value)
   }
 
+  public func setAttribute(id: IdString, value: PyObject?) -> PyResult<PyNone> {
+    return AttributeHelper.setAttribute(on: self, name: id.value, to: value)
+  }
+
   // sourcery: pymethod = __delattr__
   public func delAttribute(name: PyObject) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(on: self, name: name)
+  }
+
+  public func delAttribute(id: IdString) -> PyResult<PyNone> {
+    return AttributeHelper.delAttribute(on: self, name: id.value)
   }
 
   // MARK: - Class
