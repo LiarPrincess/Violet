@@ -287,6 +287,26 @@ extension VM {
       return .error(e)
     }
 
+    let hi = """
+    If a client requests it, we shall go anywhere.
+    Representing the Auto Memoir Doll service,
+    I am Violet Evergarden.
+
+    That said, please note that interactive mode is not a priority in Violet
+    development and some things may not be working (most notably arrow keys).
+
+    \(Py.sys.version)
+
+    """
+
+    switch self.writeToStdout(msg: hi) {
+    case .ok,
+         .streamIsNone: // Assuming that user requested no printing.
+      break
+    case .error(let e):
+      return .error(e)
+    }
+
     return .value(Py.none)
   }
 
