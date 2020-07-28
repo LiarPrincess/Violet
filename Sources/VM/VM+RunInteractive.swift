@@ -135,7 +135,9 @@ extension VM {
       case .value:
         // We are not responsible for printing value, 'printExpr' instruction is
         // (see: PEP-217 for details).
-        break
+        if let e = self.flushStdout() {
+          return e
+        }
 
       case .error(let e):
         if e.isSystemExit {
@@ -324,6 +326,27 @@ extension VM {
 
     case let .error(e):
       return .error(e)
+    }
+  }
+
+  // MARK: - Flush
+
+  private func flushStdout() -> PyBaseException? {
+    switch Py.sys.getStdoutOrNone() {
+    case .value(let stdout):
+      switch stdout.flush() {
+      case .value:
+        return nil
+      case .error(let e):
+        return e
+      }
+
+    case .none:
+      // Assuming that user requested no printing
+      return nil
+
+    case .error(let e):
+      return e
     }
   }
 }

@@ -6,6 +6,8 @@ import Foundation
 // Python -> codecs.c
 // https://docs.python.org/3.7/library/io.html
 
+// swiftlint:disable file_length
+
 // sourcery: pytype = TextFile, default, hasGC, hasFinalize
 /// We don't have `_io` module.
 /// Instead we have our own `TextFile` type based on `_io.TextIOWrapper`.
@@ -128,9 +130,8 @@ public class PyTextFile: PyObject {
     }
   }
 
+  // sourcery: pymethod = readline
   public func readLine() -> PyResult<String> {
-    // We do not need this as pymethod.
-
     if let e = self.assertFileIsOpenAndReadable() {
       return .error(e)
     }
@@ -232,6 +233,14 @@ public class PyTextFile: PyObject {
 
     let data = self.encoding.encode(string: string, errors: self.errors)
     let result = data.flatMap(self.fd.write(contentsOf:))
+    return result
+  }
+
+  // MARK: - Flush
+
+  // sourcery: pymethod = flush
+  public func flush() -> PyResult<PyNone> {
+    let result = self.fd.flush()
     return result
   }
 

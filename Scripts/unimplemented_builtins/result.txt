@@ -157,12 +157,10 @@ TextIOWrapper
     encoding
     errors
     fileno
-    flush
     isatty
     line_buffering
     name
     newlines
-    readline
     reconfigure
     seek
     seekable

@@ -11,7 +11,7 @@ public protocol FileDescriptorType {
   func read(upToCount count: Int) -> PyResult<Data>
 
   func write<T: DataProtocol>(contentsOf data: T) -> PyResult<PyNone>
-  func synchronize() -> PyResult<PyNone>
+  func flush() -> PyResult<PyNone>
 
   func offset() -> PyResult<UInt64>
 

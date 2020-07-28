@@ -2167,9 +2167,11 @@ public final class BuiltinTypes {
 
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyTextFile.repr, castSelf: Self.asTextFile))
     self.insert(type: type, name: "readable", value: PyBuiltinFunction.wrap(name: "readable", doc: nil, fn: PyTextFile.isReadable, castSelf: Self.asTextFile))
+    self.insert(type: type, name: "readline", value: PyBuiltinFunction.wrap(name: "readline", doc: nil, fn: PyTextFile.readLine, castSelf: Self.asTextFile))
     self.insert(type: type, name: "read", value: PyBuiltinFunction.wrap(name: "read", doc: nil, fn: PyTextFile.read(size:), castSelf: Self.asTextFile))
     self.insert(type: type, name: "writable", value: PyBuiltinFunction.wrap(name: "writable", doc: nil, fn: PyTextFile.isWritable, castSelf: Self.asTextFile))
     self.insert(type: type, name: "write", value: PyBuiltinFunction.wrap(name: "write", doc: nil, fn: PyTextFile.write(object:), castSelf: Self.asTextFile))
+    self.insert(type: type, name: "flush", value: PyBuiltinFunction.wrap(name: "flush", doc: nil, fn: PyTextFile.flush, castSelf: Self.asTextFile))
     self.insert(type: type, name: "closed", value: PyBuiltinFunction.wrap(name: "closed", doc: nil, fn: PyTextFile.isClosed, castSelf: Self.asTextFile))
     self.insert(type: type, name: "close", value: PyBuiltinFunction.wrap(name: "close", doc: nil, fn: PyTextFile.close, castSelf: Self.asTextFile))
     self.insert(type: type, name: "__del__", value: PyBuiltinFunction.wrap(name: "__del__", doc: nil, fn: PyTextFile.del, castSelf: Self.asTextFile))

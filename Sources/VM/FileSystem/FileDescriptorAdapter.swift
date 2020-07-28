@@ -71,9 +71,9 @@ internal struct FileDescriptorAdapter:
     }
   }
 
-  // MARK: - Synchronize
+  // MARK: - Flush
 
-  internal func synchronize() -> PyResult<PyNone> {
+  internal func flush() -> PyResult<PyNone> {
     do {
       try self.fd.synchronize()
       return .value(Py.none)
