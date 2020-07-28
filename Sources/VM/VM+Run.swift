@@ -287,6 +287,51 @@ extension VM {
       return .error(e)
     }
 
+    if let e = self.addExitAndQuitToBuiltins() {
+      return .error(e)
+    }
+
+    if let e = self.sayHi() {
+      return .error(e)
+    }
+
+    return .value(Py.none)
+  }
+
+  // Normally this would be in 'site.py', but we do not have this module.
+  private func addExitAndQuitToBuiltins() -> PyBaseException? {
+    let exitFn: PyObject
+
+    switch Py.sys.getExit() {
+    case let .value(f):
+      exitFn = f
+    case let .error(e):
+      return e
+    }
+
+    let builtins = Py.builtinsModule
+    let builtinsDict = builtins.getDict()
+
+    let exit = Py.newString("exit")
+    switch builtinsDict.set(key: exit, to: exitFn) {
+    case .ok:
+      break
+    case let .error(e):
+    return e
+    }
+
+    let quit = Py.newString("quit")
+    switch builtinsDict.set(key: quit, to: exitFn) {
+    case .ok:
+      break
+    case let .error(e):
+    return e
+    }
+
+    return nil
+  }
+
+  private func sayHi() -> PyBaseException? {
     let hi = """
     If a client requests it, we shall go anywhere.
     Representing the Auto Memoir Doll service,
@@ -294,20 +339,21 @@ extension VM {
 
     That said, please note that interactive mode is not a priority in Violet
     development and some things may not be working (most notably arrow keys).
+    Use 'exit()' or 'quit()' to exit.
 
     \(Py.sys.version)
 
     """
 
     switch self.writeToStdout(msg: hi) {
-    case .ok,
-         .streamIsNone: // Assuming that user requested no printing.
-      break
+    case .ok:
+      return nil
+    case .streamIsNone:
+      // Assuming that user requested no printing.
+      return nil
     case .error(let e):
-      return .error(e)
+      return e
     }
-
-    return .value(Py.none)
   }
 
   // MARK: - Run REPL
@@ -363,6 +409,10 @@ extension VM {
         break
 
       case .error(let e):
+        if e.isSystemExit {
+          return e
+        }
+
         // Line resulted in an error!
         // But that does not mean that we should stop 'repl'!
         // Just print this error and wait for next input.
@@ -425,9 +475,10 @@ extension VM {
       case let .error(e): return .error(e)
       }
 
-      assert(!line.hasSuffix("\n"))
       input.append(line)
-      input.append("\n")
+      if !line.hasSuffix("\n") {
+        input.append("\n")
+      }
 
       // There are 2 major cases when we want to try compile the code:
       // - we are 1st line - this is primary designed for single line statements,

@@ -203,7 +203,7 @@ public final class Sys: PyModuleImplementation {
     // See comment at the top of 'PyModuleImplementation' for details.
     self.setOrTrap(.exit,
                    doc: Self.exitDoc,
-                   fn: self.exit(status:))
+                   fn: Self.exit(status:))
     self.setOrTrap(.intern,
                    doc: Self.internDoc,
                    fn: self.intern(value:))
