@@ -144,6 +144,11 @@ public class PyBaseException: PyObject {
     return self.isSubtype(of: type)
   }
 
+  public var isKeyboardInterrupt: Bool {
+    let type = Py.errorTypes.keyboardInterrupt
+    return self.isSubtype(of: type)
+  }
+
   private func isSubtype(of type: PyType) -> Bool {
     return self.type.isSubtype(of: type)
   }

@@ -380,16 +380,6 @@ extension VM {
         case .ok, .streamIsNone: continue
         case .error(let e): return e
         }
-      case .keyboardInterrupt:
-        // On 'KeyboardInterrupt' we should just print 'KeyboardInterrupt'
-        // and wait for next input.
-        let type = Py.errorTypes.keyboardInterrupt
-        let typeName = type.getNameRaw()
-
-        switch self.writeToStdout(msg: typeName) {
-        case .ok, .streamIsNone: continue
-        case .error(let e): return e
-        }
       case .error(let e):
         return e
       }
@@ -427,7 +417,6 @@ extension VM {
   private enum InteractiveInput {
     case code(PyCode)
     case syntaxError(PyBaseException)
-    case keyboardInterrupt
     case error(PyBaseException)
   }
 
@@ -453,11 +442,6 @@ extension VM {
 
     while true {
       defer { isFirstLine = false }
-
-      if hasKeyboardInterrupt {
-        hasKeyboardInterrupt = false
-        return .keyboardInterrupt
-      }
 
       switch self.writeToStdout(msg: isFirstLine ? ps1 : ps2) {
       case .ok, .streamIsNone: break

@@ -206,8 +206,8 @@ internal struct Eval {
                       index: self.frame.nextInstructionIndex,
                       extendedArg: extendedArg)
 
-    if hasKeyboardInterrupt {
-      hasKeyboardInterrupt = false // Reset flag, very important!
+    if Signals.hasKeyboardInterrupt {
+      Signals.hasKeyboardInterrupt = false // Reset flag, very important!
       return .exception(Py.newKeyboardInterrupt())
     }
 
