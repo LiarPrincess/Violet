@@ -374,11 +374,12 @@ public class PyType: PyObject, HasCustomGetMethod {
   // MARK: - Base
 
   // sourcery: pyproperty = __bases__, setter = setBases
-  internal func getBases() -> PyTuple {
-    return Py.newTuple(self.getBasesRaw())
+  internal func getBasesPy() -> PyTuple {
+    let bases = self.getBases()
+    return Py.newTuple(bases)
   }
 
-  public func getBasesRaw() -> [PyType] {
+  public func getBases() -> [PyType] {
     return self.bases
   }
 
