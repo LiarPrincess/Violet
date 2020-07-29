@@ -86,7 +86,7 @@
 --enable emptyBraces
 --enable fileHeader
 --disable hoistPatternLet
---disable indent # This breaks a lof of already written stuff, a lot of stuff.
+--disable indent # This breaks a lof of already written stuff.
 --disable isEmpty # False-positives
 --enable leadingDelimiters
 --enable linebreakAtEndOfFile
@@ -105,7 +105,7 @@
 --enable redundantObjc
 --enable redundantParens
 --enable redundantPattern
---disable redundantRawValues # TODO: Do we even use this?
+--disable redundantRawValues # It is 'ok' to specify raw value (even if it is the same as value)
 --disable redundantReturn # implicit = bad
 --enable redundantSelf
 --enable redundantVoidReturnType
@@ -133,5 +133,5 @@
 --enable unusedArguments
 --enable void
 --disable wrap # Breaks already written code
---disable wrapArguments # Se above
+--disable wrapArguments # See above
 --disable yodaConditions # '0 < x && x < 10' is better than ' x > 0 && x < 10'
