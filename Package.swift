@@ -13,7 +13,7 @@ let package = Package(
     // Executable for running tests written in Python (from 'PyTest' directory)
     .executable(name: "PyTests", targets: ["PyTests"]),
     // Violet as a library
-    .library(name: "VioletFramework", targets: ["VioletVM"]),
+    .library(name: "LibViolet", targets: ["VioletVM"]),
 
     // Code generation tool used for AST and bytecode
     .executable(name: "Elsa", targets: ["Elsa"]),
