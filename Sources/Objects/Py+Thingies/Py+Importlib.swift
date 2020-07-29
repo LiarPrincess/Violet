@@ -173,7 +173,7 @@ extension PyInstance {
     case .module(let m): // Already initialized. Nothing to do…
       return .value(m)
     case .notModule, // Override whatever we have there
-         .notFound:  // We have to initialize it
+         .notFound: // We have to initialize it
       return .notFound
     case .error(let e):
       let msg = "error when checking if '\(spec.name)' was already initialized"

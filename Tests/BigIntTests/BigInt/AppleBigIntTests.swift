@@ -150,17 +150,17 @@ class AppleBigIntTests: XCTestCase {
     do {
       let result = try BigInt("-3UNIZHA6PAL30Y", radix: 10)
       XCTFail("Unexpected: \(result)")
-    } catch { }
+    } catch {}
 
     do {
       let result = try BigInt("---")
       XCTFail("Unexpected: \(result)")
-    } catch { }
+    } catch {}
 
     do {
-      let result =  try BigInt(" 123")
+      let result = try BigInt(" 123")
       XCTFail("Unexpected: \(result)")
-    } catch { }
+    } catch {}
   }
 
   private func toString(_ value: BigInt, base: Int) -> String {

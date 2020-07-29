@@ -214,7 +214,7 @@ extension VM {
       Py.printRecursive(error: error, file: file)
       return .ok
     case .none:
-      return.streamIsNone
+      return .streamIsNone
     case .error(let e):
       return .error(e)
     }

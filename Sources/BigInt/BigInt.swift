@@ -58,6 +58,7 @@ public struct BigInt:
       return heap.isNegative
     }
   }
+
   /// The magnitude of this value.
   ///
   /// For any numeric value `x`, `x.magnitude` is the absolute value of `x`.

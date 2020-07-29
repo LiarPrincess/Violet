@@ -219,7 +219,7 @@ extension VM {
         case .code(let c):
           return .code(c)
         case .unfinishedLongString:
-        break  // We want continue our loop!
+        break // We want continue our loop!
         case .unexpectedEOF(let e):
           // - single line statement -> well… apparently it is multiline
           // - multiline statement   -> we expected correct statement
