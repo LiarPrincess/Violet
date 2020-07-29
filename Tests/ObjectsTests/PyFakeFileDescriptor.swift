@@ -9,6 +9,10 @@ class PyFakeFileDescriptor: FileDescriptorType {
     self.raw = fd
   }
 
+  func readLine() -> PyResult<Data> {
+    unreachable()
+  }
+
   func readToEnd() -> PyResult<Data> {
     unreachable()
   }
@@ -21,7 +25,7 @@ class PyFakeFileDescriptor: FileDescriptorType {
     unreachable()
   }
 
-  func synchronize() -> PyResult<PyNone> {
+  func flush() -> PyResult<PyNone> {
     unreachable()
   }
 
