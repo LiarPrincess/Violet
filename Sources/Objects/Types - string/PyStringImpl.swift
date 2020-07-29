@@ -169,9 +169,13 @@ extension PyStringImpl {
     return !self.isEmpty
   }
 
+  /// This may be `O(n)`, but it is not like we care.
+  ///
+  /// ```
+  /// len("Cafe\u0301") -> 5
+  /// len("Café")       -> 4
+  /// ```
   internal var count: Int {
-    // len("Cafe\u0301") -> 5
-    // len("Café")       -> 4
     return self.scalars.count
   }
 }
