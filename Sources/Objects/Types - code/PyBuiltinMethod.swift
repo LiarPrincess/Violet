@@ -122,7 +122,7 @@ public class PyBuiltinMethod: PyObject, PyBuiltinFunctionShared {
     // Return type(m.__self__).__qualname__ + '.' + m.__name__
     // >>> [].append.__qualname__
     // 'list.append'
-    let typeQualname = type.getQualnameRaw()
+    let typeQualname = type.getQualname()
     return typeQualname + "." + self.name
   }
 

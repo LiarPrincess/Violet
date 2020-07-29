@@ -78,7 +78,8 @@ internal struct MRO {
 
     // Sanity check.
     if let duplicate = Self.getDuplicateBaseClass(baseClasses) {
-      return .typeError("duplicate base class \(duplicate.getQualname())")
+      let qualname = duplicate.getQualname()
+      return .typeError("duplicate base class \(qualname)")
     }
 
     // Get mros to linearise.

@@ -242,12 +242,12 @@ public class PyType: PyObject, HasCustomGetMethod {
   // MARK: - Qualname
 
   // sourcery: pyproperty = __qualname__, setter = setQualname
-  public func getQualname() -> PyString {
-    let qualname = self.getQualnameRaw()
+  public func getQualnamePy() -> PyString {
+    let qualname = self.getQualname()
     return Py.intern(string: qualname)
   }
 
-  public func getQualnameRaw() -> String {
+  public func getQualname() -> String {
     if self.isHeapType {
       return self.qualname
     }
