@@ -291,7 +291,7 @@ public final class BuiltinTypes {
     case .ok:
       break
     case .error(let e):
-      let typeName = type.getNameRaw()
+      let typeName = type.getName()
       trap("Error when inserting '\(name)' to '\(typeName)' type: \(e)")
     }
   }
@@ -2297,7 +2297,7 @@ public final class BuiltinTypes {
     type.setFlag(.hasGC)
     type.setFlag(.typeSubclass)
 
-    self.insert(type: type, name: "__name__", value: PyProperty.wrap(doc: nil, get: PyType.getName, set: PyType.setName, castSelf: Self.asType))
+    self.insert(type: type, name: "__name__", value: PyProperty.wrap(doc: nil, get: PyType.getNamePy, set: PyType.setName, castSelf: Self.asType))
     self.insert(type: type, name: "__qualname__", value: PyProperty.wrap(doc: nil, get: PyType.getQualname, set: PyType.setQualname, castSelf: Self.asType))
     self.insert(type: type, name: "__doc__", value: PyProperty.wrap(doc: nil, get: PyType.getDoc, set: PyType.setDoc, castSelf: Self.asType))
     self.insert(type: type, name: "__module__", value: PyProperty.wrap(doc: nil, get: PyType.getModule, set: PyType.setModule, castSelf: Self.asType))

@@ -23,7 +23,7 @@ internal struct NewFunctionWrapper: FunctionWrapper {
   internal let fn: NewFunction<PyObject>
 
   internal var name: String {
-    let typeName = self.type.getNameRaw()
+    let typeName = self.type.getName()
     return "\(typeName).__new__"
   }
 
@@ -58,8 +58,8 @@ internal struct NewFunctionWrapper: FunctionWrapper {
 
     // For example: type(int).__new__(None)
     guard subtype.isSubtype(of: self.type) else {
-      let t = self.type.getNameRaw()
-      let s = subtype.getNameRaw()
+      let t = self.type.getName()
+      let s = subtype.getName()
       return .typeError("\(t).__new__(\(s)): \(s) is not a subtype of \(t)")
     }
 
@@ -85,7 +85,7 @@ internal struct InitFunctionWrapper: FunctionWrapper {
 
   internal init<Zelf: PyObject>(type: PyType,
                                 fn: @escaping InitFunction<Zelf>) {
-    self.typeName = type.getName().value
+    self.typeName = type.getName()
     self.fn = InitFunctionWrapper.eraseZelf(type: type, fn: fn)
   }
 
@@ -97,7 +97,7 @@ internal struct InitFunctionWrapper: FunctionWrapper {
 
     return { (object: PyObject) in { (args: [PyObject], kwargs: PyDict?) in
         guard let zelf = object as? Zelf else {
-          let typeName = type.getNameRaw()
+          let typeName = type.getName()
           return .typeError(
             "descriptor '__init__' requires a '\(typeName)' object " +
             "but received a '\(object.typeName)'")

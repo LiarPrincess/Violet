@@ -108,7 +108,7 @@ extension PyType {
       }
 
       guard base.isBaseType else {
-        let baseName = base.getNameRaw()
+        let baseName = base.getName()
         return .typeError("type '\(baseName)' is not an acceptable base type")
       }
 

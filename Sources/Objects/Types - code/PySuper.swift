@@ -71,10 +71,10 @@ public class PySuper: PyObject, HasCustomGetMethod {
 
   // sourcery: pymethod = __repr__
   public func repr() -> PyResult<String> {
-    let typeName = self.thisClass?.getNameRaw() ?? "NULL"
+    let typeName = self.thisClass?.getName() ?? "NULL"
 
     if let objectType = self.objectType {
-      let objectTypeName = objectType.getNameRaw()
+      let objectTypeName = objectType.getName()
       return .value("<super: <class '\(typeName)'>, <\(objectTypeName) object>>")
     }
 

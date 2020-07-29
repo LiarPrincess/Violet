@@ -170,7 +170,7 @@ internal struct PySetData {
       commaSeparatedElements.append(",")
     }
 
-    let isExactlySet = typeName == Py.types.set.getName().value
+    let isExactlySet = typeName == Py.types.set.getName()
     let result = isExactlySet ?
       "{\(commaSeparatedElements)}" :
       "\(typeName)({\(commaSeparatedElements)})"

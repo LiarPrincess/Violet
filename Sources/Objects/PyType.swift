@@ -205,12 +205,12 @@ public class PyType: PyObject, HasCustomGetMethod {
   // MARK: - Name
 
   // sourcery: pyproperty = __name__, setter = setName
-  public func getName() -> PyString {
-    let name = self.getNameRaw()
+  public func getNamePy() -> PyString {
+    let name = self.getName()
     return Py.intern(string: name)
   }
 
-  public func getNameRaw() -> String {
+  public func getName() -> String {
     if self.isHeapType {
       return self.name
     }
@@ -252,7 +252,7 @@ public class PyType: PyObject, HasCustomGetMethod {
       return self.qualname
     }
 
-    return self.getNameRaw()
+    return self.getName()
   }
 
   public func setQualname(_ value: PyObject?) -> PyResult<Void> {

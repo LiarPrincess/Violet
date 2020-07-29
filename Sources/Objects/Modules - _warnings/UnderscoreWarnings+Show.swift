@@ -38,7 +38,7 @@ extension UnderscoreWarnings {
 
     let filename = warning.filename.value
     let lineNo = warning.lineNo.value
-    let category = warning.category.getNameRaw()
+    let category = warning.category.getName()
 
     let content: String
     switch Py.strValue(object: warning.text) {

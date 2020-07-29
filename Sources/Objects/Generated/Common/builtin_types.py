@@ -52,7 +52,7 @@ def print_fill_helpers():
     case .ok:
       break
     case .error(let e):
-      let typeName = type.getNameRaw()
+      let typeName = type.getName()
       trap("Error when inserting '\(name)' to '\(typeName)' type: \(e)")
     }
   }

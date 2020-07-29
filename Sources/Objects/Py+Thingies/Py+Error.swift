@@ -502,7 +502,7 @@ extension PyInstance {
     switch self.callExceptionType(type: type, arg: value) {
     case let .value(object):
       guard let exception = object as? PyBaseException else {
-        let typeName = type.getNameRaw()
+        let typeName = type.getName()
         let msg = "calling \(typeName) should have returned " +
                   "an instance of BaseException, not \(object.typeName)"
         return .typeError(msg)
