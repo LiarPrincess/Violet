@@ -312,8 +312,8 @@ public class PyType: PyObject, HasCustomGetMethod {
   // MARK: - Module
 
   // sourcery: pyproperty = __module__, setter = setModule
-  public func getModule() -> PyResult<String> {
-    switch self.getModuleRaw() {
+  public func getModulePy() -> PyResult<String> {
+    switch self.getModule() {
     case .builtins:
       return .value("builtins")
     case .module(let name):
@@ -323,13 +323,13 @@ public class PyType: PyObject, HasCustomGetMethod {
     }
   }
 
-  public enum GetModuleRawResult {
+  public enum GetModuleResult {
     case builtins
     case module(String)
     case error(PyBaseException)
   }
 
-  public func getModuleRaw() -> GetModuleRawResult {
+  public func getModule() -> GetModuleResult {
     if self.isHeapType {
       guard let object = self.__dict__.get(id: .__module__) else {
         return .error(Py.newAttributeError(msg: "__module__"))
@@ -409,7 +409,7 @@ public class PyType: PyObject, HasCustomGetMethod {
 
   // sourcery: pymethod = __repr__
   public func repr() -> PyResult<String> {
-    switch self.getModuleRaw() {
+    switch self.getModule() {
     case .builtins:
       return .value("<class '\(self.name)'>")
     case .module(let module):

@@ -488,7 +488,7 @@ extension PyInstance {
     assert(type.isException)
 
     // Module
-    switch type.getModuleRaw() {
+    switch type.getModule() {
     case .module(let name):
       if let e = self.write(file: file, string: name + ".") {
         return e
