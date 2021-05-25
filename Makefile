@@ -35,7 +35,7 @@ gen:
 # -- Lint/format --
 # -----------------
 
-.PHONY: lint format
+.PHONY: lint format spell
 
 # If you are using any other reporter than 'emoji' then you are doing it wrong...
 lint:
@@ -43,6 +43,11 @@ lint:
 
 format:
 	SwiftFormat --config ./.swiftformat "./Sources" "./Tests"
+
+# cSpell is our spell checker
+# See: https://github.com/streetsidesoftware/cspell/tree/master/packages/cspell
+spell:
+	cspell --config "./.cspell.json" "./Sources/Lexer/**"
 
 # -----------
 # -- Xcode --

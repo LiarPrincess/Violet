@@ -61,7 +61,7 @@ extension Lexer {
 
     let encoding = comment[encodingRange]
     guard self.isValidEncoding(encoding) else {
-      throw self.unimplmented(.nonUTF8Encoding(encoding: String(encoding)))
+      throw self.unimplemented(.nonUTF8Encoding(encoding: String(encoding)))
     }
 
     // uff… we are safe, no BadThings™ can happen now

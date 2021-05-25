@@ -5,6 +5,7 @@ import VioletCore
 // https://github.molgen.mpg.de/git-mirror/glibc/blob/master/stdlib/strtod_l.c
 
 // Tip: use 'man ascii':
+// cspell:disable-next
 private let asciia: UInt32 = 0x61, asciiz: UInt32 = 0x7a
 private let asciiA: UInt32 = 0x41, asciiZ: UInt32 = 0x5a
 private let ascii0: UInt32 = 0x30, ascii9: UInt32 = 0x39
@@ -81,7 +82,7 @@ extension Lexer {
     func isValid(scalar: UnicodeScalar) -> Bool {
       let value = scalar.value
       return (ascii0 <= value && value <= ascii9)
-          || (asciia <= value && value <= asciiz)
+          || (asciia <= value && value <= asciiz) // spell-checker:disable-line
           || (asciiA <= value && value <= asciiZ)
           || value == asciiUnderscore
     }

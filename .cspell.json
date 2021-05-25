@@ -1,0 +1,49 @@
+// cSpell is our spell checker
+// See: https://github.com/streetsidesoftware/cspell/tree/master/packages/cspell
+{
+  // Version of the setting file.  Always 0.1
+  "version": "0.1",
+  // language - current active spelling language
+  "language": "en",
+  // words - list of words to be always considered correct
+  "words": [],
+  // flagWords - list of words to be always considered incorrect
+  "flagWords": [
+    "hte"
+  ],
+  // languageSettings - allow for per programming language configuration settings.
+  "languageSettings": [
+    {
+      "languageId": "swift",
+      "locale": "en",
+      "words": [
+        // Swift language
+        "struct",
+        "typealias",
+        "fileprivate",
+        "discardable", // as in: @discardableResult
+        "Hashable",
+        "lowercased",
+        // Python language
+        "elif",
+        "nonlocal",
+        "fileencoding",
+        // Token related
+        "amper", // &
+        "vbar", // |
+        "paren", // ()
+        "parens",
+        "dedent",
+        "dedents",
+        // Tooling
+        "swiftlint",
+        "cyclomatic"
+      ]
+    },
+    {
+      "languageId": "markdown",
+      "locale": "en",
+      "words": []
+    }
+  ]
+}

@@ -170,16 +170,18 @@ extension Lexer {
     case "x":
       return .escaped(try self.readHex(quoteType, count: 2))
 
+    // cspell:disable-next
     // \uxxxx Character with 16-bit hex value xxxx
     case "u" where prefix.isString:
       return .escaped(try self.readHex(quoteType, count: 4))
 
+    // cspell:disable-next
     // \Uxxxxxxxx Character with 32-bit hex value xxxxxxxx
     case "U" where prefix.isString:
       return .escaped(try self.readHex(quoteType, count: 8))
 
     case "N": // Character named name in the Unicode database
-      throw self.unimplmented(.namedUnicodeEscape)
+      throw self.unimplemented(.namedUnicodeEscape)
 
     default:
       self.advance() // backslash

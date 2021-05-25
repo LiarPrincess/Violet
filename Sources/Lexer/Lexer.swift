@@ -121,8 +121,8 @@ public final class Lexer: LexerType {
   }
 
   /// Create unimplemented lexer error
-  internal func unimplmented(_ unimplemented: LexerUnimplemented,
-                             location: SourceLocation? = nil) -> LexerError {
+  internal func unimplemented(_ unimplemented: LexerUnimplemented,
+                              location: SourceLocation? = nil) -> LexerError {
     let kind = LexerErrorKind.unimplemented(unimplemented)
     return self.error(kind, location: location)
   }

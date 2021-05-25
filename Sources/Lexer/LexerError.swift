@@ -57,7 +57,7 @@ public enum LexerErrorKind: Equatable, CustomStringConvertible {
   // Expected new line after '\'.
   case missingNewLineAfterBackslashEscape
 
-  /// Given feature was not yet implmented.
+  /// Given feature was not yet implemented.
   case unimplemented(LexerUnimplemented)
 
   public var description: String {
