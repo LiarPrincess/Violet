@@ -62,7 +62,7 @@ class FloatingPointTests: XCTestCase, Common {
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
   func test_number_withoutFractions() {
-    // trivia: glibc calss this 'american style' number
+    // trivia: glibc calls this 'american style' number
 
     let s = "10."
     let lexer = self.createLexer(for: s)

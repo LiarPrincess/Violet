@@ -3,6 +3,8 @@ import VioletCore
 
 // https://docs.python.org/3/reference/lexical_analysis.html#string-and-bytes-literals
 
+// cSpell:ignore uxxxx Uxxxxxxxx
+
 private enum QuoteType {
   case single
   case triple
@@ -170,12 +172,10 @@ extension Lexer {
     case "x":
       return .escaped(try self.readHex(quoteType, count: 2))
 
-    // cspell:disable-next
     // \uxxxx Character with 16-bit hex value xxxx
     case "u" where prefix.isString:
       return .escaped(try self.readHex(quoteType, count: 4))
 
-    // cspell:disable-next
     // \Uxxxxxxxx Character with 32-bit hex value xxxxxxxx
     case "U" where prefix.isString:
       return .escaped(try self.readHex(quoteType, count: 8))

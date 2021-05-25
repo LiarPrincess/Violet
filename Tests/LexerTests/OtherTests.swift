@@ -45,7 +45,7 @@ class OtherTests: XCTestCase, Common {
     self.getEOF(lexer)
   }
 
-  func test_newLine_CRLF() {
+  func test_newLine_CR_LF() {
     let lexer = self.createLexer(for: "\(CR)\(LF)")
 
     if let token = self.getToken(lexer) {
@@ -57,7 +57,7 @@ class OtherTests: XCTestCase, Common {
     self.getEOF(lexer)
   }
 
-  func test_newLine_LFCR() {
+  func test_newLine_LF_CR() {
     let lexer = self.createLexer(for: "\(LF)\(CR)")
 
     if let token1 = self.getToken(lexer) {

@@ -37,7 +37,12 @@
         "dedents",
         // Tooling
         "swiftlint",
-        "cyclomatic"
+        "swiftformat",
+        "cyclomatic",
+        "multiline",
+        // Disney
+        "Gaston", // aka. best waifu
+        "Waifu" // Gaston
       ]
     },
     {

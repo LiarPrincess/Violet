@@ -64,6 +64,8 @@ class IdentifierTests: XCTestCase, Common {
     }
   }
 
+  // cSpell:ignore Youll
+
   /// py: 齀butIfIKnowYouIKnowWhatYoullDo
   func test_identifier_startingWithCJK() {
     let s = "齀butIfIKnowYouIKnowWhatYoullDo"

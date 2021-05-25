@@ -2,6 +2,7 @@ import Foundation
 import VioletCore
 
 // https://docs.python.org/3/reference/lexical_analysis.html#identifiers
+// cSpell:ignore bruf
 
 internal let keywords: [String: TokenKind] = [
   "and": .and,
@@ -48,7 +49,6 @@ extension Lexer {
     let startIndex = self.sourceIndex
     var stringPrefix = StringPrefix()
 
-    // cspell:disable-next
     /// we don't know if it is identifier or string in form bruf"xxx"
     while true {
       guard let c = self.peek else {
