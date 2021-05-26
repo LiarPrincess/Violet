@@ -1,6 +1,8 @@
 import VioletCore
 import VioletLexer
 
+// cSpell:ignore allowgen
+
 // In CPython:
 // Python -> ast.c
 //  ast_for_call(struct compiling *c, const node *n, expr_ty func, bool allowgen)

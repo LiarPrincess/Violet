@@ -73,11 +73,11 @@ class ParseIfStatement: XCTestCase, Common {
   /// If0
   ///   test: Pooh
   ///   body: Honey
-  ///   orelse:
+  ///   orElse:
   ///     If1
   ///       test: Tigger
   ///       body: Bouncing
-  ///       orelse: empty
+  ///       orElse: empty
   /// ```
   func test_withElif() {
     let parser = self.createStmtParser(
@@ -120,7 +120,7 @@ class ParseIfStatement: XCTestCase, Common {
   /// if Pooh:     "Honey"
   /// elif Tigger: "Bouncing"
   /// else:        "Carrots?"
-  /// Expected AST is similiar to the one in `test_withElif`.
+  /// Expected AST is similar to the one in `test_withElif`.
   func test_withElif_andElse() {
     let parser = self.createStmtParser(
       self.token(.if,                   start: loc0, end: loc1),

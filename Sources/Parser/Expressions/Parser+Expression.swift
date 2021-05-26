@@ -9,7 +9,7 @@ extension Parser {
 
   /// `test: or_test ['if' or_test 'else' test] | lambdef`
   internal func test(context: ExpressionContext) throws -> Expression {
-    // we will start from lambdef, becuse it is simpler
+    // we will start from lambdef, because it is simpler
 
     if let lambda = try self.lambDefOrNop(context: context) {
       return lambda
@@ -37,7 +37,7 @@ extension Parser {
 
   /// `test_nocond: or_test | lambdef_nocond`
   internal func testNoCond(context: ExpressionContext) throws -> Expression {
-    // we will start from lambdef_nocond, becuse it is simpler
+    // We will start from lambdef_nocond, because it is simpler
 
     if let lambda = try self.lambDefNoCondOrNop(context: context) {
       return lambda
@@ -161,7 +161,7 @@ extension Parser {
   private static let comparisonOperators: [TokenKind: CompareExpr.Operator] = [
     .equalEqual: .equal,
     .notEqual: .notEqual,
-    // <> - pep401 is not implmented
+    // <> - pep401 is not implemented
     .less: .less,
     .lessEqual: .lessEqual,
     .greater: .greater,

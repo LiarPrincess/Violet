@@ -11,7 +11,7 @@ class ParseComparisonExpr: XCTestCase, Common {
     let variants: [(TokenKind, CompareExpr.Operator)] = [
       (.equalEqual, .equal),
       (.notEqual,   .notEqual),
-      // <> - pep401 is not implmented
+      // <> - pep401 is not implemented
       (.less,      .less),
       (.lessEqual, .lessEqual),
       (.greater,      .greater),

@@ -6,6 +6,7 @@ import VioletLexer
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 // swiftformat:disable consecutiveSpaces
+// cSpell:ignore tock
 
 /// ```c
 /// class    with function

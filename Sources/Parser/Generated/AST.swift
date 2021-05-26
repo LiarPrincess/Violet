@@ -10,6 +10,7 @@ import VioletLexer
 // swiftlint:disable trailing_newline
 // swiftlint:disable vertical_whitespace
 // swiftlint:disable vertical_whitespace_closing_braces
+// cSpell:ignore kwonlyargs
 
 // MARK: - AST
 
@@ -48,14 +49,14 @@ public class AST: ASTNode, CustomStringConvertible {
   public func accept<V: ASTVisitor>(
       _ visitor: V
   ) throws -> V.ASTResult {
-    trap("'accept' method should be overriden in subclass")
+    trap("'accept' method should be overridden in subclass")
   }
 
   public func accept<V: ASTVisitorWithPayload>(
       _ visitor: V,
       payload: V.ASTPayload
   ) throws -> V.ASTResult {
-    trap("'accept' method should be overriden in subclass")
+    trap("'accept' method should be overridden in subclass")
   }
 
 }
@@ -203,14 +204,14 @@ public class Statement: ASTNode, CustomStringConvertible {
   public func accept<V: StatementVisitor>(
       _ visitor: V
   ) throws -> V.StatementResult {
-    trap("'accept' method should be overriden in subclass")
+    trap("'accept' method should be overridden in subclass")
   }
 
   public func accept<V: StatementVisitorWithPayload>(
       _ visitor: V,
       payload: V.StatementPayload
   ) throws -> V.StatementResult {
-    trap("'accept' method should be overriden in subclass")
+    trap("'accept' method should be overridden in subclass")
   }
 
 }
@@ -326,9 +327,9 @@ public final class ClassDefStmt: Statement {
   public var bases: [Expression]
   /// `keywords` is a list of keyword nodes, principally for ‘metaclass’.
   ///  Other keywords will be passed to the metaclass, as per PEP-3115.
-  /// `starargs` and kwargs are each a single node, as in a function call.
-  ///  starargs will be expanded to join the list of base classes,
-  ///  and kwargs will be passed to the metaclass.
+  ///  `*args` and `kwargs` are each a single node, as in a function call.
+  ///  `*args` will be expanded to join the list of base classes,
+  ///  and `kwargs` will be passed to the metaclass.
   public var keywords: [KeywordArgument]
   /// `body` is a list of nodes representing the code within the class definition.
   public var body: NonEmptyArray<Statement>
@@ -782,7 +783,7 @@ public struct WithItem: ASTNode, CustomStringConvertible {
 /// A `with` block.
 public final class WithStmt: Statement {
 
-  /// List of `Withitem` nodes representing the context managers.
+  /// List of `WithItem` nodes representing the context managers.
   public var items: NonEmptyArray<WithItem>
   /// Indented block inside the context.
   public var body: NonEmptyArray<Statement>
@@ -819,7 +820,7 @@ public final class WithStmt: Statement {
 /// An `async with` definition.
 public final class AsyncWithStmt: Statement {
 
-  /// List of `Withitem` nodes representing the context managers.
+  /// List of `WithItem` nodes representing the context managers.
   public var items: NonEmptyArray<WithItem>
   /// Indented block inside the context.
   public var body: NonEmptyArray<Statement>
@@ -1395,14 +1396,14 @@ public class Expression: ASTNode, CustomStringConvertible {
   public func accept<V: ExpressionVisitor>(
       _ visitor: V
   ) throws -> V.ExpressionResult {
-    trap("'accept' method should be overriden in subclass")
+    trap("'accept' method should be overridden in subclass")
   }
 
   public func accept<V: ExpressionVisitorWithPayload>(
       _ visitor: V,
       payload: V.ExpressionPayload
   ) throws -> V.ExpressionResult {
-    trap("'accept' method should be overriden in subclass")
+    trap("'accept' method should be overridden in subclass")
   }
 
 }

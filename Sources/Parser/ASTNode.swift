@@ -1,5 +1,7 @@
 import VioletCore
 
+// cSpell:ignore nody
+
 /// Node unique identifier.
 ///
 /// Used for `Equatable` and `Hashable` default implementation.
@@ -13,7 +15,6 @@ public typealias ASTNodeId = UInt
 /// Thingie that can be placed in AST.
 ///
 /// ```
-/// What are ASTs made of?
 /// What are ASTs made of?
 ///   Nodes and nodes
 ///   With nody-nodes

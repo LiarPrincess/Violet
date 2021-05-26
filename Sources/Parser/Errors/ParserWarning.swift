@@ -27,6 +27,6 @@ public enum ParserWarningKind: CustomStringConvertible {
   case weDoNotHaveWarningsAnymore
 
   public var description: String {
-    trap("Wo do not have parser warnings anmore...")
+    trap("Wo do not have parser warnings anymore...")
   }
 }

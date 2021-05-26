@@ -31,10 +31,10 @@ public final class Parser {
 
   /// Remember the parser execution result.
   ///
-  /// If we ever happen to have "great" idea along the lines of:
+  /// If we ever happen to have a "great" idea along the lines of:
   /// "let's just run the parser again, because why not".
   private enum State {
-    /// We will run te parser.
+    /// We will run the parser.
     case notStarted
     /// Everything is ok.
     case finished(AST)

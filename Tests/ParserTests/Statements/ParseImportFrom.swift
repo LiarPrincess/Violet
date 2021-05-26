@@ -183,7 +183,7 @@ class ParseImportFrom: XCTestCase, Common {
   }
 
   /// from ... import Rapunzel
-  func test_elipsis() {
+  func test_ellipsis() {
     let parser = self.createStmtParser(
       self.token(.from,                   start: loc0, end: loc1),
       self.token(.ellipsis,               start: loc2, end: loc3),
@@ -230,7 +230,7 @@ class ParseImportFrom: XCTestCase, Common {
   }
 
   /// from ...Tangled import Rapunzel
-  func test_elipsisModule() {
+  func test_ellipsisModule() {
     let parser = self.createStmtParser(
       self.token(.from,                   start: loc0, end: loc1),
       self.token(.ellipsis,               start: loc2, end: loc3),

@@ -106,7 +106,7 @@ extension Parser {
     throw self.error(.illegalAnnAssignmentTarget, location: loc)
   }
 
-  // MARK: - Augumented assignment
+  // MARK: - Augmented assignment
 
   /// ```c
   /// augassign: ('+=' | '-=' | '*=' | '@=' | '/=' | '%=' | '&=' | '|=' | '^=' |

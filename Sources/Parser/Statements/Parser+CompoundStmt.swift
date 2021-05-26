@@ -121,7 +121,7 @@ extension Parser {
       pendingElse = [statement]
     }
 
-    // We know that result is not nil beacuse of NonEmptyArray
+    // We know that result is not nil because of NonEmptyArray
     assert(result != nil)
     return result! // swiftlint:disable:this force_unwrapping
   }

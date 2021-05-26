@@ -30,7 +30,7 @@ private enum FStringFragment {
 
 internal struct FString {
 
-  /// Conctenate strings (up until next expression).
+  /// Concatenate strings (up until next expression).
   private var lastStr: String?
 
   /// List of the fragments that will go into result.

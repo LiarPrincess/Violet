@@ -3,6 +3,8 @@ import VioletCore
 import VioletLexer
 @testable import VioletParser
 
+// cSpell:ignore Cojones
+
 // MARK: - Assert
 
 internal func XCTAssertTokens(_ adapter: inout LexerAdapter,

@@ -23,7 +23,7 @@ public protocol ASTVisitor {
 /// Visitor for AST nodes.
 ///
 /// Each function has an additional `payload` argument to pass data between
-/// nodes (so that we don't have to use fileds/globals which is always awkward).
+/// nodes (so that we don't have to use fields/globals which is always awkward).
 public protocol ASTVisitorWithPayload: AnyObject {
 
   /// Visit result.
@@ -75,7 +75,7 @@ public protocol StatementVisitor {
 /// Visitor for AST nodes.
 ///
 /// Each function has an additional `payload` argument to pass data between
-/// nodes (so that we don't have to use fileds/globals which is always awkward).
+/// nodes (so that we don't have to use fields/globals which is always awkward).
 public protocol StatementVisitorWithPayload: AnyObject {
 
   /// Visit result.
@@ -155,7 +155,7 @@ public protocol ExpressionVisitor {
 /// Visitor for AST nodes.
 ///
 /// Each function has an additional `payload` argument to pass data between
-/// nodes (so that we don't have to use fileds/globals which is always awkward).
+/// nodes (so that we don't have to use fields/globals which is always awkward).
 public protocol ExpressionVisitorWithPayload: AnyObject {
 
   /// Visit result.

@@ -19,7 +19,7 @@ public indirect enum FStringError: Error, Equatable, CustomStringConvertible {
   /// Error when parsing expression.
   case parsingError(ParserErrorKind)
 
-  /// Given feature was not yet implmented.
+  /// Given feature was not yet implemented.
   case unimplemented(FStringUnimplemented)
 
   public var description: String {

@@ -9,7 +9,7 @@ import VioletLexer
 
 class ParseAugAssign: XCTestCase, Common {
 
-  // MARK: - Augumented assignment
+  // MARK: - Augmented assignment
 
   /// Ariel += "legs"
   func test_simple() {
