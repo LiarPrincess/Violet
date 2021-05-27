@@ -151,7 +151,7 @@ public struct BigInt:
     case .smi(let smi):
       return smi.negated
     case .heap(var heap):
-      // 'heap' is already a copy, so we can modify it without touching 'value'
+      // 'heap' is already a copy, so we can modify it without touching the 'value'
       heap.negate()
       return BigInt(heap)
     }
@@ -162,7 +162,7 @@ public struct BigInt:
     case .smi(let smi):
       return smi.inverted
     case .heap(var heap):
-      // 'heap' is already a copy, so we can modify it without touching 'value'
+      // 'heap' is already a copy, so we can modify it without touching the 'value'
       heap.invert()
       return BigInt(heap)
     }
@@ -177,7 +177,7 @@ public struct BigInt:
 
     case (.smi(let smi), .heap(var heap)),
          (.heap(var heap), .smi(let smi)):
-      // 'heap' is already a copy, so we can modify it without touching 'value'
+      // 'heap' is already a copy, so we can modify it without touching the 'value'
       heap.add(other: smi.value)
       return BigInt(heap)
 
@@ -468,7 +468,7 @@ public struct BigInt:
       }
 
       base *= base
-      exponent >>= 1 // Basicaly divided by 2, but faster
+      exponent >>= 1 // Basically divided by 2, but faster
     }
 
     // Most significant '1' is odd:
@@ -797,12 +797,11 @@ public struct BigInt:
 
   // MARK: - Release buffer to prevent COW
 
-  /// In `inout` operators we have `lhs: inout BigInt`, which may contain
-  /// reference to `BigIntStorage`.
-  /// Then we pattern match it on `lhs.value` to extract `BigIntHeap`,
-  /// which increases reference count to `2`.
+  /// In `inout` operators we have `lhs: inout BigInt`, which we pattern match
+  /// on `lhs.value` to extract `BigIntHeap`. This pattern matching increases
+  /// `BigIntStorage.buffer` reference count to `2`.
   /// Then any operation done on this `BigIntStorage` would force COW,
-  /// which kinda defeats the purpose.
+  /// which kinda defeats the purpose of `inout`.
   ///
   /// To solve this we will temporary assign `lhs.value = smi.zero`.
   /// This will require some `ARC` traffic, but we probably need to fetch this

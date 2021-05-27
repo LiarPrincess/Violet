@@ -216,7 +216,7 @@ extension NodeTests {
                         file: StaticString,
                         line: UInt) {
     let lhs: BigInt
-    let lhsBeforeInout: BigInt // Later to check if 'inout' did not modify orginal
+    let lhsBeforeInout: BigInt // Later to check if 'inout' did not modify original
     do {
       lhs = try self.create(string: lhsString, radix: 10)
       lhsBeforeInout = try self.create(string: lhsString, radix: 10)
@@ -250,8 +250,8 @@ extension NodeTests {
     inoutOp(&inoutLhs, rhs)
     XCTAssertEqual(inoutLhs, expected, "INOUT!!1", file: file, line: line)
 
-    // Make sure that 'inout' did not modify orginal
-    let inoutMsg = "Inout did modify shared/orginal value"
+    // Make sure that 'inout' did not modify original
+    let inoutMsg = "Inout did modify shared/original value"
     XCTAssertEqual(lhs, lhsBeforeInout, inoutMsg, file: file, line: line)
   }
 
@@ -363,18 +363,18 @@ extension NodeTests {
   }
 
   internal typealias ShiftOperation = (BigInt, BigInt) -> BigInt
-  internal typealias IntoutShiftOperation = (inout BigInt, BigInt) -> Void
+  internal typealias InoutShiftOperation = (inout BigInt, BigInt) -> Void
 
   private func shiftOp(value valueString: String,
                        count countInt: Int,
                        expecting expectedString: String,
                        op: ShiftOperation,
-                       inoutOp: IntoutShiftOperation,
+                       inoutOp: InoutShiftOperation,
                        file: StaticString,
                        line: UInt) {
 
     let value: BigInt
-    let valueBeforeInout: BigInt // Later to check if 'inout' did not modify orginal
+    let valueBeforeInout: BigInt // Later to check if 'inout' did not modify original
     do {
       value = try self.create(string: valueString, radix: 10)
       valueBeforeInout = try self.create(string: valueString, radix: 10)
@@ -402,8 +402,8 @@ extension NodeTests {
     inoutOp(&inoutValue, count)
     XCTAssertEqual(inoutValue, expected, "INOUT!!1", file: file, line: line)
 
-    // Make sure that 'inout' did not modify orginal
-    let inoutMsg = "Inout did modify shared/orginal value"
+    // Make sure that 'inout' did not modify original
+    let inoutMsg = "Inout did modify shared/original value"
     XCTAssertEqual(value, valueBeforeInout, inoutMsg, file: file, line: line)
   }
 

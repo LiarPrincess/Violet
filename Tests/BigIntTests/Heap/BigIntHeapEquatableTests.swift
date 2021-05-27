@@ -71,21 +71,21 @@ class BigIntHeapEquatableTests: XCTestCase {
         continue
       }
 
-      let orginal = p.create()
+      let original = p.create()
 
-      for i in 0..<orginal.storage.count {
+      for i in 0..<original.storage.count {
         // Word can't be above '.max'
-        if orginal.storage[i] != .max {
-          var plus1 = orginal.storage
+        if original.storage[i] != .max {
+          var plus1 = original.storage
           plus1[i] += 1
-          XCTAssertNotEqual(orginal, BigIntHeap(storage: plus1), "\(orginal)")
+          XCTAssertNotEqual(original, BigIntHeap(storage: plus1), "\(original)")
         }
 
         // Word can't be below '0'
-        if orginal.storage[i] != 0 {
-          var minus1 = orginal.storage
+        if original.storage[i] != 0 {
+          var minus1 = original.storage
           minus1[i] -= 1
-          XCTAssertNotEqual(orginal, BigIntHeap(storage: minus1), "\(orginal)")
+          XCTAssertNotEqual(original, BigIntHeap(storage: minus1), "\(original)")
         }
       }
     }
@@ -93,15 +93,15 @@ class BigIntHeapEquatableTests: XCTestCase {
 
   func test_heap_withDifferentWordCount_isNeverEqual() {
     for p in generateHeapValues(countButNotReally: 20) {
-      let orginal = p.create()
+      let original = p.create()
 
       let moreWords = BigIntHeap(isNegative: p.isNegative, words: p.words + [42])
-      XCTAssertNotEqual(orginal, moreWords, "\(orginal)")
+      XCTAssertNotEqual(original, moreWords, "\(original)")
 
       // We can't remove word if we don't have any!
       if !p.isZero {
         let lessWords = BigIntHeap(isNegative: false, words: Array(p.words.dropLast()))
-        XCTAssertNotEqual(orginal, lessWords, "\(orginal)")
+        XCTAssertNotEqual(original, lessWords, "\(original)")
       }
     }
   }

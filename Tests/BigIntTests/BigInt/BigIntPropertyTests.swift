@@ -258,7 +258,7 @@ class BigIntPropertyTests: XCTestCase {
     }
   }
 
-  func test_manitude_heap() {
+  func test_magnitude_heap() {
     for p in generateHeapValues(countButNotReally: 100) {
       if p.isZero {
         continue

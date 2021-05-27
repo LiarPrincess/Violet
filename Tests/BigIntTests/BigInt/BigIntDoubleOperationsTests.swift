@@ -9,7 +9,7 @@ private typealias Word = BigIntHeap.Word
 /// as a single application.
 /// For example: `(n + 5) + 7 = n + (5 + 7) = n + 12`.
 ///
-/// This is not exactly associativity, because we will also do this for shfts:
+/// This is not exactly associativity, because we will also do this for shifts:
 /// `(n >> x) >> y = n >> (x + y)`.
 class BigIntDoubleOperationsTests: XCTestCase {
 
@@ -50,12 +50,12 @@ class BigIntDoubleOperationsTests: XCTestCase {
 
     fileprivate static let smiA = BigInt(Smi.Storage.max / 2)
     fileprivate static let smiB = BigInt(Smi.Storage.max / 4)
-    /// It is quaranteed that `Self.smiC = Self.smiA + Self.smiB`
+    /// It is guaranteed that `Self.smiC = Self.smiA + Self.smiB`
     fileprivate static let smiC = Self.smiA + Self.smiB
 
     fileprivate static let heapA = BigInt(Word.max / 2)
     fileprivate static let heapB = BigInt(Word.max / 4)
-    /// It is quaranteed that `Self.heapC = Self.heapA + Self.heapB`
+    /// It is guaranteed that `Self.heapC = Self.heapA + Self.heapB`
     fileprivate static let heapC = Self.heapA + Self.heapB
   }
 
@@ -243,12 +243,12 @@ class BigIntDoubleOperationsTests: XCTestCase {
 
     fileprivate static let smiA = BigInt(2)
     fileprivate static let smiB = BigInt(4)
-    /// It is quaranteed that `Self.smiC = Self.smiA * Self.smiB`
+    /// It is guaranteed that `Self.smiC = Self.smiA * Self.smiB`
     fileprivate static let smiC = Self.smiA * Self.smiB
 
     fileprivate static let heapA = BigInt(Word(Smi.Storage.max) + 1)
     fileprivate static let heapB = BigInt(Word(Smi.Storage.max) + 2)
-    /// It is quaranteed that `Self.heapC = Self.heapA * Self.heapB`
+    /// It is guaranteed that `Self.heapC = Self.heapA * Self.heapB`
     fileprivate static let heapC = Self.heapA * Self.heapB
   }
 
@@ -424,7 +424,7 @@ class BigIntDoubleOperationsTests: XCTestCase {
 
     fileprivate static let a = BigInt(7)
     fileprivate static let b = BigInt(Word.bitWidth - 5)
-    /// It is quaranteed that `Self.c = Self.a + Self.b`
+    /// It is guaranteed that `Self.c = Self.a + Self.b`
     fileprivate static let c = Self.a + Self.b
   }
 
@@ -492,7 +492,7 @@ class BigIntDoubleOperationsTests: XCTestCase {
 
     fileprivate static let belowWordA = BigInt(2)
     fileprivate static let belowWordB = BigInt(3)
-    /// It is quaranteed that `Self.belowWordC = Self.belowWordA + Self.belowWordB`
+    /// It is guaranteed that `Self.belowWordC = Self.belowWordA + Self.belowWordB`
     fileprivate static let belowWordC = Self.belowWordA + Self.belowWordB
 
     // 7 + Word.bitWidth - 5 = Word.bitWidth + 2
@@ -501,7 +501,7 @@ class BigIntDoubleOperationsTests: XCTestCase {
 
     fileprivate static let overWordA = BigInt(7)
     fileprivate static let overWordB = BigInt(Word.bitWidth - 5)
-    /// It is quaranteed that `Self.overWordC = Self.overWordA + Self.overWordB`
+    /// It is guaranteed that `Self.overWordC = Self.overWordA + Self.overWordB`
     fileprivate static let overWordC = Self.overWordA + Self.overWordB
   }
 

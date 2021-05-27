@@ -1,3 +1,5 @@
+// cSpell:ignore Riku
+
 private let lowercaseDigits: [Character] = [
   "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
   "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
@@ -113,8 +115,9 @@ extension BigIntHeap: CustomStringConvertible {
 
         alreadyProcessedBitCount = otherWordSplitBitCount
       } else {
-        // We do not have split 'char', everything is simple and clean,
-        // speaking of which: https://www.youtube.com/watch?v=Irl_Dc-Tc8U
+        // We do not have split 'char', everything is simple and clean.
+        //
+        // Speaking of which: https://www.youtube.com/watch?v=Irl_Dc-Tc8U
         // And damn, Mickey and Riku in KH3 are such a good ship.
         alreadyProcessedBitCount = 0
       }

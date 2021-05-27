@@ -5,7 +5,7 @@ private typealias Word = BigIntHeap.Word
 
 /// Reversible operation - operation for which exists 'reverse' operation
 /// that undoes its effect.
-/// For example for addition it is substraction: `(n + x) - x = n`.
+/// For example for addition it is subtraction: `(n + x) - x = n`.
 class BigIntReversibleOperationsTests: XCTestCase {
 
   private lazy var smiValues = generateSmiValues(countButNotReally: 20)

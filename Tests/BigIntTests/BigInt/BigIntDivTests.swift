@@ -9,6 +9,7 @@ private typealias TestCase = (x: String, y: String, quotient: String, remainder:
 /// Based on: https://github.com/apple/swift/blob/master/test/Prototypes/BigInt.swift
 class BigIntDivTests: XCTestCase {
 
+  // cspell:disable
   private let testCases: [TestCase] = [
     ("3GFWFN54YXNBS6K2ST8K9B89Q2AMRWCNYP4JAS5ZOPPZ1WU09MXXTIT27ZPVEG2Y",
      "9Y1QXS4XYYDSBMU4N3LW7R3R1WKK",
@@ -39,13 +40,14 @@ class BigIntDivTests: XCTestCase {
      "1000000000",
      "0")
   ]
+  // cspell:enable
 
   func test_run() {
     for testCaseStrings in self.testCases {
       let msg = "\(testCaseStrings.x) / \(testCaseStrings.y)"
 
       do {
-        let values = try self.createBigInts(case: testCaseStrings)
+        let values = try self.parseTestCase(case: testCaseStrings)
 
         let x = values.x
         let y = values.y
@@ -62,14 +64,14 @@ class BigIntDivTests: XCTestCase {
     }
   }
 
-  private struct TestCaseInts {
+  private struct TestCaseValues {
     fileprivate let x: BigInt
     fileprivate let y: BigInt
     fileprivate let quotient: BigInt
     fileprivate let remainder: BigInt
   }
 
-  private func createBigInts(case c: TestCase) throws -> TestCaseInts {
+  private func parseTestCase(case c: TestCase) throws -> TestCaseValues {
     let radix = 36
 
     let x = try BigInt(c.x, radix: radix)
@@ -77,7 +79,7 @@ class BigIntDivTests: XCTestCase {
     let quotient = try BigInt(c.quotient, radix: radix)
     let remainder = try BigInt(c.remainder, radix: radix)
 
-    return TestCaseInts(
+    return TestCaseValues(
       x: x,
       y: y,
       quotient: quotient,

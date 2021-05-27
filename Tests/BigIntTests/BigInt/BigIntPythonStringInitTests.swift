@@ -88,6 +88,7 @@ class BigIntPythonStringInitTests: XCTestCase {
     // Various representations of 2**32 evaluated to 0
     // rather than 2**32 in previous versions
 
+    // cspell:disable
     self.assertEqual(int("100000000000000000000000000000000", 2), 4294967296)
     self.assertEqual(int("102002022201221111211", 3), 4294967296)
     self.assertEqual(int("10000000000000000", 4), 4294967296)
@@ -123,6 +124,7 @@ class BigIntPythonStringInitTests: XCTestCase {
     self.assertEqual(int("2qhxjli", 34), 4294967296)
     self.assertEqual(int("2br45qb", 35), 4294967296)
     self.assertEqual(int("1z141z4", 36), 4294967296)
+    // cspell:enable
 
     // tests with base 0
     // this fails on 3.0, but in 2.x the old octal syntax is allowed
@@ -165,6 +167,7 @@ class BigIntPythonStringInitTests: XCTestCase {
 
     // SF bug 1334662: int(string, base) wrong answers
     // Checks for proper evaluation of 2**32 + 1
+    // cspell:disable
     self.assertEqual(int("100000000000000000000000000000001", 2), 4294967297)
     self.assertEqual(int("102002022201221111212", 3), 4294967297)
     self.assertEqual(int("10000000000000001", 4), 4294967297)
@@ -200,6 +203,7 @@ class BigIntPythonStringInitTests: XCTestCase {
     self.assertEqual(int("2qhxjlj", 34), 4294967297)
     self.assertEqual(int("2br45qc", 35), 4294967297)
     self.assertEqual(int("1z141z5", 36), 4294967297)
+    // cspell:enable
   }
 
   // MARK: - test_underscores

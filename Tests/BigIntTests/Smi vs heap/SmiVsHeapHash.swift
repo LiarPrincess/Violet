@@ -3,15 +3,15 @@ import XCTest
 
 class SmiVsHeapHash: XCTestCase {
 
-  func test_iWillTotallyRememberToNameItLater() {
+  func test_compareHashValue() {
     for raw in generateSmiValues(countButNotReally: 100) {
       let smi = Smi(raw)
-      let smiResult = smi.hashValue
+      let smiHash = smi.hashValue
 
       let heap = BigIntHeap(raw)
-      let heapResult = heap.hashValue
+      let heapHash = heap.hashValue
 
-      XCTAssertEqual(smiResult, heapResult, "\(raw)")
+      XCTAssertEqual(smiHash, heapHash, "\(raw)")
     }
   }
 }

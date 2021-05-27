@@ -118,9 +118,9 @@ class BigIntStringInitTests: XCTestCase {
 
     for smi in generateSmiValues(countButNotReally: 100) {
       do {
-        let smallcase = String(smi, radix: radix, uppercase: false)
-        let smallcaseResult = try self.create(string: smallcase, radix: radix)
-        XCTAssert(smallcaseResult == smi, "\(smallcaseResult) == \(smi)")
+        let lowercase = String(smi, radix: radix, uppercase: false)
+        let lowercaseResult = try self.create(string: lowercase, radix: radix)
+        XCTAssert(lowercaseResult == smi, "\(lowercaseResult) == \(smi)")
 
         let uppercase = String(smi, radix: radix, uppercase: true)
         let uppercaseResult = try self.create(string: uppercase, radix: radix)
@@ -266,7 +266,7 @@ class BigIntStringInitTests: XCTestCase {
   }
 
   private func insertUnderscores(string: String) -> String {
-    // We could create pseudo-random algorithm to select underscore loaction.
+    // We could create pseudo-random algorithm to select underscore location.
     // Or we could just insert underscore after every 3rd digit.
     let underscoreAfterEvery = 3
 

@@ -69,7 +69,7 @@ extension BigInt {
 
   // 'String.UnicodeScalarView' and 'String.UnicodeScalarView.SubSequence'
   // do not share common protocol (that we would be interested in).
-  // But we can easly convert 'UnicodeScalarView' to 'UnicodeScalarView.SubSequence'
+  // But we can easily convert 'UnicodeScalarView' to 'UnicodeScalarView.SubSequence'
   // by using 'scalars[...]', so we will use this as our common ground.
 
   public init(_ string: String, radix: Int = 10) throws {
@@ -101,7 +101,7 @@ extension BigInt {
     }
 
     guard let firstDigit = scalars.first else {
-      // We already checked for empty, so the only remainig possibility is:
+      // We already checked for empty, so the only remaining possibility is:
       throw ParsingError.signWithoutDigits
     }
 
@@ -198,7 +198,7 @@ extension BigInt {
   ) -> ParseMagnitudeResult {
     let isNegative = sign.isNegative
 
-    // Instead of using a single 'BigInt' and multipling it by 'radix',
+    // Instead of using a single 'BigInt' and multiplying it by 'radix',
     // we will group scalars into words-sized chunks.
     // Then we will raise those chunks to appropriate power and add together.
     //

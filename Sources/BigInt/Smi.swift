@@ -1,6 +1,6 @@
 // swiftlint:disable empty_count
 
-/// Small integer, named after similiar type in `V8`.
+/// Small integer, named after similar type in `V8`.
 internal struct Smi: Hashable, CustomStringConvertible, CustomDebugStringConvertible {
 
   internal typealias Storage = Int32

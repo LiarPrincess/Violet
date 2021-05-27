@@ -1,5 +1,5 @@
 // In CPython:
-// Objects -> longobject.c
+// Objects -> longobject.c // cSpell:disable-line
 
 extension BigInt {
 
@@ -77,7 +77,7 @@ extension BigInt {
 
   // 'String.UnicodeScalarView' and 'String.UnicodeScalarView.SubSequence'
   // do not share common protocol (that we would be interested in).
-  // But we can easly convert 'UnicodeScalarView' to 'UnicodeScalarView.SubSequence'
+  // But we can easily convert 'UnicodeScalarView' to 'UnicodeScalarView.SubSequence'
   // by using 'scalars[...]', so we will use this as our common ground.
 
   /// This implements `Python` parsing rules, not `Swift`!
@@ -141,7 +141,7 @@ extension BigInt {
     guard let firstDigit = scalars.first else {
       if hadBasePrefix { throw PythonParsingError.baseWithoutDigits }
 
-      // We already checked for empty, so the only remainig possibility is:
+      // We already checked for empty, so the only remaining possibility is:
       throw PythonParsingError.signWithoutDigits
     }
 

@@ -1,7 +1,7 @@
 import XCTest
 @testable import BigInt
 
-// Tests were partialy copied from:
+// Tests were partially copied from:
 // https://github.com/apple/swift/blob/master/test/Prototypes/BigInt.swift
 
 class AppleBigIntTests: XCTestCase {
@@ -132,6 +132,7 @@ class AppleBigIntTests: XCTestCase {
   }
 
   // MARK: - Strings
+  // cSpell:ignore wtkgm UNIZHA
 
   func test_strings() throws {
     let x = try BigInt("-171usy24wtkgm", radix: 36)

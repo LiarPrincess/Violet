@@ -5,7 +5,7 @@
 // GMP function name is in the comment above method.
 //
 // The main reason why we use this version (instead of standard 2 complement)
-// is that it avoids unnecesary allocation.
+// is that it avoids unnecessary allocation.
 // For example: 2 complement when both numbers are negative would have to allocate
 // 2 times (1 for each of the numbers) and then another one for result.
 // GMP-mini does only 1 allocation, so that's what we prefer.

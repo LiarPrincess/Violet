@@ -6,7 +6,7 @@ class BigIntPowerTests: XCTestCase {
   // MARK: - Trivial base
 
   /// 0 ^ n = 0 (or sometimes 1)
-  func testbase_zero() {
+  func test_base_zero() {
     let zero = BigInt(0)
     let one = BigInt(1)
 
@@ -113,7 +113,7 @@ class BigIntPowerTests: XCTestCase {
     let mantissaCount = Double.significandBitCount // well… technically '+1'
     let maxExactlyRepresentable = UInt(pow(Double(2), Double(mantissaCount)))
 
-    // 'smi ^ 2' has greater possibility of beeing in 'Double' range than 'Int'
+    // 'smi ^ 2' has greater possibility of being in 'Double' range than 'Int'
     var values = generateSmiValues(countButNotReally: 20)
     for i in -10...10 {
       values.append(Smi.Storage(i))
@@ -133,7 +133,7 @@ class BigIntPowerTests: XCTestCase {
         continue
       }
 
-      // Some tests will actuallt get here, not a lot, but some
+      // Some tests will actually get here, not a lot, but some
       let base = BigInt(baseSmi)
       let exp = BigInt(expSmi)
       let result = base.power(exponent: exp)

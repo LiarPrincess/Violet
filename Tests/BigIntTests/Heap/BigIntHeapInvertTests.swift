@@ -33,8 +33,8 @@ class BigIntHeapInvertTests: XCTestCase {
       XCTAssertEqual(value.isNegative, !p.isNegative, "\(p)")
 
       // x + (~x) = -1
-      let orginal = p.create()
-      value.add(other: orginal)
+      let original = p.create()
+      value.add(other: original)
       XCTAssertEqual(value, minus1, "\(p)")
     }
   }

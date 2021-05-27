@@ -130,6 +130,7 @@ extension BigIntHeap {
   // MARK: - Right - word
 
 // swiftlint:disable function_body_length
+// cSpell:ignore bitcnt
 
   /// static void
   /// mpz_div_q_2exp (mpz_t q, const mpz_t u, mp_bitcnt_t bitShift,

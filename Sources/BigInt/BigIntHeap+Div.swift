@@ -215,7 +215,7 @@ extension BigIntHeap {
                                    divisor: BigIntHeap) -> BigIntHeap {
 // swiftlint:enable function_body_length
 
-    // Check for single word divisor, to quarantee 'n >= 2'
+    // Check for single word divisor, to guarantee 'n >= 2'
     if divisor.storage.count == 1 {
       let word = divisor.storage[0]
       let remainder = Self.divMagnitude(dividend: &dividend, divisor: word)
@@ -251,7 +251,7 @@ extension BigIntHeap {
     // We no longer need 'dividend', since we will be using 'remainder',
     // for actual division. We will use it to accumulate result instead.
     dividend.storage.transformEveryWord { _ in 0 }
-    // In each iteration we will be divising 'remainderHighWords' by 'divisorHighWords'
+    // In each iteration we will be dividing 'remainderHighWords' by 'divisorHighWords'
     // to estimate quotient word.
     let divisorHighWords = (shiftedDivisor[n - 1], shiftedDivisor[n - 2])
     // This will hold 'divisor * quotientGuess',
@@ -275,9 +275,9 @@ extension BigIntHeap {
       // If there was 'borrow', then the quotient digit was '1' too high,
       // so we must correct it and undo one subtraction of the (shifted) divisor.
       Self.internalMultiply(lhs: shiftedDivisor, rhs: quotientGuess, into: &mulBuffer)
-      let borrow = Self.inplaceSub(lhs: &remainder, rhs: mulBuffer, startIndex: j)
+      let borrow = Self.inPlaceSub(lhs: &remainder, rhs: mulBuffer, startIndex: j)
       if borrow != 0 {
-        let carry = Self.inplaceAdd(lhs: &remainder, rhs: shiftedDivisor, startIndex: j)
+        let carry = Self.inPlaceAdd(lhs: &remainder, rhs: shiftedDivisor, startIndex: j)
         remainder[j + n] += carry
         quotientGuess -= 1
       }
@@ -379,11 +379,10 @@ extension BigIntHeap {
 
   // MARK: - Heap - Add, sub and mul
 
-  /// Adds `summand` onto `value`, starting with `summand's` 0th digit
-  /// at `value's` `startIndex'th` digit.
+  /// Adds `rhs` onto `lhs`, starting with `rhs` 0th digit at `lhs` `startIndex` digit.
   ///
   /// Returns the `carry` (0 or 1).
-  private static func inplaceAdd(lhs: inout BigIntStorage,
+  private static func inPlaceAdd(lhs: inout BigIntStorage,
                                  rhs: BigIntStorage,
                                  startIndex: Int) -> Word {
     var carry: Word = 0
@@ -398,11 +397,11 @@ extension BigIntHeap {
     return carry
   }
 
-  /// Subtracts `subtrahend` from `value`, starting with `subtrahend's` 0th digit
-  /// and `value's` `startIndex-th` digit.
+  /// Subtracts `rhs` from `lhs`, starting with `rhs` 0th digit
+  /// and `lhs` `startIndex` digit.
   ///
   /// Returns the `borrow` (0 or 1).
-  private static func inplaceSub(lhs: inout BigIntStorage,
+  private static func inPlaceSub(lhs: inout BigIntStorage,
                                  rhs: BigIntStorage,
                                  startIndex: Int) -> Word {
     var borrow: Word = 0
@@ -417,8 +416,8 @@ extension BigIntHeap {
     return borrow
   }
 
-  /// Multiplies `source` with `factor` and adds `summand` to the result.
-  /// `result` and `source` may be the same BigInt for inplace modification.
+  /// Multiplies `lhs` with `rhs` and adds `summand` to the result.
+  /// `result` and `lhs` may be the same BigInt for in-place modification.
   private static func internalMultiply(lhs: BigIntStorage,
                                        rhs: Word,
                                        into result: inout BigIntStorage) {

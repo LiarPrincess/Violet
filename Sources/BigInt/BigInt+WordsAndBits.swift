@@ -9,9 +9,7 @@
 //
 // WARNING:
 // This file is full of dark arcane magic (mostly involving bit operations)!
-// Listen to this for best effect: https://www.youtube.com/watch?v=ML0XFlWkEvk
-// 'Salem's Secret' is the best song on this ablum and btw. you may get some
-// flashbacks with Count Strahd von Zarovich.
+// Listen to this for best effect: https://youtu.be/ML0XFlWkEvk?t=298.
 
 // swiftlint:disable file_length
 
@@ -110,7 +108,7 @@ extension BigIntHeap {
     let leadingZeroBitCount = last.leadingZeroBitCount
 
     func bitWidthForPositive() -> Int {
-      // Positivie numbers need leading '0',
+      // Positive numbers need leading '0',
       // because leading '1' marks negative number.
       let zeroAsSign = 1
       return wordsWidth - leadingZeroBitCount + zeroAsSign
@@ -137,7 +135,7 @@ extension BigIntHeap {
     //
     // There is a bit more detailed explanation below.
     //
-    // To quicky find powers of 2:
+    // To quickly find powers of 2:
     // 1. most significant word is power of 2
     // 2. all other words are 0
 
@@ -171,7 +169,7 @@ extension BigIntHeap {
     // let indexWhichSwallowsPlus1 = self.storage.firstIndex { $0 != 0 } ?? nope
     //
     // Step 2: If it was not the last word
-    // If one of our 'inner words' swallowed '1' then we definitelly do not need
+    // If one of our 'inner words' swallowed '1' then we definitely do not need
     // additional bit. We can just simply invert 'last' and use it as 2 complement:
     //   let complement = ~last
     //   let leadingZeroBitCount = complement.leadingZeroBitCount

@@ -16,7 +16,7 @@ import Foundation
 /// `guaranteeUniqueBufferReference` first.
 ///
 /// # Important 2
-/// We do not give any guarantes about the words after `self.count`.
+/// We do not give any guarantees about the words after `self.count`.
 /// They may be `0` or they may be garbage.
 internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringConvertible {
 
@@ -37,7 +37,7 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
     ///
     /// We could use use negative numbers for negative sign,
     /// but then we would not be able to represent `-0`.
-    /// `-0` could be usefull when user decides to set sign first
+    /// `-0` could be useful when the user decides to set sign first
     /// and then magnitude. If the current value is `0` then even though user
     /// would set `sign` to negative `Swift` would still treat it as positive (`+0`).
     fileprivate var signAndCount: UInt
@@ -79,7 +79,7 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
         return
       }
 
-      // We will allow seting 'isNegative' when the value is '0',
+      // We will allow setting 'isNegative' when the value is '0',
       // just assume that user know what they are doing.
 
       self.guaranteeUniqueBufferReference()
@@ -157,7 +157,7 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
   // MARK: - Create buffer
 
   /// `ManagedBufferPointer` will call our `deinit`.
-  /// This is bascally kind of memory overlay thingie.
+  /// This is basically kind of memory overlay thingie.
   private class LetItGo {
 
     private var buffer: Buffer {
@@ -192,13 +192,13 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
 
   internal subscript(index: Int) -> Word {
     get {
-      self.checkIndex(index: index)
+      self.checkBounds(index: index)
       return self.buffer.withUnsafeMutablePointerToElements { ptr in
         ptr.advanced(by: index).pointee
       }
     }
     set {
-      self.checkIndex(index: index)
+      self.checkBounds(index: index)
       self.guaranteeUniqueBufferReference()
       self.buffer.withUnsafeMutablePointerToElements { ptr in
         ptr.advanced(by: index).pointee = newValue
@@ -206,7 +206,7 @@ internal struct BigIntStorage: RandomAccessCollection, Equatable, CustomStringCo
     }
   }
 
-  private func checkIndex(index: Int) {
+  private func checkBounds(index: Int) {
     // 'Assert' instead of 'precondition',
     // because we control all of the callers (this type is internal).
     assert(0 <= index && index < self.count, "Index out of range")
