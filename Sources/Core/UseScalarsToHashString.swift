@@ -5,14 +5,13 @@
 /// - Swift:  "é" == "e\u{0301}" -> true
 /// - Python: "é" == "e\u0301" -> False
 ///
-/// If we used Swift version of equal and a dictionary based cache then we would
-/// emit the same value for both of them.
-///
-/// This would fail following test:
 /// ```py
 /// assert len("é") == 1
-/// assert len("e\u0301") == 2 <-- it would say 1, because it would use cached 'é'.
+/// assert len("e\u0301") == 2
 /// ```
+///
+/// This may matter:
+/// If we used Swift version as a dictionary key we would get invalid value.
 public struct UseScalarsToHashString: Equatable, Hashable, CustomStringConvertible {
 
   private let value: String

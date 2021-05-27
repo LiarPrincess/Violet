@@ -13,7 +13,7 @@ class DictionaryTakeExisting: XCTestCase {
     XCTAssertEqual(zelf, [1: "Elsa", 2: "Anna"])
   }
 
-  func test_takeExisting_withIntersection_takeTexisting() {
+  func test_takeExisting_withIntersection_takeExisting() {
     var zelf = [1: "Elsa"]
     let other = [1: "Anna"]
 

@@ -1,5 +1,5 @@
 // In CPython:
-// Python -> dtoa.c
+// Python -> dtoa.c // cSpell:disable-line
 
 extension Double {
 

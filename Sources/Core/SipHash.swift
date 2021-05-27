@@ -64,8 +64,9 @@ public enum SipHash {
   }
 
   private struct State {
+    // cspell:disable-next
     // We will use the same "somepseudorandomlygeneratedbytes" as in example.
-    // (Although it is very tempting to use Disney themed values.)
+    // (Although it is very tempting to use Disnep themed values.)
     private var v0: UInt64 = 0x736f_6d65_7073_6575
     private var v1: UInt64 = 0x646f_7261_6e64_6f6d
     private var v2: UInt64 = 0x6c79_6765_6e65_7261

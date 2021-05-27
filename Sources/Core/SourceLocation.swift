@@ -2,6 +2,7 @@
 public typealias SourceLine = UInt32
 public typealias SourceColumn = UInt32
 
+/// Location in the source file.
 public struct SourceLocation: Equatable, Comparable, CustomStringConvertible {
 
   /// Initial location.

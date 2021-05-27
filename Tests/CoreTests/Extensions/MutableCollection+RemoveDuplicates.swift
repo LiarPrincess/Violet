@@ -31,7 +31,7 @@ class MutableCollectionRemoveDuplicates: XCTestCase {
   }
 
   // This will check stability.
-  func test_duplicate_sufix() {
+  func test_duplicate_suffix() {
     var zelf = [1, 2, 3, 4, 5, 5]
     zelf.removeDuplicates()
     XCTAssertEqual(zelf, [1, 2, 3, 4, 5])

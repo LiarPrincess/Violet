@@ -26,6 +26,7 @@ class UseScalarsToHashStringTests: XCTestCase {
     XCTAssertNotEqual(rhs.hashValue, lhs.hashValue)
   }
 
+  // cspell:disable-next
   func test_different_ecuteAccents_areNotEqual() {
     let lhs = "élsa"
     let rhs = "e\u{0301}lsa"

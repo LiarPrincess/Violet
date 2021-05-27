@@ -2,14 +2,14 @@
 // It is not 'ideal'.
 //
 // Alternative would be to store 'first' and 'rest' as fields.
-// Unfortunatelly we can't do this, because:
+// Unfortunately we can't do this, because:
 //
 // public struct MyArray<Element> {
 //   fileprivate let first: Element
 // }
 //
 // public struct ASTNode {
-//   fileprivate let childrens: MyArray<ASTNode>
+//   fileprivate let children: MyArray<ASTNode>
 // }
 //
 // This will not compile, because:

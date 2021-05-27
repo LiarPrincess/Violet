@@ -194,7 +194,7 @@ extension Collection where Element == UnicodeScalar {
   public var isValidIdentifier: IsValidIdentifierResult {
     // Returning single scalar does not make sense (scalars don't have meaning).
     // We include its index, but not very precise.
-    // Basically everything is 'best efford', because text is hard.
+    // Basically everything is 'best effort', because text is hard.
 
     guard let first = self.first else {
       return .emptyString
