@@ -123,32 +123,32 @@ extension Instruction: CustomStringConvertible {
       return "binaryXor"
     case .binaryOr:
       return "binaryOr"
-    case .inplacePower:
-      return "inplacePower"
-    case .inplaceMultiply:
-      return "inplaceMultiply"
-    case .inplaceMatrixMultiply:
-      return "inplaceMatrixMultiply"
-    case .inplaceFloorDivide:
-      return "inplaceFloorDivide"
-    case .inplaceTrueDivide:
-      return "inplaceTrueDivide"
-    case .inplaceModulo:
-      return "inplaceModulo"
-    case .inplaceAdd:
-      return "inplaceAdd"
-    case .inplaceSubtract:
-      return "inplaceSubtract"
-    case .inplaceLShift:
-      return "inplaceLShift"
-    case .inplaceRShift:
-      return "inplaceRShift"
-    case .inplaceAnd:
-      return "inplaceAnd"
-    case .inplaceXor:
-      return "inplaceXor"
-    case .inplaceOr:
-      return "inplaceOr"
+    case .inPlacePower:
+      return "inPlacePower"
+    case .inPlaceMultiply:
+      return "inPlaceMultiply"
+    case .inPlaceMatrixMultiply:
+      return "inPlaceMatrixMultiply"
+    case .inPlaceFloorDivide:
+      return "inPlaceFloorDivide"
+    case .inPlaceTrueDivide:
+      return "inPlaceTrueDivide"
+    case .inPlaceModulo:
+      return "inPlaceModulo"
+    case .inPlaceAdd:
+      return "inPlaceAdd"
+    case .inPlaceSubtract:
+      return "inPlaceSubtract"
+    case .inPlaceLShift:
+      return "inPlaceLShift"
+    case .inPlaceRShift:
+      return "inPlaceRShift"
+    case .inPlaceAnd:
+      return "inPlaceAnd"
+    case .inPlaceXor:
+      return "inPlaceXor"
+    case .inPlaceOr:
+      return "inPlaceOr"
     case let .compareOp(value0):
       return "compareOp(\(value0))"
     case .getAwaitable:
@@ -239,14 +239,14 @@ extension Instruction: CustomStringConvertible {
       return "storeFast(variableIndex: \(hex(value0)))"
     case let .deleteFast(variableIndex: value0):
       return "deleteFast(variableIndex: \(hex(value0)))"
-    case let .loadDeref(cellOrFreeIndex: value0):
-      return "loadDeref(cellOrFreeIndex: \(hex(value0)))"
-    case let .storeDeref(cellOrFreeIndex: value0):
-      return "storeDeref(cellOrFreeIndex: \(hex(value0)))"
-    case let .deleteDeref(cellOrFreeIndex: value0):
-      return "deleteDeref(cellOrFreeIndex: \(hex(value0)))"
-    case let .loadClassDeref(cellOrFreeIndex: value0):
-      return "loadClassDeref(cellOrFreeIndex: \(hex(value0)))"
+    case let .loadCellOrFree(cellOrFreeIndex: value0):
+      return "loadCellOrFree(cellOrFreeIndex: \(hex(value0)))"
+    case let .storeCellOrFree(cellOrFreeIndex: value0):
+      return "storeCellOrFree(cellOrFreeIndex: \(hex(value0)))"
+    case let .deleteCellOrFree(cellOrFreeIndex: value0):
+      return "deleteCellOrFree(cellOrFreeIndex: \(hex(value0)))"
+    case let .loadClassCell(cellOrFreeIndex: value0):
+      return "loadClassCell(cellOrFreeIndex: \(hex(value0)))"
     case let .makeFunction(value0):
       return "makeFunction(\(value0))"
     case let .callFunction(argumentCount: value0):

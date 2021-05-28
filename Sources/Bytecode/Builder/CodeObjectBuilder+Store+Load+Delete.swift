@@ -1,15 +1,5 @@
 import VioletCore
 
-public enum DerefType {
-  case cell
-  case free
-}
-
-public enum ClosureType {
-  case cell
-  case free
-}
-
 extension CodeObjectBuilder {
 
   // MARK: - Name
@@ -54,18 +44,18 @@ extension CodeObjectBuilder {
 
   // MARK: - Subscript
 
-  /// Append a `binarySubscr` instruction to this code object.
-  public func appendBinarySubscr() {
+  /// Append a `binarySubscript` instruction to this code object.
+  public func appendBinarySubscript() {
     self.append(.binarySubscript)
   }
 
-  /// Append a `storeSubscr` instruction to this code object.
-  public func appendStoreSubscr() {
+  /// Append a `storeSubscript` instruction to this code object.
+  public func appendStoreSubscript() {
     self.append(.storeSubscript)
   }
 
-  /// Append a `deleteSubscr` instruction to this code object.
-  public func appendDeleteSubscr() {
+  /// Append a `deleteSubscript` instruction to this code object.
+  public func appendDeleteSubscript() {
     self.append(.deleteSubscript)
   }
 
@@ -109,34 +99,39 @@ extension CodeObjectBuilder {
     self.append(.deleteFast(variableIndex: index))
   }
 
-  // MARK: - Deref
+  // MARK: - Cell or free
 
-  /// Append a `loadDeref` instruction to this code object.
-  public func appendLoadDeref(_ name: MangledName, type: DerefType) {
-    let index = self.addCellOrFreeVariableName(name, type: type)
-    self.append(.loadDeref(cellOrFreeIndex: index))
+  public enum CellOrFree {
+    case cell
+    case free
   }
 
-  /// Append a `loadClassDeref` instruction to this code object.
-  public func appendLoadClassDeref(_ name: MangledName, type: DerefType) {
+  /// Append a `loadCellOrFree` instruction to this code object.
+  public func appendLoadCellOrFree(_ name: MangledName, type: CellOrFree) {
     let index = self.addCellOrFreeVariableName(name, type: type)
-    self.append(.loadClassDeref(cellOrFreeIndex: index))
+    self.append(.loadCellOrFree(cellOrFreeIndex: index))
   }
 
-  /// Append a `storeDeref` instruction to this code object.
-  public func appendStoreDeref(_ name: MangledName, type: DerefType) {
+  /// Append a `loadClassCell` instruction to this code object.
+  public func appendLoadClassCell(_ name: MangledName, type: CellOrFree) {
     let index = self.addCellOrFreeVariableName(name, type: type)
-    self.append(.storeDeref(cellOrFreeIndex: index))
+    self.append(.loadClassCell(cellOrFreeIndex: index))
   }
 
-  /// Append a `deleteDeref` instruction to this code object.
-  public func appendDeleteDeref(_ name: MangledName, type: DerefType) {
+  /// Append a `storeCellOrFree` instruction to this code object.
+  public func appendStoreCellOrFree(_ name: MangledName, type: CellOrFree) {
     let index = self.addCellOrFreeVariableName(name, type: type)
-    self.append(.deleteDeref(cellOrFreeIndex: index))
+    self.append(.storeCellOrFree(cellOrFreeIndex: index))
+  }
+
+  /// Append a `deleteCellOrFree` instruction to this code object.
+  public func appendDeleteCellOrFree(_ name: MangledName, type: CellOrFree) {
+    let index = self.addCellOrFreeVariableName(name, type: type)
+    self.append(.deleteCellOrFree(cellOrFreeIndex: index))
   }
 
   private func addCellOrFreeVariableName(_ name: MangledName,
-                                         type: DerefType) -> UInt8 {
+                                         type: CellOrFree) -> UInt8 {
     switch type {
     case .cell:
       return self.addCellVariableNameWithExtendedArgIfNeeded(name: name)
@@ -146,6 +141,11 @@ extension CodeObjectBuilder {
   }
 
   // MARK: - Load closure
+
+  public enum ClosureType {
+    case cell
+    case free
+  }
 
   /// Append a `loadClosure` instruction to this code object.
   ///

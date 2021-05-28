@@ -1,12 +1,14 @@
 import VioletCore
 
+// cSpell:ignore privateobj
+
 // In CPython:
 // Python -> compile.c
 //   _Py_Mangle(PyObject *privateobj, PyObject *ident)
 
 /// Any identifier of the form `__spam`
 /// (at least two leading underscores, at most one trailing underscore)
-/// is textually replaced with `_classname__spam`, where `classname`
+/// is textually replaced with `_className__spam`, where `className`
 /// is the current class name with leading underscore(s) stripped.
 /// See [docs](https://docs.python.org/3.7/tutorial/classes.html#private-variables)
 public struct MangledName: Equatable, Hashable {

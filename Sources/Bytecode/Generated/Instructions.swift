@@ -121,31 +121,31 @@ public enum Instruction {
   /// Implements `TOS = TOS1 | TOS`.
   case binaryOr
   /// Implements in-place TOS = TOS1 ** TOS.
-  case inplacePower
+  case inPlacePower
   /// Implements in-place TOS = TOS1 * TOS.
-  case inplaceMultiply
+  case inPlaceMultiply
   /// Implements in-place TOS = TOS1 @ TOS.
-  case inplaceMatrixMultiply
+  case inPlaceMatrixMultiply
   /// Implements in-place TOS = TOS1 // TOS.
-  case inplaceFloorDivide
+  case inPlaceFloorDivide
   /// Implements in-place TOS = TOS1 / TOS.
-  case inplaceTrueDivide
+  case inPlaceTrueDivide
   /// Implements in-place TOS = TOS1 % TOS.
-  case inplaceModulo
+  case inPlaceModulo
   /// Implements in-place TOS = TOS1 + TOS.
-  case inplaceAdd
+  case inPlaceAdd
   /// Implements in-place TOS = TOS1 - TOS.
-  case inplaceSubtract
+  case inPlaceSubtract
   /// Implements in-place TOS = TOS1 << TOS.
-  case inplaceLShift
+  case inPlaceLShift
   /// Implements in-place TOS = TOS1 >> TOS.
-  case inplaceRShift
+  case inPlaceRShift
   /// Implements in-place TOS = TOS1 & TOS.
-  case inplaceAnd
+  case inPlaceAnd
   /// Implements in-place TOS = TOS1 ^ TOS.
-  case inplaceXor
+  case inPlaceXor
   /// Implements in-place TOS = TOS1 | TOS.
-  case inplaceOr
+  case inPlaceOr
   /// Performs a `Boolean` operation.
   case compareOp(CompareType)
   /// Implements `TOS = GetAwaitable(TOS)`.
@@ -209,7 +209,7 @@ public enum Instruction {
   /// Calls `list.append(TOS[-i], TOS)`. Container object remains on the stack.
   /// Used to implement list comprehensions.
   case listAppend(UInt8)
-  /// Calls `dict.setitem(TOS1[-i], TOS, TOS1)`. Container object remains on the stack.
+  /// Calls `dict.setItem(TOS1[-i], TOS, TOS1)`. Container object remains on the stack.
   /// Used to implement dict comprehensions.
   case mapAdd(UInt8)
   /// Pops count iterables from the stack, joins them in a single tuple,
@@ -287,15 +287,15 @@ public enum Instruction {
   case deleteFast(variableIndex: UInt8)
   /// Loads the cell contained in slot i of the cell and free variable storage.
   /// Pushes a reference to the object the cell contains on the stack.
-  case loadDeref(cellOrFreeIndex: UInt8)
+  case loadCellOrFree(cellOrFreeIndex: UInt8)
   /// Stores TOS into the cell contained in slot i of the cell and free variable storage.
-  case storeDeref(cellOrFreeIndex: UInt8)
+  case storeCellOrFree(cellOrFreeIndex: UInt8)
   /// Empties the cell contained in slot i of the cell and free variable storage.
   /// Used by the del statement.
-  case deleteDeref(cellOrFreeIndex: UInt8)
-  /// Much like `LoadDeref` but first checks the locals dictionary before consulting the cell.
+  case deleteCellOrFree(cellOrFreeIndex: UInt8)
+  /// Much like `LoadCellOrFree` but first checks the locals dictionary before consulting the cell.
   /// This is used for loading free variables in class bodies.
-  case loadClassDeref(cellOrFreeIndex: UInt8)
+  case loadClassCell(cellOrFreeIndex: UInt8)
   /// Pushes a new function object on the stack.
   ///
   /// From bottom to top, the consumed stack must consist of values
@@ -342,7 +342,7 @@ public enum Instruction {
   /// - (if `hasKeywordArguments` is set) mapping object containing keyword arguments
   /// - iterable object containing positional arguments and a callable object to call
   ///
-  /// `BuildmapUnpackWithCall` and `BuildTupleUnpackWithCall` can be used for
+  /// `BuildMapUnpackWithCall` and `BuildTupleUnpackWithCall` can be used for
   /// merging multiple mapping objects and iterables containing arguments.
   ///
   /// It will:
@@ -380,7 +380,7 @@ public enum Instruction {
   case importStar
   /// Imports the module `name`.
   ///
-  /// TOS and TOS1 are popped and provide the `fromlist` and `level` arguments of `Import()`.
+  /// TOS and TOS1 are popped and provide the `from-list` and `level` arguments of `Import()`.
   /// The module object is pushed onto the stack.
   /// The current namespace is not affected: for a proper import statement,
   /// a subsequent StoreFast instruction modifies the namespace.
@@ -429,8 +429,8 @@ public enum Instruction {
   /// TOS is the context manager’s `__exit__()` bound method.
   /// Below TOS are 1–3 values indicating how/why the finally clause was entered:
   /// - `SECOND = None`
-  /// - `(SECOND, THIRD) = (WHY_{RETURN,CONTINUE}), retval`
-  /// - `SECOND = WHY_*; no retval below it`
+  /// - `(SECOND, THIRD) = (WHY_{RETURN,CONTINUE}), return value`
+  /// - `SECOND = WHY_*; no return value below it`
   /// - `(SECOND, THIRD, FOURTH) = exc_info()`
   /// In the last case, `TOS(SECOND, THIRD, FOURTH)` is called,
   /// otherwise `TOS(None, None, None)`.
@@ -441,7 +441,7 @@ public enum Instruction {
   /// If the stack represents an exception, and the function call returns a ‘true’ value,
   /// this information is “zapped” and replaced with a single WhySilenced
   /// to prevent EndFinally from re-raising the exception.
-  /// (But non-local gotos will still be resumed.)
+  /// (But non-local goto will still be resumed.)
   case withCleanupFinish
   /// Resolves `AEnter` and `AExit` from the object on top of the stack.
   /// Pushes `AExit` and result of `AEnter()` to the stack.

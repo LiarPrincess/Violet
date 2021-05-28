@@ -3,7 +3,7 @@ import BigInt
 import VioletCore
 
 // In CPython:
-// Objects -> codeobject.c
+// Objects -> codeobject.c // cSpell:disable-line
 
 // (Unofficial) docs:
 // https://tech.blog.aknin.name/2010/07/03/pythons-innards-code-objects/
@@ -144,7 +144,7 @@ public final class CodeObject: CustomStringConvertible {
   /// - positional argument names (including optional ones)
   /// - keyword only argument names (again, both required and optional)
   /// - varargs argument name (i.e., *args)
-  /// - kwds argument name (i.e., **kwargs)
+  /// - keyword argument name (i.e., **kwargs)
   /// - any other local variable names.
   ///
   /// So you need to look at `argCount`, `kwOnlyArgCount` and `codeFlags`

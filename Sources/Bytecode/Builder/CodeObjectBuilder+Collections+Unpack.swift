@@ -60,7 +60,7 @@ extension CodeObjectBuilder {
   public func appendMapAdd(relativeStackIndex: Int) {
     assert(relativeStackIndex >= 0)
 
-    /// Calls `dict.setitem(TOS1[-i], TOS, TOS1)`.
+    /// Calls `dict.setItem(TOS1[-i], TOS, TOS1)`.
     /// Container object remains on the stack.
     /// Used to implement dict comprehensions.
     let arg = self.appendExtendedArgIfNeeded(relativeStackIndex)

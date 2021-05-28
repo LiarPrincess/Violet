@@ -120,19 +120,19 @@ extension CodeObject {
     case .binaryXor: return "binaryXor"
     case .binaryOr: return "binaryOr"
 
-    case .inplacePower: return "inplacePower"
-    case .inplaceMultiply: return "inplaceMultiply"
-    case .inplaceMatrixMultiply: return "inplaceMatrixMultiply"
-    case .inplaceFloorDivide: return "inplaceFloorDivide"
-    case .inplaceTrueDivide: return "inplaceTrueDivide"
-    case .inplaceModulo: return "inplaceModulo"
-    case .inplaceAdd: return "inplaceAdd"
-    case .inplaceSubtract: return "inplaceSubtract"
-    case .inplaceLShift: return "inplaceLShift"
-    case .inplaceRShift: return "inplaceRShift"
-    case .inplaceAnd: return "inplaceAnd"
-    case .inplaceXor: return "inplaceXor"
-    case .inplaceOr: return "inplaceOr"
+    case .inPlacePower: return "inPlacePower"
+    case .inPlaceMultiply: return "inPlaceMultiply"
+    case .inPlaceMatrixMultiply: return "inPlaceMatrixMultiply"
+    case .inPlaceFloorDivide: return "inPlaceFloorDivide"
+    case .inPlaceTrueDivide: return "inPlaceTrueDivide"
+    case .inPlaceModulo: return "inPlaceModulo"
+    case .inPlaceAdd: return "inPlaceAdd"
+    case .inPlaceSubtract: return "inPlaceSubtract"
+    case .inPlaceLShift: return "inPlaceLShift"
+    case .inPlaceRShift: return "inPlaceRShift"
+    case .inPlaceAnd: return "inPlaceAnd"
+    case .inPlaceXor: return "inPlaceXor"
+    case .inPlaceOr: return "inPlaceOr"
 
     case let .compareOp(arg):
       return "compareOp \(self.toString(arg))"
@@ -239,14 +239,14 @@ extension CodeObject {
     case let .deleteFast(variableIndex: arg):
       return "deleteFast \(self.getVariableName(extendedArg + Int(arg)))"
 
-    case let .loadDeref(cellOrFreeIndex: arg):
-      return "loadDeref \(self.getCellOrFreeName(extendedArg + Int(arg)))"
-    case let .storeDeref(cellOrFreeIndex: arg):
-      return "storeDeref \(self.getCellOrFreeName(extendedArg + Int(arg)))"
-    case let .deleteDeref(cellOrFreeIndex: arg):
-      return "deleteDeref \(self.getCellOrFreeName(extendedArg + Int(arg)))"
-    case let .loadClassDeref(cellOrFreeIndex: arg):
-      return "loadClassDeref \(self.getCellOrFreeName(extendedArg + Int(arg)))"
+    case let .loadCellOrFree(cellOrFreeIndex: arg):
+      return "loadCellOrFree \(self.getCellOrFreeName(extendedArg + Int(arg)))"
+    case let .storeCellOrFree(cellOrFreeIndex: arg):
+      return "storeCellOrFree \(self.getCellOrFreeName(extendedArg + Int(arg)))"
+    case let .deleteCellOrFree(cellOrFreeIndex: arg):
+      return "deleteCellOrFree \(self.getCellOrFreeName(extendedArg + Int(arg)))"
+    case let .loadClassCell(cellOrFreeIndex: arg):
+      return "loadClassCell \(self.getCellOrFreeName(extendedArg + Int(arg)))"
 
     case let .makeFunction(arg):
       if arg.isEmpty {

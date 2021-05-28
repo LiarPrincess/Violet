@@ -93,69 +93,69 @@ extension CodeObjectBuilder {
 
   // MARK: - In-place
 
-  /// Append an `inplacePower` instruction to this code object.
-  public func appendInplacePower() {
-    self.append(.inplacePower)
+  /// Append an `inPlacePower` instruction to this code object.
+  public func appendInPlacePower() {
+    self.append(.inPlacePower)
   }
 
-  /// Append an `inplaceMultiply` instruction to this code object.
-  public func appendInplaceMultiply() {
-    self.append(.inplaceMultiply)
+  /// Append an `inPlaceMultiply` instruction to this code object.
+  public func appendInPlaceMultiply() {
+    self.append(.inPlaceMultiply)
   }
 
-  /// Append an `inplaceMatrixMultiply` instruction to this code object.
-  public func appendInplaceMatrixMultiply() {
-    self.append(.inplaceMatrixMultiply)
+  /// Append an `inPlaceMatrixMultiply` instruction to this code object.
+  public func appendInPlaceMatrixMultiply() {
+    self.append(.inPlaceMatrixMultiply)
   }
 
-  /// Append an `inplaceFloorDivide` instruction to this code object.
-  public func appendInplaceFloorDivide() {
-    self.append(.inplaceFloorDivide)
+  /// Append an `inPlaceFloorDivide` instruction to this code object.
+  public func appendInPlaceFloorDivide() {
+    self.append(.inPlaceFloorDivide)
   }
 
-  /// Append an `inplaceTrueDivide` instruction to this code object.
-  public func appendInplaceTrueDivide() {
-    self.append(.inplaceTrueDivide)
+  /// Append an `inPlaceTrueDivide` instruction to this code object.
+  public func appendInPlaceTrueDivide() {
+    self.append(.inPlaceTrueDivide)
   }
 
-  /// Append an `inplaceModulo` instruction to this code object.
-  public func appendInplaceModulo() {
-    self.append(.inplaceModulo)
+  /// Append an `inPlaceModulo` instruction to this code object.
+  public func appendInPlaceModulo() {
+    self.append(.inPlaceModulo)
   }
 
-  /// Append an `inplaceAdd` instruction to this code object.
-  public func appendInplaceAdd() {
-    self.append(.inplaceAdd)
+  /// Append an `inPlaceAdd` instruction to this code object.
+  public func appendInPlaceAdd() {
+    self.append(.inPlaceAdd)
   }
 
-  /// Append an `inplaceSubtract` instruction to this code object.
-  public func appendInplaceSubtract() {
-    self.append(.inplaceSubtract)
+  /// Append an `inPlaceSubtract` instruction to this code object.
+  public func appendInPlaceSubtract() {
+    self.append(.inPlaceSubtract)
   }
 
-  /// Append an `inplaceLShift` instruction to this code object.
-  public func appendInplaceLShift() {
-    self.append(.inplaceLShift)
+  /// Append an `inPlaceLShift` instruction to this code object.
+  public func appendInPlaceLShift() {
+    self.append(.inPlaceLShift)
   }
 
-  /// Append an `inplaceRShift` instruction to this code object.
-  public func appendInplaceRShift() {
-    self.append(.inplaceRShift)
+  /// Append an `inPlaceRShift` instruction to this code object.
+  public func appendInPlaceRShift() {
+    self.append(.inPlaceRShift)
   }
 
-  /// Append an `inplaceAnd` instruction to this code object.
-  public func appendInplaceAnd() {
-    self.append(.inplaceAnd)
+  /// Append an `inPlaceAnd` instruction to this code object.
+  public func appendInPlaceAnd() {
+    self.append(.inPlaceAnd)
   }
 
-  /// Append an `inplaceXor` instruction to this code object.
-  public func appendInplaceXor() {
-    self.append(.inplaceXor)
+  /// Append an `inPlaceXor` instruction to this code object.
+  public func appendInPlaceXor() {
+    self.append(.inPlaceXor)
   }
 
-  /// Append an `inplaceOr` instruction to this code object.
-  public func appendInplaceOr() {
-    self.append(.inplaceOr)
+  /// Append an `inPlaceOr` instruction to this code object.
+  public func appendInPlaceOr() {
+    self.append(.inPlaceOr)
   }
 
   // MARK: - Comparison
