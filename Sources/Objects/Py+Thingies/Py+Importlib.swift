@@ -59,7 +59,7 @@ extension PyInstance {
   /// `importlib` is the module used for importing other modules.
   public func getImportlib() -> PyResult<PyModule> {
     // 'self.initImportlibIfNeeded' is idempotent:
-    // - if it was never called it will intitialize it
+    // - if it was never called it will initialize it
     // - if we already called it then it will return module from 'sys'
     //
     // Unless you do something like 'sys.modules['importlib'] = "let it go"',
@@ -271,7 +271,7 @@ extension PyInstance {
 
   // MARK: - Install
 
-  /// Call the `_install` function from given module with sepcified `args`.
+  /// Call the `_install` function from given module with specified `args`.
   private func callInstall(spec: ModuleSpecWithPath,
                            module: PyModule,
                            args: [PyObject]) -> PyImportError? {

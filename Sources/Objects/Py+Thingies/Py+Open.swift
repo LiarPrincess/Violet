@@ -56,7 +56,7 @@ extension PyInstance {
     case let .error(e): return .error(e)
     }
 
-    // Delay `open` syscall untill the end of the method,
+    // Delay `open` syscall until the end of the method,
     // so that we don't have to deal with dangling handles.
     switch type {
     case .binary:

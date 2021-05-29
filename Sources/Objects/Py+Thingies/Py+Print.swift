@@ -2,14 +2,15 @@ import Foundation
 import BigInt
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore printinternal displayline
+
 // In CPython:
 // Python -> builtinmodule.c
 // Python -> pythonrun.c
 // Modules -> _io -> _iomodule.c
 // https://docs.python.org/3/library/functions.html
 // https://docs.python.org/3.7/library/io.html
-
-// swiftlint:disable file_length
 
 extension PyInstance {
 
@@ -316,7 +317,7 @@ extension PyInstance {
     // We could store tracebacks in array,
     // but that would be allocation and we don't know what caused error.
 
-    // Keep previous, because we need to check for recurrency
+    // Keep previous, because we need to check for recurrence
     var recursiveCount = 0
     var previous: PyTraceback?
     var current: PyTraceback? = self.limit(traceback: traceback, to: limit)

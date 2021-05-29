@@ -1,5 +1,7 @@
 import VioletBytecode
 
+// cSpell:ignore classobject
+
 // In CPython:
 // Objects -> classobject.c
 

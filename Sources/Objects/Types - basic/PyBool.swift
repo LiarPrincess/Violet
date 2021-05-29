@@ -1,15 +1,16 @@
 import BigInt
 import VioletCore
 
+// cSpell:ignore boolobject
+
 // In CPython:
 // Objects -> boolobject.c
 // https://docs.python.org/3.7/c-api/bool.html
 
 // !!! IMPORTANT !!!
-// 'PyBool' is a special (and unusual) place where we override 'pymethods' from
-// 'PyInt'
+// 'PyBool' is a special (and unusual) place where we override 'pymethod' from 'PyInt'
 // But we can't do that because Swift would always call the
-// overriden function (even if we did 'PyInt.fn(boolInstance)').
+// overridden function (even if we did 'PyInt.fn(boolInstance)').
 // So, we have to introduce separate selectors for each override.
 
 extension BigInt {

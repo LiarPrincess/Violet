@@ -1,11 +1,12 @@
 import BigInt
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore sliceobject
+
 // In CPython:
 // Objects -> sliceobject.c
 // https://docs.python.org/3.7/c-api/slice.html
-
-// swiftlint:disable file_length
 
 // sourcery: pytype = slice, default, hasGC
 /// The type object for slice objects.
@@ -194,7 +195,7 @@ public class PySlice: PyObject {
   /// int _PySlice_GetLongIndices(PySliceObject *self, PyObject *length, ...)
   ///
   /// Compute slice indices given a slice and length.
-  /// Used by slice.indices and rangeobject slicing.
+  /// Used by slice.indices and range object slicing.
   /// Assumes that `len` is a nonnegative.
   internal func getLongIndices(length: BigInt) -> PyResult<GetLongIndicesResult> {
     // swiftlint:disable:previous function_body_length
@@ -283,7 +284,7 @@ public class PySlice: PyObject {
 
   // MARK: - Unpack
 
-  /// Ok, so `UnpackedIndices` stores extracted idices,
+  /// Ok, so `UnpackedIndices` stores extracted indices,
   /// use `adjust(toCount:)` method to clamp them to desired length.
   internal struct AdjustedIndices {
     internal var start: Int

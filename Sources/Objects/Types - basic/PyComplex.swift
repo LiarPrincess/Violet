@@ -1,11 +1,12 @@
 import Foundation
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore complexobject
+
 // In CPython:
 // Objects -> complexobject.c
 // https://docs.python.org/3.7/c-api/complex.html
-
-// swiftlint:disable file_length
 
 // sourcery: pytype = complex, default, baseType
 /// This subtype of PyObject represents a Python complex number object.
@@ -104,13 +105,13 @@ public class PyComplex: PyObject {
     let realHash = Py.hasher.hash(self.real)
     let imagHash = Py.hasher.hash(self.imag)
 
-    // If the imaginary part is 0, hashimag is 0 now,
-    // so the following returns hashreal unchanged.
+    // If the imaginary part is 0, imagHash is 0 now,
+    // so the following returns realHash unchanged.
     // This is important because numbers of different types that
     // compare equal must have the same hash value, so that
     // hash(x + 0*j) must equal hash(x).
 
-    // Overflows are acceprable (and surprisingly common).
+    // Overflows are acceptable (and surprisingly common).
     let imagHashNeg = Hasher.imag &* imagHash
     return .value(realHash &+ imagHashNeg)
   }
@@ -476,7 +477,7 @@ public class PyComplex: PyObject {
     return self.divmod(other)
   }
 
-  // MARK: - Newargs
+  // MARK: - NewArgs
 
   // sourcery: pymethod = __getnewargs__
   internal func getNewArgs() -> PyTuple {

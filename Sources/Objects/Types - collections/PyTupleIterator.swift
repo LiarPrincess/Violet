@@ -1,5 +1,7 @@
 import VioletCore
 
+// cSpell:ignore tupleobject
+
 // In CPython:
 // Objects -> tupleobject.c
 

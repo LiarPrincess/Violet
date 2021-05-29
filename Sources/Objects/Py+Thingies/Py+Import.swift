@@ -1,3 +1,6 @@
+// swiftlint:disable file_length
+// cSpell:ignore initimport sysmod
+
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
@@ -5,8 +8,6 @@
 // Docs:
 // https://docs.python.org/3.7/reference/import.html
 // https://docs.python.org/3.7/library/importlib.html
-
-// swiftlint:disable file_length
 
 extension PyInstance {
 
@@ -62,11 +63,11 @@ extension PyInstance {
     // name = frozen.elsa
     // level = 1
     //
-    // importing from = disney.tangled.rapunzel <-- owner of 'globals'
-    // globals.package = disney.tangled
-    // globals.package adjusted by level (which is 1) = disney
+    // importing from = disnep.tangled.rapunzel <-- owner of 'globals'
+    // globals.package = disnep.tangled
+    // globals.package adjusted by level (which is 1) = disnep
     //
-    // absName = (globals.package adjusted by level) + name = disney.frozen.elsa
+    // absName = (globals.package adjusted by level) + name = disnep.frozen.elsa
 
     let absName: PyString
     switch self.resolveLevel(name: name, level: level, globals: globals) {
@@ -129,7 +130,7 @@ extension PyInstance {
     // Oh no… we have 'level'
     // We need to find package and then 'go up' a few 'levels'
 
-    let package: String // In example: package = 'disney.tangled'
+    let package: String // In example: package = 'disnep.tangled'
     switch self.getPackage(globals: globals) {
     case let .value(s): package = s
     case let .error(e): return .error(e)
@@ -141,7 +142,7 @@ extension PyInstance {
 
     var base = package[package.startIndex...]
 
-    // Go up a few levels. In example: base = disney
+    // Go up a few levels. In example: base = disnep
     for _ in 1..<level.value {
       guard let index = base.lastIndex(of: ".") else {
         return .valueError("attempted relative import beyond top-level package")
@@ -152,7 +153,7 @@ extension PyInstance {
 
     let result = base.isEmpty || name.value.isEmpty ?
       "\(base)" :
-      "\(base).\(name.value)" // In example: 'disney' + '.' + 'frozen.elsa'
+      "\(base).\(name.value)" // In example: 'disnep' + '.' + 'frozen.elsa'
 
     return .value(result)
   }
@@ -326,8 +327,8 @@ extension PyInstance {
 
     // Extract toplevel module (the one that is bound by the import statement)
     // name = frozen.elsa
-    // absName = disney.frozen.elsa
-    // absTopLevel = disney.frozen
+    // absName = disnep.frozen.elsa
+    // absTopLevel = disnep.frozen
     let absTopLevel = self.getTopLevelModuleAbsName(name: name.value,
                                                     nameDotIndex: nameDotIndex,
                                                     absName: absName.value)
@@ -370,11 +371,11 @@ extension PyInstance {
     // name = frozen.elsa
     // level = 1
     //
-    // importingFrom = disney.tangled.rapunzel
-    // importingFrom package = disney.tangled
-    // importingFrom package including level = disney
+    // importingFrom = disnep.tangled.rapunzel
+    // importingFrom package = disnep.tangled
+    // importingFrom package including level = disnep
     //
-    // absName = (importingFrom package withLevel) + name = disney.frozen.elsa
+    // absName = (importingFrom package withLevel) + name = disnep.frozen.elsa
 
     // --- code --
 
@@ -384,11 +385,11 @@ extension PyInstance {
     let cutOff = name.distance(from: nameDotIndex, to: name.endIndex)
 
     // Now we take 'absName' and cut off the 'cutOff'
-    // disney.frozen.elsa
-    //              ^ absWithoutCutOffIndex - we take 'disney.frozen'
+    // disnep.frozen.elsa
+    //              ^ absWithoutCutOffIndex - we take 'disnep.frozen'
     let topLevelAbsEnd = absName.index(absName.endIndex, offsetBy: -cutOff)
 
-    // result = disney.frozen
+    // result = disnep.frozen
     let topLevelAbs = absName[..<topLevelAbsEnd]
     return String(topLevelAbs)
   }

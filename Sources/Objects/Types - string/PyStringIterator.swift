@@ -1,5 +1,7 @@
 import VioletCore
 
+// cSpell:ignore unicodeobject
+
 // In CPython:
 // Objects -> unicodeobject.c
 

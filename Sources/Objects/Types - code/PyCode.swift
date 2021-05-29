@@ -1,13 +1,14 @@
 import VioletCore
 import VioletBytecode
 
+// swiftlint:disable file_length
+// cSpell:ignore codeobject
+
 // In CPython:
 // Objects -> codeobject.c
 
 // (Unofficial) docs:
 // https://tech.blog.aknin.name/2010/07/03/pythons-innards-code-objects/
-
-// swiftlint:disable file_length
 
 // sourcery: pytype = code, default
 public class PyCode: PyObject {
@@ -289,7 +290,7 @@ public class PyCode: PyObject {
 
   // sourcery: pymethod = __eq__
   public func isEqual(_ other: PyObject) -> CompareResult {
-    // We are simplifing things a bit.
+    // We are simplifying things a bit.
     // We should do property based equal instead, but comparing code objects
     // is not that frequent to waste time on this.
     //

@@ -1,5 +1,7 @@
 import VioletCore
 
+// cSpell:ignore PyMODINIT
+
 // In CPython:
 // Python -> _warnings.c
 // https://docs.python.org/3/library/warnings.html

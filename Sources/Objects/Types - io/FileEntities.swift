@@ -1,5 +1,7 @@
 import Foundation
 
+// cSpell:ignore xrwa
+
 // MARK: - Stat
 
 /// Basically a `stat`, but with only the stuff we need.

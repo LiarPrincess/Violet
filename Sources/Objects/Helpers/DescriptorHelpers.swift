@@ -123,7 +123,7 @@ internal class GetDescriptor {
 
 // SEE COMMENT AT THE TOP OF THIS FILE FOR AN EXPLANATION OF WHAT A DESCRIPTOR IS!
 //
-// It is a class because 'GetDescriptor' also is (and we like symetry).
+// It is a class because 'GetDescriptor' also is (and we like symmetry).
 internal class SetDescriptor {
 
   /// Object on which this descriptor should be called.

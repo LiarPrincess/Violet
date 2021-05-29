@@ -2,6 +2,7 @@ import BigInt
 import VioletCore
 
 // swiftlint:disable file_length
+// cSpell:ignore STRINGLIB
 
 // MARK: - String builder
 
@@ -23,9 +24,9 @@ internal protocol StringBuilderType {
 
   /// Create new empty builder.
   init()
-  /// Apped single element.
+  /// Append single element.
   mutating func append(_ value: Element)
-  /// Apped multiple elements.
+  /// Append multiple elements.
   mutating func append<C: Sequence>(contentsOf other: C)
     where C.Element == Self.Element
 }
@@ -41,7 +42,7 @@ internal enum PyStringImplExtractedSelf<T> {
 }
 
 /// (Almost) all of the `str` methods.
-/// Everything here is 'best-efford' because strings are hard.
+/// Everything here is 'best-effort' because strings are hard.
 ///
 /// Note that we will use the same implementation for `str` and `bytes`.
 ///
@@ -65,7 +66,7 @@ internal protocol PyStringImpl {
   /// `UnicodeScalarView` for `str` and `Data` for `bytes`.
   ///
   /// We improperly use name `scalars` for both because this is easier to
-  /// visualise than `elements/values/etc.`.
+  /// visualize than `elements/values/etc.`.
   var scalars: Scalars { get }
 
   /// Name of the type that uses this implementations (e.g. `str` or `bytes`).
@@ -411,7 +412,7 @@ extension PyStringImpl {
 extension PyStringImpl {
 
   /// Return true if all characters in the string are alphanumeric
-  /// and there is at least one characte.
+  /// and there is at least one character.
   /// A character c is alphanumeric if one of the following returns True:
   /// c.isalpha(), c.isdecimal(), c.isdigit(), or c.isnumeric()
   /// https://docs.python.org/3/library/stdtypes.html#str.isalnum
@@ -534,15 +535,15 @@ extension PyStringImpl {
   /// https://docs.python.org/3/library/stdtypes.html#str.isprintable
   internal var isPrintable: Bool {
     // We do not have to check if 'self.scalars.any'!
-    return self.scalars.allSatisfy(self.isPritable(element:))
+    return self.scalars.allSatisfy(self.isPrintable(element:))
   }
 
-  private func isPritable(element: Element) -> Bool {
+  private func isPrintable(element: Element) -> Bool {
     let scalar = Self.toUnicodeScalar(element)
-    return self.isPritable(scalar: scalar)
+    return self.isPrintable(scalar: scalar)
   }
 
-  internal func isPritable(scalar: UnicodeScalar) -> Bool {
+  internal func isPrintable(scalar: UnicodeScalar) -> Bool {
     if scalar == " " { // 'space' is considered printable
       return true
     }
@@ -576,7 +577,7 @@ extension PyStringImpl {
     }
   }
 
-  /// Return true if the string is a titlecased string and there is at least
+  /// Return true if the string is a title-cased string and there is at least
   /// one character, for example uppercase characters may only follow uncased
   /// characters and lowercase characters only cased ones.
   /// https://docs.python.org/3/library/stdtypes.html#str.istitle
@@ -2005,7 +2006,7 @@ extension PyStringImpl {
       if s.starts(with: element.scalars) {
         result += 1
 
-        // we know that 'element.count' != 0, because we cehcked 'element.isEmpty'
+        // we know that 'element.count' != 0, because we checked 'element.isEmpty'
         index = collection.index(index, offsetBy: element.count)
       } else {
         self.formIndex(after: &index)

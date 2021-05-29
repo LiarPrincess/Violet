@@ -1,3 +1,5 @@
+// cSpell:ignore methodobject
+
 // In CPython:
 // Objects -> methodobject.c
 

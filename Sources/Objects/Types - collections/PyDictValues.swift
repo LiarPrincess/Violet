@@ -1,6 +1,8 @@
 import BigInt
 import VioletCore
 
+// cSpell:ignore dictobject
+
 // In CPython:
 // Objects -> dictobject.c
 

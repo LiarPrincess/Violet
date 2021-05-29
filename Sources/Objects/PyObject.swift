@@ -49,7 +49,7 @@ public class PyObject: CustomStringConvertible {
     // Not really sure if this property wrapper is needed (we could just expose
     // 'self._type' as implicitly unwrapped optional).
     // Public properties in Swift are exposed as a getter/setter anyway
-    // (this is done so that we can change stored proeprty -> computed property
+    // (this is done so that we can change stored property -> computed property
     // without breaking ABI - probably, I may be wrong here).
     // Anyway, it is 'final' so it should not be a problem (also most of its
     // users are inside this module, so it should optimize nicely).

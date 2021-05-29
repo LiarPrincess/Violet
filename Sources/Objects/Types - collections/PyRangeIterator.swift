@@ -1,6 +1,8 @@
 import BigInt
 import VioletCore
 
+// cSpell:ignore rangeobject
+
 // In CPython:
 // Objects -> rangeobject.c
 

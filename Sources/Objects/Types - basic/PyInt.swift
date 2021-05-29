@@ -2,11 +2,12 @@ import Foundation
 import BigInt
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore longobject divrem
+
 // In CPython:
 // Objects -> longobject.c
 // https://docs.python.org/3.7/c-api/long.html
-
-// swiftlint:disable file_length
 
 internal let LONG_MAX = Int.max // 9223372036854775807
 internal let LONG_MIN = Int.min // -9223372036854775808
@@ -1016,7 +1017,7 @@ public class PyInt: PyObject {
     objectWithoutBase object: PyObject
   ) -> PyResult<BigInt> {
     // '__int__' and '__trunc__' have to be before 'PyInt' cast,
-    // because they can be overriden
+    // because they can be overridden
 
     switch Self.call__int__(object: object) {
     case .value(let int): return .value(int.value)

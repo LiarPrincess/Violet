@@ -1,5 +1,8 @@
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore submodule
+
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
@@ -17,8 +20,6 @@ import VioletCore
 //     doc = value.__doc__
 //
 //     print thingies
-
-// swiftlint:disable file_length
 
 // MARK: - any, all, sum
 
@@ -422,7 +423,7 @@ private let openArguments = ArgumentParser.createOrTrap(
     "encoding", "errors", "newline",
     "closefd", "opener"
   ],
-  format: "O|sizzziO:open"
+  format: "O|sizzziO:open" // cSpell:disable-line
 )
 
 extension Builtins {

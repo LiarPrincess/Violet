@@ -1,12 +1,13 @@
 import Foundation
 
+// cSpell:ignore textio
+// swiftlint:disable file_length
+
 // In CPython:
 // Modules -> _io -> textio.c
 // Modules -> _io -> iobase.c
 // Python -> codecs.c
 // https://docs.python.org/3.7/library/io.html
-
-// swiftlint:disable file_length
 
 // sourcery: pytype = TextFile, default, hasGC, hasFinalize
 /// We don't have `_io` module.
@@ -82,7 +83,7 @@ public class PyTextFile: PyObject {
     // 'Py' function as the whole 'Py' may be deinitializing.
 
     if self.closeOnDealloc {
-      // Regardles of whether it succeded/failed we will ignore result.
+      // Regardless of whether it succeeded/failed we will ignore result.
       _ = self.closeIfNotAlreadyClosed()
     }
   }
@@ -296,7 +297,7 @@ public class PyTextFile: PyObject {
   // sourcery: pymethod = __enter__
   public func enter() -> PyResult<PyObject> {
     // 'FileDescriptorType' is responsible for actually opening file.
-    // Also: we need to return self because result of '__enter__' will be binded
+    // Also: we need to return self because result of '__enter__' will be bound
     // to 'f' in 'open('elsa') as f'.
     return .value(self)
   }
@@ -306,7 +307,7 @@ public class PyTextFile: PyObject {
                    exception: PyObject,
                    traceback: PyObject) -> PyResult<PyObject> {
     // Remember that if we return 'truthy' value (yes, we JavasScript now)
-    // then the exception will be suspressed (and we dont wan't this).
+    // then the exception will be suppressed (and we don't want this).
     // So we return 'None' which is 'falsy'.
     let result = self.closeIfNotAlreadyClosed()
     return result.map { $0 as PyObject }

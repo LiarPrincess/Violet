@@ -1,5 +1,7 @@
 import VioletCore
 
+// cSpell:ignore iterobject
+
 // In CPython:
 // Objects -> iterobject.c
 

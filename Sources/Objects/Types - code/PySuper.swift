@@ -1,10 +1,11 @@
 import VioletBytecode
 
+// swiftlint:disable file_length
+// cSpell:ignore typeobject cmeth
+
 // In CPython:
 // Objects -> typeobject.c
 // https://docs.python.org/3/library/functions.html#super
-
-// swiftlint:disable file_length
 
 // sourcery: pytype = super, default, hasGC, baseType
 public class PySuper: PyObject, HasCustomGetMethod {
@@ -236,7 +237,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
     return .value(result)
   }
 
-  /// Actual funciton for '__new__'
+  /// Actual function for '__new__'
   /// (the one that does not care about conforming, to '__new__Owner' protocol)
   internal static func pyNewRaw(type: PyType) -> PySuper {
     let result = PySuper(

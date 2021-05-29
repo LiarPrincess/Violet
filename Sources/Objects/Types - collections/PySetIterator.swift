@@ -1,5 +1,7 @@
 import VioletCore
 
+// cSpell:ignore setobject
+
 // In CPython:
 // Objects -> setobject.c
 

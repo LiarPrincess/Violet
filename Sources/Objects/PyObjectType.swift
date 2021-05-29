@@ -1,6 +1,8 @@
 import Foundation
 import VioletCore
 
+// cSpell:ignore typeobject
+
 // In CPython:
 // Objects -> typeobject.c
 
@@ -204,13 +206,13 @@ internal enum PyObjectType {
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyObject> {
     if Self.excessArgs(args: args, kwargs: kwargs) {
-      if Self.hasOverriden__new__(type: type) {
+      if Self.hasOverridden__new__(type: type) {
         let msg = "object.__new__() takes exactly one argument " +
                   "(the type to instantiate)"
         return .typeError(msg)
       }
 
-      if !Self.hasOverriden__init__(type: type) {
+      if !Self.hasOverridden__init__(type: type) {
         let typeName = type.getName()
         return .typeError("\(typeName) takes no arguments")
       }
@@ -228,13 +230,13 @@ internal enum PyObjectType {
                               args: [PyObject],
                               kwargs: PyDict?) -> PyResult<PyNone> {
     if Self.excessArgs(args: args, kwargs: kwargs) {
-      if Self.hasOverriden__init__(type: zelf.type) {
+      if Self.hasOverridden__init__(type: zelf.type) {
         let msg = "object.__init__() takes exactly one argument " +
                   "(the instance to initialize)"
         return .typeError(msg)
       }
 
-      if !Self.hasOverriden__new__(type: zelf.type) {
+      if !Self.hasOverridden__new__(type: zelf.type) {
         let typeName = zelf.type.getName()
         let msg = "\(typeName).__init__() takes exactly one argument " +
                   "(the instance to initialize)"
@@ -252,26 +254,26 @@ internal enum PyObjectType {
     return !noArgs
   }
 
-  private static func hasOverriden__new__(type: PyType) -> Bool {
-    return self.hasOverriden(type: type, name: .__new__)
+  private static func hasOverridden__new__(type: PyType) -> Bool {
+    return self.hasOverridden(type: type, name: .__new__)
   }
 
-  private static func hasOverriden__init__(type: PyType) -> Bool {
-    return self.hasOverriden(type: type, name: .__init__)
+  private static func hasOverridden__init__(type: PyType) -> Bool {
+    return self.hasOverridden(type: type, name: .__init__)
   }
 
-  private static func hasOverriden(type: PyType, name: IdString) -> Bool {
+  private static func hasOverridden(type: PyType, name: IdString) -> Bool {
     guard let lookup = type.lookupWithType(name: name) else {
       let t = type.getName()
       let fn = name.value.value
       trap("Uh… oh… So '\(fn)' lookup on \(t) failed to find anything. " +
-           "It should not be possible sice every type derieves from 'object', " +
+           "It should not be possible since every type derives from 'object', " +
            "(which has this method) but here we are..."
       )
     }
 
     let owner = lookup.type
-    let hasFromObject = owner === Py.types.object
-    return !hasFromObject
+    let isFromObject = owner === Py.types.object
+    return !isFromObject
   }
 }

@@ -5,12 +5,13 @@ import VioletLexer
 import VioletParser
 import VioletCompiler
 
+// swiftlint:disable file_length
+// cSpell:ignore bltinmod
+
 // In CPython:
 // Objects -> exceptions.c
 // Python -> errors.c
 // https://docs.python.org/3.7/library/exceptions.html
-
-// swiftlint:disable file_length
 
 extension PyInstance {
 
@@ -388,16 +389,6 @@ extension PyInstance {
                                printFileAndLine: printFileAndLine)
   }
 
-  private static func isIndentDedent(token: ExpectedToken) -> Bool {
-    switch token {
-    case .indent,
-         .dedent:
-      return true
-    default:
-      return false
-    }
-  }
-
   public func newSyntaxError(filename: String,
                              error: CompilerError) -> PySyntaxError {
     let msg = String(describing: error.kind)
@@ -543,7 +534,7 @@ extension PyInstance {
   ///
   /// - Parameters:
   ///   - error: Exception instance/type.
-  ///   - expectedType: Exception type to check agains (tuples are also allowed).
+  ///   - expectedType: Exception type to check against (tuples are also allowed).
   public func exceptionMatches(error: PyObject,
                                expectedType: PyObject) -> Bool {
     if let tuple = expectedType as? PyTuple {

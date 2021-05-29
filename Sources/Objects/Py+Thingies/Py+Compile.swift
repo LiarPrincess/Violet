@@ -79,7 +79,7 @@ extension PyInstance {
   }
 
   public enum CompileResult {
-    /// Code compiled succesfully (Yay!)
+    /// Code compiled successfully (Yay!)
     case code(PyCode)
 
     /// Lexer warning that should be treated as error OR error when printing

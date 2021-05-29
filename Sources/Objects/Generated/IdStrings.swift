@@ -7,7 +7,7 @@
 // swiftlint:disable function_body_length
 
 /// Predefined commonly used `__dict__` keys.
-/// Similiar to `_Py_IDENTIFIER` in `CPython`.
+/// Similar to `_Py_IDENTIFIER` in `CPython`.
 ///
 /// Performance of this 'cache' (because that what it actually is)
 /// is crucial for overall performance.

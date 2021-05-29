@@ -1,3 +1,5 @@
+// cSpell:ignore subscriptable
+
 extension PyInstance {
 
   // MARK: - Get

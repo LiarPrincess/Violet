@@ -1,14 +1,15 @@
 import BigInt
 import VioletCore
 
-private typealias UnicodeScalarView = String.UnicodeScalarView
-private typealias UnicodeScalarViewSub = UnicodeScalarView.SubSequence
+// swiftlint:disable file_length
+// cSpell:ignore unicodeobject
 
 // In CPython:
 // Objects -> unicodeobject.c
 // https://docs.python.org/3/library/stdtypes.html
 
-// swiftlint:disable file_length
+private typealias UnicodeScalarView = String.UnicodeScalarView
+private typealias UnicodeScalarViewSub = UnicodeScalarView.SubSequence
 
 // sourcery: pytype = str, default, baseType, unicodeSubclass
 /// Textual data in Python is handled with str objects, or strings.

@@ -116,7 +116,7 @@ extension TernaryOp {
   }
 
   /// Standard operation call.
-  /// Bascially code shared between normal and in-place call.
+  /// Basically code shared between normal and in-place call.
   fileprivate static func callInner(left: PyObject,
                                     middle: PyObject,
                                     right: PyObject) -> PyResult<PyObject> {
@@ -170,7 +170,7 @@ extension TernaryOp {
   private static func callOp(left: PyObject,
                              middle: PyObject,
                              right: PyObject) -> PyResult<PyObject> {
-    // Try fast protocol-based dispach
+    // Try fast protocol-based dispatch
     switch callFastOp(left: left, middle: middle, right: right) {
     case .value(let result):
       return .value(result)
@@ -195,7 +195,7 @@ extension TernaryOp {
   private static func callReflectedOp(left: PyObject,
                                       middle: PyObject,
                                       right: PyObject) -> PyResult<PyObject> {
-    // Try fast protocol-based dispach
+    // Try fast protocol-based dispatch
     switch callFastReflected(left: left, middle: middle, right: right) {
     case .value(let result):
       return .value(result)
@@ -220,7 +220,7 @@ extension TernaryOp {
   private static func callInPlaceOp(left: PyObject,
                                     middle: PyObject,
                                     right: PyObject) -> PyResult<PyObject> {
-    // Try fast protocol-based dispach
+    // Try fast protocol-based dispatch
     switch callFastInPlace(left: left, middle: middle, right: right) {
     case .value(let result):
       return .value(result)

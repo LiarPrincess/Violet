@@ -1,5 +1,8 @@
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore Scooby
+
 // Module implementation is based on pre-specialization (partial application)
 // of function to module object and then wrapping remaining function.
 //
@@ -10,12 +13,10 @@ import VioletCore
 // which would be wrapped and exposed to Python runtime.
 //
 // So when you are working on Python 'builtins' you are actually working on
-// (Scooby-Doo reveal incomming…)
+// (Scooby-Doo reveal incoming…)
 // 'Py.builtins' object (which gives us stateful modules).
 // (and we would have gotten away with it without you meddling kids!)
 // https://www.youtube.com/watch?v=b4JLLv1lE7A
-
-// swiftlint:disable file_length
 
 /// Helper for classes that will be used as a `Python` module implementation.
 internal protocol PyModuleImplementation: AnyObject {

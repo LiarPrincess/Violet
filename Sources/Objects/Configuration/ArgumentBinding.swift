@@ -1,5 +1,7 @@
 import ArgumentParser
 
+// cSpell:ignore wstrlist
+
 // In CPython:
 // Modules -> main.c
 //  pymain_wstrlist_append(_PyMain *pymain, int *len, wchar_t ***list, ...)

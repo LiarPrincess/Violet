@@ -92,7 +92,7 @@ internal struct PyStringData: PyStringImpl, CustomStringConvertible {
       case "\r":
         result.append("\\r")
       default:
-        if self.isPritable(scalar: element) {
+        if self.isPrintable(scalar: element) {
           result.append(element)
         } else {
           let repr = self.createNonPrintableRepr(scalar: element)
@@ -131,7 +131,7 @@ internal struct PyStringData: PyStringImpl, CustomStringConvertible {
       result.append(self.hex((value >> 4) & 0xf))
       result.append(self.hex((value >> 0) & 0xf))
     } else if value < 0xffff {
-      // Map 16-bit characters to '\uxxxx'
+      // Map 16-bit characters to '\uxxxx' // cSpell:disable-line
       result.append("u")
       result.append(self.hex((value >> 12) & 0xf))
       result.append(self.hex((value >> 8) & 0xf))

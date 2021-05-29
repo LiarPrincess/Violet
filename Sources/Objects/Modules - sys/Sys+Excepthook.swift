@@ -1,5 +1,7 @@
 import VioletCore
 
+// cSpell:ignore ceval pythonrun
+
 // In CPython:
 // Python -> sysmodule.c
 // Python -> pythonrun.c

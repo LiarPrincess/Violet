@@ -1,10 +1,11 @@
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore typeobject TPFLAGS STACKLESS
+
 // In CPython:
 // Objects -> typeobject.c
 // https://docs.python.org/3/c-api/typeobj.html
-
-// swiftlint:disable file_length
 
 // MARK: - Flags
 
@@ -16,7 +17,7 @@ internal struct PyTypeFlags: OptionSet {
   /// (for example by `class` statement).
   internal static let heapType = PyTypeFlags(rawValue: 1 << 0)
 
-  /// Set if the type allows subclassing.
+  /// Set if the type allows sub-classing.
   internal static let baseType = PyTypeFlags(rawValue: 1 << 1)
 
   /// Objects support garbage collection.

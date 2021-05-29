@@ -1,3 +1,5 @@
+// cSpell:ignore moduleobject getattro
+
 // In CPython:
 // Objects -> moduleobject.c
 

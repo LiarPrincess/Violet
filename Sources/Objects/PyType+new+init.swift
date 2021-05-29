@@ -5,9 +5,9 @@ import VioletCore
 private struct PyTypeNewArgs {
   /// First argument in `__new__` invocation
   fileprivate let metatype: PyType
-  /// Args passed to orginal function
+  /// Args passed to original function
   fileprivate let args: [PyObject]
-  /// Kwargs passed to orginal function
+  /// Kwargs passed to original function
   fileprivate let kwargs: PyDict?
 
   /// Name string is the class name and becomes the `__name__` attribute
@@ -139,7 +139,7 @@ extension PyType {
       case let .error(e): return .error(e)
       }
 
-      // Calculate best base using bases memory layout (layout confilct -> error).
+      // Calculate best base using bases memory layout (layout conflict -> error).
       // We will call this base 'solid' - our new type will have the same memory
       // layout (+- '__dict__' because it does not matter).
       switch PyType.getSolidBase(bases: bases) {
@@ -148,7 +148,7 @@ extension PyType {
       }
     }
 
-    // Assumming we don't have slots
+    // Assuming we don't have slots
     let mro: MRO
     switch MRO.linearize(baseClasses: bases) {
     case let .value(r): mro = r
@@ -158,7 +158,7 @@ extension PyType {
     // Create type object
     let type = PyType(
       name: args.name.value,
-      qualname: args.name.value, // May be overriden later (if we have it in dict)
+      qualname: args.name.value, // May be overridden later (if we have it in dict)
       type: metatype,
       base: base,
       mro: mro,
@@ -201,7 +201,7 @@ extension PyType {
     Self.convertFunctionToStaticMethodIfNeeded(type: type, fnName: .__new__)
 
     // Special-case '__init_subclass__' and '__class_getitem__':
-    // if they are plain functions, make them classmethodss
+    // if they are plain functions, make them class methods
     Self.convertFunctionToClassMethodIfNeeded(type: type, fnName: .__init_subclass__)
     Self.convertFunctionToClassMethodIfNeeded(type: type, fnName: .__class_getitem__)
 
@@ -261,7 +261,7 @@ extension PyType {
 
   // MARK: - Best base
 
-  /// Solid base - traverse class hierarchy (from derieved to base)
+  /// Solid base - traverse class hierarchy (from derived to base)
   /// until we reach something with defined layout.
   ///
   /// For example:

@@ -18,7 +18,7 @@ extension OrderedDictionaryBackedIterator {
     while self.index < self.dict.entries.count {
       let entry = self.dict.entries[self.index]
 
-      // Increment index NOW, so that the regardles of whether we return 'entry'
+      // Increment index NOW, so that the regardless of whether we return 'entry'
       // or iterate more we move to next element.
       self.index += 1
 

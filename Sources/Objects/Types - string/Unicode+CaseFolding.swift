@@ -1,3 +1,8 @@
+// swiftlint:disable file_length
+// swiftlint:disable line_length
+// swiftformat:disable numberFormatting
+// cspell:disable
+
 // See section '3.13 Default Case Algorithms' in Unicode standard for details
 // (http://www.unicode.org/versions/Unicode12.1.0 -> 'Full Text pdf for Viewing').
 //
@@ -17,10 +22,6 @@
 // To get the newest version of 'CaseFolding.txt' go to:
 // https://www.unicode.org/Public/UCD/latest/ucd/
 // This file was generated with 'Scripts/unicode/CaseFolding.py'.
-
-// swiftlint:disable file_length
-// swiftlint:disable line_length
-// swiftformat:disable numberFormatting
 
 extension Unicode {
 

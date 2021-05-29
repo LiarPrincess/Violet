@@ -5,7 +5,7 @@ import VioletCore
 // swiftlint:disable file_length
 // swiftlint:disable yoda_condition
 
-/// Protocol implemented by both `bytes` and `bytesarray`.
+/// Protocol implemented by both `bytes` and `bytearray`.
 internal protocol PyBytesType: PyObject {
   var data: PyBytesData { get }
 

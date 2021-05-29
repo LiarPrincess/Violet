@@ -2,6 +2,8 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
+// cSpell:ignore unhashable
+
 extension PyInstance {
 
   /// hash(object)
@@ -28,20 +30,20 @@ extension PyInstance {
       return .error(e)
     }
 
-    guard let pyint = result as? PyInt else {
+    guard let pyInt = result as? PyInt else {
       return .typeError(
         "__hash__ method should return an integer, not \(result.typeName)"
       )
     }
 
-    if let hash = PyHash(exactly: pyint.value) {
+    if let hash = PyHash(exactly: pyInt.value) {
       return .value(hash)
     }
 
     // `result` was not within the range of a Py_hash_t, so we're free to
     // use any sufficiently bit-mixing transformation;
     // long.__hash__ will do nicely.
-    return .value(pyint.hashRaw())
+    return .value(pyInt.hashRaw())
   }
 
   /// Py_hash_t PyObject_HashNotImplemented(PyObject *v)

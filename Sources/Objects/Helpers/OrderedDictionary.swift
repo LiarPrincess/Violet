@@ -1,12 +1,13 @@
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore dictobject pertub insertdict lookdict dictresize
+
 // In CPython:
 // Objects -> dict-common.h
 // Objects -> dictobject.c
 // https://morepypy.blogspot.com/2015/01/faster-more-memory-efficient-and-more.html
 // https://www.youtube.com/watch?v=p33CVV29OG8
-
-// swiftlint:disable file_length
 
 /// PyDict_MINSIZE is the starting size for any new dict.
 private let minsize = 8
@@ -66,7 +67,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   /// HOT!
   /// If we want to optimize cache access (and by that performance) we can use
   /// 2 different kind of indices: `Int8` and `Int` with `IndexKind` enum
-  /// (similiar to Foundation.Data._Representation).
+  /// (similar to Foundation.Data._Representation).
   ///
   /// In such case we would use `Int8` for dictionaries with \<127 slots
   /// (which means 90% of them), then if we need more we would move to `Int`.
@@ -115,7 +116,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
     /// Modulo by dictionary size.
     ///
     /// When we have dictionary with 32 slots and we get index 60,
-    /// we hvae to clamp it to be <=32.
+    /// we have to clamp it to be <=32.
     private let mask: Int
     /// Include hash in the index calculation (this way it is more 'random')
     private var pertub: Int
@@ -144,10 +145,10 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
 
   // MARK: - Properties
 
-  /// Data held in dictinary.
+  /// Data held in dictionary.
   internal fileprivate(set) var entries: [EntryOrDeleted]
   /// Actual hash table of `self.size` entries. Holds indices from `self.entries`.
-  /// Indices must be: `0 <= indice < usableFraction(self.size)`.
+  /// Indices must be: `0 <= index < usableFraction(self.size)`.
   ///
   /// Having separate `indices` and `entries` is good for cache.
   fileprivate var indices: [EntryIndex]
@@ -388,7 +389,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
     var index = IndexCalculation(hash: hash, dictionarySize: self.size)
 
     while true {
-      // Search unil we find entry with equal key or we hit 'notAssigned'.
+      // Search until we find entry with equal key or we hit 'notAssigned'.
       switch self.getEntryIndex(at: index) {
       case .notAssigned:
         return .notFound

@@ -44,7 +44,7 @@ public class PyBaseException: PyObject {
   /// Our goal is to set proper `type` in each PyObject and to do this we can:
   /// 1. Have 2 inits in each exception:
   ///    - convenience, so it can be used in 'normal' code
-  ///    - with `type: PyType` arg, so it can be used in derieved classes to set type
+  ///    - with `type: PyType` arg, so it can be used in derived classes to set type
   ///    But this is a lot of boilerplate.
   /// 2. Have `type` as a computed property.
   ///    This simplifies some stuff, but complicates other, for example
@@ -180,7 +180,7 @@ public class PyBaseException: PyObject {
   internal static func str(baseException zelf: PyBaseException) -> PyResult<String> {
     // This is a special (and unusual) place where normally we would override
     // 'pymethod'. But we can't do that because Swift would always call the
-    // overriden function (even if we did 'BaseClass.fn(childInstance)').
+    // overridden function (even if we did 'BaseClass.fn(childInstance)').
     // So, we have to introduce separate selectors for each override.
 
     let args = zelf.args

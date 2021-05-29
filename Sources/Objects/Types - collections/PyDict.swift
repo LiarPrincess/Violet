@@ -1,11 +1,12 @@
 import BigInt
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore dictobject
+
 // In CPython:
 // Objects -> dictobject.c
 // https://docs.python.org/3.7/c-api/dict.html
-
-// swiftlint:disable file_length
 
 // sourcery: pytype = dict, default, hasGC, baseType, dictSubclass
 /// This subtype of PyObject represents a Python dictionary object.
@@ -194,7 +195,7 @@ public class PyDict: PyObject {
 
   /// Get value from a dictionary.
   ///
-  /// It may fail if hashing or actuall storage access fails.
+  /// It may fail if hashing or actual storage access fails.
   public func get(key: PyObject) -> GetResult {
     switch Self.createKey(from: key) {
     case let .value(key):

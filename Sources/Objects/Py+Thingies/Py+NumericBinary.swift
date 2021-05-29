@@ -6,6 +6,7 @@
 // './Scripts/generate_module_funcs/generate-builtins-binary.py'
 
 // swiftlint:disable file_length
+// cSpell:ignore BINFULL TESTFUNC SLOTNAME OPSTR ROPSTR
 
 // MARK: - Abstract
 
@@ -77,8 +78,9 @@ extension BinaryOp {
     switch self.callInner(left: left, right: right) {
     case let .value(result):
       if result.isNotImplemented {
-        var msg = "unsupported operand type(s) for \(op): " +
-                  "\(left.typeName) and \(right.typeName)."
+        let leftType = left.typeName
+        let rightType = right.typeName
+        var msg = "unsupported operand type(s) for \(op): \(leftType) and \(rightType)."
 
         // For C++ programmers who try to `print << 'Elsa'`:
         if let fn = left as? PyBuiltinFunction, fn.name == "print", Self.op == "<<" {
@@ -128,7 +130,7 @@ extension BinaryOp {
   }
 
   /// Standard operation call.
-  /// Bascially code shared between normal and in-place call.
+  /// Basically code shared between normal and in-place call.
   ///
   /// static PyObject *
   /// binary_op1(PyObject *v, PyObject *w, const int op_slot)
@@ -185,7 +187,7 @@ extension BinaryOp {
 
   private static func callOp(left: PyObject,
                              right: PyObject) -> PyResult<PyObject> {
-    // Try fast protocol-based dispach
+    // Try fast protocol-based dispatch
     switch callFastOp(left: left, right: right) {
     case .value(let result):
       return .value(result)
@@ -209,7 +211,7 @@ extension BinaryOp {
 
   private static func callReflectedOp(left: PyObject,
                                       right: PyObject) -> PyResult<PyObject> {
-    // Try fast protocol-based dispach
+    // Try fast protocol-based dispatch
     switch callFastReflected(left: left, right: right) {
     case .value(let result):
       return .value(result)
@@ -233,7 +235,7 @@ extension BinaryOp {
 
   private static func callInPlaceOp(left: PyObject,
                                     right: PyObject) -> PyResult<PyObject> {
-    // Try fast protocol-based dispach
+    // Try fast protocol-based dispatch
     switch callFastInPlace(left: left, right: right) {
     case .value(let result):
       return .value(result)

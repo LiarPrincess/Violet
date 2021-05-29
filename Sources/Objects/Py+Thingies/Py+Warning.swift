@@ -11,7 +11,7 @@ import VioletCompiler
 
 // MARK: - PyWarningEnum
 
-/// Warning typesm but as an enum.
+/// Warning types, but as an `enum`.
 ///
 /// Helper for `Py.warn` method.
 public enum PyWarningEnum {

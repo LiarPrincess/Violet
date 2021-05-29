@@ -36,7 +36,7 @@ private enum FastCallResult {
 /// This may not be the cleanest/most idiomatic Swift, but it gets the job done.
 /// Alternatives:
 /// - function with CompareMode enum (equal, left etc…) argument and then
-///   switch on it. But then our performance heavly depends on Swift compiler,
+///   switch on it. But then our performance heavily depends on Swift compiler,
 ///   (can it inline this and then eliminate dead code?) otherwise we pay
 ///   for each switch.
 /// - Java-style abstract class with `final` subclass for every compare operation.
@@ -45,7 +45,7 @@ private enum FastCallResult {
 ///   (abstract classes) is truly non-idiomatic in Swift.
 ///
 /// Or we could use protocol which will guarantee us static dispatch
-/// (btw. eveything is on static/type-level, we do not need instances):
+/// (btw. everything is on static/type-level, we do not need instances):
 private protocol CompareOp {
   /// Python selector, for example `__eq__`.
   static var selector: IdString { get }
@@ -110,7 +110,7 @@ extension CompareOp {
 
   private static func callCompare(left: PyObject,
                                   right: PyObject) -> PyResult<PyObject> {
-    // Try fast protocol-based dispach
+    // Try fast protocol-based dispatch
     switch callFastCompare(left: left, right: right) {
     case .value(let bool): return .value(Py.newBool(bool))
     case .error(let e): return .error(e)
@@ -129,7 +129,7 @@ extension CompareOp {
     }
 
     // Use base object implementation
-    // (all objects derieve from Object to this is probably a dead code)
+    // (all objects derive from Object to this is probably a dead code)
     switch baseCompare(left, right) {
     case .value(let bool): return .value(Py.newBool(bool))
     case .error(let e): return .error(e)
@@ -179,7 +179,7 @@ extension PyInstance {
   }
 }
 
-  // MARK: - Not Equal
+// MARK: - Not Equal
 
 private enum NotEqualCompare: CompareOp {
 

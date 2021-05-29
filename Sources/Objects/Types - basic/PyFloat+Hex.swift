@@ -1,12 +1,13 @@
 import Foundation
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore floatobject TOHEX ffffp inity
+
 // In CPython:
 // Objects -> floatobject.c
 // https://docs.python.org/3.7/c-api/float.html
 // https://docs.python.org/3/library/stdtypes.html#float.fromhex <- THIS!
-
-// swiftlint:disable file_length
 
 // MARK: - Hex
 
@@ -54,19 +55,19 @@ extension PyFloat {
     exponent -= shift
 
     // mantissa (hex!)
-    func appendMantisaDigit() {
+    func appendMantissaDigit() {
       let asInt = Int(mantissa)
       assert(0 <= asInt && asInt < 16)
       result.append(String(asInt, radix: 16, uppercase: false))
       mantissa -= Double(asInt)
     }
 
-    appendMantisaDigit()
+    appendMantissaDigit()
     result.append(".")
 
     for _ in 0..<((self.hexBitCount - 1) / 4) {
       mantissa *= 16.0
-      appendMantisaDigit()
+      appendMantissaDigit()
     }
 
     // exponent (decimal!)
@@ -415,15 +416,15 @@ private func combine(sign: FloatingPointSign,
     return .error(overflowError())
   }
 
-  let fdigits = fraction?.count ?? 0
-  let ndigits = fdigits + integer.count
+  let nFractionDigits = fraction?.count ?? 0
+  let nDigits = nFractionDigits + integer.count
 
   // Adjust exponent for fractional part.
-  let exponent = _exponent - 4 * fdigits
+  let exponent = _exponent - 4 * nFractionDigits
 
   // top_exp = 1 more than exponent of most sig. bit of coefficient
   let topExponent: Int = {
-    var result = exponent + 4 * (ndigits - 1)
+    var result = exponent + 4 * (nDigits - 1)
 
     var digit = firstCoefficientDigit
     while digit != 0 {
@@ -460,8 +461,8 @@ private func combine(sign: FloatingPointSign,
 private func isCoefficientZero(integer: HexDigits.SubSequence,
                                fraction: HexDigits.SubSequence?) -> Bool {
   let isIntegerZero = integer.allSatisfy(isZero(hex:))
-  let isFractionZerp = fraction?.allSatisfy(isZero(hex:)) ?? true
-  return isIntegerZero && isFractionZerp
+  let isFractionZero = fraction?.allSatisfy(isZero(hex:)) ?? true
+  return isIntegerZero && isFractionZero
 }
 
 // MARK: - Helpers

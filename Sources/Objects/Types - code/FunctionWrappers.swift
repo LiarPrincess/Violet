@@ -4,6 +4,7 @@ import VioletCore
 
 // MARK: - Function wrapper
 
+/// Represents Swift function callable from Python context.
 internal protocol FunctionWrapper {
   /// The name of the built-in function/method.
   var name: String { get }
@@ -141,7 +142,7 @@ internal typealias ArgsKwargsMethod =
   (PyObject, [PyObject], PyDict?) -> PyFunctionResult
 
 /// Wrapper dedicated to method that takes `args` and `kwargs` arguments.
-/// First argument in `args` will be treeated as `self`.
+/// First argument in `args` will be treated as `self`.
 internal struct ArgsKwargsMethodWrapper: FunctionWrapper {
 
   internal let name: String

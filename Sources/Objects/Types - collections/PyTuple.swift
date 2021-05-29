@@ -1,6 +1,8 @@
 import BigInt
 import VioletCore
 
+// cSpell:ignore tupleobject
+
 // In CPython:
 // Objects -> tupleobject.c
 // https://docs.python.org/3.7/c-api/tuple.html

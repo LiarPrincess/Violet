@@ -166,7 +166,7 @@ public class PySyntaxError: PyException {
     }()
 
     // Redundant type annotation is not that redundant.
-    // It is there so that we (as a human beeings - readers of this code)
+    // It is there so that we (as a human beings - readers of this code)
     // know that we are printing 'BigInt' not 'PyInt'.
     // User should never see 'PyInt' description, is is for debug only.
     let linenoOrNil: BigInt? = (zelf.lineno as? PyInt)?.value
@@ -280,7 +280,7 @@ public class PySyntaxError: PyException {
   internal func pySyntaxErrorInit(args: [PyObject],
                                   kwargs: PyDict?) -> PyResult<PyNone> {
     // Run 'super.pyInit' before our custom code, to avoid situation where
-    // 'super.pyInit' erros but we already mutated enity.
+    // 'super.pyInit' errors but we already mutated entity.
     switch super.pyExceptionInit(args: args, kwargs: kwargs) {
     case .value:
       break

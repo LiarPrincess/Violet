@@ -82,7 +82,7 @@ extension ExecEval {
 
   private static func parseEnv(globals: PyObject?,
                                locals: PyObject?) -> PyResult<Env> {
-    // Omg! This code looks soooooo… bad.
+    // Omg! This code looks soooooo bad.
     // So, we basically try to do 'Self.parseDictOrNone' 2 times
     // (on both 'globals' and 'locals'), so that gives us 7 cases to handle.
     switch Self.parseDictOrNone(object: globals) {

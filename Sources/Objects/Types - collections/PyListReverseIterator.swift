@@ -1,5 +1,7 @@
 import VioletCore
 
+// cSpell:ignore listobject
+
 // In CPython:
 // Objects -> listobject.c
 

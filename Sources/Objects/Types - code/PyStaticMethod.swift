@@ -1,3 +1,5 @@
+// cSpell:ignore funcobject
+
 // In CPython:
 // Objects -> funcobject.c
 

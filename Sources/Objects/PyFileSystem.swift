@@ -1,6 +1,8 @@
 import Foundation
 import VioletCore
 
+// cSpell:ignore asdf
+
 // MARK: - FileStatResult
 
 public enum FileStatResult {
@@ -8,7 +10,7 @@ public enum FileStatResult {
   case value(FileStat)
   /// No such file or directory
   case enoent
-  /// Ooopps…
+  /// Ooops…
   case error(PyOSError)
 }
 
@@ -19,7 +21,7 @@ public enum ListDirResult {
   case entries([String])
   /// No such file or directory
   case enoent
-  /// Ooopps…
+  /// Ooops…
   case error(PyOSError)
 }
 

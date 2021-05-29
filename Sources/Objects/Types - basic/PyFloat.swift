@@ -2,12 +2,13 @@ import Foundation
 import BigInt
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore floatobject
+
 // In CPython:
 // Objects -> floatobject.c
 // https://docs.python.org/3.7/c-api/float.html
 // https://developer.apple.com/documentation/swift/double/floating-point_operators_for_double
-
-// swiftlint:disable file_length
 
 internal let DBL_MANT_DIG = Double.significandBitCount + 1 // 53
 internal let DBL_MIN_EXP = Double.leastNormalMagnitude.exponent + 1 // -1021
@@ -22,7 +23,7 @@ internal let DBL_MAX_EXP = Double.greatestFiniteMagnitude.exponent + 1 // 1024
 /// (version that returns tuple)!
 ///
 /// They return different results than `frexp` in CPython (which makes comparing
-/// code very unintuitive).
+/// code very non-intuitive).
 ///
 /// In Swift `value.significand` is always positive (afaik), for example:
 /// ``` Swift
@@ -647,7 +648,7 @@ public class PyFloat: PyObject {
         return .value(self)
       }
 
-      // Dark magic incomming (well above our $0 paygrade):
+      // Dark magic incoming (well above our $0 pay grade):
       // Deal with extreme values for ndigits.
       // For ndigits > NDIGITS_MAX, x always rounds to itself.
       // For ndigits < NDIGITS_MIN, x always rounds to +-0.0.
@@ -725,30 +726,30 @@ public class PyFloat: PyObject {
   private func round(nDigit: Int) -> PyResult<PyObject> {
     assert(self.roundDigitCountMin <= nDigit && nDigit <= self.roundDigitCountMax)
 
-    let scalledToDigits: Double, pow10: Double
+    let scaledToDigits: Double, pow10: Double
     if nDigit >= 0 {
        // CPython has special case for overflow, we are too lazy for that
       pow10 = Foundation.pow(10.0, Double(nDigit))
-      scalledToDigits = self.value * pow10
+      scaledToDigits = self.value * pow10
 
       // Because 'mul' can overflow
-      guard scalledToDigits.isFinite else {
+      guard scaledToDigits.isFinite else {
         return .value(self)
       }
     } else {
       pow10 = Foundation.pow(10.0, -Double(nDigit))
-      scalledToDigits = self.value / pow10
+      scaledToDigits = self.value / pow10
     }
 
-    let rounded = self.roundToEven(value: scalledToDigits)
-    let rescalled = nDigit >= 0 ? rounded / pow10 : rounded * pow10
+    let rounded = self.roundToEven(value: scaledToDigits)
+    let rescaled = nDigit >= 0 ? rounded / pow10 : rounded * pow10
 
     // if computation resulted in overflow, raise OverflowError
-    guard rescalled.isFinite else {
+    guard rescaled.isFinite else {
       return .overflowError("overflow occurred during round")
     }
 
-    return .value(Py.newFloat(rescalled))
+    return .value(Py.newFloat(rescaled))
   }
 
   // MARK: - Trunc
@@ -931,7 +932,7 @@ public class PyFloat: PyObject {
   internal static func asDouble(int: BigInt) -> IntAsDouble {
     // This is not the best way…
     // But in general conversion 'Int -> Double' is a very complicated thing.
-    // But it fals onto 'close enough' category.
+    // But it falls onto 'close enough' category.
 
     let result = Double(int)
     assert(!result.isNaN && !result.isSubnormal)

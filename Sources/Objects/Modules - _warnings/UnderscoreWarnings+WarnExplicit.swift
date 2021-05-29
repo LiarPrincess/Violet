@@ -164,7 +164,7 @@ extension UnderscoreWarnings {
       return Py.isEqualBool(left: str, right: arg)
     }
 
-    // We do not suport regexes
+    // We do not support regular expressions
     return .value(false)
   }
 

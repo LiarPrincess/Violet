@@ -1,5 +1,7 @@
 import VioletCore
 
+// cSpell:ignore sliceobject
+
 // In CPython:
 // Objects -> sliceobject.c
 // https://docs.python.org/3.7/c-api/slice.html#ellipsis-object

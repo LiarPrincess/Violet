@@ -1,3 +1,5 @@
+// cSpell:ignore ilow ihigh
+
 /// Shared code for `__setitem__` method.
 /// Mostly because… well slices are hard.
 internal protocol SetItemHelper {

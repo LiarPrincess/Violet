@@ -1,15 +1,16 @@
 import Foundation
 import BigInt
 
+// swiftlint:disable type_name
+// swiftlint:disable nesting
+// cSpell:ignore floatobject
+
 // Compare 'Double' to various Python objects.
 // This is basically a nightmare, because whatever we do is wrong.
 //
 // In CPython:
 // Objects -> floatobject.c
 //   static PyObject* float_richcompare(PyObject *v, PyObject *w, int op)
-
-// swiftlint:disable type_name
-// swiftlint:disable nesting
 
 // MARK: - Abstract
 
@@ -128,7 +129,7 @@ extension Abstract {
     var rightWW = Swift.abs(right)
 
     if fracPart != 0.0 {
-      // Remove the last bit, and repace it with 1 for left
+      // Remove the last bit, and replace it with 1 for left
       rightWW = rightWW << 1
       leftVV = leftVV << 1
       leftVV = leftVV | 1

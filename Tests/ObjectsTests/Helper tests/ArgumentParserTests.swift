@@ -94,7 +94,7 @@ class ArgumentParserTests: PyTestCase {
     guard let e = self.bindError(
       arguments: ["", "elsa", "anna"], // 1 positional
       format: "O$OO:frozen",
-      args: [value0, value1], // 2 positionals
+      args: [value0, value1], // 2 positional
       kwargs: ["anna": value2]
     ) else { return }
 

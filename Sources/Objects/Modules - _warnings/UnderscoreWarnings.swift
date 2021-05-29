@@ -32,7 +32,7 @@ public final class UnderscoreWarnings: PyModuleImplementation {
     self.setOrTrap(._defaultaction, to: Py.newString("default"))
     self.setOrTrap(._onceregistry, to: Py.newDict())
 
-    // Not that capturing 'self' is intended.
+    // Note that capturing 'self' is intended.
     // See comment at the top of 'PyModuleImplementation' for details.
     self.setOrTrap(.warn, doc: Self.warnDoc, fn: self.warn(args:kwargs:))
   }

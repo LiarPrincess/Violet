@@ -25,7 +25,7 @@ extension Builtins {
     // MARK: - Types
 
     // Not all of those types should be exposed from builtins module.
-    // Some should require 'import types', but sice we don't have 'types' module,
+    // Some should require 'import types', but since we don't have 'types' module,
     // we will expose them from builtins.
 
     self.setOrTrap(.bool, to: Py.types.bool)

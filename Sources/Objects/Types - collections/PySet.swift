@@ -1,11 +1,12 @@
 import BigInt
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore setobject
+
 // In CPython:
 // Objects -> setobject.c
 // https://docs.python.org/3.7/c-api/set.html
-
-// swiftlint:disable file_length
 
 // sourcery: pytype = set, default, hasGC, baseType
 /// This subtype of PyObject is used to hold the internal data for both set
@@ -119,7 +120,7 @@ public class PySet: PyObject, PySetType {
     return BigInt(self.data.count)
   }
 
-  // MARK: - Contaions
+  // MARK: - Contains
 
   // sourcery: pymethod = __contains__
   public func contains(element: PyObject) -> PyResult<Bool> {

@@ -5,6 +5,8 @@ import VioletParser
 import VioletBytecode
 import VioletCompiler
 
+// cSpell:ignore tstate
+
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html

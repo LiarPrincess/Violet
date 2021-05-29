@@ -79,6 +79,7 @@ def get_types() -> [TypeInfo]:
 
   result: [TypeInfo] = []
   current_type: Union[TypeInfo, None] = None
+
   def commit_current_type():
     if current_type:
       current_type.sourcery_flags.sort()
@@ -96,7 +97,7 @@ def get_types() -> [TypeInfo]:
 
       line_type = split[0]
       if line_type == 'Type' or line_type == 'ErrorType':
-        commit_current_type()
+        commit_current_type() # We are starting new type
 
         assert len(split) == 4
         python_type = split[1]
@@ -163,7 +164,7 @@ def get_types() -> [TypeInfo]:
       else:
         assert False, f"Unknown line type: '{line_type}'"
 
-  commit_current_type()
+  commit_current_type() # Commit last type
   return result
 
 # ------------------

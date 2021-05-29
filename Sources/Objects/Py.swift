@@ -3,6 +3,7 @@ import BigInt
 import VioletCore
 
 // swiftlint:disable file_length
+// cSpell:ignore longobject
 
 /// `Py` represents a `Python` context.
 ///
@@ -12,7 +13,7 @@ import VioletCore
 ///
 /// # Global variable
 /// `Py` is a global variable .
-/// Yes, we know it is bad (at least that's whay they say in every programming
+/// Yes, we know it is bad (at least that's what they say in every programming
 /// book/manual).
 /// The thing is that it is way easier to use than alternative.
 ///
@@ -36,7 +37,7 @@ import VioletCore
 ///
 /// # Instance vs static
 /// `Py` is heap-allocated instance of `PyInstance` class.
-/// There is an interesting aternative of making `Py` static:
+/// There is an interesting alternative of making `Py` static:
 /// ```Swift
 /// public enum Py {
 ///   public static func getattr() { thingies… }
@@ -66,8 +67,8 @@ import VioletCore
 ///
 /// That would allow us to have `Py` per thread.
 /// Not really sure what we would use this for, but we can.
-/// (maybe multi-threaded testing? but we can just `fork` to run each test in
-/// separate process, we don't really  have app domains from `.Net`.).
+/// (Maybe multi-threaded testing? But we can just `fork` to run each test in
+/// separate process. What we would need is something like app domains from `.Net`.)
 ///
 /// ## Static
 /// Pros:
@@ -105,7 +106,7 @@ import VioletCore
 /// In `Violet` all of the types are heap-allocated (even builtin ones).
 /// But, we will still use 'heap-type' name with the same meaning as in `CPython`.
 /// Partially because they leak 'heap-type' implementation-detail in error
-/// messages, so we assume that this is part of the lingo.
+/// messages, so we assume that this is the part of the lingo.
 public private(set) var Py = PyInstance()
 
 /// Read `Py` documentation.
@@ -325,7 +326,7 @@ public final class PyInstance {
     // weak var builtins = Py.builtinsModule
     // weak var sys = Py.sysModule
 
-    // We always need an instance (even if uninitalized)
+    // We always need an instance (even if uninitialized)
     Py = PyInstance()
 
     // assert(old == nil, "Memory leak!")
@@ -341,7 +342,7 @@ public final class PyInstance {
 
   /// Get cached `int`.
   /// Note that not all of the `ints` are interned.
-  /// Only some of them, from a verry narrow range.
+  /// Only some of them, from a very narrow range.
   internal func getInterned(int: BigInt) -> PyInt? {
     guard let int = Int(exactly: int) else {
       return nil
@@ -352,7 +353,7 @@ public final class PyInstance {
 
   /// Get cached `int`.
   /// Note that not all of the `ints` are interned.
-  /// Only some of them, from a verry narrow range.
+  /// Only some of them, from a very narrow range.
   internal func getInterned(int: Int) -> PyInt? {
     guard PyInstance.smallIntRange.contains(int) else {
       return nil

@@ -1,5 +1,7 @@
 import VioletCompiler
 
+// cSpell:ignore pystate
+
 // In CPython:
 // Python -> sysmodule.c
 // Python -> pystate.h

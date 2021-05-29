@@ -171,7 +171,7 @@ public class PyImportError: PyException {
   internal func pyImportErrorInit(args: [PyObject],
                                   kwargs: PyDict?) -> PyResult<PyNone> {
     // Run 'super.pyInit' before our custom code, to avoid situation where
-    // 'super.pyInit' erros but we already mutated enity.
+    // 'super.pyInit' errors but we already mutated entity.
     switch super.pyExceptionInit(args: args, kwargs: kwargs) {
     case .value:
       break

@@ -1,3 +1,5 @@
+// cSpell:ignore namespaceobject
+
 // In CPython:
 // Objects -> namespaceobject.c
 

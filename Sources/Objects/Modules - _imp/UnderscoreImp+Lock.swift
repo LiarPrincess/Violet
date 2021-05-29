@@ -23,7 +23,7 @@ extension UnderscoreImp {
   /// static PyObject *
   /// _imp_lock_held_impl(PyObject *module)
   public func lockHeld() -> PyBool {
-    assert(Unimplemented.weDontHaveThreads)
+    assert(Unimplemented.weDoNotHaveThreads)
     return Py.false
   }
 
@@ -44,7 +44,7 @@ extension UnderscoreImp {
   /// static PyObject *
   /// _imp_acquire_lock_impl(PyObject *module)
   public func acquireLock() -> PyObject {
-    assert(Unimplemented.weDontHaveThreads)
+    assert(Unimplemented.weDoNotHaveThreads)
     return Py.none
   }
 
@@ -64,7 +64,7 @@ extension UnderscoreImp {
   /// static PyObject *
   /// _imp_release_lock_impl(PyObject *module)
   public func releaseLock() -> PyObject {
-    assert(Unimplemented.weDontHaveThreads)
+    assert(Unimplemented.weDoNotHaveThreads)
     return Py.none
   }
 }

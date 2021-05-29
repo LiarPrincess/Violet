@@ -1,5 +1,7 @@
 import VioletCore
 
+// cSpell:ignore bytearrayobject
+
 // In CPython:
 // Objects -> bytearrayobject.c
 

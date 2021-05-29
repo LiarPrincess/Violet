@@ -97,7 +97,7 @@ def print_fill_type_method(t: TypeInfo):
   print()
 
   function_name = get_fill_function_name(t)
-  print(f'  func {function_name}() {{')
+  print(f'  private func {function_name}() {{')
   print(f'    let type = self.{get_property_name(t.python_type)}')
 
   if static_doc_property:

@@ -30,7 +30,7 @@ public final class UnderscoreImp: PyModuleImplementation {
 
   // swiftlint:disable:next function_body_length
   private func fill__dict__() {
-    // Not that capturing 'self' is intended.
+    // Note that capturing 'self' is intended.
     // See comment at the top of 'PyModuleImplementation' for details.
     self.setOrTrap(.lock_held,
                    doc: UnderscoreImp.lockHeldDoc,

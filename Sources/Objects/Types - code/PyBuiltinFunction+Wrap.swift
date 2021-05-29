@@ -152,7 +152,7 @@ extension PyBuiltinFunction {
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
     name: String,
     doc: String?,
-    fn: @escaping (Zelf) -> () -> R, // Read-only property disquised as method
+    fn: @escaping (Zelf) -> () -> R, // Read-only property disguised as method
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
     module: PyString? = nil
   ) -> PyBuiltinFunction {
@@ -341,7 +341,7 @@ extension PyBuiltinFunction {
     )
   }
 
-  // Special overload for ternany method (self + 2 args) with optionals.
+  // Special overload for ternary method (self + 2 args) with optionals.
   // See top of this file for reasoning.
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
     name: String,
@@ -380,7 +380,7 @@ extension PyBuiltinFunction {
     )
   }
 
-  // Special overload for ternany method (self + 2 args) with optionals.
+  // Special overload for ternary method (self + 2 args) with optionals.
   // See top of this file for reasoning.
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
     name: String,

@@ -1,3 +1,5 @@
+// cSpell:ignore descrobject getx setx delx del'ing
+
 // In CPython:
 // Objects -> descrobject.c
 

@@ -37,7 +37,7 @@ class HashFloat: XCTestCase {
   }
 
   func test_int_positive_aroundModulus_wrapsIfNeeded() {
-    // This is a dummy test, `1 << 61` is well beyound `Double` precision,
+    // This is a dummy test, `1 << 61` is well beyond `Double` precision,
     // so all of the numbers are basically the same:
     // modulus:        2.305 843 009 213 694 e+18
     // modulus.nextUp: 2.305 843 009 213 694 5e+18

@@ -14,7 +14,7 @@ internal enum Unimplemented {
   /// 1. Remove it to get compiler errors.
   /// 2. Fix errors.
   /// 3. Profit (everything works).
-  internal static let weDontHaveThreads = true
+  internal static let weDoNotHaveThreads = true
 
   /// Python `locale` module.
   internal enum locale { // swiftlint:disable:this type_name

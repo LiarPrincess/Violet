@@ -52,7 +52,7 @@ public class PyNone: PyObject, HasCustomGetMethod {
     //
     // Descriptors use a comparision with 'None' to determine if they are either
     // invoked by an instance binding or a static binding.
-    // Unfortunatelly, if the object itself is 'None' then this detection won't work.
+    // Unfortunately, if the object itself is 'None' then this detection won't work.
     // Alas, my friends, welcome to 'None-Descriptor' hack.
     assert(self.isDescriptorStaticMarker)
 
@@ -72,11 +72,11 @@ public class PyNone: PyObject, HasCustomGetMethod {
 
     if let descr = descriptor {
       // We know that this thingie has a '__get__' method.
-      // When we call it with 'None' as a 'object' it will return unbinded 'self'.
+      // When we call it with 'None' as a 'object' it will return unbound 'self'.
       // Then we will try to bind it manually.
 
-      let unbinded = descr.call()
-      return unbinded.flatMap(self.bindToSelf(object:))
+      let unbound = descr.call()
+      return unbound.flatMap(self.bindToSelf(object:))
     }
 
     if let p = staticProperty {

@@ -2,6 +2,7 @@ import VioletCore
 import VioletBytecode
 
 // swiftlint:disable file_length
+// cSpell:ignore localsplus fastlocals valuestack tstate
 
 // In CPython:
 // Objects -> frameobject.c

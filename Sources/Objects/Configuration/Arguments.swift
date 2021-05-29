@@ -2,6 +2,8 @@ import ArgumentParser
 import VioletCore
 import VioletCompiler
 
+// cSpell:ignore wstrlist
+
 // In CPython:
 // Modules -> main.c
 //  pymain_wstrlist_append(_PyMain *pymain, int *len, wchar_t ***list, ...)
@@ -219,10 +221,15 @@ public struct Arguments {
   }
 
   private static func isCleanExit_helpRequest(error: Error) -> Bool {
-    if case CleanExit.helpRequest = error {
-      return true
+    guard let cleanExit = error as? CleanExit else {
+      return false
     }
 
-    return false
+    switch cleanExit {
+    case .helpRequest:
+      return true
+    default:
+      return false
+    }
   }
 }

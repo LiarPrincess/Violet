@@ -3,6 +3,7 @@ import BigInt
 import VioletCore
 
 // swiftlint:disable file_length
+// cSpell:ignore bytesobject
 
 // In CPython:
 // Objects -> bytesobject.c

@@ -1,5 +1,7 @@
 import VioletCore
 
+// cSpell:ignore uxxxx Uxxxxxxxx
+
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
@@ -188,7 +190,7 @@ extension PyInstance {
 
   /// Extract `String` from this object (if possible).
   ///
-  /// Mostly targeted torwards 'str', `bytes` and `bytearray`.
+  /// Mostly targeted towards 'str', `bytes` and `bytearray`.
   internal func extractString(object: PyObject) -> ExtractStringResult {
     if let str = object as? PyString {
       return .string(str, str.value)

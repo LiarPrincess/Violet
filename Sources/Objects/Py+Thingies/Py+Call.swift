@@ -1,11 +1,12 @@
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore attrid
+
 // In CPython:
 // Objects -> call.c
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
-
-// swiftlint:disable file_length
 
 extension PyInstance {
 

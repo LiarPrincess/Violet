@@ -11,7 +11,7 @@ private var anyFailed = false
 /// Check the memory footprint of a given type.
 ///
 /// Technically stride would be better, but the same stride may describe
-/// multiple sizes and in this test we are more intrested in the fact
+/// multiple sizes and in this test we are more interested in the fact
 /// that the value has changed and not in the value itself.
 private func checkMemorySize<T>(of type: T.Type, expectedSize: Int) {
   let size = MemoryLayout<T>.size

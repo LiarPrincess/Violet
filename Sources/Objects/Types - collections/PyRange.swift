@@ -1,12 +1,13 @@
 import BigInt
 import VioletCore
 
+// swiftlint:disable yoda_condition
+// swiftlint:disable file_length
+// cSpell:ignore rangeobject
+
 // In CPython:
 // Objects -> rangeobject.c
 // https://docs.python.org/3/library/stdtypes.html#range
-
-// swiftlint:disable yoda_condition
-// swiftlint:disable file_length
 
 // sourcery: pytype = range, default
 /// The range type represents an immutable sequence of numbers

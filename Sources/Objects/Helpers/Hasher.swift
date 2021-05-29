@@ -2,6 +2,8 @@ import Foundation
 import BigInt
 import VioletCore
 
+// cSpell:ignore pyhash longobject
+
 // In CPython:
 // Python -> pyhash.c <-- Seriously look it up!
 // Objects -> longobject.c
@@ -142,8 +144,8 @@ internal struct Hasher {
     // it will not mutate which will prevent allocation
     // (native strings already have contiguous storage).
     // But I don't really have time to look at this more closely.
-    var fingersCrosedForNoAllocation = value
-    let hash = fingersCrosedForNoAllocation.withUTF8 { ptr in
+    var fingersCrossedForNoAllocation = value
+    let hash = fingersCrossedForNoAllocation.withUTF8 { ptr in
       SipHash.hash(key0: self.key0, key1: self.key1, bytes: ptr)
     }
 

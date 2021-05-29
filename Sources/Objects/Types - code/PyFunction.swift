@@ -1,9 +1,10 @@
 import VioletBytecode
 
+// swiftlint:disable file_length
+// cSpell:ignore funcobject argdefs
+
 // In CPython:
 // Objects -> funcobject.c
-
-// swiftlint:disable file_length
 
 // sourcery: pytype = function, default, hasGC
 public class PyFunction: PyObject {

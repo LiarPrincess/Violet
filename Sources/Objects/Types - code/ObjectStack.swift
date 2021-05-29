@@ -77,7 +77,7 @@ public struct ObjectStack {
 
   public mutating func pop() -> PyObject {
     // Using 'isEmpty' or 'count' for assert would require another type lookup.
-    // (only in DEBUG and it depends on inling, but still…)
+    // (only in DEBUG and it depends on inlining, but still…)
 
     let last = self.elements.popLast()
     assert(last != nil, "Stack pop from empty stack.")
@@ -101,7 +101,7 @@ public struct ObjectStack {
       "Stack popElements out of bounds (pop: \(requestedCount), count: \(count))."
     )
 
-    // Use 'Array.init' on slice before'removeLast'!
+    // Use 'Array.init' on slice before 'removeLast'!
     // Otherwise COW would copy whole array on 'removeLast'
     // (because slice still has reference to it).
     let resultStart = count - requestedCount
@@ -112,7 +112,7 @@ public struct ObjectStack {
     return result
   }
 
-  /// Pop elements untill we reach `untilCount`.
+  /// Pop elements until we reach `untilCount`.
   public mutating func pop(untilCount: Int) {
     assert(self.elements.count >= untilCount)
 

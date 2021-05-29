@@ -1,5 +1,7 @@
 import VioletCore
 
+// cSpell:ignore enumobject
+
 // In CPython:
 // Objects -> enumobject.c
 

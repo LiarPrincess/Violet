@@ -23,7 +23,7 @@ extension UnderscoreWarnings {
     let message: PyObject
     /// Text to print.
     ///
-    /// Most of the time (but not always) it will be something similiar
+    /// Most of the time (but not always) it will be something similar
     /// to `str(self.message)`.
     let text: PyObject
     let category: PyType

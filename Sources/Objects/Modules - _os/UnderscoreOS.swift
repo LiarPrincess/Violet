@@ -1,5 +1,7 @@
 import Foundation
 
+// cSpell:ignore posixmodule fileio nameobj
+
 // In CPython:
 // Python -> Modules -> posixmodule.c
 
@@ -28,7 +30,7 @@ public final class UnderscoreOS: PyModuleImplementation {
   // MARK: - Fill dict
 
   private func fill__dict__() {
-    // Not that capturing 'self' is intended.
+    // Note that capturing 'self' is intended.
     // See comment at the top of 'PyModuleImplementation' for details.
     self.setOrTrap(.getcwd, doc: nil, fn: self.getCwd)
     self.setOrTrap(.fspath, doc: nil, fn: self.getFSPath(path:))

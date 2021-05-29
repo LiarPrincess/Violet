@@ -1,14 +1,15 @@
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore modsupport vgetargskeywordsfast kwnames kwtuple
+
 // In CPython:
 // Python -> modsupport.h
 // Python -> getargs.c
 
 // WARNING: This code is quite complicated!
-// And it is easly the ugliest/most tangled part of CPython.
+// And it is easily the ugliest/most tangled part of CPython.
 // Like really, it will break your mind when you go into it!
-
-// swiftlint:disable file_length
 
 /// Structure responsible for binding runtime parameters to function signature.
 /// In CPython `typedef struct _PyArg_Parser`.
@@ -43,7 +44,7 @@ internal struct ArgumentParser {
   ///
   /// We will reuse CPython format/convention.
   /// Mostly because this way we can just compare code/format specifiers
-  /// to check for errors. We could write this ouselves, but why?
+  /// to check for errors. We could write this ourselves, but why?
   ///
   /// For example for `int(value, base)`:
   /// ```C
@@ -54,15 +55,29 @@ internal struct ArgumentParser {
   /// ```C
   /// static int parser_init(struct _PyArg_Parser *parser)
   /// ```
-  /// - Parameter fnName: Function name
   /// - Parameter arguments: Argument names. But only for keyword arguments.
   ///                        Positional arguments should use empty string.
-  ///                        For example: `["", "base"]`.
-  /// - Parameter format: Argument formats:
-  ///                     - `|` - end of required arguments (minArgCount)
-  ///                     - `$` - end of positional arguments (maxPositionalArgCount)
+  /// - Parameter format: Argument format:
+  ///                     - `O` - Python object
+  ///                     - `|` - end of the required arguments (`minArgCount`)
+  ///                     - `$` - end of the positional arguments (`maxPositionalArgCount`)
+  ///                     - `:` - end of the argument format, what follows is a function name
   ///                     - other - ignored
-  ///                     For example: `|OO`.
+  ///
+  /// For example (this is `int.__new__`):
+  /// ```
+  /// let parser = ArgumentParser.create(
+  ///   arguments: ["", "base"],
+  ///   format: "|OO:int"
+  /// )
+  /// ```
+  ///
+  /// Means:
+  /// - 1st argument is a positional argument without name (1st entry in `arguments`)
+  /// - 2nd argument is a keyword argument called `base` (2nd entry in `arguments`)
+  /// - both arguments are Python objects (`format` has `OO`)
+  /// - none of the arguments are required (`format` starts with `|`)
+  /// - function name is `int` (part of the `format` after `:`)
   internal static func create(arguments: [String],
                               format: String) -> PyResult<ArgumentParser> {
     let name: String
@@ -211,7 +226,7 @@ internal struct ArgumentParser {
   ///
   /// Distinction between 'required' and 'optional' was introduced for additional
   /// type-safety (optional values can be nil, required can't).
-  /// Otherwise we would have to check requied for `nil` on every call site.
+  /// Otherwise we would have to check required for `nil` on every call site.
   internal struct Binding {
     fileprivate var _required = [PyObject]()
     fileprivate var _optional = [PyObject?]()
@@ -335,7 +350,7 @@ internal struct ArgumentParser {
         return .error(e)
       }
 
-      // This is a optional argument, just set it to 'nil'
+      // This is an optional argument, just set it to 'nil'
       result.addOptional(nil)
     }
 

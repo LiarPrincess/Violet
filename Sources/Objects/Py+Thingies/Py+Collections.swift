@@ -1,11 +1,12 @@
 import BigInt
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore elments newitem anyset
+
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
-
-// swiftlint:disable file_length
 
 extension PyInstance {
 
@@ -473,7 +474,7 @@ extension PyInstance {
   /// Returns the result of combining the elements of the sequence
   /// using the given closure.
   ///
-  /// This method is similiar to `Array.reduce(_:_:)`.
+  /// This method is similar to `Array.reduce(_:_:)`.
   public func reduce<Acc>(iterable: PyObject,
                           initial: Acc,
                           fn: ReduceFn<Acc>) -> PyResult<Acc> {
@@ -511,7 +512,7 @@ extension PyInstance {
   /// Returns the result of combining the elements of the sequence
   /// using the given closure.
   ///
-  /// This method is similiar to `Array.reduce(into:_:)`.
+  /// This method is similar to `Array.reduce(into:_:)`.
   ///
   /// It is preferred over `reduce(_:_:)` for efficiency when the result
   /// is a copy-on-write type, for example an `Array` or a `Dictionary`.

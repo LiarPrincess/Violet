@@ -68,12 +68,12 @@ python3 $GENERATED/TypeMemoryLayout.py > $GENERATED/TypeMemoryLayout.swift
 
 # === Fast dispatch ===
 # Sometimes instead of doing slow Python dispatch we will use Swift protocols.
-echo 'Generating Fast (protocol based dispath)'
+echo 'Generating Fast (protocol based dispatch)'
 python3 $GENERATED/Fast.py > $GENERATED/Fast.swift
 
 # === IdString ===
 # Predefined commonly used `__dict__` keys.
-# Similiar to `_Py_IDENTIFIER` in `CPython`.
+# Similar to `_Py_IDENTIFIER` in `CPython`.
 echo "Generating IdStrings"
 python3 $GENERATED/IdStrings.py > $GENERATED/IdStrings.swift
 echo ''

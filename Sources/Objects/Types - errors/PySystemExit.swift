@@ -117,7 +117,7 @@ public final class PySystemExit: PyBaseException {
     case 1:
       self.code = args[0]
     default:
-      // Check if we aready are this tuple (to avoid allocation)
+      // Check if we already are this tuple (to avoid allocation)
       if !self.isCodeTupleEqual(to: args) {
         self.code = Py.newTuple(args)
       }

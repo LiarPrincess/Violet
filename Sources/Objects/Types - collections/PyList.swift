@@ -1,11 +1,12 @@
 import BigInt
 import VioletCore
 
+// swiftlint:disable file_length
+// cSpell:ignore listobject
+
 // In CPython:
 // Objects -> listobject.c
 // https://docs.python.org/3.7/c-api/list.html
-
-// swiftlint:disable file_length
 
 // sourcery: pytype = list, default, hasGC, baseType, listSubclass
 /// This subtype of PyObject represents a Python list object.
@@ -369,7 +370,7 @@ public class PyList: PyObject, PySequenceType {
       // Note that Python requires STABLE sort, which Swift does not guarantee!
       // But we will conveniently ignore this fact… because reasons…
       // Btw. under certain conditions Swift sort is actually stable
-      // (at the time of writting this comment), but that's an implementation detail.
+      // (at the time of writing this comment), but that's an implementation detail.
       try keyedElements.sort(by: fn)
 
       // Check if user tried to touch our list.

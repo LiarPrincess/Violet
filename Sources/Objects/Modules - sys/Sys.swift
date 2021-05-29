@@ -1,5 +1,7 @@
 import VioletCore
 
+// cSpell:ignore ceval
+
 // In CPython:
 // Python -> sysmodule.c
 // https://docs.python.org/3.7/library/sys.html
@@ -199,7 +201,7 @@ public final class Sys: PyModuleImplementation {
 
     self.setOrTrap(.warnoptions, to: self.createInitialWarnOptions())
 
-    // Not that capturing 'self' is intended.
+    // Note that capturing 'self' is intended.
     // See comment at the top of 'PyModuleImplementation' for details.
     self.setOrTrap(.exit,
                    doc: Self.exitDoc,
