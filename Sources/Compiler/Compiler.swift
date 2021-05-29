@@ -28,35 +28,7 @@ public final class Compiler {
 }
 
 /// Compiler implementation.
-///
-/// Why do we have separate class? Why not just use `Compiler`?
-///
-/// `Compiler` is public and it needs to implement `ASTVisitor`
-/// which would require us to mark all of those methods as `public`.
-/// This would expose a lot of unnecessary details.
-///
-/// Why can't we specify that `Compiler` implements `ASTVisitor` on `internal`
-/// level (syntax would be `class Compiler: internal ASTVisitor`)?
-/// Think about this: what if someone from outside of the module decides
-/// to add conformance to `ASTVisitor` again?
-/// Both `Compiler` and `ASTVisitor` are public, so technically they should
-/// be able to do so.
-/// In such case we can't just say 'You can't do this because internally (yada-yada)'.
-///
-/// It also has some problems on a conceptual level:
-/// http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf
-///
-/// In theory it should be possible to create 'access modified' INHERITANCE
-/// (hello `C++`).
-///
-/// I think that idiomatic Swift prefers to create wrapper types
-/// (for this and other use-cases).
-/// For example:
-///   dictionaries/sets do not allow you to provide `Comparer`
-///   (`C#` does this) which means that you have to create 'wrapper type'
-///   if you want to use different notion of 'equality'.
-///
-/// Anyway: we have `Compiler` wrapper for `CompilerImpl`.
+/// See module documentation for details.
 internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisitor {
 
   internal typealias ASTResult = Void
