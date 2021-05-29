@@ -6,6 +6,8 @@ import VioletBytecode
 // In CPython:
 // Python -> compile.c
 
+// cSpell:ignore inplace subscr annexpr
+
 extension CompilerImpl {
 
   // MARK: - Assign
@@ -53,7 +55,7 @@ extension CompilerImpl {
     if let identifier = node.target as? IdentifierExpr {
       self.visitName(name: identifier.value, context: .load)
       try self.visit(node.value)
-      self.builder.appendInplaceOperator(node.op)
+      self.builder.appendInPlaceOperator(node.op)
       self.visitName(name: identifier.value, context: .store)
       return
     }
@@ -63,12 +65,12 @@ extension CompilerImpl {
         try self.visitAttribute(object: attribute.object,
                                 name: attribute.name,
                                 context: context,
-                                isAugumented: true)
+                                isAugmented: true)
       }
 
       try visitAttribute(context: .load)
       try self.visit(node.value)
-      self.builder.appendInplaceOperator(node.op)
+      self.builder.appendInPlaceOperator(node.op)
       try visitAttribute(context: .store)
       return
     }
@@ -78,12 +80,12 @@ extension CompilerImpl {
         try self.visitSubscript(object: subscr.object,
                                 slice: subscr.slice,
                                 context: context,
-                                isAugumented: true)
+                                isAugmented: true)
       }
 
       try visitSubscript(context: .load)
       try self.visit(node.value)
-      self.builder.appendInplaceOperator(node.op)
+      self.builder.appendInPlaceOperator(node.op)
       try visitSubscript(context: .store)
       return
     }
@@ -143,7 +145,7 @@ extension CompilerImpl {
       let mangled = self.mangle(name: identifier.value)
       self.builder.appendLoadName(SpecialIdentifiers.__annotations__)
       self.builder.appendString(mangled)
-      self.builder.appendStoreSubscr()
+      self.builder.appendStoreSubscript()
       return
     }
 
@@ -159,7 +161,7 @@ extension CompilerImpl {
     if let subscr = node.target as? SubscriptExpr {
       if node.value == nil {
         try self.checkAnnExpr(subscr.object)
-        try self.checktAnnSlice(subscr.slice)
+        try self.checkAnnSlice(subscr.slice)
       }
 
       try check()
@@ -176,7 +178,7 @@ extension CompilerImpl {
   }
 
   /// check_ann_subscr(struct compiler *c, slice_ty sl)
-  private func checktAnnSlice(_ slice: Slice) throws {
+  private func checkAnnSlice(_ slice: Slice) throws {
     // We check that everything in a subscript is defined at runtime.
     switch slice.kind {
     case let .index(i):

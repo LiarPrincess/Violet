@@ -1,5 +1,7 @@
 import VioletParser
 
+// cSpell:ignore isdocstring
+
 extension Statement {
 
   /// compiler_isdocstring(stmt_ty s)

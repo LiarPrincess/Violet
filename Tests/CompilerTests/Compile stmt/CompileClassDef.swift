@@ -744,9 +744,9 @@ class CompileClassDef: CompileTestCase {
         XCTAssertCode(cls, name: "Aurora", kind: .class)
         XCTAssertInstructions(cls, classExpected)
 
-        if let innt = self.getCodeObject(parent: cls, qualifiedName: "Aurora.__init__") {
-          XCTAssertCode(innt, name: "__init__", kind: .function)
-          XCTAssertInstructions(innt, __init__Expected)
+        if let init_ = self.getCodeObject(parent: cls, qualifiedName: "Aurora.__init__") {
+          XCTAssertCode(init_, name: "__init__", kind: .function)
+          XCTAssertInstructions(init_, __init__Expected)
         }
       }
     }

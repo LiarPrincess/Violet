@@ -8,6 +8,7 @@ import VioletBytecode
 
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
+// cSpell:ignore ssize subkwargs
 
 extension CompilerImpl {
 
@@ -62,24 +63,28 @@ extension CompilerImpl {
                            keywords: [KeywordArgument],
                            context: ExpressionContext,
                            alreadyPushedArgs: Int) throws {
-    var nSeen = alreadyPushedArgs
-    var nSubArgs = 0
-    var nSubKwArgs = 0
+    /// CPython: `nSeen`
+    /// Packed -> transformed to Tuple (to handle `*`/`**`, if needed)
+    var nArgNotPacked = alreadyPushedArgs
+    /// Cpython: `nSubArgs`
+    var nPackedArgs = 0
+    /// CPython: `nSubKwArgs`
+    var nPackedKwargs = 0
 
     for arg in args {
       if let star = arg as? StarredExpr {
         // If we've seen positional arguments, then pack them into a tuple.
-        if nSeen > 0 {
-          self.builder.appendBuildTuple(elementCount: nSeen)
-          nSeen = 0
-          nSubArgs += 1
+        if nArgNotPacked > 0 {
+          self.builder.appendBuildTuple(elementCount: nArgNotPacked)
+          nArgNotPacked = 0
+          nPackedArgs += 1
         }
 
         try self.visit(star.expression)
-        nSubArgs += 1
+        nPackedArgs += 1
       } else {
         try self.visit(arg)
-        nSeen += 1
+        nArgNotPacked += 1
       }
     }
 
@@ -90,53 +95,58 @@ extension CompilerImpl {
       }
     }
 
-    if nSubArgs > 0 || hasDictionaryUnpack {
+    if nPackedArgs > 0 || hasDictionaryUnpack {
       // Pack up any trailing positional arguments.
-      if nSeen > 0 {
-        self.builder.appendBuildTuple(elementCount: nSeen)
-        nSubArgs += 1
+      if nArgNotPacked > 0 {
+        self.builder.appendBuildTuple(elementCount: nArgNotPacked)
+        nArgNotPacked = 0
+        nPackedArgs += 1
+      }
+      assert(nArgNotPacked == 0, "We finished args, now kwargs with clean state")
+
+      // If we ended up with more than one star arg,
+      // we need to concatenate them into a single sequence.
+      if nPackedArgs == 0 {
+        // We don't have normal 'args', fake empty.
+        self.builder.appendBuildTuple(elementCount: 0)
+      } else if nPackedArgs == 1 {
+        // Exactly as we need it
+      } else {
+        // nPackedArgs > 1
+        self.builder.appendBuildTupleUnpackWithCall(elementCount: nPackedArgs)
       }
 
-      // If we ended up with more than one stararg,
-      // we need to concatenate them into a single sequence.
-      if nSubArgs > 1 {
-        self.builder.appendBuildTupleUnpackWithCall(elementCount: nSubArgs)
-      } else if nSubArgs == 0 {
-        // We don't have normal args, fake one.
-        self.builder.appendBuildTuple(elementCount: 0)
-      } // Else it is 1, so exactly as we need it
-
-      nSeen = 0
       for (index, keyword) in keywords.enumerated() {
         switch keyword.kind {
         case .dictionaryUnpack:
-          if nSeen > 0 {
-            let start = index - nSeen
-            try self.visitSubkwargs(keywords: keywords[start..<index])
-            nSubKwArgs += 1
-            nSeen = 0
+          if nArgNotPacked > 0 {
+            let start = index - nArgNotPacked
+            try self.visitKwargs(keywords: keywords[start..<index])
+            nPackedKwargs += 1
+            nArgNotPacked = 0
           }
 
           try self.visit(keyword.value)
-          nSubKwArgs += 1
+          nPackedKwargs += 1
         case .named:
-          nSeen += 1
+          nArgNotPacked += 1
         }
       }
 
       // Pack up any trailing keyword arguments.
-      if nSeen > 0 {
-        let start = keywords.count - nSeen
-        try self.visitSubkwargs(keywords: keywords[start..<keywords.count])
-        nSubKwArgs += 1
+      if nArgNotPacked > 0 {
+        let start = keywords.count - nArgNotPacked
+        try self.visitKwargs(keywords: keywords[start..<keywords.count])
+        nPackedKwargs += 1
       }
 
-      if nSubKwArgs > 1 {
-        self.builder.appendBuildMapUnpackWithCall(elementCount: nSubKwArgs)
+      if nPackedKwargs > 1 {
+        self.builder.appendBuildMapUnpackWithCall(elementCount: nPackedKwargs)
       }
 
-      self.builder.appendCallFunctionEx(hasKeywordArguments: nSubKwArgs > 0)
+      self.builder.appendCallFunctionEx(hasKeywordArguments: nPackedKwargs > 0)
     } else if keywords.any {
+      // All of the 'keywords' are 'named' (no 'dictionaryUnpack')
       let names = self.getNames(keywords: keywords)
       let argCount = alreadyPushedArgs + args.count + keywords.count
 
@@ -144,6 +154,7 @@ extension CompilerImpl {
       self.builder.appendTuple(names)
       self.builder.appendCallFunctionKw(argumentCount: argCount)
     } else {
+      // Only args, no kwargs
       let argCount = alreadyPushedArgs + args.count
       self.builder.appendCallFunction(argumentCount: argCount)
     }
@@ -170,7 +181,7 @@ extension CompilerImpl {
 
   /// compiler_subkwargs(struct compiler *c, asdl_seq *keywords,
   /// Py_ssize_t begin, Py_ssize_t end)
-  private func visitSubkwargs(keywords: ArraySlice<KeywordArgument>) throws {
+  private func visitKwargs(keywords: ArraySlice<KeywordArgument>) throws {
     assert(keywords.any)
 
     if keywords.count == 1 {
@@ -178,7 +189,7 @@ extension CompilerImpl {
       let keyword = keywords.first!
 
       guard case let .named(name) = keyword.kind else {
-        trap("[BUG] Compiler: VisitSubkwargs should not be called for unpack.")
+        trap("[BUG] Compiler: visitKwargs should not be called for unpack.")
       }
 
       self.builder.appendString(name)
@@ -188,7 +199,7 @@ extension CompilerImpl {
       var names = [CodeObject.Constant]()
       for keyword in keywords {
         guard case let .named(name) = keyword.kind else {
-          trap("[BUG] Compiler: VisitSubkwargs should not be called for unpack.")
+          trap("[BUG] Compiler: visitKwargs should not be called for unpack.")
         }
 
         try self.visit(keyword.value)

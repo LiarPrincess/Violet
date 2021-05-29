@@ -5,6 +5,7 @@ import VioletParser
 // Python -> symtable.c
 
 // swiftlint:disable file_length
+// cSpell:ignore withitem excepthandler
 
 extension SymbolTableBuilderImpl {
 
@@ -135,12 +136,12 @@ extension SymbolTableBuilderImpl {
 
       let isGlobal = current?.flags.contains(.defGlobal) ?? false
       if isGlobal && node.isSimple {
-        throw self.error(.globalAnnot(name), location: node.start)
+        throw self.error(.globalAnnotated(name), location: node.start)
       }
 
       let isNonlocal = current?.flags.contains(.defNonlocal) ?? false
       if isNonlocal && node.isSimple {
-        throw self.error(.nonlocalAnnot(name), location: node.start)
+        throw self.error(.nonlocalAnnotated(name), location: node.start)
       }
 
       // '(rapunzel): Int = 5' is tuple -> not simple!
@@ -314,7 +315,7 @@ extension SymbolTableBuilderImpl {
         }
 
         if c.flags.contains(.annotated) {
-          throw self.error(.globalAnnot(name), location: errorLocation)
+          throw self.error(.globalAnnotated(name), location: errorLocation)
         }
 
         if c.flags.contains(.defLocal) {
@@ -342,7 +343,7 @@ extension SymbolTableBuilderImpl {
         }
 
         if c.flags.contains(.annotated) {
-          throw self.error(.nonlocalAnnot(name), location: errorLocation)
+          throw self.error(.nonlocalAnnotated(name), location: errorLocation)
         }
 
         if c.flags.contains(.defLocal) {

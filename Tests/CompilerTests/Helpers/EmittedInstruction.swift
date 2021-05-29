@@ -43,19 +43,19 @@ enum EmittedInstructionKind {
   case binaryAnd
   case binaryXor
   case binaryOr
-  case inplacePower
-  case inplaceMultiply
-  case inplaceMatrixMultiply
-  case inplaceFloorDivide
-  case inplaceTrueDivide
-  case inplaceModulo
-  case inplaceAdd
-  case inplaceSubtract
-  case inplaceLShift
-  case inplaceRShift
-  case inplaceAnd
-  case inplaceXor
-  case inplaceOr
+  case inPlacePower
+  case inPlaceMultiply
+  case inPlaceMatrixMultiply
+  case inPlaceFloorDivide
+  case inPlaceTrueDivide
+  case inPlaceModulo
+  case inPlaceAdd
+  case inPlaceSubtract
+  case inPlaceLShift
+  case inPlaceRShift
+  case inPlaceAnd
+  case inPlaceXor
+  case inPlaceOr
   case compareOp
   case getAwaitable
   case getAIter
@@ -101,10 +101,10 @@ enum EmittedInstructionKind {
   case loadFast
   case storeFast
   case deleteFast
-  case loadDeref
-  case storeDeref
-  case deleteDeref
-  case loadClassDeref
+  case loadCellOrFree
+  case storeCellOrFree
+  case deleteCellOrFree
+  case loadClassCell
   case makeFunction
   case callFunction
   case callFunctionKw

@@ -7,6 +7,7 @@ import VioletBytecode
 // Python -> compile.c
 
 // swiftlint:disable file_length
+// cSpell:ignore nameop boolop ifexp cond subscr basicblock
 
 extension CompilerImpl {
 
@@ -53,7 +54,8 @@ extension CompilerImpl {
   private enum IdentifierOperation {
     case fast
     case global
-    case deref(DerefType)
+    case cell
+    case free
     case name
   }
 
@@ -73,9 +75,9 @@ extension CompilerImpl {
     var operation = IdentifierOperation.name
 
     if flags.contains(.srcFree) {
-      operation = .deref(.free)
+      operation = .free
     } else if flags.contains(.cell) {
-      operation = .deref(.cell)
+      operation = .cell
     } else if flags.contains(.srcLocal) {
       if self.currentScope.type == .function {
         operation = .fast
@@ -89,8 +91,10 @@ extension CompilerImpl {
     }
 
     switch operation {
-    case .deref(let type):
-      self.appendDeref(mangled: mangled, type: type, context: context)
+    case .cell:
+      self.appendCellOrFree(mangled: mangled, type: .cell, context: context)
+    case .free:
+      self.appendCellOrFree(mangled: mangled, type: .free, context: context)
     case .fast:
       self.builder.appendFast(name: mangled, context: context)
     case .global:
@@ -100,18 +104,18 @@ extension CompilerImpl {
     }
   }
 
-  private func appendDeref(mangled: MangledName,
-                           type: DerefType,
-                           context: ExpressionContext) {
+  private func appendCellOrFree(mangled: MangledName,
+                                type: CodeObjectBuilder.CellOrFree,
+                                context: ExpressionContext) {
     switch context {
     case .store:
-      self.builder.appendStoreDeref(mangled, type: type)
+      self.builder.appendStoreCellOrFree(mangled, type: type)
     case .load where self.currentScope.type == .class:
-      self.builder.appendLoadClassDeref(mangled, type: type)
+      self.builder.appendLoadClassCell(mangled, type: type)
     case .load:
-      self.builder.appendLoadDeref(mangled, type: type)
+      self.builder.appendLoadCellOrFree(mangled, type: type)
     case .del:
-      self.builder.appendDeleteDeref(mangled, type: type)
+      self.builder.appendDeleteCellOrFree(mangled, type: type)
     }
   }
 
@@ -142,11 +146,11 @@ extension CompilerImpl {
     case let .literal(s):
       self.builder.appendString(s)
 
-    case let .formattedValue(expr, conversion: conv, spec: spec):
+    case let .formattedValue(expr, conversion: conversionArg, spec: spec):
       try self.visit(expr)
 
       var conversion = Instruction.StringConversion.none
-      switch conv {
+      switch conversionArg {
       case .some(.str): conversion = .str
       case .some(.repr): conversion = .repr
       case .some(.ascii): conversion = .ascii
@@ -351,27 +355,27 @@ extension CompilerImpl {
   internal func visitAttribute(object: Expression,
                                name: String,
                                context: ExpressionContext,
-                               isAugumented: Bool = false) throws {
+                               isAugmented: Bool = false) throws {
     let mangled = self.mangle(name: name)
 
-    let isAugumentedStore = isAugumented && context == .store
-    if !isAugumentedStore {
+    let isAugmentedStore = isAugmented && context == .store
+    if !isAugmentedStore {
       try self.visit(object)
     }
 
     switch context {
     case .store:
-      if isAugumented {
+      if isAugmented {
         self.builder.appendRotTwo()
       }
       self.builder.appendStoreAttribute(mangled)
     case .load:
-      if isAugumented {
+      if isAugmented {
         self.builder.appendDupTop()
       }
       self.builder.appendLoadAttribute(mangled)
     case .del:
-      assert(!isAugumented)
+      assert(!isAugmented)
       self.builder.appendDeleteAttribute(mangled)
     }
   }
@@ -388,23 +392,23 @@ extension CompilerImpl {
   internal func visitSubscript(object: Expression,
                                slice: Slice,
                                context: ExpressionContext,
-                               isAugumented: Bool = false) throws {
-    let isAugumentedStore = isAugumented && context == .store
-    if !isAugumentedStore {
+                               isAugmented: Bool = false) throws {
+    let isAugmentedStore = isAugmented && context == .store
+    if !isAugmentedStore {
       try self.visit(object)
     }
 
-    try self.visitSlice(slice: slice, context: context, isAugumented: isAugumented)
+    try self.visitSlice(slice: slice, context: context, isAugmented: isAugmented)
   }
 
   /// compiler_visit_slice(struct compiler *c, slice_ty s, expr_context_ty ctx)
   /// compiler_handle_subscr(struct compiler *c, const char *kind, ...)
   private func visitSlice(slice: Slice,
                           context: ExpressionContext,
-                          isAugumented: Bool) throws {
+                          isAugmented: Bool) throws {
 
-    let isAugumentedStore = isAugumented && context == .store
-    if !isAugumentedStore {
+    let isAugmentedStore = isAugmented && context == .store
+    if !isAugmentedStore {
       switch slice.kind {
       case let .index(index):
         try self.visit(index)
@@ -420,18 +424,18 @@ extension CompilerImpl {
 
     switch context {
     case .store:
-      if isAugumented {
+      if isAugmented {
         self.builder.appendRotThree()
       }
-      self.builder.appendStoreSubscr()
+      self.builder.appendStoreSubscript()
     case .load:
-      if isAugumented {
+      if isAugmented {
         self.builder.appendDupTopTwo()
       }
-      self.builder.appendBinarySubscr()
+      self.builder.appendBinarySubscript()
     case .del:
-      assert(!isAugumented)
-      self.builder.appendDeleteSubscr()
+      assert(!isAugmented)
+      self.builder.appendDeleteSubscript()
     }
   }
 

@@ -4,6 +4,8 @@ import VioletParser
 import VioletBytecode
 @testable import VioletCompiler
 
+// cSpell:ignore inplace subscr
+
 /// Use './Scripts/dump' for reference.
 class CompileAugAssign: CompileTestCase {
 
@@ -17,19 +19,19 @@ class CompileAugAssign: CompileTestCase {
   /// 10 RETURN_VALUE
   func test_simple() {
     let operators: [BinaryOpExpr.Operator: EmittedInstructionKind] = [
-      .add: .inplaceAdd,
-      .sub: .inplaceSubtract,
-      .mul: .inplaceMultiply,
-      .matMul: .inplaceMatrixMultiply,
-      .div: .inplaceTrueDivide,
-      .modulo: .inplaceModulo,
-      .pow: .inplacePower,
-      .leftShift: .inplaceLShift,
-      .rightShift: .inplaceRShift,
-      .bitOr: .inplaceOr,
-      .bitXor: .inplaceXor,
-      .bitAnd: .inplaceAnd,
-      .floorDiv: .inplaceFloorDivide
+      .add: .inPlaceAdd,
+      .sub: .inPlaceSubtract,
+      .mul: .inPlaceMultiply,
+      .matMul: .inPlaceMatrixMultiply,
+      .div: .inPlaceTrueDivide,
+      .modulo: .inPlaceModulo,
+      .pow: .inPlacePower,
+      .leftShift: .inPlaceLShift,
+      .rightShift: .inPlaceRShift,
+      .bitOr: .inPlaceOr,
+      .bitXor: .inPlaceXor,
+      .bitAnd: .inPlaceAnd,
+      .floorDiv: .inPlaceFloorDivide
     ]
 
     for (op, emittedOp) in operators {
@@ -89,7 +91,7 @@ class CompileAugAssign: CompileTestCase {
       .init(.loadAttribute, "prince"),
       .init(.loadName, "hairy"),
       .init(.loadAttribute, "beast"),
-      .init(.inplaceAdd),
+      .init(.inPlaceAdd),
       .init(.rotTwo),
       .init(.storeAttribute, "prince"),
       .init(.loadConst, "none"),
@@ -142,7 +144,7 @@ class CompileAugAssign: CompileTestCase {
       .init(.loadName, "items"),
       .init(.loadName, "random"),
       .init(.binarySubscript),
-      .init(.inplaceAdd),
+      .init(.inPlaceAdd),
       .init(.rotThree),
       .init(.storeSubscript),
       .init(.loadConst, "none"),

@@ -186,7 +186,7 @@ class CompileIfStmt: CompileTestCase {
 
   /// if False: big
   /// else: smol
-  /// But we dont have dead code elimination, so it will be different
+  /// But we don't have dead code elimination, so it will be different
   ///
   ///   5           0 LOAD_NAME                0 (smol)
   ///               2 POP_TOP

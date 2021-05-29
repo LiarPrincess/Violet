@@ -6,7 +6,7 @@ import VioletParser
 // swiftlint:disable file_length
 
 /// Basic checks for expressions, without nested scopes.
-/// Just so we know that we visit all childs.
+/// Just so we know that we visit all children.
 /// Use 'Tools/dump_symtable.py' for reference.
 class STExpr: SymbolTableTestCase {
 
@@ -560,7 +560,7 @@ class STExpr: SymbolTableTestCase {
     }
   }
 
-  // MARK: - Generators and corutines
+  // MARK: - Generators and coroutines
 
   /// await elsa
   func test_await() {

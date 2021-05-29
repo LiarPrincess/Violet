@@ -6,8 +6,10 @@ import VioletBytecode
 // In CPython:
 // Python -> compile.c
 
+// cSpell:ignore elts starunpack
+
 /// Helper for `emitLoadWithPossibleUnpack` method.
-/// We could pass clojures with `self`, but this is more self-documenting.
+/// We could pass clojure with `self`, but this is more self-documenting.
 private protocol CollectionLoadAdapter {
   /// Create an *artificial container* for elements with given `count`.
   ///
@@ -100,7 +102,7 @@ extension CompilerImpl {
 
   /// compiler_dict(struct compiler *c, expr_ty e)
   ///
-  /// Our implementation is similiar to `self.visitLoadWithPossibleUnpack(...)`.
+  /// Our implementation is similar to `self.visitLoadWithPossibleUnpack(...)`.
   internal func visit(_ node: DictionaryExpr) throws {
     assert(node.context == .load)
 

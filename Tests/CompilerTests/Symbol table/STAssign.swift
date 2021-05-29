@@ -6,7 +6,7 @@ import VioletParser
 // swiftlint:disable file_length
 
 /// Basic checks for assigns, without nested scopes.
-/// Just so we know that we visit all childs.
+/// Just so we know that we visit all children.
 /// Use 'Tools/dump_symtable.py' for reference.
 class STAssign: SymbolTableTestCase {
 
@@ -72,20 +72,20 @@ class STAssign: SymbolTableTestCase {
     }
   }
 
-  /// rapunzel = eugine = 5
+  /// rapunzel = eugene = 5
   ///
   /// ```c
   /// name: top
   /// lineno: 0
   /// symbols:
   ///   rapunzel - local, assigned,
-  ///   eugine - local, assigned,
+  ///   eugene - local, assigned,
   /// ```
   func test_assign_multiple() {
     let stmt = self.assignStmt(
       targets: [
         self.identifierExpr(value: "rapunzel", context: .store, start: loc1),
-        self.identifierExpr(value: "eugine", context: .store, start: loc2)
+        self.identifierExpr(value: "eugene", context: .store, start: loc2)
       ],
       value: self.intExpr(value: 5)
     )
@@ -102,13 +102,13 @@ class STAssign: SymbolTableTestCase {
                               flags: [.defLocal, .srcLocal],
                               location: loc1)
       XCTAssertContainsSymbol(top,
-                              name: "eugine",
+                              name: "eugene",
                               flags: [.defLocal, .srcLocal],
                               location: loc2)
     }
   }
 
-  // MARK: - Augumented assign
+  // MARK: - Augmented assign
 
   /// rapunzel += 5
   ///
@@ -365,7 +365,7 @@ class STAssign: SymbolTableTestCase {
     )
 
     if let error = self.error(forStmts: [stmt1, stmt2]) {
-      XCTAssertEqual(error.kind, .globalAnnot("rapunzel"))
+      XCTAssertEqual(error.kind, .globalAnnotated("rapunzel"))
       XCTAssertEqual(error.location, loc1)
     }
   }
@@ -384,7 +384,7 @@ class STAssign: SymbolTableTestCase {
     )
 
     if let error = self.error(forStmts: [stmt1, stmt2]) {
-      XCTAssertEqual(error.kind, .nonlocalAnnot("rapunzel"))
+      XCTAssertEqual(error.kind, .nonlocalAnnotated("rapunzel"))
       XCTAssertEqual(error.location, loc1)
     }
   }

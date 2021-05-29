@@ -203,7 +203,7 @@ class CompileOperators: CompileTestCase {
 
   /// rapunzel and cassandra or eugene
   ///
-  /// (This is CPython, we generate different code, but the result is similiar)
+  /// (This is CPython, we generate different code, but the result is similar)
   ///  0 LOAD_NAME                0 (rapunzel)
   ///  2 POP_JUMP_IF_FALSE        8
   ///  4 LOAD_NAME                1 (cassandra)

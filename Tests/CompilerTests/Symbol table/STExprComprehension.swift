@@ -7,7 +7,7 @@ import VioletParser
 // swiftlint:disable function_body_length
 
 /// Basic checks for comprehension, without nested scopes.
-/// Just so we know that we visit all childs.
+/// Just so we know that we visit all children.
 /// Use 'Tools/dump_symtable.py' for reference.
 class STExprComprehension: SymbolTableTestCase {
 
@@ -155,14 +155,14 @@ class STExprComprehension: SymbolTableTestCase {
   ///     ariel - local, assigned,
   ///     eric - referenced, local, assigned,
   func test_list_nested() {
-    let compr1 = self.comprehension(
+    let comp1 = self.comprehension(
       target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
       iterable: self.listExpr(elements: []),
       ifs: [],
       isAsync: false
     )
 
-    let compr2 = self.comprehension(
+    let comp2 = self.comprehension(
       target: self.identifierExpr(value: "eric", context: .store, start: loc2),
       iterable: self.listExpr(elements: []),
       ifs: [],
@@ -171,7 +171,7 @@ class STExprComprehension: SymbolTableTestCase {
 
     let expr = self.listComprehensionExpr(
       element: self.identifierExpr(value: "eric", start: loc3),
-      generators: [compr1, compr2]
+      generators: [comp1, comp2]
     )
 
     if let table = self.createSymbolTable(expr: expr) {
@@ -208,9 +208,9 @@ class STExprComprehension: SymbolTableTestCase {
   // MARK: - Set
 
   /// {ariel for ariel in sea}
-  /// (similiar to `self.test_list`)
+  /// (similar to `self.test_list`)
   func test_set() {
-    let compr = self.comprehension(
+    let comp = self.comprehension(
       target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
       iterable: self.identifierExpr(value: "sea", start: loc2),
       ifs: [],
@@ -219,7 +219,7 @@ class STExprComprehension: SymbolTableTestCase {
 
     let kind = self.setComprehensionExpr(
       element: self.identifierExpr(value: "ariel", start: loc3),
-      generators: [compr]
+      generators: [comp]
     )
 
     if let table = self.createSymbolTable(expr: kind) {
@@ -276,7 +276,7 @@ class STExprComprehension: SymbolTableTestCase {
   ///     eric - referenced, global,
   /// ```
   func test_dictionary() {
-    let compr = self.comprehension(
+    let comp = self.comprehension(
       target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
       iterable: self.identifierExpr(value: "sea", start: loc2),
       ifs: [],
@@ -286,7 +286,7 @@ class STExprComprehension: SymbolTableTestCase {
     let kind = self.dictionaryComprehensionExpr(
       key: self.identifierExpr(value: "ariel", start: loc3),
       value: self.identifierExpr(value: "eric", start: loc4),
-      generators: [compr]
+      generators: [comp]
     )
 
     if let table = self.createSymbolTable(expr: kind) {
@@ -328,9 +328,9 @@ class STExprComprehension: SymbolTableTestCase {
   // MARK: - Generator
 
   /// [ariel for ariel in sea]
-  /// (similiar to `self.test_list`)
+  /// (similar to `self.test_list`)
   func test_generator() {
-    let compr = self.comprehension(
+    let comp = self.comprehension(
       target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
       iterable: self.identifierExpr(value: "sea", start: loc2),
       ifs: [],
@@ -339,7 +339,7 @@ class STExprComprehension: SymbolTableTestCase {
 
     let kind = self.generatorExpr(
       element: self.identifierExpr(value: "ariel", start: loc3),
-      generators: [compr]
+      generators: [comp]
     )
 
     if let table = self.createSymbolTable(expr: kind) {

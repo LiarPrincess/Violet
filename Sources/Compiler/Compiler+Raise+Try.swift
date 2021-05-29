@@ -46,13 +46,13 @@ extension CompilerImpl {
 
   /// compiler_try_finally(struct compiler *c, stmt_ty s)
   ///
-  /// Code generated for "try: <body> finally: <finalbody>" is as follows:
+  /// Code generated for "try: <body> finally: <finalBody>" is as follows:
   ///
   ///       SETUP_FINALLY           Label
   ///       <code for body>
   ///       POP_BLOCK
   ///       LOAD_CONST              <None>
-  ///   Label:   <code for finalbody>
+  ///   Label:   <code for finalBody>
   ///       END_FINALLY
   ///
   /// SETUP_FINALLY:

@@ -6,7 +6,7 @@ public struct SymbolInfo: Equatable, CustomStringConvertible {
   /// Symbol information.
   public let flags: SymbolFlags
 
-  /// Location of the first occurence of given symbol.
+  /// Location of the first occurrence of given symbol.
   public let location: SourceLocation
 
   public var description: String {
@@ -14,13 +14,13 @@ public struct SymbolInfo: Equatable, CustomStringConvertible {
   }
 }
 
-/// Dicitonary that holds `SymbolInfo` instances.
+/// Dictionary that holds `SymbolInfo` instances.
 ///
 /// It will remember the order in which symbols were inserted.
 public struct SymbolByNameDictionary: Sequence {
 
   // This is a very 'dump' implementation of ordered dictionary,
-  // but it is enought.
+  // but it is enough.
   private var dict = [MangledName: SymbolInfo]()
   private var list = [MangledName]()
 

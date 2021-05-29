@@ -137,7 +137,7 @@ class CompileStringTests: CompileTestCase {
   /// 2 LOAD_CONST               0 ('wonderland')
   /// 4 FORMAT_VALUE             5 (str, with format)
   /// 6 RETURN_VALUE
-  func test_formattedValue_withConvarsion_andFormat() {
+  func test_formattedValue_withConversion_andFormat() {
     let expr = self.stringExpr(value: .formattedValue(
       self.identifierExpr(value: "alice"),
       conversion: .str,

@@ -21,7 +21,7 @@ private final class OuterContext {
   ///
   /// Usage:
   /// - child - add new free variables
-  /// - parent - bind free vaiables from childs with locals (creating `cells`)
+  /// - parent - bind free variables from child with locals (creating `cells`)
   fileprivate var free: [MangledName: SymbolInfo]
 
   /// Set of declared global variables in outer scopes (used for globals)
@@ -60,7 +60,7 @@ private final class ScopeContext {
   /// Basically: outer global + our local global
   fileprivate var newGlobal = Set<MangledName>()
 
-  /// Free vaiabled that should be resolved by parent scope.
+  /// Free variable that should be resolved by parent scope.
   fileprivate var newFree = [MangledName: SymbolInfo]()
 }
 
@@ -240,7 +240,7 @@ internal final class SymbolTableVariableSourcePass {
       // is free
       guard scopeContext.newFree.contains(name) else { continue }
 
-      // we found a declaration of this free vaiable -> cell
+      // we found a declaration of this free variable -> cell
       scopeContext.symbolSources[name] = flags.union(.cell)
       scopeContext.newFree.removeValue(forKey: name)
     }

@@ -33,7 +33,7 @@ public enum CompilerErrorKind: Equatable {
   /// Name 'value' is used prior to global declaration
   case globalAfterUse(String)
   /// Annotated name 'value' can't be global
-  case globalAnnot(String)
+  case globalAnnotated(String)
 
   /// Name 'value' is parameter and nonlocal
   case nonlocalParam(String)
@@ -42,7 +42,7 @@ public enum CompilerErrorKind: Equatable {
   /// Name 'value' is used prior to nonlocal declaration
   case nonlocalAfterUse(String)
   /// Annotated name 'value' can't be nonlocal
-  case nonlocalAnnot(String)
+  case nonlocalAnnotated(String)
   /// 'nonlocal' declaration of 'value' not allowed at module level
   case nonlocalAtModuleLevel(String)
   /// No binding for nonlocal 'value' found
@@ -112,7 +112,7 @@ public enum CompilerErrorKind: Equatable {
   /// 'await' outside async function
   case awaitOutsideAsyncFunction
 
-  /// Given feature was not yet implmented.
+  /// Given feature was not yet implemented.
   case unimplemented(CompilerUnimplemented)
 }
 
@@ -128,7 +128,7 @@ extension CompilerErrorKind: CustomStringConvertible {
       return "Name '\(name)' is assigned to before global declaration"
     case let .globalAfterUse(name):
       return "Name '\(name)' is used prior to global declaration"
-    case let .globalAnnot(name):
+    case let .globalAnnotated(name):
       return "Annotated name '\(name)' can't be global"
 
     case let .nonlocalParam(name):
@@ -137,7 +137,7 @@ extension CompilerErrorKind: CustomStringConvertible {
       return "Name '\(name)' is assigned to before nonlocal declaration"
     case let .nonlocalAfterUse(name):
       return "Name '\(name)' is used prior to nonlocal declaration"
-    case let .nonlocalAnnot(name):
+    case let .nonlocalAnnotated(name):
       return "Annotated name '\(name)' can't be nonlocal"
     case let .nonlocalAtModuleLevel(name):
       return "'nonlocal' declaration of '\(name)' not allowed at module level"

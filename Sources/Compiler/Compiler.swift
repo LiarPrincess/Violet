@@ -6,6 +6,7 @@ import VioletBytecode
 // Python -> compile.c
 
 // swiftlint:disable file_length
+// cSpell:ignore dictbytype ssize fblock fblocktype basicblock
 
 public final class Compiler {
 
@@ -76,13 +77,13 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   internal private(set) var future: FutureFeatures!
   // swiftlint:disable:previous implicitly_unwrapped_optional
 
-  /// Symbol table assiciated with `self.ast`.
+  /// Symbol table associated with `self.ast`.
   internal private(set) var symbolTable: SymbolTable!
   // swiftlint:disable:previous implicitly_unwrapped_optional
 
   /// Compiler unit stack.
-  /// Current unit (the one that we are emmiting to) is at the top,
-  /// top (module) unit is at the bottom.
+  /// Current unit (the one that we are emitting to) is at the top,
+  /// module unit is at the bottom.
   ///
   /// For example:
   /// ```c
@@ -91,7 +92,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   ///     pass <- we are emitting here
   /// ```
   /// Generates following stack:
-  /// top -> class -> elsa
+  /// module -> class -> elsa
   private var unitStack = [CompilerUnit]()
 
   /// Code object that we are currently filling.
@@ -156,8 +157,6 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     self.future = try FutureFeatures.parse(ast: self.ast)
 
     self.enterScope(node: self.ast, kind: .module, argCount: 0, kwOnlyArgCount: 0)
-    self.setAppendLocation(self.ast)
-
     try self.visit(self.ast)
 
     // Emit epilog (because we may be a jump target).
@@ -270,9 +269,9 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
           || self.hasAnnotations(statements: loop.orElse)
     }
 
-    if let iff = statement as? IfStmt {
-      return self.hasAnnotations(statements: iff.body)
-          || self.hasAnnotations(statements: iff.orElse)
+    if let if_ = statement as? IfStmt {
+      return self.hasAnnotations(statements: if_.body)
+          || self.hasAnnotations(statements: if_.orElse)
     }
 
     if let with = statement as? WithStmt {
@@ -283,11 +282,11 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
       return self.hasAnnotations(statements: with.body)
     }
 
-    if let tryy = statement as? TryStmt {
-      return self.hasAnnotations(statements: tryy.body)
-          || self.hasAnnotations(statements: tryy.finally)
-          || self.hasAnnotations(statements: tryy.orElse)
-          || tryy.handlers.contains { self.hasAnnotations(statements: $0.body) }
+    if let try_ = statement as? TryStmt {
+      return self.hasAnnotations(statements: try_.body)
+          || self.hasAnnotations(statements: try_.finally)
+          || self.hasAnnotations(statements: try_.orElse)
+          || try_.handlers.contains { self.hasAnnotations(statements: $0.body) }
     }
 
     return false
@@ -324,11 +323,11 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     kwOnlyArgCount: Int,
     emitInstructions block: () throws -> Void
   ) throws -> CodeObject {
-
     self.enterScope(node: node,
                     kind: kind,
                     argCount: argCount,
                     kwOnlyArgCount: kwOnlyArgCount)
+
     try block()
     let code = self.codeObject
     try self.leaveScope()
@@ -394,7 +393,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     self.unitStack.append(unit)
   }
 
-  /// Pop scope (along with correcsponding code object).
+  /// Pop scope (along with corresponding code object).
   ///
   /// compiler_exit_scope(struct compiler *c)
   private func leaveScope() throws {

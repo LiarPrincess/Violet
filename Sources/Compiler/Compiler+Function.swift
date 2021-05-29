@@ -6,6 +6,8 @@ import VioletBytecode
 // In CPython:
 // Python -> compile.c
 
+// cSpell:ignore decos ssize argannotation argannotations kwonlyargs kwonlydefaults
+
 extension CompilerImpl {
 
   // MARK: - Lambda
@@ -201,6 +203,8 @@ extension CompilerImpl {
   }
 
   // MARK: - Closure
+
+  private typealias ClosureType = CodeObjectBuilder.ClosureType
 
   /// compiler_make_closure(struct compiler *c, PyCodeObject *co,
   /// Py_ssize_t flags, PyObject *qualname)

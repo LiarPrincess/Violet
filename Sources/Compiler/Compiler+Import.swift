@@ -7,6 +7,8 @@ import VioletBytecode
 // In CPython:
 // Python -> compile.c
 
+// cSpell:ignore asname
+
 extension CompilerImpl {
 
   // MARK: - Import

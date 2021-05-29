@@ -7,7 +7,7 @@ import VioletParser
 // swiftlint:disable function_body_length
 
 /// Basic checks for statements, without nested scopes.
-/// Just so we know that we visit all childs.
+/// Just so we know that we visit all children.
 /// Use 'Tools/dump_symtable.py' for reference.
 class STStmt: SymbolTableTestCase {
 

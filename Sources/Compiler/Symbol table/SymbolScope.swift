@@ -29,8 +29,7 @@ public enum ScopeType: Equatable {
   case function
 }
 
-/// Captures all symbols in the current scope
-/// and has a list of subscopes (childrens).
+/// Captures all symbols in the current scope and has a list of subscopes (children).
 public final class SymbolScope {
 
   /// Non-unique name of this scope.

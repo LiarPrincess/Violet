@@ -248,7 +248,7 @@ class CompileFunctionDef: CompileTestCase {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "1"),
-      .init(.buildTuple, "1"), //  <-- we don't have constatnt propagation!
+      .init(.buildTuple, "1"), //  <-- we don't have constant propagation!
       .init(.loadConst, "<code object cook>"),
       .init(.loadConst, "'cook'"),
       .init(.makeFunction, "1"),
@@ -350,7 +350,7 @@ class CompileFunctionDef: CompileTestCase {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "1"),
-      .init(.buildTuple, "1"), //  <-- we don't have constatnt propagation!
+      .init(.buildTuple, "1"), //  <-- we don't have constant propagation!
       .init(.loadConst, "<code object cook>"),
       .init(.loadConst, "'cook'"),
       .init(.makeFunction, "1"),

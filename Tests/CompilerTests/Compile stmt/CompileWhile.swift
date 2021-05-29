@@ -85,7 +85,7 @@ class CompileWhile: CompileTestCase {
   }
 
   /// while frollo:
-  ///  continue <- dont't try this at home kids
+  ///  continue <- don't try this at home kids
   ///  quasimodo
   ///
   ///  0 SETUP_LOOP              14 (to 16)

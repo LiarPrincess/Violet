@@ -5,6 +5,7 @@ import VioletBytecode
 @testable import VioletCompiler
 
 // swiftlint:disable file_length
+// cSpell:ignore subscr
 
 /// Use 'Scripts/dump_dis.py' for reference.
 class CompileSubscript: CompileTestCase {

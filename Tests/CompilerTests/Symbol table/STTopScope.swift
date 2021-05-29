@@ -111,7 +111,7 @@ class STTopScope: SymbolTableTestCase {
     let stmt2 = self.globalStmt(identifier: "elsa", start: loc1)
 
     if let error = self.error(forStmts: [stmt1, stmt2]) {
-      XCTAssertEqual(error.kind, .globalAnnot("elsa"))
+      XCTAssertEqual(error.kind, .globalAnnotated("elsa"))
       XCTAssertEqual(error.location, loc1)
     }
   }
@@ -171,7 +171,7 @@ class STTopScope: SymbolTableTestCase {
     let stmt2 = self.nonlocalStmt(identifier: "elsa", start: loc1)
 
     if let error = self.error(forStmts: [stmt1, stmt2]) {
-      XCTAssertEqual(error.kind, .nonlocalAnnot("elsa"))
+      XCTAssertEqual(error.kind, .nonlocalAnnotated("elsa"))
       XCTAssertEqual(error.location, loc1)
     }
   }

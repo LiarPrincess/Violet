@@ -4,6 +4,8 @@ import VioletParser
 import VioletBytecode
 @testable import VioletCompiler
 
+// cSpell:ignore subscr
+
 /// Use './Scripts/dump' for reference.
 class CompileAssign: CompileTestCase {
 

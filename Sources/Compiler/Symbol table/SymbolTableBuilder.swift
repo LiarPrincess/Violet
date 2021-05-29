@@ -5,6 +5,8 @@ import VioletBytecode
 // In CPython:
 // Python -> symtable.c
 
+// cSpell:ignore argannotations
+
 public final class SymbolTableBuilder {
 
   private let impl: SymbolTableBuilderImpl
@@ -20,8 +22,6 @@ public final class SymbolTableBuilder {
 
 /// Just like `Compiler` is a wrapper for `CompilerImpl`,
 /// we have `SymbolTableBuilder` as a wrapper for `SymbolTableBuilderImpl`.
-///
-/// See comment above `CompilerImpl` for details.
 internal final class SymbolTableBuilderImpl:
   ASTVisitor, StatementVisitor, ExpressionVisitor {
 
@@ -149,12 +149,12 @@ internal final class SymbolTableBuilderImpl:
     if flags.contains(.defParam) {
       self.currentScope.parameterNames.append(mangled)
     } else if flags.contains(.defGlobal) {
-      var globalsToSet = flagsToSet
+      var globalFlagsToSet = flagsToSet
       if let currentGlobal = self.topScope.symbols[mangled] {
-        globalsToSet.formUnion(currentGlobal.flags)
+        globalFlagsToSet.formUnion(currentGlobal.flags)
       }
 
-      let globalInfo = SymbolInfo(flags: globalsToSet, location: firstLocation)
+      let globalInfo = SymbolInfo(flags: globalFlagsToSet, location: firstLocation)
       self.topScope.symbols[mangled] = globalInfo
     }
   }

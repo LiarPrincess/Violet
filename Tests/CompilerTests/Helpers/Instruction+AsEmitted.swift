@@ -63,32 +63,32 @@ extension CodeObject {
     case .binaryOr:
       return EmittedInstruction(.binaryOr)
 
-    case .inplacePower:
-      return EmittedInstruction(.inplacePower)
-    case .inplaceMultiply:
-      return EmittedInstruction(.inplaceMultiply)
-    case .inplaceMatrixMultiply:
-      return EmittedInstruction(.inplaceMatrixMultiply)
-    case .inplaceFloorDivide:
-      return EmittedInstruction(.inplaceFloorDivide)
-    case .inplaceTrueDivide:
-      return EmittedInstruction(.inplaceTrueDivide)
-    case .inplaceModulo:
-      return EmittedInstruction(.inplaceModulo)
-    case .inplaceAdd:
-      return EmittedInstruction(.inplaceAdd)
-    case .inplaceSubtract:
-      return EmittedInstruction(.inplaceSubtract)
-    case .inplaceLShift:
-      return EmittedInstruction(.inplaceLShift)
-    case .inplaceRShift:
-      return EmittedInstruction(.inplaceRShift)
-    case .inplaceAnd:
-      return EmittedInstruction(.inplaceAnd)
-    case .inplaceXor:
-      return EmittedInstruction(.inplaceXor)
-    case .inplaceOr:
-      return EmittedInstruction(.inplaceOr)
+    case .inPlacePower:
+      return EmittedInstruction(.inPlacePower)
+    case .inPlaceMultiply:
+      return EmittedInstruction(.inPlaceMultiply)
+    case .inPlaceMatrixMultiply:
+      return EmittedInstruction(.inPlaceMatrixMultiply)
+    case .inPlaceFloorDivide:
+      return EmittedInstruction(.inPlaceFloorDivide)
+    case .inPlaceTrueDivide:
+      return EmittedInstruction(.inPlaceTrueDivide)
+    case .inPlaceModulo:
+      return EmittedInstruction(.inPlaceModulo)
+    case .inPlaceAdd:
+      return EmittedInstruction(.inPlaceAdd)
+    case .inPlaceSubtract:
+      return EmittedInstruction(.inPlaceSubtract)
+    case .inPlaceLShift:
+      return EmittedInstruction(.inPlaceLShift)
+    case .inPlaceRShift:
+      return EmittedInstruction(.inPlaceRShift)
+    case .inPlaceAnd:
+      return EmittedInstruction(.inPlaceAnd)
+    case .inPlaceXor:
+      return EmittedInstruction(.inPlaceXor)
+    case .inPlaceOr:
+      return EmittedInstruction(.inPlaceOr)
 
     case let .compareOp(arg):
       return EmittedInstruction(.compareOp, self.toString(arg))
@@ -195,14 +195,14 @@ extension CodeObject {
     case let .deleteFast(variableIndex: arg):
       return EmittedInstruction(.deleteFast, self.getVariableName(arg))
 
-    case let .loadDeref(cellOrFreeIndex: arg):
-      return EmittedInstruction(.loadDeref, self.getCellOrFreeName(arg))
-    case let .storeDeref(cellOrFreeIndex: arg):
-      return EmittedInstruction(.storeDeref, self.getCellOrFreeName(arg))
-    case let .deleteDeref(cellOrFreeIndex: arg):
-      return EmittedInstruction(.deleteDeref, self.getCellOrFreeName(arg))
-    case let .loadClassDeref(cellOrFreeIndex: arg):
-      return EmittedInstruction(.loadClassDeref, self.getCellOrFreeName(arg))
+    case let .loadCellOrFree(cellOrFreeIndex: arg):
+      return EmittedInstruction(.loadCellOrFree, self.getCellOrFreeName(arg))
+    case let .storeCellOrFree(cellOrFreeIndex: arg):
+      return EmittedInstruction(.storeCellOrFree, self.getCellOrFreeName(arg))
+    case let .deleteCellOrFree(cellOrFreeIndex: arg):
+      return EmittedInstruction(.deleteCellOrFree, self.getCellOrFreeName(arg))
+    case let .loadClassCell(cellOrFreeIndex: arg):
+      return EmittedInstruction(.loadClassCell, self.getCellOrFreeName(arg))
 
     case let .makeFunction(arg):
       return EmittedInstruction(.makeFunction, String(describing: arg.rawValue))

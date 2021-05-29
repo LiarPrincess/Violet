@@ -28,7 +28,7 @@ extension CompilerImpl {
 
   /// compiler_for(struct compiler *c, stmt_ty s)
   ///
-  /// This is also usefull:
+  /// This is also useful:
   /// https://docs.python.org/3.7/tutorial/controlflow.html
   ///
   /// ```c
@@ -85,7 +85,7 @@ extension CompilerImpl {
 
   /// compiler_while(struct compiler *c, stmt_ty s)
   ///
-  /// This is also usefull:
+  /// This is also useful:
   /// https://docs.python.org/3.7/tutorial/controlflow.html
   ///
   /// ```c
@@ -136,7 +136,7 @@ extension CompilerImpl {
 
   /// compiler_if(struct compiler *c, stmt_ty s)
   ///
-  /// This is also usefull:
+  /// This is also useful:
   /// https://docs.python.org/3.7/tutorial/controlflow.html
   ///
   /// ```c
@@ -316,7 +316,7 @@ extension CompilerImpl {
 
   /// compiler_continue(struct compiler *c)
   ///
-  /// This is also usefull:
+  /// This is also useful:
   /// https://docs.python.org/3.7/tutorial/controlflow.html
   internal func visit(_ node: ContinueStmt) throws {
     guard let blockType = self.blockStack.last else {
@@ -361,7 +361,7 @@ extension CompilerImpl {
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
   ///
-  /// This is also usefull:
+  /// This is also useful:
   /// https://docs.python.org/3.7/tutorial/controlflow.html
   internal func visit(_ node: BreakStmt) throws {
     if !self.isInLoop {

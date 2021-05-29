@@ -59,21 +59,21 @@ extension CodeObjectBuilder {
     }
   }
 
-  internal func appendInplaceOperator(_ op: BinaryOpExpr.Operator) {
+  internal func appendInPlaceOperator(_ op: BinaryOpExpr.Operator) {
     switch op {
-    case .add: self.appendInplaceAdd()
-    case .sub: self.appendInplaceSubtract()
-    case .mul: self.appendInplaceMultiply()
-    case .matMul: self.appendInplaceMatrixMultiply()
-    case .div: self.appendInplaceTrueDivide()
-    case .modulo: self.appendInplaceModulo()
-    case .pow: self.appendInplacePower()
-    case .leftShift: self.appendInplaceLShift()
-    case .rightShift: self.appendInplaceRShift()
-    case .bitOr: self.appendInplaceOr()
-    case .bitXor: self.appendInplaceXor()
-    case .bitAnd: self.appendInplaceAnd()
-    case .floorDiv: self.appendInplaceFloorDivide()
+    case .add: self.appendInPlaceAdd()
+    case .sub: self.appendInPlaceSubtract()
+    case .mul: self.appendInPlaceMultiply()
+    case .matMul: self.appendInPlaceMatrixMultiply()
+    case .div: self.appendInPlaceTrueDivide()
+    case .modulo: self.appendInPlaceModulo()
+    case .pow: self.appendInPlacePower()
+    case .leftShift: self.appendInPlaceLShift()
+    case .rightShift: self.appendInPlaceRShift()
+    case .bitOr: self.appendInPlaceOr()
+    case .bitXor: self.appendInPlaceXor()
+    case .bitAnd: self.appendInPlaceAnd()
+    case .floorDiv: self.appendInPlaceFloorDivide()
     }
   }
 

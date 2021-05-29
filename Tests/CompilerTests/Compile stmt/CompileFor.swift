@@ -103,7 +103,7 @@ class CompileFor: CompileTestCase {
   // MARK: - Continue
 
   /// for person in castle:
-  ///  continue <- dont't try this at home kids
+  ///  continue <- don't try this at home kids
   ///  becomeItem
   ///
   ///  0 SETUP_LOOP              18 (to 20)
