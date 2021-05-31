@@ -152,31 +152,31 @@ and labels properties of 'CodeObject'.
   -}
 
   -- Implements in-place TOS = TOS1 ** TOS.
-  | InplacePower
+  | InPlacePower
   -- Implements in-place TOS = TOS1 * TOS.
-  | InplaceMultiply
+  | InPlaceMultiply
   -- Implements in-place TOS = TOS1 @ TOS.
-  | InplaceMatrixMultiply
+  | InPlaceMatrixMultiply
   -- Implements in-place TOS = TOS1 // TOS.
-  | InplaceFloorDivide
+  | InPlaceFloorDivide
   -- Implements in-place TOS = TOS1 / TOS.
-  | InplaceTrueDivide
+  | InPlaceTrueDivide
   -- Implements in-place TOS = TOS1 % TOS.
-  | InplaceModulo
+  | InPlaceModulo
   -- Implements in-place TOS = TOS1 + TOS.
-  | InplaceAdd
+  | InPlaceAdd
   -- Implements in-place TOS = TOS1 - TOS.
-  | InplaceSubtract
+  | InPlaceSubtract
   -- Implements in-place TOS = TOS1 << TOS.
-  | InplaceLShift
+  | InPlaceLShift
   -- Implements in-place TOS = TOS1 >> TOS.
-  | InplaceRShift
+  | InPlaceRShift
   -- Implements in-place TOS = TOS1 & TOS.
-  | InplaceAnd
+  | InPlaceAnd
   -- Implements in-place TOS = TOS1 ^ TOS.
-  | InplaceXor
+  | InPlaceXor
   -- Implements in-place TOS = TOS1 | TOS.
-  | InplaceOr
+  | InPlaceOr
 
 {- ----------- -}
 {-  Comparison -}
@@ -275,7 +275,7 @@ and labels properties of 'CodeObject'.
   -- Calls `list.append(TOS[-i], TOS)`. Container object remains on the stack.
   -- Used to implement list comprehensions.
   | ListAppend(Item)
-  -- Calls `dict.setitem(TOS1[-i], TOS, TOS1)`. Container object remains on the stack.
+  -- Calls `dict.setItem(TOS1[-i], TOS, TOS1)`. Container object remains on the stack.
   -- Used to implement dict comprehensions.
   | MapAdd(Item)
 
@@ -373,15 +373,15 @@ and labels properties of 'CodeObject'.
 
   -- Loads the cell contained in slot i of the cell and free variable storage.
   -- Pushes a reference to the object the cell contains on the stack.
-  | LoadDeref(CellOrFreeIndex cellOrFreeIndex)
+  | LoadCellOrFree(CellOrFreeIndex cellOrFreeIndex)
   -- Stores TOS into the cell contained in slot i of the cell and free variable storage.
-  | StoreDeref(CellOrFreeIndex cellOrFreeIndex)
+  | StoreCellOrFree(CellOrFreeIndex cellOrFreeIndex)
   -- Empties the cell contained in slot i of the cell and free variable storage.
   -- Used by the del statement.
-  | DeleteDeref(CellOrFreeIndex cellOrFreeIndex)
-  -- Much like `LoadDeref` but first checks the locals dictionary before consulting the cell.
+  | DeleteCellOrFree(CellOrFreeIndex cellOrFreeIndex)
+  -- Much like `LoadCellOrFree` but first checks the locals dictionary before consulting the cell.
   -- This is used for loading free variables in class bodies.
-  | LoadClassDeref(CellOrFreeIndex cellOrFreeIndex)
+  | LoadClassCell(CellOrFreeIndex cellOrFreeIndex)
 
 {- ---------- -}
 {-  Function  -}
@@ -436,7 +436,7 @@ and labels properties of 'CodeObject'.
   -- - (if `hasKeywordArguments` is set) mapping object containing keyword arguments
   -- - iterable object containing positional arguments and a callable object to call
   --
-  -- `BuildmapUnpackWithCall` and `BuildTupleUnpackWithCall` can be used for
+  -- `BuildMapUnpackWithCall` and `BuildTupleUnpackWithCall` can be used for
   -- merging multiple mapping objects and iterables containing arguments.
   --
   -- It will:
@@ -488,7 +488,7 @@ and labels properties of 'CodeObject'.
 
   -- Imports the module `name`.
   --
-  -- TOS and TOS1 are popped and provide the `fromlist` and `level` arguments of `Import()`.
+  -- TOS and TOS1 are popped and provide the `from-list` and `level` arguments of `Import()`.
   -- The module object is pushed onto the stack.
   -- The current namespace is not affected: for a proper import statement,
   -- a subsequent StoreFast instruction modifies the namespace.
@@ -517,11 +517,11 @@ and labels properties of 'CodeObject'.
   | EndFinally
 
   -- Pushes a try block from a try-except clause onto the block stack.
-  -- `delta` points to the first except block.
+  -- `firstExceptLabel` points to the first except block.
   | SetupExcept(LabelIndex firstExceptLabel)
 
   -- Pushes a try block from a try-except clause onto the block stack.
-  -- `delta` points to the finally block.
+  -- `finallyStartLabel` points to the finally block.
   | SetupFinally(LabelIndex finallyStartLabel)
 
   -- Raises an exception using one of the 3 forms of the raise statement,
@@ -553,8 +553,8 @@ and labels properties of 'CodeObject'.
   -- TOS is the context manager’s `__exit__()` bound method.
   -- Below TOS are 1–3 values indicating how/why the finally clause was entered:
   -- - `SECOND = None`
-  -- - `(SECOND, THIRD) = (WHY_{RETURN,CONTINUE}), retval`
-  -- - `SECOND = WHY_*; no retval below it`
+  -- - `(SECOND, THIRD) = (WHY_{RETURN,CONTINUE}), return value`
+  -- - `SECOND = WHY_*; no return value below it`
   -- - `(SECOND, THIRD, FOURTH) = exc_info()`
   -- In the last case, `TOS(SECOND, THIRD, FOURTH)` is called,
   -- otherwise `TOS(None, None, None)`.
@@ -566,7 +566,7 @@ and labels properties of 'CodeObject'.
   -- If the stack represents an exception, and the function call returns a ‘true’ value,
   -- this information is “zapped” and replaced with a single WhySilenced
   -- to prevent EndFinally from re-raising the exception.
-  -- (But non-local gotos will still be resumed.)
+  -- (But non-local goto will still be resumed.)
   | WithCleanupFinish
 
   -- Resolves `AEnter` and `AExit` from the object on top of the stack.

@@ -202,7 +202,7 @@ public class Lexer {
     exit(EXIT_FAILURE)
   }
 
-  /// Print all tokens up to eof (usefull for debugging).
+  /// Print all tokens up to eof (useful for debugging).
   public func dumpTokens() {
     while true {
       let token = self.getToken()

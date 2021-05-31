@@ -120,9 +120,9 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   Expr* bases,
   -- `keywords` is a list of keyword nodes, principally for ‘metaclass’.
   --  Other keywords will be passed to the metaclass, as per PEP-3115.
-  -- `starargs` and kwargs are each a single node, as in a function call.
-  --  starargs will be expanded to join the list of base classes,
-  --  and kwargs will be passed to the metaclass.
+  --  `*args` and `kwargs` are each a single node, as in a function call.
+  --  `*args` will be expanded to join the list of base classes,
+  --  and `kwargs` will be passed to the metaclass.
   KeywordArgument* keywords,
   -- `body` is a list of nodes representing the code within the class definition.
   Stmt+ body,
@@ -256,7 +256,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 
 -- A `with` block.
 @class WithStmt: Stmt = (
-  -- List of `Withitem` nodes representing the context managers.
+  -- List of `WithItem` nodes representing the context managers.
   WithItem+ items,
   -- Indented block inside the context.
   Stmt+ body
@@ -264,7 +264,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 
 -- An `async with` definition.
 @class AsyncWithStmt: Stmt = (
-  -- List of `Withitem` nodes representing the context managers.
+  -- List of `WithItem` nodes representing the context managers.
   WithItem+ items,
   -- Indented block inside the context.
   Stmt+ body

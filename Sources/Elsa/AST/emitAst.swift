@@ -1,5 +1,7 @@
 import Foundation
 
+// cSpell:ignore kwonlyargs
+
 public func emitAst(inputFile: URL, outputFile: URL) {
   withRedirectedStandardOutput(to: outputFile) {
     emitAst(inputFile: inputFile)
@@ -19,6 +21,7 @@ private func emitAst(inputFile: URL) {
   print("// swiftlint:disable trailing_newline")
   print("// swiftlint:disable vertical_whitespace")
   print("// swiftlint:disable vertical_whitespace_closing_braces")
+  print("// cSpell:ignore kwonlyargs")
   print("")
 
   let entities = parse(url: inputFile)
@@ -224,14 +227,14 @@ private func printVisitor<T: ProductType>(def: T) {
       public func accept<V: \(prefix)Visitor>(
           _ visitor: V
       ) throws -> V.\(prefix)Result {
-        trap("'accept' method should be overriden in subclass")
+        trap("'accept' method should be overridden in subclass")
       }
 
       public func accept<V: \(prefix)VisitorWithPayload>(
           _ visitor: V,
           payload: V.\(prefix)Payload
       ) throws -> V.\(prefix)Result {
-        trap("'accept' method should be overriden in subclass")
+        trap("'accept' method should be overridden in subclass")
       }
     """)
   } else if def.isASTSubclass || def.isStmtSubclass || def.isExprSubclass {
