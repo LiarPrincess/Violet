@@ -2,10 +2,11 @@ import Foundation
 import VioletCore
 import VioletObjects
 
+// swiftlint:disable file_length
+// cSpell:ignore unwinded
+
 // In CPython:
 // Python -> main.c
-
-// swiftlint:disable file_length
 
 extension VM {
 

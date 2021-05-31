@@ -62,7 +62,7 @@ extension Eval {
 
     case let .exception(e):
       // We are still handling the same exception
-      // Also exception was allready filled when we started finally,
+      // Also exception was already filled when we started finally,
       // so we don't need to add current line to traceback.
       return .exception(e, fillTracebackAndContext: false)
 

@@ -75,7 +75,7 @@ extension Eval {
   private func importAllFrom(module: PyObject) -> PyResult<Void> {
     // Names can come from:
     // - '__all__' - user decides which names are exported
-    // - '__dict__' - ignore the ones that start with undercore
+    // - '__dict__' - ignore the ones that start with underscore
 
     let namesObject: PyObject
     let skipLeadingUnderscores: Bool

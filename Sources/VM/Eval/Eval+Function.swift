@@ -2,6 +2,7 @@ import VioletBytecode
 import VioletObjects
 
 // swiftlint:disable file_length
+// cSpell:ignore kwnames
 
 extension Eval {
 
@@ -205,7 +206,7 @@ extension Eval {
   /// - (if `hasKeywordArguments` is set) mapping object containing keyword arguments
   /// - iterable object containing positional arguments and a callable object to call
   ///
-  /// `BuildmapUnpackWithCall` and `BuildTupleUnpackWithCall` can be used for
+  /// `BuildMapUnpackWithCall` and `BuildTupleUnpackWithCall` can be used for
   /// merging multiple mapping objects and iterables containing arguments.
   ///
   /// It will:

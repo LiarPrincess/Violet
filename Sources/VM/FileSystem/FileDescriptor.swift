@@ -1,3 +1,7 @@
+// swiftlint:disable force_unwrapping
+// swiftlint:disable file_length
+// cSpell:ignore corelibs nulldevice closeopt
+
 // So, we are going to write a custom file descriptor.
 // .
 // ..
@@ -16,7 +20,7 @@
 //    But they are not usable on 10.14.
 //
 // === Problems to solve ===
-// This is why the 'always traping' file operations are no-go:
+// This is why the 'always trapping' file operations are no-go:
 // 1) Error handling - when can we crash?
 //  - It is acceptable for Violet to crash when some core invariant is not satisfied.
 //    Working with invalid state while having access to effects (for example IO)
@@ -29,12 +33,12 @@
 //    But that forces everyone to upgrade, so NOPE.
 // 2) Link against 'https://github.com/apple/swift-corelibs-foundation'.
 //    But then we have to describe it in our README and that may seem like
-//    overcomplicating/magic for most of the users (even if we automate this).
+//    magic for most of the users (even if we automate this).
 //    And if that fails (even for a single user) then that would be a TERRIBLE
 //    user experience (literally the worst thing). NOPE.
 // 3) Use 'FileHandle' from 'swift-corelibs-foundation' as a base for our own wrapper.
 //    In README we can describe it as: 'works only on macOS and Linux,
-//    Windows not suppported' (we could copy Windows part, but we won't).
+//    Windows not supported' (we could copy Windows part, but we won't).
 //    This is simple, transparent and SETS CLEAR BOUNDARIES.
 // 4) ?
 //    Placeholder for some other simple solution that I will feel dump about
@@ -48,9 +52,6 @@
 
 import VioletCore
 import Foundation.NSData
-
-// swiftlint:disable force_unwrapping
-// swiftlint:disable file_length
 
 // FileHandle has a .read(upToCount:) method.
 // Just invoking read() will cause an ambiguity warning. Use _read instead.

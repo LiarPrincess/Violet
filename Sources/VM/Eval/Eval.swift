@@ -3,6 +3,8 @@ import VioletCore
 import VioletBytecode
 import VioletObjects
 
+// cSpell:ignore ceval localsplus
+
 // In CPython:
 // Python -> ceval.c
 
@@ -214,7 +216,7 @@ internal struct Eval {
     let instruction = self.fetchInstruction()
 
     // According to CPython doing single switch will trash our jump prediction
-    // (unles you have the same opcode multiple times in a row).
+    // (unless you have the same opcode multiple times in a row).
     // It is a valid concern, but we don't care about this (for now).
     switch instruction {
     case .nop:
@@ -267,32 +269,32 @@ internal struct Eval {
     case .binaryOr:
       return self.binaryOr()
 
-    case .inplacePower:
-      return self.inplacePower()
-    case .inplaceMultiply:
-      return self.inplaceMultiply()
-    case .inplaceMatrixMultiply:
-      return self.inplaceMatrixMultiply()
-    case .inplaceFloorDivide:
-      return self.inplaceFloorDivide()
-    case .inplaceTrueDivide:
-      return self.inplaceTrueDivide()
-    case .inplaceModulo:
-      return self.inplaceModulo()
-    case .inplaceAdd:
-      return self.inplaceAdd()
-    case .inplaceSubtract:
-      return self.inplaceSubtract()
-    case .inplaceLShift:
-      return self.inplaceLShift()
-    case .inplaceRShift:
-      return self.inplaceRShift()
-    case .inplaceAnd:
-      return self.inplaceAnd()
-    case .inplaceXor:
-      return self.inplaceXor()
-    case .inplaceOr:
-      return self.inplaceOr()
+    case .inPlacePower:
+      return self.inPlacePower()
+    case .inPlaceMultiply:
+      return self.inPlaceMultiply()
+    case .inPlaceMatrixMultiply:
+      return self.inPlaceMatrixMultiply()
+    case .inPlaceFloorDivide:
+      return self.inPlaceFloorDivide()
+    case .inPlaceTrueDivide:
+      return self.inPlaceTrueDivide()
+    case .inPlaceModulo:
+      return self.inPlaceModulo()
+    case .inPlaceAdd:
+      return self.inPlaceAdd()
+    case .inPlaceSubtract:
+      return self.inPlaceSubtract()
+    case .inPlaceLShift:
+      return self.inPlaceLShift()
+    case .inPlaceRShift:
+      return self.inPlaceRShift()
+    case .inPlaceAnd:
+      return self.inPlaceAnd()
+    case .inPlaceXor:
+      return self.inPlaceXor()
+    case .inPlaceOr:
+      return self.inPlaceOr()
 
     case let .compareOp(type):
       assert(extendedArg == 0)
@@ -431,18 +433,18 @@ internal struct Eval {
       let extended = self.extend(base: extendedArg, arg: index)
       return self.deleteFast(index: extended)
 
-    case let .loadDeref(cellOrFreeIndex: index):
+    case let .loadCellOrFree(cellOrFreeIndex: index):
       let extended = self.extend(base: extendedArg, arg: index)
-      return self.loadDeref(cellOrFreeIndex: extended)
-    case let .storeDeref(cellOrFreeIndex: index):
+      return self.loadCellOrFree(cellOrFreeIndex: extended)
+    case let .storeCellOrFree(cellOrFreeIndex: index):
       let extended = self.extend(base: extendedArg, arg: index)
-      return self.storeDeref(cellOrFreeIndex: extended)
-    case let .deleteDeref(cellOrFreeIndex: index):
+      return self.storeCellOrFree(cellOrFreeIndex: extended)
+    case let .deleteCellOrFree(cellOrFreeIndex: index):
       let extended = self.extend(base: extendedArg, arg: index)
-      return self.deleteDeref(cellOrFreeIndex: extended)
-    case let .loadClassDeref(cellOrFreeIndex: index):
+      return self.deleteCellOrFree(cellOrFreeIndex: extended)
+    case let .loadClassCell(cellOrFreeIndex: index):
       let extended = self.extend(base: extendedArg, arg: index)
-      return self.loadClassDeref(cellOrFreeIndex: extended)
+      return self.loadClassCell(cellOrFreeIndex: extended)
 
     case let .makeFunction(flags):
       assert(extendedArg == 0)

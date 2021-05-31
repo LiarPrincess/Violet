@@ -2,6 +2,8 @@ import Foundation
 import VioletCore
 import VioletObjects
 
+// cSpell:ignore closeit zipfile PYTHONSTARTUP
+
 // In CPython:
 // Python -> main.c
 

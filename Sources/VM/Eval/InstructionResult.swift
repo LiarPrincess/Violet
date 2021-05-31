@@ -2,7 +2,7 @@ import VioletObjects
 
 /// Result of running of a single instruction.
 internal enum InstructionResult {
-  /// Instruction executed succesfully.
+  /// Instruction executed successfully.
   case ok
   /// Instruction requested stack unwind (`return`, `exception` etc.).
   case unwind(UnwindReason)

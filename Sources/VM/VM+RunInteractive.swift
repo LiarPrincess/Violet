@@ -193,8 +193,8 @@ extension VM {
       // This has an interesting interaction with autocompletion in XCode
       // integrated terminal:
       // 1. We type: 'print("abc'
-      // 2. XCode autocompletes it to: 'print("abc")'
-      // 3. We will never get the '")' part and fail to compile
+      // 2. XCode auto-completes it to: 'print("abc")'
+      // 3. Violet will never get the '")' part and fail to compile
       let line: String
       switch stdin.readLine() {
       case let .value(s): line = s

@@ -158,7 +158,7 @@ extension VM {
         trap("Closure can only contain cells, not '\(t)'.")
       }
 
-      // Free are laways after cells
+      // Free are always after cells
       let cellOrFreeIndex = cellCount + index
       frame.cellsAndFreeVariables[cellOrFreeIndex] = cell
     }

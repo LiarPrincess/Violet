@@ -5,7 +5,7 @@ import VioletObjects
 #if DEBUG
 /// Change this if you feel like it.
 /// You have a whole 2 options to choose from, so go wild
-/// (and rememeber to wash your hands after, also floss).
+/// (and remember to wash your hands after, also floss).
 private let isEnabled = false
 #else
 /// Do not change this.

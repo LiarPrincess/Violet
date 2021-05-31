@@ -2,6 +2,7 @@ import Foundation
 import VioletObjects
 
 // swiftlint:disable file_length
+// cSpell:ignore BPOSIX fileio nameobj
 
 // A lot of this code was based on:
 // https://github.com/apple/swift-corelibs-foundation/blob/master/Sources/

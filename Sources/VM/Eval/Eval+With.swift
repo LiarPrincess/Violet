@@ -66,8 +66,8 @@ extension Eval {
   /// At the top of the stack are 1–2 values indicating how/why the finally
   /// clause was entered:
   /// - `(None)` - nothing unusual happened
-  /// - `(Int, Value)` where Int is either `PushFinallyReason.retutn` or
-  ///    `PushFinallyReason.continue` - we were retutning/continuing
+  /// - `(Int, Value)` where Int is either `PushFinallyReason.return` or
+  ///    `PushFinallyReason.continue` - we were returning/continuing
   /// - `(Int)` where Int is other `PushFinallyReason` marker; no retval below it
   /// - `(PyBaseException, PyBaseException or None)`
   ///    where 1st exception is the exception that we are currently handling
@@ -159,7 +159,7 @@ extension Eval {
   /// If the stack represents an exception, and the function call returns a ‘true’ value,
   /// this information is “zapped” and replaced with a single WhySilenced
   /// to prevent EndFinally from re-raising the exception.
-  /// (But non-local gotos will still be resumed.)
+  /// (But non-local goto will still be resumed.)
   internal func withCleanupFinish() -> InstructionResult {
     // Most of the time 'result' is the result of calling '__exit__'.
     let result = self.stack.pop()

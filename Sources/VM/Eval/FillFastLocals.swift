@@ -101,7 +101,7 @@ internal struct FillFastLocals {
     self.set(index: self.totalArgs, value: tuple)
   }
 
-  /// **kwags
+  /// **kwargs
   private func setVarKwargs(value: PyDict) {
     let index = self.hasVarArgs ? self.totalArgs + 1 : self.totalArgs
     self.set(index: index, value: value)
@@ -129,7 +129,7 @@ internal struct FillFastLocals {
   // MARK: - Kwargs
 
   private mutating func fillFromKwargs() -> PyBaseException? {
-    // Create a dictionary for keyword parameters (**kwags)
+    // Create a dictionary for keyword parameters (**kwargs)
     // We have to do this even if we were not called with **kwargs.
     if self.hasVarKeywords {
       let dict = Py.newDict()
@@ -229,7 +229,7 @@ internal struct FillFastLocals {
 
   // MARK: - Kwargs defaults
 
-  /// Add missing keyword arguments (copy default values from kwdefs).
+  /// Add missing keyword arguments (copy default values from kwDefaults).
   private func fillFromKwArgsDefaults() -> PyBaseException? {
     guard let kwDefaults = self.kwDefaults else {
       return nil

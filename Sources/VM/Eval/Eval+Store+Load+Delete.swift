@@ -193,7 +193,7 @@ extension Eval {
 
   /// Loads the cell contained in slot i of the cell and free variable storage.
   /// Pushes a reference to the object the cell contains on the stack.
-  internal func loadDeref(cellOrFreeIndex index: Int) -> InstructionResult {
+  internal func loadCellOrFree(cellOrFreeIndex index: Int) -> InstructionResult {
     let cell = self.getCellOrFree(at: index)
 
     if let content = cell.content {
@@ -206,7 +206,7 @@ extension Eval {
 
   /// Stores TOS into the cell contained in slot i of the cell
   /// and free variable storage.
-  internal func storeDeref(cellOrFreeIndex index: Int) -> InstructionResult {
+  internal func storeCellOrFree(cellOrFreeIndex index: Int) -> InstructionResult {
     let cell = self.getCellOrFree(at: index)
 
     let value = self.stack.pop()
@@ -216,7 +216,7 @@ extension Eval {
 
   /// Empties the cell contained in slot i of the cell and free variable storage.
   /// Used by the del statement.
-  internal func deleteDeref(cellOrFreeIndex index: Int) -> InstructionResult {
+  internal func deleteCellOrFree(cellOrFreeIndex index: Int) -> InstructionResult {
     let cell = self.getCellOrFree(at: index)
 
     let isEmpty = cell.content == nil
@@ -231,7 +231,7 @@ extension Eval {
   /// Much like `LoadDeref` but first checks the locals dictionary before
   /// consulting the cell.
   /// This is used for loading free variables in class bodies.
-  internal func loadClassDeref(cellOrFreeIndex: Int) -> InstructionResult {
+  internal func loadClassCell(cellOrFreeIndex: Int) -> InstructionResult {
     assert(cellOrFreeIndex >= self.code.cellVariableCount)
 
     let freeIndex = cellOrFreeIndex - self.code.cellVariableCount

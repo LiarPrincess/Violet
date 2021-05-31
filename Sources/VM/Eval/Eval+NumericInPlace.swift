@@ -6,7 +6,7 @@ extension Eval {
   // MARK: - Add
 
   /// Implements in-place TOS = TOS1 + TOS.
-  internal func inplaceAdd() -> InstructionResult {
+  internal func inPlaceAdd() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
 
@@ -22,7 +22,7 @@ extension Eval {
   // MARK: - Sub
 
   /// Implements in-place TOS = TOS1 - TOS.
-  internal func inplaceSubtract() -> InstructionResult {
+  internal func inPlaceSubtract() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
 
@@ -38,7 +38,7 @@ extension Eval {
   // MARK: - Mul
 
   /// Implements in-place TOS = TOS1 * TOS.
-  internal func inplaceMultiply() -> InstructionResult {
+  internal func inPlaceMultiply() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
 
@@ -52,7 +52,7 @@ extension Eval {
   }
 
   /// Implements in-place TOS = TOS1 @ TOS.
-  internal func inplaceMatrixMultiply() -> InstructionResult {
+  internal func inPlaceMatrixMultiply() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
 
@@ -66,7 +66,7 @@ extension Eval {
   }
 
   /// Implements in-place TOS = TOS1 ** TOS.
-  internal func inplacePower() -> InstructionResult {
+  internal func inPlacePower() -> InstructionResult {
     let exp = self.stack.pop()
     let base = self.stack.top
 
@@ -82,7 +82,7 @@ extension Eval {
   // MARK: - Div
 
   /// Implements in-place TOS = TOS1 // TOS.
-  internal func inplaceFloorDivide() -> InstructionResult {
+  internal func inPlaceFloorDivide() -> InstructionResult {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
@@ -96,7 +96,7 @@ extension Eval {
   }
 
   /// Implements in-place TOS = TOS1 / TOS.
-  internal func inplaceTrueDivide() -> InstructionResult {
+  internal func inPlaceTrueDivide() -> InstructionResult {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
@@ -110,7 +110,7 @@ extension Eval {
   }
 
   /// Implements in-place TOS = TOS1 % TOS.
-  internal func inplaceModulo() -> InstructionResult {
+  internal func inPlaceModulo() -> InstructionResult {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
@@ -126,7 +126,7 @@ extension Eval {
   // MARK: - Shift
 
   /// Implements in-place TOS = TOS1 << TOS.
-  internal func inplaceLShift() -> InstructionResult {
+  internal func inPlaceLShift() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
 
@@ -140,7 +140,7 @@ extension Eval {
   }
 
   /// Implements in-place TOS = TOS1 >> TOS.
-  internal func inplaceRShift() -> InstructionResult {
+  internal func inPlaceRShift() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
 
@@ -156,7 +156,7 @@ extension Eval {
   // MARK: - Binary
 
   /// Implements in-place TOS = TOS1 & TOS.
-  internal func inplaceAnd() -> InstructionResult {
+  internal func inPlaceAnd() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
 
@@ -170,7 +170,7 @@ extension Eval {
   }
 
   /// Implements in-place TOS = TOS1 ^ TOS.
-  internal func inplaceXor() -> InstructionResult {
+  internal func inPlaceXor() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
 
@@ -184,7 +184,7 @@ extension Eval {
   }
 
   /// Implements in-place TOS = TOS1 | TOS.
-  internal func inplaceOr() -> InstructionResult {
+  internal func inPlaceOr() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
 

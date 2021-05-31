@@ -2,13 +2,15 @@ import Foundation
 import VioletCore
 import VioletObjects
 
+// cSpell:ignore signalmodule sighandler sigflags PyMODINIT
+
 // In CPython:
 // Modules -> signalmodule.c
 //
 // But since we don't have '_signal' module we will do it VM.
 // https://docs.python.org/3/library/signal.html
 //
-// This may be helpfull:
+// This may be helpful:
 // https://www.gnu.org/software/libc/manual/html_node/Signal-Handling.html#Signal-Handling
 
 // MARK: - State
