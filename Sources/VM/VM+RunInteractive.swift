@@ -219,7 +219,7 @@ extension VM {
         case .code(let c):
           return .code(c)
         case .unfinishedLongString:
-        break // We want continue our loop!
+          break // We want continue our loop!
         case .unexpectedEOF(let e):
           // - single line statement -> well… apparently it is multiline
           // - multiline statement   -> we expected correct statement
@@ -318,6 +318,8 @@ extension VM {
         return .syntaxError(e)
       }
 
+    // Warning -> Error
+    // Also, no special cases for compiler errors
     case let .lexerWarning(_, e),
          let .parserWarning(_, e),
          let .compilerWarning(_, e),

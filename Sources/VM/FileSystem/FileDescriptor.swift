@@ -11,7 +11,7 @@
 // === Why? ===
 // Darwin version of 'Foundation' (macOS 10.14.6) has following problems:
 // 1) Read/write/etc. methods are not marked as throwing.
-//    This means that operating on closed/invalid files will always trap without
+//    This means that operating on closed/invalid files will always traps without
 //    giving us a chance to handle errors (well technically…).
 //    As of 10.15 those methods are deprecated:
 //    https://developer.apple.com/documentation/foundation/filehandle/1410936-write

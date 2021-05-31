@@ -9,6 +9,8 @@ import VioletObjects
 
 extension VM {
 
+  // MARK: - Run script
+
   /// int
   /// PyRun_SimpleFileExFlags(FILE *fp, const char *filename, int closeit, ...)
   internal func run(scriptPath: String) -> PyResult<PyObject> {
@@ -52,13 +54,15 @@ extension VM {
     case let .error(e): return .error(e)
     }
 
-    // Set '__file__' (and whatever happens we need to do cleanup).
+    // Set '__file__' (remember to cleanup later!).
     let mainDict = main.getDict()
     mainDict.set(id: .__file__, to: Py.newString(scriptPath))
     defer { _ = mainDict.del(id: .__file__) }
 
     return self.eval(code: code, globals: mainDict, locals: mainDict)
   }
+
+  // MARK: - Script location
 
   private struct ScriptLocation {
     /// File to execute.

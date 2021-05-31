@@ -64,7 +64,7 @@ internal func runTest(testName: String, path: URL) {
     return
 
   case .error(let error):
-    // Try to print error to orginal 'stdout'
+    // Try to print error to original 'stdout'
     let stdout: PyTextFile
     switch Py.sys.get__stdout__() {
     case let .value(f): stdout = f

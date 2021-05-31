@@ -3,15 +3,14 @@ import VioletCore
 import VioletBytecode
 import VioletObjects
 
+// swiftlint:disable file_length
 // cSpell:ignore ceval localsplus
 
 // In CPython:
 // Python -> ceval.c
 
-// swiftlint:disable file_length
-
-/// Dummy namespace for `eval` function, just so we don't pollute `VM`
-/// with all that nonsense (but don't worry, we use `VM` as a 'catch them all'
+/// This type is a dummy namespace for `eval` function, just so we don't pollute
+/// `VM` with all that nonsense (but don't worry, we use `VM` as a 'catch them all'
 /// for all of the code that does not fit anywhere else, so it is still a mess).
 ///
 /// But wait a sec, it gets even worse:

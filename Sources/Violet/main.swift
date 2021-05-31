@@ -10,7 +10,7 @@ let vm = VM(arguments: arguments, environment: environment)
 switch vm.run() {
 case .done:
   // It worked! Yay!
-  // https://www.youtube.com/watch?v=GH6FHQJY_f8
+  // https://youtu.be/kHx5hCVN26E?t=117
   exit(0)
 
 case .systemExit(let object):
