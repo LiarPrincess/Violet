@@ -401,10 +401,10 @@ public enum Instruction {
   /// or whether the function returns, and continues with the outer-next block.
   case endFinally
   /// Pushes a try block from a try-except clause onto the block stack.
-  /// `delta` points to the first except block.
+  /// `firstExceptLabel` points to the first except block.
   case setupExcept(firstExceptLabel: UInt8)
   /// Pushes a try block from a try-except clause onto the block stack.
-  /// `delta` points to the finally block.
+  /// `finallyStartLabel` points to the finally block.
   case setupFinally(finallyStartLabel: UInt8)
   /// Raises an exception using one of the 3 forms of the raise statement,
   /// depending on the value of argc:

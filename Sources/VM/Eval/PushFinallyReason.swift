@@ -3,29 +3,33 @@ import VioletCore
 import VioletObjects
 
 /// Helper for `unwind` block and `endFinally` instruction.
-/// Basically a way to remember what we were doing before
-/// we started `finally` block.
+/// Basically a way to remember what we were doing before we started `finally`.
 ///
-/// It will work like this:
+/// It will work like this (example for `return`):
 ///
-/// Unwind `finally` block:
-/// 1. if we are unwinding because of `return`: push return value
-/// 2. push **marker**
-/// 3. execute `finally`
-///
-/// Eventually we will arrive to `endFinally` instruction:
-/// 1. pop **marker**
-/// 2. based on marker decide what we need to do
+/// ```py
+/// try:
+///   return 'elsa'
+/// finally:
+///   <push `return value` (in our example 'elsa')>
+///   <push `return marker` onto the stack>
+///   pass # executing 'finally'
+///   <`endFinally` instruction - we are still returning 'elsa'!>
+///   <pop `marker`>
+///   <based on marker decide what we need to do>
+/// ```
 internal enum PushFinallyReason {
 
   // MARK: - Marker values
 
-  private static let `return` = BigInt(0)
-  private static let `break` = BigInt(1)
-  private static let `continue` = BigInt(2)
-  private static let exception = BigInt(3)
-  private static let yield = BigInt(4)
-  private static let silenced = BigInt(5)
+  private struct Marker {
+    fileprivate static let `return` = BigInt(0)
+    fileprivate static let `break` = BigInt(1)
+    fileprivate static let `continue` = BigInt(2)
+    fileprivate static let exception = BigInt(3)
+    fileprivate static let yield = BigInt(4)
+    fileprivate static let silenced = BigInt(5)
+  }
 
   // MARK: - Push
 
@@ -45,13 +49,13 @@ internal enum PushFinallyReason {
     case yield
     /// Exception silenced by 'with'.
     ///
-    /// It happens when '__exit__' returns 'truthy' value.
+    /// It happens when `__exit__` returns 'truthy' value.
     case silenced
   }
 
   /// Remember what we were doing before we started `finally` block.
   internal static func push(reason: UnwindReason, on stack: inout ObjectStack) {
-    let marker: PushFinallyReason.Push = {
+    let value: PushFinallyReason.Push = {
       switch reason {
       case .return(let value): return .return(value)
       case .break: return .break
@@ -62,7 +66,7 @@ internal enum PushFinallyReason {
       }
     }()
 
-    PushFinallyReason.push(marker, on: &stack)
+    Self.push(value, on: &stack)
   }
 
   /// Remember what we were doing before we started `finally` block.
@@ -70,21 +74,21 @@ internal enum PushFinallyReason {
     switch value {
     case .return(let value):
       stack.push(value)
-      stack.push(Py.newInt(PushFinallyReason.return))
+      stack.push(Py.newInt(Marker.return))
     case .break:
-      stack.push(Py.newInt(PushFinallyReason.break))
+      stack.push(Py.newInt(Marker.break))
     case .continue(let loopStartLabel):
-      stack.push(Py.newInt(loopStartLabel))
-      stack.push(Py.newInt(PushFinallyReason.continue))
+      stack.push(Py.newInt(loopStartLabel)) // int -> PyInt conversion needed
+      stack.push(Py.newInt(Marker.continue))
     case .continuePy(let loopStartLabel):
       stack.push(loopStartLabel)
-      stack.push(Py.newInt(PushFinallyReason.continue))
+      stack.push(Py.newInt(Marker.continue))
     case .exception:
-      stack.push(Py.newInt(PushFinallyReason.exception))
+      stack.push(Py.newInt(Marker.exception))
     case .yield:
-      stack.push(Py.newInt(PushFinallyReason.yield))
+      stack.push(Py.newInt(Marker.yield))
     case .silenced:
-      stack.push(Py.newInt(PushFinallyReason.silenced))
+      stack.push(Py.newInt(Marker.silenced))
     }
   }
 
@@ -113,22 +117,23 @@ internal enum PushFinallyReason {
 
     if let pyInt = marker as? PyInt {
       switch pyInt.value {
-      case PushFinallyReason.return:
+      case Marker.return:
         let value = stack.pop()
         return .return(value)
-      case PushFinallyReason.break:
+      case Marker.break:
         return .break
-      case PushFinallyReason.continue:
+      case Marker.continue:
         let value = stack.pop()
         if let pyInt = value as? PyInt,
-           let int = Int(exactly: pyInt.value) { // otherwise 'invalid'
+           let int = Int(exactly: pyInt.value) {
           return .continue(loopStartLabel: int, asObject: pyInt)
         }
-      case PushFinallyReason.exception:
+        trap("Invalid argument (\(value)) for 'continue' after finally block")
+      case Marker.exception:
         assert(false)
-      case PushFinallyReason.yield:
+      case Marker.yield:
         assert(false)
-      case PushFinallyReason.silenced:
+      case Marker.silenced:
         return .silenced
       default:
         break // Try other, but probably 'invalid'

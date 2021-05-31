@@ -6,7 +6,7 @@ extension Eval {
   // MARK: - Setup
 
   /// Pushes a try block from a try-except clause onto the block stack.
-  /// `delta` points to the first except block.
+  /// `firstExceptLabel` points to the first except block.
   internal func setupExcept(firstExceptLabelIndex: Int) -> InstructionResult {
     let label = self.getLabel(index: firstExceptLabelIndex)
     let type = BlockType.setupExcept(firstExceptLabel: label)
@@ -16,7 +16,7 @@ extension Eval {
   }
 
   /// Pushes a try block from a try-except clause onto the block stack.
-  /// `delta` points to the finally block.
+  /// `finallyStartLabel` points to the finally block.
   internal func setupFinally(finallyStartLabelIndex: Int) -> InstructionResult {
     let label = self.getLabel(index: finallyStartLabelIndex)
     let type = BlockType.setupFinally(finallyStartLabel: label)
@@ -39,7 +39,7 @@ extension Eval {
       return .exception(e)
     }
 
-    self.unwindExceptHandler(block: block)
+    self.unwindExceptHandler(exceptHandlerBlock: block)
     return .ok
   }
 
@@ -62,7 +62,7 @@ extension Eval {
 
     case let .exception(e):
       // We are still handling the same exception
-      // Also exception was already filled when we started finally,
+      // Also, the exception was already filled when we started 'finally',
       // so we don't need to add current line to traceback.
       return .exception(e, fillTracebackAndContext: false)
 
@@ -76,7 +76,7 @@ extension Eval {
       }
 
       assert(block.isExceptHandler)
-      self.unwindExceptHandler(block: block)
+      self.unwindExceptHandler(exceptHandlerBlock: block)
       return .ok
 
     case .none:

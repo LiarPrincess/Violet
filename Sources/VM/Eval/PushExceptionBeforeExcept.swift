@@ -1,8 +1,29 @@
 import VioletObjects
 
-/// Helper for the situation when we want to push current exception on stack.
-/// Later we will probably want to pop this exception.
+/// Helper for the situation when we want to push current exception onto the stack.
+/// Later we will probably want to pop it.
 /// This helper will to this in a type-safe way.
+///
+/// ```py
+/// try:
+///   raise ValueError("I am an evil princess!")
+/// except:
+///   <pushing the currently handled exception onto the stack>
+///   <setting 'evil princess' as currently handled exception>
+///   pass # executing 'except'
+///   <we 'handled' the 'evil princess', now restore previous>
+/// ```
+///
+/// This is also used when we need to unwind from `except`:
+/// ```py
+/// for princess in ['elsa', 'ariel']:
+///   try:
+///     raise ValueError("I am an evil princess!")
+///   except:
+///     <pushing the currently handled exception onto the stack>
+///     <setting 'evil princess' as currently handled exception>
+///     continue # Our goal is to discard 'evil princess' and restore previous
+/// ```
 internal enum PushExceptionBeforeExcept {
 
   internal static func push(_ exception: PyBaseException?,
@@ -34,6 +55,9 @@ internal enum PushExceptionBeforeExcept {
   }
 
   // MARK: - Marker
+
+  /// Number of the values pushed onto the stack
+  internal static let countOnStack = 1
 
   private static var noExceptionMarker: PyObject {
     return Py.none

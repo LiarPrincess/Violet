@@ -14,6 +14,7 @@ private let isEnabled = false
 private let isEnabled = false
 #endif
 
+/// Printing various things (to help with debugging)
 internal enum Debug {
 
   // MARK: - Parser, compiler

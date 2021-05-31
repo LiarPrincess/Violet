@@ -21,7 +21,7 @@ extension Eval {
   /// If you want to just `popBlock` then use `self.blockStack.pop()`!
   internal func popBlockInstruction() -> InstructionResult {
     if let block = self.blockStack.pop() {
-      self.unwindBlock(block: block)
+      self.unwindStackToMatchTheOneBeforeBlock(block: block)
       return .ok
     }
 

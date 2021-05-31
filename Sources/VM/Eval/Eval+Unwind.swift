@@ -15,7 +15,7 @@ internal enum UnwindReason {
   /// Instruction requested a `break`.
   /// We will unwind stopping at nearest loop.
   case `break`
-  /// Instruction requested a `break`.
+  /// Instruction requested a `continue`.
   /// We will unwind stopping at nearest loop.
   case `continue`(loopStartLabel: Int)
   /// Instruction raised an error.
@@ -25,14 +25,18 @@ internal enum UnwindReason {
   case yield
   /// Exception silenced by 'with'
   ///
-  /// It happens when '__exit__' returns 'truthy' value.
+  /// It happens when `__exit__` returns 'truthy' value.
   case silenced
 }
+
+// MARK: - Unwind result
 
 internal enum UnwindResult {
   /// Just continue code execution.
   /// Mostly used after some sort of a jump
   /// (for example `continue` jumps to the start of the loop).
+  ///
+  /// Note that the `nextInstructionIndex` may have changed!
   case continueCodeExecution
   /// We popped all of the blocks, which means
   /// that we can finally return value to caller.
@@ -57,38 +61,87 @@ extension Eval {
       switch block.type {
       case let .setupLoop(endLabel):
         if case let .continue(loopStartLabel) = reason {
-          // Do not unwind! We are still in a loop!
+          // Do not unwind! We are still in a loop! The stack stays the same!
+          //
+          // for princess in ['elsa', 'ariel']:
+          //   <loopStartLabel will put us here>
+          //   <load 'next' from iterator and put it as 'princess'>
+          //   print(princess)
+          //   continue
           self.jumpTo(instructionIndex: loopStartLabel)
           return .continueCodeExecution
         }
 
+        // We will be leaving the loop!
+        // Go back with our stack to pre-loop level.
+        //
+        // for princess in ['elsa', 'ariel']:
+        //   print(princess)
+        //   raise ValueError("Evil character appears!") # No longer in loop after this!
         _ = self.blockStack.pop()
-        self.unwindBlock(block: block)
+        self.unwindStackToMatchTheOneBeforeBlock(block: block)
 
+        // 'break' just finishes the loop and starts execution after it.
+        // Any other 'reason' (exception, return) should unwind more blocks.
+        //
+        // for princess in ['elsa', 'ariel']:
+        //   print(princess)
+        //   break
+        // <endLabel will put us here>
         if case .break = reason {
           self.jumpTo(instructionIndex: endLabel)
           return .continueCodeExecution
         }
 
       case let .setupExcept(firstExceptLabel):
+        // We will be leaving the 'try' part (even if the reason is not an exception),
+        // which means that anything done inside 'try' should be popped.
+        //
+        // for princess in ['elsa', 'ariel']:
+        //   try:
+        //     <push 'something' onto the stack>
+        //     continue # should remove this 'something' from the stack, before
+        //              # we even get to unwind responsible for the 'for loop'
+        //   except:
+        //     pass
         _ = self.blockStack.pop()
-        self.unwindBlock(block: block)
+        self.unwindStackToMatchTheOneBeforeBlock(block: block)
 
+        // If we have an exception then this is the time to start handling it.
+        //
+        // try:
+        //   raise ValueError("I am an evil princess!")
+        // except:
+        //   <firstExceptLabel will put us here>
+        //   pass
         if case let .exception(e, _) = reason {
-          self.prepareForExceptionHandling(exception: e)
+          self.pushExceptHandlerBlock()
+          self.pushCurrentlyHandledExceptionOntoTheStackAndSetNew(exception: e)
           self.jumpTo(instructionIndex: firstExceptLabel) // execute except
           return .continueCodeExecution
         }
 
       case let .setupFinally(finallyStartLabel):
+        // Similar to 'setupExcept'.
         _ = self.blockStack.pop()
-        self.unwindBlock(block: block)
+        self.unwindStackToMatchTheOneBeforeBlock(block: block)
 
+        // Similar to 'setupExcept'.
         if case let .exception(e, _) = reason {
-          self.prepareForExceptionHandling(exception: e)
+          self.pushExceptHandlerBlock() // Even though this is 'finally'
+          self.pushCurrentlyHandledExceptionOntoTheStackAndSetNew(exception: e)
           self.jumpTo(instructionIndex: finallyStartLabel) // execute finally
           return .continueCodeExecution
         }
+
+        // So… we do not have an exception, but we do have 'finally'.
+        // We have to execute the it no mater what.
+        //
+        // try:
+        //   return 'elsa'
+        // finally:
+        //   pass # executing 'finally'
+        //   <we still 'returning elsa'>
 
         // See 'PushFinallyReason' type for comment about what this is.
         PushFinallyReason.push(reason: reason, on: &self.frame.stack)
@@ -96,8 +149,9 @@ extension Eval {
         return .continueCodeExecution
 
       case .exceptHandler:
+        // Complicated case, see inside the method for details.
         _ = self.blockStack.pop()
-        self.unwindExceptHandler(block: block)
+        self.unwindExceptHandler(exceptHandlerBlock: block)
       }
     }
 
@@ -105,26 +159,32 @@ extension Eval {
     assert(self.blockStack.isEmpty)
     switch reason {
     case .return(let value):
+      // We popped all of the blocks, which means that we can finally return
+      // value to caller. For example:
+      // def princess()"
+      //   return 'Elsa' # Nothing to unwind
+      //
+      // Or when we returned from a block, which was unwinded in the 'while' loop:
+      // for princess in ['elsa', 'ariel']: # already unwinded
+      //   return 'elsa'
       return .return(value)
 
+    case .exception(let e, _):
+      // We popped all of the blocks, but none of them was an except handler.
+      // Ask parent to deal with it. For example:
+      // def sing():
+      //   raise ValueError("I am an evil princess!")
+      return .reportExceptionToParentFrame(e)
+
     case .break:
-      // We popped top level loop, we can continue execution
-      return .continueCodeExecution
+      // We popped all of the blocks and we still have 'break'?
+      // Should not be possible.
+      return self.raiseContinueOrBreakNotInALoop(keyword: "break")
 
     case .continue:
-      let msg = Py.newString("'continue' not properly in loop")
-      let e = Py.newSyntaxError(
-        msg: msg,
-        filename: self.code.filename,
-        lineno: Py.newInt(self.frame.currentInstructionLine),
-        offset: Py.newInt(0),
-        text: msg,
-        printFileAndLine: Py.true
-      )
-      return .reportExceptionToParentFrame(e)
-
-    case .exception(let e, _):
-      return .reportExceptionToParentFrame(e)
+      // We popped all of the blocks and we still have 'continue'?
+      // Should not be possible.
+      return self.raiseContinueOrBreakNotInALoop(keyword: "continue")
 
     case .yield,
          .silenced:
@@ -136,34 +196,79 @@ extension Eval {
     }
   }
 
-  private func prepareForExceptionHandling(exception: PyBaseException) {
+  // MARK: - Push except handler block
+
+  private func pushExceptHandlerBlock() {
     let exceptHandler = Block(type: .exceptHandler, stackCount: self.stack.count)
     self.blockStack.push(block: exceptHandler)
+  }
 
-    // Remember current exception on stack
+  // MARK: - Push currently handled exception onto the stack and set new
+
+  private func pushCurrentlyHandledExceptionOntoTheStackAndSetNew(
+    exception: PyBaseException
+  ) {
+    // Called when we start 'except' or 'finally' block:
+    // try:
+    //   raise ValueError("I am an evil princess!")
+    // except:
+    //   <we are here>
+    //   <pushing the currently handled exception onto the stack>
+    //   <setting 'evil princess' as currently handled exception>
+    //   pass
+
     let currentOrNil = self.currentlyHandledException
     PushExceptionBeforeExcept.push(currentOrNil, on: &self.frame.stack)
 
-    // Make 'exception' current
     self.setCurrentlyHandledException(exception: exception)
     self.stack.push(exception)
   }
 
+  // MARK: - Unwind stack to match the one before block
+
   /// \#define UNWIND_BLOCK(b)
-  internal func unwindBlock(block: Block) {
+  ///
+  /// The more Swift-like name would be 'unwind(toTheLevelBefore: Block)'
+  /// But we already have a few 'unwind' methods and we don't want to mix them.
+  internal func unwindStackToMatchTheOneBeforeBlock(block: Block) {
     self.stack.pop(untilCount: block.stackCount)
   }
 
+  // MARK: - Unwind except handler
+
   /// \#define UNWIND_EXCEPT_HANDLER(b)
-  internal func unwindExceptHandler(block: Block) {
+  internal func unwindExceptHandler(exceptHandlerBlock block: Block) {
+    // Called when:
+    //
+    // (1) We are normally finishing the 'except' clause
+    // try:
+    //   raise ValueError("I am an evil princess!")
+    // except:
+    //   <pushing the currently handled exception onto the stack>
+    //   <setting 'evil princess' as currently handled exception>
+    //   pass # executing 'except'
+    //   <we are here! we 'handled' the 'evil princess', now restore previous>
+    //
+    // (2) We were inside 'except' when the 'unwind' struck (https://youtu.be/v2AC41dglnM)
+    // for princess in ['elsa', 'ariel']:
+    //   try:
+    //     raise ValueError("I am an evil princess!")
+    //   except:
+    //     <pushing the currently handled exception onto the stack>
+    //     <setting 'evil princess' as currently handled exception>
+    //     continue # <-- We are here!
+    //              # Our goal is to discard 'evil princess' and restore previous
     assert(block.isExceptHandler)
 
-    let stackCountIncludingException = block.stackCount + 1
+    let exceptionOnStack = PushExceptionBeforeExcept.countOnStack // probably 1
+    let stackCountIncludingException = block.stackCount + exceptionOnStack
     assert(self.stack.count >= stackCountIncludingException)
 
+    // Remove all stack entries below exception
+    // (local variables introduced in 'except')
     self.stack.pop(untilCount: stackCountIncludingException)
 
-    // Pop new 'current' exception
+    // Pop the exception
     switch PushExceptionBeforeExcept.pop(from: &self.frame.stack) {
     case .exception(let e):
       self.setCurrentlyHandledException(exception: e)
@@ -174,5 +279,20 @@ extension Eval {
     }
 
     assert(self.stack.count == block.stackCount)
+  }
+
+  // MARK: - Continue/Break not in a loop
+
+  private func raiseContinueOrBreakNotInALoop(keyword: String) -> UnwindResult {
+    let msg = Py.newString("'\(keyword)' not properly in loop")
+    let e = Py.newSyntaxError(
+      msg: msg,
+      filename: self.code.filename,
+      lineno: Py.newInt(self.frame.currentInstructionLine),
+      offset: Py.newInt(0),
+      text: msg,
+      printFileAndLine: Py.true
+    )
+    return .reportExceptionToParentFrame(e)
   }
 }
