@@ -1,3 +1,5 @@
+# cSpell:ignore smsl
+
 # Setup ######################################################################
 
 def _setup(sys_module, _imp_module):
@@ -33,6 +35,7 @@ def _setup(sys_module, _imp_module):
             builtin_module = sys.modules[builtin_name]
         setattr(self_module, builtin_name, builtin_module)
 
+
 def _builtin_from_name(name):
     spec = BuiltinImporter.find_spec(name)
     if spec is None:
@@ -41,6 +44,7 @@ def _builtin_from_name(name):
     return _load_unlocked(spec)
 
 # Bootstrap-related code ######################################################
+
 
 def _wrap(new, old):
     """Simple substitute for functools.update_wrapper."""
@@ -55,6 +59,7 @@ def _new_module(name):
 
 # Frame stripping magic ###############################################
 
+
 def _call_with_frames_removed(f, *args, **kwds):
     """remove_importlib_frames in import.c will always remove sequences
     of importlib frames that end with a call to this function
@@ -65,8 +70,10 @@ def _call_with_frames_removed(f, *args, **kwds):
     """
     return f(*args, **kwds)
 
+
 def _requires_builtin(fxn):
     """Decorator to verify the named module is built-in."""
+
     def _requires_builtin_wrapper(self, fullname):
         if fullname not in sys.builtin_module_names:
             raise ImportError(f'{fullname!r} is not a built-in module', name=fullname)
@@ -76,6 +83,7 @@ def _requires_builtin(fxn):
 
 # Module specifications #######################################################
 
+
 def _verbose_message(message, verbosity=1):
     """Print the message to stderr if -v/PYTHONVERBOSE is turned on."""
     if sys.flags.verbose >= verbosity:
@@ -83,6 +91,7 @@ def _verbose_message(message, verbosity=1):
             message = '# ' + message
 
         print(message, file=sys.stderr)
+
 
 class _installed_safely:
 
@@ -109,6 +118,7 @@ class _installed_safely:
                 _verbose_message(f'import {spec.name!r} # {spec.loader!r}')
         finally:
             self._spec._initializing = False
+
 
 class ModuleSpec:
     """The specification for a module, used for loading.
@@ -199,6 +209,7 @@ class ModuleSpec:
     def has_location(self, value):
         self._set_fileattr = bool(value)
 
+
 def _spec_from_module(module, loader=None, origin=None):
     # This function is meant for use in _setup().
     try:
@@ -240,6 +251,7 @@ def _spec_from_module(module, loader=None, origin=None):
     spec._set_fileattr = False if location is None else True
     spec.submodule_search_locations = submodule_search_locations
     return spec
+
 
 def _init_module_attrs(spec, module, *, override=False):
     # The passed-in module may be not support attribute assignment,
@@ -290,6 +302,7 @@ def _init_module_attrs(spec, module, *, override=False):
 
     return module
 
+
 def module_from_spec(spec):
     """Create a module based on the provided spec."""
     # Typically loaders will not implement create_module().
@@ -307,6 +320,7 @@ def module_from_spec(spec):
 
     _init_module_attrs(spec, module)
     return module
+
 
 def _load_backward_compatible(spec):
     # (issue19713) Once BuiltinImporter and ExtensionFileLoader
@@ -341,6 +355,7 @@ def _load_backward_compatible(spec):
 
     return module
 
+
 def _load_unlocked(spec):
     # A helper for direct use by the import system.
     if spec.loader is not None:
@@ -363,6 +378,7 @@ def _load_unlocked(spec):
     return sys.modules[spec.name]
 
 # Loaders #####################################################################
+
 
 class BuiltinImporter:
 
@@ -395,6 +411,7 @@ class BuiltinImporter:
         """Exec a built-in module"""
         _call_with_frames_removed(_imp.exec_builtin, module)
 
+
 def spec_from_loader(name, loader, *, origin=None, is_package=None):
     """Return a module spec based on various loader methods."""
     if hasattr(loader, 'get_filename'):
@@ -423,6 +440,7 @@ def spec_from_loader(name, loader, *, origin=None, is_package=None):
 
 # Import itself ###############################################################
 
+
 def import_module(name, package=None):
     """Import a module.
 
@@ -444,6 +462,7 @@ def import_module(name, package=None):
 
     return _gcd_import(name[level:], package, level)
 
+
 def _resolve_name(name, package, level):
     """Resolve a relative module name to an absolute one."""
     bits = package.rsplit('.', level - 1)
@@ -452,6 +471,7 @@ def _resolve_name(name, package, level):
 
     base = bits[0]
     return f'{base}.{name}' if name else base
+
 
 def _find_spec(name, path, target=None):
     """Find a module's spec."""
@@ -496,6 +516,7 @@ def _find_spec(name, path, target=None):
     else:
         return None
 
+
 def _sanity_check(name, package, level):
     """Verify arguments are "sane"."""
     if not isinstance(name, str):
@@ -512,6 +533,7 @@ def _sanity_check(name, package, level):
 
     if not name and level == 0:
         raise ValueError('Empty module name')
+
 
 def _find_and_load_unlocked(name, import_):
     path = None
@@ -545,7 +567,9 @@ def _find_and_load_unlocked(name, import_):
 
     return module
 
+
 _NEEDS_LOADING = object()
+
 
 def _find_and_load(name, import_):
     """Find and load the module."""
@@ -558,6 +582,7 @@ def _find_and_load(name, import_):
         raise ModuleNotFoundError(message, name=name)
 
     return module
+
 
 def _gcd_import(name, package=None, level=0):
     """Import and return the module based on its name, the package the call is
@@ -572,6 +597,7 @@ def _gcd_import(name, package=None, level=0):
     if level > 0:
         name = _resolve_name(name, package, level)
     return _find_and_load(name, _gcd_import)
+
 
 def _handle_fromlist(module, fromlist, import_, *, recursive=False):
     """Figure out what __import__ should return.
@@ -610,6 +636,7 @@ def _handle_fromlist(module, fromlist, import_, *, recursive=False):
     return module
 
 # Main ########################################################################
+
 
 def _install(sys_module, _imp_module):
     """Install importers for builtin modules"""

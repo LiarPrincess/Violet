@@ -1,10 +1,13 @@
+# cSpell:ignore smsl PYTHONCASEOK
+
 SOURCE_SUFFIXES = ['.py']
 
 # Bootstrap-related code ######################################################
 _CASE_INSENSITIVE_PLATFORMS_STR_KEY = 'win',
 _CASE_INSENSITIVE_PLATFORMS_BYTES_KEY = 'cygwin', 'darwin'
-_CASE_INSENSITIVE_PLATFORMS =  (_CASE_INSENSITIVE_PLATFORMS_BYTES_KEY
-                                + _CASE_INSENSITIVE_PLATFORMS_STR_KEY)
+_CASE_INSENSITIVE_PLATFORMS = (_CASE_INSENSITIVE_PLATFORMS_BYTES_KEY
+                               + _CASE_INSENSITIVE_PLATFORMS_STR_KEY)
+
 
 def _make_relax_case():
     def _relax_case():
@@ -12,14 +15,16 @@ def _make_relax_case():
         return False
     return _relax_case
 
+
 def _path_join(*path_parts):
     """Replacement for os.path.join()."""
     parts_to_join = []
     for part in path_parts:
-      if part:
-        parts_to_join.append(part.rstrip(path_separators))
+        if part:
+            parts_to_join.append(part.rstrip(path_separators))
 
     return path_sep.join(parts_to_join)
+
 
 def _path_split(path):
     """Replacement for os.path.split()."""
@@ -34,6 +39,7 @@ def _path_split(path):
 
     return '', path
 
+
 def _path_stat(path):
     """Stat the path.
 
@@ -42,6 +48,7 @@ def _path_stat(path):
 
     """
     return _os.stat(path)
+
 
 def _path_is_mode_type(path, mode):
     """Test whether the path is the specified mode type."""
@@ -52,9 +59,11 @@ def _path_is_mode_type(path, mode):
 
     return (stat_info.st_mode & 0o170000) == mode
 
+
 def _path_isfile(path):
     """Replacement for os.path.isfile."""
     return _path_is_mode_type(path, 0o100000)
+
 
 def _path_isdir(path):
     """Replacement for os.path.isdir."""
@@ -65,6 +74,7 @@ def _path_isdir(path):
 
 # Finder/loader utility code ###############################################
 
+
 def _check_name(method):
     """Decorator to verify that the module being requested matches the one the
     loader can handle.
@@ -73,6 +83,7 @@ def _check_name(method):
     compared against. If the comparison fails then ImportError is raised.
 
     """
+
     def _check_name_wrapper(self, name=None, *args, **kwargs):
         if name is None:
             name = self.name
@@ -96,7 +107,9 @@ def _check_name(method):
 
 # Module specifications #######################################################
 
+
 _POPULATE = object()
+
 
 def spec_from_file_location(name, location=None, *, loader=None,
                             submodule_search_locations=_POPULATE):
@@ -166,6 +179,7 @@ def spec_from_file_location(name, location=None, *, loader=None,
 
 # Loaders #####################################################################
 
+
 class SourceFileLoader:
     """Base file loader class which implements the loader protocol methods that
     require file system usage."""
@@ -219,7 +233,8 @@ class SourceFileLoader:
         The 'data' argument can be any object type that compile() supports.
         """
         return _bootstrap._call_with_frames_removed(compile, data, path, 'exec',
-                                        dont_inherit=True, optimize=_optimize)
+                                                    dont_inherit=True, optimize=_optimize)
+
 
 class _NamespacePath:
     """Represents a namespace package's path.  It uses the module name
@@ -252,7 +267,7 @@ class _NamespacePath:
 
     def _recalculate(self):
         # If the parent's path has changed, recalculate _path
-        parent_path = tuple(self._get_parent_path()) # Make a copy
+        parent_path = tuple(self._get_parent_path())  # Make a copy
 
         if parent_path != self._last_parent_path:
             spec = self._path_finder(self._name, parent_path)
@@ -284,6 +299,7 @@ class _NamespacePath:
         self._path.append(item)
 
 # Finders #####################################################################
+
 
 class PathFinder:
 
@@ -389,6 +405,7 @@ class PathFinder:
         else:
             return spec
 
+
 class FileFinder:
 
     """File-based finder.
@@ -404,9 +421,9 @@ class FileFinder:
         recognizes."""
         loaders = []
         for loader, suffixes in loader_details:
-          # VIOLET: Manual loop since we do not support comprehensions
-          for suffix in suffixes:
-            loaders.append((suffix, loader))
+            # VIOLET: Manual loop since we do not support comprehensions
+            for suffix in suffixes:
+                loaders.append((suffix, loader))
 
         self._loaders = loaders
         # Base (directory) path
@@ -531,6 +548,7 @@ class FileFinder:
 
 # Import setup ###############################################################
 
+
 def _get_supported_file_loaders():
     """Returns a list of file-based module loaders.
 
@@ -538,6 +556,7 @@ def _get_supported_file_loaders():
     """
     source = SourceFileLoader, SOURCE_SUFFIXES
     return [source]
+
 
 def _setup(_bootstrap_module):
     """Setup the path-based importers for importlib by importing needed
@@ -562,13 +581,13 @@ def _setup(_bootstrap_module):
 
     # Directly load the os module (needed during bootstrap).
     if sys.platform == 'darwin' or sys.platform == 'linux':
-      path_sep = '/'
-      path_separators = ['/']
+        path_sep = '/'
+        path_separators = ['/']
     elif sys.platform == 'win32':
-      path_sep = '\\'
-      path_separators = ['\\', '/']
+        path_sep = '\\'
+        path_separators = ['\\', '/']
     else:
-      raise ImportError('importlib requires darwin, linux or win32')
+        raise ImportError('importlib requires darwin, linux or win32')
 
     # 'os_module' was set before
     setattr(self_module, 'path_sep', path_sep)
@@ -581,6 +600,7 @@ def _setup(_bootstrap_module):
     # CPython does this in in 'importlib._install_external_importers'
     # But since we don't support forzen modules we have to do it here:
     _bootstrap._bootstrap_external = self_module
+
 
 def _install(_bootstrap_module):
     """Install the path-based import components."""
