@@ -5,17 +5,17 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseYield: XCTestCase, Common {
+class ParseYield: XCTestCase {
 
   // MARK: - Yield
 
   /// yield
   func test_withoutValue() {
-    let parser = self.createStmtParser(
-      self.token(.yield, start: loc0, end: loc1)
+    let parser = createStmtParser(
+      createToken(.yield, start: loc0, end: loc1)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 1:6)
@@ -27,12 +27,12 @@ class ParseYield: XCTestCase, Common {
 
   /// yield Megara
   func test_value() {
-    let parser = self.createStmtParser(
-      self.token(.yield,                start: loc0, end: loc1),
-      self.token(.identifier("Megara"), start: loc2, end: loc3)
+    let parser = createStmtParser(
+      createToken(.yield,                start: loc0, end: loc1),
+      createToken(.identifier("Megara"), start: loc2, end: loc3)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 3:8)
@@ -46,13 +46,13 @@ class ParseYield: XCTestCase, Common {
 
   /// yield Megara,
   func test_value_withCommaAfter_yieldsTuple() {
-    let parser = self.createStmtParser(
-      self.token(.yield,                start: loc0, end: loc1),
-      self.token(.identifier("Megara"), start: loc2, end: loc3),
-      self.token(.comma,                start: loc4, end: loc5)
+    let parser = createStmtParser(
+      createToken(.yield,                start: loc0, end: loc1),
+      createToken(.identifier("Megara"), start: loc2, end: loc3),
+      createToken(.comma,                start: loc4, end: loc5)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 5:10)
@@ -68,14 +68,14 @@ class ParseYield: XCTestCase, Common {
 
   /// yield Pain, Panic
   func test_value_multiple() {
-    let parser = self.createStmtParser(
-      self.token(.yield,           start: loc0, end: loc1),
-      self.token(.identifier("Pain"), start: loc2, end: loc3),
-      self.token(.comma,           start: loc4, end: loc5),
-      self.token(.identifier("Panic"), start: loc6, end: loc7)
+    let parser = createStmtParser(
+      createToken(.yield,           start: loc0, end: loc1),
+      createToken(.identifier("Pain"), start: loc2, end: loc3),
+      createToken(.comma,           start: loc4, end: loc5),
+      createToken(.identifier("Panic"), start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 7:12)
@@ -93,13 +93,13 @@ class ParseYield: XCTestCase, Common {
 
   /// yield from Olympus
   func test_from() {
-    let parser = self.createStmtParser(
-      self.token(.yield,                 start: loc0, end: loc1),
-      self.token(.from,                  start: loc2, end: loc3),
-      self.token(.identifier("Olympus"), start: loc4, end: loc5)
+    let parser = createStmtParser(
+      createToken(.yield,                 start: loc0, end: loc1),
+      createToken(.from,                  start: loc2, end: loc3),
+      createToken(.identifier("Olympus"), start: loc4, end: loc5)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 5:10)

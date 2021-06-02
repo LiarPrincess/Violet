@@ -7,24 +7,24 @@ import VioletLexer
 // swiftlint:disable function_body_length
 // swiftformat:disable consecutiveSpaces
 
-class ParseDecorators: XCTestCase, Common {
+class ParseDecorators: XCTestCase {
 
   // MARK: - General
 
   /// @Joy
   /// class Riley: "feel"
   func test_simple() {
-    let parser = self.createStmtParser(
-      self.token(.at,                     start: loc0, end: loc1),
-      self.token(.identifier("Joy"),      start: loc2, end: loc3),
-      self.token(.newLine,                start: loc4, end: loc5),
-      self.token(.class,                  start: loc6, end: loc7),
-      self.token(.identifier("Riley"),    start: loc8, end: loc9),
-      self.token(.colon,                  start: loc10, end: loc11),
-      self.token(.string("feel"),         start: loc12, end: loc13)
+    let parser = createStmtParser(
+      createToken(.at,                     start: loc0, end: loc1),
+      createToken(.identifier("Joy"),      start: loc2, end: loc3),
+      createToken(.newLine,                start: loc4, end: loc5),
+      createToken(.class,                  start: loc6, end: loc7),
+      createToken(.identifier("Riley"),    start: loc8, end: loc9),
+      createToken(.colon,                  start: loc10, end: loc11),
+      createToken(.string("feel"),         start: loc12, end: loc13)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 13:18)
@@ -45,19 +45,19 @@ class ParseDecorators: XCTestCase, Common {
   /// @Emotion.Joy
   /// class Riley: "feel"
   func test_dottedName() {
-    let parser = self.createStmtParser(
-      self.token(.at,                     start: loc0, end: loc1),
-      self.token(.identifier("Emotion"),  start: loc2, end: loc3),
-      self.token(.dot,                    start: loc4, end: loc5),
-      self.token(.identifier("Joy"),      start: loc6, end: loc7),
-      self.token(.newLine,                start: loc8, end: loc9),
-      self.token(.class,                  start: loc10, end: loc11),
-      self.token(.identifier("Riley"),    start: loc12, end: loc13),
-      self.token(.colon,                  start: loc14, end: loc15),
-      self.token(.string("feel"),         start: loc16, end: loc17)
+    let parser = createStmtParser(
+      createToken(.at,                     start: loc0, end: loc1),
+      createToken(.identifier("Emotion"),  start: loc2, end: loc3),
+      createToken(.dot,                    start: loc4, end: loc5),
+      createToken(.identifier("Joy"),      start: loc6, end: loc7),
+      createToken(.newLine,                start: loc8, end: loc9),
+      createToken(.class,                  start: loc10, end: loc11),
+      createToken(.identifier("Riley"),    start: loc12, end: loc13),
+      createToken(.colon,                  start: loc14, end: loc15),
+      createToken(.string("feel"),         start: loc16, end: loc17)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 17:22)
@@ -82,20 +82,20 @@ class ParseDecorators: XCTestCase, Common {
   /// @Sadness
   /// class Riley: "feel"
   func test_multiple() {
-    let parser = self.createStmtParser(
-      self.token(.at,                     start: loc0, end: loc1),
-      self.token(.identifier("Joy"),      start: loc2, end: loc3),
-      self.token(.newLine,                start: loc4, end: loc5),
-      self.token(.at,                     start: loc6, end: loc7),
-      self.token(.identifier("Sadness"),  start: loc8, end: loc9),
-      self.token(.newLine,                start: loc10, end: loc11),
-      self.token(.class,                  start: loc12, end: loc13),
-      self.token(.identifier("Riley"),    start: loc14, end: loc15),
-      self.token(.colon,                  start: loc16, end: loc17),
-      self.token(.string("feel"),         start: loc18, end: loc19)
+    let parser = createStmtParser(
+      createToken(.at,                     start: loc0, end: loc1),
+      createToken(.identifier("Joy"),      start: loc2, end: loc3),
+      createToken(.newLine,                start: loc4, end: loc5),
+      createToken(.at,                     start: loc6, end: loc7),
+      createToken(.identifier("Sadness"),  start: loc8, end: loc9),
+      createToken(.newLine,                start: loc10, end: loc11),
+      createToken(.class,                  start: loc12, end: loc13),
+      createToken(.identifier("Riley"),    start: loc14, end: loc15),
+      createToken(.colon,                  start: loc16, end: loc17),
+      createToken(.string("feel"),         start: loc18, end: loc19)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 19:24)
@@ -120,19 +120,19 @@ class ParseDecorators: XCTestCase, Common {
   /// @Joy()
   /// class Riley: "feel"
   func test_arguments_none() {
-    let parser = self.createStmtParser(
-      self.token(.at,                     start: loc0, end: loc1),
-      self.token(.identifier("Joy"),      start: loc2, end: loc3),
-      self.token(.leftParen,              start: loc4, end: loc5),
-      self.token(.rightParen,             start: loc6, end: loc7),
-      self.token(.newLine,                start: loc8, end: loc9),
-      self.token(.class,                  start: loc10, end: loc11),
-      self.token(.identifier("Riley"),    start: loc12, end: loc13),
-      self.token(.colon,                  start: loc14, end: loc15),
-      self.token(.string("feel"),         start: loc16, end: loc17)
+    let parser = createStmtParser(
+      createToken(.at,                     start: loc0, end: loc1),
+      createToken(.identifier("Joy"),      start: loc2, end: loc3),
+      createToken(.leftParen,              start: loc4, end: loc5),
+      createToken(.rightParen,             start: loc6, end: loc7),
+      createToken(.newLine,                start: loc8, end: loc9),
+      createToken(.class,                  start: loc10, end: loc11),
+      createToken(.identifier("Riley"),    start: loc12, end: loc13),
+      createToken(.colon,                  start: loc14, end: loc15),
+      createToken(.string("feel"),         start: loc16, end: loc17)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 17:22)
@@ -157,20 +157,20 @@ class ParseDecorators: XCTestCase, Common {
   /// @Joy(memory)
   /// class Riley: "feel"
   func test_arguments_positional() {
-    let parser = self.createStmtParser(
-      self.token(.at,                     start: loc0, end: loc1),
-      self.token(.identifier("Joy"),      start: loc2, end: loc3),
-      self.token(.leftParen,              start: loc4, end: loc5),
-      self.token(.identifier("memory"),   start: loc6, end: loc7),
-      self.token(.rightParen,             start: loc8, end: loc9),
-      self.token(.newLine,                start: loc10, end: loc11),
-      self.token(.class,                  start: loc12, end: loc13),
-      self.token(.identifier("Riley"),    start: loc14, end: loc15),
-      self.token(.colon,                  start: loc16, end: loc17),
-      self.token(.string("feel"),         start: loc18, end: loc19)
+    let parser = createStmtParser(
+      createToken(.at,                     start: loc0, end: loc1),
+      createToken(.identifier("Joy"),      start: loc2, end: loc3),
+      createToken(.leftParen,              start: loc4, end: loc5),
+      createToken(.identifier("memory"),   start: loc6, end: loc7),
+      createToken(.rightParen,             start: loc8, end: loc9),
+      createToken(.newLine,                start: loc10, end: loc11),
+      createToken(.class,                  start: loc12, end: loc13),
+      createToken(.identifier("Riley"),    start: loc14, end: loc15),
+      createToken(.colon,                  start: loc16, end: loc17),
+      createToken(.string("feel"),         start: loc18, end: loc19)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 19:24)
@@ -197,22 +197,22 @@ class ParseDecorators: XCTestCase, Common {
   /// @Joy(memory="happy")
   /// class Riley: "feel"
   func test_arguments_keyword() {
-    let parser = self.createStmtParser(
-      self.token(.at,                     start: loc0, end: loc1),
-      self.token(.identifier("Joy"),      start: loc2, end: loc3),
-      self.token(.leftParen,              start: loc4, end: loc5),
-      self.token(.identifier("memory"),   start: loc6, end: loc7),
-      self.token(.equal,                  start: loc8, end: loc9),
-      self.token(.string("happy"),        start: loc10, end: loc11),
-      self.token(.rightParen,             start: loc12, end: loc13),
-      self.token(.newLine,                start: loc14, end: loc15),
-      self.token(.class,                  start: loc16, end: loc17),
-      self.token(.identifier("Riley"),    start: loc18, end: loc19),
-      self.token(.colon,                  start: loc20, end: loc21),
-      self.token(.string("feel"),         start: loc22, end: loc23)
+    let parser = createStmtParser(
+      createToken(.at,                     start: loc0, end: loc1),
+      createToken(.identifier("Joy"),      start: loc2, end: loc3),
+      createToken(.leftParen,              start: loc4, end: loc5),
+      createToken(.identifier("memory"),   start: loc6, end: loc7),
+      createToken(.equal,                  start: loc8, end: loc9),
+      createToken(.string("happy"),        start: loc10, end: loc11),
+      createToken(.rightParen,             start: loc12, end: loc13),
+      createToken(.newLine,                start: loc14, end: loc15),
+      createToken(.class,                  start: loc16, end: loc17),
+      createToken(.identifier("Riley"),    start: loc18, end: loc19),
+      createToken(.colon,                  start: loc20, end: loc21),
+      createToken(.string("feel"),         start: loc22, end: loc23)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 23:28)
@@ -243,24 +243,24 @@ class ParseDecorators: XCTestCase, Common {
   /// @Joy(core, memory="happy")
   /// class Riley: "feel"
   func test_arguments_multiple() {
-    let parser = self.createStmtParser(
-      self.token(.at,                     start: loc0, end: loc1),
-      self.token(.identifier("Joy"),      start: loc2, end: loc3),
-      self.token(.leftParen,              start: loc4, end: loc5),
-      self.token(.identifier("core"),     start: loc6, end: loc7),
-      self.token(.comma,                  start: loc8, end: loc9),
-      self.token(.identifier("memory"),   start: loc10, end: loc11),
-      self.token(.equal,                  start: loc12, end: loc13),
-      self.token(.string("happy"),        start: loc14, end: loc15),
-      self.token(.rightParen,             start: loc16, end: loc17),
-      self.token(.newLine,                start: loc18, end: loc19),
-      self.token(.class,                  start: loc20, end: loc21),
-      self.token(.identifier("Riley"),    start: loc22, end: loc23),
-      self.token(.colon,                  start: loc24, end: loc25),
-      self.token(.string("feel"),         start: loc26, end: loc27)
+    let parser = createStmtParser(
+      createToken(.at,                     start: loc0, end: loc1),
+      createToken(.identifier("Joy"),      start: loc2, end: loc3),
+      createToken(.leftParen,              start: loc4, end: loc5),
+      createToken(.identifier("core"),     start: loc6, end: loc7),
+      createToken(.comma,                  start: loc8, end: loc9),
+      createToken(.identifier("memory"),   start: loc10, end: loc11),
+      createToken(.equal,                  start: loc12, end: loc13),
+      createToken(.string("happy"),        start: loc14, end: loc15),
+      createToken(.rightParen,             start: loc16, end: loc17),
+      createToken(.newLine,                start: loc18, end: loc19),
+      createToken(.class,                  start: loc20, end: loc21),
+      createToken(.identifier("Riley"),    start: loc22, end: loc23),
+      createToken(.colon,                  start: loc24, end: loc25),
+      createToken(.string("feel"),         start: loc26, end: loc27)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 27:32)
@@ -295,19 +295,19 @@ class ParseDecorators: XCTestCase, Common {
   /// @Joy
   /// def feel(): "emotion"
   func test_function() {
-    let parser = self.createStmtParser(
-      self.token(.at,                     start: loc0, end: loc1),
-      self.token(.identifier("Joy"),      start: loc2, end: loc3),
-      self.token(.newLine,                start: loc4, end: loc5),
-      self.token(.def,                    start: loc6, end: loc7),
-      self.token(.identifier("feel"),     start: loc8, end: loc9),
-      self.token(.leftParen,              start: loc10, end: loc11),
-      self.token(.rightParen,             start: loc12, end: loc13),
-      self.token(.colon,                  start: loc14, end: loc15),
-      self.token(.string("emotion"),      start: loc16, end: loc17)
+    let parser = createStmtParser(
+      createToken(.at,                     start: loc0, end: loc1),
+      createToken(.identifier("Joy"),      start: loc2, end: loc3),
+      createToken(.newLine,                start: loc4, end: loc5),
+      createToken(.def,                    start: loc6, end: loc7),
+      createToken(.identifier("feel"),     start: loc8, end: loc9),
+      createToken(.leftParen,              start: loc10, end: loc11),
+      createToken(.rightParen,             start: loc12, end: loc13),
+      createToken(.colon,                  start: loc14, end: loc15),
+      createToken(.string("emotion"),      start: loc16, end: loc17)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 17:22)
@@ -335,20 +335,20 @@ class ParseDecorators: XCTestCase, Common {
   /// @Joy
   /// async def feel(): "emotion"
   func test_function_async() {
-    let parser = self.createStmtParser(
-      self.token(.at,                     start: loc0, end: loc1),
-      self.token(.identifier("Joy"),      start: loc2, end: loc3),
-      self.token(.newLine,                start: loc4, end: loc5),
-      self.token(.async,                  start: loc6, end: loc7),
-      self.token(.def,                    start: loc8, end: loc9),
-      self.token(.identifier("feel"),     start: loc10, end: loc11),
-      self.token(.leftParen,              start: loc12, end: loc13),
-      self.token(.rightParen,             start: loc14, end: loc15),
-      self.token(.colon,                  start: loc16, end: loc17),
-      self.token(.string("emotion"),      start: loc18, end: loc19)
+    let parser = createStmtParser(
+      createToken(.at,                     start: loc0, end: loc1),
+      createToken(.identifier("Joy"),      start: loc2, end: loc3),
+      createToken(.newLine,                start: loc4, end: loc5),
+      createToken(.async,                  start: loc6, end: loc7),
+      createToken(.def,                    start: loc8, end: loc9),
+      createToken(.identifier("feel"),     start: loc10, end: loc11),
+      createToken(.leftParen,              start: loc12, end: loc13),
+      createToken(.rightParen,             start: loc14, end: loc15),
+      createToken(.colon,                  start: loc16, end: loc17),
+      createToken(.string("emotion"),      start: loc18, end: loc19)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 19:24)

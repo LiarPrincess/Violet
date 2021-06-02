@@ -5,19 +5,19 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseAssign: XCTestCase, Common {
+class ParseAssign: XCTestCase {
 
   // MARK: - Normal assignment
 
   /// Ariel = "Princess"
   func test_simple() {
-    let parser = self.createStmtParser(
-      self.token(.identifier("Ariel"), start: loc0, end: loc1),
-      self.token(.equal,               start: loc2, end: loc3),
-      self.token(.string("Princess"),  start: loc4, end: loc5)
+    let parser = createStmtParser(
+      createToken(.identifier("Ariel"), start: loc0, end: loc1),
+      createToken(.equal,               start: loc2, end: loc3),
+      createToken(.string("Princess"),  start: loc4, end: loc5)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 5:10)
@@ -33,15 +33,15 @@ class ParseAssign: XCTestCase, Common {
 
   /// Ariel, Eric = "couple"
   func test_toTuple() {
-    let parser = self.createStmtParser(
-      self.token(.identifier("Ariel"), start: loc0, end: loc1),
-      self.token(.comma,               start: loc2, end: loc3),
-      self.token(.identifier("Eric"),  start: loc4, end: loc5),
-      self.token(.equal,               start: loc6, end: loc7),
-      self.token(.string("couple"),    start: loc8, end: loc9)
+    let parser = createStmtParser(
+      createToken(.identifier("Ariel"), start: loc0, end: loc1),
+      createToken(.comma,               start: loc2, end: loc3),
+      createToken(.identifier("Eric"),  start: loc4, end: loc5),
+      createToken(.equal,               start: loc6, end: loc7),
+      createToken(.string("couple"),    start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 9:14)
@@ -61,14 +61,14 @@ class ParseAssign: XCTestCase, Common {
 
   /// Ariel, = "Princess"
   func test_target_withComma_isTuple() {
-    let parser = self.createStmtParser(
-      self.token(.identifier("Ariel"), start: loc0, end: loc1),
-      self.token(.comma,               start: loc2, end: loc3),
-      self.token(.equal,               start: loc4, end: loc5),
-      self.token(.string("Princess"),  start: loc6, end: loc7)
+    let parser = createStmtParser(
+      createToken(.identifier("Ariel"), start: loc0, end: loc1),
+      createToken(.comma,               start: loc2, end: loc3),
+      createToken(.equal,               start: loc4, end: loc5),
+      createToken(.string("Princess"),  start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 7:12)
@@ -86,15 +86,15 @@ class ParseAssign: XCTestCase, Common {
 
   /// Sebastian = Flounder = "Friend"
   func test_target_multiple() {
-    let parser = self.createStmtParser(
-      self.token(.identifier("Sebastian"), start: loc0, end: loc1),
-      self.token(.equal,                   start: loc2, end: loc3),
-      self.token(.identifier("Flounder"),  start: loc4, end: loc5),
-      self.token(.equal,                   start: loc6, end: loc7),
-      self.token(.string("Friend"),        start: loc8, end: loc9)
+    let parser = createStmtParser(
+      createToken(.identifier("Sebastian"), start: loc0, end: loc1),
+      createToken(.equal,                   start: loc2, end: loc3),
+      createToken(.identifier("Flounder"),  start: loc4, end: loc5),
+      createToken(.equal,                   start: loc6, end: loc7),
+      createToken(.string("Friend"),        start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 9:14)
@@ -114,14 +114,14 @@ class ParseAssign: XCTestCase, Common {
 
   /// Ariel = yield "Princess"
   func test_yieldValue() {
-    let parser = self.createStmtParser(
-      self.token(.identifier("Ariel"), start: loc0, end: loc1),
-      self.token(.equal,               start: loc2, end: loc3),
-      self.token(.yield,               start: loc4, end: loc5),
-      self.token(.string("Princess"),  start: loc6, end: loc7)
+    let parser = createStmtParser(
+      createToken(.identifier("Ariel"), start: loc0, end: loc1),
+      createToken(.equal,               start: loc2, end: loc3),
+      createToken(.yield,               start: loc4, end: loc5),
+      createToken(.string("Princess"),  start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 7:12)
@@ -140,16 +140,16 @@ class ParseAssign: XCTestCase, Common {
   /// Ariel = yield Eric = "couple"
   /// If we used 'yield a = xxx' then it is 'yield stmt' by grammar
   func test_yieldTarget() {
-    let parser = self.createStmtParser(
-      self.token(.identifier("Ariel"), start: loc0, end: loc1),
-      self.token(.equal,               start: loc2, end: loc3),
-      self.token(.yield,               start: loc4, end: loc5),
-      self.token(.identifier("Eric"),  start: loc6, end: loc7),
-      self.token(.equal,               start: loc8, end: loc9),
-      self.token(.string("couple"),    start: loc10, end: loc11)
+    let parser = createStmtParser(
+      createToken(.identifier("Ariel"), start: loc0, end: loc1),
+      createToken(.equal,               start: loc2, end: loc3),
+      createToken(.yield,               start: loc4, end: loc5),
+      createToken(.identifier("Eric"),  start: loc6, end: loc7),
+      createToken(.equal,               start: loc8, end: loc9),
+      createToken(.string("couple"),    start: loc10, end: loc11)
     )
 
-    if let error = self.error(parser) {
+    if let error = parseError(parser) {
       XCTAssertEqual(error.kind, .assignmentToYield)
       XCTAssertEqual(error.location, loc4)
     }

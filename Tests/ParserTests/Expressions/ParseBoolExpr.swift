@@ -5,15 +5,15 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseBoolExpr: XCTestCase, Common {
+class ParseBoolExpr: XCTestCase {
 
   func test_not() {
-    let parser = self.createExprParser(
-      self.token(.not,   start: loc0, end: loc1),
-      self.token(.false, start: loc2, end: loc3)
+    let parser = createExprParser(
+      createToken(.not,   start: loc0, end: loc1),
+      createToken(.false, start: loc2, end: loc3)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 3:8)
@@ -31,13 +31,13 @@ class ParseBoolExpr: XCTestCase, Common {
     ]
 
     for (token, op) in variants {
-      let parser = self.createExprParser(
-        self.token(.true,  start: loc0, end: loc1),
-        self.token(token,  start: loc2, end: loc3),
-        self.token(.false, start: loc4, end: loc5)
+      let parser = createExprParser(
+        createToken(.true,  start: loc0, end: loc1),
+        createToken(token,  start: loc2, end: loc3),
+        createToken(.false, start: loc4, end: loc5)
       )
 
-      guard let ast = self.parse(parser) else { continue }
+      guard let ast = parse(parser) else { continue }
 
       XCTAssertAST(ast, """
       ExpressionAST(start: 0:0, end: 5:10)
@@ -55,13 +55,13 @@ class ParseBoolExpr: XCTestCase, Common {
 
   /// not not false = not (not false)
   func test_not_isRightAssociative() {
-    let parser = self.createExprParser(
-      self.token(.not,   start: loc0, end: loc1),
-      self.token(.not,   start: loc2, end: loc3),
-      self.token(.false, start: loc4, end: loc5)
+    let parser = createExprParser(
+      createToken(.not,   start: loc0, end: loc1),
+      createToken(.not,   start: loc2, end: loc3),
+      createToken(.false, start: loc4, end: loc5)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
@@ -77,15 +77,15 @@ class ParseBoolExpr: XCTestCase, Common {
 
   /// true and false and true = (true and false) and true
   func test_and_isLeftAssociative() {
-    let parser = self.createExprParser(
-      self.token(.true,  start: loc0, end: loc1),
-      self.token(.and,   start: loc2, end: loc3),
-      self.token(.false, start: loc4, end: loc5),
-      self.token(.and,   start: loc6, end: loc7),
-      self.token(.true,  start: loc8, end: loc9)
+    let parser = createExprParser(
+      createToken(.true,  start: loc0, end: loc1),
+      createToken(.and,   start: loc2, end: loc3),
+      createToken(.false, start: loc4, end: loc5),
+      createToken(.and,   start: loc6, end: loc7),
+      createToken(.true,  start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
@@ -105,15 +105,15 @@ class ParseBoolExpr: XCTestCase, Common {
 
   /// true or false or true = (true or false) or true
   func test_or_isLeftAssociative() {
-    let parser = self.createExprParser(
-      self.token(.true,  start: loc0, end: loc1),
-      self.token(.or,    start: loc2, end: loc3),
-      self.token(.false, start: loc4, end: loc5),
-      self.token(.or,    start: loc6, end: loc7),
-      self.token(.true,  start: loc8, end: loc9)
+    let parser = createExprParser(
+      createToken(.true,  start: loc0, end: loc1),
+      createToken(.or,    start: loc2, end: loc3),
+      createToken(.false, start: loc4, end: loc5),
+      createToken(.or,    start: loc6, end: loc7),
+      createToken(.true,  start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
@@ -135,14 +135,14 @@ class ParseBoolExpr: XCTestCase, Common {
 
   /// not true and false = (not true) and false
   func test_not_hasHigherPrecedence_thanAnd() {
-    let parser = self.createExprParser(
-      self.token(.not,   start: loc0, end: loc1),
-      self.token(.true,  start: loc2, end: loc3),
-      self.token(.and,   start: loc4, end: loc5),
-      self.token(.false, start: loc6, end: loc7)
+    let parser = createExprParser(
+      createToken(.not,   start: loc0, end: loc1),
+      createToken(.true,  start: loc2, end: loc3),
+      createToken(.and,   start: loc4, end: loc5),
+      createToken(.false, start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
@@ -160,15 +160,15 @@ class ParseBoolExpr: XCTestCase, Common {
 
   /// true or false and true = true or (false and true)
   func test_and_hasHigherPrecedence_thanOr() {
-    let parser = self.createExprParser(
-      self.token(.true,  start: loc0, end: loc1),
-      self.token(.or,    start: loc2, end: loc3),
-      self.token(.false, start: loc4, end: loc5),
-      self.token(.and,   start: loc6, end: loc7),
-      self.token(.true,  start: loc8, end: loc9)
+    let parser = createExprParser(
+      createToken(.true,  start: loc0, end: loc1),
+      createToken(.or,    start: loc2, end: loc3),
+      createToken(.false, start: loc4, end: loc5),
+      createToken(.and,   start: loc6, end: loc7),
+      createToken(.true,  start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)

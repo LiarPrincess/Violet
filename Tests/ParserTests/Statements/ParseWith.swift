@@ -6,18 +6,18 @@ import VioletLexer
 // swiftlint:disable function_body_length
 // swiftformat:disable consecutiveSpaces
 
-class ParseWith: XCTestCase, Common {
+class ParseWith: XCTestCase {
 
   /// with Alice: "wonderland"
   func test_simple() {
-    let parser = self.createStmtParser(
-      self.token(.with,                 start: loc0, end: loc1),
-      self.token(.identifier("Alice"),  start: loc2, end: loc3),
-      self.token(.colon,                start: loc4, end: loc5),
-      self.token(.string("wonderland"), start: loc6, end: loc7)
+    let parser = createStmtParser(
+      createToken(.with,                 start: loc0, end: loc1),
+      createToken(.identifier("Alice"),  start: loc2, end: loc3),
+      createToken(.colon,                start: loc4, end: loc5),
+      createToken(.string("wonderland"), start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 7:12)
@@ -37,16 +37,16 @@ class ParseWith: XCTestCase, Common {
 
   /// with Alice as smol: "wonderland"
   func test_alias() {
-    let parser = self.createStmtParser(
-      self.token(.with,                 start: loc0, end: loc1),
-      self.token(.identifier("Alice"),  start: loc2, end: loc3),
-      self.token(.as,                   start: loc4, end: loc5),
-      self.token(.identifier("smol"),   start: loc6, end: loc7),
-      self.token(.colon,                start: loc8, end: loc9),
-      self.token(.string("wonderland"), start: loc10, end: loc11)
+    let parser = createStmtParser(
+      createToken(.with,                 start: loc0, end: loc1),
+      createToken(.identifier("Alice"),  start: loc2, end: loc3),
+      createToken(.as,                   start: loc4, end: loc5),
+      createToken(.identifier("smol"),   start: loc6, end: loc7),
+      createToken(.colon,                start: loc8, end: loc9),
+      createToken(.string("wonderland"), start: loc10, end: loc11)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 11:16)
@@ -68,16 +68,16 @@ class ParseWith: XCTestCase, Common {
 
   /// with Alice, Rabbit: "wonderland"
   func test_multipleItems() {
-    let parser = self.createStmtParser(
-      self.token(.with,                 start: loc0, end: loc1),
-      self.token(.identifier("Alice"),  start: loc2, end: loc3),
-      self.token(.comma,                start: loc4, end: loc5),
-      self.token(.identifier("Rabbit"), start: loc6, end: loc7),
-      self.token(.colon,                start: loc8, end: loc9),
-      self.token(.string("wonderland"), start: loc10, end: loc11)
+    let parser = createStmtParser(
+      createToken(.with,                 start: loc0, end: loc1),
+      createToken(.identifier("Alice"),  start: loc2, end: loc3),
+      createToken(.comma,                start: loc4, end: loc5),
+      createToken(.identifier("Rabbit"), start: loc6, end: loc7),
+      createToken(.colon,                start: loc8, end: loc9),
+      createToken(.string("wonderland"), start: loc10, end: loc11)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 11:16)
@@ -102,20 +102,20 @@ class ParseWith: XCTestCase, Common {
 
   /// with Alice as big, Rabbit as smol: "wonderland"
   func test_multipleItems_withAlias() {
-    let parser = self.createStmtParser(
-      self.token(.with,                 start: loc0, end: loc1),
-      self.token(.identifier("Alice"),  start: loc2, end: loc3),
-      self.token(.as,                   start: loc4, end: loc5),
-      self.token(.identifier("big"),    start: loc6, end: loc7),
-      self.token(.comma,                start: loc8, end: loc9),
-      self.token(.identifier("Rabbit"), start: loc10, end: loc11),
-      self.token(.as,                   start: loc12, end: loc13),
-      self.token(.identifier("small"),  start: loc14, end: loc15),
-      self.token(.colon,                start: loc16, end: loc17),
-      self.token(.string("wonderland"), start: loc18, end: loc19)
+    let parser = createStmtParser(
+      createToken(.with,                 start: loc0, end: loc1),
+      createToken(.identifier("Alice"),  start: loc2, end: loc3),
+      createToken(.as,                   start: loc4, end: loc5),
+      createToken(.identifier("big"),    start: loc6, end: loc7),
+      createToken(.comma,                start: loc8, end: loc9),
+      createToken(.identifier("Rabbit"), start: loc10, end: loc11),
+      createToken(.as,                   start: loc12, end: loc13),
+      createToken(.identifier("small"),  start: loc14, end: loc15),
+      createToken(.colon,                start: loc16, end: loc17),
+      createToken(.string("wonderland"), start: loc18, end: loc19)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 19:24)

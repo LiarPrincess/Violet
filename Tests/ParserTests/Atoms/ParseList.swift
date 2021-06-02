@@ -7,18 +7,18 @@ import VioletLexer
 // swiftlint:disable function_body_length
 // swiftformat:disable consecutiveSpaces
 
-class ParseList: XCTestCase, Common {
+class ParseList: XCTestCase {
 
   // MARK: - List
 
   /// []
   func test_empty() {
-    let parser = self.createExprParser(
-      self.token(.leftSqb,  start: loc0, end: loc1),
-      self.token(.rightSqb, start: loc2, end: loc3)
+    let parser = createExprParser(
+      createToken(.leftSqb,  start: loc0, end: loc1),
+      createToken(.rightSqb, start: loc2, end: loc3)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 3:8)
@@ -29,13 +29,13 @@ class ParseList: XCTestCase, Common {
 
   /// [ariel]
   func test_value() {
-    let parser = self.createExprParser(
-      self.token(.leftSqb,             start: loc0, end: loc1),
-      self.token(.identifier("ariel"), start: loc2, end: loc3),
-      self.token(.rightSqb,            start: loc4, end: loc5)
+    let parser = createExprParser(
+      createToken(.leftSqb,             start: loc0, end: loc1),
+      createToken(.identifier("ariel"), start: loc2, end: loc3),
+      createToken(.rightSqb,            start: loc4, end: loc5)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
@@ -48,14 +48,14 @@ class ParseList: XCTestCase, Common {
 
   /// [ariel,]
   func test_value_withComaAfter() {
-    let parser = self.createExprParser(
-      self.token(.leftSqb,             start: loc0, end: loc1),
-      self.token(.identifier("ariel"), start: loc2, end: loc3),
-      self.token(.comma,               start: loc4, end: loc5),
-      self.token(.rightSqb,            start: loc6, end: loc7)
+    let parser = createExprParser(
+      createToken(.leftSqb,             start: loc0, end: loc1),
+      createToken(.identifier("ariel"), start: loc2, end: loc3),
+      createToken(.comma,               start: loc4, end: loc5),
+      createToken(.rightSqb,            start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
@@ -68,15 +68,15 @@ class ParseList: XCTestCase, Common {
 
   /// [ariel, eric]
   func test_value_multiple() {
-    let parser = self.createExprParser(
-      self.token(.leftSqb,             start: loc0, end: loc1),
-      self.token(.identifier("ariel"), start: loc2, end: loc3),
-      self.token(.comma,               start: loc4, end: loc5),
-      self.token(.identifier("eric"),  start: loc6, end: loc7),
-      self.token(.rightSqb,            start: loc8, end: loc9)
+    let parser = createExprParser(
+      createToken(.leftSqb,             start: loc0, end: loc1),
+      createToken(.identifier("ariel"), start: loc2, end: loc3),
+      createToken(.comma,               start: loc4, end: loc5),
+      createToken(.identifier("eric"),  start: loc6, end: loc7),
+      createToken(.rightSqb,            start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
@@ -93,18 +93,18 @@ class ParseList: XCTestCase, Common {
 
   /// [ariel for eric in []]
   func test_comprehension_list() {
-    let parser = self.createExprParser(
-      self.token(.leftSqb,         start: loc0, end: loc1),
-      self.token(.identifier("ariel"), start: loc2, end: loc3),
-      self.token(.for,             start: loc4, end: loc5),
-      self.token(.identifier("eric"), start: loc6, end: loc7),
-      self.token(.in,              start: loc8, end: loc9),
-      self.token(.leftSqb,         start: loc10, end: loc11),
-      self.token(.rightSqb,        start: loc12, end: loc13),
-      self.token(.rightSqb,        start: loc14, end: loc15)
+    let parser = createExprParser(
+      createToken(.leftSqb,         start: loc0, end: loc1),
+      createToken(.identifier("ariel"), start: loc2, end: loc3),
+      createToken(.for,             start: loc4, end: loc5),
+      createToken(.identifier("eric"), start: loc6, end: loc7),
+      createToken(.in,              start: loc8, end: loc9),
+      createToken(.leftSqb,         start: loc10, end: loc11),
+      createToken(.rightSqb,        start: loc12, end: loc13),
+      createToken(.rightSqb,        start: loc14, end: loc15)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 15:20)
@@ -127,19 +127,19 @@ class ParseList: XCTestCase, Common {
 
   /// [ariel async for eric in []]
   func test_comprehension_async() {
-    let parser = self.createExprParser(
-      self.token(.leftSqb,             start: loc0, end: loc1),
-      self.token(.identifier("ariel"), start: loc2, end: loc3),
-      self.token(.async,               start: loc4, end: loc5),
-      self.token(.for,                 start: loc6, end: loc7),
-      self.token(.identifier("eric"),  start: loc8, end: loc9),
-      self.token(.in,                  start: loc10, end: loc11),
-      self.token(.leftSqb,             start: loc12, end: loc13),
-      self.token(.rightSqb,            start: loc14, end: loc15),
-      self.token(.rightSqb,            start: loc16, end: loc17)
+    let parser = createExprParser(
+      createToken(.leftSqb,             start: loc0, end: loc1),
+      createToken(.identifier("ariel"), start: loc2, end: loc3),
+      createToken(.async,               start: loc4, end: loc5),
+      createToken(.for,                 start: loc6, end: loc7),
+      createToken(.identifier("eric"),  start: loc8, end: loc9),
+      createToken(.in,                  start: loc10, end: loc11),
+      createToken(.leftSqb,             start: loc12, end: loc13),
+      createToken(.rightSqb,            start: loc14, end: loc15),
+      createToken(.rightSqb,            start: loc16, end: loc17)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
   ExpressionAST(start: 0:0, end: 17:22)
@@ -162,20 +162,20 @@ class ParseList: XCTestCase, Common {
 
   /// [ariel for eric, sebastian in []]
   func test_comprehension_target_multiple() {
-    let parser = self.createExprParser(
-      self.token(.leftSqb,                 start: loc0, end: loc1),
-      self.token(.identifier("ariel"),     start: loc2, end: loc3),
-      self.token(.for,                     start: loc4, end: loc5),
-      self.token(.identifier("eric"),      start: loc6, end: loc7),
-      self.token(.comma,                   start: loc8, end: loc9),
-      self.token(.identifier("sebastian"), start: loc10, end: loc11),
-      self.token(.in,                      start: loc12, end: loc13),
-      self.token(.leftSqb,                 start: loc14, end: loc15),
-      self.token(.rightSqb,                start: loc16, end: loc17),
-      self.token(.rightSqb,                start: loc18, end: loc19)
+    let parser = createExprParser(
+      createToken(.leftSqb,                 start: loc0, end: loc1),
+      createToken(.identifier("ariel"),     start: loc2, end: loc3),
+      createToken(.for,                     start: loc4, end: loc5),
+      createToken(.identifier("eric"),      start: loc6, end: loc7),
+      createToken(.comma,                   start: loc8, end: loc9),
+      createToken(.identifier("sebastian"), start: loc10, end: loc11),
+      createToken(.in,                      start: loc12, end: loc13),
+      createToken(.leftSqb,                 start: loc14, end: loc15),
+      createToken(.rightSqb,                start: loc16, end: loc17),
+      createToken(.rightSqb,                start: loc18, end: loc19)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 19:24)
@@ -202,19 +202,19 @@ class ParseList: XCTestCase, Common {
 
   /// [ariel for eric, in []]
   func test_comprehension_target_withCommaAfter_isTuple() {
-    let parser = self.createExprParser(
-      self.token(.leftSqb,             start: loc0, end: loc1),
-      self.token(.identifier("ariel"), start: loc2, end: loc3),
-      self.token(.for,                 start: loc4, end: loc5),
-      self.token(.identifier("eric"),  start: loc6, end: loc7),
-      self.token(.comma,               start: loc8, end: loc9),
-      self.token(.in,                  start: loc10, end: loc11),
-      self.token(.leftSqb,             start: loc12, end: loc13),
-      self.token(.rightSqb,            start: loc14, end: loc15),
-      self.token(.rightSqb,            start: loc16, end: loc17)
+    let parser = createExprParser(
+      createToken(.leftSqb,             start: loc0, end: loc1),
+      createToken(.identifier("ariel"), start: loc2, end: loc3),
+      createToken(.for,                 start: loc4, end: loc5),
+      createToken(.identifier("eric"),  start: loc6, end: loc7),
+      createToken(.comma,               start: loc8, end: loc9),
+      createToken(.in,                  start: loc10, end: loc11),
+      createToken(.leftSqb,             start: loc12, end: loc13),
+      createToken(.rightSqb,            start: loc14, end: loc15),
+      createToken(.rightSqb,            start: loc16, end: loc17)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 17:22)
@@ -239,23 +239,23 @@ class ParseList: XCTestCase, Common {
 
   /// [ariel for eric in [] for sebastian in []]
   func test_comprehension_for_multiple() {
-    let parser = self.createExprParser(
-      self.token(.leftSqb,                 start: loc0, end: loc1),
-      self.token(.identifier("ariel"),     start: loc2, end: loc3),
-      self.token(.for,                     start: loc4, end: loc5),
-      self.token(.identifier("eric"),      start: loc6, end: loc7),
-      self.token(.in,                      start: loc8, end: loc9),
-      self.token(.leftSqb,                 start: loc10, end: loc11),
-      self.token(.rightSqb,                start: loc12, end: loc13),
-      self.token(.for,                     start: loc14, end: loc15),
-      self.token(.identifier("sebastian"), start: loc16, end: loc17),
-      self.token(.in,                      start: loc18, end: loc19),
-      self.token(.leftSqb,                 start: loc20, end: loc21),
-      self.token(.rightSqb,                start: loc22, end: loc23),
-      self.token(.rightSqb,                start: loc24, end: loc25)
+    let parser = createExprParser(
+      createToken(.leftSqb,                 start: loc0, end: loc1),
+      createToken(.identifier("ariel"),     start: loc2, end: loc3),
+      createToken(.for,                     start: loc4, end: loc5),
+      createToken(.identifier("eric"),      start: loc6, end: loc7),
+      createToken(.in,                      start: loc8, end: loc9),
+      createToken(.leftSqb,                 start: loc10, end: loc11),
+      createToken(.rightSqb,                start: loc12, end: loc13),
+      createToken(.for,                     start: loc14, end: loc15),
+      createToken(.identifier("sebastian"), start: loc16, end: loc17),
+      createToken(.in,                      start: loc18, end: loc19),
+      createToken(.leftSqb,                 start: loc20, end: loc21),
+      createToken(.rightSqb,                start: loc22, end: loc23),
+      createToken(.rightSqb,                start: loc24, end: loc25)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 25:30)
@@ -287,22 +287,22 @@ class ParseList: XCTestCase, Common {
 
   /// [ariel for eric in [] if sebastian if flounder]
   func test_comprehension_ifs_multiple() {
-    let parser = self.createExprParser(
-      self.token(.leftSqb,                 start: loc0, end: loc1),
-      self.token(.identifier("ariel"),     start: loc2, end: loc3),
-      self.token(.for,                     start: loc4, end: loc5),
-      self.token(.identifier("eric"),      start: loc6, end: loc7),
-      self.token(.in,                      start: loc8, end: loc9),
-      self.token(.leftSqb,                 start: loc10, end: loc11),
-      self.token(.rightSqb,                start: loc12, end: loc13),
-      self.token(.if,                      start: loc14, end: loc15),
-      self.token(.identifier("sebastian"), start: loc16, end: loc17),
-      self.token(.if,                      start: loc18, end: loc19),
-      self.token(.identifier("flounder"),  start: loc20, end: loc21),
-      self.token(.rightSqb,                start: loc22, end: loc23)
+    let parser = createExprParser(
+      createToken(.leftSqb,                 start: loc0, end: loc1),
+      createToken(.identifier("ariel"),     start: loc2, end: loc3),
+      createToken(.for,                     start: loc4, end: loc5),
+      createToken(.identifier("eric"),      start: loc6, end: loc7),
+      createToken(.in,                      start: loc8, end: loc9),
+      createToken(.leftSqb,                 start: loc10, end: loc11),
+      createToken(.rightSqb,                start: loc12, end: loc13),
+      createToken(.if,                      start: loc14, end: loc15),
+      createToken(.identifier("sebastian"), start: loc16, end: loc17),
+      createToken(.if,                      start: loc18, end: loc19),
+      createToken(.identifier("flounder"),  start: loc20, end: loc21),
+      createToken(.rightSqb,                start: loc22, end: loc23)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 23:28)

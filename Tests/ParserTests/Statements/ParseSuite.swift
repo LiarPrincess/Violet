@@ -17,27 +17,27 @@ import VioletLexer
 /// with     with class
 /// try??
 /// ```
-class ParseSuite: XCTestCase, Common {
+class ParseSuite: XCTestCase {
 
   /// def fly():
   ///                <-- this line is empty
   ///   pass
   func test_multipleNewLines_atTheBeginning() {
-    let parser = self.createStmtParser(
-      self.token(.def,                 start: loc0, end: loc1),
-      self.token(.identifier("fly"),   start: loc2, end: loc3),
-      self.token(.leftParen,           start: loc4, end: loc5),
-      self.token(.rightParen,          start: loc6, end: loc7),
-      self.token(.colon,               start: loc8, end: loc9),
-      self.token(.newLine,             start: loc10, end: loc11),
-      self.token(.newLine,             start: loc12, end: loc13), // < here
-      self.token(.indent,              start: loc14, end: loc15),
-      self.token(.pass,                start: loc16, end: loc17),
-      self.token(.newLine,             start: loc18, end: loc19),
-      self.token(.dedent,              start: loc21, end: loc21)
+    let parser = createStmtParser(
+      createToken(.def,                 start: loc0, end: loc1),
+      createToken(.identifier("fly"),   start: loc2, end: loc3),
+      createToken(.leftParen,           start: loc4, end: loc5),
+      createToken(.rightParen,          start: loc6, end: loc7),
+      createToken(.colon,               start: loc8, end: loc9),
+      createToken(.newLine,             start: loc10, end: loc11),
+      createToken(.newLine,             start: loc12, end: loc13), // < here
+      createToken(.indent,              start: loc14, end: loc15),
+      createToken(.pass,                start: loc16, end: loc17),
+      createToken(.newLine,             start: loc18, end: loc19),
+      createToken(.dedent,              start: loc21, end: loc21)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 17:22)
@@ -62,26 +62,26 @@ class ParseSuite: XCTestCase, Common {
   ///   def fly():
   ///     up
   func test_class_withFunction() {
-    let parser = self.createStmtParser(
-      self.token(.class,               start: loc0, end: loc1),
-      self.token(.identifier("Peter"), start: loc2, end: loc3),
-      self.token(.colon,               start: loc4, end: loc5),
-      self.token(.newLine,             start: loc6, end: loc7),
-      self.token(.indent,              start: loc8, end: loc9),
-      self.token(.def,                 start: loc10, end: loc11),
-      self.token(.identifier("fly"),   start: loc12, end: loc13),
-      self.token(.leftParen,           start: loc14, end: loc15),
-      self.token(.rightParen,          start: loc16, end: loc17),
-      self.token(.colon,               start: loc18, end: loc19),
-      self.token(.newLine,             start: loc20, end: loc21),
-      self.token(.indent,              start: loc22, end: loc23),
-      self.token(.string("up"),        start: loc24, end: loc25),
-      self.token(.newLine,             start: loc26, end: loc27),
-      self.token(.dedent,              start: loc28, end: loc29),
-      self.token(.dedent,              start: loc30, end: loc31)
+    let parser = createStmtParser(
+      createToken(.class,               start: loc0, end: loc1),
+      createToken(.identifier("Peter"), start: loc2, end: loc3),
+      createToken(.colon,               start: loc4, end: loc5),
+      createToken(.newLine,             start: loc6, end: loc7),
+      createToken(.indent,              start: loc8, end: loc9),
+      createToken(.def,                 start: loc10, end: loc11),
+      createToken(.identifier("fly"),   start: loc12, end: loc13),
+      createToken(.leftParen,           start: loc14, end: loc15),
+      createToken(.rightParen,          start: loc16, end: loc17),
+      createToken(.colon,               start: loc18, end: loc19),
+      createToken(.newLine,             start: loc20, end: loc21),
+      createToken(.indent,              start: loc22, end: loc23),
+      createToken(.string("up"),        start: loc24, end: loc25),
+      createToken(.newLine,             start: loc26, end: loc27),
+      createToken(.dedent,              start: loc28, end: loc29),
+      createToken(.dedent,              start: loc30, end: loc31)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 25:30)
@@ -114,26 +114,26 @@ class ParseSuite: XCTestCase, Common {
   ///   if Peter:
   ///      fly
   func test_function_withIf() {
-    let parser = self.createStmtParser(
-      self.token(.def,                 start: loc0, end: loc1),
-      self.token(.identifier("fly"),   start: loc2, end: loc3),
-      self.token(.leftParen,           start: loc4, end: loc5),
-      self.token(.rightParen,          start: loc6, end: loc7),
-      self.token(.colon,               start: loc8, end: loc9),
-      self.token(.newLine,             start: loc10, end: loc11),
-      self.token(.indent,              start: loc12, end: loc13),
-      self.token(.if,                  start: loc14, end: loc15),
-      self.token(.identifier("Peter"), start: loc16, end: loc17),
-      self.token(.colon,               start: loc18, end: loc19),
-      self.token(.newLine,             start: loc20, end: loc21),
-      self.token(.indent,              start: loc22, end: loc23),
-      self.token(.identifier("fly"),   start: loc24, end: loc25),
-      self.token(.newLine,             start: loc26, end: loc27),
-      self.token(.dedent,              start: loc28, end: loc29),
-      self.token(.dedent,              start: loc30, end: loc31)
+    let parser = createStmtParser(
+      createToken(.def,                 start: loc0, end: loc1),
+      createToken(.identifier("fly"),   start: loc2, end: loc3),
+      createToken(.leftParen,           start: loc4, end: loc5),
+      createToken(.rightParen,          start: loc6, end: loc7),
+      createToken(.colon,               start: loc8, end: loc9),
+      createToken(.newLine,             start: loc10, end: loc11),
+      createToken(.indent,              start: loc12, end: loc13),
+      createToken(.if,                  start: loc14, end: loc15),
+      createToken(.identifier("Peter"), start: loc16, end: loc17),
+      createToken(.colon,               start: loc18, end: loc19),
+      createToken(.newLine,             start: loc20, end: loc21),
+      createToken(.indent,              start: loc22, end: loc23),
+      createToken(.identifier("fly"),   start: loc24, end: loc25),
+      createToken(.newLine,             start: loc26, end: loc27),
+      createToken(.dedent,              start: loc28, end: loc29),
+      createToken(.dedent,              start: loc30, end: loc31)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 25:30)
@@ -166,24 +166,24 @@ class ParseSuite: XCTestCase, Common {
   ///   while tick:
   ///      run
   func test_if_withWhile() {
-    let parser = self.createStmtParser(
-      self.token(.if,                 start: loc0, end: loc1),
-      self.token(.identifier("Hook"), start: loc2, end: loc3),
-      self.token(.colon,              start: loc4, end: loc5),
-      self.token(.newLine,            start: loc6, end: loc7),
-      self.token(.indent,             start: loc8, end: loc9),
-      self.token(.while,              start: loc10, end: loc11),
-      self.token(.identifier("tick"), start: loc12, end: loc13),
-      self.token(.colon,              start: loc14, end: loc15),
-      self.token(.newLine,            start: loc16, end: loc17),
-      self.token(.indent,             start: loc18, end: loc19),
-      self.token(.string("run"),      start: loc20, end: loc21),
-      self.token(.newLine,            start: loc22, end: loc23),
-      self.token(.dedent,             start: loc24, end: loc25),
-      self.token(.dedent,             start: loc26, end: loc27)
+    let parser = createStmtParser(
+      createToken(.if,                 start: loc0, end: loc1),
+      createToken(.identifier("Hook"), start: loc2, end: loc3),
+      createToken(.colon,              start: loc4, end: loc5),
+      createToken(.newLine,            start: loc6, end: loc7),
+      createToken(.indent,             start: loc8, end: loc9),
+      createToken(.while,              start: loc10, end: loc11),
+      createToken(.identifier("tick"), start: loc12, end: loc13),
+      createToken(.colon,              start: loc14, end: loc15),
+      createToken(.newLine,            start: loc16, end: loc17),
+      createToken(.indent,             start: loc18, end: loc19),
+      createToken(.string("run"),      start: loc20, end: loc21),
+      createToken(.newLine,            start: loc22, end: loc23),
+      createToken(.dedent,             start: loc24, end: loc25),
+      createToken(.dedent,             start: loc26, end: loc27)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 21:26)
@@ -209,26 +209,26 @@ class ParseSuite: XCTestCase, Common {
   ///   for tock in crocodile:
   ///      run
   func test_while_withFor() {
-    let parser = self.createStmtParser(
-      self.token(.while,                   start: loc0, end: loc1),
-      self.token(.identifier("tick"),      start: loc2, end: loc3),
-      self.token(.colon,                   start: loc4, end: loc5),
-      self.token(.newLine,                 start: loc6, end: loc7),
-      self.token(.indent,                  start: loc8, end: loc9),
-      self.token(.for,                     start: loc10, end: loc11),
-      self.token(.identifier("tock"),      start: loc12, end: loc13),
-      self.token(.in,                      start: loc14, end: loc15),
-      self.token(.identifier("crocodile"), start: loc16, end: loc17),
-      self.token(.colon,                   start: loc18, end: loc19),
-      self.token(.newLine,                 start: loc20, end: loc21),
-      self.token(.indent,                  start: loc22, end: loc23),
-      self.token(.string("run"),           start: loc24, end: loc25),
-      self.token(.newLine,                 start: loc26, end: loc27),
-      self.token(.dedent,                  start: loc28, end: loc29),
-      self.token(.dedent,                  start: loc30, end: loc31)
+    let parser = createStmtParser(
+      createToken(.while,                   start: loc0, end: loc1),
+      createToken(.identifier("tick"),      start: loc2, end: loc3),
+      createToken(.colon,                   start: loc4, end: loc5),
+      createToken(.newLine,                 start: loc6, end: loc7),
+      createToken(.indent,                  start: loc8, end: loc9),
+      createToken(.for,                     start: loc10, end: loc11),
+      createToken(.identifier("tock"),      start: loc12, end: loc13),
+      createToken(.in,                      start: loc14, end: loc15),
+      createToken(.identifier("crocodile"), start: loc16, end: loc17),
+      createToken(.colon,                   start: loc18, end: loc19),
+      createToken(.newLine,                 start: loc20, end: loc21),
+      createToken(.indent,                  start: loc22, end: loc23),
+      createToken(.string("run"),           start: loc24, end: loc25),
+      createToken(.newLine,                 start: loc26, end: loc27),
+      createToken(.dedent,                  start: loc28, end: loc29),
+      createToken(.dedent,                  start: loc30, end: loc31)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 25:30)
@@ -257,26 +257,26 @@ class ParseSuite: XCTestCase, Common {
   ///   with Hook:
   ///      run
   func test_for_withWith() {
-    let parser = self.createStmtParser(
-      self.token(.for,                     start: loc0, end: loc1),
-      self.token(.identifier("tock"),      start: loc2, end: loc3),
-      self.token(.in,                      start: loc4, end: loc5),
-      self.token(.identifier("crocodile"), start: loc6, end: loc7),
-      self.token(.colon,                   start: loc8, end: loc9),
-      self.token(.newLine,                 start: loc10, end: loc11),
-      self.token(.indent,                  start: loc12, end: loc13),
-      self.token(.with,                    start: loc14, end: loc15),
-      self.token(.identifier("Hook"),      start: loc16, end: loc17),
-      self.token(.colon,                   start: loc18, end: loc19),
-      self.token(.newLine,                 start: loc20, end: loc21),
-      self.token(.indent,                  start: loc22, end: loc23),
-      self.token(.string("run"),           start: loc24, end: loc25),
-      self.token(.newLine,                 start: loc26, end: loc27),
-      self.token(.dedent,                  start: loc28, end: loc29),
-      self.token(.dedent,                  start: loc30, end: loc31)
+    let parser = createStmtParser(
+      createToken(.for,                     start: loc0, end: loc1),
+      createToken(.identifier("tock"),      start: loc2, end: loc3),
+      createToken(.in,                      start: loc4, end: loc5),
+      createToken(.identifier("crocodile"), start: loc6, end: loc7),
+      createToken(.colon,                   start: loc8, end: loc9),
+      createToken(.newLine,                 start: loc10, end: loc11),
+      createToken(.indent,                  start: loc12, end: loc13),
+      createToken(.with,                    start: loc14, end: loc15),
+      createToken(.identifier("Hook"),      start: loc16, end: loc17),
+      createToken(.colon,                   start: loc18, end: loc19),
+      createToken(.newLine,                 start: loc20, end: loc21),
+      createToken(.indent,                  start: loc22, end: loc23),
+      createToken(.string("run"),           start: loc24, end: loc25),
+      createToken(.newLine,                 start: loc26, end: loc27),
+      createToken(.dedent,                  start: loc28, end: loc29),
+      createToken(.dedent,                  start: loc30, end: loc31)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 25:30)
@@ -307,24 +307,24 @@ class ParseSuite: XCTestCase, Common {
   ///   class Dust:
   ///      fly
   func test_with_withClass() {
-    let parser = self.createStmtParser(
-      self.token(.with,                     start: loc0, end: loc1),
-      self.token(.identifier("TinkerBell"), start: loc2, end: loc3),
-      self.token(.colon,                    start: loc4, end: loc5),
-      self.token(.newLine,                  start: loc6, end: loc7),
-      self.token(.indent,                   start: loc8, end: loc9),
-      self.token(.class,                    start: loc10, end: loc11),
-      self.token(.identifier("Dust"),       start: loc12, end: loc13),
-      self.token(.colon,                    start: loc14, end: loc15),
-      self.token(.newLine,                  start: loc16, end: loc17),
-      self.token(.indent,                   start: loc18, end: loc19),
-      self.token(.string("fly"),            start: loc20, end: loc21),
-      self.token(.newLine,                  start: loc22, end: loc23),
-      self.token(.dedent,                   start: loc24, end: loc25),
-      self.token(.dedent,                   start: loc26, end: loc27)
+    let parser = createStmtParser(
+      createToken(.with,                     start: loc0, end: loc1),
+      createToken(.identifier("TinkerBell"), start: loc2, end: loc3),
+      createToken(.colon,                    start: loc4, end: loc5),
+      createToken(.newLine,                  start: loc6, end: loc7),
+      createToken(.indent,                   start: loc8, end: loc9),
+      createToken(.class,                    start: loc10, end: loc11),
+      createToken(.identifier("Dust"),       start: loc12, end: loc13),
+      createToken(.colon,                    start: loc14, end: loc15),
+      createToken(.newLine,                  start: loc16, end: loc17),
+      createToken(.indent,                   start: loc18, end: loc19),
+      createToken(.string("fly"),            start: loc20, end: loc21),
+      createToken(.newLine,                  start: loc22, end: loc23),
+      createToken(.dedent,                   start: loc24, end: loc25),
+      createToken(.dedent,                   start: loc26, end: loc27)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 21:26)

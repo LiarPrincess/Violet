@@ -6,16 +6,16 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseAtoms: XCTestCase, Common {
+class ParseAtoms: XCTestCase {
 
   // MARK: - None
 
   func test_none() {
-    let parser = self.createExprParser(
-      self.token(.none, start: loc0, end: loc1)
+    let parser = createExprParser(
+      createToken(.none, start: loc0, end: loc1)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
@@ -26,11 +26,11 @@ class ParseAtoms: XCTestCase, Common {
   // MARK: - Bool
 
   func test_true() {
-    let parser = self.createExprParser(
-      self.token(.true, start: loc0, end: loc1)
+    let parser = createExprParser(
+      createToken(.true, start: loc0, end: loc1)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
@@ -39,11 +39,11 @@ class ParseAtoms: XCTestCase, Common {
   }
 
   func test_false() {
-    let parser = self.createExprParser(
-      self.token(.false, start: loc0, end: loc1)
+    let parser = createExprParser(
+      createToken(.false, start: loc0, end: loc1)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
@@ -56,11 +56,11 @@ class ParseAtoms: XCTestCase, Common {
   func test_int() {
     let value = BigInt(42)
 
-    let parser = self.createExprParser(
-      self.token(.int(value), start: loc0, end: loc1)
+    let parser = createExprParser(
+      createToken(.int(value), start: loc0, end: loc1)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
@@ -70,11 +70,11 @@ class ParseAtoms: XCTestCase, Common {
   }
 
   func test_float() {
-    let parser = self.createExprParser(
-      self.token(.float(4.2), start: loc0, end: loc1)
+    let parser = createExprParser(
+      createToken(.float(4.2), start: loc0, end: loc1)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
@@ -84,11 +84,11 @@ class ParseAtoms: XCTestCase, Common {
   }
 
   func test_imaginary() {
-    let parser = self.createExprParser(
-      self.token(.imaginary(4.2), start: loc0, end: loc1)
+    let parser = createExprParser(
+      createToken(.imaginary(4.2), start: loc0, end: loc1)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
@@ -101,11 +101,11 @@ class ParseAtoms: XCTestCase, Common {
   // MARK: - Ellipsis
 
   func test_ellipsis() {
-    let parser = self.createExprParser(
-      self.token(.ellipsis, start: loc0, end: loc1)
+    let parser = createExprParser(
+      createToken(.ellipsis, start: loc0, end: loc1)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
@@ -116,12 +116,12 @@ class ParseAtoms: XCTestCase, Common {
   // MARK: - Await
 
   func test_await() {
-    let parser = self.createExprParser(
-      self.token(.await,          start: loc0, end: loc1),
-      self.token(.string("Elsa"), start: loc2, end: loc3)
+    let parser = createExprParser(
+      createToken(.await,          start: loc0, end: loc1),
+      createToken(.string("Elsa"), start: loc2, end: loc3)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 3:8)

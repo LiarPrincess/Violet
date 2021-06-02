@@ -5,15 +5,15 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseReturn: XCTestCase, Common {
+class ParseReturn: XCTestCase {
 
   /// return
   func test_withoutValue() {
-    let parser = self.createStmtParser(
-      self.token(.return, start: loc0, end: loc1)
+    let parser = createStmtParser(
+      createToken(.return, start: loc0, end: loc1)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 1:6)
@@ -24,12 +24,12 @@ class ParseReturn: XCTestCase, Common {
 
   /// return Megara
   func test_value() {
-    let parser = self.createStmtParser(
-      self.token(.return,               start: loc0, end: loc1),
-      self.token(.identifier("Megara"), start: loc2, end: loc3)
+    let parser = createStmtParser(
+      createToken(.return,               start: loc0, end: loc1),
+      createToken(.identifier("Megara"), start: loc2, end: loc3)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 3:8)
@@ -42,13 +42,13 @@ class ParseReturn: XCTestCase, Common {
 
   /// return Megara,
   func test_withCommaAfter_returnsTuple() {
-    let parser = self.createStmtParser(
-      self.token(.return,               start: loc0, end: loc1),
-      self.token(.identifier("Megara"), start: loc2, end: loc3),
-      self.token(.comma,                start: loc4, end: loc5)
+    let parser = createStmtParser(
+      createToken(.return,               start: loc0, end: loc1),
+      createToken(.identifier("Megara"), start: loc2, end: loc3),
+      createToken(.comma,                start: loc4, end: loc5)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 5:10)
@@ -64,16 +64,16 @@ class ParseReturn: XCTestCase, Common {
   /// return Calliope, Melpomene, Terpsichore
   /// Those are the names of the muses (Thalia and Clio are missing)
   func test_multiple() {
-    let parser = self.createStmtParser(
-      self.token(.return,                    start: loc0, end: loc1),
-      self.token(.identifier("Calliope"),    start: loc2, end: loc3),
-      self.token(.comma,                     start: loc4, end: loc5),
-      self.token(.identifier("Melpomene"),   start: loc6, end: loc7),
-      self.token(.comma,                     start: loc8, end: loc9),
-      self.token(.identifier("Terpsichore"), start: loc10, end: loc11)
+    let parser = createStmtParser(
+      createToken(.return,                    start: loc0, end: loc1),
+      createToken(.identifier("Calliope"),    start: loc2, end: loc3),
+      createToken(.comma,                     start: loc4, end: loc5),
+      createToken(.identifier("Melpomene"),   start: loc6, end: loc7),
+      createToken(.comma,                     start: loc8, end: loc9),
+      createToken(.identifier("Terpsichore"), start: loc10, end: loc11)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 11:16)

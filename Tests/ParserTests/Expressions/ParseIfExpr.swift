@@ -5,19 +5,19 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseIfExpr: XCTestCase, Common {
+class ParseIfExpr: XCTestCase {
 
   /// prince if belle else beast
   func test_simple() {
-    let parser = self.createExprParser(
-      self.token(.identifier("prince"), start: loc0, end: loc1),
-      self.token(.if,                   start: loc2, end: loc3),
-      self.token(.identifier("belle"),  start: loc4, end: loc5),
-      self.token(.else,                 start: loc6, end: loc7),
-      self.token(.identifier("beast"),  start: loc8, end: loc9)
+    let parser = createExprParser(
+      createToken(.identifier("prince"), start: loc0, end: loc1),
+      createToken(.if,                   start: loc2, end: loc3),
+      createToken(.identifier("belle"),  start: loc4, end: loc5),
+      createToken(.else,                 start: loc6, end: loc7),
+      createToken(.identifier("beast"),  start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)

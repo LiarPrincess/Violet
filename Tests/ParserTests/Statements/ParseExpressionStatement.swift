@@ -5,15 +5,15 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseExpressionStatement: XCTestCase, Common {
+class ParseExpressionStatement: XCTestCase {
 
   /// "Ariel+Eric"
   func test_expression() {
-    let parser = self.createStmtParser(
-      self.token(.string("Ariel+Eric"), start: loc0, end: loc1)
+    let parser = createStmtParser(
+      createToken(.string("Ariel+Eric"), start: loc0, end: loc1)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 1:6)

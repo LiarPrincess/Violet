@@ -1,6 +1,5 @@
 public protocol LexerType: AnyObject {
-
-  /// Get next token to parse.
-  /// If we reached EOF then it should return EOF token (forever).
+  /// Get the next token to parse.
+  /// If EOF is reached, it will return EOF forever.
   func getToken() throws -> Token
 }

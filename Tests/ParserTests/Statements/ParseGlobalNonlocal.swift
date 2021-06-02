@@ -5,18 +5,18 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseGlobalNonlocal: XCTestCase, Common {
+class ParseGlobalNonlocal: XCTestCase {
 
   // MARK: - global
 
   /// global Aladdin
   func test_global() {
-    let parser = self.createStmtParser(
-      self.token(.global,                start: loc0, end: loc1),
-      self.token(.identifier("Aladdin"), start: loc2, end: loc3)
+    let parser = createStmtParser(
+      createToken(.global,                start: loc0, end: loc1),
+      createToken(.identifier("Aladdin"), start: loc2, end: loc3)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 3:8)
@@ -27,14 +27,14 @@ class ParseGlobalNonlocal: XCTestCase, Common {
 
   /// global Aladdin, Jasmine
   func test_global_multiple() {
-    let parser = self.createStmtParser(
-      self.token(.global,                start: loc0, end: loc1),
-      self.token(.identifier("Aladdin"), start: loc2, end: loc3),
-      self.token(.comma,                 start: loc4, end: loc5),
-      self.token(.identifier("Jasmine"), start: loc6, end: loc7)
+    let parser = createStmtParser(
+      createToken(.global,                start: loc0, end: loc1),
+      createToken(.identifier("Aladdin"), start: loc2, end: loc3),
+      createToken(.comma,                 start: loc4, end: loc5),
+      createToken(.identifier("Jasmine"), start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 7:12)
@@ -48,12 +48,12 @@ class ParseGlobalNonlocal: XCTestCase, Common {
 
   /// nonlocal Genie
   func test_nonlocal() {
-    let parser = self.createStmtParser(
-      self.token(.nonlocal,            start: loc0, end: loc1),
-      self.token(.identifier("Genie"), start: loc2, end: loc3)
+    let parser = createStmtParser(
+      createToken(.nonlocal,            start: loc0, end: loc1),
+      createToken(.identifier("Genie"), start: loc2, end: loc3)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 3:8)
@@ -64,14 +64,14 @@ class ParseGlobalNonlocal: XCTestCase, Common {
 
   /// nonlocal Genie, MagicCarpet
   func test_nonlocal_multiple() {
-    let parser = self.createStmtParser(
-      self.token(.nonlocal,                  start: loc0, end: loc1),
-      self.token(.identifier("Genie"),       start: loc2, end: loc3),
-      self.token(.comma,                     start: loc4, end: loc5),
-      self.token(.identifier("MagicCarpet"), start: loc6, end: loc7)
+    let parser = createStmtParser(
+      createToken(.nonlocal,                  start: loc0, end: loc1),
+      createToken(.identifier("Genie"),       start: loc2, end: loc3),
+      createToken(.comma,                     start: loc4, end: loc5),
+      createToken(.identifier("MagicCarpet"), start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 7:12)

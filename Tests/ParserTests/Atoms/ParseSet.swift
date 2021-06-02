@@ -5,19 +5,19 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseSet: XCTestCase, Common {
+class ParseSet: XCTestCase {
 
   // MARK: - Set
 
   /// {rapunzel}
   func test_singleElement() {
-    let parser = self.createExprParser(
-      self.token(.leftBrace,              start: loc0, end: loc1),
-      self.token(.identifier("rapunzel"), start: loc2, end: loc3),
-      self.token(.rightBrace,             start: loc4, end: loc5)
+    let parser = createExprParser(
+      createToken(.leftBrace,              start: loc0, end: loc1),
+      createToken(.identifier("rapunzel"), start: loc2, end: loc3),
+      createToken(.rightBrace,             start: loc4, end: loc5)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
@@ -30,14 +30,14 @@ class ParseSet: XCTestCase, Common {
 
   /// {rapunzel,}
   func test_withComaAfter() {
-    let parser = self.createExprParser(
-      self.token(.leftBrace,              start: loc0, end: loc1),
-      self.token(.identifier("rapunzel"), start: loc2, end: loc3),
-      self.token(.comma,                  start: loc4, end: loc5),
-      self.token(.rightBrace,             start: loc6, end: loc7)
+    let parser = createExprParser(
+      createToken(.leftBrace,              start: loc0, end: loc1),
+      createToken(.identifier("rapunzel"), start: loc2, end: loc3),
+      createToken(.comma,                  start: loc4, end: loc5),
+      createToken(.rightBrace,             start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
@@ -50,14 +50,14 @@ class ParseSet: XCTestCase, Common {
 
   /// {*1}
   func test_star() {
-    let parser = self.createExprParser(
-      self.token(.leftBrace,              start: loc0, end: loc1),
-      self.token(.star,                   start: loc2, end: loc3),
-      self.token(.identifier("rapunzel"), start: loc4, end: loc5),
-      self.token(.rightBrace,             start: loc6, end: loc7)
+    let parser = createExprParser(
+      createToken(.leftBrace,              start: loc0, end: loc1),
+      createToken(.star,                   start: loc2, end: loc3),
+      createToken(.identifier("rapunzel"), start: loc4, end: loc5),
+      createToken(.rightBrace,             start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
   ExpressionAST(start: 0:0, end: 7:12)
@@ -72,18 +72,18 @@ class ParseSet: XCTestCase, Common {
 
   /// {rapunzel, *eugene, cassandra}
   func test_multipleElements() {
-    let parser = self.createExprParser(
-      self.token(.leftBrace,               start: loc0, end: loc1),
-      self.token(.identifier("rapunzel"),  start: loc2, end: loc3),
-      self.token(.comma,                   start: loc4, end: loc5),
-      self.token(.star,                    start: loc6, end: loc7),
-      self.token(.identifier("eugene"),    start: loc8, end: loc9),
-      self.token(.comma,                   start: loc10, end: loc11),
-      self.token(.identifier("cassandra"), start: loc12, end: loc13),
-      self.token(.rightBrace,              start: loc14, end: loc15)
+    let parser = createExprParser(
+      createToken(.leftBrace,               start: loc0, end: loc1),
+      createToken(.identifier("rapunzel"),  start: loc2, end: loc3),
+      createToken(.comma,                   start: loc4, end: loc5),
+      createToken(.star,                    start: loc6, end: loc7),
+      createToken(.identifier("eugene"),    start: loc8, end: loc9),
+      createToken(.comma,                   start: loc10, end: loc11),
+      createToken(.identifier("cassandra"), start: loc12, end: loc13),
+      createToken(.rightBrace,              start: loc14, end: loc15)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 15:20)
@@ -104,18 +104,18 @@ class ParseSet: XCTestCase, Common {
 
   /// {rapunzel for eugene in []}
   func test_comprehension() {
-    let parser = self.createExprParser(
-      self.token(.leftBrace,              start: loc0, end: loc1),
-      self.token(.identifier("rapunzel"), start: loc2, end: loc3),
-      self.token(.for,                    start: loc4, end: loc5),
-      self.token(.identifier("eugene"),   start: loc6, end: loc7),
-      self.token(.in,                     start: loc8, end: loc9),
-      self.token(.leftSqb,                start: loc10, end: loc11),
-      self.token(.rightSqb,               start: loc12, end: loc13),
-      self.token(.rightBrace,             start: loc14, end: loc15)
+    let parser = createExprParser(
+      createToken(.leftBrace,              start: loc0, end: loc1),
+      createToken(.identifier("rapunzel"), start: loc2, end: loc3),
+      createToken(.for,                    start: loc4, end: loc5),
+      createToken(.identifier("eugene"),   start: loc6, end: loc7),
+      createToken(.in,                     start: loc8, end: loc9),
+      createToken(.leftSqb,                start: loc10, end: loc11),
+      createToken(.rightSqb,               start: loc12, end: loc13),
+      createToken(.rightBrace,             start: loc14, end: loc15)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 15:20)

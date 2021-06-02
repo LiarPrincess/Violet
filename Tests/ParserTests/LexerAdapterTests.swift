@@ -7,10 +7,10 @@ import VioletLexer
 
 // MARK: - Assert
 
-internal func XCTAssertTokens(_ adapter: inout LexerAdapter,
-                              _ expected: [Token.Kind],
-                              file: StaticString = #file,
-                              line: UInt = #line) {
+private func XCTAssertTokens(_ adapter: inout LexerAdapter,
+                             _ expected: [Token.Kind],
+                             file: StaticString = #file,
+                             line: UInt = #line) {
   do {
     let tokens = try consume(adapter: &adapter)
     XCTAssertEqual(tokens.count, expected.count, "Count", file: file, line: line)
@@ -57,7 +57,7 @@ class LexerAdapterTests: XCTestCase {
 
   func test_populatePeeks_withEOF_as2ndToken() {
     var adapter = self.createAdapter(tokens: [
-      self.token(.string("Galavant"))
+      token(.string("Galavant"))
     ])
 
     XCTAssertTokens(&adapter, [
@@ -67,10 +67,10 @@ class LexerAdapterTests: XCTestCase {
 
   func test_populatePeeks_ignoresComments() {
     var adapter = self.createAdapter(tokens: [
-      self.token(.newLine),
-      self.token(.comment("Way back in days of old")),
-      self.token(.newLine),
-      self.token(.string("There was a legend told"))
+      token(.newLine),
+      token(.comment("Way back in days of old")),
+      token(.newLine),
+      token(.string("There was a legend told"))
     ])
 
     XCTAssertTokens(&adapter, [
@@ -91,10 +91,10 @@ class LexerAdapterTests: XCTestCase {
   /// code
   func test_advance_ignoresSubsequentNewLines() {
     var adapter = self.createAdapter(tokens: [
-      self.token(.string("About a hero known as Galavant")),
-      self.token(.newLine),
-      self.token(.newLine),
-      self.token(.string("Square jaw and perfect hair..."))
+      token(.string("About a hero known as Galavant")),
+      token(.newLine),
+      token(.newLine),
+      token(.string("Square jaw and perfect hair..."))
     ])
 
     XCTAssertTokens(&adapter, [
@@ -113,11 +113,11 @@ class LexerAdapterTests: XCTestCase {
   /// code
   func test_advance_ignoresSubsequentLines_withComment() {
     var adapter = self.createAdapter(tokens: [
-      self.token(.string("Cojones out to there...")),
-      self.token(.newLine),
-      self.token(.comment("There was no hero quite like Galavant")),
-      self.token(.newLine),
-      self.token(.string("Tough, plus every other manly value..."))
+      token(.string("Cojones out to there...")),
+      token(.newLine),
+      token(.comment("There was no hero quite like Galavant")),
+      token(.newLine),
+      token(.string("Tough, plus every other manly value..."))
     ])
 
     XCTAssertTokens(&adapter, [
@@ -138,13 +138,13 @@ class LexerAdapterTests: XCTestCase {
   /// code
   func test_advance_ignoresSubsequentLines_withComment_orNewLine() {
     var adapter = self.createAdapter(tokens: [
-      self.token(.string("Mess with him, he'll disembowel you.")),
-      self.token(.newLine),
-      self.token(.newLine),
-      self.token(.comment("Yay! He ruled in every way!")),
-      self.token(.newLine),
-      self.token(.newLine),
-      self.token(.string("A fairy tale cliché!"))
+      token(.string("Mess with him, he'll disembowel you.")),
+      token(.newLine),
+      token(.newLine),
+      token(.comment("Yay! He ruled in every way!")),
+      token(.newLine),
+      token(.newLine),
+      token(.string("A fairy tale cliché!"))
     ])
 
     XCTAssertTokens(&adapter, [

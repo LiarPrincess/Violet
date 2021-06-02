@@ -5,7 +5,7 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseBitExpr: XCTestCase, Common {
+class ParseBitExpr: XCTestCase {
 
   func test_operators() {
     let variants: [(Token.Kind, BinaryOpExpr.Operator)] = [
@@ -17,13 +17,13 @@ class ParseBitExpr: XCTestCase, Common {
     ]
 
     for (token, op) in variants {
-      let parser = self.createExprParser(
-        self.token(.identifier("lilo"),   start: loc0, end: loc1),
-        self.token(token,                 start: loc2, end: loc3),
-        self.token(.identifier("stitch"), start: loc4, end: loc5)
+      let parser = createExprParser(
+        createToken(.identifier("lilo"),   start: loc0, end: loc1),
+        createToken(token,                 start: loc2, end: loc3),
+        createToken(.identifier("stitch"), start: loc4, end: loc5)
       )
 
-      guard let ast = self.parse(parser) else { continue }
+      guard let ast = parse(parser) else { continue }
 
       XCTAssertAST(ast, """
       ExpressionAST(start: 0:0, end: 5:10)
@@ -43,15 +43,15 @@ class ParseBitExpr: XCTestCase, Common {
 
   /// 1 << 2 << 4 = (1 << 2) << 4
   func test_shiftGroup_isLeftAssociative() {
-    let parser = self.createExprParser(
-      self.token(.identifier("lilo"),   start: loc0, end: loc1),
-      self.token(.leftShift,            start: loc2, end: loc3),
-      self.token(.identifier("stitch"), start: loc4, end: loc5),
-      self.token(.leftShift,            start: loc6, end: loc7),
-      self.token(.identifier("nani"),   start: loc8, end: loc9)
+    let parser = createExprParser(
+      createToken(.identifier("lilo"),   start: loc0, end: loc1),
+      createToken(.leftShift,            start: loc2, end: loc3),
+      createToken(.identifier("stitch"), start: loc4, end: loc5),
+      createToken(.leftShift,            start: loc6, end: loc7),
+      createToken(.identifier("nani"),   start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
@@ -74,15 +74,15 @@ class ParseBitExpr: XCTestCase, Common {
 
   /// 1 & 2 & 4 = (1 & 2) & 4
   func test_andGroup_isLeftAssociative() {
-    let parser = self.createExprParser(
-      self.token(.identifier("lilo"),   start: loc0, end: loc1),
-      self.token(.amper,                start: loc2, end: loc3),
-      self.token(.identifier("stitch"), start: loc4, end: loc5),
-      self.token(.amper,                start: loc6, end: loc7),
-      self.token(.identifier("nani"),   start: loc8, end: loc9)
+    let parser = createExprParser(
+      createToken(.identifier("lilo"),   start: loc0, end: loc1),
+      createToken(.amper,                start: loc2, end: loc3),
+      createToken(.identifier("stitch"), start: loc4, end: loc5),
+      createToken(.amper,                start: loc6, end: loc7),
+      createToken(.identifier("nani"),   start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
@@ -105,15 +105,15 @@ class ParseBitExpr: XCTestCase, Common {
 
   /// 1 ^ 2 ^ 4 = (1 ^ 2) ^ 4
   func test_xorGroup_isLeftAssociative() {
-    let parser = self.createExprParser(
-      self.token(.identifier("lilo"),   start: loc0, end: loc1),
-      self.token(.circumflex,           start: loc2, end: loc3),
-      self.token(.identifier("stitch"), start: loc4, end: loc5),
-      self.token(.circumflex,           start: loc6, end: loc7),
-      self.token(.identifier("nani"),   start: loc8, end: loc9)
+    let parser = createExprParser(
+      createToken(.identifier("lilo"),   start: loc0, end: loc1),
+      createToken(.circumflex,           start: loc2, end: loc3),
+      createToken(.identifier("stitch"), start: loc4, end: loc5),
+      createToken(.circumflex,           start: loc6, end: loc7),
+      createToken(.identifier("nani"),   start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
@@ -136,15 +136,15 @@ class ParseBitExpr: XCTestCase, Common {
 
   /// 1 | 2 | 4 = (1 | 2) | 4
   func test_orGroup_isLeftAssociative() {
-    let parser = self.createExprParser(
-      self.token(.identifier("lilo"),  start: loc0, end: loc1),
-      self.token(.vbar,                 start: loc2, end: loc3),
-      self.token(.identifier("stitch"), start: loc4, end: loc5),
-      self.token(.vbar,                 start: loc6, end: loc7),
-      self.token(.identifier("nani"),  start: loc8, end: loc9)
+    let parser = createExprParser(
+      createToken(.identifier("lilo"),  start: loc0, end: loc1),
+      createToken(.vbar,                 start: loc2, end: loc3),
+      createToken(.identifier("stitch"), start: loc4, end: loc5),
+      createToken(.vbar,                 start: loc6, end: loc7),
+      createToken(.identifier("nani"),  start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)

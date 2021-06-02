@@ -11,18 +11,18 @@ private let l: UInt8 = 0x6c
 private let s: UInt8 = 0x73
 private let a: UInt8 = 0x61
 
-class ParseString: XCTestCase, Common {
+class ParseString: XCTestCase {
 
   // MARK: - Bytes
 
   func test_bytes() {
     let data = Data([e, l, s, a])
 
-    let parser = self.createExprParser(
-      self.token(.bytes(data), start: loc0, end: loc1)
+    let parser = createExprParser(
+      createToken(.bytes(data), start: loc0, end: loc1)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
@@ -35,12 +35,12 @@ class ParseString: XCTestCase, Common {
     let el = Data([e, l])
     let sa = Data([s, a])
 
-    let parser = self.createExprParser(
-      self.token(.bytes(el), start: loc0, end: loc1),
-      self.token(.bytes(sa), start: loc2, end: loc3)
+    let parser = createExprParser(
+      createToken(.bytes(el), start: loc0, end: loc1),
+      createToken(.bytes(sa), start: loc2, end: loc3)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 3:8)
@@ -52,12 +52,12 @@ class ParseString: XCTestCase, Common {
   func test_bytes_concatWithString_throws() {
     let data = Data(repeating: 1, count: 2)
 
-    let parser = self.createExprParser(
-      self.token(.bytes(data), start: loc0, end: loc1),
-      self.token(.string("Let It Go"), start: loc2, end: loc3)
+    let parser = createExprParser(
+      createToken(.bytes(data), start: loc0, end: loc1),
+      createToken(.string("Let It Go"), start: loc2, end: loc3)
     )
 
-    if let error = self.error(parser) {
+    if let error = parseError(parser) {
       XCTAssertEqual(error.kind, .mixBytesAndNonBytesLiterals)
       XCTAssertEqual(error.location, loc2)
     }
@@ -66,12 +66,12 @@ class ParseString: XCTestCase, Common {
   func test_bytes_concatWithFormatString_throws() {
     let data = Data(repeating: 1, count: 2)
 
-    let parser = self.createExprParser(
-      self.token(.bytes(data), start: loc0, end: loc1),
-      self.token(.formatString("Let It Go"), start: loc2, end: loc3)
+    let parser = createExprParser(
+      createToken(.bytes(data), start: loc0, end: loc1),
+      createToken(.formatString("Let It Go"), start: loc2, end: loc3)
     )
 
-    if let error = self.error(parser) {
+    if let error = parseError(parser) {
       XCTAssertEqual(error.kind, .mixBytesAndNonBytesLiterals)
       XCTAssertEqual(error.location, loc2)
     }
@@ -80,11 +80,11 @@ class ParseString: XCTestCase, Common {
   // MARK: - String
 
   func test_string() {
-    let parser = self.createExprParser(
-      self.token(.string("Let it go"), start: loc0, end: loc1)
+    let parser = createExprParser(
+      createToken(.string("Let it go"), start: loc0, end: loc1)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
@@ -94,13 +94,13 @@ class ParseString: XCTestCase, Common {
   }
 
   func test_string_concat() {
-    let parser = self.createExprParser(
-      self.token(.string("Let "), start: loc0, end: loc1),
-      self.token(.string("it "),  start: loc2, end: loc3),
-      self.token(.string("go"),   start: loc4, end: loc5)
+    let parser = createExprParser(
+      createToken(.string("Let "), start: loc0, end: loc1),
+      createToken(.string("it "),  start: loc2, end: loc3),
+      createToken(.string("go"),   start: loc4, end: loc5)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
@@ -110,11 +110,11 @@ class ParseString: XCTestCase, Common {
   }
 
   func test_fstring() throws {
-    let parser = self.createExprParser(
-      self.token(.formatString("Let {'it'} go"), start: loc0, end: loc1)
+    let parser = createExprParser(
+      createToken(.formatString("Let {'it'} go"), start: loc0, end: loc1)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
@@ -131,13 +131,13 @@ class ParseString: XCTestCase, Common {
   }
 
   func test_fstring_concat() throws {
-    let parser = self.createExprParser(
-      self.token(.string("Let "),          start: loc0, end: loc1),
-      self.token(.formatString("{'it'}"),  start: loc2, end: loc3),
-      self.token(.formatString(" {'go'}"), start: loc4, end: loc5)
+    let parser = createExprParser(
+      createToken(.string("Let "),          start: loc0, end: loc1),
+      createToken(.formatString("{'it'}"),  start: loc2, end: loc3),
+      createToken(.formatString(" {'go'}"), start: loc4, end: loc5)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
@@ -160,23 +160,23 @@ class ParseString: XCTestCase, Common {
 
   func test_fstring_error() throws {
     // Unclosed f-string
-    let parser = self.createExprParser(
-      self.token(.formatString("Let it go {"), start: loc0, end: loc1)
+    let parser = createExprParser(
+      createToken(.formatString("Let it go {"), start: loc0, end: loc1)
     )
 
-    if let error = self.error(parser) {
+    if let error = parseError(parser) {
       XCTAssertEqual(error.kind, .fStringError(.unexpectedEnd))
       XCTAssertEqual(error.location, loc0)
     }
   }
 
   func test_string_concatWithBytes_throws() {
-    let parser = self.createExprParser(
-      self.token(.string("Let it go"), start: loc0, end: loc1),
-      self.token(.bytes(Data()),       start: loc2, end: loc3)
+    let parser = createExprParser(
+      createToken(.string("Let it go"), start: loc0, end: loc1),
+      createToken(.bytes(Data()),       start: loc2, end: loc3)
     )
 
-    if let error = self.error(parser) {
+    if let error = parseError(parser) {
       XCTAssertEqual(error.kind, .mixBytesAndNonBytesLiterals)
       XCTAssertEqual(error.location, loc2)
     }

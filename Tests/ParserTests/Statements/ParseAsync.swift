@@ -5,21 +5,21 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseAsync: XCTestCase, Common {
+class ParseAsync: XCTestCase {
 
   /// async def cook(): "Ratatouille"
   func test_def() {
-    let parser = self.createStmtParser(
-      self.token(.async,                 start: loc0, end: loc1),
-      self.token(.def,                   start: loc2, end: loc3),
-      self.token(.identifier("cook"),    start: loc4, end: loc5),
-      self.token(.leftParen,             start: loc6, end: loc7),
-      self.token(.rightParen,            start: loc8, end: loc9),
-      self.token(.colon,                 start: loc10, end: loc11),
-      self.token(.string("Ratatouille"), start: loc12, end: loc13)
+    let parser = createStmtParser(
+      createToken(.async,                 start: loc0, end: loc1),
+      createToken(.def,                   start: loc2, end: loc3),
+      createToken(.identifier("cook"),    start: loc4, end: loc5),
+      createToken(.leftParen,             start: loc6, end: loc7),
+      createToken(.rightParen,            start: loc8, end: loc9),
+      createToken(.colon,                 start: loc10, end: loc11),
+      createToken(.string("Ratatouille"), start: loc12, end: loc13)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 13:18)
@@ -44,15 +44,15 @@ class ParseAsync: XCTestCase, Common {
 
   /// async with Alice: "wonderland"
   func test_with() {
-    let parser = self.createStmtParser(
-      self.token(.async,                start: loc0, end: loc1),
-      self.token(.with,                 start: loc2, end: loc3),
-      self.token(.identifier("Alice"),  start: loc4, end: loc5),
-      self.token(.colon,                start: loc6, end: loc7),
-      self.token(.string("wonderland"), start: loc8, end: loc9)
+    let parser = createStmtParser(
+      createToken(.async,                start: loc0, end: loc1),
+      createToken(.with,                 start: loc2, end: loc3),
+      createToken(.identifier("Alice"),  start: loc4, end: loc5),
+      createToken(.colon,                start: loc6, end: loc7),
+      createToken(.string("wonderland"), start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 9:14)
@@ -72,17 +72,17 @@ class ParseAsync: XCTestCase, Common {
 
   /// async for person in castle: "becomeItem"
   func test_for() {
-    let parser = self.createStmtParser(
-      self.token(.async,                 start: loc0, end: loc1),
-      self.token(.for,                   start: loc2, end: loc3),
-      self.token(.identifier("person"),  start: loc4, end: loc5),
-      self.token(.in,                    start: loc6, end: loc7),
-      self.token(.identifier("castle"),  start: loc8, end: loc9),
-      self.token(.colon,                 start: loc10, end: loc11),
-      self.token(.string("becomeItem"),  start: loc12, end: loc13)
+    let parser = createStmtParser(
+      createToken(.async,                 start: loc0, end: loc1),
+      createToken(.for,                   start: loc2, end: loc3),
+      createToken(.identifier("person"),  start: loc4, end: loc5),
+      createToken(.in,                    start: loc6, end: loc7),
+      createToken(.identifier("castle"),  start: loc8, end: loc9),
+      createToken(.colon,                 start: loc10, end: loc11),
+      createToken(.string("becomeItem"),  start: loc12, end: loc13)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 13:18)
@@ -103,15 +103,15 @@ class ParseAsync: XCTestCase, Common {
 
   /// async while Frollo: "Quasimodo"
   func test_while_throws() {
-    let parser = self.createStmtParser(
-      self.token(.async,                start: loc0, end: loc1),
-      self.token(.while,                start: loc2, end: loc3),
-      self.token(.identifier("Frollo"), start: loc4, end: loc5),
-      self.token(.colon,                start: loc6, end: loc7),
-      self.token(.string("Quasimodo"),  start: loc8, end: loc9)
+    let parser = createStmtParser(
+      createToken(.async,                start: loc0, end: loc1),
+      createToken(.while,                start: loc2, end: loc3),
+      createToken(.identifier("Frollo"), start: loc4, end: loc5),
+      createToken(.colon,                start: loc6, end: loc7),
+      createToken(.string("Quasimodo"),  start: loc8, end: loc9)
     )
 
-    if let error = self.error(parser) {
+    if let error = parseError(parser) {
       XCTAssertEqual(error.kind, .unexpectedToken(.while, expected: [.def, .with, .for]))
       XCTAssertEqual(error.location, loc2)
     }

@@ -7,7 +7,7 @@ import VioletLexer
 // swiftlint:disable function_body_length
 // swiftformat:disable consecutiveSpaces
 
-class ParseAugAssign: XCTestCase, Common {
+class ParseAugAssign: XCTestCase {
 
   // MARK: - Augmented assignment
 
@@ -32,13 +32,13 @@ class ParseAugAssign: XCTestCase, Common {
     ]
 
     for (tokenKind, op) in augAssign {
-      let parser = self.createStmtParser(
-        self.token(.identifier("Ariel"), start: loc0, end: loc1),
-        self.token(tokenKind,            start: loc2, end: loc3),
-        self.token(.string("legs"),      start: loc4, end: loc5)
+      let parser = createStmtParser(
+        createToken(.identifier("Ariel"), start: loc0, end: loc1),
+        createToken(tokenKind,            start: loc2, end: loc3),
+        createToken(.string("legs"),      start: loc4, end: loc5)
       )
 
-      guard let ast = self.parse(parser) else { continue }
+      guard let ast = parse(parser) else { continue }
 
       XCTAssertAST(ast, """
       ModuleAST(start: 0:0, end: 5:10)
@@ -56,15 +56,15 @@ class ParseAugAssign: XCTestCase, Common {
 
   /// sea.cavern += "Gizmos"
   func test_toAttribute() {
-    let parser = self.createStmtParser(
-      self.token(.identifier("sea"),    start: loc0, end: loc1),
-      self.token(.dot,                  start: loc2, end: loc3),
-      self.token(.identifier("cavern"), start: loc4, end: loc5),
-      self.token(.plusEqual,            start: loc6, end: loc7),
-      self.token(.string("Gizmos"),     start: loc8, end: loc9)
+    let parser = createStmtParser(
+      createToken(.identifier("sea"),    start: loc0, end: loc1),
+      createToken(.dot,                  start: loc2, end: loc3),
+      createToken(.identifier("cavern"), start: loc4, end: loc5),
+      createToken(.plusEqual,            start: loc6, end: loc7),
+      createToken(.string("Gizmos"),     start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 9:14)
@@ -84,16 +84,16 @@ class ParseAugAssign: XCTestCase, Common {
 
   /// sea[cavern] += "Gizmos"
   func test_toSubscript() {
-    let parser = self.createStmtParser(
-      self.token(.identifier("sea"),    start: loc0, end: loc1),
-      self.token(.leftSqb,              start: loc2, end: loc3),
-      self.token(.identifier("cavern"), start: loc4, end: loc5),
-      self.token(.rightSqb,             start: loc6, end: loc7),
-      self.token(.plusEqual,            start: loc8, end: loc9),
-      self.token(.string("Gizmos"),     start: loc10, end: loc11)
+    let parser = createStmtParser(
+      createToken(.identifier("sea"),    start: loc0, end: loc1),
+      createToken(.leftSqb,              start: loc2, end: loc3),
+      createToken(.identifier("cavern"), start: loc4, end: loc5),
+      createToken(.rightSqb,             start: loc6, end: loc7),
+      createToken(.plusEqual,            start: loc8, end: loc9),
+      createToken(.string("Gizmos"),     start: loc10, end: loc11)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 11:16)
@@ -116,13 +116,13 @@ class ParseAugAssign: XCTestCase, Common {
 
   /// 3 += "Ursula"
   func test_toConstants_throws() {
-    let parser = self.createStmtParser(
-      self.token(.int(BigInt(3)),    start: loc0, end: loc1),
-      self.token(.plusEqual,         start: loc2, end: loc3),
-      self.token(.string("Ursula"),  start: loc4, end: loc5)
+    let parser = createStmtParser(
+      createToken(.int(BigInt(3)),    start: loc0, end: loc1),
+      createToken(.plusEqual,         start: loc2, end: loc3),
+      createToken(.string("Ursula"),  start: loc4, end: loc5)
     )
 
-    if let error = self.error(parser) {
+    if let error = parseError(parser) {
       XCTAssertEqual(error.kind, .illegalAugAssignmentTarget)
       XCTAssertEqual(error.location, loc0)
     }
@@ -130,14 +130,14 @@ class ParseAugAssign: XCTestCase, Common {
 
   /// Ariel += yield "legs"
   func test_yield() {
-    let parser = self.createStmtParser(
-      self.token(.identifier("Ariel"), start: loc0, end: loc1),
-      self.token(.plusEqual,           start: loc2, end: loc3),
-      self.token(.yield,               start: loc4, end: loc5),
-      self.token(.string("legs"),      start: loc6, end: loc7)
+    let parser = createStmtParser(
+      createToken(.identifier("Ariel"), start: loc0, end: loc1),
+      createToken(.plusEqual,           start: loc2, end: loc3),
+      createToken(.yield,               start: loc4, end: loc5),
+      createToken(.string("legs"),      start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 7:12)

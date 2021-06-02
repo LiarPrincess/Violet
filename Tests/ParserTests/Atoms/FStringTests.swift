@@ -10,7 +10,7 @@ import VioletLexer
 
 // swiftlint:disable file_length
 
-class FStringTests: XCTestCase, Common {
+class FStringTests: XCTestCase {
 
   // MARK: - Empty
 

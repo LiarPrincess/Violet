@@ -5,17 +5,17 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseAttribute: XCTestCase, Common {
+class ParseAttribute: XCTestCase {
 
   /// a.b
   func test_simple() {
-    let parser = self.createExprParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.dot,             start: loc2, end: loc3),
-      self.token(.identifier("b"), start: loc4, end: loc5)
+    let parser = createExprParser(
+      createToken(.identifier("a"), start: loc0, end: loc1),
+      createToken(.dot,             start: loc2, end: loc3),
+      createToken(.identifier("b"), start: loc4, end: loc5)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
@@ -29,15 +29,15 @@ class ParseAttribute: XCTestCase, Common {
 
   /// a.b.c = (a.b).c
   func test_isLeftAssociative() {
-    let parser = self.createExprParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.dot,             start: loc2, end: loc3),
-      self.token(.identifier("b"), start: loc4, end: loc5),
-      self.token(.dot,             start: loc6, end: loc7),
-      self.token(.identifier("c"), start: loc7, end: loc9)
+    let parser = createExprParser(
+      createToken(.identifier("a"), start: loc0, end: loc1),
+      createToken(.dot,             start: loc2, end: loc3),
+      createToken(.identifier("b"), start: loc4, end: loc5),
+      createToken(.dot,             start: loc6, end: loc7),
+      createToken(.identifier("c"), start: loc7, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)

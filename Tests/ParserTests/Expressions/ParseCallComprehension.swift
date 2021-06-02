@@ -6,25 +6,25 @@ import VioletLexer
 // swiftlint:disable function_body_length
 // swiftformat:disable consecutiveSpaces
 
-class ParseCallComprehension: XCTestCase, Common {
+class ParseCallComprehension: XCTestCase {
 
   // MARK: - As single argument
 
   /// f(a for b in [])
   func test_simple() {
-    let parser = self.createExprParser(
-      self.token(.identifier("f"), start: loc0, end: loc1),
-      self.token(.leftParen,       start: loc2, end: loc3),
-      self.token(.identifier("a"), start: loc4, end: loc5),
-      self.token(.for,             start: loc6, end: loc7),
-      self.token(.identifier("b"), start: loc8, end: loc9),
-      self.token(.in,              start: loc10, end: loc11),
-      self.token(.leftSqb,         start: loc12, end: loc13),
-      self.token(.rightSqb,        start: loc14, end: loc15),
-      self.token(.rightParen,      start: loc16, end: loc17)
+    let parser = createExprParser(
+      createToken(.identifier("f"), start: loc0, end: loc1),
+      createToken(.leftParen,       start: loc2, end: loc3),
+      createToken(.identifier("a"), start: loc4, end: loc5),
+      createToken(.for,             start: loc6, end: loc7),
+      createToken(.identifier("b"), start: loc8, end: loc9),
+      createToken(.in,              start: loc10, end: loc11),
+      createToken(.leftSqb,         start: loc12, end: loc13),
+      createToken(.rightSqb,        start: loc14, end: loc15),
+      createToken(.rightParen,      start: loc16, end: loc17)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 17:22)
@@ -55,18 +55,18 @@ class ParseCallComprehension: XCTestCase, Common {
 
   /// f(1, a for b in [])
   func test_afterPositional_withoutParens_fails() {
-    let parser = self.createExprParser(
-      self.token(.identifier("f"), start: loc0, end: loc1),
-      self.token(.leftParen,       start: loc2, end: loc3),
-      self.token(.float(1.0),      start: loc6, end: loc7),
-      self.token(.comma,           start: loc8, end: loc9),
-      self.token(.identifier("a"), start: loc10, end: loc11),
-      self.token(.for,             start: loc12, end: loc13),
-      self.token(.identifier("b"), start: loc14, end: loc15),
-      self.token(.in,              start: loc16, end: loc17),
-      self.token(.leftSqb,         start: loc18, end: loc19),
-      self.token(.rightSqb,        start: loc20, end: loc21),
-      self.token(.rightParen,      start: loc22, end: loc23)
+    let parser = createExprParser(
+      createToken(.identifier("f"), start: loc0, end: loc1),
+      createToken(.leftParen,       start: loc2, end: loc3),
+      createToken(.float(1.0),      start: loc6, end: loc7),
+      createToken(.comma,           start: loc8, end: loc9),
+      createToken(.identifier("a"), start: loc10, end: loc11),
+      createToken(.for,             start: loc12, end: loc13),
+      createToken(.identifier("b"), start: loc14, end: loc15),
+      createToken(.in,              start: loc16, end: loc17),
+      createToken(.leftSqb,         start: loc18, end: loc19),
+      createToken(.rightSqb,        start: loc20, end: loc21),
+      createToken(.rightParen,      start: loc22, end: loc23)
     )
 
     self.assert_callWithGeneratorArgumentWithoutParens(
@@ -81,7 +81,7 @@ class ParseCallComprehension: XCTestCase, Common {
     file: StaticString = #file,
     line: UInt = #line
   ) {
-    guard let error = self.error(parser,
+    guard let error = parseError(parser,
                                  file: file,
                                  line: line) else {
       return
@@ -99,23 +99,23 @@ class ParseCallComprehension: XCTestCase, Common {
 
   /// f(1, (a for b in []))
   func test_afterPositional_inParens() {
-    let parser = self.createExprParser(
-      self.token(.identifier("f"), start: loc0, end: loc1),
-      self.token(.leftParen,       start: loc2, end: loc3),
-      self.token(.float(1.0),      start: loc6, end: loc7),
-      self.token(.comma,           start: loc8, end: loc9),
-      self.token(.leftParen,       start: loc10, end: loc11),
-      self.token(.identifier("a"), start: loc12, end: loc13),
-      self.token(.for,             start: loc14, end: loc15),
-      self.token(.identifier("b"), start: loc16, end: loc17),
-      self.token(.in,              start: loc18, end: loc19),
-      self.token(.leftSqb,         start: loc20, end: loc21),
-      self.token(.rightSqb,        start: loc22, end: loc23),
-      self.token(.rightParen,      start: loc24, end: loc25),
-      self.token(.rightParen,      start: loc26, end: loc27)
+    let parser = createExprParser(
+      createToken(.identifier("f"), start: loc0, end: loc1),
+      createToken(.leftParen,       start: loc2, end: loc3),
+      createToken(.float(1.0),      start: loc6, end: loc7),
+      createToken(.comma,           start: loc8, end: loc9),
+      createToken(.leftParen,       start: loc10, end: loc11),
+      createToken(.identifier("a"), start: loc12, end: loc13),
+      createToken(.for,             start: loc14, end: loc15),
+      createToken(.identifier("b"), start: loc16, end: loc17),
+      createToken(.in,              start: loc18, end: loc19),
+      createToken(.leftSqb,         start: loc20, end: loc21),
+      createToken(.rightSqb,        start: loc22, end: loc23),
+      createToken(.rightParen,      start: loc24, end: loc25),
+      createToken(.rightParen,      start: loc26, end: loc27)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 27:32)
@@ -148,18 +148,18 @@ class ParseCallComprehension: XCTestCase, Common {
 
   /// f(a for b in [], 1)
   func test_beforePositional_withoutParens_fails() {
-    let parser = self.createExprParser(
-      self.token(.identifier("f"), start: loc0, end: loc1),
-      self.token(.leftParen,       start: loc2, end: loc3),
-      self.token(.identifier("a"), start: loc4, end: loc5),
-      self.token(.for,             start: loc6, end: loc7),
-      self.token(.identifier("b"), start: loc8, end: loc9),
-      self.token(.in,              start: loc10, end: loc11),
-      self.token(.leftSqb,         start: loc12, end: loc13),
-      self.token(.rightSqb,        start: loc14, end: loc15),
-      self.token(.comma,           start: loc16, end: loc17),
-      self.token(.float(1.0),      start: loc18, end: loc19),
-      self.token(.rightParen,      start: loc20, end: loc21)
+    let parser = createExprParser(
+      createToken(.identifier("f"), start: loc0, end: loc1),
+      createToken(.leftParen,       start: loc2, end: loc3),
+      createToken(.identifier("a"), start: loc4, end: loc5),
+      createToken(.for,             start: loc6, end: loc7),
+      createToken(.identifier("b"), start: loc8, end: loc9),
+      createToken(.in,              start: loc10, end: loc11),
+      createToken(.leftSqb,         start: loc12, end: loc13),
+      createToken(.rightSqb,        start: loc14, end: loc15),
+      createToken(.comma,           start: loc16, end: loc17),
+      createToken(.float(1.0),      start: loc18, end: loc19),
+      createToken(.rightParen,      start: loc20, end: loc21)
     )
 
     self.assert_callWithGeneratorArgumentWithoutParens(
@@ -170,23 +170,23 @@ class ParseCallComprehension: XCTestCase, Common {
 
   /// f((a for b in []), 1)
   func test_beforePositional_inParens() {
-    let parser = self.createExprParser(
-      self.token(.identifier("f"), start: loc0, end: loc1),
-      self.token(.leftParen,       start: loc2, end: loc3),
-      self.token(.leftParen,       start: loc4, end: loc5),
-      self.token(.identifier("a"), start: loc6, end: loc7),
-      self.token(.for,             start: loc8, end: loc9),
-      self.token(.identifier("b"), start: loc10, end: loc11),
-      self.token(.in,              start: loc12, end: loc13),
-      self.token(.leftSqb,         start: loc14, end: loc15),
-      self.token(.rightSqb,        start: loc16, end: loc17),
-      self.token(.rightParen,      start: loc18, end: loc19),
-      self.token(.comma,           start: loc20, end: loc21),
-      self.token(.float(1.0),      start: loc22, end: loc23),
-      self.token(.rightParen,      start: loc24, end: loc25)
+    let parser = createExprParser(
+      createToken(.identifier("f"), start: loc0, end: loc1),
+      createToken(.leftParen,       start: loc2, end: loc3),
+      createToken(.leftParen,       start: loc4, end: loc5),
+      createToken(.identifier("a"), start: loc6, end: loc7),
+      createToken(.for,             start: loc8, end: loc9),
+      createToken(.identifier("b"), start: loc10, end: loc11),
+      createToken(.in,              start: loc12, end: loc13),
+      createToken(.leftSqb,         start: loc14, end: loc15),
+      createToken(.rightSqb,        start: loc16, end: loc17),
+      createToken(.rightParen,      start: loc18, end: loc19),
+      createToken(.comma,           start: loc20, end: loc21),
+      createToken(.float(1.0),      start: loc22, end: loc23),
+      createToken(.rightParen,      start: loc24, end: loc25)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 25:30)
@@ -219,20 +219,20 @@ class ParseCallComprehension: XCTestCase, Common {
 
   /// f(a for b in [],)
   func test_commaAfter() {
-    let parser = self.createExprParser(
-      self.token(.identifier("f"), start: loc0, end: loc1),
-      self.token(.leftParen,       start: loc2, end: loc3),
-      self.token(.identifier("a"), start: loc4, end: loc5),
-      self.token(.for,             start: loc6, end: loc7),
-      self.token(.identifier("b"), start: loc8, end: loc9),
-      self.token(.in,              start: loc10, end: loc11),
-      self.token(.leftSqb,         start: loc12, end: loc13),
-      self.token(.rightSqb,        start: loc14, end: loc15),
-      self.token(.comma,           start: loc16, end: loc17),
-      self.token(.rightParen,      start: loc18, end: loc19)
+    let parser = createExprParser(
+      createToken(.identifier("f"), start: loc0, end: loc1),
+      createToken(.leftParen,       start: loc2, end: loc3),
+      createToken(.identifier("a"), start: loc4, end: loc5),
+      createToken(.for,             start: loc6, end: loc7),
+      createToken(.identifier("b"), start: loc8, end: loc9),
+      createToken(.in,              start: loc10, end: loc11),
+      createToken(.leftSqb,         start: loc12, end: loc13),
+      createToken(.rightSqb,        start: loc14, end: loc15),
+      createToken(.comma,           start: loc16, end: loc17),
+      createToken(.rightParen,      start: loc18, end: loc19)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 19:24)

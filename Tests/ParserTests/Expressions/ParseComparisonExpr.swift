@@ -5,7 +5,7 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseComparisonExpr: XCTestCase, Common {
+class ParseComparisonExpr: XCTestCase {
 
   func test_operators() {
     let variants: [(Token.Kind, CompareExpr.Operator)] = [
@@ -23,13 +23,13 @@ class ParseComparisonExpr: XCTestCase, Common {
     ]
 
     for (token, op) in variants {
-      let parser = self.createExprParser(
-        self.token(.identifier("aladdin"), start: loc0, end: loc1),
-        self.token(token,                  start: loc2, end: loc3),
-        self.token(.identifier("jasmine"), start: loc4, end: loc5)
+      let parser = createExprParser(
+        createToken(.identifier("aladdin"), start: loc0, end: loc1),
+        createToken(token,                  start: loc2, end: loc3),
+        createToken(.identifier("jasmine"), start: loc4, end: loc5)
       )
 
-      guard let ast = self.parse(parser) else { continue }
+      guard let ast = parse(parser) else { continue }
 
       XCTAssertAST(ast, """
       ExpressionAST(start: 0:0, end: 5:10)
@@ -48,14 +48,14 @@ class ParseComparisonExpr: XCTestCase, Common {
   }
 
   func test_notIn() {
-    let parser = self.createExprParser(
-      self.token(.identifier("rapunzel"), start: loc0, end: loc1),
-      self.token(.not,                    start: loc2, end: loc3),
-      self.token(.in,                     start: loc4, end: loc5),
-      self.token(.identifier("aladdin"),  start: loc6, end: loc7)
+    let parser = createExprParser(
+      createToken(.identifier("rapunzel"), start: loc0, end: loc1),
+      createToken(.not,                    start: loc2, end: loc3),
+      createToken(.in,                     start: loc4, end: loc5),
+      createToken(.identifier("aladdin"),  start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
@@ -73,14 +73,14 @@ class ParseComparisonExpr: XCTestCase, Common {
   }
 
   func test_isNot() {
-    let parser = self.createExprParser(
-      self.token(.identifier("aladdin"), start: loc0, end: loc1),
-      self.token(.is,                    start: loc2, end: loc3),
-      self.token(.not,                   start: loc4, end: loc5),
-      self.token(.identifier("jasmine"), start: loc6, end: loc7)
+    let parser = createExprParser(
+      createToken(.identifier("aladdin"), start: loc0, end: loc1),
+      createToken(.is,                    start: loc2, end: loc3),
+      createToken(.not,                   start: loc4, end: loc5),
+      createToken(.identifier("jasmine"), start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
@@ -99,15 +99,15 @@ class ParseComparisonExpr: XCTestCase, Common {
 
   /// aladdin < jasmine <= genie
   func test_compare_withMultipleElements() {
-    let parser = self.createExprParser(
-      self.token(.identifier("aladdin"), start: loc0, end: loc1),
-      self.token(.less,                  start: loc2, end: loc3),
-      self.token(.identifier("jasmine"), start: loc4, end: loc5),
-      self.token(.lessEqual,             start: loc6, end: loc7),
-      self.token(.identifier("genie"),   start: loc8, end: loc9)
+    let parser = createExprParser(
+      createToken(.identifier("aladdin"), start: loc0, end: loc1),
+      createToken(.less,                  start: loc2, end: loc3),
+      createToken(.identifier("jasmine"), start: loc4, end: loc5),
+      createToken(.lessEqual,             start: loc6, end: loc7),
+      createToken(.identifier("genie"),   start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)

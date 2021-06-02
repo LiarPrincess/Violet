@@ -5,15 +5,15 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseRaise: XCTestCase, Common {
+class ParseRaise: XCTestCase {
 
   /// raise
   func test_reRaise() {
-    let parser = self.createStmtParser(
-      self.token(.raise, start: loc0, end: loc1)
+    let parser = createStmtParser(
+      createToken(.raise, start: loc0, end: loc1)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 1:6)
@@ -25,12 +25,12 @@ class ParseRaise: XCTestCase, Common {
 
   /// raise Hades
   func test_exception() {
-    let parser = self.createStmtParser(
-      self.token(.raise,               start: loc0, end: loc1),
-      self.token(.identifier("Hades"), start: loc2, end: loc3)
+    let parser = createStmtParser(
+      createToken(.raise,               start: loc0, end: loc1),
+      createToken(.identifier("Hades"), start: loc2, end: loc3)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 3:8)
@@ -44,14 +44,14 @@ class ParseRaise: XCTestCase, Common {
 
   /// raise Hercules from Olympus
   func test_exception_from() {
-    let parser = self.createStmtParser(
-      self.token(.raise,                start: loc0, end: loc1),
-      self.token(.identifier("Hercules"), start: loc2, end: loc3),
-      self.token(.from,                 start: loc4, end: loc5),
-      self.token(.identifier("Olympus"),   start: loc6, end: loc7)
+    let parser = createStmtParser(
+      createToken(.raise,                start: loc0, end: loc1),
+      createToken(.identifier("Hercules"), start: loc2, end: loc3),
+      createToken(.from,                 start: loc4, end: loc5),
+      createToken(.identifier("Olympus"),   start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 7:12)

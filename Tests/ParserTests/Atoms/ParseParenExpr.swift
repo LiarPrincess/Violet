@@ -5,18 +5,18 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseParenExpr: XCTestCase, Common {
+class ParseParenExpr: XCTestCase {
 
   // MARK: - Empty
 
   /// ()
   func test_emptyTuple() {
-    let parser = self.createExprParser(
-      self.token(.leftParen,  start: loc0, end: loc1),
-      self.token(.rightParen, start: loc2, end: loc3)
+    let parser = createExprParser(
+      createToken(.leftParen,  start: loc0, end: loc1),
+      createToken(.rightParen, start: loc2, end: loc3)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 3:8)
@@ -29,13 +29,13 @@ class ParseParenExpr: XCTestCase, Common {
 
   /// (elsa)
   func test_value() {
-    let parser = self.createExprParser(
-      self.token(.leftParen,          start: loc0, end: loc1),
-      self.token(.identifier("elsa"), start: loc2, end: loc3),
-      self.token(.rightParen,         start: loc4, end: loc5)
+    let parser = createExprParser(
+      createToken(.leftParen,          start: loc0, end: loc1),
+      createToken(.identifier("elsa"), start: loc2, end: loc3),
+      createToken(.rightParen,         start: loc4, end: loc5)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
@@ -48,14 +48,14 @@ class ParseParenExpr: XCTestCase, Common {
 
   /// (elsa,)
   func test_value_withComaAfter_givesTuple() {
-    let parser = self.createExprParser(
-      self.token(.leftParen,          start: loc0, end: loc1),
-      self.token(.identifier("elsa"), start: loc2, end: loc3),
-      self.token(.comma,              start: loc4, end: loc5),
-      self.token(.rightParen,         start: loc6, end: loc7)
+    let parser = createExprParser(
+      createToken(.leftParen,          start: loc0, end: loc1),
+      createToken(.identifier("elsa"), start: loc2, end: loc3),
+      createToken(.comma,              start: loc4, end: loc5),
+      createToken(.rightParen,         start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
@@ -68,15 +68,15 @@ class ParseParenExpr: XCTestCase, Common {
 
   /// (elsa, anna)
   func test_tuple() {
-    let parser = self.createExprParser(
-      self.token(.leftParen,          start: loc0, end: loc1),
-      self.token(.identifier("elsa"), start: loc2, end: loc3),
-      self.token(.comma,              start: loc4, end: loc5),
-      self.token(.identifier("anna"), start: loc6, end: loc7),
-      self.token(.rightParen,         start: loc8, end: loc9)
+    let parser = createExprParser(
+      createToken(.leftParen,          start: loc0, end: loc1),
+      createToken(.identifier("elsa"), start: loc2, end: loc3),
+      createToken(.comma,              start: loc4, end: loc5),
+      createToken(.identifier("anna"), start: loc6, end: loc7),
+      createToken(.rightParen,         start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
@@ -93,13 +93,13 @@ class ParseParenExpr: XCTestCase, Common {
 
   /// (yield)
   func test_yield_nil() {
-    let parser = self.createExprParser(
-      self.token(.leftParen,  start: loc0, end: loc1),
-      self.token(.yield,      start: loc2, end: loc3),
-      self.token(.rightParen, start: loc4, end: loc5)
+    let parser = createExprParser(
+      createToken(.leftParen,  start: loc0, end: loc1),
+      createToken(.yield,      start: loc2, end: loc3),
+      createToken(.rightParen, start: loc4, end: loc5)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
@@ -110,14 +110,14 @@ class ParseParenExpr: XCTestCase, Common {
 
   /// (yield elsa)
   func test_yield_expr() {
-    let parser = self.createExprParser(
-      self.token(.leftParen,          start: loc0, end: loc1),
-      self.token(.yield,              start: loc2, end: loc3),
-      self.token(.identifier("elsa"), start: loc4, end: loc5),
-      self.token(.rightParen,         start: loc6, end: loc7)
+    let parser = createExprParser(
+      createToken(.leftParen,          start: loc0, end: loc1),
+      createToken(.yield,              start: loc2, end: loc3),
+      createToken(.identifier("elsa"), start: loc4, end: loc5),
+      createToken(.rightParen,         start: loc6, end: loc7)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
@@ -130,16 +130,16 @@ class ParseParenExpr: XCTestCase, Common {
 
   /// (yield elsa, anna)
   func test_yield_tuple() {
-    let parser = self.createExprParser(
-      self.token(.leftParen,          start: loc0, end: loc1),
-      self.token(.yield,              start: loc2, end: loc3),
-      self.token(.identifier("elsa"), start: loc4, end: loc5),
-      self.token(.comma,              start: loc6, end: loc7),
-      self.token(.identifier("anna"), start: loc8, end: loc9),
-      self.token(.rightParen,         start: loc10, end: loc11)
+    let parser = createExprParser(
+      createToken(.leftParen,          start: loc0, end: loc1),
+      createToken(.yield,              start: loc2, end: loc3),
+      createToken(.identifier("elsa"), start: loc4, end: loc5),
+      createToken(.comma,              start: loc6, end: loc7),
+      createToken(.identifier("anna"), start: loc8, end: loc9),
+      createToken(.rightParen,         start: loc10, end: loc11)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 11:16)
@@ -158,18 +158,18 @@ class ParseParenExpr: XCTestCase, Common {
 
   /// (elsa for anna in [])
   func test_generator() {
-    let parser = self.createExprParser(
-      self.token(.leftParen,          start: loc0, end: loc1),
-      self.token(.identifier("elsa"), start: loc2, end: loc3),
-      self.token(.for,                start: loc4, end: loc5),
-      self.token(.identifier("anna"), start: loc6, end: loc7),
-      self.token(.in,                 start: loc8, end: loc9),
-      self.token(.leftSqb,            start: loc10, end: loc11),
-      self.token(.rightSqb,           start: loc12, end: loc13),
-      self.token(.rightParen,         start: loc14, end: loc15)
+    let parser = createExprParser(
+      createToken(.leftParen,          start: loc0, end: loc1),
+      createToken(.identifier("elsa"), start: loc2, end: loc3),
+      createToken(.for,                start: loc4, end: loc5),
+      createToken(.identifier("anna"), start: loc6, end: loc7),
+      createToken(.in,                 start: loc8, end: loc9),
+      createToken(.leftSqb,            start: loc10, end: loc11),
+      createToken(.rightSqb,           start: loc12, end: loc13),
+      createToken(.rightParen,         start: loc14, end: loc15)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 15:20)

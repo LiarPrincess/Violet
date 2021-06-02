@@ -6,19 +6,19 @@ import VioletLexer
 
 // swiftformat:disable consecutiveSpaces
 
-class ParseAnnAssign: XCTestCase, Common {
+class ParseAnnAssign: XCTestCase {
 
   /// Flounder:Animal = "Friend"
   func test_simple() {
-    let parser = self.createStmtParser(
-      self.token(.identifier("Flounder"), start: loc0, end: loc1),
-      self.token(.colon,                  start: loc2, end: loc3),
-      self.token(.identifier("Animal"),   start: loc4, end: loc5),
-      self.token(.equal,                  start: loc6, end: loc7),
-      self.token(.string("Friend"),       start: loc8, end: loc9)
+    let parser = createStmtParser(
+      createToken(.identifier("Flounder"), start: loc0, end: loc1),
+      createToken(.colon,                  start: loc2, end: loc3),
+      createToken(.identifier("Animal"),   start: loc4, end: loc5),
+      createToken(.equal,                  start: loc6, end: loc7),
+      createToken(.string("Friend"),       start: loc8, end: loc9)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 9:14)
@@ -38,13 +38,13 @@ class ParseAnnAssign: XCTestCase, Common {
 
   /// Ariel:Mermaid
   func test_withoutValue() {
-    let parser = self.createStmtParser(
-      self.token(.identifier("Ariel"),   start: loc0, end: loc1),
-      self.token(.colon,                 start: loc2, end: loc3),
-      self.token(.identifier("Mermaid"), start: loc4, end: loc5)
+    let parser = createStmtParser(
+      createToken(.identifier("Ariel"),   start: loc0, end: loc1),
+      createToken(.colon,                 start: loc2, end: loc3),
+      createToken(.identifier("Mermaid"), start: loc4, end: loc5)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 5:10)
@@ -63,17 +63,17 @@ class ParseAnnAssign: XCTestCase, Common {
   /// Sea.Flounder:Animal = "Friend"
   func test_toAttribute() {
 
-    let parser = self.createStmtParser(
-      self.token(.identifier("Sea"),      start: loc0, end: loc1),
-      self.token(.dot,                    start: loc2, end: loc3),
-      self.token(.identifier("Flounder"), start: loc4, end: loc5),
-      self.token(.colon,                  start: loc6, end: loc7),
-      self.token(.identifier("Animal"),   start: loc8, end: loc9),
-      self.token(.equal,                  start: loc10, end: loc11),
-      self.token(.string("Friend"),       start: loc12, end: loc13)
+    let parser = createStmtParser(
+      createToken(.identifier("Sea"),      start: loc0, end: loc1),
+      createToken(.dot,                    start: loc2, end: loc3),
+      createToken(.identifier("Flounder"), start: loc4, end: loc5),
+      createToken(.colon,                  start: loc6, end: loc7),
+      createToken(.identifier("Animal"),   start: loc8, end: loc9),
+      createToken(.equal,                  start: loc10, end: loc11),
+      createToken(.string("Friend"),       start: loc12, end: loc13)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     // Note that in this test 'IsSimple: false'!
     XCTAssertAST(ast, """
@@ -97,18 +97,18 @@ class ParseAnnAssign: XCTestCase, Common {
 
   /// Sea[Flounder]:Animal = "Friend"
   func test_toSubscript() {
-    let parser = self.createStmtParser(
-      self.token(.identifier("Sea"),      start: loc0, end: loc1),
-      self.token(.leftSqb,                start: loc2, end: loc3),
-      self.token(.identifier("Flounder"), start: loc4, end: loc5),
-      self.token(.rightSqb,               start: loc6, end: loc7),
-      self.token(.colon,                  start: loc8, end: loc9),
-      self.token(.identifier("Animal"),   start: loc10, end: loc11),
-      self.token(.equal,                  start: loc12, end: loc13),
-      self.token(.string("Friend"),       start: loc14, end: loc15)
+    let parser = createStmtParser(
+      createToken(.identifier("Sea"),      start: loc0, end: loc1),
+      createToken(.leftSqb,                start: loc2, end: loc3),
+      createToken(.identifier("Flounder"), start: loc4, end: loc5),
+      createToken(.rightSqb,               start: loc6, end: loc7),
+      createToken(.colon,                  start: loc8, end: loc9),
+      createToken(.identifier("Animal"),   start: loc10, end: loc11),
+      createToken(.equal,                  start: loc12, end: loc13),
+      createToken(.string("Friend"),       start: loc14, end: loc15)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 15:20)
@@ -134,17 +134,17 @@ class ParseAnnAssign: XCTestCase, Common {
 
   /// (Ariel):Mermaid = "Princess"
   func test_inParen_isNotSimple() {
-    let parser = self.createStmtParser(
-      self.token(.leftParen,             start: loc0, end: loc1),
-      self.token(.identifier("Ariel"),   start: loc2, end: loc3),
-      self.token(.rightParen,            start: loc4, end: loc5),
-      self.token(.colon,                 start: loc6, end: loc7),
-      self.token(.identifier("Mermaid"), start: loc8, end: loc9),
-      self.token(.equal,                 start: loc10, end: loc11),
-      self.token(.string("Princess"),    start: loc12, end: loc13)
+    let parser = createStmtParser(
+      createToken(.leftParen,             start: loc0, end: loc1),
+      createToken(.identifier("Ariel"),   start: loc2, end: loc3),
+      createToken(.rightParen,            start: loc4, end: loc5),
+      createToken(.colon,                 start: loc6, end: loc7),
+      createToken(.identifier("Mermaid"), start: loc8, end: loc9),
+      createToken(.equal,                 start: loc10, end: loc11),
+      createToken(.string("Princess"),    start: loc12, end: loc13)
     )
 
-    guard let ast = self.parse(parser) else { return }
+    guard let ast = parse(parser) else { return }
 
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 13:18)
@@ -164,15 +164,15 @@ class ParseAnnAssign: XCTestCase, Common {
 
   /// 3:Witch = "Ursula"
   func test_toConstants_throws() {
-    let parser = self.createStmtParser(
-      self.token(.int(BigInt(3)),       start: loc0, end: loc1),
-      self.token(.colon,                start: loc2, end: loc3),
-      self.token(.identifier("Witch"),  start: loc4, end: loc5),
-      self.token(.equal,                start: loc6, end: loc7),
-      self.token(.string("Ursula"),     start: loc8, end: loc9)
+    let parser = createStmtParser(
+      createToken(.int(BigInt(3)),       start: loc0, end: loc1),
+      createToken(.colon,                start: loc2, end: loc3),
+      createToken(.identifier("Witch"),  start: loc4, end: loc5),
+      createToken(.equal,                start: loc6, end: loc7),
+      createToken(.string("Ursula"),     start: loc8, end: loc9)
     )
 
-    if let error = self.error(parser) {
+    if let error = parseError(parser) {
       XCTAssertEqual(error.kind, .illegalAnnAssignmentTarget)
       XCTAssertEqual(error.location, loc0)
     }
