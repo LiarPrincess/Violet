@@ -25,7 +25,7 @@ class ParseBoolExpr: XCTestCase, Common {
   }
 
   func test_and_or() {
-    let variants: [(TokenKind, BoolOpExpr.Operator)] = [
+    let variants: [(Token.Kind, BoolOpExpr.Operator)] = [
       (.or, .or), // grammar: or_test
       (.and, .and) // grammar: and_test
     ]

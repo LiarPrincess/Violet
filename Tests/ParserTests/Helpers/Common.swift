@@ -28,7 +28,7 @@ extension Common {
                   lexerDelegate: nil)
   }
 
-  internal func token(_ kind: TokenKind,
+  internal func token(_ kind: Token.Kind,
                       start: SourceLocation,
                       end: SourceLocation) -> Token {
     return Token(kind, start: start, end: end)

@@ -99,7 +99,7 @@ public final class Lexer: LexerType {
   // MARK: - Creation helpers (always use them!)
 
   /// Create token
-  internal func token(_ kind: TokenKind,
+  internal func token(_ kind: Token.Kind,
                       start: SourceLocation? = nil,
                       end: SourceLocation? = nil) -> Token {
     let s = start ?? self.location
@@ -108,14 +108,14 @@ public final class Lexer: LexerType {
   }
 
   /// Report lexer warning
-  internal func warn(_ kind: LexerWarningKind,
+  internal func warn(_ kind: LexerWarning.Kind,
                      location: SourceLocation? = nil) {
     let warning = LexerWarning(kind, location: location ?? self.location)
     self.delegate?.warn(warning: warning)
   }
 
   /// Create lexer error
-  internal func error(_ kind: LexerErrorKind,
+  internal func error(_ kind: LexerError.Kind,
                       location: SourceLocation? = nil) -> LexerError {
     return LexerError(kind, location: location ?? self.location)
   }
@@ -123,8 +123,7 @@ public final class Lexer: LexerType {
   /// Create unimplemented lexer error
   internal func unimplemented(_ unimplemented: LexerUnimplemented,
                               location: SourceLocation? = nil) -> LexerError {
-    let kind = LexerErrorKind.unimplemented(unimplemented)
-    return self.error(kind, location: location)
+    return self.error(.unimplemented(unimplemented), location: location)
   }
 
   // MARK: - Helpers

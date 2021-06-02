@@ -14,8 +14,8 @@ extension Parser {
 
   /// simple_stmt: small_stmt (';' small_stmt)* [';'] NEWLINE
   internal func simpleStmt() throws -> NonEmptyArray<Statement> {
-    let ruleClosing: [TokenKind] = [.newLine, .eof]
-    let smallStmtClosing: [TokenKind] = [.semicolon, .newLine, .eof]
+    let ruleClosing: [Token.Kind] = [.newLine, .eof]
+    let smallStmtClosing: [Token.Kind] = [.semicolon, .newLine, .eof]
 
     let first = try self.smallStmt(closingTokens: smallStmtClosing)
     var array = NonEmptyArray(first: first)

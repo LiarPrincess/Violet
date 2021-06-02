@@ -16,7 +16,7 @@ extension Parser {
     var end = self.peek.end
     var data = Data()
 
-    while case let TokenKind.bytes(b) = self.peek.kind {
+    while case let Token.Kind.bytes(b) = self.peek.kind {
       data.append(b)
       end = self.peek.end
       try self.advance()
@@ -79,21 +79,21 @@ extension Parser {
   // MARK: - Is xxx
 
   private func isBytes(_ token: Token) -> Bool {
-    if case TokenKind.bytes = token.kind {
+    if case Token.Kind.bytes = token.kind {
       return true
     }
     return false
   }
 
   private func isString(_ token: Token) -> Bool {
-    if case TokenKind.string = token.kind {
+    if case Token.Kind.string = token.kind {
       return true
     }
     return false
   }
 
   private func isFormatString(_ token: Token) -> Bool {
-    if case TokenKind.formatString = token.kind {
+    if case Token.Kind.formatString = token.kind {
       return true
     }
     return false

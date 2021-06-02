@@ -5,7 +5,7 @@ Lexer is responsible for transforming Python source code to stream of tokens.
 ## Important files
 
 - `Lexer.swift` - main type (duh…). Please note that this is is more of a “lexical closure” for properties than a proper object-oriented entity.
-- `Token.swift` and `TokenKind.swift` - token definitions.
+- `Token.swift` - token definition.
 - `LexerType.swift` - protocol describing external Lexer interface.
 - `Lexer+UNIMPLEMENTED.swift` - things that are not yet implemented.
 

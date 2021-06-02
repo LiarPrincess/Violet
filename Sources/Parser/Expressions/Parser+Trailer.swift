@@ -84,7 +84,7 @@ extension Parser {
   // MARK: - Subscript
 
   /// `subscriptlist: subscript (',' subscript)* [',']`
-  private func subscriptList(closingToken: TokenKind) throws -> Slice.Kind {
+  private func subscriptList(closingToken: Token.Kind) throws -> Slice.Kind {
     let first = try self.subscript(closingTokens: closingToken, .comma)
     var elements = NonEmptyArray<Slice>(first: first)
 
@@ -139,7 +139,7 @@ extension Parser {
   /// subscript: test | [test] ':' [test] [sliceop]
   /// sliceop: ':' [test]
   /// ```
-  private func `subscript`(closingTokens: TokenKind...) throws -> Slice {
+  private func `subscript`(closingTokens: Token.Kind...) throws -> Slice {
     let start = self.peek.start
     var lower, upper, step: Expression?
 

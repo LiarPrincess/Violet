@@ -158,7 +158,7 @@ extension Parser {
   // MARK: - Comparison
 
   /// `comp_op: '<'|'>'|'=='|'>='|'<='|'<>'|'!='|'in'|'not' 'in'|'is'|'is' 'not'`
-  private static let comparisonOperators: [TokenKind: CompareExpr.Operator] = [
+  private static let comparisonOperators: [Token.Kind: CompareExpr.Operator] = [
     .equalEqual: .equal,
     .notEqual: .notEqual,
     // <> - pep401 is not implemented
@@ -296,7 +296,7 @@ extension Parser {
 
   // MARK: - Shift expr
 
-  private static let shiftExprOperators: [TokenKind: BinaryOpExpr.Operator] = [
+  private static let shiftExprOperators: [Token.Kind: BinaryOpExpr.Operator] = [
     .leftShift: .leftShift,
     .rightShift: .rightShift
   ]
@@ -322,7 +322,7 @@ extension Parser {
 
   // MARK: - Arith expr
 
-  private static let arithExprOperators: [TokenKind: BinaryOpExpr.Operator] = [
+  private static let arithExprOperators: [Token.Kind: BinaryOpExpr.Operator] = [
     .plus: .add,
     .minus: .sub
   ]
@@ -348,7 +348,7 @@ extension Parser {
 
   // MARK: - Term
 
-  private static let termOperators: [TokenKind: BinaryOpExpr.Operator] = [
+  private static let termOperators: [Token.Kind: BinaryOpExpr.Operator] = [
     .star: .mul,
     .at: .matMul,
     .slash: .div,

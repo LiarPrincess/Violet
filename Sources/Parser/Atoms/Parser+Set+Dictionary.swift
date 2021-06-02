@@ -126,7 +126,7 @@ extension Parser {
   /// `(comp_for | (',' (test | star_expr))* [','])`
   private func setDisplay(first: Expression,
                           start: SourceLocation,
-                          closingToken: TokenKind) throws -> Expression {
+                          closingToken: Token.Kind) throws -> Expression {
     var elements = [Expression]()
     elements.append(first)
 
@@ -152,7 +152,7 @@ extension Parser {
   /// `(comp_for | (',' (test ':' test | '**' expr))* [','])`
   private func dictionaryDisplay(first: DictionaryExpr.Element,
                                  start: SourceLocation,
-                                 closingToken: TokenKind) throws -> Expression {
+                                 closingToken: Token.Kind) throws -> Expression {
 
     var elements = [DictionaryExpr.Element]()
     elements.append(first)

@@ -95,7 +95,7 @@ public enum ParserErrorKind: Equatable {
   /// Unexpected end of file, expected: [expected].
   case unexpectedEOF(expected: [ExpectedToken])
   /// Unexpected 'tokenKind', expected: 'expected'.
-  case unexpectedToken(TokenKind, expected: [ExpectedToken])
+  case unexpectedToken(Token.Kind, expected: [ExpectedToken])
   /// Expression must have 'expected' context but has 'Expression.context' instead
   case invalidContext(Expression, expected: ExpressionContext)
 }
@@ -216,7 +216,7 @@ private func joinWithCommaAndOr<T>(_ elements: [T]) -> String {
 }
 
 // swiftlint:disable:next cyclomatic_complexity
-private func needsQuotes(_ kind: TokenKind) -> Bool {
+private func needsQuotes(_ kind: Token.Kind) -> Bool {
   switch kind {
   case
     // atoms

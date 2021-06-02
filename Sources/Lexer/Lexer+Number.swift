@@ -165,8 +165,7 @@ extension Lexer {
       return try BigInt(parseUsingPythonRules: scalars, base: base.radix)
     } catch let error as BigInt.PythonParsingError {
       let string = String(scalars)
-      let kind = LexerErrorKind.unableToParseInteger(string, base.type, error)
-      throw self.error(kind, location: start)
+      throw self.error(.unableToParseInt(string, base.type, error), location: start)
     }
   }
 
@@ -174,8 +173,7 @@ extension Lexer {
                            start: SourceLocation) throws -> Double {
     guard let value = Double(parseUsingPythonRules: scalars) else {
       let string = String(scalars)
-      let kind = LexerErrorKind.unableToParseFloat(string)
-      throw self.error(kind, location: start)
+      throw self.error(.unableToParseFloat(string), location: start)
     }
 
     return value

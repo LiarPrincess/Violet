@@ -2,14 +2,12 @@
 
 // MARK: - NumberType
 
-public enum NumberType {
+public enum NumberType: CustomStringConvertible {
   case binary
   case octal
   case decimal
   case hexadecimal
-}
 
-extension NumberType: CustomStringConvertible {
   public var description: String {
     switch self {
     case .binary: return "binary"

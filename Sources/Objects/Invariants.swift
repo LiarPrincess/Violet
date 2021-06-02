@@ -53,11 +53,11 @@ internal func checkInvariants() {
   checkMemorySize(of: SourceLocation.self, expectedSize: 8)
 
   // Token: 17 kind + 3 padding (?) + 8 start + 8 end = 36
-  // TokenKind: 16 string payload + 1 tag = 17
+  // Token.Kind: 16 string payload + 1 tag = 17
   // Tokens are quite big, but we have only 2 or 3 of them at the same time
   // (not a whole array etc.).
   checkMemorySize(of: Token.self, expectedSize: 36)
-  checkMemorySize(of: TokenKind.self, expectedSize: 17)
+  checkMemorySize(of: Token.Kind.self, expectedSize: 17)
 
   if anyFailed {
     exit(EXIT_FAILURE)

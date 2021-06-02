@@ -16,7 +16,7 @@ extension Common {
 
   // MARK: - Int
 
-  internal func XCTAssertInt(_ kind: TokenKind,
+  internal func XCTAssertInt(_ kind: Token.Kind,
                              _ expected: Int64,
                              file: StaticString = #file,
                              line: UInt = #line) {
@@ -82,15 +82,15 @@ extension Common {
     return self.getSpecificToken(lexer, kind: .eof, file: file, line: line)
   }
 
-  @discardableResult
   private func getSpecificToken(_ lexer: Lexer,
-                                kind: TokenKind,
+                                kind: Token.Kind,
                                 file: StaticString = #file,
                                 line: UInt = #line) -> Token? {
     if let token = self.getToken(lexer, file: file, line: line) {
       XCTAssertEqual(token.kind, kind, file: file, line: line)
       return token
     }
+
     return nil
   }
 
@@ -120,7 +120,7 @@ extension Common {
       return nil
     } catch {
       if let e = error as? LexerError {
-        if case let LexerErrorKind.unimplemented(u) = e.kind {
+        if case let LexerError.Kind.unimplemented(u) = e.kind {
           return u
         }
       }

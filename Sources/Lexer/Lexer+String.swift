@@ -16,7 +16,7 @@ private enum QuoteType {
     }
   }
 
-  fileprivate var nilPeekError: LexerErrorKind {
+  fileprivate var nilPeekError: LexerError.Kind {
     switch self {
     case .single: return .unfinishedShortString
     case .triple: return .unfinishedLongString
@@ -51,7 +51,7 @@ extension Lexer {
     }
 
     let string = String(scalars)
-    let kind: TokenKind = prefix.f ? .formatString(string) : .string(string)
+    let kind: Token.Kind = prefix.f ? .formatString(string) : .string(string)
     return self.token(kind, start: start, end: end)
   }
 

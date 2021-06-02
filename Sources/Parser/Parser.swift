@@ -220,7 +220,7 @@ public final class Parser {
   // MARK: - Consume
 
   internal func consumeIdentifierOrThrow() throws -> String {
-    if case let TokenKind.identifier(value) = self.peek.kind {
+    if case let Token.Kind.identifier(value) = self.peek.kind {
       try self.advance() // identifier
       return value
     }
@@ -228,14 +228,14 @@ public final class Parser {
     throw self.unexpectedToken(expected: [.identifier])
   }
 
-  internal func consumeOrThrow(_ kind: TokenKind) throws {
+  internal func consumeOrThrow(_ kind: Token.Kind) throws {
     guard try self.consumeIf(kind) else {
       throw self.unexpectedToken(expected: [kind.expected])
     }
   }
 
   @discardableResult
-  internal func consumeIf(_ kind: TokenKind) throws -> Bool {
+  internal func consumeIf(_ kind: Token.Kind) throws -> Bool {
     if self.peek.kind == kind {
       try self.advance()
       return true

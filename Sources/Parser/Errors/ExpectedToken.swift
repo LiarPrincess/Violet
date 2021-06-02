@@ -4,7 +4,7 @@ import VioletLexer
 
 // Really regretting that we don't have proper union types in Swift
 // (but not really sure how would that work).
-// We can also use `case token(TokenKind)`, but in most common use case
+// We can also use `case token(Token.Kind)`, but in most common use case
 // we know which token we expected and now we have to wrap it in .token(X)
 // which is not very ergonomic.
 public enum ExpectedToken {
@@ -242,7 +242,7 @@ extension ExpectedToken: CustomStringConvertible {
   }
 }
 
-extension TokenKind {
+extension Token.Kind {
   public var expected: ExpectedToken {
     switch self {
     case .eof: return .eof

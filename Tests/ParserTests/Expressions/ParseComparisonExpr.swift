@@ -8,7 +8,7 @@ import VioletLexer
 class ParseComparisonExpr: XCTestCase, Common {
 
   func test_operators() {
-    let variants: [(TokenKind, CompareExpr.Operator)] = [
+    let variants: [(Token.Kind, CompareExpr.Operator)] = [
       (.equalEqual, .equal),
       (.notEqual,   .notEqual),
       // <> - pep401 is not implemented

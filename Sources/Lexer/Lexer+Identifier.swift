@@ -4,7 +4,7 @@ import VioletCore
 // https://docs.python.org/3/reference/lexical_analysis.html#identifiers
 // cSpell:ignore bruf
 
-internal let keywords: [String: TokenKind] = [
+internal let keywords: [String: Token.Kind] = [
   "and": .and,
   "as": .as,
   "assert": .assert,

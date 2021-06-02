@@ -128,7 +128,7 @@ class StringTests: XCTestCase, Common {
     let lexer = self.createLexer(for: "\"Ive got gadgets and gizmos aplenty\n")
 
     if let error = self.error(lexer) {
-      XCTAssertEqual(error.kind,  LexerErrorKind.unfinishedShortString)
+      XCTAssertEqual(error.kind, .unfinishedShortString)
       XCTAssertEqual(error.location, SourceLocation(line: 1, column: 35))
     }
   }
@@ -197,7 +197,7 @@ class StringTests: XCTestCase, Common {
     let lexer = self.createLexer(for: "\"\"\"But who cares?\nNo big deal\nI want more\"")
 
     if let error = self.error(lexer) {
-      XCTAssertEqual(error.kind,  LexerErrorKind.unfinishedLongString)
+      XCTAssertEqual(error.kind,  .unfinishedLongString)
       XCTAssertEqual(error.location, SourceLocation(line: 3, column: 12))
     }
   }

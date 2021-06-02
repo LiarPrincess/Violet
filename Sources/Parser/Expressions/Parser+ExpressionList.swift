@@ -30,7 +30,7 @@ extension Parser {
 
   /// `exprlist: (expr|star_expr) (',' (expr|star_expr))* [',']`
   internal func exprList(context: ExpressionContext,
-                         closingTokens: [TokenKind]) throws -> ExprListResult {
+                         closingTokens: [Token.Kind]) throws -> ExprListResult {
     let first = try self.starExprOrNop(context: context) ?? self.expr(context: context)
     var end = first.end
 
@@ -88,7 +88,7 @@ extension Parser {
 
   /// `testlist: test (',' test)* [',']`
   internal func testList(context: ExpressionContext,
-                         closingTokens: [TokenKind]) throws -> TestListResult {
+                         closingTokens: [Token.Kind]) throws -> TestListResult {
     let first = try self.test(context: context)
     var end = first.end
 
@@ -132,7 +132,7 @@ extension Parser {
   ///                    | (',' (test|star_expr))* [','])
   /// ```
   internal func testListComp(context: ExpressionContext,
-                             closingToken: TokenKind) throws -> TestListCompResult {
+                             closingToken: Token.Kind) throws -> TestListCompResult {
     let first = try self.testOrStarExpr(context: context)
 
     if let generators = try self.compForOrNop(closingTokens: [closingToken]) {
@@ -194,7 +194,7 @@ extension Parser {
   /// `testlist_star_expr: (test|star_expr) (',' (test|star_expr))* [',']`
   internal func testListStarExpr(
     context: ExpressionContext,
-    closingTokens: [TokenKind]
+    closingTokens: [Token.Kind]
   ) throws -> TestListStarExprResult {
 
     let first = try self.testOrStarExpr(context: context)

@@ -29,7 +29,9 @@ extension Parser {
   ///
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to this rule.
-  internal func compForOrNop(closingTokens: [TokenKind]) throws -> NonEmptyArray<Comprehension>? {
+  internal func compForOrNop(
+    closingTokens: [Token.Kind]
+  ) throws -> NonEmptyArray<Comprehension>? {
     return self.isCompFor() ?
       try self.compFor(closingTokens: closingTokens) :
       nil
@@ -41,7 +43,9 @@ extension Parser {
   /// comp_iter: comp_for | comp_if
   /// comp_if: 'if' test_nocond [comp_iter]
   /// ```
-  internal func compFor(closingTokens: [TokenKind]) throws -> NonEmptyArray<Comprehension> {
+  internal func compFor(
+    closingTokens: [Token.Kind]
+  ) throws -> NonEmptyArray<Comprehension> {
     var elements = [Comprehension]()
 
     while !closingTokens.contains(self.peek.kind) {

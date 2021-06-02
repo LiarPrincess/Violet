@@ -167,7 +167,7 @@ class IntegerTests: XCTestCase, Common {
 
     if let error = self.error(lexer) {
       switch error.kind {
-      case let .unableToParseInteger(s, type, parsingError):
+      case let .unableToParseInt(s, type, parsingError):
         XCTAssertEqual(s, input)
         XCTAssertEqual(type, .hexadecimal)
 

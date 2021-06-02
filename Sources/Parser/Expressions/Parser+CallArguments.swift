@@ -60,7 +60,7 @@ extension Parser {
   // MARK: - Call
 
   /// `arglist: argument (',' argument)*  [',']`
-  internal func argList(closingToken: TokenKind,
+  internal func argList(closingToken: Token.Kind,
                         isBaseClass: Bool = false) throws -> CallIR {
     var ir = CallIR(isBaseClass: isBaseClass)
 
@@ -95,7 +95,7 @@ extension Parser {
   ///             '**' test |
   ///             '*' test )
   /// ```
-  private func argument(into ir: inout CallIR, closingToken: TokenKind) throws {
+  private func argument(into ir: inout CallIR, closingToken: Token.Kind) throws {
     switch self.peek.kind {
 
     // '*' test
@@ -205,7 +205,7 @@ extension Parser {
 
   /// test [comp_for]
   private func parsePositionalArgument(test: Expression,
-                                       closingToken: TokenKind,
+                                       closingToken: Token.Kind,
                                        into ir: inout CallIR) throws {
     // We do not allow generators as base class in class definition
     if ir.isBaseClass && self.isCompFor() {

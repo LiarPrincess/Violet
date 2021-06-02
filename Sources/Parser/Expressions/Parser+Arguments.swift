@@ -70,7 +70,7 @@ extension Parser {
   ///
   /// tfpdef: NAME [':' test]
   /// ```
-  internal func typedArgsList(closingToken: TokenKind) throws -> Arguments {
+  internal func typedArgsList(closingToken: Token.Kind) throws -> Arguments {
     return try self.argsList(parseArg: Parser.tfpdef,
                              closingToken: closingToken)
   }
@@ -90,7 +90,7 @@ extension Parser {
   ///   )
   /// vfpdef: NAME
   /// ```
-  internal func varArgsList(closingToken: TokenKind) throws -> Arguments {
+  internal func varArgsList(closingToken: Token.Kind) throws -> Arguments {
     return try self.argsList(parseArg: Parser.vfpdef,
                              closingToken: closingToken)
   }
@@ -133,7 +133,7 @@ extension Parser {
   // MARK: - Args list
 
   private func argsList(parseArg: ArgFactory,
-                        closingToken: TokenKind) throws -> Arguments {
+                        closingToken: Token.Kind) throws -> Arguments {
     let loc = self.peek.start
     var ir = ArgumentsIR(start: loc, end: loc)
 

@@ -45,7 +45,7 @@ class OtherTests: XCTestCase, Common {
     self.getEOF(lexer)
   }
 
-  func test_newLine_CR_LF() {
+  func test_newLine_CRLF() {
     let lexer = self.createLexer(for: "\(CR)\(LF)")
 
     if let token = self.getToken(lexer) {
@@ -99,7 +99,7 @@ class OtherTests: XCTestCase, Common {
     self.getIdentifier(lexer, value: "Elsa")
 
     if let error = self.error(lexer) {
-      XCTAssertEqual(error.kind, LexerErrorKind.missingNewLineAfterBackslashEscape)
+      XCTAssertEqual(error.kind, .missingNewLineAfterBackslashEscape)
       XCTAssertEqual(error.location, SourceLocation(line: 1, column: 5))
     }
   }

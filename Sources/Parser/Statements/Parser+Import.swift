@@ -30,7 +30,7 @@ extension Parser {
   ///   'import' ('*' | '(' import_as_names ')' | import_as_names)
   /// )
   /// ```
-  internal func importStmt(closingTokens: [TokenKind]) throws -> Statement {
+  internal func importStmt(closingTokens: [Token.Kind]) throws -> Statement {
     assert(self.isImportStmt())
 
     switch self.peek.kind {
@@ -152,7 +152,7 @@ extension Parser {
   ///   'import' ('*' | '(' import_as_names ')' | import_as_names)
   /// )
   /// ```
-  private func parseImportFrom(closingTokens: [TokenKind]) throws -> Statement {
+  private func parseImportFrom(closingTokens: [Token.Kind]) throws -> Statement {
     assert(self.peek.kind == .from)
 
     let start = self.peek.start
@@ -222,7 +222,7 @@ extension Parser {
   /// )
   /// ```
   private func parseImportFromNames(into ir: inout ImportFromIR,
-                                    closingTokens: [TokenKind]) throws {
+                                    closingTokens: [Token.Kind]) throws {
 
     try self.consumeOrThrow(.import)
 
@@ -260,7 +260,7 @@ extension Parser {
   // MARK: - Import as names
 
   // `import_as_names: import_as_name (',' import_as_name)* [',']`
-  private func importAsNames(closingTokens: [TokenKind]) throws ->
+  private func importAsNames(closingTokens: [Token.Kind]) throws ->
     (aliases: NonEmptyArray<Alias>, hasTrailingComma: Bool) {
 
     let first = try self.importAsName()

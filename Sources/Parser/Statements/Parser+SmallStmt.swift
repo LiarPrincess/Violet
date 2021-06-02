@@ -11,7 +11,7 @@ extension Parser {
   /// small_stmt: (expr_stmt | del_stmt | pass_stmt | flow_stmt |
   ///              import_stmt | global_stmt | nonlocal_stmt | assert_stmt)
   /// ```
-  internal func smallStmt(closingTokens: [TokenKind]) throws -> Statement {
+  internal func smallStmt(closingTokens: [Token.Kind]) throws -> Statement {
     // swiftlint:disable:previous function_body_length
 
     let token = self.peek
@@ -55,7 +55,7 @@ extension Parser {
   }
 
   /// del_stmt: 'del' exprlist
-  private func delStmt(closingTokens: [TokenKind]) throws -> Statement {
+  private func delStmt(closingTokens: [Token.Kind]) throws -> Statement {
     assert(self.peek.kind == .del)
 
     let start = self.peek.start
@@ -72,7 +72,7 @@ extension Parser {
   }
 
   /// return_stmt: 'return' [testlist]
-  private func returnStmt(closingTokens: [TokenKind]) throws -> Statement {
+  private func returnStmt(closingTokens: [Token.Kind]) throws -> Statement {
     assert(self.peek.kind == .return)
 
     let token = self.peek
@@ -99,7 +99,7 @@ extension Parser {
   }
 
   /// raise_stmt: 'raise' [test ['from' test]]
-  private func raiseStmt(closingTokens: [TokenKind]) throws -> Statement {
+  private func raiseStmt(closingTokens: [Token.Kind]) throws -> Statement {
     assert(self.peek.kind == .raise)
 
     let token = self.peek
@@ -128,7 +128,7 @@ extension Parser {
   }
 
   /// global_stmt: 'global' NAME (',' NAME)*
-  private func globalStmt(closingTokens: [TokenKind]) throws -> Statement {
+  private func globalStmt(closingTokens: [Token.Kind]) throws -> Statement {
     assert(self.peek.kind == .global)
 
     let token = self.peek
@@ -140,7 +140,7 @@ extension Parser {
   }
 
   /// nonlocal_stmt: 'nonlocal' NAME (',' NAME)*
-  private func nonlocalStmt(closingTokens: [TokenKind]) throws -> Statement {
+  private func nonlocalStmt(closingTokens: [Token.Kind]) throws -> Statement {
     assert(self.peek.kind == .nonlocal)
 
     let token = self.peek
@@ -152,7 +152,7 @@ extension Parser {
   }
 
   /// assert_stmt: 'assert' test [',' test]
-  private func assertStmt(closingTokens: [TokenKind]) throws -> Statement {
+  private func assertStmt(closingTokens: [Token.Kind]) throws -> Statement {
     assert(self.peek.kind == .assert)
 
     let token = self.peek
@@ -171,7 +171,7 @@ extension Parser {
   }
 
   /// NAME (',' NAME)*
-  private func nameList(separator: TokenKind)
+  private func nameList(separator: Token.Kind)
     throws -> (names: NonEmptyArray<String>, end: SourceLocation) {
 
     var end = self.peek.end

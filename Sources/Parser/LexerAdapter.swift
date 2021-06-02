@@ -109,17 +109,17 @@ internal struct LexerAdapter {
   // MARK: - Token predicates
 
   private func isEOF(_ token: Token) -> Bool {
-    if case TokenKind.eof = token.kind { return true }
+    if case Token.Kind.eof = token.kind { return true }
     return false
   }
 
   private func isComment(_ token: Token) -> Bool {
-    if case TokenKind.comment = token.kind { return true }
+    if case Token.Kind.comment = token.kind { return true }
     return false
   }
 
   private func isNewLine(_ token: Token) -> Bool {
-    if case TokenKind.newLine = token.kind { return true }
+    if case Token.Kind.newLine = token.kind { return true }
     return false
   }
 }

@@ -8,7 +8,7 @@ import VioletLexer
 // MARK: - Assert
 
 internal func XCTAssertTokens(_ adapter: inout LexerAdapter,
-                              _ expected: [TokenKind],
+                              _ expected: [Token.Kind],
                               file: StaticString = #file,
                               line: UInt = #line) {
   do {
@@ -161,7 +161,7 @@ class LexerAdapterTests: XCTestCase {
     return LexerAdapter(lexer: lexer)
   }
 
-  private func token(_ kind: TokenKind) -> Token {
+  private func token(_ kind: Token.Kind) -> Token {
     return Token(kind, start: loc0, end: loc0)
   }
 }

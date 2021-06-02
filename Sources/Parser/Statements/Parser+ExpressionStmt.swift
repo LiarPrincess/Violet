@@ -18,7 +18,7 @@ extension Parser {
   /// augassign: ('+=' | '-=' | '*=' | '@=' | '/=' | '%=' | '&=' | '|=' | '^=' |
   /// '<<=' | '>>=' | '**=' | '//=')
   /// ```
-  internal func exprStmt(closingTokens: [TokenKind]) throws -> Statement {
+  internal func exprStmt(closingTokens: [Token.Kind]) throws -> Statement {
     // FIRST(n) == '('
     let isFirstInParen = self.peek.kind == .leftParen
 
@@ -112,7 +112,7 @@ extension Parser {
   /// augassign: ('+=' | '-=' | '*=' | '@=' | '/=' | '%=' | '&=' | '|=' | '^=' |
   ///             '<<=' | '>>=' | '**=' | '//=')
   /// ```
-  private static let augAssign: [TokenKind: BinaryOpExpr.Operator] = [
+  private static let augAssign: [Token.Kind: BinaryOpExpr.Operator] = [
     .plusEqual: .add, // +=
     .minusEqual: .sub, // -=
     .starEqual: .mul, // *=
@@ -132,7 +132,7 @@ extension Parser {
 
   /// expr_stmt: testlist_star_expr augassign (yield_expr|testlist)
   private func parseAugAssign(target: Expression,
-                              closingTokens: [TokenKind]) throws -> Statement {
+                              closingTokens: [Token.Kind]) throws -> Statement {
     try self.checkAugAssignTarget(target)
     SetStoreExpressionContext.run(expression: target)
 
@@ -160,7 +160,7 @@ extension Parser {
   }
 
   /// `yield_expr|testlist`
-  private func parseAugAssignValue(closingTokens: [TokenKind]) throws -> Expression {
+  private func parseAugAssignValue(closingTokens: [Token.Kind]) throws -> Expression {
     if let e = try self.yieldExprOrNop(closingTokens: closingTokens) {
       return e
     }
@@ -174,7 +174,7 @@ extension Parser {
 
   /// `expr_stmt: testlist_star_expr ('=' (yield_expr|testlist_star_expr))*
   private func parseNormalAssign(firstTarget: Expression,
-                                 closingTokens: [TokenKind]) throws -> Statement {
+                                 closingTokens: [Token.Kind]) throws -> Statement {
     // 'firstTarget' has '.load' context, we will change it later
     var elements = [Expression]()
 
