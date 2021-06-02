@@ -1,16 +1,17 @@
 #include "./siphash.c"
 
 // Key is 'I See the Light ' in ASCII
-const uint64_t key[] = { 0x4920536565207468, 0x65204c6967687420 };
+const uint64_t key[] = {0x4920536565207468, 0x65204c6967687420};
 
-uint64_t siphash_str(const char* str) {
-    uint8_t *in = (uint8_t *) str;
+uint64_t siphash_str(const char *str)
+{
+    uint8_t *in = (uint8_t *)str;
     size_t inlen = strlen(str);
 
     uint64_t out = 0;
     size_t outlen = 8;
 
-    int err = siphash(in, inlen, (uint8_t *) key, (uint8_t *) &out, outlen);
+    int err = siphash(in, inlen, (uint8_t *)key, (uint8_t *)&out, outlen);
     assert(err == 0);
 
     return out;
@@ -68,16 +69,17 @@ const char *lyrics[] = {
 };
 
 // Example from paper (https://131002.net/siphash/siphash.pdf).
-void paper_example() {
-    uint8_t in[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+void paper_example()
+{
+    uint8_t in[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
     size_t inlen = 15;
 
-    const uint64_t k[] = { 0x0706050403020100, 0x0f0e0d0c0b0a0908 };
+    const uint64_t k[] = {0x0706050403020100, 0x0f0e0d0c0b0a0908};
 
     uint64_t out = 0;
     size_t outlen = 8;
 
-    int err = siphash(in, inlen, (uint8_t *) k, (uint8_t *) &out, outlen);
+    int err = siphash(in, inlen, (uint8_t *)k, (uint8_t *)&out, outlen);
     assert(err == 0);
 
     const uint64_t expected = 0xa129ca6149be45e5;
@@ -87,21 +89,24 @@ void paper_example() {
 
 int main()
 {
-    size_t lyricsCount = sizeof(lyrics)/sizeof(lyrics[0]);
+    // paper_example();
+
+    size_t lyricsCount = sizeof(lyrics) / sizeof(lyrics[0]);
     for (int i = 0; i < lyricsCount; ++i)
     {
         const char *line = lyrics[i];
         int isEmpty = strncmp(line, "", 2) == 0;
 
-        if (!isEmpty) {
+        if (!isEmpty)
+        {
             uint64_t hash = siphash_str(line);
             printf("XCTAssertEqual(self.hash(\"%s\"), %llu)\n", line, hash);
-        } else {
+        }
+        else
+        {
             printf("\n");
         }
     }
-
-    // paper_example();
 
     return 0;
 }

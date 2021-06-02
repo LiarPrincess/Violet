@@ -3,6 +3,10 @@ object
     __init_subclass__
     __subclasshook__
 
+bool
+  Why do we even have this?
+    __str__
+
 builtin_function_or_method
   Why do we even have this?
     __get__
@@ -38,20 +42,28 @@ code
     co_freevars
     co_lnotab
     co_names
+    co_posonlyargcount
     co_stacksize
     co_varnames
+    replace
 
 complex
   Unimplemented:
     __format__
   Why do we even have this?
+    __str__
     __getnewargs__
+
+dict
+  Unimplemented:
+    __reversed__
 
 dict_items
   Unimplemented:
     __and__
     __or__
     __rand__
+    __reversed__
     __ror__
     __rsub__
     __rxor__
@@ -64,12 +76,19 @@ dict_keys
     __and__
     __or__
     __rand__
+    __reversed__
     __ror__
     __rsub__
     __rxor__
     __sub__
     __xor__
     isdisjoint
+
+dict_values
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __reversed__
 
 ellipsis
   Why do we even have this?
@@ -80,6 +99,8 @@ float
     __getformat__ - <class 'builtin_function_or_method'>
     __set_format__ - <class 'builtin_function_or_method'>
     __format__
+  Why do we even have this?
+    __str__
 
 frame
   Unimplemented:
@@ -97,7 +118,10 @@ int
   Unimplemented:
     from_bytes - <class 'builtin_function_or_method'>
     __format__
+    as_integer_ratio
     to_bytes
+  Why do we even have this?
+    __str__
 
 Iterator
   Why do we even have this?
@@ -148,7 +172,6 @@ TextIOWrapper
     __dict__ - <class 'mappingproxy'>
     __new__ - <class 'builtin_function_or_method'>
     _CHUNK_SIZE
-    __getstate__
     __init__
     __next__
     _finalizing

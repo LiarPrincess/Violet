@@ -1,8 +1,11 @@
 # What is this?
-This script will generate copy-on-write (COW) tests for our `BigInt` implementation.
+
+This script will generate copy-on-write (COW) tests for our `BigInt` implementation. It is important, because even though `BigInt` is immutable, the heap that is points to is not.
+
 Those tests should be placed in `/Tests/BigIntTests/BigInt/BigIntCOWTests.swift`.
 
 Example test looks like this:
+
 ```Swift
 func test_addEqual_toCopy_doesNotModifyOriginal() {
   // smi + smi
@@ -32,4 +35,9 @@ func test_addEqual_toCopy_doesNotModifyOriginal() {
 ```
 
 # How to run?
-Just run `./Scripts/bigint_generate_cow_tests/main.sh` from root dir.
+
+Run following command from the repository root:
+
+> ./Scripts/bigint_generate_cow_tests/main.sh
+
+This will generate `out.swift` file with the result.

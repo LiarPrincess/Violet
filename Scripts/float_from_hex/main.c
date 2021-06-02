@@ -9,19 +9,23 @@
 #include <stdlib.h>
 #include <string.h>
 
+// cSpell:ignore inity fdigits
+
 // In CPython:
 // Objects -> floatobject.c
 // https://docs.python.org/3.7/c-api/float.html
 // https://docs.python.org/3/library/stdtypes.html#float.fromhex <- THIS!
 
 static int
-Py_ISSPACE(const char s) {
-  return strncmp(&s, " ", 1) == 0;
+Py_ISSPACE(const char s)
+{
+    return strncmp(&s, " ", 1) == 0;
 }
 
 static char
-Py_TOLOWER(const char c) {
-  return tolower(c);
+Py_TOLOWER(const char c)
+{
+    return tolower(c);
 }
 
 #define Py_HUGE_VAL HUGE_VAL
@@ -29,7 +33,8 @@ Py_TOLOWER(const char c) {
 static int
 case_insensitive_match(const char *s, const char *t)
 {
-    while(*t && Py_TOLOWER(*s) == *t) {
+    while (*t && Py_TOLOWER(*s) == *t)
+    {
         s++;
         t++;
     }
@@ -44,27 +49,32 @@ _Py_parse_inf_or_nan(const char *p, char **endptr)
     int negate = 0;
 
     s = p;
-    if (*s == '-') {
+    if (*s == '-')
+    {
         negate = 1;
         s++;
     }
-    else if (*s == '+') {
+    else if (*s == '+')
+    {
         s++;
     }
 
-    if (case_insensitive_match(s, "inf")) {
+    if (case_insensitive_match(s, "inf"))
+    {
         s += 3;
         if (case_insensitive_match(s, "inity"))
             s += 5;
         retval = negate ? -Py_HUGE_VAL : Py_HUGE_VAL;
     }
 #ifdef Py_NAN
-    else if (case_insensitive_match(s, "nan")) {
+    else if (case_insensitive_match(s, "nan"))
+    {
         s += 3;
         retval = negate ? -Py_NAN : Py_NAN;
     }
 #endif
-    else {
+    else
+    {
         s = p;
         retval = -1.0;
     }
@@ -73,8 +83,7 @@ _Py_parse_inf_or_nan(const char *p, char **endptr)
 }
 
 const char Py_hexdigits[16] = {
-  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
-};
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
 static char
 char_from_hex(int x)
@@ -84,9 +93,11 @@ char_from_hex(int x)
 }
 
 static int
-hex_from_char(char c) {
+hex_from_char(char c)
+{
     int x;
-    switch(c) {
+    switch (c)
+    {
     case '0':
         x = 0;
         break;
@@ -163,7 +174,7 @@ float_fromhex(const char *s)
     double x, result;
     long exp, top_exp, lsb, key_digit;
     const char *coeff_start, *s_store, *coeff_end, *exp_start, *s_end;
-    int half_eps, digit, round_up, negate=0;
+    int half_eps, digit, round_up, negate = 0;
     ssize_t length, ndigits, fdigits, i;
 
     /*
@@ -229,13 +240,15 @@ float_fromhex(const char *s)
 
     /* infinities and nans */
     x = _Py_parse_inf_or_nan(s, (char **)&coeff_end);
-    if (coeff_end != s) {
+    if (coeff_end != s)
+    {
         s = coeff_end;
         goto finished;
     }
 
     /* optional sign */
-    if (*s == '-') {
+    if (*s == '-')
+    {
         s++;
         negate = 1;
     }
@@ -246,11 +259,13 @@ float_fromhex(const char *s)
 
     /* [0x] */
     s_store = s;
-    if (*s == '0') {
+    if (*s == '0')
+    {
         s++;
-        if (*s == 'x' || *s == 'X') {
-          printf("Consuming '0x'\n");
-          s++;
+        if (*s == 'x' || *s == 'X')
+        {
+            printf("Consuming '0x'\n");
+            s++;
         }
         else
             s = s_store;
@@ -261,11 +276,12 @@ float_fromhex(const char *s)
     while (hex_from_char(*s) >= 0)
         s++;
     s_store = s;
-    if (*s == '.') {
+    if (*s == '.')
+    {
         s++;
         while (hex_from_char(*s) >= 0)
             s++;
-        coeff_end = s-1;
+        coeff_end = s - 1;
     }
     else
         coeff_end = s;
@@ -277,18 +293,21 @@ float_fromhex(const char *s)
     printf("ndigits: %zd\n", ndigits);
     printf("fdigits: %zd\n", fdigits);
 
-    if (ndigits == 0) {
-      printf("Error: ndigits == 0\n");
-      goto parse_error;
+    if (ndigits == 0)
+    {
+        printf("Error: ndigits == 0\n");
+        goto parse_error;
     }
 
-    if (ndigits > Py_MIN(DBL_MIN_EXP - DBL_MANT_DIG - LONG_MIN/2, LONG_MAX/2 + 1 - DBL_MAX_EXP)/4) {
-      printf("Error: insane_length_error\n");
-      goto insane_length_error;
+    if (ndigits > Py_MIN(DBL_MIN_EXP - DBL_MANT_DIG - LONG_MIN / 2, LONG_MAX / 2 + 1 - DBL_MAX_EXP) / 4)
+    {
+        printf("Error: insane_length_error\n");
+        goto insane_length_error;
     }
 
     /* [p <exponent>] */
-    if (*s == 'p' || *s == 'P') {
+    if (*s == 'p' || *s == 'P')
+    {
         s++;
         exp_start = s;
         if (*s == '-' || *s == '+')
@@ -311,48 +330,51 @@ float_fromhex(const char *s)
      *******************************************/
 
 /* for 0 <= j < ndigits, HEX_DIGIT(j) gives the jth most significant digit */
-#define HEX_DIGIT(j) hex_from_char(*((j) < fdigits ?            \
-                     coeff_end-(j) :                                    \
-                     coeff_end-1-(j)))
-
+#define HEX_DIGIT(j) hex_from_char(*((j) < fdigits ? coeff_end - (j) : coeff_end - 1 - (j)))
 
     /* Discard leading zeros, and catch extreme overflow and underflow */
-    while (ndigits > 0 && HEX_DIGIT(ndigits-1) == 0) {
-      printf("Removing leading zero");
-      ndigits--;
+    while (ndigits > 0 && HEX_DIGIT(ndigits - 1) == 0)
+    {
+        printf("Removing leading zero");
+        ndigits--;
     }
 
-    if (ndigits == 0 || exp < LONG_MIN/2) {
+    if (ndigits == 0 || exp < LONG_MIN / 2)
+    {
         printf("ndigits == 0 || exp < LONG_MIN/2");
         x = 0.0;
         goto finished;
     }
-    if (exp > LONG_MAX/2) {
+    if (exp > LONG_MAX / 2)
+    {
         printf("exp > LONG_MAX/2");
         goto overflow_error;
     }
 
     /* Adjust exponent for fractional part. */
-    exp = exp - 4*((long)fdigits);
+    exp = exp - 4 * ((long)fdigits);
     printf("changing exponent to: %zd\n", exp);
 
     /* top_exp = 1 more than exponent of most sig. bit of coefficient */
-    top_exp = exp + 4*((long)ndigits - 1);
+    top_exp = exp + 4 * ((long)ndigits - 1);
     printf("Initial top_exp: %zd\n", top_exp);
-    for (digit = HEX_DIGIT(ndigits-1); digit != 0; digit /= 2) {
-      top_exp++;
-      printf("Incrementing topExp: %zd, digit: %d\n", top_exp, digit);
+    for (digit = HEX_DIGIT(ndigits - 1); digit != 0; digit /= 2)
+    {
+        top_exp++;
+        printf("Incrementing topExp: %zd, digit: %d\n", top_exp, digit);
     }
 
     /* catch almost all nonextreme cases of overflow and underflow here */
-    if (top_exp < DBL_MIN_EXP - DBL_MANT_DIG) {
+    if (top_exp < DBL_MIN_EXP - DBL_MANT_DIG)
+    {
         printf("top_exp < DBL_MIN_EXP - DBL_MANT_DIG\n");
         x = 0.0;
         goto finished;
     }
-    if (top_exp > DBL_MAX_EXP) {
-      printf("top_exp > DBL_MAX_EXP\n");
-      goto overflow_error;
+    if (top_exp > DBL_MAX_EXP)
+    {
+        printf("top_exp > DBL_MAX_EXP\n");
+        goto overflow_error;
     }
 
     /* lsb = exponent of least significant bit of the *rounded* value.
@@ -361,12 +383,14 @@ float_fromhex(const char *s)
     printf("lsb: %ld\n", lsb);
 
     x = 0.0;
-    if (exp >= lsb) {
+    if (exp >= lsb)
+    {
         /* no rounding required */
         printf("exp >= lsb\n");
-        for (i = ndigits-1; i >= 0; i--) {
+        for (i = ndigits - 1; i >= 0; i--)
+        {
             printf("  iter %zd, value %f\n", i, x);
-            x = 16.0*x + HEX_DIGIT(i);
+            x = 16.0 * x + HEX_DIGIT(i);
         }
 
         printf("ldexp(%f, %ld)\n", x, exp);
@@ -381,37 +405,40 @@ float_fromhex(const char *s)
     printf("half_eps: %d\n", half_eps);
     printf("key_digit: %ld\n", key_digit);
 
-    for (i = ndigits-1; i > key_digit; i--)
-        x = 16.0*x + HEX_DIGIT(i);
+    for (i = ndigits - 1; i > key_digit; i--)
+        x = 16.0 * x + HEX_DIGIT(i);
 
     digit = HEX_DIGIT(key_digit);
-    x = 16.0*x + (double)(digit & (16-2*half_eps));
+    x = 16.0 * x + (double)(digit & (16 - 2 * half_eps));
 
     /* round-half-even: round up if bit lsb-1 is 1 and at least one of
        bits lsb, lsb-2, lsb-3, lsb-4, ... is 1. */
-    if ((digit & half_eps) != 0) {
+    if ((digit & half_eps) != 0)
+    {
         round_up = 0;
-        if ((digit & (3*half_eps-1)) != 0 ||
-            (half_eps == 8 && (HEX_DIGIT(key_digit+1) & 1) != 0))
+        if ((digit & (3 * half_eps - 1)) != 0 ||
+            (half_eps == 8 && (HEX_DIGIT(key_digit + 1) & 1) != 0))
             round_up = 1;
         else
-            for (i = key_digit-1; i >= 0; i--)
-                if (HEX_DIGIT(i) != 0) {
+            for (i = key_digit - 1; i >= 0; i--)
+                if (HEX_DIGIT(i) != 0)
+                {
                     round_up = 1;
                     break;
                 }
-        if (round_up) {
-            x += 2*half_eps;
+        if (round_up)
+        {
+            x += 2 * half_eps;
             if (top_exp == DBL_MAX_EXP &&
-                x == ldexp((double)(2*half_eps), DBL_MANT_DIG))
+                x == ldexp((double)(2 * half_eps), DBL_MANT_DIG))
                 /* overflow corner case: pre-rounded value <
                    2**DBL_MAX_EXP; rounded=2**DBL_MAX_EXP. */
                 goto overflow_error;
         }
     }
-    x = ldexp(x, (int)(exp+4*key_digit));
+    x = ldexp(x, (int)(exp + 4 * key_digit));
 
-  finished:
+finished:
     /* optional trailing whitespace leading to the end of the string */
     while (Py_ISSPACE(*s))
         s++;
@@ -423,24 +450,25 @@ float_fromhex(const char *s)
     printf("Result:   %f\n", result);
     return;
 
-  overflow_error:
+overflow_error:
     printf("PyExc_OverflowError: hexadecimal value too large to represent as a float\n");
     return;
 
-  parse_error:
+parse_error:
     printf("PyExc_ValueError: invalid hexadecimal floating-point string\n");
     return;
 
-  insane_length_error:
+insane_length_error:
     printf("PyExc_ValueError: hexadecimal string too long to convert\n");
     return;
 }
 
 int main()
 {
-  // From https://docs.python.org/3/library/stdtypes.html#float.fromhex:
-  // For example, the hexadecimal string 0x3.a7p10
-  // represents the floating-point number (3 + 10./16 + 7./16**2) * 2.0**10, or 3740.0:
-  float_fromhex("0x3.a7p10"); // 3740.0
-  return 0;
+    // From https://docs.python.org/3/library/stdtypes.html#float.fromhex:
+    // For example, the hexadecimal string 0x3.a7p10
+    // represents the floating-point number (3 + 10./16 + 7./16**2) * 2.0**10, or 3740.0:
+    float_fromhex("0x3.a7p10");
+    printf("Expected: 3740.0\n");
+    return 0;
 }

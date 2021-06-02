@@ -1,4 +1,4 @@
-echo 'Updating umimplemented builtins...'
+echo 'Updating unimplemented builtins...'
 
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 

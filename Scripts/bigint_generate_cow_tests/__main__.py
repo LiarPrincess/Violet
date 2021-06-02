@@ -1,8 +1,8 @@
 def print_unary_test(name, operator):
-  name_upper = name
-  name_lower = name_upper.lower()
+    name_upper = name
+    name_lower = name_upper.lower()
 
-  print(f'''\
+    print(f'''\
   // MARK: - {name_upper}
 
   /// This test actually DOES make sense, because, even though 'BigInt' is immutable,
@@ -20,11 +20,12 @@ def print_unary_test(name, operator):
   }}
 ''')
 
-def print_binary_tests(name, operator):
-  name_upper = name
-  name_lower = name_upper.lower()
 
-  print(f'''\
+def print_binary_tests(name, operator):
+    name_upper = name
+    name_lower = name_upper.lower()
+
+    print(f'''\
   // MARK: - {name_upper}
 
   /// This test actually DOES make sense, because, even though 'BigInt' is immutable,
@@ -144,11 +145,12 @@ def print_binary_tests(name, operator):
   }}
 ''')
 
-def print_shift_tests(direction, operator):
-  direction_upper = direction
-  direction_lower = direction_upper.lower()
 
-  print(f'''\
+def print_shift_tests(direction, operator):
+    direction_upper = direction
+    direction_lower = direction_upper.lower()
+
+    print(f'''\
   // MARK: - Shift {direction_lower}
 
   /// This test actually DOES make sense, because, even though 'BigInt' is immutable,
@@ -216,16 +218,17 @@ def print_shift_tests(direction, operator):
   }}
 ''')
 
+
 if __name__ == '__main__':
-  print_unary_test('Plus', '+')
-  print_unary_test('Minus', '-')
-  print_unary_test('Invert', '~')
+    print_unary_test('Plus', '+')
+    print_unary_test('Minus', '-')
+    print_unary_test('Invert', '~')
 
-  print_binary_tests('Add', '+')
-  print_binary_tests('Sub', '-')
-  print_binary_tests('Mul', '*')
-  print_binary_tests('Div', '/')
-  print_binary_tests('Mod', '%')
+    print_binary_tests('Add', '+')
+    print_binary_tests('Sub', '-')
+    print_binary_tests('Mul', '*')
+    print_binary_tests('Div', '/')
+    print_binary_tests('Mod', '%')
 
-  print_shift_tests('Left', '<<')
-  print_shift_tests('Right', '>>')
+    print_shift_tests('Left', '<<')
+    print_shift_tests('Right', '>>')

@@ -1,7 +1,9 @@
 # What is this?
-This script will dump AST and bytecode for 'input.py' file.
+
+This script will dump AST and bytecode for `input.py` file.
 
 # Examples
+
 Input: `1 + 2`
 
 Output:
@@ -29,4 +31,8 @@ Module (node)
 (In the above example CPython folded `1 + 2 => 3`, so the bytecode already represents that)
 
 # How to run?
-Just run `python3 ./Scripts/dump` from root dir.
+
+1. Modify `input.py`
+2. Run following command from the repository root:
+
+    > python3 ./Scripts/dump_python_code

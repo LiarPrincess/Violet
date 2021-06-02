@@ -4,58 +4,61 @@ import random
 # === Smi ===
 # ===========
 
-smiMax = 2147483647
-smiMin = -2147483648
+smi_max = 2147483647
+smi_min = -2147483648
 
-def generateSmiNumbers():
-  result = []
-  result.append(0)
-  result.append(1)
-  result.append(-1)
 
-  value = smiMax
+def generate_smi_numbers():
+    result = []
+    result.append(0)
+    result.append(1)
+    result.append(-1)
 
-  while value != 0:
-    result.append(value)
-    result.append(-value)
-    value = int(value / 2)
+    value = smi_max
 
-  return result
+    while value != 0:
+        result.append(value)
+        result.append(-value)
+        value = int(value / 2)
+
+    return result
 
 # ============
 # === Heap ===
 # ============
 
-wordMax = 18446744073709551615
-wordMin = 0
 
-def generateHeapNumbers(countButNotReally):
-  result = []
+word_max = 18446744073709551615
+word_min = 0
 
-  result.append(wordMax)
-  result.append(-wordMax)
 
-  maxWordCount = 3
+def generate_heap_numbers(count_but_not_really):
+    result = []
 
-  for i in range(0, countButNotReally):
-    min1WordBecauseWeAlreadyAddedZero = 1
-    wordCount = (i % maxWordCount) + min1WordBecauseWeAlreadyAddedZero
+    result.append(word_max)
+    result.append(-word_max)
 
-    value = 1
-    for j in range(0, wordCount):
-      word = random.randint(0, wordMax)
-      value = value * wordMax + word
-      word += 1
+    maxWordCount = 3
 
-    # Hmm... this will produce very boring numbers
-    # Let's make it a little bit more random:
-    removeCount = random.randint(0, 10)
-    s = str(value)[removeCount:]
-    value = int(s)
+    for i in range(0, count_but_not_really):
+        min_1_word_because_we_already_added_0 = 1
+        word_count = (i % maxWordCount) + min_1_word_because_we_already_added_0
 
-    assert value > smiMax
+        value = 1
+        for j in range(0, word_count):
+            word = random.randint(0, word_max)
+            value = value * word_max + word
+            word += 1
 
-    result.append(value)
-    result.append(-value)
+        # Hmm... this will produce very boring numbers
+        # Let's make it a little bit more random:
+        removeCount = random.randint(0, 10)
+        s = str(value)[removeCount:]
+        value = int(s)
 
-  return result
+        assert value > smi_max
+
+        result.append(value)
+        result.append(-value)
+
+    return result

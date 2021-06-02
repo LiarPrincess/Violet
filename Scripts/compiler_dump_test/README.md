@@ -1,7 +1,9 @@
 # What is this?
-Helper for creating unit tests for compiler.
+
+Helper for creating unit tests for the compiler.
 
 # Examples
+
 Input:
 ```py
 a = 2
@@ -37,4 +39,8 @@ Part below contains expected values.
 
 
 # How to run?
-Just run `python3 ./Scripts/dump_compiler_test` from root dir.
+
+1. Modify `input.py`
+2. Run following command from the repository root:
+
+    > python3 ./Scripts/compiler_dump_test
