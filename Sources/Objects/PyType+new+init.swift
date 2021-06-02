@@ -284,11 +284,17 @@ extension PyType {
       }
 
       let layout = candidate.layout
-      if layout.isAddingNewProperties(to: currentResult.layout) {
+      if layout.isEqual(to: currentResult.layout) {
+        // do nothing…
+        // class A(int): pass
+        // class B(int): pass
+        // class C(A, B): pass <- equal layout of A and B
+      } else if layout.isAddingNewProperties(to: currentResult.layout) {
         result = candidate
       } else if currentResult.layout.isAddingNewProperties(to: layout) {
-        // nothing
+        // nothing, 'currentResult' has already more fields
       } else {
+        // we are in different 'branches' of layout hierarchy
         return .typeError("multiple bases have instance lay-out conflict")
       }
     }

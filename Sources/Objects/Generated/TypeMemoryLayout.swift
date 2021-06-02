@@ -43,17 +43,27 @@ extension PyType {
       self.base = base
     }
 
+    internal func isEqual(to other: MemoryLayout) -> Bool {
+      return self === other
+    }
+
     /// Is the current layout based on given layout?
     /// 'Based' means that that is uses the given layout, but has more properties.
     internal func isAddingNewProperties(to other: MemoryLayout) -> Bool {
-      var parentOrNil: MemoryLayout? = self
+      // Same layout -> not adding new properties
+      if self.isEqual(to: other) {
+        return false
+      }
 
-      while let parent = parentOrNil {
-        if parent === other {
+      // Traverse 'self' hierarchy looking for 'other'
+      var currentBaseOrNil: MemoryLayout? = self.base
+
+      while let current = currentBaseOrNil {
+        if current.isEqual(to: other) {
           return true
         }
 
-        parentOrNil = parent.base
+        currentBaseOrNil = current.base
       }
 
       return false

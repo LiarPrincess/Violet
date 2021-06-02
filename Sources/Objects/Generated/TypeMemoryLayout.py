@@ -3,16 +3,17 @@ from Common.strings import generated_warning
 
 
 def get_layout_name(t):
-  return t.swift_type
+    return t.swift_type
+
 
 if __name__ == '__main__':
-  print(f'''\
+    print(f'''\
 // swiftlint:disable file_length
 
 {generated_warning}
 ''')
 
-  print('''\
+    print('''\
 extension PyType {
 
   /// Layout of a given type in memory.
@@ -53,47 +54,57 @@ extension PyType {
       self.base = base
     }
 
+    internal func isEqual(to other: MemoryLayout) -> Bool {
+      return self === other
+    }
+
     /// Is the current layout based on given layout?
     /// 'Based' means that that is uses the given layout, but has more properties.
     internal func isAddingNewProperties(to other: MemoryLayout) -> Bool {
-      var parentOrNil: MemoryLayout? = self
+      // Same layout -> not adding new properties
+      if self.isEqual(to: other) {
+        return false
+      }
 
-      while let parent = parentOrNil {
-        if parent === other {
+      // Traverse 'self' hierarchy looking for 'other'
+      var currentBaseOrNil: MemoryLayout? = self.base
+
+      while let current = currentBaseOrNil {
+        if current.isEqual(to: other) {
           return true
         }
 
-        parentOrNil = parent.base
+        currentBaseOrNil = current.base
       }
 
       return false
     }
 ''')
 
-  for t in get_types():
-    swift_type = t.swift_type
-    base_type = t.swift_base_type
-    fields = t.fields
+    for t in get_types():
+        swift_type = t.swift_type
+        base_type = t.swift_base_type
+        fields = t.fields
 
-    layout_name = get_layout_name(t)
-    base_layout_name = base_type
+        layout_name = get_layout_name(t)
+        base_layout_name = base_type
 
-    has_fields = len(fields) > 0
-    if has_fields:
-      print(f'    /// Fields:')
-      for f in fields:
-        field_name = f.swift_field_name
-        field_type = f.swift_field_type
-        print(f'    /// - `{field_name}: {field_type}`')
+        has_fields = len(fields) > 0
+        if has_fields:
+            print(f'    /// Fields:')
+            for f in fields:
+                field_name = f.swift_field_name
+                field_type = f.swift_field_type
+                print(f'    /// - `{field_name}: {field_type}`')
 
-      if base_type:
-        print(f'    public static let {layout_name} = MemoryLayout(base: MemoryLayout.{base_type})')
-      else:
-        assert swift_type == 'PyObject'
-        print(f'    public static let {layout_name} = MemoryLayout()')
-    else:
-      print(f'    /// `{swift_type}` uses the same layout as it s base type (`{base_type}`).')
-      print(f'    public static let {layout_name} = MemoryLayout.{base_layout_name}')
+            if base_type:
+                print(f'    public static let {layout_name} = MemoryLayout(base: MemoryLayout.{base_type})')
+            else:
+                assert swift_type == 'PyObject'
+                print(f'    public static let {layout_name} = MemoryLayout()')
+        else:
+            print(f'    /// `{swift_type}` uses the same layout as it s base type (`{base_type}`).')
+            print(f'    public static let {layout_name} = MemoryLayout.{base_layout_name}')
 
-  print('  }')
-  print('}')
+    print('  }')
+    print('}')
