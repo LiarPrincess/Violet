@@ -67,12 +67,6 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   /// module -> class -> elsa
   private var unitStack = [CompilerUnit]()
 
-  /// Code object that we are currently filling.
-  internal var codeObject: CodeObject {
-    if let last = self.unitStack.last { return last.codeObject }
-    trap("[BUG] Compiler: Using `codeObject` with empty `unitStack`.")
-  }
-
   /// Code object builder for `self.codeObject`.
   internal var builder: CodeObjectBuilder {
     if let last = self.unitStack.last { return last.builder }
@@ -118,25 +112,24 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   /// PyAST_CompileObject(mod_ty mod, PyObject *filename, PyCompilerFlags ...)
   /// compiler_mod(struct compiler *c, mod_ty mod)
   internal func run() throws -> CodeObject {
-    // Have we already compiled?
-    if self.unitStack.count == 1 {
-      return self.codeObject
-    }
-
+    // Collect all symbols from AST
     let symbolTableBuilder = SymbolTableBuilder(delegate: self.delegate)
     self.symbolTable = try symbolTableBuilder.visit(ast: self.ast)
 
+    // Get all of the future flags that can affect compilation
     self.future = try FutureFeatures.parse(ast: self.ast)
 
-    self.enterScope(node: self.ast, kind: .module, argCount: 0, kwOnlyArgCount: 0)
-    try self.visit(self.ast)
+    // Compile (duh…)
+    let codeObject = try self.inNewCodeObject(node: self.ast, kind: .module) {
+      try self.visit(self.ast)
 
-    // Emit epilog (because we may be a jump target).
-    let isExpression = self.ast is ExpressionAST
-    try self.appendReturn(addNone: !isExpression)
+      // Epilog (because we may be a jump target).
+      let isExpression = self.ast is ExpressionAST
+      try self.appendReturn(addNone: !isExpression)
+    }
 
-    assert(self.unitStack.count == 1)
-    return self.codeObject
+    assert(self.unitStack.isEmpty)
+    return codeObject
   }
 
   // MARK: - Visit
@@ -264,7 +257,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     return false
   }
 
-  // MARK: - Scope/code object
+  // MARK: - Creating code objects
 
   /// Helper for creation of new code objects.
   /// It surrounds given `block` with `enterScope` and `leaveScope`
@@ -301,7 +294,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
                     kwOnlyArgCount: kwOnlyArgCount)
 
     try block()
-    let code = self.codeObject
+    let code = self.builder.finalize()
     try self.leaveScope()
 
     return code
@@ -339,29 +332,28 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
 
     let freeFlags: SymbolFlags = [.srcFree, .defFreeClass]
     let freeVars = self.filterSymbols(scope, accepting: freeFlags, sorted: true)
-
     var cellVars = self.filterSymbols(scope, accepting: .cell, sorted: true)
 
-    // append implicit __class__ cell.
+    // Append implicit `__class__` cell.
     if scope.needsClassClosure {
       assert(scope.type == .class) // needsClassClosure can only be set on class
       cellVars.append(MangledName(withoutClass: SpecialIdentifiers.__class__))
     }
 
-    let object = CodeObject(name: name,
-                            qualifiedName: qualifiedName,
-                            filename: self.filename,
-                            kind: kind,
-                            flags: flags,
-                            variableNames: variableNames,
-                            freeVariableNames: freeVars,
-                            cellVariableNames: cellVars,
-                            argCount: argCount,
-                            kwOnlyArgCount: kwOnlyArgCount,
-                            firstLine: node.start.line)
+    let builder = CodeObjectBuilder(name: name,
+                                    qualifiedName: qualifiedName,
+                                    filename: self.filename,
+                                    kind: kind,
+                                    flags: flags,
+                                    variableNames: variableNames,
+                                    freeVariableNames: freeVars,
+                                    cellVariableNames: cellVars,
+                                    argCount: argCount,
+                                    kwOnlyArgCount: kwOnlyArgCount,
+                                    firstLine: node.start.line)
 
     let className = kind == .class ? name : nil
-    let unit = CompilerUnit(scope: scope, codeObject: object, className: className)
+    let unit = CompilerUnit(className: className, scope: scope, builder: builder)
     self.unitStack.append(unit)
   }
 
@@ -369,18 +361,13 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   ///
   /// compiler_exit_scope(struct compiler *c)
   private func leaveScope() throws {
-    guard let unit = self.unitStack.popLast() else {
+    let unit = self.unitStack.popLast()
+    if unit == nil {
       trap("[BUG] Compiler: Attempting to pop non-existing unit.")
     }
-
-    assert(self.unitStack.any, "Popped top scope.")
-    assert(
-      unit.codeObject.labels.allSatisfy { $0 != CodeObject.Label.notAssigned },
-      "One of the labels does not have assigned address."
-    )
   }
 
-  // MARK: - Scope/code object helpers
+  // MARK: - Scope/builder helpers
 
   private func hasKind(scope: SymbolScope, kind: CodeObject.Kind) -> Bool {
     switch scope.type {
@@ -431,7 +418,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   /// (which is different than CPython)
   private func createQualifiedName(name: String, kind: CodeObject.Kind) -> String {
     // Top scope has "" as qualified name.
-    guard let parent = self.unitStack.last else {
+    guard let parentUnit = self.unitStack.last else {
       return ""
     }
 
@@ -446,8 +433,8 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
         return false
       }
 
-      let mangled = MangledName(className: parent.className, name: name)
-      let info = parent.scope.symbols[mangled]
+      let mangled = MangledName(className: parentUnit.className, name: name)
+      let info = parentUnit.scope.symbols[mangled]
       return info?.flags.contains(.srcGlobalExplicit) ?? false
     }()
 
@@ -456,13 +443,14 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     }
 
     /// Otherwise just concat to parent
-    let parentType = parent.codeObject.kind
-    let isParentFunction = parentType == .function
-                        || parentType == .asyncFunction
-                        || parentType == .lambda
+    let parentKind = parentUnit.builder.kind
+    let isParentFunction = parentKind == .function
+                        || parentKind == .asyncFunction
+                        || parentKind == .lambda
 
     let locals = isParentFunction ? ".<locals>" : ""
-    return parent.codeObject.qualifiedName + locals + "." + name
+    let parentQualifiedName = parentUnit.builder.qualifiedName
+    return parentQualifiedName + locals + "." + name
   }
 
   /// dictbytype(PyObject *src, int scope_type, int flag, Py_ssize_t offset)
@@ -565,10 +553,10 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     // to add another 'return'.
     // We will not check all of the instructions for 'return' (because that
     // would be slow), we will just take 10 last.
-    let hasReturn = self.codeObject.instructions
+    let hasReturn = self.builder.instructions
       .takeLast(10)
       .contains(where: self.isReturn(instruction:))
-    let hasNoJumps = self.codeObject.labels.isEmpty
+    let hasNoJumps = self.builder.labels.isEmpty
 
     if hasReturn && hasNoJumps {
       return

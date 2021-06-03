@@ -274,7 +274,7 @@ extension CompilerImpl {
       throw self.error(.awaitOutsideFunction)
     }
 
-    let kind = self.codeObject.kind
+    let kind = self.builder.kind
     guard kind == .asyncFunction || kind == .comprehension else {
       throw self.error(.awaitOutsideAsyncFunction)
     }
@@ -308,7 +308,7 @@ extension CompilerImpl {
       throw self.error(.yieldOutsideFunction)
     }
 
-    if self.codeObject.kind == .asyncFunction {
+    if self.builder.kind == .asyncFunction {
       throw self.error(.yieldFromInsideAsyncFunction)
     }
 

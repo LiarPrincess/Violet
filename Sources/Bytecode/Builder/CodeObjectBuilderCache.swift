@@ -3,27 +3,38 @@ import VioletCore
 /// Indices of already added objects (so that we don't store duplicates).
 internal struct CodeObjectBuilderCache {
 
+  /// Index inside `CodeObjectBuilder.constants` that contains `True`.
   internal var `true`: Int?
+  /// Index inside `CodeObjectBuilder.constants` that contains `False`.
   internal var `false`: Int?
+  /// Index inside `CodeObjectBuilder.constants` that contains `None`.
   internal var none: Int?
+  /// Index inside `CodeObjectBuilder.constants` that contains `ellipsis` (`...`).
   internal var ellipsis: Int?
+  /// Index inside `CodeObjectBuilder.constants` that contains `0`.
   internal var zero: Int?
+  /// Index inside `CodeObjectBuilder.constants` that contains `1`.
   internal var one: Int?
-  /// CodeObject.constants -> string
+
+  /// Index inside `CodeObjectBuilder.constants` that contains given `string`.
   internal var constantStrings = [UseScalarsToHashString: Int]()
 
-  /// CodeObject.names
+  /// Index inside `CodeObjectBuilder.names` that contains given `name`.
   internal var names = [UseScalarsToHashString: Int]()
 
-  /// CodeObject.variableNames
+  /// Index inside `CodeObjectBuilder.variableNames` that contains given `name`.
   internal let variableNames: [MangledName: Int]
-  /// CodeObject.freeVariableNames
+  /// Index inside `CodeObjectBuilder.freeVariableNames` that contains given `name`.
   internal let freeVariableNames: [MangledName: Int]
-  /// CodeObject.cellVariableNames
+  /// Index inside `CodeObjectBuilder.cellVariableNames` that contains given `name`.
   internal let cellVariableNames: [MangledName: Int]
 
-  internal init(code: CodeObject) {
-    for (index, constant) in code.constants.enumerated() {
+  internal init(constants: [CodeObject.Constant],
+                names: [String],
+                variableNames: [MangledName],
+                freeVariableNames: [MangledName],
+                cellVariableNames: [MangledName]) {
+    for (index, constant) in constants.enumerated() {
       switch constant {
       case .true:
         self.true = index
@@ -48,10 +59,10 @@ internal struct CodeObjectBuilderCache {
       }
     }
 
-    self.names = toIndexDict(names: code.names)
-    self.variableNames = toIndexDict(names: code.variableNames)
-    self.freeVariableNames = toIndexDict(names: code.freeVariableNames)
-    self.cellVariableNames = toIndexDict(names: code.cellVariableNames)
+    self.names = toIndexDict(names: names)
+    self.variableNames = toIndexDict(names: variableNames)
+    self.freeVariableNames = toIndexDict(names: freeVariableNames)
+    self.cellVariableNames = toIndexDict(names: cellVariableNames)
   }
 }
 

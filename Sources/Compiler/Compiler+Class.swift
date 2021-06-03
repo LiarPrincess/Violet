@@ -31,7 +31,7 @@ extension CompilerImpl {
       self.builder.appendLoadName(SpecialIdentifiers.__name__)
       self.builder.appendStoreName(SpecialIdentifiers.__module__)
 
-      self.builder.appendString(self.codeObject.qualifiedName)
+      self.builder.appendString(self.builder.qualifiedName)
       self.builder.appendStoreName(SpecialIdentifiers.__qualname__)
 
       try self.visitBody(body: node.body, onDoc: .storeAs__doc__)
@@ -46,7 +46,7 @@ extension CompilerImpl {
         self.builder.appendDupTop()
         self.builder.appendStoreName(__classcell__)
       } else {
-        assert(self.codeObject.cellVariableNames.isEmpty)
+        assert(self.builder.cellVariableNames.isEmpty)
         self.builder.appendNone()
       }
 

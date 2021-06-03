@@ -108,14 +108,14 @@ extension CodeObjectBuilder {
   /// Simply add new constant, without emitting any instruction.
   public func addConstant(string: String) {
     let constant = CodeObject.Constant.string(string)
-    self.code.constants.append(constant)
+    self.constants.append(constant)
   }
 
   // MARK: - Helpers
 
   private func appendNewConstant(_ constant: CodeObject.Constant) -> Int {
-    let index = self.code.constants.endIndex
-    self.code.constants.append(constant)
+    let index = self.constants.endIndex
+    self.constants.append(constant)
 
     self.appendExistingConstant(index: index)
     return index

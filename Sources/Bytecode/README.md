@@ -12,8 +12,6 @@ This module contains VM instructions.
 
 ## Improvement ideas
 
-- `CodeObjectBuilder` - currently we create `CodeObject` and we then pass to `CodeObjectBuilder` to fill it. It should be the other way around: create `CodeObjectBuilder` which will create `CodeObject` with `finalize()` method.
-
 - instruction views - we store instructions as an array of `Instruction` instances. Unfortunately some instruction arguments do not fit in a single byte, which means that a single instruction may also contain `ExtendedArg` prefix that has to be read to properly decode it (for example if we wanted to emit `BuildTuple` with argument of 270 we have to emit `ExtendedArg` with 255 as an argument and then `BuildTuple` with 15 as an argument). Currently each place that uses `CodeObject` is responsible for this, without any code sharing. The idea is to create view/overlay above `CodeObject.instructions` that solves this problem (quite similar to how we have different views for built-in `Swift.String`).
 
 ## Instruction size

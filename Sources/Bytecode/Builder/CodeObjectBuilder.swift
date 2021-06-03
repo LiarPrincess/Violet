@@ -5,8 +5,23 @@ import VioletCore
 /// it is acceptable to have multiple builders to a single `CodeObject`.
 public final class CodeObjectBuilder {
 
-  /// `CodeObject` that we are adding instructions to.
-  internal let code: CodeObject
+  public let name: String
+  public let qualifiedName: String
+  public let filename: String
+  public let kind: CodeObject.Kind
+  public let flags: CodeObject.Flags
+  public let variableNames: [MangledName]
+  public let freeVariableNames: [MangledName]
+  public let cellVariableNames: [MangledName]
+  public let argCount: Int
+  public let kwOnlyArgCount: Int
+  public let firstLine: SourceLine
+
+  public internal(set) var instructions = [Instruction]()
+  public internal(set) var instructionLines = [SourceLine]()
+  public internal(set) var constants = [CodeObject.Constant]()
+  public internal(set) var names = [String]()
+  public internal(set) var labels = [Int]()
 
   /// Location on which next `append` occurs.
   private var appendLocation = SourceLocation.start
@@ -14,19 +29,68 @@ public final class CodeObjectBuilder {
   /// Indices of already added constants (so that we don't store duplicates).
   internal var cache: CodeObjectBuilderCache
 
-  internal var instructions: [Instruction] {
-    _read { yield self.code.instructions }
-    _modify { yield &self.code.instructions }
+  public init(name: String,
+              qualifiedName: String,
+              filename: String,
+              kind: CodeObject.Kind,
+              flags: CodeObject.Flags,
+              variableNames: [MangledName],
+              freeVariableNames: [MangledName],
+              cellVariableNames: [MangledName],
+              argCount: Int,
+              kwOnlyArgCount: Int,
+              firstLine: SourceLine) {
+    self.name = name
+    self.qualifiedName = qualifiedName
+    self.filename = filename
+    self.kind = kind
+    self.flags = flags
+    self.variableNames = variableNames
+    self.freeVariableNames = freeVariableNames
+    self.cellVariableNames = cellVariableNames
+    self.argCount = argCount
+    self.kwOnlyArgCount = kwOnlyArgCount
+    self.firstLine = firstLine
+
+    self.cache = CodeObjectBuilderCache(constants: [],
+                                        names: [],
+                                        variableNames: variableNames,
+                                        freeVariableNames: freeVariableNames,
+                                        cellVariableNames: cellVariableNames)
   }
 
-  internal var instructionLines: [SourceLine] {
-    _read { yield self.code.instructionLines }
-    _modify { yield &self.code.instructionLines }
+  // MARK: - Finalize
+
+  /// Create `CodeObject`.
+  ///
+  /// Read as `finalize` if you like tea.
+  public func finalize() -> CodeObject {
+    self.assertAllLabelsAssigned()
+
+    return CodeObject(name: self.name,
+                      qualifiedName: self.qualifiedName,
+                      filename: self.filename,
+                      kind: self.kind,
+                      flags: self.flags,
+                      firstLine: self.firstLine,
+                      instructions: self.instructions,
+                      instructionLines: self.instructionLines,
+                      constants: self.constants,
+                      names: self.names,
+                      labels: self.labels,
+                      variableNames: self.variableNames,
+                      freeVariableNames: self.freeVariableNames,
+                      cellVariableNames: self.cellVariableNames,
+                      argCount: self.argCount,
+                      kwOnlyArgCount: self.kwOnlyArgCount)
   }
 
-  public init(codeObject: CodeObject) {
-    self.code = codeObject
-    self.cache = CodeObjectBuilderCache(code: codeObject)
+  private func assertAllLabelsAssigned() {
+    let hasAllAssigned = self.labels.allSatisfy {
+      $0 != CodeObject.Label.notAssigned
+    }
+
+    precondition(hasAllAssigned, "One of the code object labels is not assigned!")
   }
 
   // MARK: - Append
@@ -55,18 +119,18 @@ public final class CodeObjectBuilder {
   /// Creates new label (jump target) with invalid value.
   /// Use `self.setLabel()` to assign proper value.
   public func createLabel() -> CodeObject.Label {
-    let index = self.code.labels.endIndex
-    self.code.labels.append(CodeObject.Label.notAssigned)
+    let index = self.labels.endIndex
+    self.labels.append(CodeObject.Label.notAssigned)
     return CodeObject.Label(index: index)
   }
 
   /// Set label to next emitted instruction.
   public func setLabel(_ label: CodeObject.Label) {
-    assert(label.index < self.code.labels.count)
-    assert(self.code.labels[label.index] == CodeObject.Label.notAssigned)
+    assert(label.index < self.labels.count)
+    assert(self.labels[label.index] == CodeObject.Label.notAssigned)
 
     let jumpTarget = self.instructions.endIndex
-    self.code.labels[label.index] = jumpTarget
+    self.labels[label.index] = jumpTarget
   }
 
   // MARK: - Add name
@@ -83,8 +147,8 @@ public final class CodeObjectBuilder {
       return cachedIndex
     }
 
-    let index = self.code.names.endIndex
-    self.code.names.append(name)
+    let index = self.names.endIndex
+    self.names.append(name)
     self.cache.names[key] = index
     return index
   }
@@ -104,7 +168,7 @@ public final class CodeObjectBuilder {
     }
 
     self.missingVariable(name: name,
-                         allowedNames: self.code.variableNames,
+                         allowedNames: self.variableNames,
                          type: .variable)
   }
 
@@ -117,7 +181,7 @@ public final class CodeObjectBuilder {
   private func missingVariable(name: MangledName,
                                allowedNames: [MangledName],
                                type: VariableType) -> Never {
-    let codeName = self.code.qualifiedName
+    let codeName = self.qualifiedName
     var msg = "Code object '\(codeName)' does not contain \(type.rawValue) '\(name)'"
 
     if allowedNames.any {
@@ -146,13 +210,13 @@ public final class CodeObjectBuilder {
     }
 
     self.missingVariable(name: name,
-                         allowedNames: self.code.freeVariableNames,
+                         allowedNames: self.freeVariableNames,
                          type: .free)
   }
 
   internal func offsetFreeVariable(index: Int) -> Int {
     // Int 'VM.Frame.cellsAndFreeVariables' we store cells first and then free.
-    let offset = self.code.cellVariableNames.count
+    let offset = self.cellVariableNames.count
     return offset + index
   }
 
@@ -171,7 +235,7 @@ public final class CodeObjectBuilder {
     }
 
     self.missingVariable(name: name,
-                         allowedNames: self.code.cellVariableNames,
+                         allowedNames: self.cellVariableNames,
                          type: .cell)
   }
 

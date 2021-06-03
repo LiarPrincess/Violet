@@ -35,19 +35,16 @@ internal enum BlockType {
 internal final class CompilerUnit {
 
   internal let scope: SymbolScope
-  internal let codeObject: CodeObject
   internal let builder: CodeObjectBuilder
-
   /// Name of the class that we are currently filling (if any).
   /// Mostly used for mangling.
   internal let className: String?
 
-  internal init(scope: SymbolScope,
-                codeObject: CodeObject,
-                className: String?) {
-    self.scope = scope
-    self.codeObject = codeObject
-    self.builder = CodeObjectBuilder(codeObject: codeObject)
+  internal init(className: String?,
+                scope: SymbolScope,
+                builder: CodeObjectBuilder) {
     self.className = className
+    self.scope = scope
+    self.builder = builder
   }
 }

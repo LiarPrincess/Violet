@@ -136,20 +136,20 @@ public final class CodeObject: CustomStringConvertible {
   public let kind: Kind
   /// Various flags used during the compilation process.
   public let flags: Flags
-  /// First source line number.
+  /// First line in the source code.
   public let firstLine: SourceLine
 
   /// Instruction opcodes.
   /// CPython: `co_code`.
-  public internal(set) var instructions = [Instruction]()
+  public let instructions: [Instruction]
   /// Instruction locations.
   /// CPython: `co_lnotab` <- but not exactly the same.
-  public internal(set) var instructionLines = [SourceLine]()
+  public let instructionLines: [SourceLine]
 
   /// Constants used.
   /// E.g. `LoadConst 5` loads `self.constants[5]` value.
   /// CPython: `co_consts`.
-  public internal(set) var constants = [Constant]()
+  public let constants: [Constant]
   /// Names which aren’t covered by any of the other fields (they are not local
   /// variables, they are not free variables, etc) used by the bytecode.
   /// This includes names deemed to be in the global or builtin namespace
@@ -158,10 +158,10 @@ public final class CodeObject: CustomStringConvertible {
   ///
   /// E.g. `LoadName 5` loads `self.names[5]` value.
   /// CPython: `co_names`.
-  public internal(set) var names = [String]()
+  public let names: [String]
   /// Absolute jump targets.
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
-  public internal(set) var labels = [Int]()
+  public let labels: [Int]
 
   /// Names of the local variables (including arguments).
   ///
@@ -214,27 +214,37 @@ public final class CodeObject: CustomStringConvertible {
 
   // MARK: - Init
 
-  public init(name: String,
-              qualifiedName: String,
-              filename: String,
-              kind: Kind,
-              flags: Flags,
-              variableNames: [MangledName],
-              freeVariableNames: [MangledName],
-              cellVariableNames: [MangledName],
-              argCount: Int,
-              kwOnlyArgCount: Int,
-              firstLine: SourceLine) {
+  internal init(name: String,
+                qualifiedName: String,
+                filename: String,
+                kind: Kind,
+                flags: Flags,
+                firstLine: SourceLine,
+                instructions: [Instruction],
+                instructionLines: [SourceLine],
+                constants: [Constant],
+                names: [String],
+                labels: [Int],
+                variableNames: [MangledName],
+                freeVariableNames: [MangledName],
+                cellVariableNames: [MangledName],
+                argCount: Int,
+                kwOnlyArgCount: Int) {
     self.name = name
     self.qualifiedName = qualifiedName
     self.filename = filename
     self.kind = kind
     self.flags = flags
+    self.firstLine = firstLine
+    self.instructions = instructions
+    self.instructionLines = instructionLines
+    self.constants = constants
+    self.names = names
+    self.labels = labels
     self.variableNames = variableNames
     self.freeVariableNames = freeVariableNames
     self.cellVariableNames = cellVariableNames
     self.argCount = argCount
     self.kwOnlyArgCount = kwOnlyArgCount
-    self.firstLine = firstLine
   }
 }

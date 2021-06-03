@@ -164,7 +164,7 @@ extension CodeObjectBuilder {
   private func getLoadClosureArg(name: MangledName, type: ClosureType) -> Int {
     switch type {
     case .cell:
-      let names = self.code.cellVariableNames
+      let names = self.cellVariableNames
       guard let index = names.firstIndex(of: name) else {
         trap("[LoadClosure] Name '\(name.value)' was not found in cell variables.")
       }
@@ -172,7 +172,7 @@ extension CodeObjectBuilder {
       return index
 
     case .free:
-      let names = self.code.freeVariableNames
+      let names = self.freeVariableNames
       guard let index = names.firstIndex(of: name) else {
         trap("[LoadClosure] Name '\(name.value)' was not found in free variables.")
       }
