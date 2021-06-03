@@ -54,16 +54,16 @@ public final class CodeObjectBuilder {
 
   /// Creates new label (jump target) with invalid value.
   /// Use `self.setLabel()` to assign proper value.
-  public func createLabel() -> Label {
+  public func createLabel() -> CodeObject.Label {
     let index = self.code.labels.endIndex
-    self.code.labels.append(Label.notAssigned)
-    return Label(index: index)
+    self.code.labels.append(CodeObject.Label.notAssigned)
+    return CodeObject.Label(index: index)
   }
 
   /// Set label to next emitted instruction.
-  public func setLabel(_ label: Label) {
+  public func setLabel(_ label: CodeObject.Label) {
     assert(label.index < self.code.labels.count)
-    assert(self.code.labels[label.index] == Label.notAssigned)
+    assert(self.code.labels[label.index] == CodeObject.Label.notAssigned)
 
     let jumpTarget = self.instructions.endIndex
     self.code.labels[label.index] = jumpTarget
@@ -177,7 +177,7 @@ public final class CodeObjectBuilder {
 
   // MARK: - Add label
 
-  internal func addLabelWithExtendedArgIfNeeded(_ label: Label) -> UInt8 {
+  internal func addLabelWithExtendedArgIfNeeded(_ label: CodeObject.Label) -> UInt8 {
     return self.appendExtendedArgIfNeeded(label.index)
   }
 

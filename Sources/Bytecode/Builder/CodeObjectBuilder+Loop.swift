@@ -5,7 +5,7 @@ extension CodeObjectBuilder {
   // MARK: - Loops
 
   /// Append a `setupLoop` instruction to this code object.
-  public func appendSetupLoop(loopEnd: Label) {
+  public func appendSetupLoop(loopEnd: CodeObject.Label) {
     let arg = self.addLabelWithExtendedArgIfNeeded(loopEnd)
     self.append(.setupLoop(loopEndLabel: arg))
   }
@@ -16,7 +16,7 @@ extension CodeObjectBuilder {
   }
 
   /// Append a `forIter` instruction to this code object.
-  public func appendForIter(ifEmpty: Label) {
+  public func appendForIter(ifEmpty: CodeObject.Label) {
     let arg = self.addLabelWithExtendedArgIfNeeded(ifEmpty)
     self.append(.forIter(ifEmptyLabel: arg))
   }
@@ -38,7 +38,7 @@ extension CodeObjectBuilder {
   /// Continues a loop due to a continue statement.
   /// `loopStartLabel` is the address to jump to
   /// (which should be a `ForIter` instruction).
-  public func appendContinue(loopStartLabel: Label) {
+  public func appendContinue(loopStartLabel: CodeObject.Label) {
     let arg = self.addLabelWithExtendedArgIfNeeded(loopStartLabel)
     self.append(.continue(loopStartLabel: arg))
   }

@@ -17,7 +17,7 @@ internal enum SpecialIdentifiers {
 }
 
 internal enum BlockType {
-  case loop(continueTarget: Label)
+  case loop(continueTarget: CodeObject.Label)
   case except
   case finallyTry
   case finallyEnd

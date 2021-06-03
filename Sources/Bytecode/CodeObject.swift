@@ -10,7 +10,7 @@ import VioletCore
 
 public final class CodeObject: CustomStringConvertible {
 
-  // MARK: - Types
+  // MARK: - Kind
 
   public enum Kind {
     case module
@@ -20,6 +20,8 @@ public final class CodeObject: CustomStringConvertible {
     case lambda
     case comprehension
   }
+
+  // MARK: - Flags
 
   public struct Flags: OptionSet {
     public let rawValue: UInt16
@@ -39,6 +41,8 @@ public final class CodeObject: CustomStringConvertible {
       self.rawValue = rawValue
     }
   }
+
+  // MARK: - Constant
 
   public enum Constant: CustomStringConvertible {
     case `true`
@@ -67,6 +71,27 @@ public final class CodeObject: CustomStringConvertible {
       case let .code(c): return "code(\(c))"
       case let .tuple(t): return "tuple(\(t))"
       }
+    }
+  }
+
+  // MARK: - Label
+
+  /// Index of jump target in `CodeObject.labels`.
+  ///
+  /// Basically a wrapper around array index for additional type safety (otherwise
+  /// we would have to use `Int` which can be mistaken with any other `int`).
+  ///
+  /// - Important:
+  /// Labels can only be used inside a single block!
+  public struct Label {
+
+    public static let notAssigned = -1
+
+    /// Index in `CodeObject.labels`
+    internal let index: Int
+
+    internal init(index: Int) {
+      self.index = index
     }
   }
 

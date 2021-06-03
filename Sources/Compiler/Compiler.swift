@@ -375,7 +375,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
 
     assert(self.unitStack.any, "Popped top scope.")
     assert(
-      unit.codeObject.labels.allSatisfy { $0 != Label.notAssigned },
+      unit.codeObject.labels.allSatisfy { $0 != CodeObject.Label.notAssigned },
       "One of the labels does not have assigned address."
     )
   }
