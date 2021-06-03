@@ -38,7 +38,7 @@ extension CompilerImpl {
 
       // Return __class__ cell if it is referenced, otherwise return None
       if self.currentScope.needsClassClosure {
-        let __class__ = MangledName(from: SpecialIdentifiers.__class__)
+        let __class__ = MangledName(withoutClass: SpecialIdentifiers.__class__)
         let __classcell__ = SpecialIdentifiers.__classcell__
 
         // Store __classcell__ into class namespace & return it

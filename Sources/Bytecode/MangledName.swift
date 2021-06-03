@@ -11,7 +11,7 @@ import VioletCore
 /// is textually replaced with `_className__spam`, where `className`
 /// is the current class name with leading underscore(s) stripped.
 /// See [docs](https://docs.python.org/3.7/tutorial/classes.html#private-variables)
-public struct MangledName: Equatable, Hashable {
+public struct MangledName: Equatable, Hashable, ConstantString, CustomStringConvertible {
 
   /// Name BEFORE mangling
   public let beforeMangling: String
@@ -19,14 +19,27 @@ public struct MangledName: Equatable, Hashable {
   /// Name AFTER mangling
   public let value: String
 
+  public var constant: String {
+    return self.value
+  }
+
+  public var description: String {
+    return self.value
+  }
+
   /// Init without mangling
-  public init(from name: String) {
+  public init(withoutClass name: String) {
     self.beforeMangling = name
     self.value = name
   }
 
   /// Init with mangling
   public init(className: String?, name: String) {
+    guard let className = className else {
+      self = MangledName(withoutClass: name)
+      return
+    }
+
     self.beforeMangling = name
     self.value = mangle(className: className, name: name)
   }
@@ -40,21 +53,7 @@ public struct MangledName: Equatable, Hashable {
   }
 }
 
-extension MangledName: ConstantString {
-  public var constant: String { return self.value }
-}
-
-extension MangledName: CustomStringConvertible {
-  public var description: String {
-    return self.value
-  }
-}
-
-private func mangle(className: String?, name: String) -> String {
-  guard let className = className else {
-    return name
-  }
-
+private func mangle(className: String, name: String) -> String {
   guard name.hasPrefix("__") else {
     return name
   }
@@ -70,7 +69,6 @@ private func mangle(className: String?, name: String) -> String {
   // Strip leading underscores from class name
   let classNameStrip = className.drop { $0 == "_" }
 
-  return classNameStrip.isEmpty ? // Don't mangle if class is just underscores
-    name :
-    "_" + classNameStrip + name
+  // Don't mangle if class is just underscores
+  return classNameStrip.isEmpty ? name : "_" + classNameStrip + name
 }

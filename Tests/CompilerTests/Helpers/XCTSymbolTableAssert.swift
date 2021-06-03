@@ -12,7 +12,7 @@ internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
                                       _ message: String = "",
                                       file: StaticString = #file,
                                       line: UInt = #line) {
-  let mangled = MangledName(from: name)
+  let mangled = MangledName(withoutClass: name)
 
   XCTAssertNotNil(scope.symbols[mangled],
                   "\(message) (symbol is not present)",
@@ -55,7 +55,7 @@ internal func XCTAssertContainsParameter(_ scope: SymbolScope,
                                          _ message: String = "",
                                          file: StaticString = #file,
                                          line: UInt = #line) {
-  let mangled = MangledName(from: name)
+  let mangled = MangledName(withoutClass: name)
   XCTAssertTrue(scope.parameterNames.contains(mangled),
                 "\(message) (missing \(name))",
                 file: file,

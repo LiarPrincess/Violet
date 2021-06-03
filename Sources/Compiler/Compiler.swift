@@ -345,7 +345,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     // append implicit __class__ cell.
     if scope.needsClassClosure {
       assert(scope.type == .class) // needsClassClosure can only be set on class
-      cellVars.append(MangledName(from: SpecialIdentifiers.__class__))
+      cellVars.append(MangledName(withoutClass: SpecialIdentifiers.__class__))
     }
 
     let object = CodeObject(name: name,

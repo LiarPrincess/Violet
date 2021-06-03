@@ -107,7 +107,7 @@ internal final class SymbolTableVariableSourcePass {
       }
     } else {
       // If we are class then our children will also have access to __class__
-      let mangled = MangledName(from: SpecialIdentifiers.__class__)
+      let mangled = MangledName(withoutClass: SpecialIdentifiers.__class__)
       context.newBound.insert(mangled)
     }
 
@@ -250,7 +250,7 @@ internal final class SymbolTableVariableSourcePass {
   private func remove__class__(scope: SymbolScope,
                                scopeContext: ScopeContext) {
     let name = SpecialIdentifiers.__class__
-    let mangled = MangledName(from: name)
+    let mangled = MangledName(withoutClass: name)
 
     let usedClass = scopeContext.newFree.removeValue(forKey: mangled) != nil
     if usedClass {
