@@ -297,7 +297,7 @@ extension Eval {
   /// The low byte of counts is the number of values before the list value,
   /// the high byte of counts the number of values after it.
   /// The resulting values are put onto the stack right-to-left.
-  internal func unpackEx(arg: UnpackExArg) -> InstructionResult {
+  internal func unpackEx(arg: Instruction.UnpackExArg) -> InstructionResult {
     let iterable = self.stack.pop()
 
     let elements: [PyObject]

@@ -378,7 +378,7 @@ internal struct Eval {
       return self.unpackSequence(elementCount: extended)
     case let .unpackEx(arg):
       let extended = self.extend(base: extendedArg, arg: arg)
-      let decoded = UnpackExArg(value: extended)
+      let decoded = Instruction.UnpackExArg(value: extended)
       return self.unpackEx(arg: decoded)
 
     case let .loadConst(index):

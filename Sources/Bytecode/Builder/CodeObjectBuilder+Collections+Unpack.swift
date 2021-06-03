@@ -121,7 +121,9 @@ extension CodeObjectBuilder {
   /// the high byte of counts the number of values after it.
   /// The resulting values are put onto the stack right-to-left.
   public func appendUnpackEx(countBefore: Int, countAfter: Int) {
-    let encoded = UnpackExArg(countBefore: countBefore, countAfter: countAfter)
+    let encoded = Instruction.UnpackExArg(countBefore: countBefore,
+                                          countAfter: countAfter)
+
     let arg = self.appendExtendedArgIfNeeded(encoded.value)
     self.append(.unpackEx(arg: arg))
   }

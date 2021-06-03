@@ -196,7 +196,7 @@ extension CodeObject {
     case let .unpackSequence(elementCount: arg):
       return "unpackSequence (elementCount: \(extendedArg + Int(arg)))"
     case let .unpackEx(arg: arg):
-      let encoded = UnpackExArg(value: extendedArg + Int(arg))
+      let encoded = Instruction.UnpackExArg(value: extendedArg + Int(arg))
       let countBefore = encoded.countBefore
       let countAfter = encoded.countAfter
       return "unpackEx (countBefore: \(countBefore), countAfter: \(countAfter))"
