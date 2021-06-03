@@ -3,8 +3,8 @@ import VioletCore
 extension CodeObjectBuilder {
 
   /// Append a `setupWith` instruction to this code object.
-  public func appendSetupWith(afterBody: CodeObject.Label) {
-    let arg = self.addLabelWithExtendedArgIfNeeded(afterBody)
+  public func appendSetupWith(afterBody: NotAssignedLabel) {
+    let arg = self.appendExtendedArgsForLabelIndex(afterBody)
     self.append(.setupWith(afterBodyLabel: arg))
   }
 

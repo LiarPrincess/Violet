@@ -497,7 +497,7 @@ extension CompilerImpl {
 
   /// compiler_jump_if(struct compiler *c, expr_ty e, basicblock *next, int cond)
   internal func visit(_ expression: Expression,
-                      andJumpTo next: CodeObject.Label,
+                      andJumpTo next: CodeObjectBuilder.NotAssignedLabel,
                       ifBooleanValueIs cond: Bool) throws {
     // swiftlint:enable function_body_length
     self.setAppendLocation(expression)
@@ -550,7 +550,7 @@ extension CompilerImpl {
   }
 
   private func visit(_ compare: CompareExpr,
-                     andJumpTo next: CodeObject.Label,
+                     andJumpTo next: CodeObjectBuilder.NotAssignedLabel,
                      ifBooleanValueIs cond: Bool) throws {
     assert(compare.elements.count > 1)
 

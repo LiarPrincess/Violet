@@ -83,15 +83,19 @@ public final class CodeObject: CustomStringConvertible {
   ///
   /// - Important:
   /// Labels can only be used inside a single block!
-  public struct Label {
+  public struct Label: Equatable {
 
-    public static let notAssigned = -1
+    /// Invalid Label
+    public static let notAssigned = Label(jumpAddress: -1)
 
     /// Index in `CodeObject.labels`
-    internal let index: Int
+    public internal(set) var jumpAddress: Int
 
-    internal init(index: Int) {
-      self.index = index
+    /// Check if this label has assigned value.
+    ///
+    /// Label without assigned value is not valid jump address.
+    internal var isAssigned: Bool {
+      return self.jumpAddress >= 0
     }
   }
 
@@ -161,7 +165,7 @@ public final class CodeObject: CustomStringConvertible {
   public let names: [String]
   /// Absolute jump targets.
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
-  public let labels: [Int]
+  public let labels: [Label]
 
   /// Names of the local variables (including arguments).
   ///
@@ -224,7 +228,7 @@ public final class CodeObject: CustomStringConvertible {
                 instructionLines: [SourceLine],
                 constants: [Constant],
                 names: [String],
-                labels: [Int],
+                labels: [Label],
                 variableNames: [MangledName],
                 freeVariableNames: [MangledName],
                 cellVariableNames: [MangledName],

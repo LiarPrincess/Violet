@@ -336,7 +336,8 @@ extension CodeObject {
 
   private func getLabel(_ index: UInt8) -> String {
     precondition(index < self.labels.count)
-    let address = Instruction.byteSize * self.labels[Int(index)]
+    let label = self.labels[Int(index)]
+    let address = Instruction.byteSize * label.jumpAddress
     return String(describing: address)
   }
 

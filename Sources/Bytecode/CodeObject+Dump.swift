@@ -380,8 +380,10 @@ extension CodeObject {
 
   private func getLabel(_ index: Int) -> String {
     assert(0 <= index && index < self.labels.count)
-    let address = Instruction.byteSize * self.labels[Int(index)]
-    return String(describing: address)
+    let label = self.labels[index]
+    let instructionAddress = label.jumpAddress
+    let bytecodeAddress = Instruction.byteSize * instructionAddress
+    return String(describing: bytecodeAddress)
   }
 
   // MARK: - Helpers - toString

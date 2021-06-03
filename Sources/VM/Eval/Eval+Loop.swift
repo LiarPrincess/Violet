@@ -8,7 +8,7 @@ extension Eval {
   /// Pushes a block for a loop onto the block stack.
   /// The block spans from the current instruction up until `loopEndLabel`.
   internal func setupLoop(loopEndLabelIndex: Int) -> InstructionResult {
-    let label = self.getLabel(index: loopEndLabelIndex)
+    let label = self.getLabelJumpAddress(labelIndex: loopEndLabelIndex)
     let type = BlockType.setupLoop(endLabel: label)
     let block = Block(type: type, stackCount: self.stack.count)
     self.blockStack.push(block: block)
@@ -66,7 +66,7 @@ extension Eval {
   /// `loopStartLabel` is the address to jump to
   /// (which should be a `ForIter` instruction).
   internal func doContinue(loopStartLabelIndex: Int) -> InstructionResult {
-    let label = self.getLabel(index: loopStartLabelIndex)
+    let label = self.getLabelJumpAddress(labelIndex: loopStartLabelIndex)
     return .continue(loopStartLabel: label)
   }
 }

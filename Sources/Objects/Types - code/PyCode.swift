@@ -117,7 +117,7 @@ public class PyCode: PyObject {
 
   /// Absolute jump targets.
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
-  public var labels: [Int] {
+  public var labels: [CodeObject.Label] {
     return self.codeObject.labels
   }
 

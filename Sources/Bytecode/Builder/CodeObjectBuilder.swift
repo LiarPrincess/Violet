@@ -1,5 +1,7 @@
 import VioletCore
 
+// swiftlint:disable file_length
+
 /// Helper for adding new instructions to `CodeObject`.
 /// It will store reference to `codeObject`,
 /// it is acceptable to have multiple builders to a single `CodeObject`.
@@ -21,7 +23,7 @@ public final class CodeObjectBuilder {
   public internal(set) var instructionLines = [SourceLine]()
   public internal(set) var constants = [CodeObject.Constant]()
   public internal(set) var names = [String]()
-  public internal(set) var labels = [Int]()
+  public internal(set) var labels = [CodeObject.Label]()
 
   /// Location on which next `append` occurs.
   private var appendLocation = SourceLocation.start
@@ -86,11 +88,8 @@ public final class CodeObjectBuilder {
   }
 
   private func assertAllLabelsAssigned() {
-    let hasAllAssigned = self.labels.allSatisfy {
-      $0 != CodeObject.Label.notAssigned
-    }
-
-    precondition(hasAllAssigned, "One of the code object labels is not assigned!")
+    let allAssigned = self.labels.allSatisfy { $0.isAssigned }
+    precondition(allAssigned, "One of the code object labels is not assigned!")
   }
 
   // MARK: - Append
@@ -116,21 +115,27 @@ public final class CodeObjectBuilder {
 
   // MARK: - Label
 
-  /// Creates new label (jump target) with invalid value.
-  /// Use `self.setLabel()` to assign proper value.
-  public func createLabel() -> CodeObject.Label {
-    let index = self.labels.endIndex
-    self.labels.append(CodeObject.Label.notAssigned)
-    return CodeObject.Label(index: index)
+  public struct NotAssignedLabel {
+    /// Index of the label that we will set later.
+    fileprivate let labelIndex: Int
   }
 
-  /// Set label to next emitted instruction.
-  public func setLabel(_ label: CodeObject.Label) {
-    assert(label.index < self.labels.count)
-    assert(self.labels[label.index] == CodeObject.Label.notAssigned)
+  /// Creates new label (jump target) with invalid value.
+  /// Use `self.setLabel()` to assign proper value.
+  public func createLabel() -> NotAssignedLabel {
+    let index = self.labels.endIndex
+    self.labels.append(CodeObject.Label.notAssigned)
+    return NotAssignedLabel(labelIndex: index)
+  }
 
-    let jumpTarget = self.instructions.endIndex
-    self.labels[label.index] = jumpTarget
+  /// Set label to the next emitted instruction.
+  public func setLabel(_ notAssigned: NotAssignedLabel) {
+    let labelIndex = notAssigned.labelIndex
+    assert(labelIndex < self.labels.count)
+    assert(self.labels[labelIndex] == CodeObject.Label.notAssigned)
+
+    let jumpAddress = self.instructions.endIndex
+    self.labels[labelIndex] = CodeObject.Label(jumpAddress: jumpAddress)
   }
 
   // MARK: - Add name
@@ -241,8 +246,8 @@ public final class CodeObjectBuilder {
 
   // MARK: - Add label
 
-  internal func addLabelWithExtendedArgIfNeeded(_ label: CodeObject.Label) -> UInt8 {
-    return self.appendExtendedArgIfNeeded(label.index)
+  internal func appendExtendedArgsForLabelIndex(_ notAssigned: NotAssignedLabel) -> UInt8 {
+    return self.appendExtendedArgIfNeeded(notAssigned.labelIndex)
   }
 
   // MARK: - Extended arg

@@ -111,12 +111,12 @@ internal struct Eval {
     return self.code.constants[index]
   }
 
-  internal func getLabel(index: Int) -> Int {
+  internal func getLabelJumpAddress(labelIndex index: Int) -> Int {
     // In all of the dumps/prints we multiply by 'Instruction.byteSize'.
     // We don't have to it here because 'index' is already instruction index.
-
     assert(0 <= index && index < self.code.labels.count)
-    return self.code.labels[index]
+    let label = self.code.labels[index]
+    return label.jumpAddress
   }
 
   // MARK: - Run
