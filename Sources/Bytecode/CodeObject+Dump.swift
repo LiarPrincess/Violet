@@ -33,7 +33,7 @@ extension CodeObject {
       result.append("\(lineString) \(byteString) \(instructionString)\n")
 
       if case let Instruction.extendedArg(arg) = instruction {
-        extendedArg = extendedArg << 8 | Int(arg)
+        extendedArg = Instruction.extend(base: extendedArg, arg: arg)
       } else {
         extendedArg = 0
       }
@@ -338,7 +338,7 @@ extension CodeObject {
       return "buildString (count: \(arg))"
 
     case let .extendedArg(arg):
-      let total = extendedArg << 8 | Int(arg)
+      let total = Instruction.extend(base: extendedArg, arg: arg)
       return "extendedArg (value: \(arg), total: \(total))"
 
     case .setupAnnotations:
