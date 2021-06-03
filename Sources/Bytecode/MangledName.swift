@@ -11,17 +11,13 @@ import VioletCore
 /// is textually replaced with `_className__spam`, where `className`
 /// is the current class name with leading underscore(s) stripped.
 /// See [docs](https://docs.python.org/3.7/tutorial/classes.html#private-variables)
-public struct MangledName: Equatable, Hashable, ConstantString, CustomStringConvertible {
+public struct MangledName: Equatable, Hashable, CustomStringConvertible {
 
   /// Name BEFORE mangling
   public let beforeMangling: String
 
   /// Name AFTER mangling
   public let value: String
-
-  public var constant: String {
-    return self.value
-  }
 
   public var description: String {
     return self.value

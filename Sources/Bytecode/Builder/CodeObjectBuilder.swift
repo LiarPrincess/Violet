@@ -135,8 +135,8 @@ public final class CodeObjectBuilder {
 
   // MARK: - Add name
 
-  internal func addNameWithExtendedArgIfNeeded<S: ConstantString>(name: S) -> UInt8 {
-    let index = self.getNameIndex(name.constant)
+  internal func addNameWithExtendedArgIfNeeded(name: String) -> UInt8 {
+    let index = self.getNameIndex(name)
     return self.appendExtendedArgIfNeeded(index)
   }
 

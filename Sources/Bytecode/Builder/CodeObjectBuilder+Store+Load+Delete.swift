@@ -5,41 +5,71 @@ extension CodeObjectBuilder {
   // MARK: - Name
 
   /// Append a `storeName` instruction to this code object.
-  public func appendStoreName<S: ConstantString>(_ name: S) {
+  public func appendStoreName(_ name: String) {
     let index = self.addNameWithExtendedArgIfNeeded(name: name)
     self.append(.storeName(nameIndex: index))
   }
 
+  /// Append a `storeName` instruction to this code object.
+  public func appendStoreName(_ name: MangledName) {
+    self.appendStoreName(name.value)
+  }
+
   /// Append a `loadName` instruction to this code object.
-  public func appendLoadName<S: ConstantString>(_ name: S) {
+  public func appendLoadName(_ name: String) {
     let index = self.addNameWithExtendedArgIfNeeded(name: name)
     self.append(.loadName(nameIndex: index))
   }
 
+  /// Append a `loadName` instruction to this code object.
+  public func appendLoadName(_ name: MangledName) {
+    self.appendLoadName(name.value)
+  }
+
   /// Append a `deleteName` instruction to this code object.
-  public func appendDeleteName<S: ConstantString>(_ name: S) {
+  public func appendDeleteName(_ name: String) {
     let index = self.addNameWithExtendedArgIfNeeded(name: name)
     self.append(.deleteName(nameIndex: index))
+  }
+
+  /// Append a `deleteName` instruction to this code object.
+  public func appendDeleteName(_ name: MangledName) {
+    self.appendDeleteName(name.value)
   }
 
   // MARK: - Attribute
 
   /// Append a `storeAttr` instruction to this code object.
-  public func appendStoreAttribute<S: ConstantString>(_ name: S) {
+  public func appendStoreAttribute(_ name: String) {
     let index = self.addNameWithExtendedArgIfNeeded(name: name)
     self.append(.storeAttribute(nameIndex: index))
   }
 
+  /// Append a `storeAttr` instruction to this code object.
+  public func appendStoreAttribute(_ name: MangledName) {
+    self.appendStoreAttribute(name.value)
+  }
+
   /// Append a `loadAttr` instruction to this code object.
-  public func appendLoadAttribute<S: ConstantString>(_ name: S) {
+  public func appendLoadAttribute(_ name: String) {
     let index = self.addNameWithExtendedArgIfNeeded(name: name)
     self.append(.loadAttribute(nameIndex: index))
   }
 
+  /// Append a `loadAttr` instruction to this code object.
+  public func appendLoadAttribute(_ name: MangledName) {
+    self.appendLoadAttribute(name.value)
+  }
+
   /// Append a `deleteAttr` instruction to this code object.
-  public func appendDeleteAttribute<S: ConstantString>(_ name: S) {
+  public func appendDeleteAttribute(_ name: String) {
     let index = self.addNameWithExtendedArgIfNeeded(name: name)
     self.append(.deleteAttribute(nameIndex: index))
+  }
+
+  /// Append a `deleteAttr` instruction to this code object.
+  public func appendDeleteAttribute(_ name: MangledName) {
+    self.appendDeleteAttribute(name.value)
   }
 
   // MARK: - Subscript
@@ -62,21 +92,36 @@ extension CodeObjectBuilder {
   // MARK: - Global
 
   /// Append a `storeGlobal` instruction to this code object.
-  public func appendStoreGlobal<S: ConstantString>(_ name: S) {
+  public func appendStoreGlobal(_ name: String) {
     let index = self.addNameWithExtendedArgIfNeeded(name: name)
     self.append(.storeGlobal(nameIndex: index))
   }
 
+  /// Append a `storeGlobal` instruction to this code object.
+  public func appendStoreGlobal(_ name: MangledName) {
+    self.appendStoreGlobal(name.value)
+  }
+
   /// Append a `loadGlobal` instruction to this code object.
-  public func appendLoadGlobal<S: ConstantString>(_ name: S) {
+  public func appendLoadGlobal(_ name: String) {
     let index = self.addNameWithExtendedArgIfNeeded(name: name)
     self.append(.loadGlobal(nameIndex: index))
   }
 
+  /// Append a `loadGlobal` instruction to this code object.
+  public func appendLoadGlobal(_ name: MangledName) {
+    self.appendLoadGlobal(name.value)
+  }
+
   /// Append a `deleteGlobal` instruction to this code object.
-  public func appendDeleteGlobal<S: ConstantString>(_ name: S) {
+  public func appendDeleteGlobal(_ name: String) {
     let index = self.addNameWithExtendedArgIfNeeded(name: name)
     self.append(.deleteGlobal(nameIndex: index))
+  }
+
+  /// Append a `deleteGlobal` instruction to this code object.
+  public func appendDeleteGlobal(_ name: MangledName) {
+    self.appendDeleteGlobal(name.value)
   }
 
   // MARK: - Fast

@@ -76,16 +76,20 @@ extension CodeObjectBuilder {
   }
 
   /// Append a `loadConst(String)` instruction to this code object.
-  public func appendString<S: ConstantString>(_ value: S) {
-    let s = value.constant
-    let key = UseScalarsToHashString(s)
+  public func appendString(_ value: String) {
+    let key = UseScalarsToHashString(value)
 
     if let index = self.cache.constantStrings[key] {
       self.appendExistingConstant(index: index)
     } else {
-      let index = self.appendNewConstant(.string(s))
+      let index = self.appendNewConstant(.string(value))
       self.cache.constantStrings[key] = index
     }
+  }
+
+  /// Append a `loadConst(String)` instruction to this code object.
+  public func appendString(_ name: MangledName) {
+    self.appendString(name.value)
   }
 
   /// Append a `loadConst` instruction to this code object.

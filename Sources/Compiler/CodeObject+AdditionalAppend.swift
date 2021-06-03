@@ -6,11 +6,35 @@ extension CodeObjectBuilder {
 
   // MARK: - Variables
 
-  internal func appendName<S: ConstantString>(name: S, context: ExpressionContext) {
+  internal func appendName(name: String, context: ExpressionContext) {
     switch context {
     case .store: self.appendStoreName(name)
     case .load: self.appendLoadName(name)
     case .del: self.appendDeleteName(name)
+    }
+  }
+
+  internal func appendName(name: MangledName, context: ExpressionContext) {
+    switch context {
+    case .store: self.appendStoreName(name)
+    case .load: self.appendLoadName(name)
+    case .del: self.appendDeleteName(name)
+    }
+  }
+
+  internal func appendGlobal(name: String, context: ExpressionContext) {
+    switch context {
+    case .store: self.appendStoreGlobal(name)
+    case .load: self.appendLoadGlobal(name)
+    case .del: self.appendDeleteGlobal(name)
+    }
+  }
+
+  internal func appendGlobal(name: MangledName, context: ExpressionContext) {
+    switch context {
+    case .store: self.appendStoreGlobal(name)
+    case .load: self.appendLoadGlobal(name)
+    case .del: self.appendDeleteGlobal(name)
     }
   }
 
@@ -19,14 +43,6 @@ extension CodeObjectBuilder {
     case .store: self.appendStoreFast(name)
     case .load: self.appendLoadFast(name)
     case .del: self.appendDeleteFast(name)
-    }
-  }
-
-  internal func appendGlobal<S: ConstantString>(name: S, context: ExpressionContext) {
-    switch context {
-    case .store: self.appendStoreGlobal(name)
-    case .load: self.appendLoadGlobal(name)
-    case .del: self.appendDeleteGlobal(name)
     }
   }
 
