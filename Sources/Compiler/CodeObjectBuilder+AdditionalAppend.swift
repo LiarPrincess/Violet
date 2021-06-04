@@ -46,6 +46,22 @@ extension CodeObjectBuilder {
     }
   }
 
+  internal func appendCell(name: MangledName, context: ExpressionContext) {
+    switch context {
+    case .store: self.appendStoreCell(name)
+    case .load: self.appendLoadCell(name)
+    case .del: self.appendDeleteCell(name)
+    }
+  }
+
+  internal func appendFree(name: MangledName, context: ExpressionContext) {
+    switch context {
+    case .store: self.appendStoreFree(name)
+    case .load: self.appendLoadFree(name)
+    case .del: self.appendDeleteFree(name)
+    }
+  }
+
   // MARK: - Operators
 
   internal func appendUnaryOperator(_ op: UnaryOpExpr.Operator) {

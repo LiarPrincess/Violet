@@ -1,7 +1,5 @@
 import VioletCore
 
-// swiftlint:disable file_length
-
 /// Helper for adding new instructions to `CodeObject`.
 /// It will store reference to `codeObject`,
 /// it is acceptable to have multiple builders to a single `CodeObject`.
@@ -95,15 +93,8 @@ public final class CodeObjectBuilder {
   // MARK: - Append
 
   internal func append(_ instruction: Instruction) {
+    let line = self.appendLocation.line
     self.instructions.append(instruction)
-
-    var line = self.appendLocation.line
-    if let lastLine = self.instructionLines.last, lastLine > line {
-      // We have to check this, because there may be some other builder
-      // working on the same CodeObject.
-      line = lastLine
-    }
-
     self.instructionLines.append(line)
     assert(self.instructions.count == self.instructionLines.count)
   }

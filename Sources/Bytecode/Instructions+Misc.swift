@@ -54,6 +54,9 @@ extension Instruction {
   // MARK: - UnpackExArg
 
   /// Helper for handling the `unpackEx` instruction argument.
+  ///
+  /// The idea is that `countAfter` always goes into previous
+  /// `extendedArg` instruction.
   public struct UnpackExArg {
 
     public let value: Int

@@ -42,7 +42,7 @@ extension CompilerImpl {
         let __classcell__ = SpecialIdentifiers.__classcell__
 
         // Store __classcell__ into class namespace & return it
-        self.builder.appendLoadClosure(name: __class__, type: .cell)
+        self.builder.appendLoadClosureCell(name: __class__)
         self.builder.appendDupTop()
         self.builder.appendStoreName(__classcell__)
       } else {

@@ -204,8 +204,6 @@ extension CompilerImpl {
 
   // MARK: - Closure
 
-  private typealias ClosureType = CodeObjectBuilder.ClosureType
-
   /// compiler_make_closure(struct compiler *c, PyCodeObject *co,
   /// Py_ssize_t flags, PyObject *qualname)
   internal func makeClosure(codeObject: CodeObject,
@@ -223,9 +221,12 @@ extension CompilerImpl {
         // and the free var is a free var referenced within a method.
 
         let refType = self.getRefType(name: name, qualifiedName: qualifiedName)
-        let type: ClosureType = refType.contains(.cell) ? .cell : .free
-
-        self.builder.appendLoadClosure(name: name, type: type)
+        switch refType.contains(.cell) {
+        case true:
+          self.builder.appendLoadClosureCell(name: name)
+        case false:
+          self.builder.appendLoadClosureFree(name: name)
+        }
       }
 
       let freeVariableCount = codeObject.freeVariableNames.count

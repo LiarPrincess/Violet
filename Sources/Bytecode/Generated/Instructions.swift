@@ -12,7 +12,7 @@ import VioletCore
 
 extension Instruction {
 
-  public enum StringConversion {
+  public enum StringConversion: Equatable {
     case none
     case str
     case repr
@@ -22,7 +22,7 @@ extension Instruction {
 
 extension Instruction {
 
-  public enum CompareType {
+  public enum CompareType: Equatable {
     /// True when two operands are equal.
     case equal
     /// True when two operands are not equal.
@@ -50,7 +50,7 @@ extension Instruction {
 
 extension Instruction {
 
-  public enum SliceArg {
+  public enum SliceArg: Equatable {
     case lowerUpper
     case lowerUpperStep
   }
@@ -58,7 +58,7 @@ extension Instruction {
 
 extension Instruction {
 
-  public enum RaiseArg {
+  public enum RaiseArg: Equatable {
     /// Re-raise previous exception.
     /// CPython 0.
     case reRaise
@@ -71,7 +71,7 @@ extension Instruction {
   }
 }
 
-public enum Instruction {
+public enum Instruction: Equatable {
   /// Do nothing code.
   case nop
   /// Removes the top-of-stack (TOS) item.

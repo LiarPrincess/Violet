@@ -92,30 +92,16 @@ extension CompilerImpl {
 
     switch operation {
     case .cell:
-      self.appendCellOrFree(mangled: mangled, type: .cell, context: context)
-    case .free:
-      self.appendCellOrFree(mangled: mangled, type: .free, context: context)
-    case .fast:
-      self.builder.appendFast(name: mangled, context: context)
-    case .global:
-      self.builder.appendGlobal(name: mangled, context: context)
-    case .name:
-      self.builder.appendName(name: mangled, context: context)
-    }
-  }
-
-  private func appendCellOrFree(mangled: MangledName,
-                                type: CodeObjectBuilder.CellOrFree,
-                                context: ExpressionContext) {
-    switch context {
-    case .store:
-      self.builder.appendStoreCellOrFree(mangled, type: type)
-    case .load where self.currentScope.type == .class:
-      self.builder.appendLoadClassCell(mangled, type: type)
-    case .load:
-      self.builder.appendLoadCellOrFree(mangled, type: type)
-    case .del:
-      self.builder.appendDeleteCellOrFree(mangled, type: type)
+      let isLoadInClass = context == .load && self.currentScope.type == .class
+      if isLoadInClass {
+        self.builder.appendLoadClassCell(mangled)
+      } else {
+        self.builder.appendCell(name: mangled, context: context)
+      }
+    case .free: self.builder.appendFree(name: mangled, context: context)
+    case .fast: self.builder.appendFast(name: mangled, context: context)
+    case .global: self.builder.appendGlobal(name: mangled, context: context)
+    case .name: self.builder.appendName(name: mangled, context: context)
     }
   }
 

@@ -15,15 +15,16 @@ and labels properties of 'CodeObject'.
 @alias ConstantIndex = UInt8
 @alias VariableIndex = UInt8
 @alias CellOrFreeIndex = UInt8
+@alias RelativeStackIndex = UInt8
 @alias Item = UInt8
 
-@enum Instruction.StringConversion =
+@enum Instruction.StringConversion: Equatable =
     none
   | str
   | repr
   | ascii
 
-@enum Instruction.CompareType =
+@enum Instruction.CompareType: Equatable =
   -- True when two operands are equal.
   Equal
   -- True when two operands are not equal.
@@ -47,11 +48,11 @@ and labels properties of 'CodeObject'.
   -- Does the exception has specified type?
   | ExceptionMatch
 
-@enum Instruction.SliceArg =
+@enum Instruction.SliceArg: Equatable =
     LowerUpper
   | LowerUpperStep
 
-@enum Instruction.RaiseArg =
+@enum Instruction.RaiseArg: Equatable =
   -- Re-raise previous exception.
   -- CPython 0.
     ReRaise
@@ -62,7 +63,7 @@ and labels properties of 'CodeObject'.
   -- CPython 2.
   | ExceptionAndCause
 
-@enum Instruction =
+@enum Instruction: Equatable =
 
 {- ------- -}
 {- General -}
@@ -271,13 +272,13 @@ and labels properties of 'CodeObject'.
 
   -- Calls `set.add(TOS1[-i], TOS)`. Container object remains on the stack.
   -- Used to implement set comprehensions.
-  | SetAdd(Item)
+  | SetAdd(RelativeStackIndex)
   -- Calls `list.append(TOS[-i], TOS)`. Container object remains on the stack.
   -- Used to implement list comprehensions.
-  | ListAppend(Item)
+  | ListAppend(RelativeStackIndex)
   -- Calls `dict.setItem(TOS1[-i], TOS, TOS1)`. Container object remains on the stack.
   -- Used to implement dict comprehensions.
-  | MapAdd(Item)
+  | MapAdd(RelativeStackIndex)
 
 {- -------- -}
 {-  Unpack  -}

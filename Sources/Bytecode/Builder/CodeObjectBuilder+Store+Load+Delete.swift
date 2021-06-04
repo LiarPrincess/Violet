@@ -144,52 +144,70 @@ extension CodeObjectBuilder {
     self.append(.deleteFast(variableIndex: index))
   }
 
-  // MARK: - Cell or free
-
-  public enum CellOrFree {
-    case cell
-    case free
-  }
+  // MARK: - Cell
 
   /// Append a `loadCellOrFree` instruction to this code object.
-  public func appendLoadCellOrFree(_ name: MangledName, type: CellOrFree) {
-    let index = self.addCellOrFreeVariableName(name, type: type)
+  public func appendLoadCell(_ name: MangledName) {
+    let index = self.addCellVariableNameWithExtendedArgIfNeeded(name: name)
     self.append(.loadCellOrFree(cellOrFreeIndex: index))
   }
 
   /// Append a `loadClassCell` instruction to this code object.
-  public func appendLoadClassCell(_ name: MangledName, type: CellOrFree) {
-    let index = self.addCellOrFreeVariableName(name, type: type)
+  public func appendLoadClassCell(_ name: MangledName) {
+    let index = self.addCellVariableNameWithExtendedArgIfNeeded(name: name)
     self.append(.loadClassCell(cellOrFreeIndex: index))
   }
 
   /// Append a `storeCellOrFree` instruction to this code object.
-  public func appendStoreCellOrFree(_ name: MangledName, type: CellOrFree) {
-    let index = self.addCellOrFreeVariableName(name, type: type)
+  public func appendStoreCell(_ name: MangledName) {
+    let index = self.addCellVariableNameWithExtendedArgIfNeeded(name: name)
     self.append(.storeCellOrFree(cellOrFreeIndex: index))
   }
 
   /// Append a `deleteCellOrFree` instruction to this code object.
-  public func appendDeleteCellOrFree(_ name: MangledName, type: CellOrFree) {
-    let index = self.addCellOrFreeVariableName(name, type: type)
+  public func appendDeleteCell(_ name: MangledName) {
+    let index = self.addCellVariableNameWithExtendedArgIfNeeded(name: name)
     self.append(.deleteCellOrFree(cellOrFreeIndex: index))
   }
 
-  private func addCellOrFreeVariableName(_ name: MangledName,
-                                         type: CellOrFree) -> UInt8 {
-    switch type {
-    case .cell:
-      return self.addCellVariableNameWithExtendedArgIfNeeded(name: name)
-    case .free:
-      return self.addFreeVariableNameWithExtendedArgIfNeeded(name: name)
-    }
+  // MARK: - Free
+
+  /// Append a `loadCellOrFree` instruction to this code object.
+  public func appendLoadFree(_ name: MangledName) {
+    let index = self.addFreeVariableNameWithExtendedArgIfNeeded(name: name)
+    self.append(.loadCellOrFree(cellOrFreeIndex: index))
+  }
+
+  /// Append a `storeCellOrFree` instruction to this code object.
+  public func appendStoreFree(_ name: MangledName) {
+    let index = self.addFreeVariableNameWithExtendedArgIfNeeded(name: name)
+    self.append(.storeCellOrFree(cellOrFreeIndex: index))
+  }
+
+  /// Append a `deleteCellOrFree` instruction to this code object.
+  public func appendDeleteFree(_ name: MangledName) {
+    let index = self.addFreeVariableNameWithExtendedArgIfNeeded(name: name)
+    self.append(.deleteCellOrFree(cellOrFreeIndex: index))
   }
 
   // MARK: - Load closure
 
-  public enum ClosureType {
-    case cell
-    case free
+  /// Append a `loadClosure` instruction to this code object.
+  ///
+  /// Pushes a reference to the cell contained in slot 'i'
+  /// of the 'cell' or 'free' variable storage.
+  /// If 'i' < cellVars.count: name of the variable is cellVars[i].
+  /// otherwise:               name is freeVars[i - cellVars.count].
+  public func appendLoadClosureCell(name: MangledName) {
+    // static int
+    // compiler_lookup_arg(PyObject *dict, PyObject *name)
+    let names = self.cellVariableNames
+    guard let index = names.firstIndex(of: name) else {
+      trap("[LoadClosure] Name '\(name.value)' was not found in cell variables.")
+    }
+
+    let arg = self.appendExtendedArgIfNeeded(index)
+    self.append(.loadClosure(cellOrFreeIndex: arg))
   }
 
   /// Append a `loadClosure` instruction to this code object.
@@ -198,31 +216,16 @@ extension CodeObjectBuilder {
   /// of the 'cell' or 'free' variable storage.
   /// If 'i' < cellVars.count: name of the variable is cellVars[i].
   /// otherwise:               name is freeVars[i - cellVars.count].
-  public func appendLoadClosure(name: MangledName, type: ClosureType) {
-    let index = self.getLoadClosureArg(name: name, type: type)
+  public func appendLoadClosureFree(name: MangledName) {
+    // static int
+    // compiler_lookup_arg(PyObject *dict, PyObject *name)
+    let names = self.freeVariableNames
+    guard let indexInNames = names.firstIndex(of: name) else {
+      trap("[LoadClosure] Name '\(name.value)' was not found in free variables.")
+    }
+
+    let index = self.offsetFreeVariable(index: indexInNames)
     let arg = self.appendExtendedArgIfNeeded(index)
     self.append(.loadClosure(cellOrFreeIndex: arg))
-  }
-
-  // static int
-  // compiler_lookup_arg(PyObject *dict, PyObject *name)
-  private func getLoadClosureArg(name: MangledName, type: ClosureType) -> Int {
-    switch type {
-    case .cell:
-      let names = self.cellVariableNames
-      guard let index = names.firstIndex(of: name) else {
-        trap("[LoadClosure] Name '\(name.value)' was not found in cell variables.")
-      }
-
-      return index
-
-    case .free:
-      let names = self.freeVariableNames
-      guard let index = names.firstIndex(of: name) else {
-        trap("[LoadClosure] Name '\(name.value)' was not found in free variables.")
-      }
-
-      return self.offsetFreeVariable(index: index)
-    }
   }
 }
