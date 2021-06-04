@@ -32,8 +32,8 @@ extension CodeObjectBuilder {
 
   /// Append a `loadMethod` instruction to this code object.
   public func appendLoadMethod(name: String) {
-    let index = self.addNameWithExtendedArgIfNeeded(name: name)
-    self.append(.loadMethod(nameIndex: index))
+    let arg = self.appendExtendedArgsForNameIndex(name: name)
+    self.append(.loadMethod(nameIndex: arg))
   }
 
   // MARK: - Call method

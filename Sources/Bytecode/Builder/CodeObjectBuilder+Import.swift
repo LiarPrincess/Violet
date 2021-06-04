@@ -4,7 +4,7 @@ extension CodeObjectBuilder {
 
   /// Append an `importName` instruction to this code object.
   public func appendImportName(name: String) {
-    let arg = self.addNameWithExtendedArgIfNeeded(name: name)
+    let arg = self.appendExtendedArgsForNameIndex(name: name)
     self.append(.importName(nameIndex: arg))
   }
 
@@ -15,7 +15,7 @@ extension CodeObjectBuilder {
 
   /// Append an `importFrom` instruction to this code object.
   public func appendImportFrom(name: String) {
-    let arg = self.addNameWithExtendedArgIfNeeded(name: name)
+    let arg = self.appendExtendedArgsForNameIndex(name: name)
     self.append(.importFrom(nameIndex: arg))
   }
 }

@@ -6,8 +6,8 @@ extension CodeObjectBuilder {
 
   /// Append a `storeName` instruction to this code object.
   public func appendStoreName(_ name: String) {
-    let index = self.addNameWithExtendedArgIfNeeded(name: name)
-    self.append(.storeName(nameIndex: index))
+    let arg = self.appendExtendedArgsForNameIndex(name: name)
+    self.append(.storeName(nameIndex: arg))
   }
 
   /// Append a `storeName` instruction to this code object.
@@ -17,8 +17,8 @@ extension CodeObjectBuilder {
 
   /// Append a `loadName` instruction to this code object.
   public func appendLoadName(_ name: String) {
-    let index = self.addNameWithExtendedArgIfNeeded(name: name)
-    self.append(.loadName(nameIndex: index))
+    let arg = self.appendExtendedArgsForNameIndex(name: name)
+    self.append(.loadName(nameIndex: arg))
   }
 
   /// Append a `loadName` instruction to this code object.
@@ -28,8 +28,8 @@ extension CodeObjectBuilder {
 
   /// Append a `deleteName` instruction to this code object.
   public func appendDeleteName(_ name: String) {
-    let index = self.addNameWithExtendedArgIfNeeded(name: name)
-    self.append(.deleteName(nameIndex: index))
+    let arg = self.appendExtendedArgsForNameIndex(name: name)
+    self.append(.deleteName(nameIndex: arg))
   }
 
   /// Append a `deleteName` instruction to this code object.
@@ -41,8 +41,8 @@ extension CodeObjectBuilder {
 
   /// Append a `storeAttr` instruction to this code object.
   public func appendStoreAttribute(_ name: String) {
-    let index = self.addNameWithExtendedArgIfNeeded(name: name)
-    self.append(.storeAttribute(nameIndex: index))
+    let arg = self.appendExtendedArgsForNameIndex(name: name)
+    self.append(.storeAttribute(nameIndex: arg))
   }
 
   /// Append a `storeAttr` instruction to this code object.
@@ -52,8 +52,8 @@ extension CodeObjectBuilder {
 
   /// Append a `loadAttr` instruction to this code object.
   public func appendLoadAttribute(_ name: String) {
-    let index = self.addNameWithExtendedArgIfNeeded(name: name)
-    self.append(.loadAttribute(nameIndex: index))
+    let arg = self.appendExtendedArgsForNameIndex(name: name)
+    self.append(.loadAttribute(nameIndex: arg))
   }
 
   /// Append a `loadAttr` instruction to this code object.
@@ -63,8 +63,8 @@ extension CodeObjectBuilder {
 
   /// Append a `deleteAttr` instruction to this code object.
   public func appendDeleteAttribute(_ name: String) {
-    let index = self.addNameWithExtendedArgIfNeeded(name: name)
-    self.append(.deleteAttribute(nameIndex: index))
+    let arg = self.appendExtendedArgsForNameIndex(name: name)
+    self.append(.deleteAttribute(nameIndex: arg))
   }
 
   /// Append a `deleteAttr` instruction to this code object.
@@ -93,8 +93,8 @@ extension CodeObjectBuilder {
 
   /// Append a `storeGlobal` instruction to this code object.
   public func appendStoreGlobal(_ name: String) {
-    let index = self.addNameWithExtendedArgIfNeeded(name: name)
-    self.append(.storeGlobal(nameIndex: index))
+    let arg = self.appendExtendedArgsForNameIndex(name: name)
+    self.append(.storeGlobal(nameIndex: arg))
   }
 
   /// Append a `storeGlobal` instruction to this code object.
@@ -104,8 +104,8 @@ extension CodeObjectBuilder {
 
   /// Append a `loadGlobal` instruction to this code object.
   public func appendLoadGlobal(_ name: String) {
-    let index = self.addNameWithExtendedArgIfNeeded(name: name)
-    self.append(.loadGlobal(nameIndex: index))
+    let arg = self.appendExtendedArgsForNameIndex(name: name)
+    self.append(.loadGlobal(nameIndex: arg))
   }
 
   /// Append a `loadGlobal` instruction to this code object.
@@ -115,8 +115,8 @@ extension CodeObjectBuilder {
 
   /// Append a `deleteGlobal` instruction to this code object.
   public func appendDeleteGlobal(_ name: String) {
-    let index = self.addNameWithExtendedArgIfNeeded(name: name)
-    self.append(.deleteGlobal(nameIndex: index))
+    let arg = self.appendExtendedArgsForNameIndex(name: name)
+    self.append(.deleteGlobal(nameIndex: arg))
   }
 
   /// Append a `deleteGlobal` instruction to this code object.
@@ -128,66 +128,66 @@ extension CodeObjectBuilder {
 
   /// Append a `loadFast` instruction to this code object.
   public func appendLoadFast(_ name: MangledName) {
-    let index = self.addVariableNameWithExtendedArgIfNeeded(name: name)
-    self.append(.loadFast(variableIndex: index))
+    let arg = self.appendExtendedArgsForVariableNameIndex(name: name)
+    self.append(.loadFast(variableIndex: arg))
   }
 
   /// Append a `storeFast` instruction to this code object.
   public func appendStoreFast(_ name: MangledName) {
-    let index = self.addVariableNameWithExtendedArgIfNeeded(name: name)
-    self.append(.storeFast(variableIndex: index))
+    let arg = self.appendExtendedArgsForVariableNameIndex(name: name)
+    self.append(.storeFast(variableIndex: arg))
   }
 
   /// Append a `deleteFast` instruction to this code object.
   public func appendDeleteFast(_ name: MangledName) {
-    let index = self.addVariableNameWithExtendedArgIfNeeded(name: name)
-    self.append(.deleteFast(variableIndex: index))
+    let arg = self.appendExtendedArgsForVariableNameIndex(name: name)
+    self.append(.deleteFast(variableIndex: arg))
   }
 
   // MARK: - Cell
 
   /// Append a `loadCellOrFree` instruction to this code object.
   public func appendLoadCell(_ name: MangledName) {
-    let index = self.addCellVariableNameWithExtendedArgIfNeeded(name: name)
-    self.append(.loadCellOrFree(cellOrFreeIndex: index))
+    let arg = self.appendExtendedArgsForCellVariableNameIndex(name: name)
+    self.append(.loadCellOrFree(cellOrFreeIndex: arg))
   }
 
   /// Append a `loadClassCell` instruction to this code object.
   public func appendLoadClassCell(_ name: MangledName) {
-    let index = self.addCellVariableNameWithExtendedArgIfNeeded(name: name)
-    self.append(.loadClassCell(cellOrFreeIndex: index))
+    let arg = self.appendExtendedArgsForCellVariableNameIndex(name: name)
+    self.append(.loadClassCell(cellOrFreeIndex: arg))
   }
 
   /// Append a `storeCellOrFree` instruction to this code object.
   public func appendStoreCell(_ name: MangledName) {
-    let index = self.addCellVariableNameWithExtendedArgIfNeeded(name: name)
-    self.append(.storeCellOrFree(cellOrFreeIndex: index))
+    let arg = self.appendExtendedArgsForCellVariableNameIndex(name: name)
+    self.append(.storeCellOrFree(cellOrFreeIndex: arg))
   }
 
   /// Append a `deleteCellOrFree` instruction to this code object.
   public func appendDeleteCell(_ name: MangledName) {
-    let index = self.addCellVariableNameWithExtendedArgIfNeeded(name: name)
-    self.append(.deleteCellOrFree(cellOrFreeIndex: index))
+    let arg = self.appendExtendedArgsForCellVariableNameIndex(name: name)
+    self.append(.deleteCellOrFree(cellOrFreeIndex: arg))
   }
 
   // MARK: - Free
 
   /// Append a `loadCellOrFree` instruction to this code object.
   public func appendLoadFree(_ name: MangledName) {
-    let index = self.addFreeVariableNameWithExtendedArgIfNeeded(name: name)
-    self.append(.loadCellOrFree(cellOrFreeIndex: index))
+    let arg = self.appendExtendedArgsForFreeVariableNameIndex(name: name)
+    self.append(.loadCellOrFree(cellOrFreeIndex: arg))
   }
 
   /// Append a `storeCellOrFree` instruction to this code object.
   public func appendStoreFree(_ name: MangledName) {
-    let index = self.addFreeVariableNameWithExtendedArgIfNeeded(name: name)
-    self.append(.storeCellOrFree(cellOrFreeIndex: index))
+    let arg = self.appendExtendedArgsForFreeVariableNameIndex(name: name)
+    self.append(.storeCellOrFree(cellOrFreeIndex: arg))
   }
 
   /// Append a `deleteCellOrFree` instruction to this code object.
   public func appendDeleteFree(_ name: MangledName) {
-    let index = self.addFreeVariableNameWithExtendedArgIfNeeded(name: name)
-    self.append(.deleteCellOrFree(cellOrFreeIndex: index))
+    let arg = self.appendExtendedArgsForFreeVariableNameIndex(name: name)
+    self.append(.deleteCellOrFree(cellOrFreeIndex: arg))
   }
 
   // MARK: - Load closure
@@ -201,12 +201,7 @@ extension CodeObjectBuilder {
   public func appendLoadClosureCell(name: MangledName) {
     // static int
     // compiler_lookup_arg(PyObject *dict, PyObject *name)
-    let names = self.cellVariableNames
-    guard let index = names.firstIndex(of: name) else {
-      trap("[LoadClosure] Name '\(name.value)' was not found in cell variables.")
-    }
-
-    let arg = self.appendExtendedArgIfNeeded(index)
+    let arg = self.appendExtendedArgsForCellVariableNameIndex(name: name)
     self.append(.loadClosure(cellOrFreeIndex: arg))
   }
 
@@ -219,13 +214,7 @@ extension CodeObjectBuilder {
   public func appendLoadClosureFree(name: MangledName) {
     // static int
     // compiler_lookup_arg(PyObject *dict, PyObject *name)
-    let names = self.freeVariableNames
-    guard let indexInNames = names.firstIndex(of: name) else {
-      trap("[LoadClosure] Name '\(name.value)' was not found in free variables.")
-    }
-
-    let index = self.offsetFreeVariable(index: indexInNames)
-    let arg = self.appendExtendedArgIfNeeded(index)
+    let arg = self.appendExtendedArgsForFreeVariableNameIndex(name: name)
     self.append(.loadClosure(cellOrFreeIndex: arg))
   }
 }
