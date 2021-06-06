@@ -22,7 +22,7 @@ internal enum PushFinallyReason {
 
   // MARK: - Marker values
 
-  private struct Marker {
+  private enum Marker {
     fileprivate static let `return` = BigInt(0)
     fileprivate static let `break` = BigInt(1)
     fileprivate static let `continue` = BigInt(2)

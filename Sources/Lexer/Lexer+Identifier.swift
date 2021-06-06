@@ -49,7 +49,7 @@ extension Lexer {
     let startIndex = self.sourceIndex
     var stringPrefix = StringPrefix()
 
-    /// we don't know if it is identifier or string in form bruf"xxx"
+    // we don't know if it is identifier or string in form bruf"xxx"
     while true {
       guard let c = self.peek else {
         break // no character (meaning eof) -> only identifier is possible

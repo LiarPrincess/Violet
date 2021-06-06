@@ -215,7 +215,6 @@ private func joinWithCommaAndOr<T>(_ elements: [T]) -> String {
   return result
 }
 
-// swiftlint:disable:next cyclomatic_complexity
 private func needsQuotes(_ kind: Token.Kind) -> Bool {
   switch kind {
   case

@@ -30,7 +30,7 @@ func XCTAssertInt(_ kind: Token.Kind,
 
 // MARK: - Get token
 
-/// Get next token from lexer.
+/// Get the next token from lexer.
 func getToken(_ lexer: Lexer,
               file: StaticString = #file,
               line: UInt = #line) -> Token? {
@@ -42,7 +42,7 @@ func getToken(_ lexer: Lexer,
   }
 }
 
-/// Get next token from lexer while asserting its `kind`.
+/// Get the next token from lexer while asserting its `kind`.
 func getToken(_ lexer: Lexer,
               withKind kind: Token.Kind,
               file: StaticString = #file,
@@ -55,7 +55,7 @@ func getToken(_ lexer: Lexer,
   return nil
 }
 
-/// Use this if you want to test that next token is identifier.
+/// Use this if you want to test that next token is an identifier.
 @discardableResult
 func getIdentifier(_ lexer: Lexer,
                    value: String,
@@ -64,7 +64,7 @@ func getIdentifier(_ lexer: Lexer,
   return getToken(lexer, withKind: .identifier(value), file: file, line: line)
 }
 
-/// Use this if you want to test that next token is comment with specivied value.
+/// Use this if you want to test that next token is a comment with specified value.
 @discardableResult
 func getComment(_ lexer: Lexer,
                 value: String,
@@ -73,7 +73,7 @@ func getComment(_ lexer: Lexer,
   return getToken(lexer, withKind: .comment(value), file: file, line: line)
 }
 
-/// Use this if you want to test that next token is new line.
+/// Use this if you want to test that next token is a new line.
 @discardableResult
 func getNewLine(_ lexer: Lexer,
                 file: StaticString = #file,

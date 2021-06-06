@@ -129,7 +129,7 @@ public final class CodeObjectBuilder {
     self.labels[labelIndex] = CodeObject.Label(jumpAddress: jumpAddress)
   }
 
-  /// Use when using label (from `self.labels`) index as instruciton arg.
+  /// Use when using label (from `self.labels`) index as instruction arg.
   internal func appendExtendedArgsForLabelIndex(
     _ notAssigned: NotAssignedLabel
   ) -> UInt8 {
@@ -138,7 +138,7 @@ public final class CodeObjectBuilder {
 
   // MARK: - Name
 
-  /// Use when using name index as instruciton arg.
+  /// Use when using name index as instruction arg.
   /// If the name was not previously used then it will be added.
   internal func appendExtendedArgsForNameIndex(name: String) -> UInt8 {
     let index: Int = {
@@ -160,7 +160,7 @@ public final class CodeObjectBuilder {
   // MARK: - Variable/Cell/Free names
 
   /// Use when using variable name (from `self.variableNames`) index
-  /// as instruciton arg.
+  /// as instruction arg.
   internal func appendExtendedArgsForVariableNameIndex(
     name: MangledName
   ) -> UInt8 {
@@ -172,7 +172,7 @@ public final class CodeObjectBuilder {
   }
 
   /// Use when using cell name (from `self.cellVariableNames`) index
-  /// as instruciton arg.
+  /// as instruction arg.
   internal func appendExtendedArgsForCellVariableNameIndex(
     name: MangledName
   ) -> UInt8 {
@@ -184,7 +184,7 @@ public final class CodeObjectBuilder {
   }
 
   /// Use when using free name (from `self.freeVariableNames`) index
-  /// as instruciton arg.
+  /// as instruction arg.
   internal func appendExtendedArgsForFreeVariableNameIndex(
     name: MangledName
   ) -> UInt8 {

@@ -146,7 +146,7 @@ public struct BigInt:
     return value
   }
 
-  public static prefix func - (value: BigInt) -> BigInt {
+  public prefix static func - (value: BigInt) -> BigInt {
     switch value.value {
     case .smi(let smi):
       return smi.negated
