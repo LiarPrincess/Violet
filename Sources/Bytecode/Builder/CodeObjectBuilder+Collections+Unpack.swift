@@ -43,7 +43,7 @@ extension CodeObjectBuilder {
     // Calls `list.append(TOS[-i], TOS)`. Container object remains on the stack.
     // Used to implement list comprehensions.
     let arg = self.appendExtendedArgIfNeeded(relativeStackIndex)
-    self.append(.listAppend(arg))
+    self.append(.listAppend(relativeStackIndex: arg))
   }
 
   /// Append a `setAdd` instruction to this code object.
@@ -53,7 +53,7 @@ extension CodeObjectBuilder {
     // Calls `set.add(TOS1[-i], TOS)`. Container object remains on the stack.
     // Used to implement set comprehensions.
     let arg = self.appendExtendedArgIfNeeded(relativeStackIndex)
-    self.append(.setAdd(arg))
+    self.append(.setAdd(relativeStackIndex: arg))
   }
 
   /// Append a `mapAdd` instruction to this code object.
@@ -64,7 +64,7 @@ extension CodeObjectBuilder {
     /// Container object remains on the stack.
     /// Used to implement dict comprehensions.
     let arg = self.appendExtendedArgIfNeeded(relativeStackIndex)
-    self.append(.mapAdd(arg))
+    self.append(.mapAdd(relativeStackIndex: arg))
   }
 
   // MARK: - Unpack

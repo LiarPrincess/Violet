@@ -101,7 +101,7 @@ class BuilderGeneralTests: XCTestCase {
       builder.appendBuildSlice(arg: v)
 
       let code = builder.finalize()
-      XCTAssertInstructions(code, .buildSlice(v))
+      XCTAssertInstructions(code, .buildSlice(type: v))
     }
   }
 

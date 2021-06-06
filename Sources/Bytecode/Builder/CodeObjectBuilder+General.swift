@@ -49,7 +49,7 @@ extension CodeObjectBuilder {
 
   /// Append a `buildSlice` instruction to this code object.
   public func appendBuildSlice(arg: Instruction.SliceArg) {
-    self.append(.buildSlice(arg))
+    self.append(.buildSlice(type: arg))
   }
 
   /// Append an `extendedArg` instruction to this code object.

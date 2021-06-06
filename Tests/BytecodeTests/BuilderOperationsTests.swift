@@ -21,7 +21,7 @@ class BuilderOperationsTests: XCTestCase {
       builder.appendCompareOp(type: op)
 
       let code = builder.finalize()
-      XCTAssertInstructions(code, .compareOp(op))
+      XCTAssertInstructions(code, .compareOp(type: op))
     }
   }
 

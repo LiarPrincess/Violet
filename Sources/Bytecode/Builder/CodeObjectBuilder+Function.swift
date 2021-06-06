@@ -6,7 +6,7 @@ extension CodeObjectBuilder {
 
   /// Append a `makeFunction` instruction to this code object.
   public func appendMakeFunction(flags: Instruction.FunctionFlags) {
-    self.append(.makeFunction(flags))
+    self.append(.makeFunction(flags: flags))
   }
 
   // MARK: - Call function

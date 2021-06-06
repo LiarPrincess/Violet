@@ -149,8 +149,8 @@ extension Instruction: CustomStringConvertible {
       return "inPlaceXor"
     case .inPlaceOr:
       return "inPlaceOr"
-    case let .compareOp(value0):
-      return "compareOp(\(value0))"
+    case let .compareOp(type: value0):
+      return "compareOp(type: \(value0))"
     case .getAwaitable:
       return "getAwaitable"
     case .getAIter:
@@ -185,12 +185,12 @@ extension Instruction: CustomStringConvertible {
       return "buildMap(elementCount: \(hex(value0)))"
     case let .buildConstKeyMap(elementCount: value0):
       return "buildConstKeyMap(elementCount: \(hex(value0)))"
-    case let .setAdd(value0):
-      return "setAdd(\(hex(value0)))"
-    case let .listAppend(value0):
-      return "listAppend(\(hex(value0)))"
-    case let .mapAdd(value0):
-      return "mapAdd(\(hex(value0)))"
+    case let .setAdd(relativeStackIndex: value0):
+      return "setAdd(relativeStackIndex: \(hex(value0)))"
+    case let .listAppend(relativeStackIndex: value0):
+      return "listAppend(relativeStackIndex: \(hex(value0)))"
+    case let .mapAdd(relativeStackIndex: value0):
+      return "mapAdd(relativeStackIndex: \(hex(value0)))"
     case let .buildTupleUnpack(elementCount: value0):
       return "buildTupleUnpack(elementCount: \(hex(value0)))"
     case let .buildTupleUnpackWithCall(elementCount: value0):
@@ -247,8 +247,8 @@ extension Instruction: CustomStringConvertible {
       return "deleteCellOrFree(cellOrFreeIndex: \(hex(value0)))"
     case let .loadClassCell(cellOrFreeIndex: value0):
       return "loadClassCell(cellOrFreeIndex: \(hex(value0)))"
-    case let .makeFunction(value0):
-      return "makeFunction(\(value0))"
+    case let .makeFunction(flags: value0):
+      return "makeFunction(flags: \(value0))"
     case let .callFunction(argumentCount: value0):
       return "callFunction(argumentCount: \(hex(value0)))"
     case let .callFunctionKw(argumentCount: value0):
@@ -277,8 +277,8 @@ extension Instruction: CustomStringConvertible {
       return "setupExcept(firstExceptLabel: \(hex(value0)))"
     case let .setupFinally(finallyStartLabel: value0):
       return "setupFinally(finallyStartLabel: \(hex(value0)))"
-    case let .raiseVarargs(value0):
-      return "raiseVarargs(\(value0))"
+    case let .raiseVarargs(type: value0):
+      return "raiseVarargs(type: \(value0))"
     case let .setupWith(afterBodyLabel: value0):
       return "setupWith(afterBodyLabel: \(hex(value0)))"
     case .withCleanupStart:
@@ -301,8 +301,8 @@ extension Instruction: CustomStringConvertible {
       return "jumpIfFalseOrPop(labelIndex: \(hex(value0)))"
     case let .formatValue(conversion: value0, hasFormat: value1):
       return "formatValue(conversion: \(value0), hasFormat: \(value1))"
-    case let .buildString(value0):
-      return "buildString(\(hex(value0)))"
+    case let .buildString(elementCount: value0):
+      return "buildString(elementCount: \(hex(value0)))"
     case let .extendedArg(value0):
       return "extendedArg(\(hex(value0)))"
     case .setupAnnotations:
@@ -311,8 +311,8 @@ extension Instruction: CustomStringConvertible {
       return "popBlock"
     case let .loadClosure(cellOrFreeIndex: value0):
       return "loadClosure(cellOrFreeIndex: \(hex(value0)))"
-    case let .buildSlice(value0):
-      return "buildSlice(\(value0))"
+    case let .buildSlice(type: value0):
+      return "buildSlice(type: \(value0))"
     }
   }
 }

@@ -29,7 +29,7 @@ class BuilderStringTests: XCTestCase {
     builder.appendBuildString(count: 42)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .buildString(42))
+    XCTAssertInstructions(code, .buildString(elementCount: 42))
   }
 
   func test_appendBuildString_extended() {
@@ -39,7 +39,7 @@ class BuilderStringTests: XCTestCase {
     let code = builder.finalize()
     XCTAssertInstructions(code,
                           .extendedArg(1),
-                          .buildString(0))
+                          .buildString(elementCount: 0))
   }
 
   func test_appendBuildString_extended2() {
@@ -50,7 +50,7 @@ class BuilderStringTests: XCTestCase {
     XCTAssertInstructions(code,
                           .extendedArg(0xff),
                           .extendedArg(0xff),
-                          .buildString(0xff))
+                          .buildString(elementCount: 0xff))
   }
 
   func test_appendBuildString_extended3() {
@@ -62,6 +62,6 @@ class BuilderStringTests: XCTestCase {
                           .extendedArg(0xff),
                           .extendedArg(0xff),
                           .extendedArg(0xff),
-                          .buildString(0xff))
+                          .buildString(elementCount: 0xff))
   }
 }

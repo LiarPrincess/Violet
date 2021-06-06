@@ -346,13 +346,13 @@ internal struct Eval {
       let extended = Instruction.extend(base: extendedArg, arg: elementCount)
       return self.buildConstKeyMap(elementCount: extended)
 
-    case let .setAdd(value):
+    case let .setAdd(relativeStackIndex: value):
       let extended = Instruction.extend(base: extendedArg, arg: value)
       return self.setAdd(value: extended)
-    case let .listAppend(value):
+    case let .listAppend(relativeStackIndex: value):
       let extended = Instruction.extend(base: extendedArg, arg: value)
       return self.listAdd(value: extended)
-    case let .mapAdd(value):
+    case let .mapAdd(relativeStackIndex: value):
       let extended = Instruction.extend(base: extendedArg, arg: value)
       return self.mapAdd(value: extended)
 

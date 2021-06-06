@@ -129,7 +129,7 @@ class BuilderCollectionTests: XCTestCase {
     builder.appendListAppend(relativeStackIndex: 42)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .listAppend(42))
+    XCTAssertInstructions(code, .listAppend(relativeStackIndex: 42))
   }
 
   func test_appendListAppend_extended() {
@@ -137,7 +137,7 @@ class BuilderCollectionTests: XCTestCase {
     builder.appendListAppend(relativeStackIndex: 256)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .extendedArg(1), .listAppend(0))
+    XCTAssertInstructions(code, .extendedArg(1), .listAppend(relativeStackIndex: 0))
   }
 
   // MARK: - Set add
@@ -147,7 +147,7 @@ class BuilderCollectionTests: XCTestCase {
     builder.appendSetAdd(relativeStackIndex: 42)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .setAdd(42))
+    XCTAssertInstructions(code, .setAdd(relativeStackIndex: 42))
   }
 
   func test_appendSetAdd_extended() {
@@ -155,7 +155,7 @@ class BuilderCollectionTests: XCTestCase {
     builder.appendSetAdd(relativeStackIndex: 256)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .extendedArg(1), .setAdd(0))
+    XCTAssertInstructions(code, .extendedArg(1), .setAdd(relativeStackIndex: 0))
   }
 
   // MARK: - Map add
@@ -165,7 +165,7 @@ class BuilderCollectionTests: XCTestCase {
     builder.appendMapAdd(relativeStackIndex: 42)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .mapAdd(42))
+    XCTAssertInstructions(code, .mapAdd(relativeStackIndex: 42))
   }
 
   func test_appendMapAdd_extended() {
@@ -173,7 +173,7 @@ class BuilderCollectionTests: XCTestCase {
     builder.appendMapAdd(relativeStackIndex: 256)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .extendedArg(1), .mapAdd(0))
+    XCTAssertInstructions(code, .extendedArg(1), .mapAdd(relativeStackIndex: 0))
   }
 
   // MARK: - Tuple unpack

@@ -11,6 +11,6 @@ extension CodeObjectBuilder {
   /// Append a `buildString` instruction to this code object.
   public func appendBuildString(count: Int) {
     let arg = self.appendExtendedArgIfNeeded(count)
-    self.append(.buildString(arg))
+    self.append(.buildString(elementCount: arg))
   }
 }

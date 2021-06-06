@@ -26,6 +26,6 @@ extension CodeObjectBuilder {
 
   /// Append a `raiseVarargs` instruction to this code object.
   public func appendRaiseVarargs(arg: Instruction.RaiseArg) {
-    self.append(.raiseVarargs(arg))
+    self.append(.raiseVarargs(type: arg))
   }
 }

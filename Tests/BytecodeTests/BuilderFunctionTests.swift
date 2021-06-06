@@ -14,7 +14,7 @@ class BuilderFunctionTests: XCTestCase {
     builder.appendMakeFunction(flags: flags)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .makeFunction(flags))
+    XCTAssertInstructions(code, .makeFunction(flags: flags))
   }
 
   func test_appendMakeFunction_allFlags() {
@@ -24,7 +24,7 @@ class BuilderFunctionTests: XCTestCase {
     builder.appendMakeFunction(flags: flags)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .makeFunction(flags))
+    XCTAssertInstructions(code, .makeFunction(flags: flags))
   }
 
   // MARK: - Call function

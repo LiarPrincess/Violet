@@ -147,7 +147,7 @@ public enum Instruction: Equatable {
   /// Implements in-place TOS = TOS1 | TOS.
   case inPlaceOr
   /// Performs a `Boolean` operation.
-  case compareOp(CompareType)
+  case compareOp(type: CompareType)
   /// Implements `TOS = GetAwaitable(TOS)`.
   ///
   /// `GetAwaitable(o)` returns:
@@ -205,13 +205,13 @@ public enum Instruction: Equatable {
   case buildConstKeyMap(elementCount: UInt8)
   /// Calls `set.add(TOS1[-i], TOS)`. Container object remains on the stack.
   /// Used to implement set comprehensions.
-  case setAdd(UInt8)
+  case setAdd(relativeStackIndex: UInt8)
   /// Calls `list.append(TOS[-i], TOS)`. Container object remains on the stack.
   /// Used to implement list comprehensions.
-  case listAppend(UInt8)
+  case listAppend(relativeStackIndex: UInt8)
   /// Calls `dict.setItem(TOS1[-i], TOS, TOS1)`. Container object remains on the stack.
   /// Used to implement dict comprehensions.
-  case mapAdd(UInt8)
+  case mapAdd(relativeStackIndex: UInt8)
   /// Pops count iterables from the stack, joins them in a single tuple,
   /// and pushes the result.
   /// Implements iterable unpacking in tuple displays `(*x, *y, *z)`.
@@ -307,7 +307,7 @@ public enum Instruction: Equatable {
   /// - `0x08` - has tuple containing cells for free variables,
   ///            making a closure the code associated with the function (at TOS1)
   ///            the qualified name of the function (at TOS)
-  case makeFunction(FunctionFlags)
+  case makeFunction(flags: FunctionFlags)
   /// Calls a callable object with positional arguments.
   /// `argc` indicates the number of positional arguments.
   ///
@@ -411,7 +411,7 @@ public enum Instruction: Equatable {
   /// - 0: raise (re-raise previous exception)
   /// - 1: raise TOS (raise exception instance or type at TOS)
   /// - 2: raise TOS1 from TOS (raise exception instance or type at TOS1 with Cause set to TOS)
-  case raiseVarargs(RaiseArg)
+  case raiseVarargs(type: RaiseArg)
   /// This opcode performs several operations before a `with` block starts.
   ///
   /// It does following operations:
@@ -465,7 +465,7 @@ public enum Instruction: Equatable {
   case formatValue(conversion: StringConversion, hasFormat: Bool)
   /// Concatenates `count` strings from the stack
   /// and pushes the resulting string onto the stack.
-  case buildString(UInt8)
+  case buildString(elementCount: UInt8)
   /// Prefixes any opcode which has an argument too big to fit into the default one byte.
   ///
   /// `ext` holds an additional byte which act as higher bits in the argument.
@@ -486,6 +486,6 @@ public enum Instruction: Equatable {
   /// otherwise:               name is freeVars[i - cellVars.count].
   case loadClosure(cellOrFreeIndex: UInt8)
   /// Pushes a slice object on the stack.
-  case buildSlice(SliceArg)
+  case buildSlice(type: SliceArg)
 }
 

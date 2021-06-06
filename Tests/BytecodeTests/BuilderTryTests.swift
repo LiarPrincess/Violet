@@ -113,7 +113,7 @@ class BuilderTryTests: XCTestCase {
       builder.appendRaiseVarargs(arg: v)
 
       let code = builder.finalize()
-      XCTAssertInstructions(code, .raiseVarargs(v))
+      XCTAssertInstructions(code, .raiseVarargs(type: v))
     }
   }
 }
