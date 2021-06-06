@@ -58,7 +58,6 @@ public class AST: ASTNode, CustomStringConvertible {
   ) throws -> V.ASTResult {
     trap("'accept' method should be overridden in subclass")
   }
-
 }
 
 // MARK: - InteractiveAST
@@ -92,7 +91,6 @@ public final class InteractiveAST: AST {
   ) throws -> V.ASTResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - ModuleAST
@@ -131,7 +129,6 @@ public final class ModuleAST: AST {
   ) throws -> V.ASTResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - ExpressionAST
@@ -165,7 +162,6 @@ public final class ExpressionAST: AST {
   ) throws -> V.ASTResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - Statement
@@ -213,7 +209,6 @@ public class Statement: ASTNode, CustomStringConvertible {
   ) throws -> V.StatementResult {
     trap("'accept' method should be overridden in subclass")
   }
-
 }
 
 // MARK: - FunctionDefStmt
@@ -263,7 +258,6 @@ public final class FunctionDefStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - AsyncFunctionDefStmt
@@ -313,7 +307,6 @@ public final class AsyncFunctionDefStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - ClassDefStmt
@@ -366,7 +359,6 @@ public final class ClassDefStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - ReturnStmt
@@ -398,7 +390,6 @@ public final class ReturnStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - DeleteStmt
@@ -431,7 +422,6 @@ public final class DeleteStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - AssignStmt
@@ -469,7 +459,6 @@ public final class AssignStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - AugAssignStmt
@@ -510,7 +499,6 @@ public final class AugAssignStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - AnnAssignStmt
@@ -554,7 +542,6 @@ public final class AnnAssignStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - ForStmt
@@ -601,7 +588,6 @@ public final class ForStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - AsyncForStmt
@@ -648,7 +634,6 @@ public final class AsyncForStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - WhileStmt
@@ -690,7 +675,6 @@ public final class WhileStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - IfStmt
@@ -735,7 +719,6 @@ public final class IfStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - WithItem
@@ -775,7 +758,6 @@ public struct WithItem: ASTNode, CustomStringConvertible {
     self.end = end
   }
 
-
 }
 
 // MARK: - WithStmt
@@ -812,7 +794,6 @@ public final class WithStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - AsyncWithStmt
@@ -849,7 +830,6 @@ public final class AsyncWithStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - ExceptHandler
@@ -888,7 +868,6 @@ public struct ExceptHandler: ASTNode, CustomStringConvertible {
     self.start = start
     self.end = end
   }
-
 
 }
 
@@ -945,7 +924,6 @@ public final class RaiseStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - TryStmt
@@ -989,7 +967,6 @@ public final class TryStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - AssertStmt
@@ -1026,7 +1003,6 @@ public final class AssertStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - Alias
@@ -1066,7 +1042,6 @@ public struct Alias: ASTNode, CustomStringConvertible {
     self.end = end
   }
 
-
 }
 
 // MARK: - ImportStmt
@@ -1098,7 +1073,6 @@ public final class ImportStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - ImportFromStmt
@@ -1139,7 +1113,6 @@ public final class ImportFromStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - ImportFromStarStmt
@@ -1179,7 +1152,6 @@ public final class ImportFromStarStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - GlobalStmt
@@ -1211,7 +1183,6 @@ public final class GlobalStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - NonlocalStmt
@@ -1243,7 +1214,6 @@ public final class NonlocalStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - ExprStmt
@@ -1275,7 +1245,6 @@ public final class ExprStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - PassStmt
@@ -1284,6 +1253,7 @@ public final class ExprStmt: Statement {
 public final class PassStmt: Statement {
 
 
+
   override public func accept<V: StatementVisitor>(
       _ visitor: V
   ) throws -> V.StatementResult {
@@ -1296,7 +1266,6 @@ public final class PassStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - BreakStmt
@@ -1305,6 +1274,7 @@ public final class PassStmt: Statement {
 public final class BreakStmt: Statement {
 
 
+
   override public func accept<V: StatementVisitor>(
       _ visitor: V
   ) throws -> V.StatementResult {
@@ -1317,7 +1287,6 @@ public final class BreakStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - ContinueStmt
@@ -1326,6 +1295,7 @@ public final class BreakStmt: Statement {
 public final class ContinueStmt: Statement {
 
 
+
   override public func accept<V: StatementVisitor>(
       _ visitor: V
   ) throws -> V.StatementResult {
@@ -1338,7 +1308,6 @@ public final class ContinueStmt: Statement {
   ) throws -> V.StatementResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - ExpressionContext
@@ -1405,7 +1374,6 @@ public class Expression: ASTNode, CustomStringConvertible {
   ) throws -> V.ExpressionResult {
     trap("'accept' method should be overridden in subclass")
   }
-
 }
 
 // MARK: - TrueExpr
@@ -1413,6 +1381,7 @@ public class Expression: ASTNode, CustomStringConvertible {
 public final class TrueExpr: Expression {
 
 
+
   override public func accept<V: ExpressionVisitor>(
       _ visitor: V
   ) throws -> V.ExpressionResult {
@@ -1425,7 +1394,6 @@ public final class TrueExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - FalseExpr
@@ -1433,6 +1401,7 @@ public final class TrueExpr: Expression {
 public final class FalseExpr: Expression {
 
 
+
   override public func accept<V: ExpressionVisitor>(
       _ visitor: V
   ) throws -> V.ExpressionResult {
@@ -1445,7 +1414,6 @@ public final class FalseExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - NoneExpr
@@ -1453,6 +1421,7 @@ public final class FalseExpr: Expression {
 public final class NoneExpr: Expression {
 
 
+
   override public func accept<V: ExpressionVisitor>(
       _ visitor: V
   ) throws -> V.ExpressionResult {
@@ -1465,7 +1434,6 @@ public final class NoneExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - EllipsisExpr
@@ -1473,6 +1441,7 @@ public final class NoneExpr: Expression {
 public final class EllipsisExpr: Expression {
 
 
+
   override public func accept<V: ExpressionVisitor>(
       _ visitor: V
   ) throws -> V.ExpressionResult {
@@ -1485,7 +1454,6 @@ public final class EllipsisExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - Group
@@ -1561,7 +1529,6 @@ public final class IdentifierExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - StringExpr
@@ -1593,7 +1560,6 @@ public final class StringExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - IntExpr
@@ -1625,7 +1591,6 @@ public final class IntExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - FloatExpr
@@ -1657,7 +1622,6 @@ public final class FloatExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - ComplexExpr
@@ -1692,7 +1656,6 @@ public final class ComplexExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - BytesExpr
@@ -1724,7 +1687,6 @@ public final class BytesExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - Operator
@@ -1784,7 +1746,6 @@ public final class UnaryOpExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - Operator
@@ -1873,7 +1834,6 @@ public final class BinaryOpExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - Operator
@@ -1939,7 +1899,6 @@ public final class BoolOpExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - Operator
@@ -2000,7 +1959,6 @@ extension CompareExpr {
       self.right = right
     }
 
-
   }
 }
 
@@ -2036,7 +1994,6 @@ public final class CompareExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - Element
@@ -2088,7 +2045,6 @@ public final class TupleExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - ListExpr
@@ -2121,7 +2077,6 @@ public final class ListExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - DictionaryExpr
@@ -2154,7 +2109,6 @@ public final class DictionaryExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - SetExpr
@@ -2187,7 +2141,6 @@ public final class SetExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - Comprehension
@@ -2236,7 +2189,6 @@ public struct Comprehension: ASTNode, CustomStringConvertible {
     self.end = end
   }
 
-
 }
 
 // MARK: - ListComprehensionExpr
@@ -2274,7 +2226,6 @@ public final class ListComprehensionExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - SetComprehensionExpr
@@ -2312,7 +2263,6 @@ public final class SetComprehensionExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - DictionaryComprehensionExpr
@@ -2354,7 +2304,6 @@ public final class DictionaryComprehensionExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - GeneratorExpr
@@ -2392,7 +2341,6 @@ public final class GeneratorExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - AwaitExpr
@@ -2428,7 +2376,6 @@ public final class AwaitExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - YieldExpr
@@ -2463,7 +2410,6 @@ public final class YieldExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - YieldFromExpr
@@ -2498,7 +2444,6 @@ public final class YieldFromExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - LambdaExpr
@@ -2535,7 +2480,6 @@ public final class LambdaExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - CallExpr
@@ -2577,7 +2521,6 @@ public final class CallExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - AttributeExpr
@@ -2613,7 +2556,6 @@ public final class AttributeExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - Slice
@@ -2646,7 +2588,6 @@ public struct Slice: ASTNode, CustomStringConvertible {
     self.start = start
     self.end = end
   }
-
 
 }
 
@@ -2705,7 +2646,6 @@ public final class SubscriptExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - IfExpr
@@ -2744,7 +2684,6 @@ public final class IfExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - StarredExpr
@@ -2779,7 +2718,6 @@ public final class StarredExpr: Expression {
   ) throws -> V.ExpressionResult {
     try visitor.visit(self, payload: payload)
   }
-
 }
 
 // MARK: - Arguments
@@ -2848,7 +2786,6 @@ public struct Arguments: ASTNode, CustomStringConvertible {
     self.end = end
   }
 
-
 }
 
 // MARK: - Argument
@@ -2888,7 +2825,6 @@ public struct Argument: ASTNode, CustomStringConvertible {
     self.start = start
     self.end = end
   }
-
 
 }
 
@@ -2946,7 +2882,6 @@ public struct KeywordArgument: ASTNode, CustomStringConvertible {
     self.start = start
     self.end = end
   }
-
 
 }
 

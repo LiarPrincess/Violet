@@ -5,29 +5,42 @@ let sourcesDir = elsaDir.deletingLastPathComponent()
 let rootDir = sourcesDir.deletingLastPathComponent()
 let testsDir = rootDir.appendingPathComponent("Tests")
 
+private func parse(file: URL) -> SourceFile {
+  do {
+    let content = try String(contentsOf: file, encoding: .utf8)
+    let lexer = Lexer(source: content)
+    let parser = Parser(url: file, lexer: lexer)
+    return parser.parse()
+  } catch {
+    trap("Unable to read '\(file)'")
+  }
+}
+
 private func generateAST() {
   let parserDir = sourcesDir
     .appendingPathComponent("Parser")
     .appendingPathComponent("Generated")
 
-  let definition = rootDir
+  let definitionFile = rootDir
     .appendingPathComponent("Definitions", isDirectory: true)
     .appendingPathComponent("ast.letitgo", isDirectory: false)
 
-  emitAst(
-    inputFile: definition,
+  let sourceFile = parse(file: definitionFile)
+
+  EmitAstVisitor(
+    sourceFile: sourceFile,
     outputFile: parserDir.appendingPathComponent("AST.swift")
-  )
+  ).walk()
 
-  emitAstVisitors(
-    inputFile: definition,
+  EmitAstVisitorsVisitor(
+    sourceFile: sourceFile,
     outputFile: parserDir.appendingPathComponent("ASTVisitors.swift")
-  )
+  ).walk()
 
-  emitAstBuilder(
-    inputFile: definition,
+  EmitAstBuilderVisitor(
+    sourceFile: sourceFile,
     outputFile: parserDir.appendingPathComponent("ASTBuilder.swift")
-  )
+  ).walk()
 }
 
 private func generateBytecode() {
@@ -38,27 +51,30 @@ private func generateBytecode() {
   let compilerTestsDir = testsDir
     .appendingPathComponent("CompilerTests")
 
-  let definition = rootDir
+  let definitionFile = rootDir
     .appendingPathComponent("Definitions", isDirectory: true)
     .appendingPathComponent("opcodes.letitgo", isDirectory: false)
 
-  emitBytecode(
-    inputFile: definition,
+  let sourceFile = parse(file: definitionFile)
+
+  EmitBytecodeVisitor(
+    sourceFile: sourceFile,
     outputFile: bytecodeDir.appendingPathComponent("Instructions.swift")
-  )
+  ).walk()
 
-  emitBytecodeDescription(
-    inputFile: definition,
+  EmitBytecodeDescriptionVisitor(
+    sourceFile: sourceFile,
     outputFile: bytecodeDir.appendingPathComponent("Instructions+Description.swift")
-  )
+  ).walk()
 
-  emitBytecodeTestHelpers(
-    inputFile: definition,
+  EmitBytecodeTestHelpersVisitor(
+    sourceFile: sourceFile,
     outputFile: compilerTestsDir
       .appendingPathComponent("Helpers")
       .appendingPathComponent("EmittedInstruction.swift")
-  )
+  ).walk()
 }
 
 generateAST()
 generateBytecode()
+print("Finished")

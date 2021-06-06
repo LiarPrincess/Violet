@@ -1,15 +1,16 @@
 import Foundation
 
-private let keywords: [String: TokenKind] = [
+private let keywords: [String: Token.Kind] = [
   "alias": .alias,
   "enum": .enum,
   "indirectEnum": .indirect,
   "struct": .struct,
   "class": .class,
+  "final": .final,
   "underscoreInit": .underscoreInit
 ]
 
-private let operators: [Character: TokenKind] = [
+private let operators: [Character: Token.Kind] = [
   "=": .equal,
   "|": .or,
   "*": .star,
@@ -38,13 +39,13 @@ private func isValidNameCharacter(_ c: Character) -> Bool {
 // MARK: - Lexer
 
 /// String -> stream of `Tokens`
-public class Lexer {
+class Lexer {
 
   private var source: String
   private var sourceIndex: String.Index
   private var location = SourceLocation.start
 
-  public init(source: String) {
+  init(source: String) {
     self.source = source
     self.sourceIndex = source.startIndex
   }
@@ -92,7 +93,7 @@ public class Lexer {
   // MARK: - Get token
 
   /// Get next token.
-  public func getToken() -> Token {
+  func getToken() -> Token {
     // swiftlint:disable:previous function_body_length
 
     while true {
@@ -198,12 +199,11 @@ public class Lexer {
 
   /// Unrecoverable error.
   private func fail(_ message: String, location: SourceLocation? = nil) -> Never {
-    printErr("\(location ?? self.location):\(message)")
-    exit(EXIT_FAILURE)
+    trap("\(location ?? self.location):\(message)")
   }
 
   /// Print all tokens up to eof (useful for debugging).
-  public func dumpTokens() {
+  func dumpTokens() {
     while true {
       let token = self.getToken()
       print(token)

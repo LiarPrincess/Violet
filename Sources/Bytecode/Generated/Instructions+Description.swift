@@ -25,17 +25,17 @@ extension Instruction.CompareType: CustomStringConvertible {
   public var description: String {
     switch self {
     case .equal:
-      return "equal"
+      return "=="
     case .notEqual:
-      return "notEqual"
+      return "!="
     case .less:
-      return "less"
+      return "<"
     case .lessEqual:
-      return "lessEqual"
+      return "<="
     case .greater:
-      return "greater"
+      return ">"
     case .greaterEqual:
-      return "greaterEqual"
+      return ">="
     case .`is`:
       return "is"
     case .isNot:
