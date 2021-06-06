@@ -51,7 +51,7 @@ public class PyCode: PyObject {
     Create a code object. Not for the faint of heart.
     """
 
-  private let codeObject: CodeObject
+  public let codeObject: CodeObject
 
   /// Non-unique name of this code object.
   ///
@@ -389,16 +389,5 @@ public class PyCode: PyObject {
   // sourcery: pyproperty = co_nlocals
   internal func getNLocals() -> Int {
     return self.localsCount
-  }
-
-  // MARK: - Dump
-
-  public func dump() -> String {
-    return self.codeObject.dump()
-  }
-
-  public func dumpInstruction(_ instruction: Instruction,
-                              extendedArg: Int) -> String {
-    return self.codeObject.dumpInstruction(instruction, extendedArg: extendedArg)
   }
 }

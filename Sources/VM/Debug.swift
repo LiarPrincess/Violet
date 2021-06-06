@@ -33,7 +33,7 @@ internal enum Debug {
     let title = qualifiedName.isEmpty ? "(no name)" : qualifiedName
 
     print("=== \(title) ===")
-    print(code.dump())
+    print(code)
 
     for case PyCode.Constant.code(let inner) in code.constants {
       Debug.code(inner)
@@ -46,10 +46,8 @@ internal enum Debug {
                                    index: Int,
                                    extendedArg: Int) {
     guard isEnabled else { return }
-    let instruction = code.instructions[index]
-
     let byte = index * Instruction.byteSize
-    let dump = code.dumpInstruction(instruction, extendedArg: extendedArg)
+    let dump = code.codeObject.getFilledInstruction(index: index)
     print("\(byte): \(dump)")
   }
 

@@ -18,8 +18,8 @@ private func parse(file: URL) -> SourceFile {
 
 private func generateAST() {
   let parserDir = sourcesDir
-    .appendingPathComponent("Parser")
-    .appendingPathComponent("Generated")
+    .appendingPathComponent("Parser", isDirectory: true)
+    .appendingPathComponent("Generated", isDirectory: true)
 
   let definitionFile = rootDir
     .appendingPathComponent("Definitions", isDirectory: true)
@@ -43,13 +43,14 @@ private func generateAST() {
   ).walk()
 }
 
+// swiftlint:disable:next function_body_length
 private func generateBytecode() {
   let bytecodeDir = sourcesDir
-    .appendingPathComponent("Bytecode")
-    .appendingPathComponent("Generated")
+    .appendingPathComponent("Bytecode", isDirectory: true)
+    .appendingPathComponent("Generated", isDirectory: true)
 
   let compilerTestsDir = testsDir
-    .appendingPathComponent("CompilerTests")
+    .appendingPathComponent("CompilerTests", isDirectory: true)
 
   let definitionFile = rootDir
     .appendingPathComponent("Definitions", isDirectory: true)
@@ -67,6 +68,16 @@ private func generateBytecode() {
     outputFile: bytecodeDir.appendingPathComponent("Instructions+Description.swift")
   ).walk()
 
+  EmitBytecodeFilledVisitor(
+    sourceFile: sourceFile,
+    outputFile: bytecodeDir.appendingPathComponent("Instructions+Filled.swift")
+  ).walk()
+
+  EmitBytecodeFilledDescriptionVisitor(
+    sourceFile: sourceFile,
+    outputFile: bytecodeDir.appendingPathComponent("Instructions+Filled+Description.swift")
+  ).walk()
+
   EmitBytecodeTestHelpersVisitor(
     sourceFile: sourceFile,
     outputFile: compilerTestsDir
@@ -77,4 +88,3 @@ private func generateBytecode() {
 
 generateAST()
 generateBytecode()
-print("Finished")

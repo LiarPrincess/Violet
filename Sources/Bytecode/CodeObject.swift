@@ -8,7 +8,7 @@ import VioletCore
 // (Unofficial) docs:
 // https://tech.blog.aknin.name/2010/07/03/pythons-innards-code-objects/
 
-public final class CodeObject: CustomStringConvertible {
+public final class CodeObject {
 
   // MARK: - Kind
 
@@ -83,13 +83,17 @@ public final class CodeObject: CustomStringConvertible {
   ///
   /// - Important:
   /// Labels can only be used inside a single block!
-  public struct Label: Equatable {
+  public struct Label: Equatable, CustomStringConvertible {
 
     /// Invalid Label
     public static let notAssigned = Label(jumpAddress: -1)
 
     /// Index in `CodeObject.labels`
     public internal(set) var jumpAddress: Int
+
+    public var description: String {
+      return "Label(jumpAddress: \(jumpAddress))"
+    }
 
     /// Check if this label has assigned value.
     ///
@@ -210,11 +214,6 @@ public final class CodeObject: CustomStringConvertible {
   /// Keyword only argument count.
   /// CPython: `co_kwonlyargcount`.
   public let kwOnlyArgCount: Int
-
-  public var description: String {
-    let name = self.qualifiedName.isEmpty ? "(empty)" : self.qualifiedName
-    return "CodeObject(qualifiedName: \(name))"
-  }
 
   // MARK: - Init
 

@@ -33,7 +33,7 @@ extension Instruction {
   // but Elsa does not support option sets.
 
   /// Function properties used in `MakeFunction` instruction.
-  public struct FunctionFlags: OptionSet, Equatable {
+  public struct FunctionFlags: OptionSet, Equatable, CustomStringConvertible {
 
     public let rawValue: UInt8
 
@@ -46,6 +46,17 @@ extension Instruction {
     /// 0x08
     public static let hasFreeVariables = FunctionFlags(rawValue: 0x08)
 
+    public var description: String {
+      var flags = [String]()
+      if self.contains(.hasPositionalArgDefaults) { flags.append("hasPositionalArgDefaults") }
+      if self.contains(.hasKwOnlyArgDefaults) { flags.append("hasKwOnlyArgDefaults") }
+      if self.contains(.hasAnnotations) { flags.append("hasAnnotations") }
+      if self.contains(.hasFreeVariables) { flags.append("hasFreeVariables") }
+
+      let flagsString = flags.joined(separator: ", ")
+      return "FunctionFlags(\(flagsString))"
+    }
+
     public init(rawValue: UInt8) {
       self.rawValue = rawValue
     }
@@ -57,7 +68,7 @@ extension Instruction {
   ///
   /// The idea is that `countAfter` always goes into previous
   /// `extendedArg` instruction.
-  public struct UnpackExArg {
+  public struct UnpackExArg: CustomStringConvertible {
 
     public let value: Int
 
@@ -67,6 +78,12 @@ extension Instruction {
 
     public var countAfter: Int {
       return self.value >> 8
+    }
+
+    public var description: String {
+      let before = self.countBefore
+      let after = self.countAfter
+      return "UnpackExArg(countBefore: \(before), countAfter: \(after))"
     }
 
     public init(value: Int) {

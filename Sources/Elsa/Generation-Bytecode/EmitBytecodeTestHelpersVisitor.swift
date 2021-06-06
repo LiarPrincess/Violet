@@ -2,9 +2,6 @@ import Foundation
 
 class EmitBytecodeTestHelpersVisitor: BytecodeFileVisitor {
 
-  private static let instructionEnumName = "Instruction"
-  private var hasSeenInstructionEnum = false
-
   // MARK: - Header
 
   override func printHeader() {
@@ -27,30 +24,10 @@ class EmitBytecodeTestHelpersVisitor: BytecodeFileVisitor {
     print("  }")
     print("}")
     print()
-  }
 
-  // MARK: - Footer
-
-  override func printFooter() {
-    if !self.hasSeenInstructionEnum {
-      trap("Did not find the '\(Self.instructionEnumName)' enumeration")
-    }
-  }
-
-  // MARK: - Enum
-  override func printIndirectEnum(_ def: Enumeration) {
-    self.printEnum(def)
-  }
-
-  override func printEnum(_ def: Enumeration) {
-    let name = def.name.afterResolvingAlias
-    guard name == Self.instructionEnumName else {
-      return
-    }
-
-    self.hasSeenInstructionEnum = true
-    self.emitEmittedInstructionKind(def)
-//    self.emitInstructionExtension(def)
+    let instructionEnum = self.getInstructionEnum()
+    self.emitEmittedInstructionKind(instructionEnum)
+//    self.emitInstructionExtension(instructionEnum)
   }
 
   private func emitEmittedInstructionKind(_ def: Enumeration) {
@@ -97,8 +74,6 @@ class EmitBytecodeTestHelpersVisitor: BytecodeFileVisitor {
     print("}")
     print()
   }
-
-  // MARK: - EnumDestruction
 
   private struct EnumMatcher {
     /// e.g. value0, left: value1, right: value2
