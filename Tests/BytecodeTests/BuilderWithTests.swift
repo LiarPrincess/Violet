@@ -33,7 +33,7 @@ class BuilderWithTests: XCTestCase {
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
     XCTAssertInstructions(code,
-                          .setupWith(afterBodyLabel: 0),
+                          .setupWith(afterBodyLabelIndex: 0),
                           .nop,
                           .nop)
   }

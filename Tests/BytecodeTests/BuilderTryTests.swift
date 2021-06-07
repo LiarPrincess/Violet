@@ -38,7 +38,7 @@ class BuilderTryTests: XCTestCase {
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
     XCTAssertInstructions(code,
-                          .setupExcept(firstExceptLabel: 0),
+                          .setupExcept(firstExceptLabelIndex: 0),
                           .nop,
                           .nop)
   }
@@ -57,7 +57,7 @@ class BuilderTryTests: XCTestCase {
     XCTAssertLabelAtIndex256(code, jumpAddress: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
-                          .setupExcept(firstExceptLabel: 0),
+                          .setupExcept(firstExceptLabelIndex: 0),
                           .nop,
                           .nop)
   }
@@ -75,7 +75,7 @@ class BuilderTryTests: XCTestCase {
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
     XCTAssertInstructions(code,
-                          .setupFinally(finallyStartLabel: 0),
+                          .setupFinally(finallyStartLabelIndex: 0),
                           .nop,
                           .nop)
   }
@@ -94,7 +94,7 @@ class BuilderTryTests: XCTestCase {
     XCTAssertLabelAtIndex256(code, jumpAddress: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
-                          .setupFinally(finallyStartLabel: 0),
+                          .setupFinally(finallyStartLabelIndex: 0),
                           .nop,
                           .nop)
   }

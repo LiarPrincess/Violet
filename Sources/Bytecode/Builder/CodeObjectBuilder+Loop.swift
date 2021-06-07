@@ -7,7 +7,7 @@ extension CodeObjectBuilder {
   /// Append a `setupLoop` instruction to this code object.
   public func appendSetupLoop(loopEnd: NotAssignedLabel) {
     let arg = self.appendExtendedArgsForLabelIndex(loopEnd)
-    self.append(.setupLoop(loopEndLabel: arg))
+    self.append(.setupLoop(loopEndLabelIndex: arg))
   }
 
   /// Append a `getIter` instruction to this code object.
@@ -18,7 +18,7 @@ extension CodeObjectBuilder {
   /// Append a `forIter` instruction to this code object.
   public func appendForIter(ifEmpty: NotAssignedLabel) {
     let arg = self.appendExtendedArgsForLabelIndex(ifEmpty)
-    self.append(.forIter(ifEmptyLabel: arg))
+    self.append(.forIter(ifEmptyLabelIndex: arg))
   }
 
   /// Append a `getYieldFromIter` instruction to this code object.
@@ -40,6 +40,6 @@ extension CodeObjectBuilder {
   /// (which should be a `ForIter` instruction).
   public func appendContinue(loopStartLabel: NotAssignedLabel) {
     let arg = self.appendExtendedArgsForLabelIndex(loopStartLabel)
-    self.append(.continue(loopStartLabel: arg))
+    self.append(.continue(loopStartLabelIndex: arg))
   }
 }

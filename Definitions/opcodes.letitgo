@@ -141,9 +141,9 @@ and labels properties of 'CodeObject'.
   -- Implements `TOS = TOS1 \| TOS`.
   | BinaryOr
 
-{- -------------------- -}
-{-  In-place operations -}
-{- -------------------- -}
+{- ------------------- -}
+{- In-place operations -}
+{- ------------------- -}
 
   {-
     In-place operations are like binary operations,
@@ -179,16 +179,16 @@ and labels properties of 'CodeObject'.
   -- Implements in-place `TOS = TOS1 \| TOS`.
   | InPlaceOr
 
-{- ----------- -}
-{-  Comparison -}
-{- ----------- -}
+{- ---------- -}
+{- Comparison -}
+{- ---------- -}
 
   -- Performs a comparison operation specified by argument using `TOS` and `TOS1`.
   | CompareOp(CompareType type)
 
-{- ----------- -}
-{-  Coroutines -}
-{- ----------- -}
+{- ---------- -}
+{- Coroutines -}
+{- ---------- -}
 
   -- Implements `TOS = GetAwaitable(TOS)`.
   --
@@ -227,12 +227,12 @@ and labels properties of 'CodeObject'.
 
   -- Pushes a block for a loop onto the block stack.
   -- The block spans from the current instruction up until `loopEndLabel`.
-  | SetupLoop(LabelIndex loopEndLabel)
+  | SetupLoop(LabelIndex loopEndLabelIndex)
 
   -- `TOS` is an iterator. Call its `Next()` method.
   -- If this `yields` a new value, push it on the stack (leaving the iterator below it).
   -- If not then `TOS` is popped, and the byte code counter is incremented by delta.
-  | ForIter(LabelIndex ifEmptyLabel)
+  | ForIter(LabelIndex ifEmptyLabelIndex)
 
   -- Implements `TOS = iter(TOS)`.
   | GetIter
@@ -245,11 +245,11 @@ and labels properties of 'CodeObject'.
   -- Continues a loop due to a continue statement.
   -- `loopStartLabel` is the address to jump to
   -- (which should be a `ForIter` instruction).
-  | Continue(LabelIndex loopStartLabel)
+  | Continue(LabelIndex loopStartLabelIndex)
 
-{- ------------ -}
-{-  Collections -}
-{- ------------ -}
+{- ----------- -}
+{- Collections -}
+{- ----------- -}
 
   -- Creates a tuple consuming `count` items from the stack,
   -- and pushes the resulting tuple onto the stack.
@@ -280,9 +280,9 @@ and labels properties of 'CodeObject'.
   -- Used to implement dict comprehensions.
   | MapAdd(RelativeStackIndex relativeStackIndex)
 
-{- -------- -}
-{-  Unpack  -}
-{- -------- -}
+{- ------ -}
+{- Unpack -}
+{- ------ -}
 
   -- Pops `count` iterables from the stack, joins them in a single tuple,
   -- and pushes the result.
@@ -324,9 +324,9 @@ and labels properties of 'CodeObject'.
   -- Use `Instruction.UnpackExArg struct` to handle argument.
   | UnpackEx(Count arg)
 
-{- --------------------- -}
-{-  Store, load, delete  -}
-{- --------------------- -}
+{- ------------------- -}
+{- Store, load, delete -}
+{- ------------------- -}
 
   -- Pushes constant pointed by `index` onto the stack.
   | LoadConst(ConstantIndex index)
@@ -381,9 +381,9 @@ and labels properties of 'CodeObject'.
   -- This is used for loading free variables in `class` bodies.
   | LoadClassCell(CellOrFreeIndex cellOrFreeIndex)
 
-{- ---------- -}
-{-  Function  -}
-{- ---------- -}
+{- -------- -}
+{- Function -}
+{- -------- -}
 
   -- Pushes a new function object on the stack.
   --
@@ -474,9 +474,9 @@ and labels properties of 'CodeObject'.
   -- All of them are popped and return value is pushed.
   | CallMethod(Count argumentCount)
 
-{- -------- -}
-{-  Import  -}
-{- -------- -}
+{- ------ -}
+{- Import -}
+{- ------ -}
 
   -- Loads all symbols not starting with `_` directly from the module `TOS`
   -- to the local namespace.
@@ -517,11 +517,11 @@ and labels properties of 'CodeObject'.
 
   -- Pushes a try block from a try-except clause onto the block stack.
   -- `firstExceptLabel` points to the first except block.
-  | SetupExcept(LabelIndex firstExceptLabel)
+  | SetupExcept(LabelIndex firstExceptLabelIndex)
 
   -- Pushes a try block from a try-except clause onto the block stack.
   -- `finallyStartLabel` points to the finally block.
-  | SetupFinally(LabelIndex finallyStartLabel)
+  | SetupFinally(LabelIndex finallyStartLabelIndex)
 
   -- Raises an exception using one of the 3 forms of the raise statement,
   -- depending on the value of argc:
@@ -545,7 +545,7 @@ and labels properties of 'CodeObject'.
   --
   -- The next opcode will either ignore it (`PopTop`),
   -- or store it in variable (`StoreFast`, `StoreName`, or `UnpackSequence`).
-  | SetupWith(LabelIndex afterBodyLabel)
+  | SetupWith(LabelIndex afterBodyLabelIndex)
 
   -- Cleans up the stack when a `with` statement block exits.
   --

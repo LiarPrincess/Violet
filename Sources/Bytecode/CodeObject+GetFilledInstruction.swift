@@ -122,10 +122,10 @@ extension CodeObject {
     case .printExpr:
       return wrap(.printExpr)
 
-    case let .setupLoop(loopEndLabel: arg):
+    case let .setupLoop(loopEndLabelIndex: arg):
       let label = self.getLabel(extendedArg: extendedArg, arg: arg)
       return wrap(.setupLoop(loopEndLabel: label))
-    case let .forIter(ifEmptyLabel: arg):
+    case let .forIter(ifEmptyLabelIndex: arg):
       let label = self.getLabel(extendedArg: extendedArg, arg: arg)
       return wrap(.forIter(ifEmptyLabel: label))
     case .getIter:
@@ -134,7 +134,7 @@ extension CodeObject {
       return wrap(.getYieldFromIter)
     case .break:
       return wrap(.break)
-    case let .continue(loopStartLabel: arg):
+    case let .continue(loopStartLabelIndex: arg):
       let label = self.getLabel(extendedArg: extendedArg, arg: arg)
       return wrap(.continue(loopStartLabel: label))
 
@@ -293,10 +293,10 @@ extension CodeObject {
       return wrap(.popExcept)
     case .endFinally:
       return wrap(.endFinally)
-    case let .setupExcept(firstExceptLabel: arg):
+    case let .setupExcept(firstExceptLabelIndex: arg):
       let label = self.getLabel(extendedArg: extendedArg, arg: arg)
       return wrap(.setupExcept(firstExceptLabel: label))
-    case let .setupFinally(finallyStartLabel: arg):
+    case let .setupFinally(finallyStartLabelIndex: arg):
       let label = self.getLabel(extendedArg: extendedArg, arg: arg)
       return wrap(.setupFinally(finallyStartLabel: label))
 
@@ -304,7 +304,7 @@ extension CodeObject {
       assert(extendedArg == 0)
       return wrap(.raiseVarargs(type: arg))
 
-    case let .setupWith(afterBodyLabel: arg):
+    case let .setupWith(afterBodyLabelIndex: arg):
       let label = self.getLabel(extendedArg: extendedArg, arg: arg)
       return wrap(.setupWith(afterBodyLabel: label))
     case .withCleanupStart:

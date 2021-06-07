@@ -119,7 +119,7 @@ extension CodeObject {
 
     case .break:
       return EmittedInstruction(.break)
-    case let .continue(loopStartLabel: arg):
+    case let .continue(loopStartLabelIndex: arg):
       return EmittedInstruction(.continue, String(describing: arg))
 
     case let .buildTuple(elementCount: arg):

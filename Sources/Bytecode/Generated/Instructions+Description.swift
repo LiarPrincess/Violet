@@ -163,18 +163,18 @@ extension Instruction: CustomStringConvertible {
       return "yieldFrom"
     case .printExpr:
       return "printExpr"
-    case let .setupLoop(loopEndLabel: value0):
-      return "setupLoop(loopEndLabel: \(hex(value0)))"
-    case let .forIter(ifEmptyLabel: value0):
-      return "forIter(ifEmptyLabel: \(hex(value0)))"
+    case let .setupLoop(loopEndLabelIndex: value0):
+      return "setupLoop(loopEndLabelIndex: \(hex(value0)))"
+    case let .forIter(ifEmptyLabelIndex: value0):
+      return "forIter(ifEmptyLabelIndex: \(hex(value0)))"
     case .getIter:
       return "getIter"
     case .getYieldFromIter:
       return "getYieldFromIter"
     case .`break`:
       return "break"
-    case let .`continue`(loopStartLabel: value0):
-      return "continue(loopStartLabel: \(hex(value0)))"
+    case let .`continue`(loopStartLabelIndex: value0):
+      return "continue(loopStartLabelIndex: \(hex(value0)))"
     case let .buildTuple(elementCount: value0):
       return "buildTuple(elementCount: \(hex(value0)))"
     case let .buildList(elementCount: value0):
@@ -273,14 +273,14 @@ extension Instruction: CustomStringConvertible {
       return "popExcept"
     case .endFinally:
       return "endFinally"
-    case let .setupExcept(firstExceptLabel: value0):
-      return "setupExcept(firstExceptLabel: \(hex(value0)))"
-    case let .setupFinally(finallyStartLabel: value0):
-      return "setupFinally(finallyStartLabel: \(hex(value0)))"
+    case let .setupExcept(firstExceptLabelIndex: value0):
+      return "setupExcept(firstExceptLabelIndex: \(hex(value0)))"
+    case let .setupFinally(finallyStartLabelIndex: value0):
+      return "setupFinally(finallyStartLabelIndex: \(hex(value0)))"
     case let .raiseVarargs(type: value0):
       return "raiseVarargs(type: \(value0))"
-    case let .setupWith(afterBodyLabel: value0):
-      return "setupWith(afterBodyLabel: \(hex(value0)))"
+    case let .setupWith(afterBodyLabelIndex: value0):
+      return "setupWith(afterBodyLabelIndex: \(hex(value0)))"
     case .withCleanupStart:
       return "withCleanupStart"
     case .withCleanupFinish:

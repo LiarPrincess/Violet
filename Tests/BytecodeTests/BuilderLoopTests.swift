@@ -18,7 +18,7 @@ class BuilderLoopTests: XCTestCase {
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
     XCTAssertInstructions(code,
-                          .setupLoop(loopEndLabel: 0),
+                          .setupLoop(loopEndLabelIndex: 0),
                           .nop,
                           .nop)
   }
@@ -37,7 +37,7 @@ class BuilderLoopTests: XCTestCase {
     XCTAssertLabelAtIndex256(code, jumpAddress: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
-                          .setupLoop(loopEndLabel: 0),
+                          .setupLoop(loopEndLabelIndex: 0),
                           .nop,
                           .nop)
   }
@@ -65,7 +65,7 @@ class BuilderLoopTests: XCTestCase {
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
     XCTAssertInstructions(code,
-                          .forIter(ifEmptyLabel: 0),
+                          .forIter(ifEmptyLabelIndex: 0),
                           .nop,
                           .nop)
   }
@@ -84,7 +84,7 @@ class BuilderLoopTests: XCTestCase {
     XCTAssertLabelAtIndex256(code, jumpAddress: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
-                          .forIter(ifEmptyLabel: 0),
+                          .forIter(ifEmptyLabelIndex: 0),
                           .nop,
                           .nop)
   }
@@ -122,7 +122,7 @@ class BuilderLoopTests: XCTestCase {
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
     XCTAssertInstructions(code,
-                          .continue(loopStartLabel: 0),
+                          .continue(loopStartLabelIndex: 0),
                           .nop,
                           .nop)
   }
@@ -141,7 +141,7 @@ class BuilderLoopTests: XCTestCase {
     XCTAssertLabelAtIndex256(code, jumpAddress: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
-                          .continue(loopStartLabel: 0),
+                          .continue(loopStartLabelIndex: 0),
                           .nop,
                           .nop)
   }

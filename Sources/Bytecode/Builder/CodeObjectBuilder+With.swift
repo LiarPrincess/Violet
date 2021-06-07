@@ -5,7 +5,7 @@ extension CodeObjectBuilder {
   /// Append a `setupWith` instruction to this code object.
   public func appendSetupWith(afterBody: NotAssignedLabel) {
     let arg = self.appendExtendedArgsForLabelIndex(afterBody)
-    self.append(.setupWith(afterBodyLabel: arg))
+    self.append(.setupWith(afterBodyLabelIndex: arg))
   }
 
   /// Append a `withCleanupStart` instruction to this code object.

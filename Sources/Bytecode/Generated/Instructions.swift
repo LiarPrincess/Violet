@@ -170,11 +170,11 @@ public enum Instruction: Equatable {
   case printExpr
   /// Pushes a block for a loop onto the block stack.
   /// The block spans from the current instruction up until `loopEndLabel`.
-  case setupLoop(loopEndLabel: UInt8)
+  case setupLoop(loopEndLabelIndex: UInt8)
   /// `TOS` is an iterator. Call its `Next()` method.
   /// If this `yields` a new value, push it on the stack (leaving the iterator below it).
   /// If not then `TOS` is popped, and the byte code counter is incremented by delta.
-  case forIter(ifEmptyLabel: UInt8)
+  case forIter(ifEmptyLabelIndex: UInt8)
   /// Implements `TOS = iter(TOS)`.
   case getIter
   /// If `TOS` is a generator iterator or coroutine object then it is left as is.
@@ -185,7 +185,7 @@ public enum Instruction: Equatable {
   /// Continues a loop due to a continue statement.
   /// `loopStartLabel` is the address to jump to
   /// (which should be a `ForIter` instruction).
-  case `continue`(loopStartLabel: UInt8)
+  case `continue`(loopStartLabelIndex: UInt8)
   /// Creates a tuple consuming `count` items from the stack,
   /// and pushes the resulting tuple onto the stack.
   case buildTuple(elementCount: UInt8)
@@ -400,10 +400,10 @@ public enum Instruction: Equatable {
   case endFinally
   /// Pushes a try block from a try-except clause onto the block stack.
   /// `firstExceptLabel` points to the first except block.
-  case setupExcept(firstExceptLabel: UInt8)
+  case setupExcept(firstExceptLabelIndex: UInt8)
   /// Pushes a try block from a try-except clause onto the block stack.
   /// `finallyStartLabel` points to the finally block.
-  case setupFinally(finallyStartLabel: UInt8)
+  case setupFinally(finallyStartLabelIndex: UInt8)
   /// Raises an exception using one of the 3 forms of the raise statement,
   /// depending on the value of argc:
   /// - 0: raise (re-raise previous exception)
@@ -421,7 +421,7 @@ public enum Instruction: Equatable {
   ///
   /// The next opcode will either ignore it (`PopTop`),
   /// or store it in variable (`StoreFast`, `StoreName`, or `UnpackSequence`).
-  case setupWith(afterBodyLabel: UInt8)
+  case setupWith(afterBodyLabelIndex: UInt8)
   /// Cleans up the stack when a `with` statement block exits.
   ///
   /// `TOS` is the context manager’s `__exit__()` bound method.
