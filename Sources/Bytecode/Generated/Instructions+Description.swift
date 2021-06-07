@@ -164,9 +164,9 @@ extension Instruction: CustomStringConvertible {
     case .printExpr:
       return "printExpr"
     case let .setupLoop(loopEndLabelIndex: value0):
-      return "setupLoop(loopEndLabelIndex: \(hex(value0)))"
+      return "setupLoop(loopEndLabelIndex: \(value0))"
     case let .forIter(ifEmptyLabelIndex: value0):
-      return "forIter(ifEmptyLabelIndex: \(hex(value0)))"
+      return "forIter(ifEmptyLabelIndex: \(value0))"
     case .getIter:
       return "getIter"
     case .getYieldFromIter:
@@ -174,53 +174,53 @@ extension Instruction: CustomStringConvertible {
     case .`break`:
       return "break"
     case let .`continue`(loopStartLabelIndex: value0):
-      return "continue(loopStartLabelIndex: \(hex(value0)))"
+      return "continue(loopStartLabelIndex: \(value0))"
     case let .buildTuple(elementCount: value0):
-      return "buildTuple(elementCount: \(hex(value0)))"
+      return "buildTuple(elementCount: \(value0))"
     case let .buildList(elementCount: value0):
-      return "buildList(elementCount: \(hex(value0)))"
+      return "buildList(elementCount: \(value0))"
     case let .buildSet(elementCount: value0):
-      return "buildSet(elementCount: \(hex(value0)))"
+      return "buildSet(elementCount: \(value0))"
     case let .buildMap(elementCount: value0):
-      return "buildMap(elementCount: \(hex(value0)))"
+      return "buildMap(elementCount: \(value0))"
     case let .buildConstKeyMap(elementCount: value0):
-      return "buildConstKeyMap(elementCount: \(hex(value0)))"
+      return "buildConstKeyMap(elementCount: \(value0))"
     case let .setAdd(relativeStackIndex: value0):
-      return "setAdd(relativeStackIndex: \(hex(value0)))"
+      return "setAdd(relativeStackIndex: \(value0))"
     case let .listAppend(relativeStackIndex: value0):
-      return "listAppend(relativeStackIndex: \(hex(value0)))"
+      return "listAppend(relativeStackIndex: \(value0))"
     case let .mapAdd(relativeStackIndex: value0):
-      return "mapAdd(relativeStackIndex: \(hex(value0)))"
+      return "mapAdd(relativeStackIndex: \(value0))"
     case let .buildTupleUnpack(elementCount: value0):
-      return "buildTupleUnpack(elementCount: \(hex(value0)))"
+      return "buildTupleUnpack(elementCount: \(value0))"
     case let .buildTupleUnpackWithCall(elementCount: value0):
-      return "buildTupleUnpackWithCall(elementCount: \(hex(value0)))"
+      return "buildTupleUnpackWithCall(elementCount: \(value0))"
     case let .buildListUnpack(elementCount: value0):
-      return "buildListUnpack(elementCount: \(hex(value0)))"
+      return "buildListUnpack(elementCount: \(value0))"
     case let .buildSetUnpack(elementCount: value0):
-      return "buildSetUnpack(elementCount: \(hex(value0)))"
+      return "buildSetUnpack(elementCount: \(value0))"
     case let .buildMapUnpack(elementCount: value0):
-      return "buildMapUnpack(elementCount: \(hex(value0)))"
+      return "buildMapUnpack(elementCount: \(value0))"
     case let .buildMapUnpackWithCall(elementCount: value0):
-      return "buildMapUnpackWithCall(elementCount: \(hex(value0)))"
+      return "buildMapUnpackWithCall(elementCount: \(value0))"
     case let .unpackSequence(elementCount: value0):
-      return "unpackSequence(elementCount: \(hex(value0)))"
+      return "unpackSequence(elementCount: \(value0))"
     case let .unpackEx(arg: value0):
-      return "unpackEx(arg: \(hex(value0)))"
+      return "unpackEx(arg: \(value0))"
     case let .loadConst(index: value0):
-      return "loadConst(index: \(hex(value0)))"
+      return "loadConst(index: \(value0))"
     case let .storeName(nameIndex: value0):
-      return "storeName(nameIndex: \(hex(value0)))"
+      return "storeName(nameIndex: \(value0))"
     case let .loadName(nameIndex: value0):
-      return "loadName(nameIndex: \(hex(value0)))"
+      return "loadName(nameIndex: \(value0))"
     case let .deleteName(nameIndex: value0):
-      return "deleteName(nameIndex: \(hex(value0)))"
+      return "deleteName(nameIndex: \(value0))"
     case let .storeAttribute(nameIndex: value0):
-      return "storeAttribute(nameIndex: \(hex(value0)))"
+      return "storeAttribute(nameIndex: \(value0))"
     case let .loadAttribute(nameIndex: value0):
-      return "loadAttribute(nameIndex: \(hex(value0)))"
+      return "loadAttribute(nameIndex: \(value0))"
     case let .deleteAttribute(nameIndex: value0):
-      return "deleteAttribute(nameIndex: \(hex(value0)))"
+      return "deleteAttribute(nameIndex: \(value0))"
     case .binarySubscript:
       return "binarySubscript"
     case .storeSubscript:
@@ -228,31 +228,31 @@ extension Instruction: CustomStringConvertible {
     case .deleteSubscript:
       return "deleteSubscript"
     case let .storeGlobal(nameIndex: value0):
-      return "storeGlobal(nameIndex: \(hex(value0)))"
+      return "storeGlobal(nameIndex: \(value0))"
     case let .loadGlobal(nameIndex: value0):
-      return "loadGlobal(nameIndex: \(hex(value0)))"
+      return "loadGlobal(nameIndex: \(value0))"
     case let .deleteGlobal(nameIndex: value0):
-      return "deleteGlobal(nameIndex: \(hex(value0)))"
+      return "deleteGlobal(nameIndex: \(value0))"
     case let .loadFast(variableIndex: value0):
-      return "loadFast(variableIndex: \(hex(value0)))"
+      return "loadFast(variableIndex: \(value0))"
     case let .storeFast(variableIndex: value0):
-      return "storeFast(variableIndex: \(hex(value0)))"
+      return "storeFast(variableIndex: \(value0))"
     case let .deleteFast(variableIndex: value0):
-      return "deleteFast(variableIndex: \(hex(value0)))"
+      return "deleteFast(variableIndex: \(value0))"
     case let .loadCellOrFree(cellOrFreeIndex: value0):
-      return "loadCellOrFree(cellOrFreeIndex: \(hex(value0)))"
+      return "loadCellOrFree(cellOrFreeIndex: \(value0))"
     case let .storeCellOrFree(cellOrFreeIndex: value0):
-      return "storeCellOrFree(cellOrFreeIndex: \(hex(value0)))"
+      return "storeCellOrFree(cellOrFreeIndex: \(value0))"
     case let .deleteCellOrFree(cellOrFreeIndex: value0):
-      return "deleteCellOrFree(cellOrFreeIndex: \(hex(value0)))"
+      return "deleteCellOrFree(cellOrFreeIndex: \(value0))"
     case let .loadClassCell(cellOrFreeIndex: value0):
-      return "loadClassCell(cellOrFreeIndex: \(hex(value0)))"
+      return "loadClassCell(cellOrFreeIndex: \(value0))"
     case let .makeFunction(flags: value0):
       return "makeFunction(flags: \(value0))"
     case let .callFunction(argumentCount: value0):
-      return "callFunction(argumentCount: \(hex(value0)))"
+      return "callFunction(argumentCount: \(value0))"
     case let .callFunctionKw(argumentCount: value0):
-      return "callFunctionKw(argumentCount: \(hex(value0)))"
+      return "callFunctionKw(argumentCount: \(value0))"
     case let .callFunctionEx(hasKeywordArguments: value0):
       return "callFunctionEx(hasKeywordArguments: \(value0))"
     case .`return`:
@@ -260,27 +260,27 @@ extension Instruction: CustomStringConvertible {
     case .loadBuildClass:
       return "loadBuildClass"
     case let .loadMethod(nameIndex: value0):
-      return "loadMethod(nameIndex: \(hex(value0)))"
+      return "loadMethod(nameIndex: \(value0))"
     case let .callMethod(argumentCount: value0):
-      return "callMethod(argumentCount: \(hex(value0)))"
+      return "callMethod(argumentCount: \(value0))"
     case .importStar:
       return "importStar"
     case let .importName(nameIndex: value0):
-      return "importName(nameIndex: \(hex(value0)))"
+      return "importName(nameIndex: \(value0))"
     case let .importFrom(nameIndex: value0):
-      return "importFrom(nameIndex: \(hex(value0)))"
+      return "importFrom(nameIndex: \(value0))"
     case .popExcept:
       return "popExcept"
     case .endFinally:
       return "endFinally"
     case let .setupExcept(firstExceptLabelIndex: value0):
-      return "setupExcept(firstExceptLabelIndex: \(hex(value0)))"
+      return "setupExcept(firstExceptLabelIndex: \(value0))"
     case let .setupFinally(finallyStartLabelIndex: value0):
-      return "setupFinally(finallyStartLabelIndex: \(hex(value0)))"
+      return "setupFinally(finallyStartLabelIndex: \(value0))"
     case let .raiseVarargs(type: value0):
       return "raiseVarargs(type: \(value0))"
     case let .setupWith(afterBodyLabelIndex: value0):
-      return "setupWith(afterBodyLabelIndex: \(hex(value0)))"
+      return "setupWith(afterBodyLabelIndex: \(value0))"
     case .withCleanupStart:
       return "withCleanupStart"
     case .withCleanupFinish:
@@ -290,35 +290,30 @@ extension Instruction: CustomStringConvertible {
     case .setupAsyncWith:
       return "setupAsyncWith"
     case let .jumpAbsolute(labelIndex: value0):
-      return "jumpAbsolute(labelIndex: \(hex(value0)))"
+      return "jumpAbsolute(labelIndex: \(value0))"
     case let .popJumpIfTrue(labelIndex: value0):
-      return "popJumpIfTrue(labelIndex: \(hex(value0)))"
+      return "popJumpIfTrue(labelIndex: \(value0))"
     case let .popJumpIfFalse(labelIndex: value0):
-      return "popJumpIfFalse(labelIndex: \(hex(value0)))"
+      return "popJumpIfFalse(labelIndex: \(value0))"
     case let .jumpIfTrueOrPop(labelIndex: value0):
-      return "jumpIfTrueOrPop(labelIndex: \(hex(value0)))"
+      return "jumpIfTrueOrPop(labelIndex: \(value0))"
     case let .jumpIfFalseOrPop(labelIndex: value0):
-      return "jumpIfFalseOrPop(labelIndex: \(hex(value0)))"
+      return "jumpIfFalseOrPop(labelIndex: \(value0))"
     case let .formatValue(conversion: value0, hasFormat: value1):
       return "formatValue(conversion: \(value0), hasFormat: \(value1))"
     case let .buildString(elementCount: value0):
-      return "buildString(elementCount: \(hex(value0)))"
+      return "buildString(elementCount: \(value0))"
     case let .extendedArg(value0):
-      return "extendedArg(\(hex(value0)))"
+      return "extendedArg(\(value0))"
     case .setupAnnotations:
       return "setupAnnotations"
     case .popBlock:
       return "popBlock"
     case let .loadClosure(cellOrFreeIndex: value0):
-      return "loadClosure(cellOrFreeIndex: \(hex(value0)))"
+      return "loadClosure(cellOrFreeIndex: \(value0))"
     case let .buildSlice(type: value0):
       return "buildSlice(type: \(value0))"
     }
   }
 }
 
-private func hex(_ value: UInt8) -> String {
-  let s = String(value, radix: 16, uppercase: false)
-  let prefix = s.count < 2 ? "0" : ""
-  return "0x" + prefix + s
-}

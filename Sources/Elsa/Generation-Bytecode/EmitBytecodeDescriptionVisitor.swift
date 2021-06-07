@@ -24,18 +24,6 @@ class EmitBytecodeDescriptionVisitor: BytecodeFileVisitor {
     print()
   }
 
-  // MARK: - Footer
-
-  override func printFooter() {
-    print("""
-    private func hex(_ value: UInt8) -> String {
-      let s = String(value, radix: 16, uppercase: false)
-      let prefix = s.count < 2 ? \"0\" : \"\"
-      return \"0x\" + prefix + s
-    }
-    """)
-  }
-
   // MARK: - Enum
 
   override func printIndirectEnum(_ def: Enumeration) {

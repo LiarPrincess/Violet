@@ -4,7 +4,13 @@ import VioletCore
 
 // swiftlint:disable file_length
 
-private func XCTAssertDescription(_ instruction: Instruction,
+private let elsa = "elsa"
+/// Mangled name with value: `_Frozen__Elsa`
+private let _Frozen__Elsa = MangledName(className: "Frozen", name: "__Elsa")
+/// Label with `jumpAddress = 42`
+private let label42 = CodeObject.Label(jumpAddress: 42)
+
+private func XCTAssertDescription(_ instruction: Instruction.Filled,
                                   _ expected: String,
                                   file: StaticString = #file,
                                   line: UInt = #line) {
@@ -12,7 +18,11 @@ private func XCTAssertDescription(_ instruction: Instruction,
   XCTAssertEqual(description, expected, file: file, line: line)
 }
 
-class InstructionDescriptionTests: XCTestCase {
+class InstructionFilledDescriptionTests: XCTestCase {
+
+  func test_isOurMangledNameCorrect() {
+    XCTAssertEqual(_Frozen__Elsa.value, "_Frozen__Elsa")
+  }
 
   // MARK: - General
 
@@ -112,7 +122,7 @@ class InstructionDescriptionTests: XCTestCase {
   }
 
   // MARK: - Loops and collections
-
+/*
   func test_loops() {
     XCTAssertDescription(
       .setupLoop(loopEndLabelIndex: 42),
@@ -139,7 +149,7 @@ class InstructionDescriptionTests: XCTestCase {
       "continue(loopStartLabelIndex: 42)"
     )
   }
-
+*/
   func test_collections() {
     XCTAssertDescription(
       .buildTuple(elementCount: 42),
@@ -204,48 +214,84 @@ class InstructionDescriptionTests: XCTestCase {
       .unpackSequence(elementCount: 42),
       "unpackSequence(elementCount: 42)"
     )
+
+    let unpackExArg = Instruction.UnpackExArg(countBefore: 42, countAfter: 43)
     XCTAssertDescription(
-      .unpackEx(arg: 42),
-      "unpackEx(arg: 42)"
+      .unpackEx(arg: unpackExArg),
+      "unpackEx(arg: UnpackExArg(countBefore: 42, countAfter: 43))"
     )
   }
 
   // MARK: - Store, load, delete
 
   func test_storeLoadDelete_constant() {
+    XCTAssertDescription(.loadConst(.true), "loadConst(true)")
+    XCTAssertDescription(.loadConst(.false), "loadConst(false)")
+
+    XCTAssertDescription(.loadConst(.none), "loadConst(none)")
+    XCTAssertDescription(.loadConst(.ellipsis), "loadConst(ellipsis)")
+
     XCTAssertDescription(
-      .loadConst(index: 42),
-      "loadConst(index: 42)"
+      .loadConst(.integer(42)),
+      "loadConst(integer(42))"
+    )
+    XCTAssertDescription(
+      .loadConst(.float(42.3)),
+      "loadConst(float(42.3))"
+    )
+    XCTAssertDescription(
+      .loadConst(.complex(real: 42.3, imag: 45.6)),
+      "loadConst(complex(real: 42.3, imag: 45.6))"
+    )
+
+    XCTAssertDescription(
+      .loadConst(.string(elsa)),
+      "loadConst(string(elsa))"
+    )
+    XCTAssertDescription(
+      .loadConst(.bytes(Data([42, 45]))),
+      "loadConst(bytes(2 bytes))"
+    )
+
+    // We are NOT doing this one (too much work)!
+//    XCTAssertDescription(
+//      .loadConst(.code(CodeObject)),
+//      "loadConst(code(CodeObject))"
+//    )
+
+    XCTAssertDescription(
+      .loadConst(.tuple([.true, .false, .string(elsa)])),
+      "loadConst(tuple([true, false, string(elsa)]))"
     )
   }
 
   func test_storeLoadDelete_name() {
     XCTAssertDescription(
-      .storeName(nameIndex: 42),
-      "storeName(nameIndex: 42)"
+      .storeName(name: elsa),
+      "storeName(name: elsa)"
     )
     XCTAssertDescription(
-      .loadName(nameIndex: 42),
-      "loadName(nameIndex: 42)"
+      .loadName(name: elsa),
+      "loadName(name: elsa)"
     )
     XCTAssertDescription(
-      .deleteName(nameIndex: 42),
-      "deleteName(nameIndex: 42)"
+      .deleteName(name: elsa),
+      "deleteName(name: elsa)"
     )
   }
 
   func test_storeLoadDelete_attribute() {
     XCTAssertDescription(
-      .storeAttribute(nameIndex: 42),
-      "storeAttribute(nameIndex: 42)"
+      .storeAttribute(name: elsa),
+      "storeAttribute(name: elsa)"
     )
     XCTAssertDescription(
-      .loadAttribute(nameIndex: 42),
-      "loadAttribute(nameIndex: 42)"
+      .loadAttribute(name: elsa),
+      "loadAttribute(name: elsa)"
     )
     XCTAssertDescription(
-      .deleteAttribute(nameIndex: 42),
-      "deleteAttribute(nameIndex: 42)"
+      .deleteAttribute(name: elsa),
+      "deleteAttribute(name: elsa)"
     )
   }
 
@@ -266,50 +312,50 @@ class InstructionDescriptionTests: XCTestCase {
 
   func test_storeLoadDelete_global() {
     XCTAssertDescription(
-      .storeGlobal(nameIndex: 42),
-      "storeGlobal(nameIndex: 42)"
+      .storeGlobal(name: elsa),
+      "storeGlobal(name: elsa)"
     )
     XCTAssertDescription(
-      .loadGlobal(nameIndex: 42),
-      "loadGlobal(nameIndex: 42)"
+      .loadGlobal(name: elsa),
+      "loadGlobal(name: elsa)"
     )
     XCTAssertDescription(
-      .deleteGlobal(nameIndex: 42),
-      "deleteGlobal(nameIndex: 42)"
+      .deleteGlobal(name: elsa),
+      "deleteGlobal(name: elsa)"
     )
   }
 
   func test_storeLoadDelete_fast() {
     XCTAssertDescription(
-      .loadFast(variableIndex: 42),
-      "loadFast(variableIndex: 42)"
+      .loadFast(variable: _Frozen__Elsa),
+      "loadFast(variable: _Frozen__Elsa)"
     )
     XCTAssertDescription(
-      .storeFast(variableIndex: 42),
-      "storeFast(variableIndex: 42)"
+      .storeFast(variable: _Frozen__Elsa),
+      "storeFast(variable: _Frozen__Elsa)"
     )
     XCTAssertDescription(
-      .deleteFast(variableIndex: 42),
-      "deleteFast(variableIndex: 42)"
+      .deleteFast(variable: _Frozen__Elsa),
+      "deleteFast(variable: _Frozen__Elsa)"
     )
   }
 
   func test_storeLoadDelete_cellOrFree() {
     XCTAssertDescription(
-      .loadCellOrFree(cellOrFreeIndex: 42),
-      "loadCellOrFree(cellOrFreeIndex: 42)"
+      .loadCellOrFree(cellOrFree: _Frozen__Elsa),
+      "loadCellOrFree(cellOrFree: _Frozen__Elsa)"
     )
     XCTAssertDescription(
-      .storeCellOrFree(cellOrFreeIndex: 42),
-      "storeCellOrFree(cellOrFreeIndex: 42)"
+      .storeCellOrFree(cellOrFree: _Frozen__Elsa),
+      "storeCellOrFree(cellOrFree: _Frozen__Elsa)"
     )
     XCTAssertDescription(
-      .deleteCellOrFree(cellOrFreeIndex: 42),
-      "deleteCellOrFree(cellOrFreeIndex: 42)"
+      .deleteCellOrFree(cellOrFree: _Frozen__Elsa),
+      "deleteCellOrFree(cellOrFree: _Frozen__Elsa)"
     )
     XCTAssertDescription(
-      .loadClassCell(cellOrFreeIndex: 42),
-      "loadClassCell(cellOrFreeIndex: 42)"
+      .loadClassCell(cellOrFree: _Frozen__Elsa),
+      "loadClassCell(cellOrFree: _Frozen__Elsa)"
     )
   }
 
@@ -345,8 +391,8 @@ class InstructionDescriptionTests: XCTestCase {
       "return"
     )
     XCTAssertDescription(
-      .loadMethod(nameIndex: 42),
-      "loadMethod(nameIndex: 42)"
+      .loadMethod(name: elsa),
+      "loadMethod(name: elsa)"
     )
     XCTAssertDescription(
       .callMethod(argumentCount: 42),
@@ -368,12 +414,12 @@ class InstructionDescriptionTests: XCTestCase {
       "importStar"
     )
     XCTAssertDescription(
-      .importName(nameIndex: 42),
-      "importName(nameIndex: 42)"
+      .importName(name: elsa),
+      "importName(name: elsa)"
     )
     XCTAssertDescription(
-      .importFrom(nameIndex: 42),
-      "importFrom(nameIndex: 42)"
+      .importFrom(name: elsa),
+      "importFrom(name: elsa)"
     )
   }
 
@@ -389,12 +435,12 @@ class InstructionDescriptionTests: XCTestCase {
       "endFinally"
     )
     XCTAssertDescription(
-      .setupExcept(firstExceptLabelIndex: 42),
-      "setupExcept(firstExceptLabelIndex: 42)"
+      .setupExcept(firstExceptLabel: label42),
+      "setupExcept(firstExceptLabel: Label(jumpAddress: 42))"
     )
     XCTAssertDescription(
-      .setupFinally(finallyStartLabelIndex: 42),
-      "setupFinally(finallyStartLabelIndex: 42)"
+      .setupFinally(finallyStartLabel: label42),
+      "setupFinally(finallyStartLabel: Label(jumpAddress: 42))"
     )
 
     XCTAssertDescription(
@@ -415,8 +461,8 @@ class InstructionDescriptionTests: XCTestCase {
 
   func test_with() {
     XCTAssertDescription(
-      .setupWith(afterBodyLabelIndex: 42),
-      "setupWith(afterBodyLabelIndex: 42)"
+      .setupWith(afterBodyLabel: label42),
+      "setupWith(afterBodyLabel: Label(jumpAddress: 42))"
     )
     XCTAssertDescription(
       .withCleanupStart,
@@ -440,24 +486,24 @@ class InstructionDescriptionTests: XCTestCase {
 
   func test_jumps() {
     XCTAssertDescription(
-      .jumpAbsolute(labelIndex: 42),
-      "jumpAbsolute(labelIndex: 42)"
+      .jumpAbsolute(label: label42),
+      "jumpAbsolute(label: Label(jumpAddress: 42))"
     )
     XCTAssertDescription(
-      .popJumpIfTrue(labelIndex: 42),
-      "popJumpIfTrue(labelIndex: 42)"
+      .popJumpIfTrue(label: label42),
+      "popJumpIfTrue(label: Label(jumpAddress: 42))"
     )
     XCTAssertDescription(
-      .popJumpIfFalse(labelIndex: 42),
-      "popJumpIfFalse(labelIndex: 42)"
+      .popJumpIfFalse(label: label42),
+      "popJumpIfFalse(label: Label(jumpAddress: 42))"
     )
     XCTAssertDescription(
-      .jumpIfTrueOrPop(labelIndex: 42),
-      "jumpIfTrueOrPop(labelIndex: 42)"
+      .jumpIfTrueOrPop(label: label42),
+      "jumpIfTrueOrPop(label: Label(jumpAddress: 42))"
     )
     XCTAssertDescription(
-      .jumpIfFalseOrPop(labelIndex: 42),
-      "jumpIfFalseOrPop(labelIndex: 42)"
+      .jumpIfFalseOrPop(label: label42),
+      "jumpIfFalseOrPop(label: Label(jumpAddress: 42))"
     )
   }
 
@@ -487,12 +533,6 @@ class InstructionDescriptionTests: XCTestCase {
     )
   }
 
-  // MARK: - Extended
-
-  func test_extended() {
-    XCTAssertDescription(.extendedArg(42), "extendedArg(42)")
-  }
-
   // MARK: - Other
 
   func test_other() {
@@ -505,8 +545,8 @@ class InstructionDescriptionTests: XCTestCase {
       "popBlock"
     )
     XCTAssertDescription(
-      .loadClosure(cellOrFreeIndex: 42),
-      "loadClosure(cellOrFreeIndex: 42)"
+      .loadClosure(cellOrFree: _Frozen__Elsa),
+      "loadClosure(cellOrFree: _Frozen__Elsa)"
     )
 
     XCTAssertDescription(

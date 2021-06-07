@@ -57,13 +57,7 @@ class BytecodeFileVisitor: SourceFileVisitor {
       // Part used when printing description:
       // - without label: '\(value0), '
       // - with label:    'left: \(value0), '
-      let description: String = {
-        let isUInt8 = property.type.afterResolvingAlias == "UInt8"
-        let valueToPrint = isUInt8 ? "hex(\(valueBinding))" : valueBinding
-        return "\(labelColonSpace)\\(\(valueToPrint))\(comma)"
-      }()
-
-      result.description += description
+      result.description += "\(labelColonSpace)\\(\(valueBinding))\(comma)"
     }
 
     return result
