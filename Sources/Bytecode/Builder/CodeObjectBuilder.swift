@@ -52,9 +52,7 @@ public final class CodeObjectBuilder {
     self.kwOnlyArgCount = kwOnlyArgCount
     self.firstLine = firstLine
 
-    self.cache = CodeObjectBuilderCache(constants: [],
-                                        names: [],
-                                        variableNames: variableNames,
+    self.cache = CodeObjectBuilderCache(variableNames: variableNames,
                                         freeVariableNames: freeVariableNames,
                                         cellVariableNames: cellVariableNames)
   }

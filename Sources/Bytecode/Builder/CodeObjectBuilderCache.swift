@@ -29,37 +29,35 @@ internal struct CodeObjectBuilderCache {
   /// Index inside `CodeObjectBuilder.cellVariableNames` that contains given `name`.
   internal let cellVariableNames: [MangledName: Int]
 
-  internal init(constants: [CodeObject.Constant],
-                names: [String],
-                variableNames: [MangledName],
+  internal init(variableNames: [MangledName],
                 freeVariableNames: [MangledName],
                 cellVariableNames: [MangledName]) {
-    for (index, constant) in constants.enumerated() {
-      switch constant {
-      case .true:
-        self.true = index
-      case .false:
-        self.false = index
-      case .none:
-        self.none = index
-      case .ellipsis:
-        self.ellipsis = index
+//    for (index, constant) in constants.enumerated() {
+//      switch constant {
+//      case .true:
+//        self.true = index
+//      case .false:
+//        self.false = index
+//      case .none:
+//        self.none = index
+//      case .ellipsis:
+//        self.ellipsis = index
+//
+//      case let .string(s):
+//        let key = UseScalarsToHashString(s)
+//        self.constantStrings[key] = index
+//
+//      case let .integer(i) where i == 0:
+//        self.zero = index
+//      case let .integer(i) where i == 1:
+//        self.one = index
+//
+//      case .integer, .float, .complex, .bytes, .code, .tuple:
+//        break
+//      }
+//    }
 
-      case let .string(s):
-        let key = UseScalarsToHashString(s)
-        self.constantStrings[key] = index
-
-      case let .integer(i) where i == 0:
-        self.zero = index
-      case let .integer(i) where i == 1:
-        self.one = index
-
-      case .integer, .float, .complex, .bytes, .code, .tuple:
-        break
-      }
-    }
-
-    self.names = toIndexDict(names: names)
+//    self.names = toIndexDict(names: names)
     self.variableNames = toIndexDict(names: variableNames)
     self.freeVariableNames = toIndexDict(names: freeVariableNames)
     self.cellVariableNames = toIndexDict(names: cellVariableNames)
