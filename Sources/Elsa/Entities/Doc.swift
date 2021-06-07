@@ -22,7 +22,7 @@ struct Doc {
     self.lines = selfLines
   }
 
-  func formatForPrinting(indent: String) -> String {
+  func formatForPrintingInSwift(indent: String) -> String {
     var result = ""
 
     for (index, line) in self.lines.enumerated() {
@@ -32,6 +32,21 @@ struct Doc {
       let isLast = index == self.lines.count - 1
       if !isLast {
         result += "\n"
+      }
+    }
+
+    return result
+  }
+
+  func formatForPrintingInMarkdownTable(indent: String) -> String {
+    var result = ""
+
+    for (index, line) in self.lines.enumerated() {
+      result += indent + line
+
+      let isLast = index == self.lines.count - 1
+      if !isLast {
+        result += "<br/>"
       }
     }
 

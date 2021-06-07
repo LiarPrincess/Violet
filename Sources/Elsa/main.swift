@@ -1,5 +1,7 @@
 import Foundation
 
+// swiftlint:disable function_body_length
+
 let elsaDir = URL(fileURLWithPath: #file).deletingLastPathComponent()
 let sourcesDir = elsaDir.deletingLastPathComponent()
 let rootDir = sourcesDir.deletingLastPathComponent()
@@ -15,6 +17,8 @@ private func parse(file: URL) -> SourceFile {
     trap("Unable to read '\(file)'")
   }
 }
+
+// MARK: - AST
 
 private func generateAST() {
   let parserDir = sourcesDir
@@ -43,10 +47,13 @@ private func generateAST() {
   ).walk()
 }
 
-// swiftlint:disable:next function_body_length
+// MARK: - Bytecode
+
 private func generateBytecode() {
   let bytecodeDir = sourcesDir
     .appendingPathComponent("Bytecode", isDirectory: true)
+
+  let bytecodeGeneratedDir = bytecodeDir
     .appendingPathComponent("Generated", isDirectory: true)
 
   let compilerTestsDir = testsDir
@@ -60,22 +67,26 @@ private func generateBytecode() {
 
   EmitBytecodeVisitor(
     sourceFile: sourceFile,
-    outputFile: bytecodeDir.appendingPathComponent("Instructions.swift")
+    outputFile: bytecodeGeneratedDir
+      .appendingPathComponent("Instructions.swift")
   ).walk()
 
   EmitBytecodeDescriptionVisitor(
     sourceFile: sourceFile,
-    outputFile: bytecodeDir.appendingPathComponent("Instructions+Description.swift")
+    outputFile: bytecodeGeneratedDir
+      .appendingPathComponent("Instructions+Description.swift")
   ).walk()
 
   EmitBytecodeFilledVisitor(
     sourceFile: sourceFile,
-    outputFile: bytecodeDir.appendingPathComponent("Instructions+Filled.swift")
+    outputFile: bytecodeGeneratedDir
+      .appendingPathComponent("Instructions+Filled.swift")
   ).walk()
 
   EmitBytecodeFilledDescriptionVisitor(
     sourceFile: sourceFile,
-    outputFile: bytecodeDir.appendingPathComponent("Instructions+Filled+Description.swift")
+    outputFile: bytecodeGeneratedDir
+      .appendingPathComponent("Instructions+Filled+Description.swift")
   ).walk()
 
   EmitBytecodeTestHelpersVisitor(
@@ -84,7 +95,15 @@ private func generateBytecode() {
       .appendingPathComponent("Helpers")
       .appendingPathComponent("EmittedInstruction.swift")
   ).walk()
+
+  EmitBytecodeDocumentationVisitor(
+    sourceFile: sourceFile,
+    outputFile: bytecodeDir
+      .appendingPathComponent("README_Instructions.md")
+  ).walk()
 }
+
+// MARK: - Main
 
 generateAST()
 generateBytecode()
