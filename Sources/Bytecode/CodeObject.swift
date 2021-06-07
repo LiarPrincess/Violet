@@ -103,14 +103,19 @@ public final class CodeObject {
     }
   }
 
-  // MARK: - Properties
+  // MARK: - Names
 
-  public static let moduleName = "<module>"
-  public static let lambdaName = "<lambda>"
-  public static let generatorExpressionName = "<genexpr>"
-  public static let listComprehensionName = "<listcomp>"
-  public static let setComprehensionName = "<setcomp>"
-  public static let dictionaryComprehensionName = "<dictcomp>"
+  /// Predefined names to use for `CodeObjects`.
+  public enum Names {
+    public static let module = "<module>"
+    public static let lambda = "<lambda>"
+    public static let generatorExpression = "<genexpr>"
+    public static let listComprehension = "<listcomp>"
+    public static let setComprehension = "<setcomp>"
+    public static let dictionaryComprehension = "<dictcomp>"
+  }
+
+  // MARK: - Properties
 
   /// Non-unique name of this code object.
   ///

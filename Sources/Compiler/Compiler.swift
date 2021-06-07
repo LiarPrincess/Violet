@@ -387,9 +387,9 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   private func createName(scope: SymbolScope, kind: CodeObject.Kind) -> String {
     switch kind {
     case .module:
-      return CodeObject.moduleName
+      return CodeObject.Names.module
     case .lambda:
-      return CodeObject.lambdaName
+      return CodeObject.Names.lambda
     case .comprehension:
       return scope.name
     case .class,
