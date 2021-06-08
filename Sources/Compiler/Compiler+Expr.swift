@@ -260,8 +260,12 @@ extension CompilerImpl {
       throw self.error(.awaitOutsideFunction)
     }
 
-    let kind = self.builder.kind
-    guard kind == .asyncFunction || kind == .comprehension else {
+    // We only allow 'await' inside async functions
+    // (and comprehensions inside those async functions).
+    switch self.builder.kind {
+    case .asyncFunction, .comprehension:
+      break
+    case .module, .class, .function, .lambda:
       throw self.error(.awaitOutsideAsyncFunction)
     }
 

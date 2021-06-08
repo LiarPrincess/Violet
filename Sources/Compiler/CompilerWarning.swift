@@ -1,4 +1,5 @@
 import VioletCore
+import VioletBytecode
 
 // MARK: - Warning
 
@@ -32,7 +33,7 @@ public struct CompilerWarning: CustomStringConvertible {
     /// See:
     /// - [docs](https://docs.python.org/3/reference/expressions.html#yield-expressions)
     /// - [bug report](https://bugs.python.org/issue10544)
-    case yieldInsideComprehension(ComprehensionKind)
+    case yieldInsideComprehension(CodeObject.ComprehensionKind)
     /// Assertion is always true, perhaps remove parentheses?
     case assertionWithTuple
 

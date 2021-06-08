@@ -1,5 +1,6 @@
 import VioletCore
 import VioletParser
+import VioletBytecode
 
 // In CPython:
 // Python -> symtable.c
@@ -182,7 +183,7 @@ extension SymbolTableBuilderImpl {
                                   value: Expression?,
                                   generators: NonEmptyArray<Comprehension>,
                                   expr: Expression,
-                                  kind: ComprehensionKind) throws {
+                                  kind: CodeObject.ComprehensionKind) throws {
     // iterator (source) is evaluated in parent scope
     let first = generators.first
     try self.visit(first.iterable)
@@ -218,12 +219,12 @@ extension SymbolTableBuilderImpl {
     self.leaveScope()
   }
 
-  private func getIdentifier(for kind: ComprehensionKind) -> String {
+  private func getIdentifier(for kind: CodeObject.ComprehensionKind) -> String {
     switch kind {
-    case .list: return SymbolScopeNames.listcomp
-    case .set: return SymbolScopeNames.setcomp
-    case .dictionary: return SymbolScopeNames.dictcomp
-    case .generator: return SymbolScopeNames.genexpr
+    case .list: return SymbolScopeNames.Comprehension.list
+    case .set: return SymbolScopeNames.Comprehension.set
+    case .dictionary: return SymbolScopeNames.Comprehension.dictionary
+    case .generator: return SymbolScopeNames.Comprehension.generatorExpression
     }
   }
 

@@ -2,6 +2,8 @@ import Foundation
 import BigInt
 import VioletCore
 
+// swiftlint:disable file_length
+
 // In CPython:
 // Objects -> codeobject.c // cSpell:disable-line
 
@@ -15,13 +17,13 @@ public final class CodeObject: Equatable {
 
   // MARK: - Kind
 
-  public enum Kind: CustomStringConvertible {
+  public enum Kind: Equatable, CustomStringConvertible {
     case module
     case `class`
     case function
     case asyncFunction
     case lambda
-    case comprehension
+    case comprehension(ComprehensionKind)
 
     public var description: String {
       switch self {
@@ -30,7 +32,23 @@ public final class CodeObject: Equatable {
       case .function: return "Function"
       case .asyncFunction: return "Async function"
       case .lambda: return "Lambda"
-      case .comprehension: return "Comprehension"
+      case .comprehension(let kind): return "Comprehension(\(kind))"
+      }
+    }
+  }
+
+  public enum ComprehensionKind: Equatable, CustomStringConvertible {
+    case list
+    case set
+    case dictionary
+    case generator
+
+    public var description: String {
+      switch self {
+      case .list: return "list"
+      case .set: return "set"
+      case .dictionary: return "dictionary"
+      case .generator: return "generator"
       }
     }
   }
@@ -77,7 +95,6 @@ public final class CodeObject: Equatable {
 
       return "FunctionFlags(\(flags))"
     }
-
 
     public init(rawValue: UInt16) {
       self.rawValue = rawValue

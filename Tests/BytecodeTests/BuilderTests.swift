@@ -86,18 +86,26 @@ class BuilderTests: XCTestCase {
   }
 
   func test_names_forComprehension() {
-    let kind = CodeObject.Kind.comprehension
+    let values: [CodeObject.ComprehensionKind] = [
+      .list,
+      .set,
+      .dictionary,
+      .generator
+    ]
 
-    let builder = createBuilder(name: name,
-                                qualifiedName: qualifiedName,
-                                filename: filename,
-                                kind: kind)
+    for v in values {
+      let kind = CodeObject.Kind.comprehension(v)
+      let builder = createBuilder(name: name,
+                                  qualifiedName: qualifiedName,
+                                  filename: filename,
+                                  kind: kind)
 
-    let code = builder.finalize()
-    XCTAssertEqual(code.name, name)
-    XCTAssertEqual(code.qualifiedName, qualifiedName)
-    XCTAssertEqual(code.filename, filename)
-    XCTAssertEqual(code.kind, kind)
+      let code = builder.finalize()
+      XCTAssertEqual(code.name, name)
+      XCTAssertEqual(code.qualifiedName, qualifiedName)
+      XCTAssertEqual(code.filename, filename)
+      XCTAssertEqual(code.kind, kind)
+    }
   }
 
   // MARK: - Flags

@@ -370,16 +370,18 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   // MARK: - Scope/builder helpers
 
   private func hasKind(scope: SymbolScope, kind: CodeObject.Kind) -> Bool {
-    switch scope.kind {
+    let scopeKind = scope.kind
+
+    switch kind {
     case .module:
-      return kind == .module
+      return scopeKind == .module
     case .class:
-      return kind == .class
-    case .function:
-      return kind == .function
-        || kind == .asyncFunction
-        || kind == .lambda
-        || kind == .comprehension
+      return scopeKind == .class
+    case .function,
+         .asyncFunction,
+         .lambda,
+     .comprehension:
+      return scopeKind == .function
     }
   }
 
