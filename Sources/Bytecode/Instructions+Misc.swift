@@ -47,14 +47,24 @@ extension Instruction {
     public static let hasFreeVariables = FunctionFlags(rawValue: 0x08)
 
     public var description: String {
-      var flags = [String]()
-      if self.contains(.hasPositionalArgDefaults) { flags.append("hasPositionalArgDefaults") }
-      if self.contains(.hasKwOnlyArgDefaults) { flags.append("hasKwOnlyArgDefaults") }
-      if self.contains(.hasAnnotations) { flags.append("hasAnnotations") }
-      if self.contains(.hasFreeVariables) { flags.append("hasFreeVariables") }
+      var flags = ""
 
-      let flagsString = flags.joined(separator: ", ")
-      return "FunctionFlags(\(flagsString))"
+      func appendIfSet(_ flag: FunctionFlags, name: String) {
+        if self.contains(flag) {
+          if flags.any {
+            flags += ", "
+          }
+
+          flags.append(name)
+        }
+      }
+
+      appendIfSet(.hasPositionalArgDefaults, name: "hasPositionalArgDefaults")
+      appendIfSet(.hasKwOnlyArgDefaults, name: "hasKwOnlyArgDefaults")
+      appendIfSet(.hasAnnotations, name: "hasAnnotations")
+      appendIfSet(.hasFreeVariables, name: "hasFreeVariables")
+
+      return "FunctionFlags(\(flags))"
     }
 
     public init(rawValue: UInt8) {
@@ -68,7 +78,7 @@ extension Instruction {
   ///
   /// The idea is that `countAfter` always goes into previous
   /// `extendedArg` instruction.
-  public struct UnpackExArg: CustomStringConvertible {
+  public struct UnpackExArg: Equatable, CustomStringConvertible {
 
     public let value: Int
 

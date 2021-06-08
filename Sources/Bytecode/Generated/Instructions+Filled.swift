@@ -13,7 +13,7 @@ extension Instruction {
   ///
   /// Can be used for utility functionality (like printing),
   /// but the performance is not adequate for `VM` use.
-  public enum Filled {
+  public enum Filled: Equatable {
       /// Do nothing code.
       case nop
       /// Removes the top-of-stack (`TOS`) item.

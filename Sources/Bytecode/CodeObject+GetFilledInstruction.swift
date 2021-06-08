@@ -382,7 +382,12 @@ extension CodeObject {
 
   private func getCellOrFree(extendedArg: Int, arg: UInt8) -> MangledName {
     let index = self.extend(base: extendedArg, arg: arg)
-    return self.cellVariableNames[index]
+    let cellCount = self.cellVariableNames.count
+
+    // In `VM.Frame.cellsAndFreeVariables` we store `cells` first and then `free`.
+    return index < cellCount ?
+      self.cellVariableNames[index] :
+      self.freeVariableNames[index - cellCount]
   }
 
   private func extend(base: Int, arg: UInt8) -> Int {

@@ -4,7 +4,10 @@ import VioletCore
 
 // swiftlint:disable file_length
 
+/// String `elsa`
 private let elsa = "elsa"
+/// `Data` representing 'elsa' in ASCII
+private let elsaBytes = Data([101, 108, 115, 97])
 /// Mangled name with value: `_Frozen__Elsa`
 private let _Frozen__Elsa = MangledName(className: "Frozen", name: "__Elsa")
 /// Label with `jumpAddress = 42`
@@ -249,8 +252,8 @@ class InstructionFilledDescriptionTests: XCTestCase {
       "loadConst(string(elsa))"
     )
     XCTAssertDescription(
-      .loadConst(.bytes(Data([42, 45]))),
-      "loadConst(bytes(2 bytes))"
+      .loadConst(.bytes(elsaBytes)),
+      "loadConst(bytes(4 bytes))"
     )
 
     // We are NOT doing this one (too much work)!
@@ -436,11 +439,11 @@ class InstructionFilledDescriptionTests: XCTestCase {
     )
     XCTAssertDescription(
       .setupExcept(firstExceptLabel: label42),
-      "setupExcept(firstExceptLabel: Label(jumpAddress: 42))"
+      "setupExcept(firstExceptLabel: Label(instructionIndex: 42, byteOffset: 84))"
     )
     XCTAssertDescription(
       .setupFinally(finallyStartLabel: label42),
-      "setupFinally(finallyStartLabel: Label(jumpAddress: 42))"
+      "setupFinally(finallyStartLabel: Label(instructionIndex: 42, byteOffset: 84))"
     )
 
     XCTAssertDescription(
@@ -462,7 +465,7 @@ class InstructionFilledDescriptionTests: XCTestCase {
   func test_with() {
     XCTAssertDescription(
       .setupWith(afterBodyLabel: label42),
-      "setupWith(afterBodyLabel: Label(jumpAddress: 42))"
+      "setupWith(afterBodyLabel: Label(instructionIndex: 42, byteOffset: 84))"
     )
     XCTAssertDescription(
       .withCleanupStart,
@@ -487,23 +490,23 @@ class InstructionFilledDescriptionTests: XCTestCase {
   func test_jumps() {
     XCTAssertDescription(
       .jumpAbsolute(label: label42),
-      "jumpAbsolute(label: Label(jumpAddress: 42))"
+      "jumpAbsolute(label: Label(instructionIndex: 42, byteOffset: 84))"
     )
     XCTAssertDescription(
       .popJumpIfTrue(label: label42),
-      "popJumpIfTrue(label: Label(jumpAddress: 42))"
+      "popJumpIfTrue(label: Label(instructionIndex: 42, byteOffset: 84))"
     )
     XCTAssertDescription(
       .popJumpIfFalse(label: label42),
-      "popJumpIfFalse(label: Label(jumpAddress: 42))"
+      "popJumpIfFalse(label: Label(instructionIndex: 42, byteOffset: 84))"
     )
     XCTAssertDescription(
       .jumpIfTrueOrPop(label: label42),
-      "jumpIfTrueOrPop(label: Label(jumpAddress: 42))"
+      "jumpIfTrueOrPop(label: Label(instructionIndex: 42, byteOffset: 84))"
     )
     XCTAssertDescription(
       .jumpIfFalseOrPop(label: label42),
-      "jumpIfFalseOrPop(label: Label(jumpAddress: 42))"
+      "jumpIfFalseOrPop(label: Label(instructionIndex: 42, byteOffset: 84))"
     )
   }
 

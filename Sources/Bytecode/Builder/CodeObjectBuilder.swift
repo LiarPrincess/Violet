@@ -194,7 +194,7 @@ public final class CodeObjectBuilder {
     self.trapMissingVariableName(name: name, type: .free)
   }
 
-  // Int 'VM.Frame.cellsAndFreeVariables' we store cells first and then free.
+  /// In `VM.Frame.cellsAndFreeVariables` we store `cells` first and then `free`.
   internal func offsetFreeVariable(index: Int) -> Int {
     let offset = self.cellVariableNames.count
     return offset + index

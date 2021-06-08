@@ -86,7 +86,7 @@ public final class CodeObject: Equatable {
 
   // MARK: - Constant
 
-  public enum Constant: CustomStringConvertible {
+  public enum Constant: Equatable, CustomStringConvertible {
     case `true`
     case `false`
     case none
@@ -118,23 +118,25 @@ public final class CodeObject: Equatable {
 
   // MARK: - Label
 
-  /// Index of jump target in `CodeObject.labels`.
+  /// Jump target, index in `CodeObject.instructions`.
   ///
   /// Basically a wrapper around array index for additional type safety (otherwise
-  /// we would have to use `Int` which can be mistaken with any other `int`).
+  /// we would have to use `Int` which can be mistaken with any other `Int`).
   ///
   /// - Important:
-  /// Labels can only be used inside a single block!
+  /// Labels can only be used inside a `CodeObject` that contains it!
   public struct Label: Equatable, CustomStringConvertible {
 
     /// Invalid Label
     public static let notAssigned = Label(jumpAddress: -1)
 
-    /// Index in `CodeObject.labels`
+    /// Index in `CodeObject.instructions`
     public internal(set) var jumpAddress: Int
 
     public var description: String {
-      return "Label(jumpAddress: \(jumpAddress))"
+      let index = self.jumpAddress
+      let byteOffset = index * Instruction.byteSize
+      return "Label(instructionIndex: \(index), byteOffset: \(byteOffset))"
     }
 
     /// Check if this label has assigned value.
@@ -296,5 +298,12 @@ public final class CodeObject: Equatable {
     self.cellVariableNames = cellVariableNames
     self.argCount = argCount
     self.kwOnlyArgCount = kwOnlyArgCount
+  }
+
+  // MARK: - Equatable
+
+  // This is mostly for tests
+  public static func == (lhs: CodeObject, rhs: CodeObject) -> Bool {
+    return lhs === rhs
   }
 }

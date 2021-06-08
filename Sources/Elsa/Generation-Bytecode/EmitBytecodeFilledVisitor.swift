@@ -15,7 +15,7 @@ class EmitBytecodeFilledVisitor: BytecodeFileVisitor {
     print("  ///")
     print("  /// Can be used for utility functionality (like printing),")
     print("  /// but the performance is not adequate for `VM` use.")
-    print("  public enum \(Self.filledEnumName) {")
+    print("  public enum \(Self.filledEnumName): Equatable {")
 
     let filledInstructions = self.getFilledInstructions()
     for instruction in filledInstructions {

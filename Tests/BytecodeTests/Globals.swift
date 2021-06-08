@@ -56,6 +56,31 @@ func XCTAssertInstructions(_ code: CodeObject,
   }
 }
 
+func XCTAssertFilledInstructions(_ code: CodeObject,
+                                 _ expected: Instruction.Filled...,
+                                 file: StaticString = #file,
+                                 line: UInt = #line) {
+  var expectedIndex = 0
+  var instructionIndex: Int? = 0
+
+  while let index = instructionIndex {
+    let filled = code.getFilledInstruction(index: index)
+    let instruction = filled.instruction
+
+    // We may have more 'instructions' than 'expected'
+    if expectedIndex < expected.count {
+      let expectedInstruction = expected[expectedIndex]
+      XCTAssertEqual(instruction, expectedInstruction, file: file, line: line)
+    }
+
+    expectedIndex += 1
+    instructionIndex = filled.nextInstructionIndex
+  }
+
+  let instructionCount = expectedIndex
+  XCTAssertEqual(instructionCount, expected.count, "Count", file: file, line: line)
+}
+
 // MARK: - Lines
 
 func XCTAssertInstructionLines(_ code: CodeObject,
