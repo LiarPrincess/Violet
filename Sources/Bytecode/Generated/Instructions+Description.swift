@@ -20,7 +20,6 @@ extension Instruction.StringConversion: CustomStringConvertible {
     }
   }
 }
-
 extension Instruction.CompareType: CustomStringConvertible {
   public var description: String {
     switch self {
@@ -49,7 +48,6 @@ extension Instruction.CompareType: CustomStringConvertible {
     }
   }
 }
-
 extension Instruction.SliceArg: CustomStringConvertible {
   public var description: String {
     switch self {
@@ -60,7 +58,6 @@ extension Instruction.SliceArg: CustomStringConvertible {
     }
   }
 }
-
 extension Instruction.RaiseArg: CustomStringConvertible {
   public var description: String {
     switch self {
@@ -73,7 +70,6 @@ extension Instruction.RaiseArg: CustomStringConvertible {
     }
   }
 }
-
 extension Instruction: CustomStringConvertible {
   public var description: String {
     switch self {
@@ -316,4 +312,3 @@ extension Instruction: CustomStringConvertible {
     }
   }
 }
-

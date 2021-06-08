@@ -8,7 +8,11 @@ extension CodeObject: CustomStringConvertible {
       Name: \(self.name)
       QualifiedName: \(self.qualifiedName)
       Filename: \(self.filename)
-      Type: \(self.kindString)
+      Kind: \(self.kind)
+      Flags: \(self.flags)
+      Arg count: \(self.argCount)
+      Keyword only arg count: \(self.kwOnlyArgCount)
+      First line: \(self.firstLine)
 
       \(instructions)
       """
@@ -33,22 +37,14 @@ extension CodeObject: CustomStringConvertible {
       let filled = self.getFilledInstruction(index: index)
       let instruction = filled.instruction
 
-      result.append("\(lineString) \(byteString) \(instruction)\n")
+      let isLast = filled.nextInstructionIndex == nil
+      let newLine = isLast ? "" : "\n"
+
+      result.append("\(lineString) \(byteString) \(instruction)\(newLine)")
       instructionIndex = filled.nextInstructionIndex // IMPORTANT!
     }
 
     return result
-  }
-
-  private var kindString: String {
-    switch self.kind {
-    case .module: return "Module"
-    case .class: return "Class"
-    case .function: return "Function"
-    case .asyncFunction: return "Async function"
-    case .lambda: return "Lambda"
-    case .comprehension: return "Comprehension"
-    }
   }
 
   private func getLinesColumnWidth() -> Int {

@@ -58,6 +58,5 @@ class EmitBytecodeDescriptionVisitor: BytecodeFileVisitor {
     print("    }") // switch
     print("  }") // var description
     print("}")
-    print("")
   }
 }

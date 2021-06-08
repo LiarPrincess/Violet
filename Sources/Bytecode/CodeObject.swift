@@ -8,22 +8,36 @@ import VioletCore
 // (Unofficial) docs:
 // https://tech.blog.aknin.name/2010/07/03/pythons-innards-code-objects/
 
-public final class CodeObject {
+/// Bytecode container.
+///
+/// Use `CodeObjectBuilder` for creation.
+public final class CodeObject: Equatable {
 
   // MARK: - Kind
 
-  public enum Kind {
+  public enum Kind: CustomStringConvertible {
     case module
     case `class`
     case function
     case asyncFunction
     case lambda
     case comprehension
+
+    public var description: String {
+      switch self {
+      case .module: return "Module"
+      case .class: return "Class"
+      case .function: return "Function"
+      case .asyncFunction: return "Async function"
+      case .lambda: return "Lambda"
+      case .comprehension: return "Comprehension"
+      }
+    }
   }
 
   // MARK: - Flags
 
-  public struct Flags: OptionSet {
+  public struct Flags: OptionSet, CustomStringConvertible {
     public let rawValue: UInt16
 
     public static let optimized = Flags(rawValue: 0x0001)
@@ -36,6 +50,34 @@ public final class CodeObject {
     public static let coroutine = Flags(rawValue: 0x0080)
     public static let iterableCoroutine = Flags(rawValue: 0x0100)
     public static let asyncGenerator = Flags(rawValue: 0x0200)
+
+    public var description: String {
+      var flags = ""
+
+      func appendIfSet(_ flag: Flags, name: String) {
+        if self.contains(flag) {
+          if flags.any {
+            flags += ", "
+          }
+
+          flags.append(name)
+        }
+      }
+
+      appendIfSet(.optimized, name: "optimized")
+      appendIfSet(.newLocals, name: "newLocals")
+      appendIfSet(.varArgs, name: "varArgs")
+      appendIfSet(.varKeywords, name: "varKeywords")
+      appendIfSet(.nested, name: "nested")
+      appendIfSet(.generator, name: "generator")
+      appendIfSet(.noFree, name: "noFree")
+      appendIfSet(.coroutine, name: "coroutine")
+      appendIfSet(.iterableCoroutine, name: "iterableCoroutine")
+      appendIfSet(.asyncGenerator, name: "asyncGenerator")
+
+      return "FunctionFlags(\(flags))"
+    }
+
 
     public init(rawValue: UInt16) {
       self.rawValue = rawValue
