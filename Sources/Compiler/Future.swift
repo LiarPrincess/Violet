@@ -135,7 +135,7 @@ public struct FutureFeatures {
       case "braces":
         throw CompilerError(.fromFutureImportBraces, location: errorLocation)
       default:
-        let kind = CompilerErrorKind.undefinedFutureFeature(alias.name)
+        let kind = CompilerError.Kind.undefinedFutureFeature(alias.name)
         throw CompilerError(kind, location: errorLocation)
       }
     }

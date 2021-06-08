@@ -194,9 +194,9 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
 
   // MARK: - Annotations
 
-  private func setupAnnotationsIfNeeded<C: Collection>(
-    statements: C
-  ) where C.Element == Statement {
+  private func setupAnnotationsIfNeeded<S: Sequence>(
+    statements: S
+  ) where S.Element == Statement {
     if self.hasAnnotations(statements: statements) {
       self.builder.appendSetupAnnotations()
     }
@@ -205,9 +205,9 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   /// Search if variable annotations are present statically in a block.
   ///
   /// find_ann(asdl_seq *stmts)
-  private func hasAnnotations<S: Sequence>(statements: S) -> Bool
-    where S.Element == Statement {
-
+  private func hasAnnotations<S: Sequence>(
+    statements: S
+  ) -> Bool where S.Element == Statement {
     return statements.contains(where: self.hasAnnotations(statement:))
   }
 
@@ -606,13 +606,13 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   // MARK: - Error/warning
 
   /// Report compiler warning
-  internal func warn(_ kind: CompilerWarningKind) {
+  internal func warn(_ kind: CompilerWarning.Kind) {
     let warning = CompilerWarning(kind, location: self.appendLocation)
     self.delegate?.warn(warning: warning)
   }
 
   /// Create compiler error
-  internal func error(_ kind: CompilerErrorKind) -> CompilerError {
+  internal func error(_ kind: CompilerError.Kind) -> CompilerError {
     return CompilerError(kind, location: self.appendLocation)
   }
 }

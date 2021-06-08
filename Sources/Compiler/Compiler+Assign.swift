@@ -197,8 +197,7 @@ extension CompilerImpl {
           try self.visitAnnSlice(lower: l, upper: u, step: s)
 
         case .extSlice:
-          let kind = CompilerErrorKind.extendedSliceNestedInsideExtendedSlice
-          throw self.error(kind)
+          throw self.error(.extendedSliceNestedInsideExtendedSlice)
         }
       }
     }
