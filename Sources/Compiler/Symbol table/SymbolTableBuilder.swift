@@ -33,7 +33,7 @@ internal final class SymbolTableBuilderImpl:
   /// Current scope is at the top, top scope is at the bottom.
   private var scopeStack = [SymbolScope]()
 
-  private var scopeByNode = ScopeByNodeDictionary()
+  private var scopeByNode = SymbolTable.ScopeByNode()
 
   internal weak var delegate: CompilerDelegate?
 
@@ -62,7 +62,7 @@ internal final class SymbolTableBuilderImpl:
 
   /// PySymtable_BuildObject(mod_ty mod, ...)
   internal func visit(ast: AST) throws -> SymbolTable {
-    self.enterScope(name: SymbolScopeNames.top, type: .module, node: ast)
+    self.enterScope(name: SymbolScopeNames.top, kind: .module, node: ast)
 
     try ast.accept(self)
 
@@ -93,13 +93,14 @@ internal final class SymbolTableBuilderImpl:
   /// Push new scope and add as child to current scope.
   ///
   /// symtable_enter_block(struct symtable *st, identifier name, ...)
-  internal func enterScope<N: ASTNode>(name: String, type: ScopeType, node: N) {
-    let isNested = self.scopeStack.any &&
-      (self.scopeStack.last?.isNested ?? false || type == .function)
+  internal func enterScope<N: ASTNode>(name: String, kind: SymbolScope.Kind, node: N) {
+    let isParentNested = self.scopeStack.last?.isNested ?? false
+    let isNestedFunction = self.scopeStack.any && kind == .function
+    let isNested = isParentNested || isNestedFunction
 
     let previous = self.scopeStack.last
 
-    let scope = SymbolScope(name: name, type: type, isNested: isNested)
+    let scope = SymbolScope(name: name, kind: kind, isNested: isNested)
     self.scopeStack.push(scope)
     self.scopeByNode[node] = scope
     previous?.children.append(scope)
@@ -126,7 +127,7 @@ internal final class SymbolTableBuilderImpl:
   /// In general variables with '__' prefix should only be used if we
   /// really need mangling to avoid potential name clash.
   internal func addSymbol(name: String,
-                          flags: SymbolFlags,
+                          flags: Symbol.Flags,
                           location: SourceLocation) throws {
     let mangled = MangledName(className: self.className, name: name)
 
@@ -143,7 +144,7 @@ internal final class SymbolTableBuilderImpl:
       flagsToSet.formUnion(current.flags)
     }
 
-    let info = SymbolInfo(flags: flagsToSet, location: firstLocation)
+    let info = Symbol(flags: flagsToSet, location: firstLocation)
     self.currentScope.symbols[mangled] = info
 
     if flags.contains(.defParam) {
@@ -154,7 +155,7 @@ internal final class SymbolTableBuilderImpl:
         globalFlagsToSet.formUnion(currentGlobal.flags)
       }
 
-      let globalInfo = SymbolInfo(flags: globalFlagsToSet, location: firstLocation)
+      let globalInfo = Symbol(flags: globalFlagsToSet, location: firstLocation)
       self.topScope.symbols[mangled] = globalInfo
     }
   }
@@ -162,7 +163,7 @@ internal final class SymbolTableBuilderImpl:
   /// Lookup mangled name in current scope.
   ///
   /// symtable_lookup(struct symtable *st, PyObject *name)
-  internal func lookupMangled(name: String) -> SymbolInfo? {
+  internal func lookupMangled(name: String) -> Symbol? {
     let mangled = MangledName(className: self.className, name: name)
     return self.currentScope.symbols[mangled]
   }
@@ -235,13 +236,13 @@ internal final class SymbolTableBuilderImpl:
   // MARK: - Error/warning
 
   /// Report compiler warning
-  internal func warn(_ kind: CompilerWarningKind, location: SourceLocation) {
+  internal func warn(_ kind: CompilerWarning.Kind, location: SourceLocation) {
     let warning = CompilerWarning(kind, location: location)
     self.delegate?.warn(warning: warning)
   }
 
   /// Create compiler error
-  internal func error(_ kind: CompilerErrorKind,
+  internal func error(_ kind: CompilerError.Kind,
                       location: SourceLocation) -> CompilerError {
     return CompilerError(kind, location: location)
   }

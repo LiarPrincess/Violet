@@ -14,7 +14,7 @@ class STTopScope: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(expr: expr) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -34,7 +34,7 @@ class STTopScope: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -55,7 +55,7 @@ class STTopScope: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,

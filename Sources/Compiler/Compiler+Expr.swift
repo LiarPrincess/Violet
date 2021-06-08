@@ -79,11 +79,11 @@ extension CompilerImpl {
     } else if flags.contains(.cell) {
       operation = .cell
     } else if flags.contains(.srcLocal) {
-      if self.currentScope.type == .function {
+      if self.currentScope.kind == .function {
         operation = .fast
       }
     } else if flags.contains(.srcGlobalImplicit) {
-      if self.currentScope.type == .function {
+      if self.currentScope.kind == .function {
         operation = .global
       }
     } else if flags.contains(.srcGlobalExplicit) {
@@ -92,7 +92,7 @@ extension CompilerImpl {
 
     switch operation {
     case .cell:
-      let isLoadInClass = context == .load && self.currentScope.type == .class
+      let isLoadInClass = context == .load && self.currentScope.kind == .class
       if isLoadInClass {
         self.builder.appendLoadClassCell(mangled)
       } else {
@@ -256,7 +256,7 @@ extension CompilerImpl {
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visit(_ node: AwaitExpr) throws {
-    guard self.currentScope.type == .function else {
+    guard self.currentScope.kind == .function else {
       throw self.error(.awaitOutsideFunction)
     }
 
@@ -275,7 +275,7 @@ extension CompilerImpl {
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visit(_ node: YieldExpr) throws {
-    guard self.currentScope.type == .function else {
+    guard self.currentScope.kind == .function else {
       throw self.error(.yieldOutsideFunction)
     }
 
@@ -290,7 +290,7 @@ extension CompilerImpl {
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visit(_ node: YieldFromExpr) throws {
-    guard self.currentScope.type == .function else {
+    guard self.currentScope.kind == .function else {
       throw self.error(.yieldOutsideFunction)
     }
 

@@ -1,15 +1,15 @@
 import VioletCore
 import VioletBytecode
 
+// swiftlint:disable file_length
+// swiftlint:disable function_body_length
+
 // In CPython:
 // Python -> symtable.c
 
 // Implements a 2nd pass when creating symbol table.
 // This is basically 1:1 translation from CPython.
 // It is quite complicated (but it does make sense if you spend some time with it).
-
-// swiftlint:disable file_length
-// swiftlint:disable function_body_length
 
 // MARK: - Outer context
 
@@ -22,15 +22,13 @@ private final class OuterContext {
   /// Usage:
   /// - child - add new free variables
   /// - parent - bind free variables from child with locals (creating `cells`)
-  fileprivate var free: [MangledName: SymbolInfo]
-
+  fileprivate var free: [MangledName: Symbol]
   /// Set of declared global variables in outer scopes (used for globals)
   fileprivate var global: Set<MangledName>
-
   /// Set of variables bound in outer scopes (used for nonlocals)
   fileprivate var bound: Set<MangledName>
 
-  fileprivate init(free: [MangledName: SymbolInfo],
+  fileprivate init(free: [MangledName: Symbol],
                    bound: Set<MangledName>,
                    global: Set<MangledName>) {
     self.free = free
@@ -44,24 +42,19 @@ private final class OuterContext {
 /// Structure that represents current scope
 /// (basically everything INSIDE of the function).
 private final class ScopeContext {
-
   /// Names bound in block
   fileprivate var local = Set<MangledName>()
-
   /// Sources for each symbol (basically the main thing in this pass).
   /// CPython: `scopes`
-  fileprivate var symbolSources = [MangledName: SymbolFlags]()
-
+  fileprivate var symbolSources = [MangledName: Symbol.Flags]()
   /// Variable names visible in nested blocks.
   /// Basically: outer bound + our local bound
   fileprivate var newBound = Set<MangledName>()
-
   /// Global names visible in nested blocks.
   /// Basically: outer global + our local global
   fileprivate var newGlobal = Set<MangledName>()
-
   /// Free variable that should be resolved by parent scope.
-  fileprivate var newFree = [MangledName: SymbolInfo]()
+  fileprivate var newFree = [MangledName: Symbol]()
 }
 
 // MARK: - Variable source pass
@@ -81,7 +74,7 @@ internal final class SymbolTableVariableSourcePass {
     let context = ScopeContext()
 
     // Classes are 'transparent' for variable definitions
-    if let outer = outerContext, scope.type == .class {
+    if let outer = outerContext, scope.kind == .class {
       context.newBound.formUnion(outer.bound)
       context.newGlobal.formUnion(outer.global)
     }
@@ -96,8 +89,8 @@ internal final class SymbolTableVariableSourcePass {
     }
 
     // Populate global and bound sets to be passed to children
-    if scope.type != .class {
-      if scope.type == .function {
+    if scope.kind != .class {
+      if scope.kind == .function {
         context.newBound.formUnion(context.local)
       }
 
@@ -112,7 +105,7 @@ internal final class SymbolTableVariableSourcePass {
     }
 
     // Recursively call analyzeChildBlock() on each child block
-    var allFree = [MangledName: SymbolInfo]()
+    var allFree = [MangledName: Symbol]()
     for child in scope.children {
       try self.analyzeChildBlock(scope: child,
                                  scopeContext: context,
@@ -124,9 +117,9 @@ internal final class SymbolTableVariableSourcePass {
     self.mergeFree(target: &context.newFree, src: allFree)
 
     // Check if any local variables must be converted to cells
-    if scope.type == .function {
+    if scope.kind == .function {
       self.bindChildFreeVariablesToLocalCells(scopeContext: context)
-    } else if scope.type == .class {
+    } else if scope.kind == .class {
       self.remove__class__(scope: scope, scopeContext: context)
     }
 
@@ -141,8 +134,8 @@ internal final class SymbolTableVariableSourcePass {
     }
   }
 
-  private func mergeFree(target: inout [MangledName: SymbolInfo],
-                         src: [MangledName: SymbolInfo]) {
+  private func mergeFree(target: inout [MangledName: Symbol],
+                         src: [MangledName: Symbol]) {
     target.merge(src) { lhs, _ in lhs }
   }
 
@@ -152,7 +145,7 @@ internal final class SymbolTableVariableSourcePass {
   ///
   /// analyze_name(PySTEntryObject *ste, PyObject *scopes, PyObject *name, ...)
   private func analyzeName(_ name: MangledName,
-                           info: SymbolInfo,
+                           info: Symbol,
                            scope: SymbolScope,
                            scopeContext: ScopeContext,
                            outerContext: OuterContext?) throws {
@@ -163,7 +156,7 @@ internal final class SymbolTableVariableSourcePass {
 
     if flags.contains(.defGlobal) {
       if flags.contains(.defNonlocal) {
-        let kind = CompilerErrorKind.bothGlobalAndNonlocal(name.beforeMangling)
+        let kind = CompilerError.Kind.bothGlobalAndNonlocal(name.beforeMangling)
         throw self.error(kind, location: info.location)
       }
 
@@ -175,12 +168,12 @@ internal final class SymbolTableVariableSourcePass {
 
     if flags.contains(.defNonlocal) {
       guard let bound = outerContext?.bound else {
-        let kind = CompilerErrorKind.nonlocalAtModuleLevel(name.beforeMangling)
+        let kind = CompilerError.Kind.nonlocalAtModuleLevel(name.beforeMangling)
         throw self.error(kind, location: info.location)
       }
 
       if !bound.contains(name) {
-        let kind = CompilerErrorKind.nonlocalWithoutBinding(name.beforeMangling)
+        let kind = CompilerError.Kind.nonlocalWithoutBinding(name.beforeMangling)
         throw self.error(kind, location: info.location)
       }
 
@@ -214,7 +207,7 @@ internal final class SymbolTableVariableSourcePass {
   private func analyzeChildBlock(
     scope: SymbolScope,
     scopeContext: ScopeContext,
-    addingFreeVariablesTo free: inout [MangledName: SymbolInfo]) throws {
+    addingFreeVariablesTo free: inout [MangledName: Symbol]) throws {
 
     // Set is an value type in Swift, so we can simply:
     let childContext = OuterContext(free: scopeContext.newFree,
@@ -274,7 +267,7 @@ internal final class SymbolTableVariableSourcePass {
       var flags = info.flags
       flags.formUnion(srcFlags)
 
-      let newInfo = SymbolInfo(flags: flags, location: info.location)
+      let newInfo = Symbol(flags: flags, location: info.location)
       scope.symbols[name] = newInfo
     }
 
@@ -283,11 +276,11 @@ internal final class SymbolTableVariableSourcePass {
 
       // Handle symbol that already exists in this scope
       if let info = scope.symbols[name] {
-        if scope.type == .class && info.flags.contains(anyOf: .defBoundMask) {
+        if scope.kind == .class && info.flags.contains(anyOf: .defBoundMask) {
           var flags = info.flags
           flags.formUnion(.defFreeClass)
 
-          let newInfo = SymbolInfo(flags: flags, location: info.location)
+          let newInfo = Symbol(flags: flags, location: info.location)
           scope.symbols[name] = newInfo
         }
 
@@ -308,7 +301,7 @@ internal final class SymbolTableVariableSourcePass {
   // MARK: - Helpers
 
   /// Create compiler error
-  internal func error(_ kind: CompilerErrorKind,
+  internal func error(_ kind: CompilerError.Kind,
                       location: SourceLocation) -> CompilerError {
     return CompilerError(kind, location: location)
   }

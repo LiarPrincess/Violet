@@ -66,7 +66,7 @@ extension SymbolTableBuilderImpl {
     try self.visit(returns) // in CPython it is a part of visitAnnotations
     try self.visit(decorators)
 
-    self.enterScope(name: name, type: .function, node: stmt)
+    self.enterScope(name: name, kind: .function, node: stmt)
 
     if isAsync {
       self.currentScope.isCoroutine = true
@@ -87,7 +87,7 @@ extension SymbolTableBuilderImpl {
 
     let previousClassName = self.className
 
-    self.enterScope(name: node.name, type: .class, node: node)
+    self.enterScope(name: node.name, kind: .class, node: node)
     self.className = node.name
     try self.visit(node.body)
     self.className = previousClassName
@@ -146,7 +146,7 @@ extension SymbolTableBuilderImpl {
 
       // '(rapunzel): Int = 5' is tuple -> not simple!
       if node.isSimple {
-        let flags: SymbolFlags = [.defLocal, .annotated]
+        let flags: Symbol.Flags = [.defLocal, .annotated]
         try self.addSymbol(name: name, flags: flags, location: node.target.start)
       } else if node.value != nil {
         // different than CPython, but has the same effect:
@@ -274,7 +274,7 @@ extension SymbolTableBuilderImpl {
 
   internal func visit(_ node: ImportFromStarStmt) throws {
     // No names here, but we can check this:
-    if self.currentScope.type != .module {
+    if self.currentScope.kind != .module {
       throw self.error(.nonModuleImportStar, location: node.start)
     }
   }

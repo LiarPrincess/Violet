@@ -42,12 +42,12 @@ extension SymbolTableBuilderImpl {
 
   internal func visit(_ node: IdentifierExpr) throws {
     let flags = node.context == .store ?
-      SymbolFlags.defLocal :
-      SymbolFlags.use
+      Symbol.Flags.defLocal :
+      Symbol.Flags.use
 
     try self.addSymbol(name: node.value, flags: flags, location: node.start)
 
-    let isSuper = self.currentScope.type == .function && node.value == "super"
+    let isSuper = self.currentScope.kind == .function && node.value == "super"
     if node.context == .load && isSuper {
       let name = SpecialIdentifiers.__class__
       try self.addSymbol(name: name, flags: .use, location: node.start)
@@ -189,7 +189,7 @@ extension SymbolTableBuilderImpl {
 
     // new scope for comprehensions
     let scopeKind = self.getIdentifier(for: kind)
-    self.enterScope(name: scopeKind, type: .function, node: expr)
+    self.enterScope(name: scopeKind, kind: .function, node: expr)
 
     if first.isAsync {
       self.currentScope.isCoroutine = true
@@ -270,7 +270,7 @@ extension SymbolTableBuilderImpl {
     try self.visitDefaults(args: node.args)
 
     self.enterScope(name: SymbolScopeNames.lambda,
-                    type: .function,
+                    kind: .function,
                     node: node)
     try self.visitArguments(node.args)
     try self.visit(node.body)

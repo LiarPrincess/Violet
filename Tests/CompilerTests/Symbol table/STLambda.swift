@@ -37,7 +37,7 @@ class STLambda: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(expr: expr) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.parameterNames.isEmpty)
 
@@ -45,7 +45,7 @@ class STLambda: SymbolTableTestCase {
       guard top.children.count == 1 else { return }
 
       let lambdaScope = top.children[0]
-      XCTAssertScope(lambdaScope, name: "lambda", type: .function, flags: [.isNested])
+      XCTAssertScope(lambdaScope, name: "lambda", kind: .function, flags: [.isNested])
       XCTAssert(lambdaScope.children.isEmpty)
 
       XCTAssertEqual(lambdaScope.parameterNames.count, 2)
@@ -113,7 +113,7 @@ class STLambda: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
       XCTAssert(top.parameterNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
@@ -127,7 +127,7 @@ class STLambda: SymbolTableTestCase {
       guard top.children.count == 1 else { return }
 
       let defScope = top.children[0]
-      XCTAssertScope(defScope, name: "let_it_go", type: .function, flags: [.isNested])
+      XCTAssertScope(defScope, name: "let_it_go", kind: .function, flags: [.isNested])
       XCTAssert(defScope.parameterNames.isEmpty)
 
       XCTAssertEqual(defScope.symbols.count, 1)
@@ -141,7 +141,7 @@ class STLambda: SymbolTableTestCase {
       guard defScope.children.count == 1 else { return }
 
       let lambda = defScope.children[0]
-      XCTAssertScope(lambda, name: "lambda", type: .function, flags: [.isNested])
+      XCTAssertScope(lambda, name: "lambda", kind: .function, flags: [.isNested])
       XCTAssert(lambda.parameterNames.isEmpty)
       XCTAssert(lambda.children.isEmpty)
 

@@ -240,7 +240,7 @@ extension CompilerImpl {
   }
 
   private func getRefType(name: MangledName,
-                          qualifiedName: String) -> SymbolFlags {
+                          qualifiedName: String) -> Symbol.Flags {
     let classId = SpecialIdentifiers.__class__
     if self.builder.kind == .class && name.value == classId {
       return .cell

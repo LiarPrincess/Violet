@@ -121,8 +121,8 @@ extension CompilerImpl {
       try self.visit(node.target)
     }
 
-    let scopeType = self.currentScope.type
-    let isModuleOrClass = scopeType == .module || scopeType == .class
+    let scopeKind = self.currentScope.kind
+    let isModuleOrClass = scopeKind == .module || scopeKind == .class
 
     func check() throws {
       if !node.isSimple && isModuleOrClass {

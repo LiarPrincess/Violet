@@ -7,7 +7,7 @@ import VioletCompiler
 
 internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
                                       name: String,
-                                      flags: SymbolFlags,
+                                      flags: Symbol.Flags,
                                       location: SourceLocation? = nil,
                                       _ message: String = "",
                                       file: StaticString = #file,
@@ -36,7 +36,7 @@ internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
   // Enumerate flags to print invalid ones
   let maxShift = 16
   for shift in 0..<maxShift {
-    let f = SymbolFlags(rawValue: 1 << shift)
+    let f = Symbol.Flags(rawValue: 1 << shift)
     let contains = info.flags.contains(f)
     let shouldContain = flags.contains(f)
 
@@ -77,14 +77,14 @@ internal struct ScopeFeatures: OptionSet {
 // swiftlint:disable:next function_body_length
 internal func XCTAssertScope(_ scope: SymbolScope,
                              name: String,
-                             type: ScopeType,
+                             kind: SymbolScope.Kind,
                              flags: ScopeFeatures,
                              _ message: String = "",
                              file: StaticString = #file,
                              line: UInt = #line) {
 
   XCTAssertEqual(scope.name, name, message, file: file, line: line)
-  XCTAssertEqual(scope.type, type, message, file: file, line: line)
+  XCTAssertEqual(scope.kind, kind, message, file: file, line: line)
 
   XCTAssertEqual(scope.isNested,
                  flags.contains(.isNested),

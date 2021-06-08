@@ -375,7 +375,7 @@ extension CompilerImpl {
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
   internal func visit(_ node: ReturnStmt) throws {
-    guard self.currentScope.type == .function else {
+    guard self.currentScope.kind == .function else {
       throw self.error(.returnOutsideFunction)
     }
 

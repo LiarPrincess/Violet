@@ -330,13 +330,13 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     let variableNames = paramNames + localNames
     assert(paramNames == scope.parameterNames)
 
-    let freeFlags: SymbolFlags = [.srcFree, .defFreeClass]
+    let freeFlags: Symbol.Flags = [.srcFree, .defFreeClass]
     let freeVars = self.filterSymbols(scope, accepting: freeFlags, sorted: true)
     var cellVars = self.filterSymbols(scope, accepting: .cell, sorted: true)
 
     // Append implicit `__class__` cell.
     if scope.needsClassClosure {
-      assert(scope.type == .class) // needsClassClosure can only be set on class
+      assert(scope.kind == .class) // needsClassClosure can only be set on class
       cellVars.append(MangledName(withoutClass: SpecialIdentifiers.__class__))
     }
 
@@ -370,7 +370,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   // MARK: - Scope/builder helpers
 
   private func hasKind(scope: SymbolScope, kind: CodeObject.Kind) -> Bool {
-    switch scope.type {
+    switch scope.kind {
     case .module:
       return kind == .module
     case .class:
@@ -461,11 +461,11 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   /// saved in the returned dictionary.
   private func filterSymbols(
     _ scope: SymbolScope,
-    accepting: SymbolFlags,
-    skipping: SymbolFlags = [],
+    accepting: Symbol.Flags,
+    skipping: Symbol.Flags = [],
     sorted: Bool = false
   ) -> [MangledName] {
-    let symbols: [SymbolByNameDictionary.Element] = {
+    let symbols: [SymbolScope.SymbolByName.Element] = {
       guard sorted else {
         return Array(scope.symbols)
       }
@@ -496,7 +496,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
                            kind: CodeObject.Kind) -> CodeObject.Flags {
     var result = CodeObject.Flags()
 
-    if scope.type == .function {
+    if scope.kind == .function {
       result.formUnion(.newLocals)
       result.formUnion(.optimized)
 

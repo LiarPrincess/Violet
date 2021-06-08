@@ -30,7 +30,7 @@ class STAssign: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
       XCTAssert(top.children.isEmpty)
       XCTAssert(top.parameterNames.isEmpty)
 
@@ -60,7 +60,7 @@ class STAssign: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
       XCTAssert(top.children.isEmpty)
       XCTAssert(top.parameterNames.isEmpty)
 
@@ -92,7 +92,7 @@ class STAssign: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
       XCTAssert(top.children.isEmpty)
       XCTAssert(top.parameterNames.isEmpty)
 
@@ -127,7 +127,7 @@ class STAssign: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
       XCTAssert(top.children.isEmpty)
       XCTAssert(top.parameterNames.isEmpty)
 
@@ -156,7 +156,7 @@ class STAssign: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
       XCTAssert(top.children.isEmpty)
       XCTAssert(top.parameterNames.isEmpty)
 
@@ -189,7 +189,7 @@ class STAssign: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
       XCTAssert(top.children.isEmpty)
       XCTAssert(top.parameterNames.isEmpty)
 
@@ -224,7 +224,7 @@ class STAssign: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
       XCTAssert(top.children.isEmpty)
       XCTAssert(top.parameterNames.isEmpty)
 
@@ -265,7 +265,7 @@ class STAssign: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
       XCTAssert(top.children.isEmpty)
       XCTAssert(top.parameterNames.isEmpty)
 
@@ -300,7 +300,7 @@ class STAssign: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
       XCTAssert(top.children.isEmpty)
       XCTAssert(top.parameterNames.isEmpty)
 
@@ -335,7 +335,7 @@ class STAssign: SymbolTableTestCase {
 
     if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssertScope(top, name: "top", kind: .module, flags: [])
       XCTAssert(top.children.isEmpty)
       XCTAssert(top.parameterNames.isEmpty)
 

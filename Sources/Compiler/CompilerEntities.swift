@@ -2,20 +2,6 @@ import VioletCore
 import VioletParser
 import VioletBytecode
 
-internal enum SpecialIdentifiers {
-  internal static let `return` = "return"
-  internal static let assertionError = "AssertionError"
-
-  internal static let __annotations__ = "__annotations__"
-  internal static let __class__ = "__class__"
-  internal static let __classcell__ = "__classcell__"
-  internal static let __doc__ = "__doc__"
-  internal static let __future__ = "__future__"
-  internal static let __module__ = "__module__"
-  internal static let __name__ = "__name__"
-  internal static let __qualname__ = "__qualname__"
-}
-
 internal enum BlockType {
   case loop(continueTarget: CodeObjectBuilder.NotAssignedLabel)
   case except
