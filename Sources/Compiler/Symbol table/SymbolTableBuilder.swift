@@ -63,7 +63,6 @@ internal final class SymbolTableBuilderImpl:
   /// PySymtable_BuildObject(mod_ty mod, ...)
   internal func visit(ast: AST) throws -> SymbolTable {
     self.enterScope(kind: .module, node: ast)
-
     try ast.accept(self)
 
     assert(self.scopeStack.count == 1)
@@ -90,10 +89,18 @@ internal final class SymbolTableBuilderImpl:
 
   // MARK: - Scope
 
+  internal func inNewScope<N: ASTNode>(kind: SymbolScope.InitArg,
+                                       node: N,
+                                       block: () throws -> Void) rethrows {
+    self.enterScope(kind: kind, node: node)
+    try block()
+    self.leaveScope()
+  }
+
   /// Push new scope and add as child to current scope.
   ///
   /// symtable_enter_block(struct symtable *st, identifier name, ...)
-  internal func enterScope<N: ASTNode>(kind: SymbolScope.InitArg, node: N) {
+  private func enterScope<N: ASTNode>(kind: SymbolScope.InitArg, node: N) {
     let isParentNested = self.scopeStack.last?.isNested ?? false
     let isNestedFunction = self.scopeStack.any && kind.isFunctionLambdaComprehension
     let isNested = isParentNested || isNestedFunction
@@ -109,7 +116,7 @@ internal final class SymbolTableBuilderImpl:
   /// Pop scope.
   ///
   /// symtable_exit_block(struct symtable *st, void *ast)
-  internal func leaveScope() {
+  private func leaveScope() {
     assert(self.scopeStack.any)
     _ = self.scopeStack.popLast()
   }

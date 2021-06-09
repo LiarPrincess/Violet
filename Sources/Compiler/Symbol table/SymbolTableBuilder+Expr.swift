@@ -192,34 +192,33 @@ extension SymbolTableBuilderImpl {
     let first = generators.first
     try self.visit(first.iterable)
 
-    // new scope for comprehensions
-    self.enterScope(kind: .comprehension(kind), node: expr)
+    // New scope for comprehensions
+    try self.inNewScope(kind: .comprehension(kind), node: expr) {
+      if first.isAsync {
+        self.currentScope.isCoroutine = true
+      }
 
-    if first.isAsync {
-      self.currentScope.isCoroutine = true
+      // Outermost iter is received as an argument
+      try self.implicitArg(pos: 0, location: generators.first.start)
+      try self.visit(first.target)
+      try self.visit(first.ifs)
+
+      for c in generators.dropFirst() {
+        try self.visitComprehension(c)
+      }
+
+      try self.visit(value)
+      try self.visit(elt)
+
+      if currentScope.isGenerator {
+        // We don't have a better location, we just know it happened
+        self.warn(.yieldInsideComprehension(kind), location: elt.start)
+      }
+
+      if kind == .generator {
+        self.currentScope.isGenerator = true
+      }
     }
-
-    // Outermost iter is received as an argument
-    try self.implicitArg(pos: 0, location: generators.first.start)
-    try self.visit(first.target)
-    try self.visit(first.ifs)
-
-    for c in generators.dropFirst() {
-      try self.visitComprehension(c)
-    }
-
-    try self.visit(value)
-    try self.visit(elt)
-
-    if currentScope.isGenerator {
-      // we don't have a better location, we just know it happened
-      self.warn(.yieldInsideComprehension(kind), location: elt.start)
-    }
-
-    if kind == .generator {
-      self.currentScope.isGenerator = true
-    }
-    self.leaveScope()
   }
 
   /// Add implicit `.pos` argument for outermost iter.
@@ -264,10 +263,10 @@ extension SymbolTableBuilderImpl {
   internal func visit(_ node: LambdaExpr) throws {
     try self.visitDefaults(args: node.args)
 
-    self.enterScope(kind: .lambda, node: node)
-    try self.visitArguments(node.args)
-    try self.visit(node.body)
-    self.leaveScope()
+    try self.inNewScope(kind: .lambda, node: node) {
+      try self.visitArguments(node.args)
+      try self.visit(node.body)
+    }
   }
 
   // MARK: - Call

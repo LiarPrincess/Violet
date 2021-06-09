@@ -66,15 +66,14 @@ extension SymbolTableBuilderImpl {
     try self.visit(returns) // in CPython it is a part of visitAnnotations
     try self.visit(decorators)
 
-    self.enterScope(kind: .function(name: name), node: stmt)
+    try self.inNewScope(kind: .function(name: name), node: stmt) {
+      if isAsync {
+        self.currentScope.isCoroutine = true
+      }
 
-    if isAsync {
-      self.currentScope.isCoroutine = true
+      try self.visitArguments(args)
+      try self.visit(body)
     }
-
-    try self.visitArguments(args)
-    try self.visit(body)
-    self.leaveScope()
   }
 
   // MARK: - Class
@@ -87,13 +86,12 @@ extension SymbolTableBuilderImpl {
     try self.visitKeywords(keywords: node.keywords)
     try self.visit(node.decorators)
 
-    let previousClassName = self.className
-
-    self.enterScope(kind: .class(name: name), node: node)
-    self.className = name
-    try self.visit(node.body)
-    self.className = previousClassName
-    self.leaveScope()
+    try self.inNewScope(kind: .class(name: name), node: node) {
+      let previousClassName = self.className
+      self.className = name
+      try self.visit(node.body)
+      self.className = previousClassName
+    }
   }
 
   // MARK: - Return
