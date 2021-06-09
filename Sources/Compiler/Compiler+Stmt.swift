@@ -375,7 +375,7 @@ extension CompilerImpl {
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
   internal func visit(_ node: ReturnStmt) throws {
-    guard self.currentScope.kind == .function else {
+    guard self.currentScope.kind.isFunctionLambdaComprehension else {
       throw self.error(.returnOutsideFunction)
     }
 

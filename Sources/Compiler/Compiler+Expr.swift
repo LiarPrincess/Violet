@@ -66,7 +66,8 @@ extension CompilerImpl {
   /// compiler_nameop(struct compiler *c, identifier name, expr_context_ty ctx)
   internal func visitName(name: String, context: ExpressionContext) {
     let mangled = self.mangle(name: name)
-    let info = self.currentScope.symbols[mangled]
+    let scope = self.currentScope
+    let info = scope.symbols[mangled]
 
     // 'name.starts(with: "_")' for '__doc__' etc.
     assert(info != nil || name.starts(with: "_"))
@@ -79,11 +80,11 @@ extension CompilerImpl {
     } else if flags.contains(.cell) {
       operation = .cell
     } else if flags.contains(.srcLocal) {
-      if self.currentScope.kind == .function {
+      if scope.kind.isFunctionLambdaComprehension {
         operation = .fast
       }
     } else if flags.contains(.srcGlobalImplicit) {
-      if self.currentScope.kind == .function {
+      if scope.kind.isFunctionLambdaComprehension {
         operation = .global
       }
     } else if flags.contains(.srcGlobalExplicit) {
@@ -92,7 +93,7 @@ extension CompilerImpl {
 
     switch operation {
     case .cell:
-      let isLoadInClass = context == .load && self.currentScope.kind == .class
+      let isLoadInClass = context == .load && scope.kind.isClass
       if isLoadInClass {
         self.builder.appendLoadClassCell(mangled)
       } else {
@@ -256,7 +257,7 @@ extension CompilerImpl {
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visit(_ node: AwaitExpr) throws {
-    guard self.currentScope.kind == .function else {
+    guard self.currentScope.kind.isFunctionLambdaComprehension else {
       throw self.error(.awaitOutsideFunction)
     }
 
@@ -279,7 +280,7 @@ extension CompilerImpl {
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visit(_ node: YieldExpr) throws {
-    guard self.currentScope.kind == .function else {
+    guard self.currentScope.kind.isFunctionLambdaComprehension else {
       throw self.error(.yieldOutsideFunction)
     }
 
@@ -294,7 +295,7 @@ extension CompilerImpl {
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visit(_ node: YieldFromExpr) throws {
-    guard self.currentScope.kind == .function else {
+    guard self.currentScope.kind.isFunctionLambdaComprehension else {
       throw self.error(.yieldOutsideFunction)
     }
 

@@ -74,7 +74,7 @@ internal final class SymbolTableVariableSourcePass {
     let context = ScopeContext()
 
     // Classes are 'transparent' for variable definitions
-    if let outer = outerContext, scope.kind == .class {
+    if let outer = outerContext, scope.kind.isClass {
       context.newBound.formUnion(outer.bound)
       context.newGlobal.formUnion(outer.global)
     }
@@ -88,9 +88,13 @@ internal final class SymbolTableVariableSourcePass {
                            outerContext: outerContext)
     }
 
-    // Populate global and bound sets to be passed to children
-    if scope.kind != .class {
-      if scope.kind == .function {
+    if scope.kind.isClass {
+      // If we are class then our children will also have access to __class__
+      let mangled = MangledName(withoutClass: SpecialIdentifiers.__class__)
+      context.newBound.insert(mangled)
+    } else {
+      // Populate global and bound sets to be passed to children
+      if scope.kind.isFunctionLambdaComprehension {
         context.newBound.formUnion(context.local)
       }
 
@@ -98,10 +102,6 @@ internal final class SymbolTableVariableSourcePass {
         context.newBound.formUnion(outer.bound)
         context.newGlobal.formUnion(outer.global)
       }
-    } else {
-      // If we are class then our children will also have access to __class__
-      let mangled = MangledName(withoutClass: SpecialIdentifiers.__class__)
-      context.newBound.insert(mangled)
     }
 
     // Recursively call analyzeChildBlock() on each child block
@@ -117,9 +117,9 @@ internal final class SymbolTableVariableSourcePass {
     self.mergeFree(target: &context.newFree, src: allFree)
 
     // Check if any local variables must be converted to cells
-    if scope.kind == .function {
+    if scope.kind.isFunctionLambdaComprehension {
       self.bindChildFreeVariablesToLocalCells(scopeContext: context)
-    } else if scope.kind == .class {
+    } else if scope.kind.isClass {
       self.remove__class__(scope: scope, scopeContext: context)
     }
 
@@ -276,7 +276,7 @@ internal final class SymbolTableVariableSourcePass {
 
       // Handle symbol that already exists in this scope
       if let info = scope.symbols[name] {
-        if scope.kind == .class && info.flags.contains(anyOf: .defBoundMask) {
+        if scope.kind.isClass && info.flags.contains(anyOf: .defBoundMask) {
           var flags = info.flags
           flags.formUnion(.defFreeClass)
 

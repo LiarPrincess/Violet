@@ -16,6 +16,35 @@ public final class SymbolScope {
     case module
     case `class`
     case function
+    case asyncFunction
+    case lambda
+    case comprehension(CodeObject.ComprehensionKind)
+
+    /// Use this when CPython checks if this is a `module` scope.
+    ///
+    /// CPython has only `module`, `class` and `function`, use this for mapping.
+    internal var isModule: Bool {
+      return self == .module
+    }
+
+    /// Use this when CPython checks if this is a `class` scope.
+    ///
+    /// CPython has only `module`, `class` and `function`, use this for mapping.
+    internal var isClass: Bool {
+      return self == .class
+    }
+
+    /// Use this when CPython checks if this is a `function` scope.
+    ///
+    /// CPython has only `module`, `class` and `function`, use this for mapping.
+    internal var isFunctionLambdaComprehension: Bool {
+      switch self {
+      case .module, .class:
+        return false
+      case .function, .asyncFunction, .lambda, .comprehension:
+        return true
+      }
+    }
   }
 
   // MARK: - Names
@@ -116,8 +145,10 @@ public final class SymbolScope {
   /// - set comprehension -> setcomp
   /// - dictionary comprehension -> dictcomp
   public let name: String
-  /// Type of the symbol table.
-  /// Possible values are: module, class and function.
+  /// Type of the scope.
+  ///
+  /// Does not directly map to `CPython` values, they have only
+  /// `module`, `class` and `function`. We have more.
   public let kind: Kind
   /// A set of symbols present on this scope level
   public internal(set) var symbols = SymbolByName()
@@ -154,9 +185,9 @@ public final class SymbolScope {
     case lambda
     case comprehension(CodeObject.ComprehensionKind)
 
-    internal var isFunction: Bool {
+    internal var isFunctionLambdaComprehension: Bool {
       let (_, kind) = SymbolScope.getNameAndKind(arg: self)
-      return kind == .function
+      return kind.isFunctionLambdaComprehension
     }
   }
 
@@ -186,23 +217,18 @@ public final class SymbolScope {
     case .function(let name):
       return (name, .function)
     case .asyncFunction(let name):
-      return (name, .function)
+      return (name, .asyncFunction)
     case .lambda:
-      return (Names.lambda, .function)
+      return (Names.lambda, .lambda)
 
-    case .comprehension(let kind):
-      let returnedKind = Kind.function
-
-      switch kind {
-      case .list:
-        return (Names.Comprehension.list, returnedKind)
-      case .set:
-        return (Names.Comprehension.set, returnedKind)
-      case .dictionary:
-        return (Names.Comprehension.dictionary, returnedKind)
-      case .generator:
-        return (Names.Comprehension.generatorExpression, returnedKind)
-      }
+    case .comprehension(.list):
+      return (Names.Comprehension.list, .comprehension(.list))
+    case .comprehension(.set):
+      return (Names.Comprehension.set, .comprehension(.set))
+    case .comprehension(.dictionary):
+      return (Names.Comprehension.dictionary, .comprehension(.dictionary))
+    case .comprehension(.generator):
+      return (Names.Comprehension.generatorExpression, .comprehension(.generator))
     }
   }
 }

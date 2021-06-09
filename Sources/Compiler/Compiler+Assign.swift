@@ -122,7 +122,7 @@ extension CompilerImpl {
     }
 
     let scopeKind = self.currentScope.kind
-    let isModuleOrClass = scopeKind == .module || scopeKind == .class
+    let isModuleOrClass = scopeKind.isModule || scopeKind.isClass
 
     func check() throws {
       if !node.isSimple && isModuleOrClass {

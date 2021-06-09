@@ -95,7 +95,7 @@ internal final class SymbolTableBuilderImpl:
   /// symtable_enter_block(struct symtable *st, identifier name, ...)
   internal func enterScope<N: ASTNode>(kind: SymbolScope.InitArg, node: N) {
     let isParentNested = self.scopeStack.last?.isNested ?? false
-    let isNestedFunction = self.scopeStack.any && kind.isFunction
+    let isNestedFunction = self.scopeStack.any && kind.isFunctionLambdaComprehension
     let isNested = isParentNested || isNestedFunction
 
     let previous = self.scopeStack.last

@@ -48,8 +48,12 @@ extension SymbolTableBuilderImpl {
 
     try self.addSymbol(name: node.value, flags: flags, location: node.start)
 
-    let isSuper = self.currentScope.kind == .function && node.value == "super"
-    if node.context == .load && isSuper {
+    let scopeKind = self.currentScope.kind
+    let isLoadSuper = node.context == .load
+      && node.value == SpecialIdentifiers.super
+      && scopeKind.isFunctionLambdaComprehension // 'super' makes sense only in those contexts
+
+    if isLoadSuper {
       let name = SpecialIdentifiers.__class__
       try self.addSymbol(name: name, flags: .use, location: node.start)
     }

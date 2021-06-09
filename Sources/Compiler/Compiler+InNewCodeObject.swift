@@ -104,18 +104,19 @@ extension CompilerImpl {
   // MARK: - Has kind
 
   private func hasKind(scope: SymbolScope, kind: CodeObject.Kind) -> Bool {
-    let scopeKind = scope.kind
-
-    switch kind {
+    switch scope.kind {
     case .module:
-      return scopeKind == .module
+      return kind == .module
     case .class:
-      return scopeKind == .class
-    case .function,
-         .asyncFunction,
-         .lambda,
-     .comprehension:
-      return scopeKind == .function
+      return kind == .class
+    case .function:
+      return kind == .function
+    case .asyncFunction:
+      return kind == .asyncFunction
+    case .lambda:
+      return kind == .lambda
+    case .comprehension(let comprehensionKind):
+      return kind == CodeObject.Kind.comprehension(comprehensionKind)
     }
   }
 
@@ -200,7 +201,7 @@ extension CompilerImpl {
                            kind: CodeObject.Kind) -> CodeObject.Flags {
     var result = CodeObject.Flags()
 
-    if scope.kind == .function {
+    if scope.kind.isFunctionLambdaComprehension {
       result.formUnion(.newLocals)
       result.formUnion(.optimized)
 
@@ -279,7 +280,7 @@ extension CompilerImpl {
 
     // Append implicit '__class__' cell.
     if scope.needsClassClosure {
-      assert(scope.kind == .class) // needsClassClosure can only be set on class
+      assert(scope.kind.isClass) // needsClassClosure can only be set on class
       cellNames.append(MangledName(withoutClass: SpecialIdentifiers.__class__))
     }
 

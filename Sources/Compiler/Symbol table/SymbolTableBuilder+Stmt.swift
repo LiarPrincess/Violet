@@ -276,7 +276,8 @@ extension SymbolTableBuilderImpl {
 
   internal func visit(_ node: ImportFromStarStmt) throws {
     // No names here, but we can check this:
-    if self.currentScope.kind != .module {
+    let scope = self.currentScope
+    if !scope.kind.isModule {
       throw self.error(.nonModuleImportStar, location: node.start)
     }
   }
