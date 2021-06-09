@@ -18,7 +18,7 @@ extension CompilerImpl {
     node: N,
     kind: CodeObject.Kind,
     emitInstructions block: () throws -> Void
-  ) throws -> CodeObject {
+  ) rethrows -> CodeObject {
     return try self.inNewCodeObject(
       node: node,
       kind: kind,
@@ -38,7 +38,7 @@ extension CompilerImpl {
     argCount: Int,
     kwOnlyArgCount: Int,
     emitInstructions block: () throws -> Void
-  ) throws -> CodeObject {
+  ) rethrows -> CodeObject {
     self.enterScope(node: node,
                     kind: kind,
                     argCount: argCount,
@@ -46,23 +46,20 @@ extension CompilerImpl {
 
     try block()
     let code = self.builder.finalize()
-    try self.leaveScope()
+    self.leaveScope()
 
     return code
   }
 
   // MARK: - Enter scope
 
-  // swiftlint:disable function_body_length
-
-  /// Push new scope (and generate a new code object to emit to).
+  /// Push a new scope (and generate a new code object builder to emit to).
   ///
   /// compiler_enter_scope(struct compiler *c, identifier name, ...)
   private func enterScope<N: ASTNode>(node: N,
                                       kind: CodeObject.Kind,
                                       argCount: Int,
                                       kwOnlyArgCount: Int) {
-    // swiftlint:enable function_body_length
 
     guard let scope = self.symbolTable.scopeByNode[node] else {
       trap("[BUG] Compiler: Entering scope that is not present in symbol table.")
@@ -73,34 +70,16 @@ extension CompilerImpl {
     let name = self.createName(scope: scope, kind: kind)
     let qualifiedName = self.createQualifiedName(name: name, kind: kind)
     let flags = self.createFlags(scope: scope, kind: kind)
-
-    // In 'variableNames' we have to put parameters before locals.
-    let paramNames = self.filterSymbols(scope, accepting: .defParam)
-    let localNames = self.filterSymbols(scope,
-                                        accepting: .srcLocal,
-                                        skipping: .defParam,
-                                        sorted: true)
-    let variableNames = paramNames + localNames
-    assert(paramNames == scope.parameterNames)
-
-    let freeFlags: Symbol.Flags = [.srcFree, .defFreeClass]
-    let freeVars = self.filterSymbols(scope, accepting: freeFlags, sorted: true)
-    var cellVars = self.filterSymbols(scope, accepting: .cell, sorted: true)
-
-    // Append implicit `__class__` cell.
-    if scope.needsClassClosure {
-      assert(scope.kind == .class) // needsClassClosure can only be set on class
-      cellVars.append(MangledName(withoutClass: SpecialIdentifiers.__class__))
-    }
+    let symbolNames = self.gatherSymbolNames(scope: scope)
 
     let builder = CodeObjectBuilder(name: name,
                                     qualifiedName: qualifiedName,
                                     filename: self.filename,
                                     kind: kind,
                                     flags: flags,
-                                    variableNames: variableNames,
-                                    freeVariableNames: freeVars,
-                                    cellVariableNames: cellVars,
+                                    variableNames: symbolNames.variable,
+                                    freeVariableNames: symbolNames.free,
+                                    cellVariableNames: symbolNames.cell,
                                     argCount: argCount,
                                     kwOnlyArgCount: kwOnlyArgCount,
                                     firstLine: node.start.line)
@@ -112,10 +91,10 @@ extension CompilerImpl {
 
   // MARK: - Leave scope
 
-  /// Pop scope (along with corresponding code object).
+  /// Pop a scope (along with corresponding code object builder).
   ///
   /// compiler_exit_scope(struct compiler *c)
-  private func leaveScope() throws {
+  private func leaveScope() {
     let unit = self.unitStack.popLast()
     if unit == nil {
       trap("[BUG] Compiler: Attempting to pop non-existing unit.")
@@ -249,42 +228,61 @@ extension CompilerImpl {
     return result
   }
 
-  // MARK: - Filter symbols
+  // MARK: - Variable names
 
+  private struct SymbolNames {
+    fileprivate let variable: [MangledName]
+    fileprivate let free: [MangledName]
+    fileprivate let cell: [MangledName]
+  }
+
+  /// In CPython they do this inside:
+  /// compiler_enter_scope(struct compiler *c, identifier name, ...)
+  /// which internally uses:
   /// dictbytype(PyObject *src, int scope_type, int flag, Py_ssize_t offset)
-  ///
-  /// If the symbol contains any of the given flags add it to result.
-  ///
-  /// Sort the keys so that we have a deterministic order on the indexes
-  /// saved in the returned dictionary.
-  private func filterSymbols(
-    _ scope: SymbolScope,
-    accepting: Symbol.Flags,
-    skipping: Symbol.Flags = [],
-    sorted: Bool = false
-  ) -> [MangledName] {
-    let symbols: [SymbolScope.SymbolByName.Element] = {
-      guard sorted else {
-        return Array(scope.symbols)
+  private func gatherSymbolNames(scope: SymbolScope) -> SymbolNames {
+    var parameterNames = [MangledName]()
+    var localNames = [MangledName]()
+    var cellNames = [MangledName]()
+    var freeNames = [MangledName]()
+
+    for (name, symbol) in scope.symbols {
+      let flags = symbol.flags
+
+      if flags.contains(.defParam) {
+        parameterNames.append(name)
+      } else if flags.contains(.srcLocal) { // local but not param!
+        localNames.append(name)
       }
 
-      return scope.symbols.sorted { lhs, rhs in
-        let lhsName = lhs.key
-        let rhsName = rhs.key
-        return lhsName.value < rhsName.value
+      if flags.contains(.srcFree) || flags.contains(.defFreeClass) {
+        freeNames.append(name)
       }
-    }()
 
-    var result = [MangledName]()
-    for (name, info) in symbols {
-      let isAccepted = info.flags.contains(anyOf: accepting)
-      let isSkipped = info.flags.contains(anyOf: skipping)
-
-      if isAccepted && !isSkipped {
-        result.append(name)
+      if flags.contains(.cell) {
+        cellNames.append(name)
       }
     }
 
-    return result
+    // Sort, so that we have a deterministic index order.
+    func sort(names: inout [MangledName]) {
+      names.sort { lhs, rhs in lhs.value < rhs.value }
+    }
+
+    sort(names: &localNames)
+    sort(names: &freeNames)
+    sort(names: &cellNames)
+
+    // In 'variableNames' we have to put parameters before locals.
+    let variableNames = parameterNames + localNames
+    assert(parameterNames == scope.parameterNames)
+
+    // Append implicit '__class__' cell.
+    if scope.needsClassClosure {
+      assert(scope.kind == .class) // needsClassClosure can only be set on class
+      cellNames.append(MangledName(withoutClass: SpecialIdentifiers.__class__))
+    }
+
+    return SymbolNames(variable: variableNames, free: freeNames, cell: cellNames)
   }
 }
