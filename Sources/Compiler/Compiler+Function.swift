@@ -24,10 +24,11 @@ extension CompilerImpl {
     let kwOnlyArgCount = node.args.kwOnlyArgs.count
 
     let codeObject = try self.inNewCodeObject(node: node,
-                                              kind: .lambda,
                                               argCount: argCount,
                                               kwOnlyArgCount: kwOnlyArgCount) {
-      // Make None the first constant, so the lambda can't have a docstring.
+      assert(self.builder.kind == .lambda)
+
+      // Make 'None' the first constant, so the lambda can't have a docstring.
       self.builder.appendNone()
 
       try self.visit(node.body)
@@ -59,9 +60,9 @@ extension CompilerImpl {
     let kwOnlyArgCount = node.args.kwOnlyArgs.count
 
     let codeObject = try self.inNewCodeObject(node: node,
-                                              kind: .function,
                                               argCount: argCount,
                                               kwOnlyArgCount: kwOnlyArgCount) {
+      assert(self.builder.kind == .function)
       try self.visitBody(body: node.body, onDoc: .appendToConstants)
       try self.appendReturn(addNone: true)
     }

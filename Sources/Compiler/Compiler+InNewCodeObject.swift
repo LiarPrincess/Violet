@@ -16,16 +16,12 @@ extension CompilerImpl {
   /// Use `self.codeObject` to emit instructions.
   internal func inNewCodeObject<N: ASTNode>(
     node: N,
-    kind: CodeObject.Kind,
     emitInstructions block: () throws -> Void
   ) rethrows -> CodeObject {
-    return try self.inNewCodeObject(
-      node: node,
-      kind: kind,
-      argCount: 0,
-      kwOnlyArgCount: 0,
-      emitInstructions: block
-    )
+    return try self.inNewCodeObject(node: node,
+                                    argCount: 0,
+                                    kwOnlyArgCount: 0,
+                                    emitInstructions: block)
   }
 
   /// Helper for creation of new code objects.
@@ -34,13 +30,11 @@ extension CompilerImpl {
   /// Use `self.codeObject` to emit instructions.
   internal func inNewCodeObject<N: ASTNode>(
     node: N,
-    kind: CodeObject.Kind,
     argCount: Int,
     kwOnlyArgCount: Int,
     emitInstructions block: () throws -> Void
   ) rethrows -> CodeObject {
     self.enterScope(node: node,
-                    kind: kind,
                     argCount: argCount,
                     kwOnlyArgCount: kwOnlyArgCount)
 
@@ -57,7 +51,6 @@ extension CompilerImpl {
   ///
   /// compiler_enter_scope(struct compiler *c, identifier name, ...)
   private func enterScope<N: ASTNode>(node: N,
-                                      kind: CodeObject.Kind,
                                       argCount: Int,
                                       kwOnlyArgCount: Int) {
 
@@ -65,11 +58,10 @@ extension CompilerImpl {
       trap("[BUG] Compiler: Entering scope that is not present in symbol table.")
     }
 
-    assert(self.hasKind(scope: scope, kind: kind))
-
-    let name = self.createName(scope: scope, kind: kind)
-    let qualifiedName = self.createQualifiedName(name: name, kind: kind)
-    let flags = self.createFlags(scope: scope, kind: kind)
+    let name = self.createName(scope: scope)
+    let qualifiedName = self.createQualifiedName(scope: scope, name: name)
+    let kind = self.createKind(scope: scope)
+    let flags = self.createFlags(scope: scope)
     let symbolNames = self.gatherSymbolNames(scope: scope)
 
     let builder = CodeObjectBuilder(name: name,
@@ -101,35 +93,24 @@ extension CompilerImpl {
     }
   }
 
-  // MARK: - Has kind
-
-  private func hasKind(scope: SymbolScope, kind: CodeObject.Kind) -> Bool {
-    switch scope.kind {
-    case .module:
-      return kind == .module
-    case .class:
-      return kind == .class
-    case .function:
-      return kind == .function
-    case .asyncFunction:
-      return kind == .asyncFunction
-    case .lambda:
-      return kind == .lambda
-    case .comprehension(let comprehensionKind):
-      return kind == CodeObject.Kind.comprehension(comprehensionKind)
-    }
-  }
-
   // MARK: - Create name
 
-  private func createName(scope: SymbolScope, kind: CodeObject.Kind) -> String {
-    switch kind {
+  private func createName(scope: SymbolScope) -> String {
+    switch scope.kind {
     case .module:
       return CodeObject.Names.module
     case .lambda:
       return CodeObject.Names.lambda
-    case .comprehension:
-      return scope.name
+
+    case .comprehension(.list):
+      return CodeObject.Names.listComprehension
+    case .comprehension(.set):
+      return CodeObject.Names.setComprehension
+    case .comprehension(.dictionary):
+      return CodeObject.Names.dictionaryComprehension
+    case .comprehension(.generator):
+      return CodeObject.Names.generatorExpression
+
     case .class,
          .function,
          .asyncFunction:
@@ -156,7 +137,7 @@ extension CompilerImpl {
   /// - Note:
   /// It has to be called BEFORE code object is pushed on stack!
   /// (which is different than CPython)
-  private func createQualifiedName(name: String, kind: CodeObject.Kind) -> String {
+  private func createQualifiedName(scope: SymbolScope, name: String) -> String {
     // Top scope has "" as qualified name.
     guard let parentUnit = self.unitStack.last else {
       return ""
@@ -169,6 +150,7 @@ extension CompilerImpl {
 
     /// Is this a special case? (see docstring)
     let isGlobalNestedInOtherScope: Bool = {
+      let kind = scope.kind
       guard kind == .function || kind == .asyncFunction || kind == .class else {
         return false
       }
@@ -193,12 +175,24 @@ extension CompilerImpl {
     return parentQualifiedName + locals + "." + name
   }
 
+  // MARK: - Create kind
+
+  private func createKind(scope: SymbolScope) -> CodeObject.Kind {
+    switch scope.kind {
+    case .module: return .module
+    case .class: return .class
+    case .function: return .function
+    case .asyncFunction: return .asyncFunction
+    case .lambda: return .lambda
+    case .comprehension(let k): return .comprehension(k)
+    }
+  }
+
   // MARK: - Create flags
 
   /// static int
   /// compute_code_flags(struct compiler *c)
-  private func createFlags(scope: SymbolScope,
-                           kind: CodeObject.Kind) -> CodeObject.Flags {
+  private func createFlags(scope: SymbolScope) -> CodeObject.Flags {
     var result = CodeObject.Flags()
 
     if scope.kind.isFunctionLambdaComprehension {

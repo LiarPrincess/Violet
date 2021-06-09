@@ -92,7 +92,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   /// Stack of blocks (loop, except, finallyTry, finallyEnd)
   /// that current statement is surrounded with.
   internal var blockStack = [BlockType]()
-  /// Does the current statement is inside of the loop?
+  /// Is the current statement inside a loop?
   internal var isInLoop: Bool {
     return self.blockStack.contains { $0.isLoop }
   }
@@ -120,7 +120,8 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     self.future = try FutureFeatures.parse(ast: self.ast)
 
     // Compile (duh…)
-    let codeObject = try self.inNewCodeObject(node: self.ast, kind: .module) {
+    let codeObject = try self.inNewCodeObject(node: self.ast) {
+      assert(self.builder.kind == .module)
       try self.visit(self.ast)
 
       // Epilog (because we may be a jump target).
@@ -128,6 +129,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
       try self.appendReturn(addNone: !isExpression)
     }
 
+    assert(codeObject.kind == .module)
     assert(self.unitStack.isEmpty)
     return codeObject
   }

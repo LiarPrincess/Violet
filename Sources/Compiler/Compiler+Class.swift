@@ -26,7 +26,9 @@ extension CompilerImpl {
     try self.visitDecorators(decorators: node.decorators, location: location)
 
     // 1. compile the class body into a code object
-    let codeObject = try self.inNewCodeObject(node: node, kind: .class) {
+    let codeObject = try self.inNewCodeObject(node: node) {
+      assert(self.builder.kind == .class)
+
       // load (global) __name__ and store it as __module__
       self.builder.appendLoadName(SpecialIdentifiers.__name__)
       self.builder.appendStoreName(SpecialIdentifiers.__module__)
