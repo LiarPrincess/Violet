@@ -62,7 +62,7 @@ internal final class SymbolTableBuilderImpl:
 
   /// PySymtable_BuildObject(mod_ty mod, ...)
   internal func visit(ast: AST) throws -> SymbolTable {
-    self.enterScope(name: SymbolScopeNames.top, kind: .module, node: ast)
+    self.enterScope(kind: .module, node: ast)
 
     try ast.accept(self)
 
@@ -93,14 +93,14 @@ internal final class SymbolTableBuilderImpl:
   /// Push new scope and add as child to current scope.
   ///
   /// symtable_enter_block(struct symtable *st, identifier name, ...)
-  internal func enterScope<N: ASTNode>(name: String, kind: SymbolScope.Kind, node: N) {
+  internal func enterScope<N: ASTNode>(kind: SymbolScope.InitArg, node: N) {
     let isParentNested = self.scopeStack.last?.isNested ?? false
-    let isNestedFunction = self.scopeStack.any && kind == .function
+    let isNestedFunction = self.scopeStack.any && kind.isFunction
     let isNested = isParentNested || isNestedFunction
 
     let previous = self.scopeStack.last
 
-    let scope = SymbolScope(name: name, kind: kind, isNested: isNested)
+    let scope = SymbolScope(kind: kind, isNested: isNested)
     self.scopeStack.push(scope)
     self.scopeByNode[node] = scope
     previous?.children.append(scope)

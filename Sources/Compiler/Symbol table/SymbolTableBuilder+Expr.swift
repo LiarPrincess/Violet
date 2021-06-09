@@ -189,8 +189,7 @@ extension SymbolTableBuilderImpl {
     try self.visit(first.iterable)
 
     // new scope for comprehensions
-    let scopeKind = self.getIdentifier(for: kind)
-    self.enterScope(name: scopeKind, kind: .function, node: expr)
+    self.enterScope(kind: .comprehension(kind), node: expr)
 
     if first.isAsync {
       self.currentScope.isCoroutine = true
@@ -217,15 +216,6 @@ extension SymbolTableBuilderImpl {
       self.currentScope.isGenerator = true
     }
     self.leaveScope()
-  }
-
-  private func getIdentifier(for kind: CodeObject.ComprehensionKind) -> String {
-    switch kind {
-    case .list: return SymbolScopeNames.Comprehension.list
-    case .set: return SymbolScopeNames.Comprehension.set
-    case .dictionary: return SymbolScopeNames.Comprehension.dictionary
-    case .generator: return SymbolScopeNames.Comprehension.generatorExpression
-    }
   }
 
   /// Add implicit `.pos` argument for outermost iter.
@@ -270,9 +260,7 @@ extension SymbolTableBuilderImpl {
   internal func visit(_ node: LambdaExpr) throws {
     try self.visitDefaults(args: node.args)
 
-    self.enterScope(name: SymbolScopeNames.lambda,
-                    kind: .function,
-                    node: node)
+    self.enterScope(kind: .lambda, node: node)
     try self.visitArguments(node.args)
     try self.visit(node.body)
     self.leaveScope()

@@ -2,6 +2,8 @@ import VioletCore
 import VioletParser
 import VioletBytecode
 
+// swiftlint:disable nesting
+
 // In CPython:
 // Include -> symtable.h
 
@@ -14,6 +16,27 @@ public final class SymbolScope {
     case module
     case `class`
     case function
+  }
+
+  // MARK: - Names
+
+  /// Predefined scope names.
+  internal enum Names {
+    /// Name of the `AST` scope.
+    internal static let top = "top"
+    /// Name of the `lambda` scope.
+    internal static let lambda = "lambda"
+
+    enum Comprehension {
+      /// Name of the `list` comprehension scope.
+      internal static let list  = "listcomp"
+      /// Name of the `set` comprehension scope.
+      internal static let set = "setcomp"
+      /// Name of the `dict` comprehension scope.
+      internal static let dictionary = "dictcomp"
+      /// Name of the generator expression scope.
+      internal static let generatorExpression = "genexpr"
+    }
   }
 
   // MARK: - SymbolByName
@@ -122,6 +145,21 @@ public final class SymbolScope {
 
   // MARK: - Init
 
+  /// Argument used for `init` function.
+  internal enum InitArg {
+    case module
+    case function(name: String)
+    case asyncFunction(name: String)
+    case `class`(name: String)
+    case lambda
+    case comprehension(CodeObject.ComprehensionKind)
+
+    internal var isFunction: Bool {
+      let (_, kind) = SymbolScope.getNameAndKind(arg: self)
+      return kind == .function
+    }
+  }
+
   // CPython also contains:
   // - ste_directives - locations of global and nonlocal statements
   //                    we don't need it because we store location of each variable
@@ -130,9 +168,41 @@ public final class SymbolScope {
   //                    including free refs to globals - not used
 
   // `internal` so, that we can't instantiate it outside of this module.
-  internal init(name: String, kind: Kind, isNested: Bool) {
+  internal init(kind arg: InitArg, isNested: Bool) {
+    let (name, kind) = Self.getNameAndKind(arg: arg)
     self.name = name
     self.kind = kind
     self.isNested = isNested
+  }
+
+  private static func getNameAndKind(arg: InitArg) -> (String, Kind) {
+    switch arg {
+    case .module:
+      return (Names.top, .module)
+
+    case .class(let name):
+      return (name, .class)
+
+    case .function(let name):
+      return (name, .function)
+    case .asyncFunction(let name):
+      return (name, .function)
+    case .lambda:
+      return (Names.lambda, .function)
+
+    case .comprehension(let kind):
+      let returnedKind = Kind.function
+
+      switch kind {
+      case .list:
+        return (Names.Comprehension.list, returnedKind)
+      case .set:
+        return (Names.Comprehension.set, returnedKind)
+      case .dictionary:
+        return (Names.Comprehension.dictionary, returnedKind)
+      case .generator:
+        return (Names.Comprehension.generatorExpression, returnedKind)
+      }
+    }
   }
 }
