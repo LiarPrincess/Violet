@@ -29,7 +29,7 @@ extension ASTCreator {
 
   // MARK: - InteractiveAST
 
-  public func interactiveAST(
+  func interactiveAST(
     statements: [Statement],
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -44,7 +44,7 @@ extension ASTCreator {
 
   // MARK: - ModuleAST
 
-  public func moduleAST(
+  func moduleAST(
     statements: [Statement],
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -59,7 +59,7 @@ extension ASTCreator {
 
   // MARK: - ExpressionAST
 
-  public func expressionAST(
+  func expressionAST(
     expression: Expression,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -74,7 +74,7 @@ extension ASTCreator {
 
   // MARK: - FunctionDefStmt
 
-  public func functionDefStmt(
+  func functionDefStmt(
     name: String,
     args: Arguments,
     body: [Statement],
@@ -97,7 +97,7 @@ extension ASTCreator {
 
   // MARK: - AsyncFunctionDefStmt
 
-  public func asyncFunctionDefStmt(
+  func asyncFunctionDefStmt(
     name: String,
     args: Arguments,
     body: [Statement],
@@ -120,7 +120,7 @@ extension ASTCreator {
 
   // MARK: - ClassDefStmt
 
-  public func classDefStmt(
+  func classDefStmt(
     name: String,
     bases: [Expression],
     keywords: [KeywordArgument],
@@ -143,7 +143,7 @@ extension ASTCreator {
 
   // MARK: - ReturnStmt
 
-  public func returnStmt(
+  func returnStmt(
     value: Expression?,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -158,7 +158,7 @@ extension ASTCreator {
 
   // MARK: - DeleteStmt
 
-  public func deleteStmt(
+  func deleteStmt(
     values: [Expression],
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -173,7 +173,7 @@ extension ASTCreator {
 
   // MARK: - AssignStmt
 
-  public func assignStmt(
+  func assignStmt(
     targets: [Expression],
     value: Expression,
     start: SourceLocation? = nil,
@@ -190,7 +190,7 @@ extension ASTCreator {
 
   // MARK: - AugAssignStmt
 
-  public func augAssignStmt(
+  func augAssignStmt(
     target: Expression,
     op: BinaryOpExpr.Operator,
     value: Expression,
@@ -209,7 +209,7 @@ extension ASTCreator {
 
   // MARK: - AnnAssignStmt
 
-  public func annAssignStmt(
+  func annAssignStmt(
     target: Expression,
     annotation: Expression,
     value: Expression?,
@@ -230,7 +230,7 @@ extension ASTCreator {
 
   // MARK: - ForStmt
 
-  public func forStmt(
+  func forStmt(
     target: Expression,
     iterable: Expression,
     body: [Statement],
@@ -251,7 +251,7 @@ extension ASTCreator {
 
   // MARK: - AsyncForStmt
 
-  public func asyncForStmt(
+  func asyncForStmt(
     target: Expression,
     iterable: Expression,
     body: [Statement],
@@ -272,7 +272,7 @@ extension ASTCreator {
 
   // MARK: - WhileStmt
 
-  public func whileStmt(
+  func whileStmt(
     test: Expression,
     body: [Statement],
     orElse: [Statement],
@@ -291,7 +291,7 @@ extension ASTCreator {
 
   // MARK: - IfStmt
 
-  public func ifStmt(
+  func ifStmt(
     test: Expression,
     body: [Statement],
     orElse: [Statement],
@@ -310,7 +310,7 @@ extension ASTCreator {
 
   // MARK: - WithStmt
 
-  public func withStmt(
+  func withStmt(
     items: [WithItem],
     body: [Statement],
     start: SourceLocation? = nil,
@@ -327,7 +327,7 @@ extension ASTCreator {
 
   // MARK: - AsyncWithStmt
 
-  public func asyncWithStmt(
+  func asyncWithStmt(
     items: [WithItem],
     body: [Statement],
     start: SourceLocation? = nil,
@@ -344,7 +344,7 @@ extension ASTCreator {
 
   // MARK: - RaiseStmt
 
-  public func raiseStmt(
+  func raiseStmt(
     exception: Expression?,
     cause: Expression?,
     start: SourceLocation? = nil,
@@ -361,7 +361,7 @@ extension ASTCreator {
 
   // MARK: - TryStmt
 
-  public func tryStmt(
+  func tryStmt(
     body: [Statement],
     handlers: [ExceptHandler],
     orElse: [Statement],
@@ -382,7 +382,7 @@ extension ASTCreator {
 
   // MARK: - AssertStmt
 
-  public func assertStmt(
+  func assertStmt(
     test: Expression,
     msg: Expression?,
     start: SourceLocation? = nil,
@@ -399,7 +399,7 @@ extension ASTCreator {
 
   // MARK: - ImportStmt
 
-  public func importStmt(
+  func importStmt(
     names: [Alias],
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -414,7 +414,7 @@ extension ASTCreator {
 
   // MARK: - ImportFromStmt
 
-  public func importFromStmt(
+  func importFromStmt(
     moduleName: String?,
     names: [Alias],
     level: UInt8,
@@ -433,7 +433,7 @@ extension ASTCreator {
 
   // MARK: - ImportFromStarStmt
 
-  public func importFromStarStmt(
+  func importFromStarStmt(
     moduleName: String?,
     level: UInt8,
     start: SourceLocation? = nil,
@@ -450,14 +450,14 @@ extension ASTCreator {
 
   // MARK: - GlobalStmt
 
-  public func globalStmt(
+  func globalStmt(
     identifier: String,
     start: SourceLocation? = nil
   ) -> GlobalStmt {
     return self.globalStmt(identifiers: [identifier], start: start)
   }
 
-  public func globalStmt(
+  func globalStmt(
     identifiers: [String],
     start: SourceLocation? = nil
   ) -> GlobalStmt {
@@ -471,14 +471,14 @@ extension ASTCreator {
 
   // MARK: - NonlocalStmt
 
-  public func nonlocalStmt(
+  func nonlocalStmt(
     identifier: String,
     start: SourceLocation? = nil
   ) -> NonlocalStmt {
     return self.nonlocalStmt(identifiers: [identifier], start: start)
   }
 
-  public func nonlocalStmt(
+  func nonlocalStmt(
     identifiers: [String],
     start: SourceLocation? = nil
   ) -> NonlocalStmt {
@@ -492,7 +492,7 @@ extension ASTCreator {
 
   // MARK: - ExprStmt
 
-  public func exprStmt(
+  func exprStmt(
     expression: Expression,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -507,7 +507,7 @@ extension ASTCreator {
 
   // MARK: - PassStmt
 
-  public func passStmt(
+  func passStmt(
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
   ) -> PassStmt {
@@ -520,7 +520,7 @@ extension ASTCreator {
 
   // MARK: - BreakStmt
 
-  public func breakStmt(
+  func breakStmt(
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
   ) -> BreakStmt {
@@ -533,7 +533,7 @@ extension ASTCreator {
 
   // MARK: - ContinueStmt
 
-  public func continueStmt(
+  func continueStmt(
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
   ) -> ContinueStmt {
@@ -546,7 +546,7 @@ extension ASTCreator {
 
   // MARK: - TrueExpr
 
-  public func trueExpr(
+  func trueExpr(
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -561,7 +561,7 @@ extension ASTCreator {
 
   // MARK: - FalseExpr
 
-  public func falseExpr(
+  func falseExpr(
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -576,7 +576,7 @@ extension ASTCreator {
 
   // MARK: - NoneExpr
 
-  public func noneExpr(
+  func noneExpr(
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -591,7 +591,7 @@ extension ASTCreator {
 
   // MARK: - EllipsisExpr
 
-  public func ellipsisExpr(
+  func ellipsisExpr(
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
@@ -606,7 +606,7 @@ extension ASTCreator {
 
   // MARK: - IdentifierExpr
 
-  public func identifierExpr(
+  func identifierExpr(
     value: String,
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
@@ -621,7 +621,7 @@ extension ASTCreator {
     )
   }
 
-  public func identifierStmt(
+  func identifierStmt(
     value: String,
     context: ExpressionContext = .load,
     exprStart: SourceLocation? = nil,
@@ -644,7 +644,7 @@ extension ASTCreator {
 
   // MARK: - StringExpr
 
-  public func stringExpr(
+  func stringExpr(
     value: StringExpr.Group,
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
@@ -661,7 +661,7 @@ extension ASTCreator {
 
   // MARK: - IntExpr
 
-  public func intExpr(
+  func intExpr(
     value: Int,
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
@@ -676,7 +676,7 @@ extension ASTCreator {
     )
   }
 
-  public func intExpr(
+  func intExpr(
     value: BigInt,
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
@@ -693,7 +693,7 @@ extension ASTCreator {
 
   // MARK: - FloatExpr
 
-  public func floatExpr(
+  func floatExpr(
     value: Double,
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
@@ -710,7 +710,7 @@ extension ASTCreator {
 
   // MARK: - ComplexExpr
 
-  public func complexExpr(
+  func complexExpr(
     real: Double,
     imag: Double,
     context: ExpressionContext = .load,
@@ -729,7 +729,7 @@ extension ASTCreator {
 
   // MARK: - BytesExpr
 
-  public func bytesExpr(
+  func bytesExpr(
     value: Data,
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
@@ -746,7 +746,7 @@ extension ASTCreator {
 
   // MARK: - UnaryOpExpr
 
-  public func unaryOpExpr(
+  func unaryOpExpr(
     op: UnaryOpExpr.Operator,
     right: Expression,
     context: ExpressionContext = .load,
@@ -765,7 +765,7 @@ extension ASTCreator {
 
   // MARK: - BinaryOpExpr
 
-  public func binaryOpExpr(
+  func binaryOpExpr(
     op: BinaryOpExpr.Operator,
     left: Expression,
     right: Expression,
@@ -786,7 +786,7 @@ extension ASTCreator {
 
   // MARK: - BoolOpExpr
 
-  public func boolOpExpr(
+  func boolOpExpr(
     op: BoolOpExpr.Operator,
     left: Expression,
     right: Expression,
@@ -807,7 +807,7 @@ extension ASTCreator {
 
   // MARK: - CompareExpr
 
-  public func compareExpr(
+  func compareExpr(
     left: Expression,
     elements: [CompareExpr.Element],
     context: ExpressionContext = .load,
@@ -826,7 +826,7 @@ extension ASTCreator {
 
   // MARK: - TupleExpr
 
-  public func tupleExpr(
+  func tupleExpr(
     elements: [Expression],
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
@@ -843,7 +843,7 @@ extension ASTCreator {
 
   // MARK: - ListExpr
 
-  public func listExpr(
+  func listExpr(
     elements: [Expression],
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
@@ -860,7 +860,7 @@ extension ASTCreator {
 
   // MARK: - DictionaryExpr
 
-  public func dictionaryExpr(
+  func dictionaryExpr(
     elements: [DictionaryExpr.Element],
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
@@ -877,7 +877,7 @@ extension ASTCreator {
 
   // MARK: - SetExpr
 
-  public func setExpr(
+  func setExpr(
     elements: [Expression],
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
@@ -894,7 +894,7 @@ extension ASTCreator {
 
   // MARK: - ListComprehensionExpr
 
-  public func listComprehensionExpr(
+  func listComprehensionExpr(
     element: Expression,
     generators: [Comprehension],
     context: ExpressionContext = .load,
@@ -913,7 +913,7 @@ extension ASTCreator {
 
   // MARK: - SetComprehensionExpr
 
-  public func setComprehensionExpr(
+  func setComprehensionExpr(
     element: Expression,
     generators: [Comprehension],
     context: ExpressionContext = .load,
@@ -932,7 +932,7 @@ extension ASTCreator {
 
   // MARK: - DictionaryComprehensionExpr
 
-  public func dictionaryComprehensionExpr(
+  func dictionaryComprehensionExpr(
     key: Expression,
     value: Expression,
     generators: [Comprehension],
@@ -953,7 +953,7 @@ extension ASTCreator {
 
   // MARK: - GeneratorExpr
 
-  public func generatorExpr(
+  func generatorExpr(
     element: Expression,
     generators: [Comprehension],
     context: ExpressionContext = .load,
@@ -972,7 +972,7 @@ extension ASTCreator {
 
   // MARK: - AwaitExpr
 
-  public func awaitExpr(
+  func awaitExpr(
     value: Expression,
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
@@ -989,7 +989,7 @@ extension ASTCreator {
 
   // MARK: - YieldExpr
 
-  public func yieldExpr(
+  func yieldExpr(
     value: Expression?,
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
@@ -1006,7 +1006,7 @@ extension ASTCreator {
 
   // MARK: - YieldFromExpr
 
-  public func yieldFromExpr(
+  func yieldFromExpr(
     value: Expression,
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,
@@ -1023,7 +1023,7 @@ extension ASTCreator {
 
   // MARK: - LambdaExpr
 
-  public func lambdaExpr(
+  func lambdaExpr(
     args: Arguments,
     body: Expression,
     context: ExpressionContext = .load,
@@ -1042,7 +1042,7 @@ extension ASTCreator {
 
   // MARK: - CallExpr
 
-  public func callExpr(
+  func callExpr(
     function: Expression,
     args: [Expression],
     keywords: [KeywordArgument],
@@ -1063,7 +1063,7 @@ extension ASTCreator {
 
   // MARK: - IfExpr
 
-  public func ifExpr(
+  func ifExpr(
     test: Expression,
     body: Expression,
     orElse: Expression,
@@ -1084,7 +1084,7 @@ extension ASTCreator {
 
   // MARK: - AttributeExpr
 
-  public func attributeExpr(
+  func attributeExpr(
     object: Expression,
     name: String,
     context: ExpressionContext = .load,
@@ -1103,7 +1103,7 @@ extension ASTCreator {
 
   // MARK: - SubscriptExpr
 
-  public func subscriptExpr(
+  func subscriptExpr(
     object: Expression,
     slice: Slice,
     context: ExpressionContext = .load,
@@ -1122,7 +1122,7 @@ extension ASTCreator {
 
   // MARK: - StarredExpr
 
-  public func starredExpr(
+  func starredExpr(
     expression: Expression,
     context: ExpressionContext = .load,
     start: SourceLocation? = nil,

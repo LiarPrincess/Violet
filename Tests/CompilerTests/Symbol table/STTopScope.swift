@@ -12,19 +12,21 @@ class STTopScope: SymbolTableTestCase {
   func test_identifier_expression() {
     let expr = self.identifierExpr(value: "elsa", start: loc1)
 
-    if let table = self.createSymbolTable(expr: expr) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-
-      XCTAssertEqual(top.symbols.count, 1)
-      XCTAssertContainsSymbol(top,
-                              name: "elsa",
-                              flags: [.use, .srcGlobalImplicit],
-                              location: loc1)
-
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
+    guard let table = self.createSymbolTable(expr: expr) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "elsa", flags: [.use, .srcGlobalImplicit], location: loc1)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   /// elsa
@@ -32,19 +34,21 @@ class STTopScope: SymbolTableTestCase {
     let expr = self.identifierExpr(value: "elsa", start: loc1)
     let stmt = self.exprStmt(expression: expr)
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-
-      XCTAssertEqual(top.symbols.count, 1)
-      XCTAssertContainsSymbol(top,
-                              name: "elsa",
-                              flags: [.use, .srcGlobalImplicit],
-                              location: loc1)
-
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "elsa", flags: [.use, .srcGlobalImplicit], location: loc1)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   // MARK: - Global
@@ -53,19 +57,21 @@ class STTopScope: SymbolTableTestCase {
   func test_global() {
     let stmt = self.globalStmt(identifier: "elsa", start: loc1)
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-
-      XCTAssertEqual(top.symbols.count, 1)
-      XCTAssertContainsSymbol(top,
-                              name: "elsa",
-                              flags: [.defGlobal, .srcGlobalExplicit],
-                              location: loc1)
-
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "elsa", flags: [.defGlobal, .srcGlobalExplicit], location: loc1)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   /// def let_it_go(elsa): global elsa

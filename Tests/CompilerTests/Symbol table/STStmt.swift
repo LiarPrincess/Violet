@@ -4,7 +4,6 @@ import VioletParser
 @testable import VioletCompiler
 
 // swiftlint:disable file_length
-// swiftlint:disable function_body_length
 
 /// Basic checks for statements, without nested scopes.
 /// Just so we know that we visit all children.
@@ -16,14 +15,19 @@ class STStmt: SymbolTableTestCase {
   func test_pass() {
     let stmt = self.passStmt()
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-
-      XCTAssert(top.symbols.isEmpty)
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   // MARK: - Break, continue
@@ -31,27 +35,37 @@ class STStmt: SymbolTableTestCase {
   func test_break() {
     let stmt = self.breakStmt()
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-
-      XCTAssert(top.symbols.isEmpty)
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   func test_continue() {
     let stmt = self.continueStmt()
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-
-      XCTAssert(top.symbols.isEmpty)
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   // MARK: - Return
@@ -84,35 +98,38 @@ class STStmt: SymbolTableTestCase {
       ]
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 1)
-      XCTAssertContainsSymbol(top,
-                              name: "let_it_go",
-                              flags: [.defLocal, .srcLocal])
-
-      XCTAssertEqual(top.children.count, 1)
-      guard top.children.count == 1 else { return }
-
-      let bodyScope = top.children[0]
-      XCTAssertScope(bodyScope,
-                     name: "let_it_go",
-                     kind: .function,
-                     flags: [.hasReturnValue, .isNested])
-      XCTAssert(bodyScope.children.isEmpty)
-
-      XCTAssertEqual(bodyScope.parameterNames.count, 1)
-      XCTAssertContainsParameter(bodyScope, name: "elsa")
-
-      // We have '.use' flag, which means that return value was visited
-      XCTAssertEqual(bodyScope.symbols.count, 1)
-      XCTAssertContainsSymbol(bodyScope,
-                              name: "elsa",
-                              flags: [.defParam, .srcLocal, .use])
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "let_it_go", flags: [.defLocal, .srcLocal])
+      ],
+      parameters: [],
+      childrenCount: 1
+    )
+
+    guard let function = self.getChildScope(table.top, at: 0) else {
+      return
+    }
+
+    XCTAssertScope(
+      function,
+      name: "let_it_go",
+      kind: .function,
+      flags: [.hasReturnValue, .isNested],
+      symbols: [
+        // We have '.use' flag, which means that return value was visited
+        .init(name: "elsa", flags: [.defParam, .srcLocal, .use])
+      ],
+      parameters: ["elsa"],
+      childrenCount: 0
+    )
   }
 
   // MARK: - Delete
@@ -135,22 +152,22 @@ class STStmt: SymbolTableTestCase {
       ]
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-      XCTAssert(top.children.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 2)
-      XCTAssertContainsSymbol(top,
-                              name: "elsa",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "anna",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc2)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "elsa", flags: [.srcGlobalImplicit, .use], location: loc1),
+        .init(name: "anna", flags: [.srcGlobalImplicit, .use], location: loc2)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   // MARK: - Assert
@@ -170,22 +187,22 @@ class STStmt: SymbolTableTestCase {
       msg: self.identifierExpr(value: "anna", start: loc2)
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-      XCTAssert(top.children.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 2)
-      XCTAssertContainsSymbol(top,
-                              name: "elsa",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "anna",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc2)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "elsa", flags: [.srcGlobalImplicit, .use], location: loc1),
+        .init(name: "anna", flags: [.srcGlobalImplicit, .use], location: loc2)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   // MARK: - For, while, if
@@ -214,26 +231,23 @@ class STStmt: SymbolTableTestCase {
       ]
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-      XCTAssert(top.children.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 3)
-      XCTAssertContainsSymbol(top,
-                              name: "elsa",
-                              flags: [.defLocal, .srcLocal, .use],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "frozen",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc2)
-      XCTAssertContainsSymbol(top,
-                              name: "anna",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc4)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "elsa", flags: [.defLocal, .srcLocal, .use], location: loc1),
+        .init(name: "frozen", flags: [.srcGlobalImplicit, .use], location: loc2),
+        .init(name: "anna", flags: [.srcGlobalImplicit, .use], location: loc4)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   /// while elsa:
@@ -259,26 +273,23 @@ class STStmt: SymbolTableTestCase {
       ]
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-      XCTAssert(top.children.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 3)
-      XCTAssertContainsSymbol(top,
-                              name: "elsa",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "anna",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc2)
-      XCTAssertContainsSymbol(top,
-                              name: "snowgies",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc3)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "elsa", flags: [.srcGlobalImplicit, .use], location: loc1),
+        .init(name: "anna", flags: [.srcGlobalImplicit, .use], location: loc2),
+        .init(name: "snowgies", flags: [.srcGlobalImplicit, .use], location: loc3)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   /// if elsa:
@@ -300,26 +311,23 @@ class STStmt: SymbolTableTestCase {
       orElse: [self.identifierStmt(value: "snowgies", exprStart: loc3)]
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-      XCTAssert(top.children.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 3)
-      XCTAssertContainsSymbol(top,
-                              name: "elsa",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "anna",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc2)
-      XCTAssertContainsSymbol(top,
-                              name: "snowgies",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc3)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "elsa", flags: [.srcGlobalImplicit, .use], location: loc1),
+        .init(name: "anna", flags: [.srcGlobalImplicit, .use], location: loc2),
+        .init(name: "snowgies", flags: [.srcGlobalImplicit, .use], location: loc3)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   // MARK: - With
@@ -347,22 +355,22 @@ class STStmt: SymbolTableTestCase {
       ]
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-      XCTAssert(top.children.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 2)
-      XCTAssertContainsSymbol(top,
-                              name: "elsa",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "queen",
-                              flags: [.defLocal, .srcLocal, .use],
-                              location: loc2)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "elsa", flags: [.srcGlobalImplicit, .use], location: loc1),
+        .init(name: "queen", flags: [.defLocal, .srcLocal, .use], location: loc2)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   // MARK: - Exceptions
@@ -382,22 +390,22 @@ class STStmt: SymbolTableTestCase {
       cause: self.identifierExpr(value: "arendelle", start: loc2)
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-      XCTAssert(top.children.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 2)
-      XCTAssertContainsSymbol(top,
-                              name: "elsa",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "arendelle",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc2)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "elsa", flags: [.srcGlobalImplicit, .use], location: loc1),
+        .init(name: "arendelle", flags: [.srcGlobalImplicit, .use], location: loc2)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   /// try: magic
@@ -432,33 +440,24 @@ class STStmt: SymbolTableTestCase {
       finally: [self.identifierStmt(value: "sing", exprStart: loc3)]
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-      XCTAssert(top.children.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 5)
-      XCTAssertContainsSymbol(top,
-                              name: "magic",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "spell",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc2)
-      XCTAssertContainsSymbol(top,
-                              name: "elsa",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc4)
-      XCTAssertContainsSymbol(top,
-                              name: "queen",
-                              flags: [.defLocal, .srcLocal, .use],
-                              location: loc5)
-      XCTAssertContainsSymbol(top,
-                              name: "sing",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc3)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "magic", flags: [.srcGlobalImplicit, .use], location: loc1),
+        .init(name: "elsa", flags: [.srcGlobalImplicit, .use], location: loc4),
+        .init(name: "queen", flags: [.defLocal, .srcLocal, .use], location: loc5),
+        .init(name: "spell", flags: [.srcGlobalImplicit, .use], location: loc2),
+        .init(name: "sing", flags: [.srcGlobalImplicit, .use], location: loc3)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 }

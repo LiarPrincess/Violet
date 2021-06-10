@@ -43,36 +43,38 @@ class STExprComprehension: SymbolTableTestCase {
       ]
     )
 
-    if let table = self.createSymbolTable(expr: expr) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 1)
-      XCTAssertContainsSymbol(top,
-                              name: "sea",
-                              flags: [.use, .srcGlobalImplicit],
-                              location: loc3)
-
-      XCTAssertEqual(top.children.count, 1)
-      guard top.children.count == 1 else { return }
-
-      let listComp = top.children[0]
-      XCTAssertScope(listComp, name: "listcomp", kind: .function, flags: [.isNested])
-      XCTAssert(listComp.children.isEmpty)
-
-      XCTAssertEqual(listComp.parameterNames.count, 1)
-      XCTAssertContainsParameter(listComp, name: ".0")
-
-      XCTAssertEqual(listComp.symbols.count, 2)
-      XCTAssertContainsSymbol(listComp,
-                              name: ".0",
-                              flags: [.defParam, .srcLocal])
-      XCTAssertContainsSymbol(listComp,
-                              name: "ariel",
-                              flags: [.defLocal, .srcLocal, .use],
-                              location: loc2)
+    guard let table = self.createSymbolTable(expr: expr) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "sea", flags: [.use, .srcGlobalImplicit], location: loc3)
+      ],
+      parameters: [],
+      childrenCount: 1
+    )
+
+    guard let comp = self.getChildScope(table.top, at: 0) else {
+      return
+    }
+
+    XCTAssertScope(
+      comp,
+      name: "listcomp",
+      kind: .comprehension(.list),
+      flags: [.isNested],
+      symbols: [
+        .init(name: ".0", flags: [.defParam, .srcLocal]),
+        .init(name: "ariel", flags: [.defLocal, .srcLocal, .use], location: loc2)
+      ],
+      parameters: [".0"],
+      childrenCount: 0
+    )
   }
 
   /// [ariel for ariel in [] if hasLegs]
@@ -103,40 +105,42 @@ class STExprComprehension: SymbolTableTestCase {
           ifs: [
             self.identifierExpr(value: "hasLegs", start: loc3)
           ],
-          isAsync: true
+          isAsync: true // This will make it coroutine!
         )
       ]
     )
 
-    if let table = self.createSymbolTable(expr: expr) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-      XCTAssert(top.symbols.isEmpty)
-
-      XCTAssertEqual(top.children.count, 1)
-      guard top.children.count == 1 else { return }
-
-      let listComp = top.children[0]
-      XCTAssertScope(listComp, name: "listcomp", kind: .function, flags: [.isNested, .isCoroutine])
-      XCTAssert(listComp.children.isEmpty)
-
-      XCTAssertEqual(listComp.parameterNames.count, 1)
-      XCTAssertContainsParameter(listComp, name: ".0")
-
-      XCTAssertEqual(listComp.symbols.count, 3)
-      XCTAssertContainsSymbol(listComp,
-                              name: ".0",
-                              flags: [.defParam, .srcLocal])
-      XCTAssertContainsSymbol(listComp,
-                              name: "ariel",
-                              flags: [.defLocal, .srcLocal, .use],
-                              location: loc2)
-      XCTAssertContainsSymbol(listComp,
-                              name: "hasLegs",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc3)
+    guard let table = self.createSymbolTable(expr: expr) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [],
+      parameters: [],
+      childrenCount: 1
+    )
+
+    guard let comp = self.getChildScope(table.top, at: 0) else {
+      return
+    }
+
+    XCTAssertScope(
+      comp,
+      name: "listcomp",
+      kind: .comprehension(.list),
+      flags: [.isNested, .isCoroutine], // Coroutine!
+      symbols: [
+        .init(name: ".0", flags: [.defParam, .srcLocal]),
+        .init(name: "ariel", flags: [.defLocal, .srcLocal, .use], location: loc2),
+        .init(name: "hasLegs", flags: [.srcGlobalImplicit, .use], location: loc3)
+      ],
+      parameters: [".0"],
+      childrenCount: 0
+    )
   }
 
   /// [eric for ariel in [] for eric in []]
@@ -174,35 +178,37 @@ class STExprComprehension: SymbolTableTestCase {
       generators: [comp1, comp2]
     )
 
-    if let table = self.createSymbolTable(expr: expr) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-      XCTAssert(top.symbols.isEmpty)
-
-      XCTAssertEqual(top.children.count, 1)
-      guard top.children.count == 1 else { return }
-
-      let listComp = top.children[0]
-      XCTAssertScope(listComp, name: "listcomp", kind: .function, flags: [.isNested])
-      XCTAssert(listComp.children.isEmpty)
-
-      XCTAssertEqual(listComp.parameterNames.count, 1)
-      XCTAssertContainsParameter(listComp, name: ".0")
-
-      XCTAssertEqual(listComp.symbols.count, 3)
-      XCTAssertContainsSymbol(listComp,
-                              name: ".0",
-                              flags: [.defParam, .srcLocal])
-      XCTAssertContainsSymbol(listComp,
-                              name: "ariel",
-                              flags: [.defLocal, .srcLocal],
-                              location: loc1)
-      XCTAssertContainsSymbol(listComp,
-                              name: "eric",
-                              flags: [.defLocal, .srcLocal, .use],
-                              location: loc2)
+    guard let table = self.createSymbolTable(expr: expr) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [],
+      parameters: [],
+      childrenCount: 1
+    )
+
+    guard let compScope = self.getChildScope(table.top, at: 0) else {
+      return
+    }
+
+    XCTAssertScope(
+      compScope,
+      name: "listcomp",
+      kind: .comprehension(.list),
+      flags: [.isNested],
+      symbols: [
+        .init(name: ".0", flags: [.defParam, .srcLocal]),
+        .init(name: "ariel", flags: [.defLocal, .srcLocal], location: loc1),
+        .init(name: "eric", flags: [.defLocal, .srcLocal, .use], location: loc2)
+      ],
+      parameters: [".0"],
+      childrenCount: 0
+    )
   }
 
   // MARK: - Set
@@ -210,48 +216,50 @@ class STExprComprehension: SymbolTableTestCase {
   /// {ariel for ariel in sea}
   /// (similar to `self.test_list`)
   func test_set() {
-    let comp = self.comprehension(
-      target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
-      iterable: self.identifierExpr(value: "sea", start: loc2),
-      ifs: [],
-      isAsync: false
-    )
-
-    let kind = self.setComprehensionExpr(
+    let expr = self.setComprehensionExpr(
       element: self.identifierExpr(value: "ariel", start: loc3),
-      generators: [comp]
+      generators: [
+        self.comprehension(
+          target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
+          iterable: self.identifierExpr(value: "sea", start: loc2),
+          ifs: [],
+          isAsync: false
+        )
+      ]
     )
 
-    if let table = self.createSymbolTable(expr: kind) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 1)
-      XCTAssertContainsSymbol(top,
-                              name: "sea",
-                              flags: [.use, .srcGlobalImplicit],
-                              location: loc2)
-
-      XCTAssertEqual(top.children.count, 1)
-      guard top.children.count == 1 else { return }
-
-      let listComp = top.children[0]
-      XCTAssertScope(listComp, name: "setcomp", kind: .function, flags: [.isNested])
-      XCTAssert(listComp.children.isEmpty)
-
-      XCTAssertEqual(listComp.parameterNames.count, 1)
-      XCTAssertContainsParameter(listComp, name: ".0")
-
-      XCTAssertEqual(listComp.symbols.count, 2)
-      XCTAssertContainsSymbol(listComp,
-                              name: ".0",
-                              flags: [.defParam, .srcLocal])
-      XCTAssertContainsSymbol(listComp,
-                              name: "ariel",
-                              flags: [.defLocal, .srcLocal, .use],
-                              location: loc1)
+    guard let table = self.createSymbolTable(expr: expr) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "sea", flags: [.use, .srcGlobalImplicit], location: loc2)
+      ],
+      parameters: [],
+      childrenCount: 1
+    )
+
+    guard let comp = self.getChildScope(table.top, at: 0) else {
+      return
+    }
+
+    XCTAssertScope(
+      comp,
+      name: "setcomp",
+      kind: .comprehension(.set),
+      flags: [.isNested],
+      symbols: [
+        .init(name: ".0", flags: [.defParam, .srcLocal]),
+        .init(name: "ariel", flags: [.defLocal, .srcLocal, .use], location: loc1)
+      ],
+      parameters: [".0"],
+      childrenCount: 0
+    )
   }
 
   // MARK: - Dictionary
@@ -276,53 +284,52 @@ class STExprComprehension: SymbolTableTestCase {
   ///     eric - referenced, global,
   /// ```
   func test_dictionary() {
-    let comp = self.comprehension(
-      target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
-      iterable: self.identifierExpr(value: "sea", start: loc2),
-      ifs: [],
-      isAsync: false
-    )
-
-    let kind = self.dictionaryComprehensionExpr(
+    let expr = self.dictionaryComprehensionExpr(
       key: self.identifierExpr(value: "ariel", start: loc3),
       value: self.identifierExpr(value: "eric", start: loc4),
-      generators: [comp]
+      generators: [
+        self.comprehension(
+          target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
+          iterable: self.identifierExpr(value: "sea", start: loc2),
+          ifs: [],
+          isAsync: false
+        )
+      ]
     )
 
-    if let table = self.createSymbolTable(expr: kind) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 1)
-      XCTAssertContainsSymbol(top,
-                              name: "sea",
-                              flags: [.use, .srcGlobalImplicit],
-                              location: loc2)
-
-      XCTAssertEqual(top.children.count, 1)
-      guard top.children.count == 1 else { return }
-
-      let listComp = top.children[0]
-      XCTAssertScope(listComp, name: "dictcomp", kind: .function, flags: [.isNested])
-      XCTAssert(listComp.children.isEmpty)
-
-      XCTAssertEqual(listComp.parameterNames.count, 1)
-      XCTAssertContainsParameter(listComp, name: ".0")
-
-      XCTAssertEqual(listComp.symbols.count, 3)
-      XCTAssertContainsSymbol(listComp,
-                              name: ".0",
-                              flags: [.defParam, .srcLocal])
-      XCTAssertContainsSymbol(listComp,
-                              name: "ariel",
-                              flags: [.defLocal, .srcLocal, .use],
-                              location: loc1)
-      XCTAssertContainsSymbol(listComp,
-                              name: "eric",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc4)
+    guard let table = self.createSymbolTable(expr: expr) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "sea", flags: [.use, .srcGlobalImplicit], location: loc2)
+      ],
+      parameters: [],
+      childrenCount: 1
+    )
+
+    guard let comp = self.getChildScope(table.top, at: 0) else {
+      return
+    }
+
+    XCTAssertScope(
+      comp,
+      name: "dictcomp",
+      kind: .comprehension(.dictionary),
+      flags: [.isNested],
+      symbols: [
+        .init(name: ".0", flags: [.defParam, .srcLocal]),
+        .init(name: "ariel", flags: [.defLocal, .srcLocal, .use], location: loc1),
+        .init(name: "eric", flags: [.srcGlobalImplicit, .use], location: loc4)
+      ],
+      parameters: [".0"],
+      childrenCount: 0
+    )
   }
 
   // MARK: - Generator
@@ -330,50 +337,49 @@ class STExprComprehension: SymbolTableTestCase {
   /// [ariel for ariel in sea]
   /// (similar to `self.test_list`)
   func test_generator() {
-    let comp = self.comprehension(
-      target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
-      iterable: self.identifierExpr(value: "sea", start: loc2),
-      ifs: [],
-      isAsync: false
-    )
-
-    let kind = self.generatorExpr(
+    let expr = self.generatorExpr(
       element: self.identifierExpr(value: "ariel", start: loc3),
-      generators: [comp]
+      generators: [
+        self.comprehension(
+          target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
+          iterable: self.identifierExpr(value: "sea", start: loc2),
+          ifs: [],
+          isAsync: false
+        )
+      ]
     )
 
-    if let table = self.createSymbolTable(expr: kind) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 1)
-      XCTAssertContainsSymbol(top,
-                              name: "sea",
-                              flags: [.use, .srcGlobalImplicit],
-                              location: loc2)
-
-      XCTAssertEqual(top.children.count, 1)
-      guard top.children.count == 1 else { return }
-
-      let listComp = top.children[0]
-      XCTAssertScope(listComp,
-                     name: "genexpr",
-                     kind: .function,
-                     flags: [.isNested, .isGenerator])
-      XCTAssert(listComp.children.isEmpty)
-
-      XCTAssertEqual(listComp.parameterNames.count, 1)
-      XCTAssertContainsParameter(listComp, name: ".0")
-
-      XCTAssertEqual(listComp.symbols.count, 2)
-      XCTAssertContainsSymbol(listComp,
-                              name: ".0",
-                              flags: [.defParam, .srcLocal])
-      XCTAssertContainsSymbol(listComp,
-                              name: "ariel",
-                              flags: [.defLocal, .srcLocal, .use],
-                              location: loc1)
+    guard let table = self.createSymbolTable(expr: expr) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "sea", flags: [.use, .srcGlobalImplicit], location: loc2)
+      ],
+      parameters: [],
+      childrenCount: 1
+    )
+
+    guard let comp = self.getChildScope(table.top, at: 0) else {
+      return
+    }
+
+    XCTAssertScope(
+      comp,
+      name: "genexpr",
+      kind: .comprehension(.generator),
+      flags: [.isNested, .isGenerator],
+      symbols: [
+        .init(name: ".0", flags: [.defParam, .srcLocal]),
+        .init(name: "ariel", flags: [.defLocal, .srcLocal, .use], location: loc1)
+      ],
+      parameters: [".0"],
+      childrenCount: 0
+    )
   }
 }

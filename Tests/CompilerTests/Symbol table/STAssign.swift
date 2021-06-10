@@ -28,18 +28,21 @@ class STAssign: SymbolTableTestCase {
       value: self.intExpr(value: 5)
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 1)
-      XCTAssertContainsSymbol(top,
-                              name: "rapunzel",
-                              flags: [.defLocal, .srcLocal],
-                              location: loc1)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "rapunzel", flags: [.defLocal, .srcLocal], location: loc1)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   /// rapunzel = rapunzel
@@ -58,18 +61,21 @@ class STAssign: SymbolTableTestCase {
       value: self.identifierExpr(value: "rapunzel")
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 1)
-      XCTAssertContainsSymbol(top,
-                              name: "rapunzel",
-                              flags: [.defLocal, .srcLocal, .use],
-                              location: loc1)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "rapunzel", flags: [.defLocal, .srcLocal, .use], location: loc1)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   /// rapunzel = eugene = 5
@@ -90,22 +96,22 @@ class STAssign: SymbolTableTestCase {
       value: self.intExpr(value: 5)
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 2)
-      XCTAssertContainsSymbol(top,
-                              name: "rapunzel",
-                              flags: [.defLocal, .srcLocal],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "eugene",
-                              flags: [.defLocal, .srcLocal],
-                              location: loc2)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "rapunzel", flags: [.defLocal, .srcLocal], location: loc1),
+        .init(name: "eugene", flags: [.defLocal, .srcLocal], location: loc2)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   // MARK: - Augmented assign
@@ -125,18 +131,21 @@ class STAssign: SymbolTableTestCase {
       value: self.intExpr(value: 5)
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 1)
-      XCTAssertContainsSymbol(top,
-                              name: "rapunzel",
-                              flags: [.defLocal, .srcLocal],
-                              location: loc1)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "rapunzel", flags: [.defLocal, .srcLocal], location: loc1)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   /// rapunzel += rapunzel
@@ -154,18 +163,21 @@ class STAssign: SymbolTableTestCase {
       value: self.identifierExpr(value: "rapunzel")
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 1)
-      XCTAssertContainsSymbol(top,
-                              name: "rapunzel",
-                              flags: [.defLocal, .srcLocal, .use],
-                              location: loc1)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "rapunzel", flags: [.defLocal, .srcLocal, .use], location: loc1)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   // MARK: - Annotated assign
@@ -187,22 +199,22 @@ class STAssign: SymbolTableTestCase {
       isSimple: true
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 2)
-      XCTAssertContainsSymbol(top,
-                              name: "rapunzel",
-                              flags: [.defLocal, .srcLocal, .annotated],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "Int",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc2)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "rapunzel", flags: [.defLocal, .srcLocal, .annotated], location: loc1),
+        .init(name: "Int", flags: [.srcGlobalImplicit, .use], location: loc2)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   /// (rapunzel): Int = 5
@@ -222,22 +234,22 @@ class STAssign: SymbolTableTestCase {
       isSimple: false // <- parens
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 2)
-      XCTAssertContainsSymbol(top,
-                              name: "rapunzel",
-                              flags: [.defLocal, .srcLocal],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "Int",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc2)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "rapunzel", flags: [.defLocal, .srcLocal], location: loc1),
+        .init(name: "Int", flags: [.srcGlobalImplicit, .use], location: loc2)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   /// tangled.rapunzel: Int = 5
@@ -250,35 +262,33 @@ class STAssign: SymbolTableTestCase {
   ///   Int - referenced, global,
   /// ```
   func test_annAssign_attribute() {
-    let target = self.attributeExpr(
-      object: self.identifierExpr(value: "tangled", start: loc1),
-      name: "rapunzel",
-      context: .store
-    )
-
     let stmt = self.annAssignStmt(
-      target: target,
+      target: self.attributeExpr(
+        object: self.identifierExpr(value: "tangled", start: loc1),
+        name: "rapunzel",
+        context: .store
+      ),
       annotation: self.identifierExpr(value: "Int", start: loc3),
       value: self.intExpr(value: 5),
       isSimple: false
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 2)
-      XCTAssertContainsSymbol(top,
-                              name: "tangled",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "Int",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc3)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "tangled", flags: [.srcGlobalImplicit, .use], location: loc1),
+        .init(name: "Int", flags: [.srcGlobalImplicit, .use], location: loc3)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   /// rapunzel: Int = rapunzel
@@ -298,22 +308,22 @@ class STAssign: SymbolTableTestCase {
       isSimple: true
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 2)
-      XCTAssertContainsSymbol(top,
-                              name: "rapunzel",
-                              flags: [.defLocal, .srcLocal, .use, .annotated],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "Int",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc2)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "rapunzel", flags: [.defLocal, .srcLocal, .use, .annotated], location: loc1),
+        .init(name: "Int", flags: [.srcGlobalImplicit, .use], location: loc2)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   /// rapunzel: Int
@@ -333,22 +343,22 @@ class STAssign: SymbolTableTestCase {
       isSimple: true
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 2)
-      XCTAssertContainsSymbol(top,
-                              name: "rapunzel",
-                              flags: [.defLocal, .srcLocal, .annotated],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "Int",
-                              flags: [.srcGlobalImplicit, .use],
-                              location: loc2)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "rapunzel", flags: [.defLocal, .srcLocal, .annotated], location: loc1),
+        .init(name: "Int", flags: [.srcGlobalImplicit, .use], location: loc2)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 
   // global rapunzel

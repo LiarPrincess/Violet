@@ -35,33 +35,36 @@ class STLambda: SymbolTableTestCase {
       body: self.identifierExpr(value: "elsa", start: loc3)
     )
 
-    if let table = self.createSymbolTable(expr: expr) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.symbols.isEmpty)
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.children.count, 1)
-      guard top.children.count == 1 else { return }
-
-      let lambdaScope = top.children[0]
-      XCTAssertScope(lambdaScope, name: "lambda", kind: .function, flags: [.isNested])
-      XCTAssert(lambdaScope.children.isEmpty)
-
-      XCTAssertEqual(lambdaScope.parameterNames.count, 2)
-      XCTAssertContainsParameter(lambdaScope, name: "elsa")
-      XCTAssertContainsParameter(lambdaScope, name: "anna")
-
-      XCTAssertEqual(lambdaScope.symbols.count, 2)
-      XCTAssertContainsSymbol(lambdaScope,
-                              name: "elsa",
-                              flags: [.defParam, .srcLocal, .use],
-                              location: loc1)
-      XCTAssertContainsSymbol(lambdaScope,
-                              name: "anna",
-                              flags: [.defParam, .srcLocal],
-                              location: loc2)
+    guard let table = self.createSymbolTable(expr: expr) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [],
+      parameters: [],
+      childrenCount: 1
+    )
+
+    guard let lambda = self.getChildScope(table.top, at: 0) else {
+      return
+    }
+
+    XCTAssertScope(
+      lambda,
+      name: "lambda",
+      kind: .lambda,
+      flags: [.isNested],
+      symbols: [
+        .init(name: "elsa", flags: [.defParam, .srcLocal, .use], location: loc1),
+        .init(name: "anna", flags: [.defParam, .srcLocal], location: loc2)
+      ],
+      parameters: ["elsa", "anna"],
+      childrenCount: 0
+    )
   }
 
   /// def let_it_go():
@@ -111,45 +114,52 @@ class STLambda: SymbolTableTestCase {
       start: loc3
     )
 
-    if let table = self.createSymbolTable(stmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", kind: .module, flags: [])
-      XCTAssert(top.parameterNames.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 1)
-      XCTAssertContainsSymbol(top,
-                              name: "let_it_go",
-                              flags: [.defLocal, .srcLocal],
-                              location: loc3)
-
-      // function
-      XCTAssertEqual(top.children.count, 1)
-      guard top.children.count == 1 else { return }
-
-      let defScope = top.children[0]
-      XCTAssertScope(defScope, name: "let_it_go", kind: .function, flags: [.isNested])
-      XCTAssert(defScope.parameterNames.isEmpty)
-
-      XCTAssertEqual(defScope.symbols.count, 1)
-      XCTAssertContainsSymbol(defScope,
-                              name: "elsa", // missing: srcLocal
-                              flags: [.defLocal, .srcLocal, .cell],
-                              location: loc1)
-
-      // lambda
-      XCTAssertEqual(defScope.children.count, 1)
-      guard defScope.children.count == 1 else { return }
-
-      let lambda = defScope.children[0]
-      XCTAssertScope(lambda, name: "lambda", kind: .function, flags: [.isNested])
-      XCTAssert(lambda.parameterNames.isEmpty)
-      XCTAssert(lambda.children.isEmpty)
-
-      XCTAssertEqual(lambda.symbols.count, 1)
-      XCTAssertContainsSymbol(lambda,
-                              name: "elsa",
-                              flags: [.use, .srcFree],
-                              location: loc2)
+    guard let table = self.createSymbolTable(stmt: stmt) else {
+      return
     }
+
+    XCTAssertScope(
+      table.top,
+      name: "top",
+      kind: .module,
+      flags: [],
+      symbols: [
+        .init(name: "let_it_go", flags: [.defLocal, .srcLocal], location: loc3)
+      ],
+      parameters: [],
+      childrenCount: 1
+    )
+
+    guard let function = self.getChildScope(table.top, at: 0) else {
+      return
+    }
+
+    XCTAssertScope(
+      function,
+      name: "let_it_go",
+      kind: .function,
+      flags: [.isNested],
+      symbols: [
+        .init(name: "elsa", flags: [.defLocal, .srcLocal, .cell], location: loc1)
+      ],
+      parameters: [],
+      childrenCount: 1
+    )
+
+    guard let lambda = self.getChildScope(function, at: 0) else {
+      return
+    }
+
+    XCTAssertScope(
+      lambda,
+      name: "lambda",
+      kind: .lambda,
+      flags: [.isNested],
+      symbols: [
+        .init(name: "elsa", flags: [.use, .srcFree], location: loc2)
+      ],
+      parameters: [],
+      childrenCount: 0
+    )
   }
 }
