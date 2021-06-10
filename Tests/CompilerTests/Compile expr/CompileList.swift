@@ -11,15 +11,21 @@ class CompileList: CompileTestCase {
   func test_empty() {
     let expr = self.listExpr(elements: [])
 
-    let expected: [EmittedInstruction] = [
-      .init(.buildList, "0"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .buildList(elementCount: 0),
+        .return
+      ]
+    )
   }
 
   /// ['ariel', True]
@@ -29,17 +35,23 @@ class CompileList: CompileTestCase {
       self.trueExpr()
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "'ariel'"),
-      .init(.loadConst, "true"),
-      .init(.buildList, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst("ariel"),
+        .loadConst(.true),
+        .buildList(elementCount: 2),
+        .return
+      ]
+    )
   }
 
   /// [ariel, True]
@@ -49,17 +61,23 @@ class CompileList: CompileTestCase {
       self.trueExpr()
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "ariel"),
-      .init(.loadConst, "true"),
-      .init(.buildList, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "ariel"),
+        .loadConst(.true),
+        .buildList(elementCount: 2),
+        .return
+      ]
+    )
   }
 
   /// [ariel, *sea]
@@ -75,18 +93,24 @@ class CompileList: CompileTestCase {
       self.starredExpr(expression: self.identifierExpr(value: "sea"))
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "ariel"),
-      .init(.buildTuple, "1"), // <- tuple!
-      .init(.loadName, "sea"),
-      .init(.buildListUnpack, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "ariel"),
+        .buildTuple(elementCount: 1),
+        .loadName(name: "sea"),
+        .buildListUnpack(elementCount: 2),
+        .return
+      ]
+    )
   }
 
   /// [ariel, *sea, *land, eric]
@@ -107,20 +131,26 @@ class CompileList: CompileTestCase {
       self.identifierExpr(value: "eric")
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "ariel"),
-      .init(.buildTuple, "1"),
-      .init(.loadName, "sea"),
-      .init(.loadName, "land"),
-      .init(.loadName, "eric"),
-      .init(.buildTuple, "1"),
-      .init(.buildListUnpack, "4"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "ariel"),
+        .buildTuple(elementCount: 1),
+        .loadName(name: "sea"),
+        .loadName(name: "land"),
+        .loadName(name: "eric"),
+        .buildTuple(elementCount: 1),
+        .buildListUnpack(elementCount: 4),
+        .return
+      ]
+    )
   }
 }

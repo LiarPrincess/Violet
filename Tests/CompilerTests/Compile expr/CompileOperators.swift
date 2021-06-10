@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-import VioletBytecode
+@testable import VioletBytecode
 @testable import VioletCompiler
 
 // swiftlint:disable file_length
@@ -18,29 +18,33 @@ class CompileOperators: CompileTestCase {
   /// 2 UNARY_POSITIVE
   /// 4 RETURN_VALUE
   func test_unary() {
-    let operators: [UnaryOpExpr.Operator: EmittedInstructionKind] = [
-      .plus: .unaryPositive,
-      .minus: .unaryNegative,
-      .not: .unaryNot,
-      .invert: .unaryInvert
+    let operators: [(UnaryOpExpr.Operator, Instruction.Filled)] = [
+      (.plus, .unaryPositive),
+      (.minus, .unaryNegative),
+      (.not, .unaryNot),
+      (.invert, .unaryInvert)
     ]
 
-    for (op, emittedOp) in operators {
-      let msg = "for '\(op)'"
-
+    for (astOp, op) in operators {
       let right = self.identifierExpr(value: "rapunzel")
-      let expr = self.unaryOpExpr(op: op, right: right)
+      let expr = self.unaryOpExpr(op: astOp, right: right)
 
-      let expected: [EmittedInstruction] = [
-        .init(.loadName, "rapunzel"),
-        .init(emittedOp),
-        .init(.return)
-      ]
-
-      if let code = self.compile(expr: expr) {
-        XCTAssertCode(code, name: "<module>", qualified: "", kind: .module, msg)
-        XCTAssertInstructions(code, expected, msg)
+      guard let code = self.compile(expr: expr) else {
+        continue
       }
+
+      XCTAssertCodeObject(
+        code,
+        name: "<module>",
+        qualifiedName: "",
+        kind: .module,
+        flags: [],
+        instructions: [
+          .loadName(name: "rapunzel"),
+          op,
+          .return
+        ]
+      )
     }
   }
 
@@ -58,17 +62,23 @@ class CompileOperators: CompileTestCase {
       right: self.unaryOpExpr(op: .minus, right: right)
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "rapunzel"),
-      .init(.unaryNegative),
-      .init(.unaryPositive),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "rapunzel"),
+        .unaryNegative,
+        .unaryPositive,
+        .return
+      ]
+    )
   }
 
   // MARK: - Binary
@@ -81,40 +91,44 @@ class CompileOperators: CompileTestCase {
   /// 4 BINARY_ADD
   /// 6 RETURN_VALUE
   func test_binary() {
-    let operators: [BinaryOpExpr.Operator: EmittedInstructionKind] = [
-      .add: .binaryAdd,
-      .sub: .binarySubtract,
-      .mul: .binaryMultiply,
-      .matMul: .binaryMatrixMultiply,
-      .div: .binaryTrueDivide,
-      .modulo: .binaryModulo,
-      .pow: .binaryPower,
-      .leftShift: .binaryLShift,
-      .rightShift: .binaryRShift,
-      .bitOr: .binaryOr,
-      .bitXor: .binaryXor,
-      .bitAnd: .binaryAnd,
-      .floorDiv: .binaryFloorDivide
+    let operators: [(BinaryOpExpr.Operator, Instruction.Filled)] = [
+      (.add, .binaryAdd),
+      (.sub, .binarySubtract),
+      (.mul, .binaryMultiply),
+      (.matMul, .binaryMatrixMultiply),
+      (.div, .binaryTrueDivide),
+      (.modulo, .binaryModulo),
+      (.pow, .binaryPower),
+      (.leftShift, .binaryLShift),
+      (.rightShift, .binaryRShift),
+      (.bitOr, .binaryOr),
+      (.bitXor, .binaryXor),
+      (.bitAnd, .binaryAnd),
+      (.floorDiv, .binaryFloorDivide)
     ]
 
-    for (op, emittedOp) in operators {
-      let msg = "for '\(op)'"
-
+    for (astOp, op) in operators {
       let left = self.identifierExpr(value: "rapunzel")
       let right = self.identifierExpr(value: "cassandra")
-      let expr = self.binaryOpExpr(op: op, left: left, right: right)
+      let expr = self.binaryOpExpr(op: astOp, left: left, right: right)
 
-      let expected: [EmittedInstruction] = [
-        .init(.loadName, "rapunzel"),
-        .init(.loadName, "cassandra"),
-        .init(emittedOp),
-        .init(.return)
-      ]
-
-      if let code = self.compile(expr: expr) {
-        XCTAssertCode(code, name: "<module>", qualified: "", kind: .module, msg)
-        XCTAssertInstructions(code, expected, msg)
+      guard let code = self.compile(expr: expr) else {
+        continue
       }
+
+      XCTAssertCodeObject(
+        code,
+        name: "<module>",
+        qualifiedName: "",
+        kind: .module,
+        flags: [],
+        instructions: [
+          .loadName(name: "rapunzel"),
+          .loadName(name: "cassandra"),
+          op,
+          .return
+        ]
+      )
     }
   }
 
@@ -134,19 +148,25 @@ class CompileOperators: CompileTestCase {
     let add = self.binaryOpExpr(op: .add, left: left, right: middle)
     let expr = self.binaryOpExpr(op: .sub, left: add, right: right)
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "eugene"),
-      .init(.loadName, "rapunzel"),
-      .init(.binaryAdd),
-      .init(.loadName, "cassandra"),
-      .init(.binarySubtract),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "eugene"),
+        .loadName(name: "rapunzel"),
+        .binaryAdd,
+        .loadName(name: "cassandra"), // Spoiler!
+        .binarySubtract,
+        .return
+      ]
+    )
   }
 
   // MARK: - Boolean
@@ -163,17 +183,23 @@ class CompileOperators: CompileTestCase {
     let right = self.identifierExpr(value: "cassandra")
     let expr = self.boolOpExpr(op: .and, left: left, right: right)
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "rapunzel"),
-      .init(.jumpIfFalseOrPop, "6"),
-      .init(.loadName, "cassandra"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "rapunzel"), // 0
+        .jumpIfFalseOrPop(label: CodeObject.Label(jumpAddress: 3)), // 1
+        .loadName(name: "cassandra"), // 2
+        .return // 3
+      ]
+    )
   }
 
   /// rapunzel or cassandra
@@ -188,17 +214,23 @@ class CompileOperators: CompileTestCase {
     let right = self.identifierExpr(value: "cassandra")
     let expr = self.boolOpExpr(op: .or, left: left, right: right)
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "rapunzel"),
-      .init(.jumpIfTrueOrPop, "6"),
-      .init(.loadName, "cassandra"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "rapunzel"), // 0
+        .jumpIfTrueOrPop(label: CodeObject.Label(jumpAddress: 3)), // 1
+        .loadName(name: "cassandra"), // 2
+        .return // 3
+      ]
+    )
   }
 
   /// rapunzel and cassandra or eugene
@@ -218,19 +250,25 @@ class CompileOperators: CompileTestCase {
     let and = self.boolOpExpr(op: .and, left: left, right: middle)
     let expr = self.boolOpExpr(op: .or, left: and, right: right)
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "rapunzel"),
-      .init(.jumpIfFalseOrPop, "6"),
-      .init(.loadName, "cassandra"),
-      .init(.jumpIfTrueOrPop, "10"),
-      .init(.loadName, "eugene"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "rapunzel"), // 0
+        .jumpIfFalseOrPop(label: CodeObject.Label(jumpAddress: 3)), // 1
+        .loadName(name: "cassandra"), // 2
+        .jumpIfTrueOrPop(label: CodeObject.Label(jumpAddress: 5)), // 3
+        .loadName(name: "eugene"), // 4
+        .return // 5
+      ]
+    )
   }
 
   // MARK: - Compare
@@ -243,41 +281,45 @@ class CompileOperators: CompileTestCase {
   /// 4 COMPARE_OP               0 (<)
   /// 6 RETURN_VALUE
   func test_compare() {
-    let operators: [CompareExpr.Operator: String] = [
-      .equal: "==",
-      .notEqual: "!=",
-      .less: "<",
-      .lessEqual: "<=",
-      .greater: ">",
-      .greaterEqual: ">=",
-      .is: "is",
-      .isNot: "is not",
-      .in: "in",
-      .notIn: "not in"
+    let operators: [(CompareExpr.Operator, Instruction.CompareType)] = [
+      (.equal, .equal),
+      (.notEqual, .notEqual),
+      (.less, .less),
+      (.lessEqual, .lessEqual),
+      (.greater, .greater),
+      (.greaterEqual, .greaterEqual),
+      (.is, .is),
+      (.isNot, .isNot),
+      (.in, .in),
+      (.notIn, .notIn)
     ]
 
-    for (op, emittedOp) in operators {
-      let msg = "for '\(op)'"
-
+    for (astOp, compareType) in operators {
       let left = self.identifierExpr(value: "rapunzel")
       let right = self.identifierExpr(value: "cassandra")
 
       let expr = self.compareExpr(
         left: left,
-        elements: [CompareExpr.Element(op: op, right: right)]
+        elements: [CompareExpr.Element(op: astOp, right: right)]
       )
 
-      let expected: [EmittedInstruction] = [
-        .init(.loadName, "rapunzel"),
-        .init(.loadName, "cassandra"),
-        .init(.compareOp, emittedOp),
-        .init(.return)
-      ]
-
-      if let code = self.compile(expr: expr) {
-        XCTAssertCode(code, name: "<module>", qualified: "", kind: .module, msg)
-        XCTAssertInstructions(code, expected, msg)
+      guard let code = self.compile(expr: expr) else {
+        continue
       }
+
+      XCTAssertCodeObject(
+        code,
+        name: "<module>",
+        qualifiedName: "",
+        kind: .module,
+        flags: [],
+        instructions: [
+          .loadName(name: "rapunzel"),
+          .loadName(name: "cassandra"),
+          .compareOp(type: compareType),
+          .return
+        ]
+      )
     }
   }
 
@@ -314,25 +356,31 @@ class CompileOperators: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "eugene"),
-      .init(.loadName, "rapunzel"),
-      .init(.dupTop),
-      .init(.rotThree),
-      .init(.compareOp, "<"),
-      .init(.jumpIfFalseOrPop, "18"),
-      .init(.loadName, "cassandra"),
-      .init(.compareOp, "<"),
-      .init(.jumpAbsolute, "22"),
-      .init(.rotTwo),
-      .init(.popTop),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "eugene"),
+        .loadName(name: "rapunzel"),
+        .dupTop,
+        .rotThree,
+        .compareOp(type: .less),
+        .jumpIfFalseOrPop(label: CodeObject.Label(jumpAddress: 9)),
+        .loadName(name: "cassandra"),
+        .compareOp(type: .less),
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 11)),
+        .rotTwo,
+        .popTop,
+        .return
+      ]
+    )
   }
 
   /// eugene < pascal < rapunzel < cassandra
@@ -376,30 +424,36 @@ class CompileOperators: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "eugene"),
-      .init(.loadName, "pascal"),
-      .init(.dupTop),
-      .init(.rotThree),
-      .init(.compareOp, "<"),
-      .init(.jumpIfFalseOrPop, "28"),
-      .init(.loadName, "rapunzel"),
-      .init(.dupTop),
-      .init(.rotThree),
-      .init(.compareOp, "<"),
-      .init(.jumpIfFalseOrPop, "28"),
-      .init(.loadName, "cassandra"),
-      .init(.compareOp, "<"),
-      .init(.jumpAbsolute, "32"),
-      .init(.rotTwo),
-      .init(.popTop),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "eugene"),
+        .loadName(name: "pascal"),
+        .dupTop,
+        .rotThree,
+        .compareOp(type: .less),
+        .jumpIfFalseOrPop(label: CodeObject.Label(jumpAddress: 14)),
+        .loadName(name: "rapunzel"),
+        .dupTop,
+        .rotThree,
+        .compareOp(type: .less),
+        .jumpIfFalseOrPop(label: CodeObject.Label(jumpAddress: 14)),
+        .loadName(name: "cassandra"),
+        .compareOp(type: .less),
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 16)),
+        .rotTwo,
+        .popTop,
+        .return
+      ]
+    )
   }
 
   /// 1 < 2
@@ -419,16 +473,22 @@ class CompileOperators: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "1"),
-      .init(.loadConst, "2"),
-      .init(.compareOp, "<"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(1),
+        .loadConst(2),
+        .compareOp(type: .less),
+        .return
+      ]
+    )
   }
 }

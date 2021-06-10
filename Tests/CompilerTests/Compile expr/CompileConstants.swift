@@ -1,4 +1,5 @@
 import XCTest
+import BigInt
 import VioletCore
 import VioletParser
 import VioletBytecode
@@ -13,30 +14,42 @@ class CompileConstants: CompileTestCase {
   func test_none() {
     let expr = self.noneExpr()
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// ...
   func test_ellipsis() {
     let expr = self.ellipsisExpr()
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "ellipsis"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(.ellipsis),
+        .return
+      ]
+    )
   }
 
   // MARK: - Boolean
@@ -45,76 +58,110 @@ class CompileConstants: CompileTestCase {
   func test_true() {
     let expr = self.trueExpr()
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "true"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(.true),
+        .return
+      ]
+    )
   }
 
   /// false
   func test_false() {
     let expr = self.falseExpr()
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "false"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(.false),
+        .return
+      ]
+    )
   }
 
   // MARK: - Numbers
 
   /// 3
   func test_integer() {
-    let expr = self.intExpr(value: 3)
+    let value = BigInt(42)
+    let expr = self.intExpr(value: value)
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "3"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(value),
+        .return
+      ]
+    )
   }
 
   /// 12.3
   func test_float() {
-    let expr = self.floatExpr(value: 12.3)
+    let value = 42.5
+    let expr = self.floatExpr(value: value)
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "12.3"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(value),
+        .return
+      ]
+    )
   }
 
   /// 1.2+3.4j
   func test_complex() {
-    let expr = self.complexExpr(real: 1.2, imag: 3.4)
+    let real = 42.5
+    let imag = 24.6
+    let expr = self.complexExpr(real: real, imag: imag)
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "1.2+3.4j"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(real: real, imag: imag),
+        .return
+      ]
+    )
   }
 }

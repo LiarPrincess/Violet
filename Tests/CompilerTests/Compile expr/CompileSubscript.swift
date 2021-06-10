@@ -26,17 +26,23 @@ class CompileSubscript: CompileTestCase {
       )
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "paris"),
-      .init(.loadConst, "'notre_dame'"),
-      .init(.binarySubscript),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "paris"),
+        .loadConst("notre_dame"),
+        .binarySubscript,
+        .return
+      ]
+    )
   }
 
   /// paris[notre_dame]
@@ -53,17 +59,23 @@ class CompileSubscript: CompileTestCase {
       )
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "paris"),
-      .init(.loadName, "notre_dame"),
-      .init(.binarySubscript),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "paris"),
+        .loadName(name: "notre_dame"),
+        .binarySubscript,
+        .return
+      ]
+    )
   }
 
   /// paris[notre_dame][bell]
@@ -89,19 +101,25 @@ class CompileSubscript: CompileTestCase {
       )
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "paris"),
-      .init(.loadName, "notre_dame"),
-      .init(.binarySubscript),
-      .init(.loadName, "bell"),
-      .init(.binarySubscript),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "paris"),
+        .loadName(name: "notre_dame"),
+        .binarySubscript,
+        .loadName(name: "bell"),
+        .binarySubscript,
+        .return
+      ]
+    )
   }
 
   // MARK: - Slice
@@ -127,20 +145,26 @@ class CompileSubscript: CompileTestCase {
       )
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "paris"),
-      .init(.loadConst, "'Quasimodo'"),
-      .init(.loadConst, "'Esmeralda'"),
-      .init(.loadConst, "'Frollo'"),
-      .init(.buildSlice, "3"),
-      .init(.binarySubscript),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "paris"),
+        .loadConst("Quasimodo"),
+        .loadConst("Esmeralda"),
+        .loadConst("Frollo"),
+        .buildSlice(type: .lowerUpperStep),
+        .binarySubscript,
+        .return
+      ]
+    )
   }
 
   /// paris[Quasimodo:Esmeralda:Frollo]
@@ -164,20 +188,26 @@ class CompileSubscript: CompileTestCase {
       )
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "paris"),
-      .init(.loadName, "Quasimodo"),
-      .init(.loadName, "Esmeralda"),
-      .init(.loadName, "Frollo"),
-      .init(.buildSlice, "3"),
-      .init(.binarySubscript),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "paris"),
+        .loadName(name: "Quasimodo"),
+        .loadName(name: "Esmeralda"),
+        .loadName(name: "Frollo"),
+        .buildSlice(type: .lowerUpperStep),
+        .binarySubscript,
+        .return
+      ]
+    )
   }
 
   /// paris[Quasimodo:Esmeralda]
@@ -200,19 +230,26 @@ class CompileSubscript: CompileTestCase {
       )
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "paris"),
-      .init(.loadName, "Quasimodo"),
-      .init(.loadName, "Esmeralda"),
-      .init(.buildSlice, "2"),
-      .init(.binarySubscript),
-      .init(.return)
-    ]
 
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "paris"),
+        .loadName(name: "Quasimodo"),
+        .loadName(name: "Esmeralda"),
+        .buildSlice(type: .lowerUpper),
+        .binarySubscript,
+        .return
+      ]
+    )
   }
 
   /// paris[::]
@@ -231,19 +268,25 @@ class CompileSubscript: CompileTestCase {
       )
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "paris"),
-      .init(.loadConst, "none"),
-      .init(.loadConst, "none"),
-      .init(.buildSlice, "2"),
-      .init(.binarySubscript),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "paris"),
+        .loadConst(.none),
+        .loadConst(.none),
+        .buildSlice(type: .lowerUpper),
+        .binarySubscript,
+        .return
+      ]
+    )
   }
 
   // MARK: - Ext slice
@@ -259,45 +302,57 @@ class CompileSubscript: CompileTestCase {
   /// 12 BINARY_SUBSCR
   /// 14 RETURN_VALUE
   func test_slice_extended() {
-
     let expr = self.subscriptExpr(
       object: self.identifierExpr(value: "paris"),
       slice: self.slice(
-        kind: self.extSlice(
-          slices: [
-            self.slice(
-              kind: .slice(
-                lower: self.identifierExpr(value: "Quasimodo"),
-                upper: self.identifierExpr(value: "Esmeralda"),
-                step: nil
-              )
-            ),
-            self.slice(
-              kind: .index(self.identifierExpr(value: "Frollo"))
+        kind: self.extSlice([
+          self.slice(
+            kind: .slice(
+              lower: self.identifierExpr(value: "Quasimodo"),
+              upper: self.identifierExpr(value: "Esmeralda"),
+              step: nil
             )
-          ]
-        )
+          ),
+          self.slice(
+            kind: .index(self.identifierExpr(value: "Frollo"))
+          )
+        ])
       )
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "paris"),
-      .init(.loadName, "Quasimodo"),
-      .init(.loadName, "Esmeralda"),
-      .init(.buildSlice, "2"),
-      .init(.loadName, "Frollo"),
-      .init(.buildTuple, "2"),
-      .init(.binarySubscript),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        //      .init(.loadName, "paris"),
+        //      .init(.loadName, "Quasimodo"),
+        //      .init(.loadName, "Esmeralda"),
+        //      .init(.buildSlice, "2"),
+        //      .init(.loadName, "Frollo"),
+        //      .init(.buildTuple, "2"),
+        //      .init(.binarySubscript),
+        //      .init(.return)
+
+        .loadName(name: "paris"),
+        .loadName(name: "Quasimodo"),
+        .loadName(name: "Esmeralda"),
+        .buildSlice(type: .lowerUpper),
+        .loadName(name: "Frollo"),
+        .buildTuple(elementCount: 2),
+        .binarySubscript,
+        .return
+      ]
+    )
   }
 
-  private func extSlice(slices: [Slice]) -> Slice.Kind {
+  private func extSlice(_ slices: [Slice]) -> Slice.Kind {
     assert(slices.any)
     let first = slices[0]
     let rest = Array(slices.dropFirst())

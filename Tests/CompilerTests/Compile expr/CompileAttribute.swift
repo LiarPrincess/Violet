@@ -18,16 +18,22 @@ class CompileAttribute: CompileTestCase {
       name: "notre_dame"
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "paris"),
-      .init(.loadAttribute, "notre_dame"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "paris"),
+        .loadAttribute(name: "notre_dame"),
+        .return
+      ]
+    )
   }
 
   /// paris.notre_dame.bell
@@ -45,16 +51,22 @@ class CompileAttribute: CompileTestCase {
       name: "bell"
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "paris"),
-      .init(.loadAttribute, "notre_dame"),
-      .init(.loadAttribute, "bell"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "paris"),
+        .loadAttribute(name: "notre_dame"),
+        .loadAttribute(name: "bell"),
+        .return
+      ]
+    )
   }
 }

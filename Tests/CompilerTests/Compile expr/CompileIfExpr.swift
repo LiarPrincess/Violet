@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-import VioletBytecode
+@testable import VioletBytecode
 @testable import VioletCompiler
 
 /// Use 'Scripts/dump_dis.py' for reference.
@@ -31,19 +31,25 @@ class CompileIfExpr: CompileTestCase {
       orElse: self.stringExpr(value: .literal("lamp"))
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "'touched'"),
-      .init(.popJumpIfFalse, "8"),
-      .init(.loadConst, "'genie'"),
-      .init(.jumpAbsolute, "10"),
-      .init(.loadConst, "'lamp'"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst("touched"), // 0
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 4)), // 1
+        .loadConst("genie"), // 2
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 5)), // 3
+        .loadConst("lamp"), // 4
+        .return // 5
+      ]
+    )
   }
 
   /// genie if touched else lamp
@@ -67,19 +73,25 @@ class CompileIfExpr: CompileTestCase {
       orElse: self.identifierExpr(value: "lamp")
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "touched"),
-      .init(.popJumpIfFalse, "8"),
-      .init(.loadName, "genie"),
-      .init(.jumpAbsolute, "10"),
-      .init(.loadName, "lamp"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "touched"), // 0
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 4)), // 1
+        .loadName(name: "genie"), // 2
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 5)), // 3
+        .loadName(name: "lamp"), // 4
+        .return // 5
+      ]
+    )
   }
 
   /// aladdin if jasmine else (ali if prince else thief)
@@ -110,22 +122,30 @@ class CompileIfExpr: CompileTestCase {
       )
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "jasmine"),
-      .init(.popJumpIfFalse, "8"),
-      .init(.loadName, "aladdin"),
-      .init(.jumpAbsolute, "18"),
-      .init(.loadName, "prince"),
-      .init(.popJumpIfFalse, "16"),
-      .init(.loadName, "ali"),
-      .init(.jumpAbsolute, "18"),
-      .init(.loadName, "thief"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "jasmine"), // 0
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 4)), // 1
+        .loadName(name: "aladdin"), // 2
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 9)), // 3
+
+        .loadName(name: "prince"), // 4
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 8)), // 5
+        .loadName(name: "ali"), // 6
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 9)), // 7
+
+        .loadName(name: "thief"), // 8
+        .return // 9
+      ]
+    )
   }
 }

@@ -23,16 +23,22 @@ class CompileCall: CompileTestCase {
       keywords: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "cook"),
-      .init(.callFunction, "0"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "cook"),
+        .callFunction(argumentCount: 0),
+        .return
+      ]
+    )
   }
 
   // MARK: - Args
@@ -54,18 +60,24 @@ class CompileCall: CompileTestCase {
       keywords: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "cook"),
-      .init(.loadName, "zucchini"),
-      .init(.loadName, "tomato"),
-      .init(.callFunction, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "cook"),
+        .loadName(name: "zucchini"),
+        .loadName(name: "tomato"),
+        .callFunction(argumentCount: 2),
+        .return
+      ]
+    )
   }
 
   /// cook(zucchini, *tomato)
@@ -89,20 +101,26 @@ class CompileCall: CompileTestCase {
       keywords: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "cook"),
-      .init(.loadName, "zucchini"),
-      .init(.buildTuple, "1"),
-      .init(.loadName, "tomato"),
-      .init(.buildTupleUnpackWithCall, "2"),
-      .init(.callFunctionEx, "0"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "cook"),
+        .loadName(name: "zucchini"),
+        .buildTuple(elementCount: 1),
+        .loadName(name: "tomato"),
+        .buildTupleUnpackWithCall(elementCount: 2),
+        .callFunctionEx(hasKeywordArguments: false),
+        .return
+      ]
+    )
   }
 
   /// cook(zucchini, *tomato, *pepper, eggplant)
@@ -133,23 +151,29 @@ class CompileCall: CompileTestCase {
       keywords: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "cook"),
-      .init(.loadName, "zucchini"),
-      .init(.buildTuple, "1"),
-      .init(.loadName, "tomato"),
-      .init(.loadName, "pepper"),
-      .init(.loadName, "eggplant"),
-      .init(.buildTuple, "1"),
-      .init(.buildTupleUnpackWithCall, "4"),
-      .init(.callFunctionEx, "0"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "cook"),
+        .loadName(name: "zucchini"),
+        .buildTuple(elementCount: 1),
+        .loadName(name: "tomato"),
+        .loadName(name: "pepper"),
+        .loadName(name: "eggplant"),
+        .buildTuple(elementCount: 1),
+        .buildTupleUnpackWithCall(elementCount: 4),
+        .callFunctionEx(hasKeywordArguments: false),
+        .return
+      ]
+    )
   }
 
   // MARK: - Keywords
@@ -172,19 +196,25 @@ class CompileCall: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "cook"),
-      .init(.loadName, "tomato"),
-      .init(.loadName, "eggplant"),
-      .init(.loadConst, "('zucchini', 'pepper')"),
-      .init(.callFunctionKw, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "cook"),
+        .loadName(name: "tomato"),
+        .loadName(name: "eggplant"),
+        .loadConst(.tuple([.string("zucchini"), .string("pepper")])),
+        .callFunctionKw(argumentCount: 2),
+        .return
+      ]
+    )
   }
 
   /// cook(zucchini=tomato, salt=pepper, **eggplant)
@@ -210,23 +240,29 @@ class CompileCall: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "cook"),
-      .init(.buildTuple, "0"),
-      .init(.loadName, "tomato"),
-      .init(.loadName, "pepper"),
-      .init(.loadConst, "('zucchini', 'salt')"),
-      .init(.buildConstKeyMap, "2"),
-      .init(.loadName, "eggplant"),
-      .init(.buildMapUnpackWithCall, "2"),
-      .init(.callFunctionEx, "1"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "cook"),
+        .buildTuple(elementCount: 0),
+        .loadName(name: "tomato"),
+        .loadName(name: "pepper"),
+        .loadConst(.tuple([.string("zucchini"), .string("salt")])),
+        .buildConstKeyMap(elementCount: 2),
+        .loadName(name: "eggplant"),
+        .buildMapUnpackWithCall(elementCount: 2),
+        .callFunctionEx(hasKeywordArguments: true),
+        .return
+      ]
+    )
   }
 
   /// cook(zucchini=tomato, **pepper, **eggplant, salt=onion)
@@ -256,26 +292,32 @@ class CompileCall: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "cook"),
-      .init(.buildTuple, "0"),
-      .init(.loadConst, "'zucchini'"),
-      .init(.loadName, "tomato"),
-      .init(.buildMap, "1"),
-      .init(.loadName, "pepper"),
-      .init(.loadName, "eggplant"),
-      .init(.loadConst, "'salt'"),
-      .init(.loadName, "onion"),
-      .init(.buildMap, "1"),
-      .init(.buildMapUnpackWithCall, "4"),
-      .init(.callFunctionEx, "1"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "cook"),
+        .buildTuple(elementCount: 0),
+        .loadConst("zucchini"),
+        .loadName(name: "tomato"),
+        .buildMap(elementCount: 1),
+        .loadName(name: "pepper"),
+        .loadName(name: "eggplant"),
+        .loadConst("salt"),
+        .loadName(name: "onion"),
+        .buildMap(elementCount: 1),
+        .buildMapUnpackWithCall(elementCount: 4),
+        .callFunctionEx(hasKeywordArguments: true),
+        .return
+      ]
+    )
   }
 
   // MARK: - All
@@ -309,24 +351,30 @@ class CompileCall: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "cook"),
-      .init(.loadName, "zucchini"),
-      .init(.buildTuple, "1"),
-      .init(.loadName, "tomato"),
-      .init(.buildTupleUnpackWithCall, "2"),
-      .init(.loadConst, "'pepper'"),
-      .init(.loadName, "salt"),
-      .init(.buildMap, "1"),
-      .init(.loadName, "eggplant"),
-      .init(.buildMapUnpackWithCall, "2"),
-      .init(.callFunctionEx, "1"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "cook"),
+        .loadName(name: "zucchini"),
+        .buildTuple(elementCount: 1),
+        .loadName(name: "tomato"),
+        .buildTupleUnpackWithCall(elementCount: 2),
+        .loadConst("pepper"),
+        .loadName(name: "salt"),
+        .buildMap(elementCount: 1),
+        .loadName(name: "eggplant"),
+        .buildMapUnpackWithCall(elementCount: 2),
+        .callFunctionEx(hasKeywordArguments: true),
+        .return
+      ]
+    )
   }
 }

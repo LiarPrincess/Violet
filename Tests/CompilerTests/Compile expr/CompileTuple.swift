@@ -11,15 +11,21 @@ class CompileTuple: CompileTestCase {
   func test_empty() {
     let expr = self.tupleExpr(elements: [])
 
-    let expected: [EmittedInstruction] = [
-      .init(.buildTuple, "0"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .buildTuple(elementCount: 0),
+        .return
+      ]
+    )
   }
 
   /// ('ariel', True)
@@ -29,17 +35,23 @@ class CompileTuple: CompileTestCase {
       self.trueExpr()
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "'ariel'"),
-      .init(.loadConst, "true"),
-      .init(.buildTuple, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst("ariel"),
+        .loadConst(.true),
+        .buildTuple(elementCount: 2),
+        .return
+      ]
+    )
   }
 
   /// (ariel, True)
@@ -49,17 +61,23 @@ class CompileTuple: CompileTestCase {
       self.trueExpr()
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "ariel"),
-      .init(.loadConst, "true"),
-      .init(.buildTuple, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "ariel"),
+        .loadConst(.true),
+        .buildTuple(elementCount: 2),
+        .return
+      ]
+    )
   }
 
   /// (ariel, *sea)
@@ -75,18 +93,24 @@ class CompileTuple: CompileTestCase {
       self.starredExpr(expression: self.identifierExpr(value: "sea"))
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "ariel"),
-      .init(.buildTuple, "1"),
-      .init(.loadName, "sea"),
-      .init(.buildTupleUnpack, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "ariel"),
+        .buildTuple(elementCount: 1),
+        .loadName(name: "sea"),
+        .buildTupleUnpack(elementCount: 2),
+        .return
+      ]
+    )
   }
 
   /// (ariel, *sea, *land, eric)
@@ -107,20 +131,35 @@ class CompileTuple: CompileTestCase {
       self.identifierExpr(value: "eric")
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "ariel"),
-      .init(.buildTuple, "1"),
-      .init(.loadName, "sea"),
-      .init(.loadName, "land"),
-      .init(.loadName, "eric"),
-      .init(.buildTuple, "1"),
-      .init(.buildTupleUnpack, "4"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        //      .init(.loadName, "ariel"),
+        //      .init(.buildTuple, "1"),
+        //      .init(.loadName, "sea"),
+        //      .init(.loadName, "land"),
+        //      .init(.loadName, "eric"),
+        //      .init(.buildTuple, "1"),
+        //      .init(.buildTupleUnpack, "4"),
+        //      .init(.return)
+
+        .loadName(name: "ariel"),
+        .buildTuple(elementCount: 1),
+        .loadName(name: "sea"),
+        .loadName(name: "land"),
+        .loadName(name: "eric"),
+        .buildTuple(elementCount: 1),
+        .buildTupleUnpack(elementCount: 4),
+        .return
+      ]
+    )
   }
 }

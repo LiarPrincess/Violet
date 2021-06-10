@@ -18,17 +18,23 @@ class CompileSet: CompileTestCase {
       self.trueExpr()
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "'ariel'"),
-      .init(.loadConst, "true"),
-      .init(.buildSet, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst("ariel"),
+        .loadConst(.true),
+        .buildSet(elementCount: 2),
+        .return
+      ]
+    )
   }
 
   /// { ariel, True }
@@ -38,17 +44,23 @@ class CompileSet: CompileTestCase {
       self.trueExpr()
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "ariel"),
-      .init(.loadConst, "true"),
-      .init(.buildSet, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "ariel"),
+        .loadConst(.true),
+        .buildSet(elementCount: 2),
+        .return
+      ]
+    )
   }
 
   /// { ariel, *sea }
@@ -64,18 +76,24 @@ class CompileSet: CompileTestCase {
       self.starredExpr(expression: self.identifierExpr(value: "sea"))
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "ariel"),
-      .init(.buildSet, "1"),
-      .init(.loadName, "sea"),
-      .init(.buildSetUnpack, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "ariel"),
+        .buildSet(elementCount: 1),
+        .loadName(name: "sea"),
+        .buildSetUnpack(elementCount: 2),
+        .return
+      ]
+    )
   }
 
   /// { ariel, *sea, *land, eric }
@@ -96,20 +114,26 @@ class CompileSet: CompileTestCase {
       self.identifierExpr(value: "eric")
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "ariel"),
-      .init(.buildSet, "1"),
-      .init(.loadName, "sea"),
-      .init(.loadName, "land"),
-      .init(.loadName, "eric"),
-      .init(.buildSet, "1"),
-      .init(.buildSetUnpack, "4"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "ariel"),
+        .buildSet(elementCount: 1),
+        .loadName(name: "sea"),
+        .loadName(name: "land"),
+        .loadName(name: "eric"),
+        .buildSet(elementCount: 1),
+        .buildSetUnpack(elementCount: 4),
+        .return
+      ]
+    )
   }
 }

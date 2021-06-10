@@ -19,15 +19,21 @@ class CompileStringTests: CompileTestCase {
     let data = Data([a, l, i, c, e])
     let expr = self.bytesExpr(value: data)
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "b'Alice'"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(data),
+        .return
+      ]
+    )
   }
 
   // MARK: - String - literal
@@ -35,15 +41,21 @@ class CompileStringTests: CompileTestCase {
   func test_stringLiteral() {
     let expr = self.stringExpr(value: .literal("Alice"))
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "'Alice'"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst("Alice"),
+        .return
+      ]
+    )
   }
 
   // MARK: - String - formatted
@@ -61,16 +73,22 @@ class CompileStringTests: CompileTestCase {
       )
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "alice"),
-      .init(.formatValue, ""),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "alice"),
+        .formatValue(conversion: .none, hasFormat: false),
+        .return
+      ]
+    )
   }
 
   /// f'{alice!s}'
@@ -79,29 +97,35 @@ class CompileStringTests: CompileTestCase {
   ///  2 FORMAT_VALUE             1 (str)
   ///  4 RETURN_VALUE
   func test_formattedValue_withConversion() {
-    let conversions: [StringExpr.Conversion: String] = [
-      .str: "str",
-      .ascii: "ascii",
-      .repr: "repr"
+    let conversions: [(StringExpr.Conversion, Instruction.StringConversion)] = [
+      (.str, .str),
+      (.ascii, .ascii),
+      (.repr, .repr)
     ]
 
-    for (conversion, str) in conversions {
+    for (astConversion, conversion) in conversions {
       let expr = self.stringExpr(value: .formattedValue(
-        self.identifierExpr(value: "alice"),
-        conversion: conversion,
-        spec: nil)
+                                  self.identifierExpr(value: "alice"),
+                                  conversion: astConversion,
+                                  spec: nil)
       )
 
-      let expected: [EmittedInstruction] = [
-        .init(.loadName, "alice"),
-        .init(.formatValue, str),
-        .init(.return)
-      ]
-
-      if let code = self.compile(expr: expr) {
-        XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-        XCTAssertInstructions(code, expected)
+      guard let code = self.compile(expr: expr) else {
+        continue
       }
+
+      XCTAssertCodeObject(
+        code,
+        name: "<module>",
+        qualifiedName: "",
+        kind: .module,
+        flags: [],
+        instructions: [
+          .loadName(name: "alice"),
+          .formatValue(conversion: conversion, hasFormat: false),
+          .return
+        ]
+      )
     }
   }
 
@@ -118,17 +142,23 @@ class CompileStringTests: CompileTestCase {
       spec: "wonderland")
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "alice"),
-      .init(.loadConst, "'wonderland'"),
-      .init(.formatValue, "with format"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "alice"),
+        .loadConst("wonderland"),
+        .formatValue(conversion: .none, hasFormat: true),
+        .return
+      ]
+    )
   }
 
   /// f'{alice!s:wonderland}'
@@ -144,17 +174,23 @@ class CompileStringTests: CompileTestCase {
       spec: "wonderland")
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "alice"),
-      .init(.loadConst, "'wonderland'"),
-      .init(.formatValue, "str, with format"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "alice"),
+        .loadConst("wonderland"),
+        .formatValue(conversion: .str, hasFormat: true),
+        .return
+      ]
+    )
   }
 
   // MARK: - Joined string
@@ -173,21 +209,27 @@ class CompileStringTests: CompileTestCase {
       .formattedValue(
         self.identifierExpr(value: "in"),
         conversion: .str,
-        spec: "wonderland")
+        spec: " wonderland")
     ]))
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "'alice '"),
-      .init(.loadName, "in"),
-      .init(.loadConst, "'wonderland'"),
-      .init(.formatValue, "str, with format"),
-      .init(.buildString, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst("alice "),
+        .loadName(name: "in"),
+        .loadConst(" wonderland"),
+        .formatValue(conversion: .str, hasFormat: true),
+        .buildString(elementCount: 2),
+        .return
+      ]
+    )
   }
 }

@@ -11,15 +11,21 @@ class CompileDictionary: CompileTestCase {
   func test_empty() {
     let expr = self.dictionaryExpr(elements: [])
 
-    let expected: [EmittedInstruction] = [
-      .init(.buildMap, "0"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .buildMap(elementCount: 0),
+        .return
+      ]
+    )
   }
 
   /// { 'ariel': 'mermaid', 'eric': 'human' }
@@ -35,19 +41,25 @@ class CompileDictionary: CompileTestCase {
       )
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "'ariel'"),
-      .init(.loadConst, "'mermaid'"),
-      .init(.loadConst, "'eric'"),
-      .init(.loadConst, "'human'"),
-      .init(.buildMap, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst("ariel"),
+        .loadConst("mermaid"),
+        .loadConst("eric"),
+        .loadConst("human"),
+        .buildMap(elementCount: 2),
+        .return
+      ]
+    )
   }
 
   /// { ariel: 'mermaid', eric: human }
@@ -63,19 +75,25 @@ class CompileDictionary: CompileTestCase {
       )
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "ariel"),
-      .init(.loadConst, "'mermaid'"),
-      .init(.loadName, "eric"),
-      .init(.loadName, "human"),
-      .init(.buildMap, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "ariel"),
+        .loadConst("mermaid"),
+        .loadName(name: "eric"),
+        .loadName(name: "human"),
+        .buildMap(elementCount: 2),
+        .return
+      ]
+    )
   }
 
   /// { ariel: 'mermaid', **sea }
@@ -95,19 +113,25 @@ class CompileDictionary: CompileTestCase {
       .unpacking(self.identifierExpr(value: "sea"))
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "ariel"),
-      .init(.loadConst, "'mermaid'"),
-      .init(.buildMap, "1"),
-      .init(.loadName, "sea"),
-      .init(.buildMapUnpack, "2"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "ariel"),
+        .loadConst("mermaid"),
+        .buildMap(elementCount: 1),
+        .loadName(name: "sea"),
+        .buildMapUnpack(elementCount: 2),
+        .return
+      ]
+    )
   }
 
   /// { ariel: 'mermaid', **sea, **land, eric: human }
@@ -136,22 +160,28 @@ class CompileDictionary: CompileTestCase {
       )
     ])
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "ariel"),
-      .init(.loadConst, "'mermaid'"),
-      .init(.buildMap, "1"),
-      .init(.loadName, "sea"),
-      .init(.loadName, "land"),
-      .init(.loadName, "eric"),
-      .init(.loadName, "human"),
-      .init(.buildMap, "1"),
-      .init(.buildMapUnpack, "4"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(expr: expr) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(expr: expr) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "ariel"),
+        .loadConst("mermaid"),
+        .buildMap(elementCount: 1),
+        .loadName(name: "sea"),
+        .loadName(name: "land"),
+        .loadName(name: "eric"),
+        .loadName(name: "human"),
+        .buildMap(elementCount: 1),
+        .buildMapUnpack(elementCount: 4),
+        .return
+      ]
+    )
   }
 }
