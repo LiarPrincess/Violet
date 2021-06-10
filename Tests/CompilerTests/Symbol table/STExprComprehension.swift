@@ -70,7 +70,7 @@ class STExprComprehension: SymbolTableTestCase {
       flags: [.isNested],
       symbols: [
         .init(name: ".0", flags: [.defParam, .srcLocal]),
-        .init(name: "ariel", flags: [.defLocal, .srcLocal, .use], location: loc2)
+        .init(name: "ariel", flags: [.defLocal, .srcLocal, .use], location: loc1)
       ],
       parameters: [".0"],
       childrenCount: 0
@@ -135,7 +135,7 @@ class STExprComprehension: SymbolTableTestCase {
       flags: [.isNested, .isCoroutine], // Coroutine!
       symbols: [
         .init(name: ".0", flags: [.defParam, .srcLocal]),
-        .init(name: "ariel", flags: [.defLocal, .srcLocal, .use], location: loc2),
+        .init(name: "ariel", flags: [.defLocal, .srcLocal, .use], location: loc1),
         .init(name: "hasLegs", flags: [.srcGlobalImplicit, .use], location: loc3)
       ],
       parameters: [".0"],

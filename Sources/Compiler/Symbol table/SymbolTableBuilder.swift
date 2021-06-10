@@ -138,17 +138,17 @@ internal final class SymbolTableBuilderImpl:
                           location: SourceLocation) throws {
     let mangled = MangledName(className: self.className, name: name)
 
-    var firstLocation = location
     var flagsToSet = flags
+    var firstLocation = location
 
     if let current = self.currentScope.symbols[mangled] {
       if flags.contains(.defParam) && current.flags.contains(.defParam) {
-        let loc = Swift.max(current.location, location)
-        throw self.error(.duplicateArgument(name), location: loc)
+        let location = Swift.max(current.location, location)
+        throw self.error(.duplicateArgument(name), location: location)
       }
 
-      firstLocation = current.location
       flagsToSet.formUnion(current.flags)
+      firstLocation = Swift.min(firstLocation, current.location)
     }
 
     let info = Symbol(flags: flagsToSet, location: firstLocation)
@@ -156,13 +156,18 @@ internal final class SymbolTableBuilderImpl:
 
     if flags.contains(.defParam) {
       self.currentScope.parameterNames.append(mangled)
-    } else if flags.contains(.defGlobal) {
+    }
+
+    if flags.contains(.defGlobal) {
       var globalFlagsToSet = flagsToSet
+      var globalLocation = firstLocation
+
       if let currentGlobal = self.topScope.symbols[mangled] {
         globalFlagsToSet.formUnion(currentGlobal.flags)
+        globalLocation = Swift.min(firstLocation, currentGlobal.location)
       }
 
-      let globalInfo = Symbol(flags: globalFlagsToSet, location: firstLocation)
+      let globalInfo = Symbol(flags: globalFlagsToSet, location: globalLocation)
       self.topScope.symbols[mangled] = globalInfo
     }
   }
