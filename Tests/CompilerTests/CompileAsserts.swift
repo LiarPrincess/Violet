@@ -8,6 +8,7 @@ import VioletCompiler
 
 // MARK: - Assert code object
 
+// swiftlint:disable:next function_parameter_count
 func XCTAssertCodeObject(_ code: CodeObject,
                          name: String,
                          qualifiedName: String,
@@ -30,7 +31,8 @@ func XCTAssertCodeObject(_ code: CodeObject,
                  file: file,
                  line: line)
   XCTAssertEqual(code.kind,
-                 kind, "Kind",
+                 kind,
+                 "Kind",
                  file: file,
                  line: line)
 

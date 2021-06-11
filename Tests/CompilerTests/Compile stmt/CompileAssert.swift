@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-@testable import VioletBytecode
+import VioletBytecode
 @testable import VioletCompiler
 
 /// Use './Scripts/dump' for reference.
@@ -33,7 +33,7 @@ class CompileAssert: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "pooh"),
-        .popJumpIfTrue(label: CodeObject.Label(jumpAddress: 4)),
+        .popJumpIfTrue(target: 8),
         .loadGlobal(name: "AssertionError"),
         .raiseVarargs(type: .exceptionOnly),
         .loadConst(.none),
@@ -70,9 +70,9 @@ class CompileAssert: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "pooh"),
-        .popJumpIfTrue(label: CodeObject.Label(jumpAddress: 6)),
+        .popJumpIfTrue(target: 12),
         .loadGlobal(name: "AssertionError"),
-        .loadConst("Stuck at Rabbits Howse"),
+        .loadConst(string: "Stuck at Rabbits Howse"),
         .callFunction(argumentCount: 1),
         .raiseVarargs(type: .exceptionOnly),
         .loadConst(.none),
@@ -82,12 +82,18 @@ class CompileAssert: CompileTestCase {
   }
 
   /// assert pooh
+  ///
+  ///  0 LOAD_NAME                0 (pooh)
+  ///  2 POP_JUMP_IF_TRUE         8
+  ///  4 LOAD_GLOBAL              1 (AssertionError)
+  ///  6 RAISE_VARARGS            1
+  ///  8 LOAD_CONST               0 (None)
+  /// 10 RETURN_VALUE
   func test_withOptimization_emitsNothing() {
     let stmt = self.assertStmt(
       test: self.identifierExpr(value: "pooh"),
       msg: nil
     )
-
 
     guard let code = self.compile(stmt: stmt) else {
       return
@@ -101,7 +107,7 @@ class CompileAssert: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "pooh"),
-        .popJumpIfTrue(label: CodeObject.Label(jumpAddress: 4)),
+        .popJumpIfTrue(target: 8),
         .loadGlobal(name: "AssertionError"),
         .raiseVarargs(type: .exceptionOnly),
         .loadConst(.none),

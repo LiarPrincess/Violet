@@ -114,7 +114,7 @@ class CompileConstants: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(value),
+        .loadConst(integer: value),
         .return
       ]
     )
@@ -136,7 +136,7 @@ class CompileConstants: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(value),
+        .loadConst(float: value),
         .return
       ]
     )

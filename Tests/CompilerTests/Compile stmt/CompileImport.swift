@@ -31,7 +31,7 @@ class CompileImport: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(0),
+        .loadConst(integer: 0),
         .loadConst(.none),
         .importName(name: "Rapunzel"),
         .storeName(name: "Rapunzel"),
@@ -65,7 +65,7 @@ class CompileImport: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(0),
+        .loadConst(integer: 0),
         .loadConst(.none),
         .importName(name: "Tangled.Rapunzel"),
         .storeName(name: "Tangled"),
@@ -99,7 +99,7 @@ class CompileImport: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(0),
+        .loadConst(integer: 0),
         .loadConst(.none),
         .importName(name: "Rapunzel"),
         .storeName(name: "Daughter"),
@@ -140,11 +140,11 @@ class CompileImport: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(0),
+        .loadConst(integer: 0),
         .loadConst(.none),
         .importName(name: "Rapunzel"),
         .storeName(name: "Daughter"),
-        .loadConst(0),
+        .loadConst(integer: 0),
         .loadConst(.none),
         .importName(name: "Pascal"),
         .storeName(name: "Pascal"),
@@ -183,7 +183,7 @@ class CompileImport: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(0),
+        .loadConst(integer: 0),
         .loadConst(.none),
         .importName(name: "Tangled.Rapunzel"),
         .importFrom(name: "Rapunzel"),

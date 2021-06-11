@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-@testable import VioletBytecode
+import VioletBytecode
 @testable import VioletCompiler
 
 // swiftlint:disable file_length
@@ -194,10 +194,10 @@ class CompileOperators: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadName(name: "rapunzel"), // 0
-        .jumpIfFalseOrPop(label: CodeObject.Label(jumpAddress: 3)), // 1
-        .loadName(name: "cassandra"), // 2
-        .return // 3
+        .loadName(name: "rapunzel"),
+        .jumpIfFalseOrPop(target: 6),
+        .loadName(name: "cassandra"),
+        .return
       ]
     )
   }
@@ -225,10 +225,10 @@ class CompileOperators: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadName(name: "rapunzel"), // 0
-        .jumpIfTrueOrPop(label: CodeObject.Label(jumpAddress: 3)), // 1
-        .loadName(name: "cassandra"), // 2
-        .return // 3
+        .loadName(name: "rapunzel"),
+        .jumpIfTrueOrPop(target: 6),
+        .loadName(name: "cassandra"),
+        .return
       ]
     )
   }
@@ -261,12 +261,12 @@ class CompileOperators: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadName(name: "rapunzel"), // 0
-        .jumpIfFalseOrPop(label: CodeObject.Label(jumpAddress: 3)), // 1
-        .loadName(name: "cassandra"), // 2
-        .jumpIfTrueOrPop(label: CodeObject.Label(jumpAddress: 5)), // 3
-        .loadName(name: "eugene"), // 4
-        .return // 5
+        .loadName(name: "rapunzel"),
+        .jumpIfFalseOrPop(target: 6), // We don't have peephole optimizer
+        .loadName(name: "cassandra"),
+        .jumpIfTrueOrPop(target: 10),
+        .loadName(name: "eugene"),
+        .return
       ]
     )
   }
@@ -372,10 +372,10 @@ class CompileOperators: CompileTestCase {
         .dupTop,
         .rotThree,
         .compareOp(type: .less),
-        .jumpIfFalseOrPop(label: CodeObject.Label(jumpAddress: 9)),
+        .jumpIfFalseOrPop(target: 18),
         .loadName(name: "cassandra"),
         .compareOp(type: .less),
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 11)),
+        .jumpAbsolute(target: 22),
         .rotTwo,
         .popTop,
         .return
@@ -440,15 +440,15 @@ class CompileOperators: CompileTestCase {
         .dupTop,
         .rotThree,
         .compareOp(type: .less),
-        .jumpIfFalseOrPop(label: CodeObject.Label(jumpAddress: 14)),
+        .jumpIfFalseOrPop(target: 28),
         .loadName(name: "rapunzel"),
         .dupTop,
         .rotThree,
         .compareOp(type: .less),
-        .jumpIfFalseOrPop(label: CodeObject.Label(jumpAddress: 14)),
+        .jumpIfFalseOrPop(target: 28),
         .loadName(name: "cassandra"),
         .compareOp(type: .less),
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 16)),
+        .jumpAbsolute(target: 32),
         .rotTwo,
         .popTop,
         .return
@@ -484,8 +484,8 @@ class CompileOperators: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(1),
-        .loadConst(2),
+        .loadConst(integer: 1),
+        .loadConst(integer: 2),
         .compareOp(type: .less),
         .return
       ]

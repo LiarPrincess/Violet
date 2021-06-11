@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-@testable import VioletBytecode
+import VioletBytecode
 @testable import VioletCompiler
 
 // swiftlint:disable file_length
@@ -43,14 +43,14 @@ class CompileFor: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 9)),
+        .setupLoop(loopEndTarget: 18),
         .loadName(name: "castle"),
         .getIter,
-        .forIter(ifEmptyLabel: CodeObject.Label(jumpAddress: 8)),
+        .forIter(ifEmptyTarget: 16),
         .storeName(name: "person"),
         .loadName(name: "becomeItem"),
         .popTop,
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 3)),
+        .jumpAbsolute(target: 6),
         .popBlock,
         .loadConst(.none),
         .return
@@ -95,14 +95,14 @@ class CompileFor: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 11)),
+        .setupLoop(loopEndTarget: 22),
         .loadName(name: "belle"),
         .getIter,
-        .forIter(ifEmptyLabel: CodeObject.Label(jumpAddress: 8)),
+        .forIter(ifEmptyTarget: 16),
         .storeName(name: "person"),
         .loadName(name: "husband"),
         .popTop,
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 3)),
+        .jumpAbsolute(target: 6),
         .popBlock,
         .loadName(name: "beast"),
         .popTop,
@@ -152,15 +152,15 @@ class CompileFor: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 10)),
+        .setupLoop(loopEndTarget: 20),
         .loadName(name: "castle"),
         .getIter,
-        .forIter(ifEmptyLabel: CodeObject.Label(jumpAddress: 9)),
+        .forIter(ifEmptyTarget: 18),
         .storeName(name: "person"),
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 3)),
+        .jumpAbsolute(target: 6),
         .loadName(name: "becomeItem"),
         .popTop,
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 3)),
+        .jumpAbsolute(target: 6),
         .popBlock,
         .loadConst(.none),
         .return
@@ -244,26 +244,26 @@ class CompileFor: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 28)),
+        .setupLoop(loopEndTarget: 56),
         .loadName(name: "castle"),
         .getIter,
-        .forIter(ifEmptyLabel: CodeObject.Label(jumpAddress: 27)),
+        .forIter(ifEmptyTarget: 54),
         .storeName(name: "person"),
-        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 10)),
+        .setupExcept(firstExceptTarget: 20),
         .loadName(name: "spell"),
         .raiseVarargs(type: .exceptionOnly),
         .popBlock,
-        // will jump to: '.jumpAbsolute(label: CodeObject.Label(jumpAddress: "6")'
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 26)),
+        // will jump to: '.jumpAbsolute(target"6")'
+        .jumpAbsolute(target: 52),
         .dupTop,
         .loadName(name: "spell"),
         .compareOp(type: .exceptionMatch),
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 25)),
-        //        .popTop,
+        .popJumpIfFalse(target: 50),
+//        .popTop,
         .storeName(name: "e"),
-        //        .popTop,
-        .setupFinally(finallyStartLabel: CodeObject.Label(jumpAddress: 19)),
-        .continue(loopStartLabel: CodeObject.Label(jumpAddress: 3)),
+//        .popTop,
+        .setupFinally(finallyStartTarget: 38),
+        .continue(loopStartTarget: 6),
         .popBlock,
         .loadConst(.none),
         .loadConst(.none),
@@ -271,10 +271,10 @@ class CompileFor: CompileTestCase {
         .deleteName(name: "e"),
         .endFinally,
         .popExcept,
-        // will jump to: '.jumpAbsolute(label: CodeObject.Label(jumpAddress: "6")'
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 26)),
+        // will jump to: '.jumpAbsolute(target"6")'
+        .jumpAbsolute(target: 52),
         .endFinally,
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 3)),
+        .jumpAbsolute(target: 6),
         .popBlock,
         .loadConst(.none),
         .return
@@ -322,19 +322,18 @@ class CompileFor: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 10)),
+        .setupLoop(loopEndTarget: 20),
         .loadName(name: "castle"),
         .getIter,
-        .forIter(ifEmptyLabel: CodeObject.Label(jumpAddress: 9)),
+        .forIter(ifEmptyTarget: 18),
         .storeName(name: "person"),
         .break,
         .loadName(name: "becomeItem"),
         .popTop,
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 3)),
+        .jumpAbsolute(target: 6),
         .popBlock,
         .loadConst(.none),
         .return
-
       ]
     )
   }

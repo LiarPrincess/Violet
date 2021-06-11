@@ -4,6 +4,7 @@ import VioletParser
 import VioletBytecode
 @testable import VioletCompiler
 
+// swiftlint:disable function_body_length
 // swiftlint:disable file_length
 
 /// Use './Scripts/dump' for reference.
@@ -43,7 +44,7 @@ class CompileFunctionDef: CompileTestCase {
       flags: [],
       instructions: [
         .loadConst(codeObject: .any),
-        .loadConst("cook"),
+        .loadConst(string: "cook"),
         .makeFunction(flags: []),
         .storeName(name: "cook"),
         .loadConst(.none),
@@ -109,10 +110,10 @@ class CompileFunctionDef: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "Dish"),
-        .loadConst(.tuple([.string("return")])),
+        .loadConst(tuple: ["return"]),
         .buildConstKeyMap(elementCount: 1),
         .loadConst(codeObject: .any),
-        .loadConst("cook"),
+        .loadConst(string: "cook"),
         .makeFunction(flags: [.hasAnnotations]),
         .storeName(name: "cook"),
         .loadConst(.none),
@@ -176,7 +177,7 @@ class CompileFunctionDef: CompileTestCase {
       flags: [],
       instructions: [
         .loadConst(codeObject: .any),
-        .loadConst("cook"),
+        .loadConst(string: "cook"),
         .makeFunction(flags: []),
         .storeName(name: "cook"),
         .loadConst(.none),
@@ -244,10 +245,10 @@ class CompileFunctionDef: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "Vegetable"),
-        .loadConst(.tuple([.string("zucchini")])),
+        .loadConst(tuple: ["zucchini"]),
         .buildConstKeyMap(elementCount: 1),
         .loadConst(codeObject: .any),
-        .loadConst("cook"),
+        .loadConst(string: "cook"),
         .makeFunction(flags: [.hasAnnotations]),
         .storeName(name: "cook"),
         .loadConst(.none),
@@ -311,10 +312,10 @@ class CompileFunctionDef: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(1),
+        .loadConst(integer: 1),
         .buildTuple(elementCount: 1), //  <-- we don't have constant propagation!
         .loadConst(codeObject: .any),
-        .loadConst("cook"),
+        .loadConst(string: "cook"),
         .makeFunction(flags: [.hasPositionalArgDefaults]),
         .storeName(name: "cook"),
         .loadConst(.none),
@@ -377,7 +378,7 @@ class CompileFunctionDef: CompileTestCase {
       flags: [],
       instructions: [
         .loadConst(codeObject: .any),
-        .loadConst("cook"),
+        .loadConst(string: "cook"),
         .makeFunction(flags: []),
         .storeName(name: "cook"),
         .loadConst(.none),
@@ -441,10 +442,10 @@ class CompileFunctionDef: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(1),
+        .loadConst(integer: 1),
         .buildTuple(elementCount: 1), //  <-- we don't have constant propagation!
         .loadConst(codeObject: .any),
-        .loadConst("cook"),
+        .loadConst(string: "cook"),
         .makeFunction(flags: [.hasPositionalArgDefaults]),
         .storeName(name: "cook"),
         .loadConst(.none),
@@ -509,7 +510,7 @@ class CompileFunctionDef: CompileTestCase {
       flags: [],
       instructions: [
         .loadConst(codeObject: .any),
-        .loadConst("cook"),
+        .loadConst(string: "cook"),
         .makeFunction(flags: []),
         .storeName(name: "cook"),
         .loadConst(.none),
@@ -576,11 +577,11 @@ class CompileFunctionDef: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(1),
-        .loadConst(.tuple([.string("tomato")])),
+        .loadConst(integer: 1),
+        .loadConst(tuple: ["tomato"]),
         .buildConstKeyMap(elementCount: 1),
         .loadConst(codeObject: .any),
-        .loadConst("cook"),
+        .loadConst(string: "cook"),
         .makeFunction(flags: [.hasKwOnlyArgDefaults]),
         .storeName(name: "cook"),
         .loadConst(.none),
@@ -646,7 +647,7 @@ class CompileFunctionDef: CompileTestCase {
       flags: [],
       instructions: [
         .loadConst(codeObject: .any),
-        .loadConst("cook"),
+        .loadConst(string: "cook"),
         .makeFunction(flags: []),
         .storeName(name: "cook"),
         .loadConst(.none),
@@ -712,7 +713,7 @@ class CompileFunctionDef: CompileTestCase {
       flags: [],
       instructions: [
         .loadConst(codeObject: .any),
-        .loadConst("cook"),
+        .loadConst(string: "cook"),
         .makeFunction(flags: []),
         .storeName(name: "cook"),
         .loadConst(.none),
@@ -782,7 +783,7 @@ class CompileFunctionDef: CompileTestCase {
       flags: [],
       instructions: [
         .loadConst(codeObject: .any),
-        .loadConst("cook"),
+        .loadConst(string: "cook"),
         .makeFunction(flags: []),
         .storeName(name: "cook"),
         .loadConst(.none),

@@ -40,11 +40,11 @@ class CompileAnnAssign: CompileTestCase {
       flags: [],
       instructions: [
         .setupAnnotations,
-        .loadConst("Friend"),
+        .loadConst(string: "Friend"),
         .storeName(name: "flounder"),
         .loadName(name: "Animal"),
         .loadName(name: "__annotations__"),
-        .loadConst("flounder"),
+        .loadConst(string: "flounder"),
         .storeSubscript,
         .loadConst(.none),
         .return
@@ -83,7 +83,7 @@ class CompileAnnAssign: CompileTestCase {
         .setupAnnotations,
         .loadName(name: "Mermaid"),
         .loadName(name: "__annotations__"),
-        .loadConst("ariel"),
+        .loadConst(string: "ariel"),
         .storeSubscript,
         .loadConst(.none),
         .return
@@ -125,7 +125,7 @@ class CompileAnnAssign: CompileTestCase {
       flags: [],
       instructions: [
         .setupAnnotations,
-        .loadConst("Friend"),
+        .loadConst(string: "Friend"),
         .loadName(name: "sea"),
         .storeAttribute(name: "flounder"),
         .loadName(name: "Animal"),
@@ -173,7 +173,7 @@ class CompileAnnAssign: CompileTestCase {
       flags: [],
       instructions: [
         .setupAnnotations,
-        .loadConst("Friend"),
+        .loadConst(string: "Friend"),
         .loadName(name: "sea"),
         .loadName(name: "flounder"),
         .storeSubscript,

@@ -30,7 +30,7 @@ class CompileStringTests: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(data),
+        .loadConst(bytes: data),
         .return
       ]
     )
@@ -52,7 +52,7 @@ class CompileStringTests: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst("Alice"),
+        .loadConst(string: "Alice"),
         .return
       ]
     )
@@ -154,7 +154,7 @@ class CompileStringTests: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "alice"),
-        .loadConst("wonderland"),
+        .loadConst(string: "wonderland"),
         .formatValue(conversion: .none, hasFormat: true),
         .return
       ]
@@ -186,7 +186,7 @@ class CompileStringTests: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "alice"),
-        .loadConst("wonderland"),
+        .loadConst(string: "wonderland"),
         .formatValue(conversion: .str, hasFormat: true),
         .return
       ]
@@ -223,9 +223,9 @@ class CompileStringTests: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst("alice "),
+        .loadConst(string: "alice "),
         .loadName(name: "in"),
-        .loadConst(" wonderland"),
+        .loadConst(string: " wonderland"),
         .formatValue(conversion: .str, hasFormat: true),
         .buildString(elementCount: 2),
         .return

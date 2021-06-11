@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-@testable import VioletBytecode
+import VioletBytecode
 @testable import VioletCompiler
 
 /// Use 'Scripts/dump_dis.py' for reference.
@@ -42,12 +42,12 @@ class CompileIfExpr: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst("touched"), // 0
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 4)), // 1
-        .loadConst("genie"), // 2
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 5)), // 3
-        .loadConst("lamp"), // 4
-        .return // 5
+        .loadConst(string: "touched"),
+        .popJumpIfFalse(target: 8),
+        .loadConst(string: "genie"),
+        .jumpAbsolute(target: 10),
+        .loadConst(string: "lamp"),
+        .return
       ]
     )
   }
@@ -84,12 +84,12 @@ class CompileIfExpr: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadName(name: "touched"), // 0
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 4)), // 1
-        .loadName(name: "genie"), // 2
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 5)), // 3
-        .loadName(name: "lamp"), // 4
-        .return // 5
+        .loadName(name: "touched"),
+        .popJumpIfFalse(target: 8),
+        .loadName(name: "genie"),
+        .jumpAbsolute(target: 10),
+        .loadName(name: "lamp"),
+        .return
       ]
     )
   }
@@ -134,17 +134,17 @@ class CompileIfExpr: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "jasmine"), // 0
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 4)), // 1
-        .loadName(name: "aladdin"), // 2
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 9)), // 3
+        .popJumpIfFalse(target: 8), // 2
+        .loadName(name: "aladdin"), // 4
+        .jumpAbsolute(target: 18), // 6
 
-        .loadName(name: "prince"), // 4
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 8)), // 5
-        .loadName(name: "ali"), // 6
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 9)), // 7
+        .loadName(name: "prince"), // 8
+        .popJumpIfFalse(target: 16), // 10
+        .loadName(name: "ali"), // 12
+        .jumpAbsolute(target: 18), // 14
 
-        .loadName(name: "thief"), // 8
-        .return // 9
+        .loadName(name: "thief"), // 16
+        .return // 18
       ]
     )
   }

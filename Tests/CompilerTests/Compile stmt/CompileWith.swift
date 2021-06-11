@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-@testable import VioletBytecode
+import VioletBytecode
 @testable import VioletCompiler
 
 // swiftlint:disable function_body_length
@@ -46,7 +46,7 @@ class CompileWith: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "alice"),
-        .setupWith(afterBodyLabel: CodeObject.Label(jumpAddress: 7)),
+        .setupWith(afterBodyTarget: 14),
         .popTop,
         .loadName(name: "wonderland"),
         .popTop,
@@ -98,7 +98,7 @@ class CompileWith: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "alice"),
-        .setupWith(afterBodyLabel: CodeObject.Label(jumpAddress: 7)),
+        .setupWith(afterBodyTarget: 14),
         .storeName(name: "smol"),
         .loadName(name: "wonderland"),
         .popTop,
@@ -162,10 +162,10 @@ class CompileWith: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "alice"),
-        .setupWith(afterBodyLabel: CodeObject.Label(jumpAddress: 15)),
+        .setupWith(afterBodyTarget: 30),
         .popTop,
         .loadName(name: "rabbit"),
-        .setupWith(afterBodyLabel: CodeObject.Label(jumpAddress: 10)),
+        .setupWith(afterBodyTarget: 20),
         .popTop,
         .loadName(name: "wonderland"),
         .popTop,
@@ -234,10 +234,10 @@ class CompileWith: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "alice"),
-        .setupWith(afterBodyLabel: CodeObject.Label(jumpAddress: 15)),
+        .setupWith(afterBodyTarget: 30),
         .storeName(name: "big"),
         .loadName(name: "rabbit"),
-        .setupWith(afterBodyLabel: CodeObject.Label(jumpAddress: 10)),
+        .setupWith(afterBodyTarget: 20),
         .storeName(name: "smol"),
         .loadName(name: "wonderland"),
         .popTop,

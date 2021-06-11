@@ -46,7 +46,7 @@ class CompileTuple: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst("ariel"),
+        .loadConst(string: "ariel"),
         .loadConst(.true),
         .buildTuple(elementCount: 2),
         .return
@@ -142,15 +142,6 @@ class CompileTuple: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        //      .init(.loadName, "ariel"),
-        //      .init(.buildTuple, "1"),
-        //      .init(.loadName, "sea"),
-        //      .init(.loadName, "land"),
-        //      .init(.loadName, "eric"),
-        //      .init(.buildTuple, "1"),
-        //      .init(.buildTupleUnpack, "4"),
-        //      .init(.return)
-
         .loadName(name: "ariel"),
         .buildTuple(elementCount: 1),
         .loadName(name: "sea"),

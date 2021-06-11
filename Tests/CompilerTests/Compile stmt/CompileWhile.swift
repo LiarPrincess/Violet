@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-@testable import VioletBytecode
+import VioletBytecode
 @testable import VioletCompiler
 
 /// Use './Scripts/dump' for reference.
@@ -36,12 +36,12 @@ class CompileWhile: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 7)),
+        .setupLoop(loopEndTarget: 14),
         .loadName(name: "frollo"),
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 6)),
+        .popJumpIfFalse(target: 12),
         .loadName(name: "quasimodo"),
         .popTop,
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 1)),
+        .jumpAbsolute(target: 2),
         .popBlock,
         .loadConst(.none),
         .return
@@ -81,12 +81,12 @@ class CompileWhile: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 9)),
+        .setupLoop(loopEndTarget: 18),
         .loadName(name: "frollo"),
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 6)),
+        .popJumpIfFalse(target: 12),
         .loadName(name: "quasimodo"),
         .popTop,
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 1)),
+        .jumpAbsolute(target: 2),
         .popBlock,
         .loadName(name: "esmeralda"),
         .popTop,
@@ -131,13 +131,13 @@ class CompileWhile: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 8)),
+        .setupLoop(loopEndTarget: 16),
         .loadName(name: "frollo"),
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 7)),
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 1)),
+        .popJumpIfFalse(target: 14),
+        .jumpAbsolute(target: 2),
         .loadName(name: "quasimodo"),
         .popTop,
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 1)),
+        .jumpAbsolute(target: 2),
         .popBlock,
         .loadConst(.none),
         .return
@@ -180,13 +180,13 @@ class CompileWhile: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 8)),
+        .setupLoop(loopEndTarget: 16),
         .loadName(name: "frollo"),
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 7)),
+        .popJumpIfFalse(target: 14),
         .break,
         .loadName(name: "quasimodo"),
         .popTop,
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 1)),
+        .jumpAbsolute(target: 2),
         .popBlock,
         .loadConst(.none),
         .return

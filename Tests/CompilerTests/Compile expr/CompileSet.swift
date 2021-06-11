@@ -29,7 +29,7 @@ class CompileSet: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst("ariel"),
+        .loadConst(string: "ariel"),
         .loadConst(.true),
         .buildSet(elementCount: 2),
         .return

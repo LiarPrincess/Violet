@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-@testable import VioletBytecode
+import VioletBytecode
 @testable import VioletCompiler
 
 // swiftlint:disable file_length
@@ -44,7 +44,7 @@ class CompileTry: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupFinally(finallyStartLabel: CodeObject.Label(jumpAddress: 5)),
+        .setupFinally(finallyStartTarget: 10),
         .loadName(name: "ping"),
         .popTop,
         .popBlock,
@@ -102,12 +102,12 @@ class CompileTry: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 5)),
+        .setupExcept(firstExceptTarget: 10),
         .loadName(name: "mulan"),
         .popTop,
         .popBlock,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 11)),
+        .jumpAbsolute(target: 22),
         .popTop,
 //      .popTop,
 //      .popTop,
@@ -115,7 +115,7 @@ class CompileTry: CompileTestCase {
         .popTop,
         .popExcept,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 11)),
+        .jumpAbsolute(target: 22),
         .endFinally,
         .loadConst(.none),
         .return
@@ -172,17 +172,17 @@ class CompileTry: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 5)),
+        .setupExcept(firstExceptTarget: 10),
         .loadName(name: "mulan"),
         .popTop,
         .popBlock,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 15)),
+        .jumpAbsolute(target: 30),
         .dupTop,
         .loadName(name: "soldier"),
         .compareOp(type: .exceptionMatch),
         // different label as we pop only once
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 14)),
+        .popJumpIfFalse(target: 28),
         .popTop,
 //      .popTop,
 //      .popTop,
@@ -190,7 +190,7 @@ class CompileTry: CompileTestCase {
         .popTop,
         .popExcept,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 15)),
+        .jumpAbsolute(target: 30),
         .endFinally,
         .loadConst(.none),
         .return
@@ -254,22 +254,22 @@ class CompileTry: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 5)),
+        .setupExcept(firstExceptTarget: 10),
         .loadName(name: "mulan"),
         .popTop,
         .popBlock,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 22)),
+        .jumpAbsolute(target: 44),
         .dupTop,
         .loadName(name: "disguise"),
         .compareOp(type: .exceptionMatch),
         // different label as we pop only once
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 21)),
+        .popJumpIfFalse(target: 42),
 //      .popTop,
         .storeName(name: "soldier"),
 //      .popTop,
         // different label as we pop only once
-        .setupFinally(finallyStartLabel: CodeObject.Label(jumpAddress: 15)),
+        .setupFinally(finallyStartTarget: 30),
         .loadName(name: "ping"),
         .popTop,
         .popBlock,
@@ -280,7 +280,7 @@ class CompileTry: CompileTestCase {
         .endFinally,
         .popExcept,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 22)),
+        .jumpAbsolute(target: 44),
         .endFinally,
         .loadConst(.none),
         .return
@@ -349,17 +349,17 @@ class CompileTry: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 5)),
+        .setupExcept(firstExceptTarget: 10),
         .loadName(name: "mulan"),
         .popTop,
         .popBlock,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 20)),
+        .jumpAbsolute(target: 40),
         .dupTop,
         .loadName(name: "soldier"),
         .compareOp(type: .exceptionMatch),
         // different label as we pop only once
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 14)),
+        .popJumpIfFalse(target: 28),
         .popTop,
   //      .popTop,
   //      .popTop,
@@ -367,7 +367,7 @@ class CompileTry: CompileTestCase {
         .popTop,
         .popExcept,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 20)),
+        .jumpAbsolute(target: 40),
         .popTop,
   //      .popTop,
   //      .popTop,
@@ -375,7 +375,7 @@ class CompileTry: CompileTestCase {
         .popTop,
         .popExcept,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 20)),
+        .jumpAbsolute(target: 40),
         .endFinally,
         .loadConst(.none), // this is 40
         .return
@@ -428,12 +428,12 @@ class CompileTry: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 5)),
+        .setupExcept(firstExceptTarget: 10),
         .loadName(name: "mulan"),
         .popTop,
         .popBlock,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 11)),
+        .jumpAbsolute(target: 22),
         .popTop,
   //      .popTop,
   //      .popTop,
@@ -441,7 +441,7 @@ class CompileTry: CompileTestCase {
         .popTop,
         .popExcept,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 13)),
+        .jumpAbsolute(target: 26),
         .endFinally,
         .loadName(name: "faMulan"),
         .popTop,
@@ -501,13 +501,13 @@ class CompileTry: CompileTestCase {
       flags: [],
       instructions: [
         // different label as we pop only once
-        .setupFinally(finallyStartLabel: CodeObject.Label(jumpAddress: 14)),
-        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 6)),
+        .setupFinally(finallyStartTarget: 28),
+        .setupExcept(firstExceptTarget: 12),
         .loadName(name: "mulan"),
         .popTop,
         .popBlock,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 12)),
+        .jumpAbsolute(target: 24),
         .popTop, // 12
   //      .popTop,
   //      .popTop,
@@ -515,7 +515,7 @@ class CompileTry: CompileTestCase {
         .popTop,
         .popExcept,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 12)),
+        .jumpAbsolute(target: 24),
         .endFinally,
         .popBlock,
         .loadConst(.none),
@@ -581,13 +581,13 @@ class CompileTry: CompileTestCase {
       flags: [],
       instructions: [
         // different label as we pop only once
-        .setupFinally(finallyStartLabel: CodeObject.Label(jumpAddress: 16)),
-        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 6)),
+        .setupFinally(finallyStartTarget: 32),
+        .setupExcept(firstExceptTarget: 12),
         .loadName(name: "mulan"),
         .popTop,
         .popBlock,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 12)),
+        .jumpAbsolute(target: 24),
         .popTop,
   //      .popTop,
   //      .popTop,
@@ -595,7 +595,7 @@ class CompileTry: CompileTestCase {
         .popTop,
         .popExcept,
         // different label as we pop only once
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 14)),
+        .jumpAbsolute(target: 28),
         .endFinally,
         .loadName(name: "pong"),
         .popTop,

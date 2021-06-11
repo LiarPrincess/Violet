@@ -1,8 +1,10 @@
 import XCTest
 import VioletCore
 import VioletParser
-@testable import VioletBytecode
+import VioletBytecode
 @testable import VioletCompiler
+
+// swiftlint:disable function_body_length
 
 /// Use './Scripts/dump' for reference.
 class CompileIfStmt: CompileTestCase {
@@ -36,12 +38,12 @@ class CompileIfStmt: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadName(name: "eat_me"), // 0
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 4)), // 1
-        .loadName(name: "big"), // 2
-        .popTop, // 3
-        .loadConst(.none), // 4
-        .return // 5
+        .loadName(name: "eat_me"),
+        .popJumpIfFalse(target: 8),
+        .loadName(name: "big"),
+        .popTop,
+        .loadConst(.none),
+        .return
       ]
     )
   }
@@ -83,10 +85,10 @@ class CompileIfStmt: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "eat_me"),
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 5)),
+        .popJumpIfFalse(target: 10),
         .loadName(name: "big"),
         .popTop,
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 7)),
+        .jumpAbsolute(target: 14),
         .loadName(name: "smol"),
         .popTop,
         .loadConst(.none),
@@ -146,15 +148,15 @@ class CompileIfStmt: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "eat_me"),
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 5)),
+        .popJumpIfFalse(target: 10),
         .loadName(name: "big"),
         .popTop,
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 12)),
+        .jumpAbsolute(target: 24),
         .loadName(name: "drink_me"),
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 10)),
+        .popJumpIfFalse(target: 20),
         .loadName(name: "smol"),
         .popTop,
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 12)),
+        .jumpAbsolute(target: 24),
         .loadName(name: "alice"),
         .popTop,
         .loadConst(.none),
@@ -196,10 +198,10 @@ class CompileIfStmt: CompileTestCase {
       flags: [],
       instructions: [
         .loadConst(.true),
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 5)),
+        .popJumpIfFalse(target: 10),
         .loadName(name: "big"),
         .popTop,
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 7)),
+        .jumpAbsolute(target: 14),
         .loadName(name: "smol"),
         .popTop,
         .loadConst(.none),
@@ -239,10 +241,10 @@ class CompileIfStmt: CompileTestCase {
       flags: [],
       instructions: [
         .loadConst(.false),
-        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 5)),
+        .popJumpIfFalse(target: 10),
         .loadName(name: "big"),
         .popTop,
-        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 7)),
+        .jumpAbsolute(target: 14),
         .loadName(name: "smol"),
         .popTop,
         .loadConst(.none),

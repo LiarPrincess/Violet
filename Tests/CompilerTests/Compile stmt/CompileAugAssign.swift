@@ -4,6 +4,7 @@ import VioletParser
 import VioletBytecode
 @testable import VioletCompiler
 
+// swiftlint:disable function_body_length
 // cSpell:ignore inplace subscr
 
 /// Use './Scripts/dump' for reference.

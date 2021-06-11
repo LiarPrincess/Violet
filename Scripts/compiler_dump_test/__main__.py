@@ -128,11 +128,34 @@ def print_expected(lines: List[str]):
             pass  # TODO: unpackEx
 
         elif name == 'loadConst':
-            if args == 'None':
-                args = '.none'
+            if args in ('None', 'Ellipsis', 'True', 'False'):
+                args = '.' + args.lower()
+
+            elif args and args[0].isnumeric():
+                # We sometimes get additional parens
+                args = args.replace('(', '').replace(')', '')
+
+                if '+' in args or args[-1] == 'j':
+                    split = args.split('+')
+                    real = split[0] if len(split) == 2 else '0'
+                    imag = split[1] if len(split) == 2 else split[0]
+                    args = f'real: {real}, imag: {imag}'
+                elif '.' in args:
+                    args = 'float: ' + args
+                else:
+                    args = 'integer: ' + args
+
+            elif args.startswith("'") or args.startswith('"'):
+                args = args.replace("'", '"')  # ' -> "
+                args = 'string: ' + args
+            elif args.startswith('b"') or args.startswith("b'"):
+                args = args.replace("'", '"')  # ' -> "
+                args = 'bytes: ' + args
+
+            elif ',' in args:
+                args = 'tuple: ' + args
             elif args.startswith('<code object'):
                 args = 'codeObject: .any'
-            args = args.replace("'", '"')  # ' -> "
 
         elif name in ('loadName', 'storeName', 'deleteName'):
             args = f'name: "{args}"'

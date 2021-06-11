@@ -3,15 +3,17 @@ import BigInt
 import VioletCore
 import VioletLexer
 import VioletParser
-import VioletBytecode
-import VioletCompiler
+@testable import VioletBytecode
+@testable import VioletCompiler
 
 // MARK: - CodeObject + any
 
 extension CodeObject {
 
-  static let anyName = "__ANY_CODE_OBJECT_NAME__"
+  private static let anyName = "__ANY_CODE_OBJECT_NAME__"
 
+  /// Use this code object when you need *any* code object without specific
+  /// property values.
   static let any: CodeObject = {
     let builder = CodeObjectBuilder(name: CodeObject.anyName,
                                     qualifiedName: CodeObject.anyName,
@@ -28,7 +30,7 @@ extension CodeObject {
     return builder.finalize()
   }()
 
-  // Is this any code object without specific property requirements?
+  // Is this *any* code object without any specific property requirements?
   var isAny: Bool {
     return self.name == CodeObject.anyName
   }
@@ -100,23 +102,25 @@ extension CodeObject {
 
 extension Instruction.Filled {
 
-  static func loadConst(_ value: String) -> Instruction.Filled {
+  // MARK: Const
+
+  static func loadConst(string value: String) -> Instruction.Filled {
     return .loadConst(.string(value))
   }
 
-  static func loadConst(_ value: Data) -> Instruction.Filled {
+  static func loadConst(bytes value: Data) -> Instruction.Filled {
     return .loadConst(.bytes(value))
   }
 
-  static func loadConst(_ value: Int) -> Instruction.Filled {
+  static func loadConst(integer value: Int) -> Instruction.Filled {
     return .loadConst(.integer(BigInt(value)))
   }
 
-  static func loadConst(_ value: BigInt) -> Instruction.Filled {
+  static func loadConst(integer value: BigInt) -> Instruction.Filled {
     return .loadConst(.integer(value))
   }
 
-  static func loadConst(_ value: Double) -> Instruction.Filled {
+  static func loadConst(float value: Double) -> Instruction.Filled {
     return .loadConst(.float(value))
   }
 
@@ -133,7 +137,77 @@ extension Instruction.Filled {
     return .loadConst(.tuple(elements))
   }
 
+  // MARK: Fast
+
   static func loadFast(variable: String) -> Instruction.Filled {
     return .loadFast(variable: MangledName(withoutClass: variable))
+  }
+
+  // MARK: Loops
+
+  static func setupLoop(loopEndTarget: Int) -> Instruction.Filled {
+    let label = Self.toLabel(bytecodeIndex: loopEndTarget)
+    return .setupLoop(loopEndLabel: label)
+  }
+
+  static func forIter(ifEmptyTarget: Int) -> Instruction.Filled {
+    let label = Self.toLabel(bytecodeIndex: ifEmptyTarget)
+    return .forIter(ifEmptyLabel: label)
+  }
+
+  static func `continue`(loopStartTarget: Int)-> Instruction.Filled {
+    let label = Self.toLabel(bytecodeIndex: loopStartTarget)
+    return .continue(loopStartLabel: label)
+  }
+
+  // MARK: Try
+
+  static func setupExcept(firstExceptTarget: Int) -> Instruction.Filled {
+    let label = Self.toLabel(bytecodeIndex: firstExceptTarget)
+    return .setupExcept(firstExceptLabel: label)
+  }
+
+  static func setupFinally(finallyStartTarget: Int) -> Instruction.Filled {
+    let label = Self.toLabel(bytecodeIndex: finallyStartTarget)
+    return .setupFinally(finallyStartLabel: label)
+  }
+
+  // MARK: With
+
+  static func setupWith(afterBodyTarget: Int) -> Instruction.Filled {
+    let label = Self.toLabel(bytecodeIndex: afterBodyTarget)
+    return .setupWith(afterBodyLabel: label)
+  }
+
+  // MARK: Jumps
+
+  static func jumpAbsolute(target: Int) -> Instruction.Filled {
+    let label = Self.toLabel(bytecodeIndex: target)
+    return .jumpAbsolute(label: label)
+  }
+
+  static func jumpIfTrueOrPop(target: Int) -> Instruction.Filled {
+    let label = Self.toLabel(bytecodeIndex: target)
+    return .jumpIfTrueOrPop(label: label)
+  }
+
+  static func jumpIfFalseOrPop(target: Int) -> Instruction.Filled {
+    let label = Self.toLabel(bytecodeIndex: target)
+    return .jumpIfFalseOrPop(label: label)
+  }
+
+  static func popJumpIfTrue(target: Int) -> Instruction.Filled {
+    let label = Self.toLabel(bytecodeIndex: target)
+    return .popJumpIfTrue(label: label)
+  }
+
+  static func popJumpIfFalse(target: Int) -> Instruction.Filled {
+    let label = Self.toLabel(bytecodeIndex: target)
+    return .popJumpIfFalse(label: label)
+  }
+
+  private static func toLabel(bytecodeIndex: Int) -> CodeObject.Label {
+    let instructionIndex = bytecodeIndex / Instruction.byteSize
+    return CodeObject.Label(jumpAddress: instructionIndex)
   }
 }

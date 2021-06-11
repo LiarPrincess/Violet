@@ -4,6 +4,8 @@ import VioletParser
 import VioletBytecode
 @testable import VioletCompiler
 
+// swiftlint:disable file_length
+
 /// Use './Scripts/dump' for reference.
 class CompileImportFrom: CompileTestCase {
 
@@ -39,7 +41,7 @@ class CompileImportFrom: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(0),
+        .loadConst(integer: 0),
         .loadConst(tuple: ["Rapunzel"]),
         .importName(name: "Tangled"),
         .importFrom(name: "Rapunzel"),
@@ -81,7 +83,7 @@ class CompileImportFrom: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(0),
+        .loadConst(integer: 0),
         .loadConst(tuple: ["Rapunzel"]),
         .importName(name: "Tangled"),
         .importFrom(name: "Rapunzel"),
@@ -127,7 +129,7 @@ class CompileImportFrom: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(0),
+        .loadConst(integer: 0),
         .loadConst(tuple: ["Rapunzel", "Pascal"]),
         .importName(name: "Tangled"),
         .importFrom(name: "Rapunzel"),
@@ -171,7 +173,7 @@ class CompileImportFrom: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(0),
+        .loadConst(integer: 0),
         .loadConst(tuple: ["Rapunzel"]),
         .importName(name: "Disnep.Tangled"),
         .importFrom(name: "Rapunzel"),
@@ -211,7 +213,7 @@ class CompileImportFrom: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(0),
+        .loadConst(integer: 0),
         .loadConst(tuple: ["*"]),
         .importName(name: "Tangled"),
         .importStar,
@@ -253,7 +255,7 @@ class CompileImportFrom: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(1),
+        .loadConst(integer: 1),
         .loadConst(tuple: ["Rapunzel"]),
         .importName(name: ""),
         .importFrom(name: "Rapunzel"),
@@ -295,7 +297,7 @@ class CompileImportFrom: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(1),
+        .loadConst(integer: 1),
         .loadConst(tuple: ["Rapunzel"]),
         .importName(name: "Tangled"),
         .importFrom(name: "Rapunzel"),

@@ -46,7 +46,7 @@ class CompileList: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst("ariel"),
+        .loadConst(string: "ariel"),
         .loadConst(.true),
         .buildList(elementCount: 2),
         .return

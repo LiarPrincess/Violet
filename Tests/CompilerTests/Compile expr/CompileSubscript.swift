@@ -38,7 +38,7 @@ class CompileSubscript: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "paris"),
-        .loadConst("notre_dame"),
+        .loadConst(string: "notre_dame"),
         .binarySubscript,
         .return
       ]
@@ -157,9 +157,9 @@ class CompileSubscript: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "paris"),
-        .loadConst("Quasimodo"),
-        .loadConst("Esmeralda"),
-        .loadConst("Frollo"),
+        .loadConst(string: "Quasimodo"),
+        .loadConst(string: "Esmeralda"),
+        .loadConst(string: "Frollo"),
         .buildSlice(type: .lowerUpperStep),
         .binarySubscript,
         .return
@@ -229,7 +229,6 @@ class CompileSubscript: CompileTestCase {
         )
       )
     )
-
 
     guard let code = self.compile(expr: expr) else {
       return
@@ -331,15 +330,6 @@ class CompileSubscript: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        //      .init(.loadName, "paris"),
-        //      .init(.loadName, "Quasimodo"),
-        //      .init(.loadName, "Esmeralda"),
-        //      .init(.buildSlice, "2"),
-        //      .init(.loadName, "Frollo"),
-        //      .init(.buildTuple, "2"),
-        //      .init(.binarySubscript),
-        //      .init(.return)
-
         .loadName(name: "paris"),
         .loadName(name: "Quasimodo"),
         .loadName(name: "Esmeralda"),

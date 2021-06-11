@@ -52,10 +52,10 @@ class CompileDictionary: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst("ariel"),
-        .loadConst("mermaid"),
-        .loadConst("eric"),
-        .loadConst("human"),
+        .loadConst(string: "ariel"),
+        .loadConst(string: "mermaid"),
+        .loadConst(string: "eric"),
+        .loadConst(string: "human"),
         .buildMap(elementCount: 2),
         .return
       ]
@@ -87,7 +87,7 @@ class CompileDictionary: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "ariel"),
-        .loadConst("mermaid"),
+        .loadConst(string: "mermaid"),
         .loadName(name: "eric"),
         .loadName(name: "human"),
         .buildMap(elementCount: 2),
@@ -125,7 +125,7 @@ class CompileDictionary: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "ariel"),
-        .loadConst("mermaid"),
+        .loadConst(string: "mermaid"),
         .buildMap(elementCount: 1),
         .loadName(name: "sea"),
         .buildMapUnpack(elementCount: 2),
@@ -172,7 +172,7 @@ class CompileDictionary: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "ariel"),
-        .loadConst("mermaid"),
+        .loadConst(string: "mermaid"),
         .buildMap(elementCount: 1),
         .loadName(name: "sea"),
         .loadName(name: "land"),
