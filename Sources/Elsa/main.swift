@@ -56,9 +56,6 @@ private func generateBytecode() {
   let bytecodeGeneratedDir = bytecodeDir
     .appendingPathComponent("Generated", isDirectory: true)
 
-  let compilerTestsDir = testsDir
-    .appendingPathComponent("CompilerTests", isDirectory: true)
-
   let definitionFile = rootDir
     .appendingPathComponent("Definitions", isDirectory: true)
     .appendingPathComponent("opcodes.letitgo", isDirectory: false)
@@ -87,13 +84,6 @@ private func generateBytecode() {
     sourceFile: sourceFile,
     outputFile: bytecodeGeneratedDir
       .appendingPathComponent("Instructions+Filled+Description.swift")
-  ).walk()
-
-  EmitBytecodeTestHelpersVisitor(
-    sourceFile: sourceFile,
-    outputFile: compilerTestsDir
-      .appendingPathComponent("Helpers")
-      .appendingPathComponent("EmittedInstruction.swift")
   ).walk()
 
   EmitBytecodeDocumentationVisitor(

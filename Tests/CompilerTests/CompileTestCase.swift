@@ -55,15 +55,4 @@ internal class CompileTestCase: XCTestCase, ASTCreator {
       return nil
     }
   }
-
-  // MARK: - Print
-
-  @available(*, deprecated, message: "This should be used only for debug.")
-  internal func printInstructions(_ code: CodeObject) {
-    for (index, emitted) in code.emittedInstructions.enumerated() {
-      let i = Instruction.byteSize * index
-      let arg = emitted.arg ?? ""
-      print("\(i): \(emitted.kind) \(arg)")
-    }
-  }
 }
