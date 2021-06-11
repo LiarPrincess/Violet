@@ -31,31 +31,44 @@ class CompileFunctionDef: CompileTestCase {
       body: [self.identifierStmt(value: "ratatouille")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "'cook'"),
-      .init(.makeFunction, "0"),
-      .init(.storeName, "cook"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let defExpected: [EmittedInstruction] = [
-      .init(.loadGlobal, "ratatouille"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", kind: .function)
-        XCTAssertInstructions(def, defExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(codeObject: .any),
+        .loadConst("cook"),
+        .makeFunction(flags: []),
+        .storeName(name: "cook"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let functionCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      functionCode,
+      name: "cook",
+      qualifiedName: "cook",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized],
+      instructions: [
+        .loadGlobal(name: "ratatouille"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   // MARK: - Return
@@ -84,34 +97,47 @@ class CompileFunctionDef: CompileTestCase {
       returns: self.identifierExpr(value: "Dish")
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "Dish"),
-      .init(.loadConst, "('return')"),
-      .init(.buildConstKeyMap, "1"),
-      .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "'cook'"),
-      .init(.makeFunction, "4"),
-      .init(.storeName, "cook"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let defExpected: [EmittedInstruction] = [
-      .init(.loadGlobal, "ratatouille"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", kind: .function)
-        XCTAssertInstructions(def, defExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "Dish"),
+        .loadConst(.tuple([.string("return")])),
+        .buildConstKeyMap(elementCount: 1),
+        .loadConst(codeObject: .any),
+        .loadConst("cook"),
+        .makeFunction(flags: [.hasAnnotations]),
+        .storeName(name: "cook"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let functionCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      functionCode,
+      name: "cook",
+      qualifiedName: "cook",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized],
+      instructions: [
+        .loadGlobal(name: "ratatouille"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   // MARK: - Positional
@@ -138,31 +164,45 @@ class CompileFunctionDef: CompileTestCase {
       body: [self.identifierStmt(value: "ratatouille")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "'cook'"),
-      .init(.makeFunction, "0"),
-      .init(.storeName, "cook"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let defExpected: [EmittedInstruction] = [
-      .init(.loadGlobal, "ratatouille"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", kind: .function)
-        XCTAssertInstructions(def, defExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(codeObject: .any),
+        .loadConst("cook"),
+        .makeFunction(flags: []),
+        .storeName(name: "cook"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let functionCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      functionCode,
+      name: "cook",
+      qualifiedName: "cook",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized],
+      instructions: [
+        .loadGlobal(name: "ratatouille"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ],
+      argCount: 1
+    )
   }
 
   /// def cook(zucchini: Vegetable): ratatouille
@@ -192,34 +232,48 @@ class CompileFunctionDef: CompileTestCase {
       body: [self.identifierStmt(value: "ratatouille")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "Vegetable"),
-      .init(.loadConst, "('zucchini')"),
-      .init(.buildConstKeyMap, "1"),
-      .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "'cook'"),
-      .init(.makeFunction, "4"),
-      .init(.storeName, "cook"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let defExpected: [EmittedInstruction] = [
-      .init(.loadGlobal, "ratatouille"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", kind: .function)
-        XCTAssertInstructions(def, defExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "Vegetable"),
+        .loadConst(.tuple([.string("zucchini")])),
+        .buildConstKeyMap(elementCount: 1),
+        .loadConst(codeObject: .any),
+        .loadConst("cook"),
+        .makeFunction(flags: [.hasAnnotations]),
+        .storeName(name: "cook"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let functionCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      functionCode,
+      name: "cook",
+      qualifiedName: "cook",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized],
+      instructions: [
+        .loadGlobal(name: "ratatouille"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ],
+      argCount: 1
+    )
   }
 
   /// def cook(zucchini = 1): ratatouille
@@ -246,33 +300,47 @@ class CompileFunctionDef: CompileTestCase {
       body: [self.identifierStmt(value: "ratatouille")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "1"),
-      .init(.buildTuple, "1"), //  <-- we don't have constant propagation!
-      .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "'cook'"),
-      .init(.makeFunction, "1"),
-      .init(.storeName, "cook"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let defExpected: [EmittedInstruction] = [
-      .init(.loadGlobal, "ratatouille"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", kind: .function)
-        XCTAssertInstructions(def, defExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(1),
+        .buildTuple(elementCount: 1), //  <-- we don't have constant propagation!
+        .loadConst(codeObject: .any),
+        .loadConst("cook"),
+        .makeFunction(flags: [.hasPositionalArgDefaults]),
+        .storeName(name: "cook"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let functionCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      functionCode,
+      name: "cook",
+      qualifiedName: "cook",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized],
+      instructions: [
+        .loadGlobal(name: "ratatouille"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ],
+      argCount: 1
+    )
   }
 
   /// def cook(zucchini, tomato): ratatouille
@@ -297,31 +365,45 @@ class CompileFunctionDef: CompileTestCase {
       body: [self.identifierStmt(value: "ratatouille")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "'cook'"),
-      .init(.makeFunction, "0"),
-      .init(.storeName, "cook"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let defExpected: [EmittedInstruction] = [
-      .init(.loadGlobal, "ratatouille"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", kind: .function)
-        XCTAssertInstructions(def, defExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(codeObject: .any),
+        .loadConst("cook"),
+        .makeFunction(flags: []),
+        .storeName(name: "cook"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let functionCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      functionCode,
+      name: "cook",
+      qualifiedName: "cook",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized],
+      instructions: [
+        .loadGlobal(name: "ratatouille"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ],
+      argCount: 2
+    )
   }
 
   /// def cook(zucchini, tomato=1): ratatouille
@@ -348,33 +430,47 @@ class CompileFunctionDef: CompileTestCase {
       body: [self.identifierStmt(value: "ratatouille")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "1"),
-      .init(.buildTuple, "1"), //  <-- we don't have constant propagation!
-      .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "'cook'"),
-      .init(.makeFunction, "1"),
-      .init(.storeName, "cook"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let defExpected: [EmittedInstruction] = [
-      .init(.loadGlobal, "ratatouille"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", kind: .function)
-        XCTAssertInstructions(def, defExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(1),
+        .buildTuple(elementCount: 1), //  <-- we don't have constant propagation!
+        .loadConst(codeObject: .any),
+        .loadConst("cook"),
+        .makeFunction(flags: [.hasPositionalArgDefaults]),
+        .storeName(name: "cook"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let functionCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      functionCode,
+      name: "cook",
+      qualifiedName: "cook",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized],
+      instructions: [
+        .loadGlobal(name: "ratatouille"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ],
+      argCount: 2
+    )
   }
 
   // MARK: - Variadic
@@ -401,31 +497,45 @@ class CompileFunctionDef: CompileTestCase {
       body: [self.identifierStmt(value: "ratatouille")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "'cook'"),
-      .init(.makeFunction, "0"),
-      .init(.storeName, "cook"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let defExpected: [EmittedInstruction] = [
-      .init(.loadGlobal, "ratatouille"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", kind: .function)
-        XCTAssertInstructions(def, defExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(codeObject: .any),
+        .loadConst("cook"),
+        .makeFunction(flags: []),
+        .storeName(name: "cook"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let functionCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      functionCode,
+      name: "cook",
+      qualifiedName: "cook",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized, .varArgs],
+      instructions: [
+        .loadGlobal(name: "ratatouille"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ],
+      argCount: 0
+    )
   }
 
   /// def cook(*zucchini, tomato=1): ratatouille
@@ -455,34 +565,49 @@ class CompileFunctionDef: CompileTestCase {
       body: [self.identifierStmt(value: "ratatouille")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "1"),
-      .init(.loadConst, "('tomato')"),
-      .init(.buildConstKeyMap, "1"),
-      .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "'cook'"),
-      .init(.makeFunction, "2"),
-      .init(.storeName, "cook"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let defExpected: [EmittedInstruction] = [
-      .init(.loadGlobal, "ratatouille"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", kind: .function)
-        XCTAssertInstructions(def, defExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(1),
+        .loadConst(.tuple([.string("tomato")])),
+        .buildConstKeyMap(elementCount: 1),
+        .loadConst(codeObject: .any),
+        .loadConst("cook"),
+        .makeFunction(flags: [.hasKwOnlyArgDefaults]),
+        .storeName(name: "cook"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let functionCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      functionCode,
+      name: "cook",
+      qualifiedName: "cook",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized, .varArgs],
+      instructions: [
+        .loadGlobal(name: "ratatouille"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ],
+      argCount: 0,
+      kwOnlyArgCount: 1
+    )
   }
 
   /// def cook(*, zucchini): ratatouille
@@ -509,31 +634,46 @@ class CompileFunctionDef: CompileTestCase {
       body: [self.identifierStmt(value: "ratatouille")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "'cook'"),
-      .init(.makeFunction, "0"),
-      .init(.storeName, "cook"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let defExpected: [EmittedInstruction] = [
-      .init(.loadGlobal, "ratatouille"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", kind: .function)
-        XCTAssertInstructions(def, defExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(codeObject: .any),
+        .loadConst("cook"),
+        .makeFunction(flags: []),
+        .storeName(name: "cook"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let functionCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      functionCode,
+      name: "cook",
+      qualifiedName: "cook",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized],
+      instructions: [
+        .loadGlobal(name: "ratatouille"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ],
+      argCount: 0,
+      kwOnlyArgCount: 1
+    )
   }
 
   // MARK: - Kwargs
@@ -560,31 +700,46 @@ class CompileFunctionDef: CompileTestCase {
       body: [self.identifierStmt(value: "ratatouille")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "'cook'"),
-      .init(.makeFunction, "0"),
-      .init(.storeName, "cook"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let defExpected: [EmittedInstruction] = [
-      .init(.loadGlobal, "ratatouille"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", kind: .function)
-        XCTAssertInstructions(def, defExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(codeObject: .any),
+        .loadConst("cook"),
+        .makeFunction(flags: []),
+        .storeName(name: "cook"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let functionCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      functionCode,
+      name: "cook",
+      qualifiedName: "cook",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized, .varKeywords],
+      instructions: [
+        .loadGlobal(name: "ratatouille"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ],
+      argCount: 0,
+      kwOnlyArgCount: 0
+    )
   }
 
   // MARK: - All
@@ -615,30 +770,45 @@ class CompileFunctionDef: CompileTestCase {
       body: [self.identifierStmt(value: "ratatouille")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "'cook'"),
-      .init(.makeFunction, "0"),
-      .init(.storeName, "cook"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let defExpected: [EmittedInstruction] = [
-      .init(.loadGlobal, "ratatouille"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let def = self.getCodeObject(parent: code, qualifiedName: "cook") {
-        XCTAssertCode(def, name: "cook", kind: .function)
-        XCTAssertInstructions(def, defExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(codeObject: .any),
+        .loadConst("cook"),
+        .makeFunction(flags: []),
+        .storeName(name: "cook"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let functionCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      functionCode,
+      name: "cook",
+      qualifiedName: "cook",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized, .varArgs, .varKeywords],
+      instructions: [
+        .loadGlobal(name: "ratatouille"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ],
+      argCount: 1,
+      kwOnlyArgCount: 1
+    )
   }
 }

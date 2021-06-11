@@ -28,22 +28,28 @@ class CompileAnnAssign: CompileTestCase {
       isSimple: true
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupAnnotations),
-      .init(.loadConst, "'Friend'"),
-      .init(.storeName, "flounder"),
-      .init(.loadName, "Animal"),
-      .init(.loadName, "__annotations__"),
-      .init(.loadConst, "'flounder'"),
-      .init(.storeSubscript),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupAnnotations,
+        .loadConst("Friend"),
+        .storeName(name: "flounder"),
+        .loadName(name: "Animal"),
+        .loadName(name: "__annotations__"),
+        .loadConst("flounder"),
+        .storeSubscript,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// ariel:Mermaid
@@ -63,20 +69,26 @@ class CompileAnnAssign: CompileTestCase {
       isSimple: true
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupAnnotations),
-      .init(.loadName, "Mermaid"),
-      .init(.loadName, "__annotations__"),
-      .init(.loadConst, "'ariel'"),
-      .init(.storeSubscript),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupAnnotations,
+        .loadName(name: "Mermaid"),
+        .loadName(name: "__annotations__"),
+        .loadConst("ariel"),
+        .storeSubscript,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// sea.flounder:Animal = "Friend"
@@ -101,21 +113,27 @@ class CompileAnnAssign: CompileTestCase {
       isSimple: false
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupAnnotations),
-      .init(.loadConst, "'Friend'"),
-      .init(.loadName, "sea"),
-      .init(.storeAttribute, "flounder"),
-      .init(.loadName, "Animal"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupAnnotations,
+        .loadConst("Friend"),
+        .loadName(name: "sea"),
+        .storeAttribute(name: "flounder"),
+        .loadName(name: "Animal"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// sea[flounder]:Animal = "Friend"
@@ -143,21 +161,27 @@ class CompileAnnAssign: CompileTestCase {
       isSimple: false
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupAnnotations),
-      .init(.loadConst, "'Friend'"),
-      .init(.loadName, "sea"),
-      .init(.loadName, "flounder"),
-      .init(.storeSubscript),
-      .init(.loadName, "Animal"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupAnnotations,
+        .loadConst("Friend"),
+        .loadName(name: "sea"),
+        .loadName(name: "flounder"),
+        .storeSubscript,
+        .loadName(name: "Animal"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 }

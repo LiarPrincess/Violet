@@ -8,28 +8,40 @@ import VioletBytecode
 class CompileTrivial: CompileTestCase {
 
   func test_empty() {
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmts: []) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmts: []) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   func test_pass_doesNothing() {
     let stmt = self.passStmt()
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 }

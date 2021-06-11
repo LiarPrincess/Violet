@@ -6,35 +6,6 @@ import VioletParser
 import VioletBytecode
 import VioletCompiler
 
-// MARK: - Helpers
-
-extension Instruction.Filled {
-
-  static func loadConst(_ value: String) -> Instruction.Filled {
-    return .loadConst(.string(value))
-  }
-
-  static func loadConst(_ value: Data) -> Instruction.Filled {
-    return .loadConst(.bytes(value))
-  }
-
-  static func loadConst(_ value: Int) -> Instruction.Filled {
-    return .loadConst(.integer(BigInt(value)))
-  }
-
-  static func loadConst(_ value: BigInt) -> Instruction.Filled {
-    return .loadConst(.integer(value))
-  }
-
-  static func loadConst(_ value: Double) -> Instruction.Filled {
-    return .loadConst(.float(value))
-  }
-
-  static func loadConst(real: Double, imag: Double) -> Instruction.Filled {
-    return .loadConst(.complex(real: real, imag: imag))
-  }
-}
-
 // MARK: - Assert code object
 
 func XCTAssertCodeObject(_ code: CodeObject,
@@ -45,6 +16,7 @@ func XCTAssertCodeObject(_ code: CodeObject,
                          instructions: [Instruction.Filled],
                          argCount: Int = 0,
                          kwOnlyArgCount: Int = 0,
+                         childCodeObjectCount: Int = 0,
                          file: StaticString = #file,
                          line: UInt = #line) {
   XCTAssertEqual(code.name,
@@ -64,6 +36,7 @@ func XCTAssertCodeObject(_ code: CodeObject,
 
   assertFlags(code, expected: flags, file: file, line: line)
   assertInstructions(code, expected: instructions, file: file, line: line)
+  assertChildCodeObjectCount(code, expected: childCodeObjectCount, file: file, line: line)
 
   XCTAssertEqual(code.argCount,
                  argCount,
@@ -111,99 +84,50 @@ private func assertInstructions(_ code: CodeObject,
                                 expected: [Instruction.Filled],
                                 file: StaticString,
                                 line: UInt) {
-  let instructions = getAllInstructions(from: code, file: file, line: line)
+  let instructions = code.getAllFilledInstructions(file: file, line: line)
   XCTAssertEqual(instructions.count,
                  expected.count,
                  "Instruction count",
                  file: file,
                  line: line)
 
-  for (index, (i, e)) in zip(instructions, expected).enumerated() {
-    XCTAssertEqual(i, e, "Instruction \(index)", file: file, line: line)
+  for (index, (instruction, expected)) in zip(instructions, expected).enumerated() {
+    switch (instruction, expected) {
+    case (.loadConst(.code), .loadConst(.code(let c))):
+      XCTAssertTrue(c.isAny,
+                    "Code object constant should be created with 'CodeObject.any'.",
+                    file: file,
+                    line: line)
+
+    default:
+      XCTAssertEqual(instruction,
+                     expected,
+                     "Instruction \(index)",
+                     file: file,
+                     line: line)
+    }
   }
 }
 
-private func getAllInstructions(from code: CodeObject,
-                                file: StaticString,
-                                line: UInt) -> [Instruction.Filled] {
-  if code.instructions.isEmpty {
-    return []
-  }
+// MARK: - ChildCodeObjectCount
 
-  var result = [Instruction.Filled]()
-
-  var instructionIndex: Int? = 0
-  while let index = instructionIndex {
-    let filled = code.getFilledInstruction(index: index)
-    result.append(filled.instruction)
-    instructionIndex = filled.nextInstructionIndex
-
-    let maxInstructionCount = 100
-    if result.count > maxInstructionCount {
-      XCTFail("More than \(maxInstructionCount) instructions (probably error)",
-              file: file,
-              line: line)
-      return []
+private func assertChildCodeObjectCount(_ code: CodeObject,
+                                        expected: Int,
+                                        file: StaticString,
+                                        line: UInt) {
+  var count = 0
+  for constant in code.constants {
+    switch constant {
+    case .code:
+      count += 1
+    default:
+      break
     }
   }
 
-  return result
-}
-
-// MARK: - Old
-
-internal func XCTAssertCode(_ code: CodeObject,
-                            name: String,
-                            qualified: String,
-                            kind: CodeObject.Kind,
-                            _ message: String = "",
-                            file: StaticString = #file,
-                            line: UInt = #line) {
-  XCTAssertEqual(code.name, name, message, file: file, line: line)
-  XCTAssertEqual(code.qualifiedName, qualified, message, file: file, line: line)
-  XCTAssertEqual(code.kind, kind, message, file: file, line: line)
-}
-
-internal func XCTAssertCode(_ code: CodeObject,
-                            name: String,
-                            kind: CodeObject.Kind,
-                            _ message: String = "",
-                            file: StaticString = #file,
-                            line: UInt = #line) {
-  XCTAssertEqual(code.name, name, message, file: file, line: line)
-  XCTAssertEqual(code.kind, kind, message, file: file, line: line)
-}
-
-internal func XCTAssertInstructions(_ code: CodeObject,
-                                    _ expected: [EmittedInstruction],
-                                    _ message: String = "",
-                                    file: StaticString = #file,
-                                    line: UInt = #line) {
-  XCTAssertEqual(code.instructions.count,
-                 expected.count,
-                 "\(message) (count)",
+  XCTAssertEqual(count,
+                 expected,
+                 "Child code object count",
                  file: file,
                  line: line)
-
-  var index = 0
-  for (emitted, exp) in zip(code.emittedInstructions, expected) {
-    let details = "(emitted: \(toString(emitted)), expected: \(toString(exp)))"
-    XCTAssertEqual(emitted.kind,
-                   exp.kind,
-                   "Invalid instruction kind at \(index) \(details) \(message)",
-                   file: file,
-                   line: line)
-
-    XCTAssertEqual(emitted.arg,
-                   exp.arg,
-                   "Invalid instruction argument at \(index) \(details) \(message)",
-                   file: file,
-                   line: line)
-
-    index += 1
-  }
-}
-
-private func toString(_ instruction: EmittedInstruction) -> String {
-  return "'\(instruction.kind) \(instruction.arg ?? "")'"
 }

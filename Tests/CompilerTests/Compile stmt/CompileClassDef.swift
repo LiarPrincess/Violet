@@ -1,3 +1,4 @@
+
 import XCTest
 import VioletCore
 import VioletParser
@@ -32,7 +33,7 @@ class CompileClassDef: CompileTestCase {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
-  func test_parent_no() {
+  func test_baseTypes_no() {
     let stmt = self.classDefStmt(
       name: "Princess",
       bases: [],
@@ -40,38 +41,51 @@ class CompileClassDef: CompileTestCase {
       body: [self.identifierStmt(value: "sing")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadBuildClass),
-      .init(.loadConst, "<code object Princess>"),
-      .init(.loadConst, "'Princess'"),
-      .init(.makeFunction, "0"),
-      .init(.loadConst, "'Princess'"),
-      .init(.callFunction, "2"),
-      .init(.storeName, "Princess"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let classExpected: [EmittedInstruction] = [
-      .init(.loadName, "__name__"),
-      .init(.storeName, "__module__"),
-      .init(.loadConst, "'Princess'"),
-      .init(.storeName, "__qualname__"),
-      .init(.loadName, "sing"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let cls = self.getCodeObject(parent: code, qualifiedName: "Princess") {
-        XCTAssertCode(cls, name: "Princess", kind: .class)
-        XCTAssertInstructions(cls, classExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadBuildClass,
+        .loadConst(codeObject: .any),
+        .loadConst("Princess"),
+        .makeFunction(flags: []),
+        .loadConst("Princess"),
+        .callFunction(argumentCount: 2),
+        .storeName(name: "Princess"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let classCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      classCode,
+      name: "Princess",
+      qualifiedName: "Princess",
+      kind: .class,
+      flags: [],
+      instructions: [
+        .loadName(name: "__name__"),
+        .storeName(name: "__module__"),
+        .loadConst("Princess"),
+        .storeName(name: "__qualname__"),
+        .loadName(name: "sing"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   // MARK: - Bases
@@ -97,7 +111,7 @@ class CompileClassDef: CompileTestCase {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
-  func test_parent_single() {
+  func test_baseTypes_single() {
     let stmt = self.classDefStmt(
       name: "Aurora",
       bases: [self.identifierExpr(value: "Princess")],
@@ -105,39 +119,52 @@ class CompileClassDef: CompileTestCase {
       body: [self.identifierStmt(value: "sleep")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadBuildClass),
-      .init(.loadConst, "<code object Aurora>"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.makeFunction, "0"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.loadName, "Princess"),
-      .init(.callFunction, "3"),
-      .init(.storeName, "Aurora"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let classExpected: [EmittedInstruction] = [
-      .init(.loadName, "__name__"),
-      .init(.storeName, "__module__"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.storeName, "__qualname__"),
-      .init(.loadName, "sleep"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", kind: .class)
-        XCTAssertInstructions(cls, classExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadBuildClass,
+        .loadConst(codeObject: .any),
+        .loadConst("Aurora"),
+        .makeFunction(flags: []),
+        .loadConst("Aurora"),
+        .loadName(name: "Princess"),
+        .callFunction(argumentCount: 3),
+        .storeName(name: "Aurora"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let classCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      classCode,
+      name: "Aurora",
+      qualifiedName: "Aurora",
+      kind: .class,
+      flags: [],
+      instructions: [
+        .loadName(name: "__name__"),
+        .storeName(name: "__module__"),
+        .loadConst("Aurora"),
+        .storeName(name: "__qualname__"),
+        .loadName(name: "sleep"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// class Aurora(Princess, Human): sleep
@@ -162,7 +189,7 @@ class CompileClassDef: CompileTestCase {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
-  func test_parent_multiple() {
+  func test_baseTypes_multiple() {
     let stmt = self.classDefStmt(
       name: "Aurora",
       bases: [
@@ -173,40 +200,53 @@ class CompileClassDef: CompileTestCase {
       body: [self.identifierStmt(value: "sleep")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadBuildClass),
-      .init(.loadConst, "<code object Aurora>"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.makeFunction, "0"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.loadName, "Princess"),
-      .init(.loadName, "Human"),
-      .init(.callFunction, "4"),
-      .init(.storeName, "Aurora"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let classExpected: [EmittedInstruction] = [
-      .init(.loadName, "__name__"),
-      .init(.storeName, "__module__"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.storeName, "__qualname__"),
-      .init(.loadName, "sleep"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", kind: .class)
-        XCTAssertInstructions(cls, classExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadBuildClass,
+        .loadConst(codeObject: .any),
+        .loadConst("Aurora"),
+        .makeFunction(flags: []),
+        .loadConst("Aurora"),
+        .loadName(name: "Princess"),
+        .loadName(name: "Human"),
+        .callFunction(argumentCount: 4),
+        .storeName(name: "Aurora"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let classCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      classCode,
+      name: "Aurora",
+      qualifiedName: "Aurora",
+      kind: .class,
+      flags: [],
+      instructions: [
+        .loadName(name: "__name__"),
+        .storeName(name: "__module__"),
+        .loadConst("Aurora"),
+        .storeName(name: "__qualname__"),
+        .loadName(name: "sleep"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   // MARK: - Base - star
@@ -232,7 +272,7 @@ class CompileClassDef: CompileTestCase {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
-  func test_parent_withStar() {
+  func test_baseTypes_withStar() {
     let stmt = self.classDefStmt(
       name: "Aurora",
       bases: [
@@ -242,41 +282,54 @@ class CompileClassDef: CompileTestCase {
       body: [self.identifierStmt(value: "sleep")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadBuildClass),
-      .init(.loadConst, "<code object Aurora>"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.makeFunction, "0"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.buildTuple, "2"),
-      .init(.loadName, "Princess"),
-      .init(.buildTupleUnpackWithCall, "2"),
-      .init(.callFunctionEx, "0"),
-      .init(.storeName, "Aurora"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let classExpected: [EmittedInstruction] = [
-      .init(.loadName, "__name__"),
-      .init(.storeName, "__module__"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.storeName, "__qualname__"),
-      .init(.loadName, "sleep"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", kind: .class)
-        XCTAssertInstructions(cls, classExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadBuildClass,
+        .loadConst(codeObject: .any),
+        .loadConst("Aurora"),
+        .makeFunction(flags: []),
+        .loadConst("Aurora"),
+        .buildTuple(elementCount: 2),
+        .loadName(name: "Princess"),
+        .buildTupleUnpackWithCall(elementCount: 2),
+        .callFunctionEx(hasKeywordArguments: false),
+        .storeName(name: "Aurora"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let classCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      classCode,
+      name: "Aurora",
+      qualifiedName: "Aurora",
+      kind: .class,
+      flags: [],
+      instructions: [
+        .loadName(name: "__name__"),
+        .storeName(name: "__module__"),
+        .loadConst("Aurora"),
+        .storeName(name: "__qualname__"),
+        .loadName(name: "sleep"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// class Aurora(Princess=1, *Human): sleep
@@ -305,7 +358,7 @@ class CompileClassDef: CompileTestCase {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
-  func test_parent_withStar_afterKeyword() {
+  func test_baseTypes_withStar_afterKeyword() {
     let stmt = self.classDefStmt(
       name: "Aurora",
       bases: [
@@ -320,47 +373,60 @@ class CompileClassDef: CompileTestCase {
       body: [self.identifierStmt(value: "sleep")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadBuildClass),
-      .init(.loadConst, "<code object Aurora>"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.makeFunction, "0"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.buildTuple, "2"),
-      .init(.loadName, "Human"),
-      .init(.buildTupleUnpackWithCall, "2"),
-      .init(.loadConst, "'Princess'"),
-      .init(.loadConst, "1"),
-      .init(.buildMap, "1"),
-      .init(.callFunctionEx, "1"),
-      .init(.storeName, "Aurora"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let classExpected: [EmittedInstruction] = [
-      .init(.loadName, "__name__"),
-      .init(.storeName, "__module__"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.storeName, "__qualname__"),
-      .init(.loadName, "sleep"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", kind: .class)
-        XCTAssertInstructions(cls, classExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadBuildClass,
+        .loadConst(codeObject: .any),
+        .loadConst("Aurora"),
+        .makeFunction(flags: []),
+        .loadConst("Aurora"),
+        .buildTuple(elementCount: 2),
+        .loadName(name: "Human"),
+        .buildTupleUnpackWithCall(elementCount: 2),
+        .loadConst("Princess"),
+        .loadConst(1),
+        .buildMap(elementCount: 1),
+        .callFunctionEx(hasKeywordArguments: true),
+        .storeName(name: "Aurora"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let classCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      classCode,
+      name: "Aurora",
+      qualifiedName: "Aurora",
+      kind: .class,
+      flags: [],
+      instructions: [
+        .loadName(name: "__name__"),
+        .storeName(name: "__module__"),
+        .loadConst("Aurora"),
+        .storeName(name: "__qualname__"),
+        .loadName(name: "sleep"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
-  // MARK: - Keyword
+  // MARK: - Base - keyword
 
   /// class Aurora(Princess=1): sleep
   ///
@@ -384,7 +450,7 @@ class CompileClassDef: CompileTestCase {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
-  func test_parent_keyword_single() {
+  func test_baseTypes_keyword_single() {
     let stmt = self.classDefStmt(
       name: "Aurora",
       bases: [],
@@ -394,40 +460,53 @@ class CompileClassDef: CompileTestCase {
       body: [self.identifierStmt(value: "sleep")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadBuildClass),
-      .init(.loadConst, "<code object Aurora>"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.makeFunction, "0"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.loadConst, "1"),
-      .init(.loadConst, "('Princess')"),
-      .init(.callFunctionKw, "3"),
-      .init(.storeName, "Aurora"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let classExpected: [EmittedInstruction] = [
-      .init(.loadName, "__name__"),
-      .init(.storeName, "__module__"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.storeName, "__qualname__"),
-      .init(.loadName, "sleep"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", kind: .class)
-        XCTAssertInstructions(cls, classExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadBuildClass,
+        .loadConst(codeObject: .any),
+        .loadConst("Aurora"),
+        .makeFunction(flags: []),
+        .loadConst("Aurora"),
+        .loadConst(1),
+        .loadConst(.tuple([.string("Princess")])),
+        .callFunctionKw(argumentCount: 3),
+        .storeName(name: "Aurora"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let classCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      classCode,
+      name: "Aurora",
+      qualifiedName: "Aurora",
+      kind: .class,
+      flags: [],
+      instructions: [
+        .loadName(name: "__name__"),
+        .storeName(name: "__module__"),
+        .loadConst("Aurora"),
+        .storeName(name: "__qualname__"),
+        .loadName(name: "sleep"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// class Aurora(Princess=1, Human=2): sleep
@@ -453,7 +532,7 @@ class CompileClassDef: CompileTestCase {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
-  func test_parent_keyword_multiple() {
+  func test_baseTypes_keyword_multiple() {
     let stmt = self.classDefStmt(
       name: "Aurora",
       bases: [],
@@ -464,41 +543,54 @@ class CompileClassDef: CompileTestCase {
       body: [self.identifierStmt(value: "sleep")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadBuildClass),
-      .init(.loadConst, "<code object Aurora>"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.makeFunction, "0"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.loadConst, "1"),
-      .init(.loadConst, "2"),
-      .init(.loadConst, "('Princess', 'Human')"),
-      .init(.callFunctionKw, "4"),
-      .init(.storeName, "Aurora"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let classExpected: [EmittedInstruction] = [
-      .init(.loadName, "__name__"),
-      .init(.storeName, "__module__"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.storeName, "__qualname__"),
-      .init(.loadName, "sleep"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", kind: .class)
-        XCTAssertInstructions(cls, classExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadBuildClass,
+        .loadConst(codeObject: .any),
+        .loadConst("Aurora"),
+        .makeFunction(flags: []),
+        .loadConst("Aurora"),
+        .loadConst(1),
+        .loadConst(2),
+        .loadConst(.tuple([.string("Princess"), .string("Human")])),
+        .callFunctionKw(argumentCount: 4),
+        .storeName(name: "Aurora"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let classCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      classCode,
+      name: "Aurora",
+      qualifiedName: "Aurora",
+      kind: .class,
+      flags: [],
+      instructions: [
+        .loadName(name: "__name__"),
+        .storeName(name: "__module__"),
+        .loadConst("Aurora"),
+        .storeName(name: "__qualname__"),
+        .loadName(name: "sleep"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   // MARK: - Keyword - star star
@@ -525,53 +617,66 @@ class CompileClassDef: CompileTestCase {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
-  func test_parent_keyword_withStarStar() {
+  func test_baseTypes_keyword_withStarStar() {
     let stmt = self.classDefStmt(
       name: "Aurora",
       bases: [],
       keywords: [
         self.keyword(
           kind: .dictionaryUnpack,
-          value: self.identifierExpr(value: "**Princess")
+          value: self.identifierExpr(value: "Princess")
         )
       ],
       body: [self.identifierStmt(value: "sleep")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadBuildClass),
-      .init(.loadConst, "<code object Aurora>"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.makeFunction, "0"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.buildTuple, "2"),
-      .init(.loadName, "**Princess"),
-      .init(.callFunctionEx, "1"),
-      .init(.storeName, "Aurora"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let classExpected: [EmittedInstruction] = [
-      .init(.loadName, "__name__"),
-      .init(.storeName, "__module__"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.storeName, "__qualname__"),
-      .init(.loadName, "sleep"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", kind: .class)
-        XCTAssertInstructions(cls, classExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadBuildClass,
+        .loadConst(codeObject: .any),
+        .loadConst("Aurora"),
+        .makeFunction(flags: []),
+        .loadConst("Aurora"),
+        .buildTuple(elementCount: 2),
+        .loadName(name: "Princess"),
+        .callFunctionEx(hasKeywordArguments: true),
+        .storeName(name: "Aurora"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let classCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      classCode,
+      name: "Aurora",
+      qualifiedName: "Aurora",
+      kind: .class,
+      flags: [],
+      instructions: [
+        .loadName(name: "__name__"),
+        .storeName(name: "__module__"),
+        .loadConst("Aurora"),
+        .storeName(name: "__qualname__"),
+        .loadName(name: "sleep"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// class Aurora(Princess, **Human): sleep
@@ -597,51 +702,64 @@ class CompileClassDef: CompileTestCase {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
-  func test_parent_keyword_withStarStar_afterNormal() {
+  func test_baseTypes_keyword_withStarStar_afterNormal() {
     let stmt = self.classDefStmt(
       name: "Aurora",
       bases: [self.identifierExpr(value: "Princess")],
       keywords: [
-        self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr(value: "**Human"))
+        self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr(value: "Human"))
       ],
       body: [self.identifierStmt(value: "sleep")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadBuildClass),
-      .init(.loadConst, "<code object Aurora>"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.makeFunction, "0"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.loadName, "Princess"),
-      .init(.buildTuple, "3"),
-      .init(.loadName, "**Human"),
-      .init(.callFunctionEx, "1"),
-      .init(.storeName, "Aurora"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let classExpected: [EmittedInstruction] = [
-      .init(.loadName, "__name__"),
-      .init(.storeName, "__module__"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.storeName, "__qualname__"),
-      .init(.loadName, "sleep"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", kind: .class)
-        XCTAssertInstructions(cls, classExpected)
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadBuildClass,
+        .loadConst(codeObject: .any),
+        .loadConst("Aurora"),
+        .makeFunction(flags: []),
+        .loadConst("Aurora"),
+        .loadName(name: "Princess"),
+        .buildTuple(elementCount: 3),
+        .loadName(name: "Human"),
+        .callFunctionEx(hasKeywordArguments: true),
+        .storeName(name: "Aurora"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let classCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      classCode,
+      name: "Aurora",
+      qualifiedName: "Aurora",
+      kind: .class,
+      flags: [],
+      instructions: [
+        .loadName(name: "__name__"),
+        .storeName(name: "__module__"),
+        .loadConst("Aurora"),
+        .storeName(name: "__qualname__"),
+        .loadName(name: "sleep"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   // MARK: - Init
@@ -703,52 +821,73 @@ class CompileClassDef: CompileTestCase {
       body: [__init__]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadBuildClass),
-      .init(.loadConst, "<code object Aurora>"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.makeFunction, "0"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.callFunction, "2"),
-      .init(.storeName, "Aurora"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let classExpected: [EmittedInstruction] = [
-      .init(.loadName, "__name__"),
-      .init(.storeName, "__module__"),
-      .init(.loadConst, "'Aurora'"),
-      .init(.storeName, "__qualname__"),
-      .init(.loadConst, "<code object Aurora.__init__>"),
-      .init(.loadConst, "'Aurora.__init__'"),
-      .init(.makeFunction, "0"),
-      .init(.storeName, "__init__"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    let __init__Expected: [EmittedInstruction] = [
-      .init(.loadFast, "name"),
-      .init(.loadFast, "self"),
-      .init(.storeAttribute, "name"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
-
-      if let cls = self.getCodeObject(parent: code, qualifiedName: "Aurora") {
-        XCTAssertCode(cls, name: "Aurora", kind: .class)
-        XCTAssertInstructions(cls, classExpected)
-
-        if let init_ = self.getCodeObject(parent: cls, qualifiedName: "Aurora.__init__") {
-          XCTAssertCode(init_, name: "__init__", kind: .function)
-          XCTAssertInstructions(init_, __init__Expected)
-        }
-      }
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadBuildClass,
+        .loadConst(codeObject: .any),
+        .loadConst("Aurora"),
+        .makeFunction(flags: []),
+        .loadConst("Aurora"),
+        .callFunction(argumentCount: 2),
+        .storeName(name: "Aurora"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let classCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      classCode,
+      name: "Aurora",
+      qualifiedName: "Aurora",
+      kind: .class,
+      flags: [],
+      instructions: [
+        .loadName(name: "__name__"),
+        .storeName(name: "__module__"),
+        .loadConst("Aurora"),
+        .storeName(name: "__qualname__"),
+        .loadConst(codeObject: .any),
+        .loadConst("Aurora.__init__"),
+        .makeFunction(flags: []),
+        .storeName(name: "__init__"),
+        .loadConst(.none),
+        .return
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let __init__code = classCode.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      __init__code,
+      name: "__init__",
+      qualifiedName: "Aurora.__init__",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized],
+      instructions: [
+        .loadFast(variable: "name"),
+        .loadFast(variable: "self"),
+        .storeAttribute(name: "name"),
+        .loadConst(.none),
+        .return
+      ],
+      argCount: 2
+    )
   }
 }

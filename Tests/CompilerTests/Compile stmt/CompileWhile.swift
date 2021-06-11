@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-import VioletBytecode
+@testable import VioletBytecode
 @testable import VioletCompiler
 
 /// Use './Scripts/dump' for reference.
@@ -25,22 +25,28 @@ class CompileWhile: CompileTestCase {
       orElse: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupLoop, "14"),
-      .init(.loadName, "frollo"),
-      .init(.popJumpIfFalse, "12"),
-      .init(.loadName, "quasimodo"),
-      .init(.popTop),
-      .init(.jumpAbsolute, "2"),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 7)),
+        .loadName(name: "frollo"),
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 6)),
+        .loadName(name: "quasimodo"),
+        .popTop,
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 1)),
+        .popBlock,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// while frollo: quasimodo
@@ -64,24 +70,30 @@ class CompileWhile: CompileTestCase {
       orElse: [self.identifierStmt(value: "esmeralda")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupLoop, "18"),
-      .init(.loadName, "frollo"),
-      .init(.popJumpIfFalse, "12"),
-      .init(.loadName, "quasimodo"),
-      .init(.popTop),
-      .init(.jumpAbsolute, "2"),
-      .init(.popBlock),
-      .init(.loadName, "esmeralda"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 9)),
+        .loadName(name: "frollo"),
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 6)),
+        .loadName(name: "quasimodo"),
+        .popTop,
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 1)),
+        .popBlock,
+        .loadName(name: "esmeralda"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// while frollo:
@@ -108,23 +120,29 @@ class CompileWhile: CompileTestCase {
       orElse: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupLoop, "16"),
-      .init(.loadName, "frollo"),
-      .init(.popJumpIfFalse, "14"),
-      .init(.jumpAbsolute, "2"),
-      .init(.loadName, "quasimodo"),
-      .init(.popTop),
-      .init(.jumpAbsolute, "2"),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 8)),
+        .loadName(name: "frollo"),
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 7)),
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 1)),
+        .loadName(name: "quasimodo"),
+        .popTop,
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 1)),
+        .popBlock,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// while frollo:
@@ -151,22 +169,28 @@ class CompileWhile: CompileTestCase {
       orElse: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupLoop, "16"),
-      .init(.loadName, "frollo"),
-      .init(.popJumpIfFalse, "14"),
-      .init(.break),
-      .init(.loadName, "quasimodo"),
-      .init(.popTop),
-      .init(.jumpAbsolute, "2"),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 8)),
+        .loadName(name: "frollo"),
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 7)),
+        .break,
+        .loadName(name: "quasimodo"),
+        .popTop,
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 1)),
+        .popBlock,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 }

@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-import VioletBytecode
+@testable import VioletBytecode
 @testable import VioletCompiler
 
 // swiftlint:disable file_length
@@ -32,24 +32,30 @@ class CompileFor: CompileTestCase {
       orElse: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupLoop, "18"),
-      .init(.loadName, "castle"),
-      .init(.getIter),
-      .init(.forIter, "16"),
-      .init(.storeName, "person"),
-      .init(.loadName, "becomeItem"),
-      .init(.popTop),
-      .init(.jumpAbsolute, "6"),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 9)),
+        .loadName(name: "castle"),
+        .getIter,
+        .forIter(ifEmptyLabel: CodeObject.Label(jumpAddress: 8)),
+        .storeName(name: "person"),
+        .loadName(name: "becomeItem"),
+        .popTop,
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 3)),
+        .popBlock,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   // MARK: - Else
@@ -78,26 +84,32 @@ class CompileFor: CompileTestCase {
       orElse: [self.identifierStmt(value: "beast")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupLoop, "22"),
-      .init(.loadName, "belle"),
-      .init(.getIter),
-      .init(.forIter, "16"),
-      .init(.storeName, "person"),
-      .init(.loadName, "husband"),
-      .init(.popTop),
-      .init(.jumpAbsolute, "6"),
-      .init(.popBlock),
-      .init(.loadName, "beast"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 11)),
+        .loadName(name: "belle"),
+        .getIter,
+        .forIter(ifEmptyLabel: CodeObject.Label(jumpAddress: 8)),
+        .storeName(name: "person"),
+        .loadName(name: "husband"),
+        .popTop,
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 3)),
+        .popBlock,
+        .loadName(name: "beast"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   // MARK: - Continue
@@ -129,25 +141,31 @@ class CompileFor: CompileTestCase {
       orElse: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupLoop, "20"),
-      .init(.loadName, "castle"),
-      .init(.getIter),
-      .init(.forIter, "18"),
-      .init(.storeName, "person"),
-      .init(.jumpAbsolute, "6"),
-      .init(.loadName, "becomeItem"),
-      .init(.popTop),
-      .init(.jumpAbsolute, "6"),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 10)),
+        .loadName(name: "castle"),
+        .getIter,
+        .forIter(ifEmptyLabel: CodeObject.Label(jumpAddress: 9)),
+        .storeName(name: "person"),
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 3)),
+        .loadName(name: "becomeItem"),
+        .popTop,
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 3)),
+        .popBlock,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// for person in castle:
@@ -215,45 +233,53 @@ class CompileFor: CompileTestCase {
       orElse: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupLoop, "56"),
-      .init(.loadName, "castle"),
-      .init(.getIter),
-      .init(.forIter, "54"),
-      .init(.storeName, "person"),
-      .init(.setupExcept, "20"),
-      .init(.loadName, "spell"),
-      .init(.raiseVarargs, "exception"),
-      .init(.popBlock),
-      .init(.jumpAbsolute, "52"), // will jump to: '.init(.jumpAbsolute, "6")'
-      .init(.dupTop),
-      .init(.loadName, "spell"),
-      .init(.compareOp, "exception match"),
-      .init(.popJumpIfFalse, "50"),
-//      .init(.popTop),
-      .init(.storeName, "e"),
-//      .init(.popTop),
-      .init(.setupFinally, "38"),
-      .init(.continue, "0"),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.loadConst, "none"),
-      .init(.storeName, "e"),
-      .init(.deleteName, "e"),
-      .init(.endFinally),
-      .init(.popExcept),
-      .init(.jumpAbsolute, "52"), // will jump to: '.init(.jumpAbsolute, "6")'
-      .init(.endFinally),
-      .init(.jumpAbsolute, "6"),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 28)),
+        .loadName(name: "castle"),
+        .getIter,
+        .forIter(ifEmptyLabel: CodeObject.Label(jumpAddress: 27)),
+        .storeName(name: "person"),
+        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 10)),
+        .loadName(name: "spell"),
+        .raiseVarargs(type: .exceptionOnly),
+        .popBlock,
+        // will jump to: '.jumpAbsolute(label: CodeObject.Label(jumpAddress: "6")'
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 26)),
+        .dupTop,
+        .loadName(name: "spell"),
+        .compareOp(type: .exceptionMatch),
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 25)),
+        //        .popTop,
+        .storeName(name: "e"),
+        //        .popTop,
+        .setupFinally(finallyStartLabel: CodeObject.Label(jumpAddress: 19)),
+        .continue(loopStartLabel: CodeObject.Label(jumpAddress: 3)),
+        .popBlock,
+        .loadConst(.none),
+        .loadConst(.none),
+        .storeName(name: "e"),
+        .deleteName(name: "e"),
+        .endFinally,
+        .popExcept,
+        // will jump to: '.jumpAbsolute(label: CodeObject.Label(jumpAddress: "6")'
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 26)),
+        .endFinally,
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 3)),
+        .popBlock,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   // MARK: - Break
@@ -285,24 +311,31 @@ class CompileFor: CompileTestCase {
       orElse: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupLoop, "20"),
-      .init(.loadName, "castle"),
-      .init(.getIter),
-      .init(.forIter, "18"),
-      .init(.storeName, "person"),
-      .init(.break),
-      .init(.loadName, "becomeItem"),
-      .init(.popTop),
-      .init(.jumpAbsolute, "6"),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupLoop(loopEndLabel: CodeObject.Label(jumpAddress: 10)),
+        .loadName(name: "castle"),
+        .getIter,
+        .forIter(ifEmptyLabel: CodeObject.Label(jumpAddress: 9)),
+        .storeName(name: "person"),
+        .break,
+        .loadName(name: "becomeItem"),
+        .popTop,
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 3)),
+        .popBlock,
+        .loadConst(.none),
+        .return
+
+      ]
+    )
   }
 }

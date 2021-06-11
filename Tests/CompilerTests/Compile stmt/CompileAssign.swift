@@ -21,17 +21,23 @@ class CompileAssign: CompileTestCase {
       value: self.identifierExpr(value: "beast")
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "beast"),
-      .init(.storeName, "prince"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "beast"),
+        .storeName(name: "prince"),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// lumiere = mrsPotts = cogsworth = items
@@ -54,21 +60,27 @@ class CompileAssign: CompileTestCase {
       value: self.identifierExpr(value: "items")
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "items"),
-      .init(.dupTop),
-      .init(.storeName, "lumiere"),
-      .init(.dupTop),
-      .init(.storeName, "mrsPotts"),
-      .init(.storeName, "cogsworth"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "items"),
+        .dupTop,
+        .storeName(name: "lumiere"),
+        .dupTop,
+        .storeName(name: "mrsPotts"),
+        .storeName(name: "cogsworth"),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// pretty.prince = hairy.beast
@@ -94,19 +106,25 @@ class CompileAssign: CompileTestCase {
       )
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "hairy"),
-      .init(.loadAttribute, "beast"),
-      .init(.loadName, "pretty"),
-      .init(.storeAttribute, "prince"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "hairy"),
+        .loadAttribute(name: "beast"),
+        .loadName(name: "pretty"),
+        .storeAttribute(name: "prince"),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// castle[inhabitant] = items[random]
@@ -138,20 +156,26 @@ class CompileAssign: CompileTestCase {
       )
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "items"),
-      .init(.loadName, "random"),
-      .init(.binarySubscript),
-      .init(.loadName, "castle"),
-      .init(.loadName, "inhabitant"),
-      .init(.storeSubscript),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "items"),
+        .loadName(name: "random"),
+        .binarySubscript,
+        .loadName(name: "castle"),
+        .loadName(name: "inhabitant"),
+        .storeSubscript,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 }

@@ -18,16 +18,22 @@ class CompileRaise: CompileTestCase {
       cause: nil
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.raiseVarargs, "reRaise"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .raiseVarargs(type: .reRaise),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// raise Hades
@@ -42,17 +48,23 @@ class CompileRaise: CompileTestCase {
       cause: nil
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "Hades"),
-      .init(.raiseVarargs, "exception"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "Hades"),
+        .raiseVarargs(type: .exceptionOnly),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// raise Hercules from Olympus
@@ -68,17 +80,23 @@ class CompileRaise: CompileTestCase {
       cause: self.identifierExpr(value: "Olympus")
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "Hercules"),
-      .init(.loadName, "Olympus"),
-      .init(.raiseVarargs, "exception, cause"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "Hercules"),
+        .loadName(name: "Olympus"),
+        .raiseVarargs(type: .exceptionAndCause),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 }

@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-import VioletBytecode
+@testable import VioletBytecode
 @testable import VioletCompiler
 
 // swiftlint:disable file_length
@@ -33,23 +33,29 @@ class CompileTry: CompileTestCase {
       finally: [self.identifierStmt(value: "mulan")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupFinally, "10"),
-      .init(.loadName, "ping"),
-      .init(.popTop),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.loadName, "mulan"),
-      .init(.popTop),
-      .init(.endFinally),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupFinally(finallyStartLabel: CodeObject.Label(jumpAddress: 5)),
+        .loadName(name: "ping"),
+        .popTop,
+        .popBlock,
+        .loadConst(.none),
+        .loadName(name: "mulan"),
+        .popTop,
+        .endFinally,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   // MARK: - Except
@@ -85,28 +91,36 @@ class CompileTry: CompileTestCase {
       finally: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupExcept, "10"),
-      .init(.loadName, "mulan"),
-      .init(.popTop),
-      .init(.popBlock),
-      .init(.jumpAbsolute, "22"), // different label as we pop only once
-      .init(.popTop),
-//      .init(.popTop),
-//      .init(.popTop),
-      .init(.loadName, "ping"),
-      .init(.popTop),
-      .init(.popExcept),
-      .init(.jumpAbsolute, "22"), // different label as we pop only once
-      .init(.endFinally),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 5)),
+        .loadName(name: "mulan"),
+        .popTop,
+        .popBlock,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 11)),
+        .popTop,
+//      .popTop,
+//      .popTop,
+        .loadName(name: "ping"),
+        .popTop,
+        .popExcept,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 11)),
+        .endFinally,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// try: mulan
@@ -147,32 +161,41 @@ class CompileTry: CompileTestCase {
       finally: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupExcept, "10"),
-      .init(.loadName, "mulan"),
-      .init(.popTop),
-      .init(.popBlock),
-      .init(.jumpAbsolute, "30"), // different label as we pop only once
-      .init(.dupTop),
-      .init(.loadName, "soldier"),
-      .init(.compareOp, "exception match"),
-      .init(.popJumpIfFalse, "28"), // different label as we pop only once
-      .init(.popTop),
-//      .init(.popTop),
-//      .init(.popTop),
-      .init(.loadName, "ping"),
-      .init(.popTop),
-      .init(.popExcept),
-      .init(.jumpAbsolute, "30"), // different label as we pop only once
-      .init(.endFinally),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 5)),
+        .loadName(name: "mulan"),
+        .popTop,
+        .popBlock,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 15)),
+        .dupTop,
+        .loadName(name: "soldier"),
+        .compareOp(type: .exceptionMatch),
+        // different label as we pop only once
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 14)),
+        .popTop,
+//      .popTop,
+//      .popTop,
+        .loadName(name: "ping"),
+        .popTop,
+        .popExcept,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 15)),
+        .endFinally,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// try: mulan
@@ -220,39 +243,49 @@ class CompileTry: CompileTestCase {
       finally: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupExcept, "10"),
-      .init(.loadName, "mulan"),
-      .init(.popTop),
-      .init(.popBlock),
-      .init(.jumpAbsolute, "44"), // different label as we pop only once
-      .init(.dupTop),
-      .init(.loadName, "disguise"),
-      .init(.compareOp, "exception match"),
-      .init(.popJumpIfFalse, "42"), // different label as we pop only once
-//      .init(.popTop),
-      .init(.storeName, "soldier"),
-//      .init(.popTop),
-      .init(.setupFinally, "30"), // different label as we pop only once
-      .init(.loadName, "ping"),
-      .init(.popTop),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.loadConst, "none"),
-      .init(.storeName, "soldier"),
-      .init(.deleteName, "soldier"),
-      .init(.endFinally),
-      .init(.popExcept),
-      .init(.jumpAbsolute, "44"), // different label as we pop only once
-      .init(.endFinally),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 5)),
+        .loadName(name: "mulan"),
+        .popTop,
+        .popBlock,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 22)),
+        .dupTop,
+        .loadName(name: "disguise"),
+        .compareOp(type: .exceptionMatch),
+        // different label as we pop only once
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 21)),
+//      .popTop,
+        .storeName(name: "soldier"),
+//      .popTop,
+        // different label as we pop only once
+        .setupFinally(finallyStartLabel: CodeObject.Label(jumpAddress: 15)),
+        .loadName(name: "ping"),
+        .popTop,
+        .popBlock,
+        .loadConst(.none),
+        .loadConst(.none),
+        .storeName(name: "soldier"),
+        .deleteName(name: "soldier"),
+        .endFinally,
+        .popExcept,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 22)),
+        .endFinally,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// try: mulan
@@ -305,39 +338,49 @@ class CompileTry: CompileTestCase {
       finally: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupExcept, "10"),
-      .init(.loadName, "mulan"),
-      .init(.popTop),
-      .init(.popBlock),
-      .init(.jumpAbsolute, "40"), // different label as we pop only once
-      .init(.dupTop),
-      .init(.loadName, "soldier"),
-      .init(.compareOp, "exception match"),
-      .init(.popJumpIfFalse, "28"), // different label as we pop only once
-      .init(.popTop),
-//      .init(.popTop),
-//      .init(.popTop),
-      .init(.loadName, "ping"),
-      .init(.popTop),
-      .init(.popExcept),
-      .init(.jumpAbsolute, "40"), // different label as we pop only once
-      .init(.popTop),
-//      .init(.popTop),
-//      .init(.popTop),
-      .init(.loadName, "pong"),
-      .init(.popTop),
-      .init(.popExcept),
-      .init(.jumpAbsolute, "40"), // different label as we pop only once
-      .init(.endFinally),
-      .init(.loadConst, "none"), // this is 40
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 5)),
+        .loadName(name: "mulan"),
+        .popTop,
+        .popBlock,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 20)),
+        .dupTop,
+        .loadName(name: "soldier"),
+        .compareOp(type: .exceptionMatch),
+        // different label as we pop only once
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 14)),
+        .popTop,
+  //      .popTop,
+  //      .popTop,
+        .loadName(name: "ping"),
+        .popTop,
+        .popExcept,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 20)),
+        .popTop,
+  //      .popTop,
+  //      .popTop,
+        .loadName(name: "pong"),
+        .popTop,
+        .popExcept,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 20)),
+        .endFinally,
+        .loadConst(.none), // this is 40
+        .return
+      ]
+    )
   }
 
   /// try: mulan
@@ -374,30 +417,38 @@ class CompileTry: CompileTestCase {
       finally: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupExcept, "10"),
-      .init(.loadName, "mulan"),
-      .init(.popTop),
-      .init(.popBlock),
-      .init(.jumpAbsolute, "22"), // different label as we pop only once
-      .init(.popTop),
-//      .init(.popTop),
-//      .init(.popTop),
-      .init(.loadName, "ping"),
-      .init(.popTop),
-      .init(.popExcept),
-      .init(.jumpAbsolute, "26"), // different label as we pop only once
-      .init(.endFinally),
-      .init(.loadName, "faMulan"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 5)),
+        .loadName(name: "mulan"),
+        .popTop,
+        .popBlock,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 11)),
+        .popTop,
+  //      .popTop,
+  //      .popTop,
+        .loadName(name: "ping"),
+        .popTop,
+        .popExcept,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 13)),
+        .endFinally,
+        .loadName(name: "faMulan"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// try: mulan
@@ -438,34 +489,43 @@ class CompileTry: CompileTestCase {
       finally: [self.identifierStmt(value: "faMulan")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupFinally, "28"), // different label as we pop only once
-      .init(.setupExcept, "12"),
-      .init(.loadName, "mulan"),
-      .init(.popTop),
-      .init(.popBlock),
-      .init(.jumpAbsolute, "24"), // different label as we pop only once
-      .init(.popTop), // 12
-//      .init(.popTop),
-//      .init(.popTop),
-      .init(.loadName, "ping"),
-      .init(.popTop),
-      .init(.popExcept),
-      .init(.jumpAbsolute, "24"), // different label as we pop only once
-      .init(.endFinally),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.loadName, "faMulan"),
-      .init(.popTop),
-      .init(.endFinally),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        // different label as we pop only once
+        .setupFinally(finallyStartLabel: CodeObject.Label(jumpAddress: 14)),
+        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 6)),
+        .loadName(name: "mulan"),
+        .popTop,
+        .popBlock,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 12)),
+        .popTop, // 12
+  //      .popTop,
+  //      .popTop,
+        .loadName(name: "ping"),
+        .popTop,
+        .popExcept,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 12)),
+        .endFinally,
+        .popBlock,
+        .loadConst(.none),
+        .loadName(name: "faMulan"),
+        .popTop,
+        .endFinally,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// try: mulan
@@ -509,35 +569,44 @@ class CompileTry: CompileTestCase {
       finally: [self.identifierStmt(value: "faMulan")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.setupFinally, "32"), // different label as we pop only once
-      .init(.setupExcept, "12"),
-      .init(.loadName, "mulan"),
-      .init(.popTop),
-      .init(.popBlock),
-      .init(.jumpAbsolute, "24"), // different label as we pop only once
-      .init(.popTop),
-//      .init(.popTop),
-//      .init(.popTop),
-      .init(.loadName, "ping"),
-      .init(.popTop),
-      .init(.popExcept),
-      .init(.jumpAbsolute, "28"), // different label as we pop only once
-      .init(.endFinally),
-      .init(.loadName, "pong"),
-      .init(.popTop),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.loadName, "faMulan"),
-      .init(.popTop),
-      .init(.endFinally),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        // different label as we pop only once
+        .setupFinally(finallyStartLabel: CodeObject.Label(jumpAddress: 16)),
+        .setupExcept(firstExceptLabel: CodeObject.Label(jumpAddress: 6)),
+        .loadName(name: "mulan"),
+        .popTop,
+        .popBlock,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 12)),
+        .popTop,
+  //      .popTop,
+  //      .popTop,
+        .loadName(name: "ping"),
+        .popTop,
+        .popExcept,
+        // different label as we pop only once
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 14)),
+        .endFinally,
+        .loadName(name: "pong"),
+        .popTop,
+        .popBlock,
+        .loadConst(.none),
+        .loadName(name: "faMulan"),
+        .popTop,
+        .endFinally,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 }

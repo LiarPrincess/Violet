@@ -20,19 +20,25 @@ class CompileImport: CompileTestCase {
       names: [self.alias(name: "Rapunzel", asName: nil)]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "0"),
-      .init(.loadConst, "none"),
-      .init(.importName, "Rapunzel"),
-      .init(.storeName, "Rapunzel"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(0),
+        .loadConst(.none),
+        .importName(name: "Rapunzel"),
+        .storeName(name: "Rapunzel"),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// import Tangled.Rapunzel
@@ -48,19 +54,25 @@ class CompileImport: CompileTestCase {
       names: [self.alias(name: "Tangled.Rapunzel", asName: nil)]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "0"),
-      .init(.loadConst, "none"),
-      .init(.importName, "Tangled.Rapunzel"),
-      .init(.storeName, "Tangled"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(0),
+        .loadConst(.none),
+        .importName(name: "Tangled.Rapunzel"),
+        .storeName(name: "Tangled"),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// import Rapunzel as Daughter
@@ -76,19 +88,25 @@ class CompileImport: CompileTestCase {
       names: [self.alias(name: "Rapunzel", asName: "Daughter")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "0"),
-      .init(.loadConst, "none"),
-      .init(.importName, "Rapunzel"),
-      .init(.storeName, "Daughter"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(0),
+        .loadConst(.none),
+        .importName(name: "Rapunzel"),
+        .storeName(name: "Daughter"),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// import Rapunzel as Daughter, Pascal
@@ -111,23 +129,29 @@ class CompileImport: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "0"),
-      .init(.loadConst, "none"),
-      .init(.importName, "Rapunzel"),
-      .init(.storeName, "Daughter"),
-      .init(.loadConst, "0"),
-      .init(.loadConst, "none"),
-      .init(.importName, "Pascal"),
-      .init(.storeName, "Pascal"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(0),
+        .loadConst(.none),
+        .importName(name: "Rapunzel"),
+        .storeName(name: "Daughter"),
+        .loadConst(0),
+        .loadConst(.none),
+        .importName(name: "Pascal"),
+        .storeName(name: "Pascal"),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// import Tangled.Rapunzel as Daughter
@@ -148,20 +172,26 @@ class CompileImport: CompileTestCase {
       names: [self.alias(name: "Tangled.Rapunzel", asName: "Daughter")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "0"),
-      .init(.loadConst, "none"),
-      .init(.importName, "Tangled.Rapunzel"),
-      .init(.importFrom, "Rapunzel"),
-      .init(.storeName, "Daughter"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(0),
+        .loadConst(.none),
+        .importName(name: "Tangled.Rapunzel"),
+        .importFrom(name: "Rapunzel"),
+        .storeName(name: "Daughter"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 }

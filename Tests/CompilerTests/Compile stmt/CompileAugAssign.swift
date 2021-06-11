@@ -18,44 +18,48 @@ class CompileAugAssign: CompileTestCase {
   ///  8 LOAD_CONST               0 (None)
   /// 10 RETURN_VALUE
   func test_simple() {
-    let operators: [BinaryOpExpr.Operator: EmittedInstructionKind] = [
-      .add: .inPlaceAdd,
-      .sub: .inPlaceSubtract,
-      .mul: .inPlaceMultiply,
-      .matMul: .inPlaceMatrixMultiply,
-      .div: .inPlaceTrueDivide,
-      .modulo: .inPlaceModulo,
-      .pow: .inPlacePower,
-      .leftShift: .inPlaceLShift,
-      .rightShift: .inPlaceRShift,
-      .bitOr: .inPlaceOr,
-      .bitXor: .inPlaceXor,
-      .bitAnd: .inPlaceAnd,
-      .floorDiv: .inPlaceFloorDivide
+    let operators: [(BinaryOpExpr.Operator, Instruction.Filled)] = [
+      (.add, .inPlaceAdd),
+      (.sub, .inPlaceSubtract),
+      (.mul, .inPlaceMultiply),
+      (.matMul, .inPlaceMatrixMultiply),
+      (.div, .inPlaceTrueDivide),
+      (.modulo, .inPlaceModulo),
+      (.pow, .inPlacePower),
+      (.leftShift, .inPlaceLShift),
+      (.rightShift, .inPlaceRShift),
+      (.bitOr, .inPlaceOr),
+      (.bitXor, .inPlaceXor),
+      (.bitAnd, .inPlaceAnd),
+      (.floorDiv, .inPlaceFloorDivide)
     ]
 
-    for (op, emittedOp) in operators {
-      let msg = "for '\(op)'"
-
+    for (astOp, op) in operators {
       let stmt = self.augAssignStmt(
         target: self.identifierExpr(value: "prince", context: .store),
-        op: op,
+        op: astOp,
         value: self.identifierExpr(value: "beast")
       )
 
-      let expected: [EmittedInstruction] = [
-        .init(.loadName, "prince"),
-        .init(.loadName, "beast"),
-        .init(emittedOp),
-        .init(.storeName, "prince"),
-        .init(.loadConst, "none"),
-        .init(.return)
-      ]
-
-      if let code = self.compile(stmt: stmt) {
-        XCTAssertCode(code, name: "<module>", qualified: "", kind: .module, msg)
-        XCTAssertInstructions(code, expected, msg)
+      guard let code = self.compile(stmt: stmt) else {
+        continue
       }
+
+      XCTAssertCodeObject(
+        code,
+        name: "<module>",
+        qualifiedName: "",
+        kind: .module,
+        flags: [],
+        instructions: [
+          .loadName(name: "prince"),
+          .loadName(name: "beast"),
+          op,
+          .storeName(name: "prince"),
+          .loadConst(.none),
+          .return
+        ]
+      )
     }
   }
 
@@ -85,23 +89,29 @@ class CompileAugAssign: CompileTestCase {
       )
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "pretty"),
-      .init(.dupTop),
-      .init(.loadAttribute, "prince"),
-      .init(.loadName, "hairy"),
-      .init(.loadAttribute, "beast"),
-      .init(.inPlaceAdd),
-      .init(.rotTwo),
-      .init(.storeAttribute, "prince"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "pretty"),
+        .dupTop,
+        .loadAttribute(name: "prince"),
+        .loadName(name: "hairy"),
+        .loadAttribute(name: "beast"),
+        .inPlaceAdd,
+        .rotTwo,
+        .storeAttribute(name: "prince"),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// castle[inhabitant] += items[random]
@@ -136,24 +146,30 @@ class CompileAugAssign: CompileTestCase {
       )
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "castle"),
-      .init(.loadName, "inhabitant"),
-      .init(.dupTopTwo),
-      .init(.binarySubscript),
-      .init(.loadName, "items"),
-      .init(.loadName, "random"),
-      .init(.binarySubscript),
-      .init(.inPlaceAdd),
-      .init(.rotThree),
-      .init(.storeSubscript),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "castle"),
+        .loadName(name: "inhabitant"),
+        .dupTopTwo,
+        .binarySubscript,
+        .loadName(name: "items"),
+        .loadName(name: "random"),
+        .binarySubscript,
+        .inPlaceAdd,
+        .rotThree,
+        .storeSubscript,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 }

@@ -21,16 +21,22 @@ class CompileDelete: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.deleteName, "jafar"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .deleteName(name: "jafar"),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// del jafar, iago
@@ -47,17 +53,23 @@ class CompileDelete: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.deleteName, "jafar"),
-      .init(.deleteName, "iago"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .deleteName(name: "jafar"),
+        .deleteName(name: "iago"),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// del (jafar, iago)
@@ -79,17 +91,23 @@ class CompileDelete: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.deleteName, "jafar"),
-      .init(.deleteName, "iago"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .deleteName(name: "jafar"),
+        .deleteName(name: "iago"),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// del agrabah.jafar
@@ -109,17 +127,23 @@ class CompileDelete: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "agrabah"),
-      .init(.deleteAttribute, "jafar"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "agrabah"),
+        .deleteAttribute(name: "jafar"),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// del agrabah[jafar]
@@ -142,17 +166,23 @@ class CompileDelete: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "agrabah"),
-      .init(.loadName, "jafar"),
-      .init(.deleteSubscript),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "agrabah"),
+        .loadName(name: "jafar"),
+        .deleteSubscript,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 }

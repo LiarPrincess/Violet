@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-import VioletBytecode
+@testable import VioletBytecode
 @testable import VioletCompiler
 
 /// Use './Scripts/dump' for reference.
@@ -25,19 +25,25 @@ class CompileIfStmt: CompileTestCase {
       orElse: []
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "eat_me"),
-      .init(.popJumpIfFalse, "8"),
-      .init(.loadName, "big"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "eat_me"), // 0
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 4)), // 1
+        .loadName(name: "big"), // 2
+        .popTop, // 3
+        .loadConst(.none), // 4
+        .return // 5
+      ]
+    )
   }
 
   /// if eat_me: big
@@ -65,22 +71,28 @@ class CompileIfStmt: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "eat_me"),
-      .init(.popJumpIfFalse, "10"),
-      .init(.loadName, "big"),
-      .init(.popTop),
-      .init(.jumpAbsolute, "14"),
-      .init(.loadName, "smol"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "eat_me"),
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 5)),
+        .loadName(name: "big"),
+        .popTop,
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 7)),
+        .loadName(name: "smol"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// if eat_me: big
@@ -122,27 +134,33 @@ class CompileIfStmt: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "eat_me"),
-      .init(.popJumpIfFalse, "10"),
-      .init(.loadName, "big"),
-      .init(.popTop),
-      .init(.jumpAbsolute, "24"),
-      .init(.loadName, "drink_me"),
-      .init(.popJumpIfFalse, "20"),
-      .init(.loadName, "smol"),
-      .init(.popTop),
-      .init(.jumpAbsolute, "24"),
-      .init(.loadName, "alice"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "eat_me"),
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 5)),
+        .loadName(name: "big"),
+        .popTop,
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 12)),
+        .loadName(name: "drink_me"),
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 10)),
+        .loadName(name: "smol"),
+        .popTop,
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 12)),
+        .loadName(name: "alice"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   // MARK: - Constants
@@ -166,22 +184,28 @@ class CompileIfStmt: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "true"),
-      .init(.popJumpIfFalse, "10"),
-      .init(.loadName, "big"),
-      .init(.popTop),
-      .init(.jumpAbsolute, "14"),
-      .init(.loadName, "smol"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(.true),
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 5)),
+        .loadName(name: "big"),
+        .popTop,
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 7)),
+        .loadName(name: "smol"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// if False: big
@@ -203,21 +227,27 @@ class CompileIfStmt: CompileTestCase {
       ]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "false"),
-      .init(.popJumpIfFalse, "10"),
-      .init(.loadName, "big"),
-      .init(.popTop),
-      .init(.jumpAbsolute, "14"),
-      .init(.loadName, "smol"),
-      .init(.popTop),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(.false),
+        .popJumpIfFalse(label: CodeObject.Label(jumpAddress: 5)),
+        .loadName(name: "big"),
+        .popTop,
+        .jumpAbsolute(label: CodeObject.Label(jumpAddress: 7)),
+        .loadName(name: "smol"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 }

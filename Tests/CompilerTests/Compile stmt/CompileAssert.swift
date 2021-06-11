@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-import VioletBytecode
+@testable import VioletBytecode
 @testable import VioletCompiler
 
 /// Use './Scripts/dump' for reference.
@@ -21,19 +21,25 @@ class CompileAssert: CompileTestCase {
       msg: nil
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "pooh"),
-      .init(.popJumpIfTrue, "8"),
-      .init(.loadGlobal, "AssertionError"),
-      .init(.raiseVarargs, "exception"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "pooh"),
+        .popJumpIfTrue(label: CodeObject.Label(jumpAddress: 4)),
+        .loadGlobal(name: "AssertionError"),
+        .raiseVarargs(type: .exceptionOnly),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// assert pooh, 'Stuck at Rabbits Howse'
@@ -52,21 +58,27 @@ class CompileAssert: CompileTestCase {
       msg: self.stringExpr(value: .literal("Stuck at Rabbits Howse"))
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "pooh"),
-      .init(.popJumpIfTrue, "12"),
-      .init(.loadGlobal, "AssertionError"),
-      .init(.loadConst, "'Stuck at Rabbits Howse'"),
-      .init(.callFunction, "1"),
-      .init(.raiseVarargs, "exception"),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "pooh"),
+        .popJumpIfTrue(label: CodeObject.Label(jumpAddress: 6)),
+        .loadGlobal(name: "AssertionError"),
+        .loadConst("Stuck at Rabbits Howse"),
+        .callFunction(argumentCount: 1),
+        .raiseVarargs(type: .exceptionOnly),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// assert pooh
@@ -76,14 +88,25 @@ class CompileAssert: CompileTestCase {
       msg: nil
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
 
-    if let code = self.compile(stmt: stmt, optimizationLevel: .O) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "pooh"),
+        .popJumpIfTrue(label: CodeObject.Label(jumpAddress: 4)),
+        .loadGlobal(name: "AssertionError"),
+        .raiseVarargs(type: .exceptionOnly),
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 }

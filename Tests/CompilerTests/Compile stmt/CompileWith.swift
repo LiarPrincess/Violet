@@ -1,7 +1,7 @@
 import XCTest
 import VioletCore
 import VioletParser
-import VioletBytecode
+@testable import VioletBytecode
 @testable import VioletCompiler
 
 // swiftlint:disable function_body_length
@@ -34,25 +34,31 @@ class CompileWith: CompileTestCase {
       body: [self.identifierStmt(value: "wonderland")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "alice"),
-      .init(.setupWith, "14"),
-      .init(.popTop),
-      .init(.loadName, "wonderland"),
-      .init(.popTop),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.withCleanupStart),
-      .init(.withCleanupFinish),
-      .init(.endFinally),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "alice"),
+        .setupWith(afterBodyLabel: CodeObject.Label(jumpAddress: 7)),
+        .popTop,
+        .loadName(name: "wonderland"),
+        .popTop,
+        .popBlock,
+        .loadConst(.none),
+        .withCleanupStart,
+        .withCleanupFinish,
+        .endFinally,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// with alice as smol: wonderland
@@ -80,25 +86,31 @@ class CompileWith: CompileTestCase {
       body: [self.identifierStmt(value: "wonderland")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "alice"),
-      .init(.setupWith, "14"),
-      .init(.storeName, "smol"),
-      .init(.loadName, "wonderland"),
-      .init(.popTop),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.withCleanupStart),
-      .init(.withCleanupFinish),
-      .init(.endFinally),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "alice"),
+        .setupWith(afterBodyLabel: CodeObject.Label(jumpAddress: 7)),
+        .storeName(name: "smol"),
+        .loadName(name: "wonderland"),
+        .popTop,
+        .popBlock,
+        .loadConst(.none),
+        .withCleanupStart,
+        .withCleanupFinish,
+        .endFinally,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// with alice, rabbit: wonderland
@@ -138,33 +150,39 @@ class CompileWith: CompileTestCase {
       body: [self.identifierStmt(value: "wonderland")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "alice"),
-      .init(.setupWith, "30"),
-      .init(.popTop),
-      .init(.loadName, "rabbit"),
-      .init(.setupWith, "20"),
-      .init(.popTop),
-      .init(.loadName, "wonderland"),
-      .init(.popTop),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.withCleanupStart),
-      .init(.withCleanupFinish),
-      .init(.endFinally),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.withCleanupStart),
-      .init(.withCleanupFinish),
-      .init(.endFinally),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "alice"),
+        .setupWith(afterBodyLabel: CodeObject.Label(jumpAddress: 15)),
+        .popTop,
+        .loadName(name: "rabbit"),
+        .setupWith(afterBodyLabel: CodeObject.Label(jumpAddress: 10)),
+        .popTop,
+        .loadName(name: "wonderland"),
+        .popTop,
+        .popBlock,
+        .loadConst(.none),
+        .withCleanupStart,
+        .withCleanupFinish,
+        .endFinally,
+        .popBlock,
+        .loadConst(.none),
+        .withCleanupStart,
+        .withCleanupFinish,
+        .endFinally,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 
   /// with alice as big, rabbit as smol: wonderland
@@ -204,32 +222,38 @@ class CompileWith: CompileTestCase {
       body: [self.identifierStmt(value: "wonderland")]
     )
 
-    let expected: [EmittedInstruction] = [
-      .init(.loadName, "alice"),
-      .init(.setupWith, "30"),
-      .init(.storeName, "big"),
-      .init(.loadName, "rabbit"),
-      .init(.setupWith, "20"),
-      .init(.storeName, "smol"),
-      .init(.loadName, "wonderland"),
-      .init(.popTop),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.withCleanupStart),
-      .init(.withCleanupFinish),
-      .init(.endFinally),
-      .init(.popBlock),
-      .init(.loadConst, "none"),
-      .init(.withCleanupStart),
-      .init(.withCleanupFinish),
-      .init(.endFinally),
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmt: stmt) {
-      XCTAssertCode(code, name: "<module>", qualified: "", kind: .module)
-      XCTAssertInstructions(code, expected)
+    guard let code = self.compile(stmt: stmt) else {
+      return
     }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "alice"),
+        .setupWith(afterBodyLabel: CodeObject.Label(jumpAddress: 15)),
+        .storeName(name: "big"),
+        .loadName(name: "rabbit"),
+        .setupWith(afterBodyLabel: CodeObject.Label(jumpAddress: 10)),
+        .storeName(name: "smol"),
+        .loadName(name: "wonderland"),
+        .popTop,
+        .popBlock,
+        .loadConst(.none),
+        .withCleanupStart,
+        .withCleanupFinish,
+        .endFinally,
+        .popBlock,
+        .loadConst(.none),
+        .withCleanupStart,
+        .withCleanupFinish,
+        .endFinally,
+        .loadConst(.none),
+        .return
+      ]
+    )
   }
 }
