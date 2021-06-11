@@ -300,7 +300,7 @@ extension CompilerImpl {
 
     let end = self.builder.createLabel()
     try self.visit(node.test, andJumpTo: end, ifBooleanValueIs: true)
-    self.builder.appendLoadGlobal(SpecialIdentifiers.assertionError)
+    self.builder.appendLoadGlobal(SpecialIdentifiers.assertionErrorTypeName)
 
     if let message = node.msg {
       // Call 'AssertionError' with single argument

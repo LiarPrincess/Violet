@@ -48,10 +48,11 @@ extension SymbolTableBuilderImpl {
 
     try self.addSymbol(name: node.value, flags: flags, location: node.start)
 
+    // Special-case super: it counts as a use of '__class__'
     let scopeKind = self.currentScope.kind
     let isLoadSuper = node.context == .load
-      && node.value == SpecialIdentifiers.super
-      && scopeKind.isFunctionLambdaComprehension // 'super' makes sense only in those contexts
+      && node.value == SpecialIdentifiers.superFunctionName
+      && scopeKind.isFunctionLambdaComprehension
 
     if isLoadSuper {
       let name = SpecialIdentifiers.__class__

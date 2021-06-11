@@ -63,11 +63,12 @@ public struct FutureFeatures {
 
       previousLine = stmt.start.line
 
+      // '__future__' imports have to be first
       if let importStmt = stmt as? ImportFromStmt,
         importStmt.moduleName == SpecialIdentifiers.__future__ {
 
         if isDone {
-          // '__future__' imports have to be first, so this is not valid:
+          // This is not valid:
           // import tangled
           // from __future__ import braces
           throw CompilerError(.lateFuture, location: stmt.start)

@@ -160,7 +160,7 @@ extension CompilerImpl {
                                   location: location)
     }
 
-    try self.visitArgAnnotation(name: SpecialIdentifiers.return,
+    try self.visitArgAnnotation(name: SpecialIdentifiers.returnAnnotationKey,
                                 annotation: returns,
                                 appendingNameTo: &names,
                                 location: location)
@@ -242,8 +242,9 @@ extension CompilerImpl {
 
   private func getRefType(name: MangledName,
                           qualifiedName: String) -> Symbol.Flags {
-    let classId = SpecialIdentifiers.__class__
-    if self.builder.kind == .class && name.value == classId {
+    let is__class__ = name.value == SpecialIdentifiers.__class__
+    let isInsideClass = self.builder.kind == .class
+    if is__class__ && isInsideClass {
       return .cell
     }
 
