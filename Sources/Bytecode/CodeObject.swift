@@ -56,18 +56,30 @@ public final class CodeObject: Equatable {
   // MARK: - Flags
 
   public struct Flags: OptionSet, CustomStringConvertible {
+    // Value corresponds to CPython value.
     public let rawValue: UInt16
 
+    /// Automatically added to every `function`, `lambda` and `comprehension`.
     public static let optimized = Flags(rawValue: 0x0001)
+    /// Automatically added to every `function`, `lambda` and `comprehension`.
     public static let newLocals = Flags(rawValue: 0x0002)
+    /// Has `*` in arguments.
     public static let varArgs = Flags(rawValue: 0x0004)
+    /// Has `**` in arguments.
     public static let varKeywords = Flags(rawValue: 0x0008)
+    /// Is this `function`, `lambda` or `comprehension` nested inside any other
+    /// `CodeObject`? Also true for any  of its children.
     public static let nested = Flags(rawValue: 0x0010)
+    /// Contains `yield`/`yield from` or generator expression.
     public static let generator = Flags(rawValue: 0x0020)
-    public static let noFree = Flags(rawValue: 0x0040)
+    /// Contains `await` or `async` function/comprehension.
     public static let coroutine = Flags(rawValue: 0x0080)
-    public static let iterableCoroutine = Flags(rawValue: 0x0100)
+    /// Both `generator` and `coroutine`.
     public static let asyncGenerator = Flags(rawValue: 0x0200)
+
+    // Not used:
+    public static let noFree = Flags(rawValue: 0x0040)
+    public static let iterableCoroutine = Flags(rawValue: 0x0100)
 
     public var description: String {
       var flags = ""
