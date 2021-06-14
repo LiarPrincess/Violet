@@ -5,7 +5,11 @@ import VioletBytecode
 // In CPython:
 // Include -> symtable.h
 
-public struct Symbol: Equatable, CustomStringConvertible {
+/// Information about a single symbol.
+///
+/// It does not contain a symbol name, as this information is stored inside
+/// `SymbolScope.symbols` dictionary.
+public struct SymbolInfo: Equatable, CustomStringConvertible {
 
   // MARK: - Flags
 
@@ -154,6 +158,6 @@ public struct Symbol: Equatable, CustomStringConvertible {
   public let location: SourceLocation
 
   public var description: String {
-    return "Symbol(flags: \(self.flags), location: \(self.location))"
+    return "SymbolInfo(flags: \(self.flags), location: \(self.location))"
   }
 }

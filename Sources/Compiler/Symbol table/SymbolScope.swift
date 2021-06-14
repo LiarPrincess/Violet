@@ -77,7 +77,7 @@ public final class SymbolScope {
 
     // This is a very unsophisticated implementation of ordered dictionary,
     // but it is enough.
-    private var dict = [MangledName: Symbol]()
+    private var dict = [MangledName: SymbolInfo]()
     private var list = [MangledName]()
 
     public var count: Int {
@@ -90,7 +90,7 @@ public final class SymbolScope {
       return self.list.isEmpty
     }
 
-    public internal(set) subscript(name: MangledName) -> Symbol? {
+    public internal(set) subscript(name: MangledName) -> SymbolInfo? {
       get { return self.dict[name] }
       set {
         // We don't need removal operation, but we want fancy subscript syntax.
@@ -109,7 +109,7 @@ public final class SymbolScope {
       }
     }
 
-    public typealias Element = (key: MangledName, info: Symbol)
+    public typealias Element = (key: MangledName, info: SymbolInfo)
     public typealias Iterator = AnyIterator<Self.Element>
 
     public func makeIterator() -> Iterator {

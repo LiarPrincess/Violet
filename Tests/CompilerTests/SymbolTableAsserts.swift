@@ -10,10 +10,11 @@ import VioletCompiler
 /// Expected symbol
 struct ExpectedSymbol {
   let name: String
-  let flags: Symbol.Flags
+  let flags: SymbolInfo.Flags
   let location: SourceLocation?
 
-  init(name: String, flags: Symbol.Flags, location: SourceLocation? = nil) {
+  // We need custom `init` to make `location` optional parameter.
+  init(name: String, flags: SymbolInfo.Flags, location: SourceLocation? = nil) {
     self.name = name
     self.flags = flags
     self.location = location
@@ -103,7 +104,7 @@ private func assertSymbols(_ scope: SymbolScope,
                    file: file,
                    line: line)
 
-    func assertFlag(_ flag: Symbol.Flags, name: String) {
+    func assertFlag(_ flag: SymbolInfo.Flags, name: String) {
       let hasFlag = info.flags.contains(flag)
       let expectsFlag = expected.flags.contains(flag)
       XCTAssertEqual(hasFlag,

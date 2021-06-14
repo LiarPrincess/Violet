@@ -43,8 +43,8 @@ extension SymbolTableBuilderImpl {
 
   internal func visit(_ node: IdentifierExpr) throws {
     let flags = node.context == .store ?
-      Symbol.Flags.defLocal :
-      Symbol.Flags.use
+      SymbolInfo.Flags.defLocal :
+      SymbolInfo.Flags.use
 
     try self.addSymbol(name: node.value, flags: flags, location: node.start)
 

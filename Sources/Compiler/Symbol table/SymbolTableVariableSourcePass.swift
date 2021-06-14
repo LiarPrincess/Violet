@@ -22,13 +22,13 @@ private final class OuterContext {
   /// Usage:
   /// - child - add new free variables
   /// - parent - bind free variables from child with locals (creating `cells`)
-  fileprivate var free: [MangledName: Symbol]
+  fileprivate var free: [MangledName: SymbolInfo]
   /// Set of declared global variables in outer scopes (used for globals)
   fileprivate var global: Set<MangledName>
   /// Set of variables bound in outer scopes (used for nonlocals)
   fileprivate var bound: Set<MangledName>
 
-  fileprivate init(free: [MangledName: Symbol],
+  fileprivate init(free: [MangledName: SymbolInfo],
                    bound: Set<MangledName>,
                    global: Set<MangledName>) {
     self.free = free
@@ -46,7 +46,7 @@ private final class ScopeContext {
   fileprivate var local = Set<MangledName>()
   /// Sources for each symbol (basically the main thing in this pass).
   /// CPython: `scopes`
-  fileprivate var symbolSources = [MangledName: Symbol.Flags]()
+  fileprivate var symbolSources = [MangledName: SymbolInfo.Flags]()
   /// Variable names visible in nested blocks.
   /// Basically: outer bound + our local bound
   fileprivate var newBound = Set<MangledName>()
@@ -54,7 +54,7 @@ private final class ScopeContext {
   /// Basically: outer global + our local global
   fileprivate var newGlobal = Set<MangledName>()
   /// Free variable that should be resolved by parent scope.
-  fileprivate var newFree = [MangledName: Symbol]()
+  fileprivate var newFree = [MangledName: SymbolInfo]()
 }
 
 // MARK: - Variable source pass
@@ -105,7 +105,7 @@ internal final class SymbolTableVariableSourcePass {
     }
 
     // Recursively call analyzeChildBlock() on each child block
-    var allFree = [MangledName: Symbol]()
+    var allFree = [MangledName: SymbolInfo]()
     for child in scope.children {
       try self.analyzeChildBlock(scope: child,
                                  scopeContext: context,
@@ -134,8 +134,8 @@ internal final class SymbolTableVariableSourcePass {
     }
   }
 
-  private func mergeFree(target: inout [MangledName: Symbol],
-                         src: [MangledName: Symbol]) {
+  private func mergeFree(target: inout [MangledName: SymbolInfo],
+                         src: [MangledName: SymbolInfo]) {
     target.merge(src) { lhs, _ in lhs }
   }
 
@@ -145,7 +145,7 @@ internal final class SymbolTableVariableSourcePass {
   ///
   /// analyze_name(PySTEntryObject *ste, PyObject *scopes, PyObject *name, ...)
   private func analyzeName(_ name: MangledName,
-                           info: Symbol,
+                           info: SymbolInfo,
                            scope: SymbolScope,
                            scopeContext: ScopeContext,
                            outerContext: OuterContext?) throws {
@@ -207,7 +207,7 @@ internal final class SymbolTableVariableSourcePass {
   private func analyzeChildBlock(
     scope: SymbolScope,
     scopeContext: ScopeContext,
-    addingFreeVariablesTo free: inout [MangledName: Symbol]) throws {
+    addingFreeVariablesTo free: inout [MangledName: SymbolInfo]) throws {
 
     // Set is an value type in Swift, so we can simply:
     let childContext = OuterContext(free: scopeContext.newFree,
@@ -267,7 +267,7 @@ internal final class SymbolTableVariableSourcePass {
       var flags = info.flags
       flags.formUnion(srcFlags)
 
-      let newInfo = Symbol(flags: flags, location: info.location)
+      let newInfo = SymbolInfo(flags: flags, location: info.location)
       scope.symbols[name] = newInfo
     }
 
@@ -280,7 +280,7 @@ internal final class SymbolTableVariableSourcePass {
           var flags = info.flags
           flags.formUnion(.defFreeClass)
 
-          let newInfo = Symbol(flags: flags, location: info.location)
+          let newInfo = SymbolInfo(flags: flags, location: info.location)
           scope.symbols[name] = newInfo
         }
 

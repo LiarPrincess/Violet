@@ -146,7 +146,7 @@ extension SymbolTableBuilderImpl {
 
       // '(rapunzel): Int = 5' is tuple -> not simple!
       if node.isSimple {
-        let flags: Symbol.Flags = [.defLocal, .annotated]
+        let flags: SymbolInfo.Flags = [.defLocal, .annotated]
         try self.addSymbol(name: name, flags: flags, location: node.target.start)
       } else if node.value != nil {
         // different than CPython, but has the same effect:

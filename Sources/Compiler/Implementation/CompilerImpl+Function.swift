@@ -241,7 +241,7 @@ extension CompilerImpl {
   }
 
   private func getRefType(name: MangledName,
-                          qualifiedName: String) -> Symbol.Flags {
+                          qualifiedName: String) -> SymbolInfo.Flags {
     let is__class__ = name.value == SpecialIdentifiers.__class__
     let isInsideClass = self.builder.kind == .class
     if is__class__ && isInsideClass {

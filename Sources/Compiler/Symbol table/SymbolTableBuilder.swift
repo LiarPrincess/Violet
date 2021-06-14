@@ -134,7 +134,7 @@ internal final class SymbolTableBuilderImpl:
   /// In general variables with '__' prefix should only be used if we
   /// really need mangling to avoid potential name clash.
   internal func addSymbol(name: String,
-                          flags: Symbol.Flags,
+                          flags: SymbolInfo.Flags,
                           location: SourceLocation) throws {
     let mangled = MangledName(className: self.className, name: name)
 
@@ -151,7 +151,7 @@ internal final class SymbolTableBuilderImpl:
       firstLocation = Swift.min(firstLocation, current.location)
     }
 
-    let info = Symbol(flags: flagsToSet, location: firstLocation)
+    let info = SymbolInfo(flags: flagsToSet, location: firstLocation)
     self.currentScope.symbols[mangled] = info
 
     if flags.contains(.defParam) {
@@ -167,7 +167,7 @@ internal final class SymbolTableBuilderImpl:
         globalLocation = Swift.min(firstLocation, currentGlobal.location)
       }
 
-      let globalInfo = Symbol(flags: globalFlagsToSet, location: globalLocation)
+      let globalInfo = SymbolInfo(flags: globalFlagsToSet, location: globalLocation)
       self.topScope.symbols[mangled] = globalInfo
     }
   }
@@ -175,7 +175,7 @@ internal final class SymbolTableBuilderImpl:
   /// Lookup mangled name in current scope.
   ///
   /// symtable_lookup(struct symtable *st, PyObject *name)
-  internal func lookupMangled(name: String) -> Symbol? {
+  internal func lookupMangled(name: String) -> SymbolInfo? {
     let mangled = MangledName(className: self.className, name: name)
     return self.currentScope.symbols[mangled]
   }
