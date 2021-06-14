@@ -34,7 +34,7 @@ class BuilderJumpTests: XCTestCase {
     builder.appendNop() // 3
 
     let code = builder.finalize()
-    XCTAssertLabelAtIndex256(code, jumpAddress: 3)
+    XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .jumpAbsolute(labelIndex: 0),
@@ -71,7 +71,7 @@ class BuilderJumpTests: XCTestCase {
     builder.appendNop() // 3
 
     let code = builder.finalize()
-    XCTAssertLabelAtIndex256(code, jumpAddress: 3)
+    XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .popJumpIfTrue(labelIndex: 0),
@@ -108,7 +108,7 @@ class BuilderJumpTests: XCTestCase {
     builder.appendNop() // 3
 
     let code = builder.finalize()
-    XCTAssertLabelAtIndex256(code, jumpAddress: 3)
+    XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .popJumpIfFalse(labelIndex: 0),
@@ -145,7 +145,7 @@ class BuilderJumpTests: XCTestCase {
     builder.appendNop() // 3
 
     let code = builder.finalize()
-    XCTAssertLabelAtIndex256(code, jumpAddress: 3)
+    XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .jumpIfTrueOrPop(labelIndex: 0),
@@ -182,7 +182,7 @@ class BuilderJumpTests: XCTestCase {
     builder.appendNop() // 3
 
     let code = builder.finalize()
-    XCTAssertLabelAtIndex256(code, jumpAddress: 3)
+    XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .jumpIfFalseOrPop(labelIndex: 0),

@@ -34,7 +34,7 @@ class BuilderLoopTests: XCTestCase {
     builder.appendNop() // 3
 
     let code = builder.finalize()
-    XCTAssertLabelAtIndex256(code, jumpAddress: 3)
+    XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .setupLoop(loopEndLabelIndex: 0),
@@ -81,7 +81,7 @@ class BuilderLoopTests: XCTestCase {
     builder.appendNop() // 2
 
     let code = builder.finalize()
-    XCTAssertLabelAtIndex256(code, jumpAddress: 3)
+    XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .forIter(ifEmptyLabelIndex: 0),
@@ -138,7 +138,7 @@ class BuilderLoopTests: XCTestCase {
     builder.appendNop() // 2
 
     let code = builder.finalize()
-    XCTAssertLabelAtIndex256(code, jumpAddress: 3)
+    XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .continue(loopStartLabelIndex: 0),

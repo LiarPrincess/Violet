@@ -149,22 +149,29 @@ public final class CodeObject: Equatable {
 
   /// Jump target, index in `CodeObject.instructions`.
   ///
-  /// Basically a wrapper around array index for additional type safety (otherwise
-  /// we would have to use `Int` which can be mistaken with any other `Int`).
+  /// Basically a wrapper around an array index for additional type safety
+  /// (otherwise we would have to use `Int` which can be mistaken with any
+  /// other `Int`).
   ///
   /// - Important:
   /// Labels can only be used inside a `CodeObject` that contains it!
   public struct Label: Equatable, CustomStringConvertible {
 
     /// Invalid Label
-    public static let notAssigned = Label(jumpAddress: -1)
+    public static let notAssigned = Label(instructionIndex: -1)
 
-    /// Index in `CodeObject.instructions`
-    public internal(set) var jumpAddress: Int
+    /// Index in `CodeObject.instructions`.
+    public internal(set) var instructionIndex: Int
+
+    /// Instruction index counted as if `CodeObject.instructions` was a
+    /// `Foundation.Data`.
+    public var byteOffset: Int {
+      return self.instructionIndex * Instruction.byteSize
+    }
 
     public var description: String {
-      let index = self.jumpAddress
-      let byteOffset = index * Instruction.byteSize
+      let index = self.instructionIndex
+      let byteOffset = self.byteOffset
       return "Label(instructionIndex: \(index), byteOffset: \(byteOffset))"
     }
 
@@ -172,7 +179,7 @@ public final class CodeObject: Equatable {
     ///
     /// Label without assigned value is not valid jump address.
     internal var isAssigned: Bool {
-      return self.jumpAddress >= 0
+      return self.instructionIndex >= 0
     }
   }
 

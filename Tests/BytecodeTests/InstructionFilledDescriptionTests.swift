@@ -11,7 +11,7 @@ private let elsaBytes = Data([101, 108, 115, 97])
 /// Mangled name with value: `_Frozen__Elsa`
 private let _Frozen__Elsa = MangledName(className: "Frozen", name: "__Elsa")
 /// Label with `jumpAddress = 42`
-private let label42 = CodeObject.Label(jumpAddress: 42)
+private let label42 = CodeObject.Label(instructionIndex: 42)
 
 private func XCTAssertDescription(_ instruction: Instruction.Filled,
                                   _ expected: String,

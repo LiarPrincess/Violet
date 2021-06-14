@@ -178,7 +178,7 @@ func XCTAssertLabelTargets(_ code: CodeObject,
   }
 
   for (l, e) in zip(code.labels, expected) {
-    let eLabel = CodeObject.Label(jumpAddress: e)
+    let eLabel = CodeObject.Label(instructionIndex: e)
     XCTAssertEqual(l, eLabel, file: file, line: line)
   }
 }
@@ -193,7 +193,7 @@ func add255Labels(builder: CodeObjectBuilder) {
 
 /// Assert `code.labels[256]`
 func XCTAssertLabelAtIndex256(_ code: CodeObject,
-                              jumpAddress: Int,
+                              instructionIndex: Int,
                               file: StaticString = #file,
                               line: UInt = #line) {
   let count = code.labels.count
@@ -205,7 +205,7 @@ func XCTAssertLabelAtIndex256(_ code: CodeObject,
   }
 
   let label = code.labels[index]
-  let expectedLabel = CodeObject.Label(jumpAddress: jumpAddress)
+  let expectedLabel = CodeObject.Label(instructionIndex: instructionIndex)
   XCTAssertEqual(label, expectedLabel, file: file, line: line)
 }
 

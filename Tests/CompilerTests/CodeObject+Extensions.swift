@@ -208,6 +208,6 @@ extension Instruction.Filled {
 
   private static func toLabel(bytecodeIndex: Int) -> CodeObject.Label {
     let instructionIndex = bytecodeIndex / Instruction.byteSize
-    return CodeObject.Label(jumpAddress: instructionIndex)
+    return CodeObject.Label(instructionIndex: instructionIndex)
   }
 }

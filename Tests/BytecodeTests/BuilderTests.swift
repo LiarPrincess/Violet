@@ -208,7 +208,7 @@ class BuilderTests: XCTestCase {
     guard builder.labels.count == 1 else { return }
 
     let labelAfter = builder.labels[0]
-    XCTAssertEqual(labelAfter.jumpAddress, 1)
+    XCTAssertEqual(labelAfter.instructionIndex, 1)
     XCTAssertTrue(labelAfter.isAssigned)
 
     // Code object
@@ -218,7 +218,7 @@ class BuilderTests: XCTestCase {
     guard code.labels.count == 1 else { return }
 
     let codeLabel = code.labels[0]
-    XCTAssertEqual(codeLabel.jumpAddress, 1)
+    XCTAssertEqual(codeLabel.instructionIndex, 1)
     XCTAssertTrue(codeLabel.isAssigned)
   }
 

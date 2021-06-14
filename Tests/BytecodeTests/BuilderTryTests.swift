@@ -54,7 +54,7 @@ class BuilderTryTests: XCTestCase {
     builder.appendNop() // 3
 
     let code = builder.finalize()
-    XCTAssertLabelAtIndex256(code, jumpAddress: 3)
+    XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .setupExcept(firstExceptLabelIndex: 0),
@@ -91,7 +91,7 @@ class BuilderTryTests: XCTestCase {
     builder.appendNop() // 3
 
     let code = builder.finalize()
-    XCTAssertLabelAtIndex256(code, jumpAddress: 3)
+    XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .setupFinally(finallyStartLabelIndex: 0),

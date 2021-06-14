@@ -123,8 +123,8 @@ public final class CodeObjectBuilder {
     assert(labelIndex < self.labels.count)
     assert(self.labels[labelIndex] == CodeObject.Label.notAssigned)
 
-    let jumpAddress = self.instructions.endIndex
-    self.labels[labelIndex] = CodeObject.Label(jumpAddress: jumpAddress)
+    let jumpTarget = self.instructions.endIndex
+    self.labels[labelIndex] = CodeObject.Label(instructionIndex: jumpTarget)
   }
 
   /// Use when using label (from `self.labels`) index as instruction arg.
