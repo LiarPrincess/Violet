@@ -19,7 +19,7 @@ internal class CompileTestCase: XCTestCase, ASTCreator {
   }
 
   internal func compile(stmt: Statement,
-                        optimizationLevel: OptimizationLevel = .none,
+                        optimizationLevel: Compiler.OptimizationLevel = .none,
                         file: StaticString = #file,
                         line: UInt = #line) -> CodeObject? {
     let ast = self.moduleAST(statements: [stmt])
@@ -37,14 +37,14 @@ internal class CompileTestCase: XCTestCase, ASTCreator {
   }
 
   private func compile(ast: AST,
-                       optimizationLevel: OptimizationLevel = .none,
+                       optimizationLevel: Compiler.OptimizationLevel = .none,
                        file: StaticString = #file,
                        line: UInt = #line) -> CodeObject? {
     do {
       let validator = ASTValidator()
       try validator.validate(ast: ast)
 
-      let options = CompilerOptions(optimizationLevel: optimizationLevel)
+      let options = Compiler.Options(optimizationLevel: optimizationLevel)
       let compiler = Compiler(filename: "file",
                               ast: ast,
                               options: options,
