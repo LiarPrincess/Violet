@@ -296,7 +296,7 @@ internal struct Eval {
     case .inPlaceOr:
       return self.inPlaceOr()
 
-    case let .compareOp(type):
+    case let .compareOp(type: type):
       assert(extendedArg == 0)
       return self.compareOp(type: type)
 
@@ -314,97 +314,97 @@ internal struct Eval {
     case .printExpr:
       return self.printExpr()
 
-    case let .setupLoop(loopEndLabel):
-      let extended = Instruction.extend(base: extendedArg, arg: loopEndLabel)
-      return self.setupLoop(loopEndLabelIndex: extended)
-    case let .forIter(ifEmptyLabel):
-      let extended = Instruction.extend(base: extendedArg, arg: ifEmptyLabel)
-      return self.forIter(ifEmptyLabelIndex: extended)
+    case let .setupLoop(loopEndLabelIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.setupLoop(loopEndLabelIndex: index)
+    case let .forIter(ifEmptyLabelIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.forIter(ifEmptyLabelIndex: index)
     case .getIter:
       return self.getIter()
     case .getYieldFromIter:
       return self.getYieldFromIter()
     case .break:
       return self.doBreak()
-    case let .continue(loopStartLabel):
-      let extended = Instruction.extend(base: extendedArg, arg: loopStartLabel)
-      return self.doContinue(loopStartLabelIndex: extended)
+    case let .continue(loopStartLabelIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.doContinue(loopStartLabelIndex: index)
 
-    case let .buildTuple(elementCount):
-      let extended = Instruction.extend(base: extendedArg, arg: elementCount)
-      return self.buildTuple(elementCount: extended)
-    case let .buildList(elementCount):
-      let extended = Instruction.extend(base: extendedArg, arg: elementCount)
-      return self.buildList(elementCount: extended)
-    case let .buildSet(elementCount):
-      let extended = Instruction.extend(base: extendedArg, arg: elementCount)
-      return self.buildSet(elementCount: extended)
-    case let .buildMap(elementCount):
-      let extended = Instruction.extend(base: extendedArg, arg: elementCount)
-      return self.buildMap(elementCount: extended)
-    case let .buildConstKeyMap(elementCount):
-      let extended = Instruction.extend(base: extendedArg, arg: elementCount)
-      return self.buildConstKeyMap(elementCount: extended)
+    case let .buildTuple(elementCount: arg):
+      let count = Instruction.extend(base: extendedArg, arg: arg)
+      return self.buildTuple(elementCount: count)
+    case let .buildList(elementCount: arg):
+      let count = Instruction.extend(base: extendedArg, arg: arg)
+      return self.buildList(elementCount: count)
+    case let .buildSet(elementCount: arg):
+      let count = Instruction.extend(base: extendedArg, arg: arg)
+      return self.buildSet(elementCount: count)
+    case let .buildMap(elementCount: arg):
+      let count = Instruction.extend(base: extendedArg, arg: arg)
+      return self.buildMap(elementCount: count)
+    case let .buildConstKeyMap(elementCount: arg):
+      let count = Instruction.extend(base: extendedArg, arg: arg)
+      return self.buildConstKeyMap(elementCount: count)
 
-    case let .setAdd(relativeStackIndex: value):
-      let extended = Instruction.extend(base: extendedArg, arg: value)
-      return self.setAdd(value: extended)
-    case let .listAppend(relativeStackIndex: value):
-      let extended = Instruction.extend(base: extendedArg, arg: value)
-      return self.listAdd(value: extended)
-    case let .mapAdd(relativeStackIndex: value):
-      let extended = Instruction.extend(base: extendedArg, arg: value)
-      return self.mapAdd(value: extended)
+    case let .setAdd(relativeStackIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.setAdd(stackIndex: index)
+    case let .listAppend(relativeStackIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.listAdd(stackIndex: index)
+    case let .mapAdd(relativeStackIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.mapAdd(stackIndex: index)
 
-    case let .buildTupleUnpack(elementCount):
-      let extended = Instruction.extend(base: extendedArg, arg: elementCount)
-      return self.buildTupleUnpack(elementCount: extended)
-    case let .buildTupleUnpackWithCall(elementCount):
-      let extended = Instruction.extend(base: extendedArg, arg: elementCount)
-      return self.buildTupleUnpackWithCall(elementCount: extended)
-    case let .buildListUnpack(elementCount):
-      let extended = Instruction.extend(base: extendedArg, arg: elementCount)
-      return self.buildListUnpack(elementCount: extended)
-    case let .buildSetUnpack(elementCount):
-      let extended = Instruction.extend(base: extendedArg, arg: elementCount)
-      return self.buildSetUnpack(elementCount: extended)
-    case let .buildMapUnpack(elementCount):
-      let extended = Instruction.extend(base: extendedArg, arg: elementCount)
-      return self.buildMapUnpack(elementCount: extended)
-    case let .buildMapUnpackWithCall(elementCount):
-      let extended = Instruction.extend(base: extendedArg, arg: elementCount)
-      return self.buildMapUnpackWithCall(elementCount: extended)
-    case let .unpackSequence(elementCount):
-      let extended = Instruction.extend(base: extendedArg, arg: elementCount)
-      return self.unpackSequence(elementCount: extended)
-    case let .unpackEx(arg):
+    case let .buildTupleUnpack(elementCount: arg):
+      let count = Instruction.extend(base: extendedArg, arg: arg)
+      return self.buildTupleUnpack(elementCount: count)
+    case let .buildTupleUnpackWithCall(elementCount: arg):
+      let count = Instruction.extend(base: extendedArg, arg: arg)
+      return self.buildTupleUnpackWithCall(elementCount: count)
+    case let .buildListUnpack(elementCount: arg):
+      let count = Instruction.extend(base: extendedArg, arg: arg)
+      return self.buildListUnpack(elementCount: count)
+    case let .buildSetUnpack(elementCount: arg):
+      let count = Instruction.extend(base: extendedArg, arg: arg)
+      return self.buildSetUnpack(elementCount: count)
+    case let .buildMapUnpack(elementCount: arg):
+      let count = Instruction.extend(base: extendedArg, arg: arg)
+      return self.buildMapUnpack(elementCount: count)
+    case let .buildMapUnpackWithCall(elementCount: arg):
+      let count = Instruction.extend(base: extendedArg, arg: arg)
+      return self.buildMapUnpackWithCall(elementCount: count)
+    case let .unpackSequence(elementCount: arg):
+      let count = Instruction.extend(base: extendedArg, arg: arg)
+      return self.unpackSequence(elementCount: count)
+    case let .unpackEx(arg: arg):
       let extended = Instruction.extend(base: extendedArg, arg: arg)
       let decoded = Instruction.UnpackExArg(value: extended)
       return self.unpackEx(arg: decoded)
 
-    case let .loadConst(index):
-      let extended = Instruction.extend(base: extendedArg, arg: index)
-      return self.loadConst(index: extended)
+    case let .loadConst(index: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.loadConst(index: index)
 
-    case let .storeName(nameIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: nameIndex)
-      return self.storeName(nameIndex: extended)
-    case let .loadName(nameIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: nameIndex)
-      return self.loadName(nameIndex: extended)
-    case let .deleteName(nameIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: nameIndex)
-      return self.deleteName(nameIndex: extended)
+    case let .storeName(nameIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.storeName(nameIndex: index)
+    case let .loadName(nameIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.loadName(nameIndex: index)
+    case let .deleteName(nameIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.deleteName(nameIndex: index)
 
-    case let .storeAttribute(nameIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: nameIndex)
-      return self.storeAttribute(nameIndex: extended)
-    case let .loadAttribute(nameIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: nameIndex)
-      return self.loadAttribute(nameIndex: extended)
-    case let .deleteAttribute(nameIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: nameIndex)
-      return self.deleteAttribute(nameIndex: extended)
+    case let .storeAttribute(nameIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.storeAttribute(nameIndex: index)
+    case let .loadAttribute(nameIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.loadAttribute(nameIndex: index)
+    case let .deleteAttribute(nameIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.deleteAttribute(nameIndex: index)
 
     case .binarySubscript:
       return self.binarySubscript()
@@ -413,49 +413,49 @@ internal struct Eval {
     case .deleteSubscript:
       return self.deleteSubscript()
 
-    case let .storeGlobal(nameIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: nameIndex)
-      return self.storeGlobal(nameIndex: extended)
-    case let .loadGlobal(nameIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: nameIndex)
-      return self.loadGlobal(nameIndex: extended)
-    case let .deleteGlobal(nameIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: nameIndex)
-      return self.deleteGlobal(nameIndex: extended)
+    case let .storeGlobal(nameIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.storeGlobal(nameIndex: index)
+    case let .loadGlobal(nameIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.loadGlobal(nameIndex: index)
+    case let .deleteGlobal(nameIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.deleteGlobal(nameIndex: index)
 
-    case let .loadFast(variableIndex: index):
-      let extended = Instruction.extend(base: extendedArg, arg: index)
-      return self.loadFast(index: extended)
-    case let .storeFast(variableIndex: index):
-      let extended = Instruction.extend(base: extendedArg, arg: index)
-      return self.storeFast(index: extended)
-    case let .deleteFast(variableIndex: index):
-      let extended = Instruction.extend(base: extendedArg, arg: index)
-      return self.deleteFast(index: extended)
+    case let .loadFast(variableIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.loadFast(index: index)
+    case let .storeFast(variableIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.storeFast(index: index)
+    case let .deleteFast(variableIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.deleteFast(index: index)
 
-    case let .loadCellOrFree(cellOrFreeIndex: index):
-      let extended = Instruction.extend(base: extendedArg, arg: index)
-      return self.loadCellOrFree(cellOrFreeIndex: extended)
-    case let .storeCellOrFree(cellOrFreeIndex: index):
-      let extended = Instruction.extend(base: extendedArg, arg: index)
-      return self.storeCellOrFree(cellOrFreeIndex: extended)
-    case let .deleteCellOrFree(cellOrFreeIndex: index):
-      let extended = Instruction.extend(base: extendedArg, arg: index)
-      return self.deleteCellOrFree(cellOrFreeIndex: extended)
-    case let .loadClassCell(cellOrFreeIndex: index):
-      let extended = Instruction.extend(base: extendedArg, arg: index)
-      return self.loadClassCell(cellOrFreeIndex: extended)
+    case let .loadCellOrFree(cellOrFreeIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.loadCellOrFree(cellOrFreeIndex: index)
+    case let .storeCellOrFree(cellOrFreeIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.storeCellOrFree(cellOrFreeIndex: index)
+    case let .deleteCellOrFree(cellOrFreeIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.deleteCellOrFree(cellOrFreeIndex: index)
+    case let .loadClassCell(cellOrFreeIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.loadClassCell(cellOrFreeIndex: index)
 
-    case let .makeFunction(flags):
+    case let .makeFunction(flags: flags):
       assert(extendedArg == 0)
       return self.makeFunction(flags: flags)
-    case let .callFunction(argumentCount):
-      let extended = Instruction.extend(base: extendedArg, arg: argumentCount)
-      return self.callFunction(argumentCount: extended)
-    case let .callFunctionKw(argumentCount):
-      let extended = Instruction.extend(base: extendedArg, arg: argumentCount)
-      return self.callFunctionKw(argumentCount: extended)
-    case let .callFunctionEx(hasKeywordArguments):
+    case let .callFunction(argumentCount: arg):
+      let argCount = Instruction.extend(base: extendedArg, arg: arg)
+      return self.callFunction(argumentCount: argCount)
+    case let .callFunctionKw(argumentCount: arg):
+      let argCount = Instruction.extend(base: extendedArg, arg: arg)
+      return self.callFunctionKw(argumentCount: argCount)
+    case let .callFunctionEx(hasKeywordArguments: hasKeywordArguments):
       assert(extendedArg == 0)
       return self.callFunctionEx(hasKeywordArguments: hasKeywordArguments)
 
@@ -465,40 +465,40 @@ internal struct Eval {
     case .loadBuildClass:
       return self.loadBuildClass()
 
-    case let .loadMethod(nameIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: nameIndex)
-      return self.loadMethod(nameIndex: extended)
-    case let .callMethod(argumentCount):
-      let extended = Instruction.extend(base: extendedArg, arg: argumentCount)
-      return self.callMethod(argumentCount: extended)
+    case let .loadMethod(nameIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.loadMethod(nameIndex: index)
+    case let .callMethod(argumentCount: arg):
+      let argCount = Instruction.extend(base: extendedArg, arg: arg)
+      return self.callMethod(argumentCount: argCount)
 
     case .importStar:
       return self.importStar()
-    case let .importName(nameIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: nameIndex)
-      return self.importName(nameIndex: extended)
-    case let .importFrom(nameIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: nameIndex)
-      return self.importFrom(nameIndex: extended)
+    case let .importName(nameIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.importName(nameIndex: index)
+    case let .importFrom(nameIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.importFrom(nameIndex: index)
 
     case .popExcept:
       return self.popExcept()
     case .endFinally:
       return self.endFinally()
-    case let .setupExcept(firstExceptLabel):
-      let extended = Instruction.extend(base: extendedArg, arg: firstExceptLabel)
-      return self.setupExcept(firstExceptLabelIndex: extended)
-    case let .setupFinally(finallyStartLabel):
-      let extended = Instruction.extend(base: extendedArg, arg: finallyStartLabel)
-      return self.setupFinally(finallyStartLabelIndex: extended)
+    case let .setupExcept(firstExceptLabelIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.setupExcept(firstExceptLabelIndex: index)
+    case let .setupFinally(finallyStartLabelIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.setupFinally(finallyStartLabelIndex: index)
 
-    case let .raiseVarargs(arg):
+    case let .raiseVarargs(type: arg):
       assert(extendedArg == 0)
       return self.raiseVarargs(arg: arg)
 
-    case let .setupWith(afterBodyLabel):
-      let extended = Instruction.extend(base: extendedArg, arg: afterBodyLabel)
-      return self.setupWith(afterBodyLabelIndex: extended)
+    case let .setupWith(afterBodyLabelIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.setupWith(afterBodyLabelIndex: index)
     case .withCleanupStart:
       return self.withCleanupStart()
     case .withCleanupFinish:
@@ -508,43 +508,43 @@ internal struct Eval {
     case .setupAsyncWith:
       return self.setupAsyncWith()
 
-    case let .jumpAbsolute(labelIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: labelIndex)
-      return self.jumpAbsolute(labelIndex: extended)
+    case let .jumpAbsolute(labelIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.jumpAbsolute(labelIndex: index)
 
-    case let .popJumpIfTrue(labelIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: labelIndex)
-      return self.popJumpIfTrue(labelIndex: extended)
-    case let .popJumpIfFalse(labelIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: labelIndex)
-      return self.popJumpIfFalse(labelIndex: extended)
-    case let .jumpIfTrueOrPop(labelIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: labelIndex)
-      return self.jumpIfTrueOrPop(labelIndex: extended)
-    case let .jumpIfFalseOrPop(labelIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: labelIndex)
-      return self.jumpIfFalseOrPop(labelIndex: extended)
+    case let .popJumpIfTrue(labelIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.popJumpIfTrue(labelIndex: index)
+    case let .popJumpIfFalse(labelIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.popJumpIfFalse(labelIndex: index)
+    case let .jumpIfTrueOrPop(labelIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.jumpIfTrueOrPop(labelIndex: index)
+    case let .jumpIfFalseOrPop(labelIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.jumpIfFalseOrPop(labelIndex: index)
 
-    case let .formatValue(conversion, hasFormat):
+    case let .formatValue(conversion: conversion, hasFormat: hasFormat):
       assert(extendedArg == 0)
       return self.formatValue(conversion: conversion, hasFormat: hasFormat)
 
-    case let .buildString(arg):
-      let extended = Instruction.extend(base: extendedArg, arg: arg)
-      return self.buildString(count: extended)
+    case let .buildString(elementCount: arg):
+      let count = Instruction.extend(base: extendedArg, arg: arg)
+      return self.buildString(count: count)
 
-    case let .extendedArg(value):
-      let extended = Instruction.extend(base: extendedArg, arg: value)
+    case let .extendedArg(arg):
+      let extended = Instruction.extend(base: extendedArg, arg: arg)
       return self.executeInstruction(extendedArg: extended)
 
     case .setupAnnotations:
       return self.setupAnnotations()
     case .popBlock:
       return self.popBlockInstruction()
-    case let .loadClosure(cellOrFreeIndex):
-      let extended = Instruction.extend(base: extendedArg, arg: cellOrFreeIndex)
-      return self.loadClosure(cellOrFreeIndex: extended)
-    case let .buildSlice(arg):
+    case let .loadClosure(cellOrFreeIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.loadClosure(cellOrFreeIndex: index)
+    case let .buildSlice(type: arg):
       return self.buildSlice(arg: arg)
     }
   }
