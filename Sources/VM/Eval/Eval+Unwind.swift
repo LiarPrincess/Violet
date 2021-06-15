@@ -2,7 +2,7 @@ import Foundation
 import VioletCore
 import VioletObjects
 
-// MARK: - Unwind reason
+// MARK: - Reason
 
 /// The reason why we might be unwinding a block.
 ///
@@ -29,7 +29,7 @@ internal enum UnwindReason {
   case silenced
 }
 
-// MARK: - Unwind result
+// MARK: - Result
 
 internal enum UnwindResult {
   /// Just continue code execution.
@@ -58,7 +58,7 @@ extension Eval {
     // swiftlint:disable:previous function_body_length
 
     while let block = self.blockStack.current {
-      switch block.type {
+      switch block.kind {
       case let .setupLoop(endLabel):
         if case let .continue(loopStartLabel) = reason {
           // Do not unwind! We are still in a loop! The stack stays the same!
@@ -199,8 +199,9 @@ extension Eval {
   // MARK: - Push except handler block
 
   private func pushExceptHandlerBlock() {
-    let exceptHandler = Block(type: .exceptHandler, stackCount: self.stack.count)
-    self.blockStack.push(block: exceptHandler)
+    let block = Block(kind: .exceptHandler,
+                      stackCount: self.stack.count)
+    self.blockStack.push(block: block)
   }
 
   // MARK: - Push currently handled exception onto the stack and set new

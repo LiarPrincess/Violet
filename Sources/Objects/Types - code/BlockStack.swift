@@ -1,13 +1,36 @@
 import VioletCore
 
+// MARK: - Block
+
 public struct Block: CustomStringConvertible {
+
+  public enum Kind: CustomStringConvertible {
+    case setupLoop(endLabel: Int)
+    case setupExcept(firstExceptLabel: Int)
+    case setupFinally(finallyStartLabel: Int)
+    case exceptHandler
+
+    public var description: String {
+      switch self {
+      case let .setupLoop(endLabel: value):
+        return "setupLoop(endLabel: \(value))"
+      case let .setupExcept(firstExceptLabel: value):
+        return "setupExcept(firstExceptLabel: \(value))"
+      case let .setupFinally(finallyStartLabel: value):
+        return "setupFinally(finallyStartLabel: \(value))"
+      case .exceptHandler:
+        return "exceptHandler"
+      }
+    }
+  }
+
   /// The type of block.
-  public let type: BlockType
+  public let kind: Kind
   /// Stack size when the block was entered.
   public let stackCount: Int
 
   public var isExceptHandler: Bool {
-    switch self.type {
+    switch self.kind {
     case .exceptHandler:
       return true
     default:
@@ -16,34 +39,16 @@ public struct Block: CustomStringConvertible {
   }
 
   public var description: String {
-    return "Block(type: \(self.type), level: \(self.stackCount))"
+    return "Block(type: \(self.kind), level: \(self.stackCount))"
   }
 
-  public init(type: BlockType, stackCount: Int) {
-    self.type = type
+  public init(kind: Kind, stackCount: Int) {
+    self.kind = kind
     self.stackCount = stackCount
   }
 }
 
-public enum BlockType: CustomStringConvertible {
-  case setupLoop(endLabel: Int)
-  case setupExcept(firstExceptLabel: Int)
-  case setupFinally(finallyStartLabel: Int)
-  case exceptHandler
-
-  public var description: String {
-    switch self {
-    case let .setupLoop(endLabel: value):
-      return "setupLoop(endLabel: \(value))"
-    case let .setupExcept(firstExceptLabel: value):
-      return "setupExcept(firstExceptLabel: \(value))"
-    case let .setupFinally(finallyStartLabel: value):
-      return "setupFinally(finallyStartLabel: \(value))"
-    case .exceptHandler:
-      return "exceptHandler"
-    }
-  }
-}
+// MARK: - Stack
 
 public struct BlockStack {
 
