@@ -106,7 +106,7 @@ def print_fill_type_method(t: TypeInfo):
     print(f'    type.setBuiltinTypeDoc(nil)')
 
   for flag in sourcery_flags:
-    print(f'    type.setFlag(.{flag})')
+    print(f'    type.flags.set(PyType.{flag}Flag)')
 
   # ==================
   # === Properties ===

@@ -22,6 +22,8 @@ import Foundation
 /// - class hierarchy is missing
 public class PyTextFile: PyObject {
 
+  private static let closeOnDeallocFlag = PyObject.Flags.custom0
+
   internal static let doc = """
     Type used to read/write file-thingies.
 
@@ -39,7 +41,12 @@ public class PyTextFile: PyObject {
   internal let errors: PyStringErrorHandler
 
   internal let mode: FileMode
-  internal let closeOnDealloc: Bool
+
+  /// Should we close the file when deallocating?
+  internal var closeOnDealloc: Bool {
+    get { self.flags.isSet(Self.closeOnDeallocFlag) }
+    set { self.flags.set(Self.closeOnDeallocFlag, to: newValue) }
+  }
 
   override public var description: String {
     let name = self.name ?? "?"
@@ -72,8 +79,8 @@ public class PyTextFile: PyObject {
     self.encoding = encoding
     self.errors = errors
     self.mode = mode
-    self.closeOnDealloc = closeOnDealloc
     super.init(type: Py.types.textFile)
+    self.closeOnDealloc = closeOnDealloc
   }
 
   // MARK: - Deinit

@@ -340,13 +340,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - BaseException
 
-  func fillBaseException() {
+  private func fillBaseException() {
     let type = self.baseException
     type.setBuiltinTypeDoc(PyBaseException.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyBaseException.getDict, castSelf: Self.asBaseException))
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBaseException.getClass, castSelf: Self.asBaseException))
@@ -378,13 +378,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - SystemExit
 
-  func fillSystemExit() {
+  private func fillSystemExit() {
     let type = self.systemExit
     type.setBuiltinTypeDoc(PySystemExit.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySystemExit.getClass, castSelf: Self.asSystemExit))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PySystemExit.getDict, castSelf: Self.asSystemExit))
@@ -405,13 +405,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - KeyboardInterrupt
 
-  func fillKeyboardInterrupt() {
+  private func fillKeyboardInterrupt() {
     let type = self.keyboardInterrupt
     type.setBuiltinTypeDoc(PyKeyboardInterrupt.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyKeyboardInterrupt.getClass, castSelf: Self.asKeyboardInterrupt))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyKeyboardInterrupt.getDict, castSelf: Self.asKeyboardInterrupt))
@@ -431,13 +431,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - GeneratorExit
 
-  func fillGeneratorExit() {
+  private func fillGeneratorExit() {
     let type = self.generatorExit
     type.setBuiltinTypeDoc(PyGeneratorExit.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyGeneratorExit.getClass, castSelf: Self.asGeneratorExit))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyGeneratorExit.getDict, castSelf: Self.asGeneratorExit))
@@ -457,13 +457,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - Exception
 
-  func fillException() {
+  private func fillException() {
     let type = self.exception
     type.setBuiltinTypeDoc(PyException.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyException.getClass, castSelf: Self.asException))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyException.getDict, castSelf: Self.asException))
@@ -483,13 +483,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - StopIteration
 
-  func fillStopIteration() {
+  private func fillStopIteration() {
     let type = self.stopIteration
     type.setBuiltinTypeDoc(PyStopIteration.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyStopIteration.getClass, castSelf: Self.asStopIteration))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyStopIteration.getDict, castSelf: Self.asStopIteration))
@@ -510,13 +510,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - StopAsyncIteration
 
-  func fillStopAsyncIteration() {
+  private func fillStopAsyncIteration() {
     let type = self.stopAsyncIteration
     type.setBuiltinTypeDoc(PyStopAsyncIteration.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyStopAsyncIteration.getClass, castSelf: Self.asStopAsyncIteration))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyStopAsyncIteration.getDict, castSelf: Self.asStopAsyncIteration))
@@ -536,13 +536,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - ArithmeticError
 
-  func fillArithmeticError() {
+  private func fillArithmeticError() {
     let type = self.arithmeticError
     type.setBuiltinTypeDoc(PyArithmeticError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyArithmeticError.getClass, castSelf: Self.asArithmeticError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyArithmeticError.getDict, castSelf: Self.asArithmeticError))
@@ -562,13 +562,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - FloatingPointError
 
-  func fillFloatingPointError() {
+  private func fillFloatingPointError() {
     let type = self.floatingPointError
     type.setBuiltinTypeDoc(PyFloatingPointError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyFloatingPointError.getClass, castSelf: Self.asFloatingPointError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyFloatingPointError.getDict, castSelf: Self.asFloatingPointError))
@@ -588,13 +588,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - OverflowError
 
-  func fillOverflowError() {
+  private func fillOverflowError() {
     let type = self.overflowError
     type.setBuiltinTypeDoc(PyOverflowError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyOverflowError.getClass, castSelf: Self.asOverflowError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyOverflowError.getDict, castSelf: Self.asOverflowError))
@@ -614,13 +614,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - ZeroDivisionError
 
-  func fillZeroDivisionError() {
+  private func fillZeroDivisionError() {
     let type = self.zeroDivisionError
     type.setBuiltinTypeDoc(PyZeroDivisionError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyZeroDivisionError.getClass, castSelf: Self.asZeroDivisionError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyZeroDivisionError.getDict, castSelf: Self.asZeroDivisionError))
@@ -640,13 +640,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - AssertionError
 
-  func fillAssertionError() {
+  private func fillAssertionError() {
     let type = self.assertionError
     type.setBuiltinTypeDoc(PyAssertionError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyAssertionError.getClass, castSelf: Self.asAssertionError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyAssertionError.getDict, castSelf: Self.asAssertionError))
@@ -666,13 +666,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - AttributeError
 
-  func fillAttributeError() {
+  private func fillAttributeError() {
     let type = self.attributeError
     type.setBuiltinTypeDoc(PyAttributeError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyAttributeError.getClass, castSelf: Self.asAttributeError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyAttributeError.getDict, castSelf: Self.asAttributeError))
@@ -692,13 +692,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - BufferError
 
-  func fillBufferError() {
+  private func fillBufferError() {
     let type = self.bufferError
     type.setBuiltinTypeDoc(PyBufferError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBufferError.getClass, castSelf: Self.asBufferError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyBufferError.getDict, castSelf: Self.asBufferError))
@@ -718,13 +718,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - EOFError
 
-  func fillEOFError() {
+  private func fillEOFError() {
     let type = self.eofError
     type.setBuiltinTypeDoc(PyEOFError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyEOFError.getClass, castSelf: Self.asEOFError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyEOFError.getDict, castSelf: Self.asEOFError))
@@ -744,13 +744,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - ImportError
 
-  func fillImportError() {
+  private func fillImportError() {
     let type = self.importError
     type.setBuiltinTypeDoc(PyImportError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyImportError.getClass, castSelf: Self.asImportError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyImportError.getDict, castSelf: Self.asImportError))
@@ -775,13 +775,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - ModuleNotFoundError
 
-  func fillModuleNotFoundError() {
+  private func fillModuleNotFoundError() {
     let type = self.moduleNotFoundError
     type.setBuiltinTypeDoc(PyModuleNotFoundError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyModuleNotFoundError.getClass, castSelf: Self.asModuleNotFoundError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyModuleNotFoundError.getDict, castSelf: Self.asModuleNotFoundError))
@@ -801,13 +801,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - LookupError
 
-  func fillLookupError() {
+  private func fillLookupError() {
     let type = self.lookupError
     type.setBuiltinTypeDoc(PyLookupError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyLookupError.getClass, castSelf: Self.asLookupError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyLookupError.getDict, castSelf: Self.asLookupError))
@@ -827,13 +827,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - IndexError
 
-  func fillIndexError() {
+  private func fillIndexError() {
     let type = self.indexError
     type.setBuiltinTypeDoc(PyIndexError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyIndexError.getClass, castSelf: Self.asIndexError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyIndexError.getDict, castSelf: Self.asIndexError))
@@ -853,13 +853,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - KeyError
 
-  func fillKeyError() {
+  private func fillKeyError() {
     let type = self.keyError
     type.setBuiltinTypeDoc(PyKeyError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyKeyError.getClass, castSelf: Self.asKeyError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyKeyError.getDict, castSelf: Self.asKeyError))
@@ -881,13 +881,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - MemoryError
 
-  func fillMemoryError() {
+  private func fillMemoryError() {
     let type = self.memoryError
     type.setBuiltinTypeDoc(PyMemoryError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyMemoryError.getClass, castSelf: Self.asMemoryError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyMemoryError.getDict, castSelf: Self.asMemoryError))
@@ -907,13 +907,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - NameError
 
-  func fillNameError() {
+  private func fillNameError() {
     let type = self.nameError
     type.setBuiltinTypeDoc(PyNameError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyNameError.getClass, castSelf: Self.asNameError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyNameError.getDict, castSelf: Self.asNameError))
@@ -933,13 +933,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - UnboundLocalError
 
-  func fillUnboundLocalError() {
+  private func fillUnboundLocalError() {
     let type = self.unboundLocalError
     type.setBuiltinTypeDoc(PyUnboundLocalError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyUnboundLocalError.getClass, castSelf: Self.asUnboundLocalError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyUnboundLocalError.getDict, castSelf: Self.asUnboundLocalError))
@@ -959,13 +959,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - OSError
 
-  func fillOSError() {
+  private func fillOSError() {
     let type = self.osError
     type.setBuiltinTypeDoc(PyOSError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyOSError.getClass, castSelf: Self.asOSError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyOSError.getDict, castSelf: Self.asOSError))
@@ -985,13 +985,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - BlockingIOError
 
-  func fillBlockingIOError() {
+  private func fillBlockingIOError() {
     let type = self.blockingIOError
     type.setBuiltinTypeDoc(PyBlockingIOError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBlockingIOError.getClass, castSelf: Self.asBlockingIOError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyBlockingIOError.getDict, castSelf: Self.asBlockingIOError))
@@ -1011,13 +1011,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - ChildProcessError
 
-  func fillChildProcessError() {
+  private func fillChildProcessError() {
     let type = self.childProcessError
     type.setBuiltinTypeDoc(PyChildProcessError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyChildProcessError.getClass, castSelf: Self.asChildProcessError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyChildProcessError.getDict, castSelf: Self.asChildProcessError))
@@ -1037,13 +1037,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - ConnectionError
 
-  func fillConnectionError() {
+  private func fillConnectionError() {
     let type = self.connectionError
     type.setBuiltinTypeDoc(PyConnectionError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyConnectionError.getClass, castSelf: Self.asConnectionError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyConnectionError.getDict, castSelf: Self.asConnectionError))
@@ -1063,13 +1063,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - BrokenPipeError
 
-  func fillBrokenPipeError() {
+  private func fillBrokenPipeError() {
     let type = self.brokenPipeError
     type.setBuiltinTypeDoc(PyBrokenPipeError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBrokenPipeError.getClass, castSelf: Self.asBrokenPipeError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyBrokenPipeError.getDict, castSelf: Self.asBrokenPipeError))
@@ -1089,13 +1089,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - ConnectionAbortedError
 
-  func fillConnectionAbortedError() {
+  private func fillConnectionAbortedError() {
     let type = self.connectionAbortedError
     type.setBuiltinTypeDoc(PyConnectionAbortedError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyConnectionAbortedError.getClass, castSelf: Self.asConnectionAbortedError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyConnectionAbortedError.getDict, castSelf: Self.asConnectionAbortedError))
@@ -1115,13 +1115,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - ConnectionRefusedError
 
-  func fillConnectionRefusedError() {
+  private func fillConnectionRefusedError() {
     let type = self.connectionRefusedError
     type.setBuiltinTypeDoc(PyConnectionRefusedError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyConnectionRefusedError.getClass, castSelf: Self.asConnectionRefusedError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyConnectionRefusedError.getDict, castSelf: Self.asConnectionRefusedError))
@@ -1141,13 +1141,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - ConnectionResetError
 
-  func fillConnectionResetError() {
+  private func fillConnectionResetError() {
     let type = self.connectionResetError
     type.setBuiltinTypeDoc(PyConnectionResetError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyConnectionResetError.getClass, castSelf: Self.asConnectionResetError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyConnectionResetError.getDict, castSelf: Self.asConnectionResetError))
@@ -1167,13 +1167,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - FileExistsError
 
-  func fillFileExistsError() {
+  private func fillFileExistsError() {
     let type = self.fileExistsError
     type.setBuiltinTypeDoc(PyFileExistsError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyFileExistsError.getClass, castSelf: Self.asFileExistsError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyFileExistsError.getDict, castSelf: Self.asFileExistsError))
@@ -1193,13 +1193,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - FileNotFoundError
 
-  func fillFileNotFoundError() {
+  private func fillFileNotFoundError() {
     let type = self.fileNotFoundError
     type.setBuiltinTypeDoc(PyFileNotFoundError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyFileNotFoundError.getClass, castSelf: Self.asFileNotFoundError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyFileNotFoundError.getDict, castSelf: Self.asFileNotFoundError))
@@ -1219,13 +1219,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - InterruptedError
 
-  func fillInterruptedError() {
+  private func fillInterruptedError() {
     let type = self.interruptedError
     type.setBuiltinTypeDoc(PyInterruptedError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyInterruptedError.getClass, castSelf: Self.asInterruptedError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyInterruptedError.getDict, castSelf: Self.asInterruptedError))
@@ -1245,13 +1245,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - IsADirectoryError
 
-  func fillIsADirectoryError() {
+  private func fillIsADirectoryError() {
     let type = self.isADirectoryError
     type.setBuiltinTypeDoc(PyIsADirectoryError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyIsADirectoryError.getClass, castSelf: Self.asIsADirectoryError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyIsADirectoryError.getDict, castSelf: Self.asIsADirectoryError))
@@ -1271,13 +1271,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - NotADirectoryError
 
-  func fillNotADirectoryError() {
+  private func fillNotADirectoryError() {
     let type = self.notADirectoryError
     type.setBuiltinTypeDoc(PyNotADirectoryError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyNotADirectoryError.getClass, castSelf: Self.asNotADirectoryError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyNotADirectoryError.getDict, castSelf: Self.asNotADirectoryError))
@@ -1297,13 +1297,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - PermissionError
 
-  func fillPermissionError() {
+  private func fillPermissionError() {
     let type = self.permissionError
     type.setBuiltinTypeDoc(PyPermissionError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyPermissionError.getClass, castSelf: Self.asPermissionError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyPermissionError.getDict, castSelf: Self.asPermissionError))
@@ -1323,13 +1323,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - ProcessLookupError
 
-  func fillProcessLookupError() {
+  private func fillProcessLookupError() {
     let type = self.processLookupError
     type.setBuiltinTypeDoc(PyProcessLookupError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyProcessLookupError.getClass, castSelf: Self.asProcessLookupError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyProcessLookupError.getDict, castSelf: Self.asProcessLookupError))
@@ -1349,13 +1349,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - TimeoutError
 
-  func fillTimeoutError() {
+  private func fillTimeoutError() {
     let type = self.timeoutError
     type.setBuiltinTypeDoc(PyTimeoutError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyTimeoutError.getClass, castSelf: Self.asTimeoutError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyTimeoutError.getDict, castSelf: Self.asTimeoutError))
@@ -1375,13 +1375,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - ReferenceError
 
-  func fillReferenceError() {
+  private func fillReferenceError() {
     let type = self.referenceError
     type.setBuiltinTypeDoc(PyReferenceError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyReferenceError.getClass, castSelf: Self.asReferenceError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyReferenceError.getDict, castSelf: Self.asReferenceError))
@@ -1401,13 +1401,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - RuntimeError
 
-  func fillRuntimeError() {
+  private func fillRuntimeError() {
     let type = self.runtimeError
     type.setBuiltinTypeDoc(PyRuntimeError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyRuntimeError.getClass, castSelf: Self.asRuntimeError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyRuntimeError.getDict, castSelf: Self.asRuntimeError))
@@ -1427,13 +1427,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - NotImplementedError
 
-  func fillNotImplementedError() {
+  private func fillNotImplementedError() {
     let type = self.notImplementedError
     type.setBuiltinTypeDoc(PyNotImplementedError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyNotImplementedError.getClass, castSelf: Self.asNotImplementedError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyNotImplementedError.getDict, castSelf: Self.asNotImplementedError))
@@ -1453,13 +1453,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - RecursionError
 
-  func fillRecursionError() {
+  private func fillRecursionError() {
     let type = self.recursionError
     type.setBuiltinTypeDoc(PyRecursionError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyRecursionError.getClass, castSelf: Self.asRecursionError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyRecursionError.getDict, castSelf: Self.asRecursionError))
@@ -1479,13 +1479,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - SyntaxError
 
-  func fillSyntaxError() {
+  private func fillSyntaxError() {
     let type = self.syntaxError
     type.setBuiltinTypeDoc(PySyntaxError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySyntaxError.getClass, castSelf: Self.asSyntaxError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PySyntaxError.getDict, castSelf: Self.asSyntaxError))
@@ -1513,13 +1513,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - IndentationError
 
-  func fillIndentationError() {
+  private func fillIndentationError() {
     let type = self.indentationError
     type.setBuiltinTypeDoc(PyIndentationError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyIndentationError.getClass, castSelf: Self.asIndentationError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyIndentationError.getDict, castSelf: Self.asIndentationError))
@@ -1539,13 +1539,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - TabError
 
-  func fillTabError() {
+  private func fillTabError() {
     let type = self.tabError
     type.setBuiltinTypeDoc(PyTabError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyTabError.getClass, castSelf: Self.asTabError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyTabError.getDict, castSelf: Self.asTabError))
@@ -1565,13 +1565,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - SystemError
 
-  func fillSystemError() {
+  private func fillSystemError() {
     let type = self.systemError
     type.setBuiltinTypeDoc(PySystemError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySystemError.getClass, castSelf: Self.asSystemError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PySystemError.getDict, castSelf: Self.asSystemError))
@@ -1591,13 +1591,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - TypeError
 
-  func fillTypeError() {
+  private func fillTypeError() {
     let type = self.typeError
     type.setBuiltinTypeDoc(PyTypeError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyTypeError.getClass, castSelf: Self.asTypeError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyTypeError.getDict, castSelf: Self.asTypeError))
@@ -1617,13 +1617,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - ValueError
 
-  func fillValueError() {
+  private func fillValueError() {
     let type = self.valueError
     type.setBuiltinTypeDoc(PyValueError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyValueError.getClass, castSelf: Self.asValueError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyValueError.getDict, castSelf: Self.asValueError))
@@ -1643,13 +1643,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - UnicodeError
 
-  func fillUnicodeError() {
+  private func fillUnicodeError() {
     let type = self.unicodeError
     type.setBuiltinTypeDoc(PyUnicodeError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyUnicodeError.getClass, castSelf: Self.asUnicodeError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyUnicodeError.getDict, castSelf: Self.asUnicodeError))
@@ -1669,13 +1669,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - UnicodeDecodeError
 
-  func fillUnicodeDecodeError() {
+  private func fillUnicodeDecodeError() {
     let type = self.unicodeDecodeError
     type.setBuiltinTypeDoc(PyUnicodeDecodeError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyUnicodeDecodeError.getClass, castSelf: Self.asUnicodeDecodeError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyUnicodeDecodeError.getDict, castSelf: Self.asUnicodeDecodeError))
@@ -1695,13 +1695,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - UnicodeEncodeError
 
-  func fillUnicodeEncodeError() {
+  private func fillUnicodeEncodeError() {
     let type = self.unicodeEncodeError
     type.setBuiltinTypeDoc(PyUnicodeEncodeError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyUnicodeEncodeError.getClass, castSelf: Self.asUnicodeEncodeError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyUnicodeEncodeError.getDict, castSelf: Self.asUnicodeEncodeError))
@@ -1721,13 +1721,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - UnicodeTranslateError
 
-  func fillUnicodeTranslateError() {
+  private func fillUnicodeTranslateError() {
     let type = self.unicodeTranslateError
     type.setBuiltinTypeDoc(PyUnicodeTranslateError.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyUnicodeTranslateError.getClass, castSelf: Self.asUnicodeTranslateError))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyUnicodeTranslateError.getDict, castSelf: Self.asUnicodeTranslateError))
@@ -1747,13 +1747,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - Warning
 
-  func fillWarning() {
+  private func fillWarning() {
     let type = self.warning
     type.setBuiltinTypeDoc(PyWarning.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyWarning.getClass, castSelf: Self.asWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyWarning.getDict, castSelf: Self.asWarning))
@@ -1773,13 +1773,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - DeprecationWarning
 
-  func fillDeprecationWarning() {
+  private func fillDeprecationWarning() {
     let type = self.deprecationWarning
     type.setBuiltinTypeDoc(PyDeprecationWarning.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDeprecationWarning.getClass, castSelf: Self.asDeprecationWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyDeprecationWarning.getDict, castSelf: Self.asDeprecationWarning))
@@ -1799,13 +1799,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - PendingDeprecationWarning
 
-  func fillPendingDeprecationWarning() {
+  private func fillPendingDeprecationWarning() {
     let type = self.pendingDeprecationWarning
     type.setBuiltinTypeDoc(PyPendingDeprecationWarning.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyPendingDeprecationWarning.getClass, castSelf: Self.asPendingDeprecationWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyPendingDeprecationWarning.getDict, castSelf: Self.asPendingDeprecationWarning))
@@ -1825,13 +1825,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - RuntimeWarning
 
-  func fillRuntimeWarning() {
+  private func fillRuntimeWarning() {
     let type = self.runtimeWarning
     type.setBuiltinTypeDoc(PyRuntimeWarning.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyRuntimeWarning.getClass, castSelf: Self.asRuntimeWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyRuntimeWarning.getDict, castSelf: Self.asRuntimeWarning))
@@ -1851,13 +1851,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - SyntaxWarning
 
-  func fillSyntaxWarning() {
+  private func fillSyntaxWarning() {
     let type = self.syntaxWarning
     type.setBuiltinTypeDoc(PySyntaxWarning.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySyntaxWarning.getClass, castSelf: Self.asSyntaxWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PySyntaxWarning.getDict, castSelf: Self.asSyntaxWarning))
@@ -1877,13 +1877,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - UserWarning
 
-  func fillUserWarning() {
+  private func fillUserWarning() {
     let type = self.userWarning
     type.setBuiltinTypeDoc(PyUserWarning.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyUserWarning.getClass, castSelf: Self.asUserWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyUserWarning.getDict, castSelf: Self.asUserWarning))
@@ -1903,13 +1903,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - FutureWarning
 
-  func fillFutureWarning() {
+  private func fillFutureWarning() {
     let type = self.futureWarning
     type.setBuiltinTypeDoc(PyFutureWarning.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyFutureWarning.getClass, castSelf: Self.asFutureWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyFutureWarning.getDict, castSelf: Self.asFutureWarning))
@@ -1929,13 +1929,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - ImportWarning
 
-  func fillImportWarning() {
+  private func fillImportWarning() {
     let type = self.importWarning
     type.setBuiltinTypeDoc(PyImportWarning.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyImportWarning.getClass, castSelf: Self.asImportWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyImportWarning.getDict, castSelf: Self.asImportWarning))
@@ -1955,13 +1955,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - UnicodeWarning
 
-  func fillUnicodeWarning() {
+  private func fillUnicodeWarning() {
     let type = self.unicodeWarning
     type.setBuiltinTypeDoc(PyUnicodeWarning.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyUnicodeWarning.getClass, castSelf: Self.asUnicodeWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyUnicodeWarning.getDict, castSelf: Self.asUnicodeWarning))
@@ -1981,13 +1981,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - BytesWarning
 
-  func fillBytesWarning() {
+  private func fillBytesWarning() {
     let type = self.bytesWarning
     type.setBuiltinTypeDoc(PyBytesWarning.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBytesWarning.getClass, castSelf: Self.asBytesWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyBytesWarning.getDict, castSelf: Self.asBytesWarning))
@@ -2007,13 +2007,13 @@ public final class BuiltinErrorTypes {
 
   // MARK: - ResourceWarning
 
-  func fillResourceWarning() {
+  private func fillResourceWarning() {
     let type = self.resourceWarning
     type.setBuiltinTypeDoc(PyResourceWarning.doc)
-    type.setFlag(.baseExceptionSubclass)
-    type.setFlag(.baseType)
-    type.setFlag(.default)
-    type.setFlag(.hasGC)
+    type.flags.set(PyType.baseExceptionSubclassFlag)
+    type.flags.set(PyType.baseTypeFlag)
+    type.flags.set(PyType.defaultFlag)
+    type.flags.set(PyType.hasGCFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyResourceWarning.getClass, castSelf: Self.asResourceWarning))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyResourceWarning.getDict, castSelf: Self.asResourceWarning))

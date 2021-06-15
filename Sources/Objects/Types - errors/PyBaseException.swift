@@ -11,6 +11,8 @@ import VioletCore
 // sourcery: pyerrortype = BaseException, default, baseType, hasGC, baseExceptionSubclass
 public class PyBaseException: PyObject {
 
+  private static let suppressContextFlag = PyObject.Flags.custom0
+
   internal class var doc: String {
     return "Common base class for all exceptions"
   }
@@ -24,7 +26,10 @@ public class PyBaseException: PyObject {
   /// Should we use `self.cause` or `self.context`?
   ///
   /// If we have `cause` then probably `cause`, otherwise `context`.
-  private var suppressContext: Bool
+  internal var suppressContext: Bool {
+    get { self.flags.isSet(Self.suppressContextFlag) }
+    set { self.flags.set(Self.suppressContextFlag, to: newValue) }
+  }
 
   internal lazy var __dict__ = Py.newDict()
 
@@ -84,9 +89,8 @@ public class PyBaseException: PyObject {
     self.traceback = traceback
     self.cause = cause
     self.context = context
-    self.suppressContext = suppressContext
-
     super.init(type: type ?? Self.pythonType)
+    self.suppressContext = suppressContext
   }
 
   // MARK: - Msg

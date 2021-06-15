@@ -7,69 +7,62 @@ import VioletCore
 // Objects -> typeobject.c
 // https://docs.python.org/3/c-api/typeobj.html
 
-// MARK: - Flags
+// sourcery: pytype = type, default, hasGC, baseType, typeSubclass
+public class PyType: PyObject, HasCustomGetMethod {
 
-internal struct PyTypeFlags: OptionSet {
+  // MARK: - Weak ref
 
-  let rawValue: UInt16
+  /// Box to store `weak` reference to `PyType`.
+  /// Used to store subclasses (to avoid cycle, since we also store reference
+  /// to base classes in `mro`).
+  internal struct WeakRef {
+
+    fileprivate weak var value: PyType?
+
+    fileprivate init(_ value: PyType) {
+      self.value = value
+    }
+  }
+
+  // MARK: - Flags
 
   /// Set if the type object is dynamically allocated
   /// (for example by `class` statement).
-  internal static let heapType = PyTypeFlags(rawValue: 1 << 0)
-
+  internal static let heapTypeFlag = Flags.custom0
   /// Set if the type allows sub-classing.
-  internal static let baseType = PyTypeFlags(rawValue: 1 << 1)
-
+  internal static let baseTypeFlag = Flags.custom1
   /// Objects support garbage collection.
-  internal static let hasGC = PyTypeFlags(rawValue: 1 << 2)
-
+  internal static let hasGCFlag = Flags.custom2
   /// Type is abstract and cannot be instantiated
-  internal static let isAbstract = PyTypeFlags(rawValue: 1 << 3)
-
+  internal static let isAbstractFlag = Flags.custom3
   /// Type structure has tp_finalize member (3.4)
-  internal static let hasFinalize = PyTypeFlags(rawValue: 1 << 4)
+  internal static let hasFinalizeFlag = Flags.custom4
 
+  /// ```c
   /// #define Py_TPFLAGS_DEFAULT  ( \
   ///     Py_TPFLAGS_HAVE_STACKLESS_EXTENSION | \
   ///     Py_TPFLAGS_HAVE_VERSION_TAG)
-  internal static let `default` = PyTypeFlags(rawValue: 1 << 5)
+  /// ```
+  internal static let `defaultFlag` = Flags.custom5
 
-  /// These flags are used to determine if a type is a subclass.
-  internal static let longSubclass = PyTypeFlags(rawValue: 1 << 8)
-  /// These flags are used to determine if a type is a subclass.
-  internal static let listSubclass = PyTypeFlags(rawValue: 1 << 9)
-  /// These flags are used to determine if a type is a subclass.
-  internal static let tupleSubclass = PyTypeFlags(rawValue: 1 << 10)
-  /// These flags are used to determine if a type is a subclass.
-  internal static let bytesSubclass = PyTypeFlags(rawValue: 1 << 11)
-  /// These flags are used to determine if a type is a subclass.
-  internal static let unicodeSubclass = PyTypeFlags(rawValue: 1 << 12)
-  /// These flags are used to determine if a type is a subclass.
-  internal static let dictSubclass = PyTypeFlags(rawValue: 1 << 13)
-  /// These flags are used to determine if a type is a subclass.
-  internal static let baseExceptionSubclass = PyTypeFlags(rawValue: 1 << 14)
-  /// These flags are used to determine if a type is a subclass.
-  internal static let typeSubclass = PyTypeFlags(rawValue: 1 << 15)
-}
+  /// These flags are used to determine if a type is a `int` subclass.
+  internal static let longSubclassFlag = Flags.custom8
+  /// These flags are used to determine if a type is a `list` subclass.
+  internal static let listSubclassFlag = Flags.custom9
+  /// These flags are used to determine if a type is a `tuple` subclass.
+  internal static let tupleSubclassFlag = Flags.custom10
+  /// These flags are used to determine if a type is a `bytes` subclass.
+  internal static let bytesSubclassFlag = Flags.custom11
+  /// These flags are used to determine if a type is a `str` subclass.
+  internal static let unicodeSubclassFlag = Flags.custom12
+  /// These flags are used to determine if a type is a `dict` subclass.
+  internal static let dictSubclassFlag = Flags.custom13
+  /// These flags are used to determine if a type is a `baseException` subclass.
+  internal static let baseExceptionSubclassFlag = Flags.custom14
+  /// These flags are used to determine if a type is a `type` subclass.
+  internal static let typeSubclassFlag = Flags.custom15
 
-// MARK: - Type weak ref
-
-/// Box to store weak reference to `PyType`.
-/// Used to store subclasses in `PyType` (to avoid cycle since we
-/// also store reference to base classes in `mro`).
-internal struct PyTypeWeakRef {
-
-  fileprivate weak var value: PyType?
-
-  fileprivate init(_ value: PyType) {
-    self.value = value
-  }
-}
-
-// MARK: - Type
-
-// sourcery: pytype = type, default, hasGC, baseType, typeSubclass
-public class PyType: PyObject, HasCustomGetMethod {
+  // MARK: - Properties & init
 
   internal static let doc: String = """
     type(object_or_name, bases, dict)
@@ -85,25 +78,19 @@ public class PyType: PyObject, HasCustomGetMethod {
   private var base: PyType?
   private var bases: [PyType]
   private var mro: [PyType]
-  private var subclasses: [PyTypeWeakRef] = []
+  private var subclasses: [WeakRef] = []
   private lazy var __dict__ = PyDict()
 
   /// Swift storage (layout).
   /// See `PyType.MemoryLayout` documentation for details.
   internal let layout: MemoryLayout
 
-  internal private(set) var typeFlags = PyTypeFlags()
-
   internal var isHeapType: Bool {
-    return self.typeFlags.contains(.heapType)
+    return self.flags.isSet(Self.heapTypeFlag)
   }
 
   internal var isBaseType: Bool {
-    return self.typeFlags.contains(.baseType)
-  }
-
-  internal var hasGC: Bool {
-    return self.typeFlags.contains(.hasGC)
+    return self.flags.isSet(Self.baseTypeFlag)
   }
 
   override public var description: String {
@@ -153,7 +140,7 @@ public class PyType: PyObject, HasCustomGetMethod {
       self.mro = [self] + mro.resolutionOrder
 
       for base in mro.baseClasses {
-        base.subclasses.append(PyTypeWeakRef(self))
+        base.subclasses.append(WeakRef(self))
       }
     } else {
       self.mro = [self]
@@ -802,12 +789,6 @@ public class PyType: PyObject, HasCustomGetMethod {
   /// By `pure` we mean its type is `type`, not some weird metatype.
   public func checkExact() -> Bool {
     return self.type === Py.types.type
-  }
-
-  // MARK: - Setters
-
-  internal func setFlag(_ flag: PyTypeFlags) {
-    self.typeFlags.insert(flag)
   }
 
   // MARK: - GC

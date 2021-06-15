@@ -168,9 +168,13 @@ extension PyType {
     // Flags have to be set ASAP!
     // Setter methods will check 'heapType' (because it should not be possible
     // to modify builtin types, but it is 'ok' for heap types).
-    type.setFlag([.default, .heapType, .baseType, .hasFinalize])
-    if base.hasGC {
-      type.setFlag(.hasGC)
+    type.flags.set(Self.defaultFlag)
+    type.flags.set(Self.heapTypeFlag)
+    type.flags.set(Self.baseTypeFlag)
+    type.flags.set(Self.hasFinalizeFlag)
+
+    if base.flags.isSet(Self.hasGCFlag) {
+      type.flags.set(Self.hasGCFlag)
     }
 
     // Initialize '__dict__' from passed-in dict

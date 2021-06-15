@@ -71,7 +71,7 @@ extension PyType {
 
     /// Fields:
     /// - `_type: PyType!`
-    /// - `flags: PyObjectFlags`
+    /// - `flags: Flags`
     public static let PyObject = MemoryLayout()
     /// `PyBool` uses the same layout as it s base type (`PyInt`).
     public static let PyBool = MemoryLayout.PyInt
@@ -286,7 +286,6 @@ extension PyType {
     /// - `encoding: PyStringEncoding`
     /// - `errors: PyStringErrorHandler`
     /// - `mode: FileMode`
-    /// - `closeOnDealloc: Bool`
     public static let PyTextFile = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `next: PyTraceback?`
@@ -307,10 +306,9 @@ extension PyType {
     /// - `base: PyType?`
     /// - `bases: [PyType]`
     /// - `mro: [PyType]`
-    /// - `subclasses: [PyTypeWeakRef]`
+    /// - `subclasses: [WeakRef]`
     /// - `__dict__: PyDict`
     /// - `layout: MemoryLayout`
-    /// - `typeFlags: PyTypeFlags`
     public static let PyType = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `iterators: [PyObject]`
@@ -326,7 +324,6 @@ extension PyType {
     /// - `traceback: PyTraceback?`
     /// - `cause: PyBaseException?`
     /// - `context: PyBaseException?`
-    /// - `suppressContext: Bool`
     /// - `__dict__: Py`
     public static let PyBaseException = MemoryLayout(base: MemoryLayout.PyObject)
     /// `PyBlockingIOError` uses the same layout as it s base type (`PyOSError`).
