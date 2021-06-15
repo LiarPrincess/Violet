@@ -6,22 +6,20 @@ import VioletParser
 import VioletBytecode
 import VioletCompiler
 
-private var anyFailed = false
-
 /// Check the memory footprint of a given type.
 ///
-/// Technically stride would be better, but the same stride may describe
-/// multiple sizes and in this test we are more interested in the fact
+/// Technically `stride` would be better, but the same `stride` may describe
+/// multiple `sizes` and in this test we are more interested in the fact
 /// that the value has changed and not in the value itself.
 private func checkMemorySize<T>(of type: T.Type, expectedSize: Int) {
   let size = MemoryLayout<T>.size
   if size != expectedSize {
-    anyFailed = true
     let typeName = String(describing: type)
-    print("[Invariant] \(typeName) has size \(size) instead of expected \(expectedSize)")
+    trap("[Invariant] \(typeName) has size \(size) instead of expected \(expectedSize)")
   }
 }
 
+/// Print the memory representation of a given value.
 private func dumpMemory<T>(of value: T) {
   print("\(String(describing: value)) (\(String(describing: T.self)))")
   print("  Size:", MemoryLayout<T>.size)
@@ -42,8 +40,9 @@ private func dumpMemory<T>(of value: T) {
   print()
 }
 
+/// Static checks, at runtime because YOLO.
 internal func checkInvariants() {
-  // 1 ptr
+  // 1 ptr (it should use tagged pointer internally)
   checkMemorySize(of: BigInt.self, expectedSize: 8)
 
   // 1 opcode + 1 argument = 2
@@ -58,8 +57,4 @@ internal func checkInvariants() {
   // (not a whole array etc.).
   checkMemorySize(of: Token.self, expectedSize: 36)
   checkMemorySize(of: Token.Kind.self, expectedSize: 17)
-
-  if anyFailed {
-    exit(EXIT_FAILURE)
-  }
 }
