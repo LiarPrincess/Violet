@@ -55,7 +55,7 @@ public struct SysFlags {
 
   // MARK: - Optimize
 
-  public var optimize: OptimizationLevel {
+  public var optimize: Compiler.OptimizationLevel {
     let env = self.environment?.optimize ?? .none
     return Swift.max(self.arguments.optimize, env)
   }

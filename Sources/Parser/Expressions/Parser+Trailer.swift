@@ -100,7 +100,7 @@ extension Parser {
       try self.advance() // ,
     }
 
-    // If we have coma then it is a tuple! (even if it has only 1 element!)
+    // If we have comma then it is a tuple! (even if it has only 1 element!)
     if elements.count == 1 && !hasTrailingComma {
       return first.kind
     }

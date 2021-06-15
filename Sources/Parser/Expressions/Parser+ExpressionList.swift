@@ -49,7 +49,7 @@ extension Parser {
       try self.advance() // ,
     }
 
-    // if we have coma then it is a tuple! (even if it has only 1 element!)
+    // if we have comma then it is a tuple! (even if it has only 1 element!)
     if additionalElements.isEmpty && !hasTrailingComma {
       return ExprListResult(context: context, kind: .single(first))
     }
@@ -155,7 +155,7 @@ extension Parser {
       try self.advance() // ,
     }
 
-    // if we have coma then it is a tuple! (even if it has only 1 element!)
+    // if we have comma then it is a tuple! (even if it has only 1 element!)
     if elements.count == 1 && !hasTrailingComma {
       return .single(first)
     }

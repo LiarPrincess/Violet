@@ -155,7 +155,7 @@ extension ExecEval {
       let compileResult = Py.compile(source: source,
                                      filename: Self.filename,
                                      mode: Self.parserMode,
-                                     optimize: OptimizationLevel.none)
+                                     optimize: Compiler.OptimizationLevel.none)
 
       return compileResult.asResult()
 

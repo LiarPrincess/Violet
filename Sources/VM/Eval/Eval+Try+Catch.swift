@@ -8,7 +8,7 @@ extension Eval {
   /// Pushes a try block from a try-except clause onto the block stack.
   /// `firstExceptLabel` points to the first except block.
   internal func setupExcept(firstExceptLabelIndex: Int) -> InstructionResult {
-    let label = self.getLabelJumpAddress(labelIndex: firstExceptLabelIndex)
+    let label = self.getInstructionIndexToJumpTo(labelIndex: firstExceptLabelIndex)
     let type = BlockType.setupExcept(firstExceptLabel: label)
     let block = Block(type: type, stackCount: self.stack.count)
     self.blockStack.push(block: block)
@@ -18,7 +18,7 @@ extension Eval {
   /// Pushes a try block from a try-except clause onto the block stack.
   /// `finallyStartLabel` points to the finally block.
   internal func setupFinally(finallyStartLabelIndex: Int) -> InstructionResult {
-    let label = self.getLabelJumpAddress(labelIndex: finallyStartLabelIndex)
+    let label = self.getInstructionIndexToJumpTo(labelIndex: finallyStartLabelIndex)
     let type = BlockType.setupFinally(finallyStartLabel: label)
     let block = Block(type: type, stackCount: self.stack.count)
     self.blockStack.push(block: block)

@@ -72,7 +72,7 @@ public struct Arguments {
   // MARK: - Optimization
 
   /// `-O -OO`
-  public var optimize = OptimizationLevel.none
+  public var optimize = Compiler.OptimizationLevel.none
 
   // MARK: - Warnings
 
@@ -171,7 +171,7 @@ public struct Arguments {
     }
    }
 
-  private func getOptimization(binding: ArgumentBinding) -> OptimizationLevel {
+  private func getOptimization(binding: ArgumentBinding) -> Compiler.OptimizationLevel {
     if binding.optimize2 {
       return .OO
     }

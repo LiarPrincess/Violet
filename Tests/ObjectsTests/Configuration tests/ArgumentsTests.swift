@@ -140,7 +140,7 @@ class ArgumentsTests: XCTestCase {
   // MARK: - Optimization levels
 
   func test_optimization() {
-    let values: [String: OptimizationLevel] = [
+    let values: [String: Compiler.OptimizationLevel] = [
       "-O": .O,
       "-OO": .OO
     ]

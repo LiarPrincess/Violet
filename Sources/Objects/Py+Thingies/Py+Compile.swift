@@ -43,7 +43,7 @@ extension PyInstance {
 
     // We will ignore 'flags' and 'dont_inherit'.
 
-    let optimize: OptimizationLevel
+    let optimize: Compiler.OptimizationLevel
     switch self.parseOptimize(arg: optimizeArg) {
     case let .value(o): optimize = o
     case let .error(e): return .error(e)
@@ -58,7 +58,7 @@ extension PyInstance {
   /// Compile object at a given `path`.
   public func compile(path: String,
                       mode: Parser.Mode,
-                      optimize: OptimizationLevel? = nil) -> CompileResult {
+                      optimize: Compiler.OptimizationLevel? = nil) -> CompileResult {
     let data: Data
     switch self.fileSystem.read(path: path) {
     case let .value(d): data = d
@@ -139,7 +139,7 @@ extension PyInstance {
   public func compile(source: String,
                       filename: String,
                       mode: Parser.Mode,
-                      optimize: OptimizationLevel? = nil) -> CompileResult {
+                      optimize: Compiler.OptimizationLevel? = nil) -> CompileResult {
     do {
       let delegate = WarningsHandler()
 
@@ -164,7 +164,7 @@ extension PyInstance {
       }
 
       // Compiler phase
-      let compilerOptions = CompilerOptions(
+      let compilerOptions = Compiler.Options(
         optimizationLevel: optimize ?? self.optimizeFromSysFlags
       )
 
@@ -233,11 +233,11 @@ extension PyInstance {
 
   // MARK: - Optimize
 
-  private var optimizeFromSysFlags: OptimizationLevel {
+  private var optimizeFromSysFlags: Compiler.OptimizationLevel {
     return self.sys.flags.optimize
   }
 
-  private func parseOptimize(arg: PyObject?) -> PyResult<OptimizationLevel> {
+  private func parseOptimize(arg: PyObject?) -> PyResult<Compiler.OptimizationLevel> {
     // The argument optimize specifies the optimization level of the compiler;
     // the default value of -1 selects the optimization level of the interpreter
     // as given by -O options.

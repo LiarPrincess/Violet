@@ -43,7 +43,7 @@ public struct Environment {
   /// If this is set to a non-empty string it is equivalent to specifying
   /// the `-O` option.
   /// If set to an integer, it is equivalent to specifying `-O` multiple times.
-  public var optimize = OptimizationLevel.none
+  public var optimize = Compiler.OptimizationLevel.none
 
   /// PYTHONWARNINGS
   ///
