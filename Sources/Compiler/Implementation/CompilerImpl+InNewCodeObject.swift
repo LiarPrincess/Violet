@@ -13,7 +13,8 @@ extension CompilerImpl {
   /// Helper for creation of new code objects.
   /// It surrounds given `block` with `enterScope` and `leaveScope`
   /// (1 scope = 1 code object).
-  /// Use `self.codeObject` to emit instructions.
+  ///
+  /// Use `self.builder` to emit instructions.
   internal func inNewCodeObject<N: ASTNode>(
     node: N,
     emitInstructions block: () throws -> Void
@@ -27,7 +28,8 @@ extension CompilerImpl {
   /// Helper for creation of new code objects.
   /// It surrounds given `block` with `enterScope` and `leaveScope`
   /// (1 scope = 1 code object).
-  /// Use `self.codeObject` to emit instructions.
+  ///
+  /// Use `self.builder` to emit instructions.
   internal func inNewCodeObject<N: ASTNode>(
     node: N,
     argCount: Int,
@@ -114,7 +116,7 @@ extension CompilerImpl {
     case .class,
          .function,
          .asyncFunction:
-      return scope.name
+      return scope.name // class/function name
     }
   }
 
@@ -143,12 +145,14 @@ extension CompilerImpl {
       return ""
     }
 
+    // If we are directly inside the module (and not nested inside another
+    // class/function/etc) then just using 'name' is fine.
     let isTopLevel = self.unitStack.count == 1
     if isTopLevel {
       return name
     }
 
-    /// Is this a special case? (see docstring)
+    /// Is this a special case? (see docstring for this method)
     let isGlobalNestedInOtherScope: Bool = {
       let kind = scope.kind
       guard kind == .function || kind == .asyncFunction || kind == .class else {

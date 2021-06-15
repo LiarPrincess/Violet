@@ -73,6 +73,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   /// Stack of blocks (loop, except, finallyTry, finallyEnd)
   /// that current statement is surrounded with.
   internal var blockStack = [BlockType]()
+
   /// Is the current statement inside a loop?
   internal var isInLoop: Bool {
     return self.blockStack.contains { $0.isLoop }
@@ -123,9 +124,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
   }
 
   internal func visit(_ node: InteractiveAST) throws {
-    // We cannot use 'visitBody' because we do not want '__doc__'.
-    self.setupAnnotationsIfNeeded(statements: node.statements)
-    try self.visit(node.statements)
+    try self.visitBody(body: node.statements, onDoc: .treatAsStatement)
   }
 
   internal func visit(_ node: ModuleAST) throws {
@@ -140,10 +139,12 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
 
   /// What to do when we have doc?
   internal enum DocHandling {
-    /// Emit `appendString` and then `appendStoreName(__doc__)`.
+    /// Basically `appendString` and then `appendStoreName(__doc__)`.
     case storeAs__doc__
     /// Simply add new constant, without emitting any instruction.
     case appendToConstants
+    /// Nothing extraordinary, just visit and compile.
+    case treatAsStatement
   }
 
   /// Compile a sequence of statements, checking for a docstring
@@ -165,14 +166,19 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
       case .storeAs__doc__:
         self.builder.appendString(doc)
         self.builder.appendStoreName(SpecialIdentifiers.__doc__)
+        try self.visit(body.dropFirst())
+        return
       case .appendToConstants:
         self.builder.addConstant(string: doc)
+        try self.visit(body.dropFirst())
+        return
+      case .treatAsStatement:
+        // No special treatment.
+        break
       }
-
-      try self.visit(body.dropFirst())
-    } else {
-      try self.visit(body)
     }
+
+    try self.visit(body)
   }
 
   // MARK: - Annotations
@@ -185,7 +191,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     }
   }
 
-  /// Search if variable annotations are present statically in a block.
+  /// Check if variable annotations are present statically in a block.
   ///
   /// find_ann(asdl_seq *stmts)
   private func hasAnnotations<S: Sequence>(
@@ -194,7 +200,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     return statements.contains(where: self.hasAnnotations(statement:))
   }
 
-  /// Search if variable annotations are present statically in a block.
+  /// Check if variable annotations are present statically in a block.
   ///
   /// find_ann(asdl_seq *stmts)
   private func hasAnnotations(statement: Statement) -> Bool {
