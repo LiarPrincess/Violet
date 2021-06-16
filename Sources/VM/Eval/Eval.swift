@@ -101,22 +101,24 @@ internal struct Eval {
 
   // MARK: - Code object getters
 
-  internal func getName(index: Int) -> PyString {
-    assert(0 <= index && index < self.code.names.count)
-    return self.code.names[index]
-  }
-
   internal func getConstant(index: Int) -> PyCode.Constant {
     assert(0 <= index && index < self.code.constants.count)
     return self.code.constants[index]
   }
 
-  internal func getInstructionIndexToJumpTo(labelIndex index: Int) -> Int {
-    // In all of the dumps/prints we multiply by 'Instruction.byteSize'.
-    // We don't have to it here because 'index' is already instruction index.
+  internal func getName(index: Int) -> PyString {
+    assert(0 <= index && index < self.code.names.count)
+    return self.code.names[index]
+  }
+
+  internal func getCellOrFree(index: Int) -> PyCell {
+    assert(0 <= index && index < self.cellsAndFreeVariables.count)
+    return self.cellsAndFreeVariables[index]
+  }
+
+  internal func getLabel(index: Int) -> CodeObject.Label {
     assert(0 <= index && index < self.code.labels.count)
-    let label = self.code.labels[index]
-    return label.instructionIndex
+    return self.code.labels[index]
   }
 
   // MARK: - Run

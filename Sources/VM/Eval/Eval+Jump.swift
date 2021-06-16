@@ -72,8 +72,8 @@ extension Eval {
   // MARK: - Helpers
 
   internal func jumpTo(labelIndex: Int) {
-    let label = self.getInstructionIndexToJumpTo(labelIndex: labelIndex)
-    self.jumpTo(instructionIndex: label)
+    let label = self.getLabel(index: labelIndex)
+    self.jumpTo(instructionIndex: label.instructionIndex)
   }
 
   internal func jumpTo(instructionIndex: Int) {

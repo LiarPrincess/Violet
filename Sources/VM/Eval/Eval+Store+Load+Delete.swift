@@ -194,7 +194,7 @@ extension Eval {
   /// Loads the cell contained in slot i of the cell and free variable storage.
   /// Pushes a reference to the object the cell contains on the stack.
   internal func loadCellOrFree(cellOrFreeIndex index: Int) -> InstructionResult {
-    let cell = self.getCellOrFree(at: index)
+    let cell = self.getCellOrFree(index: index)
 
     if let content = cell.content {
       self.stack.push(content)
@@ -207,7 +207,7 @@ extension Eval {
   /// Stores TOS into the cell contained in slot i of the cell
   /// and free variable storage.
   internal func storeCellOrFree(cellOrFreeIndex index: Int) -> InstructionResult {
-    let cell = self.getCellOrFree(at: index)
+    let cell = self.getCellOrFree(index: index)
 
     let value = self.stack.pop()
     cell.content = value
@@ -217,7 +217,7 @@ extension Eval {
   /// Empties the cell contained in slot i of the cell and free variable storage.
   /// Used by the del statement.
   internal func deleteCellOrFree(cellOrFreeIndex index: Int) -> InstructionResult {
-    let cell = self.getCellOrFree(at: index)
+    let cell = self.getCellOrFree(index: index)
 
     let isEmpty = cell.content == nil
     if isEmpty {
@@ -257,11 +257,6 @@ extension Eval {
 
     self.stack.push(value)
     return .ok
-  }
-
-  private func getCellOrFree(at index: Int) -> PyCell {
-    assert(0 <= index && index < self.cellsAndFreeVariables.count)
-    return self.cellsAndFreeVariables[index]
   }
 
   private func unboundDerefError(index: Int) -> InstructionResult {
