@@ -1,10 +1,12 @@
 #!/bin/bash
 
+OBJECTS=./Sources/Objects
 GENERATED=./Sources/Objects/Generated
 
 # ===========================
 # Stage 1: Generate new types
 # ===========================
+
 # This stage has to be first because other stages will depend on newly created
 # type definitions.
 
@@ -17,20 +19,17 @@ echo ''
 # =====================================
 # Stage 2: Work on all type definitions
 # =====================================
+
 # This stage has to be after 'Stage 1: Generate new types'
 
 # === Dump types ===
-# This will generate a giant file wile with of all of the Python types/operations.
+# This will generate a giant file wile with of all of the Python types/methods.
 # It will be used as a 'single source of truth' for later stages.
 echo 'Running Sourcery'
 sourcery \
-  --sources ./Sources/Objects \
-  --templates $GENERATED/Data/types.stencil \
-  --output $GENERATED/Data/types.txt
-echo ''
-
-echo 'Validating Swift definitions'
-python3 $GENERATED/run_validation.py
+  --sources $OBJECTS \
+  --templates $GENERATED/Sourcery/dump.stencil \
+  --output $GENERATED/Sourcery/dump.txt
 echo ''
 
 # === Builtin types ===
@@ -64,6 +63,7 @@ python3 $GENERATED/TypeMemoryLayout.py > $GENERATED/TypeMemoryLayout.swift
 # ==============
 # Stage 3: Other
 # ==============
+
 # This stage does not really depend on type definitions.
 
 # === Fast dispatch ===

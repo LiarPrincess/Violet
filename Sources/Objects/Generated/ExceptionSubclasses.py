@@ -1,7 +1,6 @@
-from Data.errors import data
-from Common.strings import generated_warning
-from Common.errors import where_to_find_it_in_cpython
-from Common.builtin_types import get_property_name_escaped as get_builtins_type_property_name
+from Exception_hierarchy import data
+from Common.strings import generated_warning, where_to_find_errors_in_cpython
+from Common.builtin_types import get_property_name_escaped as get_builtin_type_property_name
 
 
 def is_final(name):
@@ -22,7 +21,7 @@ if __name__ == '__main__':
 
 {generated_warning}
 
-{where_to_find_it_in_cpython}
+{where_to_find_errors_in_cpython}
 ''')
 
     # For some of the exceptions we manyally wrote Swift class.
@@ -46,7 +45,7 @@ if __name__ == '__main__':
         class_name = 'Py' + name
         doc = doc.replace('\n', ' " +\n"')
         final = 'final ' if is_final(name) else ''
-        builtins_type_variable = get_builtins_type_property_name(name)
+        builtins_type_variable = get_builtin_type_property_name(name)
 
         print(f'''\
 // MARK: - {name}

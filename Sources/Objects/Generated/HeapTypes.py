@@ -1,8 +1,8 @@
-from Data.types import get_types
+from Sourcery import get_types, TypeInfo
 from Common.strings import generated_warning
 
 
-def get_heap_type_name(t):
+def get_heap_type_name(t: TypeInfo):
     swift_type = t.swift_type
     if swift_type == 'PyObjectType':
         swift_type = 'PyObject'

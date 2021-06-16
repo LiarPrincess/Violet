@@ -1,46 +1,51 @@
-from TypeMemoryLayout import get_layout_name
-from Data.types import TypeInfo, PyFunctionInfo
+from Sourcery import TypeInfo, PyFunctionInfo
+
 
 # =============
 # Property name
 # =============
 
+def print_property(t: TypeInfo):
+    python_type = t.python_type
+    property_name_escaped = get_property_name_escaped(python_type)
+    print(f'  public let {property_name_escaped}: PyType')
 
-def get_property_name(python_type):
-    if python_type == 'NoneType':
+
+def get_property_name(python_type_name: str) -> str:
+    if python_type_name == 'NoneType':
         return 'none'
 
-    if python_type == 'NotImplementedType':
+    if python_type_name == 'NotImplementedType':
         return 'notImplemented'
 
-    if python_type == 'types.SimpleNamespace':
+    if python_type_name == 'types.SimpleNamespace':
         return 'simpleNamespace'
 
-    if python_type == 'TextFile':
+    if python_type_name == 'TextFile':
         return 'textFile'
 
-    if python_type == 'EOFError':
+    if python_type_name == 'EOFError':
         return 'eofError'
 
-    if python_type == 'OSError':
+    if python_type_name == 'OSError':
         return 'osError'
 
-    result = python_type[0].lower() + python_type[1:]
+    result = python_type_name[0].lower() + python_type_name[1:]
     return result
 
 
-def get_property_name_escaped(python_type):
-    property_name = get_property_name(python_type)
+def get_property_name_escaped(python_type_name: str) -> str:
+    property_name = get_property_name(python_type_name)
 
     if property_name == 'super':
         return '`super`'
 
     return property_name
 
-# =======
-# Helpers
-# =======
 
+# ====
+# Fill
+# ====
 
 def print_fill_helpers():
     print('''\
@@ -79,24 +84,18 @@ def print_fill_helpers():
   }
 ''')
 
-# ====
-# Fill
-# ====
 
-
-def get_fill_function_name(t):
+def get_fill_function_name(t: TypeInfo):
     swift_type = t.swift_type
     swift_type_without_py = swift_type.replace('Py', '')
     return 'fill' + swift_type_without_py
 
 
-def print_fill_type_method(t: TypeInfo):
-    static_doc_property = t.swift_static_doc_property
-    sourcery_flags = t.sourcery_flags
-
+def print_fill_function(t: TypeInfo):
     # For 'object': 'PyObject' holds data, but 'PyObjectType' holds methods, doc etc.
-    swift_type = t.swift_type
-    swift_type = 'PyObjectType' if swift_type == 'PyObject' else swift_type
+    swift_type_name = t.swift_type
+    if swift_type_name == 'PyObject':
+        swift_type_name = 'PyObjectType'
 
     print(f'  // MARK: - {t.swift_type.replace("Py", "")}')
     print()
@@ -105,11 +104,13 @@ def print_fill_type_method(t: TypeInfo):
     print(f'  private func {function_name}() {{')
     print(f'    let type = self.{get_property_name(t.python_type)}')
 
+    static_doc_property = t.swift_static_doc_property
     if static_doc_property:
-        print(f'    type.setBuiltinTypeDoc({swift_type}.{static_doc_property})')
+        print(f'    type.setBuiltinTypeDoc({swift_type_name}.{static_doc_property})')
     else:
         print(f'    type.setBuiltinTypeDoc(nil)')
 
+    sourcery_flags = t.sourcery_flags
     for flag in sourcery_flags:
         print(f'    type.flags.set(PyType.{flag}Flag)')
 
@@ -126,7 +127,7 @@ def print_fill_type_method(t: TypeInfo):
         swift_setter_fn = prop.swift_setter_fn
 
         static_doc_property = prop.swift_static_doc_property
-        doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
+        doc = f'{swift_type_name}.{static_doc_property}' if static_doc_property else 'nil'
 
         if is_first:
             is_first = False
@@ -134,10 +135,10 @@ def print_fill_type_method(t: TypeInfo):
 
         if not swift_setter_fn:
             print(
-                f'    self.insert(type: type, name: "{python_name}", value: PyProperty.wrap(doc: {doc}, get: {swift_type}.{swift_getter_fn}, castSelf: {castSelf}))')
+                f'    self.insert(type: type, name: "{python_name}", value: PyProperty.wrap(doc: {doc}, get: {swift_type_name}.{swift_getter_fn}, castSelf: {castSelf}))')
         else:
             print(
-                f'    self.insert(type: type, name: "{python_name}", value: PyProperty.wrap(doc: {doc}, get: {swift_type}.{swift_getter_fn}, set: {swift_type}.{swift_setter_fn}, castSelf: {castSelf}))')
+                f'    self.insert(type: type, name: "{python_name}", value: PyProperty.wrap(doc: {doc}, get: {swift_type_name}.{swift_getter_fn}, set: {swift_type_name}.{swift_setter_fn}, castSelf: {castSelf}))')
 
     # ================
     # === New/init ===
@@ -151,7 +152,7 @@ def print_fill_type_method(t: TypeInfo):
         swift_selector = meth.swift_selector
 
         static_doc_property = meth.swift_static_doc_property
-        doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
+        doc = f'{swift_type_name}.{static_doc_property}' if static_doc_property else 'nil'
 
         if not python_name == '__new__':
             continue
@@ -160,7 +161,7 @@ def print_fill_type_method(t: TypeInfo):
             is_first = False
             print()
 
-        print(f'    self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: {doc}, fn: {swift_type}.{swift_selector}))')
+        print(f'    self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: {doc}, fn: {swift_type_name}.{swift_selector}))')
 
     # __init__
     for meth in t.methods:
@@ -168,7 +169,7 @@ def print_fill_type_method(t: TypeInfo):
         swift_selector = meth.swift_selector
 
         static_doc_property = meth.swift_static_doc_property
-        doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
+        doc = f'{swift_type_name}.{static_doc_property}' if static_doc_property else 'nil'
 
         if not python_name == '__init__':
             continue
@@ -177,7 +178,8 @@ def print_fill_type_method(t: TypeInfo):
             is_first = False
             print()
 
-        print(f'    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: {doc}, fn: {swift_type}.{swift_selector}))')
+        print(
+            f'    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: {doc}, fn: {swift_type_name}.{swift_selector}))')
 
     # ==============================
     # === Static/class functions ===
@@ -185,7 +187,7 @@ def print_fill_type_method(t: TypeInfo):
 
     is_first = True
 
-    def is_new_or_init(name):
+    def is_new_or_init(name: str):
         return name == '__new__' or name == '__init__'
 
     def print_static_class_method(factory_type: str, fn: PyFunctionInfo):
@@ -193,7 +195,7 @@ def print_fill_type_method(t: TypeInfo):
         swift_selector = fn.swift_selector
 
         static_doc_property = fn.swift_static_doc_property
-        doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
+        doc = f'{swift_type_name}.{static_doc_property}' if static_doc_property else 'nil'
 
         if is_new_or_init(python_name):
             return
@@ -204,7 +206,7 @@ def print_fill_type_method(t: TypeInfo):
             print()
 
         print(
-            f'    self.insert(type: type, name: "{python_name}", value: {factory_type}.wrap(name: "{python_name}", doc: {doc}, fn: {swift_type}.{swift_selector}))')
+            f'    self.insert(type: type, name: "{python_name}", value: {factory_type}.wrap(name: "{python_name}", doc: {doc}, fn: {swift_type_name}.{swift_selector}))')
 
     for fn in t.static_functions:
         print_static_class_method('PyStaticMethod', fn)
@@ -223,7 +225,7 @@ def print_fill_type_method(t: TypeInfo):
         swift_selector = meth.swift_selector
 
         static_doc_property = meth.swift_static_doc_property
-        doc = f'{swift_type}.{static_doc_property}' if static_doc_property else 'nil'
+        doc = f'{swift_type_name}.{static_doc_property}' if static_doc_property else 'nil'
 
         if is_new_or_init(python_name):
             continue
@@ -234,26 +236,26 @@ def print_fill_type_method(t: TypeInfo):
 
         if t.python_type == 'object':
             print(
-                f'    self.insert(type: type, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: {doc}, fn: {swift_type}.{swift_selector}))')
+                f'    self.insert(type: type, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: {doc}, fn: {swift_type_name}.{swift_selector}))')
         else:
             print(
-                f'    self.insert(type: type, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: {doc}, fn: {swift_type}.{swift_selector}, castSelf: {castSelf}))')
+                f'    self.insert(type: type, name: "{python_name}", value: PyBuiltinFunction.wrap(name: "{python_name}", doc: {doc}, fn: {swift_type_name}.{swift_selector}, castSelf: {castSelf}))')
 
     print('  }')
     print()
+
 
 # ==============
 # Cast as 'type'
 # ==============
 
-
-def get_downcast_function_name(t):
+def get_downcast_function_name(t: TypeInfo):
     swift_type = t.swift_type
     swift_type_without_py = swift_type.replace('Py', '')
     return f'as{swift_type_without_py}'
 
 
-def print_downcast_function(t):
+def print_downcast_function(t: TypeInfo):
     python_type = t.python_type
     swift_type = t.swift_type
 

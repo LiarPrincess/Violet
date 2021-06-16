@@ -24,26 +24,31 @@ So we called 'PyInt.f' with 'bool' and it returned 'bool'.
 In Python this would return 'int'.
 '''
 
-from Data.types import get_types, TypeInfo, PyFunctionInfo
+from typing import List
+
+from Sourcery.entities import TypeInfo, FieldInfo, PyPropertyInfo, PyFunctionInfo
+
 
 # -------------------
 # Overridden pymethod
 # -------------------
-
 
 class OverriddenPyMethod:
     '''
     Swift field.
     '''
 
-    def __init__(self, type: TypeInfo, method: PyFunctionInfo, also_defined_in: [TypeInfo]):
+    def __init__(self,
+                 type: TypeInfo,
+                 method: PyFunctionInfo,
+                 also_defined_in: List[TypeInfo]):
         assert also_defined_in
         self.type = type
         self.method = method
         self.also_defined_in = also_defined_in
 
 
-def check_for_overridden_pymethod(types: [TypeInfo]) -> bool:
+def check_for_overridden_pymethod(types: List[TypeInfo]) -> bool:
     types_by_name = {}
     for t in types:
         types_by_name[t.swift_type] = t
@@ -101,19 +106,16 @@ Following methods were found to be both 'pymethod' and Swift method overrides
             print(f'- {swift_type}.{swift_method} is override of similar method in {also_defined_in}')
 
         print('!!! Error !!!')
-        return True
+        return False
 
-    return False
+    return True
+
 
 # ----
-# Main
+# Run
 # ----
 
-
-if __name__ == '__main__':
-    types: [TypeInfo] = get_types()
-
-    has_overridden_pymethod = check_for_overridden_pymethod(types)
-
-    if has_overridden_pymethod:
-        exit(1)
+def run(types: List[TypeInfo]) -> bool:
+    is_valid = True
+    is_valid = check_for_overridden_pymethod(types) and is_valid
+    return is_valid

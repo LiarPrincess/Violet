@@ -1,21 +1,19 @@
-'''
-Parse Swift function signature.
-'''
-
-
 class ArgumentInfo:
-    def __init__(self, label, name, typ):
+    def __init__(self, label: str, name: str, typ: str):
         self.label = label
         self.name = name
         self.typ = typ
 
 
 class SignatureInfo:
+    '''
+    Parse Swift function signature.
+    '''
 
-    def __init__(self, swift_signature, swift_return_type):
+    def __init__(self, swift_signature: str, swift_return_type: str):
         self.return_type = swift_return_type
 
-        clean = clean_signature(swift_signature)
+        clean = remove_indentation(swift_signature)
         self.value = clean + ' -> ' + swift_return_type
 
         open_paren_index = clean.index('(')
@@ -46,7 +44,7 @@ class SignatureInfo:
                 self.arguments.append(argument)
 
 
-def clean_signature(sig):
+def remove_indentation(sig: str) -> str:
     ''' If signature spans multiple lines then Sourcery will ignore new lines, but
     preserve indentation, so we end up with:
     func find(_ value: PyObject,                     start: PyObject?,                     end: PyObject?) -> PyResult<Int>
@@ -84,3 +82,7 @@ def test():
     assert sig.arguments[1].name == 'kwargs'
     assert sig.arguments[1].typ == 'PyDict?'
     assert sig.return_type == 'PyResult<PyObject>'
+
+
+if __name__ == '__main__':
+    test()

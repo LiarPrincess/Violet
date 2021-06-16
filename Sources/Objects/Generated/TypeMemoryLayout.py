@@ -1,8 +1,8 @@
-from Data.types import get_types
+from Sourcery import get_types, TypeInfo
 from Common.strings import generated_warning
 
 
-def get_layout_name(t):
+def get_layout_name(t: TypeInfo):
     return t.swift_type
 
 

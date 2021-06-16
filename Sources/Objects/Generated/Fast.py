@@ -1,6 +1,6 @@
-from Data.types import get_types
+from Sourcery import get_types
 from Common.strings import generated_warning
-from Common.SignatureInfo import SignatureInfo
+from Common.signature import SignatureInfo
 
 # All of the operations for which protocols will be generated
 # (Feel free to add new ones)

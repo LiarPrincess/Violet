@@ -1,10 +1,10 @@
-from Data.types import get_types
+from Sourcery import get_types
 from Common.strings import generated_warning
 from TypeMemoryLayout import get_layout_name
 from Common.builtin_types import (
-    get_property_name_escaped,
-    get_fill_function_name, print_fill_type_method,
-    print_fill_helpers, get_downcast_function_name, print_downcast_function
+    get_property_name_escaped, print_property,
+    get_fill_function_name, print_fill_function, print_fill_helpers,
+    get_downcast_function_name, print_downcast_function
 )
 
 if __name__ == '__main__':
@@ -47,9 +47,7 @@ import VioletCore
     types = list(filter(lambda t: not t.is_error, all_types))
 
     for t in types:
-        python_type = t.python_type
-        property_name_escaped = get_property_name_escaped(python_type)
-        print(f'  public let {property_name_escaped}: PyType')
+        print_property(t)
 
     print()
 
@@ -149,7 +147,7 @@ import VioletCore
     print_fill_helpers()
 
     for t in types:
-        print_fill_type_method(t)
+        print_fill_function(t)
         print_downcast_function(t)
 
     print('}')

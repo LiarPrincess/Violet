@@ -1,12 +1,11 @@
-from Data.errors import data
-from Data.types import get_types
-from Common.errors import where_to_find_it_in_cpython
-from Common.strings import generated_warning
+from Exception_hierarchy import data
+from Sourcery import get_types
+from Common.strings import generated_warning, where_to_find_errors_in_cpython
 from TypeMemoryLayout import get_layout_name
 from Common.builtin_types import (
-    get_property_name_escaped,
-    get_fill_function_name, print_fill_type_method,
-    print_fill_helpers, get_downcast_function_name, print_downcast_function
+    get_property_name_escaped, print_property,
+    get_fill_function_name, print_fill_function, print_fill_helpers,
+    get_downcast_function_name, print_downcast_function
 )
 
 if __name__ == '__main__':
@@ -21,7 +20,7 @@ import VioletCore
 
 {generated_warning}
 
-{where_to_find_it_in_cpython}
+{where_to_find_errors_in_cpython}
 
 // Just like 'BuiltinTypes' this will be 2 phase init.
 // See 'BuiltinTypes' for reasoning.\
@@ -59,9 +58,7 @@ import VioletCore
     print()
 
     for t in types:
-        python_type = t.python_type
-        property_name = get_property_name_escaped(python_type)
-        print(f'  public let {property_name}: PyType')
+        print_property(t)
 
     print()
 
@@ -145,7 +142,7 @@ import VioletCore
     print_fill_helpers()
 
     for t in types:
-        print_fill_type_method(t)
+        print_fill_function(t)
         print_downcast_function(t)
 
     print('}')
