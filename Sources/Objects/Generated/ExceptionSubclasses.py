@@ -3,17 +3,19 @@ from Common.strings import generated_warning
 from Common.errors import where_to_find_it_in_cpython
 from Common.builtin_types import get_property_name_escaped as get_builtins_type_property_name
 
+
 def is_final(name):
-  'If there exists any exception with us as base then we are not final'
+    'If there exists any exception with us as base then we are not final'
 
-  for e in data:
-    if e.base_class == name:
-      return False
+    for e in data:
+        if e.base_class == name:
+            return False
 
-  return True
+    return True
+
 
 if __name__ == '__main__':
-  print(f'''\
+    print(f'''\
 // swiftlint:disable line_length
 // swiftlint:disable trailing_newline
 // swiftlint:disable file_length
@@ -23,30 +25,30 @@ if __name__ == '__main__':
 {where_to_find_it_in_cpython}
 ''')
 
-  # For some of the exceptions we manyally wrote Swift class.
-  manually_implemented = [
-    'BaseException',
-    'KeyError', # Custom '__str__' method
-    'StopIteration', # 'value' property
-    'SystemExit', # 'code' property
-    'ImportError', # tons of customization (msg, name, path)
-    'SyntaxError', # another ton of customization (msg, filename, lineno, offset, text, print_file_and_line)
-  ]
+    # For some of the exceptions we manyally wrote Swift class.
+    manually_implemented = [
+        'BaseException',
+        'KeyError',  # Custom '__str__' method
+        'StopIteration',  # 'value' property
+        'SystemExit',  # 'code' property
+        'ImportError',  # tons of customization (msg, name, path)
+        'SyntaxError',  # another ton of customization (msg, filename, lineno, offset, text, print_file_and_line)
+    ]
 
-  for t in data:
-    name = t.class_name
-    base = t.base_class
-    doc = t.doc
+    for t in data:
+        name = t.class_name
+        base = t.base_class
+        doc = t.doc
 
-    if name in manually_implemented:
-      continue
+        if name in manually_implemented:
+            continue
 
-    class_name = 'Py' + name
-    doc = doc.replace('\n', ' " +\n"')
-    final = 'final ' if is_final(name) else ''
-    builtins_type_variable = get_builtins_type_property_name(name)
+        class_name = 'Py' + name
+        doc = doc.replace('\n', ' " +\n"')
+        final = 'final ' if is_final(name) else ''
+        builtins_type_variable = get_builtins_type_property_name(name)
 
-    print(f'''\
+        print(f'''\
 // MARK: - {name}
 
 // sourcery: pyerrortype = {name}, default, baseType, hasGC, baseExceptionSubclass

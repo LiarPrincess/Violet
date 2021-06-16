@@ -2,13 +2,13 @@ from Data.types import get_types
 from Common.strings import generated_warning
 from TypeMemoryLayout import get_layout_name
 from Common.builtin_types import (
-  get_property_name_escaped,
-  get_fill_function_name, print_fill_type_method,
-  print_fill_helpers, get_downcast_function_name, print_downcast_function
+    get_property_name_escaped,
+    get_fill_function_name, print_fill_type_method,
+    print_fill_helpers, get_downcast_function_name, print_downcast_function
 )
 
 if __name__ == '__main__':
-  print(f'''\
+    print(f'''\
 import BigInt
 import VioletCore
 
@@ -33,34 +33,34 @@ import VioletCore
 // When all of the types are initalized we can finally fill dictionaries.
 ''')
 
-  print('public final class BuiltinTypes {')
-  print()
+    print('public final class BuiltinTypes {')
+    print()
 
-  # ==================
-  # === Properties ===
-  # ==================
+    # ==================
+    # === Properties ===
+    # ==================
 
-  print('  // MARK: - Properties')
-  print()
+    print('  // MARK: - Properties')
+    print()
 
-  all_types = get_types()
-  types = list(filter(lambda t: not t.is_error, all_types))
+    all_types = get_types()
+    types = list(filter(lambda t: not t.is_error, all_types))
 
-  for t in types:
-    python_type = t.python_type
-    property_name_escaped = get_property_name_escaped(python_type)
-    print(f'  public let {property_name_escaped}: PyType')
+    for t in types:
+        python_type = t.python_type
+        property_name_escaped = get_property_name_escaped(python_type)
+        print(f'  public let {property_name_escaped}: PyType')
 
-  print()
+    print()
 
-  # ============
-  # === Init ===
-  # ============
+    # ============
+    # === Init ===
+    # ============
 
-  print('  // MARK: - Stage 1 - init')
-  print()
+    print('  // MARK: - Stage 1 - init')
+    print()
 
-  print('''\
+    print('''\
   /// Init that will only initialize properties.
   /// (see comment at the top of this file)
   internal init() {
@@ -75,34 +75,34 @@ import VioletCore
     // 'self.bool' has to be last because it uses 'self.int' as base!\
 ''')
 
-  for t in types:
-    python_type = t.python_type
+    for t in types:
+        python_type = t.python_type
 
-    # 'self.object' and 'self.type' are already initialized
-    if python_type == 'object' or python_type == 'type':
-      continue
+        # 'self.object' and 'self.type' are already initialized
+        if python_type == 'object' or python_type == 'type':
+            continue
 
-    # 'self.bool' has to be last because it uses 'self.int' as base!
-    if python_type == 'bool':
-      continue
+        # 'self.bool' has to be last because it uses 'self.int' as base!
+        if python_type == 'bool':
+            continue
 
-    layout = get_layout_name(t)
-    property_name_escaped = get_property_name_escaped(python_type)
-    print(f'    self.{property_name_escaped} = PyType.initBuiltinType(name: "{python_type}", type: self.type, base: self.object, layout: .{layout})')
+        layout = get_layout_name(t)
+        property_name_escaped = get_property_name_escaped(python_type)
+        print(f'    self.{property_name_escaped} = PyType.initBuiltinType(name: "{python_type}", type: self.type, base: self.object, layout: .{layout})')
 
-  # And now add 'bool'
-  print('    self.bool = PyType.initBuiltinType(name: "bool", type: self.type, base: self.int, layout: .PyBool)')
-  print('  }')
-  print()
+    # And now add 'bool'
+    print('    self.bool = PyType.initBuiltinType(name: "bool", type: self.type, base: self.int, layout: .PyBool)')
+    print('  }')
+    print()
 
-  # ====================
-  # === fill__dict__ ===
-  # ====================
+    # ====================
+    # === fill__dict__ ===
+    # ====================
 
-  print('  // MARK: - Stage 2 - fill __dict__')
-  print()
+    print('  // MARK: - Stage 2 - fill __dict__')
+    print()
 
-  print('''\
+    print('''\
   /// This function finalizes init of all of the stored types.
   /// (see comment at the top of this file)
   ///
@@ -113,43 +113,43 @@ import VioletCore
   internal func fill__dict__() {\
 ''')
 
-  for t in types:
-    python_type = t.python_type
-    fill_function = get_fill_function_name(t)
-    print(f'    self.{fill_function}()')
+    for t in types:
+        python_type = t.python_type
+        fill_function = get_fill_function_name(t)
+        print(f'    self.{fill_function}()')
 
-  print('  }')
-  print()
+    print('  }')
+    print()
 
-  # ===========
-  # === all ===
-  # ===========
+    # ===========
+    # === all ===
+    # ===========
 
-  print('  // MARK: - All')
-  print()
+    print('  // MARK: - All')
+    print()
 
-  print('''\
+    print('''\
   internal var all: [PyType] {
     return [\
 ''')
 
-  for t in types:
-    python_type = t.python_type
-    property_name_escaped = get_property_name_escaped(python_type)
-    print(f'      self.{property_name_escaped},')
+    for t in types:
+        python_type = t.python_type
+        property_name_escaped = get_property_name_escaped(python_type)
+        print(f'      self.{property_name_escaped},')
 
-  print('    ]')
-  print('  }')
-  print()
+    print('    ]')
+    print('  }')
+    print()
 
-  # ============================
-  # === fill__dict__ methods ===
-  # ============================
+    # ============================
+    # === fill__dict__ methods ===
+    # ============================
 
-  print_fill_helpers()
+    print_fill_helpers()
 
-  for t in types:
-    print_fill_type_method(t)
-    print_downcast_function(t)
+    for t in types:
+        print_fill_type_method(t)
+        print_downcast_function(t)
 
-  print('}')
+    print('}')

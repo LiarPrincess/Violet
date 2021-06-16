@@ -1,4 +1,3 @@
-import sys
 from Data.types import get_types
 from Common.strings import generated_warning
 from Common.SignatureInfo import SignatureInfo
@@ -6,100 +5,106 @@ from Common.SignatureInfo import SignatureInfo
 # All of the operations for which protocols will be generated
 # (Feel free to add new ones)
 generated_protocols = set([
-  '__abs__',
-  '__add__',
-  '__and__',
-  '__bool__',
-  '__call__',
-  '__contains__',
-  '__del__',
-  '__delattr__',
-  '__delitem__',
-  '__dir__',
-  '__divmod__',
-  '__eq__',
-  '__float__',
-  '__floordiv__',
-  '__ge__',
-  '__getattr__',
-  '__getattribute__',
-  '__getitem__',
-  '__gt__',
-  '__hash__',
-  '__iadd__',
-  '__index__',
-  '__instancecheck__',
-  '__int__',
-  '__invert__',
-  '__isabstractmethod__',
-  '__iter__',
-  '__le__',
-  '__len__',
-  '__lshift__',
-  '__lt__',
-  '__mod__',
-  '__mul__',
-  '__ne__',
-  '__neg__',
-  '__next__',
-  '__or__',
-  '__pos__',
-  '__pow__',
-  '__radd__',
-  '__rand__',
-  '__rdivmod__',
-  '__repr__',
-  '__reversed__',
-  '__rfloordiv__',
-  '__rlshift__',
-  '__rmod__',
-  '__rmul__',
-  '__ror__',
-  '__round__',
-  '__rpow__',
-  '__rrshift__',
-  '__rshift__',
-  '__rsub__',
-  '__rtruediv__',
-  '__rxor__',
-  '__setattr__',
-  '__setitem__',
-  '__str__',
-  '__sub__',
-  '__subclasscheck__',
-  '__truediv__',
-  '__trunc__',
-  '__xor__',
-  'keys',
+    '__abs__',
+    '__add__',
+    '__and__',
+    '__bool__',
+    '__call__',
+    '__contains__',
+    '__del__',
+    '__delattr__',
+    '__delitem__',
+    '__dir__',
+    '__divmod__',
+    '__eq__',
+    '__float__',
+    '__floordiv__',
+    '__ge__',
+    '__getattr__',
+    '__getattribute__',
+    '__getitem__',
+    '__gt__',
+    '__hash__',
+    '__iadd__',
+    '__index__',
+    '__instancecheck__',
+    '__int__',
+    '__invert__',
+    '__isabstractmethod__',
+    '__iter__',
+    '__le__',
+    '__len__',
+    '__lshift__',
+    '__lt__',
+    '__mod__',
+    '__mul__',
+    '__ne__',
+    '__neg__',
+    '__next__',
+    '__or__',
+    '__pos__',
+    '__pow__',
+    '__radd__',
+    '__rand__',
+    '__rdivmod__',
+    '__repr__',
+    '__reversed__',
+    '__rfloordiv__',
+    '__rlshift__',
+    '__rmod__',
+    '__rmul__',
+    '__ror__',
+    '__round__',
+    '__rpow__',
+    '__rrshift__',
+    '__rshift__',
+    '__rsub__',
+    '__rtruediv__',
+    '__rxor__',
+    '__setattr__',
+    '__setitem__',
+    '__str__',
+    '__sub__',
+    '__subclasscheck__',
+    '__truediv__',
+    '__trunc__',
+    '__xor__',
+    'keys',
 ])
 
+
 def get_properties(t):
-  return filter(lambda prop: prop.python_name in generated_protocols, t.properties)
+    return filter(lambda prop: prop.python_name in generated_protocols, t.properties)
+
 
 def get_methods(t):
-  return filter(lambda prop: prop.python_name in generated_protocols, t.methods)
+    return filter(lambda prop: prop.python_name in generated_protocols, t.methods)
 
 # ------
 # Helpers
 # ------
 
+
 def getter_protocol_name(name):
-  name = name if name.startswith('__') else name.title()
-  return f'{name}Owner'
+    name = name if name.startswith('__') else name.title()
+    return f'{name}Owner'
+
 
 def setter_protocol_name(name):
-  name = name if name.startswith('__') else name.title()
-  return f'{name}SetterOwner'
+    name = name if name.startswith('__') else name.title()
+    return f'{name}SetterOwner'
+
 
 def func_protocol_name(name):
-  return f'{name}Owner'
+    return f'{name}Owner'
 
 # ----
 # Main
 # ----
 
+
 if __name__ == '__main__':
-  print(f'''\
+    print(f'''\
 import BigInt
 import VioletCore
 
@@ -142,7 +147,7 @@ import VioletCore
 // when not all of the types are yet fully initialized.
 // For example when we have not yet added '__hash__' to 'str.__dict__'
 // we can still call this method because:
-// - 'str' confrms to '__hash__Owner' protocol
+// - 'str' conforms to '__hash__Owner' protocol
 // - it does not override builtin 'str.__hash__' method
 
 // == Is this bullet-proof? ==
@@ -163,13 +168,13 @@ import VioletCore
 // 4. Owner protocol conformance - this type supports given operation/protocol
 ''')
 
-  # =================
-  # === Protocols ===
-  # =================
+    # =================
+    # === Protocols ===
+    # =================
 
-  types = get_types()
+    types = get_types()
 
-  print(f'''\
+    print(f'''\
 // MARK: - Owner protocols
 
 // This is the only protocol marked as 'internal'.
@@ -179,83 +184,84 @@ internal protocol __dict__Owner {{
 }}
 ''')
 
-  class ProtocolEntry:
-    def __init__(self, python_name, swift_protocol_name, swift_signature):
-      self.python_name = python_name
-      self.swift_protocol_name = swift_protocol_name
-      self.swift_signature = swift_signature
+    class ProtocolEntry:
+        def __init__(self, python_name, swift_protocol_name, swift_signature):
+            self.python_name = python_name
+            self.swift_protocol_name = swift_protocol_name
+            self.swift_signature = swift_signature
 
-  protocols_by_name = { }
-  def add_protocol(python_name, swift_protocol_name, swift_function, swift_return_type):
-    if swift_protocol_name not in protocols_by_name:
-      signature = SignatureInfo(swift_function, swift_return_type)
-      protocol = ProtocolEntry(python_name, swift_protocol_name, signature)
-      protocols_by_name[swift_protocol_name] = protocol
+    protocols_by_name = {}
 
-  for t in types:
-    # Object will never participate in 'Fast'
-    if t.python_type == 'object':
-      continue
+    def add_protocol(python_name, swift_protocol_name, swift_function, swift_return_type):
+        if swift_protocol_name not in protocols_by_name:
+            signature = SignatureInfo(swift_function, swift_return_type)
+            protocol = ProtocolEntry(python_name, swift_protocol_name, signature)
+            protocols_by_name[swift_protocol_name] = protocol
 
-    for prop in get_properties(t):
-      python_name = prop.python_name
-      swift_getter_fn = prop.swift_getter_fn + '()'
-      swift_return_type = prop.swift_type
-      protocol_name = getter_protocol_name(python_name)
-      add_protocol(python_name, protocol_name, swift_getter_fn, swift_return_type)
+    for t in types:
+        # Object will never participate in 'Fast'
+        if t.python_type == 'object':
+            continue
 
-      # Setters are not supported
+        for prop in get_properties(t):
+            python_name = prop.python_name
+            swift_getter_fn = prop.swift_getter_fn + '()'
+            swift_return_type = prop.swift_type
+            protocol_name = getter_protocol_name(python_name)
+            add_protocol(python_name, protocol_name, swift_getter_fn, swift_return_type)
 
-    for meth in get_methods(t):
-      python_name = meth.python_name
-      swift_name_full = meth.swift_name_full
-      swift_return_type = meth.swift_return_type
-      protocol_name = func_protocol_name(python_name)
+            # Setters are not supported
 
-      # 'int' and 'bool' have static versions of some methods
-      # (because we can't override pymethods).
-      # But they provide correct methods for protocol conformance.
-      if t.python_type in ('int', 'bool') and python_name in ('__repr__', '__str__', '__and__', '__rand__', '__or__', '__ror__', '__xor__', '__rxor__'):
-        continue
+        for meth in get_methods(t):
+            python_name = meth.python_name
+            swift_name_full = meth.swift_name_full
+            swift_return_type = meth.swift_return_type
+            protocol_name = func_protocol_name(python_name)
 
-      add_protocol(python_name, protocol_name, swift_name_full, swift_return_type)
+            # 'int' and 'bool' have static versions of some methods
+            # (because we can't override pymethods).
+            # But they provide correct methods for protocol conformance.
+            if t.python_type in ('int', 'bool') and python_name in ('__repr__', '__str__', '__and__', '__rand__', '__or__', '__ror__', '__xor__', '__rxor__'):
+                continue
 
-    # From static methods we have hand-written '__new__' and '__init__'.
-    # We ignore others.
+            add_protocol(python_name, protocol_name, swift_name_full, swift_return_type)
 
-  # Additional protocols (none of the builtin types implement them)
-  #            python_name,     swift_protocol_name,  swift_function,                 swift_return_type
-  add_protocol('__matmul__',    '__matmul__Owner',    'matmul(_ other: PyObject)',    'PyResult<PyObject>')
-  add_protocol('__rmatmul__',   '__rmatmul__Owner',   'rmatmul(_ other: PyObject)',   'PyResult<PyObject>')
-  add_protocol('__isub__',      '__isub__Owner',      'isub(_ other: PyObject)',      'PyResult<PyObject>')
-  add_protocol('__imul__',      '__imul__Owner',      'imul(_ other: PyObject)',      'PyResult<PyObject>')
-  add_protocol('__imatmul__',   '__imatmul__Owner',   'imatmul(_ other: PyObject)',   'PyResult<PyObject>')
-  add_protocol('__itruediv__',  '__itruediv__Owner',  'itruediv(_ other: PyObject)',  'PyResult<PyObject>')
-  add_protocol('__ifloordiv__', '__ifloordiv__Owner', 'ifloordiv(_ other: PyObject)', 'PyResult<PyObject>')
-  add_protocol('__imod__',      '__imod__Owner',      'imod(_ other: PyObject)',      'PyResult<PyObject>')
-  add_protocol('__ilshift__',   '__ilshift__Owner',   'ilshift(_ other: PyObject)',   'PyResult<PyObject>')
-  add_protocol('__irshift__',   '__irshift__Owner',   'irshift(_ other: PyObject)',   'PyResult<PyObject>')
-  add_protocol('__iand__',      '__iand__Owner',      'iand(_ other: PyObject)',      'PyResult<PyObject>')
-  add_protocol('__ixor__',      '__ixor__Owner',      'ixor(_ other: PyObject)',      'PyResult<PyObject>')
-  add_protocol('__ior__',       '__ior__Owner',       'ior(_ other: PyObject)',       'PyResult<PyObject>')
-  add_protocol('__ipow__',      '__ipow__Owner',      'ipow(base: PyObject, mod: PyObject)', 'PyResult<PyObject>')
-  add_protocol('__idivmod__',   '__idivmod__Owner',   'idivmod(_ other: PyObject)',   'PyResult<PyObject>')
-  add_protocol('__complex__',   '__complex__Owner',   'asComplex()',                  'PyObject')
-  add_protocol('__getattr__',   '__getattr__Owner',   'getAttribute(name: PyObject)', 'PyResult<PyObject>')
+        # From static methods we have hand-written '__new__' and '__init__'.
+        # We ignore others.
 
-  for protocol_name in sorted(protocols_by_name):
-    protocol = protocols_by_name[protocol_name]
-    python_name = protocol.python_name
-    protocol_name = protocol.swift_protocol_name
-    signature = protocol.swift_signature
-    print(f'private protocol {protocol_name} {{ func {signature.value} }}')
-  print()
+    # Additional protocols (none of the builtin types implement them)
+    #            python_name,     swift_protocol_name,  swift_function,                 swift_return_type
+    add_protocol('__matmul__',    '__matmul__Owner',    'matmul(_ other: PyObject)',    'PyResult<PyObject>')
+    add_protocol('__rmatmul__',   '__rmatmul__Owner',   'rmatmul(_ other: PyObject)',   'PyResult<PyObject>')
+    add_protocol('__isub__',      '__isub__Owner',      'isub(_ other: PyObject)',      'PyResult<PyObject>')
+    add_protocol('__imul__',      '__imul__Owner',      'imul(_ other: PyObject)',      'PyResult<PyObject>')
+    add_protocol('__imatmul__',   '__imatmul__Owner',   'imatmul(_ other: PyObject)',   'PyResult<PyObject>')
+    add_protocol('__itruediv__',  '__itruediv__Owner',  'itruediv(_ other: PyObject)',  'PyResult<PyObject>')
+    add_protocol('__ifloordiv__', '__ifloordiv__Owner', 'ifloordiv(_ other: PyObject)', 'PyResult<PyObject>')
+    add_protocol('__imod__',      '__imod__Owner',      'imod(_ other: PyObject)',      'PyResult<PyObject>')
+    add_protocol('__ilshift__',   '__ilshift__Owner',   'ilshift(_ other: PyObject)',   'PyResult<PyObject>')
+    add_protocol('__irshift__',   '__irshift__Owner',   'irshift(_ other: PyObject)',   'PyResult<PyObject>')
+    add_protocol('__iand__',      '__iand__Owner',      'iand(_ other: PyObject)',      'PyResult<PyObject>')
+    add_protocol('__ixor__',      '__ixor__Owner',      'ixor(_ other: PyObject)',      'PyResult<PyObject>')
+    add_protocol('__ior__',       '__ior__Owner',       'ior(_ other: PyObject)',       'PyResult<PyObject>')
+    add_protocol('__ipow__',      '__ipow__Owner',      'ipow(base: PyObject, mod: PyObject)', 'PyResult<PyObject>')
+    add_protocol('__idivmod__',   '__idivmod__Owner',   'idivmod(_ other: PyObject)',   'PyResult<PyObject>')
+    add_protocol('__complex__',   '__complex__Owner',   'asComplex()',                  'PyObject')
+    add_protocol('__getattr__',   '__getattr__Owner',   'getAttribute(name: PyObject)', 'PyResult<PyObject>')
 
-  # =====================
-  # === Has overriden ===
-  # =====================
+    for protocol_name in sorted(protocols_by_name):
+        protocol = protocols_by_name[protocol_name]
+        python_name = protocol.python_name
+        protocol_name = protocol.swift_protocol_name
+        signature = protocol.swift_signature
+        print(f'private protocol {protocol_name} {{ func {signature.value} }}')
+    print()
 
-  print('''\
+    # =====================
+    # === Has overriden ===
+    # =====================
+
+    print('''\
 // MARK: - Has overriden
 
 /// Check if the user has overriden given method.
@@ -281,45 +287,45 @@ private func hasOverridenBuiltinMethod(
 }
 ''')
 
-  # ============
-  # === Fast ===
-  # ============
+    # ============
+    # === Fast ===
+    # ============
 
-  print('// MARK: - Fast')
-  print()
-  print('internal enum Fast {')
+    print('// MARK: - Fast')
+    print()
+    print('internal enum Fast {')
 
-  for protocol_name in sorted(protocols_by_name):
-    protocol = protocols_by_name[protocol_name]
-    python_name = protocol.python_name
-    protocol_name = protocol.swift_protocol_name
+    for protocol_name in sorted(protocols_by_name):
+        protocol = protocols_by_name[protocol_name]
+        python_name = protocol.python_name
+        protocol_name = protocol.swift_protocol_name
 
-    signature = protocol.swift_signature
-    swift_function_name = signature.function_name
+        signature = protocol.swift_signature
+        swift_function_name = signature.function_name
 
-    fn_arguments = '' # technically those are called 'parameters'
-    call_arguments = ''
-    for index, arg in enumerate(signature.arguments):
-      label = arg.label # str | None
-      name = arg.name
-      typ = arg.typ
+        fn_arguments = ''  # technically those are called 'parameters'
+        call_arguments = ''
+        for index, arg in enumerate(signature.arguments):
+            label = arg.label  # str | None
+            name = arg.name
+            typ = arg.typ
 
-      is_last = index == len(signature.arguments) - 1
+            is_last = index == len(signature.arguments) - 1
 
-      fn_label = label + ' ' if label else ''
-      fn_arguments += f', {fn_label}{name}: {typ}'
+            fn_label = label + ' ' if label else ''
+            fn_arguments += f', {fn_label}{name}: {typ}'
 
-      if label is None:
-        call_label = name + ': '
-      elif label == '_':
-        call_label = ''
-      else:
-        call_label = label + ': '
+            if label is None:
+                call_label = name + ': '
+            elif label == '_':
+                call_label = ''
+            else:
+                call_label = label + ': '
 
-      call_comma = '' if is_last else ', '
-      call_arguments += f'{call_label}{name}{call_comma}'
+            call_comma = '' if is_last else ', '
+            call_arguments += f'{call_label}{name}{call_comma}'
 
-    print(f'''
+        print(f'''
   internal static func {python_name}(_ zelf: PyObject{fn_arguments}) -> {signature.return_type}? {{
     if let owner = zelf as? {protocol_name},
        !hasOverridenBuiltinMethod(object: zelf, selector: .{python_name}) {{
@@ -330,84 +336,84 @@ private func hasOverridenBuiltinMethod(
   }}\
 ''')
 
-  print('}')
-  print()
-
-  # ===================
-  # === Conformance ===
-  # ===================
-
-  print('// MARK: - Conformance')
-  print()
-
-  class ConformanceEntry:
-    def __init__(self, swift_type, swift_base_type):
-      self.swift_type = swift_type
-      self.swift_base_type = swift_base_type
-      self.protocols = []
-
-  # swift_type name pointing to ConformanceEntry
-  entries_by_swift_type = { }
-
-  for t in types:
-    python_name = t.python_type
-    swift_type = t.swift_type
-    swift_base_type = t.swift_base_type
-
-    # We will not generate conformances for 'object'
-    if t.swift_type == 'PyObject':
-      continue
-
-    entry = entries_by_swift_type.get(swift_type)
-    if not entry:
-      entry = ConformanceEntry(swift_type, swift_base_type)
-      entries_by_swift_type[swift_type] = entry
-
-    def add_protocol_conformance(protocol_name):
-      # 'protocols_by_name' - all generated protocols
-      # And special case for '__dict__'
-      protocol_exists = protocol_name in protocols_by_name or protocol_name == '__dict__Owner'
-      if protocol_exists:
-        entry.protocols.append(protocol_name)
-
-    for prop in t.properties:
-      python_name = prop.python_name
-      protocol_name = getter_protocol_name(python_name)
-      add_protocol_conformance(protocol_name)
-
-    for meth in t.methods:
-      python_name = meth.python_name
-      protocol_name = func_protocol_name(python_name)
-      add_protocol_conformance(protocol_name)
-
-  for entry in entries_by_swift_type.values():
-    swift_type = entry.swift_type
-    swift_base_type = entry.swift_base_type
-    self_protocols = entry.protocols
-
-    # Remove parent conformances
-    base = swift_base_type
-    while base:
-      base_entry = entries_by_swift_type.get(base)
-      if not base_entry:
-        base = None
-        continue
-
-      for base_protocol in base_entry.protocols:
-        if base_protocol in self_protocols:
-          self_protocols.remove(base_protocol)
-
-      base = base_entry.swift_base_type
-
-    # Print extension
-    if not self_protocols:
-      print(f'// {swift_type} does not add any new protocols to {swift_base_type}')
-      print(f'extension {swift_type} {{ }}')
-    else:
-      print(f'extension {swift_type}:')
-      for protocol in self_protocols:
-        comma = '' if protocol == self_protocols[-1] else ','
-        print(f'  {protocol}{comma}')
-      print('{ }')
-
+    print('}')
     print()
+
+    # ===================
+    # === Conformance ===
+    # ===================
+
+    print('// MARK: - Conformance')
+    print()
+
+    class ConformanceEntry:
+        def __init__(self, swift_type, swift_base_type):
+            self.swift_type = swift_type
+            self.swift_base_type = swift_base_type
+            self.protocols = []
+
+    # swift_type name pointing to ConformanceEntry
+    entries_by_swift_type = {}
+
+    for t in types:
+        python_name = t.python_type
+        swift_type = t.swift_type
+        swift_base_type = t.swift_base_type
+
+        # We will not generate conformances for 'object'
+        if t.swift_type == 'PyObject':
+            continue
+
+        entry = entries_by_swift_type.get(swift_type)
+        if not entry:
+            entry = ConformanceEntry(swift_type, swift_base_type)
+            entries_by_swift_type[swift_type] = entry
+
+        def add_protocol_conformance(protocol_name):
+            # 'protocols_by_name' - all generated protocols
+            # And special case for '__dict__'
+            protocol_exists = protocol_name in protocols_by_name or protocol_name == '__dict__Owner'
+            if protocol_exists:
+                entry.protocols.append(protocol_name)
+
+        for prop in t.properties:
+            python_name = prop.python_name
+            protocol_name = getter_protocol_name(python_name)
+            add_protocol_conformance(protocol_name)
+
+        for meth in t.methods:
+            python_name = meth.python_name
+            protocol_name = func_protocol_name(python_name)
+            add_protocol_conformance(protocol_name)
+
+    for entry in entries_by_swift_type.values():
+        swift_type = entry.swift_type
+        swift_base_type = entry.swift_base_type
+        self_protocols = entry.protocols
+
+        # Remove parent conformances
+        base = swift_base_type
+        while base:
+            base_entry = entries_by_swift_type.get(base)
+            if not base_entry:
+                base = None
+                continue
+
+            for base_protocol in base_entry.protocols:
+                if base_protocol in self_protocols:
+                    self_protocols.remove(base_protocol)
+
+            base = base_entry.swift_base_type
+
+        # Print extension
+        if not self_protocols:
+            print(f'// {swift_type} does not add any new protocols to {swift_base_type}')
+            print(f'extension {swift_type} {{ }}')
+        else:
+            print(f'extension {swift_type}:')
+            for protocol in self_protocols:
+                comma = '' if protocol == self_protocols[-1] else ','
+                print(f'  {protocol}{comma}')
+            print('{ }')
+
+        print()

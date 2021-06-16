@@ -4,13 +4,13 @@ from Common.errors import where_to_find_it_in_cpython
 from Common.strings import generated_warning
 from TypeMemoryLayout import get_layout_name
 from Common.builtin_types import (
-  get_property_name_escaped,
-  get_fill_function_name, print_fill_type_method,
-  print_fill_helpers, get_downcast_function_name, print_downcast_function
+    get_property_name_escaped,
+    get_fill_function_name, print_fill_type_method,
+    print_fill_helpers, get_downcast_function_name, print_downcast_function
 )
 
 if __name__ == '__main__':
-  print(f'''\
+    print(f'''\
 import VioletCore
 
 // swiftlint:disable line_length
@@ -27,77 +27,78 @@ import VioletCore
 // See 'BuiltinTypes' for reasoning.\
 ''')
 
-  print('public final class BuiltinErrorTypes {')
-  print()
+    print('public final class BuiltinErrorTypes {')
+    print()
 
-  all_types = get_types()
-  def get_type(e):
-    python_type = e.class_name
-    for t in all_types:
-      if t.python_type == python_type:
-        return t
+    all_types = get_types()
 
-    assert False, f"Type not found: '{python_type}'"
+    def get_type(e):
+        python_type = e.class_name
+        for t in all_types:
+            if t.python_type == python_type:
+                return t
 
-  # Errors in 'data' are in the correct order (parent is before its subclasses).
-  types = list(map(get_type, data))
+        assert False, f"Type not found: '{python_type}'"
 
-  def get_base_type(t):
-    swift_base_type = t.swift_base_type
-    for other in all_types:
-      if other.swift_type == swift_base_type:
-        return other
+    # Errors in 'data' are in the correct order (parent is before its subclasses).
+    types = list(map(get_type, data))
 
-    assert False, f"Unable to find base type of: '{t.swift_type}'"
+    def get_base_type(t):
+        swift_base_type = t.swift_base_type
+        for other in all_types:
+            if other.swift_type == swift_base_type:
+                return other
 
-  # ==================
-  # === Properties ===
-  # ==================
+        assert False, f"Unable to find base type of: '{t.swift_type}'"
 
-  print('  // MARK: - Properties')
-  print()
+    # ==================
+    # === Properties ===
+    # ==================
 
-  for t in types:
-    python_type = t.python_type
-    property_name = get_property_name_escaped(python_type)
-    print(f'  public let {property_name}: PyType')
+    print('  // MARK: - Properties')
+    print()
 
-  print()
+    for t in types:
+        python_type = t.python_type
+        property_name = get_property_name_escaped(python_type)
+        print(f'  public let {property_name}: PyType')
 
-  # ============
-  # === Init ===
-  # ============
+    print()
 
-  print('  // MARK: - Stage 1 - init')
-  print()
+    # ============
+    # === Init ===
+    # ============
 
-  print('  /// Init that will only initialize properties.')
-  print('  internal init() {')
-  print('    let types = Py.types')
+    print('  // MARK: - Stage 1 - init')
+    print()
 
-  for t in types:
-    python_type = t.python_type
+    print('  /// Init that will only initialize properties.')
+    print('  internal init() {')
+    print('    let types = Py.types')
 
-    if python_type == 'BaseException':
-      base_property = 'types.object'
-    else:
-      base_type = get_base_type(t)
-      base_property = 'self.' + get_property_name_escaped(base_type.python_type)
+    for t in types:
+        python_type = t.python_type
 
-    layout = get_layout_name(t)
-    property_name = get_property_name_escaped(python_type)
-    print(f'    self.{property_name} = PyType.initBuiltinType(name: "{python_type}", type: types.type, base: {base_property}, layout: .{layout})')
-  print('  }')
-  print()
+        if python_type == 'BaseException':
+            base_property = 'types.object'
+        else:
+            base_type = get_base_type(t)
+            base_property = 'self.' + get_property_name_escaped(base_type.python_type)
 
-  # ====================
-  # === fill__dict__ ===
-  # ====================
+        layout = get_layout_name(t)
+        property_name = get_property_name_escaped(python_type)
+        print(f'    self.{property_name} = PyType.initBuiltinType(name: "{python_type}", type: types.type, base: {base_property}, layout: .{layout})')
+    print('  }')
+    print()
 
-  print('  // MARK: - Stage 2 - fill __dict__')
-  print()
+    # ====================
+    # === fill__dict__ ===
+    # ====================
 
-  print('''\
+    print('  // MARK: - Stage 2 - fill __dict__')
+    print()
+
+    print('''\
   /// This function finalizes init of all of the stored types.
   /// (see comment at the top of this file)
   ///
@@ -108,43 +109,43 @@ import VioletCore
   internal func fill__dict__() {\
 ''')
 
-  for t in types:
-    python_type = t.python_type
-    fill_function = get_fill_function_name(t)
-    print(f'    self.{fill_function}()')
+    for t in types:
+        python_type = t.python_type
+        fill_function = get_fill_function_name(t)
+        print(f'    self.{fill_function}()')
 
-  print('  }')
-  print()
+    print('  }')
+    print()
 
-  # ===========
-  # === all ===
-  # ===========
+    # ===========
+    # === all ===
+    # ===========
 
-  print('  // MARK: - All')
-  print()
+    print('  // MARK: - All')
+    print()
 
-  print('''\
+    print('''\
   internal var all: [PyType] {
     return [\
 ''')
 
-  for t in types:
-    python_type = t.python_type
-    property_name_escaped = get_property_name_escaped(python_type)
-    print(f'      self.{property_name_escaped},')
+    for t in types:
+        python_type = t.python_type
+        property_name_escaped = get_property_name_escaped(python_type)
+        print(f'      self.{property_name_escaped},')
 
-  print('    ]')
-  print('  }')
-  print()
+    print('    ]')
+    print('  }')
+    print()
 
-  # ============================
-  # === fill__dict__ methods ===
-  # ============================
+    # ============================
+    # === fill__dict__ methods ===
+    # ============================
 
-  print_fill_helpers()
+    print_fill_helpers()
 
-  for t in types:
-    print_fill_type_method(t)
-    print_downcast_function(t)
+    for t in types:
+        print_fill_type_method(t)
+        print_downcast_function(t)
 
-  print('}')
+    print('}')
