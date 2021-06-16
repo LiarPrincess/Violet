@@ -103,10 +103,10 @@ extension Eval {
       __exit__ = self.stack.pop()
       PushFinallyReason.push(.return(value), on: &self.frame.stack)
 
-    case let .continue(loopStartLabel: _, asObject: label):
+    case let .continue(loopStartLabelIndex: _, asObject: index):
       // we were continuing
       __exit__ = self.stack.pop()
-      PushFinallyReason.push(.continuePy(loopStartLabel: label), on: &self.frame.stack)
+      PushFinallyReason.push(.continuePy(loopStartLabelIndex: index), on: &self.frame.stack)
 
     case .break:
       __exit__ = self.stack.pop()

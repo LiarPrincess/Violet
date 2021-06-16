@@ -61,8 +61,8 @@ extension Eval {
     case .break:
       return .break // We are still 'breaking'
 
-    case let .continue(loopStartLabel: label, asObject: _):
-      return .continue(loopStartLabel: label)
+    case let .continue(loopStartLabelIndex: index, asObject: _):
+      return .continue(loopStartLabelIndex: index)
 
     case let .exception(e):
       // We are still handling the same exception

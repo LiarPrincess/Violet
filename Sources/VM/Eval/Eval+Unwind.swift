@@ -17,7 +17,7 @@ internal enum UnwindReason {
   case `break`
   /// Instruction requested a `continue`.
   /// We will unwind and jump to the beginning of the nearest loop.
-  case `continue`(loopStartLabel: Int)
+  case `continue`(loopStartLabelIndex: Int)
   /// Instruction raised an error.
   /// We will unwind trying to handle it (try-except and finally blocks).
   /// If that fails we will report this error to parent frame.
@@ -61,7 +61,7 @@ extension Eval {
     while let block = self.blockStack.current {
       switch block.kind {
       case let .setupLoop(loopEndLabelIndex: loopEndLabelIndex):
-        if case let .continue(loopStartLabel: loopStartLabel) = reason {
+        if case let .continue(loopStartLabelIndex: loopStartLabelIndex) = reason {
           // Do not unwind! We are still in a loop! The stack stays the same!
           //
           // for princess in ['elsa', 'ariel']:
@@ -69,7 +69,7 @@ extension Eval {
           //   <load 'next' from iterator and put it as 'princess'>
           //   print(princess)
           //   continue
-          self.jumpTo(instructionIndex: loopStartLabel)
+          self.jumpTo(labelIndex: loopStartLabelIndex)
           return .continueCodeExecution
         }
 

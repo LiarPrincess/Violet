@@ -18,8 +18,8 @@ internal enum InstructionResult {
   }
 
   /// `UnwindReason.continue`
-  internal static func `continue`(loopStartLabel: Int) -> InstructionResult {
-    return .unwind(.continue(loopStartLabel: loopStartLabel))
+  internal static func `continue`(loopStartLabelIndex: Int) -> InstructionResult {
+    return .unwind(.continue(loopStartLabelIndex: loopStartLabelIndex))
   }
 
   /// `UnwindReason.exception`

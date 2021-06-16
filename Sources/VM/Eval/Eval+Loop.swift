@@ -68,7 +68,6 @@ extension Eval {
   /// `loopStartLabel` is the address to jump to
   /// (which should be a `ForIter` instruction).
   internal func doContinue(loopStartLabelIndex: Int) -> InstructionResult {
-    let label = self.getInstructionIndexToJumpTo(labelIndex: loopStartLabelIndex)
-    return .continue(loopStartLabel: label)
+    return .continue(loopStartLabelIndex: loopStartLabelIndex)
   }
 }
