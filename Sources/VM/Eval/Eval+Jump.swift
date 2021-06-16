@@ -80,17 +80,15 @@ extension Eval {
     self.frame.nextInstructionIndex = instructionIndex
   }
 
-  private func popJumpIf(_ cond: Bool, to labelIndex: Int) {
-    if cond {
-      let label = self.getInstructionIndexToJumpTo(labelIndex: labelIndex)
-      self.jumpTo(instructionIndex: label)
+  private func popJumpIf(_ condition: Bool, to labelIndex: Int) {
+    if condition {
+      self.jumpTo(labelIndex: labelIndex)
     }
   }
 
-  private func jumpIfOrPop(_ cond: Bool, to labelIndex: Int) {
-    if cond {
-      let label = self.getInstructionIndexToJumpTo(labelIndex: labelIndex)
-      self.jumpTo(instructionIndex: label)
+  private func jumpIfOrPop(_ condition: Bool, to labelIndex: Int) {
+    if condition {
+      self.jumpTo(labelIndex: labelIndex)
     } else {
       _ = self.stack.pop()
     }

@@ -13,17 +13,18 @@ internal enum UnwindReason {
   /// We will unwind and the return `value`.
   case `return`(PyObject)
   /// Instruction requested a `break`.
-  /// We will unwind stopping at nearest loop.
+  /// We will unwind and jump after the nearest loop.
   case `break`
   /// Instruction requested a `continue`.
-  /// We will unwind stopping at nearest loop.
+  /// We will unwind and jump to the beginning of the nearest loop.
   case `continue`(loopStartLabel: Int)
   /// Instruction raised an error.
   /// We will unwind trying to handle it (try-except and finally blocks).
+  /// If that fails we will report this error to parent frame.
   case exception(PyBaseException, fillTracebackAndContext: Bool)
   /// 'yield' operator
   case yield
-  /// Exception silenced by 'with'
+  /// Exception silenced by `with`.
   ///
   /// It happens when `__exit__` returns 'truthy' value.
   case silenced
@@ -59,8 +60,8 @@ extension Eval {
 
     while let block = self.blockStack.current {
       switch block.kind {
-      case let .setupLoop(endLabel):
-        if case let .continue(loopStartLabel) = reason {
+      case let .setupLoop(loopEndLabelIndex: loopEndLabelIndex):
+        if case let .continue(loopStartLabel: loopStartLabel) = reason {
           // Do not unwind! We are still in a loop! The stack stays the same!
           //
           // for princess in ['elsa', 'ariel']:
@@ -89,11 +90,11 @@ extension Eval {
         //   break
         // <endLabel will put us here>
         if case .break = reason {
-          self.jumpTo(instructionIndex: endLabel)
+          self.jumpTo(labelIndex: loopEndLabelIndex)
           return .continueCodeExecution
         }
 
-      case let .setupExcept(firstExceptLabel):
+      case let .setupExcept(firstExceptLabelIndex: firstExceptLabelIndex):
         // We will be leaving the 'try' part (even if the reason is not an exception),
         // which means that anything done inside 'try' should be popped.
         //
@@ -116,12 +117,12 @@ extension Eval {
         //   pass
         if case let .exception(e, _) = reason {
           self.pushExceptHandlerBlock()
-          self.pushCurrentlyHandledExceptionOntoTheStackAndSetNew(exception: e)
-          self.jumpTo(instructionIndex: firstExceptLabel) // execute except
+          self.pushCurrentlyHandledExceptionOntoTheStack(newCurrentlyHandledException: e)
+          self.jumpTo(labelIndex: firstExceptLabelIndex) // execute except
           return .continueCodeExecution
         }
 
-      case let .setupFinally(finallyStartLabel):
+      case let .setupFinally(finallyStartLabelIndex: finallyStartLabelIndex):
         // Similar to 'setupExcept'.
         _ = self.blockStack.pop()
         self.unwindStackToMatchTheOneBeforeBlock(block: block)
@@ -129,8 +130,8 @@ extension Eval {
         // Similar to 'setupExcept'.
         if case let .exception(e, _) = reason {
           self.pushExceptHandlerBlock() // Even though this is 'finally'
-          self.pushCurrentlyHandledExceptionOntoTheStackAndSetNew(exception: e)
-          self.jumpTo(instructionIndex: finallyStartLabel) // execute finally
+          self.pushCurrentlyHandledExceptionOntoTheStack(newCurrentlyHandledException: e)
+          self.jumpTo(labelIndex: finallyStartLabelIndex) // execute finally
           return .continueCodeExecution
         }
 
@@ -145,7 +146,7 @@ extension Eval {
 
         // See 'PushFinallyReason' type for comment about what this is.
         PushFinallyReason.push(reason: reason, on: &self.frame.stack)
-        self.jumpTo(instructionIndex: finallyStartLabel) // execute finally
+        self.jumpTo(labelIndex: finallyStartLabelIndex) // execute finally
         return .continueCodeExecution
 
       case .exceptHandler:
@@ -206,8 +207,8 @@ extension Eval {
 
   // MARK: - Push currently handled exception onto the stack and set new
 
-  private func pushCurrentlyHandledExceptionOntoTheStackAndSetNew(
-    exception: PyBaseException
+  private func pushCurrentlyHandledExceptionOntoTheStack(
+    newCurrentlyHandledException: PyBaseException
   ) {
     // Called when we start 'except' or 'finally' block:
     // try:
@@ -221,8 +222,8 @@ extension Eval {
     let currentOrNil = self.currentlyHandledException
     PushExceptionBeforeExcept.push(currentOrNil, on: &self.frame.stack)
 
-    self.setCurrentlyHandledException(exception: exception)
-    self.stack.push(exception)
+    self.setCurrentlyHandledException(exception: newCurrentlyHandledException)
+    self.stack.push(newCurrentlyHandledException)
   }
 
   // MARK: - Unwind stack to match the one before block

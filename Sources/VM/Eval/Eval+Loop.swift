@@ -8,9 +8,10 @@ extension Eval {
   /// Pushes a block for a loop onto the block stack.
   /// The block spans from the current instruction up until `loopEndLabel`.
   internal func setupLoop(loopEndLabelIndex: Int) -> InstructionResult {
-    let label = self.getInstructionIndexToJumpTo(labelIndex: loopEndLabelIndex)
-    let block = Block(kind: .setupLoop(endLabel: label),
-                      stackCount: self.stack.count)
+    let block = Block(
+      kind: .setupLoop(loopEndLabelIndex: loopEndLabelIndex),
+      stackCount: self.stack.count
+    )
 
     self.blockStack.push(block: block)
     return .ok

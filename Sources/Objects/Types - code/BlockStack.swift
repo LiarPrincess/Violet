@@ -5,19 +5,19 @@ import VioletCore
 public struct Block: CustomStringConvertible {
 
   public enum Kind: CustomStringConvertible {
-    case setupLoop(endLabel: Int)
-    case setupExcept(firstExceptLabel: Int)
-    case setupFinally(finallyStartLabel: Int)
+    case setupLoop(loopEndLabelIndex: Int)
+    case setupExcept(firstExceptLabelIndex: Int)
+    case setupFinally(finallyStartLabelIndex: Int)
     case exceptHandler
 
     public var description: String {
       switch self {
-      case let .setupLoop(endLabel: value):
-        return "setupLoop(endLabel: \(value))"
-      case let .setupExcept(firstExceptLabel: value):
-        return "setupExcept(firstExceptLabel: \(value))"
-      case let .setupFinally(finallyStartLabel: value):
-        return "setupFinally(finallyStartLabel: \(value))"
+      case let .setupLoop(loopEndLabelIndex: index):
+        return "setupLoop(loopEndLabelIndex: \(index))"
+      case let .setupExcept(firstExceptLabelIndex: index):
+        return "setupExcept(firstExceptLabelIndex: \(index))"
+      case let .setupFinally(finallyStartLabelIndex: index):
+        return "setupFinally(finallyStartLabelIndex: \(index))"
       case .exceptHandler:
         return "exceptHandler"
       }

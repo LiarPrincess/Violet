@@ -37,9 +37,10 @@ extension Eval {
     switch Py.call(callable: __enter__) {
     case let .value(res):
       // Setup the finally block before pushing the result of __enter__ on the stack.
-      let label = self.getInstructionIndexToJumpTo(labelIndex: afterBodyLabelIndex)
-      let block = Block(kind: .setupFinally(finallyStartLabel: label),
-                        stackCount: self.stack.count)
+      let block = Block(
+        kind: .setupFinally(finallyStartLabelIndex: afterBodyLabelIndex),
+        stackCount: self.stack.count
+      )
       self.blockStack.push(block: block)
 
       self.stack.push(res)
