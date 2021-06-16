@@ -30,9 +30,9 @@ extension Eval {
   /// Calls `list.append(TOS[-i], TOS)`.
   /// Container object remains on the stack.
   /// Used to implement list comprehensions.
-  internal func listAdd(value: Int) -> InstructionResult {
+  internal func listAdd(stackIndex: Int) -> InstructionResult {
     let element = self.stack.pop()
-    let list = self.stack.top
+    let list = self.stack.peek(stackIndex)
 
     switch Py.add(list: list, element: element) {
     case .value:
@@ -60,9 +60,9 @@ extension Eval {
   /// Calls `set.add(TOS1[-i], TOS)`.
   /// Container object remains on the stack.
   /// Used to implement set comprehensions.
-  internal func setAdd(value: Int) -> InstructionResult {
+  internal func setAdd(stackIndex: Int) -> InstructionResult {
     let element = self.stack.pop()
-    let set = self.stack.top
+    let set = self.stack.peek(stackIndex)
 
     switch Py.add(set: set, value: element) {
     case .value:
@@ -126,10 +126,10 @@ extension Eval {
   /// Calls `dict.setitem(TOS1[-i], TOS, TOS1)`.
   /// Container object remains on the stack.
   /// Used to implement dict comprehensions.
-  internal func mapAdd(value: Int) -> InstructionResult {
+  internal func mapAdd(stackIndex: Int) -> InstructionResult {
     let key = self.stack.pop()
     let value = self.stack.pop()
-    let map = self.stack.top
+    let map = self.stack.peek(stackIndex)
 
     switch Py.add(dict: map, key: key, value: value) {
     case .value:
@@ -143,21 +143,20 @@ extension Eval {
 
   /// Pushes a slice object on the stack.
   internal func buildSlice(arg: Instruction.SliceArg) -> InstructionResult {
-    let step = self.getSliceStep(arg: arg)
+    let step: PyObject? = {
+      switch arg {
+      case .lowerUpper:
+        return nil
+      case .lowerUpperStep:
+        return self.stack.pop()
+      }
+    }()
+
     let stop = self.stack.pop()
     let start = self.stack.top
 
     let slice = Py.newSlice(start: start, stop: stop, step: step)
     self.stack.top = slice
     return .ok
-  }
-
-  private func getSliceStep(arg: Instruction.SliceArg) -> PyObject? {
-    switch arg {
-    case .lowerUpper:
-      return nil
-    case .lowerUpperStep:
-      return self.stack.pop()
-    }
   }
 }
