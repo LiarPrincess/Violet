@@ -18,6 +18,8 @@ public class PyEllipsis: PyObject {
   // MARK: - Init
 
   override internal init() {
+    // 'ellipsis' has only 1 instance and can't be subclassed,
+    // so we can just pass the correct type to 'super.init'.
     super.init(type: Py.types.ellipsis)
   }
 

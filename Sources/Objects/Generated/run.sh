@@ -77,6 +77,11 @@ python3 $GENERATED/Fast.py > $GENERATED/Fast.swift
 echo 'Generating PyCast (methods for casting PyObject -> swift specific type)'
 python3 $GENERATED/PyCast.py > $GENERATED/PyCast.swift
 
+# === Memory ===
+# Helper for allocating new object instances.
+echo 'Generating PyMemory (helper for allocating new object instances)'
+python3 $GENERATED/PyMemory.py > $GENERATED/PyMemory.swift
+
 # === IdString ===
 # Predefined commonly used `__dict__` keys.
 # Similar to `_Py_IDENTIFIER` in `CPython`.

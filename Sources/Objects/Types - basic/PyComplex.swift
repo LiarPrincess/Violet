@@ -36,7 +36,6 @@ public class PyComplex: PyObject {
     super.init(type: Py.types.complex)
   }
 
-  /// Use only in `__new__`!
   internal init(type: PyType, real: Double, imag: Double) {
     self.real = real
     self.imag = imag
@@ -519,18 +518,14 @@ public class PyComplex: PyObject {
       return .value(complex)
     }
 
-    let isBuiltin = type === Py.types.complex
-    let alloca = isBuiltin ?
-      PyComplex.init(type:real:imag:) :
-      PyComplexHeap.init(type:real:imag:)
-
     let arg0String = arg0.flatMap(PyCast.asString(_:))
     if let str = arg0String {
       guard arg1 == nil else {
         return .typeError("complex() can't take second arg if first is a string")
       }
 
-      return PyComplex.parse(str.value).map { alloca(type, $0.real, $0.imag) }
+      let parsed = PyComplex.parse(str.value)
+      return parsed.map { Self.allocate(type: type, real: $0.real, imag: $0.imag) }
     }
 
     let arg1IsString = arg1.flatMap(PyCast.isString(_:)) ?? false
@@ -559,8 +554,17 @@ public class PyComplex: PyObject {
     }
 
     // a + b * j = (a.r + a.i) + (b.r + b.i) * j = (a.r - b.i) + (a.i + b.r)j
-    let result = alloca(type, a.real - b.imag, a.imag + b.real)
+    let result = Self.allocate(type: type, real: a.real - b.imag, imag: a.imag + b.real)
     return .value(result)
+  }
+
+  private static func allocate(type: PyType, real:Double, imag: Double) -> PyComplex {
+    // If this is a builtin then try to re-use interned values
+    // (do we even have interned complex?)
+    let isBuiltin = type === Py.types.complex
+    return isBuiltin ?
+      Py.newComplex(real: real, imag: imag) :
+      PyComplexHeap(type: type, real: real, imag: imag)
   }
 
   /// A valid complex string usually takes one of the three forms:

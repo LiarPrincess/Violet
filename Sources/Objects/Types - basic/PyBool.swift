@@ -41,6 +41,8 @@ public class PyBool: PyInt {
   // MARK: - Init
 
   internal init(value: Bool) {
+    // 'bool' has only 2 instances and can't be subclassed,
+    // so we can just pass the correct type to 'super.init'.
     super.init(type: Py.types.bool, value: BigInt(value ? 1 : 0))
   }
 
@@ -166,7 +168,7 @@ public class PyBool: PyInt {
   // sourcery: pystaticmethod = __new__
   internal static func pyBoolNew(type: PyType,
                                  args: [PyObject],
-                                 kwargs: PyDict?) -> PyResult<PyInt> {
+                                 kwargs: PyDict?) -> PyResult<PyBool> {
     if let e = ArgumentParser.noKwargsOrError(fnName: "bool", kwargs: kwargs) {
       return .error(e)
     }
@@ -182,9 +184,6 @@ public class PyBool: PyInt {
       return .value(Py.false)
     }
 
-    // The result is actually 'PyBool', but we are overriding 'PyInt.pyNew'
-    // so we have to have the same result type.
-    let result = Py.isTrue(args[0])
-    return result.map { $0 as PyInt }
+    return Py.isTrue(args[0])
   }
 }

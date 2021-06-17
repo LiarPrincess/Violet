@@ -16,11 +16,11 @@ extension PyInstance {
   }
 
   public func newInt(_ value: Int) -> PyInt {
-    return self.getInterned(int: value) ?? PyInt(value: value)
+    return self.getInterned(int: value) ?? PyMemory.newInt(value: BigInt(value))
   }
 
   public func newInt(_ value: BigInt) -> PyInt {
-    return self.getInterned(int: value) ?? PyInt(value: value)
+    return self.getInterned(int: value) ?? PyMemory.newInt(value: value)
   }
 
   /// PyObject *
@@ -54,13 +54,13 @@ extension PyInstance {
   // MARK: - Float
 
   public func newFloat(_ value: Double) -> PyFloat {
-    return PyFloat(value: value)
+    return PyMemory.newFloat(value: value)
   }
 
   // MARK: - Complex
 
   public func newComplex(real: Double, imag: Double) -> PyComplex {
-    return PyComplex(real: real, imag: imag)
+    return PyMemory.newComplex(real: real, imag: imag)
   }
 
   // MARK: - String
@@ -102,7 +102,7 @@ extension PyInstance {
   }
 
   public func newNamespace(dict: PyDict) -> PyNamespace {
-    return PyNamespace(dict: dict)
+    return PyMemory.newNamespace(dict: dict)
   }
 
   // MARK: - Dict

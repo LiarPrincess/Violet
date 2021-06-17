@@ -15,6 +15,8 @@ public class PyNone: PyObject, HasCustomGetMethod {
   // MARK: - Init
 
   override internal init() {
+    // 'none' has only 1 instance and can't be subclassed,
+    // so we can just pass the correct type to 'super.init'.
     super.init(type: Py.types.none)
   }
 

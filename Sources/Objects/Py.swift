@@ -115,13 +115,13 @@ public final class PyInstance {
   // MARK: - Builtins
 
   /// Interned `true` value.
-  public private(set) lazy var `true` = PyBool(value: true)
+  public private(set) lazy var `true` = PyMemory.newBool(value: true)
   /// Interned `false` value.
-  public private(set) lazy var `false` = PyBool(value: false)
+  public private(set) lazy var `false` = PyMemory.newBool(value: false)
   /// Interned `None` value.
-  public private(set) lazy var none = PyNone()
+  public private(set) lazy var none = PyMemory.newNone()
   /// Interned `ellipsis (...)` value.
-  public private(set) lazy var ellipsis = PyEllipsis()
+  public private(set) lazy var ellipsis = PyMemory.newEllipsis()
   /// Interned empty `tuple` value (because `tuple` is immutable).
   public private(set) lazy var emptyTuple = PyTuple(elements: [])
   /// Interned empty `str` value (because `str` is immutable).
@@ -131,7 +131,7 @@ public final class PyInstance {
   /// Interned empty `frozenset` value (because `frozenset` is immutable).
   public private(set) lazy var emptyFrozenSet = PyFrozenSet()
   /// Interned `NotImplemented` value.
-  public private(set) lazy var notImplemented = PyNotImplemented()
+  public private(set) lazy var notImplemented = PyMemory.newNotImplemented()
 
   // MARK: - Modules
 
@@ -338,7 +338,9 @@ public final class PyInstance {
 
   private static let smallIntRange = -10...255
 
-  private lazy var smallInts = PyInstance.smallIntRange.map { PyInt(value: $0) }
+  private lazy var smallInts = PyInstance.smallIntRange.map {
+    PyMemory.newInt(value: BigInt($0))
+  }
 
   /// Get cached `int`.
   /// Note that not all of the `ints` are interned.

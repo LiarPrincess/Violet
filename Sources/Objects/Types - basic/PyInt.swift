@@ -43,16 +43,11 @@ public class PyInt: PyObject {
 
   // MARK: - Init
 
-  internal convenience init(value: Int) {
-    self.init(value: BigInt(value))
-  }
-
   internal init(value: BigInt) {
     self.value = value
     super.init(type: Py.types.int)
   }
 
-  /// Use only in PyBool or `__new__`!
   internal init(type: PyType, value: BigInt) {
     self.value = value
     super.init(type: type)
@@ -955,21 +950,19 @@ public class PyInt: PyObject {
   private static func pyIntNew(type: PyType,
                                object: PyObject?,
                                base: PyObject?) -> PyResult<PyInt> {
-    let isBuiltin = type === Py.types.int
-    let alloca = isBuiltin ? Self.newInt(type:value:) : PyIntHeap.init(type:value:)
-
     // If we do not have 1st argument -> 0
     guard let object = object else {
       if base != nil {
         return .typeError("int() missing string argument")
       }
 
-      return .value(alloca(type, 0))
+      return .value(Self.allocate(type: type, value: 0))
     }
 
     // If we do not have base -> try to cast 'object' as 'int'
     guard let base = base else {
-      return Self.parseBigInt(objectWithoutBase: object).map { alloca(type, $0) }
+      let parsed = Self.parseBigInt(objectWithoutBase: object)
+      return parsed.map { Self.allocate(type: type, value: $0) }
     }
 
     // Check if base is 'int'
@@ -989,7 +982,7 @@ public class PyInt: PyObject {
 
     // Parse 'object' with a given 'base'
     switch Self.parseBigInt(string: object, base: baseInt) {
-    case .value(let v): return .value(alloca(type, v))
+    case .value(let v): return .value(Self.allocate(type: type, value: v))
     case .notString: break
     case .error(let e): return .error(e)
     }
@@ -997,9 +990,12 @@ public class PyInt: PyObject {
     return .typeError("int() can't convert non-string with explicit base")
   }
 
-  /// Allocate new PyInt (it will use 'builtins' cache if possible).
-  private static func newInt(type: PyType, value: BigInt) -> PyInt {
-    return Py.newInt(value)
+  private static func allocate(type: PyType, value: BigInt) -> PyInt {
+    // If this is a builtin then try to re-use interned values
+    let isBuiltin = type === Py.types.int
+    return isBuiltin ?
+      Py.newInt(value):
+      PyIntHeap(type: type, value: value)
   }
 
   /// PyObject *

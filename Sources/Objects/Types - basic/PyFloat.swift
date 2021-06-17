@@ -79,7 +79,6 @@ public class PyFloat: PyObject {
     super.init(type: Py.types.float)
   }
 
-  /// Use only in `__new__`!
   internal init(type: PyType, value: Double) {
     self.value = value
     super.init(type: type)
@@ -795,29 +794,34 @@ public class PyFloat: PyObject {
       return .error(e)
     }
 
-    let alloca = isBuiltin ?
-      PyFloat.init(type:value:) :
-      PyFloatHeap.init(type:value:)
-
     if args.isEmpty {
-      return .value(alloca(type, 0.0))
+      return .value(Self.allocate(type: type, value: 0.0))
     }
 
     let arg0 = args[0]
     switch Self.pyNew(fromString: arg0) {
-    case .value(let d): return .value(alloca(type, d))
+    case .value(let d): return .value(Self.allocate(type: type, value: d))
     case .notString: break
     case .error(let e): return .error(e)
     }
 
     switch Self.pyNew(fromNumber: arg0) {
-    case .value(let d): return .value(alloca(type, d))
+    case .value(let d): return .value(Self.allocate(type: type, value: d))
     case .notNumber: break
     case .error(let e): return .error(e)
     }
 
     let msg = "float() argument must be a string, or a number, not '\(arg0.typeName)'"
     return .typeError(msg)
+  }
+
+  private static func allocate(type: PyType, value: Double) -> PyFloat {
+    // If this is a builtin then try to re-use interned values
+    // (do we even have interned floats?)
+    let isBuiltin = type === Py.types.float
+    return isBuiltin ?
+      Py.newFloat(value):
+      PyFloatHeap(type: type, value: value)
   }
 
   private enum DoubleFromString {

@@ -21,6 +21,8 @@ public class PyNamespace: PyObject {
   // MARK: - Init
 
   internal init(dict: PyDict) {
+    // 'namespace' can't be subclassed,
+    // so we can just pass the correct type to 'super.init'.
     self.__dict__ = dict
     super.init(type: Py.types.simpleNamespace)
   }

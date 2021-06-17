@@ -1,7 +1,7 @@
 import os
 from typing import List, Union
 
-from Sourcery.entities import TypeInfo, SwiftFieldInfo, PyPropertyInfo, PyFunctionInfo
+from Sourcery.entities import SwiftInitInfo, TypeInfo, SwiftFieldInfo, PyPropertyInfo, PyFunctionInfo
 from Sourcery.validation import run as run_validation
 
 
@@ -63,6 +63,14 @@ def get_types() -> List[TypeInfo]:
 
                 field = SwiftFieldInfo(swift_field_name, swift_field_type)
                 current_type.swift_fields.append(field)
+
+            elif line_type == 'SwiftInit':
+                assert current_type
+                assert len(split) == 2
+
+                swift_selector_with_types = split[1]
+                init = SwiftInitInfo(swift_selector_with_types)
+                current_type.swift_initializers.append(init)
 
             elif line_type == 'PyProperty':
                 assert current_type

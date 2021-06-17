@@ -24,6 +24,7 @@ class TypeInfo:
 
         # Properties, methods - to be filled later
         self.swift_fields: List[SwiftFieldInfo] = []
+        self.swift_initializers: List[SwiftInitInfo] = []
         self.python_properties: List[PyPropertyInfo] = []
         self.python_methods: List[PyFunctionInfo] = []
         self.python_static_functions: List[PyFunctionInfo] = []
@@ -40,6 +41,40 @@ class SwiftFieldInfo:
                  swift_field_type: str):
         self.swift_field_name = swift_field_name
         self.swift_field_type = swift_field_type
+
+
+def _create_selector(signature: SignatureInfo) -> str:
+    result = signature.name
+    if signature.arguments:
+        result += '('
+
+        for arg in signature.arguments:
+            label = arg.label or arg.name
+            result += label + ':'
+
+        result += ')'
+
+    return result
+
+
+class SwiftInitInfo:
+    '''
+    Swift init function.
+    '''
+
+    def __init__(self,
+                 selector_with_types: str):
+        signature = SignatureInfo(selector_with_types, '')
+        assert signature.name == 'init'
+        assert signature.return_type == ''
+
+        self.arguments = signature.arguments
+        # Function name with full arguments.
+        # For example: foo(bar: Int)
+        self.selector_with_types = signature.selector_with_types
+        # Function name with arguments.
+        # For example: foo(bar:)
+        self.swift_selector = _create_selector(signature)
 
 
 class PyPropertyInfo:
@@ -89,21 +124,9 @@ class PyFunctionInfo:
         self.swift_name = signature.name
         self.swift_return_type = signature.return_type
         self.swift_arguments = signature.arguments
-
         # Function name with full arguments.
         # For example: foo(bar: Int)
         self.swift_selector_with_types = signature.selector_with_types
-
         # Function name with arguments.
         # For example: foo(bar:)
-        selector = signature.name
-        if signature.arguments:
-            selector += '('
-
-            for arg in signature.arguments:
-                label = arg.label or arg.name
-                selector += label + ':'
-
-            selector += ')'
-
-        self.swift_selector = selector
+        self.swift_selector = _create_selector(signature)
