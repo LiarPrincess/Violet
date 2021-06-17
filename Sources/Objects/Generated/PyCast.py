@@ -42,9 +42,8 @@ public enum PyCast {{
             continue
 
         python_type = t.python_type
-        builtin_property = get_builtin_type_property_name(python_type)
-
         builtin_types = 'Py.errorTypes' if t.is_error else 'Py.types'
+        builtin_property = get_builtin_type_property_name(python_type)
 
         print(f'''
   // MARK: - {swift_type_without_py}

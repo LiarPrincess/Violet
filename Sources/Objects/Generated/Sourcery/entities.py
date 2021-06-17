@@ -1,5 +1,7 @@
 from typing import List, Union
 
+from Sourcery.signature import SignatureInfo
+
 
 class TypeInfo:
     '''
@@ -77,17 +79,31 @@ class PyFunctionInfo:
 
     def __init__(self,
                  python_name: str,
-                 swift_name: str,
-                 swift_name_full: str,
-                 swift_selector: str,
+                 selector_with_types: str,
                  swift_return_type: str,
                  swift_static_doc_property: str):
         self.python_name = python_name
-        # Method name without arguments names, parenthesis and generic types, i.e. foo
-        self.swift_name = swift_name
-        # Full method name, including generic constraints, i.e. foo<T>(bar: T)
-        self.swift_name_full = swift_name_full
-        # Method name including arguments names, i.e. foo(bar:)
-        self.swift_selector = swift_selector
-        self.swift_return_type = swift_return_type
         self.swift_static_doc_property = swift_static_doc_property or None
+
+        signature = SignatureInfo(selector_with_types, swift_return_type)
+        self.swift_name = signature.name
+        self.swift_return_type = signature.return_type
+        self.swift_arguments = signature.arguments
+
+        # Function name with full arguments.
+        # For example: foo(bar: Int)
+        self.swift_selector_with_types = signature.selector_with_types
+
+        # Function name with arguments.
+        # For example: foo(bar:)
+        selector = signature.name
+        if signature.arguments:
+            selector += '('
+
+            for arg in signature.arguments:
+                label = arg.label or arg.name
+                selector += label + ':'
+
+            selector += ')'
+
+        self.swift_selector = selector

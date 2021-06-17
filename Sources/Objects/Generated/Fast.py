@@ -1,6 +1,6 @@
-from Sourcery import get_types
+from Sourcery import get_types, TypeInfo
+from Sourcery.signature import SignatureInfo
 from Common.strings import generated_warning
-from Common.signature import SignatureInfo
 
 # All of the operations for which protocols will be generated
 # (Feel free to add new ones)
@@ -73,29 +73,33 @@ generated_protocols = set([
 ])
 
 
-def get_properties(t):
-    return filter(lambda prop: prop.python_name in generated_protocols, t.properties)
+def is_python_name_in_generated_protocols(name) -> bool:
+    return name.python_name in generated_protocols
 
 
-def get_methods(t):
-    return filter(lambda prop: prop.python_name in generated_protocols, t.methods)
+def get_properties(t: TypeInfo):
+    return filter(is_python_name_in_generated_protocols, t.properties)
+
+
+def get_methods(t: TypeInfo):
+    return filter(is_python_name_in_generated_protocols, t.methods)
 
 # ------
 # Helpers
 # ------
 
 
-def getter_protocol_name(name):
+def getter_protocol_name(name: str) -> str:
     name = name if name.startswith('__') else name.title()
     return f'{name}Owner'
 
 
-def setter_protocol_name(name):
+def setter_protocol_name(name: str) -> str:
     name = name if name.startswith('__') else name.title()
     return f'{name}SetterOwner'
 
 
-def func_protocol_name(name):
+def func_protocol_name(name: str) -> str:
     return f'{name}Owner'
 
 # ----
@@ -185,16 +189,22 @@ internal protocol __dict__Owner {{
 ''')
 
     class ProtocolEntry:
-        def __init__(self, python_name, swift_protocol_name, swift_signature):
+        def __init__(self,
+                     python_name: str,
+                     swift_protocol_name: str,
+                     swift_signature: SignatureInfo):
             self.python_name = python_name
             self.swift_protocol_name = swift_protocol_name
             self.swift_signature = swift_signature
 
     protocols_by_name = {}
 
-    def add_protocol(python_name, swift_protocol_name, swift_function, swift_return_type):
+    def add_protocol(python_name: str,
+                     swift_protocol_name: str,
+                     swift_selector_with_types: str,
+                     swift_return_type: str):
         if swift_protocol_name not in protocols_by_name:
-            signature = SignatureInfo(swift_function, swift_return_type)
+            signature = SignatureInfo(swift_selector_with_types, swift_return_type)
             protocol = ProtocolEntry(python_name, swift_protocol_name, signature)
             protocols_by_name[swift_protocol_name] = protocol
 
@@ -214,7 +224,7 @@ internal protocol __dict__Owner {{
 
         for meth in get_methods(t):
             python_name = meth.python_name
-            swift_name_full = meth.swift_name_full
+            swift_selector_with_types = meth.swift_selector_with_types
             swift_return_type = meth.swift_return_type
             protocol_name = func_protocol_name(python_name)
 
@@ -224,7 +234,7 @@ internal protocol __dict__Owner {{
             if t.python_type in ('int', 'bool') and python_name in ('__repr__', '__str__', '__and__', '__rand__', '__or__', '__ror__', '__xor__', '__rxor__'):
                 continue
 
-            add_protocol(python_name, protocol_name, swift_name_full, swift_return_type)
+            add_protocol(python_name, protocol_name, swift_selector_with_types, swift_return_type)
 
         # From static methods we have hand-written '__new__' and '__init__'.
         # We ignore others.
@@ -253,8 +263,8 @@ internal protocol __dict__Owner {{
         protocol = protocols_by_name[protocol_name]
         python_name = protocol.python_name
         protocol_name = protocol.swift_protocol_name
-        signature = protocol.swift_signature
-        print(f'private protocol {protocol_name} {{ func {signature.value} }}')
+        s = protocol.swift_signature
+        print(f'private protocol {protocol_name} {{ func {s.selector_with_types} -> {s.return_type} }}')
     print()
 
     # =====================
@@ -300,17 +310,17 @@ private func hasOverridenBuiltinMethod(
         python_name = protocol.python_name
         protocol_name = protocol.swift_protocol_name
 
-        signature = protocol.swift_signature
-        swift_function_name = signature.function_name
+        s = protocol.swift_signature
+        swift_function_name = s.name
 
         fn_arguments = ''  # technically those are called 'parameters'
         call_arguments = ''
-        for index, arg in enumerate(signature.arguments):
+        for index, arg in enumerate(s.arguments):
             label = arg.label  # str | None
             name = arg.name
             typ = arg.typ
 
-            is_last = index == len(signature.arguments) - 1
+            is_last = index == len(s.arguments) - 1
 
             fn_label = label + ' ' if label else ''
             fn_arguments += f', {fn_label}{name}: {typ}'
@@ -326,7 +336,7 @@ private func hasOverridenBuiltinMethod(
             call_arguments += f'{call_label}{name}{call_comma}'
 
         print(f'''
-  internal static func {python_name}(_ zelf: PyObject{fn_arguments}) -> {signature.return_type}? {{
+  internal static func {python_name}(_ zelf: PyObject{fn_arguments}) -> {s.return_type}? {{
     if let owner = zelf as? {protocol_name},
        !hasOverridenBuiltinMethod(object: zelf, selector: .{python_name}) {{
       return owner.{swift_function_name}({call_arguments})

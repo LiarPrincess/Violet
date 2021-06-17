@@ -1,5 +1,8 @@
+from typing import List, Union
+
+
 class ArgumentInfo:
-    def __init__(self, label: str, name: str, typ: str):
+    def __init__(self, label: Union[str, None], name: str, typ: str):
         self.label = label
         self.name = name
         self.typ = typ
@@ -10,21 +13,23 @@ class SignatureInfo:
     Parse Swift function signature.
     '''
 
-    def __init__(self, swift_signature: str, swift_return_type: str):
-        self.return_type = swift_return_type
+    def __init__(self,
+                 selector_with_types: str,
+                 return_type: str):
+        self.return_type = return_type
 
-        clean = remove_indentation(swift_signature)
-        self.value = clean + ' -> ' + swift_return_type
+        selector_with_types = remove_indentation(selector_with_types)
+        self.selector_with_types = selector_with_types
 
-        open_paren_index = clean.index('(')
-        self.function_name = clean[:open_paren_index]
+        open_paren_index = selector_with_types.index('(')
+        self.name = selector_with_types[:open_paren_index]
 
-        close_paren_index = clean.rindex(')')
+        close_paren_index = selector_with_types.rindex(')')
 
         arguments_start_index = open_paren_index + 1
-        arguments = clean[arguments_start_index:close_paren_index]
+        arguments = selector_with_types[arguments_start_index:close_paren_index]
 
-        self.arguments = []
+        self.arguments: List[ArgumentInfo] = []
         if arguments:
             for arg in arguments.split(','):
                 label_name, typ = arg.strip().split(':')
@@ -60,12 +65,12 @@ def remove_indentation(sig: str) -> str:
 
 def test():
     sig = SignatureInfo('abs()', 'PyObject')
-    assert sig.function_name == 'abs'
+    assert sig.name == 'abs'
     assert len(sig.arguments) == 0
     assert sig.return_type == 'PyObject'
 
     sig = SignatureInfo('add(_ other: PyObject)', 'PyResult<PyObject>')
-    assert sig.function_name == 'add'
+    assert sig.name == 'add'
     assert len(sig.arguments) == 1
     assert sig.arguments[0].label == '_'
     assert sig.arguments[0].name == 'other'
@@ -73,7 +78,7 @@ def test():
     assert sig.return_type == 'PyResult<PyObject>'
 
     sig = SignatureInfo('call(args: [PyObject], kwargs: PyDict?)', 'PyResult<PyObject>')
-    assert sig.function_name == 'call'
+    assert sig.name == 'call'
     assert len(sig.arguments) == 2
     assert sig.arguments[0].label == None
     assert sig.arguments[0].name == 'args'
@@ -82,6 +87,8 @@ def test():
     assert sig.arguments[1].name == 'kwargs'
     assert sig.arguments[1].typ == 'PyDict?'
     assert sig.return_type == 'PyResult<PyObject>'
+
+    print('Finished')
 
 
 if __name__ == '__main__':
