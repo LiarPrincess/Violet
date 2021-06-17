@@ -218,7 +218,7 @@ public class PyType: PyObject, HasCustomGetMethod {
     case let .error(e): return .error(e)
     }
 
-    guard let string = object as? PyString else {
+    guard let string = PyCast.asString(object) else {
       let t = object.typeName
       return .typeError("can only assign string to \(self.name).__name__, not '\(t)'")
     }
@@ -250,7 +250,7 @@ public class PyType: PyObject, HasCustomGetMethod {
     case let .error(e): return .error(e)
     }
 
-    guard let string = object as? PyString else {
+    guard let string = PyCast.asString(object) else {
       let t = object.typeName
       return .typeError("can only assign string to \(self.name).__qualname__, not '\(t)'")
     }
@@ -323,7 +323,7 @@ public class PyType: PyObject, HasCustomGetMethod {
         return .error(Py.newAttributeError(msg: "__module__"))
       }
 
-      guard let module = object as? PyModule else {
+      guard let module = PyCast.asModule(object) else {
         switch Py.strValue(object: object) {
         case let .value(s):
           return .module(s)
@@ -450,7 +450,7 @@ public class PyType: PyObject, HasCustomGetMethod {
 
   // sourcery: pymethod = __subclasscheck__
   public func isSubtype(of object: PyObject) -> PyResult<Bool> {
-    if let type = object as? PyType {
+    if let type = PyCast.asType(object) {
       return .value(self.isSubtype(of: type))
     }
 

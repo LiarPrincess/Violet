@@ -193,7 +193,7 @@ public final class UnderscoreOS: PyModuleImplementation {
   // MARK: - Helpers
 
   private func parsePath(object: PyObject) -> PyResult<PyString> {
-    if let str = object as? PyString {
+    if let str = PyCast.asString(object) {
       return .value(str)
     }
 
@@ -219,7 +219,7 @@ public final class UnderscoreOS: PyModuleImplementation {
   private func parsePathOrDescriptor(
     object: PyObject
   ) -> ParsePathOrDescriptorResult {
-    if let pyInt = object as? PyInt {
+    if let pyInt = PyCast.asInt(object) {
       if let fd = Int32(exactly: pyInt.value) {
         return .descriptor(fd)
       }
@@ -228,7 +228,7 @@ public final class UnderscoreOS: PyModuleImplementation {
       return .error(Py.newOverflowError(msg: msg))
     }
 
-    if let str = object as? PyString {
+    if let str = PyCast.asString(object) {
       return .path(str.value)
     }
 

@@ -62,17 +62,17 @@ extension PyType {
       let fn = "type.__new__()"
 
       let arg0 = binding.required(at: 0)
-      guard let name = arg0 as? PyString else {
+      guard let name = PyCast.asString(arg0) else {
         return .typeError("\(fn) argument 1 must be str, not \(arg0.typeName)")
       }
 
       let arg1 = binding.required(at: 1)
-      guard let bases = arg1 as? PyTuple else {
+      guard let bases = PyCast.asTuple(arg1) else {
         return .typeError("\(fn) argument 2 must be tuple, not \(arg1.typeName)")
       }
 
       let arg2 = binding.required(at: 2)
-      guard let dict = arg2 as? PyDict else {
+      guard let dict = PyCast.asDict(arg2) else {
         return .typeError("\(fn) argument 3 must be dict, not \(arg2.typeName)")
       }
 
@@ -103,7 +103,7 @@ extension PyType {
   ) -> PyResult<[PyType]> {
     var result = [PyType]()
     for object in bases.elements {
-      guard let base = object as? PyType else {
+      guard let base = PyCast.asType(object) else {
         return .typeError("bases must be types")
       }
 
@@ -366,7 +366,7 @@ extension PyType {
       return
     }
 
-    guard let function = object as? PyFunction else {
+    guard let function = PyCast.asFunction(object) else {
       return
     }
 
@@ -384,7 +384,7 @@ extension PyType {
       return
     }
 
-    guard let function = object as? PyFunction else {
+    guard let function = PyCast.asFunction(object) else {
       return
     }
 
@@ -442,7 +442,7 @@ extension PyType {
 
   private static func setHeapType__dict__(object: PyObject,
                                           value: PyObject) -> PyResult<PyNone> {
-    guard let dict = value as? PyDict else {
+    guard let dict = PyCast.asDict(value) else {
       let t = value.typeName
       return .typeError("__dict__ must be set to a dictionary, not a '\(t)'")
     }
@@ -519,7 +519,7 @@ extension PyType {
       return nil
     }
 
-    guard let cell = __classcell__ as? PyCell else {
+    guard let cell = PyCast.asCell(__classcell__) else {
       let t = __classcell__.typeName
       let msg = "__classcell__ must be a nonlocal cell, not \(t)"
       return Py.newTypeError(msg: msg)

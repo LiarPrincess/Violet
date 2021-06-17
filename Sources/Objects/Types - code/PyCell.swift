@@ -103,7 +103,7 @@ public class PyCell: PyObject {
     bothHaveContent: (PyObject, PyObject) -> PyResult<Bool>,
     oneIsNil: (PyObject?, PyObject?) -> Bool
   ) -> CompareResult {
-    guard let other = other as? PyCell else {
+    guard let other = PyCast.asCell(other) else {
       return .notImplemented
     }
 

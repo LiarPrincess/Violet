@@ -53,7 +53,7 @@ internal struct NewFunctionWrapper: FunctionWrapper {
     }
 
     let arg0 = args[0]
-    guard let subtype = arg0 as? PyType else {
+    guard let subtype = PyCast.asType(arg0) else {
       return .typeError("\(self.name)(X): X is not a type object (\(arg0))")
     }
 

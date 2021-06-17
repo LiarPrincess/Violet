@@ -77,7 +77,7 @@ internal struct PyBytesData: PyStringImpl {
   ) -> PyStringImplExtractedSelf<Self> {
     // Most of the `bytes` functions also accept `int`.
     // For example: `49 in b'123'`.
-    if let pyInt = object as? PyInt {
+    if let pyInt = PyCast.asInt(object) {
       guard let byte = UInt8(exactly: pyInt.value) else {
         let msg = "byte must be in range(0, 256)"
         return .error(Py.newValueError(msg: msg))
@@ -564,7 +564,7 @@ internal struct PyBytesData: PyStringImpl {
     case let .error(e): return .error(e)
     }
 
-    guard let string = object as? PyString else {
+    guard let string = PyCast.asString(object) else {
       return .typeError("encoding without a string argument")
     }
 

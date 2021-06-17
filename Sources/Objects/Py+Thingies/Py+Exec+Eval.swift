@@ -127,7 +127,7 @@ extension ExecEval {
       return .none
     }
 
-    if let dict = obj as? PyDict {
+    if let dict = PyCast.asDict(obj) {
       return .dict(dict)
     }
 
@@ -141,7 +141,7 @@ extension ExecEval {
   // MARK: - Source
 
   private static func parseSource(arg: PyObject) -> PyResult<PyCode> {
-    if let code = arg as? PyCode {
+    if let code = PyCast.asCode(arg) {
       if code.freeVariableCount > 0 {
         return .typeError(Self.createSourceWithFreeVariablesError())
       }

@@ -264,7 +264,7 @@ extension VM {
       return self.defaultInteractivePrompt
     }
 
-    if let s = object as? PyString {
+    if let s = PyCast.asString(object) {
       return s.value
     }
 

@@ -41,7 +41,7 @@ extension PyInstance {
                          locals: PyObject? = nil,
                          fromList: PyObject? = nil,
                          level levelArg: PyObject? = nil) -> PyResult<PyObject> {
-    guard let name = nameArg as? PyString else {
+    guard let name = PyCast.asString(nameArg) else {
       return .typeError("module name must be a string")
     }
 
@@ -97,7 +97,7 @@ extension PyInstance {
       return .value(self.newInt(0))
     }
 
-    guard let int = object as? PyInt else {
+    guard let int = PyCast.asInt(object) else {
       return .typeError("module level must be a int")
     }
 
@@ -164,13 +164,13 @@ extension PyInstance {
       return .keyError("'__name__' not in globals")
     }
 
-    guard let globals = globalsObject as? PyDict else {
+    guard let globals = PyCast.asDict(globalsObject) else {
       return .typeError("globals must be a dict")
     }
 
     // Try to get 'globals.__package__':
     if let package = globals.get(id: .__package__), !package.isNone {
-      guard let result = package as? PyString else {
+      guard let result = PyCast.asString(package) else {
         return .typeError("package must be a string")
       }
 
@@ -212,7 +212,7 @@ extension PyInstance {
   private func getParent(spec: PyObject) -> PyResult<PyString> {
     switch self.getattr(object: spec, name: "parent") {
     case let .value(object):
-      guard let string = object as? PyString else {
+      guard let string = PyCast.asString(object) else {
         return .typeError("__spec__.parent must be a string")
       }
 
@@ -227,7 +227,7 @@ extension PyInstance {
       return .keyError("'__name__' not in globals")
     }
 
-    guard let str = object as? PyString else {
+    guard let str = PyCast.asString(object) else {
       return .typeError("__name__ must be a string")
     }
 

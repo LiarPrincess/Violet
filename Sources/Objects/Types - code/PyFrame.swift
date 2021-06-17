@@ -141,7 +141,9 @@ public class PyFrame: PyObject {
       return p.builtins
     }
 
-    if let module = globals.get(id: .__builtins__) as? PyModule {
+    let globalBuiltins = globals.get(id: .__builtins__)
+    let globalBuiltinsModule = globalBuiltins.flatMap(PyCast.asModule(_:))
+    if let module = globalBuiltinsModule {
       return module.getDict()
     }
 

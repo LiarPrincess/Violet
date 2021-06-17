@@ -721,7 +721,7 @@ extension PyStringImpl {
       return .error(e)
     }
 
-    if let tuple = element as? PyTuple {
+    if let tuple = PyCast.asTuple(element) {
       for element in tuple.elements {
         switch Self.extractSelf(from: element) {
         case .value(let string):
@@ -763,7 +763,7 @@ extension PyStringImpl {
       return .error(e)
     }
 
-    if let tuple = element as? PyTuple {
+    if let tuple = PyCast.asTuple(element) {
       for element in tuple.elements {
         switch Self.extractSelf(from: element) {
         case .value(let string):
@@ -1195,7 +1195,7 @@ extension PyStringImpl {
       return .error(e)
     }
 
-    if let slice = index as? PySlice {
+    if let slice = PyCast.asSlice(index) {
       switch self.getSlice(slice: slice) {
       case let .value(r): return .slice(r)
       case let .error(e): return .error(e)
@@ -1374,7 +1374,7 @@ extension PyStringImpl {
 
   private func parseJustWidth(_ width: PyObject,
                               fnName: String) -> PyResult<Int> {
-    guard let pyInt = width as? PyInt else {
+    guard let pyInt = PyCast.asInt(width) else {
       return .typeError("\(fnName) width arg must be int, not \(width.typeName)")
     }
 
@@ -1738,7 +1738,7 @@ extension PyStringImpl {
       return .value(Int.max)
     }
 
-    guard let pyInt = maxCount as? PyInt else {
+    guard let pyInt = PyCast.asInt(maxCount) else {
       return .typeError("maxsplit must be int, not \(maxCount.typeName)")
     }
 
@@ -1779,7 +1779,7 @@ extension PyStringImpl {
     }
 
     // `bool` is also `int`
-    if let int = keepEnds as? PyInt {
+    if let int = PyCast.asInt(keepEnds) {
       let isTrue = int.value.isTrue
       return .value(self.splitLines(keepEnds: isTrue))
     }
@@ -1951,7 +1951,7 @@ extension PyStringImpl {
       return .value(8)
     }
 
-    guard let pyInt = tabSize as? PyInt else {
+    guard let pyInt = PyCast.asInt(tabSize) else {
       return .typeError("tabsize must be int, not \(tabSize.typeName)")
     }
 
@@ -2123,7 +2123,7 @@ extension PyStringImpl {
       return .value(Int.max)
     }
 
-    guard let pyInt = count as? PyInt else {
+    guard let pyInt = PyCast.asInt(count) else {
       return .typeError("count must be int, not \(count.typeName)")
     }
 
@@ -2140,7 +2140,7 @@ extension PyStringImpl {
 extension PyStringImpl {
 
   internal func zfill(width: PyObject) -> PyResult<Builder.Result> {
-    guard let widthInt = width as? PyInt else {
+    guard let widthInt = PyCast.asInt(width) else {
       return .typeError("width must be int, not \(width.typeName)")
     }
 
@@ -2223,7 +2223,7 @@ extension PyStringImpl {
 extension PyStringImpl {
 
   internal func mul(_ other: PyObject) -> PyResult<Builder.Result> {
-    guard let pyInt = other as? PyInt else {
+    guard let pyInt = PyCast.asInt(other) else {
       let s = Self.typeName
       let t = other.typeName
       return .typeError("can only multiply \(s) and int (not '\(t)')")

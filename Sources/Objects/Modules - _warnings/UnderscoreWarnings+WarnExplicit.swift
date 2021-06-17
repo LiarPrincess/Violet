@@ -93,14 +93,14 @@ extension UnderscoreWarnings {
     }
 
     for (index, object) in filters.elements.enumerated() {
-      guard let filter = object as? PyTuple, filter.elements.count == 5 else {
+      guard let filter = PyCast.asTuple(object), filter.elements.count == 5 else {
         return .valueError("_warnings.filters item \(index) isn't a 5-tuple")
       }
 
       switch self.isApplicable(filter: filter, warning: warning) {
       case .value(true):
         let object = filter.elements[0]
-        guard let action = object as? PyString else {
+        guard let action = PyCast.asString(object) else {
           return .typeError("filter action must be an str, not \(object.typeName)")
         }
         return .value(Filter(action: action, object: .value(filter)))
@@ -160,7 +160,7 @@ extension UnderscoreWarnings {
     }
 
     // An internal plain text default filter must match exactly
-    if let str = object as? PyString {
+    if let str = PyCast.asString(object) {
       return Py.isEqualBool(left: str, right: arg)
     }
 
@@ -170,7 +170,7 @@ extension UnderscoreWarnings {
 
   private func compareLine(filter object: PyObject,
                            arg: PyInt) -> PyResult<Bool> {
-    guard let int = object as? PyInt else {
+    guard let int = PyCast.asInt(object) else {
       return .typeError("filter line must be an int, not \(object.typeName)")
     }
 

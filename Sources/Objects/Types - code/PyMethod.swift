@@ -38,7 +38,7 @@ public class PyMethod: PyObject {
 
   // sourcery: pymethod = __eq__
   public func isEqual(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PyMethod else {
+    guard let other = PyCast.asMethod(other) else {
       return .notImplemented
     }
 
@@ -85,12 +85,12 @@ public class PyMethod: PyObject {
 
   // sourcery: pymethod = __repr__
   public func repr() -> PyResult<String> {
-    let funcNameObject =
+    let funcNamePyObject =
       self.function.__dict__.get(id: .__qualname__) ??
       self.function.__dict__.get(id: .__name__)
 
-    let funcNameString = funcNameObject as? PyString
-    let funcName = funcNameString?.value ?? self.function.name.value
+    let funcNamePyString = funcNamePyObject.flatMap(PyCast.asString(_:))
+    let funcName = funcNamePyString?.value ?? self.function.name.value
 
     let ptr = self.object.ptr
     let type = self.object.typeName

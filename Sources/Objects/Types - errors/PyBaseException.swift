@@ -109,7 +109,7 @@ public class PyBaseException: PyObject {
       return nil
     }
 
-    guard let string = firstArg as? PyString else {
+    guard let string = PyCast.asString(firstArg) else {
       return nil
     }
 
@@ -243,7 +243,7 @@ public class PyBaseException: PyObject {
       return .typeError("args may not be deleted")
     }
 
-    if let tuple = value as? PyTuple {
+    if let tuple = PyCast.asTuple(value) {
       return self.setArgs(tuple)
     }
 
@@ -276,7 +276,7 @@ public class PyBaseException: PyObject {
       return .value()
     }
 
-    if let tb = value as? PyTraceback {
+    if let tb = PyCast.asTraceback(value) {
       self.setTraceback(traceback: tb)
       return .value()
     }
@@ -320,7 +320,7 @@ public class PyBaseException: PyObject {
       return .value()
     }
 
-    if let e = value as? PyBaseException {
+    if let e = PyCast.asBaseException(value) {
       self.setCause(e)
       return .value()
     }
@@ -358,7 +358,7 @@ public class PyBaseException: PyObject {
       return .value()
     }
 
-    if let context = value as? PyBaseException {
+    if let context = PyCast.asBaseException(value) {
       self.setContext(context)
       return .value()
     }

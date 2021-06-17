@@ -23,7 +23,7 @@ extension Sys {
   /// sys.intern(string)
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.intern).
   public func intern(value: PyObject) -> PyResult<PyString> {
-    guard let str = value as? PyString else {
+    guard let str = PyCast.asString(value) else {
       let t = value.typeName
       return .typeError("intern() argument 1 must be str, not \(t)")
     }
@@ -194,7 +194,7 @@ extension Sys {
       return .value(-1)
     }
 
-    guard let depth = object as? PyInt else {
+    guard let depth = PyCast.asInt(object) else {
       return .typeError("an integer is required (got type \(object.typeName))")
     }
 

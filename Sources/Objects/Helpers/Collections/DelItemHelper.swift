@@ -24,7 +24,7 @@ extension DelItemHelper {
       return .error(e)
     }
 
-    if let slice = index as? PySlice {
+    if let slice = PyCast.asSlice(index) {
       return Self.delItem(collection: &collection, slice: slice)
     }
 

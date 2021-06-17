@@ -434,7 +434,7 @@ internal struct PySequenceData {
   }
 
   internal func mul(count: PyObject) -> MulResult {
-    guard let countInt = count as? PyInt else {
+    guard let countInt = PyCast.asInt(count) else {
       return .notImplemented
     }
 
@@ -442,7 +442,7 @@ internal struct PySequenceData {
   }
 
   internal func rmul(count: PyObject) -> MulResult {
-    guard let countInt = count as? PyInt else {
+    guard let countInt = PyCast.asInt(count) else {
       return .notImplemented
     }
 

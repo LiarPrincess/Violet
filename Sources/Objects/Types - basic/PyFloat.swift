@@ -858,7 +858,7 @@ public class PyFloat: PyObject {
     // Call has to be before 'Self.asDouble', because it can override
     switch Self.callFloat(object) {
     case .value(let o):
-      guard let f = o as? PyFloat else {
+      guard let f = PyCast.asFloat(o) else {
         let ot = o.typeName
         let msg = "\(object.typeName).__float__ returned non-float (type \(ot))"
         return .error(Py.newTypeError(msg: msg))
@@ -904,11 +904,11 @@ public class PyFloat: PyObject {
   ///
   /// CPython: `define CONVERT_TO_DOUBLE(obj, dbl)`
   internal static func asDouble(object: PyObject) -> AsDouble {
-    if let pyFloat = object as? PyFloat {
+    if let pyFloat = PyCast.asFloat(object) {
       return .value(pyFloat.value)
     }
 
-    if let int = object as? PyInt {
+    if let int = PyCast.asInt(object) {
       switch Self.asDouble(int: int) {
       case let .value(d):
         return .value(d)

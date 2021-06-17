@@ -51,7 +51,7 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = __eq__
   public func isEqual(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PyDict else {
+    guard let other = PyCast.asDict(other) else {
       return .notImplemented
     }
 
@@ -595,7 +595,7 @@ public class PyDict: PyObject {
     from object: PyObject,
     onKeyDuplicate: UpdateKeyDuplicate = .default
   ) -> PyResult<PyNone> {
-    if let dict = object as? PyDict, dict.checkExact() {
+    if let dict = PyCast.asDict(object), dict.checkExact() {
       return self.update(from: dict.data,
                          onKeyDuplicate: onKeyDuplicate)
     }
@@ -832,8 +832,8 @@ public class PyDict: PyObject {
     }
 
     // Fast path for empty 'dict'
-    if let dict = dictObject as? PyDict, dict.checkExact(), dict.data.isEmpty {
-      if let iterDict = iterable as? PyDict, iterDict.checkExact() {
+    if let dict = PyCast.asDict(dictObject), dict.checkExact(), dict.data.isEmpty {
+      if let iterDict = PyCast.asDict(iterable), iterDict.checkExact() {
         return self.fillFromKeys(dict: dict, iterable: iterDict, value: value)
       }
 

@@ -33,7 +33,7 @@ extension Sys {
                          traceback: PyObject) -> PyResult<PyObject> {
     let fn = "sys.excepthook():"
 
-    guard let error = value as? PyBaseException else {
+    guard let error = PyCast.asBaseException(value) else {
       let t = value.typeName
       return .typeError("\(fn) Exception expected for value, \(t) found")
     }
@@ -41,7 +41,7 @@ extension Sys {
     if error.getTraceback() == nil {
       if traceback.isNone {
         // nothing
-      } else if let tb = traceback as? PyTraceback {
+      } else if let tb = PyCast.asTraceback(traceback) {
         error.setTraceback(traceback: tb)
       } else {
         let t = traceback.typeName

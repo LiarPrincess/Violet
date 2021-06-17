@@ -94,7 +94,7 @@ public enum PyStringEncoding: CustomStringConvertible {
       return .value(.default)
     }
 
-    guard let str = object as? PyString else {
+    guard let str = PyCast.asString(object) else {
       return .typeError("encoding must be str, not \(object.typeName)")
     }
 
@@ -143,7 +143,7 @@ internal enum PyStringErrorHandler {
       return .value(.default)
     }
 
-    guard let str = object as? PyString else {
+    guard let str = PyCast.asString(object) else {
       return .typeError("errors have to be str, not \(object.typeName)")
     }
 

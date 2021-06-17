@@ -99,7 +99,7 @@ extension PyFloat {
   // sourcery: pyclassmethod = fromhex, doc = fromHexDoc
   public static func fromHex(type: PyType,
                              value: PyObject) -> PyResult<PyObject> {
-    guard let stringObject = value as? PyString else {
+    guard let stringObject = PyCast.asString(value) else {
       // This message looks weird, but argument name is 'string'
       let t = value.typeName
       return .typeError("fromhex(): string has to have str type, not \(t)")

@@ -158,18 +158,18 @@ public class PySyntaxError: PyException {
     // Why this is static? See comment in 'PyBaseException.str'.
 
     let filenameOrNil: String? = {
-      guard let path = zelf.filename as? PyString, path.value.any else {
+      let filenamePyString = zelf.filename.flatMap(PyCast.asString(_:))
+      guard let path = filenamePyString, path.value.any else {
         return nil
       }
 
       return Py.fileSystem.basename(path: path.value)
     }()
 
-    // Redundant type annotation is not that redundant.
-    // It is there so that we (as a human beings - readers of this code)
-    // know that we are printing 'BigInt' not 'PyInt'.
-    // User should never see 'PyInt' description, is is for debug only.
-    let linenoOrNil: BigInt? = (zelf.lineno as? PyInt)?.value
+    let linenoOrNil: BigInt? = {
+      let linenoPyInt = zelf.lineno.flatMap(PyCast.asInt(_:))
+      return linenoPyInt?.value
+    }()
 
     let msg: String
     switch Py.strValue(object: zelf.msg ?? Py.none) {

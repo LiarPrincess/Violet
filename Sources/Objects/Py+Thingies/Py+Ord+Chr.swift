@@ -36,7 +36,7 @@ extension PyInstance {
   public func ord(object: PyObject) -> PyResult<PyInt> {
     // Unicode character -> integer representing the Unicode code point
 
-    if let string = object as? PyString {
+    if let string = PyCast.asString(object) {
       let scalars = string.scalars
 
       guard let first = scalars.first, scalars.count == 1 else {

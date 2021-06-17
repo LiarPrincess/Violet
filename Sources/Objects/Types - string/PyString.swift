@@ -117,7 +117,7 @@ public class PyString: PyObject {
   }
 
   private func compare(with other: PyObject) -> StringCompareResult? {
-    guard let other = other as? PyString else {
+    guard let other = PyCast.asString(other) else {
       return nil
     }
 
@@ -775,7 +775,7 @@ public class PyString: PyObject {
     // Fast path when we don't have encoding and kwargs
     if encodingObj == nil && errorObj == nil {
       // Is this object already a 'str'?
-      if let str = object as? PyString {
+      if let str = PyCast.asString(object) {
         // If we are builtin 'str' (not a subclass) -> return itself
         if str.checkExact() {
           return .value(str)

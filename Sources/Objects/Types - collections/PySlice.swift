@@ -81,7 +81,7 @@ public class PySlice: PyObject {
     with other: PyObject,
     using compareFn: (PySequenceData, PySequenceData) -> CompareResult
   ) -> CompareResult {
-    guard let other = other as? PySlice else {
+    guard let other = PyCast.asSlice(other) else {
       return .notImplemented
     }
 

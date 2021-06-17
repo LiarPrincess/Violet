@@ -88,7 +88,7 @@ public class PyList: PyObject, PySequenceType {
     with other: PyObject,
     using compareFn: (PySequenceData, PySequenceData) -> CompareResult
   ) -> CompareResult {
-    guard let other = other as? PyList else {
+    guard let other = PyCast.asList(other) else {
       return .notImplemented
     }
 
@@ -435,7 +435,7 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    guard let otherList = other as? PyList else {
+    guard let otherList = PyCast.asList(other) else {
       let msg = "can only concatenate list (not '\(other.typeName)') to list"
       return .typeError(msg)
     }

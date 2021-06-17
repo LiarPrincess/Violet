@@ -492,7 +492,7 @@ extension PyInstance {
 
     switch self.callExceptionType(type: type, arg: value) {
     case let .value(object):
-      guard let exception = object as? PyBaseException else {
+      guard let exception = PyCast.asBaseException(object) else {
         let typeName = type.getName()
         let msg = "calling \(typeName) should have returned " +
                   "an instance of BaseException, not \(object.typeName)"
@@ -515,7 +515,7 @@ extension PyInstance {
       return self.call(callable: type, args: [])
     }
 
-    if let argTuple = arg as? PyTuple {
+    if let argTuple = PyCast.asTuple(arg) {
       return self.call(callable: type, args: argTuple.elements)
     }
 
@@ -537,13 +537,13 @@ extension PyInstance {
   ///   - expectedType: Exception type to check against (tuples are also allowed).
   public func exceptionMatches(error: PyObject,
                                expectedType: PyObject) -> Bool {
-    if let tuple = expectedType as? PyTuple {
+    if let tuple = PyCast.asTuple(expectedType) {
       return tuple.elements.contains {
         self.exceptionMatches(error: error, expectedType: $0)
       }
     }
 
-    if let type = expectedType as? PyType {
+    if let type = PyCast.asType(expectedType) {
       return self.exceptionMatches(error: error, expectedType: type)
     }
 
@@ -553,7 +553,7 @@ extension PyInstance {
   private func exceptionMatches(error: PyObject,
                                 expectedType: PyType) -> Bool {
     // 'error' is a type
-    if let type = error as? PyType {
+    if let type = PyCast.asType(error) {
       return self.exceptionMatches(type: type, expectedType: expectedType)
     }
 

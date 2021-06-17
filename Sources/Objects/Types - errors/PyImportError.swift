@@ -107,7 +107,8 @@ public class PyImportError: PyException {
   internal static func str(importError zelf: PyImportError) -> PyResult<String> {
     // Why this is static? See comment in 'PyBaseException.str'.
 
-    if let msg = zelf.msg as? PyString {
+    let msgPyString = zelf.msg.flatMap(PyCast.asString(_:))
+    if let msg = msgPyString {
       return .value(msg.value)
     }
 

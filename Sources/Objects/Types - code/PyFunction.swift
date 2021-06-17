@@ -104,7 +104,7 @@ public class PyFunction: PyObject {
       return .value()
     }
 
-    guard let valueString = value as? PyString else {
+    guard let valueString = PyCast.asString(value) else {
       return .typeError("__name__ must be set to a string object")
     }
 
@@ -124,7 +124,7 @@ public class PyFunction: PyObject {
       return .value()
     }
 
-    guard let valueString = value as? PyString else {
+    guard let valueString = PyCast.asString(value) else {
       return .typeError("__qualname__ must be set to a string object")
     }
 
@@ -145,7 +145,7 @@ public class PyFunction: PyObject {
       return .value()
     }
 
-    if let tuple = object as? PyTuple {
+    if let tuple = PyCast.asTuple(object) {
       self.defaults = tuple
       return .value()
     }
@@ -166,7 +166,7 @@ public class PyFunction: PyObject {
       return .value()
     }
 
-    guard let dict = object as? PyDict else {
+    guard let dict = PyCast.asDict(object) else {
       return .systemError("non-dict keyword only default args")
     }
 
@@ -189,7 +189,7 @@ public class PyFunction: PyObject {
       return .value()
     }
 
-    if let tuple = object as? PyTuple {
+    if let tuple = PyCast.asTuple(object) {
       self.closure = tuple
       return .value()
     }
@@ -205,7 +205,7 @@ public class PyFunction: PyObject {
   }
 
   public func setGlobals(_ object: PyObject) -> PyResult<Void> {
-    if let dict = object as? PyDict {
+    if let dict = PyCast.asDict(object) {
       self.globals = dict
       return .value()
     }
@@ -226,7 +226,7 @@ public class PyFunction: PyObject {
       return .value()
     }
 
-    if let dict = object as? PyDict {
+    if let dict = PyCast.asDict(object) {
       self.annotations = dict
       return .value()
     }
@@ -242,7 +242,7 @@ public class PyFunction: PyObject {
   }
 
   public func setCode(_ object: PyObject) -> PyResult<Void> {
-    guard let code = object as? PyCode else {
+    guard let code = PyCast.asCode(object) else {
       return .typeError("__code__ must be set to a code object")
     }
 
@@ -272,7 +272,7 @@ public class PyFunction: PyObject {
       return .value()
     }
 
-    if let str = object as? PyString {
+    if let str = PyCast.asString(object) {
       self.doc = str
       return .value()
     }
@@ -285,7 +285,7 @@ public class PyFunction: PyObject {
 
   // sourcery: pyproperty = __module__, setter = setModule
   public func getModule() -> PyResult<String> {
-    if let module = self.module as? PyModule {
+    if let module = PyCast.asModule(self.module) {
       return module.getName()
     }
 

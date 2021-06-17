@@ -29,7 +29,7 @@ public class PyNamespace: PyObject {
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PyNamespace else {
+    guard let other = PyCast.asNamespace(other) else {
       return .notImplemented
     }
 

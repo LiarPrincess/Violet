@@ -18,7 +18,7 @@ extension PyInstance {
   public func newFunction(qualname: PyObject,
                           code: PyObject,
                           globals: PyDict) -> PyResult<PyFunction> {
-    guard let codeValue = code as? PyCode else {
+    guard let codeValue = PyCast.asCode(code) else {
       let t = code.typeName
       return .typeError("function() code must be code, not \(t)")
     }
@@ -26,7 +26,7 @@ extension PyInstance {
     let qualnameValue: String?
     if qualname is PyNone {
       qualnameValue = nil
-    } else if let q = qualname as? PyString {
+    } else if let q = PyCast.asString(qualname) {
       qualnameValue = q.value
     } else {
       let t = qualname.typeName
@@ -67,12 +67,12 @@ extension PyInstance {
 
   public func newMethod(fn: PyObject,
                         object: PyObject) -> PyResult<PyObject> {
-    if let f = fn as? PyBuiltinFunction {
+    if let f = PyCast.asBuiltinFunction(fn) {
       let result = self.newMethod(fn: f, object: object)
       return .value(result)
     }
 
-    if let f = fn as? PyFunction {
+    if let f = PyCast.asFunction(fn) {
       let result = self.newMethod(fn: f, object: object)
       return .value(result)
     }

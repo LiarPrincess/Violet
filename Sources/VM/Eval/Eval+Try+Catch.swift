@@ -138,9 +138,9 @@ extension Eval {
     }
 
     var exceptionOrNil: PyBaseException?
-    if let error = value as? PyBaseException {
+    if let error = PyCast.asBaseException(value) {
       exceptionOrNil = error
-    } else if let type = value as? PyType, type.isException {
+    } else if let type = PyCast.asType(value), type.isException {
       switch Py.newException(type: type, value: nil) {
       case let .value(e): exceptionOrNil = e
       case let .error(e): return e
@@ -175,14 +175,14 @@ extension Eval {
       return .none
     }
 
-    if let type = cause as? PyType, type.isException {
+    if let type = PyCast.asType(cause), type.isException {
       switch Py.newException(type: type, value: nil) {
       case let .value(o): return .object(o)
       case let .error(e): return .error(e)
       }
     }
 
-    if let error = cause as? PyBaseException {
+    if let error = PyCast.asBaseException(cause) {
       return .object(error)
     }
 

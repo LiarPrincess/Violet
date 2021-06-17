@@ -363,10 +363,10 @@ extension PyInstance {
     // >>> o2(1)
     // 2
 
-    if let fn = method as? PyBuiltinFunction {
+    if let fn = PyCast.asBuiltinFunction(method) {
       method = fn.bind(to: object)
     }
-    if let fn = method as? PyFunction {
+    if let fn = PyCast.asFunction(method) {
       method = fn.bind(to: object)
     }
 

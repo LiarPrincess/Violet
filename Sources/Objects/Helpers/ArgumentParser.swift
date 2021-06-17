@@ -464,7 +464,7 @@ internal struct ArgumentParser {
   // MARK: - Unpack
 
   internal static func unpackArgsTuple(args: PyObject) -> PyResult<[PyObject]> {
-    guard let tuple = args as? PyTuple else {
+    guard let tuple = PyCast.asTuple(args) else {
       let t = args.typeName
       return .typeError("Function positional arguments should be a tuple, not \(t)")
     }
@@ -477,7 +477,7 @@ internal struct ArgumentParser {
       return .value(nil)
     }
 
-    guard let kwargsDict = kwargs as? PyDict else {
+    guard let kwargsDict = PyCast.asDict(kwargs) else {
       let t = kwargs.typeName
       return .typeError("Function keyword arguments should be a dict, not \(t)")
     }
@@ -562,7 +562,7 @@ internal struct ArgumentParser {
     var result = [String: PyObject]()
 
     for entry in kwargs.data {
-      switch entry.key.object as? PyString {
+      switch PyCast.asString(entry.key.object) {
       case let .some(keyString):
         result[keyString.value] = entry.value
       case .none:

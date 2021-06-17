@@ -43,7 +43,7 @@ extension PyInstance {
 
     switch self.callMethod(object: object, selector: .__bool__) {
     case .value(let result):
-      if let pyBool = result as? PyBool {
+      if let pyBool = PyCast.asBool(result) {
         return .value(pyBool.value.isTrue)
       }
 

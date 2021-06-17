@@ -42,7 +42,7 @@ extension PyInstance {
   public func getattr(object: PyObject,
                       name: PyObject,
                       default: PyObject? = nil) -> PyResult<PyObject> {
-    guard let name = name as? PyString else {
+    guard let name = PyCast.asString(name) else {
       return .typeError("getattr(): attribute name must be string")
     }
 
@@ -174,7 +174,7 @@ extension PyInstance {
   /// hasattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
   public func hasattr(object: PyObject, name: PyObject) -> PyResult<Bool> {
-    guard let name = name as? PyString else {
+    guard let name = PyCast.asString(name) else {
       return .typeError("hasattr(): attribute name must be string")
     }
 
@@ -215,7 +215,7 @@ extension PyInstance {
   public func setattr(object: PyObject,
                       name: PyObject,
                       value: PyObject) -> PyResult<PyNone> {
-    guard let name = name as? PyString else {
+    guard let name = PyCast.asString(name) else {
       return .typeError("setattr(): attribute name must be string")
     }
 
@@ -290,7 +290,7 @@ extension PyInstance {
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
   public func delattr(object: PyObject, name: PyObject) -> PyResult<PyNone> {
-    guard let name = name as? PyString else {
+    guard let name = PyCast.asString(name) else {
       return .typeError("delattr(): attribute name must be string")
     }
 

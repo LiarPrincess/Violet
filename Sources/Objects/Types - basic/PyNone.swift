@@ -87,15 +87,15 @@ public class PyNone: PyObject, HasCustomGetMethod {
   }
 
   private func bindToSelf(object: PyObject) -> PyResult<PyObject> {
-    if let fn = object as? PyBuiltinFunction {
+    if let fn = PyCast.asBuiltinFunction(object) {
       return .value(fn.bind(to: self))
     }
 
-    if let fn = object as? PyFunction {
+    if let fn = PyCast.asFunction(object) {
       return .value(fn.bind(to: self))
     }
 
-    if let prop = object as? PyProperty {
+    if let prop = PyCast.asProperty(object) {
       return prop.bind(to: self)
     }
 

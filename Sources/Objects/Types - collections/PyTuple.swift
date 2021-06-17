@@ -85,7 +85,7 @@ public class PyTuple: PyObject, PySequenceType {
     with other: PyObject,
     using compareFn: (PySequenceData, PySequenceData) -> CompareResult
   ) -> CompareResult {
-    guard let other = other as? PyTuple else {
+    guard let other = PyCast.asTuple(other) else {
       return .notImplemented
     }
 
@@ -195,7 +195,7 @@ public class PyTuple: PyObject, PySequenceType {
       return .value(other)
     }
 
-    guard let otherTuple = other as? PyTuple else {
+    guard let otherTuple = PyCast.asTuple(other) else {
       let msg = "can only concatenate tuple (not '\(other.typeName)') to tuple"
       return .typeError(msg)
     }

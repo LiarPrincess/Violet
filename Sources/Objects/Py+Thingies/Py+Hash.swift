@@ -30,7 +30,7 @@ extension PyInstance {
       return .error(e)
     }
 
-    guard let pyInt = result as? PyInt else {
+    guard let pyInt = PyCast.asInt(result) else {
       return .typeError(
         "__hash__ method should return an integer, not \(result.typeName)"
       )

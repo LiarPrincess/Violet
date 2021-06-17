@@ -101,7 +101,7 @@ extension UnderscoreImp {
   /// static int
   /// _imp_exec_dynamic_impl(PyObject *module, PyObject *mod)
   public func execDynamic(module: PyObject) -> PyResult<PyNone> {
-    //    guard let mod = module as? PyModule else {
+    //    guard let mod = PyCast.asModule(module) else {
     //      let msg = "exec_dynamic() argument must be module, not \(module.typeName)"
     //      return .typeError(msg)
     //    }

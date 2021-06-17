@@ -43,7 +43,7 @@ internal enum PushExceptionBeforeExcept {
   internal static func pop(from stack: inout ObjectStack) -> Pop {
     let value = stack.pop()
 
-    if let exception = value as? PyBaseException {
+    if let exception = PyCast.asBaseException(value) {
       return .exception(exception)
     }
 

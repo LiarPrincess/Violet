@@ -14,12 +14,12 @@ extension PyInstance {
       return .value(true)
     }
 
-    if let type = typeOrTuple as? PyType, type.checkExact() {
+    if let type = PyCast.asType(typeOrTuple), type.checkExact() {
       let result = type.isType(of: object)
       return .value(result)
     }
 
-    if let tuple = typeOrTuple as? PyTuple {
+    if let tuple = PyCast.asTuple(typeOrTuple) {
       for type in tuple.elements {
         switch self.isInstance(object: object, of: type) {
         case .value(true): return .value(true)
@@ -58,8 +58,8 @@ extension PyInstance {
   /// See [this](https://docs.python.org/3/library/functions.html#issubclass)
   public func isSubclass(object: PyObject,
                          of typeOrTuple: PyObject) -> PyResult<Bool> {
-    if let `super` = typeOrTuple as? PyType, `super`.checkExact() {
-      guard let type = object as? PyType else {
+    if let `super` = PyCast.asType(typeOrTuple), `super`.checkExact() {
+      guard let type = PyCast.asType(object) else {
         return .typeError("issubclass() arg 1 must be a class")
       }
 
@@ -67,7 +67,7 @@ extension PyInstance {
       return .value(result)
     }
 
-    if let tuple = typeOrTuple as? PyTuple {
+    if let tuple = PyCast.asTuple(typeOrTuple) {
       for type in tuple.elements {
         switch self.isSubclass(object: object, of: type) {
         case .value(true): return .value(true)

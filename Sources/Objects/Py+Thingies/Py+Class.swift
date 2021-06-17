@@ -111,7 +111,7 @@ extension PyInstance {
       result = bases.elements.first?.type ?? self.types.type
     }
 
-    if let metaType = result as? PyType {
+    if let metaType = PyCast.asType(result) {
       // meta is really a class, so check for a more derived
       // metaclass, or possible metaclass conflicts:
       switch PyType.calculateMetaclass(metatype: metaType, bases: bases.elements) {
@@ -152,7 +152,7 @@ extension PyInstance {
         return .error(e)
       }
 
-      guard let dict = object as? PyDict else {
+      guard let dict = PyCast.asDict(object) else {
         let mt = metatype.typeName
         let ot = object.typeName
         let msg = "\(mt).__prepare__() must return a mapping, not \(ot)"
@@ -205,8 +205,8 @@ extension PyInstance {
 
   private func fill__class__cell(cell _cell: PyObject,
                                  with _type: PyObject) -> PyBaseException? {
-    guard let type = _type as? PyType,
-          let cell = _cell as? PyCell else {
+    guard let type = PyCast.asType(_type),
+          let cell = PyCast.asCell(_cell) else {
       assert(_cell.isNone, "__class__ should be cell or None. Compiler error?")
       return nil
     }

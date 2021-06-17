@@ -83,7 +83,9 @@ extension BinaryOp {
         var msg = "unsupported operand type(s) for \(op): \(leftType) and \(rightType)."
 
         // For C++ programmers who try to `print << 'Elsa'`:
-        if let fn = left as? PyBuiltinFunction, fn.name == "print", Self.op == "<<" {
+        if let fn = PyCast.asBuiltinFunction(left),
+           fn.name == "print",
+           Self.op == "<<" {
           msg += " Did you mean \"print(<message>, file=<output_stream>)\"?"
         }
 

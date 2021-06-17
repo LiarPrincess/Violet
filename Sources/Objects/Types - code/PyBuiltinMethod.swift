@@ -117,7 +117,7 @@ public class PyBuiltinMethod: PyObject, PyBuiltinFunctionShared {
     // >>> dict.fromkeys.__qualname__ # 'dict' is a type, so use it!
     // 'dict.fromkeys'
     var type = self.object.type
-    if let ifObjectIsTypeThenUseItAsType = self.object as? PyType {
+    if let ifObjectIsTypeThenUseItAsType = PyCast.asType(self.object) {
       type = ifObjectIsTypeThenUseItAsType
     }
 

@@ -127,12 +127,13 @@ public final class PySystemExit: PyBaseException {
   }
 
   private func isCodeTupleEqual(to args: [PyObject]) -> Bool {
-    guard let codeTuple = self.code as? PyTuple else {
+    let codeTupleOrNil = self.code.flatMap(PyCast.asTuple(_:))
+    guard let codeTuple = codeTupleOrNil else {
       return false
     }
 
     let codeElements = codeTuple.elements
-    return codeElements.count == args.count &&
-      zip(codeElements, args).allSatisfy { $0.0 === $0.1 }
+    return codeElements.count == args.count
+      && zip(codeElements, args).allSatisfy { $0.0 === $0.1 }
   }
 }

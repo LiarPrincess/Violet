@@ -57,7 +57,7 @@ extension Eval {
 
   private func exceptionMatch(left: PyObject,
                               right: PyObject) -> PyResult<PyObject> {
-    if let rightTuple = right as? PyTuple {
+    if let rightTuple = PyCast.asTuple(right) {
       for element in rightTuple.elements {
         if let e = self.guaranteeExceptionType(element) {
           return .error(e)
@@ -74,7 +74,7 @@ extension Eval {
   }
 
   private func guaranteeExceptionType(_ object: PyObject) -> PyBaseException? {
-    if let type = object as? PyType, type.isException {
+    if let type = PyCast.asType(object), type.isException {
       return nil
     }
 

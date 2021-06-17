@@ -56,7 +56,7 @@ extension Sys {
 
     switch modules.get(key: name) {
     case .value(let o):
-      if let m = o as? PyModule {
+      if let m = PyCast.asModule(o) {
         return .module(m)
       }
 

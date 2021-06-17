@@ -86,7 +86,7 @@ extension PyDictViewsShared {
       return set.data.count
     }
 
-    if let dict = other as? PyDict {
+    if let dict = PyCast.asDict(other) {
       return dict.data.count
     }
 

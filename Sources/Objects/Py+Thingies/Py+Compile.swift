@@ -212,7 +212,7 @@ extension PyInstance {
   // MARK: - Mode
 
   private func parseMode(arg: PyObject) -> PyResult<Parser.Mode> {
-    guard let string = arg as? PyString else {
+    guard let string = PyCast.asString(arg) else {
       return .typeError("compile(): mode must be an str")
     }
 
@@ -246,7 +246,7 @@ extension PyInstance {
       return .value(self.optimizeFromSysFlags)
     }
 
-    guard let int = arg as? PyInt else {
+    guard let int = PyCast.asInt(arg) else {
       return .typeError("compile(): optimize must be an int")
     }
 

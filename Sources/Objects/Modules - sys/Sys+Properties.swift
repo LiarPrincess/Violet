@@ -59,7 +59,7 @@ extension Sys {
       return .valueError(msg)
     }
 
-    guard let result = first as? PyString else {
+    guard let result = PyCast.asString(first) else {
       let t = first.typeName
       let msg = "Expected first element of 'sys.argv' to be a str, but got \(t)"
       return .typeError(msg)

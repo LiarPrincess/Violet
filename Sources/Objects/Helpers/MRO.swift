@@ -227,7 +227,7 @@ internal struct MRO {
     result.reserveCapacity(objects.count)
 
     for object in objects {
-      switch object as? PyType {
+      switch PyCast.asType(object) {
       case .some(let t): result.append(t)
       case .none: return .none
       }

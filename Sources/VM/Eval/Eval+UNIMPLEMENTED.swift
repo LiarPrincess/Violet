@@ -75,7 +75,7 @@ extension Eval {
     // Fast path for common types
     let isFormatEmpty = format?.value.isEmpty ?? true
     if isFormatEmpty {
-      if let str = value as? PyString, str.checkExact() {
+      if let str = PyCast.asString(value), str.checkExact() {
         return .value(str)
       }
 
@@ -97,7 +97,7 @@ extension Eval {
       return .nil
     }
 
-    guard let str = format as? PyString else {
+    guard let str = PyCast.asString(format) else {
       let t = format.typeName
       let msg = "Format specifier must be a string, not \(t)"
       return .error(Py.newTypeError(msg: msg))

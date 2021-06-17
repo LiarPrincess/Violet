@@ -43,7 +43,7 @@ extension Sys {
   /// static PyObject *
   /// sys_setrecursionlimit(PyObject *self, PyObject *args)
   public func setRecursionLimit(limit: PyObject) -> PyResult<PyNone> {
-    guard let int = limit as? PyInt else {
+    guard let int = PyCast.asInt(limit) else {
       let t = limit.typeName
       return .typeError("recursion limit must be an int, not \(t)")
     }

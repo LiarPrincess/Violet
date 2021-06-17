@@ -148,7 +148,7 @@ Pros:
 
     // sourcery: pymethod = __add__
     public func add(_ other: PyObject) -> PyResult<PyObject> {
-      guard let other = other as? PyInt else {
+      guard let other = PyCast.asInt(other) else {
         return .value(Py.notImplemented)
       }
 
@@ -460,7 +460,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __add__
   public func add(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -1197,7 +1197,7 @@ public class PyList: PyObject, PySequenceType {
     with other: PyObject,
     using compareFn: (PySequenceData, PySequenceData) -> CompareResult
   ) -> CompareResult {
-    guard let other = other as? PyList else {
+    guard let other = PyCast.asList(other) else {
       return .notImplemented
     }
 

@@ -84,7 +84,7 @@ internal enum IndexHelper {
   /// PyNumber_Index(PyObject *item)
   /// ```
   internal static func bigInt(_ value: PyObject) -> BigIntIndex {
-    if let int = value as? PyInt {
+    if let int = PyCast.asInt(value) {
       return .value(int.value)
     }
 
@@ -94,7 +94,7 @@ internal enum IndexHelper {
 
     switch Py.callMethod(object: value, selector: .__index__) {
     case .value(let object):
-      guard let int = object as? PyInt else {
+      guard let int = PyCast.asInt(object) else {
         let msg = "__index__ returned non-int (type \(object.typeName)"
         return .error(Py.newTypeError(msg: msg))
       }

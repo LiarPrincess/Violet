@@ -100,7 +100,7 @@ public class PyInt: PyObject {
     with other: PyObject,
     using compareFn: (BigInt, BigInt) -> Bool
   ) -> CompareResult {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .notImplemented
     }
 
@@ -282,7 +282,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __add__
   public func add(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -299,7 +299,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __sub__
   public func sub(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -309,7 +309,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __rsub__
   public func rsub(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -321,7 +321,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __mul__
   public func mul(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -342,7 +342,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __pow__
   public func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
-    guard let exp = exp as? PyInt else {
+    guard let exp = PyCast.asInt(exp) else {
       return .value(Py.notImplemented)
     }
 
@@ -387,7 +387,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __rpow__
   public func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
-    guard let base = base as? PyInt else {
+    guard let base = PyCast.asInt(base) else {
       return .value(Py.notImplemented)
     }
 
@@ -414,7 +414,7 @@ public class PyInt: PyObject {
       return .none
     }
 
-    if let int = mod as? PyInt {
+    if let int = PyCast.asInt(mod) {
       return .int(int)
     }
 
@@ -474,7 +474,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __truediv__
   public func truediv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -483,7 +483,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __rtruediv__
   public func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -521,7 +521,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __floordiv__
   public func floordiv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -530,7 +530,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __rfloordiv__
   public func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -550,7 +550,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __mod__
   public func mod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -559,7 +559,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __rmod__
   public func rmod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -579,7 +579,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __divmod__
   public func divmod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -589,7 +589,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __rdivmod__
   public func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -662,7 +662,7 @@ public class PyInt: PyObject {
   /// static PyObject *
   /// long_lshift(PyObject *v, PyObject *w)
   public func lshift(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -673,7 +673,7 @@ public class PyInt: PyObject {
   /// static PyObject *
   /// long_rshift(PyLongObject *a, PyLongObject *b)
   public func rlshift(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -703,7 +703,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __rshift__
   public func rshift(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -712,7 +712,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __rrshift__
   public func rrshift(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -738,7 +738,7 @@ public class PyInt: PyObject {
   internal static func and(int zelf: PyInt,
                            other: PyObject) -> PyResult<PyObject> {
     // Why static? See comment at the top of 'PyBool'.
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -767,7 +767,7 @@ public class PyInt: PyObject {
   internal static func or(int zelf: PyInt,
                           other: PyObject) -> PyResult<PyObject> {
     // Why static? See comment at the top of 'PyBool'.
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -795,7 +795,7 @@ public class PyInt: PyObject {
   // sourcery: pymethod = __xor__
   internal static func xor(int zelf: PyInt,
                            other: PyObject) -> PyResult<PyObject> {
-    guard let other = other as? PyInt else {
+    guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -1016,7 +1016,7 @@ public class PyInt: PyObject {
   private static func parseBigInt(
     objectWithoutBase object: PyObject
   ) -> PyResult<BigInt> {
-    // '__int__' and '__trunc__' have to be before 'PyInt' cast,
+    // '__int__' and '__trunc__' have to be before 'PyCast.asInt',
     // because they can be overridden
 
     switch Self.call__int__(object: object) {
@@ -1031,7 +1031,7 @@ public class PyInt: PyObject {
     case .error(let e): return .error(e)
     }
 
-    if let int = object as? PyInt {
+    if let int = PyCast.asInt(object) {
       return .value(int.value)
     }
 
@@ -1062,7 +1062,7 @@ public class PyInt: PyObject {
 
     switch Py.callMethod(object: object, selector: .__int__) {
     case .value(let o):
-      guard let int = o as? PyInt else {
+      guard let int = PyCast.asInt(o) else {
         let msg = "__int__ returned non-int (type \(o.typeName)"
         return .error(Py.newTypeError(msg: msg))
       }
@@ -1087,7 +1087,7 @@ public class PyInt: PyObject {
 
     switch Py.callMethod(object: object, selector: .__trunc__) {
     case .value(let o):
-      if let int = o as? PyInt {
+      if let int = PyCast.asInt(o) {
         return .value(int)
       }
 

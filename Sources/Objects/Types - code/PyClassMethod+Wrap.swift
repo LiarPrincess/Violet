@@ -4,7 +4,7 @@
 // MARK: - 1st argument is type
 
 private func asType(name: String, object: PyObject) -> PyResult<PyType> {
-  if let type = object as? PyType {
+  if let type = PyCast.asType(object) {
     return .value(type)
   }
 

@@ -84,7 +84,7 @@ public class PyBool: PyInt {
   internal static func and(bool zelf: PyBool,
                            other: PyObject) -> PyResult<PyObject> {
     // Why static? See comment at the top of this file.
-    if let other = other as? PyBool {
+    if let other = PyCast.asBool(other) {
       let result = zelf.value.isTrue && other.value.isTrue
       return .value(Py.newBool(result))
     }
@@ -113,7 +113,7 @@ public class PyBool: PyInt {
   internal static func or(bool zelf: PyBool,
                           other: PyObject) -> PyResult<PyObject> {
     // Why static? See comment at the top of this file.
-    if let other = other as? PyBool {
+    if let other = PyCast.asBool(other) {
       let result = zelf.value.isTrue || other.value.isTrue
       return .value(Py.newBool(result))
     }
@@ -142,7 +142,7 @@ public class PyBool: PyInt {
   internal static func xor(bool zelf: PyBool,
                            other: PyObject) -> PyResult<PyObject> {
     // Why static? See comment at the top of this file.
-    if let other = other as? PyBool {
+    if let other = PyCast.asBool(other) {
       let result = zelf.value.isTrue != other.value.isTrue
       return .value(Py.newBool(result))
     }

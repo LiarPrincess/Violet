@@ -270,7 +270,7 @@ extension PyInstance {
     // >>> i = 2**60 # <-- high value to skip interned values (small int cache)
     // >>> assert range(i).stop is i
 
-    if let objectInt = object as? PyInt {
+    if let objectInt = PyCast.asInt(object) {
       return .value(objectInt)
     }
 
@@ -351,7 +351,7 @@ extension PyInstance {
     // Use `self.length(iterable: PyObject)`
     switch self.len(iterable: iterable) {
     case let .value(object):
-      guard let pyInt = object as? PyInt else {
+      guard let pyInt = PyCast.asInt(object) else {
         return .typeError("'\(object)' object cannot be interpreted as an integer")
       }
 
@@ -572,7 +572,7 @@ extension PyInstance {
       return .value(byteObjects)
     }
 
-    if let string = iterable as? PyString, string.checkExact() {
+    if let string = PyCast.asString(iterable), string.checkExact() {
       let scalars = string.data.scalars
       let characterObjects = scalars.map(self.intern(scalar:))
       return .value(characterObjects)

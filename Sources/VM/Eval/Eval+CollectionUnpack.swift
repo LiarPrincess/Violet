@@ -86,30 +86,30 @@ extension Eval {
   }
 
   internal func getFunctionName(object: PyObject) -> String? {
-    if let fn = object as? PyFunction {
+    if let fn = PyCast.asFunction(object) {
       let result = fn.getName()
       return result.value
     }
 
-    if let fn = object as? PyBuiltinFunction {
+    if let fn = PyCast.asBuiltinFunction(object) {
       return fn.getName()
     }
 
-    if let method = object as? PyMethod {
+    if let method = PyCast.asMethod(object) {
       let fn = method.getFunc()
       let result = fn.getName()
       return result.value
     }
 
-     if let fn = object as? PyBuiltinMethod {
+     if let fn = PyCast.asBuiltinMethod(object) {
       return fn.getName()
     }
 
-    if let fn = object as? PyStaticMethod, let callable = fn.getFunc() {
+    if let fn = PyCast.asStaticMethod(object), let callable = fn.getFunc() {
       return self.getFunctionName(object: callable)
     }
 
-    if let fn = object as? PyClassMethod, let callable = fn.getFunc() {
+    if let fn = PyCast.asClassMethod(object), let callable = fn.getFunc() {
       return self.getFunctionName(object: callable)
     }
 
@@ -235,11 +235,11 @@ extension Eval {
       return Py.newTypeError(msg: msg)
     }
 
-    if let keyError = error as? PyKeyError {
+    if let keyError = PyCast.asKeyError(error) {
       let args = keyError.getArgs()
       guard let first = args.elements.first else { return nil }
 
-      if let key = first as? PyString {
+      if let key = PyCast.asString(first) {
         let msg = "\(fnName) got multiple values for keyword argument '\(key)'"
         return Py.newTypeError(msg: msg)
       }

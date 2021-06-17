@@ -83,7 +83,7 @@ extension Sys {
         return .none
       }
 
-      if let file = object as? PyTextFile {
+      if let file = PyCast.asTextFile(object) {
         return .value(file)
       }
 

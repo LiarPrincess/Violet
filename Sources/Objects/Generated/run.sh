@@ -71,6 +71,12 @@ python3 $GENERATED/TypeMemoryLayout.py > $GENERATED/TypeMemoryLayout.swift
 echo 'Generating Fast (protocol based dispatch)'
 python3 $GENERATED/Fast.py > $GENERATED/Fast.swift
 
+# === Casting ===
+# Sometimes we have to cast from 'PyObject' to specific Swift type.
+# This file generates casting methods.
+echo 'Generating PyCast (methods for casting PyObject -> Specific type)'
+python3 $GENERATED/PyCast.py > $GENERATED/PyCast.swift
+
 # === IdString ===
 # Predefined commonly used `__dict__` keys.
 # Similar to `_Py_IDENTIFIER` in `CPython`.

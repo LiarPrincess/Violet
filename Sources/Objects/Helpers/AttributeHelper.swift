@@ -129,7 +129,7 @@ internal enum AttributeHelper {
   // MARK: - Extract name
 
   internal static func extractName(from object: PyObject) -> PyResult<PyString> {
-    guard let string = object as? PyString else {
+    guard let string = PyCast.asString(object) else {
       let msg = "attribute name must be string, not '\(object.typeName)'"
       return .typeError(msg)
     }

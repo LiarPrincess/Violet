@@ -153,7 +153,7 @@ extension VM {
 
     let cellCount = code.cellVariableCount
     for (index, cellObject) in closure.elements.enumerated() {
-      guard let cell = cellObject as? PyCell else {
+      guard let cell = PyCast.asCell(cellObject) else {
         let t = cellObject.typeName
         trap("Closure can only contain cells, not '\(t)'.")
       }

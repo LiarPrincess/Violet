@@ -118,7 +118,7 @@ extension UnderscoreWarnings {
       return .value(userWarning)
     }
 
-    if let type = category as? PyType, self.isWarningSubtype(type: type) {
+    if let type = PyCast.asType(category), self.isWarningSubtype(type: type) {
       return .value(type)
     }
 
@@ -137,7 +137,7 @@ extension UnderscoreWarnings {
       return .value(1)
     }
 
-    if let pyInt = level as? PyInt {
+    if let pyInt = PyCast.asInt(level) {
       if let int = Int(exactly: pyInt.value) {
         return .value(int)
       }
@@ -215,7 +215,7 @@ extension UnderscoreWarnings {
         return .value(.none)
       }
 
-      if let dict = object as? PyDict {
+      if let dict = PyCast.asDict(object) {
         return .value(.dict(dict))
       }
 
@@ -232,7 +232,7 @@ extension UnderscoreWarnings {
 
   private func getModuleName(globals: PyDict) -> PyString {
     if let object = globals.get(id: .__name__),
-       let string = object as? PyString {
+       let string = PyCast.asString(object) {
       return string
     }
 
@@ -243,7 +243,7 @@ extension UnderscoreWarnings {
 
   private func getFilename(globals: PyDict, module: PyString) -> PyString {
     if let object = globals.get(id: .__file__),
-       let str = object as? PyString {
+       let str = PyCast.asString(object) {
       return str
     }
 

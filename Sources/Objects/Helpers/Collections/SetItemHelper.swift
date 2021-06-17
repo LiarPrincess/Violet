@@ -34,7 +34,7 @@ extension SetItemHelper {
       return .error(e)
     }
 
-    if let slice = index as? PySlice {
+    if let slice = PyCast.asSlice(index) {
       return Self.setItem(collection: &collection, slice: slice, value: value)
     }
 

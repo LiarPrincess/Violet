@@ -121,7 +121,7 @@ internal enum PushFinallyReason {
   internal static func pop(from stack: inout ObjectStack) -> Pop {
     let marker = stack.pop()
 
-    if let pyInt = marker as? PyInt {
+    if let pyInt = PyCast.asInt(marker) {
       switch pyInt.value {
       case Marker.return:
         let value = stack.pop()
@@ -130,7 +130,7 @@ internal enum PushFinallyReason {
         return .break
       case Marker.continue:
         let value = stack.pop()
-        if let pyInt = value as? PyInt, let int = Int(exactly: pyInt.value) {
+        if let pyInt = PyCast.asInt(value), let int = Int(exactly: pyInt.value) {
           return .continue(loopStartLabelIndex: int, asObject: pyInt)
         }
         trap("Invalid argument (\(value)) for 'continue' after finally block")
@@ -145,7 +145,7 @@ internal enum PushFinallyReason {
       }
     }
 
-    if let e = marker as? PyBaseException {
+    if let e = PyCast.asBaseException(marker) {
       return .exception(e)
     }
 

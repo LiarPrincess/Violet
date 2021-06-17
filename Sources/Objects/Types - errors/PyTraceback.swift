@@ -114,7 +114,7 @@ public class PyTraceback: PyObject {
       return .value()
     }
 
-    if let traceback = value as? PyTraceback {
+    if let traceback = PyCast.asTraceback(value) {
       if let e = self.checkForLoop(with: traceback) {
         return .error(e)
       }
@@ -182,24 +182,24 @@ public class PyTraceback: PyObject {
     var next: PyTraceback?
     if _next.isNone {
       next = nil
-    } else if let traceback = _next as? PyTraceback {
+    } else if let traceback = PyCast.asTraceback(_next) {
       next = traceback
     } else {
       let t = _next.typeName
       return .typeError("\(fn) argument 1 must be traceback or None, not \(t)")
     }
 
-    guard let frame = _frame as? PyFrame else {
+    guard let frame = PyCast.asFrame(_frame) else {
       let t = _frame.typeName
       return .typeError("\(fn) argument 2 must be frame, not \(t)")
     }
 
-    guard let lastInstruction = _lastInstruction as? PyInt else {
+    guard let lastInstruction = PyCast.asInt(_lastInstruction) else {
       let t = _lastInstruction.typeName
       return .typeError("\(fn) argument 3 must be int, not \(t)")
     }
 
-    guard let lineNo = _lineNo as? PyInt else {
+    guard let lineNo = PyCast.asInt(_lineNo) else {
       let t = _lineNo.typeName
       return .typeError("\(fn) argument 4 must be int, not \(t)")
     }

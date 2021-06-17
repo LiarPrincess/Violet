@@ -602,11 +602,11 @@ extension Builtins {
       return .typeError("__build_class__: not enough arguments")
     }
 
-    guard let fn = args[0] as? PyFunction else {
+    guard let fn = PyCast.asFunction(args[0]) else {
       return .typeError("__build_class__: func must be a function")
     }
 
-    guard let name = args[1] as? PyString else {
+    guard let name = PyCast.asString(args[1]) else {
       return .typeError("__build_class__: name is not a string")
     }
 

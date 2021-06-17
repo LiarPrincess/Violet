@@ -124,7 +124,7 @@ extension PyInstance {
       return self.defaultPrintStream.getFile()
     }
 
-    guard let textFile = file as? PyTextFile else {
+    guard let textFile = PyCast.asTextFile(file) else {
       return .error(Py.newAttributeError(object: file, hasNoAttribute: "write"))
     }
 
@@ -141,7 +141,7 @@ extension PyInstance {
       return .value(.none)
     }
 
-    guard let string = object as? PyString else {
+    guard let string = PyCast.asString(object) else {
       let msg = "\(argName) must be None or a string, not \(object.typeName)"
       return .typeError(msg)
     }

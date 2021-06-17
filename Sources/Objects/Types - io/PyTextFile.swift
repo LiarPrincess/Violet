@@ -161,7 +161,7 @@ public class PyTextFile: PyObject {
       return self.read(size: -1)
     }
 
-    if let pyInt = size as? PyInt {
+    if let pyInt = PyCast.asInt(size) {
       let int = Int(exactly: pyInt.value) ?? Int.max
       return self.read(size: int)
     }
@@ -223,7 +223,7 @@ public class PyTextFile: PyObject {
   /// static PyObject *
   /// _io_TextIOWrapper_write_impl(textio *self, Py_ssize_t n)
   public func write(object: PyObject) -> PyResult<PyNone> {
-    guard let str = object as? PyString else {
+    guard let str = PyCast.asString(object) else {
       return .typeError("write() argument must be str, not \(object.typeName)")
     }
 

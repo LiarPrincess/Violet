@@ -47,12 +47,12 @@ public class PyComplex: PyObject {
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    if let complex = other as? PyComplex {
+    if let complex = PyCast.asComplex(other) {
       let result = self.real == complex.real && self.imag == complex.imag
       return .value(result)
     }
 
-    if let float = other as? PyFloat {
+    if let float = PyCast.asFloat(other) {
       guard self.imag.isZero else {
         return .value(false)
       }
@@ -60,7 +60,7 @@ public class PyComplex: PyObject {
       return FloatCompareHelper.isEqual(left: self.real, right: float)
     }
 
-    if let int = other as? PyInt {
+    if let int = PyCast.asInt(other) {
       guard self.imag.isZero else {
         return .value(false)
       }
@@ -514,7 +514,8 @@ public class PyComplex: PyObject {
                            arg0: PyObject?,
                            arg1: PyObject?) -> PyResult<PyComplex> {
     // Special-case for a identity.
-    if let complex = arg0 as? PyComplex, arg1 == nil {
+    let arg0Complex = arg0.flatMap(PyCast.asComplex(_:))
+    if let complex = arg0Complex, arg1 == nil {
       return .value(complex)
     }
 
@@ -523,7 +524,8 @@ public class PyComplex: PyObject {
       PyComplex.init(type:real:imag:) :
       PyComplexHeap.init(type:real:imag:)
 
-    if let str = arg0 as? PyString {
+    let arg0String = arg0.flatMap(PyCast.asString(_:))
+    if let str = arg0String {
       guard arg1 == nil else {
         return .typeError("complex() can't take second arg if first is a string")
       }
@@ -531,7 +533,8 @@ public class PyComplex: PyObject {
       return PyComplex.parse(str.value).map { alloca(type, $0.real, $0.imag) }
     }
 
-    guard arg1 as? PyString == nil else {
+    let arg1IsString = arg1.flatMap(PyCast.isString(_:)) ?? false
+    if arg1IsString {
       return .typeError("complex() second arg can't be a string")
     }
 
@@ -643,7 +646,7 @@ public class PyComplex: PyObject {
     // Call has to be before 'Self.asComplex', because it can override
     switch PyComplex.callComplex(object) {
     case .value(let o):
-      guard let complex = o as? PyComplex else {
+      guard let complex = PyCast.asComplex(o) else {
         return .typeError("__complex__ returned non-Complex (type \(o.typeName))")
       }
       return .value(Raw(real: complex.real, imag: complex.imag))
@@ -696,17 +699,17 @@ public class PyComplex: PyObject {
   }
 
   private static func asComplex(object: PyObject) -> AsComplex {
-    if let complex = object as? PyComplex {
+    if let complex = PyCast.asComplex(object) {
       let result = Raw(real: complex.real, imag: complex.imag)
       return .value(result)
     }
 
-    if let float = object as? PyFloat {
+    if let float = PyCast.asFloat(object) {
       let result = Self.asComplex(float: float)
       return .value(result)
     }
 
-    if let int = object as? PyInt {
+    if let int = PyCast.asInt(object) {
       switch Self.asComplex(int: int) {
       case let .value(r):
         return .value(r)

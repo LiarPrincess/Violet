@@ -34,7 +34,7 @@ extension Abstract {
   fileprivate static func compare(left: Double, right: PyObject) -> CompareResult {
     // If both are floats then use standard Swift compare
     // (even if one of them is nan/inf/whatever).
-    if let rightFloat = right as? PyFloat {
+    if let rightFloat = PyCast.asFloat(right) {
       let result = Self.compare(left: left, right: rightFloat.value)
       return .value(result)
     }
@@ -51,7 +51,7 @@ extension Abstract {
       return .notImplemented
     }
 
-    if let rightInt = right as? PyInt {
+    if let rightInt = PyCast.asInt(right) {
       return Self.compare(left: left, right: rightInt.value)
     }
 

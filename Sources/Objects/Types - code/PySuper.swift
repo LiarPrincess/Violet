@@ -141,7 +141,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
   }
 
   private func is__class__(name: PyObject) -> Bool {
-    guard let string = name as? PyString else {
+    guard let string = PyCast.asString(name) else {
       return false
     }
 
@@ -283,7 +283,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
     var object = objectArg
 
     if let typeAsObject = typeArg {
-      guard let typeAsType = typeAsObject as? PyType else {
+      guard let typeAsType = PyCast.asType(typeAsObject) else {
         let t = typeAsObject.typeName
         return .typeError("super() argument 1 must be type, not \(t)")
       }
@@ -429,7 +429,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
         return .error(Py.newRuntimeError(msg: msg))
       }
 
-      guard let type = content as? PyType else {
+      guard let type = PyCast.asType(content) else {
         let msg = "super(): __class__ is not a type (\(content.typeName))"
         return .error(Py.newRuntimeError(msg: msg))
       }
@@ -456,7 +456,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
   /// `Py_TYPE(obj)` is not a subclass of type, but `object.__class__` is!
   /// This will allow using `super()` with a proxy for `object`.
   private func checkSuper(type: PyType, object: PyObject) -> PyResult<PyType> {
-    if let objectAsType = object as? PyType, objectAsType.isSubtype(of: type) {
+    if let objectAsType = PyCast.asType(object), objectAsType.isSubtype(of: type) {
       return .value(objectAsType)
     }
 
@@ -467,7 +467,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
 
     switch Py.getattr(object: objectType, name: .__class__) {
     case .value(let classObject):
-      if let classType = classObject as? PyType, classType.isSubtype(of: type) {
+      if let classType = PyCast.asType(classObject), classType.isSubtype(of: type) {
         return .value(classType)
       }
     case .error:

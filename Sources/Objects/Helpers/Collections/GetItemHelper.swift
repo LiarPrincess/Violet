@@ -36,7 +36,7 @@ extension GetItemHelper {
       return .error(e)
     }
 
-    if let slice = index as? PySlice {
+    if let slice = PyCast.asSlice(index) {
       switch Self.getItem(collection: collection, slice: slice) {
       case let .value(v): return .slice(v)
       case let .error(e): return .error(e)

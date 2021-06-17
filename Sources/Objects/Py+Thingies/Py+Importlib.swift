@@ -197,7 +197,7 @@ extension PyInstance {
     var triedPaths = [String]()
     for object in moduleSearchPaths.elements {
       // If this is not 'str' then ignore
-      guard let path = object as? PyString else {
+      guard let path = PyCast.asString(object) else {
         continue
       }
 

@@ -40,12 +40,12 @@ internal enum FileSource {
   case bytes(Data)
 
   internal static func from(_ object: PyObject) -> PyResult<FileSource> {
-    if let int = object as? PyInt,
+    if let int = PyCast.asInt(object),
        let fd = Int32(exactly: int.value) {
       return .value(.fileDescriptor(fd))
     }
 
-    if let string = object as? PyString {
+    if let string = PyCast.asString(object) {
       return .value(.string(string.value))
     }
 
@@ -126,7 +126,7 @@ internal struct FileModeParser {
       return .value(FileModeParser())
     }
 
-    guard let str = mode as? PyString else {
+    guard let str = PyCast.asString(mode) else {
       return .typeError("mode must be str, not \(mode.typeName)")
     }
 

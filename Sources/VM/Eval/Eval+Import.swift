@@ -117,7 +117,7 @@ extension Eval {
   }
 
   private func startsWithUnderscore(name: PyObject) -> Bool {
-    guard let str = name as? PyString else {
+    guard let str = PyCast.asString(name) else {
       return false
     }
 
@@ -143,9 +143,10 @@ extension Eval {
         case let .error(e): return .error(e)
         }
       case .notFound:
-        let moduleName = (module as? PyModule)?.getNameOrNil()
+        let moduleOrNil = PyCast.asModule(module)
+        let moduleNameOrNil = moduleOrNil?.getNameOrNil()
         let msg = "from-import-* object has no __dict__ and no __all__"
-        return .error(Py.newImportError(msg: msg, moduleName: moduleName))
+        return .error(Py.newImportError(msg: msg, moduleName: moduleNameOrNil))
       case .error(let e):
          return .error(e)
       }
@@ -269,7 +270,7 @@ extension Eval {
     case let .error(e): return .error(e)
     }
 
-    guard let str = object as? PyString else {
+    guard let str = PyCast.asString(object) else {
       return .notString
     }
 

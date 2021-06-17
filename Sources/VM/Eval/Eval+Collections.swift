@@ -94,7 +94,7 @@ extension Eval {
   internal func buildConstKeyMap(elementCount: Int) -> InstructionResult {
     let keys = self.stack.pop()
 
-    guard let keysTuple = keys as? PyTuple else {
+    guard let keysTuple = PyCast.asTuple(keys) else {
       let msg = "bad BUILD_CONST_KEY_MAP keys argument"
       return .exception(Py.newSystemError(msg: msg))
     }

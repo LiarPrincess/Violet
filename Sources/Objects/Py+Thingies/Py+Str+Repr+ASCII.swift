@@ -19,7 +19,7 @@ extension PyInstance {
 
     switch self.callMethod(object: object, selector: .__repr__) {
     case .value(let result):
-      guard let resultStr = result as? PyString else {
+      guard let resultStr = PyCast.asString(result) else {
         return .typeError("__repr__ returned non-string (\(result.typeName))")
       }
 
@@ -61,7 +61,7 @@ extension PyInstance {
 
     switch self.callMethod(object: object, selector: .__str__) {
     case .value(let result):
-      guard let resultStr = result as? PyString else {
+      guard let resultStr = PyCast.asString(result) else {
         return .typeError("__str__ returned non-string (\(result.typeName))")
       }
 
@@ -135,12 +135,12 @@ extension PyInstance {
     }
 
     if elements.count == 1 {
-      if let s = elements[0] as? PyString {
+      if let s = PyCast.asString(elements[0]) {
         return .value(s)
       }
     }
 
-    guard let sep = separator as? PyString else {
+    guard let sep = PyCast.asString(separator) else {
       return .typeError("separator: expected str instance, \(separator.typeName) found")
     }
 
@@ -167,7 +167,7 @@ extension PyInstance {
     var result = [PyString]()
 
     for (index, object) in elements.enumerated() {
-      switch object as? PyString {
+      switch PyCast.asString(object) {
       case .some(let s):
         result.append(s)
       case .none:
@@ -192,7 +192,7 @@ extension PyInstance {
   ///
   /// Mostly targeted towards 'str', `bytes` and `bytearray`.
   internal func extractString(object: PyObject) -> ExtractStringResult {
-    if let str = object as? PyString {
+    if let str = PyCast.asString(object) {
       return .string(str, str.value)
     }
 

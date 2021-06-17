@@ -93,7 +93,7 @@ public class PyRange: PyObject {
 
   // sourcery: pymethod = __eq__
   public func isEqual(_ other: PyObject) -> CompareResult {
-    guard let otherRange = other as? PyRange else {
+    guard let otherRange = PyCast.asRange(other) else {
       return .notImplemented
     }
 
@@ -214,7 +214,7 @@ public class PyRange: PyObject {
 
   // sourcery: pymethod = __contains__
   public func contains(element: PyObject) -> PyResult<Bool> {
-    guard let int = element as? PyInt else {
+    guard let int = PyCast.asInt(element) else {
       return .value(false)
     }
 
@@ -258,7 +258,7 @@ public class PyRange: PyObject {
       return .error(e)
     }
 
-    if let slice = index as? PySlice {
+    if let slice = PyCast.asSlice(index) {
       let result = self.getItem(slice: slice)
       return result.flatMap { PyResult<PyObject>.value($0) }
     }
@@ -378,7 +378,7 @@ public class PyRange: PyObject {
 
   // sourcery: pymethod = count
   public func count(element: PyObject) -> PyResult<BigInt> {
-    if let int = element as? PyInt {
+    if let int = PyCast.asInt(element) {
       return .value(self.contains(element: int) ? 1 : 0)
     }
 
@@ -389,7 +389,7 @@ public class PyRange: PyObject {
 
   // sourcery: pymethod = index
   public func index(of element: PyObject) -> PyResult<BigInt> {
-    guard let int = element as? PyInt, self.contains(element: int) else {
+    guard let int = PyCast.asInt(element), self.contains(element: int) else {
       switch Py.strValue(object: element) {
       case .value(let str):
         return .valueError("\(str) is not in range")
