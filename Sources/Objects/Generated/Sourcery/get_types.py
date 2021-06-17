@@ -1,7 +1,7 @@
 import os
 from typing import List, Union
 
-from Sourcery.entities import TypeInfo, FieldInfo, PyPropertyInfo, PyFunctionInfo
+from Sourcery.entities import TypeInfo, SwiftFieldInfo, PyPropertyInfo, PyFunctionInfo
 from Sourcery.validation import run as run_validation
 
 
@@ -55,14 +55,14 @@ def get_types() -> List[TypeInfo]:
                 assert len(split) == 2
                 current_type.swift_static_doc_property = split[1]
 
-            elif line_type == 'Field':
+            elif line_type == 'SwiftField':
                 assert current_type
                 assert len(split) == 3
                 swift_field_name = split[1]
                 swift_field_type = split[2]
 
-                field = FieldInfo(swift_field_name, swift_field_type)
-                current_type.fields.append(field)
+                field = SwiftFieldInfo(swift_field_name, swift_field_type)
+                current_type.swift_fields.append(field)
 
             elif line_type == 'PyProperty':
                 assert current_type
@@ -78,7 +78,7 @@ def get_types() -> List[TypeInfo]:
                                       swift_setter_fn,
                                       swift_type,
                                       swift_static_doc_property)
-                current_type.properties.append(prop)
+                current_type.python_properties.append(prop)
 
             elif line_type == 'PyMethod' or line_type == 'PyClassMethod' or line_type == 'PyStaticMethod':
                 assert current_type
@@ -94,11 +94,11 @@ def get_types() -> List[TypeInfo]:
                                     swift_static_doc_property)
 
                 if line_type == 'PyMethod':
-                    current_type.methods.append(fn)
+                    current_type.python_methods.append(fn)
                 elif line_type == 'PyStaticMethod':
-                    current_type.static_functions.append(fn)
+                    current_type.python_static_functions.append(fn)
                 elif line_type == 'PyClassMethod':
-                    current_type.class_functions.append(fn)
+                    current_type.python_class_functions.append(fn)
 
             else:
                 assert False, f"Unknown line type: '{line_type}'"

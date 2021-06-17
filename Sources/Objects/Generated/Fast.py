@@ -78,11 +78,11 @@ def is_python_name_in_generated_protocols(name) -> bool:
 
 
 def get_properties(t: TypeInfo):
-    return filter(is_python_name_in_generated_protocols, t.properties)
+    return filter(is_python_name_in_generated_protocols, t.python_properties)
 
 
 def get_methods(t: TypeInfo):
-    return filter(is_python_name_in_generated_protocols, t.methods)
+    return filter(is_python_name_in_generated_protocols, t.python_methods)
 
 # ------
 # Helpers
@@ -210,31 +210,31 @@ internal protocol __dict__Owner {{
 
     for t in types:
         # Object will never participate in 'Fast'
-        if t.python_type == 'object':
+        if t.python_type_name == 'object':
             continue
 
         for prop in get_properties(t):
-            python_name = prop.python_name
+            python_type_name = prop.python_name
             swift_getter_fn = prop.swift_getter_fn + '()'
             swift_return_type = prop.swift_type
-            protocol_name = getter_protocol_name(python_name)
-            add_protocol(python_name, protocol_name, swift_getter_fn, swift_return_type)
+            protocol_name = getter_protocol_name(python_type_name)
+            add_protocol(python_type_name, protocol_name, swift_getter_fn, swift_return_type)
 
             # Setters are not supported
 
         for meth in get_methods(t):
-            python_name = meth.python_name
+            python_type_name = meth.python_name
             swift_selector_with_types = meth.swift_selector_with_types
             swift_return_type = meth.swift_return_type
-            protocol_name = func_protocol_name(python_name)
+            protocol_name = func_protocol_name(python_type_name)
 
             # 'int' and 'bool' have static versions of some methods
             # (because we can't override pymethods).
             # But they provide correct methods for protocol conformance.
-            if t.python_type in ('int', 'bool') and python_name in ('__repr__', '__str__', '__and__', '__rand__', '__or__', '__ror__', '__xor__', '__rxor__'):
+            if t.python_type_name in ('int', 'bool') and python_type_name in ('__repr__', '__str__', '__and__', '__rand__', '__or__', '__ror__', '__xor__', '__rxor__'):
                 continue
 
-            add_protocol(python_name, protocol_name, swift_selector_with_types, swift_return_type)
+            add_protocol(python_type_name, protocol_name, swift_selector_with_types, swift_return_type)
 
         # From static methods we have hand-written '__new__' and '__init__'.
         # We ignore others.
@@ -261,7 +261,7 @@ internal protocol __dict__Owner {{
 
     for protocol_name in sorted(protocols_by_name):
         protocol = protocols_by_name[protocol_name]
-        python_name = protocol.python_name
+        python_type_name = protocol.python_name
         protocol_name = protocol.swift_protocol_name
         s = protocol.swift_signature
         print(f'private protocol {protocol_name} {{ func {s.selector_with_types} -> {s.return_type} }}')
@@ -307,7 +307,7 @@ private func hasOverridenBuiltinMethod(
 
     for protocol_name in sorted(protocols_by_name):
         protocol = protocols_by_name[protocol_name]
-        python_name = protocol.python_name
+        python_type_name = protocol.python_name
         protocol_name = protocol.swift_protocol_name
 
         s = protocol.swift_signature
@@ -336,9 +336,9 @@ private func hasOverridenBuiltinMethod(
             call_arguments += f'{call_label}{name}{call_comma}'
 
         print(f'''
-  internal static func {python_name}(_ zelf: PyObject{fn_arguments}) -> {s.return_type}? {{
+  internal static func {python_type_name}(_ zelf: PyObject{fn_arguments}) -> {s.return_type}? {{
     if let owner = zelf as? {protocol_name},
-       !hasOverridenBuiltinMethod(object: zelf, selector: .{python_name}) {{
+       !hasOverridenBuiltinMethod(object: zelf, selector: .{python_type_name}) {{
       return owner.{swift_function_name}({call_arguments})
     }}
 
@@ -366,18 +366,18 @@ private func hasOverridenBuiltinMethod(
     entries_by_swift_type = {}
 
     for t in types:
-        python_name = t.python_type
-        swift_type = t.swift_type
-        swift_base_type = t.swift_base_type
+        python_type_name = t.python_type_name
+        swift_type_name = t.swift_type_name
+        swift_base_type = t.swift_base_type_name
 
         # We will not generate conformances for 'object'
-        if t.swift_type == 'PyObject':
+        if t.swift_type_name == 'PyObject':
             continue
 
-        entry = entries_by_swift_type.get(swift_type)
+        entry = entries_by_swift_type.get(swift_type_name)
         if not entry:
-            entry = ConformanceEntry(swift_type, swift_base_type)
-            entries_by_swift_type[swift_type] = entry
+            entry = ConformanceEntry(swift_type_name, swift_base_type)
+            entries_by_swift_type[swift_type_name] = entry
 
         def add_protocol_conformance(protocol_name):
             # 'protocols_by_name' - all generated protocols
@@ -386,18 +386,18 @@ private func hasOverridenBuiltinMethod(
             if protocol_exists:
                 entry.protocols.append(protocol_name)
 
-        for prop in t.properties:
-            python_name = prop.python_name
-            protocol_name = getter_protocol_name(python_name)
+        for prop in t.python_properties:
+            python_type_name = prop.python_name
+            protocol_name = getter_protocol_name(python_type_name)
             add_protocol_conformance(protocol_name)
 
-        for meth in t.methods:
-            python_name = meth.python_name
-            protocol_name = func_protocol_name(python_name)
+        for meth in t.python_methods:
+            python_type_name = meth.python_name
+            protocol_name = func_protocol_name(python_type_name)
             add_protocol_conformance(protocol_name)
 
     for entry in entries_by_swift_type.values():
-        swift_type = entry.swift_type
+        swift_type_name = entry.swift_type
         swift_base_type = entry.swift_base_type
         self_protocols = entry.protocols
 
@@ -417,10 +417,10 @@ private func hasOverridenBuiltinMethod(
 
         # Print extension
         if not self_protocols:
-            print(f'// {swift_type} does not add any new protocols to {swift_base_type}')
-            print(f'extension {swift_type} {{ }}')
+            print(f'// {swift_type_name} does not add any new protocols to {swift_base_type}')
+            print(f'extension {swift_type_name} {{ }}')
         else:
-            print(f'extension {swift_type}:')
+            print(f'extension {swift_type_name}:')
             for protocol in self_protocols:
                 comma = '' if protocol == self_protocols[-1] else ','
                 print(f'  {protocol}{comma}')

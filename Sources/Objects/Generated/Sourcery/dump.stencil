@@ -28,11 +28,11 @@ Doc|doc
 {% endfor %}
 {% endmacro %}
 
-{# === Field === #}
+{# === SwiftField === #}
 
 {% macro print_fields type %}
 {% for field in type.storedVariables %}
-Field|{{field.name}}|{{field.typeName}}
+SwiftField|{{field.name}}|{{field.typeName}}
 {% endfor %}
 {% endmacro %}
 

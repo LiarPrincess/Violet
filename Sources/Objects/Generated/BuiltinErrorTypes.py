@@ -34,7 +34,7 @@ import VioletCore
     def get_type(e):
         python_type = e.class_name
         for t in all_types:
-            if t.python_type == python_type:
+            if t.python_type_name == python_type:
                 return t
 
         assert False, f"Type not found: '{python_type}'"
@@ -43,9 +43,9 @@ import VioletCore
     types = list(map(get_type, data))
 
     def get_base_type(t):
-        swift_base_type = t.swift_base_type
+        swift_base_type_name = t.swift_base_type_name
         for other in all_types:
-            if other.swift_type == swift_base_type:
+            if other.swift_type_name == swift_base_type_name:
                 return other
 
         assert False, f"Unable to find base type of: '{t.swift_type}'"
@@ -74,17 +74,17 @@ import VioletCore
     print('    let types = Py.types')
 
     for t in types:
-        python_type = t.python_type
+        python_type_name = t.python_type_name
 
-        if python_type == 'BaseException':
+        if python_type_name == 'BaseException':
             base_property = 'types.object'
         else:
             base_type = get_base_type(t)
-            base_property = 'self.' + get_property_name_escaped(base_type.python_type)
+            base_property = 'self.' + get_property_name_escaped(base_type.python_type_name)
 
         layout = get_layout_name(t)
-        property_name = get_property_name_escaped(python_type)
-        print(f'    self.{property_name} = PyType.initBuiltinType(name: "{python_type}", type: types.type, base: {base_property}, layout: .{layout})')
+        property_name = get_property_name_escaped(python_type_name)
+        print(f'    self.{property_name} = PyType.initBuiltinType(name: "{python_type_name}", type: types.type, base: {base_property}, layout: .{layout})')
     print('  }')
     print()
 
@@ -107,7 +107,7 @@ import VioletCore
 ''')
 
     for t in types:
-        python_type = t.python_type
+        python_type_name = t.python_type_name
         fill_function = get_fill_function_name(t)
         print(f'    self.{fill_function}()')
 
@@ -127,8 +127,8 @@ import VioletCore
 ''')
 
     for t in types:
-        python_type = t.python_type
-        property_name_escaped = get_property_name_escaped(python_type)
+        python_type_name = t.python_type_name
+        property_name_escaped = get_property_name_escaped(python_type_name)
         print(f'      self.{property_name_escaped},')
 
     print('    ]')

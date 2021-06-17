@@ -34,14 +34,14 @@ public enum PyCast {{
 ''')
 
     for t in get_types():
-        swift_type = t.swift_type
-        swift_type_without_py = swift_type[2:]
+        swift_type_name = t.swift_type_name
+        swift_type_without_py = swift_type_name[2:]
 
         # We don't need to cast 'Object' -> 'Object'
-        if swift_type == 'PyObject':
+        if swift_type_name == 'PyObject':
             continue
 
-        python_type = t.python_type
+        python_type = t.python_type_name
         builtin_types = 'Py.errorTypes' if t.is_error else 'Py.types'
         builtin_property = get_builtin_type_property_name(python_type)
 
@@ -59,16 +59,16 @@ public enum PyCast {{
     return self.isExactlyInstance(object, of: {builtin_types}.{builtin_property})
   }}
 
-  /// Cast this object to `{swift_type}` if it is an instance of python `{python_type}` type
+  /// Cast this object to `{swift_type_name}` if it is an instance of python `{python_type}` type
   /// (or its subclass).
-  public static func as{swift_type_without_py}(_ object: PyObject) -> {swift_type}? {{
-    return Self.is{swift_type_without_py}(object) ? (object as! {swift_type}) : nil
+  public static func as{swift_type_without_py}(_ object: PyObject) -> {swift_type_name}? {{
+    return Self.is{swift_type_without_py}(object) ? (object as! {swift_type_name}) : nil
   }}
 
-  /// Cast this object to `{swift_type}` if it is an instance of python `{python_type}` type.
+  /// Cast this object to `{swift_type_name}` if it is an instance of python `{python_type}` type.
   /// Subclasses will return `nil`.
-  public static func asExactly{swift_type_without_py}(_ object: PyObject) -> {swift_type}? {{
-    return Self.isExactly{swift_type_without_py}(object) ? (object as! {swift_type}) : nil
+  public static func asExactly{swift_type_without_py}(_ object: PyObject) -> {swift_type_name}? {{
+    return Self.isExactly{swift_type_without_py}(object) ? (object as! {swift_type_name}) : nil
   }}\
 ''')
 

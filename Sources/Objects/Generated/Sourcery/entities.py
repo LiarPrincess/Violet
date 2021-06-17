@@ -9,13 +9,13 @@ class TypeInfo:
     '''
 
     def __init__(self,
-                 python_type: str,
-                 swift_type: str,
-                 swift_base_type: str,
+                 python_type_name: str,
+                 swift_type_name: str,
+                 swift_base_type_name: str,
                  is_error: bool):
-        self.python_type = python_type
-        self.swift_type = swift_type
-        self.swift_base_type = swift_base_type
+        self.python_type_name = python_type_name
+        self.swift_type_name = swift_type_name
+        self.swift_base_type_name = swift_base_type_name
         self.is_error = is_error
 
         # To be filled later
@@ -23,14 +23,14 @@ class TypeInfo:
         self.sourcery_flags: List[str] = []
 
         # Properties, methods - to be filled later
-        self.fields: List[FieldInfo] = []
-        self.properties: List[PyPropertyInfo] = []
-        self.methods: List[PyFunctionInfo] = []
-        self.static_functions: List[PyFunctionInfo] = []
-        self.class_functions: List[PyFunctionInfo] = []
+        self.swift_fields: List[SwiftFieldInfo] = []
+        self.python_properties: List[PyPropertyInfo] = []
+        self.python_methods: List[PyFunctionInfo] = []
+        self.python_static_functions: List[PyFunctionInfo] = []
+        self.python_class_functions: List[PyFunctionInfo] = []
 
 
-class FieldInfo:
+class SwiftFieldInfo:
     '''
     Swift field.
     '''

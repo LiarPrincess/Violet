@@ -74,19 +74,19 @@ import VioletCore
 ''')
 
     for t in types:
-        python_type = t.python_type
+        python_type_names = t.python_type_name
 
         # 'self.object' and 'self.type' are already initialized
-        if python_type == 'object' or python_type == 'type':
+        if python_type_names == 'object' or python_type_names == 'type':
             continue
 
         # 'self.bool' has to be last because it uses 'self.int' as base!
-        if python_type == 'bool':
+        if python_type_names == 'bool':
             continue
 
         layout = get_layout_name(t)
-        property_name_escaped = get_property_name_escaped(python_type)
-        print(f'    self.{property_name_escaped} = PyType.initBuiltinType(name: "{python_type}", type: self.type, base: self.object, layout: .{layout})')
+        property_name_escaped = get_property_name_escaped(python_type_names)
+        print(f'    self.{property_name_escaped} = PyType.initBuiltinType(name: "{python_type_names}", type: self.type, base: self.object, layout: .{layout})')
 
     # And now add 'bool'
     print('    self.bool = PyType.initBuiltinType(name: "bool", type: self.type, base: self.int, layout: .PyBool)')
@@ -112,7 +112,7 @@ import VioletCore
 ''')
 
     for t in types:
-        python_type = t.python_type
+        python_type_names = t.python_type_name
         fill_function = get_fill_function_name(t)
         print(f'    self.{fill_function}()')
 
@@ -132,8 +132,8 @@ import VioletCore
 ''')
 
     for t in types:
-        python_type = t.python_type
-        property_name_escaped = get_property_name_escaped(python_type)
+        python_type_names = t.python_type_name
+        property_name_escaped = get_property_name_escaped(python_type_names)
         print(f'      self.{property_name_escaped},')
 
     print('    ]')

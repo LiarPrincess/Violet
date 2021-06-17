@@ -3,11 +3,11 @@ from Common.strings import generated_warning
 
 
 def get_heap_type_name(t: TypeInfo):
-    swift_type = t.swift_type
-    if swift_type == 'PyObjectType':
-        swift_type = 'PyObject'
+    swift_type_name = t.swift_type_name
+    if swift_type_name == 'PyObjectType':
+        swift_type_name = 'PyObject'
 
-    return f'{swift_type}Heap'
+    return f'{swift_type_name}Heap'
 
 
 if __name__ == '__main__':
@@ -45,9 +45,9 @@ extension HeapType {
 ''')
 
     for t in get_types():
-        python_type = t.python_type
-        swift_type = t.swift_type
-        swift_type_withot_py = swift_type.replace('Py', '')
+        python_type_name = t.python_type_name
+        swift_type_name = t.swift_type_name
+        swift_type_withot_py = swift_type_name.replace('Py', '')
 
         print(f'// MARK: - {swift_type_withot_py}')
         print()
@@ -59,26 +59,26 @@ extension HeapType {
                 is_base = True
 
         if not is_base:
-            print(f'// {swift_type} is not a base type.')
+            print(f'// {swift_type_name} is not a base type.')
             print()
             continue
 
         # If it already has '__dict__' -> skip
         has_dict = False
-        for prop in t.properties:
+        for prop in t.python_properties:
             if prop.python_name == '__dict__':
                 has_dict = True
 
         if has_dict:
-            print(f'// {swift_type} already has everything we need.')
+            print(f'// {swift_type_name} already has everything we need.')
             print()
             continue
 
         type_name = get_heap_type_name(t)
         print(f'''\
-/// Type used when we subclass builtin `{python_type}` class.
-/// For example: `class Rapunzel({python_type}): pass`.
-internal final class {type_name}: {swift_type}, HeapType {{
+/// Type used when we subclass builtin `{python_type_name}` class.
+/// For example: `class Rapunzel({python_type_name}): pass`.
+internal final class {type_name}: {swift_type_name}, HeapType {{
 
   /// Python `__dict__` property.
   internal lazy var __dict__ = PyDict()

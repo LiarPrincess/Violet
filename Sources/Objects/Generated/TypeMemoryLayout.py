@@ -3,7 +3,7 @@ from Common.strings import generated_warning
 
 
 def get_layout_name(t: TypeInfo):
-    return t.swift_type
+    return t.swift_type_name
 
 
 if __name__ == '__main__':
@@ -82,12 +82,12 @@ extension PyType {
 ''')
 
     for t in get_types():
-        swift_type = t.swift_type
-        base_type = t.swift_base_type
-        fields = t.fields
+        swift_type_name = t.swift_type_name
+        base_type_name = t.swift_base_type_name
+        fields = t.swift_fields
 
         layout_name = get_layout_name(t)
-        base_layout_name = base_type
+        base_layout_name = base_type_name
 
         has_fields = len(fields) > 0
         if has_fields:
@@ -97,13 +97,13 @@ extension PyType {
                 field_type = f.swift_field_type
                 print(f'    /// - `{field_name}: {field_type}`')
 
-            if base_type:
-                print(f'    public static let {layout_name} = MemoryLayout(base: MemoryLayout.{base_type})')
+            if base_type_name:
+                print(f'    public static let {layout_name} = MemoryLayout(base: MemoryLayout.{base_type_name})')
             else:
-                assert swift_type == 'PyObject'
+                assert swift_type_name == 'PyObject'
                 print(f'    public static let {layout_name} = MemoryLayout()')
         else:
-            print(f'    /// `{swift_type}` uses the same layout as it s base type (`{base_type}`).')
+            print(f'    /// `{swift_type_name}` uses the same layout as it s base type (`{base_type_name}`).')
             print(f'    public static let {layout_name} = MemoryLayout.{base_layout_name}')
 
     print('  }')

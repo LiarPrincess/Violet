@@ -26,7 +26,7 @@ In Python this would return 'int'.
 
 from typing import List
 
-from Sourcery.entities import TypeInfo, FieldInfo, PyPropertyInfo, PyFunctionInfo
+from Sourcery.entities import TypeInfo, SwiftFieldInfo, PyPropertyInfo, PyFunctionInfo
 
 
 # -------------------
@@ -51,11 +51,11 @@ class OverriddenPyMethod:
 def check_for_overridden_pymethod(types: List[TypeInfo]) -> bool:
     types_by_name = {}
     for t in types:
-        types_by_name[t.swift_type] = t
+        types_by_name[t.swift_type_name] = t
 
     overridden_pymethods = []
     for t in types:
-        swift_type = t.swift_type
+        swift_type = t.swift_type_name
 
         # 'Object' is at the top - it can't override anything
         if swift_type == 'PyObject':
@@ -63,12 +63,12 @@ def check_for_overridden_pymethod(types: List[TypeInfo]) -> bool:
 
         # Get all base types - we will look for 'duplicate' definition of every method
         base_types = []
-        base_type_name = t.swift_base_type
+        base_type_name = t.swift_base_type_name
         while base_type_name:
             base = types_by_name[base_type_name]
-            base.all_methods = [] if base_type_name == 'PyObject' else base.methods + base.static_functions + base.class_functions
+            base.all_methods = [] if base_type_name == 'PyObject' else base.python_methods + base.python_static_functions + base.python_class_functions
             base_types.append(base)
-            base_type_name = base.swift_base_type
+            base_type_name = base.swift_base_type_name
 
         # Look in bases for method with the same selector
         def add_override_if_needed(m: PyFunctionInfo):
@@ -83,11 +83,11 @@ def check_for_overridden_pymethod(types: List[TypeInfo]) -> bool:
                 override = OverriddenPyMethod(t, m, also_defined_in)
                 overridden_pymethods.append(override)
 
-        for m in t.methods:
+        for m in t.python_methods:
             add_override_if_needed(m)
-        for m in t.static_functions:
+        for m in t.python_static_functions:
             add_override_if_needed(m)
-        for m in t.class_functions:
+        for m in t.python_class_functions:
             add_override_if_needed(m)
 
     # Print result
