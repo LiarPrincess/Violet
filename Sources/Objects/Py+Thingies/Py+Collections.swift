@@ -572,7 +572,7 @@ extension PyInstance {
       return .value(byteObjects)
     }
 
-    if let string = PyCast.asString(iterable), string.checkExact() {
+    if let string = PyCast.asExactlyString(iterable) {
       let scalars = string.data.scalars
       let characterObjects = scalars.map(self.intern(scalar:))
       return .value(characterObjects)

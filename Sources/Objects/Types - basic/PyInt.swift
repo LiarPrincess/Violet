@@ -821,15 +821,6 @@ public class PyInt: PyObject {
     return Py.newInt(result)
   }
 
-  // MARK: - Check exact
-
-  /// Is this builtin `int` type?
-  ///
-  /// Will return `false` if this is a subclass.
-  public func checkExact() -> Bool {
-    return self.type === Py.types.int
-  }
-
   // MARK: - Round
 
   // sourcery: pymethod = __round__

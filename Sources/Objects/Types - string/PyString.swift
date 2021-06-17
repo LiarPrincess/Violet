@@ -725,12 +725,6 @@ public class PyString: PyObject {
     return PyStringIterator(string: self)
   }
 
-  // MARK: - Check exact
-
-  public func checkExact() -> Bool {
-    return self.type === Py.types.str
-  }
-
   // MARK: - Python new
 
   private static let newArguments = ArgumentParser.createOrTrap(
@@ -777,7 +771,7 @@ public class PyString: PyObject {
       // Is this object already a 'str'?
       if let str = PyCast.asString(object) {
         // If we are builtin 'str' (not a subclass) -> return itself
-        if str.checkExact() {
+        if PyCast.isExactlyString(str) {
           return .value(str)
         }
 

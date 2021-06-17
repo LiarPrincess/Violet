@@ -161,15 +161,6 @@ public class PyBool: PyInt {
     return Self.xor(bool: zelf, other: other)
   }
 
-  // MARK: - Check exact
-
-  /// Is this builtin `bool` type?
-  ///
-  /// Will return `false` if this is a subclass.
-  public func checkExactBool() -> Bool {
-    return self.type === Py.types.bool
-  }
-
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__

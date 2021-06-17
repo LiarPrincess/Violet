@@ -9,8 +9,8 @@
 /// Helper type used to safely downcast Python objects to specific Swift type.
 ///
 /// For example:
-/// On the `VM` stack we hold `PyObject`, at some point we would want to convert
-/// `PyInt`. We can do this with `PyCast`:
+/// On the `VM` stack we hold `PyObject`, at some point we may want to convert
+/// it to `PyInt`:
 ///
 /// ```Swift
 /// if let int = PyCast.asInt(object) {
@@ -23,7 +23,7 @@ public enum PyCast {
     return object.type.isSubtype(of: type)
   }
 
-  private static func isExactInstance(_ object: PyObject, of type: PyType) -> Bool {
+  private static func isExactlyInstance(_ object: PyObject, of type: PyType) -> Bool {
     return object.type === type
   }
 
@@ -36,8 +36,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `bool` type?
   /// Subclasses will return `false`.
-  public static func isBoolExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.bool)
+  public static func isExactlyBool(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.bool)
   }
 
   /// Cast this object to `PyBool` if it is an instance of python `bool` type
@@ -48,8 +48,8 @@ public enum PyCast {
 
   /// Cast this object to `PyBool` if it is an instance of python `bool` type.
   /// Subclasses will return `nil`.
-  public static func asBoolExact(_ object: PyObject) -> PyBool? {
-    return Self.isBoolExact(object) ? (object as! PyBool) : nil
+  public static func asExactlyBool(_ object: PyObject) -> PyBool? {
+    return Self.isExactlyBool(object) ? (object as! PyBool) : nil
   }
 
   // MARK: - BuiltinFunction
@@ -61,8 +61,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `builtinFunction` type?
   /// Subclasses will return `false`.
-  public static func isBuiltinFunctionExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.builtinFunction)
+  public static func isExactlyBuiltinFunction(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.builtinFunction)
   }
 
   /// Cast this object to `PyBuiltinFunction` if it is an instance of python `builtinFunction` type
@@ -73,8 +73,8 @@ public enum PyCast {
 
   /// Cast this object to `PyBuiltinFunction` if it is an instance of python `builtinFunction` type.
   /// Subclasses will return `nil`.
-  public static func asBuiltinFunctionExact(_ object: PyObject) -> PyBuiltinFunction? {
-    return Self.isBuiltinFunctionExact(object) ? (object as! PyBuiltinFunction) : nil
+  public static func asExactlyBuiltinFunction(_ object: PyObject) -> PyBuiltinFunction? {
+    return Self.isExactlyBuiltinFunction(object) ? (object as! PyBuiltinFunction) : nil
   }
 
   // MARK: - BuiltinMethod
@@ -86,8 +86,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `builtinMethod` type?
   /// Subclasses will return `false`.
-  public static func isBuiltinMethodExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.builtinMethod)
+  public static func isExactlyBuiltinMethod(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.builtinMethod)
   }
 
   /// Cast this object to `PyBuiltinMethod` if it is an instance of python `builtinMethod` type
@@ -98,8 +98,8 @@ public enum PyCast {
 
   /// Cast this object to `PyBuiltinMethod` if it is an instance of python `builtinMethod` type.
   /// Subclasses will return `nil`.
-  public static func asBuiltinMethodExact(_ object: PyObject) -> PyBuiltinMethod? {
-    return Self.isBuiltinMethodExact(object) ? (object as! PyBuiltinMethod) : nil
+  public static func asExactlyBuiltinMethod(_ object: PyObject) -> PyBuiltinMethod? {
+    return Self.isExactlyBuiltinMethod(object) ? (object as! PyBuiltinMethod) : nil
   }
 
   // MARK: - ByteArray
@@ -111,8 +111,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `bytearray` type?
   /// Subclasses will return `false`.
-  public static func isByteArrayExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.bytearray)
+  public static func isExactlyByteArray(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.bytearray)
   }
 
   /// Cast this object to `PyByteArray` if it is an instance of python `bytearray` type
@@ -123,8 +123,8 @@ public enum PyCast {
 
   /// Cast this object to `PyByteArray` if it is an instance of python `bytearray` type.
   /// Subclasses will return `nil`.
-  public static func asByteArrayExact(_ object: PyObject) -> PyByteArray? {
-    return Self.isByteArrayExact(object) ? (object as! PyByteArray) : nil
+  public static func asExactlyByteArray(_ object: PyObject) -> PyByteArray? {
+    return Self.isExactlyByteArray(object) ? (object as! PyByteArray) : nil
   }
 
   // MARK: - ByteArrayIterator
@@ -136,8 +136,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `bytearray_iterator` type?
   /// Subclasses will return `false`.
-  public static func isByteArrayIteratorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.bytearray_iterator)
+  public static func isExactlyByteArrayIterator(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.bytearray_iterator)
   }
 
   /// Cast this object to `PyByteArrayIterator` if it is an instance of python `bytearray_iterator` type
@@ -148,8 +148,8 @@ public enum PyCast {
 
   /// Cast this object to `PyByteArrayIterator` if it is an instance of python `bytearray_iterator` type.
   /// Subclasses will return `nil`.
-  public static func asByteArrayIteratorExact(_ object: PyObject) -> PyByteArrayIterator? {
-    return Self.isByteArrayIteratorExact(object) ? (object as! PyByteArrayIterator) : nil
+  public static func asExactlyByteArrayIterator(_ object: PyObject) -> PyByteArrayIterator? {
+    return Self.isExactlyByteArrayIterator(object) ? (object as! PyByteArrayIterator) : nil
   }
 
   // MARK: - Bytes
@@ -161,8 +161,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `bytes` type?
   /// Subclasses will return `false`.
-  public static func isBytesExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.bytes)
+  public static func isExactlyBytes(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.bytes)
   }
 
   /// Cast this object to `PyBytes` if it is an instance of python `bytes` type
@@ -173,8 +173,8 @@ public enum PyCast {
 
   /// Cast this object to `PyBytes` if it is an instance of python `bytes` type.
   /// Subclasses will return `nil`.
-  public static func asBytesExact(_ object: PyObject) -> PyBytes? {
-    return Self.isBytesExact(object) ? (object as! PyBytes) : nil
+  public static func asExactlyBytes(_ object: PyObject) -> PyBytes? {
+    return Self.isExactlyBytes(object) ? (object as! PyBytes) : nil
   }
 
   // MARK: - BytesIterator
@@ -186,8 +186,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `bytes_iterator` type?
   /// Subclasses will return `false`.
-  public static func isBytesIteratorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.bytes_iterator)
+  public static func isExactlyBytesIterator(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.bytes_iterator)
   }
 
   /// Cast this object to `PyBytesIterator` if it is an instance of python `bytes_iterator` type
@@ -198,8 +198,8 @@ public enum PyCast {
 
   /// Cast this object to `PyBytesIterator` if it is an instance of python `bytes_iterator` type.
   /// Subclasses will return `nil`.
-  public static func asBytesIteratorExact(_ object: PyObject) -> PyBytesIterator? {
-    return Self.isBytesIteratorExact(object) ? (object as! PyBytesIterator) : nil
+  public static func asExactlyBytesIterator(_ object: PyObject) -> PyBytesIterator? {
+    return Self.isExactlyBytesIterator(object) ? (object as! PyBytesIterator) : nil
   }
 
   // MARK: - CallableIterator
@@ -211,8 +211,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `callable_iterator` type?
   /// Subclasses will return `false`.
-  public static func isCallableIteratorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.callable_iterator)
+  public static func isExactlyCallableIterator(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.callable_iterator)
   }
 
   /// Cast this object to `PyCallableIterator` if it is an instance of python `callable_iterator` type
@@ -223,8 +223,8 @@ public enum PyCast {
 
   /// Cast this object to `PyCallableIterator` if it is an instance of python `callable_iterator` type.
   /// Subclasses will return `nil`.
-  public static func asCallableIteratorExact(_ object: PyObject) -> PyCallableIterator? {
-    return Self.isCallableIteratorExact(object) ? (object as! PyCallableIterator) : nil
+  public static func asExactlyCallableIterator(_ object: PyObject) -> PyCallableIterator? {
+    return Self.isExactlyCallableIterator(object) ? (object as! PyCallableIterator) : nil
   }
 
   // MARK: - Cell
@@ -236,8 +236,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `cell` type?
   /// Subclasses will return `false`.
-  public static func isCellExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.cell)
+  public static func isExactlyCell(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.cell)
   }
 
   /// Cast this object to `PyCell` if it is an instance of python `cell` type
@@ -248,8 +248,8 @@ public enum PyCast {
 
   /// Cast this object to `PyCell` if it is an instance of python `cell` type.
   /// Subclasses will return `nil`.
-  public static func asCellExact(_ object: PyObject) -> PyCell? {
-    return Self.isCellExact(object) ? (object as! PyCell) : nil
+  public static func asExactlyCell(_ object: PyObject) -> PyCell? {
+    return Self.isExactlyCell(object) ? (object as! PyCell) : nil
   }
 
   // MARK: - ClassMethod
@@ -261,8 +261,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `classmethod` type?
   /// Subclasses will return `false`.
-  public static func isClassMethodExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.classmethod)
+  public static func isExactlyClassMethod(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.classmethod)
   }
 
   /// Cast this object to `PyClassMethod` if it is an instance of python `classmethod` type
@@ -273,8 +273,8 @@ public enum PyCast {
 
   /// Cast this object to `PyClassMethod` if it is an instance of python `classmethod` type.
   /// Subclasses will return `nil`.
-  public static func asClassMethodExact(_ object: PyObject) -> PyClassMethod? {
-    return Self.isClassMethodExact(object) ? (object as! PyClassMethod) : nil
+  public static func asExactlyClassMethod(_ object: PyObject) -> PyClassMethod? {
+    return Self.isExactlyClassMethod(object) ? (object as! PyClassMethod) : nil
   }
 
   // MARK: - Code
@@ -286,8 +286,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `code` type?
   /// Subclasses will return `false`.
-  public static func isCodeExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.code)
+  public static func isExactlyCode(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.code)
   }
 
   /// Cast this object to `PyCode` if it is an instance of python `code` type
@@ -298,8 +298,8 @@ public enum PyCast {
 
   /// Cast this object to `PyCode` if it is an instance of python `code` type.
   /// Subclasses will return `nil`.
-  public static func asCodeExact(_ object: PyObject) -> PyCode? {
-    return Self.isCodeExact(object) ? (object as! PyCode) : nil
+  public static func asExactlyCode(_ object: PyObject) -> PyCode? {
+    return Self.isExactlyCode(object) ? (object as! PyCode) : nil
   }
 
   // MARK: - Complex
@@ -311,8 +311,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `complex` type?
   /// Subclasses will return `false`.
-  public static func isComplexExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.complex)
+  public static func isExactlyComplex(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.complex)
   }
 
   /// Cast this object to `PyComplex` if it is an instance of python `complex` type
@@ -323,8 +323,8 @@ public enum PyCast {
 
   /// Cast this object to `PyComplex` if it is an instance of python `complex` type.
   /// Subclasses will return `nil`.
-  public static func asComplexExact(_ object: PyObject) -> PyComplex? {
-    return Self.isComplexExact(object) ? (object as! PyComplex) : nil
+  public static func asExactlyComplex(_ object: PyObject) -> PyComplex? {
+    return Self.isExactlyComplex(object) ? (object as! PyComplex) : nil
   }
 
   // MARK: - Dict
@@ -336,8 +336,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `dict` type?
   /// Subclasses will return `false`.
-  public static func isDictExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.dict)
+  public static func isExactlyDict(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.dict)
   }
 
   /// Cast this object to `PyDict` if it is an instance of python `dict` type
@@ -348,8 +348,8 @@ public enum PyCast {
 
   /// Cast this object to `PyDict` if it is an instance of python `dict` type.
   /// Subclasses will return `nil`.
-  public static func asDictExact(_ object: PyObject) -> PyDict? {
-    return Self.isDictExact(object) ? (object as! PyDict) : nil
+  public static func asExactlyDict(_ object: PyObject) -> PyDict? {
+    return Self.isExactlyDict(object) ? (object as! PyDict) : nil
   }
 
   // MARK: - DictItemIterator
@@ -361,8 +361,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `dict_itemiterator` type?
   /// Subclasses will return `false`.
-  public static func isDictItemIteratorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.dict_itemiterator)
+  public static func isExactlyDictItemIterator(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.dict_itemiterator)
   }
 
   /// Cast this object to `PyDictItemIterator` if it is an instance of python `dict_itemiterator` type
@@ -373,8 +373,8 @@ public enum PyCast {
 
   /// Cast this object to `PyDictItemIterator` if it is an instance of python `dict_itemiterator` type.
   /// Subclasses will return `nil`.
-  public static func asDictItemIteratorExact(_ object: PyObject) -> PyDictItemIterator? {
-    return Self.isDictItemIteratorExact(object) ? (object as! PyDictItemIterator) : nil
+  public static func asExactlyDictItemIterator(_ object: PyObject) -> PyDictItemIterator? {
+    return Self.isExactlyDictItemIterator(object) ? (object as! PyDictItemIterator) : nil
   }
 
   // MARK: - DictItems
@@ -386,8 +386,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `dict_items` type?
   /// Subclasses will return `false`.
-  public static func isDictItemsExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.dict_items)
+  public static func isExactlyDictItems(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.dict_items)
   }
 
   /// Cast this object to `PyDictItems` if it is an instance of python `dict_items` type
@@ -398,8 +398,8 @@ public enum PyCast {
 
   /// Cast this object to `PyDictItems` if it is an instance of python `dict_items` type.
   /// Subclasses will return `nil`.
-  public static func asDictItemsExact(_ object: PyObject) -> PyDictItems? {
-    return Self.isDictItemsExact(object) ? (object as! PyDictItems) : nil
+  public static func asExactlyDictItems(_ object: PyObject) -> PyDictItems? {
+    return Self.isExactlyDictItems(object) ? (object as! PyDictItems) : nil
   }
 
   // MARK: - DictKeyIterator
@@ -411,8 +411,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `dict_keyiterator` type?
   /// Subclasses will return `false`.
-  public static func isDictKeyIteratorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.dict_keyiterator)
+  public static func isExactlyDictKeyIterator(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.dict_keyiterator)
   }
 
   /// Cast this object to `PyDictKeyIterator` if it is an instance of python `dict_keyiterator` type
@@ -423,8 +423,8 @@ public enum PyCast {
 
   /// Cast this object to `PyDictKeyIterator` if it is an instance of python `dict_keyiterator` type.
   /// Subclasses will return `nil`.
-  public static func asDictKeyIteratorExact(_ object: PyObject) -> PyDictKeyIterator? {
-    return Self.isDictKeyIteratorExact(object) ? (object as! PyDictKeyIterator) : nil
+  public static func asExactlyDictKeyIterator(_ object: PyObject) -> PyDictKeyIterator? {
+    return Self.isExactlyDictKeyIterator(object) ? (object as! PyDictKeyIterator) : nil
   }
 
   // MARK: - DictKeys
@@ -436,8 +436,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `dict_keys` type?
   /// Subclasses will return `false`.
-  public static func isDictKeysExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.dict_keys)
+  public static func isExactlyDictKeys(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.dict_keys)
   }
 
   /// Cast this object to `PyDictKeys` if it is an instance of python `dict_keys` type
@@ -448,8 +448,8 @@ public enum PyCast {
 
   /// Cast this object to `PyDictKeys` if it is an instance of python `dict_keys` type.
   /// Subclasses will return `nil`.
-  public static func asDictKeysExact(_ object: PyObject) -> PyDictKeys? {
-    return Self.isDictKeysExact(object) ? (object as! PyDictKeys) : nil
+  public static func asExactlyDictKeys(_ object: PyObject) -> PyDictKeys? {
+    return Self.isExactlyDictKeys(object) ? (object as! PyDictKeys) : nil
   }
 
   // MARK: - DictValueIterator
@@ -461,8 +461,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `dict_valueiterator` type?
   /// Subclasses will return `false`.
-  public static func isDictValueIteratorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.dict_valueiterator)
+  public static func isExactlyDictValueIterator(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.dict_valueiterator)
   }
 
   /// Cast this object to `PyDictValueIterator` if it is an instance of python `dict_valueiterator` type
@@ -473,8 +473,8 @@ public enum PyCast {
 
   /// Cast this object to `PyDictValueIterator` if it is an instance of python `dict_valueiterator` type.
   /// Subclasses will return `nil`.
-  public static func asDictValueIteratorExact(_ object: PyObject) -> PyDictValueIterator? {
-    return Self.isDictValueIteratorExact(object) ? (object as! PyDictValueIterator) : nil
+  public static func asExactlyDictValueIterator(_ object: PyObject) -> PyDictValueIterator? {
+    return Self.isExactlyDictValueIterator(object) ? (object as! PyDictValueIterator) : nil
   }
 
   // MARK: - DictValues
@@ -486,8 +486,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `dict_values` type?
   /// Subclasses will return `false`.
-  public static func isDictValuesExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.dict_values)
+  public static func isExactlyDictValues(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.dict_values)
   }
 
   /// Cast this object to `PyDictValues` if it is an instance of python `dict_values` type
@@ -498,8 +498,8 @@ public enum PyCast {
 
   /// Cast this object to `PyDictValues` if it is an instance of python `dict_values` type.
   /// Subclasses will return `nil`.
-  public static func asDictValuesExact(_ object: PyObject) -> PyDictValues? {
-    return Self.isDictValuesExact(object) ? (object as! PyDictValues) : nil
+  public static func asExactlyDictValues(_ object: PyObject) -> PyDictValues? {
+    return Self.isExactlyDictValues(object) ? (object as! PyDictValues) : nil
   }
 
   // MARK: - Ellipsis
@@ -511,8 +511,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ellipsis` type?
   /// Subclasses will return `false`.
-  public static func isEllipsisExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.ellipsis)
+  public static func isExactlyEllipsis(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.ellipsis)
   }
 
   /// Cast this object to `PyEllipsis` if it is an instance of python `ellipsis` type
@@ -523,8 +523,8 @@ public enum PyCast {
 
   /// Cast this object to `PyEllipsis` if it is an instance of python `ellipsis` type.
   /// Subclasses will return `nil`.
-  public static func asEllipsisExact(_ object: PyObject) -> PyEllipsis? {
-    return Self.isEllipsisExact(object) ? (object as! PyEllipsis) : nil
+  public static func asExactlyEllipsis(_ object: PyObject) -> PyEllipsis? {
+    return Self.isExactlyEllipsis(object) ? (object as! PyEllipsis) : nil
   }
 
   // MARK: - Enumerate
@@ -536,8 +536,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `enumerate` type?
   /// Subclasses will return `false`.
-  public static func isEnumerateExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.enumerate)
+  public static func isExactlyEnumerate(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.enumerate)
   }
 
   /// Cast this object to `PyEnumerate` if it is an instance of python `enumerate` type
@@ -548,8 +548,8 @@ public enum PyCast {
 
   /// Cast this object to `PyEnumerate` if it is an instance of python `enumerate` type.
   /// Subclasses will return `nil`.
-  public static func asEnumerateExact(_ object: PyObject) -> PyEnumerate? {
-    return Self.isEnumerateExact(object) ? (object as! PyEnumerate) : nil
+  public static func asExactlyEnumerate(_ object: PyObject) -> PyEnumerate? {
+    return Self.isExactlyEnumerate(object) ? (object as! PyEnumerate) : nil
   }
 
   // MARK: - Filter
@@ -561,8 +561,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `filter` type?
   /// Subclasses will return `false`.
-  public static func isFilterExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.filter)
+  public static func isExactlyFilter(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.filter)
   }
 
   /// Cast this object to `PyFilter` if it is an instance of python `filter` type
@@ -573,8 +573,8 @@ public enum PyCast {
 
   /// Cast this object to `PyFilter` if it is an instance of python `filter` type.
   /// Subclasses will return `nil`.
-  public static func asFilterExact(_ object: PyObject) -> PyFilter? {
-    return Self.isFilterExact(object) ? (object as! PyFilter) : nil
+  public static func asExactlyFilter(_ object: PyObject) -> PyFilter? {
+    return Self.isExactlyFilter(object) ? (object as! PyFilter) : nil
   }
 
   // MARK: - Float
@@ -586,8 +586,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `float` type?
   /// Subclasses will return `false`.
-  public static func isFloatExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.float)
+  public static func isExactlyFloat(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.float)
   }
 
   /// Cast this object to `PyFloat` if it is an instance of python `float` type
@@ -598,8 +598,8 @@ public enum PyCast {
 
   /// Cast this object to `PyFloat` if it is an instance of python `float` type.
   /// Subclasses will return `nil`.
-  public static func asFloatExact(_ object: PyObject) -> PyFloat? {
-    return Self.isFloatExact(object) ? (object as! PyFloat) : nil
+  public static func asExactlyFloat(_ object: PyObject) -> PyFloat? {
+    return Self.isExactlyFloat(object) ? (object as! PyFloat) : nil
   }
 
   // MARK: - Frame
@@ -611,8 +611,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `frame` type?
   /// Subclasses will return `false`.
-  public static func isFrameExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.frame)
+  public static func isExactlyFrame(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.frame)
   }
 
   /// Cast this object to `PyFrame` if it is an instance of python `frame` type
@@ -623,8 +623,8 @@ public enum PyCast {
 
   /// Cast this object to `PyFrame` if it is an instance of python `frame` type.
   /// Subclasses will return `nil`.
-  public static func asFrameExact(_ object: PyObject) -> PyFrame? {
-    return Self.isFrameExact(object) ? (object as! PyFrame) : nil
+  public static func asExactlyFrame(_ object: PyObject) -> PyFrame? {
+    return Self.isExactlyFrame(object) ? (object as! PyFrame) : nil
   }
 
   // MARK: - FrozenSet
@@ -636,8 +636,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `frozenset` type?
   /// Subclasses will return `false`.
-  public static func isFrozenSetExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.frozenset)
+  public static func isExactlyFrozenSet(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.frozenset)
   }
 
   /// Cast this object to `PyFrozenSet` if it is an instance of python `frozenset` type
@@ -648,8 +648,8 @@ public enum PyCast {
 
   /// Cast this object to `PyFrozenSet` if it is an instance of python `frozenset` type.
   /// Subclasses will return `nil`.
-  public static func asFrozenSetExact(_ object: PyObject) -> PyFrozenSet? {
-    return Self.isFrozenSetExact(object) ? (object as! PyFrozenSet) : nil
+  public static func asExactlyFrozenSet(_ object: PyObject) -> PyFrozenSet? {
+    return Self.isExactlyFrozenSet(object) ? (object as! PyFrozenSet) : nil
   }
 
   // MARK: - Function
@@ -661,8 +661,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `function` type?
   /// Subclasses will return `false`.
-  public static func isFunctionExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.function)
+  public static func isExactlyFunction(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.function)
   }
 
   /// Cast this object to `PyFunction` if it is an instance of python `function` type
@@ -673,8 +673,8 @@ public enum PyCast {
 
   /// Cast this object to `PyFunction` if it is an instance of python `function` type.
   /// Subclasses will return `nil`.
-  public static func asFunctionExact(_ object: PyObject) -> PyFunction? {
-    return Self.isFunctionExact(object) ? (object as! PyFunction) : nil
+  public static func asExactlyFunction(_ object: PyObject) -> PyFunction? {
+    return Self.isExactlyFunction(object) ? (object as! PyFunction) : nil
   }
 
   // MARK: - Int
@@ -686,8 +686,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `int` type?
   /// Subclasses will return `false`.
-  public static func isIntExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.int)
+  public static func isExactlyInt(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.int)
   }
 
   /// Cast this object to `PyInt` if it is an instance of python `int` type
@@ -698,8 +698,8 @@ public enum PyCast {
 
   /// Cast this object to `PyInt` if it is an instance of python `int` type.
   /// Subclasses will return `nil`.
-  public static func asIntExact(_ object: PyObject) -> PyInt? {
-    return Self.isIntExact(object) ? (object as! PyInt) : nil
+  public static func asExactlyInt(_ object: PyObject) -> PyInt? {
+    return Self.isExactlyInt(object) ? (object as! PyInt) : nil
   }
 
   // MARK: - Iterator
@@ -711,8 +711,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `iterator` type?
   /// Subclasses will return `false`.
-  public static func isIteratorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.iterator)
+  public static func isExactlyIterator(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.iterator)
   }
 
   /// Cast this object to `PyIterator` if it is an instance of python `iterator` type
@@ -723,8 +723,8 @@ public enum PyCast {
 
   /// Cast this object to `PyIterator` if it is an instance of python `iterator` type.
   /// Subclasses will return `nil`.
-  public static func asIteratorExact(_ object: PyObject) -> PyIterator? {
-    return Self.isIteratorExact(object) ? (object as! PyIterator) : nil
+  public static func asExactlyIterator(_ object: PyObject) -> PyIterator? {
+    return Self.isExactlyIterator(object) ? (object as! PyIterator) : nil
   }
 
   // MARK: - List
@@ -736,8 +736,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `list` type?
   /// Subclasses will return `false`.
-  public static func isListExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.list)
+  public static func isExactlyList(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.list)
   }
 
   /// Cast this object to `PyList` if it is an instance of python `list` type
@@ -748,8 +748,8 @@ public enum PyCast {
 
   /// Cast this object to `PyList` if it is an instance of python `list` type.
   /// Subclasses will return `nil`.
-  public static func asListExact(_ object: PyObject) -> PyList? {
-    return Self.isListExact(object) ? (object as! PyList) : nil
+  public static func asExactlyList(_ object: PyObject) -> PyList? {
+    return Self.isExactlyList(object) ? (object as! PyList) : nil
   }
 
   // MARK: - ListIterator
@@ -761,8 +761,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `list_iterator` type?
   /// Subclasses will return `false`.
-  public static func isListIteratorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.list_iterator)
+  public static func isExactlyListIterator(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.list_iterator)
   }
 
   /// Cast this object to `PyListIterator` if it is an instance of python `list_iterator` type
@@ -773,8 +773,8 @@ public enum PyCast {
 
   /// Cast this object to `PyListIterator` if it is an instance of python `list_iterator` type.
   /// Subclasses will return `nil`.
-  public static func asListIteratorExact(_ object: PyObject) -> PyListIterator? {
-    return Self.isListIteratorExact(object) ? (object as! PyListIterator) : nil
+  public static func asExactlyListIterator(_ object: PyObject) -> PyListIterator? {
+    return Self.isExactlyListIterator(object) ? (object as! PyListIterator) : nil
   }
 
   // MARK: - ListReverseIterator
@@ -786,8 +786,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `list_reverseiterator` type?
   /// Subclasses will return `false`.
-  public static func isListReverseIteratorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.list_reverseiterator)
+  public static func isExactlyListReverseIterator(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.list_reverseiterator)
   }
 
   /// Cast this object to `PyListReverseIterator` if it is an instance of python `list_reverseiterator` type
@@ -798,8 +798,8 @@ public enum PyCast {
 
   /// Cast this object to `PyListReverseIterator` if it is an instance of python `list_reverseiterator` type.
   /// Subclasses will return `nil`.
-  public static func asListReverseIteratorExact(_ object: PyObject) -> PyListReverseIterator? {
-    return Self.isListReverseIteratorExact(object) ? (object as! PyListReverseIterator) : nil
+  public static func asExactlyListReverseIterator(_ object: PyObject) -> PyListReverseIterator? {
+    return Self.isExactlyListReverseIterator(object) ? (object as! PyListReverseIterator) : nil
   }
 
   // MARK: - Map
@@ -811,8 +811,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `map` type?
   /// Subclasses will return `false`.
-  public static func isMapExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.map)
+  public static func isExactlyMap(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.map)
   }
 
   /// Cast this object to `PyMap` if it is an instance of python `map` type
@@ -823,8 +823,8 @@ public enum PyCast {
 
   /// Cast this object to `PyMap` if it is an instance of python `map` type.
   /// Subclasses will return `nil`.
-  public static func asMapExact(_ object: PyObject) -> PyMap? {
-    return Self.isMapExact(object) ? (object as! PyMap) : nil
+  public static func asExactlyMap(_ object: PyObject) -> PyMap? {
+    return Self.isExactlyMap(object) ? (object as! PyMap) : nil
   }
 
   // MARK: - Method
@@ -836,8 +836,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `method` type?
   /// Subclasses will return `false`.
-  public static func isMethodExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.method)
+  public static func isExactlyMethod(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.method)
   }
 
   /// Cast this object to `PyMethod` if it is an instance of python `method` type
@@ -848,8 +848,8 @@ public enum PyCast {
 
   /// Cast this object to `PyMethod` if it is an instance of python `method` type.
   /// Subclasses will return `nil`.
-  public static func asMethodExact(_ object: PyObject) -> PyMethod? {
-    return Self.isMethodExact(object) ? (object as! PyMethod) : nil
+  public static func asExactlyMethod(_ object: PyObject) -> PyMethod? {
+    return Self.isExactlyMethod(object) ? (object as! PyMethod) : nil
   }
 
   // MARK: - Module
@@ -861,8 +861,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `module` type?
   /// Subclasses will return `false`.
-  public static func isModuleExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.module)
+  public static func isExactlyModule(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.module)
   }
 
   /// Cast this object to `PyModule` if it is an instance of python `module` type
@@ -873,8 +873,8 @@ public enum PyCast {
 
   /// Cast this object to `PyModule` if it is an instance of python `module` type.
   /// Subclasses will return `nil`.
-  public static func asModuleExact(_ object: PyObject) -> PyModule? {
-    return Self.isModuleExact(object) ? (object as! PyModule) : nil
+  public static func asExactlyModule(_ object: PyObject) -> PyModule? {
+    return Self.isExactlyModule(object) ? (object as! PyModule) : nil
   }
 
   // MARK: - Namespace
@@ -886,8 +886,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `types.SimpleNamespace` type?
   /// Subclasses will return `false`.
-  public static func isNamespaceExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.simpleNamespace)
+  public static func isExactlyNamespace(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.simpleNamespace)
   }
 
   /// Cast this object to `PyNamespace` if it is an instance of python `types.SimpleNamespace` type
@@ -898,8 +898,8 @@ public enum PyCast {
 
   /// Cast this object to `PyNamespace` if it is an instance of python `types.SimpleNamespace` type.
   /// Subclasses will return `nil`.
-  public static func asNamespaceExact(_ object: PyObject) -> PyNamespace? {
-    return Self.isNamespaceExact(object) ? (object as! PyNamespace) : nil
+  public static func asExactlyNamespace(_ object: PyObject) -> PyNamespace? {
+    return Self.isExactlyNamespace(object) ? (object as! PyNamespace) : nil
   }
 
   // MARK: - None
@@ -911,8 +911,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `NoneType` type?
   /// Subclasses will return `false`.
-  public static func isNoneExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.none)
+  public static func isExactlyNone(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.none)
   }
 
   /// Cast this object to `PyNone` if it is an instance of python `NoneType` type
@@ -923,8 +923,8 @@ public enum PyCast {
 
   /// Cast this object to `PyNone` if it is an instance of python `NoneType` type.
   /// Subclasses will return `nil`.
-  public static func asNoneExact(_ object: PyObject) -> PyNone? {
-    return Self.isNoneExact(object) ? (object as! PyNone) : nil
+  public static func asExactlyNone(_ object: PyObject) -> PyNone? {
+    return Self.isExactlyNone(object) ? (object as! PyNone) : nil
   }
 
   // MARK: - NotImplemented
@@ -936,8 +936,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `NotImplementedType` type?
   /// Subclasses will return `false`.
-  public static func isNotImplementedExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.notImplemented)
+  public static func isExactlyNotImplemented(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.notImplemented)
   }
 
   /// Cast this object to `PyNotImplemented` if it is an instance of python `NotImplementedType` type
@@ -948,8 +948,8 @@ public enum PyCast {
 
   /// Cast this object to `PyNotImplemented` if it is an instance of python `NotImplementedType` type.
   /// Subclasses will return `nil`.
-  public static func asNotImplementedExact(_ object: PyObject) -> PyNotImplemented? {
-    return Self.isNotImplementedExact(object) ? (object as! PyNotImplemented) : nil
+  public static func asExactlyNotImplemented(_ object: PyObject) -> PyNotImplemented? {
+    return Self.isExactlyNotImplemented(object) ? (object as! PyNotImplemented) : nil
   }
 
   // MARK: - Property
@@ -961,8 +961,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `property` type?
   /// Subclasses will return `false`.
-  public static func isPropertyExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.property)
+  public static func isExactlyProperty(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.property)
   }
 
   /// Cast this object to `PyProperty` if it is an instance of python `property` type
@@ -973,8 +973,8 @@ public enum PyCast {
 
   /// Cast this object to `PyProperty` if it is an instance of python `property` type.
   /// Subclasses will return `nil`.
-  public static func asPropertyExact(_ object: PyObject) -> PyProperty? {
-    return Self.isPropertyExact(object) ? (object as! PyProperty) : nil
+  public static func asExactlyProperty(_ object: PyObject) -> PyProperty? {
+    return Self.isExactlyProperty(object) ? (object as! PyProperty) : nil
   }
 
   // MARK: - Range
@@ -986,8 +986,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `range` type?
   /// Subclasses will return `false`.
-  public static func isRangeExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.range)
+  public static func isExactlyRange(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.range)
   }
 
   /// Cast this object to `PyRange` if it is an instance of python `range` type
@@ -998,8 +998,8 @@ public enum PyCast {
 
   /// Cast this object to `PyRange` if it is an instance of python `range` type.
   /// Subclasses will return `nil`.
-  public static func asRangeExact(_ object: PyObject) -> PyRange? {
-    return Self.isRangeExact(object) ? (object as! PyRange) : nil
+  public static func asExactlyRange(_ object: PyObject) -> PyRange? {
+    return Self.isExactlyRange(object) ? (object as! PyRange) : nil
   }
 
   // MARK: - RangeIterator
@@ -1011,8 +1011,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `range_iterator` type?
   /// Subclasses will return `false`.
-  public static func isRangeIteratorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.range_iterator)
+  public static func isExactlyRangeIterator(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.range_iterator)
   }
 
   /// Cast this object to `PyRangeIterator` if it is an instance of python `range_iterator` type
@@ -1023,8 +1023,8 @@ public enum PyCast {
 
   /// Cast this object to `PyRangeIterator` if it is an instance of python `range_iterator` type.
   /// Subclasses will return `nil`.
-  public static func asRangeIteratorExact(_ object: PyObject) -> PyRangeIterator? {
-    return Self.isRangeIteratorExact(object) ? (object as! PyRangeIterator) : nil
+  public static func asExactlyRangeIterator(_ object: PyObject) -> PyRangeIterator? {
+    return Self.isExactlyRangeIterator(object) ? (object as! PyRangeIterator) : nil
   }
 
   // MARK: - Reversed
@@ -1036,8 +1036,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `reversed` type?
   /// Subclasses will return `false`.
-  public static func isReversedExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.reversed)
+  public static func isExactlyReversed(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.reversed)
   }
 
   /// Cast this object to `PyReversed` if it is an instance of python `reversed` type
@@ -1048,8 +1048,8 @@ public enum PyCast {
 
   /// Cast this object to `PyReversed` if it is an instance of python `reversed` type.
   /// Subclasses will return `nil`.
-  public static func asReversedExact(_ object: PyObject) -> PyReversed? {
-    return Self.isReversedExact(object) ? (object as! PyReversed) : nil
+  public static func asExactlyReversed(_ object: PyObject) -> PyReversed? {
+    return Self.isExactlyReversed(object) ? (object as! PyReversed) : nil
   }
 
   // MARK: - Set
@@ -1061,8 +1061,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `set` type?
   /// Subclasses will return `false`.
-  public static func isSetExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.set)
+  public static func isExactlySet(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.set)
   }
 
   /// Cast this object to `PySet` if it is an instance of python `set` type
@@ -1073,8 +1073,8 @@ public enum PyCast {
 
   /// Cast this object to `PySet` if it is an instance of python `set` type.
   /// Subclasses will return `nil`.
-  public static func asSetExact(_ object: PyObject) -> PySet? {
-    return Self.isSetExact(object) ? (object as! PySet) : nil
+  public static func asExactlySet(_ object: PyObject) -> PySet? {
+    return Self.isExactlySet(object) ? (object as! PySet) : nil
   }
 
   // MARK: - SetIterator
@@ -1086,8 +1086,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `set_iterator` type?
   /// Subclasses will return `false`.
-  public static func isSetIteratorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.set_iterator)
+  public static func isExactlySetIterator(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.set_iterator)
   }
 
   /// Cast this object to `PySetIterator` if it is an instance of python `set_iterator` type
@@ -1098,8 +1098,8 @@ public enum PyCast {
 
   /// Cast this object to `PySetIterator` if it is an instance of python `set_iterator` type.
   /// Subclasses will return `nil`.
-  public static func asSetIteratorExact(_ object: PyObject) -> PySetIterator? {
-    return Self.isSetIteratorExact(object) ? (object as! PySetIterator) : nil
+  public static func asExactlySetIterator(_ object: PyObject) -> PySetIterator? {
+    return Self.isExactlySetIterator(object) ? (object as! PySetIterator) : nil
   }
 
   // MARK: - Slice
@@ -1111,8 +1111,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `slice` type?
   /// Subclasses will return `false`.
-  public static func isSliceExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.slice)
+  public static func isExactlySlice(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.slice)
   }
 
   /// Cast this object to `PySlice` if it is an instance of python `slice` type
@@ -1123,8 +1123,8 @@ public enum PyCast {
 
   /// Cast this object to `PySlice` if it is an instance of python `slice` type.
   /// Subclasses will return `nil`.
-  public static func asSliceExact(_ object: PyObject) -> PySlice? {
-    return Self.isSliceExact(object) ? (object as! PySlice) : nil
+  public static func asExactlySlice(_ object: PyObject) -> PySlice? {
+    return Self.isExactlySlice(object) ? (object as! PySlice) : nil
   }
 
   // MARK: - StaticMethod
@@ -1136,8 +1136,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `staticmethod` type?
   /// Subclasses will return `false`.
-  public static func isStaticMethodExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.staticmethod)
+  public static func isExactlyStaticMethod(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.staticmethod)
   }
 
   /// Cast this object to `PyStaticMethod` if it is an instance of python `staticmethod` type
@@ -1148,8 +1148,8 @@ public enum PyCast {
 
   /// Cast this object to `PyStaticMethod` if it is an instance of python `staticmethod` type.
   /// Subclasses will return `nil`.
-  public static func asStaticMethodExact(_ object: PyObject) -> PyStaticMethod? {
-    return Self.isStaticMethodExact(object) ? (object as! PyStaticMethod) : nil
+  public static func asExactlyStaticMethod(_ object: PyObject) -> PyStaticMethod? {
+    return Self.isExactlyStaticMethod(object) ? (object as! PyStaticMethod) : nil
   }
 
   // MARK: - String
@@ -1161,8 +1161,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `str` type?
   /// Subclasses will return `false`.
-  public static func isStringExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.str)
+  public static func isExactlyString(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.str)
   }
 
   /// Cast this object to `PyString` if it is an instance of python `str` type
@@ -1173,8 +1173,8 @@ public enum PyCast {
 
   /// Cast this object to `PyString` if it is an instance of python `str` type.
   /// Subclasses will return `nil`.
-  public static func asStringExact(_ object: PyObject) -> PyString? {
-    return Self.isStringExact(object) ? (object as! PyString) : nil
+  public static func asExactlyString(_ object: PyObject) -> PyString? {
+    return Self.isExactlyString(object) ? (object as! PyString) : nil
   }
 
   // MARK: - StringIterator
@@ -1186,8 +1186,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `str_iterator` type?
   /// Subclasses will return `false`.
-  public static func isStringIteratorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.str_iterator)
+  public static func isExactlyStringIterator(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.str_iterator)
   }
 
   /// Cast this object to `PyStringIterator` if it is an instance of python `str_iterator` type
@@ -1198,8 +1198,8 @@ public enum PyCast {
 
   /// Cast this object to `PyStringIterator` if it is an instance of python `str_iterator` type.
   /// Subclasses will return `nil`.
-  public static func asStringIteratorExact(_ object: PyObject) -> PyStringIterator? {
-    return Self.isStringIteratorExact(object) ? (object as! PyStringIterator) : nil
+  public static func asExactlyStringIterator(_ object: PyObject) -> PyStringIterator? {
+    return Self.isExactlyStringIterator(object) ? (object as! PyStringIterator) : nil
   }
 
   // MARK: - Super
@@ -1211,8 +1211,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `super` type?
   /// Subclasses will return `false`.
-  public static func isSuperExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.`super`)
+  public static func isExactlySuper(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.`super`)
   }
 
   /// Cast this object to `PySuper` if it is an instance of python `super` type
@@ -1223,8 +1223,8 @@ public enum PyCast {
 
   /// Cast this object to `PySuper` if it is an instance of python `super` type.
   /// Subclasses will return `nil`.
-  public static func asSuperExact(_ object: PyObject) -> PySuper? {
-    return Self.isSuperExact(object) ? (object as! PySuper) : nil
+  public static func asExactlySuper(_ object: PyObject) -> PySuper? {
+    return Self.isExactlySuper(object) ? (object as! PySuper) : nil
   }
 
   // MARK: - TextFile
@@ -1236,8 +1236,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `TextFile` type?
   /// Subclasses will return `false`.
-  public static func isTextFileExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.textFile)
+  public static func isExactlyTextFile(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.textFile)
   }
 
   /// Cast this object to `PyTextFile` if it is an instance of python `TextFile` type
@@ -1248,8 +1248,8 @@ public enum PyCast {
 
   /// Cast this object to `PyTextFile` if it is an instance of python `TextFile` type.
   /// Subclasses will return `nil`.
-  public static func asTextFileExact(_ object: PyObject) -> PyTextFile? {
-    return Self.isTextFileExact(object) ? (object as! PyTextFile) : nil
+  public static func asExactlyTextFile(_ object: PyObject) -> PyTextFile? {
+    return Self.isExactlyTextFile(object) ? (object as! PyTextFile) : nil
   }
 
   // MARK: - Traceback
@@ -1261,8 +1261,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `traceback` type?
   /// Subclasses will return `false`.
-  public static func isTracebackExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.traceback)
+  public static func isExactlyTraceback(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.traceback)
   }
 
   /// Cast this object to `PyTraceback` if it is an instance of python `traceback` type
@@ -1273,8 +1273,8 @@ public enum PyCast {
 
   /// Cast this object to `PyTraceback` if it is an instance of python `traceback` type.
   /// Subclasses will return `nil`.
-  public static func asTracebackExact(_ object: PyObject) -> PyTraceback? {
-    return Self.isTracebackExact(object) ? (object as! PyTraceback) : nil
+  public static func asExactlyTraceback(_ object: PyObject) -> PyTraceback? {
+    return Self.isExactlyTraceback(object) ? (object as! PyTraceback) : nil
   }
 
   // MARK: - Tuple
@@ -1286,8 +1286,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `tuple` type?
   /// Subclasses will return `false`.
-  public static func isTupleExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.tuple)
+  public static func isExactlyTuple(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.tuple)
   }
 
   /// Cast this object to `PyTuple` if it is an instance of python `tuple` type
@@ -1298,8 +1298,8 @@ public enum PyCast {
 
   /// Cast this object to `PyTuple` if it is an instance of python `tuple` type.
   /// Subclasses will return `nil`.
-  public static func asTupleExact(_ object: PyObject) -> PyTuple? {
-    return Self.isTupleExact(object) ? (object as! PyTuple) : nil
+  public static func asExactlyTuple(_ object: PyObject) -> PyTuple? {
+    return Self.isExactlyTuple(object) ? (object as! PyTuple) : nil
   }
 
   // MARK: - TupleIterator
@@ -1311,8 +1311,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `tuple_iterator` type?
   /// Subclasses will return `false`.
-  public static func isTupleIteratorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.tuple_iterator)
+  public static func isExactlyTupleIterator(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.tuple_iterator)
   }
 
   /// Cast this object to `PyTupleIterator` if it is an instance of python `tuple_iterator` type
@@ -1323,8 +1323,8 @@ public enum PyCast {
 
   /// Cast this object to `PyTupleIterator` if it is an instance of python `tuple_iterator` type.
   /// Subclasses will return `nil`.
-  public static func asTupleIteratorExact(_ object: PyObject) -> PyTupleIterator? {
-    return Self.isTupleIteratorExact(object) ? (object as! PyTupleIterator) : nil
+  public static func asExactlyTupleIterator(_ object: PyObject) -> PyTupleIterator? {
+    return Self.isExactlyTupleIterator(object) ? (object as! PyTupleIterator) : nil
   }
 
   // MARK: - Type
@@ -1336,8 +1336,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `type` type?
   /// Subclasses will return `false`.
-  public static func isTypeExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.type)
+  public static func isExactlyType(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.type)
   }
 
   /// Cast this object to `PyType` if it is an instance of python `type` type
@@ -1348,8 +1348,8 @@ public enum PyCast {
 
   /// Cast this object to `PyType` if it is an instance of python `type` type.
   /// Subclasses will return `nil`.
-  public static func asTypeExact(_ object: PyObject) -> PyType? {
-    return Self.isTypeExact(object) ? (object as! PyType) : nil
+  public static func asExactlyType(_ object: PyObject) -> PyType? {
+    return Self.isExactlyType(object) ? (object as! PyType) : nil
   }
 
   // MARK: - Zip
@@ -1361,8 +1361,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `zip` type?
   /// Subclasses will return `false`.
-  public static func isZipExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.types.zip)
+  public static func isExactlyZip(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.types.zip)
   }
 
   /// Cast this object to `PyZip` if it is an instance of python `zip` type
@@ -1373,8 +1373,8 @@ public enum PyCast {
 
   /// Cast this object to `PyZip` if it is an instance of python `zip` type.
   /// Subclasses will return `nil`.
-  public static func asZipExact(_ object: PyObject) -> PyZip? {
-    return Self.isZipExact(object) ? (object as! PyZip) : nil
+  public static func asExactlyZip(_ object: PyObject) -> PyZip? {
+    return Self.isExactlyZip(object) ? (object as! PyZip) : nil
   }
 
   // MARK: - ArithmeticError
@@ -1386,8 +1386,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ArithmeticError` type?
   /// Subclasses will return `false`.
-  public static func isArithmeticErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.arithmeticError)
+  public static func isExactlyArithmeticError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.arithmeticError)
   }
 
   /// Cast this object to `PyArithmeticError` if it is an instance of python `ArithmeticError` type
@@ -1398,8 +1398,8 @@ public enum PyCast {
 
   /// Cast this object to `PyArithmeticError` if it is an instance of python `ArithmeticError` type.
   /// Subclasses will return `nil`.
-  public static func asArithmeticErrorExact(_ object: PyObject) -> PyArithmeticError? {
-    return Self.isArithmeticErrorExact(object) ? (object as! PyArithmeticError) : nil
+  public static func asExactlyArithmeticError(_ object: PyObject) -> PyArithmeticError? {
+    return Self.isExactlyArithmeticError(object) ? (object as! PyArithmeticError) : nil
   }
 
   // MARK: - AssertionError
@@ -1411,8 +1411,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `AssertionError` type?
   /// Subclasses will return `false`.
-  public static func isAssertionErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.assertionError)
+  public static func isExactlyAssertionError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.assertionError)
   }
 
   /// Cast this object to `PyAssertionError` if it is an instance of python `AssertionError` type
@@ -1423,8 +1423,8 @@ public enum PyCast {
 
   /// Cast this object to `PyAssertionError` if it is an instance of python `AssertionError` type.
   /// Subclasses will return `nil`.
-  public static func asAssertionErrorExact(_ object: PyObject) -> PyAssertionError? {
-    return Self.isAssertionErrorExact(object) ? (object as! PyAssertionError) : nil
+  public static func asExactlyAssertionError(_ object: PyObject) -> PyAssertionError? {
+    return Self.isExactlyAssertionError(object) ? (object as! PyAssertionError) : nil
   }
 
   // MARK: - AttributeError
@@ -1436,8 +1436,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `AttributeError` type?
   /// Subclasses will return `false`.
-  public static func isAttributeErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.attributeError)
+  public static func isExactlyAttributeError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.attributeError)
   }
 
   /// Cast this object to `PyAttributeError` if it is an instance of python `AttributeError` type
@@ -1448,8 +1448,8 @@ public enum PyCast {
 
   /// Cast this object to `PyAttributeError` if it is an instance of python `AttributeError` type.
   /// Subclasses will return `nil`.
-  public static func asAttributeErrorExact(_ object: PyObject) -> PyAttributeError? {
-    return Self.isAttributeErrorExact(object) ? (object as! PyAttributeError) : nil
+  public static func asExactlyAttributeError(_ object: PyObject) -> PyAttributeError? {
+    return Self.isExactlyAttributeError(object) ? (object as! PyAttributeError) : nil
   }
 
   // MARK: - BaseException
@@ -1461,8 +1461,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `BaseException` type?
   /// Subclasses will return `false`.
-  public static func isBaseExceptionExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.baseException)
+  public static func isExactlyBaseException(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.baseException)
   }
 
   /// Cast this object to `PyBaseException` if it is an instance of python `BaseException` type
@@ -1473,8 +1473,8 @@ public enum PyCast {
 
   /// Cast this object to `PyBaseException` if it is an instance of python `BaseException` type.
   /// Subclasses will return `nil`.
-  public static func asBaseExceptionExact(_ object: PyObject) -> PyBaseException? {
-    return Self.isBaseExceptionExact(object) ? (object as! PyBaseException) : nil
+  public static func asExactlyBaseException(_ object: PyObject) -> PyBaseException? {
+    return Self.isExactlyBaseException(object) ? (object as! PyBaseException) : nil
   }
 
   // MARK: - BlockingIOError
@@ -1486,8 +1486,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `BlockingIOError` type?
   /// Subclasses will return `false`.
-  public static func isBlockingIOErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.blockingIOError)
+  public static func isExactlyBlockingIOError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.blockingIOError)
   }
 
   /// Cast this object to `PyBlockingIOError` if it is an instance of python `BlockingIOError` type
@@ -1498,8 +1498,8 @@ public enum PyCast {
 
   /// Cast this object to `PyBlockingIOError` if it is an instance of python `BlockingIOError` type.
   /// Subclasses will return `nil`.
-  public static func asBlockingIOErrorExact(_ object: PyObject) -> PyBlockingIOError? {
-    return Self.isBlockingIOErrorExact(object) ? (object as! PyBlockingIOError) : nil
+  public static func asExactlyBlockingIOError(_ object: PyObject) -> PyBlockingIOError? {
+    return Self.isExactlyBlockingIOError(object) ? (object as! PyBlockingIOError) : nil
   }
 
   // MARK: - BrokenPipeError
@@ -1511,8 +1511,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `BrokenPipeError` type?
   /// Subclasses will return `false`.
-  public static func isBrokenPipeErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.brokenPipeError)
+  public static func isExactlyBrokenPipeError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.brokenPipeError)
   }
 
   /// Cast this object to `PyBrokenPipeError` if it is an instance of python `BrokenPipeError` type
@@ -1523,8 +1523,8 @@ public enum PyCast {
 
   /// Cast this object to `PyBrokenPipeError` if it is an instance of python `BrokenPipeError` type.
   /// Subclasses will return `nil`.
-  public static func asBrokenPipeErrorExact(_ object: PyObject) -> PyBrokenPipeError? {
-    return Self.isBrokenPipeErrorExact(object) ? (object as! PyBrokenPipeError) : nil
+  public static func asExactlyBrokenPipeError(_ object: PyObject) -> PyBrokenPipeError? {
+    return Self.isExactlyBrokenPipeError(object) ? (object as! PyBrokenPipeError) : nil
   }
 
   // MARK: - BufferError
@@ -1536,8 +1536,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `BufferError` type?
   /// Subclasses will return `false`.
-  public static func isBufferErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.bufferError)
+  public static func isExactlyBufferError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.bufferError)
   }
 
   /// Cast this object to `PyBufferError` if it is an instance of python `BufferError` type
@@ -1548,8 +1548,8 @@ public enum PyCast {
 
   /// Cast this object to `PyBufferError` if it is an instance of python `BufferError` type.
   /// Subclasses will return `nil`.
-  public static func asBufferErrorExact(_ object: PyObject) -> PyBufferError? {
-    return Self.isBufferErrorExact(object) ? (object as! PyBufferError) : nil
+  public static func asExactlyBufferError(_ object: PyObject) -> PyBufferError? {
+    return Self.isExactlyBufferError(object) ? (object as! PyBufferError) : nil
   }
 
   // MARK: - BytesWarning
@@ -1561,8 +1561,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `BytesWarning` type?
   /// Subclasses will return `false`.
-  public static func isBytesWarningExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.bytesWarning)
+  public static func isExactlyBytesWarning(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.bytesWarning)
   }
 
   /// Cast this object to `PyBytesWarning` if it is an instance of python `BytesWarning` type
@@ -1573,8 +1573,8 @@ public enum PyCast {
 
   /// Cast this object to `PyBytesWarning` if it is an instance of python `BytesWarning` type.
   /// Subclasses will return `nil`.
-  public static func asBytesWarningExact(_ object: PyObject) -> PyBytesWarning? {
-    return Self.isBytesWarningExact(object) ? (object as! PyBytesWarning) : nil
+  public static func asExactlyBytesWarning(_ object: PyObject) -> PyBytesWarning? {
+    return Self.isExactlyBytesWarning(object) ? (object as! PyBytesWarning) : nil
   }
 
   // MARK: - ChildProcessError
@@ -1586,8 +1586,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ChildProcessError` type?
   /// Subclasses will return `false`.
-  public static func isChildProcessErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.childProcessError)
+  public static func isExactlyChildProcessError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.childProcessError)
   }
 
   /// Cast this object to `PyChildProcessError` if it is an instance of python `ChildProcessError` type
@@ -1598,8 +1598,8 @@ public enum PyCast {
 
   /// Cast this object to `PyChildProcessError` if it is an instance of python `ChildProcessError` type.
   /// Subclasses will return `nil`.
-  public static func asChildProcessErrorExact(_ object: PyObject) -> PyChildProcessError? {
-    return Self.isChildProcessErrorExact(object) ? (object as! PyChildProcessError) : nil
+  public static func asExactlyChildProcessError(_ object: PyObject) -> PyChildProcessError? {
+    return Self.isExactlyChildProcessError(object) ? (object as! PyChildProcessError) : nil
   }
 
   // MARK: - ConnectionAbortedError
@@ -1611,8 +1611,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ConnectionAbortedError` type?
   /// Subclasses will return `false`.
-  public static func isConnectionAbortedErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.connectionAbortedError)
+  public static func isExactlyConnectionAbortedError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.connectionAbortedError)
   }
 
   /// Cast this object to `PyConnectionAbortedError` if it is an instance of python `ConnectionAbortedError` type
@@ -1623,8 +1623,8 @@ public enum PyCast {
 
   /// Cast this object to `PyConnectionAbortedError` if it is an instance of python `ConnectionAbortedError` type.
   /// Subclasses will return `nil`.
-  public static func asConnectionAbortedErrorExact(_ object: PyObject) -> PyConnectionAbortedError? {
-    return Self.isConnectionAbortedErrorExact(object) ? (object as! PyConnectionAbortedError) : nil
+  public static func asExactlyConnectionAbortedError(_ object: PyObject) -> PyConnectionAbortedError? {
+    return Self.isExactlyConnectionAbortedError(object) ? (object as! PyConnectionAbortedError) : nil
   }
 
   // MARK: - ConnectionError
@@ -1636,8 +1636,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ConnectionError` type?
   /// Subclasses will return `false`.
-  public static func isConnectionErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.connectionError)
+  public static func isExactlyConnectionError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.connectionError)
   }
 
   /// Cast this object to `PyConnectionError` if it is an instance of python `ConnectionError` type
@@ -1648,8 +1648,8 @@ public enum PyCast {
 
   /// Cast this object to `PyConnectionError` if it is an instance of python `ConnectionError` type.
   /// Subclasses will return `nil`.
-  public static func asConnectionErrorExact(_ object: PyObject) -> PyConnectionError? {
-    return Self.isConnectionErrorExact(object) ? (object as! PyConnectionError) : nil
+  public static func asExactlyConnectionError(_ object: PyObject) -> PyConnectionError? {
+    return Self.isExactlyConnectionError(object) ? (object as! PyConnectionError) : nil
   }
 
   // MARK: - ConnectionRefusedError
@@ -1661,8 +1661,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ConnectionRefusedError` type?
   /// Subclasses will return `false`.
-  public static func isConnectionRefusedErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.connectionRefusedError)
+  public static func isExactlyConnectionRefusedError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.connectionRefusedError)
   }
 
   /// Cast this object to `PyConnectionRefusedError` if it is an instance of python `ConnectionRefusedError` type
@@ -1673,8 +1673,8 @@ public enum PyCast {
 
   /// Cast this object to `PyConnectionRefusedError` if it is an instance of python `ConnectionRefusedError` type.
   /// Subclasses will return `nil`.
-  public static func asConnectionRefusedErrorExact(_ object: PyObject) -> PyConnectionRefusedError? {
-    return Self.isConnectionRefusedErrorExact(object) ? (object as! PyConnectionRefusedError) : nil
+  public static func asExactlyConnectionRefusedError(_ object: PyObject) -> PyConnectionRefusedError? {
+    return Self.isExactlyConnectionRefusedError(object) ? (object as! PyConnectionRefusedError) : nil
   }
 
   // MARK: - ConnectionResetError
@@ -1686,8 +1686,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ConnectionResetError` type?
   /// Subclasses will return `false`.
-  public static func isConnectionResetErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.connectionResetError)
+  public static func isExactlyConnectionResetError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.connectionResetError)
   }
 
   /// Cast this object to `PyConnectionResetError` if it is an instance of python `ConnectionResetError` type
@@ -1698,8 +1698,8 @@ public enum PyCast {
 
   /// Cast this object to `PyConnectionResetError` if it is an instance of python `ConnectionResetError` type.
   /// Subclasses will return `nil`.
-  public static func asConnectionResetErrorExact(_ object: PyObject) -> PyConnectionResetError? {
-    return Self.isConnectionResetErrorExact(object) ? (object as! PyConnectionResetError) : nil
+  public static func asExactlyConnectionResetError(_ object: PyObject) -> PyConnectionResetError? {
+    return Self.isExactlyConnectionResetError(object) ? (object as! PyConnectionResetError) : nil
   }
 
   // MARK: - DeprecationWarning
@@ -1711,8 +1711,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `DeprecationWarning` type?
   /// Subclasses will return `false`.
-  public static func isDeprecationWarningExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.deprecationWarning)
+  public static func isExactlyDeprecationWarning(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.deprecationWarning)
   }
 
   /// Cast this object to `PyDeprecationWarning` if it is an instance of python `DeprecationWarning` type
@@ -1723,8 +1723,8 @@ public enum PyCast {
 
   /// Cast this object to `PyDeprecationWarning` if it is an instance of python `DeprecationWarning` type.
   /// Subclasses will return `nil`.
-  public static func asDeprecationWarningExact(_ object: PyObject) -> PyDeprecationWarning? {
-    return Self.isDeprecationWarningExact(object) ? (object as! PyDeprecationWarning) : nil
+  public static func asExactlyDeprecationWarning(_ object: PyObject) -> PyDeprecationWarning? {
+    return Self.isExactlyDeprecationWarning(object) ? (object as! PyDeprecationWarning) : nil
   }
 
   // MARK: - EOFError
@@ -1736,8 +1736,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `EOFError` type?
   /// Subclasses will return `false`.
-  public static func isEOFErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.eofError)
+  public static func isExactlyEOFError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.eofError)
   }
 
   /// Cast this object to `PyEOFError` if it is an instance of python `EOFError` type
@@ -1748,8 +1748,8 @@ public enum PyCast {
 
   /// Cast this object to `PyEOFError` if it is an instance of python `EOFError` type.
   /// Subclasses will return `nil`.
-  public static func asEOFErrorExact(_ object: PyObject) -> PyEOFError? {
-    return Self.isEOFErrorExact(object) ? (object as! PyEOFError) : nil
+  public static func asExactlyEOFError(_ object: PyObject) -> PyEOFError? {
+    return Self.isExactlyEOFError(object) ? (object as! PyEOFError) : nil
   }
 
   // MARK: - Exception
@@ -1761,8 +1761,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `Exception` type?
   /// Subclasses will return `false`.
-  public static func isExceptionExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.exception)
+  public static func isExactlyException(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.exception)
   }
 
   /// Cast this object to `PyException` if it is an instance of python `Exception` type
@@ -1773,8 +1773,8 @@ public enum PyCast {
 
   /// Cast this object to `PyException` if it is an instance of python `Exception` type.
   /// Subclasses will return `nil`.
-  public static func asExceptionExact(_ object: PyObject) -> PyException? {
-    return Self.isExceptionExact(object) ? (object as! PyException) : nil
+  public static func asExactlyException(_ object: PyObject) -> PyException? {
+    return Self.isExactlyException(object) ? (object as! PyException) : nil
   }
 
   // MARK: - FileExistsError
@@ -1786,8 +1786,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `FileExistsError` type?
   /// Subclasses will return `false`.
-  public static func isFileExistsErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.fileExistsError)
+  public static func isExactlyFileExistsError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.fileExistsError)
   }
 
   /// Cast this object to `PyFileExistsError` if it is an instance of python `FileExistsError` type
@@ -1798,8 +1798,8 @@ public enum PyCast {
 
   /// Cast this object to `PyFileExistsError` if it is an instance of python `FileExistsError` type.
   /// Subclasses will return `nil`.
-  public static func asFileExistsErrorExact(_ object: PyObject) -> PyFileExistsError? {
-    return Self.isFileExistsErrorExact(object) ? (object as! PyFileExistsError) : nil
+  public static func asExactlyFileExistsError(_ object: PyObject) -> PyFileExistsError? {
+    return Self.isExactlyFileExistsError(object) ? (object as! PyFileExistsError) : nil
   }
 
   // MARK: - FileNotFoundError
@@ -1811,8 +1811,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `FileNotFoundError` type?
   /// Subclasses will return `false`.
-  public static func isFileNotFoundErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.fileNotFoundError)
+  public static func isExactlyFileNotFoundError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.fileNotFoundError)
   }
 
   /// Cast this object to `PyFileNotFoundError` if it is an instance of python `FileNotFoundError` type
@@ -1823,8 +1823,8 @@ public enum PyCast {
 
   /// Cast this object to `PyFileNotFoundError` if it is an instance of python `FileNotFoundError` type.
   /// Subclasses will return `nil`.
-  public static func asFileNotFoundErrorExact(_ object: PyObject) -> PyFileNotFoundError? {
-    return Self.isFileNotFoundErrorExact(object) ? (object as! PyFileNotFoundError) : nil
+  public static func asExactlyFileNotFoundError(_ object: PyObject) -> PyFileNotFoundError? {
+    return Self.isExactlyFileNotFoundError(object) ? (object as! PyFileNotFoundError) : nil
   }
 
   // MARK: - FloatingPointError
@@ -1836,8 +1836,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `FloatingPointError` type?
   /// Subclasses will return `false`.
-  public static func isFloatingPointErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.floatingPointError)
+  public static func isExactlyFloatingPointError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.floatingPointError)
   }
 
   /// Cast this object to `PyFloatingPointError` if it is an instance of python `FloatingPointError` type
@@ -1848,8 +1848,8 @@ public enum PyCast {
 
   /// Cast this object to `PyFloatingPointError` if it is an instance of python `FloatingPointError` type.
   /// Subclasses will return `nil`.
-  public static func asFloatingPointErrorExact(_ object: PyObject) -> PyFloatingPointError? {
-    return Self.isFloatingPointErrorExact(object) ? (object as! PyFloatingPointError) : nil
+  public static func asExactlyFloatingPointError(_ object: PyObject) -> PyFloatingPointError? {
+    return Self.isExactlyFloatingPointError(object) ? (object as! PyFloatingPointError) : nil
   }
 
   // MARK: - FutureWarning
@@ -1861,8 +1861,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `FutureWarning` type?
   /// Subclasses will return `false`.
-  public static func isFutureWarningExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.futureWarning)
+  public static func isExactlyFutureWarning(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.futureWarning)
   }
 
   /// Cast this object to `PyFutureWarning` if it is an instance of python `FutureWarning` type
@@ -1873,8 +1873,8 @@ public enum PyCast {
 
   /// Cast this object to `PyFutureWarning` if it is an instance of python `FutureWarning` type.
   /// Subclasses will return `nil`.
-  public static func asFutureWarningExact(_ object: PyObject) -> PyFutureWarning? {
-    return Self.isFutureWarningExact(object) ? (object as! PyFutureWarning) : nil
+  public static func asExactlyFutureWarning(_ object: PyObject) -> PyFutureWarning? {
+    return Self.isExactlyFutureWarning(object) ? (object as! PyFutureWarning) : nil
   }
 
   // MARK: - GeneratorExit
@@ -1886,8 +1886,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `GeneratorExit` type?
   /// Subclasses will return `false`.
-  public static func isGeneratorExitExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.generatorExit)
+  public static func isExactlyGeneratorExit(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.generatorExit)
   }
 
   /// Cast this object to `PyGeneratorExit` if it is an instance of python `GeneratorExit` type
@@ -1898,8 +1898,8 @@ public enum PyCast {
 
   /// Cast this object to `PyGeneratorExit` if it is an instance of python `GeneratorExit` type.
   /// Subclasses will return `nil`.
-  public static func asGeneratorExitExact(_ object: PyObject) -> PyGeneratorExit? {
-    return Self.isGeneratorExitExact(object) ? (object as! PyGeneratorExit) : nil
+  public static func asExactlyGeneratorExit(_ object: PyObject) -> PyGeneratorExit? {
+    return Self.isExactlyGeneratorExit(object) ? (object as! PyGeneratorExit) : nil
   }
 
   // MARK: - ImportError
@@ -1911,8 +1911,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ImportError` type?
   /// Subclasses will return `false`.
-  public static func isImportErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.importError)
+  public static func isExactlyImportError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.importError)
   }
 
   /// Cast this object to `PyImportError` if it is an instance of python `ImportError` type
@@ -1923,8 +1923,8 @@ public enum PyCast {
 
   /// Cast this object to `PyImportError` if it is an instance of python `ImportError` type.
   /// Subclasses will return `nil`.
-  public static func asImportErrorExact(_ object: PyObject) -> PyImportError? {
-    return Self.isImportErrorExact(object) ? (object as! PyImportError) : nil
+  public static func asExactlyImportError(_ object: PyObject) -> PyImportError? {
+    return Self.isExactlyImportError(object) ? (object as! PyImportError) : nil
   }
 
   // MARK: - ImportWarning
@@ -1936,8 +1936,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ImportWarning` type?
   /// Subclasses will return `false`.
-  public static func isImportWarningExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.importWarning)
+  public static func isExactlyImportWarning(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.importWarning)
   }
 
   /// Cast this object to `PyImportWarning` if it is an instance of python `ImportWarning` type
@@ -1948,8 +1948,8 @@ public enum PyCast {
 
   /// Cast this object to `PyImportWarning` if it is an instance of python `ImportWarning` type.
   /// Subclasses will return `nil`.
-  public static func asImportWarningExact(_ object: PyObject) -> PyImportWarning? {
-    return Self.isImportWarningExact(object) ? (object as! PyImportWarning) : nil
+  public static func asExactlyImportWarning(_ object: PyObject) -> PyImportWarning? {
+    return Self.isExactlyImportWarning(object) ? (object as! PyImportWarning) : nil
   }
 
   // MARK: - IndentationError
@@ -1961,8 +1961,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `IndentationError` type?
   /// Subclasses will return `false`.
-  public static func isIndentationErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.indentationError)
+  public static func isExactlyIndentationError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.indentationError)
   }
 
   /// Cast this object to `PyIndentationError` if it is an instance of python `IndentationError` type
@@ -1973,8 +1973,8 @@ public enum PyCast {
 
   /// Cast this object to `PyIndentationError` if it is an instance of python `IndentationError` type.
   /// Subclasses will return `nil`.
-  public static func asIndentationErrorExact(_ object: PyObject) -> PyIndentationError? {
-    return Self.isIndentationErrorExact(object) ? (object as! PyIndentationError) : nil
+  public static func asExactlyIndentationError(_ object: PyObject) -> PyIndentationError? {
+    return Self.isExactlyIndentationError(object) ? (object as! PyIndentationError) : nil
   }
 
   // MARK: - IndexError
@@ -1986,8 +1986,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `IndexError` type?
   /// Subclasses will return `false`.
-  public static func isIndexErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.indexError)
+  public static func isExactlyIndexError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.indexError)
   }
 
   /// Cast this object to `PyIndexError` if it is an instance of python `IndexError` type
@@ -1998,8 +1998,8 @@ public enum PyCast {
 
   /// Cast this object to `PyIndexError` if it is an instance of python `IndexError` type.
   /// Subclasses will return `nil`.
-  public static func asIndexErrorExact(_ object: PyObject) -> PyIndexError? {
-    return Self.isIndexErrorExact(object) ? (object as! PyIndexError) : nil
+  public static func asExactlyIndexError(_ object: PyObject) -> PyIndexError? {
+    return Self.isExactlyIndexError(object) ? (object as! PyIndexError) : nil
   }
 
   // MARK: - InterruptedError
@@ -2011,8 +2011,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `InterruptedError` type?
   /// Subclasses will return `false`.
-  public static func isInterruptedErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.interruptedError)
+  public static func isExactlyInterruptedError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.interruptedError)
   }
 
   /// Cast this object to `PyInterruptedError` if it is an instance of python `InterruptedError` type
@@ -2023,8 +2023,8 @@ public enum PyCast {
 
   /// Cast this object to `PyInterruptedError` if it is an instance of python `InterruptedError` type.
   /// Subclasses will return `nil`.
-  public static func asInterruptedErrorExact(_ object: PyObject) -> PyInterruptedError? {
-    return Self.isInterruptedErrorExact(object) ? (object as! PyInterruptedError) : nil
+  public static func asExactlyInterruptedError(_ object: PyObject) -> PyInterruptedError? {
+    return Self.isExactlyInterruptedError(object) ? (object as! PyInterruptedError) : nil
   }
 
   // MARK: - IsADirectoryError
@@ -2036,8 +2036,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `IsADirectoryError` type?
   /// Subclasses will return `false`.
-  public static func isIsADirectoryErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.isADirectoryError)
+  public static func isExactlyIsADirectoryError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.isADirectoryError)
   }
 
   /// Cast this object to `PyIsADirectoryError` if it is an instance of python `IsADirectoryError` type
@@ -2048,8 +2048,8 @@ public enum PyCast {
 
   /// Cast this object to `PyIsADirectoryError` if it is an instance of python `IsADirectoryError` type.
   /// Subclasses will return `nil`.
-  public static func asIsADirectoryErrorExact(_ object: PyObject) -> PyIsADirectoryError? {
-    return Self.isIsADirectoryErrorExact(object) ? (object as! PyIsADirectoryError) : nil
+  public static func asExactlyIsADirectoryError(_ object: PyObject) -> PyIsADirectoryError? {
+    return Self.isExactlyIsADirectoryError(object) ? (object as! PyIsADirectoryError) : nil
   }
 
   // MARK: - KeyError
@@ -2061,8 +2061,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `KeyError` type?
   /// Subclasses will return `false`.
-  public static func isKeyErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.keyError)
+  public static func isExactlyKeyError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.keyError)
   }
 
   /// Cast this object to `PyKeyError` if it is an instance of python `KeyError` type
@@ -2073,8 +2073,8 @@ public enum PyCast {
 
   /// Cast this object to `PyKeyError` if it is an instance of python `KeyError` type.
   /// Subclasses will return `nil`.
-  public static func asKeyErrorExact(_ object: PyObject) -> PyKeyError? {
-    return Self.isKeyErrorExact(object) ? (object as! PyKeyError) : nil
+  public static func asExactlyKeyError(_ object: PyObject) -> PyKeyError? {
+    return Self.isExactlyKeyError(object) ? (object as! PyKeyError) : nil
   }
 
   // MARK: - KeyboardInterrupt
@@ -2086,8 +2086,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `KeyboardInterrupt` type?
   /// Subclasses will return `false`.
-  public static func isKeyboardInterruptExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.keyboardInterrupt)
+  public static func isExactlyKeyboardInterrupt(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.keyboardInterrupt)
   }
 
   /// Cast this object to `PyKeyboardInterrupt` if it is an instance of python `KeyboardInterrupt` type
@@ -2098,8 +2098,8 @@ public enum PyCast {
 
   /// Cast this object to `PyKeyboardInterrupt` if it is an instance of python `KeyboardInterrupt` type.
   /// Subclasses will return `nil`.
-  public static func asKeyboardInterruptExact(_ object: PyObject) -> PyKeyboardInterrupt? {
-    return Self.isKeyboardInterruptExact(object) ? (object as! PyKeyboardInterrupt) : nil
+  public static func asExactlyKeyboardInterrupt(_ object: PyObject) -> PyKeyboardInterrupt? {
+    return Self.isExactlyKeyboardInterrupt(object) ? (object as! PyKeyboardInterrupt) : nil
   }
 
   // MARK: - LookupError
@@ -2111,8 +2111,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `LookupError` type?
   /// Subclasses will return `false`.
-  public static func isLookupErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.lookupError)
+  public static func isExactlyLookupError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.lookupError)
   }
 
   /// Cast this object to `PyLookupError` if it is an instance of python `LookupError` type
@@ -2123,8 +2123,8 @@ public enum PyCast {
 
   /// Cast this object to `PyLookupError` if it is an instance of python `LookupError` type.
   /// Subclasses will return `nil`.
-  public static func asLookupErrorExact(_ object: PyObject) -> PyLookupError? {
-    return Self.isLookupErrorExact(object) ? (object as! PyLookupError) : nil
+  public static func asExactlyLookupError(_ object: PyObject) -> PyLookupError? {
+    return Self.isExactlyLookupError(object) ? (object as! PyLookupError) : nil
   }
 
   // MARK: - MemoryError
@@ -2136,8 +2136,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `MemoryError` type?
   /// Subclasses will return `false`.
-  public static func isMemoryErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.memoryError)
+  public static func isExactlyMemoryError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.memoryError)
   }
 
   /// Cast this object to `PyMemoryError` if it is an instance of python `MemoryError` type
@@ -2148,8 +2148,8 @@ public enum PyCast {
 
   /// Cast this object to `PyMemoryError` if it is an instance of python `MemoryError` type.
   /// Subclasses will return `nil`.
-  public static func asMemoryErrorExact(_ object: PyObject) -> PyMemoryError? {
-    return Self.isMemoryErrorExact(object) ? (object as! PyMemoryError) : nil
+  public static func asExactlyMemoryError(_ object: PyObject) -> PyMemoryError? {
+    return Self.isExactlyMemoryError(object) ? (object as! PyMemoryError) : nil
   }
 
   // MARK: - ModuleNotFoundError
@@ -2161,8 +2161,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ModuleNotFoundError` type?
   /// Subclasses will return `false`.
-  public static func isModuleNotFoundErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.moduleNotFoundError)
+  public static func isExactlyModuleNotFoundError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.moduleNotFoundError)
   }
 
   /// Cast this object to `PyModuleNotFoundError` if it is an instance of python `ModuleNotFoundError` type
@@ -2173,8 +2173,8 @@ public enum PyCast {
 
   /// Cast this object to `PyModuleNotFoundError` if it is an instance of python `ModuleNotFoundError` type.
   /// Subclasses will return `nil`.
-  public static func asModuleNotFoundErrorExact(_ object: PyObject) -> PyModuleNotFoundError? {
-    return Self.isModuleNotFoundErrorExact(object) ? (object as! PyModuleNotFoundError) : nil
+  public static func asExactlyModuleNotFoundError(_ object: PyObject) -> PyModuleNotFoundError? {
+    return Self.isExactlyModuleNotFoundError(object) ? (object as! PyModuleNotFoundError) : nil
   }
 
   // MARK: - NameError
@@ -2186,8 +2186,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `NameError` type?
   /// Subclasses will return `false`.
-  public static func isNameErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.nameError)
+  public static func isExactlyNameError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.nameError)
   }
 
   /// Cast this object to `PyNameError` if it is an instance of python `NameError` type
@@ -2198,8 +2198,8 @@ public enum PyCast {
 
   /// Cast this object to `PyNameError` if it is an instance of python `NameError` type.
   /// Subclasses will return `nil`.
-  public static func asNameErrorExact(_ object: PyObject) -> PyNameError? {
-    return Self.isNameErrorExact(object) ? (object as! PyNameError) : nil
+  public static func asExactlyNameError(_ object: PyObject) -> PyNameError? {
+    return Self.isExactlyNameError(object) ? (object as! PyNameError) : nil
   }
 
   // MARK: - NotADirectoryError
@@ -2211,8 +2211,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `NotADirectoryError` type?
   /// Subclasses will return `false`.
-  public static func isNotADirectoryErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.notADirectoryError)
+  public static func isExactlyNotADirectoryError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.notADirectoryError)
   }
 
   /// Cast this object to `PyNotADirectoryError` if it is an instance of python `NotADirectoryError` type
@@ -2223,8 +2223,8 @@ public enum PyCast {
 
   /// Cast this object to `PyNotADirectoryError` if it is an instance of python `NotADirectoryError` type.
   /// Subclasses will return `nil`.
-  public static func asNotADirectoryErrorExact(_ object: PyObject) -> PyNotADirectoryError? {
-    return Self.isNotADirectoryErrorExact(object) ? (object as! PyNotADirectoryError) : nil
+  public static func asExactlyNotADirectoryError(_ object: PyObject) -> PyNotADirectoryError? {
+    return Self.isExactlyNotADirectoryError(object) ? (object as! PyNotADirectoryError) : nil
   }
 
   // MARK: - NotImplementedError
@@ -2236,8 +2236,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `NotImplementedError` type?
   /// Subclasses will return `false`.
-  public static func isNotImplementedErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.notImplementedError)
+  public static func isExactlyNotImplementedError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.notImplementedError)
   }
 
   /// Cast this object to `PyNotImplementedError` if it is an instance of python `NotImplementedError` type
@@ -2248,8 +2248,8 @@ public enum PyCast {
 
   /// Cast this object to `PyNotImplementedError` if it is an instance of python `NotImplementedError` type.
   /// Subclasses will return `nil`.
-  public static func asNotImplementedErrorExact(_ object: PyObject) -> PyNotImplementedError? {
-    return Self.isNotImplementedErrorExact(object) ? (object as! PyNotImplementedError) : nil
+  public static func asExactlyNotImplementedError(_ object: PyObject) -> PyNotImplementedError? {
+    return Self.isExactlyNotImplementedError(object) ? (object as! PyNotImplementedError) : nil
   }
 
   // MARK: - OSError
@@ -2261,8 +2261,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `OSError` type?
   /// Subclasses will return `false`.
-  public static func isOSErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.osError)
+  public static func isExactlyOSError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.osError)
   }
 
   /// Cast this object to `PyOSError` if it is an instance of python `OSError` type
@@ -2273,8 +2273,8 @@ public enum PyCast {
 
   /// Cast this object to `PyOSError` if it is an instance of python `OSError` type.
   /// Subclasses will return `nil`.
-  public static func asOSErrorExact(_ object: PyObject) -> PyOSError? {
-    return Self.isOSErrorExact(object) ? (object as! PyOSError) : nil
+  public static func asExactlyOSError(_ object: PyObject) -> PyOSError? {
+    return Self.isExactlyOSError(object) ? (object as! PyOSError) : nil
   }
 
   // MARK: - OverflowError
@@ -2286,8 +2286,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `OverflowError` type?
   /// Subclasses will return `false`.
-  public static func isOverflowErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.overflowError)
+  public static func isExactlyOverflowError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.overflowError)
   }
 
   /// Cast this object to `PyOverflowError` if it is an instance of python `OverflowError` type
@@ -2298,8 +2298,8 @@ public enum PyCast {
 
   /// Cast this object to `PyOverflowError` if it is an instance of python `OverflowError` type.
   /// Subclasses will return `nil`.
-  public static func asOverflowErrorExact(_ object: PyObject) -> PyOverflowError? {
-    return Self.isOverflowErrorExact(object) ? (object as! PyOverflowError) : nil
+  public static func asExactlyOverflowError(_ object: PyObject) -> PyOverflowError? {
+    return Self.isExactlyOverflowError(object) ? (object as! PyOverflowError) : nil
   }
 
   // MARK: - PendingDeprecationWarning
@@ -2311,8 +2311,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `PendingDeprecationWarning` type?
   /// Subclasses will return `false`.
-  public static func isPendingDeprecationWarningExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.pendingDeprecationWarning)
+  public static func isExactlyPendingDeprecationWarning(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.pendingDeprecationWarning)
   }
 
   /// Cast this object to `PyPendingDeprecationWarning` if it is an instance of python `PendingDeprecationWarning` type
@@ -2323,8 +2323,8 @@ public enum PyCast {
 
   /// Cast this object to `PyPendingDeprecationWarning` if it is an instance of python `PendingDeprecationWarning` type.
   /// Subclasses will return `nil`.
-  public static func asPendingDeprecationWarningExact(_ object: PyObject) -> PyPendingDeprecationWarning? {
-    return Self.isPendingDeprecationWarningExact(object) ? (object as! PyPendingDeprecationWarning) : nil
+  public static func asExactlyPendingDeprecationWarning(_ object: PyObject) -> PyPendingDeprecationWarning? {
+    return Self.isExactlyPendingDeprecationWarning(object) ? (object as! PyPendingDeprecationWarning) : nil
   }
 
   // MARK: - PermissionError
@@ -2336,8 +2336,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `PermissionError` type?
   /// Subclasses will return `false`.
-  public static func isPermissionErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.permissionError)
+  public static func isExactlyPermissionError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.permissionError)
   }
 
   /// Cast this object to `PyPermissionError` if it is an instance of python `PermissionError` type
@@ -2348,8 +2348,8 @@ public enum PyCast {
 
   /// Cast this object to `PyPermissionError` if it is an instance of python `PermissionError` type.
   /// Subclasses will return `nil`.
-  public static func asPermissionErrorExact(_ object: PyObject) -> PyPermissionError? {
-    return Self.isPermissionErrorExact(object) ? (object as! PyPermissionError) : nil
+  public static func asExactlyPermissionError(_ object: PyObject) -> PyPermissionError? {
+    return Self.isExactlyPermissionError(object) ? (object as! PyPermissionError) : nil
   }
 
   // MARK: - ProcessLookupError
@@ -2361,8 +2361,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ProcessLookupError` type?
   /// Subclasses will return `false`.
-  public static func isProcessLookupErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.processLookupError)
+  public static func isExactlyProcessLookupError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.processLookupError)
   }
 
   /// Cast this object to `PyProcessLookupError` if it is an instance of python `ProcessLookupError` type
@@ -2373,8 +2373,8 @@ public enum PyCast {
 
   /// Cast this object to `PyProcessLookupError` if it is an instance of python `ProcessLookupError` type.
   /// Subclasses will return `nil`.
-  public static func asProcessLookupErrorExact(_ object: PyObject) -> PyProcessLookupError? {
-    return Self.isProcessLookupErrorExact(object) ? (object as! PyProcessLookupError) : nil
+  public static func asExactlyProcessLookupError(_ object: PyObject) -> PyProcessLookupError? {
+    return Self.isExactlyProcessLookupError(object) ? (object as! PyProcessLookupError) : nil
   }
 
   // MARK: - RecursionError
@@ -2386,8 +2386,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `RecursionError` type?
   /// Subclasses will return `false`.
-  public static func isRecursionErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.recursionError)
+  public static func isExactlyRecursionError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.recursionError)
   }
 
   /// Cast this object to `PyRecursionError` if it is an instance of python `RecursionError` type
@@ -2398,8 +2398,8 @@ public enum PyCast {
 
   /// Cast this object to `PyRecursionError` if it is an instance of python `RecursionError` type.
   /// Subclasses will return `nil`.
-  public static func asRecursionErrorExact(_ object: PyObject) -> PyRecursionError? {
-    return Self.isRecursionErrorExact(object) ? (object as! PyRecursionError) : nil
+  public static func asExactlyRecursionError(_ object: PyObject) -> PyRecursionError? {
+    return Self.isExactlyRecursionError(object) ? (object as! PyRecursionError) : nil
   }
 
   // MARK: - ReferenceError
@@ -2411,8 +2411,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ReferenceError` type?
   /// Subclasses will return `false`.
-  public static func isReferenceErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.referenceError)
+  public static func isExactlyReferenceError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.referenceError)
   }
 
   /// Cast this object to `PyReferenceError` if it is an instance of python `ReferenceError` type
@@ -2423,8 +2423,8 @@ public enum PyCast {
 
   /// Cast this object to `PyReferenceError` if it is an instance of python `ReferenceError` type.
   /// Subclasses will return `nil`.
-  public static func asReferenceErrorExact(_ object: PyObject) -> PyReferenceError? {
-    return Self.isReferenceErrorExact(object) ? (object as! PyReferenceError) : nil
+  public static func asExactlyReferenceError(_ object: PyObject) -> PyReferenceError? {
+    return Self.isExactlyReferenceError(object) ? (object as! PyReferenceError) : nil
   }
 
   // MARK: - ResourceWarning
@@ -2436,8 +2436,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ResourceWarning` type?
   /// Subclasses will return `false`.
-  public static func isResourceWarningExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.resourceWarning)
+  public static func isExactlyResourceWarning(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.resourceWarning)
   }
 
   /// Cast this object to `PyResourceWarning` if it is an instance of python `ResourceWarning` type
@@ -2448,8 +2448,8 @@ public enum PyCast {
 
   /// Cast this object to `PyResourceWarning` if it is an instance of python `ResourceWarning` type.
   /// Subclasses will return `nil`.
-  public static func asResourceWarningExact(_ object: PyObject) -> PyResourceWarning? {
-    return Self.isResourceWarningExact(object) ? (object as! PyResourceWarning) : nil
+  public static func asExactlyResourceWarning(_ object: PyObject) -> PyResourceWarning? {
+    return Self.isExactlyResourceWarning(object) ? (object as! PyResourceWarning) : nil
   }
 
   // MARK: - RuntimeError
@@ -2461,8 +2461,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `RuntimeError` type?
   /// Subclasses will return `false`.
-  public static func isRuntimeErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.runtimeError)
+  public static func isExactlyRuntimeError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.runtimeError)
   }
 
   /// Cast this object to `PyRuntimeError` if it is an instance of python `RuntimeError` type
@@ -2473,8 +2473,8 @@ public enum PyCast {
 
   /// Cast this object to `PyRuntimeError` if it is an instance of python `RuntimeError` type.
   /// Subclasses will return `nil`.
-  public static func asRuntimeErrorExact(_ object: PyObject) -> PyRuntimeError? {
-    return Self.isRuntimeErrorExact(object) ? (object as! PyRuntimeError) : nil
+  public static func asExactlyRuntimeError(_ object: PyObject) -> PyRuntimeError? {
+    return Self.isExactlyRuntimeError(object) ? (object as! PyRuntimeError) : nil
   }
 
   // MARK: - RuntimeWarning
@@ -2486,8 +2486,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `RuntimeWarning` type?
   /// Subclasses will return `false`.
-  public static func isRuntimeWarningExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.runtimeWarning)
+  public static func isExactlyRuntimeWarning(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.runtimeWarning)
   }
 
   /// Cast this object to `PyRuntimeWarning` if it is an instance of python `RuntimeWarning` type
@@ -2498,8 +2498,8 @@ public enum PyCast {
 
   /// Cast this object to `PyRuntimeWarning` if it is an instance of python `RuntimeWarning` type.
   /// Subclasses will return `nil`.
-  public static func asRuntimeWarningExact(_ object: PyObject) -> PyRuntimeWarning? {
-    return Self.isRuntimeWarningExact(object) ? (object as! PyRuntimeWarning) : nil
+  public static func asExactlyRuntimeWarning(_ object: PyObject) -> PyRuntimeWarning? {
+    return Self.isExactlyRuntimeWarning(object) ? (object as! PyRuntimeWarning) : nil
   }
 
   // MARK: - StopAsyncIteration
@@ -2511,8 +2511,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `StopAsyncIteration` type?
   /// Subclasses will return `false`.
-  public static func isStopAsyncIterationExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.stopAsyncIteration)
+  public static func isExactlyStopAsyncIteration(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.stopAsyncIteration)
   }
 
   /// Cast this object to `PyStopAsyncIteration` if it is an instance of python `StopAsyncIteration` type
@@ -2523,8 +2523,8 @@ public enum PyCast {
 
   /// Cast this object to `PyStopAsyncIteration` if it is an instance of python `StopAsyncIteration` type.
   /// Subclasses will return `nil`.
-  public static func asStopAsyncIterationExact(_ object: PyObject) -> PyStopAsyncIteration? {
-    return Self.isStopAsyncIterationExact(object) ? (object as! PyStopAsyncIteration) : nil
+  public static func asExactlyStopAsyncIteration(_ object: PyObject) -> PyStopAsyncIteration? {
+    return Self.isExactlyStopAsyncIteration(object) ? (object as! PyStopAsyncIteration) : nil
   }
 
   // MARK: - StopIteration
@@ -2536,8 +2536,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `StopIteration` type?
   /// Subclasses will return `false`.
-  public static func isStopIterationExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.stopIteration)
+  public static func isExactlyStopIteration(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.stopIteration)
   }
 
   /// Cast this object to `PyStopIteration` if it is an instance of python `StopIteration` type
@@ -2548,8 +2548,8 @@ public enum PyCast {
 
   /// Cast this object to `PyStopIteration` if it is an instance of python `StopIteration` type.
   /// Subclasses will return `nil`.
-  public static func asStopIterationExact(_ object: PyObject) -> PyStopIteration? {
-    return Self.isStopIterationExact(object) ? (object as! PyStopIteration) : nil
+  public static func asExactlyStopIteration(_ object: PyObject) -> PyStopIteration? {
+    return Self.isExactlyStopIteration(object) ? (object as! PyStopIteration) : nil
   }
 
   // MARK: - SyntaxError
@@ -2561,8 +2561,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `SyntaxError` type?
   /// Subclasses will return `false`.
-  public static func isSyntaxErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.syntaxError)
+  public static func isExactlySyntaxError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.syntaxError)
   }
 
   /// Cast this object to `PySyntaxError` if it is an instance of python `SyntaxError` type
@@ -2573,8 +2573,8 @@ public enum PyCast {
 
   /// Cast this object to `PySyntaxError` if it is an instance of python `SyntaxError` type.
   /// Subclasses will return `nil`.
-  public static func asSyntaxErrorExact(_ object: PyObject) -> PySyntaxError? {
-    return Self.isSyntaxErrorExact(object) ? (object as! PySyntaxError) : nil
+  public static func asExactlySyntaxError(_ object: PyObject) -> PySyntaxError? {
+    return Self.isExactlySyntaxError(object) ? (object as! PySyntaxError) : nil
   }
 
   // MARK: - SyntaxWarning
@@ -2586,8 +2586,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `SyntaxWarning` type?
   /// Subclasses will return `false`.
-  public static func isSyntaxWarningExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.syntaxWarning)
+  public static func isExactlySyntaxWarning(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.syntaxWarning)
   }
 
   /// Cast this object to `PySyntaxWarning` if it is an instance of python `SyntaxWarning` type
@@ -2598,8 +2598,8 @@ public enum PyCast {
 
   /// Cast this object to `PySyntaxWarning` if it is an instance of python `SyntaxWarning` type.
   /// Subclasses will return `nil`.
-  public static func asSyntaxWarningExact(_ object: PyObject) -> PySyntaxWarning? {
-    return Self.isSyntaxWarningExact(object) ? (object as! PySyntaxWarning) : nil
+  public static func asExactlySyntaxWarning(_ object: PyObject) -> PySyntaxWarning? {
+    return Self.isExactlySyntaxWarning(object) ? (object as! PySyntaxWarning) : nil
   }
 
   // MARK: - SystemError
@@ -2611,8 +2611,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `SystemError` type?
   /// Subclasses will return `false`.
-  public static func isSystemErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.systemError)
+  public static func isExactlySystemError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.systemError)
   }
 
   /// Cast this object to `PySystemError` if it is an instance of python `SystemError` type
@@ -2623,8 +2623,8 @@ public enum PyCast {
 
   /// Cast this object to `PySystemError` if it is an instance of python `SystemError` type.
   /// Subclasses will return `nil`.
-  public static func asSystemErrorExact(_ object: PyObject) -> PySystemError? {
-    return Self.isSystemErrorExact(object) ? (object as! PySystemError) : nil
+  public static func asExactlySystemError(_ object: PyObject) -> PySystemError? {
+    return Self.isExactlySystemError(object) ? (object as! PySystemError) : nil
   }
 
   // MARK: - SystemExit
@@ -2636,8 +2636,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `SystemExit` type?
   /// Subclasses will return `false`.
-  public static func isSystemExitExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.systemExit)
+  public static func isExactlySystemExit(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.systemExit)
   }
 
   /// Cast this object to `PySystemExit` if it is an instance of python `SystemExit` type
@@ -2648,8 +2648,8 @@ public enum PyCast {
 
   /// Cast this object to `PySystemExit` if it is an instance of python `SystemExit` type.
   /// Subclasses will return `nil`.
-  public static func asSystemExitExact(_ object: PyObject) -> PySystemExit? {
-    return Self.isSystemExitExact(object) ? (object as! PySystemExit) : nil
+  public static func asExactlySystemExit(_ object: PyObject) -> PySystemExit? {
+    return Self.isExactlySystemExit(object) ? (object as! PySystemExit) : nil
   }
 
   // MARK: - TabError
@@ -2661,8 +2661,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `TabError` type?
   /// Subclasses will return `false`.
-  public static func isTabErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.tabError)
+  public static func isExactlyTabError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.tabError)
   }
 
   /// Cast this object to `PyTabError` if it is an instance of python `TabError` type
@@ -2673,8 +2673,8 @@ public enum PyCast {
 
   /// Cast this object to `PyTabError` if it is an instance of python `TabError` type.
   /// Subclasses will return `nil`.
-  public static func asTabErrorExact(_ object: PyObject) -> PyTabError? {
-    return Self.isTabErrorExact(object) ? (object as! PyTabError) : nil
+  public static func asExactlyTabError(_ object: PyObject) -> PyTabError? {
+    return Self.isExactlyTabError(object) ? (object as! PyTabError) : nil
   }
 
   // MARK: - TimeoutError
@@ -2686,8 +2686,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `TimeoutError` type?
   /// Subclasses will return `false`.
-  public static func isTimeoutErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.timeoutError)
+  public static func isExactlyTimeoutError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.timeoutError)
   }
 
   /// Cast this object to `PyTimeoutError` if it is an instance of python `TimeoutError` type
@@ -2698,8 +2698,8 @@ public enum PyCast {
 
   /// Cast this object to `PyTimeoutError` if it is an instance of python `TimeoutError` type.
   /// Subclasses will return `nil`.
-  public static func asTimeoutErrorExact(_ object: PyObject) -> PyTimeoutError? {
-    return Self.isTimeoutErrorExact(object) ? (object as! PyTimeoutError) : nil
+  public static func asExactlyTimeoutError(_ object: PyObject) -> PyTimeoutError? {
+    return Self.isExactlyTimeoutError(object) ? (object as! PyTimeoutError) : nil
   }
 
   // MARK: - TypeError
@@ -2711,8 +2711,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `TypeError` type?
   /// Subclasses will return `false`.
-  public static func isTypeErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.typeError)
+  public static func isExactlyTypeError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.typeError)
   }
 
   /// Cast this object to `PyTypeError` if it is an instance of python `TypeError` type
@@ -2723,8 +2723,8 @@ public enum PyCast {
 
   /// Cast this object to `PyTypeError` if it is an instance of python `TypeError` type.
   /// Subclasses will return `nil`.
-  public static func asTypeErrorExact(_ object: PyObject) -> PyTypeError? {
-    return Self.isTypeErrorExact(object) ? (object as! PyTypeError) : nil
+  public static func asExactlyTypeError(_ object: PyObject) -> PyTypeError? {
+    return Self.isExactlyTypeError(object) ? (object as! PyTypeError) : nil
   }
 
   // MARK: - UnboundLocalError
@@ -2736,8 +2736,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `UnboundLocalError` type?
   /// Subclasses will return `false`.
-  public static func isUnboundLocalErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.unboundLocalError)
+  public static func isExactlyUnboundLocalError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.unboundLocalError)
   }
 
   /// Cast this object to `PyUnboundLocalError` if it is an instance of python `UnboundLocalError` type
@@ -2748,8 +2748,8 @@ public enum PyCast {
 
   /// Cast this object to `PyUnboundLocalError` if it is an instance of python `UnboundLocalError` type.
   /// Subclasses will return `nil`.
-  public static func asUnboundLocalErrorExact(_ object: PyObject) -> PyUnboundLocalError? {
-    return Self.isUnboundLocalErrorExact(object) ? (object as! PyUnboundLocalError) : nil
+  public static func asExactlyUnboundLocalError(_ object: PyObject) -> PyUnboundLocalError? {
+    return Self.isExactlyUnboundLocalError(object) ? (object as! PyUnboundLocalError) : nil
   }
 
   // MARK: - UnicodeDecodeError
@@ -2761,8 +2761,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `UnicodeDecodeError` type?
   /// Subclasses will return `false`.
-  public static func isUnicodeDecodeErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.unicodeDecodeError)
+  public static func isExactlyUnicodeDecodeError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.unicodeDecodeError)
   }
 
   /// Cast this object to `PyUnicodeDecodeError` if it is an instance of python `UnicodeDecodeError` type
@@ -2773,8 +2773,8 @@ public enum PyCast {
 
   /// Cast this object to `PyUnicodeDecodeError` if it is an instance of python `UnicodeDecodeError` type.
   /// Subclasses will return `nil`.
-  public static func asUnicodeDecodeErrorExact(_ object: PyObject) -> PyUnicodeDecodeError? {
-    return Self.isUnicodeDecodeErrorExact(object) ? (object as! PyUnicodeDecodeError) : nil
+  public static func asExactlyUnicodeDecodeError(_ object: PyObject) -> PyUnicodeDecodeError? {
+    return Self.isExactlyUnicodeDecodeError(object) ? (object as! PyUnicodeDecodeError) : nil
   }
 
   // MARK: - UnicodeEncodeError
@@ -2786,8 +2786,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `UnicodeEncodeError` type?
   /// Subclasses will return `false`.
-  public static func isUnicodeEncodeErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.unicodeEncodeError)
+  public static func isExactlyUnicodeEncodeError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.unicodeEncodeError)
   }
 
   /// Cast this object to `PyUnicodeEncodeError` if it is an instance of python `UnicodeEncodeError` type
@@ -2798,8 +2798,8 @@ public enum PyCast {
 
   /// Cast this object to `PyUnicodeEncodeError` if it is an instance of python `UnicodeEncodeError` type.
   /// Subclasses will return `nil`.
-  public static func asUnicodeEncodeErrorExact(_ object: PyObject) -> PyUnicodeEncodeError? {
-    return Self.isUnicodeEncodeErrorExact(object) ? (object as! PyUnicodeEncodeError) : nil
+  public static func asExactlyUnicodeEncodeError(_ object: PyObject) -> PyUnicodeEncodeError? {
+    return Self.isExactlyUnicodeEncodeError(object) ? (object as! PyUnicodeEncodeError) : nil
   }
 
   // MARK: - UnicodeError
@@ -2811,8 +2811,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `UnicodeError` type?
   /// Subclasses will return `false`.
-  public static func isUnicodeErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.unicodeError)
+  public static func isExactlyUnicodeError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.unicodeError)
   }
 
   /// Cast this object to `PyUnicodeError` if it is an instance of python `UnicodeError` type
@@ -2823,8 +2823,8 @@ public enum PyCast {
 
   /// Cast this object to `PyUnicodeError` if it is an instance of python `UnicodeError` type.
   /// Subclasses will return `nil`.
-  public static func asUnicodeErrorExact(_ object: PyObject) -> PyUnicodeError? {
-    return Self.isUnicodeErrorExact(object) ? (object as! PyUnicodeError) : nil
+  public static func asExactlyUnicodeError(_ object: PyObject) -> PyUnicodeError? {
+    return Self.isExactlyUnicodeError(object) ? (object as! PyUnicodeError) : nil
   }
 
   // MARK: - UnicodeTranslateError
@@ -2836,8 +2836,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `UnicodeTranslateError` type?
   /// Subclasses will return `false`.
-  public static func isUnicodeTranslateErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.unicodeTranslateError)
+  public static func isExactlyUnicodeTranslateError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.unicodeTranslateError)
   }
 
   /// Cast this object to `PyUnicodeTranslateError` if it is an instance of python `UnicodeTranslateError` type
@@ -2848,8 +2848,8 @@ public enum PyCast {
 
   /// Cast this object to `PyUnicodeTranslateError` if it is an instance of python `UnicodeTranslateError` type.
   /// Subclasses will return `nil`.
-  public static func asUnicodeTranslateErrorExact(_ object: PyObject) -> PyUnicodeTranslateError? {
-    return Self.isUnicodeTranslateErrorExact(object) ? (object as! PyUnicodeTranslateError) : nil
+  public static func asExactlyUnicodeTranslateError(_ object: PyObject) -> PyUnicodeTranslateError? {
+    return Self.isExactlyUnicodeTranslateError(object) ? (object as! PyUnicodeTranslateError) : nil
   }
 
   // MARK: - UnicodeWarning
@@ -2861,8 +2861,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `UnicodeWarning` type?
   /// Subclasses will return `false`.
-  public static func isUnicodeWarningExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.unicodeWarning)
+  public static func isExactlyUnicodeWarning(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.unicodeWarning)
   }
 
   /// Cast this object to `PyUnicodeWarning` if it is an instance of python `UnicodeWarning` type
@@ -2873,8 +2873,8 @@ public enum PyCast {
 
   /// Cast this object to `PyUnicodeWarning` if it is an instance of python `UnicodeWarning` type.
   /// Subclasses will return `nil`.
-  public static func asUnicodeWarningExact(_ object: PyObject) -> PyUnicodeWarning? {
-    return Self.isUnicodeWarningExact(object) ? (object as! PyUnicodeWarning) : nil
+  public static func asExactlyUnicodeWarning(_ object: PyObject) -> PyUnicodeWarning? {
+    return Self.isExactlyUnicodeWarning(object) ? (object as! PyUnicodeWarning) : nil
   }
 
   // MARK: - UserWarning
@@ -2886,8 +2886,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `UserWarning` type?
   /// Subclasses will return `false`.
-  public static func isUserWarningExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.userWarning)
+  public static func isExactlyUserWarning(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.userWarning)
   }
 
   /// Cast this object to `PyUserWarning` if it is an instance of python `UserWarning` type
@@ -2898,8 +2898,8 @@ public enum PyCast {
 
   /// Cast this object to `PyUserWarning` if it is an instance of python `UserWarning` type.
   /// Subclasses will return `nil`.
-  public static func asUserWarningExact(_ object: PyObject) -> PyUserWarning? {
-    return Self.isUserWarningExact(object) ? (object as! PyUserWarning) : nil
+  public static func asExactlyUserWarning(_ object: PyObject) -> PyUserWarning? {
+    return Self.isExactlyUserWarning(object) ? (object as! PyUserWarning) : nil
   }
 
   // MARK: - ValueError
@@ -2911,8 +2911,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ValueError` type?
   /// Subclasses will return `false`.
-  public static func isValueErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.valueError)
+  public static func isExactlyValueError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.valueError)
   }
 
   /// Cast this object to `PyValueError` if it is an instance of python `ValueError` type
@@ -2923,8 +2923,8 @@ public enum PyCast {
 
   /// Cast this object to `PyValueError` if it is an instance of python `ValueError` type.
   /// Subclasses will return `nil`.
-  public static func asValueErrorExact(_ object: PyObject) -> PyValueError? {
-    return Self.isValueErrorExact(object) ? (object as! PyValueError) : nil
+  public static func asExactlyValueError(_ object: PyObject) -> PyValueError? {
+    return Self.isExactlyValueError(object) ? (object as! PyValueError) : nil
   }
 
   // MARK: - Warning
@@ -2936,8 +2936,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `Warning` type?
   /// Subclasses will return `false`.
-  public static func isWarningExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.warning)
+  public static func isExactlyWarning(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.warning)
   }
 
   /// Cast this object to `PyWarning` if it is an instance of python `Warning` type
@@ -2948,8 +2948,8 @@ public enum PyCast {
 
   /// Cast this object to `PyWarning` if it is an instance of python `Warning` type.
   /// Subclasses will return `nil`.
-  public static func asWarningExact(_ object: PyObject) -> PyWarning? {
-    return Self.isWarningExact(object) ? (object as! PyWarning) : nil
+  public static func asExactlyWarning(_ object: PyObject) -> PyWarning? {
+    return Self.isExactlyWarning(object) ? (object as! PyWarning) : nil
   }
 
   // MARK: - ZeroDivisionError
@@ -2961,8 +2961,8 @@ public enum PyCast {
 
   /// Is this object an instance of a python `ZeroDivisionError` type?
   /// Subclasses will return `false`.
-  public static func isZeroDivisionErrorExact(_ object: PyObject) -> Bool {
-    return self.isExactInstance(object, of: Py.errorTypes.zeroDivisionError)
+  public static func isExactlyZeroDivisionError(_ object: PyObject) -> Bool {
+    return self.isExactlyInstance(object, of: Py.errorTypes.zeroDivisionError)
   }
 
   /// Cast this object to `PyZeroDivisionError` if it is an instance of python `ZeroDivisionError` type
@@ -2973,7 +2973,7 @@ public enum PyCast {
 
   /// Cast this object to `PyZeroDivisionError` if it is an instance of python `ZeroDivisionError` type.
   /// Subclasses will return `nil`.
-  public static func asZeroDivisionErrorExact(_ object: PyObject) -> PyZeroDivisionError? {
-    return Self.isZeroDivisionErrorExact(object) ? (object as! PyZeroDivisionError) : nil
+  public static func asExactlyZeroDivisionError(_ object: PyObject) -> PyZeroDivisionError? {
+    return Self.isExactlyZeroDivisionError(object) ? (object as! PyZeroDivisionError) : nil
   }
 }

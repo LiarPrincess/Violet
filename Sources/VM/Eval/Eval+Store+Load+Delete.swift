@@ -294,7 +294,8 @@ extension Eval {
   private func store(dict: PyDict,
                      name: PyString,
                      value: PyObject) -> InstructionResult {
-    if dict.checkExact() {
+    let isExactlyDictNotSubclass = PyCast.isExactlyDict(dict)
+    if isExactlyDictNotSubclass {
       switch dict.set(key: name, to: value) {
       case .ok:
         return .ok
@@ -312,8 +313,8 @@ extension Eval {
   }
 
   private func load(dict: PyDict, name: PyString) -> PyDict.GetResult {
-    // If this is exactly dict then use 'get', otherwise 'getItem'
-    if dict.checkExact() {
+    let isExactlyDictNotSubclass = PyCast.isExactlyDict(dict)
+    if isExactlyDictNotSubclass {
       return dict.get(key: name)
     }
 
@@ -349,7 +350,8 @@ extension Eval {
   }
 
   private func del(dict: PyDict, name: PyString) -> InstructionResult {
-    if dict.checkExact() {
+    let isExactlyDictNotSubclass = PyCast.isExactlyDict(dict)
+    if isExactlyDictNotSubclass {
       switch dict.del(key: name) {
       case .value:
         return .ok

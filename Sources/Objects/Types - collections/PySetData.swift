@@ -479,7 +479,8 @@ internal struct PySetData {
       return self.update(from: set.data)
     }
 
-    if let dict = PyCast.asDict(other), dict.checkExact() {
+    // Fast path if 'other' is 'dict' (but not dict subclass!)
+    if let dict = PyCast.asExactlyDict(other) {
       return self.update(from: dict.data)
     }
 
@@ -597,7 +598,7 @@ internal struct PySetData {
     }
 
     // Fast path for dictionaries (since they already have hashed elements)
-    if let dict = PyCast.asDict(other), dict.checkExact() {
+    if let dict = PyCast.asExactlyDict(other) {
       // Init 'elements' with size, so that we don't have to resize later
       var elements = PySetData.DictType(size: dict.data.count)
 

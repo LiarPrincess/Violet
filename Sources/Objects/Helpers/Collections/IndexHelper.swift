@@ -99,7 +99,8 @@ internal enum IndexHelper {
         return .error(Py.newTypeError(msg: msg))
       }
 
-      let isSubclass = !int.checkExact()
+      let isExactlyIntNotSubclass = PyCast.isExactlyInt(int)
+      let isSubclass = !isExactlyIntNotSubclass
       if isSubclass {
         let msg = "__index__ returned non-int (type \(int.typeName)).  " +
           "The ability to return an instance of a strict subclass of int " +

@@ -74,7 +74,7 @@ python3 $GENERATED/Fast.py > $GENERATED/Fast.swift
 # === Casting ===
 # Sometimes we have to cast from 'PyObject' to specific Swift type.
 # This file generates casting methods.
-echo 'Generating PyCast (methods for casting PyObject -> Specific type)'
+echo 'Generating PyCast (methods for casting PyObject -> swift specific type)'
 python3 $GENERATED/PyCast.py > $GENERATED/PyCast.swift
 
 # === IdString ===

@@ -14,8 +14,8 @@ if __name__ == '__main__':
 /// Helper type used to safely downcast Python objects to specific Swift type.
 ///
 /// For example:
-/// On the `VM` stack we hold `PyObject`, at some point we would want to convert
-/// `PyInt`. We can do this with `PyCast`:
+/// On the `VM` stack we hold `PyObject`, at some point we may want to convert
+/// it to `PyInt`:
 ///
 /// ```Swift
 /// if let int = PyCast.asInt(object) {{
@@ -28,7 +28,7 @@ public enum PyCast {{
     return object.type.isSubtype(of: type)
   }}
 
-  private static func isExactInstance(_ object: PyObject, of type: PyType) -> Bool {{
+  private static func isExactlyInstance(_ object: PyObject, of type: PyType) -> Bool {{
     return object.type === type
   }}\
 ''')
@@ -56,8 +56,8 @@ public enum PyCast {{
 
   /// Is this object an instance of a python `{python_type}` type?
   /// Subclasses will return `false`.
-  public static func is{swift_type_without_py}Exact(_ object: PyObject) -> Bool {{
-    return self.isExactInstance(object, of: {builtin_types}.{builtin_property})
+  public static func isExactly{swift_type_without_py}(_ object: PyObject) -> Bool {{
+    return self.isExactlyInstance(object, of: {builtin_types}.{builtin_property})
   }}
 
   /// Cast this object to `{swift_type}` if it is an instance of python `{python_type}` type
@@ -68,8 +68,8 @@ public enum PyCast {{
 
   /// Cast this object to `{swift_type}` if it is an instance of python `{python_type}` type.
   /// Subclasses will return `nil`.
-  public static func as{swift_type_without_py}Exact(_ object: PyObject) -> {swift_type}? {{
-    return Self.is{swift_type_without_py}Exact(object) ? (object as! {swift_type}) : nil
+  public static func asExactly{swift_type_without_py}(_ object: PyObject) -> {swift_type}? {{
+    return Self.isExactly{swift_type_without_py}(object) ? (object as! {swift_type}) : nil
   }}\
 ''')
 

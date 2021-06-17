@@ -75,7 +75,7 @@ extension Eval {
     // Fast path for common types
     let isFormatEmpty = format?.value.isEmpty ?? true
     if isFormatEmpty {
-      if let str = PyCast.asString(value), str.checkExact() {
+      if let str = PyCast.asExactlyString(value) {
         return .value(str)
       }
 

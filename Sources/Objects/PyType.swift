@@ -783,14 +783,6 @@ public class PyType: PyObject, HasCustomGetMethod {
     }
   }
 
-  // MARK: - Check exact
-
-  /// Is this `pure` type?
-  /// By `pure` we mean its type is `type`, not some weird metatype.
-  public func checkExact() -> Bool {
-    return self.type === Py.types.type
-  }
-
   // MARK: - GC
 
   /// Remove all of the references to other Python objects.

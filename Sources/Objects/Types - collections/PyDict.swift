@@ -336,7 +336,9 @@ public class PyDict: PyObject {
     }
 
     // Call '__missing__' method if we're a subclass.
-    if !self.checkExact() {
+    let isExactlyDictNotSubclass = PyCast.isExactlyDict(self)
+    let isSubclass = !isExactlyDictNotSubclass
+    if isSubclass {
       switch Py.callMethod(object: self, selector: .__missing__, arg: index) {
       case .value(let o):
         return .value(o)
@@ -595,7 +597,8 @@ public class PyDict: PyObject {
     from object: PyObject,
     onKeyDuplicate: UpdateKeyDuplicate = .default
   ) -> PyResult<PyNone> {
-    if let dict = PyCast.asDict(object), dict.checkExact() {
+    // Fast path if we are 'dict' (but not subclass)
+    if let dict = PyCast.asExactlyDict(object) {
       return self.update(from: dict.data,
                          onKeyDuplicate: onKeyDuplicate)
     }
@@ -832,8 +835,8 @@ public class PyDict: PyObject {
     }
 
     // Fast path for empty 'dict'
-    if let dict = PyCast.asDict(dictObject), dict.checkExact(), dict.data.isEmpty {
-      if let iterDict = PyCast.asDict(iterable), iterDict.checkExact() {
+    if let dict = PyCast.asExactlyDict(dictObject), dict.data.isEmpty {
+      if let iterDict = PyCast.asExactlyDict(iterable) {
         return self.fillFromKeys(dict: dict, iterable: iterDict, value: value)
       }
 
@@ -860,8 +863,8 @@ public class PyDict: PyObject {
   private static func fillFromKeys(dict: PyDict,
                                    iterable: PyDict,
                                    value: PyObject) -> PyResult<PyObject> {
-    assert(dict.checkExact())
-    assert(iterable.checkExact())
+    assert(PyCast.isExactlyDict(dict))
+    assert(PyCast.isExactlyDict(iterable))
 
     switch dict.update(from: iterable, onKeyDuplicate: .continue) {
     case .value:
@@ -874,8 +877,8 @@ public class PyDict: PyObject {
   private static func fillFromKeys(dict: PyDict,
                                    iterable: PySetType,
                                    value: PyObject) -> PyResult<PyObject> {
-    assert(dict.checkExact())
-    assert(iterable.checkExact())
+    assert(PyCast.isExactlyDict(dict))
+    assert(PyCast.isExactlyDict(iterable))
 
     for entry in iterable.data.dict {
       let key = PyDictKey(hash: entry.key.hash, object: entry.key.object)
@@ -902,15 +905,6 @@ public class PyDict: PyObject {
   // sourcery: pymethod = values
   public func values() -> PyObject {
     return PyDictValues(dict: self)
-  }
-
-  // MARK: - Check exact
-
-  /// Is this builtin `dict` type?
-  ///
-  /// Will return `false` if this is a subclass.
-  public func checkExact() -> Bool {
-    return self.type === Py.types.dict
   }
 
   // MARK: - Python new
