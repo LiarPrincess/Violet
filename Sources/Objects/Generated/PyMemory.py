@@ -5,7 +5,7 @@ from Common.builtin_types import get_property_name_escaped as get_builtin_type_p
 
 # Types for which we want to generate 'new' function
 implemented_types = (
-    'PyNone',
+    'PyNone',  # Basic
     'PyEllipsis',
     'PyNamespace',
     'PyNotImplemented',
@@ -13,8 +13,13 @@ implemented_types = (
     'PyInt',
     'PyFloat',
     'PyComplex',
-    'PyType',
-    'PyObject'
+    'PyType',  # Type and object
+    'PyObject',
+    'PyList',  # List and tuple
+    'PyListIterator',
+    'PyListReverseIterator',
+    'PyTuple',
+    'PyTupleIterator'
 )
 
 

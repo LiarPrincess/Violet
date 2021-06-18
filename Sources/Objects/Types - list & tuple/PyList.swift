@@ -34,19 +34,13 @@ public class PyList: PyObject, PySequenceType {
 
   // MARK: - Init
 
-  convenience init(elements: [PyObject]) {
-    let data = PySequenceData(elements: elements)
-    self.init(data: data)
-  }
-
-  internal init(data: PySequenceData) {
-    self.data = data
+  internal init(elements: [PyObject]) {
+    self.data = PySequenceData(elements: elements)
     super.init(type: Py.types.list)
   }
 
-  /// Use only in `__new__`!
-  internal init(type: PyType, data: PySequenceData) {
-    self.data = data
+  internal init(type: PyType, elements: [PyObject]) {
+    self.data = PySequenceData(elements: elements)
     super.init(type: type)
   }
 
@@ -192,12 +186,12 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = __iter__
   internal func iter() -> PyObject {
-    return PyListIterator(list: self)
+    return PyMemory.newListIterator(list: self)
   }
 
   // sourcery: pymethod = __reversed__
   internal func reversed() -> PyObject {
-    return PyListReverseIterator(list: self)
+    return PyMemory.newListReverseIterator(list: self)
   }
 
   // MARK: - Append
@@ -428,7 +422,7 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = copy
   internal func copy() -> PyObject {
-    return Py.newList(self.data)
+    return Py.newList(self.data.elements)
   }
 
   // MARK: - Add
@@ -502,13 +496,14 @@ public class PyList: PyObject, PySequenceType {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyList> {
+    let elements = [PyObject]()
     let isBuiltin = type === Py.types.list
-    let alloca = isBuiltin ?
-      PyList.init(type:data:) :
-      PyListHeap.init(type:data:)
 
-    let data = PySequenceData()
-    return .value(alloca(type, data))
+    let result: PyList = isBuiltin ?
+      Py.newList(elements) :
+      PyListHeap(type: type, elements: elements)
+
+    return .value(result)
   }
 
   // MARK: - Python init

@@ -126,6 +126,50 @@ public enum PyMemory {
     )
   }
 
+  // MARK: - List
+
+  /// Allocate new instance of `list` type.
+  public static func newList(
+    elements: [PyObject]
+  ) -> PyList {
+    return PyList(
+      elements: elements
+    )
+  }
+
+  /// Allocate new instance of `list` type.
+  public static func newList(
+    type: PyType,
+    elements: [PyObject]
+  ) -> PyList {
+    return PyList(
+      type: type,
+      elements: elements
+    )
+  }
+
+  // MARK: - ListIterator
+
+  /// Allocate new instance of `list_iterator` type.
+  public static func newListIterator(
+    list: PyList
+  ) -> PyListIterator {
+    return PyListIterator(
+      list: list
+    )
+  }
+
+  // MARK: - ListReverseIterator
+
+  /// Allocate new instance of `list_reverseiterator` type.
+  public static func newListReverseIterator(
+    list: PyList
+  ) -> PyListReverseIterator {
+    return PyListReverseIterator(
+      list: list
+    )
+  }
+
   // MARK: - Namespace
 
   /// Allocate new instance of `types.SimpleNamespace` type.
@@ -152,6 +196,39 @@ public enum PyMemory {
   public static func newNotImplemented(
   ) -> PyNotImplemented {
     return PyNotImplemented(
+    )
+  }
+
+  // MARK: - Tuple
+
+  /// Allocate new instance of `tuple` type.
+  public static func newTuple(
+    elements: [PyObject]
+  ) -> PyTuple {
+    return PyTuple(
+      elements: elements
+    )
+  }
+
+  /// Allocate new instance of `tuple` type.
+  public static func newTuple(
+    type: PyType,
+    elements: [PyObject]
+  ) -> PyTuple {
+    return PyTuple(
+      type: type,
+      elements: elements
+    )
+  }
+
+  // MARK: - TupleIterator
+
+  /// Allocate new instance of `tuple_iterator` type.
+  public static func newTupleIterator(
+    tuple: PyTuple
+  ) -> PyTupleIterator {
+    return PyTupleIterator(
+      tuple: tuple
     )
   }
 

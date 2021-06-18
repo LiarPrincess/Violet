@@ -21,23 +21,17 @@ extension PyInstance {
   public func newTuple(_ elements: [PyObject]) -> PyTuple {
     return elements.isEmpty ?
       self.emptyTuple :
-      PyTuple(elements: elements)
+      PyMemory.newTuple(elements: elements)
   }
 
   /// PyObject * PyList_AsTuple(PyObject *v)
   public func newTuple(list object: PyObject) -> PyResult<PyTuple> {
     return self.cast(object, as: PyList.self, typeName: "list")
-      .map { self.newTuple($0.data) }
+      .map { self.newTuple($0.elements) }
   }
 
   public func newTuple(iterable: PyObject) -> PyResult<PyTuple> {
     return self.toArray(iterable: iterable).map(self.newTuple)
-  }
-
-  internal func newTuple(_ data: PySequenceData) -> PyTuple {
-    return data.isEmpty ?
-      self.emptyTuple :
-      PyTuple(data: data)
   }
 
   // MARK: - List
@@ -49,14 +43,10 @@ extension PyInstance {
 
   /// PyObject * PyList_New(Py_ssize_t size)
   public func newList(_ elements: [PyObject]) -> PyList {
-    return PyList(elements: elements)
+    return PyMemory.newList(elements: elements)
   }
 
-  internal func newList(_ data: PySequenceData) -> PyList {
-    return PyList(data: data)
-  }
-
-  internal func newList(iterable: PyObject) -> PyResult<PyList> {
+  public func newList(iterable: PyObject) -> PyResult<PyList> {
     return self.toArray(iterable: iterable).map(self.newList)
   }
 

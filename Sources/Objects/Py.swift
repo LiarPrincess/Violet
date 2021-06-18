@@ -123,7 +123,7 @@ public final class PyInstance {
   /// Interned `ellipsis (...)` value.
   public private(set) lazy var ellipsis = PyMemory.newEllipsis()
   /// Interned empty `tuple` value (because `tuple` is immutable).
-  public private(set) lazy var emptyTuple = PyTuple(elements: [])
+  public private(set) lazy var emptyTuple = PyMemory.newTuple(elements: [])
   /// Interned empty `str` value (because `str` is immutable).
   public private(set) lazy var emptyString = PyString(value: "")
   /// Interned empty `bytes` value (because `bytes` are immutable).

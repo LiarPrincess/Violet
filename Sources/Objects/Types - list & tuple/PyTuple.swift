@@ -31,19 +31,13 @@ public class PyTuple: PyObject, PySequenceType {
 
   // MARK: - Init
 
-  convenience init(elements: [PyObject]) {
-    let data = PySequenceData(elements: elements)
-    self.init(data: data)
-  }
-
-  internal init(data: PySequenceData) {
-    self.data = data
+  init(elements: [PyObject]) {
+    self.data = PySequenceData(elements: elements)
     super.init(type: Py.types.tuple)
   }
 
-  /// Use only in `__new__`!
-  internal init(type: PyType, data: PySequenceData) {
-    self.data = data
+  internal init(type: PyType, elements: [PyObject]) {
+    self.data = PySequenceData(elements: elements)
     super.init(type: type)
   }
 
@@ -184,7 +178,7 @@ public class PyTuple: PyObject, PySequenceType {
 
   // sourcery: pymethod = __iter__
   internal func iter() -> PyObject {
-    return PyTupleIterator(tuple: self)
+    return PyMemory.newTupleIterator(tuple: self)
   }
 
   // MARK: - Add
@@ -254,29 +248,26 @@ public class PyTuple: PyObject, PySequenceType {
       return .error(e)
     }
 
-    let isBuiltin = type === Py.types.tuple
-    let alloca = isBuiltin ?
-      PyTuple.newTuple(type:data:) :
-      PyTupleHeap.init(type:data:)
-
-    return PyTuple.getSequenceData(args: args).map { alloca(type, $0) }
-  }
-
-  /// Allocate new PyType (it will use 'builtins' cache if possible).
-  private static func newTuple(type: PyType, data: PySequenceData) -> PyTuple {
-    assert(type === Py.types.tuple, "Only for builtin tuple (not subclass!)")
-    return Py.newTuple(data)
-  }
-
-  private static func getSequenceData(args: [PyObject]) -> PyResult<PySequenceData> {
-    // swiftlint:disable:next empty_count
-    assert(args.count == 0 || args.count == 1)
-
-    guard let iterable = args.first else {
-      return .value(PySequenceData())
+    let elements: [PyObject]
+    switch args.count {
+    case 0:
+      elements = []
+    case 1:
+      let iterable = args[0]
+      switch Py.toArray(iterable: iterable) {
+      case let .value(e): elements = e
+      case let .error(e): return .error(e)
+      }
+    default:
+      trap("We already checked max count = 1")
     }
 
-    return Py.toArray(iterable: iterable)
-      .map(PySequenceData.init(elements:))
+    // If this is a builtin then try to re-use interned values
+    let isBuiltin = type === Py.types.tuple
+    let result: PyTuple = isBuiltin ?
+      Py.newTuple(elements) :
+      PyTupleHeap(type: type, elements: elements)
+
+    return .value(result)
   }
 }
