@@ -102,7 +102,7 @@ public class PyDictKeys: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __iter__
   internal func iter() -> PyObject {
-    return PyDictKeyIterator(dict: self.dict)
+    return PyMemory.newDictKeyIterator(dict: self.dict)
   }
 
   // MARK: - Python new

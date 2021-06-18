@@ -45,7 +45,7 @@ public class PyFunction: PyObject {
   internal private(set) var annotations: PyDict?
 
   /// The `__dict__` attribute, a dict or NULL
-  internal let __dict__ = PyDict()
+  internal let __dict__ = Py.newDict()
 
   override public var description: String {
     let name = self.name.value

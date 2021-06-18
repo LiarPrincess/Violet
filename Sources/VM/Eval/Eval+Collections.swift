@@ -1,7 +1,7 @@
 import VioletBytecode
 import VioletObjects
 
-private typealias CreateDictionaryArg = PyInstance.CreateDictionaryArg
+private typealias DictionaryElement = PyInstance.DictionaryElement
 
 extension Eval {
 
@@ -111,12 +111,12 @@ extension Eval {
     }
   }
 
-  private func popDictionaryElements(count: Int) -> [CreateDictionaryArg] {
-    var elements = [CreateDictionaryArg]()
+  private func popDictionaryElements(count: Int) -> [DictionaryElement] {
+    var elements = [DictionaryElement]()
     for _ in 0..<count {
       let value = self.stack.pop()
       let key = self.stack.pop()
-      elements.push(CreateDictionaryArg(key: key, value: value))
+      elements.push(DictionaryElement(key: key, value: value))
     }
 
     // Elements on stack are in reverse order

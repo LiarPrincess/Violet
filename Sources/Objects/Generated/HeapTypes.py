@@ -81,6 +81,6 @@ extension HeapType {
 internal final class {type_name}: {swift_type_name}, HeapType {{
 
   /// Python `__dict__` property.
-  internal lazy var __dict__ = PyDict()
+  internal lazy var __dict__ = Py.newDict()
 }}
 ''')

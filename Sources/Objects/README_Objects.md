@@ -375,7 +375,7 @@ internal protocol HeapType: AnyObject {
 internal final class PyIntHeap: PyInt, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var __dict__ = PyDict()
+  internal lazy var __dict__ = Py.newDict()
 }
 ```
 

@@ -79,7 +79,7 @@ public class PyType: PyObject, HasCustomGetMethod {
   private var bases: [PyType]
   private var mro: [PyType]
   private var subclasses: [WeakRef] = []
-  private lazy var __dict__ = PyDict()
+  private lazy var __dict__ = Py.newDict()
 
   /// Swift storage (layout).
   /// See `PyType.MemoryLayout` documentation for details.

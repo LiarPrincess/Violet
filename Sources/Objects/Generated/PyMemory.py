@@ -19,7 +19,17 @@ implemented_types = (
     'PyListIterator',
     'PyListReverseIterator',
     'PyTuple',
-    'PyTupleIterator'
+    'PyTupleIterator',
+    'PyDict',  # Dict
+    'PyDictItemIterator',
+    'PyDictItems',
+    'PyDictKeyIterator',
+    'PyDictKeys',
+    'PyDictValueIterator',
+    'PyDictValues',
+    # 'PyFrozenSet',  # Set
+    # 'PySet',
+    # 'PySetIterator'
 )
 
 
@@ -104,7 +114,9 @@ import VioletCore
 import VioletBytecode
 import VioletCompiler
 
+// swiftlint:disable function_parameter_count
 // swiftlint:disable vertical_whitespace_closing_braces
+// swiftlint:disable file_length
 
 /// Helper type for allocating new object instances.
 ///

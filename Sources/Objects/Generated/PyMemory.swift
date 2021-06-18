@@ -6,7 +6,9 @@ import VioletCore
 import VioletBytecode
 import VioletCompiler
 
+// swiftlint:disable function_parameter_count
 // swiftlint:disable vertical_whitespace_closing_braces
+// swiftlint:disable file_length
 
 /// Helper type for allocating new object instances.
 ///
@@ -70,6 +72,94 @@ public enum PyMemory {
       type: type,
       real: real,
       imag: imag
+    )
+  }
+
+  // MARK: - Dict
+
+  /// Allocate new instance of `dict` type.
+  public static func newDict(
+    data: PyDictData
+  ) -> PyDict {
+    return PyDict(
+      data: data
+    )
+  }
+
+  /// Allocate new instance of `dict` type.
+  public static func newDict(
+    type: PyType,
+    data: PyDictData
+  ) -> PyDict {
+    return PyDict(
+      type: type,
+      data: data
+    )
+  }
+
+  // MARK: - DictItemIterator
+
+  /// Allocate new instance of `dict_itemiterator` type.
+  public static func newDictItemIterator(
+    dict: PyDict
+  ) -> PyDictItemIterator {
+    return PyDictItemIterator(
+      dict: dict
+    )
+  }
+
+  // MARK: - DictItems
+
+  /// Allocate new instance of `dict_items` type.
+  public static func newDictItems(
+    dict: PyDict
+  ) -> PyDictItems {
+    return PyDictItems(
+      dict: dict
+    )
+  }
+
+  // MARK: - DictKeyIterator
+
+  /// Allocate new instance of `dict_keyiterator` type.
+  public static func newDictKeyIterator(
+    dict: PyDict
+  ) -> PyDictKeyIterator {
+    return PyDictKeyIterator(
+      dict: dict
+    )
+  }
+
+  // MARK: - DictKeys
+
+  /// Allocate new instance of `dict_keys` type.
+  public static func newDictKeys(
+    dict: PyDict
+  ) -> PyDictKeys {
+    return PyDictKeys(
+      dict: dict
+    )
+  }
+
+  // MARK: - DictValueIterator
+
+  /// Allocate new instance of `dict_valueiterator` type.
+  public static func newDictValueIterator(
+    dict: PyDict
+  ) -> PyDictValueIterator {
+    return PyDictValueIterator(
+      dict: dict
+    )
+  }
+
+  // MARK: - DictValues
+
+  /// Allocate new instance of `dict_values` type.
+  public static func newDictValues(
+    dict: PyDict
+  ) -> PyDictValues {
+    return PyDictValues(
+      dict: dict
     )
   }
 

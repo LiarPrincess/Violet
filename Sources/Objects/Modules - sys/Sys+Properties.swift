@@ -97,7 +97,7 @@ extension Sys {
   }
 
   internal func createInitialFlags() -> PyNamespace {
-    let dict = PyDict()
+    let dict = Py.newDict()
 
     func insertOrTrap(name: String, value: PyObject) {
       let key = Py.newString(name)
@@ -217,7 +217,7 @@ extension Sys {
   }
 
   internal func createInitialHashInfo() -> PyNamespace {
-    let dict = PyDict()
+    let dict = Py.newDict()
 
     func set(name: String, value: PyObject) {
       let interned = Py.intern(string: name)

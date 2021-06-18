@@ -32,7 +32,7 @@ public class PyStaticMethod: PyObject {
   }
 
   private var callable: PyObject?
-  private lazy var __dict__ = PyDict()
+  private lazy var __dict__ = Py.newDict()
 
   internal convenience init(callable: PyObject) {
     let type = Py.types.staticmethod

@@ -104,7 +104,7 @@ extension PyInstance {
 
   // MARK: - Dictionary
 
-  public class CreateDictionaryArg {
+  public struct DictionaryElement {
     public let key: PyObject
     public let value: PyObject
 
@@ -115,14 +115,14 @@ extension PyInstance {
   }
 
   public func newDict() -> PyDict {
-    return PyDict(data: PyDictData())
+    return PyMemory.newDict(data: PyDictData())
   }
 
   public func newDict(data: PyDictData) -> PyDict {
-    return PyDict(data: data)
+    return PyMemory.newDict(data: data)
   }
 
-  public func newDict(elements: [CreateDictionaryArg]) -> PyResult<PyDict> {
+  public func newDict(elements: [DictionaryElement]) -> PyResult<PyDict> {
     var data = PyDictData()
     for arg in elements {
       switch self.hash(object: arg.key) {
@@ -137,7 +137,8 @@ extension PyInstance {
       }
     }
 
-    return .value(PyDict(data: data))
+    let result = self.newDict(data: data)
+    return .value(result)
   }
 
   public func newDict(keys: PyTuple, elements: [PyObject]) -> PyResult<PyDict> {
@@ -159,7 +160,8 @@ extension PyInstance {
       }
     }
 
-    return .value(PyDict(data: data))
+    let result = self.newDict(data: data)
+    return .value(result)
   }
 
   public func add(dict object: PyObject,
@@ -448,17 +450,6 @@ extension PyInstance {
     case error(PyBaseException)
   }
 
-  /// `Builtins.reduce(iterable:into:fn)` trampoline.
-  public enum ReduceIntoStep<Acc> {
-    /// Go to the next item.
-    case goToNextElement
-    /// End reduction.
-    /// Use this if you already have the result and don't need to iterate anymore.
-    case finish
-    /// Finish reduction with given error.
-    case error(PyBaseException)
-  }
-
   public typealias ReduceFn<Acc> = (Acc, PyObject) -> ReduceStep<Acc>
 
   /// Returns the result of combining the elements of the sequence
@@ -496,6 +487,17 @@ extension PyInstance {
   }
 
   // MARK: - Reduce into
+
+  /// `Builtins.reduce(iterable:into:fn)` trampoline.
+  public enum ReduceIntoStep<Acc> {
+    /// Go to the next item.
+    case goToNextElement
+    /// End reduction.
+    /// Use this if you already have the result and don't need to iterate anymore.
+    case finish
+    /// Finish reduction with given error.
+    case error(PyBaseException)
+  }
 
   public typealias ReduceIntoFn<Acc> = (inout Acc, PyObject) -> ReduceIntoStep<Acc>
 

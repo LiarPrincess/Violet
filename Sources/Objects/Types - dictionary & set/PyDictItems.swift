@@ -116,7 +116,7 @@ public class PyDictItems: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __iter__
   internal func iter() -> PyObject {
-    return PyDictItemIterator(dict: self.dict)
+    return PyMemory.newDictItemIterator(dict: self.dict)
   }
 
   // MARK: - Python new

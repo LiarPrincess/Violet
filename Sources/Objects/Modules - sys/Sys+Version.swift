@@ -63,7 +63,7 @@ extension Sys {
     property: String,
     versionInfo: VersionInfo
   ) -> PyNamespace {
-    let dict = PyDict()
+    let dict = Py.newDict()
 
     func insertOrTrap(name: String, value: PyObject) {
       self.insertOrTrap(dict: dict, name: name, value: value, for: property)
@@ -84,7 +84,7 @@ extension Sys {
     property: String,
     implementation: ImplementationInfo
   ) -> PyNamespace {
-    let dict = PyDict()
+    let dict = Py.newDict()
 
     func insertOrTrap(name: String, value: PyObject) {
       self.insertOrTrap(dict: dict, name: name, value: value, for: property)

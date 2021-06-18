@@ -32,16 +32,11 @@ public class PyDict: PyObject {
 
   // MARK: - Init
 
-  override internal convenience init() {
-    self.init(data: PyDictData())
-  }
-
   internal init(data: PyDictData) {
     self.data = data
     super.init(type: Py.types.dict)
   }
 
-  /// Use only in `__new__`!
   internal init(type: PyType, data: PyDictData) {
     self.data = data
     super.init(type: type)
@@ -587,10 +582,7 @@ public class PyDict: PyObject {
   public enum UpdateKeyDuplicate {
     case `continue`
     case error
-
-    public static var `default`: UpdateKeyDuplicate {
-      return .continue
-    }
+    public static let `default` = UpdateKeyDuplicate.continue
   }
 
   public func update(
@@ -634,7 +626,8 @@ public class PyDict: PyObject {
       return .value(o)
     case .missingMethod:
       return .missingMethod
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }
@@ -894,17 +887,17 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = keys
   public func keys() -> PyObject {
-    return PyDictKeys(dict: self)
+    return PyMemory.newDictKeys(dict: self)
   }
 
   // sourcery: pymethod = items
   public func items() -> PyObject {
-    return PyDictItems(dict: self)
+    return PyMemory.newDictItems(dict: self)
   }
 
   // sourcery: pymethod = values
   public func values() -> PyObject {
-    return PyDictValues(dict: self)
+    return PyMemory.newDictValues(dict: self)
   }
 
   // MARK: - Python new
@@ -913,13 +906,14 @@ public class PyDict: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyDict> {
-    let isBuiltin = type === Py.types.dict
-    let alloca = isBuiltin ?
-      PyDict.init(type:data:) :
-      PyDictHeap.init(type:data:)
-
     let data = PyDictData()
-    return .value(alloca(type, data))
+
+    let isBuiltin = type === Py.types.dict
+    let result = isBuiltin ?
+      Py.newDict(data: data) :
+      PyDictHeap(type: type, data: data)
+
+    return .value(result)
   }
 
   // MARK: - Python init
