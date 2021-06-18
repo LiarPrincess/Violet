@@ -12,7 +12,7 @@ public class PyDictItemIterator: PyObject, OrderedDictionaryBackedIterator {
   internal var index: Int
   private var initCount: Int
 
-  internal var dict: OrderedDictionary<PyDictKey, PyObject> {
+  internal var dict: PyDict.Data {
     return self.object.data
   }
 

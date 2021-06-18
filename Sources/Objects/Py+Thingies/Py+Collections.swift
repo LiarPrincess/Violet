@@ -104,6 +104,14 @@ extension PyInstance {
 
   // MARK: - Dictionary
 
+  public func newDict() -> PyDict {
+    return PyMemory.newDict(data: PyDict.Data())
+  }
+
+  public func newDict(data: PyDict.Data) -> PyDict {
+    return PyMemory.newDict(data: data)
+  }
+
   public struct DictionaryElement {
     public let key: PyObject
     public let value: PyObject
@@ -114,20 +122,13 @@ extension PyInstance {
     }
   }
 
-  public func newDict() -> PyDict {
-    return PyMemory.newDict(data: PyDictData())
-  }
-
-  public func newDict(data: PyDictData) -> PyDict {
-    return PyMemory.newDict(data: data)
-  }
-
   public func newDict(elements: [DictionaryElement]) -> PyResult<PyDict> {
-    var data = PyDictData()
+    var data = PyDict.Data()
+
     for arg in elements {
       switch self.hash(object: arg.key) {
       case let .value(hash):
-        let key = PyDictKey(hash: hash, object: arg.key)
+        let key = PyDict.Key(hash: hash, object: arg.key)
         switch data.insert(key: key, value: arg.value) {
         case .inserted, .updated: break
         case .error(let e): return .error(e)
@@ -146,11 +147,12 @@ extension PyInstance {
       return .valueError("bad 'dictionary(keyTuple:elements:)' keys argument")
     }
 
-    var data = PyDictData()
+    var data = PyDict.Data()
+
     for (keyObject, value) in Swift.zip(keys.elements, elements) {
       switch self.hash(object: keyObject) {
       case let .value(hash):
-        let key = PyDictKey(hash: hash, object: keyObject)
+        let key = PyDict.Key(hash: hash, object: keyObject)
         switch data.insert(key: key, value: value) {
         case .inserted, .updated: break
         case .error(let e): return .error(e)

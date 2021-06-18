@@ -12,6 +12,48 @@ import VioletCore
 /// This subtype of PyObject represents a Python dictionary object.
 public class PyDict: PyObject {
 
+  // MARK: - Types
+
+  public typealias Data = OrderedDictionary<Key, PyObject>
+
+  public struct Key: PyHashable, CustomStringConvertible {
+
+    public var hash: PyHash
+    public var object: PyObject
+
+    public var description: String {
+      return "PyDict.Key(hash: \(self.hash), object: \(self.object))"
+    }
+
+    fileprivate init(id: IdString) {
+      self.hash = id.hash
+      self.object = id.value
+    }
+
+    public init(hash: PyHash, object: PyObject) {
+      self.hash = hash
+      self.object = object
+    }
+
+    public func isEqual(to other: Key) -> PyResult<Bool> {
+      // >>> class C:
+      // ...     def __eq__(self, other): raise NotImplementedError('a')
+      // ...     def __hash__(self): return 1
+      // >>> d = {}
+      // >>> d[1] = 'a'
+      // >>> d[c] = 'b'
+      // NotImplementedError: a
+
+      guard self.hash == other.hash else {
+        return .value(false)
+      }
+
+      return Py.isEqualBool(left: self.object, right: other.object)
+    }
+  }
+
+  // MARK: - Properties
+
   internal static let doc: String = """
     dict() -> new empty dictionary
     dict(mapping) -> new dictionary initialized from a mapping object's
@@ -24,7 +66,7 @@ public class PyDict: PyObject {
     in the keyword argument list.  For example:  dict(one=1, two=2)
     """
 
-  public private(set) var data: PyDictData
+  public private(set) var data: Data
 
   override public var description: String {
     return "PyDict(count: \(self.data.count))"
@@ -32,12 +74,12 @@ public class PyDict: PyObject {
 
   // MARK: - Init
 
-  internal init(data: PyDictData) {
+  internal init(data: PyDict.Data) {
     self.data = data
     super.init(type: Py.types.dict)
   }
 
-  internal init(type: PyType, data: PyDictData) {
+  internal init(type: PyType, data: PyDict.Data) {
     self.data = data
     super.init(type: type)
   }
@@ -176,7 +218,7 @@ public class PyDict: PyObject {
   ///
   /// It will trap on fail.
   public func get(id: IdString) -> PyObject? {
-    let key = Self.createKey(from: id)
+    let key = Key(id: id)
 
     switch self.data.get(key: key) {
     case .value(let o):
@@ -203,7 +245,7 @@ public class PyDict: PyObject {
   /// Get value from a dictionary.
   ///
   /// It may fail.
-  internal func get(key: PyDictKey) -> GetResult {
+  internal func get(key: Key) -> GetResult {
     switch self.data.get(key: key) {
     case .value(let o):
       return .value(o)
@@ -222,7 +264,7 @@ public class PyDict: PyObject {
   }
 
   public func set(id: IdString, to value: PyObject) {
-    let key = Self.createKey(from: id)
+    let key = Key(id: id)
 
     switch self.data.insert(key: key, value: value) {
     case .inserted,
@@ -242,7 +284,7 @@ public class PyDict: PyObject {
     }
   }
 
-  internal func set(key: PyDictKey, to value: PyObject) -> SetResult {
+  internal func set(key: Key, to value: PyObject) -> SetResult {
     switch self.data.insert(key: key, value: value) {
     case .inserted,
          .updated:
@@ -261,7 +303,7 @@ public class PyDict: PyObject {
   }
 
   public func del(id: IdString) -> PyObject? {
-    let key = Self.createKey(from: id)
+    let key = Key(id: id)
 
     switch self.data.remove(key: key) {
     case .value(let o):
@@ -282,7 +324,7 @@ public class PyDict: PyObject {
     }
   }
 
-  internal func del(key: PyDictKey) -> DelResult {
+  internal func del(key: Key) -> DelResult {
     switch self.data.remove(key: key) {
     case .value(let o):
       return .value(o)
@@ -322,7 +364,7 @@ public class PyDict: PyObject {
 
   /// Implementation of `Python` subscript.
   public func getItem(index: PyObject, hash: PyHash) -> PyResult<PyObject> {
-    let key = PyDictKey(hash: hash, object: index)
+    let key = Key(hash: hash, object: index)
 
     switch self.data.get(key: key) {
     case .value(let o): return .value(o)
@@ -365,7 +407,7 @@ public class PyDict: PyObject {
   public func setItem(index: PyObject,
                       hash: PyHash,
                       value: PyObject) -> PyResult<PyNone> {
-    let key = PyDictKey(hash: hash, object: index)
+    let key = Key(hash: hash, object: index)
 
     switch self.data.insert(key: key, value: value) {
     case .inserted, .updated:
@@ -390,7 +432,7 @@ public class PyDict: PyObject {
 
   /// Implementation of `Python` subscript.
   public func delItem(index: PyObject, hash: PyHash) -> PyResult<PyNone> {
-    let key = PyDictKey(hash: hash, object: index)
+    let key = Key(hash: hash, object: index)
 
     switch self.data.remove(key: key) {
     case .value:
@@ -436,7 +478,7 @@ public class PyDict: PyObject {
   /// Implementation of Python `get($self, key, default=None, /)` method.
   public func getWithDefault(index: PyObject,
                              default: PyObject?) -> PyResult<PyObject> {
-    let key: PyDictKey
+    let key: Key
     switch Self.createKey(from: index) {
     case let .value(v): key = v
     case let .error(e): return .error(e)
@@ -496,7 +538,7 @@ public class PyDict: PyObject {
   /// `default` defaults to None.
   public func setWithDefault(index: PyObject,
                              default: PyObject?) -> PyResult<PyObject> {
-    let key: PyDictKey
+    let key: Key
     switch Self.createKey(from: index) {
     case let .value(v): key = v
     case let .error(e): return .error(e)
@@ -522,7 +564,7 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = __contains__
   public func contains(element: PyObject) -> PyResult<Bool> {
-    let key: PyDictKey
+    let key: Key
     switch Self.createKey(from: element) {
     case let .value(v): key = v
     case let .error(e): return .error(e)
@@ -633,7 +675,7 @@ public class PyDict: PyObject {
   }
 
   public func update(
-    from data: PyDictData,
+    from data: Data,
     onKeyDuplicate: UpdateKeyDuplicate = .default
   ) -> PyResult<PyNone> {
     for entry in data {
@@ -647,7 +689,7 @@ public class PyDict: PyObject {
     return .value(Py.none)
   }
 
-  private func update(key: PyDictKey,
+  private func update(key: Key,
                       value: PyObject,
                       onKeyDuplicate: UpdateKeyDuplicate) -> PyBaseException? {
     switch self.data.insert(key: key, value: value) {
@@ -663,7 +705,7 @@ public class PyDict: PyObject {
     }
   }
 
-  private typealias KeyValue = (key: PyDictKey, value: PyObject)
+  private typealias KeyValue = (key: Key, value: PyObject)
 
   /// int
   /// PyDict_MergeFromSeq2(PyObject *d, PyObject *seq2, int override)
@@ -728,7 +770,7 @@ public class PyDict: PyObject {
     }
 
     for keyObject in keys {
-      let key: PyDictKey
+      let key: Key
       switch Self.createKey(from: keyObject) {
       case let .value(k): key = k
       case let .error(e): return .error(e)
@@ -771,7 +813,7 @@ public class PyDict: PyObject {
   // sourcery: pymethod = pop, doc = popDoc
   public func pop(_ index: PyObject,
                   default: PyObject?) -> PyResult<PyObject> {
-    let key: PyDictKey
+    let key: Key
     switch Self.createKey(from: index) {
     case let .value(v): key = v
     case let .error(e): return .error(e)
@@ -874,7 +916,7 @@ public class PyDict: PyObject {
     assert(PyCast.isExactlyDict(iterable))
 
     for entry in iterable.data.dict {
-      let key = PyDictKey(hash: entry.key.hash, object: entry.key.object)
+      let key = Key(hash: entry.key.hash, object: entry.key.object)
       if let e = dict.update(key: key, value: value, onKeyDuplicate: .continue) {
         return .error(e)
       }
@@ -906,7 +948,7 @@ public class PyDict: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyDict> {
-    let data = PyDictData()
+    let data = Data()
 
     let isBuiltin = type === Py.types.dict
     let result = isBuiltin ?
@@ -933,14 +975,10 @@ public class PyDict: PyObject {
 
   // MARK: - Helpers
 
-  private static func createKey(from id: IdString) -> PyDictKey {
-    return PyDictKey(hash: id.hash, object: id.value)
-  }
-
-  private static func createKey(from object: PyObject) -> PyResult<PyDictKey> {
+  private static func createKey(from object: PyObject) -> PyResult<Key> {
     switch Py.hash(object: object) {
     case let .value(hash):
-      return .value(PyDictKey(hash: hash, object: object))
+      return .value(Key(hash: hash, object: object))
     case let .error(e):
       return .error(e)
     }

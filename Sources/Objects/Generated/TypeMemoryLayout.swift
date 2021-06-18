@@ -109,7 +109,7 @@ extension PyType {
     public static let PyCell = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `callable: PyObject?`
-    /// - `__dict__: PyDict`
+    /// - `__dict__: Py`
     public static let PyClassMethod = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `codeObject: CodeObject`
@@ -124,7 +124,7 @@ extension PyType {
     /// - `imag: Double`
     public static let PyComplex = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
-    /// - `data: PyDictData`
+    /// - `data: Data`
     public static let PyDict = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `object: PyDict`
@@ -190,7 +190,7 @@ extension PyType {
     /// - `kwDefaults: PyDict?`
     /// - `closure: PyTuple?`
     /// - `annotations: PyDict?`
-    /// - `__dict__: PyDict`
+    /// - `__dict__: Py`
     public static let PyFunction = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `value: BigInt`
@@ -266,7 +266,7 @@ extension PyType {
     public static let PySlice = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `callable: PyObject?`
-    /// - `__dict__: PyDict`
+    /// - `__dict__: Py`
     public static let PyStaticMethod = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `data: PyStringData`
@@ -307,7 +307,7 @@ extension PyType {
     /// - `bases: [PyType]`
     /// - `mro: [PyType]`
     /// - `subclasses: [WeakRef]`
-    /// - `__dict__: PyDict`
+    /// - `__dict__: Py`
     /// - `layout: MemoryLayout`
     public static let PyType = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:

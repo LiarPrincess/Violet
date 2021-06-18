@@ -79,7 +79,7 @@ public enum PyMemory {
 
   /// Allocate new instance of `dict` type.
   public static func newDict(
-    data: PyDictData
+    data: PyDict.Data
   ) -> PyDict {
     return PyDict(
       data: data
@@ -89,7 +89,7 @@ public enum PyMemory {
   /// Allocate new instance of `dict` type.
   public static func newDict(
     type: PyType,
-    data: PyDictData
+    data: PyDict.Data
   ) -> PyDict {
     return PyDict(
       type: type,

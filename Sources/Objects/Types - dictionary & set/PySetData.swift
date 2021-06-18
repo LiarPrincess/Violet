@@ -508,7 +508,7 @@ internal struct PySetData {
     return .ok
   }
 
-  internal mutating func update(from other: PyDictData) -> UpdateResult {
+  internal mutating func update(from other: PyDict.Data) -> UpdateResult {
     for entry in other {
       let key = entry.key
       let element = PySetElement(hash: key.hash, object: key.object)

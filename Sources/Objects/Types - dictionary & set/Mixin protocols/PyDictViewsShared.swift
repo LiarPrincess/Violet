@@ -8,7 +8,7 @@ internal protocol PyDictViewsShared: PyObject {
 
 extension PyDictViewsShared {
 
-  internal var data: PyDictData {
+  internal var data: PyDict.Data {
     return self.dict.data
   }
 

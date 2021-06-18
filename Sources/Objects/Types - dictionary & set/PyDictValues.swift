@@ -11,7 +11,7 @@ public class PyDictValues: PyObject, PyDictViewsShared {
 
   internal let dict: PyDict
 
-  private var data: PyDictData {
+  private var data: PyDict.Data {
     return self.dict.data
   }
 
