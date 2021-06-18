@@ -1,3 +1,4 @@
+import BigInt
 import VioletCore
 
 /// Shared methods for various `PyDict` views.
@@ -13,9 +14,8 @@ extension PyDictViewsShared {
 
   // MARK: - Equatable
 
-  // sourcery: pymethod = __eq__
   internal func isEqualShared(_ other: PyObject) -> CompareResult {
-    guard let size = self.getSetOrDictSize(other) else {
+    guard let size = self.getDictOrSetSize(other) else {
       return .notImplemented
     }
 
@@ -26,7 +26,6 @@ extension PyDictViewsShared {
     return Py.contains(iterable: self, allFrom: other).asCompareResult
   }
 
-  // sourcery: pymethod = __ne__
   internal func isNotEqualShared(_ other: PyObject) -> CompareResult {
     return self.isEqualShared(other).not
   }
@@ -34,7 +33,7 @@ extension PyDictViewsShared {
   // MARK: - Comparable
 
   internal func isLessShared(_ other: PyObject) -> CompareResult {
-    guard let size = self.getSetOrDictSize(other) else {
+    guard let size = self.getDictOrSetSize(other) else {
       return .notImplemented
     }
 
@@ -46,7 +45,7 @@ extension PyDictViewsShared {
   }
 
   internal func isLessEqualShared(_ other: PyObject) -> CompareResult {
-    guard let size = self.getSetOrDictSize(other) else {
+    guard let size = self.getDictOrSetSize(other) else {
       return .notImplemented
     }
 
@@ -58,7 +57,7 @@ extension PyDictViewsShared {
   }
 
   internal func isGreaterShared(_ other: PyObject) -> CompareResult {
-    guard let size = self.getSetOrDictSize(other) else {
+    guard let size = self.getDictOrSetSize(other) else {
       return .notImplemented
     }
 
@@ -70,7 +69,7 @@ extension PyDictViewsShared {
   }
 
   internal func isGreaterEqualShared(_ other: PyObject) -> CompareResult {
-    guard let size = self.getSetOrDictSize(other) else {
+    guard let size = self.getDictOrSetSize(other) else {
       return .notImplemented
     }
 
@@ -81,7 +80,7 @@ extension PyDictViewsShared {
     return Py.contains(iterable: self, allFrom: other).asCompareResult
   }
 
-  private func getSetOrDictSize(_ other: PyObject) -> Int? {
+  private func getDictOrSetSize(_ other: PyObject) -> Int? {
     if let set = other as? PySetType {
       return set.data.count
     }
@@ -91,6 +90,12 @@ extension PyDictViewsShared {
     }
 
     return nil
+  }
+
+  // MARK: - Hashable
+
+  internal func hashShared() -> HashResult {
+    return .error(Py.hashNotImplemented(self))
   }
 
   // MARK: - String
@@ -116,5 +121,11 @@ extension PyDictViewsShared {
       result += ")"
       return .value(result)
     }
+  }
+
+  // MARK: - Length
+
+  internal func getLengthShared() -> BigInt {
+    return BigInt(self.data.count)
   }
 }

@@ -60,7 +60,7 @@ public class PyDictItems: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    return .error(Py.hashNotImplemented(self))
+    return self.hashShared()
   }
 
   // MARK: - Class
@@ -88,7 +88,7 @@ public class PyDictItems: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
-    return BigInt(self.data.count)
+    return self.getLengthShared()
   }
 
   // MARK: - Contains
@@ -122,9 +122,9 @@ public class PyDictItems: PyObject, PyDictViewsShared {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyNew(type: PyType,
-                            args: [PyObject],
-                            kwargs: PyDict?) -> PyResult<PyDictItems> {
+  internal static func pyNew(type: PyType,
+                             args: [PyObject],
+                             kwargs: PyDict?) -> PyResult<PyDictItems> {
     return .typeError("cannot create 'dict_items' instances")
   }
 }

@@ -10,6 +10,7 @@ internal protocol OrderedDictionaryBackedIterator: PyObject {
 }
 
 extension OrderedDictionaryBackedIterator {
+
   internal func iterShared() -> PyObject {
     return self
   }

@@ -44,13 +44,13 @@ public class PyDictValues: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
-    return BigInt(self.data.count)
+    return self.getLengthShared()
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
   internal func iter() -> PyObject {
-    return PyDictValueIterator(dict: self.dict)
+    return PyMemory.newDictValueIterator(dict: self.dict)
   }
 }
