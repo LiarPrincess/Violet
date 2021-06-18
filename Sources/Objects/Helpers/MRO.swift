@@ -7,7 +7,7 @@ import VioletCore
 // Objects -> typeobject.c
 
 /// Method Resolution Order
-internal struct MRO {
+public struct MRO {
   internal let baseClasses: [PyType]
   internal let resolutionOrder: [PyType]
 

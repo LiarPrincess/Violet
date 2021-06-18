@@ -12,7 +12,9 @@ implemented_types = (
     'PyBool',
     'PyInt',
     'PyFloat',
-    'PyComplex'
+    'PyComplex',
+    'PyType',
+    'PyObject'
 )
 
 
@@ -35,20 +37,44 @@ def print_new_function(t: TypeInfo, i: SwiftInitInfo):
     swift_type = t.swift_type_name
     swift_type_without_py = swift_type[2:]
     python_type = t.python_type_name
+    init_arguments = i.arguments
+
+    access_modifier = 'public'
+    additional_docs = ''
+
+    if python_type == 'object' and not init_arguments:
+        access_modifier = 'internal'
+        additional_docs = '''\
+  ///
+  /// Unsafe `new` without `type` property filled.
+  /// Reserved for `objectType` and `typeType` to create mutual recursion.\
+'''
+
+    has_metatype_arg = any(map(lambda a: a.name == 'metatype', init_arguments))
+    if python_type == 'type' and not has_metatype_arg:
+        access_modifier = 'internal'
+        additional_docs = '''\
+  ///
+  /// Unsafe `new` without `type` property filled.
+  /// Reserved for `objectType` and `typeType` to create mutual recursion.\
+'''
 
     print(f'  /// Allocate new instance of `{python_type}` type.')
-    print(f'  public static func new{swift_type_without_py}(')
+    if additional_docs:
+        print(additional_docs)
 
-    for index, arg in enumerate(i.arguments):
-        is_last = index == len(i.arguments) - 1
+    print(f'  {access_modifier} static func new{swift_type_without_py}(')
+
+    for index, arg in enumerate(init_arguments):
+        is_last = index == len(init_arguments) - 1
         comma = '' if is_last else ','
         print(f'    {arg.name}: {arg.typ}{comma}')
 
     print(f'  ) -> {swift_type} {{')
     print(f'    return {swift_type}(')
 
-    for index, arg in enumerate(i.arguments):
-        is_last = index == len(i.arguments) - 1
+    for index, arg in enumerate(init_arguments):
+        is_last = index == len(init_arguments) - 1
         comma = '' if is_last else ','
         print(f'      {arg.name}: {arg.name}{comma}')
 
@@ -72,6 +98,8 @@ import BigInt
 import VioletCore
 import VioletBytecode
 import VioletCompiler
+
+// swiftlint:disable vertical_whitespace_closing_braces
 
 /// Helper type for allocating new object instances.
 ///

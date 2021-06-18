@@ -102,10 +102,10 @@ public class PyType: PyObject, HasCustomGetMethod {
   /// Full init with all of the options.
   internal convenience init(name: String,
                             qualname: String,
-                            type: PyType,
+                            metatype: PyType,
                             base: PyType,
                             mro: MRO,
-                            layout: MemoryLayout) {
+                            layout: PyType.MemoryLayout) {
     assert(mro.baseClasses.contains { $0 === base })
 
     self.init(name: name,
@@ -113,18 +113,18 @@ public class PyType: PyObject, HasCustomGetMethod {
               base: base,
               mro: mro,
               layout: layout)
-    self.setType(to: type)
+    self.setType(to: metatype)
   }
 
-  /// Unsafe init without `type` property filled.
+  /// Unsafe `init` without `type` property filled.
   ///
   /// NEVER EVER use this function!
   /// Reserved for `objectType` and `typeType`.
-  private init(name: String,
-               qualname: String,
-               base: PyType?,
-               mro: MRO?,
-               layout: MemoryLayout) {
+  internal init(name: String,
+                qualname: String,
+                base: PyType?,
+                mro: MRO?,
+                layout: PyType.MemoryLayout) {
     self.name = name
     self.qualname = qualname
     self.base = base
@@ -153,11 +153,11 @@ public class PyType: PyObject, HasCustomGetMethod {
   /// It will not set `self.type` property!
   internal static func initObjectType() -> PyType {
     let name = "object"
-    return PyType(name: name,
-                  qualname: name,
-                  base: nil,
-                  mro: nil,
-                  layout: .PyObject)
+    return PyMemory.newType(name: name,
+                            qualname: name,
+                            base: nil,
+                            mro: nil,
+                            layout: .PyObject)
   }
 
   /// NEVER EVER use this function! It is a reserved for `typeType`.
@@ -167,12 +167,11 @@ public class PyType: PyObject, HasCustomGetMethod {
   internal static func initTypeType(objectType: PyType) -> PyType {
     let name = "type"
     let mro = MRO.linearizeForBuiltinType(baseClass: objectType)
-
-    return PyType(name: name,
-                  qualname: name,
-                  base: objectType,
-                  mro: mro,
-                  layout: .PyType)
+    return PyMemory.newType(name: name,
+                            qualname: name,
+                            base: objectType,
+                            mro: mro,
+                            layout: .PyType)
   }
 
   /// NEVER EVER use this function! It is a reserved for builtin types
@@ -182,12 +181,12 @@ public class PyType: PyObject, HasCustomGetMethod {
                                        base: PyType,
                                        layout: MemoryLayout) -> PyType {
     let mro = MRO.linearizeForBuiltinType(baseClass: base)
-    return PyType(name: name,
-                  qualname: name,
-                  type: type,
-                  base: base,
-                  mro: mro,
-                  layout: layout)
+    return PyMemory.newType(name: name,
+                            qualname: name,
+                            metatype: type,
+                            base: base,
+                            mro: mro,
+                            layout: layout)
   }
 
   // MARK: - Name

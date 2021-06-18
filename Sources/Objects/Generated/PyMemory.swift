@@ -6,12 +6,35 @@ import VioletCore
 import VioletBytecode
 import VioletCompiler
 
+// swiftlint:disable vertical_whitespace_closing_braces
+
 /// Helper type for allocating new object instances.
 ///
 /// Please note that with every call of `new` method a new Python object will be
 /// allocated! It will not reuse existing instances or do any fancy checks.
 /// This is basically the same thing as calling `init` on Swift type.
 public enum PyMemory {
+
+  // MARK: - Object
+
+  /// Allocate new instance of `object` type.
+  public static func newObject(
+    type: PyType
+  ) -> PyObject {
+    return PyObject(
+      type: type
+    )
+  }
+
+  /// Allocate new instance of `object` type.
+  ///
+  /// Unsafe `new` without `type` property filled.
+  /// Reserved for `objectType` and `typeType` to create mutual recursion.
+  internal static func newObject(
+  ) -> PyObject {
+    return PyObject(
+    )
+  }
 
   // MARK: - Bool
 
@@ -129,6 +152,47 @@ public enum PyMemory {
   public static func newNotImplemented(
   ) -> PyNotImplemented {
     return PyNotImplemented(
+    )
+  }
+
+  // MARK: - Type
+
+  /// Allocate new instance of `type` type.
+  public static func newType(
+    name: String,
+    qualname: String,
+    metatype: PyType,
+    base: PyType,
+    mro: MRO,
+    layout: PyType.MemoryLayout
+  ) -> PyType {
+    return PyType(
+      name: name,
+      qualname: qualname,
+      metatype: metatype,
+      base: base,
+      mro: mro,
+      layout: layout
+    )
+  }
+
+  /// Allocate new instance of `type` type.
+  ///
+  /// Unsafe `new` without `type` property filled.
+  /// Reserved for `objectType` and `typeType` to create mutual recursion.
+  internal static func newType(
+    name: String,
+    qualname: String,
+    base: PyType?,
+    mro: MRO?,
+    layout: PyType.MemoryLayout
+  ) -> PyType {
+    return PyType(
+      name: name,
+      qualname: qualname,
+      base: base,
+      mro: mro,
+      layout: layout
     )
   }
 

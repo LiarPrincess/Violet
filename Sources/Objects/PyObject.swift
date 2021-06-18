@@ -139,9 +139,6 @@ public class PyObject: CustomStringConvertible {
   public final var type: PyType {
     // Not really sure if this property wrapper is needed (we could just expose
     // 'self._type' as implicitly unwrapped optional).
-    // Public properties in Swift are exposed as a getter/setter anyway
-    // (this is done so that we can change stored property -> computed property
-    // without breaking ABI - probably, I may be wrong here).
     // Anyway, it is 'final' so it should not be a problem (also most of its
     // users are inside this module, so it should optimize nicely).
     return self._type
@@ -178,7 +175,7 @@ public class PyObject: CustomStringConvertible {
     self._type = type
   }
 
-  /// NEVER EVER use this ctor! It will not set `self.type`!
+  /// NEVER EVER use this `init`! It will not set `self.type`!
   ///
   /// This is a reserved for `objectType` and `typeType` to create mutual recursion.
   /// Use `init(type: PyType)` instead.

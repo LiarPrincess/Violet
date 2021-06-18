@@ -156,10 +156,10 @@ extension PyType {
     }
 
     // Create type object
-    let type = PyType(
+    let type = PyMemory.newType(
       name: args.name.value,
       qualname: args.name.value, // May be overridden later (if we have it in dict)
-      type: metatype,
+      metatype: metatype,
       base: base,
       mro: mro,
       layout: base.layout // Heap types will use the same layout as base (+- __dict__)
