@@ -25,12 +25,6 @@ internal struct PySetElement: PyHashable {
   }
 }
 
-extension OrderedDictionary where Value == Void {
-  internal mutating func insert(key: Key) -> InsertResult {
-    return self.insert(key: key, value: ())
-  }
-}
-
 // MARK: - PySetType
 
 internal protocol PySetType: PyObject {
@@ -48,21 +42,16 @@ internal protocol PySetType: PyObject {
 /// Used in `PySet` and `PyFrozenSet`.
 internal struct PySetData {
 
-  // Small trick: when we use `Void` (which is the same as `()`) as value
-  // then it would not take any space in dictionary!
-  // For example `struct { Int, Void }` has the same storage as `struct { Int }`.
-  // This trick is sponsored by 'go lang': `map[T]struct{}`.
-  internal typealias DictType = OrderedDictionary<PySetElement, Void>
-  internal typealias Iterator = DictType.Iterator
-
-  internal private(set) var dict: DictType
+  internal typealias OrderedSet = VioletObjects.OrderedSet<PySetElement>
+  
+  internal private(set) var elements: OrderedSet
 
   internal init() {
-    self.dict = DictType()
+    self.elements = OrderedSet()
   }
 
-  internal init(elements: DictType) {
-    self.dict = elements
+  internal init(elements: OrderedSet) {
+    self.elements = elements
   }
 
   // MARK: - Equatable
@@ -149,49 +138,50 @@ internal struct PySetData {
 
   // MARK: - String
 
-  internal func repr(typeName: String) -> PyResult<String> {
+  internal func repr(
+    typeName: String,
+    prependTypeNameWhenNotEmpty: Bool
+  ) -> PyResult<String> {
     if self.isEmpty {
       return .value(typeName + "()")
     }
 
-    var commaSeparatedElements = ""
-    for (index, element) in self.dict.enumerated() {
+    var result = prependTypeNameWhenNotEmpty ? typeName : ""
+    result += "{"
+
+    for (index, element) in self.elements.enumerated() {
       if index > 0 {
-        commaSeparatedElements.append(", ") // so that we don't have ', )'.
+        result.append(", ") // so that we don't have ', )'.
       }
 
-      switch Py.repr(object: element.key.object) {
-      case let .value(s): commaSeparatedElements.append(s)
+      switch Py.repr(object: element.object) {
+      case let .value(s): result.append(s)
       case let .error(e): return .error(e)
       }
     }
 
     if self.count > 1 {
-      commaSeparatedElements.append(",")
+      result.append(",")
     }
 
-    let isExactlySet = typeName == Py.types.set.getName()
-    let result = isExactlySet ?
-      "{\(commaSeparatedElements)}" :
-      "\(typeName)({\(commaSeparatedElements)})"
-
+    result += "}"
     return .value(result)
   }
 
   // MARK: - Length
 
   internal var isEmpty: Bool {
-    return self.dict.isEmpty
+    return self.elements.isEmpty
   }
 
   internal var count: Int {
-    return self.dict.count
+    return self.elements.count
   }
 
   // MARK: - Contains
 
-  internal func contains(value: PyObject) -> PyResult<Bool> {
-    switch self.createElement(from: value) {
+  internal func contains(object: PyObject) -> PyResult<Bool> {
+    switch self.createElement(from: object) {
     case let .value(element):
       return self.contains(element: element)
     case let .error(e):
@@ -200,60 +190,60 @@ internal struct PySetData {
   }
 
   internal func contains(element: PySetElement) -> PyResult<Bool> {
-    return self.dict.contains(key: element)
+    return self.elements.contains(element: element)
   }
 
   // MARK: - And
 
-  internal func and(other: PyObject) -> BitOpResult {
+  internal enum BitOperationResult {
+    case set(PySetData)
+    case notImplemented
+    case error(PyBaseException)
+
+    fileprivate init(_ result: PyResult<PySetData>) {
+      switch result {
+      case let .value(data):
+        self = .set(data)
+      case let .error(e):
+        self = .error(e)
+      }
+    }
+  }
+
+  internal func and(other: PyObject) -> BitOperationResult {
     guard let other = other as? PySetType else {
       return .notImplemented
     }
 
     let result = self.intersection(with: other)
-    return self.toBinOpResult(result)
-  }
-
-  internal enum BitOpResult {
-    case set(PySetData)
-    case notImplemented
-    case error(PyBaseException)
-  }
-
-  private func toBinOpResult(_ result: PyResult<PySetData>) -> BitOpResult {
-    switch result {
-    case let .value(data):
-      return .set(data)
-    case let .error(e):
-      return .error(e)
-    }
+    return BitOperationResult(result)
   }
 
   // MARK: - Or
 
-  internal func or(other: PyObject) -> BitOpResult {
+  internal func or(other: PyObject) -> BitOperationResult {
     guard let other = other as? PySetType else {
       return .notImplemented
     }
 
     let result = self.union(with: other)
-    return self.toBinOpResult(result)
+    return BitOperationResult(result)
   }
 
   // MARK: - Xor
 
-  internal func xor(other: PyObject) -> BitOpResult {
+  internal func xor(other: PyObject) -> BitOperationResult {
     guard let other = other as? PySetType else {
       return .notImplemented
     }
 
     let result = self.symmetricDifference(with: other)
-    return self.toBinOpResult(result)
+    return BitOperationResult(result)
   }
 
   // MARK: - Sub
 
-  internal func sub(other: PyObject) -> BitOpResult {
+  internal func sub(other: PyObject) -> BitOperationResult {
     guard let other = other as? PySetType else {
       return .notImplemented
     }
@@ -261,12 +251,12 @@ internal struct PySetData {
     return self.sub(other: other.data)
   }
 
-  private func sub(other: PySetData) -> BitOpResult {
+  private func sub(other: PySetData) -> BitOperationResult {
     let result = self.difference(with: other)
-    return self.toBinOpResult(result)
+    return BitOperationResult(result)
   }
 
-  internal func rsub(other: PyObject) -> BitOpResult {
+  internal func rsub(other: PyObject) -> BitOperationResult {
     guard let other = other as? PySetType else {
       return .notImplemented
     }
@@ -285,8 +275,8 @@ internal struct PySetData {
       return .value(false)
     }
 
-    for entry in self.dict {
-      switch other.dict.contains(key: entry.key) {
+    for element in self.elements {
+      switch other.contains(element: element) {
       case .value(true): break // try next
       case .value(false): return .value(false)
       case .error(let e): return .error(e)
@@ -314,14 +304,14 @@ internal struct PySetData {
 
   private func intersection(with other: PySetData) -> PyResult<PySetData> {
     let isSelfSmaller = self.count < other.count
-    let smallerSet = isSelfSmaller ? self : other
-    let largerSet = isSelfSmaller ? other : self
+    let smaller = isSelfSmaller ? self : other
+    let bigger = isSelfSmaller ? other : self
 
     var result = PySetData()
-    for entry in smallerSet.dict {
-      switch largerSet.dict.contains(key: entry.key) {
+    for element in smaller.elements {
+      switch bigger.contains(element: element) {
       case .value(true):
-        switch result.insert(element: entry.key) {
+        switch result.insert(element: element) {
         case .ok: break
         case .error(let e): return .error(e)
         }
@@ -341,12 +331,12 @@ internal struct PySetData {
 
   private func union(with other: PySetData) -> PyResult<PySetData> {
     let isSelfSmaller = self.count < other.count
-    let smallerSet = isSelfSmaller ? self : other
-    let largerSet = isSelfSmaller ? other : self
+    let smaller = isSelfSmaller ? self : other
+    let bigger = isSelfSmaller ? other : self
 
-    var result = largerSet
-    for entry in smallerSet.dict {
-      switch result.insert(element: entry.key) {
+    var result = bigger
+    for element in smaller.elements {
+      switch result.insert(element: element) {
       case .ok: break
       case .error(let e): return .error(e)
       }
@@ -363,12 +353,13 @@ internal struct PySetData {
 
   private func difference(with other: PySetData) -> PyResult<PySetData> {
     var result = PySetData()
-    for entry in self.dict {
-      switch other.dict.contains(key: entry.key) {
+
+    for element in self.elements {
+      switch other.contains(element: element) {
       case .value(true):
         break
       case .value(false):
-        switch result.insert(element: entry.key) {
+        switch result.insert(element: element) {
         case .ok: break
         case .error(let e): return .error(e)
         }
@@ -389,12 +380,12 @@ internal struct PySetData {
   private func symmetricDifference(with other: PySetData) -> PyResult<PySetData> {
     var result = PySetData()
 
-    for entry in self.dict {
-      switch other.dict.contains(key: entry.key) {
+    for element in self.elements {
+      switch other.contains(element: element) {
       case .value(true):
         break
       case .value(false):
-        switch result.insert(element: entry.key) {
+        switch result.insert(element: element) {
         case .ok: break
         case .error(let e): return .error(e)
         }
@@ -403,12 +394,12 @@ internal struct PySetData {
       }
     }
 
-    for entry in other.dict {
-      switch self.dict.contains(key: entry.key) {
+    for element in other.elements {
+      switch self.contains(element: element) {
       case .value(true):
         break
       case .value(false):
-        switch result.insert(element: entry.key) {
+        switch result.insert(element: element) {
         case .ok: break
         case .error(let e): return .error(e)
         }
@@ -428,11 +419,11 @@ internal struct PySetData {
 
   private func isDisjoint(with other: PySetData) -> PyResult<Bool> {
     let isSelfSmaller = self.count < other.count
-    let smallerSet = isSelfSmaller ? self : other
-    let largerSet = isSelfSmaller ? other : self
+    let smaller = isSelfSmaller ? self : other
+    let bigger = isSelfSmaller ? other : self
 
-    for entry in smallerSet.dict {
-      switch largerSet.dict.contains(key: entry.key) {
+    for element in smaller.elements {
+      switch bigger.contains(element: element) {
       case .value(true): return .value(false)
       case .value(false): break
       case .error(let e): return .error(e)
@@ -449,8 +440,8 @@ internal struct PySetData {
     case error(PyBaseException)
   }
 
-  internal mutating func insert(value: PyObject) -> InsertResult {
-    switch self.createElement(from: value) {
+  internal mutating func insert(object: PyObject) -> InsertResult {
+    switch self.createElement(from: object) {
     case let .value(element):
       return self.insert(element: element)
     case let .error(e):
@@ -459,8 +450,9 @@ internal struct PySetData {
   }
 
   internal mutating func insert(element: PySetElement) -> InsertResult {
-    switch self.dict.insert(key: element) {
-    case .inserted, .updated:
+    switch self.elements.insert(element: element) {
+    case .inserted,
+         .updated:
       return .ok
     case .error(let e):
       return .error(e)
@@ -476,16 +468,16 @@ internal struct PySetData {
 
   internal mutating func update(from other: PyObject) -> UpdateResult {
     if let set = other as? PySetType {
-      return self.update(from: set.data)
+      return self.update(fromSet: set.data)
     }
 
     // Fast path if 'other' is 'dict' (but not dict subclass!)
     if let dict = PyCast.asExactlyDict(other) {
-      return self.update(from: dict.data)
+      return self.update(fromDict: dict.data)
     }
 
     let result = Py.reduce(iterable: other, initial: 0) { _, object in
-      switch self.insert(value: object) {
+      switch self.insert(object: object) {
       case .ok: return .goToNextElement
       case .error(let e): return .error(e)
       }
@@ -497,9 +489,9 @@ internal struct PySetData {
     }
   }
 
-  internal mutating func update(from other: PySetData) -> UpdateResult {
-    for entry in other.dict {
-      switch self.insert(element: entry.key) {
+  internal mutating func update(fromSet other: PySetData) -> UpdateResult {
+    for element in other.elements {
+      switch self.insert(element: element) {
       case .ok: break
       case .error(let e): return .error(e)
       }
@@ -508,7 +500,7 @@ internal struct PySetData {
     return .ok
   }
 
-  internal mutating func update(from other: PyDict.Data) -> UpdateResult {
+  internal mutating func update(fromDict other: PyDict.Data) -> UpdateResult {
     for entry in other {
       let key = entry.key
       let element = PySetElement(hash: key.hash, object: key.object)
@@ -528,8 +520,8 @@ internal struct PySetData {
     case error(PyBaseException)
   }
 
-  internal mutating func remove(value: PyObject) -> RemoveResult {
-    switch self.createElement(from: value) {
+  internal mutating func remove(object: PyObject) -> RemoveResult {
+    switch self.createElement(from: object) {
     case let .value(element):
       return self.remove(element: element)
     case let .error(e):
@@ -538,8 +530,8 @@ internal struct PySetData {
   }
 
   internal mutating func remove(element: PySetElement) -> RemoveResult {
-    switch self.dict.remove(key: element) {
-    case .value:
+    switch self.elements.remove(element: element) {
+    case .ok:
       return .ok
     case .notFound:
       return .error(Py.newKeyError(key: element.object))
@@ -555,8 +547,8 @@ internal struct PySetData {
     case error(PyBaseException)
   }
 
-  internal mutating func discard(value: PyObject) -> DiscardResult {
-    switch self.createElement(from: value) {
+  internal mutating func discard(object: PyObject) -> DiscardResult {
+    switch self.createElement(from: object) {
     case let .value(element):
       return self.discard(element: element)
     case let .error(e):
@@ -565,8 +557,9 @@ internal struct PySetData {
   }
 
   internal mutating func discard(element: PySetElement) -> DiscardResult {
-    switch self.dict.remove(key: element) {
-    case .value, .notFound:
+    switch self.elements.remove(element: element) {
+    case .ok,
+         .notFound:
       return .ok
     case .error(let e):
       return .error(e)
@@ -576,18 +569,18 @@ internal struct PySetData {
   // MARK: - Clear
 
   internal mutating func clear() {
-    self.dict.clear()
+    self.elements.clear()
   }
 
   // MARK: - Pop
 
   internal mutating func pop() -> PyResult<PyObject> {
-    guard let lastElement = self.dict.last else {
+    guard let lastElement = self.elements.last else {
       return .keyError("pop from an empty set")
     }
 
-    _ = self.remove(element: lastElement.key)
-    return .value(lastElement.key.object)
+    _ = self.remove(element: lastElement)
+    return .value(lastElement.object)
   }
 
   // MARK: - Helpers
@@ -600,23 +593,24 @@ internal struct PySetData {
     // Fast path for dictionaries (since they already have hashed elements)
     if let dict = PyCast.asExactlyDict(other) {
       // Init 'elements' with size, so that we don't have to resize later
-      var elements = PySetData.DictType(size: dict.data.count)
+      var result = OrderedSet(count: dict.data.count)
 
       for entry in dict.data {
         let key = entry.key
         let element = PySetElement(hash: key.hash, object: key.object)
-        switch elements.insert(key: element) {
+
+        switch result.insert(element: element) {
         case .inserted,
              .updated: break
         case .error(let e): return .error(e)
         }
       }
 
-      return .value(PySetData(elements: elements))
+      return .value(PySetData(elements: result))
     }
 
-    return Py.reduce(iterable: other, into: PySetData()) { acc, element in
-      switch acc.insert(value: element) {
+    return Py.reduce(iterable: other, into: PySetData()) { acc, object in
+      switch acc.insert(object: object) {
       case .ok: return .goToNextElement
       case .error(let e): return .error(e)
       }

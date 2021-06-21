@@ -701,11 +701,11 @@ public class PyDict: PyObject {
     // Fast path for empty 'dict'
     if let dict = PyCast.asExactlyDict(dictObject), dict.data.isEmpty {
       if let iterDict = PyCast.asExactlyDict(iterable) {
-        return self.fillFromKeys(dict: dict, iterable: iterDict, value: value)
+        return self.fillFromKeys(target: dict, dict: iterDict, value: value)
       }
 
       if let iterSet = iterable as? PySetType, iterSet.checkExact() {
-        return self.fillFromKeys(dict: dict, iterable: iterSet, value: value)
+        return self.fillFromKeys(target: dict, set: iterSet, value: value)
       }
     }
 
@@ -724,36 +724,41 @@ public class PyDict: PyObject {
     }
   }
 
-  private static func fillFromKeys(dict: PyDict,
-                                   iterable: PyDict,
+  private static let onFillFromKeysDuplicate = OnUpdateKeyDuplicate.continue
+
+  private static func fillFromKeys(target: PyDict,
+                                   dict: PyDict,
                                    value: PyObject) -> PyResult<PyObject> {
+    assert(PyCast.isExactlyDict(target))
     assert(PyCast.isExactlyDict(dict))
-    assert(PyCast.isExactlyDict(iterable))
 
-    switch dict.update(from: iterable, onKeyDuplicate: .continue) {
-    case .value:
-      return .value(dict)
-    case .error(let e):
-      return .error(e)
-    }
-  }
-
-  private static func fillFromKeys(dict: PyDict,
-                                   iterable: PySetType,
-                                   value: PyObject) -> PyResult<PyObject> {
-    assert(PyCast.isExactlyDict(dict))
-    assert(PyCast.isExactlyDict(iterable))
-
-    for entry in iterable.data.dict {
-      let key = Key(hash: entry.key.hash, object: entry.key.object)
-      if let e = dict.updateSingleEntry(key: key,
-                                        value: value,
-                                        onKeyDuplicate: .continue) {
+    for entry in dict.data {
+      if let e = target.updateSingleEntry(key: entry.key,
+                                          value: value,
+                                          onKeyDuplicate: Self.onFillFromKeysDuplicate) {
         return .error(e)
       }
     }
 
-    return .value(dict)
+    return .value(target)
+  }
+
+  private static func fillFromKeys(target: PyDict,
+                                   set: PySetType,
+                                   value: PyObject) -> PyResult<PyObject> {
+    assert(PyCast.isExactlyDict(target))
+    assert(PyCast.isExactlySet(set) || PyCast.isExactlyFrozenSet(set))
+
+    for element in set.data.elements {
+      let key = Key(hash: element.hash, object: element.object)
+      if let e = target.updateSingleEntry(key: key,
+                                          value: value,
+                                          onKeyDuplicate: Self.onFillFromKeysDuplicate) {
+        return .error(e)
+      }
+    }
+
+    return .value(target)
   }
 
   // MARK: - Views

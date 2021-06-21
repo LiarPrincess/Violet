@@ -13,7 +13,7 @@ public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
   private var initCount: Int
 
   internal var dict: OrderedDictionary<PySetElement, Void> {
-    return self.set.data.dict
+    return self.set.data.elements.dict
   }
 
   override public var description: String {

@@ -95,7 +95,7 @@ public class PySet: PyObject, PySetType {
     }
 
     return self.withReprLock {
-      self.data.repr(typeName: self.typeName)
+      self.data.repr(typeName: self.typeName, prependTypeNameWhenNotEmpty: false)
     }
   }
 
@@ -124,7 +124,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = __contains__
   public func contains(element: PyObject) -> PyResult<Bool> {
-    return self.data.contains(value: element)
+    return self.data.contains(object: element)
   }
 
   // MARK: - And
@@ -270,7 +270,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = add, doc = addDoc
   public func add(_ value: PyObject) -> PyResult<PyNone> {
-    switch self.data.insert(value: value) {
+    switch self.data.insert(object: value) {
     case .ok:
       return .value(Py.none)
     case .error(let e):
@@ -304,7 +304,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = remove, doc = removeDoc
   public func remove(_ value: PyObject) -> PyResult<PyNone> {
-    switch self.data.remove(value: value) {
+    switch self.data.remove(object: value) {
     case .ok:
       return .value(Py.none)
     case .error(let e):
@@ -322,7 +322,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = discard, doc = discardDoc
   public func discard(_ value: PyObject) -> PyResult<PyNone> {
-    switch self.data.discard(value: value) {
+    switch self.data.discard(object: value) {
     case .ok:
       return .value(Py.none)
     case .error(let e):
@@ -419,7 +419,7 @@ public class PySet: PyObject, PySetType {
 
   // MARK: - Helpers
 
-  private func createSet(result: PySetData.BitOpResult) -> PyResult<PyObject> {
+  private func createSet(result: PySetData.BitOperationResult) -> PyResult<PyObject> {
     switch result {
     case .set(let s):
       return .value(self.createSet(data: s))

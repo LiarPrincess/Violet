@@ -81,7 +81,7 @@ extension PyInstance {
     var data = PySetData()
 
     for element in elements {
-      switch data.insert(value: element) {
+      switch data.insert(object: element) {
       case .ok: break
       case .error(let e): return .error(e)
       }

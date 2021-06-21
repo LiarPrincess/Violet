@@ -29,7 +29,7 @@ public protocol PyHashable {
   /// Value should be either immutable or mutation should not change hash.
   var hash: Int { get }
 
-  /// Returns a Boolean value indicating whether two values are equal.
+  /// Returns a boolean value indicating whether two values are equal.
   func isEqual(to other: Self) -> PyResult<Bool>
 }
 
@@ -213,12 +213,12 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   // MARK: - Init
 
   public init() {
-    self.init(size: minsize)
+    self.init(count: minsize)
   }
 
   /// static PyDictKeysObject *new_keys_object(Py_ssize_t size)
-  public init(size: Int) {
-    let size = Swift.max(nextPowerOf2(size), minsize)
+  public init(count: Int) {
+    let size = Swift.max(nextPowerOf2(count), minsize)
     assert(isPowerOf2(size))
 
     self.entries = [EntryOrDeleted]()
@@ -560,13 +560,13 @@ extension OrderedDictionary: CustomStringConvertible {
 
     var result = "OrderedDictionary("
 
-    for entry in self {
-      result += "\(entry.key): \(entry.value), "
-    }
+    for (index, entry) in self.enumerated() {
+      if index > 0 {
+        result += ", " // so that we don't have ', )'.
+      }
 
-    // remove trailing ', '
-    _ = result.popLast()
-    _ = result.popLast()
+      result += "\(entry.key): \(entry.value)"
+    }
 
     result += ")"
     return result
@@ -590,7 +590,6 @@ extension OrderedDictionary.EntryOrDeleted: CustomReflectable {
 }
 
 extension OrderedDictionary: CustomReflectable {
-
   public var customMirror: Mirror {
     return Mirror(
       self,
@@ -604,38 +603,41 @@ extension OrderedDictionary: CustomReflectable {
 
 // MARK: - Sequence
 
-/// Iterator for `OrderedDictionary` that will skip deleted entries.
-public struct OrderedDictionaryIterator<Key: PyHashable, Value>: IteratorProtocol {
+extension OrderedDictionary: Sequence {
 
-  public typealias OrderedDictionaryType = OrderedDictionary<Key, Value>
-  public typealias Element = OrderedDictionaryType.Entry
+  /// Iterator for `OrderedDictionary` that will skip deleted entries.
+  public struct Iterator: IteratorProtocol {
 
-  private var inner: IndexingIterator<[OrderedDictionaryType.EntryOrDeleted]>
+    // swiftlint:disable nesting
+    public typealias OrderedDictionaryType = OrderedDictionary<Key, Value>
+    public typealias Element = OrderedDictionaryType.Entry
+    // swiftlint:enable nesting
 
-  public init(_ dictionary: OrderedDictionaryType) {
-    self.inner = dictionary.entries.makeIterator()
-  }
+    private var inner: IndexingIterator<[OrderedDictionaryType.EntryOrDeleted]>
 
-  public mutating func next() -> Self.Element? {
-    while let entryOrDeleted = self.inner.next() {
-      switch entryOrDeleted {
-      case let .entry(entry):
-        return entry
-      case .deleted:
-        break // Skip deleted
-      }
+    public init(_ dictionary: OrderedDictionaryType) {
+      self.inner = dictionary.entries.makeIterator()
     }
 
-    // We reached end, no more entries to return
-    return nil
+    public mutating func next() -> Element? {
+      while let entryOrDeleted = self.inner.next() {
+        switch entryOrDeleted {
+        case let .entry(entry):
+          return entry
+        case .deleted:
+          break // Skip deleted
+        }
+      }
+
+      // We reached end, no more entries to return
+      return nil
+    }
   }
-}
 
-extension OrderedDictionary: Sequence {
-  public typealias Element = Array<Entry>.Element
+  public typealias Element = Iterator.Element
 
-  public func makeIterator() -> OrderedDictionaryIterator<Key, Value> {
-    return OrderedDictionaryIterator(self)
+  public func makeIterator() -> Iterator {
+    return Iterator(self)
   }
 }
 

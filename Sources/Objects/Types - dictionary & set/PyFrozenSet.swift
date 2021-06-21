@@ -86,12 +86,12 @@ public class PyFrozenSet: PyObject, PySetType {
     // and 'tuple' with the same elements (in the same order) will have
     // the same hash.
     var x: PyHash = 0x34_5678
-    var mult = Hasher.multiplier
+    var multiplier = Hasher.multiplier
 
-    for entry in self.data.dict {
-      let y = entry.key.hash
-      x = (x ^ y) * mult
-      mult += 82_520 + PyHash(2 * self.data.count)
+    for element in self.data.elements {
+      let y = element.hash
+      x = (x ^ y) * multiplier
+      multiplier += 82_520 + PyHash(2 * self.data.count)
     }
 
     return .value(x + 97_531)
@@ -106,7 +106,7 @@ public class PyFrozenSet: PyObject, PySetType {
     }
 
     return self.withReprLock {
-      self.data.repr(typeName: self.typeName)
+      self.data.repr(typeName: self.typeName, prependTypeNameWhenNotEmpty: true)
     }
   }
 
@@ -135,7 +135,7 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // sourcery: pymethod = __contains__
   public func contains(element: PyObject) -> PyResult<Bool> {
-    return self.data.contains(value: element)
+    return self.data.contains(object: element)
   }
 
   // MARK: - And
@@ -341,7 +341,7 @@ public class PyFrozenSet: PyObject, PySetType {
     }
 
     return Py.reduce(iterable: iterable, into: PySetData()) { data, object in
-      switch data.insert(value: object) {
+      switch data.insert(object: object) {
       case .ok:
         return .goToNextElement
       case .error(let e):
@@ -352,7 +352,7 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // MARK: - Helpers
 
-  private func createSet(result: PySetData.BitOpResult) -> PyResult<PyObject> {
+  private func createSet(result: PySetData.BitOperationResult) -> PyResult<PyObject> {
     switch result {
     case .set(let s):
       return .value(self.createSet(data: s))
