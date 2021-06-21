@@ -254,7 +254,7 @@ extension Eval {
     }
 
     let result = Py.newDict()
-    switch result.update(from: object) {
+    switch result.update(from: object, onKeyDuplicate: .continue) {
     case .value:
       return .value(result)
     case .error(let e):

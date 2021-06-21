@@ -132,7 +132,7 @@ public class PyNamespace: PyObject {
     case .error(let e): return .error(e)
     }
 
-    switch self.__dict__.update(from: kwargs) {
+    switch self.__dict__.update(from: kwargs, onKeyDuplicate: .continue) {
     case .value: break
     case .error(let e): return .error(e)
     }

@@ -66,7 +66,7 @@ public class PyDict: PyObject {
     in the keyword argument list.  For example:  dict(one=1, two=2)
     """
 
-  public private(set) var data: Data
+  public internal(set) var data: Data
 
   override public var description: String {
     return "PyDict(count: \(self.data.count))"
@@ -621,177 +621,6 @@ public class PyDict: PyObject {
     return .value(Py.none)
   }
 
-  public enum UpdateKeyDuplicate {
-    case `continue`
-    case error
-    public static let `default` = UpdateKeyDuplicate.continue
-  }
-
-  public func update(
-    from object: PyObject,
-    onKeyDuplicate: UpdateKeyDuplicate = .default
-  ) -> PyResult<PyNone> {
-    // Fast path if we are 'dict' (but not subclass)
-    if let dict = PyCast.asExactlyDict(object) {
-      return self.update(from: dict.data,
-                         onKeyDuplicate: onKeyDuplicate)
-    }
-
-    switch self.callKeys(on: object) {
-    case .value(let keys): // We have keys -> dict-like object
-      return self.update(fromKeysOwner: object,
-                         keys: keys,
-                         onKeyDuplicate: onKeyDuplicate)
-
-    case .missingMethod: // We don't have keys -> try iterable
-      return self.update(fromIterableOfPairs: object,
-                         onKeyDuplicate: onKeyDuplicate)
-
-    case .error(let e):
-      return .error(e)
-    }
-  }
-
-  private enum CallKeysResult {
-    case value(PyObject)
-    case error(PyBaseException)
-    case missingMethod
-  }
-
-  private func callKeys(on object: PyObject) -> CallKeysResult {
-    if let result = Fast.keys(object) {
-      return .value(result)
-    }
-
-    switch Py.callMethod(object: object, selector: .keys) {
-    case .value(let o):
-      return .value(o)
-    case .missingMethod:
-      return .missingMethod
-    case .error(let e),
-         .notCallable(let e):
-      return .error(e)
-    }
-  }
-
-  public func update(
-    from data: Data,
-    onKeyDuplicate: UpdateKeyDuplicate = .default
-  ) -> PyResult<PyNone> {
-    for entry in data {
-      if let e = self.update(key: entry.key,
-                             value: entry.value,
-                             onKeyDuplicate: onKeyDuplicate) {
-        return .error(e)
-      }
-    }
-
-    return .value(Py.none)
-  }
-
-  private func update(key: Key,
-                      value: PyObject,
-                      onKeyDuplicate: UpdateKeyDuplicate) -> PyBaseException? {
-    switch self.data.insert(key: key, value: value) {
-    case .inserted:
-      return nil
-    case .updated:
-      switch onKeyDuplicate {
-      case .continue: return nil
-      case .error: return Py.newKeyError(key: key.object)
-      }
-    case .error(let e):
-      return e
-    }
-  }
-
-  private typealias KeyValue = (key: Key, value: PyObject)
-
-  /// int
-  /// PyDict_MergeFromSeq2(PyObject *d, PyObject *seq2, int override)
-  ///
-  /// Iterable of sequences with 2 elements (key and value).
-  private func update(fromIterableOfPairs iterable: PyObject,
-                      onKeyDuplicate: UpdateKeyDuplicate) -> PyResult<PyNone> {
-    let kvs = Py.reduce(iterable: iterable, into: [KeyValue]()) { acc, object in
-      switch self.unpackKeyValue(fromIterable: object) {
-      case let .value(keyValue):
-        acc.append(keyValue)
-        return .goToNextElement
-      case let .error(e):
-        return .error(e)
-      }
-    }
-
-    switch kvs {
-    case let .value(keyValues):
-      for (key, value) in keyValues {
-        if let e = self.update(key: key,
-                               value: value,
-                               onKeyDuplicate: onKeyDuplicate) {
-          return .error(e)
-        }
-      }
-
-      return .value(Py.none)
-
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  /// Given iterable of 2 elements it will return
-  /// `iterable[0]` as key and `iterable[1]` as value.
-  private func unpackKeyValue(fromIterable iterable: PyObject) -> PyResult<KeyValue> {
-    switch Py.toArray(iterable: iterable) {
-    case let .value(array):
-      guard array.count == 2 else {
-        let l = array.count
-        let msg = "dictionary update sequence element has length \(l); 2 is required"
-        return .valueError(msg)
-      }
-
-      return Self.createKey(from: array[0]).map { ($0, array[1]) }
-
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  /// static int
-  /// dict_merge(PyObject *a, PyObject *b, int override)
-  private func update(fromKeysOwner dict: PyObject,
-                      keys keyIterable: PyObject,
-                      onKeyDuplicate: UpdateKeyDuplicate) -> PyResult<PyNone> {
-    let keys: [PyObject]
-    switch Py.toArray(iterable: keyIterable) {
-    case let .value(k): keys = k
-    case let .error(e): return .error(e)
-    }
-
-    for keyObject in keys {
-      let key: Key
-      switch Self.createKey(from: keyObject) {
-      case let .value(k): key = k
-      case let .error(e): return .error(e)
-      }
-
-      let value: PyObject
-      switch Py.getItem(object: dict, index: keyObject) {
-      case let .value(v): value = v
-      case let .error(e): return .error(e)
-      }
-
-      if let e = self.update(key: key,
-                             value: value,
-                             onKeyDuplicate: onKeyDuplicate) {
-        return .error(e)
-      }
-    }
-
-    return .value(Py.none)
-  }
-
   // MARK: - Copy
 
   internal static let copyDoc = "D.copy() -> a shallow copy of D"
@@ -917,7 +746,9 @@ public class PyDict: PyObject {
 
     for entry in iterable.data.dict {
       let key = Key(hash: entry.key.hash, object: entry.key.object)
-      if let e = dict.update(key: key, value: value, onKeyDuplicate: .continue) {
+      if let e = dict.updateSingleEntry(key: key,
+                                        value: value,
+                                        onKeyDuplicate: .continue) {
         return .error(e)
       }
     }
@@ -975,7 +806,7 @@ public class PyDict: PyObject {
 
   // MARK: - Helpers
 
-  private static func createKey(from object: PyObject) -> PyResult<Key> {
+  internal static func createKey(from object: PyObject) -> PyResult<Key> {
     switch Py.hash(object: object) {
     case let .value(hash):
       return .value(Key(hash: hash, object: object))

@@ -147,7 +147,7 @@ extension Eval {
     let iterables = self.stack.popElementsInPushOrder(count: elementCount)
 
     for object in iterables {
-      switch dict.update(from: object) {
+      switch dict.update(from: object, onKeyDuplicate: .continue) {
       case .value:
         break // just go to the next element
       case .error(let e):

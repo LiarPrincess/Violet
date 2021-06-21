@@ -95,13 +95,13 @@ internal struct PySequenceData {
     }
   }
 
-  private enum FistNotEqualElements {
+  private enum NonEqualElements {
     case elements(selfElement: PyObject, otherElement: PyObject)
     case allEqualUpToShorterCount
     case error(PyBaseException)
   }
 
-  private func getFirstNotEqualElement(with other: PySequenceData) -> FistNotEqualElements {
+  private func getFirstNotEqualElement(with other: PySequenceData) -> NonEqualElements {
     for (l, r) in zip(self.elements, other.elements) {
       switch Py.isEqualBool(left: l, right: r) {
       case .value(true):
@@ -120,13 +120,13 @@ internal struct PySequenceData {
 
   internal var hash: PyResult<PyHash> {
     var x: PyHash = 0x34_5678
-    var mult = Hasher.multiplier
+    var multiplier = Hasher.multiplier
 
     for e in self.elements {
       switch Py.hash(object: e) {
       case let .value(y):
-        x = (x ^ y) &* mult
-        mult &+= 82_520 + PyHash(2 * self.elements.count)
+        x = (x ^ y) &* multiplier
+        multiplier &+= 82_520 + PyHash(2 * self.elements.count)
       case let .error(e):
         return .error(e)
       }

@@ -110,7 +110,7 @@ internal enum Debug {
 
   internal static func callFunction(fn: PyObject,
                                     args: [PyObject],
-                                    kwargs: PyDictData?,
+                                    kwargs: PyDict.Data?,
                                     result: PyInstance.CallResult) {
     guard isEnabled else { return }
     print("  fn:", fn)
