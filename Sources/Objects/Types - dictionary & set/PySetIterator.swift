@@ -12,8 +12,8 @@ public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
   internal var index: Int
   private var initCount: Int
 
-  internal var dict: OrderedDictionary<PySetElement, Void> {
-    return self.set.data.elements.dict
+  internal var dict: OrderedDictionary<PySet.Element, Void> {
+    return self.set.data.elements.dict // Ugh…
   }
 
   override public var description: String {

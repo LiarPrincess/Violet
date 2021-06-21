@@ -27,7 +27,7 @@ public class PyDict: PyObject {
       return "PyDict.Key(hash: \(self.hash), object: \(self.object))"
     }
 
-    fileprivate init(id: IdString) {
+    internal init(id: IdString) {
       self.hash = id.hash
       self.object = id.value
     }
@@ -38,13 +38,15 @@ public class PyDict: PyObject {
     }
 
     public func isEqual(to other: Key) -> PyResult<Bool> {
-      // >>> class C:
-      // ...     def __eq__(self, other): raise NotImplementedError('a')
+      // >>> class HashCollisionWith1:
       // ...     def __hash__(self): return 1
+      // ...     def __eq__(self, other): raise NotImplementedError('Ooo!')
+      //
       // >>> d = {}
       // >>> d[1] = 'a'
+      // >>> c = HashCollisionWith1()
       // >>> d[c] = 'b'
-      // NotImplementedError: a
+      // NotImplementedError: Ooo!
 
       guard self.hash == other.hash else {
         return .value(false)

@@ -12,6 +12,13 @@ import VioletCore
 /// This is an instance of PyTypeObject representing the Python frozenset type.
 public class PyFrozenSet: PyObject, PySetType {
 
+  // MARK: - OrderedSet & Element
+
+  public typealias OrderedSet = PySet.OrderedSet
+  public typealias Element = PySet.Element
+
+  // MARK: - Properties
+
   internal static let doc: String = """
     frozenset() -> empty frozenset object
     frozenset(iterable) -> frozenset object

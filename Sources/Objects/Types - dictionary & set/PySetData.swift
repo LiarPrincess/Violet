@@ -4,27 +4,6 @@ import VioletCore
 
 // swiftlint:disable file_length
 
-// MARK: - Element
-
-internal struct PySetElement: PyHashable {
-
-  internal var hash: PyHash
-  internal var object: PyObject
-
-  internal init(hash: PyHash, object: PyObject) {
-    self.hash = hash
-    self.object = object
-  }
-
-  internal func isEqual(to other: PySetElement) -> PyResult<Bool> {
-    guard self.hash == other.hash else {
-      return .value(false)
-    }
-
-    return Py.isEqualBool(left: self.object, right: other.object)
-  }
-}
-
 // MARK: - PySetType
 
 internal protocol PySetType: PyObject {
@@ -42,8 +21,9 @@ internal protocol PySetType: PyObject {
 /// Used in `PySet` and `PyFrozenSet`.
 internal struct PySetData {
 
-  internal typealias OrderedSet = VioletObjects.OrderedSet<PySetElement>
-  
+  internal typealias OrderedSet = PySet.OrderedSet
+  internal typealias Element = PySet.Element
+
   internal private(set) var elements: OrderedSet
 
   internal init() {
@@ -189,7 +169,7 @@ internal struct PySetData {
     }
   }
 
-  internal func contains(element: PySetElement) -> PyResult<Bool> {
+  internal func contains(element: Element) -> PyResult<Bool> {
     return self.elements.contains(element: element)
   }
 
@@ -449,7 +429,7 @@ internal struct PySetData {
     }
   }
 
-  internal mutating func insert(element: PySetElement) -> InsertResult {
+  internal mutating func insert(element: Element) -> InsertResult {
     switch self.elements.insert(element: element) {
     case .inserted,
          .updated:
@@ -503,7 +483,7 @@ internal struct PySetData {
   internal mutating func update(fromDict other: PyDict) -> UpdateResult {
     for entry in other.elements {
       let key = entry.key
-      let element = PySetElement(hash: key.hash, object: key.object)
+      let element = Element(hash: key.hash, object: key.object)
       switch self.insert(element: element) {
       case .ok: break
       case .error(let e): return .error(e)
@@ -529,7 +509,7 @@ internal struct PySetData {
     }
   }
 
-  internal mutating func remove(element: PySetElement) -> RemoveResult {
+  internal mutating func remove(element: Element) -> RemoveResult {
     switch self.elements.remove(element: element) {
     case .ok:
       return .ok
@@ -556,7 +536,7 @@ internal struct PySetData {
     }
   }
 
-  internal mutating func discard(element: PySetElement) -> DiscardResult {
+  internal mutating func discard(element: Element) -> DiscardResult {
     switch self.elements.remove(element: element) {
     case .ok,
          .notFound:
@@ -597,7 +577,7 @@ internal struct PySetData {
 
       for entry in dict.elements {
         let key = entry.key
-        let element = PySetElement(hash: key.hash, object: key.object)
+        let element = Element(hash: key.hash, object: key.object)
 
         switch result.insert(element: element) {
         case .inserted,
@@ -617,10 +597,10 @@ internal struct PySetData {
     }
   }
 
-  private func createElement(from object: PyObject) -> PyResult<PySetElement> {
+  private func createElement(from object: PyObject) -> PyResult<Element> {
     switch Py.hash(object: object) {
     case let .value(hash):
-      return .value(PySetElement(hash: hash, object: object))
+      return .value(Element(hash: hash, object: object))
     case let .error(e):
       return .error(e)
     }

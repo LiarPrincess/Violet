@@ -13,6 +13,37 @@ import VioletCore
 /// and frozenset objects.
 public class PySet: PyObject, PySetType {
 
+  // MARK: - OrderedSet
+
+  public typealias OrderedSet = VioletObjects.OrderedSet<Element>
+
+  // MARK: - Element
+
+  public struct Element: PyHashable, CustomStringConvertible {
+
+    public var hash: PyHash
+    public var object: PyObject
+
+    public var description: String {
+      return "PySet.Element(hash: \(self.hash), object: \(self.object))"
+    }
+
+    public init(hash: PyHash, object: PyObject) {
+      self.hash = hash
+      self.object = object
+    }
+
+    public func isEqual(to other: Element) -> PyResult<Bool> {
+      guard self.hash == other.hash else {
+        return .value(false)
+      }
+
+      return Py.isEqualBool(left: self.object, right: other.object)
+    }
+  }
+
+  // MARK: - Properties
+
   internal static let doc: String = """
     set() -> new empty set object
     set(iterable) -> new set object
