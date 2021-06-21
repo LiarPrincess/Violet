@@ -103,12 +103,17 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // sourcery: pymethod = __repr__
   public func repr() -> PyResult<String> {
+    if self.data.isEmpty {
+      return .value(self.typeName + "()")
+    }
+
     if self.hasReprLock {
       return .value(self.typeName + "(...)")
     }
 
     return self.withReprLock {
-      self.data.repr(typeName: self.typeName, prependTypeNameWhenNotEmpty: true)
+      let elements = self.data.joinElementsForRepr()
+      return elements.map { "\(typeName)({" + $0 + "})" }
     }
   }
 
@@ -144,7 +149,8 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // sourcery: pymethod = __and__
   public func and(_ other: PyObject) -> PyResult<PyObject> {
-    return self.createSet(result: self.data.and(other: other))
+    let result = self.data.and(other: other)
+    return self.createSet(result: result)
   }
 
   // sourcery: pymethod = __rand__
@@ -156,7 +162,8 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // sourcery: pymethod = __or__
   public func or(_ other: PyObject) -> PyResult<PyObject> {
-    return self.createSet(result: self.data.or(other: other))
+    let result = self.data.or(other: other)
+    return self.createSet(result: result)
   }
 
   // sourcery: pymethod = __ror__
@@ -168,7 +175,8 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // sourcery: pymethod = __xor__
   public func xor(_ other: PyObject) -> PyResult<PyObject> {
-    return self.createSet(result: self.data.xor(other: other))
+    let result = self.data.xor(other: other)
+    return self.createSet(result: result)
   }
 
   // sourcery: pymethod = __rxor__
@@ -180,12 +188,14 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // sourcery: pymethod = __sub__
   public func sub(_ other: PyObject) -> PyResult<PyObject> {
-    return self.createSet(result: self.data.sub(other: other))
+    let result = self.data.sub(other: other)
+    return self.createSet(result: result)
   }
 
   // sourcery: pymethod = __rsub__
   public func rsub(_ other: PyObject) -> PyResult<PyObject> {
-    return self.createSet(result: self.data.rsub(other: other))
+    let result = self.data.rsub(other: other)
+    return self.createSet(result: result)
   }
 
   // MARK: - Subset
@@ -220,7 +230,8 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // sourcery: pymethod = intersection, doc = intersectionDoc
   public func intersection(with other: PyObject) -> PyResult<PyObject> {
-    return self.data.intersection(with: other).map(self.createSet(data:))
+    let result = self.data.intersection(with: other)
+    return self.createSet(result: result)
   }
 
   // MARK: - Union
@@ -233,7 +244,8 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // sourcery: pymethod = union, doc = unionDoc
   public func union(with other: PyObject) -> PyResult<PyObject> {
-    return self.data.union(with: other).map(self.createSet(data:))
+    let result = self.data.union(with: other)
+    return self.createSet(result: result)
   }
 
   // MARK: - Difference
@@ -246,7 +258,8 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // sourcery: pymethod = difference, doc = differenceDoc
   public func difference(with other: PyObject) -> PyResult<PyObject> {
-    return self.data.difference(with: other).map(self.createSet(data:))
+    let result = self.data.difference(with: other)
+    return self.createSet(result: result)
   }
 
   // MARK: - Symmetric difference
@@ -259,7 +272,8 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // sourcery: pymethod = symmetric_difference, doc = symmetricDifferenceDoc
   public func symmetricDifference(with other: PyObject) -> PyResult<PyObject> {
-    return self.data.symmetricDifference(with: other).map(self.createSet(data:))
+    let result = self.data.symmetricDifference(with: other)
+    return self.createSet(result: result)
   }
 
   // MARK: - Is disjoint
@@ -355,11 +369,20 @@ public class PyFrozenSet: PyObject, PySetType {
 
   private func createSet(result: PySetData.BitOperationResult) -> PyResult<PyObject> {
     switch result {
-    case .set(let s):
-      return .value(self.createSet(data: s))
+    case .set(let data):
+      return .value(self.createSet(data: data))
     case .notImplemented:
       return .value(Py.notImplemented)
     case .error(let e):
+      return .error(e)
+    }
+  }
+
+  private func createSet(result: PyResult<PySetData>) -> PyResult<PyObject> {
+    switch result {
+    case let .value(data):
+      return .value(self.createSet(data: data))
+    case let .error(e):
       return .error(e)
     }
   }

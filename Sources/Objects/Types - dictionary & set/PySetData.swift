@@ -118,20 +118,12 @@ internal struct PySetData {
 
   // MARK: - String
 
-  internal func repr(
-    typeName: String,
-    prependTypeNameWhenNotEmpty: Bool
-  ) -> PyResult<String> {
-    if self.isEmpty {
-      return .value(typeName + "()")
-    }
-
-    var result = prependTypeNameWhenNotEmpty ? typeName : ""
-    result += "{"
+  internal func joinElementsForRepr() -> PyResult<String> {
+    var result = ""
 
     for (index, element) in self.elements.enumerated() {
       if index > 0 {
-        result.append(", ") // so that we don't have ', )'.
+        result.append(", ")
       }
 
       switch Py.repr(object: element.object) {
@@ -140,11 +132,6 @@ internal struct PySetData {
       }
     }
 
-    if self.count > 1 {
-      result.append(",")
-    }
-
-    result += "}"
     return .value(result)
   }
 
@@ -439,14 +426,25 @@ internal struct PySetData {
     }
   }
 
-  // MARK: - Update
+  // MARK: - Add
 
-  internal enum UpdateResult {
-    case ok
-    case error(PyBaseException)
+  /// Implementation of Python method `add`.
+  /// Basically, the same as `self.insert(obejct)`, but will convert result to `None`.
+  ///
+  /// Most of the time you want to use `self.insert(obejct)`.
+  internal mutating func add(object: PyObject) -> PyResult<PyNone> {
+    let result = self.insert(object: object)
+    switch result {
+    case .ok:
+      return .value(Py.none)
+    case .error(let e):
+      return .error(e)
+    }
   }
 
-  internal mutating func update(from other: PyObject) -> UpdateResult {
+  // MARK: - Update
+
+  internal mutating func update(from other: PyObject) -> PyResult<PyNone> {
     if let set = other as? PySetType {
       return self.update(fromSet: set.data)
     }
@@ -464,12 +462,12 @@ internal struct PySetData {
     }
 
     switch result {
-    case .value: return .ok
+    case .value: return .value(Py.none)
     case .error(let e): return .error(e)
     }
   }
 
-  internal mutating func update(fromSet other: PySetData) -> UpdateResult {
+  internal mutating func update(fromSet other: PySetData) -> PyResult<PyNone> {
     for element in other.elements {
       switch self.insert(element: element) {
       case .ok: break
@@ -477,10 +475,10 @@ internal struct PySetData {
       }
     }
 
-    return .ok
+    return .value(Py.none)
   }
 
-  internal mutating func update(fromDict other: PyDict) -> UpdateResult {
+  internal mutating func update(fromDict other: PyDict) -> PyResult<PyNone> {
     for entry in other.elements {
       let key = entry.key
       let element = Element(hash: key.hash, object: key.object)
@@ -490,17 +488,12 @@ internal struct PySetData {
       }
     }
 
-    return .ok
+    return .value(Py.none)
   }
 
   // MARK: - Remove
 
-  internal enum RemoveResult {
-    case ok
-    case error(PyBaseException)
-  }
-
-  internal mutating func remove(object: PyObject) -> RemoveResult {
+  internal mutating func remove(object: PyObject) -> PyResult<PyNone> {
     switch self.createElement(from: object) {
     case let .value(element):
       return self.remove(element: element)
@@ -509,10 +502,10 @@ internal struct PySetData {
     }
   }
 
-  internal mutating func remove(element: Element) -> RemoveResult {
+  internal mutating func remove(element: Element) -> PyResult<PyNone> {
     switch self.elements.remove(element: element) {
     case .ok:
-      return .ok
+      return .value(Py.none)
     case .notFound:
       return .error(Py.newKeyError(key: element.object))
     case .error(let e):
@@ -522,12 +515,7 @@ internal struct PySetData {
 
   // MARK: - Discard
 
-  internal enum DiscardResult {
-    case ok
-    case error(PyBaseException)
-  }
-
-  internal mutating func discard(object: PyObject) -> DiscardResult {
+  internal mutating func discard(object: PyObject) -> PyResult<PyNone> {
     switch self.createElement(from: object) {
     case let .value(element):
       return self.discard(element: element)
@@ -536,11 +524,10 @@ internal struct PySetData {
     }
   }
 
-  internal mutating func discard(element: Element) -> DiscardResult {
+  internal mutating func discard(element: Element) -> PyResult<PyNone> {
     switch self.elements.remove(element: element) {
-    case .ok,
-         .notFound:
-      return .ok
+    case .ok, .notFound:
+      return .value(Py.none)
     case .error(let e):
       return .error(e)
     }
@@ -548,8 +535,9 @@ internal struct PySetData {
 
   // MARK: - Clear
 
-  internal mutating func clear() {
+  internal mutating func clear() -> PyNone {
     self.elements.clear()
+    return Py.none
   }
 
   // MARK: - Pop
