@@ -129,7 +129,8 @@ public final class PyInstance {
   /// Interned empty `bytes` value (because `bytes` are immutable).
   public private(set) lazy var emptyBytes = PyBytes(value: Data())
   /// Interned empty `frozenset` value (because `frozenset` is immutable).
-  public private(set) lazy var emptyFrozenSet = PyFrozenSet()
+  public private(set) lazy var emptyFrozenSet =
+    PyMemory.newFrozenSet(elements: PySet.OrderedSet())
   /// Interned `NotImplemented` value.
   public private(set) lazy var notImplemented = PyMemory.newNotImplemented()
 

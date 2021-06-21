@@ -59,18 +59,13 @@ public class PySet: PyObject, PySetType {
 
   // MARK: - Init
 
-  override internal convenience init() {
-    self.init(data: PySetData())
-  }
-
-  internal init(data: PySetData) {
-    self.data = data
+  internal init(elements: PySet.OrderedSet) {
+    self.data = PySetData(elements: elements)
     super.init(type: Py.types.set)
   }
 
-  /// Use only in `__new__`!
-  internal init(type: PyType, data: PySetData) {
-    self.data = data
+  internal init(type: PyType, elements: PySet.OrderedSet) {
+    self.data = PySetData(elements: elements)
     super.init(type: type)
   }
 
@@ -398,7 +393,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = __iter__
   public func iter() -> PyObject {
-    return PySetIterator(set: self)
+    return PyMemory.newSetIterator(set: self)
   }
 
   // MARK: - Check exact
@@ -413,13 +408,14 @@ public class PySet: PyObject, PySetType {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PySet> {
+    let elements = OrderedSet()
     let isBuiltin = type === Py.types.set
-    let alloca = isBuiltin ?
-      PySet.init(type:data:) :
-      PySetHeap.init(type:data:)
 
-    let data = PySetData()
-    return .value(alloca(type, data))
+    let result: PySet = isBuiltin ?
+      Py.newSet(elements: elements) :
+      PySetHeap(type: type, elements: elements)
+
+    return .value(result)
   }
 
   // MARK: - Python init
@@ -462,6 +458,6 @@ public class PySet: PyObject, PySetType {
   }
 
   private func createSet(data: PySetData) -> PySet {
-    return PySet(data: data)
+    return Py.newSet(elements: data.elements)
   }
 }

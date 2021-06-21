@@ -15,10 +15,10 @@ implemented_types = (
     'PyComplex',
     'PyType',  # Type and object
     'PyObject',
-    'PyList',  # List and tuple
+    'PyList',  # List
     'PyListIterator',
     'PyListReverseIterator',
-    'PyTuple',
+    'PyTuple',  # Tuple
     'PyTupleIterator',
     'PyDict',  # Dict
     'PyDictItemIterator',
@@ -27,9 +27,9 @@ implemented_types = (
     'PyDictKeys',
     'PyDictValueIterator',
     'PyDictValues',
-    # 'PyFrozenSet',  # Set
-    # 'PySet',
-    # 'PySetIterator'
+    'PyFrozenSet',  # Set
+    'PySet',
+    'PySetIterator'
 )
 
 
@@ -49,6 +49,9 @@ def get_init(types_by_name: dict, t: TypeInfo) -> SwiftInitInfo:
 
 
 def print_new_function(t: TypeInfo, i: SwiftInitInfo):
+    if not i.is_open_public_internal:
+        return
+
     swift_type = t.swift_type_name
     swift_type_without_py = swift_type[2:]
     python_type = t.python_type_name

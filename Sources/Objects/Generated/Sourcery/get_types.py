@@ -66,10 +66,11 @@ def get_types() -> List[TypeInfo]:
 
             elif line_type == 'SwiftInit':
                 assert current_type
-                assert len(split) == 2
+                assert len(split) == 3
 
-                swift_selector_with_types = split[1]
-                init = SwiftInitInfo(swift_selector_with_types)
+                swift_access_modifier = split[1]
+                swift_selector_with_types = split[2]
+                init = SwiftInitInfo(swift_access_modifier, swift_selector_with_types)
                 current_type.swift_initializers.append(init)
 
             elif line_type == 'PyProperty':

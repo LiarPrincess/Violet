@@ -59,16 +59,18 @@ extension PyInstance {
   // MARK: - Set
 
   public func newSet() -> PySet {
-    return self.newSet(data: PySetData())
+    let elements = PySet.OrderedSet()
+    return PyMemory.newSet(elements: elements)
+  }
+
+  public func newSet(elements: PySet.OrderedSet) -> PySet {
+    return PyMemory.newSet(elements: elements)
   }
 
   /// PyObject * PySet_New(PyObject *iterable)
-  public func newSet(elements: [PyObject]) -> PyResult<PySet> {
-    return self.toSetData(elements).map(self.newSet(data:))
-  }
-
-  internal func newSet(data: PySetData) -> PySet {
-    return PySet(data: data)
+  public func newSet(elements args: [PyObject]) -> PyResult<PySet> {
+    let elements = self.crateSetElements(from: args)
+    return elements.map(self.newSet(elements:))
   }
 
   /// int PySet_Add(PyObject *anyset, PyObject *key)
@@ -77,29 +79,40 @@ extension PyInstance {
       .flatMap { $0.add(value) }
   }
 
-  private func toSetData(_ elements: [PyObject]) -> PyResult<PySetData> {
-    var data = PySetData()
+  private func crateSetElements(from args: [PyObject]) -> PyResult<PySet.OrderedSet> {
+    var result = PySet.OrderedSet()
 
-    for element in elements {
-      switch data.insert(object: element) {
-      case .ok: break
-      case .error(let e): return .error(e)
+    for object in args {
+      switch self.hash(object: object) {
+      case let .value(hash):
+        let element = PySet.Element(hash: hash, object: object)
+        switch result.insert(element: element) {
+        case .inserted, .updated: break
+        case .error(let e): return .error(e)
+        }
+      case let .error(e):
+        return .error(e)
       }
     }
 
-    return .value(data)
+    return .value(result)
   }
 
   // MARK: - Frozen set
 
-  public func newFrozenSet(elements: [PyObject] = []) -> PyResult<PyFrozenSet> {
-    return self.toSetData(elements).map(self.newFrozenSet(data:))
+  public func newFrozenSet() -> PyFrozenSet {
+    return self.emptyFrozenSet
   }
 
-  internal func newFrozenSet(data: PySetData) -> PyFrozenSet {
-    return data.isEmpty ?
+  public func newFrozenSet(elements: PyFrozenSet.OrderedSet) -> PyFrozenSet {
+    return elements.isEmpty ?
       self.emptyFrozenSet :
-      PyFrozenSet(data: data)
+      PyMemory.newFrozenSet(elements: elements)
+  }
+
+  public func newFrozenSet(elements args: [PyObject]) -> PyResult<PyFrozenSet> {
+    let elements = self.crateSetElements(from: args)
+    return elements.map(self.newFrozenSet(elements:))
   }
 
   // MARK: - Dictionary
@@ -126,11 +139,11 @@ extension PyInstance {
   public func newDict(elements: [DictionaryElement]) -> PyResult<PyDict> {
     var result = PyDict.OrderedDictionary()
 
-    for arg in elements {
-      switch self.hash(object: arg.key) {
+    for element in elements {
+      switch self.hash(object: element.key) {
       case let .value(hash):
-        let key = PyDict.Key(hash: hash, object: arg.key)
-        switch result.insert(key: key, value: arg.value) {
+        let key = PyDict.Key(hash: hash, object: element.key)
+        switch result.insert(key: key, value: element.value) {
         case .inserted, .updated: break
         case .error(let e): return .error(e)
         }
@@ -150,11 +163,11 @@ extension PyInstance {
 
     var result = PyDict.OrderedDictionary()
 
-    for (keyObject, value) in Swift.zip(keys.elements, elements) {
-      switch self.hash(object: keyObject) {
+    for (key, value) in Swift.zip(keys.elements, elements) {
+      switch self.hash(object: key) {
       case let .value(hash):
-        let key = PyDict.Key(hash: hash, object: keyObject)
-        switch result.insert(key: key, value: value) {
+        let dictKey = PyDict.Key(hash: hash, object: key)
+        switch result.insert(key: dictKey, value: value) {
         case .inserted, .updated: break
         case .error(let e): return .error(e)
         }

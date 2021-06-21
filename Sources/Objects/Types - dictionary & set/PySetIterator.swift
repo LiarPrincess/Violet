@@ -8,24 +8,53 @@ import VioletCore
 // sourcery: pytype = set_iterator, default, hasGC
 public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
 
-  internal let set: PySetType
-  internal var index: Int
-  private var initCount: Int
+  private enum SetOrFrozenSet: CustomStringConvertible {
+    case set(PySet)
+    case frozenSet(PyFrozenSet)
 
+    fileprivate var description: String {
+      switch self {
+      case let .set(s): return s.description
+      case let .frozenSet(s): return s.description
+      }
+    }
+
+    fileprivate var data: PySetData {
+      switch self {
+      case let .set(s): return s.data
+      case let .frozenSet(s): return s.data
+      }
+    }
+  }
+
+  private let set: SetOrFrozenSet
+  internal var index: Int // 'internal' for 'OrderedDictionaryBackedIterator'
+  private var inititialCount: Int
+
+  // For 'OrderedDictionaryBackedIterator'
   internal var dict: OrderedDictionary<PySet.Element, Void> {
-    return self.set.data.elements.dict // Ugh…
+    let orderedSet = self.set.data.elements
+    return orderedSet.dict
   }
 
   override public var description: String {
-    return "PySetIterator()"
+    return "PySetIterator(set: \(self.set), index: \(self.index))"
   }
 
   // MARK: - Init
 
-  internal init(set: PySetType) {
+  internal convenience init(set: PySet) {
+    self.init(set: .set(set))
+  }
+
+  internal convenience init(set: PyFrozenSet) {
+    self.init(set: .frozenSet(set))
+  }
+
+  private init(set: SetOrFrozenSet) {
     self.set = set
     self.index = 0
-    self.initCount = set.data.count
+    self.inititialCount = set.data.count
     super.init(type: Py.types.set_iterator)
   }
 
@@ -54,7 +83,8 @@ public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
 
   // sourcery: pymethod = __next__
   public func next() -> PyResult<PyObject> {
-    guard self.initCount == self.set.data.count else {
+    let currentCount = self.set.data.count
+    guard currentCount == self.inititialCount else {
       self.index = -1 // Make this state sticky
       return .runtimeError("Set changed size during iteration")
     }

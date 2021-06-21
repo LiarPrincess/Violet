@@ -34,18 +34,13 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // MARK: - Init
 
-  override internal convenience init() {
-    self.init(data: PySetData())
-  }
-
-  internal init(data: PySetData) {
-    self.data = data
+  internal init(elements: PyFrozenSet.OrderedSet) {
+    self.data = PySetData(elements: elements)
     super.init(type: Py.types.frozenset)
   }
 
-  /// Use only in `__new__`!
-  internal init(type: PyType, data: PySetData) {
-    self.data = data
+  internal init(type: PyType, elements: PyFrozenSet.OrderedSet) {
+    self.data = PySetData(elements: elements)
     super.init(type: type)
   }
 
@@ -291,7 +286,7 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // sourcery: pymethod = __iter__
   public func iter() -> PyObject {
-    return PySetIterator(set: self)
+    return PyMemory.newSetIterator(set: self)
   }
 
   // MARK: - Check exact
@@ -322,39 +317,38 @@ public class PyFrozenSet: PyObject, PySetType {
       return .error(e)
     }
 
-    var dataOrNil: PySetData?
+    var elementsOrNil: OrderedSet?
     if let iterable = args.first {
-      switch PyFrozenSet.createData(iterable: iterable) {
-      case let .value(d): dataOrNil = d
+      switch PyFrozenSet.getElements(iterable: iterable) {
+      case let .value(d): elementsOrNil = d
       case let .error(e): return .error(e)
       }
     }
 
-    let alloca = isBuiltin ?
-      PyFrozenSet.newSet(type:data:) :
-      PyFrozenSetHeap.init(type:data:)
+    let elements = elementsOrNil ?? OrderedSet()
 
-    let result = alloca(type, dataOrNil ?? PySetData())
+    let result: PyFrozenSet = isBuiltin ?
+      Py.newFrozenSet(elements: elements) :
+      PyFrozenSetHeap(type: type, elements: elements)
+
     return .value(result)
   }
 
-  private static func newSet(type: PyType, data: PySetData) -> PyFrozenSet {
-    return Py.newFrozenSet(data: data)
-  }
-
-  private static func createData(iterable: PyObject) -> PyResult<PySetData> {
+  private static func getElements(iterable: PyObject) -> PyResult<OrderedSet> {
     if let set = iterable as? PySetType, set.checkExact() {
-      return .value(set.data)
+      return .value(set.data.elements)
     }
 
-    return Py.reduce(iterable: iterable, into: PySetData()) { data, object in
-      switch data.insert(object: object) {
+    let dataOrError = Py.reduce(iterable: iterable, into: PySetData()) { acc, object in
+      switch acc.insert(object: object) {
       case .ok:
         return .goToNextElement
       case .error(let e):
         return .error(e)
       }
     }
+
+    return dataOrError.map { $0.elements }
   }
 
   // MARK: - Helpers
@@ -371,6 +365,6 @@ public class PyFrozenSet: PyObject, PySetType {
   }
 
   private func createSet(data: PySetData) -> PyFrozenSet {
-    return PyFrozenSet(data: data)
+    return Py.newFrozenSet(elements: data.elements)
   }
 }

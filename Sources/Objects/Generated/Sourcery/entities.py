@@ -63,7 +63,11 @@ class SwiftInitInfo:
     '''
 
     def __init__(self,
+                 access_modifier: str,
                  selector_with_types: str):
+        self.access_modifier = access_modifier
+        self.is_open_public_internal = access_modifier in ('open', 'public', 'internal')
+
         signature = SignatureInfo(selector_with_types, '')
         assert signature.name == 'init'
         assert signature.return_type == ''

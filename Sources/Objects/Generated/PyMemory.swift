@@ -194,6 +194,28 @@ public enum PyMemory {
     )
   }
 
+  // MARK: - FrozenSet
+
+  /// Allocate new instance of `frozenset` type.
+  public static func newFrozenSet(
+    elements: PyFrozenSet.OrderedSet
+  ) -> PyFrozenSet {
+    return PyFrozenSet(
+      elements: elements
+    )
+  }
+
+  /// Allocate new instance of `frozenset` type.
+  public static func newFrozenSet(
+    type: PyType,
+    elements: PyFrozenSet.OrderedSet
+  ) -> PyFrozenSet {
+    return PyFrozenSet(
+      type: type,
+      elements: elements
+    )
+  }
+
   // MARK: - Int
 
   /// Allocate new instance of `int` type.
@@ -286,6 +308,48 @@ public enum PyMemory {
   public static func newNotImplemented(
   ) -> PyNotImplemented {
     return PyNotImplemented(
+    )
+  }
+
+  // MARK: - Set
+
+  /// Allocate new instance of `set` type.
+  public static func newSet(
+    elements: PySet.OrderedSet
+  ) -> PySet {
+    return PySet(
+      elements: elements
+    )
+  }
+
+  /// Allocate new instance of `set` type.
+  public static func newSet(
+    type: PyType,
+    elements: PySet.OrderedSet
+  ) -> PySet {
+    return PySet(
+      type: type,
+      elements: elements
+    )
+  }
+
+  // MARK: - SetIterator
+
+  /// Allocate new instance of `set_iterator` type.
+  public static func newSetIterator(
+    set: PySet
+  ) -> PySetIterator {
+    return PySetIterator(
+      set: set
+    )
+  }
+
+  /// Allocate new instance of `set_iterator` type.
+  public static func newSetIterator(
+    set: PyFrozenSet
+  ) -> PySetIterator {
+    return PySetIterator(
+      set: set
     )
   }
 

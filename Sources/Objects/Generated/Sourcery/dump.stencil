@@ -40,8 +40,9 @@ SwiftField|{{field.name}}|{{field.typeName}}
 
 {% macro print_initializers type %}
 {% for init in type.initializers %}
+{% set swift_access_modifier %}{{ init.accessLevel }}{% endset %}
 {% set swift_selector_with_types %}{{ init.name }}{% endset %}
-SwiftInit|{{swift_selector_with_types}}
+SwiftInit|{{swift_access_modifier}}|{{swift_selector_with_types}}
 {% endfor %}
 {% endmacro %}
 
