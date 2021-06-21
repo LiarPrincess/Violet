@@ -205,7 +205,7 @@ internal enum PyObjectType {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyObject> {
-    if Self.excessArgs(args: args, kwargs: kwargs) {
+    if Self.hasExcessArgs(args: args, kwargs: kwargs) {
       if Self.hasOverridden__new__(type: type) {
         let msg = "object.__new__() takes exactly one argument " +
                   "(the type to instantiate)"
@@ -229,7 +229,7 @@ internal enum PyObjectType {
   internal static func pyInit(zelf: PyObject,
                               args: [PyObject],
                               kwargs: PyDict?) -> PyResult<PyNone> {
-    if Self.excessArgs(args: args, kwargs: kwargs) {
+    if Self.hasExcessArgs(args: args, kwargs: kwargs) {
       if Self.hasOverridden__init__(type: zelf.type) {
         let msg = "object.__init__() takes exactly one argument " +
                   "(the instance to initialize)"
@@ -249,8 +249,8 @@ internal enum PyObjectType {
 
   /// static int
   /// excess_args(PyObject *args, PyObject *kwds)
-  private static func excessArgs(args: [PyObject], kwargs: PyDict?) -> Bool {
-    let noArgs = args.isEmpty && (kwargs?.data.isEmpty ?? true)
+  private static func hasExcessArgs(args: [PyObject], kwargs: PyDict?) -> Bool {
+    let noArgs = args.isEmpty && (kwargs?.elements.isEmpty ?? true)
     return !noArgs
   }
 

@@ -84,17 +84,29 @@ public class PyNamespace: PyObject {
     }
 
     return self.withReprLock {
-      var list = [String]()
+      var values = ""
 
-      for entry in self.__dict__.data {
-        switch Py.repr(object: entry.value) {
-        case let .value(o): list.append("\(entry.key)=\(o)")
+      for (index, entry) in self.__dict__.elements.enumerated() {
+        if index > 0 {
+          values.append(", ")
+        }
+
+        let keyRepr: String
+        switch Py.repr(object: entry.key.object) {
+        case let .value(r): keyRepr = r
         case let .error(e): return .error(e)
         }
+
+        let valueRepr: String
+        switch Py.repr(object: entry.value) {
+        case let .value(r): valueRepr = r
+        case let .error(e): return .error(e)
+        }
+
+        values.append("\(keyRepr)=\(valueRepr)")
       }
 
-      let listJoined = list.joined(separator: ", ")
-      return .value("\(name)(\(listJoined))")
+      return .value("\(name)(\(values))")
     }
   }
 

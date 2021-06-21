@@ -133,13 +133,13 @@ internal struct ArgumentParser {
   /// Function name starts after ':' in format.
   private static func extractFunctionName(format: String) -> PyResult<String> {
     guard var startIndex = format.firstIndex(of: ":") else {
-      return .systemError("Format does not contain function name")
+      return .systemError("Format does not contain a function name")
     }
 
     // Go after ':'
     format.formIndex(after: &startIndex) // after ':'
     if startIndex == format.endIndex {
-      return .systemError("Format does not contain function name")
+      return .systemError("Format does not contain a function name")
     }
 
     return .value(String(format[startIndex...]))
@@ -240,7 +240,7 @@ internal struct ArgumentParser {
     }
 
     /// Get optional argument at specified index.
-    /// Note that optional arguments start after required.
+    /// Note that the optional arguments start after required.
     internal func optional(at index: Int) -> PyObject? {
       let optionalIndex = index - self._required.count
       assert(optionalIndex >= 0, "Accessing optional arg using required index")
@@ -529,7 +529,7 @@ internal struct ArgumentParser {
   /// _PyArg_NoKeywords(const char *funcname, PyObject *kwargs)
   internal static func noKwargsOrError(fnName: String,
                                        kwargs: PyDict?) -> PyBaseException? {
-    let noKwargs = kwargs?.data.isEmpty ?? true
+    let noKwargs = kwargs?.elements.isEmpty ?? true
     if noKwargs {
       return nil
     }
@@ -561,7 +561,7 @@ internal struct ArgumentParser {
 
     var result = [String: PyObject]()
 
-    for entry in kwargs.data {
+    for entry in kwargs.elements {
       switch PyCast.asString(entry.key.object) {
       case let .some(keyString):
         result[keyString.value] = entry.value

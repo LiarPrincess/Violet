@@ -521,7 +521,7 @@ public class PyBaseException: PyObject {
 
     // Copy kwargs
     if let kwargs = kwargs {
-      switch self.__dict__.update(from: kwargs.data, onKeyDuplicate: .continue) {
+      switch self.__dict__.update(from: kwargs.elements, onKeyDuplicate: .continue) {
       case .value: break
       case .error(let e): return .error(e)
       }

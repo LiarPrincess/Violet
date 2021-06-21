@@ -473,7 +473,7 @@ internal struct PySetData {
 
     // Fast path if 'other' is 'dict' (but not dict subclass!)
     if let dict = PyCast.asExactlyDict(other) {
-      return self.update(fromDict: dict.data)
+      return self.update(fromDict: dict)
     }
 
     let result = Py.reduce(iterable: other, initial: 0) { _, object in
@@ -500,8 +500,8 @@ internal struct PySetData {
     return .ok
   }
 
-  internal mutating func update(fromDict other: PyDict.Data) -> UpdateResult {
-    for entry in other {
+  internal mutating func update(fromDict other: PyDict) -> UpdateResult {
+    for entry in other.elements {
       let key = entry.key
       let element = PySetElement(hash: key.hash, object: key.object)
       switch self.insert(element: element) {
@@ -593,9 +593,9 @@ internal struct PySetData {
     // Fast path for dictionaries (since they already have hashed elements)
     if let dict = PyCast.asExactlyDict(other) {
       // Init 'elements' with size, so that we don't have to resize later
-      var result = OrderedSet(count: dict.data.count)
+      var result = OrderedSet(count: dict.elements.count)
 
-      for entry in dict.data {
+      for entry in dict.elements {
         let key = entry.key
         let element = PySetElement(hash: key.hash, object: key.object)
 

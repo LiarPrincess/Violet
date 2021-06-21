@@ -105,11 +105,12 @@ extension PyInstance {
   // MARK: - Dictionary
 
   public func newDict() -> PyDict {
-    return PyMemory.newDict(data: PyDict.Data())
+    let elements = PyDict.OrderedDictionary()
+    return PyMemory.newDict(elements: elements)
   }
 
-  public func newDict(data: PyDict.Data) -> PyDict {
-    return PyMemory.newDict(data: data)
+  public func newDict(elements: PyDict.OrderedDictionary) -> PyDict {
+    return PyMemory.newDict(elements: elements)
   }
 
   public struct DictionaryElement {
@@ -123,13 +124,13 @@ extension PyInstance {
   }
 
   public func newDict(elements: [DictionaryElement]) -> PyResult<PyDict> {
-    var data = PyDict.Data()
+    var result = PyDict.OrderedDictionary()
 
     for arg in elements {
       switch self.hash(object: arg.key) {
       case let .value(hash):
         let key = PyDict.Key(hash: hash, object: arg.key)
-        switch data.insert(key: key, value: arg.value) {
+        switch result.insert(key: key, value: arg.value) {
         case .inserted, .updated: break
         case .error(let e): return .error(e)
         }
@@ -138,8 +139,8 @@ extension PyInstance {
       }
     }
 
-    let result = self.newDict(data: data)
-    return .value(result)
+    let dict = self.newDict(elements: result)
+    return .value(dict)
   }
 
   public func newDict(keys: PyTuple, elements: [PyObject]) -> PyResult<PyDict> {
@@ -147,13 +148,13 @@ extension PyInstance {
       return .valueError("bad 'dictionary(keyTuple:elements:)' keys argument")
     }
 
-    var data = PyDict.Data()
+    var result = PyDict.OrderedDictionary()
 
     for (keyObject, value) in Swift.zip(keys.elements, elements) {
       switch self.hash(object: keyObject) {
       case let .value(hash):
         let key = PyDict.Key(hash: hash, object: keyObject)
-        switch data.insert(key: key, value: value) {
+        switch result.insert(key: key, value: value) {
         case .inserted, .updated: break
         case .error(let e): return .error(e)
         }
@@ -162,8 +163,8 @@ extension PyInstance {
       }
     }
 
-    let result = self.newDict(data: data)
-    return .value(result)
+    let dict = self.newDict(elements: result)
+    return .value(dict)
   }
 
   public func add(dict object: PyObject,

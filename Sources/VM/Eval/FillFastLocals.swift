@@ -142,7 +142,7 @@ internal struct FillFastLocals {
     }
 
     // Handle keyword arguments
-    nextKwarg: for entry in kwargs.data {
+    nextKwarg: for entry in kwargs.elements {
       guard let keyword = PyCast.asString(entry.key.object) else {
         let name = self.code.name
         return Py.newTypeError(msg: "\(name)() keywords must be strings")

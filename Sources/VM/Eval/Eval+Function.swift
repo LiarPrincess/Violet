@@ -194,7 +194,7 @@ extension Eval {
       }
     }
 
-    assert(result.data.count == names.count)
+    assert(result.elements.count == names.count)
     return .value(result)
   }
 

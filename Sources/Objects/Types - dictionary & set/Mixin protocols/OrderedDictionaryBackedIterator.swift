@@ -3,10 +3,10 @@
 internal protocol OrderedDictionaryBackedIterator: PyObject {
   associatedtype Key: PyHashable
   associatedtype Value
-  typealias Dict = OrderedDictionary<Key, Value>
+  typealias Dictionary = OrderedDictionary<Key, Value>
 
   var index: Int { get set }
-  var dict: Dict { get }
+  var dict: Dictionary { get }
 }
 
 extension OrderedDictionaryBackedIterator {
@@ -15,7 +15,7 @@ extension OrderedDictionaryBackedIterator {
     return self
   }
 
-  internal func nextShared() -> PyResult<Dict.Entry> {
+  internal func nextShared() -> PyResult<Dictionary.Entry> {
     while self.index < self.dict.entries.count {
       let entry = self.dict.entries[self.index]
 

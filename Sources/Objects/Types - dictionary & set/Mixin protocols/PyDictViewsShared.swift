@@ -8,8 +8,8 @@ internal protocol PyDictViewsShared: PyObject {
 
 extension PyDictViewsShared {
 
-  internal var data: PyDict.Data {
-    return self.dict.data
+  internal var elements: PyDict.OrderedDictionary {
+    return self.dict.elements
   }
 
   // MARK: - Equatable
@@ -19,7 +19,7 @@ extension PyDictViewsShared {
       return .notImplemented
     }
 
-    guard self.data.count == size else {
+    guard self.elements.count == size else {
       return .value(false)
     }
 
@@ -37,7 +37,7 @@ extension PyDictViewsShared {
       return .notImplemented
     }
 
-    guard self.data.count < size else {
+    guard self.elements.count < size else {
       return .value(false)
     }
 
@@ -49,7 +49,7 @@ extension PyDictViewsShared {
       return .notImplemented
     }
 
-    guard self.data.count <= size else {
+    guard self.elements.count <= size else {
       return .value(false)
     }
 
@@ -61,7 +61,7 @@ extension PyDictViewsShared {
       return .notImplemented
     }
 
-    guard self.data.count > size else {
+    guard self.elements.count > size else {
       return .value(false)
     }
 
@@ -73,7 +73,7 @@ extension PyDictViewsShared {
       return .notImplemented
     }
 
-    guard self.data.count >= size else {
+    guard self.elements.count >= size else {
       return .value(false)
     }
 
@@ -86,7 +86,7 @@ extension PyDictViewsShared {
     }
 
     if let dict = PyCast.asDict(other) {
-      return dict.data.count
+      return dict.elements.count
     }
 
     return nil
@@ -107,7 +107,7 @@ extension PyDictViewsShared {
 
     return self.withReprLock {
       var result = typeName + "("
-      for (index, element) in self.dict.data.enumerated() {
+      for (index, element) in self.dict.elements.enumerated() {
         if index > 0 {
           result += ", " // so that we don't have ', )'.
         }
@@ -126,6 +126,6 @@ extension PyDictViewsShared {
   // MARK: - Length
 
   internal func getLengthShared() -> BigInt {
-    return BigInt(self.data.count)
+    return BigInt(self.elements.count)
   }
 }

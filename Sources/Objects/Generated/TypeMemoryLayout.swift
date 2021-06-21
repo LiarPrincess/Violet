@@ -124,7 +124,7 @@ extension PyType {
     /// - `imag: Double`
     public static let PyComplex = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
-    /// - `data: Data`
+    /// - `elements: OrderedDictionary`
     public static let PyDict = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `object: PyDict`

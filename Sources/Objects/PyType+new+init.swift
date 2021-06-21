@@ -43,8 +43,10 @@ extension PyType {
 
     // Special case: type(x) should return x->ob_type
     if type === Py.types.type {
-      let noKwargs = kwargs?.data.isEmpty ?? true
-      if args.count == 1 && noKwargs {
+      let hasSingleArg = args.count == 1
+      let noKwargs = kwargs?.elements.isEmpty ?? true
+
+      if hasSingleArg && noKwargs {
         return .value(args[0].type)
       }
 
@@ -179,7 +181,7 @@ extension PyType {
 
     // Initialize '__dict__' from passed-in dict
     // Also: we have to COPY it! Swift COW will take care of this.
-    let dict = Py.newDict(data: args.dict.data)
+    let dict = args.dict.copy()
     type.setDict(value: dict)
 
     // =========================================================================
@@ -539,7 +541,7 @@ extension PyType {
   ) -> PyBaseException? {
     let dict = type.getDict()
 
-    for entry in dict.data {
+    for entry in dict.elements {
       let key = entry.key.object
       let value = entry.value
 
@@ -609,7 +611,10 @@ extension PyType {
   // sourcery: pymethod = __init__
   internal func pyInit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
     if let kwargs = kwargs {
-      if args.count == 1 && kwargs.data.any {
+      let hasSingleArg = args.count == 1
+      let hasKwargs = kwargs.elements.any
+
+      if hasSingleArg && hasKwargs {
         return .typeError("type.__init__() takes no keyword arguments")
       }
     }

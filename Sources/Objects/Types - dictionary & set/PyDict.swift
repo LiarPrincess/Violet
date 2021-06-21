@@ -12,9 +12,11 @@ import VioletCore
 /// This subtype of PyObject represents a Python dictionary object.
 public class PyDict: PyObject {
 
-  // MARK: - Types
+  // MARK: - OrderedDictionary
 
-  public typealias Data = OrderedDictionary<Key, PyObject>
+  public typealias OrderedDictionary = VioletObjects.OrderedDictionary<Key, PyObject>
+
+  // MARK: - Key
 
   public struct Key: PyHashable, CustomStringConvertible {
 
@@ -66,21 +68,21 @@ public class PyDict: PyObject {
     in the keyword argument list.  For example:  dict(one=1, two=2)
     """
 
-  public internal(set) var data: Data
+  public internal(set) var elements: OrderedDictionary
 
   override public var description: String {
-    return "PyDict(count: \(self.data.count))"
+    return "PyDict(count: \(self.elements.count))"
   }
 
   // MARK: - Init
 
-  internal init(data: PyDict.Data) {
-    self.data = data
+  internal init(elements: PyDict.OrderedDictionary) {
+    self.elements = elements
     super.init(type: Py.types.dict)
   }
 
-  internal init(type: PyType, data: PyDict.Data) {
-    self.data = data
+  internal init(type: PyType, elements: PyDict.OrderedDictionary) {
+    self.elements = elements
     super.init(type: type)
   }
 
@@ -92,13 +94,13 @@ public class PyDict: PyObject {
       return .notImplemented
     }
 
-    guard self.data.count == other.data.count else {
+    guard self.elements.count == other.elements.count else {
       return .value(false)
     }
 
-    for entry in self.data {
+    for entry in self.elements {
       let otherValue: PyObject
-      switch other.data.get(key: entry.key) {
+      switch other.elements.get(key: entry.key) {
       case .value(let o): otherValue = o
       case .notFound: return .value(false)
       case .error(let e): return .error(e)
@@ -152,7 +154,7 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = __repr__
   public func repr() -> PyResult<String> {
-    if self.data.isEmpty {
+    if self.elements.isEmpty {
       return .value("{}")
     }
 
@@ -162,7 +164,7 @@ public class PyDict: PyObject {
 
     return self.withReprLock {
       var result = "{"
-      for (index, element) in self.data.enumerated() {
+      for (index, element) in self.elements.enumerated() {
         if index > 0 {
           result += ", " // so that we don't have ugly ', }'.
         }
@@ -203,7 +205,7 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = __len__
   public func getLength() -> BigInt {
-    return BigInt(self.data.count)
+    return BigInt(self.elements.count)
   }
 
   // MARK: - Get
@@ -220,7 +222,7 @@ public class PyDict: PyObject {
   public func get(id: IdString) -> PyObject? {
     let key = Key(id: id)
 
-    switch self.data.get(key: key) {
+    switch self.elements.get(key: key) {
     case .value(let o):
       return o
     case .notFound:
@@ -246,7 +248,7 @@ public class PyDict: PyObject {
   ///
   /// It may fail.
   internal func get(key: Key) -> GetResult {
-    switch self.data.get(key: key) {
+    switch self.elements.get(key: key) {
     case .value(let o):
       return .value(o)
     case .notFound:
@@ -266,7 +268,7 @@ public class PyDict: PyObject {
   public func set(id: IdString, to value: PyObject) {
     let key = Key(id: id)
 
-    switch self.data.insert(key: key, value: value) {
+    switch self.elements.insert(key: key, value: value) {
     case .inserted,
          .updated:
       break
@@ -285,7 +287,7 @@ public class PyDict: PyObject {
   }
 
   internal func set(key: Key, to value: PyObject) -> SetResult {
-    switch self.data.insert(key: key, value: value) {
+    switch self.elements.insert(key: key, value: value) {
     case .inserted,
          .updated:
       return .ok
@@ -305,7 +307,7 @@ public class PyDict: PyObject {
   public func del(id: IdString) -> PyObject? {
     let key = Key(id: id)
 
-    switch self.data.remove(key: key) {
+    switch self.elements.remove(key: key) {
     case .value(let o):
       return o
     case .notFound:
@@ -325,7 +327,7 @@ public class PyDict: PyObject {
   }
 
   internal func del(key: Key) -> DelResult {
-    switch self.data.remove(key: key) {
+    switch self.elements.remove(key: key) {
     case .value(let o):
       return .value(o)
     case .notFound:
@@ -366,7 +368,7 @@ public class PyDict: PyObject {
   public func getItem(index: PyObject, hash: PyHash) -> PyResult<PyObject> {
     let key = Key(hash: hash, object: index)
 
-    switch self.data.get(key: key) {
+    switch self.elements.get(key: key) {
     case .value(let o): return .value(o)
     case .notFound: break // Try other
     case .error(let e): return .error(e)
@@ -409,7 +411,7 @@ public class PyDict: PyObject {
                       value: PyObject) -> PyResult<PyNone> {
     let key = Key(hash: hash, object: index)
 
-    switch self.data.insert(key: key, value: value) {
+    switch self.elements.insert(key: key, value: value) {
     case .inserted, .updated:
       return .value(Py.none)
     case .error(let e):
@@ -434,7 +436,7 @@ public class PyDict: PyObject {
   public func delItem(index: PyObject, hash: PyHash) -> PyResult<PyNone> {
     let key = Key(hash: hash, object: index)
 
-    switch self.data.remove(key: key) {
+    switch self.elements.remove(key: key) {
     case .value:
       return .value(Py.none)
     case .notFound:
@@ -484,7 +486,7 @@ public class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.data.get(key: key) {
+    switch self.elements.get(key: key) {
     case .value(let o):
       return .value(o)
     case .notFound:
@@ -544,12 +546,12 @@ public class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.data.get(key: key) {
+    switch self.elements.get(key: key) {
     case .value(let o):
       return .value(o)
     case .notFound:
       let value = `default` ?? Py.none
-      switch self.data.insert(key: key, value: value) {
+      switch self.elements.insert(key: key, value: value) {
       case .inserted, .updated:
         return .value(value)
       case .error(let e):
@@ -570,7 +572,7 @@ public class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    return self.data.contains(key: key)
+    return self.elements.contains(key: key)
   }
 
   // MARK: - Iter
@@ -588,7 +590,7 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = clear, doc = clearDoc
   public func clear() -> PyNone {
-    self.data.clear()
+    self.elements.clear()
     return Py.none
   }
 
@@ -627,9 +629,7 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = copy, doc = copyDoc
   public func copy() -> PyDict {
-    let result = Py.newDict()
-    result.data = self.data
-    return result
+    return Py.newDict(elements: self.elements)
   }
 
   // MARK: - Pop
@@ -648,7 +648,7 @@ public class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.data.remove(key: key) {
+    switch self.elements.remove(key: key) {
     case .value(let o):
       return .value(o)
     case .notFound:
@@ -669,11 +669,11 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = popitem, doc = popitemDoc
   internal func popItem() -> PyResult<PyObject> {
-    guard let last = self.data.last else {
+    guard let last = self.elements.last else {
       return .keyError("popitem(): dictionary is empty")
     }
 
-    _ = self.data.remove(key: last.key)
+    _ = self.elements.remove(key: last.key)
 
     let key = last.key.object
     let value = last.value
@@ -699,7 +699,7 @@ public class PyDict: PyObject {
     }
 
     // Fast path for empty 'dict'
-    if let dict = PyCast.asExactlyDict(dictObject), dict.data.isEmpty {
+    if let dict = PyCast.asExactlyDict(dictObject), dict.elements.isEmpty {
       if let iterDict = PyCast.asExactlyDict(iterable) {
         return self.fillFromKeys(target: dict, dict: iterDict, value: value)
       }
@@ -732,7 +732,7 @@ public class PyDict: PyObject {
     assert(PyCast.isExactlyDict(target))
     assert(PyCast.isExactlyDict(dict))
 
-    for entry in dict.data {
+    for entry in dict.elements {
       if let e = target.updateSingleEntry(key: entry.key,
                                           value: value,
                                           onKeyDuplicate: Self.onFillFromKeysDuplicate) {
@@ -784,14 +784,14 @@ public class PyDict: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyDict> {
-    let data = Data()
+    let elements = OrderedDictionary()
 
     let isBuiltin = type === Py.types.dict
-    let result = isBuiltin ?
-      Py.newDict(data: data) :
-      PyDictHeap(type: type, data: data)
+    let dict = isBuiltin ?
+      Py.newDict(elements: elements) :
+      PyDictHeap(type: type, elements: elements)
 
-    return .value(result)
+    return .value(dict)
   }
 
   // MARK: - Python init
@@ -805,7 +805,7 @@ public class PyDict: PyObject {
 
   /// Remove all of the references to other Python objects.
   override internal func gcClean() {
-    self.data.clear()
+    self.elements.clear()
     super.gcClean()
   }
 

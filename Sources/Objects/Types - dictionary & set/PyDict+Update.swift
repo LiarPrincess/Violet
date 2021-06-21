@@ -23,7 +23,7 @@ extension PyDict {
   ) -> PyResult<PyNone> {
     // Fast path if we are 'dict' (but not subclass)
     if let dict = PyCast.asExactlyDict(object) {
-      return self.update(from: dict.data,
+      return self.update(from: dict.elements,
                          onKeyDuplicate: onKeyDuplicate)
     }
 
@@ -45,7 +45,7 @@ extension PyDict {
   // MARK: - From other dict
 
   public func update(
-    from data: Data,
+    from data: OrderedDictionary,
     onKeyDuplicate: OnUpdateKeyDuplicate
   ) -> PyResult<PyNone> {
     for entry in data {
@@ -181,7 +181,7 @@ extension PyDict {
     value: PyObject,
     onKeyDuplicate: OnUpdateKeyDuplicate
   ) -> PyBaseException? {
-    switch self.data.insert(key: key, value: value) {
+    switch self.elements.insert(key: key, value: value) {
     case .inserted:
       return nil
     case .updated:

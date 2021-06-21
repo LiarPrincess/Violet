@@ -12,7 +12,7 @@ public class PyDictItems: PyObject, PyDictViewsShared {
   internal let dict: PyDict
 
   override public var description: String {
-    return "PyDictItems(count: \(self.data.count))"
+    return "PyDictItems(count: \(self.elements.count))"
   }
 
   // MARK: - Init

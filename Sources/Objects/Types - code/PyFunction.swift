@@ -328,7 +328,7 @@ public class PyFunction: PyObject {
     // Caller and callee functions should not share the kwargs dictionary.
     var kwargsCopy: PyDict?
     if let kwargs = kwargs {
-      kwargsCopy = Py.newDict(data: kwargs.data)
+      kwargsCopy = kwargs.copy()
     }
 
     let argsDefaults = self.defaults?.elements ?? []

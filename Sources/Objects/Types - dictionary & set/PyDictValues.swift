@@ -11,12 +11,8 @@ public class PyDictValues: PyObject, PyDictViewsShared {
 
   internal let dict: PyDict
 
-  private var data: PyDict.Data {
-    return self.dict.data
-  }
-
   override public var description: String {
-    return "PyDictValues()"
+    return "PyDictValues(count: \(self.elements.count))"
   }
 
   // MARK: - Init

@@ -131,8 +131,9 @@ public class PyNone: PyObject, HasCustomGetMethod {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyNone> {
-    let noKwargs = kwargs?.data.isEmpty ?? true
-    guard args.isEmpty && noKwargs else {
+    let noArgs = args.isEmpty
+    let noKwargs = kwargs?.elements.isEmpty ?? true
+    guard noArgs && noKwargs else {
       return .typeError("NoneType takes no arguments")
     }
 

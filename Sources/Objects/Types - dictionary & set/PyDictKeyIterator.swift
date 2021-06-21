@@ -12,8 +12,8 @@ public class PyDictKeyIterator: PyObject, OrderedDictionaryBackedIterator {
   internal var index: Int
   private var initCount: Int
 
-  internal var dict: PyDict.Data {
-    return self.object.data
+  internal var dict: PyDict.OrderedDictionary {
+    return self.object.elements
   }
 
   override public var description: String {
@@ -25,7 +25,7 @@ public class PyDictKeyIterator: PyObject, OrderedDictionaryBackedIterator {
   internal init(dict: PyDict) {
     self.object = dict
     self.index = 0
-    self.initCount = dict.data.count
+    self.initCount = dict.elements.count
     super.init(type: Py.types.dict_keyiterator)
   }
 
@@ -54,7 +54,7 @@ public class PyDictKeyIterator: PyObject, OrderedDictionaryBackedIterator {
 
   // sourcery: pymethod = __next__
   public func next() -> PyResult<PyObject> {
-    guard self.initCount == self.object.data.count else {
+    guard self.initCount == self.object.elements.count else {
       self.index = -1 // Make this state sticky
       return .runtimeError("dictionary changed size during iteration")
     }

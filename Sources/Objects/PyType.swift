@@ -710,7 +710,7 @@ public class PyType: PyObject, HasCustomGetMethod {
     // Ugly exception: when the call was type(something),
     // don't call tp_init on the result.
     let hasSingleArg = args.count == 1
-    let hasEmptyKwargs = kwargs?.data.isEmpty ?? true
+    let hasEmptyKwargs = kwargs?.elements.isEmpty ?? true
     if self === Py.types.type && hasSingleArg && hasEmptyKwargs {
       return .value(object)
     }
