@@ -203,12 +203,29 @@ extension PyInstance {
     }
   }
 
-  public func getKeys(dict object: PyObject) -> PyResult<PyObject> {
+  // MARK: - Keys
+
+  public enum GetKeysResult {
+    case value(PyObject)
+    case error(PyBaseException)
+    case missingMethod(PyBaseException)
+  }
+
+  /// Call the `keys` method on object.
+  public func getKeys(object: PyObject) -> GetKeysResult {
     if let result = Fast.keys(object) {
       return .value(result)
     }
 
-    return self.getattr(object: object, name: .keys)
+    switch Py.callMethod(object: object, selector: .keys) {
+    case let .value(o):
+      return .value(o)
+    case let .missingMethod(e):
+      return .missingMethod(e)
+    case let.error(e),
+         let .notCallable(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Range

@@ -27,7 +27,7 @@ extension PyDict {
                          onKeyDuplicate: onKeyDuplicate)
     }
 
-    switch self.callKeys(on: object) {
+    switch Py.getKeys(object: object) {
     case .value(let keys): // We have keys -> dict-like object
       return self.update(fromKeysOwner: object,
                          keys: keys,
@@ -57,30 +57,6 @@ extension PyDict {
     }
 
     return .value(Py.none)
-  }
-
-  // MARK: - Call keys
-
-  private enum CallKeysResult {
-    case value(PyObject)
-    case error(PyBaseException)
-    case missingMethod
-  }
-
-  private func callKeys(on object: PyObject) -> CallKeysResult {
-    if let result = Fast.keys(object) {
-      return .value(result)
-    }
-
-    switch Py.callMethod(object: object, selector: .keys) {
-    case .value(let o):
-      return .value(o)
-    case .missingMethod:
-      return .missingMethod
-    case .error(let e),
-         .notCallable(let e):
-      return .error(e)
-    }
   }
 
   // MARK: - From iterable of pairs

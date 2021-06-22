@@ -138,15 +138,20 @@ extension Eval {
     case .notFound:
       switch self.getAttribute(module: module, name: .__dict__) {
       case .value(let o):
-        switch Py.getKeys(dict: o) {
-        case let .value(keys): return .dict(keys)
-        case let .error(e): return .error(e)
+        switch Py.getKeys(object: o) {
+        case let .value(keys):
+          return .dict(keys)
+        case let .missingMethod(e),
+             let .error(e):
+          return .error(e)
         }
+
       case .notFound:
         let moduleOrNil = PyCast.asModule(module)
         let moduleNameOrNil = moduleOrNil?.getNameOrNil()
         let msg = "from-import-* object has no __dict__ and no __all__"
         return .error(Py.newImportError(msg: msg, moduleName: moduleNameOrNil))
+
       case .error(let e):
          return .error(e)
       }
