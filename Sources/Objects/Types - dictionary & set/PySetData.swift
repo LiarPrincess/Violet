@@ -4,17 +4,6 @@ import VioletCore
 
 // swiftlint:disable file_length
 
-// MARK: - PySetType
-
-internal protocol PySetType: PyObject {
-  var data: PySetData { get set }
-
-  /// Is this builtin `set/frozenset` type?
-  ///
-  /// Will return `false` if this is a subclass.
-  func checkExact() -> Bool
-}
-
 // MARK: - PySetData
 
 /// Main logic for Python sets.
@@ -42,7 +31,7 @@ internal struct PySetData {
 
   internal static func from(iterable: PyObject) -> PyResult<PySetData> {
     // Fast path for sets (since they already have hashed elements)
-    if let set = iterable as? PySetType, set.checkExact() {
+    if let set = PyCast.asExactlyAnySet(iterable) {
       return .value(set.data)
     }
 
@@ -86,7 +75,7 @@ internal struct PySetData {
   // MARK: - Equatable
 
   internal func isEqual(to other: PyObject) -> CompareResult {
-    guard let other = other as? PySetType else {
+    guard let other = PyCast.asAnySet(other) else {
       return .notImplemented
     }
 
@@ -106,7 +95,7 @@ internal struct PySetData {
   // MARK: - Comparable
 
   internal func isLess(than other: PyObject) -> CompareResult {
-    guard let other = other as? PySetType else {
+    guard let other = PyCast.asAnySet(other) else {
       return .notImplemented
     }
 
@@ -123,7 +112,7 @@ internal struct PySetData {
   }
 
   internal func isLessEqual(than other: PyObject) -> CompareResult {
-    guard let other = other as? PySetType else {
+    guard let other = PyCast.asAnySet(other) else {
       return .notImplemented
     }
 
@@ -136,7 +125,7 @@ internal struct PySetData {
   }
 
   internal func isGreater(than other: PyObject) -> CompareResult {
-    guard let other = other as? PySetType else {
+    guard let other = PyCast.asAnySet(other) else {
       return .notImplemented
     }
 
@@ -153,7 +142,7 @@ internal struct PySetData {
   }
 
   internal func isGreaterEqual(than other: PyObject) -> CompareResult {
-    guard let other = other as? PySetType else {
+    guard let other = PyCast.asAnySet(other) else {
       return .notImplemented
     }
 
@@ -227,57 +216,57 @@ internal struct PySetData {
   }
 
   internal func and(other: PyObject) -> BitOperationResult {
-    guard let other = other as? PySetType else {
+    guard let other = PyCast.asAnySet(other) else {
       return .notImplemented
     }
 
-    let result = self.intersection(with: other)
+    let result = self.intersection(with: other.data)
     return BitOperationResult(result)
   }
 
   // MARK: - Or
 
   internal func or(other: PyObject) -> BitOperationResult {
-    guard let other = other as? PySetType else {
+    guard let other = PyCast.asAnySet(other) else {
       return .notImplemented
     }
 
-    let result = self.union(with: other)
+    let result = self.union(with: other.data)
     return BitOperationResult(result)
   }
 
   // MARK: - Xor
 
   internal func xor(other: PyObject) -> BitOperationResult {
-    guard let other = other as? PySetType else {
+    guard let other = PyCast.asAnySet(other) else {
       return .notImplemented
     }
 
-    let result = self.symmetricDifference(with: other)
+    let result = self.symmetricDifference(with: other.data)
     return BitOperationResult(result)
   }
 
   // MARK: - Sub
 
   internal func sub(other: PyObject) -> BitOperationResult {
-    guard let other = other as? PySetType else {
+    guard let other = PyCast.asAnySet(other) else {
       return .notImplemented
     }
 
-    return self.sub(other: other.data)
-  }
-
-  private func sub(other: PySetData) -> BitOperationResult {
-    let result = self.difference(with: other)
-    return BitOperationResult(result)
+    return PySetData.sub(lhs: self, rhs: other.data)
   }
 
   internal func rsub(other: PyObject) -> BitOperationResult {
-    guard let other = other as? PySetType else {
+    guard let other = PyCast.asAnySet(other) else {
       return .notImplemented
     }
 
-    return other.data.sub(other: self)
+    return PySetData.sub(lhs: other.data, rhs: self)
+  }
+
+  private static func sub(lhs: PySetData, rhs: PySetData) -> BitOperationResult {
+    let result = lhs.difference(with: rhs)
+    return BitOperationResult(result)
   }
 
   // MARK: - Subset
@@ -501,44 +490,17 @@ internal struct PySetData {
   // MARK: - Update
 
   internal mutating func update(from other: PyObject) -> PyResult<PyNone> {
-    if let set = other as? PySetType {
-      return self.update(fromSet: set.data)
-    }
-
-    // Fast path if 'other' is 'dict' (but not dict subclass!)
-    if let dict = PyCast.asExactlyDict(other) {
-      return self.update(fromDict: dict)
-    }
-
-    let result = Py.reduce(iterable: other, initial: ()) { _, object in
-      switch self.insert(object: object) {
-      case .ok: return .goToNextElement
-      case .error(let e): return .error(e)
-      }
-    }
-
-    switch result {
-    case .value: return .value(Py.none)
-    case .error(let e): return .error(e)
+    let dataResult = PySetData.from(iterable: other)
+    switch dataResult {
+    case let .value(data):
+      return self.update(from: data)
+    case let .error(e):
+      return .error(e)
     }
   }
 
-  internal mutating func update(fromSet other: PySetData) -> PyResult<PyNone> {
+  internal mutating func update(from other: PySetData) -> PyResult<PyNone> {
     for element in other.elements {
-      switch self.insert(element: element) {
-      case .ok: break
-      case .error(let e): return .error(e)
-      }
-    }
-
-    return .value(Py.none)
-  }
-
-  internal mutating func update(fromDict other: PyDict) -> PyResult<PyNone> {
-    for entry in other.elements {
-      let key = entry.key
-      let element = Element(hash: key.hash, object: key.object)
-
       switch self.insert(element: element) {
       case .ok: break
       case .error(let e): return .error(e)

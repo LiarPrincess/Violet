@@ -11,7 +11,7 @@ import VioletCore
 // sourcery: pytype = set, default, hasGC, baseType
 /// This subtype of PyObject is used to hold the internal data for both set
 /// and frozenset objects.
-public class PySet: PyObject, PySetType {
+public class PySet: PyObject {
 
   // MARK: - OrderedSet
 
@@ -387,12 +387,6 @@ public class PySet: PyObject, PySetType {
   // sourcery: pymethod = __iter__
   public func iter() -> PyObject {
     return PyMemory.newSetIterator(set: self)
-  }
-
-  // MARK: - Check exact
-
-  public func checkExact() -> Bool {
-    return self.type === Py.types.set
   }
 
   // MARK: - Python new

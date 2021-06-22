@@ -81,7 +81,7 @@ extension PyDictViewsShared {
   }
 
   private func getDictOrSetSize(_ other: PyObject) -> Int? {
-    if let set = other as? PySetType {
+    if let set = PyCast.asAnySet(other) {
       return set.data.count
     }
 

@@ -346,10 +346,10 @@ public enum PyMemory {
 
   /// Allocate new instance of `set_iterator` type.
   public static func newSetIterator(
-    set: PyFrozenSet
+    frozenSet: PyFrozenSet
   ) -> PySetIterator {
     return PySetIterator(
-      set: set
+      frozenSet: frozenSet
     )
   }
 

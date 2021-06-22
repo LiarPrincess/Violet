@@ -255,9 +255,9 @@ extension PyType {
     /// - `data: PySetData`
     public static let PySet = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
-    /// - `set: SetOrFrozenSet`
+    /// - `set: PyAnySet`
     /// - `index: Int`
-    /// - `inititialCount: Int`
+    /// - `initialCount: Int`
     public static let PySetIterator = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `start: PyObject`

@@ -706,7 +706,7 @@ public class PyDict: PyObject {
         return self.fillFromKeys(target: dict, dict: iterDict, value: value)
       }
 
-      if let iterSet = iterable as? PySetType, iterSet.checkExact() {
+      if let iterSet = PyCast.asExactlyAnySet(iterable) {
         return self.fillFromKeys(target: dict, set: iterSet, value: value)
       }
     }
@@ -746,10 +746,10 @@ public class PyDict: PyObject {
   }
 
   private static func fillFromKeys(target: PyDict,
-                                   set: PySetType,
+                                   set: PyAnySet,
                                    value: PyObject) -> PyResult<PyObject> {
     assert(PyCast.isExactlyDict(target))
-    assert(PyCast.isExactlySet(set) || PyCast.isExactlyFrozenSet(set))
+    assert(PyCast.isExactlyAnySet(set))
 
     for element in set.data.elements {
       let key = Key(hash: element.hash, object: element.object)

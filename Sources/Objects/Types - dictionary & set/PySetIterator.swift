@@ -8,28 +8,9 @@ import VioletCore
 // sourcery: pytype = set_iterator, default, hasGC
 public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
 
-  private enum SetOrFrozenSet: CustomStringConvertible {
-    case set(PySet)
-    case frozenSet(PyFrozenSet)
-
-    fileprivate var description: String {
-      switch self {
-      case let .set(s): return s.description
-      case let .frozenSet(s): return s.description
-      }
-    }
-
-    fileprivate var data: PySetData {
-      switch self {
-      case let .set(s): return s.data
-      case let .frozenSet(s): return s.data
-      }
-    }
-  }
-
-  private let set: SetOrFrozenSet
+  private let set: PyAnySet
   internal var index: Int // 'internal' for 'OrderedDictionaryBackedIterator'
-  private var inititialCount: Int
+  private var initialCount: Int
 
   // For 'OrderedDictionaryBackedIterator'
   internal var dict: OrderedDictionary<PySet.Element, Void> {
@@ -44,17 +25,17 @@ public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
   // MARK: - Init
 
   internal convenience init(set: PySet) {
-    self.init(set: .set(set))
+    self.init(set: PyAnySet(set: set))
   }
 
-  internal convenience init(set: PyFrozenSet) {
-    self.init(set: .frozenSet(set))
+  internal convenience init(frozenSet: PyFrozenSet) {
+    self.init(set: PyAnySet(frozenSet: frozenSet))
   }
 
-  private init(set: SetOrFrozenSet) {
+  private init(set: PyAnySet) {
     self.set = set
     self.index = 0
-    self.inititialCount = set.data.count
+    self.initialCount = set.data.count
     super.init(type: Py.types.set_iterator)
   }
 
@@ -84,7 +65,7 @@ public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
   // sourcery: pymethod = __next__
   public func next() -> PyResult<PyObject> {
     let currentCount = self.set.data.count
-    guard currentCount == self.inititialCount else {
+    guard currentCount == self.initialCount else {
       self.index = -1 // Make this state sticky
       return .runtimeError("Set changed size during iteration")
     }

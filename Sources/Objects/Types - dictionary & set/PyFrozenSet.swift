@@ -10,7 +10,7 @@ import VioletCore
 
 // sourcery: pytype = frozenset, default, hasGC, baseType
 /// This is an instance of PyTypeObject representing the Python frozenset type.
-public class PyFrozenSet: PyObject, PySetType {
+public class PyFrozenSet: PyObject {
 
   // MARK: - OrderedSet & Element
 
@@ -26,7 +26,7 @@ public class PyFrozenSet: PyObject, PySetType {
     Build an immutable unordered collection of unique elements.
     """
 
-  internal var data: PySetData
+  internal let data: PySetData
 
   override public var description: String {
     return "PyFrozenSet(count: \(self.data.count))"
@@ -300,13 +300,7 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // sourcery: pymethod = __iter__
   public func iter() -> PyObject {
-    return PyMemory.newSetIterator(set: self)
-  }
-
-  // MARK: - Check exact
-
-  public func checkExact() -> Bool {
-    return self.type === Py.types.frozenset
+    return PyMemory.newSetIterator(frozenSet: self)
   }
 
   // MARK: - Python new
