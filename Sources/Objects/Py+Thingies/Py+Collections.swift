@@ -13,12 +13,12 @@ extension PyInstance {
   // MARK: - Tuple
 
   /// PyObject * PyTuple_New(Py_ssize_t size)
-  public func newTuple(_ elements: PyObject...) -> PyTuple {
-    return self.newTuple(elements)
+  public func newTuple(elements: PyObject...) -> PyTuple {
+    return self.newTuple(elements: elements)
   }
 
   /// PyObject * PyTuple_New(Py_ssize_t size)
-  public func newTuple(_ elements: [PyObject]) -> PyTuple {
+  public func newTuple(elements: [PyObject]) -> PyTuple {
     return elements.isEmpty ?
       self.emptyTuple :
       PyMemory.newTuple(elements: elements)

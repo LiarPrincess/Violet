@@ -292,7 +292,7 @@ public class PyFloat: PyObject {
 
     let pyNumerator = Py.newInt(numerator)
     let pyDenominator = Py.newInt(denominator)
-    return .value(Py.newTuple(pyNumerator, pyDenominator))
+    return .value(Py.newTuple(elements: pyNumerator, pyDenominator))
   }
 
   // MARK: - Add
@@ -598,7 +598,7 @@ public class PyFloat: PyObject {
 
     let tuple0 = Py.newFloat(div)
     let tuple1 = Py.newFloat(mod)
-    return .value(Py.newTuple(tuple0, tuple1))
+    return .value(Py.newTuple(elements: tuple0, tuple1))
   }
 
   // MARK: - Round

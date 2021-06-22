@@ -90,7 +90,7 @@ public class PySyntaxError: PyException {
       argsElements.append(m)
     }
 
-    self.init(args: Py.newTuple(argsElements),
+    self.init(args: Py.newTuple(elements: argsElements),
               traceback: traceback,
               cause: cause,
               context: context,
@@ -270,7 +270,7 @@ public class PySyntaxError: PyException {
   internal class func pySyntaxErrorNew(type: PyType,
                                        args: [PyObject],
                                        kwargs: PyDict?) -> PyResult<PySyntaxError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PySyntaxError(args: argsTuple, type: type))
   }
 

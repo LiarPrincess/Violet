@@ -82,7 +82,7 @@ public {final}class {class_name}: Py{base} {{
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<{class_name}> {{
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value({class_name}(args: argsTuple, type: type))
   }}
 

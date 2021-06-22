@@ -282,7 +282,7 @@ public class PyCode: PyObject {
 
     case let .tuple(t):
       let elements = t.map { PyCode.intern(constant: $0).asObject }
-      return .tuple(Py.newTuple(elements))
+      return .tuple(Py.newTuple(elements: elements))
     }
   }
 

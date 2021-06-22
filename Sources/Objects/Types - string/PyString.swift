@@ -622,11 +622,11 @@ public class PyString: PyObject {
     switch self.data.partition(separator: separator) {
     case .separatorNotFound:
       let empty = Py.emptyString
-      return .value(Py.newTuple(self, empty, empty))
+      return .value(Py.newTuple(elements: self, empty, empty))
     case let .separatorFound(before, _, after):
       let b = Py.newString(String(before))
       let a = Py.newString(String(after))
-      return .value(Py.newTuple(b, separator, a))
+      return .value(Py.newTuple(elements: b, separator, a))
     case let .error(e):
       return .error(e)
     }
@@ -637,11 +637,11 @@ public class PyString: PyObject {
     switch self.data.rpartition(separator: separator) {
     case .separatorNotFound:
       let empty = Py.emptyString
-      return .value(Py.newTuple(empty, empty, self))
+      return .value(Py.newTuple(elements: empty, empty, self))
     case let .separatorFound(before, _, after):
       let b = Py.newString(String(before))
       let a = Py.newString(String(after))
-      return .value(Py.newTuple(b, separator, a))
+      return .value(Py.newTuple(elements: b, separator, a))
     case let .error(e):
       return .error(e)
     }

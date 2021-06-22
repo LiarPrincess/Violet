@@ -134,7 +134,7 @@ extension Sys {
 
   private func asList(values: [String]) -> PyList {
     let elements = values.map(Py.newString(_:))
-    return Py.newList(elements)
+    return Py.newList(elements: elements)
   }
 
   /// static int

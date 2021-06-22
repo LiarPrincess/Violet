@@ -44,7 +44,7 @@ public class PyImportError: PyException {
       argsElements.append(Py.newString(m))
     }
 
-    self.init(args: Py.newTuple(argsElements),
+    self.init(args: Py.newTuple(elements: argsElements),
               traceback: traceback,
               cause: cause,
               context: context,
@@ -157,7 +157,7 @@ public class PyImportError: PyException {
   internal class func pyImportErrorNew(type: PyType,
                                        args: [PyObject],
                                        kwargs: PyDict?) -> PyResult<PyImportError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyImportError(args: argsTuple, type: type))
   }
 

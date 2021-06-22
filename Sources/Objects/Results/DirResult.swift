@@ -64,7 +64,7 @@ public class DirResult: PyFunctionResultConvertible {
     }
 
     let result: PyFunctionResult
-    let list = Py.newList(self.elements)
+    let list = Py.newList(elements: self.elements)
 
     switch list.sort(key: nil, isReverse: false) {
     case .value:

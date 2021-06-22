@@ -34,7 +34,7 @@ public final class PyStopIteration: PyException {
                             context: PyBaseException? = nil,
                             suppressContext: Bool = false,
                             type: PyType? = nil) {
-    let args = Py.newTuple(value ?? Py.none)
+    let args = Py.newTuple(elements: value ?? Py.none)
     self.init(args: args,
               traceback: traceback,
               cause: cause,
@@ -94,7 +94,7 @@ public final class PyStopIteration: PyException {
   internal class func pyStopIterationNew(type: PyType,
                                          args: [PyObject],
                                          kwargs: PyDict?) -> PyResult<PyStopIteration> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyStopIteration(args: argsTuple, type: type))
   }
 

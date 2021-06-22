@@ -610,7 +610,7 @@ extension Builtins {
       return .typeError("__build_class__: name is not a string")
     }
 
-    let bases = Py.newTuple(Array(args[2...]))
+    let bases = Py.newTuple(elements: Array(args[2...]))
     return Py.__build_class__(name: name,
                               bases: bases,
                               bodyFn: fn,

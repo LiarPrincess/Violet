@@ -70,7 +70,7 @@ public class PyBaseException: PyObject {
                             context: PyBaseException? = nil,
                             suppressContext: Bool = false,
                             type: PyType? = nil) {
-    let args = Py.newTuple(Py.newString(msg))
+    let args = Py.newTuple(elements: Py.newString(msg))
     self.init(args: args,
               traceback: traceback,
               cause: cause,
@@ -249,7 +249,7 @@ public class PyBaseException: PyObject {
 
     switch Py.toArray(iterable: value) {
     case let .value(elements):
-      return self.setArgs(Py.newTuple(elements))
+      return self.setArgs(Py.newTuple(elements: elements))
     case let .error(e):
       return .error(e)
     }
@@ -504,7 +504,7 @@ public class PyBaseException: PyObject {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyBaseException> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyBaseException(args: argsTuple, type: type))
   }
 
@@ -515,7 +515,7 @@ public class PyBaseException: PyObject {
                                     kwargs: PyDict?) -> PyResult<PyNone> {
     // Copy args if needed
     if !self.areArgsEqual(to: args) {
-      let argsTuple = Py.newTuple(args)
+      let argsTuple = Py.newTuple(elements: args)
       self.setArgs(argsTuple)
     }
 

@@ -97,7 +97,7 @@ internal struct FillFastLocals {
 
   /// *args
   private func setVarArgs(value: [PyObject]) {
-    let tuple = Py.newTuple(value)
+    let tuple = Py.newTuple(elements: value)
     self.set(index: self.totalArgs, value: tuple)
   }
 

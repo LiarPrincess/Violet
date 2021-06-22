@@ -72,7 +72,7 @@ public final class PyKeyError: PyLookupError {
   internal class func pyKeyErrorNew(type: PyType,
                                     args: [PyObject],
                                     kwargs: PyDict?) -> PyResult<PyKeyError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyKeyError(args: argsTuple, type: type))
   }
 

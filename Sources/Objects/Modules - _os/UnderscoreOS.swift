@@ -161,7 +161,7 @@ public final class UnderscoreOS: PyModuleImplementation {
     switch result {
     case .entries(let entries):
       let elements = entries.map(Py.newString(_:))
-      let list = Py.newList(elements)
+      let list = Py.newList(elements: elements)
       return .value(list)
     case .enoent:
       return .error(Py.newFileNotFoundError(path: path))

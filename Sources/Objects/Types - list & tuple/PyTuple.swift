@@ -145,7 +145,7 @@ public class PyTuple: PyObject {
   internal func getItem(index: PyObject) -> PyResult<PyObject> {
     switch self.data.getItem(index: index) {
     case let .single(s): return .value(s)
-    case let .slice(s): return .value(Py.newTuple(s))
+    case let .slice(s): return .value(Py.newTuple(elements: s))
     case let .error(e): return .error(e)
     }
   }
@@ -199,7 +199,7 @@ public class PyTuple: PyObject {
     }
 
     let result = self.data.add(other: otherTuple.data)
-    return .value(Py.newTuple(result))
+    return .value(Py.newTuple(elements: result))
   }
 
   // MARK: - Mul
@@ -259,7 +259,7 @@ public class PyTuple: PyObject {
     // If this is a builtin then try to re-use interned values
     let isBuiltin = type === Py.types.tuple
     let result: PyTuple = isBuiltin ?
-      Py.newTuple(elements) :
+      Py.newTuple(elements: elements) :
       PyTupleHeap(type: type, elements: elements)
 
     return .value(result)

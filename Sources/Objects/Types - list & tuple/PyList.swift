@@ -143,7 +143,7 @@ public class PyList: PyObject {
   internal func getItem(index: PyObject) -> PyResult<PyObject> {
     switch self.data.getItem(index: index) {
     case let .single(s): return .value(s)
-    case let .slice(s): return .value(Py.newList(s))
+    case let .slice(s): return .value(Py.newList(elements: s))
     case let .error(e): return .error(e)
     }
   }
@@ -307,7 +307,7 @@ public class PyList: PyObject {
 
   // sourcery: pymethod = copy
   internal func copy() -> PyObject {
-    return Py.newList(self.data.elements)
+    return Py.newList(elements: self.data.elements)
   }
 
   // MARK: - Add
@@ -320,7 +320,7 @@ public class PyList: PyObject {
     }
 
     let result = self.data.add(other: otherList.data)
-    return .value(Py.newList(result))
+    return .value(Py.newList(elements: result))
   }
 
   // sourcery: pymethod = __iadd__
@@ -385,7 +385,7 @@ public class PyList: PyObject {
     let isBuiltin = type === Py.types.list
 
     let result: PyList = isBuiltin ?
-      Py.newList(elements) :
+      Py.newList(elements: elements) :
       PyListHeap(type: type, elements: elements)
 
     return .value(result)

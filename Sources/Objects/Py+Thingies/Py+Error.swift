@@ -188,7 +188,7 @@ extension PyInstance {
       result.append(self.newString(filename))
     }
 
-    return self.newTuple(result)
+    return self.newTuple(elements: result)
   }
 
   // MARK: - File not found
@@ -212,7 +212,7 @@ extension PyInstance {
       args.append(self.newString(f))
     }
 
-    let argsTuple = self.newTuple(args)
+    let argsTuple = self.newTuple(elements: args)
     return PyFileNotFoundError(args: argsTuple)
   }
 
@@ -225,7 +225,7 @@ extension PyInstance {
 
   /// Mapping key not found.
   public func newKeyError(key: PyObject) -> PyKeyError {
-    let args = self.newTuple(key)
+    let args = self.newTuple(elements: key)
     return PyKeyError(args: args)
   }
 

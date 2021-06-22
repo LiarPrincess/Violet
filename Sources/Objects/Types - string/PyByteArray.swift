@@ -532,12 +532,12 @@ public class PyByteArray: PyObject, PyBytesType {
     case .separatorNotFound:
       let empty1 = Py.newByteArray(Data())
       let empty2 = Py.newByteArray(Data())
-      return .value(Py.newTuple(self, empty1, empty2))
+      return .value(Py.newTuple(elements: self, empty1, empty2))
     case let .separatorFound(before, sep, after):
       let b = Py.newByteArray(before)
       let s = Py.newByteArray(sep) // Always new!
       let a = Py.newByteArray(after)
-      return .value(Py.newTuple(b, s, a))
+      return .value(Py.newTuple(elements: b, s, a))
     case let .error(e):
       return .error(e)
     }
@@ -549,12 +549,12 @@ public class PyByteArray: PyObject, PyBytesType {
     case .separatorNotFound:
       let empty1 = Py.newByteArray(Data())
       let empty2 = Py.newByteArray(Data())
-      return .value(Py.newTuple(empty1, empty2, self))
+      return .value(Py.newTuple(elements: empty1, empty2, self))
     case let .separatorFound(before, sep, after):
       let b = Py.newByteArray(before)
       let s = Py.newByteArray(sep) // Always new!
       let a = Py.newByteArray(after)
-      return .value(Py.newTuple(b, s, a))
+      return .value(Py.newTuple(elements: b, s, a))
     case let .error(e):
       return .error(e)
     }

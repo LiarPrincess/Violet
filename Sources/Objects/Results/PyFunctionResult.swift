@@ -58,7 +58,7 @@ extension Array: PyFunctionResultConvertible
       }
     }
 
-    return .value(Py.newList(elements))
+    return .value(Py.newList(elements: elements))
   }
 }
 

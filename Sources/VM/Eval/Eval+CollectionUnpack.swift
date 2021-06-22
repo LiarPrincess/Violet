@@ -13,7 +13,7 @@ extension Eval {
   internal func buildTupleUnpack(elementCount: Int) -> InstructionResult {
     switch self.unpackToArray(elementCount: elementCount) {
     case let .value(elements):
-      self.stack.push(Py.newTuple(elements))
+      self.stack.push(Py.newTuple(elements: elements))
       return .ok
     case let .error(e):
       return .exception(e)
@@ -25,7 +25,7 @@ extension Eval {
   internal func buildListUnpack(elementCount: Int) -> InstructionResult {
     switch self.unpackToArray(elementCount: elementCount) {
     case let .value(elements):
-      self.stack.push(Py.newList(elements))
+      self.stack.push(Py.newList(elements: elements))
       return .ok
     case let .error(e):
       return .exception(e)
@@ -65,7 +65,7 @@ extension Eval {
       }
     }
 
-    self.stack.push(Py.newTuple(result))
+    self.stack.push(Py.newTuple(elements: result))
     return .ok
   }
 
@@ -328,7 +328,7 @@ extension Eval {
 
     // Reverse because we have to push them in 'right-to-left' order!
     self.stack.push(contentsOf: after.reversed())
-    self.stack.push(Py.newList(pack))
+    self.stack.push(Py.newList(elements: pack))
     self.stack.push(contentsOf: before.reversed())
 
     return .ok

@@ -363,7 +363,7 @@ public class PyType: PyObject, HasCustomGetMethod {
   // sourcery: pyproperty = __bases__, setter = setBases
   internal func getBasesPy() -> PyTuple {
     let bases = self.getBases()
-    return Py.newTuple(bases)
+    return Py.newTuple(elements: bases)
   }
 
   public func getBases() -> [PyType] {
@@ -418,10 +418,10 @@ public class PyType: PyObject, HasCustomGetMethod {
 
   // sourcery: pyproperty = __mro__
   /// This is an implementation of `Python __mro__` property.
-  ///
   /// In Swift use `self.getMRO` instead.
   internal func get__mro__() -> PyTuple {
-    return Py.newTuple(self.getMRO())
+    let mro = self.getMRO()
+    return Py.newTuple(elements: mro)
   }
 
   internal static let mroPyDoc = """
@@ -438,7 +438,7 @@ public class PyType: PyObject, HasCustomGetMethod {
   /// In Swift use `self.getMRO` instead.
   internal func getMROPy() -> PyList {
     let mro = self.getMRO()
-    return Py.newList(mro)
+    return Py.newList(elements: mro)
   }
 
   public func getMRO() -> [PyType] {

@@ -11,7 +11,7 @@ extension Eval {
   /// and pushes the resulting tuple onto the stack.
   internal func buildTuple(elementCount: Int) -> InstructionResult {
     let elements = self.stack.popElementsInPushOrder(count: elementCount)
-    let collection = Py.newTuple(elements)
+    let collection = Py.newTuple(elements: elements)
     self.stack.push(collection)
     return .ok
   }
@@ -22,7 +22,7 @@ extension Eval {
   /// and pushes the resulting list onto the stack.
   internal func buildList(elementCount: Int) -> InstructionResult {
     let elements = self.stack.popElementsInPushOrder(count: elementCount)
-    let collection = Py.newList(elements)
+    let collection = Py.newList(elements: elements)
     self.stack.push(collection)
     return .ok
   }

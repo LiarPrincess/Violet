@@ -122,7 +122,7 @@ extension Sys {
     // sys.builtin_module_names
     self.builtinModuleNames = names.map { $0.value }
 
-    let tuple = Py.newTuple(names)
+    let tuple = Py.newTuple(elements: names)
     if let e = self.setBuiltinModuleNames(to: tuple) {
       trap("Error when setting 'sys.builtin_module_names': \(e)")
     }

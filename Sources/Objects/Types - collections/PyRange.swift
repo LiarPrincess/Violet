@@ -407,8 +407,8 @@ public class PyRange: PyObject {
 
   // sourcery: pymethod = __reduce__
   public func reduce(args: [PyObject], kwargs: PyDict?) -> PyTuple {
-    let props = Py.newTuple(self.start, self.stop, self.step)
-    return Py.newTuple(self.type, props)
+    let props = Py.newTuple(elements: self.start, self.stop, self.step)
+    return Py.newTuple(elements: self.type, props)
   }
 
   // MARK: - Python new

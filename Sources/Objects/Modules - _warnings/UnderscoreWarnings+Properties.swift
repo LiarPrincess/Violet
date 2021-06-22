@@ -65,7 +65,7 @@ extension UnderscoreWarnings {
     append(category: .resourceWarning, action: "ignore", module: nil)
     #endif
 
-    return Py.newList(elements)
+    return Py.newList(elements: elements)
   }
 
   private func createFilter(category: PyType,
@@ -75,7 +75,7 @@ extension UnderscoreWarnings {
     let module: PyObject = moduleArg.map(Py.intern) ?? Py.none
     let msg = Py.none
     let line = Py.newInt(0)
-    return Py.newTuple([action, msg, category, module, line])
+    return Py.newTuple(elements: action, msg, category, module, line)
   }
 
   // MARK: - Default action

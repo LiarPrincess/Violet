@@ -45,7 +45,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyKeyboardInterrupt> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyKeyboardInterrupt(args: argsTuple, type: type))
   }
 
@@ -92,7 +92,7 @@ public final class PyGeneratorExit: PyBaseException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyGeneratorExit> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyGeneratorExit(args: argsTuple, type: type))
   }
 
@@ -139,7 +139,7 @@ public class PyException: PyBaseException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyException> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyException(args: argsTuple, type: type))
   }
 
@@ -186,7 +186,7 @@ public final class PyStopAsyncIteration: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyStopAsyncIteration> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyStopAsyncIteration(args: argsTuple, type: type))
   }
 
@@ -233,7 +233,7 @@ public class PyArithmeticError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyArithmeticError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyArithmeticError(args: argsTuple, type: type))
   }
 
@@ -280,7 +280,7 @@ public final class PyFloatingPointError: PyArithmeticError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyFloatingPointError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyFloatingPointError(args: argsTuple, type: type))
   }
 
@@ -327,7 +327,7 @@ public final class PyOverflowError: PyArithmeticError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyOverflowError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyOverflowError(args: argsTuple, type: type))
   }
 
@@ -374,7 +374,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyZeroDivisionError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyZeroDivisionError(args: argsTuple, type: type))
   }
 
@@ -421,7 +421,7 @@ public final class PyAssertionError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyAssertionError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyAssertionError(args: argsTuple, type: type))
   }
 
@@ -468,7 +468,7 @@ public final class PyAttributeError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyAttributeError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyAttributeError(args: argsTuple, type: type))
   }
 
@@ -515,7 +515,7 @@ public final class PyBufferError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyBufferError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyBufferError(args: argsTuple, type: type))
   }
 
@@ -562,7 +562,7 @@ public final class PyEOFError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyEOFError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyEOFError(args: argsTuple, type: type))
   }
 
@@ -609,7 +609,7 @@ public final class PyModuleNotFoundError: PyImportError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyModuleNotFoundError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyModuleNotFoundError(args: argsTuple, type: type))
   }
 
@@ -656,7 +656,7 @@ public class PyLookupError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyLookupError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyLookupError(args: argsTuple, type: type))
   }
 
@@ -703,7 +703,7 @@ public final class PyIndexError: PyLookupError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyIndexError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyIndexError(args: argsTuple, type: type))
   }
 
@@ -750,7 +750,7 @@ public final class PyMemoryError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyMemoryError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyMemoryError(args: argsTuple, type: type))
   }
 
@@ -797,7 +797,7 @@ public class PyNameError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNameError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyNameError(args: argsTuple, type: type))
   }
 
@@ -844,7 +844,7 @@ public final class PyUnboundLocalError: PyNameError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyUnboundLocalError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyUnboundLocalError(args: argsTuple, type: type))
   }
 
@@ -891,7 +891,7 @@ public class PyOSError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyOSError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyOSError(args: argsTuple, type: type))
   }
 
@@ -938,7 +938,7 @@ public final class PyBlockingIOError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyBlockingIOError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyBlockingIOError(args: argsTuple, type: type))
   }
 
@@ -985,7 +985,7 @@ public final class PyChildProcessError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyChildProcessError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyChildProcessError(args: argsTuple, type: type))
   }
 
@@ -1032,7 +1032,7 @@ public class PyConnectionError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyConnectionError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyConnectionError(args: argsTuple, type: type))
   }
 
@@ -1079,7 +1079,7 @@ public final class PyBrokenPipeError: PyConnectionError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyBrokenPipeError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyBrokenPipeError(args: argsTuple, type: type))
   }
 
@@ -1126,7 +1126,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyConnectionAbortedError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyConnectionAbortedError(args: argsTuple, type: type))
   }
 
@@ -1173,7 +1173,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyConnectionRefusedError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyConnectionRefusedError(args: argsTuple, type: type))
   }
 
@@ -1220,7 +1220,7 @@ public final class PyConnectionResetError: PyConnectionError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyConnectionResetError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyConnectionResetError(args: argsTuple, type: type))
   }
 
@@ -1267,7 +1267,7 @@ public final class PyFileExistsError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyFileExistsError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyFileExistsError(args: argsTuple, type: type))
   }
 
@@ -1314,7 +1314,7 @@ public final class PyFileNotFoundError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyFileNotFoundError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyFileNotFoundError(args: argsTuple, type: type))
   }
 
@@ -1361,7 +1361,7 @@ public final class PyInterruptedError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyInterruptedError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyInterruptedError(args: argsTuple, type: type))
   }
 
@@ -1408,7 +1408,7 @@ public final class PyIsADirectoryError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyIsADirectoryError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyIsADirectoryError(args: argsTuple, type: type))
   }
 
@@ -1455,7 +1455,7 @@ public final class PyNotADirectoryError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNotADirectoryError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyNotADirectoryError(args: argsTuple, type: type))
   }
 
@@ -1502,7 +1502,7 @@ public final class PyPermissionError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyPermissionError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyPermissionError(args: argsTuple, type: type))
   }
 
@@ -1549,7 +1549,7 @@ public final class PyProcessLookupError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyProcessLookupError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyProcessLookupError(args: argsTuple, type: type))
   }
 
@@ -1596,7 +1596,7 @@ public final class PyTimeoutError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyTimeoutError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyTimeoutError(args: argsTuple, type: type))
   }
 
@@ -1643,7 +1643,7 @@ public final class PyReferenceError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyReferenceError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyReferenceError(args: argsTuple, type: type))
   }
 
@@ -1690,7 +1690,7 @@ public class PyRuntimeError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyRuntimeError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyRuntimeError(args: argsTuple, type: type))
   }
 
@@ -1737,7 +1737,7 @@ public final class PyNotImplementedError: PyRuntimeError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNotImplementedError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyNotImplementedError(args: argsTuple, type: type))
   }
 
@@ -1784,7 +1784,7 @@ public final class PyRecursionError: PyRuntimeError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyRecursionError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyRecursionError(args: argsTuple, type: type))
   }
 
@@ -1831,7 +1831,7 @@ public class PyIndentationError: PySyntaxError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyIndentationError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyIndentationError(args: argsTuple, type: type))
   }
 
@@ -1878,7 +1878,7 @@ public final class PyTabError: PyIndentationError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyTabError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyTabError(args: argsTuple, type: type))
   }
 
@@ -1928,7 +1928,7 @@ public final class PySystemError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PySystemError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PySystemError(args: argsTuple, type: type))
   }
 
@@ -1975,7 +1975,7 @@ public final class PyTypeError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyTypeError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyTypeError(args: argsTuple, type: type))
   }
 
@@ -2022,7 +2022,7 @@ public class PyValueError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyValueError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyValueError(args: argsTuple, type: type))
   }
 
@@ -2069,7 +2069,7 @@ public class PyUnicodeError: PyValueError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyUnicodeError(args: argsTuple, type: type))
   }
 
@@ -2116,7 +2116,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeDecodeError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyUnicodeDecodeError(args: argsTuple, type: type))
   }
 
@@ -2163,7 +2163,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeEncodeError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyUnicodeEncodeError(args: argsTuple, type: type))
   }
 
@@ -2210,7 +2210,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeTranslateError> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyUnicodeTranslateError(args: argsTuple, type: type))
   }
 
@@ -2257,7 +2257,7 @@ public class PyWarning: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyWarning> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyWarning(args: argsTuple, type: type))
   }
 
@@ -2304,7 +2304,7 @@ public final class PyDeprecationWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyDeprecationWarning> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyDeprecationWarning(args: argsTuple, type: type))
   }
 
@@ -2352,7 +2352,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyPendingDeprecationWarning> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyPendingDeprecationWarning(args: argsTuple, type: type))
   }
 
@@ -2399,7 +2399,7 @@ public final class PyRuntimeWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyRuntimeWarning> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyRuntimeWarning(args: argsTuple, type: type))
   }
 
@@ -2446,7 +2446,7 @@ public final class PySyntaxWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PySyntaxWarning> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PySyntaxWarning(args: argsTuple, type: type))
   }
 
@@ -2493,7 +2493,7 @@ public final class PyUserWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyUserWarning> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyUserWarning(args: argsTuple, type: type))
   }
 
@@ -2541,7 +2541,7 @@ public final class PyFutureWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyFutureWarning> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyFutureWarning(args: argsTuple, type: type))
   }
 
@@ -2588,7 +2588,7 @@ public final class PyImportWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyImportWarning> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyImportWarning(args: argsTuple, type: type))
   }
 
@@ -2636,7 +2636,7 @@ public final class PyUnicodeWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeWarning> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyUnicodeWarning(args: argsTuple, type: type))
   }
 
@@ -2684,7 +2684,7 @@ public final class PyBytesWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyBytesWarning> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyBytesWarning(args: argsTuple, type: type))
   }
 
@@ -2731,7 +2731,7 @@ public final class PyResourceWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyResourceWarning> {
-    let argsTuple = Py.newTuple(args)
+    let argsTuple = Py.newTuple(elements: args)
     return .value(PyResourceWarning(args: argsTuple, type: type))
   }
 

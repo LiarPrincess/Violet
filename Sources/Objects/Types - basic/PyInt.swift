@@ -599,7 +599,7 @@ public class PyInt: PyObject {
     fileprivate func asTuple() -> PyTuple {
       let q = Py.newInt(self.div)
       let r = Py.newInt(self.mod)
-      return Py.newTuple(q, r)
+      return Py.newTuple(elements: q, r)
     }
   }
 

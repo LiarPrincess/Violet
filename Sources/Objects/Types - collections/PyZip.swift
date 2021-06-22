@@ -74,7 +74,7 @@ public class PyZip: PyObject {
     }
 
     // Multiple iterators -> tuple
-    let tuple = Py.newTuple(result)
+    let tuple = Py.newTuple(elements: result)
     return .value(tuple)
   }
 

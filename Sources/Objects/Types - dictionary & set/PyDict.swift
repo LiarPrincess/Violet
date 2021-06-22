@@ -679,7 +679,7 @@ public class PyDict: PyObject {
 
     let key = last.key.object
     let value = last.value
-    let result = Py.newTuple(key, value)
+    let result = Py.newTuple(elements: key, value)
     return .value(result)
   }
 

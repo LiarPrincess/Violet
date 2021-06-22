@@ -42,7 +42,7 @@ extension Sys {
 
     assert(result.any)
     let objects = result.map(Py.newString(_:))
-    return Py.newList(objects)
+    return Py.newList(elements: objects)
   }
 
   // MARK: - Argv0
@@ -171,7 +171,7 @@ extension Sys {
     }
 
     let strings = result.map(Py.newString(_:))
-    return Py.newList(strings)
+    return Py.newList(elements: strings)
   }
 
   // MARK: - Executable
