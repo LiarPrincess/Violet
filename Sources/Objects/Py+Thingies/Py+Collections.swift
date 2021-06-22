@@ -451,7 +451,72 @@ extension PyInstance {
     }
   }
 
-// MARK: - Reduce
+  // MARK: - To array
+
+  /// Convert iterable to Swift array.
+  ///
+  /// Most of the time you want to use `Py.reduce` though…
+  public func toArray(iterable: PyObject) -> PyResult<[PyObject]> {
+    if let trivialArray = self.triviallyIntoSwiftArray(iterable: iterable) {
+      return .value(trivialArray)
+    }
+
+    var result = [PyObject]()
+    let reduceError = self.reduce(iterable: iterable, into: &result) { acc, object in
+      acc.append(object)
+      return .goToNextElement
+    }
+
+    if let e = reduceError {
+      return .error(e)
+    }
+
+    return .value(result)
+  }
+
+  /// Some types can be trivially converted to Swift array without all of that
+  /// `__iter__/__next__` ceremony.
+  private func triviallyIntoSwiftArray(iterable: PyObject) -> [PyObject]? {
+    // swiftlint:disable:previous discouraged_optional_collection
+
+    // We always have to go with 'asExactly…' version because user can override
+    // '__iter__' or '__next__' in which case they are no longer 'trivial'.
+
+    if let tuple = PyCast.asExactlyTuple(iterable) {
+      return tuple.elements
+    }
+
+    if let list = PyCast.asExactlyList(iterable) {
+      return list.elements
+    }
+
+    if let dict = PyCast.asExactlyDict(iterable) {
+      // '__iter__' on dict returns 'dict_keyiterator'
+      return dict.elements.map { $0.key.object }
+    }
+
+    if let set = PyCast.asSet(iterable) {
+      return set.data.elements.map { $0.object }
+    }
+
+    if let set = PyCast.asFrozenSet(iterable) {
+      return set.data.elements.map { $0.object }
+    }
+
+    if let bytes = iterable as? PyBytesType, bytes.checkExact() {
+      let scalars = bytes.data.scalars
+      return scalars.map(self.newInt)
+    }
+
+    if let string = PyCast.asExactlyString(iterable) {
+      let scalars = string.data.scalars
+      return scalars.map(self.intern(scalar:))
+    }
+
+    return nil
+  }
+
+  // MARK: - Reduce
 
   /// `Builtins.reduce(iterable:initial:fn)` trampoline.
   public enum ReduceStep<Acc> {
@@ -569,30 +634,7 @@ extension PyInstance {
     return .typeError("expected \(typeName), but received a '\(object.typeName)'")
   }
 
-  public func toArray(iterable: PyObject) -> PyResult<[PyObject]> {
-    if let sequence = iterable as? PySequenceType, sequence.checkExact() {
-      return .value(sequence.data.elements)
-    }
-
-    if let bytes = iterable as? PyBytesType, bytes.checkExact() {
-      let scalars = bytes.data.scalars
-      let byteObjects = scalars.map(self.newInt)
-      return .value(byteObjects)
-    }
-
-    if let string = PyCast.asExactlyString(iterable) {
-      let scalars = string.data.scalars
-      let characterObjects = scalars.map(self.intern(scalar:))
-      return .value(characterObjects)
-    }
-
-    // For now there is no fast path for 'PyDict' and 'PySetType'
-
-    return self.reduce(iterable: iterable, into: [PyObject]()) { acc, object in
-      acc.append(object)
-      return .goToNextElement
-    }
-  }
+  // MARK: - Select key
 
   /// In various places (for example: `min`, `max`, `list.sort`) we need to
   /// 'select given key'.

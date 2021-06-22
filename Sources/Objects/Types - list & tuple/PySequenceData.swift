@@ -4,15 +4,6 @@ import VioletCore
 // swiftlint:disable file_length
 // swiftlint:disable yoda_condition
 
-internal protocol PySequenceType {
-  var data: PySequenceData { get }
-
-  /// Is this builtin `list/tuple` type?
-  ///
-  /// Will return `false` if this is a subclass.
-  func checkExact() -> Bool
-}
-
 /// Main logic for Python sequences.
 /// Used in `PyTuple` and `PyList`.
 internal struct PySequenceData {

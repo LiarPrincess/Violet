@@ -10,7 +10,7 @@ import VioletCore
 
 // sourcery: pytype = list, default, hasGC, baseType, listSubclass
 /// This subtype of PyObject represents a Python list object.
-public class PyList: PyObject, PySequenceType {
+public class PyList: PyObject {
 
   internal static let doc: String = """
     list(iterable=(), /)

@@ -1184,7 +1184,7 @@ internal struct PySequenceData {
 
 // sourcery: pytype = list, default, hasGC, baseType, listSubclass
 /// This subtype of PyObject represents a Python list object.
-public class PyList: PyObject, PySequenceType {
+public class PyList: PyObject {
 
   internal var data: PySequenceData
 
@@ -1208,7 +1208,7 @@ public class PyList: PyObject, PySequenceType {
 // sourcery: pytype = tuple, default, hasGC, baseType, tupleSubclass
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
-public class PyTuple: PyObject, PySequenceType {
+public class PyTuple: PyObject {
 
   internal let data: PySequenceData
 

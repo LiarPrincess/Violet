@@ -10,7 +10,7 @@ import VioletCore
 // sourcery: pytype = tuple, default, hasGC, baseType, tupleSubclass
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
-public class PyTuple: PyObject, PySequenceType {
+public class PyTuple: PyObject {
 
   internal static let doc: String = """
     tuple() -> an empty tuple
@@ -223,12 +223,6 @@ public class PyTuple: PyObject, PySequenceType {
     case .notImplemented:
       return .value(Py.notImplemented)
     }
-  }
-
-  // MARK: - Check exact
-
-  public func checkExact() -> Bool {
-    return self.type === Py.types.tuple
   }
 
   // MARK: - Python new
