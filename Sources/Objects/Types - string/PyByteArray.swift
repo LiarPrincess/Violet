@@ -681,14 +681,14 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = append, doc = appendDoc
   public func append(_ element: PyObject) -> PyResult<PyNone> {
-    return self.data.append(element).map { _ in Py.none }
+    return self.data.append(object: element)
   }
 
   // MARK: - Extend
 
   // sourcery: pymethod = extend
   public func extend(iterable: PyObject) -> PyResult<PyNone> {
-    return self.data.extend(iterable: iterable).map { _ in Py.none }
+    return self.data.extend(with: iterable).map { _ in Py.none }
   }
 
   // MARK: - Insert

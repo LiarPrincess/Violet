@@ -331,38 +331,23 @@ public class PyFrozenSet: PyObject, PySetType {
       return .error(e)
     }
 
-    var elementsOrNil: OrderedSet?
+    let data: PySetData
     if let iterable = args.first {
-      switch PyFrozenSet.getElements(iterable: iterable) {
-      case let .value(d): elementsOrNil = d
+      switch PySetData.from(iterable: iterable) {
+      case let .value(d): data = d
       case let .error(e): return .error(e)
       }
+    } else {
+      data = PySetData()
     }
 
-    let elements = elementsOrNil ?? OrderedSet()
+    let elements = data.elements
 
     let result: PyFrozenSet = isBuiltin ?
       Py.newFrozenSet(elements: elements) :
       PyFrozenSetHeap(type: type, elements: elements)
 
     return .value(result)
-  }
-
-  private static func getElements(iterable: PyObject) -> PyResult<OrderedSet> {
-    if let set = iterable as? PySetType, set.checkExact() {
-      return .value(set.data.elements)
-    }
-
-    let dataOrError = Py.reduce(iterable: iterable, into: PySetData()) { acc, object in
-      switch acc.insert(object: object) {
-      case .ok:
-        return .goToNextElement
-      case .error(let e):
-        return .error(e)
-      }
-    }
-
-    return dataOrError.map { $0.elements }
   }
 
   // MARK: - Helpers

@@ -2021,18 +2021,21 @@ extension PyStringImpl {
 
 extension PyStringImpl {
 
+  // >>> '@'.join(['A', 'B', 'C'])
+  // 'A@B@C'
   internal func join(iterable: PyObject) -> PyResult<Builder.Result> {
     var index = 0
-    let b = Py.reduce(iterable: iterable, into: Builder()) { builder, object in
-      let isFirst = index == 0
-      if !isFirst {
-        builder.append(contentsOf: self.scalars) // comma in ','.join([1, 2])
+    var builder = Builder()
+
+    let reduceError = Py.reduce(iterable: iterable, into: &builder) { acc, object in
+      if index > 0 {
+        acc.append(contentsOf: self.scalars) // @ in '@'.join(['A', 'B', 'C'])
       }
 
       switch Self.extractSelf(from: object) {
       case .value(let string):
+        acc.append(contentsOf: string.scalars)
         index += 1
-        builder.append(contentsOf: string.scalars)
         return .goToNextElement
       case .notSelf:
         let s = Self.typeName
@@ -2044,7 +2047,12 @@ extension PyStringImpl {
       }
     }
 
-    return b.map { $0.result }
+    if let e = reduceError {
+      return .error(e)
+    }
+
+    let result = builder.result
+    return .value(result)
   }
 }
 

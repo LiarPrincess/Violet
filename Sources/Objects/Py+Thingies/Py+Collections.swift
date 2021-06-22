@@ -553,10 +553,15 @@ extension PyInstance {
   /// Returns the result of combining the elements of the sequence
   /// using the given closure.
   ///
-  /// This method is similar to `Array.reduce(_:_:)`.
+  /// This method is similar to `Swift.Sequence.reduce(_:_:)`.
   public func reduce<Acc>(iterable: PyObject,
                           initial: Acc,
                           fn: ReduceFn<Acc>) -> PyResult<Acc> {
+    // Fast path if we are an object with known conversion.
+    if let array = self.triviallyIntoSwiftArray(iterable: iterable) {
+      return self.reduce(array: array, initial: initial, fn: fn)
+    }
+
     let iter: PyObject
     switch self.iter(object: iterable) {
     case let .value(i): iter = i
@@ -566,8 +571,8 @@ extension PyInstance {
     var acc = initial
     while true {
       switch self.next(iterator: iter) {
-      case .value(let o):
-        switch fn(acc, o) {
+      case .value(let object):
+        switch fn(acc, object) {
         case .goToNextElement: break // do nothing
         case .setAcc(let a): acc = a
         case .finish(let a): return .value(a)
@@ -582,6 +587,23 @@ extension PyInstance {
         return .error(e)
       }
     }
+  }
+
+  private func reduce<Acc>(array: [PyObject],
+                           initial: Acc,
+                           fn: ReduceFn<Acc>) -> PyResult<Acc> {
+    var acc = initial
+
+    for o in array {
+      switch fn(acc, o) {
+      case .goToNextElement: break // do nothing
+      case .setAcc(let a): acc = a
+      case .finish(let a): return .value(a)
+      case .error(let e): return .error(e)
+      }
+    }
+
+    return .value(acc)
   }
 
   // MARK: - Reduce into
@@ -602,41 +624,74 @@ extension PyInstance {
   /// Returns the result of combining the elements of the sequence
   /// using the given closure.
   ///
-  /// This method is similar to `Array.reduce(into:_:)`.
+  /// This is preferred over `reduce(iterable:initial:fn:)` for efficiency when
+  /// the result is a copy-on-write type, for example an `Array` or a `Dictionary`.
   ///
-  /// It is preferred over `reduce(_:_:)` for efficiency when the result
-  /// is a copy-on-write type, for example an `Array` or a `Dictionary`.
+  /// - Important
+  /// This is a bit different than the `Swift.Sequence.reduce(into:)`!
+  /// It will not copy  the `into` argument, but pass it directly into provided
+  /// `fn` function for modification.
+  ///
+  /// Example usage:
+  ///
+  /// ```Swift
+  /// var values = [1, 2, 3]
+  /// let reduceError = Py.reduce(iterable: iterable, into: &values) { acc, object in
+  ///   // Modify 'acc'
+  ///   // Swift non-overlapping access guarantees that 'values' are not accessible
+  /// }
+  ///
+  /// // Handle 'error' (if any) or use 'values' (now you can access them)
+  /// ```
   ///
   /// - Warning
-  /// Do not merge into `reduce(_:_:)`!
+  /// Do not merge into `Py.reduce(iterable:initial:fn:)`!
   /// I am 90% sure it will create needles copy during COW.
   public func reduce<Acc>(iterable: PyObject,
-                          into initial: Acc,
-                          fn: ReduceIntoFn<Acc>) -> PyResult<Acc> {
+                          into acc: inout Acc,
+                          fn: ReduceIntoFn<Acc>) -> PyBaseException? {
+    // Fast path if we are an object with known conversion.
+    if let array = self.triviallyIntoSwiftArray(iterable: iterable) {
+      return self.reduce(array: array, into: &acc, fn: fn)
+    }
+
     let iter: PyObject
     switch self.iter(object: iterable) {
     case let .value(i): iter = i
-    case let .error(e): return .error(e)
+    case let .error(e): return e
     }
 
-    var acc = initial
     while true {
       switch self.next(iterator: iter) {
-      case .value(let o):
-        switch fn(&acc, o) {
+      case .value(let object):
+        switch fn(&acc, object) {
         case .goToNextElement: break // mutation is our side-effect
-        case .finish: return .value(acc)
-        case .error(let e): return .error(e)
+        case .finish: return nil
+        case .error(let e): return e
         }
 
       case .error(let e):
         if e.isStopIteration {
-          return .value(acc)
+          return nil
         }
 
-        return .error(e)
+        return e
       }
     }
+  }
+
+  private func reduce<Acc>(array: [PyObject],
+                           into acc: inout Acc,
+                           fn: ReduceIntoFn<Acc>) -> PyBaseException? {
+    for object in array {
+      switch fn(&acc, object) {
+      case .goToNextElement: break // mutation is our side-effect
+      case .finish: return nil
+      case .error(let e): return e
+      }
+    }
+
+    return nil
   }
 
   // MARK: - Helpers

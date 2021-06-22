@@ -393,14 +393,8 @@ internal struct PySequenceData {
   // MARK: - Extend
 
   internal mutating func extend(iterable: PyObject) -> PyResult<PyNone> {
-    // Fast path: adding tuples, lists
-    if let sequence = iterable as? PySequenceType {
-      self.elements.append(contentsOf: sequence.data.elements)
-      return .value(Py.none)
-    }
-
-    // Slow path: iterable
-    // Do not modify `self.elements` until we finished iteration.
+    // Do not modify `self.elements` until we finished iteration!
+    // We do not want to end with half-baked product!
     switch Py.toArray(iterable: iterable) {
     case let .value(elements):
       self.elements.append(contentsOf: elements)

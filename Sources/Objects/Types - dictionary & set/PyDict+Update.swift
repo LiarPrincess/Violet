@@ -69,7 +69,8 @@ extension PyDict {
   /// Iterable of sequences with 2 elements (key and value).
   private func update(fromIterableOfPairs iterable: PyObject,
                       onKeyDuplicate: OnUpdateKeyDuplicate) -> PyResult<PyNone> {
-    let kvs = Py.reduce(iterable: iterable, into: [KeyValue]()) { acc, object in
+    var keyValues = [KeyValue]()
+    let reduceError = Py.reduce(iterable: iterable, into: &keyValues) { acc, object in
       switch self.unpackKeyValue(fromIterable: object) {
       case let .value(keyValue):
         acc.append(keyValue)
@@ -79,21 +80,19 @@ extension PyDict {
       }
     }
 
-    switch kvs {
-    case let .value(keyValues):
-      for (key, value) in keyValues {
-        if let e = self.updateSingleEntry(key: key,
-                                          value: value,
-                                          onKeyDuplicate: onKeyDuplicate) {
-          return .error(e)
-        }
-      }
-
-      return .value(Py.none)
-
-    case let .error(e):
+    if let e = reduceError {
       return .error(e)
     }
+
+    for (key, value) in keyValues {
+      if let e = self.updateSingleEntry(key: key,
+                                        value: value,
+                                        onKeyDuplicate: onKeyDuplicate) {
+        return .error(e)
+      }
+    }
+
+    return .value(Py.none)
   }
 
   /// Given iterable of 2 elements it will return
@@ -102,12 +101,12 @@ extension PyDict {
     switch Py.toArray(iterable: iterable) {
     case let .value(array):
       guard array.count == 2 else {
-        let l = array.count
-        let msg = "dictionary update sequence element has length \(l); 2 is required"
+        let msg = "dictionary update sequence element has length \(array.count); 2 is required"
         return .valueError(msg)
       }
 
-      return Self.createKey(from: array[0]).map { ($0, array[1]) }
+      let key = Self.createKey(from: array[0])
+      return key.map { ($0, array[1]) }
 
     case let .error(e):
       return .error(e)

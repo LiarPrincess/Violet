@@ -30,8 +30,57 @@ internal struct PySetData {
     self.elements = OrderedSet()
   }
 
+  internal init(count: Int) {
+    self.elements = OrderedSet(count: count)
+  }
+
   internal init(elements: OrderedSet) {
     self.elements = elements
+  }
+
+  // MARK: - Factory
+
+  internal static func from(iterable: PyObject) -> PyResult<PySetData> {
+    // Fast path for sets (since they already have hashed elements)
+    if let set = iterable as? PySetType, set.checkExact() {
+      return .value(set.data)
+    }
+
+    // Fast path for dictionaries (same reason as above)
+    if let dict = PyCast.asExactlyDict(iterable) {
+      // Init with 'count', so that we don't have to resize later
+      var result = PySetData(count: dict.elements.count)
+
+      for entry in dict.elements {
+        let key = entry.key
+        let element = Element(hash: key.hash, object: key.object)
+
+        switch result.insert(element: element) {
+        case .ok:
+          break // go to next element
+        case .error(let e):
+          return .error(e)
+        }
+      }
+
+      return .value(result)
+    }
+
+    var result = PySetData()
+    let reduceError = Py.reduce(iterable: iterable, into: &result) { acc, object in
+      switch acc.insert(object: object) {
+      case .ok:
+        return .goToNextElement
+      case .error(let e):
+        return .error(e)
+      }
+    }
+
+    if let e = reduceError {
+      return .error(e)
+    }
+
+    return .value(result)
   }
 
   // MARK: - Equatable
@@ -234,7 +283,8 @@ internal struct PySetData {
   // MARK: - Subset
 
   internal func isSubset(of other: PyObject) -> PyResult<Bool> {
-    return self.makeSet(from: other).flatMap(self.isSubset(of:))
+    let set = PySetData.from(iterable: other)
+    return set.flatMap(self.isSubset(of:))
   }
 
   private func isSubset(of other: PySetData) -> PyResult<Bool> {
@@ -256,7 +306,8 @@ internal struct PySetData {
   // MARK: - Superset
 
   internal func isSuperset(of other: PyObject) -> PyResult<Bool> {
-    return self.makeSet(from: other).flatMap(self.isSuperset(of:))
+    let set = PySetData.from(iterable: other)
+    return set.flatMap(self.isSuperset(of:))
   }
 
   private func isSuperset(of other: PySetData) -> PyResult<Bool> {
@@ -266,7 +317,8 @@ internal struct PySetData {
   // MARK: - Intersection
 
   internal func intersection(with other: PyObject) -> PyResult<PySetData> {
-    return self.makeSet(from: other).flatMap(self.intersection(with:))
+    let set = PySetData.from(iterable: other)
+    return set.flatMap(self.intersection(with:))
   }
 
   private func intersection(with other: PySetData) -> PyResult<PySetData> {
@@ -293,7 +345,8 @@ internal struct PySetData {
   // MARK: - Union
 
   internal func union(with other: PyObject) -> PyResult<PySetData> {
-    return self.makeSet(from: other).flatMap(self.union(with:))
+    let set = PySetData.from(iterable: other)
+    return set.flatMap(self.union(with:))
   }
 
   private func union(with other: PySetData) -> PyResult<PySetData> {
@@ -315,7 +368,8 @@ internal struct PySetData {
   // MARK: - Difference
 
   internal func difference(with other: PyObject) -> PyResult<PySetData> {
-    return self.makeSet(from: other).flatMap(self.difference(with:))
+    let set = PySetData.from(iterable: other)
+    return set.flatMap(self.difference(with:))
   }
 
   private func difference(with other: PySetData) -> PyResult<PySetData> {
@@ -341,7 +395,8 @@ internal struct PySetData {
   // MARK: - Symmetric difference
 
   internal func symmetricDifference(with other: PyObject) -> PyResult<PySetData> {
-    return self.makeSet(from: other).flatMap(self.symmetricDifference(with:))
+    let set = PySetData.from(iterable: other)
+    return set.flatMap(self.symmetricDifference(with:))
   }
 
   private func symmetricDifference(with other: PySetData) -> PyResult<PySetData> {
@@ -381,7 +436,8 @@ internal struct PySetData {
   // MARK: - Is disjoint
 
   internal func isDisjoint(with other: PyObject) -> PyResult<Bool> {
-    return self.makeSet(from: other).flatMap(self.isDisjoint(with:))
+    let set = PySetData.from(iterable: other)
+    return set.flatMap(self.isDisjoint(with:))
   }
 
   private func isDisjoint(with other: PySetData) -> PyResult<Bool> {
@@ -429,9 +485,9 @@ internal struct PySetData {
   // MARK: - Add
 
   /// Implementation of Python method `add`.
-  /// Basically, the same as `self.insert(obejct)`, but will convert result to `None`.
+  /// Basically, the same as `self.insert(object)`, but will convert result to `None`.
   ///
-  /// Most of the time you want to use `self.insert(obejct)`.
+  /// Most of the time you want to use `self.insert(object)`.
   internal mutating func add(object: PyObject) -> PyResult<PyNone> {
     let result = self.insert(object: object)
     switch result {
@@ -454,7 +510,7 @@ internal struct PySetData {
       return self.update(fromDict: dict)
     }
 
-    let result = Py.reduce(iterable: other, initial: 0) { _, object in
+    let result = Py.reduce(iterable: other, initial: ()) { _, object in
       switch self.insert(object: object) {
       case .ok: return .goToNextElement
       case .error(let e): return .error(e)
@@ -482,6 +538,7 @@ internal struct PySetData {
     for entry in other.elements {
       let key = entry.key
       let element = Element(hash: key.hash, object: key.object)
+
       switch self.insert(element: element) {
       case .ok: break
       case .error(let e): return .error(e)
@@ -552,38 +609,6 @@ internal struct PySetData {
   }
 
   // MARK: - Helpers
-
-  private func makeSet(from other: PyObject) -> PyResult<PySetData> {
-    if let set = other as? PySetType, set.checkExact() {
-      return .value(set.data)
-    }
-
-    // Fast path for dictionaries (since they already have hashed elements)
-    if let dict = PyCast.asExactlyDict(other) {
-      // Init 'elements' with size, so that we don't have to resize later
-      var result = OrderedSet(count: dict.elements.count)
-
-      for entry in dict.elements {
-        let key = entry.key
-        let element = Element(hash: key.hash, object: key.object)
-
-        switch result.insert(element: element) {
-        case .inserted,
-             .updated: break
-        case .error(let e): return .error(e)
-        }
-      }
-
-      return .value(PySetData(elements: result))
-    }
-
-    return Py.reduce(iterable: other, into: PySetData()) { acc, object in
-      switch acc.insert(object: object) {
-      case .ok: return .goToNextElement
-      case .error(let e): return .error(e)
-      }
-    }
-  }
 
   private func createElement(from object: PyObject) -> PyResult<Element> {
     switch Py.hash(object: object) {

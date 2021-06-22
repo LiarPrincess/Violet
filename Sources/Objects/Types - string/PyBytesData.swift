@@ -55,6 +55,35 @@ internal struct PyBytesData: PyStringImpl {
     self.values = values
   }
 
+  // MARK: - Factory
+
+  internal static func from(iterable: PyObject) -> PyResult<PyBytesData> {
+    // Fast path: bytes
+    switch Self.extractSelf(from: iterable) {
+    case .value(let bytesData):
+      return .value(bytesData)
+    case .notSelf:
+      break // Try other
+    case .error(let e):
+      return .error(e)
+    }
+
+    // Slow path: iterable
+    var result = PyBytesData()
+    let reduceError = Py.reduce(iterable: iterable, into: &result) { acc, object in
+      switch acc.append(object: object) {
+      case .value: return .goToNextElement
+      case .error(let e): return .error(e)
+      }
+    }
+
+    if let e = reduceError {
+      return .error(e)
+    }
+
+    return .value(result)
+  }
+
   // MARK: PyStringImpl
 
   internal typealias Scalars = Data
@@ -236,49 +265,36 @@ internal struct PyBytesData: PyStringImpl {
 
   // MARK: - Append
 
-  internal mutating func append(_ value: PyObject) -> PyResult<Void> {
-    switch PyBytesData.asByte(value) {
-    case let .value(b):
-      self.values.append(b)
-      return .value()
+  internal mutating func append(object: PyObject) -> PyResult<PyNone> {
+    switch PyBytesData.asByte(object) {
+    case let .value(byte):
+      self.append(element: byte)
+      return .value(Py.none)
     case let .error(e):
       return .error(e)
     }
   }
 
+  internal mutating func append(element: UInt8) {
+    self.values.append(element)
+  }
+
   // MARK: - Extend
 
-  internal mutating func extend(iterable: PyObject) -> PyResult<Void> {
-    // Fast path: adding bytes
-    switch Self.extractSelf(from: iterable) {
-    case .value(let bytes):
-      self.values.append(contentsOf: bytes.scalars)
-      return .value()
-    case .notSelf:
-      break // Try other
-    case .error(let e):
-      return .error(e)
-    }
-
-    // Slow path: iterable
+  internal mutating func extend(with iterable: PyObject) -> PyResult<PyNone> {
     // Do not modify `self.values` until we finished iteration.
-    let d = Py.reduce(iterable: iterable, into: Data()) { acc, object in
-      switch Self.asByte(object) {
-      case let .value(byte):
-        acc.append(byte)
-        return .goToNextElement
-      case let .error(e):
-        return .error(e)
-      }
-    }
-
-    switch d {
+    let dataResult = PyBytesData.from(iterable: iterable)
+    switch dataResult {
     case let .value(data):
-      self.values.append(contentsOf: data)
-      return .value()
+      self.extend(with: data)
+      return .value(Py.none)
     case let .error(e):
       return .error(e)
     }
+  }
+
+  internal mutating func extend(with data: PyBytesData) {
+    self.values.append(data.scalars)
   }
 
   // MARK: - Insert
@@ -404,7 +420,9 @@ internal struct PyBytesData: PyStringImpl {
     }
 
     fileprivate static func getElements(object: PyObject) -> PyResult<[UInt8]> {
-      return Py.reduce(iterable: object, into: []) { acc, object in
+      var result = [UInt8]()
+
+      let reduceError = Py.reduce(iterable: object, into: &result) { acc, object in
         switch SetItemImpl.getElement(object: object) {
         case let .value(i):
           acc.append(i)
@@ -413,6 +431,12 @@ internal struct PyBytesData: PyStringImpl {
           return .error(e)
         }
       }
+
+      if let e = reduceError {
+        return .error(e)
+      }
+
+      return .value(result)
     }
   }
 
@@ -605,38 +629,23 @@ internal struct PyBytesData: PyStringImpl {
       return .bytes(bytes.data.values)
     }
 
-    if let sequence = iterable as? PySequenceType, sequence.checkExact() {
-      var result = Data()
-      result.reserveCapacity(sequence.data.count)
+    var result = Data()
 
-      for element in sequence.data.elements {
-        switch PyBytesData.asByte(element) {
-        case let .value(byte):
-          result.append(byte)
-        case let .error(e):
-          return .error(e)
-        }
-      }
-
-      return .bytes(result)
-    }
-
-    let acc = Py.reduce(iterable: iterable, into: Data()) { data, object in
+    let reduceError = Py.reduce(iterable: iterable, into: &result) { acc, object in
       switch PyBytesData.asByte(object) {
       case let .value(byte):
-        data.append(byte)
+        acc.append(byte)
         return .goToNextElement
       case let .error(e):
         return .error(e)
       }
     }
 
-    switch acc {
-    case let .value(data):
-      return .bytes(data)
-    case let .error(e):
+    if let e = reduceError {
       return .error(e)
     }
+
+    return .bytes(result)
   }
 
   // MARK: - Helpers
