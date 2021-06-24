@@ -64,7 +64,7 @@ extension Eval {
     let element = self.stack.pop()
     let set = self.stack.peek(stackIndex)
 
-    switch Py.add(set: set, value: element) {
+    switch Py.add(set: set, element: element) {
     case .value:
       return .ok
     case let .error(e):

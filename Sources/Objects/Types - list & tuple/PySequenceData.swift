@@ -264,8 +264,8 @@ internal struct PySequenceData {
 
   // MARK: - Count
 
-  internal func count(element: PyObject) -> PyResult<Int> {
-    var result = 0
+  internal func count(element: PyObject) -> PyResult<BigInt> {
+    var result = BigInt()
 
     for e in self.elements {
       switch Py.isEqualBool(left: e, right: element) {

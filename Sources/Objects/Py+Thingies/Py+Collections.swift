@@ -25,24 +25,40 @@ extension PyInstance {
   }
 
   /// PyObject * PyList_AsTuple(PyObject *v)
-  public func newTuple(list object: PyObject) -> PyResult<PyTuple> {
-    return self.cast(object, as: PyList.self, typeName: "list")
-      .map { self.newTuple($0.elements) }
+  public func newTuple(fromList object: PyObject) -> PyResult<PyTuple> {
+    guard let list = PyCast.asList(object) else {
+      let e = self.unexpectedCollectionTypeError(expected: "list", got: object)
+      return .error(e)
+    }
+
+    let result = self.newTuple(fromList: list)
+    return .value(result)
+  }
+
+  public func newTuple(fromList list: PyList) -> PyTuple {
+    return self.newTuple(elements: list.elements)
   }
 
   public func newTuple(iterable: PyObject) -> PyResult<PyTuple> {
     return self.toArray(iterable: iterable).map(self.newTuple)
   }
 
+  private func unexpectedCollectionTypeError(expected: String,
+                                             got: PyObject) -> PyTypeError {
+    let gotType = got.typeName
+    let msg = "expected \(expected), but received a '\(gotType)'"
+    return Py.newTypeError(msg: msg)
+  }
+
   // MARK: - List
 
   /// PyObject * PyList_New(Py_ssize_t size)
-  public func newList(_ elements: PyObject...) -> PyList {
-    return self.newList(elements)
+  public func newList(elements: PyObject...) -> PyList {
+    return self.newList(elements: elements)
   }
 
   /// PyObject * PyList_New(Py_ssize_t size)
-  public func newList(_ elements: [PyObject]) -> PyList {
+  public func newList(elements: [PyObject]) -> PyList {
     return PyMemory.newList(elements: elements)
   }
 
@@ -52,15 +68,24 @@ extension PyInstance {
 
   /// int PyList_Append(PyObject *op, PyObject *newitem)
   public func add(list object: PyObject, element: PyObject) -> PyResult<PyNone> {
-    return self.cast(object, as: PyList.self, typeName: "list")
-      .flatMap { $0.append(element) }
+    guard let list = PyCast.asList(object) else {
+      let e = self.unexpectedCollectionTypeError(expected: "list", got: object)
+      return .error(e)
+    }
+
+    self.add(list: list, element: element)
+    return .value(Py.none)
+  }
+
+  public func add(list: PyList, element: PyObject) {
+    list.append(element)
   }
 
   // MARK: - Set
 
   public func newSet() -> PySet {
     let elements = PySet.OrderedSet()
-    return PyMemory.newSet(elements: elements)
+    return self.newSet(elements: elements)
   }
 
   public func newSet(elements: PySet.OrderedSet) -> PySet {
@@ -69,33 +94,38 @@ extension PyInstance {
 
   /// PyObject * PySet_New(PyObject *iterable)
   public func newSet(elements args: [PyObject]) -> PyResult<PySet> {
-    let elements = self.crateSetElements(from: args)
+    let elements = self.asSetElements(args: args)
     return elements.map(self.newSet(elements:))
   }
 
-  /// int PySet_Add(PyObject *anyset, PyObject *key)
-  public func add(set object: PyObject, value: PyObject) -> PyResult<PyNone> {
-    return self.cast(object, as: PySet.self, typeName: "set")
-      .flatMap { $0.add(value) }
-  }
-
-  private func crateSetElements(from args: [PyObject]) -> PyResult<PySet.OrderedSet> {
-    var result = PySet.OrderedSet()
+  private func asSetElements(args: [PyObject]) -> PyResult<PySet.OrderedSet> {
+    var data = PySetData()
 
     for object in args {
-      switch self.hash(object: object) {
-      case let .value(hash):
-        let element = PySet.Element(hash: hash, object: object)
-        switch result.insert(element: element) {
-        case .inserted, .updated: break
-        case .error(let e): return .error(e)
-        }
-      case let .error(e):
+      switch data.insert(object: object) {
+      case .ok:
+        break
+      case .error(let e):
         return .error(e)
       }
     }
 
+    let result = data.elements
     return .value(result)
+  }
+
+  /// int PySet_Add(PyObject *anyset, PyObject *key)
+  public func add(set object: PyObject, element: PyObject) -> PyResult<PyNone> {
+    guard let set = PyCast.asSet(object) else {
+      let e = self.unexpectedCollectionTypeError(expected: "set", got: object)
+      return .error(e)
+    }
+
+    return self.add(set: set, element: element)
+  }
+
+  public func add(set: PySet, element: PyObject) -> PyResult<PyNone> {
+    return set.add(element)
   }
 
   // MARK: - Frozen set
@@ -111,7 +141,7 @@ extension PyInstance {
   }
 
   public func newFrozenSet(elements args: [PyObject]) -> PyResult<PyFrozenSet> {
-    let elements = self.crateSetElements(from: args)
+    let elements = self.asSetElements(args: args)
     return elements.map(self.newFrozenSet(elements:))
   }
 
@@ -119,7 +149,7 @@ extension PyInstance {
 
   public func newDict() -> PyDict {
     let elements = PyDict.OrderedDictionary()
-    return PyMemory.newDict(elements: elements)
+    return self.newDict(elements: elements)
   }
 
   public func newDict(elements: PyDict.OrderedDictionary) -> PyDict {
@@ -137,23 +167,19 @@ extension PyInstance {
   }
 
   public func newDict(elements: [DictionaryElement]) -> PyResult<PyDict> {
-    var result = PyDict.OrderedDictionary()
+    let result = self.newDict()
 
     for element in elements {
-      switch self.hash(object: element.key) {
-      case let .value(hash):
-        let key = PyDict.Key(hash: hash, object: element.key)
-        switch result.insert(key: key, value: element.value) {
-        case .inserted, .updated: break
-        case .error(let e): return .error(e)
-        }
-      case let .error(e):
+      let setResult = result.set(key: element.key, to: element.value)
+      switch setResult {
+      case .ok:
+        break
+      case .error(let e):
         return .error(e)
       }
     }
 
-    let dict = self.newDict(elements: result)
-    return .value(dict)
+    return .value(result)
   }
 
   public func newDict(keys: PyTuple, elements: [PyObject]) -> PyResult<PyDict> {
@@ -189,16 +215,21 @@ extension PyInstance {
   public func add(dict object: PyObject,
                   key: PyObject,
                   value: PyObject) -> PyResult<PyNone> {
-    switch self.cast(object, as: PyDict.self, typeName: "dict") {
-    case let .value(dict):
-      switch dict.set(key: key, to: value) {
-      case .ok:
-        return .value(self.none)
-      case .error(let e):
-        return .error(e)
-      }
+    guard let dict = PyCast.asDict(object) else {
+      let e = self.unexpectedCollectionTypeError(expected: "dict", got: object)
+      return .error(e)
+    }
 
-    case let .error(e):
+    return self.add(dict: dict, key: key, value: value)
+  }
+
+  public func add(dict: PyDict,
+                  key: PyObject,
+                  value: PyObject) -> PyResult<PyNone> {
+    switch dict.set(key: key, to: value) {
+    case .ok:
+      return .value(Py.none)
+    case .error(let e):
       return .error(e)
     }
   }
@@ -235,7 +266,8 @@ extension PyInstance {
   }
 
   public func newRange(stop: PyInt) -> PyResult<PyRange> {
-    return self.newRange(start: self.newInt(0), stop: stop, step: nil)
+    let start = self.newInt(0)
+    return self.newRange(start: start, stop: stop, step: nil)
   }
 
   public func newRange(stop: PyObject) -> PyResult<PyRange> {
@@ -692,18 +724,6 @@ extension PyInstance {
     }
 
     return nil
-  }
-
-  // MARK: - Helpers
-
-  private func cast<T>(_ object: PyObject,
-                       as type: T.Type,
-                       typeName: String) -> PyResult<T> {
-    if let v = object as? T {
-      return .value(v)
-    }
-
-    return .typeError("expected \(typeName), but received a '\(object.typeName)'")
   }
 
   // MARK: - Select key

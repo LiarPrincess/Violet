@@ -224,7 +224,7 @@ public class PyDict: PyObject {
   public func get(id: IdString) -> PyObject? {
     let key = Key(id: id)
 
-    switch self.elements.get(key: key) {
+    switch self.get(key: key) {
     case .value(let o):
       return o
     case .notFound:
@@ -270,9 +270,8 @@ public class PyDict: PyObject {
   public func set(id: IdString, to value: PyObject) {
     let key = Key(id: id)
 
-    switch self.elements.insert(key: key, value: value) {
-    case .inserted,
-         .updated:
+    switch self.set(key: key, to: value) {
+    case .ok:
       break
     case .error(let e):
       self.idErrorNotHandled(operation: "set", error: e)
@@ -309,7 +308,7 @@ public class PyDict: PyObject {
   public func del(id: IdString) -> PyObject? {
     let key = Key(id: id)
 
-    switch self.elements.remove(key: key) {
+    switch self.del(key: key) {
     case .value(let o):
       return o
     case .notFound:
@@ -539,7 +538,7 @@ public class PyDict: PyObject {
   ///
   /// If `key` is in the dictionary, return its value.
   /// If not, insert key with a value of `default` and return `default`.
-  /// `default` defaults to None.
+  /// `default` defaults to `None`.
   public func setWithDefault(index: PyObject,
                              default: PyObject?) -> PyResult<PyObject> {
     let key: Key
@@ -568,12 +567,15 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = __contains__
   public func contains(element: PyObject) -> PyResult<Bool> {
-    let key: Key
     switch Self.createKey(from: element) {
-    case let .value(v): key = v
-    case let .error(e): return .error(e)
+    case let .value(key):
+      return self.contains(key: key)
+    case let .error(e):
+      return .error(e)
     }
+  }
 
+  public func contains(key: Key) -> PyResult<Bool> {
     return self.elements.contains(key: key)
   }
 
@@ -581,7 +583,7 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = __iter__
   public func iter() -> PyObject {
-    return PyDictKeyIterator(dict: self)
+    return PyMemory.newDictKeyIterator(dict: self)
   }
 
   // MARK: - Clear
@@ -608,6 +610,7 @@ public class PyDict: PyObject {
       return .error(e)
     }
 
+    // Specific 'update' methods are in different file
     if let arg = args.first {
       switch self.update(from: arg, onKeyDuplicate: .continue) {
       case .value: break
@@ -642,8 +645,7 @@ public class PyDict: PyObject {
     """
 
   // sourcery: pymethod = pop, doc = popDoc
-  public func pop(_ index: PyObject,
-                  default: PyObject?) -> PyResult<PyObject> {
+  public func pop(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> {
     let key: Key
     switch Self.createKey(from: index) {
     case let .value(v): key = v

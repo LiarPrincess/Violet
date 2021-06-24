@@ -154,7 +154,7 @@ public class PyTuple: PyObject {
 
   // sourcery: pymethod = count
   internal func count(element: PyObject) -> PyResult<BigInt> {
-    return self.data.count(element: element).map(BigInt.init)
+    return self.data.count(element: element)
   }
 
   // MARK: - Index of
@@ -206,18 +206,20 @@ public class PyTuple: PyObject {
 
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.mulResult(self.data.mul(count: other))
+    let result = self.data.mul(count: other)
+    return self.handle(mulResult: result)
   }
 
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.mulResult(self.data.rmul(count: other))
+    let result = self.data.rmul(count: other)
+    return self.handle(mulResult: result)
   }
 
-  private func mulResult(_ result: PySequenceData.MulResult) -> PyResult<PyObject> {
-    switch result {
+  private func handle(mulResult: PySequenceData.MulResult) -> PyResult<PyObject> {
+    switch mulResult {
     case .value(let elements):
-      return .value(Py.newTuple(elements))
+      return .value(Py.newTuple(elements: elements))
     case .error(let e):
       return .error(e)
     case .notImplemented:

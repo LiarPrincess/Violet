@@ -162,7 +162,7 @@ public class PyList: PyObject {
 
   // sourcery: pymethod = count
   internal func count(element: PyObject) -> PyResult<BigInt> {
-    return self.data.count(element: element).map(BigInt.init)
+    return self.data.count(element: element)
   }
 
   // MARK: - Index
@@ -197,9 +197,8 @@ public class PyList: PyObject {
   // MARK: - Append
 
   // sourcery: pymethod = append
-  internal func append(_ element: PyObject) -> PyResult<PyNone> {
+  internal func append(_ element: PyObject) {
     self.data.append(element)
-    return .value(Py.none)
   }
 
   // MARK: - Insert
@@ -337,12 +336,25 @@ public class PyList: PyObject {
 
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.mulResult(self.data.mul(count: other))
+    let result = self.data.mul(count: other)
+    return self.handle(mulResult: result)
   }
 
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.mulResult(self.data.rmul(count: other))
+    let result = self.data.rmul(count: other)
+    return self.handle(mulResult: result)
+  }
+
+  private func handle(mulResult: PySequenceData.MulResult) -> PyResult<PyObject> {
+    switch mulResult {
+    case .value(let elements):
+      return .value(Py.newList(elements: elements))
+    case .error(let e):
+      return .error(e)
+    case .notImplemented:
+      return .value(Py.notImplemented)
+    }
   }
 
   // sourcery: pymethod = __imul__
@@ -356,23 +368,6 @@ public class PyList: PyObject {
     case .error(let e):
       return .error(e)
     }
-  }
-
-  private func mulResult(_ result: PySequenceData.MulResult) -> PyResult<PyObject> {
-    switch result {
-    case .value(let elements):
-      return .value(Py.newList(elements))
-    case .error(let e):
-      return .error(e)
-    case .notImplemented:
-      return .value(Py.notImplemented)
-    }
-  }
-
-  // MARK: - Check exact
-
-  public func checkExact() -> Bool {
-    return self.type === Py.types.list
   }
 
   // MARK: - Python new
