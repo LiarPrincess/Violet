@@ -74,6 +74,10 @@ internal struct FunctionWrapper {
   case self_ObjectOpt_to_Result(Self_ObjectOpt_to_Result)
   /// `(Zelf, PyObject?) -> Void`
   case self_ObjectOpt_to_Void(Self_ObjectOpt_to_Void)
+  /// `(PyObject?, PyObject?) -> PyFunctionResultConvertible`
+  case objectOpt_ObjectOpt_to_Result(ObjectOpt_ObjectOpt_to_Result)
+  /// `(PyObject?, PyObject?) -> Void`
+  case objectOpt_ObjectOpt_to_Void(ObjectOpt_ObjectOpt_to_Void)
   /// `(Zelf) -> (PyObject) -> PyFunctionResultConvertible`
   case self_then_Object_to_Result(Self_then_Object_to_Result)
   /// `(Zelf) -> (PyObject) -> Void`
@@ -126,6 +130,10 @@ internal struct FunctionWrapper {
   case object_ObjectOpt_ObjectOpt_to_Result(Object_ObjectOpt_ObjectOpt_to_Result)
   /// `(PyObject, PyObject?, PyObject?) -> Void`
   case object_ObjectOpt_ObjectOpt_to_Void(Object_ObjectOpt_ObjectOpt_to_Void)
+  /// `(PyObject?, PyObject?, PyObject?) -> PyFunctionResultConvertible`
+  case objectOpt_ObjectOpt_ObjectOpt_to_Result(ObjectOpt_ObjectOpt_ObjectOpt_to_Result)
+  /// `(PyObject?, PyObject?, PyObject?) -> Void`
+  case objectOpt_ObjectOpt_ObjectOpt_to_Void(ObjectOpt_ObjectOpt_ObjectOpt_to_Void)
   /// `(Zelf) -> (PyObject, PyObject, PyObject) -> PyFunctionResultConvertible`
   case self_then_Object_Object_Object_to_Result(Self_then_Object_Object_Object_to_Result)
   /// `(Zelf) -> (PyObject, PyObject, PyObject) -> Void`
@@ -142,6 +150,26 @@ internal struct FunctionWrapper {
   case self_then_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(Self_then_ObjectOpt_ObjectOpt_ObjectOpt_to_Result)
   /// `(Zelf) -> (PyObject?, PyObject?, PyObject?) -> Void`
   case self_then_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(Self_then_ObjectOpt_ObjectOpt_ObjectOpt_to_Void)
+  /// `(PyObject, PyObject, PyObject, PyObject) -> PyFunctionResultConvertible`
+  case object_Object_Object_Object_to_Result(Object_Object_Object_Object_to_Result)
+  /// `(PyObject, PyObject, PyObject, PyObject) -> Void`
+  case object_Object_Object_Object_to_Void(Object_Object_Object_Object_to_Void)
+  /// `(PyObject, PyObject, PyObject, PyObject?) -> PyFunctionResultConvertible`
+  case object_Object_Object_ObjectOpt_to_Result(Object_Object_Object_ObjectOpt_to_Result)
+  /// `(PyObject, PyObject, PyObject, PyObject?) -> Void`
+  case object_Object_Object_ObjectOpt_to_Void(Object_Object_Object_ObjectOpt_to_Void)
+  /// `(PyObject, PyObject, PyObject?, PyObject?) -> PyFunctionResultConvertible`
+  case object_Object_ObjectOpt_ObjectOpt_to_Result(Object_Object_ObjectOpt_ObjectOpt_to_Result)
+  /// `(PyObject, PyObject, PyObject?, PyObject?) -> Void`
+  case object_Object_ObjectOpt_ObjectOpt_to_Void(Object_Object_ObjectOpt_ObjectOpt_to_Void)
+  /// `(PyObject, PyObject?, PyObject?, PyObject?) -> PyFunctionResultConvertible`
+  case object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result)
+  /// `(PyObject, PyObject?, PyObject?, PyObject?) -> Void`
+  case object_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Void)
+  /// `(PyObject?, PyObject?, PyObject?, PyObject?) -> PyFunctionResultConvertible`
+  case objectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result)
+  /// `(PyObject?, PyObject?, PyObject?, PyObject?) -> Void`
+  case objectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Void)
   }
 
   // MARK: - Cast self
@@ -177,6 +205,8 @@ internal struct FunctionWrapper {
     case let .self_Object_to_Void(w): return w.fnName
     case let .self_ObjectOpt_to_Result(w): return w.fnName
     case let .self_ObjectOpt_to_Void(w): return w.fnName
+    case let .objectOpt_ObjectOpt_to_Result(w): return w.fnName
+    case let .objectOpt_ObjectOpt_to_Void(w): return w.fnName
     case let .self_then_Object_to_Result(w): return w.fnName
     case let .self_then_Object_to_Void(w): return w.fnName
     case let .self_then_ObjectOpt_to_Result(w): return w.fnName
@@ -203,6 +233,8 @@ internal struct FunctionWrapper {
     case let .object_Object_ObjectOpt_to_Void(w): return w.fnName
     case let .object_ObjectOpt_ObjectOpt_to_Result(w): return w.fnName
     case let .object_ObjectOpt_ObjectOpt_to_Void(w): return w.fnName
+    case let .objectOpt_ObjectOpt_ObjectOpt_to_Result(w): return w.fnName
+    case let .objectOpt_ObjectOpt_ObjectOpt_to_Void(w): return w.fnName
     case let .self_then_Object_Object_Object_to_Result(w): return w.fnName
     case let .self_then_Object_Object_Object_to_Void(w): return w.fnName
     case let .self_then_Object_Object_ObjectOpt_to_Result(w): return w.fnName
@@ -211,6 +243,16 @@ internal struct FunctionWrapper {
     case let .self_then_Object_ObjectOpt_ObjectOpt_to_Void(w): return w.fnName
     case let .self_then_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(w): return w.fnName
     case let .self_then_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(w): return w.fnName
+    case let .object_Object_Object_Object_to_Result(w): return w.fnName
+    case let .object_Object_Object_Object_to_Void(w): return w.fnName
+    case let .object_Object_Object_ObjectOpt_to_Result(w): return w.fnName
+    case let .object_Object_Object_ObjectOpt_to_Void(w): return w.fnName
+    case let .object_Object_ObjectOpt_ObjectOpt_to_Result(w): return w.fnName
+    case let .object_Object_ObjectOpt_ObjectOpt_to_Void(w): return w.fnName
+    case let .object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(w): return w.fnName
+    case let .object_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(w): return w.fnName
+    case let .objectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(w): return w.fnName
+    case let .objectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(w): return w.fnName
     }
   }
 
@@ -236,6 +278,8 @@ internal struct FunctionWrapper {
     case let .self_Object_to_Void(w): return w.call(args: args, kwargs: kwargs)
     case let .self_ObjectOpt_to_Result(w): return w.call(args: args, kwargs: kwargs)
     case let .self_ObjectOpt_to_Void(w): return w.call(args: args, kwargs: kwargs)
+    case let .objectOpt_ObjectOpt_to_Result(w): return w.call(args: args, kwargs: kwargs)
+    case let .objectOpt_ObjectOpt_to_Void(w): return w.call(args: args, kwargs: kwargs)
     case let .self_then_Object_to_Result(w): return w.call(args: args, kwargs: kwargs)
     case let .self_then_Object_to_Void(w): return w.call(args: args, kwargs: kwargs)
     case let .self_then_ObjectOpt_to_Result(w): return w.call(args: args, kwargs: kwargs)
@@ -262,6 +306,8 @@ internal struct FunctionWrapper {
     case let .object_Object_ObjectOpt_to_Void(w): return w.call(args: args, kwargs: kwargs)
     case let .object_ObjectOpt_ObjectOpt_to_Result(w): return w.call(args: args, kwargs: kwargs)
     case let .object_ObjectOpt_ObjectOpt_to_Void(w): return w.call(args: args, kwargs: kwargs)
+    case let .objectOpt_ObjectOpt_ObjectOpt_to_Result(w): return w.call(args: args, kwargs: kwargs)
+    case let .objectOpt_ObjectOpt_ObjectOpt_to_Void(w): return w.call(args: args, kwargs: kwargs)
     case let .self_then_Object_Object_Object_to_Result(w): return w.call(args: args, kwargs: kwargs)
     case let .self_then_Object_Object_Object_to_Void(w): return w.call(args: args, kwargs: kwargs)
     case let .self_then_Object_Object_ObjectOpt_to_Result(w): return w.call(args: args, kwargs: kwargs)
@@ -270,6 +316,16 @@ internal struct FunctionWrapper {
     case let .self_then_Object_ObjectOpt_ObjectOpt_to_Void(w): return w.call(args: args, kwargs: kwargs)
     case let .self_then_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(w): return w.call(args: args, kwargs: kwargs)
     case let .self_then_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(w): return w.call(args: args, kwargs: kwargs)
+    case let .object_Object_Object_Object_to_Result(w): return w.call(args: args, kwargs: kwargs)
+    case let .object_Object_Object_Object_to_Void(w): return w.call(args: args, kwargs: kwargs)
+    case let .object_Object_Object_ObjectOpt_to_Result(w): return w.call(args: args, kwargs: kwargs)
+    case let .object_Object_Object_ObjectOpt_to_Void(w): return w.call(args: args, kwargs: kwargs)
+    case let .object_Object_ObjectOpt_ObjectOpt_to_Result(w): return w.call(args: args, kwargs: kwargs)
+    case let .object_Object_ObjectOpt_ObjectOpt_to_Void(w): return w.call(args: args, kwargs: kwargs)
+    case let .object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(w): return w.call(args: args, kwargs: kwargs)
+    case let .object_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(w): return w.call(args: args, kwargs: kwargs)
+    case let .objectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(w): return w.call(args: args, kwargs: kwargs)
+    case let .objectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(w): return w.call(args: args, kwargs: kwargs)
     }
   }
 
@@ -897,6 +953,108 @@ internal struct FunctionWrapper {
   ) {
     let wrapper = Self_ObjectOpt_to_Void(name: name, fn: fn, castSelf: castSelf)
     self.kind = .self_ObjectOpt_to_Void(wrapper)
+  }
+
+  // MARK: - (PyObject?, PyObject?) -> PyFunctionResultConvertible
+
+  /// Positional binary: tuple of 2 `objects` (both optional).
+  ///
+  /// `(PyObject?, PyObject?) -> PyFunctionResultConvertible`
+  internal typealias ObjectOpt_ObjectOpt_to_Result_Fn<R: PyFunctionResultConvertible> = (PyObject?, PyObject?) -> R
+
+  internal struct ObjectOpt_ObjectOpt_to_Result {
+    fileprivate let fnName: String
+    private let fn: (PyObject?, PyObject?) -> PyFunctionResult
+
+    fileprivate init<R: PyFunctionResultConvertible>(
+      name: String,
+      fn: @escaping ObjectOpt_ObjectOpt_to_Result_Fn<R>
+    ) {
+        self.fnName = name
+        self.fn = { (arg0: PyObject?, arg1: PyObject?) -> PyFunctionResult in
+          // This function returns 'R'
+          let result = fn(arg0, arg1)
+          return result.asFunctionResult
+        }
+    }
+
+    fileprivate func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.fnName, kwargs: kwargs) {
+        return .error(e)
+      }
+
+      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
+      switch args.count {
+      case 0:
+        return self.fn(nil, nil)
+      case 1:
+        return self.fn(args[0], nil)
+      case 2:
+        return self.fn(args[0], args[1])
+      default:
+        return .typeError("expected 2 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  internal init<R: PyFunctionResultConvertible>(
+    name: String,
+    fn: @escaping ObjectOpt_ObjectOpt_to_Result_Fn<R>
+  ) {
+    let wrapper = ObjectOpt_ObjectOpt_to_Result(name: name, fn: fn)
+    self.kind = .objectOpt_ObjectOpt_to_Result(wrapper)
+  }
+
+  // MARK: - (PyObject?, PyObject?) -> Void
+
+  /// Positional binary: tuple of 2 `objects` (both optional).
+  ///
+  /// `(PyObject?, PyObject?) -> Void`
+  internal typealias ObjectOpt_ObjectOpt_to_Void_Fn = (PyObject?, PyObject?) -> Void
+
+  internal struct ObjectOpt_ObjectOpt_to_Void {
+    fileprivate let fnName: String
+    private let fn: (PyObject?, PyObject?) -> PyFunctionResult
+
+    fileprivate init(
+      name: String,
+      fn: @escaping ObjectOpt_ObjectOpt_to_Void_Fn
+    ) {
+        self.fnName = name
+        self.fn = { (arg0: PyObject?, arg1: PyObject?) -> PyFunctionResult in
+          // This function returns 'Void'
+          fn(arg0, arg1)
+          return .value(Py.none)
+        }
+    }
+
+    fileprivate func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.fnName, kwargs: kwargs) {
+        return .error(e)
+      }
+
+      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
+      switch args.count {
+      case 0:
+        return self.fn(nil, nil)
+      case 1:
+        return self.fn(args[0], nil)
+      case 2:
+        return self.fn(args[0], args[1])
+      default:
+        return .typeError("expected 2 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  internal init(
+    name: String,
+    fn: @escaping ObjectOpt_ObjectOpt_to_Void_Fn
+  ) {
+    let wrapper = ObjectOpt_ObjectOpt_to_Void(name: name, fn: fn)
+    self.kind = .objectOpt_ObjectOpt_to_Void(wrapper)
   }
 
   // MARK: - (Zelf) -> (PyObject) -> PyFunctionResultConvertible
@@ -2067,7 +2225,7 @@ internal struct FunctionWrapper {
 
   // MARK: - (PyObject, PyObject, PyObject?) -> PyFunctionResultConvertible
 
-  /// Positional ternary: tuple of 3 `objects` (3rd one is optional).
+  /// Positional ternary: tuple of 3 `objects` (last one is optional).
   ///
   /// `(PyObject, PyObject, PyObject?) -> PyFunctionResultConvertible`
   internal typealias Object_Object_ObjectOpt_to_Result_Fn<R: PyFunctionResultConvertible> = (PyObject, PyObject, PyObject?) -> R
@@ -2116,7 +2274,7 @@ internal struct FunctionWrapper {
 
   // MARK: - (PyObject, PyObject, PyObject?) -> Void
 
-  /// Positional ternary: tuple of 3 `objects` (3rd one is optional).
+  /// Positional ternary: tuple of 3 `objects` (last one is optional).
   ///
   /// `(PyObject, PyObject, PyObject?) -> Void`
   internal typealias Object_Object_ObjectOpt_to_Void_Fn = (PyObject, PyObject, PyObject?) -> Void
@@ -2263,6 +2421,112 @@ internal struct FunctionWrapper {
   ) {
     let wrapper = Object_ObjectOpt_ObjectOpt_to_Void(name: name, fn: fn)
     self.kind = .object_ObjectOpt_ObjectOpt_to_Void(wrapper)
+  }
+
+  // MARK: - (PyObject?, PyObject?, PyObject?) -> PyFunctionResultConvertible
+
+  /// Positional ternary: tuple of 3 `objects` (all optional).
+  ///
+  /// `(PyObject?, PyObject?, PyObject?) -> PyFunctionResultConvertible`
+  internal typealias ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn<R: PyFunctionResultConvertible> = (PyObject?, PyObject?, PyObject?) -> R
+
+  internal struct ObjectOpt_ObjectOpt_ObjectOpt_to_Result {
+    fileprivate let fnName: String
+    private let fn: (PyObject?, PyObject?, PyObject?) -> PyFunctionResult
+
+    fileprivate init<R: PyFunctionResultConvertible>(
+      name: String,
+      fn: @escaping ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn<R>
+    ) {
+        self.fnName = name
+        self.fn = { (arg0: PyObject?, arg1: PyObject?, arg2: PyObject?) -> PyFunctionResult in
+          // This function returns 'R'
+          let result = fn(arg0, arg1, arg2)
+          return result.asFunctionResult
+        }
+    }
+
+    fileprivate func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.fnName, kwargs: kwargs) {
+        return .error(e)
+      }
+
+      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
+      switch args.count {
+      case 0:
+        return self.fn(nil, nil, nil)
+      case 1:
+        return self.fn(args[0], nil, nil)
+      case 2:
+        return self.fn(args[0], args[1], nil)
+      case 3:
+        return self.fn(args[0], args[1], args[2])
+      default:
+        return .typeError("expected 3 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  internal init<R: PyFunctionResultConvertible>(
+    name: String,
+    fn: @escaping ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn<R>
+  ) {
+    let wrapper = ObjectOpt_ObjectOpt_ObjectOpt_to_Result(name: name, fn: fn)
+    self.kind = .objectOpt_ObjectOpt_ObjectOpt_to_Result(wrapper)
+  }
+
+  // MARK: - (PyObject?, PyObject?, PyObject?) -> Void
+
+  /// Positional ternary: tuple of 3 `objects` (all optional).
+  ///
+  /// `(PyObject?, PyObject?, PyObject?) -> Void`
+  internal typealias ObjectOpt_ObjectOpt_ObjectOpt_to_Void_Fn = (PyObject?, PyObject?, PyObject?) -> Void
+
+  internal struct ObjectOpt_ObjectOpt_ObjectOpt_to_Void {
+    fileprivate let fnName: String
+    private let fn: (PyObject?, PyObject?, PyObject?) -> PyFunctionResult
+
+    fileprivate init(
+      name: String,
+      fn: @escaping ObjectOpt_ObjectOpt_ObjectOpt_to_Void_Fn
+    ) {
+        self.fnName = name
+        self.fn = { (arg0: PyObject?, arg1: PyObject?, arg2: PyObject?) -> PyFunctionResult in
+          // This function returns 'Void'
+          fn(arg0, arg1, arg2)
+          return .value(Py.none)
+        }
+    }
+
+    fileprivate func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.fnName, kwargs: kwargs) {
+        return .error(e)
+      }
+
+      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
+      switch args.count {
+      case 0:
+        return self.fn(nil, nil, nil)
+      case 1:
+        return self.fn(args[0], nil, nil)
+      case 2:
+        return self.fn(args[0], args[1], nil)
+      case 3:
+        return self.fn(args[0], args[1], args[2])
+      default:
+        return .typeError("expected 3 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  internal init(
+    name: String,
+    fn: @escaping ObjectOpt_ObjectOpt_ObjectOpt_to_Void_Fn
+  ) {
+    let wrapper = ObjectOpt_ObjectOpt_ObjectOpt_to_Void(name: name, fn: fn)
+    self.kind = .objectOpt_ObjectOpt_ObjectOpt_to_Void(wrapper)
   }
 
   // MARK: - (Zelf) -> (PyObject, PyObject, PyObject) -> PyFunctionResultConvertible
@@ -2735,6 +2999,516 @@ internal struct FunctionWrapper {
   ) {
     let wrapper = Self_then_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(name: name, fn: fn, castSelf: castSelf)
     self.kind = .self_then_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(wrapper)
+  }
+
+  // MARK: - (PyObject, PyObject, PyObject, PyObject) -> PyFunctionResultConvertible
+
+  /// Positional quartary: `tuple of 4 `objects`.
+  ///
+  /// `(PyObject, PyObject, PyObject, PyObject) -> PyFunctionResultConvertible`
+  internal typealias Object_Object_Object_Object_to_Result_Fn<R: PyFunctionResultConvertible> = (PyObject, PyObject, PyObject, PyObject) -> R
+
+  internal struct Object_Object_Object_Object_to_Result {
+    fileprivate let fnName: String
+    private let fn: (PyObject, PyObject, PyObject, PyObject) -> PyFunctionResult
+
+    fileprivate init<R: PyFunctionResultConvertible>(
+      name: String,
+      fn: @escaping Object_Object_Object_Object_to_Result_Fn<R>
+    ) {
+        self.fnName = name
+        self.fn = { (arg0: PyObject, arg1: PyObject, arg2: PyObject, arg3: PyObject) -> PyFunctionResult in
+          // This function returns 'R'
+          let result = fn(arg0, arg1, arg2, arg3)
+          return result.asFunctionResult
+        }
+    }
+
+    fileprivate func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.fnName, kwargs: kwargs) {
+        return .error(e)
+      }
+
+      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
+      switch args.count {
+      case 4:
+        return self.fn(args[0], args[1], args[2], args[3])
+      default:
+        return .typeError("expected 4 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  internal init<R: PyFunctionResultConvertible>(
+    name: String,
+    fn: @escaping Object_Object_Object_Object_to_Result_Fn<R>
+  ) {
+    let wrapper = Object_Object_Object_Object_to_Result(name: name, fn: fn)
+    self.kind = .object_Object_Object_Object_to_Result(wrapper)
+  }
+
+  // MARK: - (PyObject, PyObject, PyObject, PyObject) -> Void
+
+  /// Positional quartary: `tuple of 4 `objects`.
+  ///
+  /// `(PyObject, PyObject, PyObject, PyObject) -> Void`
+  internal typealias Object_Object_Object_Object_to_Void_Fn = (PyObject, PyObject, PyObject, PyObject) -> Void
+
+  internal struct Object_Object_Object_Object_to_Void {
+    fileprivate let fnName: String
+    private let fn: (PyObject, PyObject, PyObject, PyObject) -> PyFunctionResult
+
+    fileprivate init(
+      name: String,
+      fn: @escaping Object_Object_Object_Object_to_Void_Fn
+    ) {
+        self.fnName = name
+        self.fn = { (arg0: PyObject, arg1: PyObject, arg2: PyObject, arg3: PyObject) -> PyFunctionResult in
+          // This function returns 'Void'
+          fn(arg0, arg1, arg2, arg3)
+          return .value(Py.none)
+        }
+    }
+
+    fileprivate func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.fnName, kwargs: kwargs) {
+        return .error(e)
+      }
+
+      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
+      switch args.count {
+      case 4:
+        return self.fn(args[0], args[1], args[2], args[3])
+      default:
+        return .typeError("expected 4 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  internal init(
+    name: String,
+    fn: @escaping Object_Object_Object_Object_to_Void_Fn
+  ) {
+    let wrapper = Object_Object_Object_Object_to_Void(name: name, fn: fn)
+    self.kind = .object_Object_Object_Object_to_Void(wrapper)
+  }
+
+  // MARK: - (PyObject, PyObject, PyObject, PyObject?) -> PyFunctionResultConvertible
+
+  /// Positional quartary: `tuple of 4 `objects` (last one is optional).
+  ///
+  /// `(PyObject, PyObject, PyObject, PyObject?) -> PyFunctionResultConvertible`
+  internal typealias Object_Object_Object_ObjectOpt_to_Result_Fn<R: PyFunctionResultConvertible> = (PyObject, PyObject, PyObject, PyObject?) -> R
+
+  internal struct Object_Object_Object_ObjectOpt_to_Result {
+    fileprivate let fnName: String
+    private let fn: (PyObject, PyObject, PyObject, PyObject?) -> PyFunctionResult
+
+    fileprivate init<R: PyFunctionResultConvertible>(
+      name: String,
+      fn: @escaping Object_Object_Object_ObjectOpt_to_Result_Fn<R>
+    ) {
+        self.fnName = name
+        self.fn = { (arg0: PyObject, arg1: PyObject, arg2: PyObject, arg3: PyObject?) -> PyFunctionResult in
+          // This function returns 'R'
+          let result = fn(arg0, arg1, arg2, arg3)
+          return result.asFunctionResult
+        }
+    }
+
+    fileprivate func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.fnName, kwargs: kwargs) {
+        return .error(e)
+      }
+
+      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
+      switch args.count {
+      case 3:
+        return self.fn(args[0], args[1], args[2], nil)
+      case 4:
+        return self.fn(args[0], args[1], args[2], args[3])
+      default:
+        return .typeError("expected 4 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  internal init<R: PyFunctionResultConvertible>(
+    name: String,
+    fn: @escaping Object_Object_Object_ObjectOpt_to_Result_Fn<R>
+  ) {
+    let wrapper = Object_Object_Object_ObjectOpt_to_Result(name: name, fn: fn)
+    self.kind = .object_Object_Object_ObjectOpt_to_Result(wrapper)
+  }
+
+  // MARK: - (PyObject, PyObject, PyObject, PyObject?) -> Void
+
+  /// Positional quartary: `tuple of 4 `objects` (last one is optional).
+  ///
+  /// `(PyObject, PyObject, PyObject, PyObject?) -> Void`
+  internal typealias Object_Object_Object_ObjectOpt_to_Void_Fn = (PyObject, PyObject, PyObject, PyObject?) -> Void
+
+  internal struct Object_Object_Object_ObjectOpt_to_Void {
+    fileprivate let fnName: String
+    private let fn: (PyObject, PyObject, PyObject, PyObject?) -> PyFunctionResult
+
+    fileprivate init(
+      name: String,
+      fn: @escaping Object_Object_Object_ObjectOpt_to_Void_Fn
+    ) {
+        self.fnName = name
+        self.fn = { (arg0: PyObject, arg1: PyObject, arg2: PyObject, arg3: PyObject?) -> PyFunctionResult in
+          // This function returns 'Void'
+          fn(arg0, arg1, arg2, arg3)
+          return .value(Py.none)
+        }
+    }
+
+    fileprivate func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.fnName, kwargs: kwargs) {
+        return .error(e)
+      }
+
+      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
+      switch args.count {
+      case 3:
+        return self.fn(args[0], args[1], args[2], nil)
+      case 4:
+        return self.fn(args[0], args[1], args[2], args[3])
+      default:
+        return .typeError("expected 4 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  internal init(
+    name: String,
+    fn: @escaping Object_Object_Object_ObjectOpt_to_Void_Fn
+  ) {
+    let wrapper = Object_Object_Object_ObjectOpt_to_Void(name: name, fn: fn)
+    self.kind = .object_Object_Object_ObjectOpt_to_Void(wrapper)
+  }
+
+  // MARK: - (PyObject, PyObject, PyObject?, PyObject?) -> PyFunctionResultConvertible
+
+  /// Positional quartary: `tuple of 4 `objects` (3rd and 4th are optional).
+  ///
+  /// `(PyObject, PyObject, PyObject?, PyObject?) -> PyFunctionResultConvertible`
+  internal typealias Object_Object_ObjectOpt_ObjectOpt_to_Result_Fn<R: PyFunctionResultConvertible> = (PyObject, PyObject, PyObject?, PyObject?) -> R
+
+  internal struct Object_Object_ObjectOpt_ObjectOpt_to_Result {
+    fileprivate let fnName: String
+    private let fn: (PyObject, PyObject, PyObject?, PyObject?) -> PyFunctionResult
+
+    fileprivate init<R: PyFunctionResultConvertible>(
+      name: String,
+      fn: @escaping Object_Object_ObjectOpt_ObjectOpt_to_Result_Fn<R>
+    ) {
+        self.fnName = name
+        self.fn = { (arg0: PyObject, arg1: PyObject, arg2: PyObject?, arg3: PyObject?) -> PyFunctionResult in
+          // This function returns 'R'
+          let result = fn(arg0, arg1, arg2, arg3)
+          return result.asFunctionResult
+        }
+    }
+
+    fileprivate func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.fnName, kwargs: kwargs) {
+        return .error(e)
+      }
+
+      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
+      switch args.count {
+      case 2:
+        return self.fn(args[0], args[1], nil, nil)
+      case 3:
+        return self.fn(args[0], args[1], args[2], nil)
+      case 4:
+        return self.fn(args[0], args[1], args[2], args[3])
+      default:
+        return .typeError("expected 4 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  internal init<R: PyFunctionResultConvertible>(
+    name: String,
+    fn: @escaping Object_Object_ObjectOpt_ObjectOpt_to_Result_Fn<R>
+  ) {
+    let wrapper = Object_Object_ObjectOpt_ObjectOpt_to_Result(name: name, fn: fn)
+    self.kind = .object_Object_ObjectOpt_ObjectOpt_to_Result(wrapper)
+  }
+
+  // MARK: - (PyObject, PyObject, PyObject?, PyObject?) -> Void
+
+  /// Positional quartary: `tuple of 4 `objects` (3rd and 4th are optional).
+  ///
+  /// `(PyObject, PyObject, PyObject?, PyObject?) -> Void`
+  internal typealias Object_Object_ObjectOpt_ObjectOpt_to_Void_Fn = (PyObject, PyObject, PyObject?, PyObject?) -> Void
+
+  internal struct Object_Object_ObjectOpt_ObjectOpt_to_Void {
+    fileprivate let fnName: String
+    private let fn: (PyObject, PyObject, PyObject?, PyObject?) -> PyFunctionResult
+
+    fileprivate init(
+      name: String,
+      fn: @escaping Object_Object_ObjectOpt_ObjectOpt_to_Void_Fn
+    ) {
+        self.fnName = name
+        self.fn = { (arg0: PyObject, arg1: PyObject, arg2: PyObject?, arg3: PyObject?) -> PyFunctionResult in
+          // This function returns 'Void'
+          fn(arg0, arg1, arg2, arg3)
+          return .value(Py.none)
+        }
+    }
+
+    fileprivate func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.fnName, kwargs: kwargs) {
+        return .error(e)
+      }
+
+      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
+      switch args.count {
+      case 2:
+        return self.fn(args[0], args[1], nil, nil)
+      case 3:
+        return self.fn(args[0], args[1], args[2], nil)
+      case 4:
+        return self.fn(args[0], args[1], args[2], args[3])
+      default:
+        return .typeError("expected 4 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  internal init(
+    name: String,
+    fn: @escaping Object_Object_ObjectOpt_ObjectOpt_to_Void_Fn
+  ) {
+    let wrapper = Object_Object_ObjectOpt_ObjectOpt_to_Void(name: name, fn: fn)
+    self.kind = .object_Object_ObjectOpt_ObjectOpt_to_Void(wrapper)
+  }
+
+  // MARK: - (PyObject, PyObject?, PyObject?, PyObject?) -> PyFunctionResultConvertible
+
+  /// Positional quartary: `tuple of 4 `objects` (2nd, 3rd and 4th are optional).
+  ///
+  /// `(PyObject, PyObject?, PyObject?, PyObject?) -> PyFunctionResultConvertible`
+  internal typealias Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn<R: PyFunctionResultConvertible> = (PyObject, PyObject?, PyObject?, PyObject?) -> R
+
+  internal struct Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result {
+    fileprivate let fnName: String
+    private let fn: (PyObject, PyObject?, PyObject?, PyObject?) -> PyFunctionResult
+
+    fileprivate init<R: PyFunctionResultConvertible>(
+      name: String,
+      fn: @escaping Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn<R>
+    ) {
+        self.fnName = name
+        self.fn = { (arg0: PyObject, arg1: PyObject?, arg2: PyObject?, arg3: PyObject?) -> PyFunctionResult in
+          // This function returns 'R'
+          let result = fn(arg0, arg1, arg2, arg3)
+          return result.asFunctionResult
+        }
+    }
+
+    fileprivate func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.fnName, kwargs: kwargs) {
+        return .error(e)
+      }
+
+      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
+      switch args.count {
+      case 1:
+        return self.fn(args[0], nil, nil, nil)
+      case 2:
+        return self.fn(args[0], args[1], nil, nil)
+      case 3:
+        return self.fn(args[0], args[1], args[2], nil)
+      case 4:
+        return self.fn(args[0], args[1], args[2], args[3])
+      default:
+        return .typeError("expected 4 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  internal init<R: PyFunctionResultConvertible>(
+    name: String,
+    fn: @escaping Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn<R>
+  ) {
+    let wrapper = Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(name: name, fn: fn)
+    self.kind = .object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(wrapper)
+  }
+
+  // MARK: - (PyObject, PyObject?, PyObject?, PyObject?) -> Void
+
+  /// Positional quartary: `tuple of 4 `objects` (2nd, 3rd and 4th are optional).
+  ///
+  /// `(PyObject, PyObject?, PyObject?, PyObject?) -> Void`
+  internal typealias Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Void_Fn = (PyObject, PyObject?, PyObject?, PyObject?) -> Void
+
+  internal struct Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Void {
+    fileprivate let fnName: String
+    private let fn: (PyObject, PyObject?, PyObject?, PyObject?) -> PyFunctionResult
+
+    fileprivate init(
+      name: String,
+      fn: @escaping Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Void_Fn
+    ) {
+        self.fnName = name
+        self.fn = { (arg0: PyObject, arg1: PyObject?, arg2: PyObject?, arg3: PyObject?) -> PyFunctionResult in
+          // This function returns 'Void'
+          fn(arg0, arg1, arg2, arg3)
+          return .value(Py.none)
+        }
+    }
+
+    fileprivate func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.fnName, kwargs: kwargs) {
+        return .error(e)
+      }
+
+      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
+      switch args.count {
+      case 1:
+        return self.fn(args[0], nil, nil, nil)
+      case 2:
+        return self.fn(args[0], args[1], nil, nil)
+      case 3:
+        return self.fn(args[0], args[1], args[2], nil)
+      case 4:
+        return self.fn(args[0], args[1], args[2], args[3])
+      default:
+        return .typeError("expected 4 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  internal init(
+    name: String,
+    fn: @escaping Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Void_Fn
+  ) {
+    let wrapper = Object_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(name: name, fn: fn)
+    self.kind = .object_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(wrapper)
+  }
+
+  // MARK: - (PyObject?, PyObject?, PyObject?, PyObject?) -> PyFunctionResultConvertible
+
+  /// Positional quartary: `tuple of 4 `objects` (all optional).
+  ///
+  /// `(PyObject?, PyObject?, PyObject?, PyObject?) -> PyFunctionResultConvertible`
+  internal typealias ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn<R: PyFunctionResultConvertible> = (PyObject?, PyObject?, PyObject?, PyObject?) -> R
+
+  internal struct ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result {
+    fileprivate let fnName: String
+    private let fn: (PyObject?, PyObject?, PyObject?, PyObject?) -> PyFunctionResult
+
+    fileprivate init<R: PyFunctionResultConvertible>(
+      name: String,
+      fn: @escaping ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn<R>
+    ) {
+        self.fnName = name
+        self.fn = { (arg0: PyObject?, arg1: PyObject?, arg2: PyObject?, arg3: PyObject?) -> PyFunctionResult in
+          // This function returns 'R'
+          let result = fn(arg0, arg1, arg2, arg3)
+          return result.asFunctionResult
+        }
+    }
+
+    fileprivate func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.fnName, kwargs: kwargs) {
+        return .error(e)
+      }
+
+      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
+      switch args.count {
+      case 0:
+        return self.fn(nil, nil, nil, nil)
+      case 1:
+        return self.fn(args[0], nil, nil, nil)
+      case 2:
+        return self.fn(args[0], args[1], nil, nil)
+      case 3:
+        return self.fn(args[0], args[1], args[2], nil)
+      case 4:
+        return self.fn(args[0], args[1], args[2], args[3])
+      default:
+        return .typeError("expected 4 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  internal init<R: PyFunctionResultConvertible>(
+    name: String,
+    fn: @escaping ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn<R>
+  ) {
+    let wrapper = ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(name: name, fn: fn)
+    self.kind = .objectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(wrapper)
+  }
+
+  // MARK: - (PyObject?, PyObject?, PyObject?, PyObject?) -> Void
+
+  /// Positional quartary: `tuple of 4 `objects` (all optional).
+  ///
+  /// `(PyObject?, PyObject?, PyObject?, PyObject?) -> Void`
+  internal typealias ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Void_Fn = (PyObject?, PyObject?, PyObject?, PyObject?) -> Void
+
+  internal struct ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Void {
+    fileprivate let fnName: String
+    private let fn: (PyObject?, PyObject?, PyObject?, PyObject?) -> PyFunctionResult
+
+    fileprivate init(
+      name: String,
+      fn: @escaping ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Void_Fn
+    ) {
+        self.fnName = name
+        self.fn = { (arg0: PyObject?, arg1: PyObject?, arg2: PyObject?, arg3: PyObject?) -> PyFunctionResult in
+          // This function returns 'Void'
+          fn(arg0, arg1, arg2, arg3)
+          return .value(Py.none)
+        }
+    }
+
+    fileprivate func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
+      // This function has only positional arguments, so any kwargs -> error
+      if let e = ArgumentParser.noKwargsOrError(fnName: self.fnName, kwargs: kwargs) {
+        return .error(e)
+      }
+
+      // 'self.fn' call will jump to 'self.fn' assignment inside 'init'
+      switch args.count {
+      case 0:
+        return self.fn(nil, nil, nil, nil)
+      case 1:
+        return self.fn(args[0], nil, nil, nil)
+      case 2:
+        return self.fn(args[0], args[1], nil, nil)
+      case 3:
+        return self.fn(args[0], args[1], args[2], nil)
+      case 4:
+        return self.fn(args[0], args[1], args[2], args[3])
+      default:
+        return .typeError("expected 4 arguments, got \(args.count)")
+      }
+    }
+  }
+
+  internal init(
+    name: String,
+    fn: @escaping ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Void_Fn
+  ) {
+    let wrapper = ObjectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(name: name, fn: fn)
+    self.kind = .objectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(wrapper)
   }
 
 }

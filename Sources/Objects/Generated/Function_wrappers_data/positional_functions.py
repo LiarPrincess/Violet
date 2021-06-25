@@ -19,6 +19,7 @@ supported_argument_configurations: List[Tuple[str, str]] = [
     # Positional binary
     ('Self, Object', 'Positional binary: tuple of `self` and `object`.'),
     ('Self, Object?', 'Positional binary: tuple of `self` and optional `object`.'),
+    ('Object?, Object?', 'Positional binary: tuple of 2 `objects` (both optional).'),
     ('Self -> Object', 'Positional binary: `self` and then `object`.'),
     ('Self -> Object?', 'Positional binary: `self` and then optional `object`.'),
 
@@ -35,14 +36,21 @@ supported_argument_configurations: List[Tuple[str, str]] = [
     ('Self -> Object?, Object?', 'Positional ternary: `self` and then tuple of 2 `objects` (both optional).'),
 
     ('Object, Object, Object', 'Positional ternary: tuple of 3 `objects`.'),
-    ('Object, Object, Object?', 'Positional ternary: tuple of 3 `objects` (3rd one is optional).'),
+    ('Object, Object, Object?', 'Positional ternary: tuple of 3 `objects` (last one is optional).'),
     ('Object, Object?, Object?', 'Positional ternary: tuple of 3 `objects` (2nd and 3rd are optional).'),
+    ('Object?, Object?, Object?', 'Positional ternary: tuple of 3 `objects` (all optional).'),
 
     # Positional quartary
     ('Self -> Object, Object, Object', 'Positional quartary: `self` and then tuple of 3 `objects`.'),
     ('Self -> Object, Object, Object?', 'Positional quartary: `self` and then tuple of 3 `objects` (last one is optional).'),
     ('Self -> Object, Object?, Object?', 'Positional quartary: `self` and then tuple of 3 `objects` (2nd and 3rd are optional).'),
     ('Self -> Object?, Object?, Object?', 'Positional quartary: `self` and then tuple of 3 `objects` (all optional).'),
+
+    ('Object, Object, Object, Object', 'Positional quartary: `tuple of 4 `objects`.'),
+    ('Object, Object, Object, Object?', 'Positional quartary: `tuple of 4 `objects` (last one is optional).'),
+    ('Object, Object, Object?, Object?', 'Positional quartary: `tuple of 4 `objects` (3rd and 4th are optional).'),
+    ('Object, Object?, Object?, Object?', 'Positional quartary: `tuple of 4 `objects` (2nd, 3rd and 4th are optional).'),
+    ('Object?, Object?, Object?, Object?', 'Positional quartary: `tuple of 4 `objects` (all optional).'),
 
     # Positional quintary
     # We are not doing this!
