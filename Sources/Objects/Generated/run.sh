@@ -82,6 +82,16 @@ python3 $GENERATED/PyCast.py > $GENERATED/PyCast.swift
 echo 'Generating PyMemory (helper for allocating new object instances)'
 python3 $GENERATED/PyMemory.py > $GENERATED/PyMemory.swift
 
+# === FunctionWrapper ===
+# Helper type for storing and calling Swift functions (regardless of their signature)
+echo 'Generating FunctionWrapper (helper for storing and calling Swift functions)'
+python3 $GENERATED/FunctionWrapper.py > $GENERATED/FunctionWrapper.swift
+
+# === PyBuiltinFunction+Wrap ===
+# Static factory function, uses 'FunctionWrapper'
+echo "Generating PyBuiltinFunction+Wrap (helpers for creating 'builtinfunction')"
+python3 $GENERATED/PyBuiltinFunction+Wrap.py > $GENERATED/PyBuiltinFunction+Wrap.swift
+
 # === IdString ===
 # Predefined commonly used `__dict__` keys.
 # Similar to `_Py_IDENTIFIER` in `CPython`.

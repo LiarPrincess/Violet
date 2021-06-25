@@ -4,7 +4,7 @@ from TypeMemoryLayout import get_layout_name
 from Common.builtin_types import (
     get_property_name_escaped, print_property,
     get_fill_function_name, print_fill_function, print_fill_helpers,
-    get_downcast_function_name, print_downcast_function
+    print_castSelf_functions
 )
 
 if __name__ == '__main__':
@@ -15,6 +15,7 @@ import VioletCore
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 // swiftlint:disable trailing_comma
+// swiftlint:disable discouraged_optional_boolean
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable file_length
 
@@ -148,6 +149,6 @@ import VioletCore
 
     for t in types:
         print_fill_function(t)
-        print_downcast_function(t)
+        print_castSelf_functions(t)
 
     print('}')

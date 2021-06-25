@@ -64,24 +64,6 @@ def print_fill_helpers():
       trap("Error when inserting '\(name)' to '\(typeName)' type: \(e)")
     }
   }
-
-  /// Basically:
-  /// We hold 'PyObjects' on stack.
-  /// We need to call Swift method that needs specific 'self' type.
-  /// This method is responsible for downcasting 'PyObject' -> specific Swift type.
-  private static func cast<T>(_ object: PyObject,
-                              as type: T.Type,
-                              typeName: String,
-                              methodName: String) -> PyResult<T> {
-    if let v = object as? T {
-      return .value(v)
-    }
-
-    return .typeError(
-      "descriptor '\(methodName)' requires a '\(typeName)' object " +
-      "but received a '\(object.typeName)'"
-    )
-  }
 ''')
 
 
@@ -119,7 +101,8 @@ def print_fill_function(t: TypeInfo):
     # ==================
 
     is_first = True
-    castSelf = f'Self.{get_downcast_function_name(t)}'
+    castSelf = 'Self.' + get_castSelf_function_name(t)
+    castSelfOptional = 'Self.' + get_castSelfOptional_function_name(t)
 
     for prop in t.python_properties:
         python_name = prop.python_name
@@ -179,7 +162,7 @@ def print_fill_function(t: TypeInfo):
             print()
 
         print(
-            f'    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: {doc}, fn: {swift_type_name}.{swift_selector}))')
+            f'    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: {doc}, fn: {swift_type_name}.{swift_selector}, castSelf: {castSelfOptional}))')
 
     # ==============================
     # === Static/class functions ===
@@ -249,25 +232,55 @@ def print_fill_function(t: TypeInfo):
 # Cast as 'type'
 # ==============
 
-def get_downcast_function_name(t: TypeInfo):
+def get_castSelf_function_name(t: TypeInfo):
     swift_type = t.swift_type_name
     swift_type_without_py = swift_type.replace('Py', '')
     return f'as{swift_type_without_py}'
 
 
-def print_downcast_function(t: TypeInfo):
+def get_castSelfOptional_function_name(t: TypeInfo):
+    swift_type = t.swift_type_name
+    swift_type_without_py = swift_type.replace('Py', '')
+    return f'as{swift_type_without_py}Optional'
+
+
+def print_castSelf_functions(t: TypeInfo):
     python_type = t.python_type_name
     swift_type = t.swift_type_name
+    py_cast_function = 'PyCast.as' + swift_type.replace('Py', '')
 
-    function_name = get_downcast_function_name(t)
+    cast_fn_name = get_castSelf_function_name(t)
+    castOptional_fn_name = get_castSelfOptional_function_name(t)
+
+    # Simplified version for object
+    if python_type == 'object':
+        print(f'''\
+  private static func {cast_fn_name}(functionName: String, object: PyObject) -> PyResult<{swift_type}> {{
+    // Trivial cast: 'object' is always an 'object'
+    return .value(object)
+  }}
+
+  private static func {castOptional_fn_name}(object: PyObject) -> {swift_type}? {{
+    // Trivial cast: 'object' is always an 'object'
+    return object
+  }}
+''')
+        return
 
     print(f'''\
-  private static func {function_name}(_ object: PyObject, methodName: String) -> PyResult<{swift_type}> {{
-    return Self.cast(
-      object,
-      as: {swift_type}.self,
-      typeName: "{python_type}",
-      methodName: methodName
-    )
+  private static func {cast_fn_name}(functionName: String, object: PyObject) -> PyResult<{swift_type}> {{
+    switch {py_cast_function}(object) {{
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a '{python_type}' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }}
+  }}
+
+  private static func {castOptional_fn_name}(object: PyObject) -> {swift_type}? {{
+    return {py_cast_function}(object)
   }}
 ''')

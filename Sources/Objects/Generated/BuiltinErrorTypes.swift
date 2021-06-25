@@ -320,24 +320,6 @@ public final class BuiltinErrorTypes {
     }
   }
 
-  /// Basically:
-  /// We hold 'PyObjects' on stack.
-  /// We need to call Swift method that needs specific 'self' type.
-  /// This method is responsible for downcasting 'PyObject' -> specific Swift type.
-  private static func cast<T>(_ object: PyObject,
-                              as type: T.Type,
-                              typeName: String,
-                              methodName: String) -> PyResult<T> {
-    if let v = object as? T {
-      return .value(v)
-    }
-
-    return .typeError(
-      "descriptor '\(methodName)' requires a '\(typeName)' object " +
-      "but received a '\(object.typeName)'"
-    )
-  }
-
   // MARK: - BaseException
 
   private func fillBaseException() {
@@ -357,7 +339,7 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__suppress_context__", value: PyProperty.wrap(doc: nil, get: PyBaseException.getSuppressContext, set: PyBaseException.setSuppressContext, castSelf: Self.asBaseException))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyBaseException.pyBaseExceptionNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBaseException.pyBaseExceptionInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBaseException.pyBaseExceptionInit(args:kwargs:), castSelf: Self.asBaseExceptionOptional))
 
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyBaseException.repr, castSelf: Self.asBaseException))
     self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyBaseException.str(baseException:), castSelf: Self.asBaseException))
@@ -367,13 +349,20 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "with_traceback", value: PyBuiltinFunction.wrap(name: "with_traceback", doc: PyBaseException.withTracebackDoc, fn: PyBaseException.withTraceback(traceback:), castSelf: Self.asBaseException))
   }
 
-  private static func asBaseException(_ object: PyObject, methodName: String) -> PyResult<PyBaseException> {
-    return Self.cast(
-      object,
-      as: PyBaseException.self,
-      typeName: "BaseException",
-      methodName: methodName
-    )
+  private static func asBaseException(functionName: String, object: PyObject) -> PyResult<PyBaseException> {
+    switch PyCast.asBaseException(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'BaseException' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asBaseExceptionOptional(object: PyObject) -> PyBaseException? {
+    return PyCast.asBaseException(object)
   }
 
   // MARK: - SystemExit
@@ -391,16 +380,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "code", value: PyProperty.wrap(doc: nil, get: PySystemExit.getCode, set: PySystemExit.setCode, castSelf: Self.asSystemExit))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PySystemExit.pySystemExitNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySystemExit.pySystemExitInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySystemExit.pySystemExitInit(args:kwargs:), castSelf: Self.asSystemExitOptional))
   }
 
-  private static func asSystemExit(_ object: PyObject, methodName: String) -> PyResult<PySystemExit> {
-    return Self.cast(
-      object,
-      as: PySystemExit.self,
-      typeName: "SystemExit",
-      methodName: methodName
-    )
+  private static func asSystemExit(functionName: String, object: PyObject) -> PyResult<PySystemExit> {
+    switch PyCast.asSystemExit(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'SystemExit' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asSystemExitOptional(object: PyObject) -> PySystemExit? {
+    return PyCast.asSystemExit(object)
   }
 
   // MARK: - KeyboardInterrupt
@@ -417,16 +413,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyKeyboardInterrupt.getDict, castSelf: Self.asKeyboardInterrupt))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyKeyboardInterrupt.pyKeyboardInterruptNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyKeyboardInterrupt.pyKeyboardInterruptInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyKeyboardInterrupt.pyKeyboardInterruptInit(args:kwargs:), castSelf: Self.asKeyboardInterruptOptional))
   }
 
-  private static func asKeyboardInterrupt(_ object: PyObject, methodName: String) -> PyResult<PyKeyboardInterrupt> {
-    return Self.cast(
-      object,
-      as: PyKeyboardInterrupt.self,
-      typeName: "KeyboardInterrupt",
-      methodName: methodName
-    )
+  private static func asKeyboardInterrupt(functionName: String, object: PyObject) -> PyResult<PyKeyboardInterrupt> {
+    switch PyCast.asKeyboardInterrupt(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'KeyboardInterrupt' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asKeyboardInterruptOptional(object: PyObject) -> PyKeyboardInterrupt? {
+    return PyCast.asKeyboardInterrupt(object)
   }
 
   // MARK: - GeneratorExit
@@ -443,16 +446,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyGeneratorExit.getDict, castSelf: Self.asGeneratorExit))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyGeneratorExit.pyGeneratorExitNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyGeneratorExit.pyGeneratorExitInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyGeneratorExit.pyGeneratorExitInit(args:kwargs:), castSelf: Self.asGeneratorExitOptional))
   }
 
-  private static func asGeneratorExit(_ object: PyObject, methodName: String) -> PyResult<PyGeneratorExit> {
-    return Self.cast(
-      object,
-      as: PyGeneratorExit.self,
-      typeName: "GeneratorExit",
-      methodName: methodName
-    )
+  private static func asGeneratorExit(functionName: String, object: PyObject) -> PyResult<PyGeneratorExit> {
+    switch PyCast.asGeneratorExit(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'GeneratorExit' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asGeneratorExitOptional(object: PyObject) -> PyGeneratorExit? {
+    return PyCast.asGeneratorExit(object)
   }
 
   // MARK: - Exception
@@ -469,16 +479,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyException.getDict, castSelf: Self.asException))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyException.pyExceptionNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyException.pyExceptionInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyException.pyExceptionInit(args:kwargs:), castSelf: Self.asExceptionOptional))
   }
 
-  private static func asException(_ object: PyObject, methodName: String) -> PyResult<PyException> {
-    return Self.cast(
-      object,
-      as: PyException.self,
-      typeName: "Exception",
-      methodName: methodName
-    )
+  private static func asException(functionName: String, object: PyObject) -> PyResult<PyException> {
+    switch PyCast.asException(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'Exception' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asExceptionOptional(object: PyObject) -> PyException? {
+    return PyCast.asException(object)
   }
 
   // MARK: - StopIteration
@@ -496,16 +513,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "value", value: PyProperty.wrap(doc: nil, get: PyStopIteration.getValue, set: PyStopIteration.setValue, castSelf: Self.asStopIteration))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyStopIteration.pyStopIterationNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStopIteration.pyStopIterationInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStopIteration.pyStopIterationInit(args:kwargs:), castSelf: Self.asStopIterationOptional))
   }
 
-  private static func asStopIteration(_ object: PyObject, methodName: String) -> PyResult<PyStopIteration> {
-    return Self.cast(
-      object,
-      as: PyStopIteration.self,
-      typeName: "StopIteration",
-      methodName: methodName
-    )
+  private static func asStopIteration(functionName: String, object: PyObject) -> PyResult<PyStopIteration> {
+    switch PyCast.asStopIteration(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'StopIteration' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asStopIterationOptional(object: PyObject) -> PyStopIteration? {
+    return PyCast.asStopIteration(object)
   }
 
   // MARK: - StopAsyncIteration
@@ -522,16 +546,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyStopAsyncIteration.getDict, castSelf: Self.asStopAsyncIteration))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyStopAsyncIteration.pyStopAsyncIterationNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStopAsyncIteration.pyStopAsyncIterationInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStopAsyncIteration.pyStopAsyncIterationInit(args:kwargs:), castSelf: Self.asStopAsyncIterationOptional))
   }
 
-  private static func asStopAsyncIteration(_ object: PyObject, methodName: String) -> PyResult<PyStopAsyncIteration> {
-    return Self.cast(
-      object,
-      as: PyStopAsyncIteration.self,
-      typeName: "StopAsyncIteration",
-      methodName: methodName
-    )
+  private static func asStopAsyncIteration(functionName: String, object: PyObject) -> PyResult<PyStopAsyncIteration> {
+    switch PyCast.asStopAsyncIteration(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'StopAsyncIteration' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asStopAsyncIterationOptional(object: PyObject) -> PyStopAsyncIteration? {
+    return PyCast.asStopAsyncIteration(object)
   }
 
   // MARK: - ArithmeticError
@@ -548,16 +579,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyArithmeticError.getDict, castSelf: Self.asArithmeticError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyArithmeticError.pyArithmeticErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyArithmeticError.pyArithmeticErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyArithmeticError.pyArithmeticErrorInit(args:kwargs:), castSelf: Self.asArithmeticErrorOptional))
   }
 
-  private static func asArithmeticError(_ object: PyObject, methodName: String) -> PyResult<PyArithmeticError> {
-    return Self.cast(
-      object,
-      as: PyArithmeticError.self,
-      typeName: "ArithmeticError",
-      methodName: methodName
-    )
+  private static func asArithmeticError(functionName: String, object: PyObject) -> PyResult<PyArithmeticError> {
+    switch PyCast.asArithmeticError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ArithmeticError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asArithmeticErrorOptional(object: PyObject) -> PyArithmeticError? {
+    return PyCast.asArithmeticError(object)
   }
 
   // MARK: - FloatingPointError
@@ -574,16 +612,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyFloatingPointError.getDict, castSelf: Self.asFloatingPointError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyFloatingPointError.pyFloatingPointErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFloatingPointError.pyFloatingPointErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFloatingPointError.pyFloatingPointErrorInit(args:kwargs:), castSelf: Self.asFloatingPointErrorOptional))
   }
 
-  private static func asFloatingPointError(_ object: PyObject, methodName: String) -> PyResult<PyFloatingPointError> {
-    return Self.cast(
-      object,
-      as: PyFloatingPointError.self,
-      typeName: "FloatingPointError",
-      methodName: methodName
-    )
+  private static func asFloatingPointError(functionName: String, object: PyObject) -> PyResult<PyFloatingPointError> {
+    switch PyCast.asFloatingPointError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'FloatingPointError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asFloatingPointErrorOptional(object: PyObject) -> PyFloatingPointError? {
+    return PyCast.asFloatingPointError(object)
   }
 
   // MARK: - OverflowError
@@ -600,16 +645,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyOverflowError.getDict, castSelf: Self.asOverflowError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyOverflowError.pyOverflowErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyOverflowError.pyOverflowErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyOverflowError.pyOverflowErrorInit(args:kwargs:), castSelf: Self.asOverflowErrorOptional))
   }
 
-  private static func asOverflowError(_ object: PyObject, methodName: String) -> PyResult<PyOverflowError> {
-    return Self.cast(
-      object,
-      as: PyOverflowError.self,
-      typeName: "OverflowError",
-      methodName: methodName
-    )
+  private static func asOverflowError(functionName: String, object: PyObject) -> PyResult<PyOverflowError> {
+    switch PyCast.asOverflowError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'OverflowError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asOverflowErrorOptional(object: PyObject) -> PyOverflowError? {
+    return PyCast.asOverflowError(object)
   }
 
   // MARK: - ZeroDivisionError
@@ -626,16 +678,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyZeroDivisionError.getDict, castSelf: Self.asZeroDivisionError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyZeroDivisionError.pyZeroDivisionErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyZeroDivisionError.pyZeroDivisionErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyZeroDivisionError.pyZeroDivisionErrorInit(args:kwargs:), castSelf: Self.asZeroDivisionErrorOptional))
   }
 
-  private static func asZeroDivisionError(_ object: PyObject, methodName: String) -> PyResult<PyZeroDivisionError> {
-    return Self.cast(
-      object,
-      as: PyZeroDivisionError.self,
-      typeName: "ZeroDivisionError",
-      methodName: methodName
-    )
+  private static func asZeroDivisionError(functionName: String, object: PyObject) -> PyResult<PyZeroDivisionError> {
+    switch PyCast.asZeroDivisionError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ZeroDivisionError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asZeroDivisionErrorOptional(object: PyObject) -> PyZeroDivisionError? {
+    return PyCast.asZeroDivisionError(object)
   }
 
   // MARK: - AssertionError
@@ -652,16 +711,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyAssertionError.getDict, castSelf: Self.asAssertionError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyAssertionError.pyAssertionErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyAssertionError.pyAssertionErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyAssertionError.pyAssertionErrorInit(args:kwargs:), castSelf: Self.asAssertionErrorOptional))
   }
 
-  private static func asAssertionError(_ object: PyObject, methodName: String) -> PyResult<PyAssertionError> {
-    return Self.cast(
-      object,
-      as: PyAssertionError.self,
-      typeName: "AssertionError",
-      methodName: methodName
-    )
+  private static func asAssertionError(functionName: String, object: PyObject) -> PyResult<PyAssertionError> {
+    switch PyCast.asAssertionError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'AssertionError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asAssertionErrorOptional(object: PyObject) -> PyAssertionError? {
+    return PyCast.asAssertionError(object)
   }
 
   // MARK: - AttributeError
@@ -678,16 +744,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyAttributeError.getDict, castSelf: Self.asAttributeError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyAttributeError.pyAttributeErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyAttributeError.pyAttributeErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyAttributeError.pyAttributeErrorInit(args:kwargs:), castSelf: Self.asAttributeErrorOptional))
   }
 
-  private static func asAttributeError(_ object: PyObject, methodName: String) -> PyResult<PyAttributeError> {
-    return Self.cast(
-      object,
-      as: PyAttributeError.self,
-      typeName: "AttributeError",
-      methodName: methodName
-    )
+  private static func asAttributeError(functionName: String, object: PyObject) -> PyResult<PyAttributeError> {
+    switch PyCast.asAttributeError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'AttributeError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asAttributeErrorOptional(object: PyObject) -> PyAttributeError? {
+    return PyCast.asAttributeError(object)
   }
 
   // MARK: - BufferError
@@ -704,16 +777,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyBufferError.getDict, castSelf: Self.asBufferError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyBufferError.pyBufferErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBufferError.pyBufferErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBufferError.pyBufferErrorInit(args:kwargs:), castSelf: Self.asBufferErrorOptional))
   }
 
-  private static func asBufferError(_ object: PyObject, methodName: String) -> PyResult<PyBufferError> {
-    return Self.cast(
-      object,
-      as: PyBufferError.self,
-      typeName: "BufferError",
-      methodName: methodName
-    )
+  private static func asBufferError(functionName: String, object: PyObject) -> PyResult<PyBufferError> {
+    switch PyCast.asBufferError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'BufferError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asBufferErrorOptional(object: PyObject) -> PyBufferError? {
+    return PyCast.asBufferError(object)
   }
 
   // MARK: - EOFError
@@ -730,16 +810,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyEOFError.getDict, castSelf: Self.asEOFError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyEOFError.pyEOFErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyEOFError.pyEOFErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyEOFError.pyEOFErrorInit(args:kwargs:), castSelf: Self.asEOFErrorOptional))
   }
 
-  private static func asEOFError(_ object: PyObject, methodName: String) -> PyResult<PyEOFError> {
-    return Self.cast(
-      object,
-      as: PyEOFError.self,
-      typeName: "EOFError",
-      methodName: methodName
-    )
+  private static func asEOFError(functionName: String, object: PyObject) -> PyResult<PyEOFError> {
+    switch PyCast.asEOFError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'EOFError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asEOFErrorOptional(object: PyObject) -> PyEOFError? {
+    return PyCast.asEOFError(object)
   }
 
   // MARK: - ImportError
@@ -759,18 +846,25 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "path", value: PyProperty.wrap(doc: nil, get: PyImportError.getPath, set: PyImportError.setPath, castSelf: Self.asImportError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyImportError.pyImportErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyImportError.pyImportErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyImportError.pyImportErrorInit(args:kwargs:), castSelf: Self.asImportErrorOptional))
 
     self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyImportError.str(importError:), castSelf: Self.asImportError))
   }
 
-  private static func asImportError(_ object: PyObject, methodName: String) -> PyResult<PyImportError> {
-    return Self.cast(
-      object,
-      as: PyImportError.self,
-      typeName: "ImportError",
-      methodName: methodName
-    )
+  private static func asImportError(functionName: String, object: PyObject) -> PyResult<PyImportError> {
+    switch PyCast.asImportError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ImportError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asImportErrorOptional(object: PyObject) -> PyImportError? {
+    return PyCast.asImportError(object)
   }
 
   // MARK: - ModuleNotFoundError
@@ -787,16 +881,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyModuleNotFoundError.getDict, castSelf: Self.asModuleNotFoundError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyModuleNotFoundError.pyModuleNotFoundErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyModuleNotFoundError.pyModuleNotFoundErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyModuleNotFoundError.pyModuleNotFoundErrorInit(args:kwargs:), castSelf: Self.asModuleNotFoundErrorOptional))
   }
 
-  private static func asModuleNotFoundError(_ object: PyObject, methodName: String) -> PyResult<PyModuleNotFoundError> {
-    return Self.cast(
-      object,
-      as: PyModuleNotFoundError.self,
-      typeName: "ModuleNotFoundError",
-      methodName: methodName
-    )
+  private static func asModuleNotFoundError(functionName: String, object: PyObject) -> PyResult<PyModuleNotFoundError> {
+    switch PyCast.asModuleNotFoundError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ModuleNotFoundError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asModuleNotFoundErrorOptional(object: PyObject) -> PyModuleNotFoundError? {
+    return PyCast.asModuleNotFoundError(object)
   }
 
   // MARK: - LookupError
@@ -813,16 +914,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyLookupError.getDict, castSelf: Self.asLookupError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyLookupError.pyLookupErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyLookupError.pyLookupErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyLookupError.pyLookupErrorInit(args:kwargs:), castSelf: Self.asLookupErrorOptional))
   }
 
-  private static func asLookupError(_ object: PyObject, methodName: String) -> PyResult<PyLookupError> {
-    return Self.cast(
-      object,
-      as: PyLookupError.self,
-      typeName: "LookupError",
-      methodName: methodName
-    )
+  private static func asLookupError(functionName: String, object: PyObject) -> PyResult<PyLookupError> {
+    switch PyCast.asLookupError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'LookupError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asLookupErrorOptional(object: PyObject) -> PyLookupError? {
+    return PyCast.asLookupError(object)
   }
 
   // MARK: - IndexError
@@ -839,16 +947,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyIndexError.getDict, castSelf: Self.asIndexError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyIndexError.pyIndexErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyIndexError.pyIndexErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyIndexError.pyIndexErrorInit(args:kwargs:), castSelf: Self.asIndexErrorOptional))
   }
 
-  private static func asIndexError(_ object: PyObject, methodName: String) -> PyResult<PyIndexError> {
-    return Self.cast(
-      object,
-      as: PyIndexError.self,
-      typeName: "IndexError",
-      methodName: methodName
-    )
+  private static func asIndexError(functionName: String, object: PyObject) -> PyResult<PyIndexError> {
+    switch PyCast.asIndexError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'IndexError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asIndexErrorOptional(object: PyObject) -> PyIndexError? {
+    return PyCast.asIndexError(object)
   }
 
   // MARK: - KeyError
@@ -865,18 +980,25 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyKeyError.getDict, castSelf: Self.asKeyError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyKeyError.pyKeyErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyKeyError.pyKeyErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyKeyError.pyKeyErrorInit(args:kwargs:), castSelf: Self.asKeyErrorOptional))
 
     self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyKeyError.str(keyError:), castSelf: Self.asKeyError))
   }
 
-  private static func asKeyError(_ object: PyObject, methodName: String) -> PyResult<PyKeyError> {
-    return Self.cast(
-      object,
-      as: PyKeyError.self,
-      typeName: "KeyError",
-      methodName: methodName
-    )
+  private static func asKeyError(functionName: String, object: PyObject) -> PyResult<PyKeyError> {
+    switch PyCast.asKeyError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'KeyError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asKeyErrorOptional(object: PyObject) -> PyKeyError? {
+    return PyCast.asKeyError(object)
   }
 
   // MARK: - MemoryError
@@ -893,16 +1015,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyMemoryError.getDict, castSelf: Self.asMemoryError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyMemoryError.pyMemoryErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyMemoryError.pyMemoryErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyMemoryError.pyMemoryErrorInit(args:kwargs:), castSelf: Self.asMemoryErrorOptional))
   }
 
-  private static func asMemoryError(_ object: PyObject, methodName: String) -> PyResult<PyMemoryError> {
-    return Self.cast(
-      object,
-      as: PyMemoryError.self,
-      typeName: "MemoryError",
-      methodName: methodName
-    )
+  private static func asMemoryError(functionName: String, object: PyObject) -> PyResult<PyMemoryError> {
+    switch PyCast.asMemoryError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'MemoryError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asMemoryErrorOptional(object: PyObject) -> PyMemoryError? {
+    return PyCast.asMemoryError(object)
   }
 
   // MARK: - NameError
@@ -919,16 +1048,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyNameError.getDict, castSelf: Self.asNameError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyNameError.pyNameErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNameError.pyNameErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNameError.pyNameErrorInit(args:kwargs:), castSelf: Self.asNameErrorOptional))
   }
 
-  private static func asNameError(_ object: PyObject, methodName: String) -> PyResult<PyNameError> {
-    return Self.cast(
-      object,
-      as: PyNameError.self,
-      typeName: "NameError",
-      methodName: methodName
-    )
+  private static func asNameError(functionName: String, object: PyObject) -> PyResult<PyNameError> {
+    switch PyCast.asNameError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'NameError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asNameErrorOptional(object: PyObject) -> PyNameError? {
+    return PyCast.asNameError(object)
   }
 
   // MARK: - UnboundLocalError
@@ -945,16 +1081,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyUnboundLocalError.getDict, castSelf: Self.asUnboundLocalError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyUnboundLocalError.pyUnboundLocalErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnboundLocalError.pyUnboundLocalErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnboundLocalError.pyUnboundLocalErrorInit(args:kwargs:), castSelf: Self.asUnboundLocalErrorOptional))
   }
 
-  private static func asUnboundLocalError(_ object: PyObject, methodName: String) -> PyResult<PyUnboundLocalError> {
-    return Self.cast(
-      object,
-      as: PyUnboundLocalError.self,
-      typeName: "UnboundLocalError",
-      methodName: methodName
-    )
+  private static func asUnboundLocalError(functionName: String, object: PyObject) -> PyResult<PyUnboundLocalError> {
+    switch PyCast.asUnboundLocalError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'UnboundLocalError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asUnboundLocalErrorOptional(object: PyObject) -> PyUnboundLocalError? {
+    return PyCast.asUnboundLocalError(object)
   }
 
   // MARK: - OSError
@@ -971,16 +1114,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyOSError.getDict, castSelf: Self.asOSError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyOSError.pyOSErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyOSError.pyOSErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyOSError.pyOSErrorInit(args:kwargs:), castSelf: Self.asOSErrorOptional))
   }
 
-  private static func asOSError(_ object: PyObject, methodName: String) -> PyResult<PyOSError> {
-    return Self.cast(
-      object,
-      as: PyOSError.self,
-      typeName: "OSError",
-      methodName: methodName
-    )
+  private static func asOSError(functionName: String, object: PyObject) -> PyResult<PyOSError> {
+    switch PyCast.asOSError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'OSError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asOSErrorOptional(object: PyObject) -> PyOSError? {
+    return PyCast.asOSError(object)
   }
 
   // MARK: - BlockingIOError
@@ -997,16 +1147,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyBlockingIOError.getDict, castSelf: Self.asBlockingIOError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyBlockingIOError.pyBlockingIOErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBlockingIOError.pyBlockingIOErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBlockingIOError.pyBlockingIOErrorInit(args:kwargs:), castSelf: Self.asBlockingIOErrorOptional))
   }
 
-  private static func asBlockingIOError(_ object: PyObject, methodName: String) -> PyResult<PyBlockingIOError> {
-    return Self.cast(
-      object,
-      as: PyBlockingIOError.self,
-      typeName: "BlockingIOError",
-      methodName: methodName
-    )
+  private static func asBlockingIOError(functionName: String, object: PyObject) -> PyResult<PyBlockingIOError> {
+    switch PyCast.asBlockingIOError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'BlockingIOError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asBlockingIOErrorOptional(object: PyObject) -> PyBlockingIOError? {
+    return PyCast.asBlockingIOError(object)
   }
 
   // MARK: - ChildProcessError
@@ -1023,16 +1180,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyChildProcessError.getDict, castSelf: Self.asChildProcessError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyChildProcessError.pyChildProcessErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyChildProcessError.pyChildProcessErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyChildProcessError.pyChildProcessErrorInit(args:kwargs:), castSelf: Self.asChildProcessErrorOptional))
   }
 
-  private static func asChildProcessError(_ object: PyObject, methodName: String) -> PyResult<PyChildProcessError> {
-    return Self.cast(
-      object,
-      as: PyChildProcessError.self,
-      typeName: "ChildProcessError",
-      methodName: methodName
-    )
+  private static func asChildProcessError(functionName: String, object: PyObject) -> PyResult<PyChildProcessError> {
+    switch PyCast.asChildProcessError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ChildProcessError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asChildProcessErrorOptional(object: PyObject) -> PyChildProcessError? {
+    return PyCast.asChildProcessError(object)
   }
 
   // MARK: - ConnectionError
@@ -1049,16 +1213,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyConnectionError.getDict, castSelf: Self.asConnectionError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyConnectionError.pyConnectionErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionError.pyConnectionErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionError.pyConnectionErrorInit(args:kwargs:), castSelf: Self.asConnectionErrorOptional))
   }
 
-  private static func asConnectionError(_ object: PyObject, methodName: String) -> PyResult<PyConnectionError> {
-    return Self.cast(
-      object,
-      as: PyConnectionError.self,
-      typeName: "ConnectionError",
-      methodName: methodName
-    )
+  private static func asConnectionError(functionName: String, object: PyObject) -> PyResult<PyConnectionError> {
+    switch PyCast.asConnectionError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ConnectionError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asConnectionErrorOptional(object: PyObject) -> PyConnectionError? {
+    return PyCast.asConnectionError(object)
   }
 
   // MARK: - BrokenPipeError
@@ -1075,16 +1246,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyBrokenPipeError.getDict, castSelf: Self.asBrokenPipeError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyBrokenPipeError.pyBrokenPipeErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBrokenPipeError.pyBrokenPipeErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBrokenPipeError.pyBrokenPipeErrorInit(args:kwargs:), castSelf: Self.asBrokenPipeErrorOptional))
   }
 
-  private static func asBrokenPipeError(_ object: PyObject, methodName: String) -> PyResult<PyBrokenPipeError> {
-    return Self.cast(
-      object,
-      as: PyBrokenPipeError.self,
-      typeName: "BrokenPipeError",
-      methodName: methodName
-    )
+  private static func asBrokenPipeError(functionName: String, object: PyObject) -> PyResult<PyBrokenPipeError> {
+    switch PyCast.asBrokenPipeError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'BrokenPipeError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asBrokenPipeErrorOptional(object: PyObject) -> PyBrokenPipeError? {
+    return PyCast.asBrokenPipeError(object)
   }
 
   // MARK: - ConnectionAbortedError
@@ -1101,16 +1279,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyConnectionAbortedError.getDict, castSelf: Self.asConnectionAbortedError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyConnectionAbortedError.pyConnectionAbortedErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionAbortedError.pyConnectionAbortedErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionAbortedError.pyConnectionAbortedErrorInit(args:kwargs:), castSelf: Self.asConnectionAbortedErrorOptional))
   }
 
-  private static func asConnectionAbortedError(_ object: PyObject, methodName: String) -> PyResult<PyConnectionAbortedError> {
-    return Self.cast(
-      object,
-      as: PyConnectionAbortedError.self,
-      typeName: "ConnectionAbortedError",
-      methodName: methodName
-    )
+  private static func asConnectionAbortedError(functionName: String, object: PyObject) -> PyResult<PyConnectionAbortedError> {
+    switch PyCast.asConnectionAbortedError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ConnectionAbortedError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asConnectionAbortedErrorOptional(object: PyObject) -> PyConnectionAbortedError? {
+    return PyCast.asConnectionAbortedError(object)
   }
 
   // MARK: - ConnectionRefusedError
@@ -1127,16 +1312,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyConnectionRefusedError.getDict, castSelf: Self.asConnectionRefusedError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyConnectionRefusedError.pyConnectionRefusedErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionRefusedError.pyConnectionRefusedErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionRefusedError.pyConnectionRefusedErrorInit(args:kwargs:), castSelf: Self.asConnectionRefusedErrorOptional))
   }
 
-  private static func asConnectionRefusedError(_ object: PyObject, methodName: String) -> PyResult<PyConnectionRefusedError> {
-    return Self.cast(
-      object,
-      as: PyConnectionRefusedError.self,
-      typeName: "ConnectionRefusedError",
-      methodName: methodName
-    )
+  private static func asConnectionRefusedError(functionName: String, object: PyObject) -> PyResult<PyConnectionRefusedError> {
+    switch PyCast.asConnectionRefusedError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ConnectionRefusedError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asConnectionRefusedErrorOptional(object: PyObject) -> PyConnectionRefusedError? {
+    return PyCast.asConnectionRefusedError(object)
   }
 
   // MARK: - ConnectionResetError
@@ -1153,16 +1345,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyConnectionResetError.getDict, castSelf: Self.asConnectionResetError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyConnectionResetError.pyConnectionResetErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionResetError.pyConnectionResetErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionResetError.pyConnectionResetErrorInit(args:kwargs:), castSelf: Self.asConnectionResetErrorOptional))
   }
 
-  private static func asConnectionResetError(_ object: PyObject, methodName: String) -> PyResult<PyConnectionResetError> {
-    return Self.cast(
-      object,
-      as: PyConnectionResetError.self,
-      typeName: "ConnectionResetError",
-      methodName: methodName
-    )
+  private static func asConnectionResetError(functionName: String, object: PyObject) -> PyResult<PyConnectionResetError> {
+    switch PyCast.asConnectionResetError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ConnectionResetError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asConnectionResetErrorOptional(object: PyObject) -> PyConnectionResetError? {
+    return PyCast.asConnectionResetError(object)
   }
 
   // MARK: - FileExistsError
@@ -1179,16 +1378,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyFileExistsError.getDict, castSelf: Self.asFileExistsError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyFileExistsError.pyFileExistsErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFileExistsError.pyFileExistsErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFileExistsError.pyFileExistsErrorInit(args:kwargs:), castSelf: Self.asFileExistsErrorOptional))
   }
 
-  private static func asFileExistsError(_ object: PyObject, methodName: String) -> PyResult<PyFileExistsError> {
-    return Self.cast(
-      object,
-      as: PyFileExistsError.self,
-      typeName: "FileExistsError",
-      methodName: methodName
-    )
+  private static func asFileExistsError(functionName: String, object: PyObject) -> PyResult<PyFileExistsError> {
+    switch PyCast.asFileExistsError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'FileExistsError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asFileExistsErrorOptional(object: PyObject) -> PyFileExistsError? {
+    return PyCast.asFileExistsError(object)
   }
 
   // MARK: - FileNotFoundError
@@ -1205,16 +1411,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyFileNotFoundError.getDict, castSelf: Self.asFileNotFoundError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyFileNotFoundError.pyFileNotFoundErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFileNotFoundError.pyFileNotFoundErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFileNotFoundError.pyFileNotFoundErrorInit(args:kwargs:), castSelf: Self.asFileNotFoundErrorOptional))
   }
 
-  private static func asFileNotFoundError(_ object: PyObject, methodName: String) -> PyResult<PyFileNotFoundError> {
-    return Self.cast(
-      object,
-      as: PyFileNotFoundError.self,
-      typeName: "FileNotFoundError",
-      methodName: methodName
-    )
+  private static func asFileNotFoundError(functionName: String, object: PyObject) -> PyResult<PyFileNotFoundError> {
+    switch PyCast.asFileNotFoundError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'FileNotFoundError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asFileNotFoundErrorOptional(object: PyObject) -> PyFileNotFoundError? {
+    return PyCast.asFileNotFoundError(object)
   }
 
   // MARK: - InterruptedError
@@ -1231,16 +1444,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyInterruptedError.getDict, castSelf: Self.asInterruptedError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyInterruptedError.pyInterruptedErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyInterruptedError.pyInterruptedErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyInterruptedError.pyInterruptedErrorInit(args:kwargs:), castSelf: Self.asInterruptedErrorOptional))
   }
 
-  private static func asInterruptedError(_ object: PyObject, methodName: String) -> PyResult<PyInterruptedError> {
-    return Self.cast(
-      object,
-      as: PyInterruptedError.self,
-      typeName: "InterruptedError",
-      methodName: methodName
-    )
+  private static func asInterruptedError(functionName: String, object: PyObject) -> PyResult<PyInterruptedError> {
+    switch PyCast.asInterruptedError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'InterruptedError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asInterruptedErrorOptional(object: PyObject) -> PyInterruptedError? {
+    return PyCast.asInterruptedError(object)
   }
 
   // MARK: - IsADirectoryError
@@ -1257,16 +1477,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyIsADirectoryError.getDict, castSelf: Self.asIsADirectoryError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyIsADirectoryError.pyIsADirectoryErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyIsADirectoryError.pyIsADirectoryErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyIsADirectoryError.pyIsADirectoryErrorInit(args:kwargs:), castSelf: Self.asIsADirectoryErrorOptional))
   }
 
-  private static func asIsADirectoryError(_ object: PyObject, methodName: String) -> PyResult<PyIsADirectoryError> {
-    return Self.cast(
-      object,
-      as: PyIsADirectoryError.self,
-      typeName: "IsADirectoryError",
-      methodName: methodName
-    )
+  private static func asIsADirectoryError(functionName: String, object: PyObject) -> PyResult<PyIsADirectoryError> {
+    switch PyCast.asIsADirectoryError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'IsADirectoryError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asIsADirectoryErrorOptional(object: PyObject) -> PyIsADirectoryError? {
+    return PyCast.asIsADirectoryError(object)
   }
 
   // MARK: - NotADirectoryError
@@ -1283,16 +1510,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyNotADirectoryError.getDict, castSelf: Self.asNotADirectoryError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyNotADirectoryError.pyNotADirectoryErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNotADirectoryError.pyNotADirectoryErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNotADirectoryError.pyNotADirectoryErrorInit(args:kwargs:), castSelf: Self.asNotADirectoryErrorOptional))
   }
 
-  private static func asNotADirectoryError(_ object: PyObject, methodName: String) -> PyResult<PyNotADirectoryError> {
-    return Self.cast(
-      object,
-      as: PyNotADirectoryError.self,
-      typeName: "NotADirectoryError",
-      methodName: methodName
-    )
+  private static func asNotADirectoryError(functionName: String, object: PyObject) -> PyResult<PyNotADirectoryError> {
+    switch PyCast.asNotADirectoryError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'NotADirectoryError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asNotADirectoryErrorOptional(object: PyObject) -> PyNotADirectoryError? {
+    return PyCast.asNotADirectoryError(object)
   }
 
   // MARK: - PermissionError
@@ -1309,16 +1543,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyPermissionError.getDict, castSelf: Self.asPermissionError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyPermissionError.pyPermissionErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyPermissionError.pyPermissionErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyPermissionError.pyPermissionErrorInit(args:kwargs:), castSelf: Self.asPermissionErrorOptional))
   }
 
-  private static func asPermissionError(_ object: PyObject, methodName: String) -> PyResult<PyPermissionError> {
-    return Self.cast(
-      object,
-      as: PyPermissionError.self,
-      typeName: "PermissionError",
-      methodName: methodName
-    )
+  private static func asPermissionError(functionName: String, object: PyObject) -> PyResult<PyPermissionError> {
+    switch PyCast.asPermissionError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'PermissionError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asPermissionErrorOptional(object: PyObject) -> PyPermissionError? {
+    return PyCast.asPermissionError(object)
   }
 
   // MARK: - ProcessLookupError
@@ -1335,16 +1576,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyProcessLookupError.getDict, castSelf: Self.asProcessLookupError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyProcessLookupError.pyProcessLookupErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyProcessLookupError.pyProcessLookupErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyProcessLookupError.pyProcessLookupErrorInit(args:kwargs:), castSelf: Self.asProcessLookupErrorOptional))
   }
 
-  private static func asProcessLookupError(_ object: PyObject, methodName: String) -> PyResult<PyProcessLookupError> {
-    return Self.cast(
-      object,
-      as: PyProcessLookupError.self,
-      typeName: "ProcessLookupError",
-      methodName: methodName
-    )
+  private static func asProcessLookupError(functionName: String, object: PyObject) -> PyResult<PyProcessLookupError> {
+    switch PyCast.asProcessLookupError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ProcessLookupError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asProcessLookupErrorOptional(object: PyObject) -> PyProcessLookupError? {
+    return PyCast.asProcessLookupError(object)
   }
 
   // MARK: - TimeoutError
@@ -1361,16 +1609,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyTimeoutError.getDict, castSelf: Self.asTimeoutError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyTimeoutError.pyTimeoutErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyTimeoutError.pyTimeoutErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyTimeoutError.pyTimeoutErrorInit(args:kwargs:), castSelf: Self.asTimeoutErrorOptional))
   }
 
-  private static func asTimeoutError(_ object: PyObject, methodName: String) -> PyResult<PyTimeoutError> {
-    return Self.cast(
-      object,
-      as: PyTimeoutError.self,
-      typeName: "TimeoutError",
-      methodName: methodName
-    )
+  private static func asTimeoutError(functionName: String, object: PyObject) -> PyResult<PyTimeoutError> {
+    switch PyCast.asTimeoutError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'TimeoutError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asTimeoutErrorOptional(object: PyObject) -> PyTimeoutError? {
+    return PyCast.asTimeoutError(object)
   }
 
   // MARK: - ReferenceError
@@ -1387,16 +1642,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyReferenceError.getDict, castSelf: Self.asReferenceError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyReferenceError.pyReferenceErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyReferenceError.pyReferenceErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyReferenceError.pyReferenceErrorInit(args:kwargs:), castSelf: Self.asReferenceErrorOptional))
   }
 
-  private static func asReferenceError(_ object: PyObject, methodName: String) -> PyResult<PyReferenceError> {
-    return Self.cast(
-      object,
-      as: PyReferenceError.self,
-      typeName: "ReferenceError",
-      methodName: methodName
-    )
+  private static func asReferenceError(functionName: String, object: PyObject) -> PyResult<PyReferenceError> {
+    switch PyCast.asReferenceError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ReferenceError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asReferenceErrorOptional(object: PyObject) -> PyReferenceError? {
+    return PyCast.asReferenceError(object)
   }
 
   // MARK: - RuntimeError
@@ -1413,16 +1675,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyRuntimeError.getDict, castSelf: Self.asRuntimeError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyRuntimeError.pyRuntimeErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyRuntimeError.pyRuntimeErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyRuntimeError.pyRuntimeErrorInit(args:kwargs:), castSelf: Self.asRuntimeErrorOptional))
   }
 
-  private static func asRuntimeError(_ object: PyObject, methodName: String) -> PyResult<PyRuntimeError> {
-    return Self.cast(
-      object,
-      as: PyRuntimeError.self,
-      typeName: "RuntimeError",
-      methodName: methodName
-    )
+  private static func asRuntimeError(functionName: String, object: PyObject) -> PyResult<PyRuntimeError> {
+    switch PyCast.asRuntimeError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'RuntimeError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asRuntimeErrorOptional(object: PyObject) -> PyRuntimeError? {
+    return PyCast.asRuntimeError(object)
   }
 
   // MARK: - NotImplementedError
@@ -1439,16 +1708,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyNotImplementedError.getDict, castSelf: Self.asNotImplementedError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyNotImplementedError.pyNotImplementedErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNotImplementedError.pyNotImplementedErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNotImplementedError.pyNotImplementedErrorInit(args:kwargs:), castSelf: Self.asNotImplementedErrorOptional))
   }
 
-  private static func asNotImplementedError(_ object: PyObject, methodName: String) -> PyResult<PyNotImplementedError> {
-    return Self.cast(
-      object,
-      as: PyNotImplementedError.self,
-      typeName: "NotImplementedError",
-      methodName: methodName
-    )
+  private static func asNotImplementedError(functionName: String, object: PyObject) -> PyResult<PyNotImplementedError> {
+    switch PyCast.asNotImplementedError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'NotImplementedError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asNotImplementedErrorOptional(object: PyObject) -> PyNotImplementedError? {
+    return PyCast.asNotImplementedError(object)
   }
 
   // MARK: - RecursionError
@@ -1465,16 +1741,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyRecursionError.getDict, castSelf: Self.asRecursionError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyRecursionError.pyRecursionErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyRecursionError.pyRecursionErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyRecursionError.pyRecursionErrorInit(args:kwargs:), castSelf: Self.asRecursionErrorOptional))
   }
 
-  private static func asRecursionError(_ object: PyObject, methodName: String) -> PyResult<PyRecursionError> {
-    return Self.cast(
-      object,
-      as: PyRecursionError.self,
-      typeName: "RecursionError",
-      methodName: methodName
-    )
+  private static func asRecursionError(functionName: String, object: PyObject) -> PyResult<PyRecursionError> {
+    switch PyCast.asRecursionError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'RecursionError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asRecursionErrorOptional(object: PyObject) -> PyRecursionError? {
+    return PyCast.asRecursionError(object)
   }
 
   // MARK: - SyntaxError
@@ -1497,18 +1780,25 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "print_file_and_line", value: PyProperty.wrap(doc: nil, get: PySyntaxError.getPrintFileAndLine, set: PySyntaxError.setPrintFileAndLine, castSelf: Self.asSyntaxError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PySyntaxError.pySyntaxErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySyntaxError.pySyntaxErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySyntaxError.pySyntaxErrorInit(args:kwargs:), castSelf: Self.asSyntaxErrorOptional))
 
     self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PySyntaxError.str(syntaxError:), castSelf: Self.asSyntaxError))
   }
 
-  private static func asSyntaxError(_ object: PyObject, methodName: String) -> PyResult<PySyntaxError> {
-    return Self.cast(
-      object,
-      as: PySyntaxError.self,
-      typeName: "SyntaxError",
-      methodName: methodName
-    )
+  private static func asSyntaxError(functionName: String, object: PyObject) -> PyResult<PySyntaxError> {
+    switch PyCast.asSyntaxError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'SyntaxError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asSyntaxErrorOptional(object: PyObject) -> PySyntaxError? {
+    return PyCast.asSyntaxError(object)
   }
 
   // MARK: - IndentationError
@@ -1525,16 +1815,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyIndentationError.getDict, castSelf: Self.asIndentationError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyIndentationError.pyIndentationErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyIndentationError.pyIndentationErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyIndentationError.pyIndentationErrorInit(args:kwargs:), castSelf: Self.asIndentationErrorOptional))
   }
 
-  private static func asIndentationError(_ object: PyObject, methodName: String) -> PyResult<PyIndentationError> {
-    return Self.cast(
-      object,
-      as: PyIndentationError.self,
-      typeName: "IndentationError",
-      methodName: methodName
-    )
+  private static func asIndentationError(functionName: String, object: PyObject) -> PyResult<PyIndentationError> {
+    switch PyCast.asIndentationError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'IndentationError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asIndentationErrorOptional(object: PyObject) -> PyIndentationError? {
+    return PyCast.asIndentationError(object)
   }
 
   // MARK: - TabError
@@ -1551,16 +1848,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyTabError.getDict, castSelf: Self.asTabError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyTabError.pyTabErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyTabError.pyTabErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyTabError.pyTabErrorInit(args:kwargs:), castSelf: Self.asTabErrorOptional))
   }
 
-  private static func asTabError(_ object: PyObject, methodName: String) -> PyResult<PyTabError> {
-    return Self.cast(
-      object,
-      as: PyTabError.self,
-      typeName: "TabError",
-      methodName: methodName
-    )
+  private static func asTabError(functionName: String, object: PyObject) -> PyResult<PyTabError> {
+    switch PyCast.asTabError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'TabError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asTabErrorOptional(object: PyObject) -> PyTabError? {
+    return PyCast.asTabError(object)
   }
 
   // MARK: - SystemError
@@ -1577,16 +1881,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PySystemError.getDict, castSelf: Self.asSystemError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PySystemError.pySystemErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySystemError.pySystemErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySystemError.pySystemErrorInit(args:kwargs:), castSelf: Self.asSystemErrorOptional))
   }
 
-  private static func asSystemError(_ object: PyObject, methodName: String) -> PyResult<PySystemError> {
-    return Self.cast(
-      object,
-      as: PySystemError.self,
-      typeName: "SystemError",
-      methodName: methodName
-    )
+  private static func asSystemError(functionName: String, object: PyObject) -> PyResult<PySystemError> {
+    switch PyCast.asSystemError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'SystemError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asSystemErrorOptional(object: PyObject) -> PySystemError? {
+    return PyCast.asSystemError(object)
   }
 
   // MARK: - TypeError
@@ -1603,16 +1914,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyTypeError.getDict, castSelf: Self.asTypeError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyTypeError.pyTypeErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyTypeError.pyTypeErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyTypeError.pyTypeErrorInit(args:kwargs:), castSelf: Self.asTypeErrorOptional))
   }
 
-  private static func asTypeError(_ object: PyObject, methodName: String) -> PyResult<PyTypeError> {
-    return Self.cast(
-      object,
-      as: PyTypeError.self,
-      typeName: "TypeError",
-      methodName: methodName
-    )
+  private static func asTypeError(functionName: String, object: PyObject) -> PyResult<PyTypeError> {
+    switch PyCast.asTypeError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'TypeError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asTypeErrorOptional(object: PyObject) -> PyTypeError? {
+    return PyCast.asTypeError(object)
   }
 
   // MARK: - ValueError
@@ -1629,16 +1947,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyValueError.getDict, castSelf: Self.asValueError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyValueError.pyValueErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyValueError.pyValueErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyValueError.pyValueErrorInit(args:kwargs:), castSelf: Self.asValueErrorOptional))
   }
 
-  private static func asValueError(_ object: PyObject, methodName: String) -> PyResult<PyValueError> {
-    return Self.cast(
-      object,
-      as: PyValueError.self,
-      typeName: "ValueError",
-      methodName: methodName
-    )
+  private static func asValueError(functionName: String, object: PyObject) -> PyResult<PyValueError> {
+    switch PyCast.asValueError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ValueError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asValueErrorOptional(object: PyObject) -> PyValueError? {
+    return PyCast.asValueError(object)
   }
 
   // MARK: - UnicodeError
@@ -1655,16 +1980,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyUnicodeError.getDict, castSelf: Self.asUnicodeError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyUnicodeError.pyUnicodeErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeError.pyUnicodeErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeError.pyUnicodeErrorInit(args:kwargs:), castSelf: Self.asUnicodeErrorOptional))
   }
 
-  private static func asUnicodeError(_ object: PyObject, methodName: String) -> PyResult<PyUnicodeError> {
-    return Self.cast(
-      object,
-      as: PyUnicodeError.self,
-      typeName: "UnicodeError",
-      methodName: methodName
-    )
+  private static func asUnicodeError(functionName: String, object: PyObject) -> PyResult<PyUnicodeError> {
+    switch PyCast.asUnicodeError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'UnicodeError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asUnicodeErrorOptional(object: PyObject) -> PyUnicodeError? {
+    return PyCast.asUnicodeError(object)
   }
 
   // MARK: - UnicodeDecodeError
@@ -1681,16 +2013,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyUnicodeDecodeError.getDict, castSelf: Self.asUnicodeDecodeError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyUnicodeDecodeError.pyUnicodeDecodeErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeDecodeError.pyUnicodeDecodeErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeDecodeError.pyUnicodeDecodeErrorInit(args:kwargs:), castSelf: Self.asUnicodeDecodeErrorOptional))
   }
 
-  private static func asUnicodeDecodeError(_ object: PyObject, methodName: String) -> PyResult<PyUnicodeDecodeError> {
-    return Self.cast(
-      object,
-      as: PyUnicodeDecodeError.self,
-      typeName: "UnicodeDecodeError",
-      methodName: methodName
-    )
+  private static func asUnicodeDecodeError(functionName: String, object: PyObject) -> PyResult<PyUnicodeDecodeError> {
+    switch PyCast.asUnicodeDecodeError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'UnicodeDecodeError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asUnicodeDecodeErrorOptional(object: PyObject) -> PyUnicodeDecodeError? {
+    return PyCast.asUnicodeDecodeError(object)
   }
 
   // MARK: - UnicodeEncodeError
@@ -1707,16 +2046,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyUnicodeEncodeError.getDict, castSelf: Self.asUnicodeEncodeError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyUnicodeEncodeError.pyUnicodeEncodeErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeEncodeError.pyUnicodeEncodeErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeEncodeError.pyUnicodeEncodeErrorInit(args:kwargs:), castSelf: Self.asUnicodeEncodeErrorOptional))
   }
 
-  private static func asUnicodeEncodeError(_ object: PyObject, methodName: String) -> PyResult<PyUnicodeEncodeError> {
-    return Self.cast(
-      object,
-      as: PyUnicodeEncodeError.self,
-      typeName: "UnicodeEncodeError",
-      methodName: methodName
-    )
+  private static func asUnicodeEncodeError(functionName: String, object: PyObject) -> PyResult<PyUnicodeEncodeError> {
+    switch PyCast.asUnicodeEncodeError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'UnicodeEncodeError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asUnicodeEncodeErrorOptional(object: PyObject) -> PyUnicodeEncodeError? {
+    return PyCast.asUnicodeEncodeError(object)
   }
 
   // MARK: - UnicodeTranslateError
@@ -1733,16 +2079,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyUnicodeTranslateError.getDict, castSelf: Self.asUnicodeTranslateError))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyUnicodeTranslateError.pyUnicodeTranslateErrorNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeTranslateError.pyUnicodeTranslateErrorInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeTranslateError.pyUnicodeTranslateErrorInit(args:kwargs:), castSelf: Self.asUnicodeTranslateErrorOptional))
   }
 
-  private static func asUnicodeTranslateError(_ object: PyObject, methodName: String) -> PyResult<PyUnicodeTranslateError> {
-    return Self.cast(
-      object,
-      as: PyUnicodeTranslateError.self,
-      typeName: "UnicodeTranslateError",
-      methodName: methodName
-    )
+  private static func asUnicodeTranslateError(functionName: String, object: PyObject) -> PyResult<PyUnicodeTranslateError> {
+    switch PyCast.asUnicodeTranslateError(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'UnicodeTranslateError' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asUnicodeTranslateErrorOptional(object: PyObject) -> PyUnicodeTranslateError? {
+    return PyCast.asUnicodeTranslateError(object)
   }
 
   // MARK: - Warning
@@ -1759,16 +2112,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyWarning.getDict, castSelf: Self.asWarning))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyWarning.pyWarningNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyWarning.pyWarningInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyWarning.pyWarningInit(args:kwargs:), castSelf: Self.asWarningOptional))
   }
 
-  private static func asWarning(_ object: PyObject, methodName: String) -> PyResult<PyWarning> {
-    return Self.cast(
-      object,
-      as: PyWarning.self,
-      typeName: "Warning",
-      methodName: methodName
-    )
+  private static func asWarning(functionName: String, object: PyObject) -> PyResult<PyWarning> {
+    switch PyCast.asWarning(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'Warning' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asWarningOptional(object: PyObject) -> PyWarning? {
+    return PyCast.asWarning(object)
   }
 
   // MARK: - DeprecationWarning
@@ -1785,16 +2145,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyDeprecationWarning.getDict, castSelf: Self.asDeprecationWarning))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyDeprecationWarning.pyDeprecationWarningNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyDeprecationWarning.pyDeprecationWarningInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyDeprecationWarning.pyDeprecationWarningInit(args:kwargs:), castSelf: Self.asDeprecationWarningOptional))
   }
 
-  private static func asDeprecationWarning(_ object: PyObject, methodName: String) -> PyResult<PyDeprecationWarning> {
-    return Self.cast(
-      object,
-      as: PyDeprecationWarning.self,
-      typeName: "DeprecationWarning",
-      methodName: methodName
-    )
+  private static func asDeprecationWarning(functionName: String, object: PyObject) -> PyResult<PyDeprecationWarning> {
+    switch PyCast.asDeprecationWarning(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'DeprecationWarning' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asDeprecationWarningOptional(object: PyObject) -> PyDeprecationWarning? {
+    return PyCast.asDeprecationWarning(object)
   }
 
   // MARK: - PendingDeprecationWarning
@@ -1811,16 +2178,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyPendingDeprecationWarning.getDict, castSelf: Self.asPendingDeprecationWarning))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyPendingDeprecationWarning.pyPendingDeprecationWarningNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyPendingDeprecationWarning.pyPendingDeprecationWarningInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyPendingDeprecationWarning.pyPendingDeprecationWarningInit(args:kwargs:), castSelf: Self.asPendingDeprecationWarningOptional))
   }
 
-  private static func asPendingDeprecationWarning(_ object: PyObject, methodName: String) -> PyResult<PyPendingDeprecationWarning> {
-    return Self.cast(
-      object,
-      as: PyPendingDeprecationWarning.self,
-      typeName: "PendingDeprecationWarning",
-      methodName: methodName
-    )
+  private static func asPendingDeprecationWarning(functionName: String, object: PyObject) -> PyResult<PyPendingDeprecationWarning> {
+    switch PyCast.asPendingDeprecationWarning(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'PendingDeprecationWarning' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asPendingDeprecationWarningOptional(object: PyObject) -> PyPendingDeprecationWarning? {
+    return PyCast.asPendingDeprecationWarning(object)
   }
 
   // MARK: - RuntimeWarning
@@ -1837,16 +2211,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyRuntimeWarning.getDict, castSelf: Self.asRuntimeWarning))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyRuntimeWarning.pyRuntimeWarningNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyRuntimeWarning.pyRuntimeWarningInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyRuntimeWarning.pyRuntimeWarningInit(args:kwargs:), castSelf: Self.asRuntimeWarningOptional))
   }
 
-  private static func asRuntimeWarning(_ object: PyObject, methodName: String) -> PyResult<PyRuntimeWarning> {
-    return Self.cast(
-      object,
-      as: PyRuntimeWarning.self,
-      typeName: "RuntimeWarning",
-      methodName: methodName
-    )
+  private static func asRuntimeWarning(functionName: String, object: PyObject) -> PyResult<PyRuntimeWarning> {
+    switch PyCast.asRuntimeWarning(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'RuntimeWarning' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asRuntimeWarningOptional(object: PyObject) -> PyRuntimeWarning? {
+    return PyCast.asRuntimeWarning(object)
   }
 
   // MARK: - SyntaxWarning
@@ -1863,16 +2244,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PySyntaxWarning.getDict, castSelf: Self.asSyntaxWarning))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PySyntaxWarning.pySyntaxWarningNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySyntaxWarning.pySyntaxWarningInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySyntaxWarning.pySyntaxWarningInit(args:kwargs:), castSelf: Self.asSyntaxWarningOptional))
   }
 
-  private static func asSyntaxWarning(_ object: PyObject, methodName: String) -> PyResult<PySyntaxWarning> {
-    return Self.cast(
-      object,
-      as: PySyntaxWarning.self,
-      typeName: "SyntaxWarning",
-      methodName: methodName
-    )
+  private static func asSyntaxWarning(functionName: String, object: PyObject) -> PyResult<PySyntaxWarning> {
+    switch PyCast.asSyntaxWarning(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'SyntaxWarning' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asSyntaxWarningOptional(object: PyObject) -> PySyntaxWarning? {
+    return PyCast.asSyntaxWarning(object)
   }
 
   // MARK: - UserWarning
@@ -1889,16 +2277,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyUserWarning.getDict, castSelf: Self.asUserWarning))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyUserWarning.pyUserWarningNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUserWarning.pyUserWarningInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUserWarning.pyUserWarningInit(args:kwargs:), castSelf: Self.asUserWarningOptional))
   }
 
-  private static func asUserWarning(_ object: PyObject, methodName: String) -> PyResult<PyUserWarning> {
-    return Self.cast(
-      object,
-      as: PyUserWarning.self,
-      typeName: "UserWarning",
-      methodName: methodName
-    )
+  private static func asUserWarning(functionName: String, object: PyObject) -> PyResult<PyUserWarning> {
+    switch PyCast.asUserWarning(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'UserWarning' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asUserWarningOptional(object: PyObject) -> PyUserWarning? {
+    return PyCast.asUserWarning(object)
   }
 
   // MARK: - FutureWarning
@@ -1915,16 +2310,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyFutureWarning.getDict, castSelf: Self.asFutureWarning))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyFutureWarning.pyFutureWarningNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFutureWarning.pyFutureWarningInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFutureWarning.pyFutureWarningInit(args:kwargs:), castSelf: Self.asFutureWarningOptional))
   }
 
-  private static func asFutureWarning(_ object: PyObject, methodName: String) -> PyResult<PyFutureWarning> {
-    return Self.cast(
-      object,
-      as: PyFutureWarning.self,
-      typeName: "FutureWarning",
-      methodName: methodName
-    )
+  private static func asFutureWarning(functionName: String, object: PyObject) -> PyResult<PyFutureWarning> {
+    switch PyCast.asFutureWarning(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'FutureWarning' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asFutureWarningOptional(object: PyObject) -> PyFutureWarning? {
+    return PyCast.asFutureWarning(object)
   }
 
   // MARK: - ImportWarning
@@ -1941,16 +2343,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyImportWarning.getDict, castSelf: Self.asImportWarning))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyImportWarning.pyImportWarningNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyImportWarning.pyImportWarningInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyImportWarning.pyImportWarningInit(args:kwargs:), castSelf: Self.asImportWarningOptional))
   }
 
-  private static func asImportWarning(_ object: PyObject, methodName: String) -> PyResult<PyImportWarning> {
-    return Self.cast(
-      object,
-      as: PyImportWarning.self,
-      typeName: "ImportWarning",
-      methodName: methodName
-    )
+  private static func asImportWarning(functionName: String, object: PyObject) -> PyResult<PyImportWarning> {
+    switch PyCast.asImportWarning(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ImportWarning' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asImportWarningOptional(object: PyObject) -> PyImportWarning? {
+    return PyCast.asImportWarning(object)
   }
 
   // MARK: - UnicodeWarning
@@ -1967,16 +2376,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyUnicodeWarning.getDict, castSelf: Self.asUnicodeWarning))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyUnicodeWarning.pyUnicodeWarningNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeWarning.pyUnicodeWarningInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeWarning.pyUnicodeWarningInit(args:kwargs:), castSelf: Self.asUnicodeWarningOptional))
   }
 
-  private static func asUnicodeWarning(_ object: PyObject, methodName: String) -> PyResult<PyUnicodeWarning> {
-    return Self.cast(
-      object,
-      as: PyUnicodeWarning.self,
-      typeName: "UnicodeWarning",
-      methodName: methodName
-    )
+  private static func asUnicodeWarning(functionName: String, object: PyObject) -> PyResult<PyUnicodeWarning> {
+    switch PyCast.asUnicodeWarning(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'UnicodeWarning' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asUnicodeWarningOptional(object: PyObject) -> PyUnicodeWarning? {
+    return PyCast.asUnicodeWarning(object)
   }
 
   // MARK: - BytesWarning
@@ -1993,16 +2409,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyBytesWarning.getDict, castSelf: Self.asBytesWarning))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyBytesWarning.pyBytesWarningNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBytesWarning.pyBytesWarningInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBytesWarning.pyBytesWarningInit(args:kwargs:), castSelf: Self.asBytesWarningOptional))
   }
 
-  private static func asBytesWarning(_ object: PyObject, methodName: String) -> PyResult<PyBytesWarning> {
-    return Self.cast(
-      object,
-      as: PyBytesWarning.self,
-      typeName: "BytesWarning",
-      methodName: methodName
-    )
+  private static func asBytesWarning(functionName: String, object: PyObject) -> PyResult<PyBytesWarning> {
+    switch PyCast.asBytesWarning(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'BytesWarning' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asBytesWarningOptional(object: PyObject) -> PyBytesWarning? {
+    return PyCast.asBytesWarning(object)
   }
 
   // MARK: - ResourceWarning
@@ -2019,16 +2442,23 @@ public final class BuiltinErrorTypes {
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyResourceWarning.getDict, castSelf: Self.asResourceWarning))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyResourceWarning.pyResourceWarningNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyResourceWarning.pyResourceWarningInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyResourceWarning.pyResourceWarningInit(args:kwargs:), castSelf: Self.asResourceWarningOptional))
   }
 
-  private static func asResourceWarning(_ object: PyObject, methodName: String) -> PyResult<PyResourceWarning> {
-    return Self.cast(
-      object,
-      as: PyResourceWarning.self,
-      typeName: "ResourceWarning",
-      methodName: methodName
-    )
+  private static func asResourceWarning(functionName: String, object: PyObject) -> PyResult<PyResourceWarning> {
+    switch PyCast.asResourceWarning(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ResourceWarning' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asResourceWarningOptional(object: PyObject) -> PyResourceWarning? {
+    return PyCast.asResourceWarning(object)
   }
 
 }

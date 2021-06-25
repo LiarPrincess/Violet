@@ -5,7 +5,7 @@ from TypeMemoryLayout import get_layout_name
 from Common.builtin_types import (
     get_property_name_escaped, print_property,
     get_fill_function_name, print_fill_function, print_fill_helpers,
-    get_downcast_function_name, print_downcast_function
+    print_castSelf_functions
 )
 
 if __name__ == '__main__':
@@ -143,6 +143,6 @@ import VioletCore
 
     for t in types:
         print_fill_function(t)
-        print_downcast_function(t)
+        print_castSelf_functions(t)
 
     print('}')

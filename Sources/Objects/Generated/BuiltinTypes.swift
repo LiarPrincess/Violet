@@ -4,6 +4,7 @@ import VioletCore
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 // swiftlint:disable trailing_comma
+// swiftlint:disable discouraged_optional_boolean
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable file_length
 
@@ -296,24 +297,6 @@ public final class BuiltinTypes {
     }
   }
 
-  /// Basically:
-  /// We hold 'PyObjects' on stack.
-  /// We need to call Swift method that needs specific 'self' type.
-  /// This method is responsible for downcasting 'PyObject' -> specific Swift type.
-  private static func cast<T>(_ object: PyObject,
-                              as type: T.Type,
-                              typeName: String,
-                              methodName: String) -> PyResult<T> {
-    if let v = object as? T {
-      return .value(v)
-    }
-
-    return .typeError(
-      "descriptor '\(methodName)' requires a '\(typeName)' object " +
-      "but received a '\(object.typeName)'"
-    )
-  }
-
   // MARK: - Object
 
   private func fillObject() {
@@ -325,7 +308,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyObjectType.getClass(zelf:), castSelf: Self.asObject))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyObjectType.pyNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyObjectType.pyInit(zelf:args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyObjectType.pyInit(zelf:args:kwargs:), castSelf: Self.asObjectOptional))
 
     self.insert(type: type, name: "__subclasshook__", value: PyClassMethod.wrap(name: "__subclasshook__", doc: nil, fn: PyObjectType.subclasshook(args:kwargs:)))
 
@@ -346,13 +329,14 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__init_subclass__", value: PyBuiltinFunction.wrap(name: "__init_subclass__", doc: nil, fn: PyObjectType.initSubclass(zelf:)))
   }
 
-  private static func asObject(_ object: PyObject, methodName: String) -> PyResult<PyObject> {
-    return Self.cast(
-      object,
-      as: PyObject.self,
-      typeName: "object",
-      methodName: methodName
-    )
+  private static func asObject(functionName: String, object: PyObject) -> PyResult<PyObject> {
+    // Trivial cast: 'object' is always an 'object'
+    return .value(object)
+  }
+
+  private static func asObjectOptional(object: PyObject) -> PyObject? {
+    // Trivial cast: 'object' is always an 'object'
+    return object
   }
 
   // MARK: - Bool
@@ -376,13 +360,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__rxor__", value: PyBuiltinFunction.wrap(name: "__rxor__", doc: nil, fn: PyBool.rxor(bool:other:), castSelf: Self.asBool))
   }
 
-  private static func asBool(_ object: PyObject, methodName: String) -> PyResult<PyBool> {
-    return Self.cast(
-      object,
-      as: PyBool.self,
-      typeName: "bool",
-      methodName: methodName
-    )
+  private static func asBool(functionName: String, object: PyObject) -> PyResult<PyBool> {
+    switch PyCast.asBool(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'bool' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asBoolOptional(object: PyObject) -> PyBool? {
+    return PyCast.asBool(object)
   }
 
   // MARK: - BuiltinFunction
@@ -413,13 +404,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__call__", value: PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyBuiltinFunction.call(args:kwargs:), castSelf: Self.asBuiltinFunction))
   }
 
-  private static func asBuiltinFunction(_ object: PyObject, methodName: String) -> PyResult<PyBuiltinFunction> {
-    return Self.cast(
-      object,
-      as: PyBuiltinFunction.self,
-      typeName: "builtinFunction",
-      methodName: methodName
-    )
+  private static func asBuiltinFunction(functionName: String, object: PyObject) -> PyResult<PyBuiltinFunction> {
+    switch PyCast.asBuiltinFunction(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'builtinFunction' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asBuiltinFunctionOptional(object: PyObject) -> PyBuiltinFunction? {
+    return PyCast.asBuiltinFunction(object)
   }
 
   // MARK: - BuiltinMethod
@@ -449,13 +447,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__call__", value: PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyBuiltinMethod.call(args:kwargs:), castSelf: Self.asBuiltinMethod))
   }
 
-  private static func asBuiltinMethod(_ object: PyObject, methodName: String) -> PyResult<PyBuiltinMethod> {
-    return Self.cast(
-      object,
-      as: PyBuiltinMethod.self,
-      typeName: "builtinMethod",
-      methodName: methodName
-    )
+  private static func asBuiltinMethod(functionName: String, object: PyObject) -> PyResult<PyBuiltinMethod> {
+    switch PyCast.asBuiltinMethod(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'builtinMethod' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asBuiltinMethodOptional(object: PyObject) -> PyBuiltinMethod? {
+    return PyCast.asBuiltinMethod(object)
   }
 
   // MARK: - ByteArray
@@ -469,7 +474,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyByteArray.getClass, castSelf: Self.asByteArray))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyByteArray.pyNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyByteArray.pyInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyByteArray.pyInit(args:kwargs:), castSelf: Self.asByteArrayOptional))
 
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyByteArray.isEqual(_:), castSelf: Self.asByteArray))
     self.insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyByteArray.isNotEqual(_:), castSelf: Self.asByteArray))
@@ -537,13 +542,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "copy", value: PyBuiltinFunction.wrap(name: "copy", doc: PyByteArray.copyDoc, fn: PyByteArray.copy, castSelf: Self.asByteArray))
   }
 
-  private static func asByteArray(_ object: PyObject, methodName: String) -> PyResult<PyByteArray> {
-    return Self.cast(
-      object,
-      as: PyByteArray.self,
-      typeName: "bytearray",
-      methodName: methodName
-    )
+  private static func asByteArray(functionName: String, object: PyObject) -> PyResult<PyByteArray> {
+    switch PyCast.asByteArray(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'bytearray' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asByteArrayOptional(object: PyObject) -> PyByteArray? {
+    return PyCast.asByteArray(object)
   }
 
   // MARK: - ByteArrayIterator
@@ -564,13 +576,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyByteArrayIterator.lengthHint, castSelf: Self.asByteArrayIterator))
   }
 
-  private static func asByteArrayIterator(_ object: PyObject, methodName: String) -> PyResult<PyByteArrayIterator> {
-    return Self.cast(
-      object,
-      as: PyByteArrayIterator.self,
-      typeName: "bytearray_iterator",
-      methodName: methodName
-    )
+  private static func asByteArrayIterator(functionName: String, object: PyObject) -> PyResult<PyByteArrayIterator> {
+    switch PyCast.asByteArrayIterator(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'bytearray_iterator' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asByteArrayIteratorOptional(object: PyObject) -> PyByteArrayIterator? {
+    return PyCast.asByteArrayIterator(object)
   }
 
   // MARK: - Bytes
@@ -640,13 +659,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyBytes.iter, castSelf: Self.asBytes))
   }
 
-  private static func asBytes(_ object: PyObject, methodName: String) -> PyResult<PyBytes> {
-    return Self.cast(
-      object,
-      as: PyBytes.self,
-      typeName: "bytes",
-      methodName: methodName
-    )
+  private static func asBytes(functionName: String, object: PyObject) -> PyResult<PyBytes> {
+    switch PyCast.asBytes(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'bytes' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asBytesOptional(object: PyObject) -> PyBytes? {
+    return PyCast.asBytes(object)
   }
 
   // MARK: - BytesIterator
@@ -667,13 +693,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyBytesIterator.lengthHint, castSelf: Self.asBytesIterator))
   }
 
-  private static func asBytesIterator(_ object: PyObject, methodName: String) -> PyResult<PyBytesIterator> {
-    return Self.cast(
-      object,
-      as: PyBytesIterator.self,
-      typeName: "bytes_iterator",
-      methodName: methodName
-    )
+  private static func asBytesIterator(functionName: String, object: PyObject) -> PyResult<PyBytesIterator> {
+    switch PyCast.asBytesIterator(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'bytes_iterator' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asBytesIteratorOptional(object: PyObject) -> PyBytesIterator? {
+    return PyCast.asBytesIterator(object)
   }
 
   // MARK: - CallableIterator
@@ -691,13 +724,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyCallableIterator.next, castSelf: Self.asCallableIterator))
   }
 
-  private static func asCallableIterator(_ object: PyObject, methodName: String) -> PyResult<PyCallableIterator> {
-    return Self.cast(
-      object,
-      as: PyCallableIterator.self,
-      typeName: "callable_iterator",
-      methodName: methodName
-    )
+  private static func asCallableIterator(functionName: String, object: PyObject) -> PyResult<PyCallableIterator> {
+    switch PyCast.asCallableIterator(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'callable_iterator' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asCallableIteratorOptional(object: PyObject) -> PyCallableIterator? {
+    return PyCast.asCallableIterator(object)
   }
 
   // MARK: - Cell
@@ -718,13 +758,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyCell.getAttribute(name:), castSelf: Self.asCell))
   }
 
-  private static func asCell(_ object: PyObject, methodName: String) -> PyResult<PyCell> {
-    return Self.cast(
-      object,
-      as: PyCell.self,
-      typeName: "cell",
-      methodName: methodName
-    )
+  private static func asCell(functionName: String, object: PyObject) -> PyResult<PyCell> {
+    switch PyCast.asCell(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'cell' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asCellOptional(object: PyObject) -> PyCell? {
+    return PyCast.asCell(object)
   }
 
   // MARK: - ClassMethod
@@ -741,19 +788,26 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__func__", value: PyProperty.wrap(doc: nil, get: PyClassMethod.getFunc, castSelf: Self.asClassMethod))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyClassMethod.pyNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyClassMethod.pyInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyClassMethod.pyInit(args:kwargs:), castSelf: Self.asClassMethodOptional))
 
     self.insert(type: type, name: "__get__", value: PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyClassMethod.get(object:type:), castSelf: Self.asClassMethod))
     self.insert(type: type, name: "__isabstractmethod__", value: PyBuiltinFunction.wrap(name: "__isabstractmethod__", doc: nil, fn: PyClassMethod.isAbstractMethod, castSelf: Self.asClassMethod))
   }
 
-  private static func asClassMethod(_ object: PyObject, methodName: String) -> PyResult<PyClassMethod> {
-    return Self.cast(
-      object,
-      as: PyClassMethod.self,
-      typeName: "classmethod",
-      methodName: methodName
-    )
+  private static func asClassMethod(functionName: String, object: PyObject) -> PyResult<PyClassMethod> {
+    switch PyCast.asClassMethod(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'classmethod' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asClassMethodOptional(object: PyObject) -> PyClassMethod? {
+    return PyCast.asClassMethod(object)
   }
 
   // MARK: - Code
@@ -782,13 +836,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyCode.getAttribute(name:), castSelf: Self.asCode))
   }
 
-  private static func asCode(_ object: PyObject, methodName: String) -> PyResult<PyCode> {
-    return Self.cast(
-      object,
-      as: PyCode.self,
-      typeName: "code",
-      methodName: methodName
-    )
+  private static func asCode(functionName: String, object: PyObject) -> PyResult<PyCode> {
+    switch PyCast.asCode(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'code' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asCodeOptional(object: PyObject) -> PyCode? {
+    return PyCast.asCode(object)
   }
 
   // MARK: - Complex
@@ -841,13 +902,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getnewargs__", value: PyBuiltinFunction.wrap(name: "__getnewargs__", doc: nil, fn: PyComplex.getNewArgs, castSelf: Self.asComplex))
   }
 
-  private static func asComplex(_ object: PyObject, methodName: String) -> PyResult<PyComplex> {
-    return Self.cast(
-      object,
-      as: PyComplex.self,
-      typeName: "complex",
-      methodName: methodName
-    )
+  private static func asComplex(functionName: String, object: PyObject) -> PyResult<PyComplex> {
+    switch PyCast.asComplex(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'complex' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asComplexOptional(object: PyObject) -> PyComplex? {
+    return PyCast.asComplex(object)
   }
 
   // MARK: - Dict
@@ -863,7 +931,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDict.getClass, castSelf: Self.asDict))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyDict.pyNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyDict.pyInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyDict.pyInit(args:kwargs:), castSelf: Self.asDictOptional))
 
     self.insert(type: type, name: "fromkeys", value: PyClassMethod.wrap(name: "fromkeys", doc: nil, fn: PyDict.fromKeys(type:iterable:value:)))
 
@@ -894,13 +962,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "values", value: PyBuiltinFunction.wrap(name: "values", doc: nil, fn: PyDict.values, castSelf: Self.asDict))
   }
 
-  private static func asDict(_ object: PyObject, methodName: String) -> PyResult<PyDict> {
-    return Self.cast(
-      object,
-      as: PyDict.self,
-      typeName: "dict",
-      methodName: methodName
-    )
+  private static func asDict(functionName: String, object: PyObject) -> PyResult<PyDict> {
+    switch PyCast.asDict(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'dict' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asDictOptional(object: PyObject) -> PyDict? {
+    return PyCast.asDict(object)
   }
 
   // MARK: - DictItemIterator
@@ -921,13 +996,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyDictItemIterator.lengthHint, castSelf: Self.asDictItemIterator))
   }
 
-  private static func asDictItemIterator(_ object: PyObject, methodName: String) -> PyResult<PyDictItemIterator> {
-    return Self.cast(
-      object,
-      as: PyDictItemIterator.self,
-      typeName: "dict_itemiterator",
-      methodName: methodName
-    )
+  private static func asDictItemIterator(functionName: String, object: PyObject) -> PyResult<PyDictItemIterator> {
+    switch PyCast.asDictItemIterator(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'dict_itemiterator' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asDictItemIteratorOptional(object: PyObject) -> PyDictItemIterator? {
+    return PyCast.asDictItemIterator(object)
   }
 
   // MARK: - DictItems
@@ -956,13 +1038,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyDictItems.iter, castSelf: Self.asDictItems))
   }
 
-  private static func asDictItems(_ object: PyObject, methodName: String) -> PyResult<PyDictItems> {
-    return Self.cast(
-      object,
-      as: PyDictItems.self,
-      typeName: "dict_items",
-      methodName: methodName
-    )
+  private static func asDictItems(functionName: String, object: PyObject) -> PyResult<PyDictItems> {
+    switch PyCast.asDictItems(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'dict_items' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asDictItemsOptional(object: PyObject) -> PyDictItems? {
+    return PyCast.asDictItems(object)
   }
 
   // MARK: - DictKeyIterator
@@ -983,13 +1072,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyDictKeyIterator.lengthHint, castSelf: Self.asDictKeyIterator))
   }
 
-  private static func asDictKeyIterator(_ object: PyObject, methodName: String) -> PyResult<PyDictKeyIterator> {
-    return Self.cast(
-      object,
-      as: PyDictKeyIterator.self,
-      typeName: "dict_keyiterator",
-      methodName: methodName
-    )
+  private static func asDictKeyIterator(functionName: String, object: PyObject) -> PyResult<PyDictKeyIterator> {
+    switch PyCast.asDictKeyIterator(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'dict_keyiterator' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asDictKeyIteratorOptional(object: PyObject) -> PyDictKeyIterator? {
+    return PyCast.asDictKeyIterator(object)
   }
 
   // MARK: - DictKeys
@@ -1018,13 +1114,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyDictKeys.iter, castSelf: Self.asDictKeys))
   }
 
-  private static func asDictKeys(_ object: PyObject, methodName: String) -> PyResult<PyDictKeys> {
-    return Self.cast(
-      object,
-      as: PyDictKeys.self,
-      typeName: "dict_keys",
-      methodName: methodName
-    )
+  private static func asDictKeys(functionName: String, object: PyObject) -> PyResult<PyDictKeys> {
+    switch PyCast.asDictKeys(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'dict_keys' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asDictKeysOptional(object: PyObject) -> PyDictKeys? {
+    return PyCast.asDictKeys(object)
   }
 
   // MARK: - DictValueIterator
@@ -1045,13 +1148,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyDictValueIterator.lengthHint, castSelf: Self.asDictValueIterator))
   }
 
-  private static func asDictValueIterator(_ object: PyObject, methodName: String) -> PyResult<PyDictValueIterator> {
-    return Self.cast(
-      object,
-      as: PyDictValueIterator.self,
-      typeName: "dict_valueiterator",
-      methodName: methodName
-    )
+  private static func asDictValueIterator(functionName: String, object: PyObject) -> PyResult<PyDictValueIterator> {
+    switch PyCast.asDictValueIterator(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'dict_valueiterator' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asDictValueIteratorOptional(object: PyObject) -> PyDictValueIterator? {
+    return PyCast.asDictValueIterator(object)
   }
 
   // MARK: - DictValues
@@ -1068,13 +1178,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyDictValues.iter, castSelf: Self.asDictValues))
   }
 
-  private static func asDictValues(_ object: PyObject, methodName: String) -> PyResult<PyDictValues> {
-    return Self.cast(
-      object,
-      as: PyDictValues.self,
-      typeName: "dict_values",
-      methodName: methodName
-    )
+  private static func asDictValues(functionName: String, object: PyObject) -> PyResult<PyDictValues> {
+    switch PyCast.asDictValues(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'dict_values' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asDictValuesOptional(object: PyObject) -> PyDictValues? {
+    return PyCast.asDictValues(object)
   }
 
   // MARK: - Ellipsis
@@ -1093,13 +1210,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyEllipsis.getAttribute(name:), castSelf: Self.asEllipsis))
   }
 
-  private static func asEllipsis(_ object: PyObject, methodName: String) -> PyResult<PyEllipsis> {
-    return Self.cast(
-      object,
-      as: PyEllipsis.self,
-      typeName: "ellipsis",
-      methodName: methodName
-    )
+  private static func asEllipsis(functionName: String, object: PyObject) -> PyResult<PyEllipsis> {
+    switch PyCast.asEllipsis(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'ellipsis' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asEllipsisOptional(object: PyObject) -> PyEllipsis? {
+    return PyCast.asEllipsis(object)
   }
 
   // MARK: - Enumerate
@@ -1120,13 +1244,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyEnumerate.next, castSelf: Self.asEnumerate))
   }
 
-  private static func asEnumerate(_ object: PyObject, methodName: String) -> PyResult<PyEnumerate> {
-    return Self.cast(
-      object,
-      as: PyEnumerate.self,
-      typeName: "enumerate",
-      methodName: methodName
-    )
+  private static func asEnumerate(functionName: String, object: PyObject) -> PyResult<PyEnumerate> {
+    switch PyCast.asEnumerate(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'enumerate' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asEnumerateOptional(object: PyObject) -> PyEnumerate? {
+    return PyCast.asEnumerate(object)
   }
 
   // MARK: - Filter
@@ -1147,13 +1278,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyFilter.next, castSelf: Self.asFilter))
   }
 
-  private static func asFilter(_ object: PyObject, methodName: String) -> PyResult<PyFilter> {
-    return Self.cast(
-      object,
-      as: PyFilter.self,
-      typeName: "filter",
-      methodName: methodName
-    )
+  private static func asFilter(functionName: String, object: PyObject) -> PyResult<PyFilter> {
+    switch PyCast.asFilter(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'filter' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asFilterOptional(object: PyObject) -> PyFilter? {
+    return PyCast.asFilter(object)
   }
 
   // MARK: - Float
@@ -1212,13 +1350,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "hex", value: PyBuiltinFunction.wrap(name: "hex", doc: PyFloat.hexDoc, fn: PyFloat.hex, castSelf: Self.asFloat))
   }
 
-  private static func asFloat(_ object: PyObject, methodName: String) -> PyResult<PyFloat> {
-    return Self.cast(
-      object,
-      as: PyFloat.self,
-      typeName: "float",
-      methodName: methodName
-    )
+  private static func asFloat(functionName: String, object: PyObject) -> PyResult<PyFloat> {
+    switch PyCast.asFloat(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'float' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asFloatOptional(object: PyObject) -> PyFloat? {
+    return PyCast.asFloat(object)
   }
 
   // MARK: - Frame
@@ -1244,13 +1389,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__delattr__", value: PyBuiltinFunction.wrap(name: "__delattr__", doc: nil, fn: PyFrame.delAttribute(name:), castSelf: Self.asFrame))
   }
 
-  private static func asFrame(_ object: PyObject, methodName: String) -> PyResult<PyFrame> {
-    return Self.cast(
-      object,
-      as: PyFrame.self,
-      typeName: "frame",
-      methodName: methodName
-    )
+  private static func asFrame(functionName: String, object: PyObject) -> PyResult<PyFrame> {
+    switch PyCast.asFrame(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'frame' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asFrameOptional(object: PyObject) -> PyFrame? {
+    return PyCast.asFrame(object)
   }
 
   // MARK: - FrozenSet
@@ -1296,13 +1448,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyFrozenSet.iter, castSelf: Self.asFrozenSet))
   }
 
-  private static func asFrozenSet(_ object: PyObject, methodName: String) -> PyResult<PyFrozenSet> {
-    return Self.cast(
-      object,
-      as: PyFrozenSet.self,
-      typeName: "frozenset",
-      methodName: methodName
-    )
+  private static func asFrozenSet(functionName: String, object: PyObject) -> PyResult<PyFrozenSet> {
+    switch PyCast.asFrozenSet(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'frozenset' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asFrozenSetOptional(object: PyObject) -> PyFrozenSet? {
+    return PyCast.asFrozenSet(object)
   }
 
   // MARK: - Function
@@ -1331,13 +1490,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__call__", value: PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyFunction.call(args:kwargs:), castSelf: Self.asFunction))
   }
 
-  private static func asFunction(_ object: PyObject, methodName: String) -> PyResult<PyFunction> {
-    return Self.cast(
-      object,
-      as: PyFunction.self,
-      typeName: "function",
-      methodName: methodName
-    )
+  private static func asFunction(functionName: String, object: PyObject) -> PyResult<PyFunction> {
+    switch PyCast.asFunction(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'function' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asFunctionOptional(object: PyObject) -> PyFunction? {
+    return PyCast.asFunction(object)
   }
 
   // MARK: - Int
@@ -1409,13 +1575,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__round__", value: PyBuiltinFunction.wrap(name: "__round__", doc: nil, fn: PyInt.round(nDigits:), castSelf: Self.asInt))
   }
 
-  private static func asInt(_ object: PyObject, methodName: String) -> PyResult<PyInt> {
-    return Self.cast(
-      object,
-      as: PyInt.self,
-      typeName: "int",
-      methodName: methodName
-    )
+  private static func asInt(functionName: String, object: PyObject) -> PyResult<PyInt> {
+    switch PyCast.asInt(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'int' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asIntOptional(object: PyObject) -> PyInt? {
+    return PyCast.asInt(object)
   }
 
   // MARK: - Iterator
@@ -1434,13 +1607,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyIterator.lengthHint, castSelf: Self.asIterator))
   }
 
-  private static func asIterator(_ object: PyObject, methodName: String) -> PyResult<PyIterator> {
-    return Self.cast(
-      object,
-      as: PyIterator.self,
-      typeName: "iterator",
-      methodName: methodName
-    )
+  private static func asIterator(functionName: String, object: PyObject) -> PyResult<PyIterator> {
+    switch PyCast.asIterator(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'iterator' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asIteratorOptional(object: PyObject) -> PyIterator? {
+    return PyCast.asIterator(object)
   }
 
   // MARK: - List
@@ -1456,7 +1636,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyList.getClass, castSelf: Self.asList))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyList.pyNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyList.pyInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyList.pyInit(args:kwargs:), castSelf: Self.asListOptional))
 
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyList.isEqual(_:), castSelf: Self.asList))
     self.insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyList.isNotEqual(_:), castSelf: Self.asList))
@@ -1492,13 +1672,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__imul__", value: PyBuiltinFunction.wrap(name: "__imul__", doc: nil, fn: PyList.imul(_:), castSelf: Self.asList))
   }
 
-  private static func asList(_ object: PyObject, methodName: String) -> PyResult<PyList> {
-    return Self.cast(
-      object,
-      as: PyList.self,
-      typeName: "list",
-      methodName: methodName
-    )
+  private static func asList(functionName: String, object: PyObject) -> PyResult<PyList> {
+    switch PyCast.asList(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'list' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asListOptional(object: PyObject) -> PyList? {
+    return PyCast.asList(object)
   }
 
   // MARK: - ListIterator
@@ -1519,13 +1706,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyListIterator.lengthHint, castSelf: Self.asListIterator))
   }
 
-  private static func asListIterator(_ object: PyObject, methodName: String) -> PyResult<PyListIterator> {
-    return Self.cast(
-      object,
-      as: PyListIterator.self,
-      typeName: "list_iterator",
-      methodName: methodName
-    )
+  private static func asListIterator(functionName: String, object: PyObject) -> PyResult<PyListIterator> {
+    switch PyCast.asListIterator(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'list_iterator' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asListIteratorOptional(object: PyObject) -> PyListIterator? {
+    return PyCast.asListIterator(object)
   }
 
   // MARK: - ListReverseIterator
@@ -1546,13 +1740,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyListReverseIterator.lengthHint, castSelf: Self.asListReverseIterator))
   }
 
-  private static func asListReverseIterator(_ object: PyObject, methodName: String) -> PyResult<PyListReverseIterator> {
-    return Self.cast(
-      object,
-      as: PyListReverseIterator.self,
-      typeName: "list_reverseiterator",
-      methodName: methodName
-    )
+  private static func asListReverseIterator(functionName: String, object: PyObject) -> PyResult<PyListReverseIterator> {
+    switch PyCast.asListReverseIterator(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'list_reverseiterator' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asListReverseIteratorOptional(object: PyObject) -> PyListReverseIterator? {
+    return PyCast.asListReverseIterator(object)
   }
 
   // MARK: - Map
@@ -1573,13 +1774,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyMap.next, castSelf: Self.asMap))
   }
 
-  private static func asMap(_ object: PyObject, methodName: String) -> PyResult<PyMap> {
-    return Self.cast(
-      object,
-      as: PyMap.self,
-      typeName: "map",
-      methodName: methodName
-    )
+  private static func asMap(functionName: String, object: PyObject) -> PyResult<PyMap> {
+    switch PyCast.asMap(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'map' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asMapOptional(object: PyObject) -> PyMap? {
+    return PyCast.asMap(object)
   }
 
   // MARK: - Method
@@ -1610,13 +1818,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__call__", value: PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyMethod.call(args:kwargs:), castSelf: Self.asMethod))
   }
 
-  private static func asMethod(_ object: PyObject, methodName: String) -> PyResult<PyMethod> {
-    return Self.cast(
-      object,
-      as: PyMethod.self,
-      typeName: "method",
-      methodName: methodName
-    )
+  private static func asMethod(functionName: String, object: PyObject) -> PyResult<PyMethod> {
+    switch PyCast.asMethod(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'method' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asMethodOptional(object: PyObject) -> PyMethod? {
+    return PyCast.asMethod(object)
   }
 
   // MARK: - Module
@@ -1632,7 +1847,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyModule.getClass, castSelf: Self.asModule))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyModule.pyNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyModule.pyInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyModule.pyInit(args:kwargs:), castSelf: Self.asModuleOptional))
 
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyModule.repr, castSelf: Self.asModule))
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyModule.getAttribute(name:), castSelf: Self.asModule))
@@ -1641,13 +1856,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__dir__", value: PyBuiltinFunction.wrap(name: "__dir__", doc: nil, fn: PyModule.dir, castSelf: Self.asModule))
   }
 
-  private static func asModule(_ object: PyObject, methodName: String) -> PyResult<PyModule> {
-    return Self.cast(
-      object,
-      as: PyModule.self,
-      typeName: "module",
-      methodName: methodName
-    )
+  private static func asModule(functionName: String, object: PyObject) -> PyResult<PyModule> {
+    switch PyCast.asModule(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'module' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asModuleOptional(object: PyObject) -> PyModule? {
+    return PyCast.asModule(object)
   }
 
   // MARK: - Namespace
@@ -1661,7 +1883,7 @@ public final class BuiltinTypes {
 
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyNamespace.getDict, castSelf: Self.asNamespace))
 
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNamespace.pyInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNamespace.pyInit(args:kwargs:), castSelf: Self.asNamespaceOptional))
 
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyNamespace.isEqual(_:), castSelf: Self.asNamespace))
     self.insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyNamespace.isNotEqual(_:), castSelf: Self.asNamespace))
@@ -1675,13 +1897,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__delattr__", value: PyBuiltinFunction.wrap(name: "__delattr__", doc: nil, fn: PyNamespace.delAttribute(name:), castSelf: Self.asNamespace))
   }
 
-  private static func asNamespace(_ object: PyObject, methodName: String) -> PyResult<PyNamespace> {
-    return Self.cast(
-      object,
-      as: PyNamespace.self,
-      typeName: "types.SimpleNamespace",
-      methodName: methodName
-    )
+  private static func asNamespace(functionName: String, object: PyObject) -> PyResult<PyNamespace> {
+    switch PyCast.asNamespace(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'types.SimpleNamespace' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asNamespaceOptional(object: PyObject) -> PyNamespace? {
+    return PyCast.asNamespace(object)
   }
 
   // MARK: - None
@@ -1700,13 +1929,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyNone.getAttribute(name:), castSelf: Self.asNone))
   }
 
-  private static func asNone(_ object: PyObject, methodName: String) -> PyResult<PyNone> {
-    return Self.cast(
-      object,
-      as: PyNone.self,
-      typeName: "NoneType",
-      methodName: methodName
-    )
+  private static func asNone(functionName: String, object: PyObject) -> PyResult<PyNone> {
+    switch PyCast.asNone(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'NoneType' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asNoneOptional(object: PyObject) -> PyNone? {
+    return PyCast.asNone(object)
   }
 
   // MARK: - NotImplemented
@@ -1723,13 +1959,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyNotImplemented.repr, castSelf: Self.asNotImplemented))
   }
 
-  private static func asNotImplemented(_ object: PyObject, methodName: String) -> PyResult<PyNotImplemented> {
-    return Self.cast(
-      object,
-      as: PyNotImplemented.self,
-      typeName: "NotImplementedType",
-      methodName: methodName
-    )
+  private static func asNotImplemented(functionName: String, object: PyObject) -> PyResult<PyNotImplemented> {
+    switch PyCast.asNotImplemented(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'NotImplementedType' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asNotImplementedOptional(object: PyObject) -> PyNotImplemented? {
+    return PyCast.asNotImplemented(object)
   }
 
   // MARK: - Property
@@ -1748,7 +1991,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__doc__", value: PyProperty.wrap(doc: nil, get: PyProperty.getDoc, set: PyProperty.setDoc, castSelf: Self.asProperty))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyProperty.pyNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyProperty.pyInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyProperty.pyInit(args:kwargs:), castSelf: Self.asPropertyOptional))
 
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyProperty.getAttribute(name:), castSelf: Self.asProperty))
     self.insert(type: type, name: "__get__", value: PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyProperty.get(object:type:), castSelf: Self.asProperty))
@@ -1759,13 +2002,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "deleter", value: PyBuiltinFunction.wrap(name: "deleter", doc: nil, fn: PyProperty.deleter(value:), castSelf: Self.asProperty))
   }
 
-  private static func asProperty(_ object: PyObject, methodName: String) -> PyResult<PyProperty> {
-    return Self.cast(
-      object,
-      as: PyProperty.self,
-      typeName: "property",
-      methodName: methodName
-    )
+  private static func asProperty(functionName: String, object: PyObject) -> PyResult<PyProperty> {
+    switch PyCast.asProperty(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'property' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asPropertyOptional(object: PyObject) -> PyProperty? {
+    return PyCast.asProperty(object)
   }
 
   // MARK: - Range
@@ -1802,13 +2052,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__reduce__", value: PyBuiltinFunction.wrap(name: "__reduce__", doc: nil, fn: PyRange.reduce(args:kwargs:), castSelf: Self.asRange))
   }
 
-  private static func asRange(_ object: PyObject, methodName: String) -> PyResult<PyRange> {
-    return Self.cast(
-      object,
-      as: PyRange.self,
-      typeName: "range",
-      methodName: methodName
-    )
+  private static func asRange(functionName: String, object: PyObject) -> PyResult<PyRange> {
+    switch PyCast.asRange(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'range' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asRangeOptional(object: PyObject) -> PyRange? {
+    return PyCast.asRange(object)
   }
 
   // MARK: - RangeIterator
@@ -1828,13 +2085,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyRangeIterator.lengthHint, castSelf: Self.asRangeIterator))
   }
 
-  private static func asRangeIterator(_ object: PyObject, methodName: String) -> PyResult<PyRangeIterator> {
-    return Self.cast(
-      object,
-      as: PyRangeIterator.self,
-      typeName: "range_iterator",
-      methodName: methodName
-    )
+  private static func asRangeIterator(functionName: String, object: PyObject) -> PyResult<PyRangeIterator> {
+    switch PyCast.asRangeIterator(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'range_iterator' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asRangeIteratorOptional(object: PyObject) -> PyRangeIterator? {
+    return PyCast.asRangeIterator(object)
   }
 
   // MARK: - Reversed
@@ -1856,13 +2120,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyReversed.lengthHint, castSelf: Self.asReversed))
   }
 
-  private static func asReversed(_ object: PyObject, methodName: String) -> PyResult<PyReversed> {
-    return Self.cast(
-      object,
-      as: PyReversed.self,
-      typeName: "reversed",
-      methodName: methodName
-    )
+  private static func asReversed(functionName: String, object: PyObject) -> PyResult<PyReversed> {
+    switch PyCast.asReversed(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'reversed' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asReversedOptional(object: PyObject) -> PyReversed? {
+    return PyCast.asReversed(object)
   }
 
   // MARK: - Set
@@ -1877,7 +2148,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySet.getClass, castSelf: Self.asSet))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PySet.pyNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySet.pyInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySet.pyInit(args:kwargs:), castSelf: Self.asSetOptional))
 
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PySet.isEqual(_:), castSelf: Self.asSet))
     self.insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PySet.isNotEqual(_:), castSelf: Self.asSet))
@@ -1915,13 +2186,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PySet.iter, castSelf: Self.asSet))
   }
 
-  private static func asSet(_ object: PyObject, methodName: String) -> PyResult<PySet> {
-    return Self.cast(
-      object,
-      as: PySet.self,
-      typeName: "set",
-      methodName: methodName
-    )
+  private static func asSet(functionName: String, object: PyObject) -> PyResult<PySet> {
+    switch PyCast.asSet(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'set' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asSetOptional(object: PyObject) -> PySet? {
+    return PyCast.asSet(object)
   }
 
   // MARK: - SetIterator
@@ -1942,13 +2220,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PySetIterator.lengthHint, castSelf: Self.asSetIterator))
   }
 
-  private static func asSetIterator(_ object: PyObject, methodName: String) -> PyResult<PySetIterator> {
-    return Self.cast(
-      object,
-      as: PySetIterator.self,
-      typeName: "set_iterator",
-      methodName: methodName
-    )
+  private static func asSetIterator(functionName: String, object: PyObject) -> PyResult<PySetIterator> {
+    switch PyCast.asSetIterator(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'set_iterator' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asSetIteratorOptional(object: PyObject) -> PySetIterator? {
+    return PyCast.asSetIterator(object)
   }
 
   // MARK: - Slice
@@ -1978,13 +2263,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "indices", value: PyBuiltinFunction.wrap(name: "indices", doc: nil, fn: PySlice.indicesInSequence(length:), castSelf: Self.asSlice))
   }
 
-  private static func asSlice(_ object: PyObject, methodName: String) -> PyResult<PySlice> {
-    return Self.cast(
-      object,
-      as: PySlice.self,
-      typeName: "slice",
-      methodName: methodName
-    )
+  private static func asSlice(functionName: String, object: PyObject) -> PyResult<PySlice> {
+    switch PyCast.asSlice(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'slice' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asSliceOptional(object: PyObject) -> PySlice? {
+    return PyCast.asSlice(object)
   }
 
   // MARK: - StaticMethod
@@ -2001,19 +2293,26 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__func__", value: PyProperty.wrap(doc: nil, get: PyStaticMethod.getFunc, castSelf: Self.asStaticMethod))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyStaticMethod.pyNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStaticMethod.pyInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStaticMethod.pyInit(args:kwargs:), castSelf: Self.asStaticMethodOptional))
 
     self.insert(type: type, name: "__get__", value: PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyStaticMethod.get(object:type:), castSelf: Self.asStaticMethod))
     self.insert(type: type, name: "__isabstractmethod__", value: PyBuiltinFunction.wrap(name: "__isabstractmethod__", doc: nil, fn: PyStaticMethod.isAbstractMethod, castSelf: Self.asStaticMethod))
   }
 
-  private static func asStaticMethod(_ object: PyObject, methodName: String) -> PyResult<PyStaticMethod> {
-    return Self.cast(
-      object,
-      as: PyStaticMethod.self,
-      typeName: "staticmethod",
-      methodName: methodName
-    )
+  private static func asStaticMethod(functionName: String, object: PyObject) -> PyResult<PyStaticMethod> {
+    switch PyCast.asStaticMethod(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'staticmethod' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asStaticMethodOptional(object: PyObject) -> PyStaticMethod? {
+    return PyCast.asStaticMethod(object)
   }
 
   // MARK: - String
@@ -2088,13 +2387,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__iter__", value: PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyString.iter, castSelf: Self.asString))
   }
 
-  private static func asString(_ object: PyObject, methodName: String) -> PyResult<PyString> {
-    return Self.cast(
-      object,
-      as: PyString.self,
-      typeName: "str",
-      methodName: methodName
-    )
+  private static func asString(functionName: String, object: PyObject) -> PyResult<PyString> {
+    switch PyCast.asString(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'str' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asStringOptional(object: PyObject) -> PyString? {
+    return PyCast.asString(object)
   }
 
   // MARK: - StringIterator
@@ -2115,13 +2421,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyStringIterator.lengthHint, castSelf: Self.asStringIterator))
   }
 
-  private static func asStringIterator(_ object: PyObject, methodName: String) -> PyResult<PyStringIterator> {
-    return Self.cast(
-      object,
-      as: PyStringIterator.self,
-      typeName: "str_iterator",
-      methodName: methodName
-    )
+  private static func asStringIterator(functionName: String, object: PyObject) -> PyResult<PyStringIterator> {
+    switch PyCast.asStringIterator(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'str_iterator' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asStringIteratorOptional(object: PyObject) -> PyStringIterator? {
+    return PyCast.asStringIterator(object)
   }
 
   // MARK: - Super
@@ -2138,20 +2451,27 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__self_class__", value: PyProperty.wrap(doc: PySuper.selfClassDoc, get: PySuper.getSelfClass, castSelf: Self.asSuper))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PySuper.pyNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySuper.pyInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySuper.pyInit(args:kwargs:), castSelf: Self.asSuperOptional))
 
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PySuper.repr, castSelf: Self.asSuper))
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PySuper.getAttribute(name:), castSelf: Self.asSuper))
     self.insert(type: type, name: "__get__", value: PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PySuper.get(object:type:), castSelf: Self.asSuper))
   }
 
-  private static func asSuper(_ object: PyObject, methodName: String) -> PyResult<PySuper> {
-    return Self.cast(
-      object,
-      as: PySuper.self,
-      typeName: "super",
-      methodName: methodName
-    )
+  private static func asSuper(functionName: String, object: PyObject) -> PyResult<PySuper> {
+    switch PyCast.asSuper(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'super' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asSuperOptional(object: PyObject) -> PySuper? {
+    return PyCast.asSuper(object)
   }
 
   // MARK: - TextFile
@@ -2179,13 +2499,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__exit__", value: PyBuiltinFunction.wrap(name: "__exit__", doc: nil, fn: PyTextFile.exit(exceptionType:exception:traceback:), castSelf: Self.asTextFile))
   }
 
-  private static func asTextFile(_ object: PyObject, methodName: String) -> PyResult<PyTextFile> {
-    return Self.cast(
-      object,
-      as: PyTextFile.self,
-      typeName: "TextFile",
-      methodName: methodName
-    )
+  private static func asTextFile(functionName: String, object: PyObject) -> PyResult<PyTextFile> {
+    switch PyCast.asTextFile(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'TextFile' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asTextFileOptional(object: PyObject) -> PyTextFile? {
+    return PyCast.asTextFile(object)
   }
 
   // MARK: - Traceback
@@ -2208,13 +2535,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__dir__", value: PyBuiltinFunction.wrap(name: "__dir__", doc: nil, fn: PyTraceback.dir, castSelf: Self.asTraceback))
   }
 
-  private static func asTraceback(_ object: PyObject, methodName: String) -> PyResult<PyTraceback> {
-    return Self.cast(
-      object,
-      as: PyTraceback.self,
-      typeName: "traceback",
-      methodName: methodName
-    )
+  private static func asTraceback(functionName: String, object: PyObject) -> PyResult<PyTraceback> {
+    switch PyCast.asTraceback(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'traceback' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asTracebackOptional(object: PyObject) -> PyTraceback? {
+    return PyCast.asTraceback(object)
   }
 
   // MARK: - Tuple
@@ -2251,13 +2585,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__rmul__", value: PyBuiltinFunction.wrap(name: "__rmul__", doc: nil, fn: PyTuple.rmul(_:), castSelf: Self.asTuple))
   }
 
-  private static func asTuple(_ object: PyObject, methodName: String) -> PyResult<PyTuple> {
-    return Self.cast(
-      object,
-      as: PyTuple.self,
-      typeName: "tuple",
-      methodName: methodName
-    )
+  private static func asTuple(functionName: String, object: PyObject) -> PyResult<PyTuple> {
+    switch PyCast.asTuple(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'tuple' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asTupleOptional(object: PyObject) -> PyTuple? {
+    return PyCast.asTuple(object)
   }
 
   // MARK: - TupleIterator
@@ -2278,13 +2619,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__length_hint__", value: PyBuiltinFunction.wrap(name: "__length_hint__", doc: nil, fn: PyTupleIterator.lengthHint, castSelf: Self.asTupleIterator))
   }
 
-  private static func asTupleIterator(_ object: PyObject, methodName: String) -> PyResult<PyTupleIterator> {
-    return Self.cast(
-      object,
-      as: PyTupleIterator.self,
-      typeName: "tuple_iterator",
-      methodName: methodName
-    )
+  private static func asTupleIterator(functionName: String, object: PyObject) -> PyResult<PyTupleIterator> {
+    switch PyCast.asTupleIterator(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'tuple_iterator' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asTupleIteratorOptional(object: PyObject) -> PyTupleIterator? {
+    return PyCast.asTupleIterator(object)
   }
 
   // MARK: - Type
@@ -2308,7 +2656,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__mro__", value: PyProperty.wrap(doc: nil, get: PyType.get__mro__, castSelf: Self.asType))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyType.pyNew(type:args:kwargs:)))
-    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyType.pyInit(args:kwargs:)))
+    self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyType.pyInit(args:kwargs:), castSelf: Self.asTypeOptional))
 
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyType.repr, castSelf: Self.asType))
     self.insert(type: type, name: "mro", value: PyBuiltinFunction.wrap(name: "mro", doc: PyType.mroPyDoc, fn: PyType.getMROPy, castSelf: Self.asType))
@@ -2322,13 +2670,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__call__", value: PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyType.call(args:kwargs:), castSelf: Self.asType))
   }
 
-  private static func asType(_ object: PyObject, methodName: String) -> PyResult<PyType> {
-    return Self.cast(
-      object,
-      as: PyType.self,
-      typeName: "type",
-      methodName: methodName
-    )
+  private static func asType(functionName: String, object: PyObject) -> PyResult<PyType> {
+    switch PyCast.asType(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'type' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asTypeOptional(object: PyObject) -> PyType? {
+    return PyCast.asType(object)
   }
 
   // MARK: - Zip
@@ -2349,13 +2704,20 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyZip.next, castSelf: Self.asZip))
   }
 
-  private static func asZip(_ object: PyObject, methodName: String) -> PyResult<PyZip> {
-    return Self.cast(
-      object,
-      as: PyZip.self,
-      typeName: "zip",
-      methodName: methodName
-    )
+  private static func asZip(functionName: String, object: PyObject) -> PyResult<PyZip> {
+    switch PyCast.asZip(object) {
+    case .some(let o):
+        return .value(o)
+    case .none:
+      return .typeError(
+        "descriptor '\(functionName)' requires a 'zip' object " +
+        "but received a '\(object.typeName)'"
+      )
+    }
+  }
+
+  private static func asZipOptional(object: PyObject) -> PyZip? {
+    return PyCast.asZip(object)
   }
 
 }

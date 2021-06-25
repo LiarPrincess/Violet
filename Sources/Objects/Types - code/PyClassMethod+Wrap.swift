@@ -1,84 +1,90 @@
 // Basically the same as 'PyBuiltinFunction+Wrap' but for 'classmethod'.
 // See 'PyBuiltinFunction+Wrap.swift' for details.
 
-// MARK: - 1st argument is type
-
-private func asType(name: String, object: PyObject) -> PyResult<PyType> {
+private func asType(fnName: String, object: PyObject) -> PyResult<PyType> {
   if let type = PyCast.asType(object) {
     return .value(type)
   }
 
   let t = object.typeName
-  let msg = "descriptor '\(name)' requires a type but received a '\(t)'"
+  let msg = "descriptor '\(fnName)' requires a type but received a '\(t)'"
   return .typeError(msg)
 }
 
-// MARK: - Wrap
-
 extension PyClassMethod {
 
-  // MARK: - Args kwargs function
+  // MARK: - Args, kwargs
 
+  // Args kwargs static method
   internal static func wrap<R: PyFunctionResultConvertible>(
     name: String,
     doc: String?,
     fn: @escaping ([PyObject], PyDict?) -> R,
     module: PyString? = nil
   ) -> PyClassMethod {
+    let builtinFunction = PyBuiltinFunction.wrap(name: name,
+                                                 doc: doc,
+                                                 fn: fn,
+                                                 module: module)
 
-    let wrapped = PyBuiltinFunction.wrap(
-      name: name,
-      doc: doc,
-      fn: fn,
-      module: module
-    )
-
-    return PyClassMethod(callable: wrapped)
+    return PyClassMethod(callable: builtinFunction)
   }
 
-  // MARK: - Positional binary
+  // MARK: - With type as 1st arg
 
+  // Positional binary
   internal static func wrap<R: PyFunctionResultConvertible>(
     name: String,
     doc: String?,
     fn: @escaping (PyType, PyObject) -> R,
     module: PyString? = nil
   ) -> PyClassMethod {
+    // We do not have overload for 'PyType' as 1st arg,
+    // so we have to modify the 'fn' a bit.
+    let objectAs1stArg = { (arg0: PyObject, arg1: PyObject) -> PyFunctionResult in
+      let type: PyType
+      switch asType(fnName: name, object: arg0) {
+      case let .value(t): type = t
+      case let .error(e): return .error(e)
+      }
 
-    let wrapped = PyBuiltinFunction.wrap(
-      name: name,
-      doc: doc,
-      fn: { (arg0: PyObject, arg1: PyObject) -> PyFunctionResult in
-        let type = asType(name: name, object: arg0)
-        let result = type.map { fn($0, arg1) }
-        return result.asFunctionResult
-      },
-      module: module
-    )
+      let result = fn(type, arg1)
+      return result.asFunctionResult
+    }
 
-    return PyClassMethod(callable: wrapped)
+    let builtinFunction = PyBuiltinFunction.wrap(name: name,
+                                                 doc: doc,
+                                                 fn: objectAs1stArg,
+                                                 module: module)
+
+    return PyClassMethod(callable: builtinFunction)
   }
 
-  // MARK: - Positional ternary
-
+  // Positional ternary with last argument optional
   internal static func wrap<R: PyFunctionResultConvertible>(
     name: String,
     doc: String?,
     fn: @escaping (PyType, PyObject, PyObject?) -> R,
     module: PyString? = nil
   ) -> PyClassMethod {
+    // We do not have overload for 'PyType' as 1st arg,
+    // so we have to modify the 'fn' a bit.
+    let objectAs1stArg = { (arg0: PyObject, arg1: PyObject, arg2: PyObject?) -> PyFunctionResult in
+      let type: PyType
+      switch asType(fnName: name, object: arg0) {
+      case let .value(t): type = t
+      case let .error(e): return .error(e)
+      }
 
-    let wrapped = PyBuiltinFunction.wrap(
-      name: name,
-      doc: doc,
-      fn: { (arg0: PyObject, arg1: PyObject, arg2: PyObject?) -> PyFunctionResult in
-        let type = asType(name: name, object: arg0)
-        let result = type.map { fn($0, arg1, arg2) }
-        return result.asFunctionResult
-      },
-      module: module
-    )
+      let result = fn(type, arg1, arg2)
+      return result.asFunctionResult
+    }
 
-    return PyClassMethod(callable: wrapped)
+    let builtinFunction = PyBuiltinFunction.wrap(name: name,
+                                                 doc: doc,
+                                                 fn: objectAs1stArg,
+                                                 module: module)
+
+    return PyClassMethod(callable: builtinFunction)
   }
 }
