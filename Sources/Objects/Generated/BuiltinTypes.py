@@ -9,6 +9,8 @@ from Common.builtin_types import (
 
 if __name__ == '__main__':
     print(f'''\
+{generated_warning(__file__)}
+
 import BigInt
 import VioletCore
 
@@ -18,8 +20,6 @@ import VioletCore
 // swiftlint:disable discouraged_optional_boolean
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable file_length
-
-{generated_warning}
 
 // Type initialization order:
 //

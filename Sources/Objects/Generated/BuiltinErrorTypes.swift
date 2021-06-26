@@ -1,3 +1,8 @@
+// ==============================================================================
+// Automatically generated from: ./Sources/Objects/Generated/BuiltinErrorTypes.py
+// DO NOT EDIT!
+// ==============================================================================
+
 import VioletCore
 
 // swiftlint:disable line_length
@@ -5,9 +10,6 @@ import VioletCore
 // swiftlint:disable trailing_comma
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable file_length
-
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
 
 // In CPython:
 // Objects -> exceptions.c

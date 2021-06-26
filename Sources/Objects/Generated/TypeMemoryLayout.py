@@ -8,9 +8,9 @@ def get_layout_name(t: TypeInfo):
 
 if __name__ == '__main__':
     print(f'''\
-// swiftlint:disable file_length
+{generated_warning(__file__)}
 
-{generated_warning}
+// swiftlint:disable file_length
 ''')
 
     print('''\

@@ -15,11 +15,11 @@ def is_final(name):
 
 if __name__ == '__main__':
     print(f'''\
+{generated_warning(__file__)}
+
 // swiftlint:disable line_length
 // swiftlint:disable trailing_newline
 // swiftlint:disable file_length
-
-{generated_warning}
 
 {where_to_find_errors_in_cpython}
 ''')

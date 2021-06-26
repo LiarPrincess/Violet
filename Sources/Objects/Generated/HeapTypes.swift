@@ -1,8 +1,10 @@
+// ======================================================================
+// Automatically generated from: ./Sources/Objects/Generated/HeapTypes.py
+// DO NOT EDIT!
+// ======================================================================
+
 // swiftlint:disable file_length
 // swiftlint:disable trailing_newline
-
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
 
 // Types used when we subclass one of the builtin types
 // (the same but in other words: type created by user with 'class' statement).

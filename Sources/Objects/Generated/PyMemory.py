@@ -110,7 +110,7 @@ if __name__ == '__main__':
         types_by_name[name] = t
 
     print(f'''\
-{generated_warning}
+{generated_warning(__file__)}
 
 import BigInt
 import VioletCore

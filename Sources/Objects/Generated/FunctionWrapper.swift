@@ -1,12 +1,14 @@
+// ============================================================================
+// Automatically generated from: ./Sources/Objects/Generated/FunctionWrapper.py
+// DO NOT EDIT!
+// ============================================================================
+
 // swiftlint:disable type_name
 // swiftlint:disable identifier_name
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
-
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
 
 // Why do we need so many different signatures?
 //

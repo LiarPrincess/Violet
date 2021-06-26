@@ -1,7 +1,16 @@
-generated_warning = '''\
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.\
+def generated_warning(file_path: str) -> str:
+    header = f'''
+// Automatically generated from: {file_path}
+// DO NOT EDIT!
 '''
+
+    comment_marker = '// '
+    max_line_len = max(map(lambda line: len(line), header.splitlines()))
+    equal_count = max_line_len - len(comment_marker)
+    separator = comment_marker + '=' * equal_count
+
+    return separator + header + separator
+
 
 where_to_find_errors_in_cpython = '''\
 // In CPython:

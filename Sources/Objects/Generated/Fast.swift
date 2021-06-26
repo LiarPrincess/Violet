@@ -1,3 +1,8 @@
+// =================================================================
+// Automatically generated from: ./Sources/Objects/Generated/Fast.py
+// DO NOT EDIT!
+// =================================================================
+
 import BigInt
 import VioletCore
 
@@ -6,9 +11,6 @@ import VioletCore
 // swiftlint:disable trailing_newline
 // swiftlint:disable discouraged_optional_boolean
 // swiftlint:disable file_length
-
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
 
 // == What is this? ==
 // Sometimes instead of doing slow Python dispatch we will use Swift protocols.

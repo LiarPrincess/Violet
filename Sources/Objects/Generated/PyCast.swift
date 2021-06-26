@@ -1,5 +1,7 @@
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
+// ===================================================================
+// Automatically generated from: ./Sources/Objects/Generated/PyCast.py
+// DO NOT EDIT!
+// ===================================================================
 
 // swiftlint:disable force_cast
 // swiftlint:disable discouraged_optional_boolean

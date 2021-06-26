@@ -109,6 +109,8 @@ def func_protocol_name(name: str) -> str:
 
 if __name__ == '__main__':
     print(f'''\
+{generated_warning(__file__)}
+
 import BigInt
 import VioletCore
 
@@ -117,8 +119,6 @@ import VioletCore
 // swiftlint:disable trailing_newline
 // swiftlint:disable discouraged_optional_boolean
 // swiftlint:disable file_length
-
-{generated_warning}
 
 // == What is this? ==
 // Sometimes instead of doing slow Python dispatch we will use Swift protocols.

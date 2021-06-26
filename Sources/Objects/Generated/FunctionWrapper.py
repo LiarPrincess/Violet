@@ -15,14 +15,14 @@ if __name__ == '__main__':
     hand_written_functions = get_hand_written_functions()
 
     print(f'''\
+{generated_warning(__file__)}
+
 // swiftlint:disable type_name
 // swiftlint:disable identifier_name
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
-
-{generated_warning}
 
 // Why do we need so many different signatures?
 //

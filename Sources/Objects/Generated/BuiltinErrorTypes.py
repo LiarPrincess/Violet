@@ -10,6 +10,8 @@ from Common.builtin_types import (
 
 if __name__ == '__main__':
     print(f'''\
+{generated_warning(__file__)}
+
 import VioletCore
 
 // swiftlint:disable line_length
@@ -17,8 +19,6 @@ import VioletCore
 // swiftlint:disable trailing_comma
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable file_length
-
-{generated_warning}
 
 {where_to_find_errors_in_cpython}
 

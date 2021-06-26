@@ -1,3 +1,8 @@
+// =========================================================================
+// Automatically generated from: ./Sources/Objects/Generated/BuiltinTypes.py
+// DO NOT EDIT!
+// =========================================================================
+
 import BigInt
 import VioletCore
 
@@ -7,9 +12,6 @@ import VioletCore
 // swiftlint:disable discouraged_optional_boolean
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable file_length
-
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
 
 // Type initialization order:
 //

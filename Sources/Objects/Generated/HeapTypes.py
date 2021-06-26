@@ -12,10 +12,10 @@ def get_heap_type_name(t: TypeInfo):
 
 if __name__ == '__main__':
     print(f'''\
+{generated_warning(__file__)}
+
 // swiftlint:disable file_length
 // swiftlint:disable trailing_newline
-
-{generated_warning}
 
 // Types used when we subclass one of the builtin types
 // (the same but in other words: type created by user with 'class' statement).

@@ -5,11 +5,11 @@ if __name__ == '__main__':
     positional_functions = get_positional_signatures()
 
     print(f'''\
+{generated_warning(__file__)}
+
 // swiftlint:disable identifier_name
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable file_length
-
-{generated_warning}
 
 extension PyClassMethod {{
 

@@ -15,7 +15,7 @@ def get_indefinite_article(word: str) -> str:
 
 if __name__ == '__main__':
     print(f'''\
-{generated_warning}
+{generated_warning(__file__)}
 
 // swiftlint:disable force_cast
 // swiftlint:disable discouraged_optional_boolean

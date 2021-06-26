@@ -1,9 +1,11 @@
+// ================================================================================
+// Automatically generated from: ./Sources/Objects/Generated/ExceptionSubclasses.py
+// DO NOT EDIT!
+// ================================================================================
+
 // swiftlint:disable line_length
 // swiftlint:disable trailing_newline
 // swiftlint:disable file_length
-
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
 
 // In CPython:
 // Objects -> exceptions.c

@@ -1,5 +1,7 @@
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
+// =====================================================================
+// Automatically generated from: ./Sources/Objects/Generated/PyMemory.py
+// DO NOT EDIT!
+// =====================================================================
 
 import BigInt
 import VioletCore

@@ -1,5 +1,7 @@
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
+// ======================================================================
+// Automatically generated from: ./Sources/Objects/Generated/IdStrings.py
+// DO NOT EDIT!
+// ======================================================================
 
 // swiftlint:disable force_unwrapping
 // swiftlint:disable implicitly_unwrapped_optional

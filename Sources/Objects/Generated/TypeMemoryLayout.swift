@@ -1,7 +1,9 @@
-// swiftlint:disable file_length
+// =============================================================================
+// Automatically generated from: ./Sources/Objects/Generated/TypeMemoryLayout.py
+// DO NOT EDIT!
+// =============================================================================
 
-// Please note that this file was automatically generated. DO NOT EDIT!
-// The same goes for other files in 'Generated' directory.
+// swiftlint:disable file_length
 
 extension PyType {
 
