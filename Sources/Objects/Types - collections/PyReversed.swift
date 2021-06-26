@@ -28,10 +28,10 @@ public class PyReversed: PyObject {
   // MARK: - Init
 
   internal convenience init(sequence: PyObject, count: Int) {
-    self.init(type: Py.types.reversed, sequence: sequence, count: count)
+    let type = Py.types.reversed
+    self.init(type: type, sequence: sequence, count: count)
   }
 
-  /// Use only in `__new__`!
   internal init(type: PyType, sequence: PyObject, count: Int) {
     self.sequence = sequence
     self.index = count - 1
@@ -113,7 +113,7 @@ public class PyReversed: PyObject {
   private static func pyNew(type: PyType,
                             object: PyObject) -> PyResult<PyObject> {
     // If we have dedicated '__reversed__' then we will use it
-    switch PyReversed.call__reversed__(on: object) {
+    switch PyReversed.call__reversed__(object: object) {
     case .value(let r):
       return .value(r)
     case .missingMethod:
@@ -139,17 +139,14 @@ public class PyReversed: PyObject {
     }
 
     let isBuiltin = type === Py.types.reversed
-    let alloca = isBuiltin ?
-      PyReversed.init(type:sequence:count:) :
-      PyReversedHeap.init(type:sequence:count:)
+    let result = isBuiltin ?
+      PyMemory.newReversed(type: type, sequence: object, count: count):
+      PyReversedHeap(type: type, sequence: object, count: count)
 
-    let result = alloca(type, object, count)
     return .value(result)
   }
 
-  private static func call__reversed__(
-    on object: PyObject
-  ) -> PyInstance.CallMethodResult {
+  private static func call__reversed__(object: PyObject) -> PyInstance.CallMethodResult {
     if let result = Fast.__reversed__(object) {
       return .value(result)
     }

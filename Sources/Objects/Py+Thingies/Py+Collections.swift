@@ -291,7 +291,8 @@ extension PyInstance {
       return .valueError("range() arg 3 must not be zero")
     }
 
-    return .value(PyRange(start: start, stop: stop, step: step))
+    let result = PyMemory.newRange(start: start, stop: stop, step: step)
+    return .value(result)
   }
 
   public func newRange(start: PyObject,
@@ -355,28 +356,24 @@ extension PyInstance {
     case let .error(e): return .error(e)
     }
 
-    let result = PyEnumerate(iterator: iter, startFrom: index)
+    let result = PyMemory.newEnumerate(iterator: iter, startFrom: index)
     return .value(result)
   }
 
   // MARK: - Slice
 
   public func newSlice(stop: PyObject) -> PySlice {
-    return PySlice(
-      start: self.none,
-      stop: stop,
-      step: self.none
-    )
+    return PyMemory.newSlice(start: self.none,
+                             stop: stop,
+                             step: self.none)
   }
 
   public func newSlice(start: PyObject?,
                        stop: PyObject?,
                        step: PyObject? = nil) -> PySlice {
-    return PySlice(
-      start: start ?? self.none,
-      stop: stop ?? self.none,
-      step: step ?? self.none
-    )
+    return PyMemory.newSlice(start: start ?? self.none,
+                             stop: stop ?? self.none,
+                             step: step ?? self.none)
   }
 
   // MARK: - Length

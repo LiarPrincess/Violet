@@ -22,14 +22,12 @@ public class PyMap: PyObject {
 
   // MARK: - Init
 
-  internal init(fn: PyObject, iterators: [PyObject]) {
-    self.fn = fn
-    self.iterators = iterators
-    super.init(type: Py.types.map)
+  internal convenience init(fn: PyObject, iterators: [PyObject]) {
+    let type = Py.types.map
+    self.init(type: type, fn: fn, iterators: iterators)
   }
 
-  /// Use only in `__new__`!
-  private init(type: PyType, fn: PyObject, iterators: [PyObject]) {
+  internal init(type: PyType, fn: PyObject, iterators: [PyObject]) {
     self.fn = fn
     self.iterators = iterators
     super.init(type: type)
@@ -104,7 +102,7 @@ public class PyMap: PyObject {
       }
     }
 
-    let result = PyMap(type: type, fn: fn, iterators: iters)
+    let result = PyMemory.newMap(type: type, fn: fn, iterators: iters)
     return .value(result)
   }
 }

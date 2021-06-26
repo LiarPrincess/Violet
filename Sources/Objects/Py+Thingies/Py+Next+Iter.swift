@@ -56,7 +56,7 @@ extension PyInstance {
     // Having '__getitem__' is also acceptable.
     switch self.hasMethod(object: object, selector: .__getitem__) {
     case .value(true):
-      let iter = PyIterator(sequence: object)
+      let iter = PyMemory.newIterator(sequence: object)
       return .value(iter)
     case .value(false):
       return .typeError("'\(object.typeName)' object is not an iterable")
@@ -83,7 +83,7 @@ extension PyInstance {
       return .error(e)
     }
 
-    let result = PyCallableIterator(callable: object, sentinel: sentinel)
+    let result = PyMemory.newCallableIterator(callable: object, sentinel: sentinel)
     return .value(result)
   }
 

@@ -178,7 +178,8 @@ public class PyRange: PyObject {
     case .implicit:
       return .value("range(\(start), \(stop))")
     case .explicit:
-      return .value("range(\(start), \(stop), \(self.step.repr()))")
+      let step = self.step.repr()
+      return .value("range(\(start), \(stop), \(step))")
     }
   }
 
@@ -218,7 +219,8 @@ public class PyRange: PyObject {
       return .value(false)
     }
 
-    return .value(self.contains(element: int))
+    let result = self.contains(element: int)
+    return .value(result)
   }
 
   public func contains(element: PyInt) -> Bool {
@@ -360,18 +362,18 @@ public class PyRange: PyObject {
                                             stop: newStop,
                                             step: newStep)
 
-    return PyRangeIterator(start: newStart,
-                           step: newStep,
-                           length: newLength)
+    return PyMemory.newRangeIterator(start: newStart,
+                                     step: newStep,
+                                     length: newLength)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
   public func iter() -> PyObject {
-    return PyRangeIterator(start: self.start.value,
-                           step: self.step.value,
-                           length: self.length.value)
+    return PyMemory.newRangeIterator(start: self.start.value,
+                                     step: self.step.value,
+                                     length: self.length.value)
   }
 
   // MARK: - Count
@@ -379,7 +381,8 @@ public class PyRange: PyObject {
   // sourcery: pymethod = count
   public func count(element: PyObject) -> PyResult<BigInt> {
     if let int = PyCast.asInt(element) {
-      return .value(self.contains(element: int) ? 1 : 0)
+      let contains = self.contains(element: int)
+      return .value(contains ? 1 : 0)
     }
 
     return .value(0)
@@ -398,9 +401,9 @@ public class PyRange: PyObject {
       }
     }
 
-    let tmp = int.value - self.start.value
-    let result = tmp / self.step.value
-    return .value(result)
+    let tmp0 = int.value - self.start.value
+    let tmp1 = tmp0 / self.step.value
+    return .value(tmp1)
   }
 
   // MARK: - Range

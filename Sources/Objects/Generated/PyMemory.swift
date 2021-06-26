@@ -51,6 +51,19 @@ public enum PyMemory {
     )
   }
 
+  // MARK: - CallableIterator
+
+  /// Allocate new instance of `callable_iterator` type.
+  public static func newCallableIterator(
+    callable: PyObject,
+    sentinel: PyObject
+  ) -> PyCallableIterator {
+    return PyCallableIterator(
+      callable: callable,
+      sentinel: sentinel
+    )
+  }
+
   // MARK: - Complex
 
   /// Allocate new instance of `complex` type.
@@ -174,6 +187,58 @@ public enum PyMemory {
     )
   }
 
+  // MARK: - Enumerate
+
+  /// Allocate new instance of `enumerate` type.
+  public static func newEnumerate(
+    iterator: PyObject,
+    startFrom index: BigInt
+  ) -> PyEnumerate {
+    return PyEnumerate(
+      iterator: iterator,
+      startFrom: index
+    )
+  }
+
+  /// Allocate new instance of `enumerate` type.
+  public static func newEnumerate(
+    type: PyType,
+    iterator: PyObject,
+    startFrom index: BigInt
+  ) -> PyEnumerate {
+    return PyEnumerate(
+      type: type,
+      iterator: iterator,
+      startFrom: index
+    )
+  }
+
+  // MARK: - Filter
+
+  /// Allocate new instance of `filter` type.
+  public static func newFilter(
+    fn: PyObject,
+    iterator: PyObject
+  ) -> PyFilter {
+    return PyFilter(
+      fn: fn,
+      iterator: iterator
+    )
+  }
+
+  /// Allocate new instance of `filter` type.
+  public static func newFilter(
+    type: PyType,
+    fn: PyObject,
+    iterator: PyObject
+  ) -> PyFilter {
+    return PyFilter(
+      type: type,
+      fn: fn,
+      iterator: iterator
+    )
+  }
+
   // MARK: - Float
 
   /// Allocate new instance of `float` type.
@@ -240,6 +305,17 @@ public enum PyMemory {
     )
   }
 
+  // MARK: - Iterator
+
+  /// Allocate new instance of `iterator` type.
+  public static func newIterator(
+    sequence: PyObject
+  ) -> PyIterator {
+    return PyIterator(
+      sequence: sequence
+    )
+  }
+
   // MARK: - List
 
   /// Allocate new instance of `list` type.
@@ -284,6 +360,32 @@ public enum PyMemory {
     )
   }
 
+  // MARK: - Map
+
+  /// Allocate new instance of `map` type.
+  public static func newMap(
+    fn: PyObject,
+    iterators: [PyObject]
+  ) -> PyMap {
+    return PyMap(
+      fn: fn,
+      iterators: iterators
+    )
+  }
+
+  /// Allocate new instance of `map` type.
+  public static func newMap(
+    type: PyType,
+    fn: PyObject,
+    iterators: [PyObject]
+  ) -> PyMap {
+    return PyMap(
+      type: type,
+      fn: fn,
+      iterators: iterators
+    )
+  }
+
   // MARK: - Namespace
 
   /// Allocate new instance of `types.SimpleNamespace` type.
@@ -310,6 +412,62 @@ public enum PyMemory {
   public static func newNotImplemented(
   ) -> PyNotImplemented {
     return PyNotImplemented(
+    )
+  }
+
+  // MARK: - Range
+
+  /// Allocate new instance of `range` type.
+  public static func newRange(
+    start: PyInt,
+    stop: PyInt,
+    step: PyInt?
+  ) -> PyRange {
+    return PyRange(
+      start: start,
+      stop: stop,
+      step: step
+    )
+  }
+
+  // MARK: - RangeIterator
+
+  /// Allocate new instance of `range_iterator` type.
+  public static func newRangeIterator(
+    start: BigInt,
+    step: BigInt,
+    length: BigInt
+  ) -> PyRangeIterator {
+    return PyRangeIterator(
+      start: start,
+      step: step,
+      length: length
+    )
+  }
+
+  // MARK: - Reversed
+
+  /// Allocate new instance of `reversed` type.
+  public static func newReversed(
+    sequence: PyObject,
+    count: Int
+  ) -> PyReversed {
+    return PyReversed(
+      sequence: sequence,
+      count: count
+    )
+  }
+
+  /// Allocate new instance of `reversed` type.
+  public static func newReversed(
+    type: PyType,
+    sequence: PyObject,
+    count: Int
+  ) -> PyReversed {
+    return PyReversed(
+      type: type,
+      sequence: sequence,
+      count: count
     )
   }
 
@@ -352,6 +510,21 @@ public enum PyMemory {
   ) -> PySetIterator {
     return PySetIterator(
       frozenSet: frozenSet
+    )
+  }
+
+  // MARK: - Slice
+
+  /// Allocate new instance of `slice` type.
+  public static func newSlice(
+    start: PyObject,
+    stop: PyObject,
+    step: PyObject
+  ) -> PySlice {
+    return PySlice(
+      start: start,
+      stop: stop,
+      step: step
     )
   }
 
@@ -426,6 +599,28 @@ public enum PyMemory {
       base: base,
       mro: mro,
       layout: layout
+    )
+  }
+
+  // MARK: - Zip
+
+  /// Allocate new instance of `zip` type.
+  public static func newZip(
+    iterators: [PyObject]
+  ) -> PyZip {
+    return PyZip(
+      iterators: iterators
+    )
+  }
+
+  /// Allocate new instance of `zip` type.
+  public static func newZip(
+    type: PyType,
+    iterators: [PyObject]
+  ) -> PyZip {
+    return PyZip(
+      type: type,
+      iterators: iterators
     )
   }
 

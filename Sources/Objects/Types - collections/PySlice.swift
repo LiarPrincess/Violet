@@ -34,9 +34,7 @@ public class PySlice: PyObject {
 
   // MARK: - Init
 
-  internal init(start: PyObject,
-                stop: PyObject,
-                step: PyObject) {
+  internal init(start: PyObject, stop: PyObject, step: PyObject) {
     self.start = start
     self.stop = stop
     self.step = step

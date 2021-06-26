@@ -29,7 +29,17 @@ implemented_types = (
     'PyDictValues',
     'PyFrozenSet',  # Set
     'PySet',
-    'PySetIterator'
+    'PySetIterator',
+    'PyIterator',  # Iterators
+    'PyCallableIterator',
+    'PyReversed',
+    'PyRange',  # Range
+    'PyRangeIterator',
+    'PySlice',  # Slice
+    'PyEnumerate',  # Enumerate, map, filter, zip
+    'PyMap',
+    'PyFilter',
+    'PyZip',
 )
 
 
@@ -86,7 +96,12 @@ def print_new_function(t: TypeInfo, i: SwiftInitInfo):
     for index, arg in enumerate(init_arguments):
         is_last = index == len(init_arguments) - 1
         comma = '' if is_last else ','
-        print(f'    {arg.name}: {arg.typ}{comma}')
+
+        label = ''
+        if arg.label:
+            label = arg.label + ' '
+
+        print(f'    {label}{arg.name}: {arg.typ}{comma}')
 
     print(f'  ) -> {swift_type} {{')
     print(f'    return {swift_type}(')
@@ -94,7 +109,8 @@ def print_new_function(t: TypeInfo, i: SwiftInitInfo):
     for index, arg in enumerate(init_arguments):
         is_last = index == len(init_arguments) - 1
         comma = '' if is_last else ','
-        print(f'      {arg.name}: {arg.name}{comma}')
+        label = arg.label or arg.name
+        print(f'      {label}: {arg.name}{comma}')
 
     print(f'    )')  # Init end
     print('  }')  # Function end

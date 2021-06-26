@@ -23,13 +23,12 @@ public class PyZip: PyObject {
 
   // MARK: - Init
 
-  internal init(iterators: [PyObject]) {
-    self.iterators = iterators
-    super.init(type: Py.types.zip)
+  internal convenience init(iterators: [PyObject]) {
+    let type = Py.types.zip
+    self.init(type: type, iterators: iterators)
   }
 
-  /// Use only in `__new__`!
-  private init(type: PyType, iterators: [PyObject]) {
+  internal init(type: PyType, iterators: [PyObject]) {
     self.iterators = iterators
     super.init(type: type)
   }
@@ -101,11 +100,12 @@ public class PyZip: PyObject {
         if e.isTypeError {
           return .typeError("zip argument \(index + 1) must support iteration")
         }
+
         return .error(e)
       }
     }
 
-    let result = PyZip(type: type, iterators: iters)
+    let result = PyMemory.newZip(type: type, iterators: iters)
     return .value(result)
   }
 }

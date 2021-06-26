@@ -22,14 +22,12 @@ public class PyFilter: PyObject {
 
   // MARK: - Init
 
-  internal init(fn: PyObject, iterator: PyObject) {
-    self.fn = fn
-    self.iterator = iterator
-    super.init(type: Py.types.filter)
+  internal convenience init(fn: PyObject, iterator: PyObject) {
+    let type = Py.types.filter
+    self.init(type: type, fn: fn, iterator: iterator)
   }
 
-  /// Use only in `__new__`!
-  private init(type: PyType, fn: PyObject, iterator: PyObject) {
+  internal init(type: PyType, fn: PyObject, iterator: PyObject) {
     self.fn = fn
     self.iterator = iterator
     super.init(type: type)
@@ -60,12 +58,12 @@ public class PyFilter: PyObject {
 
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
-    let checkTrue = self.fn is PyNone || self.fn is PyBool
+    let useTrivialBoolCheck = PyCast.isNone(self.fn) || PyCast.isBool(self.fn)
 
     loop: while true {
       switch Py.next(iterator: self.iterator) {
       case let .value(item):
-        if checkTrue {
+        if useTrivialBoolCheck {
           switch Py.isTrueBool(item) {
           case .value(true): return .value(item)
           case .value(false): continue loop // try next item
@@ -118,7 +116,7 @@ public class PyFilter: PyObject {
     case let .error(e): return .error(e)
     }
 
-    let result = PyFilter(type: type, fn: fn, iterator: iter)
+    let result = PyMemory.newFilter(type: type, fn: fn, iterator: iter)
     return .value(result)
   }
 }

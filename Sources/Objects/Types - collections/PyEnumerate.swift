@@ -38,14 +38,12 @@ public class PyEnumerate: PyObject {
 
   // MARK: - Init
 
-  internal init(iterator: PyObject, startFrom index: BigInt) {
-    self.iterator = iterator
-    self.nextIndex = index
-    super.init(type: Py.types.enumerate)
+  internal convenience init(iterator: PyObject, startFrom index: BigInt) {
+    let type = Py.types.enumerate
+    self.init(type: type, iterator: iterator, startFrom: index)
   }
 
-  /// Use only in `__new__`!
-  private init(type: PyType, iterator: PyObject, startFrom index: BigInt) {
+  internal init(type: PyType, iterator: PyObject, startFrom index: BigInt) {
     self.iterator = iterator
     self.nextIndex = index
     super.init(type: type)
@@ -153,7 +151,9 @@ public class PyEnumerate: PyObject {
     case let .error(e): return .error(e)
     }
 
-    let result = PyEnumerate(type: type, iterator: iter, startFrom: startIndex)
+    let result = PyMemory.newEnumerate(type: type,
+                                       iterator: iter,
+                                       startFrom: startIndex)
     return .value(result)
   }
 }
