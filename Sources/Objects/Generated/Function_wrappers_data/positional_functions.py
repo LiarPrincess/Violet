@@ -15,6 +15,7 @@ supported_argument_configurations: List[Tuple[str, str]] = [
     ('Self', 'Positional unary: single `self` argument.'),
     ('Object', 'Positional unary: single `object` argument.'),
     ('Object?', 'Positional unary: single optional `object` argument.'),
+    ('Type', 'Positional unary: classmethod with no arguments.'),
 
     # Positional binary
     ('Self, Object', 'Positional binary: tuple of `self` and `object`.'),
@@ -30,6 +31,9 @@ supported_argument_configurations: List[Tuple[str, str]] = [
     ('Object -> Object', 'Positional binary: `object` and then another `object`.'),
     ('Object -> Object?', 'Positional binary: `object` and then optional `object`.'),
 
+    ('Type, Object', 'Positional binary: classmethod with single argument.'),
+    ('Type, Object?', 'Positional binary: classmethod with single optional argument.'),
+
     # Positional ternary
     ('Self -> Object, Object', 'Positional ternary: `self` and then tuple of 2 `objects`.'),
     ('Self -> Object, Object?', 'Positional ternary: `self` and then tuple of 2 `objects` (last one is optional).'),
@@ -39,6 +43,10 @@ supported_argument_configurations: List[Tuple[str, str]] = [
     ('Object, Object, Object?', 'Positional ternary: tuple of 3 `objects` (last one is optional).'),
     ('Object, Object?, Object?', 'Positional ternary: tuple of 3 `objects` (2nd and 3rd are optional).'),
     ('Object?, Object?, Object?', 'Positional ternary: tuple of 3 `objects` (all optional).'),
+
+    ('Type, Object, Object', 'Positional ternary: classmethod with 2 arguments.'),
+    ('Type, Object, Object?', 'Positional ternary: classmethod with 2 arguments (last one is optional).'),
+    ('Type, Object?, Object?', 'Positional ternary: classmethod with 2 arguments (both optional).'),
 
     # Positional quartary
     ('Self -> Object, Object, Object', 'Positional quartary: `self` and then tuple of 3 `objects`.'),
@@ -51,6 +59,11 @@ supported_argument_configurations: List[Tuple[str, str]] = [
     ('Object, Object, Object?, Object?', 'Positional quartary: `tuple of 4 `objects` (3rd and 4th are optional).'),
     ('Object, Object?, Object?, Object?', 'Positional quartary: `tuple of 4 `objects` (2nd, 3rd and 4th are optional).'),
     ('Object?, Object?, Object?, Object?', 'Positional quartary: `tuple of 4 `objects` (all optional).'),
+
+    ('Type, Object, Object, Object', 'Positional quartary: classmethod with 3 arguments.'),
+    ('Type, Object, Object, Object?', 'Positional quartary: classmethod with 3 arguments (last one is optional).'),
+    ('Type, Object, Object?, Object?', 'Positional quartary: classmethod with 3 arguments (2nd and 3rd are optional).'),
+    ('Type, Object?, Object?, Object?', 'Positional quartary: classmethod with 3 arguments (all optional).'),
 
     # Positional quintary
     # We are not doing this!
@@ -70,6 +83,7 @@ class Argument:
                  type_name_part: str,
                  *,
                  is_self: bool = False,
+                 is_type: bool = False,
                  is_optional: bool = False,
                  is_generic: bool = False,
                  generic_requirements: Union[str, None] = None):
@@ -80,8 +94,10 @@ class Argument:
         self.swift_type_stored_in_struct = swift_type_in_struct_fn
         # Part used in 'struct/enum/fn_typealias' name
         self.type_name_part = type_name_part
-        # Is this 'self' argument?
+        # Is this the 'self' argument?
         self.is_self = is_self
+        # Is this the 'type' argument?
+        self.is_type = is_type
         # Is this argument optional?
         self.is_optional = is_optional
         # Is this generic argument?
@@ -97,6 +113,7 @@ void_argument = Argument('Void', None, 'Void')
 self_argument = Argument('Zelf', 'PyObject', 'Self', is_self=True, is_generic=True)
 object_argument = Argument('PyObject', 'PyObject', 'Object')
 object_optional_argument = Argument('PyObject?', 'PyObject?', 'ObjectOpt', is_optional=True)
+type_argument = Argument('PyType', 'PyObject', 'Type', is_type=True)
 
 
 # ===================
@@ -461,12 +478,15 @@ class Signature:
         # <Zelf, R: PyFunctionResultConvertible>, generic function argument declaration
         self.generic_arguments_with_requirements = generic.with_requirements
 
-        # Do we have generic 'Self'?
+        # Do we have Self or Type?
         self.has_self_argument = False
+        self.has_type_argument = False
         for arg_group in arguments:
             for arg in arg_group:
                 if arg.is_self:
                     self.has_self_argument = True
+                if arg.is_type:
+                    self.has_type_argument = True
 
 
 # ======================
@@ -495,6 +515,8 @@ def get_positional_signatures() -> List[Signature]:
                     current_argument_group.append(object_argument)
                 elif type_lower == 'object?':
                     current_argument_group.append(object_optional_argument)
+                elif type_lower == 'type':
+                    current_argument_group.append(type_argument)
                 else:
                     raise ValueError(f"Unknown argument type: '{type}'")
 

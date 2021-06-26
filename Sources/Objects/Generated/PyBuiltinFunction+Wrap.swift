@@ -89,6 +89,28 @@ extension PyBuiltinFunction {
     return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_to_Result_Fn<R>,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_to_Void_Fn,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
     name: String,
     doc: String?,
@@ -299,6 +321,50 @@ extension PyBuiltinFunction {
     return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_Object_to_Result_Fn<R>,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_Object_to_Void_Fn,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_ObjectOpt_to_Result_Fn<R>,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_ObjectOpt_to_Void_Fn,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
     name: String,
     doc: String?,
@@ -442,6 +508,72 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_Object_Object_to_Result_Fn<R>,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_Object_Object_to_Void_Fn,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_Object_ObjectOpt_to_Result_Fn<R>,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_Object_ObjectOpt_to_Void_Fn,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_ObjectOpt_ObjectOpt_to_Result_Fn<R>,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_ObjectOpt_ObjectOpt_to_Void_Fn,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
     return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
@@ -630,6 +762,94 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_Object_Object_Object_to_Result_Fn<R>,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_Object_Object_Object_to_Void_Fn,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_Object_Object_ObjectOpt_to_Result_Fn<R>,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_Object_Object_ObjectOpt_to_Void_Fn,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_Object_ObjectOpt_ObjectOpt_to_Result_Fn<R>,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_Object_ObjectOpt_ObjectOpt_to_Void_Fn,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_ObjectOpt_ObjectOpt_ObjectOpt_to_Result_Fn<R>,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
+    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+  }
+
+  internal static func wrap(
+    name: String,
+    doc: String?,
+    fn: @escaping FunctionWrapper.Type_ObjectOpt_ObjectOpt_ObjectOpt_to_Void_Fn,
+    castType: @escaping FunctionWrapper.CastType,
+    module: PyString? = nil
+  ) -> PyBuiltinFunction {
+    let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
     return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 

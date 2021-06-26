@@ -26,14 +26,20 @@ if __name__ == '__main__':
             cast_self_argument = f',\n    castSelf: @escaping FunctionWrapper.CastSelf<Zelf>'
             cast_self_call_argument = ', castSelf: castSelf'
 
+        cast_type_argument = ''
+        cast_type_call_argument = ''
+        if fn.has_type_argument:
+            cast_type_argument = f',\n    castType: @escaping FunctionWrapper.CastType'
+            cast_type_call_argument = ', castType: castType'
+
         print(f'''\
   internal static func wrap{generic_arguments_with_requirements}(
     name: String,
     doc: String?,
-    fn: @escaping FunctionWrapper.{fn_typealias_name}{generic_arguments}{cast_self_argument},
+    fn: @escaping FunctionWrapper.{fn_typealias_name}{generic_arguments}{cast_self_argument}{cast_type_argument},
     module: PyString? = nil
   ) -> PyBuiltinFunction {{
-    let wrapper = FunctionWrapper(name: name, fn: fn{cast_self_call_argument})
+    let wrapper = FunctionWrapper(name: name, fn: fn{cast_self_call_argument}{cast_type_call_argument})
     return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }}
 ''')

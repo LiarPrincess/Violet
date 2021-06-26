@@ -74,7 +74,7 @@ python3 $GENERATED/Fast.py > $GENERATED/Fast.swift
 # === Casting ===
 # Sometimes we have to cast from 'PyObject' to specific Swift type.
 # This file generates casting methods.
-echo 'Generating PyCast (methods for casting PyObject -> swift specific type)'
+echo 'Generating PyCast (methods for casting PyObject -> specific Swift type)'
 python3 $GENERATED/PyCast.py > $GENERATED/PyCast.swift
 
 # === Memory ===
@@ -82,19 +82,18 @@ python3 $GENERATED/PyCast.py > $GENERATED/PyCast.swift
 echo 'Generating PyMemory (helper for allocating new object instances)'
 python3 $GENERATED/PyMemory.py > $GENERATED/PyMemory.swift
 
-# === FunctionWrapper ===
-# Helper type for storing and calling Swift functions (regardless of their signature)
+# === Function wrappers ===
+# Helper for storing and calling Swift functions (regardless of their signature)
 echo 'Generating FunctionWrapper (helper for storing and calling Swift functions)'
 python3 $GENERATED/FunctionWrapper.py > $GENERATED/FunctionWrapper.swift
-
-# === PyBuiltinFunction+Wrap ===
-# Static factory function, uses 'FunctionWrapper'
-echo "Generating PyBuiltinFunction+Wrap (helpers for creating 'builtinfunction')"
+echo "Generating PyBuiltinFunction+Wrap (factory methods for 'builtinfunction')"
 python3 $GENERATED/PyBuiltinFunction+Wrap.py > $GENERATED/PyBuiltinFunction+Wrap.swift
+echo "Generating PyClassMethod+Wrap (factory methods for 'classmethod')"
+python3 $GENERATED/PyClassMethod+Wrap.py > $GENERATED/PyClassMethod+Wrap.swift
 
 # === IdString ===
 # Predefined commonly used `__dict__` keys.
 # Similar to `_Py_IDENTIFIER` in `CPython`.
-echo "Generating IdStrings"
+echo "Generating IdStrings (predefined commonly used '__dict__' keys)"
 python3 $GENERATED/IdStrings.py > $GENERATED/IdStrings.swift
 echo ''

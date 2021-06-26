@@ -74,16 +74,18 @@ internal struct FunctionWrapper {{
     print('  }')
     print()
 
-    # =================
-    # === Cast self ===
-    # =================
+    # =============
+    # === Casts ===
+    # =============
 
-    print_mark('Cast self')
+    print_mark('Casts')
     print('''\
   /// Cast given object to a specific type, 1st argument is a function name.
   internal typealias CastSelf<Zelf> = (String, PyObject) -> PyResult<Zelf>
   /// Cast given object to a specific type.
   internal typealias CastSelfOptional<Zelf> = (PyObject) -> Zelf?
+  /// Cast given object to a type object, 1st argument is a function name.
+  internal typealias CastType = (String, PyObject) -> PyResult<PyType>
 ''')
 
     # ==================
@@ -147,6 +149,7 @@ internal struct FunctionWrapper {{
         generic_arguments_with_requirements = fn.generic_arguments_with_requirements
         generic_signature = fn.generic_signature
         has_self_argument = fn.has_self_argument
+        has_type_argument = fn.has_type_argument
         return_type = fn.return_type
 
         print_mark(human_readable_signature)
@@ -171,6 +174,10 @@ internal struct FunctionWrapper {{
         if has_self_argument:
             cast_self_argument = ',\n      castSelf: @escaping CastSelf<Zelf>'
 
+        cast_type_argument = ''
+        if has_type_argument:
+            cast_type_argument = ',\n      castType: @escaping CastType'
+
         total_arg_index = 0
         fn_argument_binding = '('
         for arg_group in fn.arguments:
@@ -193,7 +200,7 @@ internal struct FunctionWrapper {{
         print(f'''\
     fileprivate init{generic_arguments_with_requirements}(
       name: String,
-      fn: @escaping {fn_typealias_name}{generic_arguments}{cast_self_argument}
+      fn: @escaping {fn_typealias_name}{generic_arguments}{cast_self_argument}{cast_type_argument}
     ) {{
         self.fnName = name
         self.fn = {{ {fn_argument_binding} -> PyFunctionResult in\
@@ -205,6 +212,15 @@ internal struct FunctionWrapper {{
           let zelf: Zelf
           switch castSelf(name, arg0) {{
           case let .value(z): zelf = z
+          case let .error(e): return .error(e)
+          }}
+''')
+        if has_type_argument:
+            print(f'''\
+          // This function has a 'type' argument that we have to cast
+          let type: PyType
+          switch castType(name, arg0) {{
+          case let .value(t): type = t
           case let .error(e): return .error(e)
           }}
 ''')
@@ -222,6 +238,8 @@ internal struct FunctionWrapper {{
                 binding = 'arg' + str(total_arg_index)
                 if total_arg_index == 0 and has_self_argument:
                     binding = 'zelf'
+                if total_arg_index == 0 and has_type_argument:
+                    binding = 'type'
                 if arg == void_argument:
                     binding = ''
 
@@ -296,15 +314,20 @@ internal struct FunctionWrapper {{
         if has_self_argument:
             cast_self_call_argument = ', castSelf: castSelf'
 
+        cast_type_call_argument = ''
+        if has_type_argument:
+            cast_type_call_argument = ', castType: castType'
+
         # Decrease indent
         cast_self_argument = cast_self_argument.replace('      ', '    ')
+        cast_type_argument = cast_type_argument.replace('      ', '    ')
 
         print(f'''\
   internal init{generic_arguments_with_requirements}(
     name: String,
-    fn: @escaping {fn_typealias_name}{generic_arguments}{cast_self_argument}
+    fn: @escaping {fn_typealias_name}{generic_arguments}{cast_self_argument}{cast_type_argument}
   ) {{
-    let wrapper = {struct_name}(name: name, fn: fn{cast_self_call_argument})
+    let wrapper = {struct_name}(name: name, fn: fn{cast_self_call_argument}{cast_type_call_argument})
     self.kind = .{enum_case_name}(wrapper)
   }}
 ''')
