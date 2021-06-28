@@ -134,7 +134,7 @@ public class PyBytes: PyObject, PyBytesType {
 
   // sourcery: pymethod = __contains__
   public func contains(element: PyObject) -> PyResult<Bool> {
-    return self.data.contains(element)
+    return self.data.contains(element: element)
   }
 
   // MARK: - Get item
@@ -153,7 +153,7 @@ public class PyBytes: PyObject, PyBytesType {
     }
   }
 
-  // MARK: - Predicates
+  // MARK: - Properties
 
   internal static let isalnumDoc = """
     Return True if the string is an alpha-numeric string, False otherwise.
@@ -273,7 +273,7 @@ public class PyBytes: PyObject, PyBytesType {
   public func startsWith(_ element: PyObject,
                          start: PyObject?,
                          end: PyObject?) -> PyResult<Bool> {
-    return self.data.starts(with: element, start: start, end: end)
+    return self.data.startsWith(element, start: start, end: end)
   }
 
   internal static let endswithDoc = """
@@ -293,7 +293,7 @@ public class PyBytes: PyObject, PyBytesType {
   public func endsWith(_ element: PyObject,
                        start: PyObject?,
                        end: PyObject?) -> PyResult<Bool> {
-    return self.data.ends(with: element, start: start, end: end)
+    return self.data.endsWith(element, start: start, end: end)
   }
 
   // MARK: - Strip
@@ -399,7 +399,7 @@ public class PyBytes: PyObject, PyBytesType {
   public func index(of element: PyObject,
                     start: PyObject?,
                     end: PyObject?) -> PyResult<BigInt> {
-    return self.data.index(of: element, start: start, end: end)
+    return self.data.indexOf(element: element, start: start, end: end)
   }
 
   internal static let rindexDoc = """
@@ -420,7 +420,7 @@ public class PyBytes: PyObject, PyBytesType {
   public func rindex(_ element: PyObject,
                      start: PyObject?,
                      end: PyObject?) -> PyResult<BigInt> {
-    return self.data.rindex(element, start: start, end: end)
+    return self.data.rindexOf(element: element, start: start, end: end)
   }
 
   // MARK: - Case
@@ -460,21 +460,21 @@ public class PyBytes: PyObject, PyBytesType {
   // sourcery: pymethod = center
   public func center(width: PyObject,
                      fillChar: PyObject?) -> PyResult<PyBytes> {
-    let result = self.data.center(width: width, fill: fillChar)
+    let result = self.data.center(width: width, fillChar: fillChar)
     return self.asBytes(data: result)
   }
 
   // sourcery: pymethod = ljust
   public func ljust(width: PyObject,
                     fillChar: PyObject?) -> PyResult<PyBytes> {
-    let result = self.data.ljust(width: width, fill: fillChar)
+    let result = self.data.ljust(width: width, fillChar: fillChar)
     return self.asBytes(data: result)
   }
 
   // sourcery: pymethod = rjust
   public func rjust(width: PyObject,
                     fillChar: PyObject?) -> PyResult<PyBytes> {
-    let result = self.data.rjust(width: width, fill: fillChar)
+    let result = self.data.rjust(width: width, fillChar: fillChar)
     return self.asBytes(data: result)
   }
 
@@ -487,12 +487,6 @@ public class PyBytes: PyObject, PyBytesType {
     return self.asByteList(data: result)
   }
 
-  public func split(separator: PyObject?,
-                    maxCount: PyObject?) -> PyResult<[PyBytes]> {
-    let result = self.data.split(separator: separator, maxCount: maxCount)
-    return self.asByteList(data: result)
-  }
-
   // sourcery: pymethod = rsplit
   internal func rsplit(args: [PyObject],
                        kwargs: PyDict?) -> PyResult<[PyBytes]> {
@@ -500,21 +494,10 @@ public class PyBytes: PyObject, PyBytesType {
     return self.asByteList(data: result)
   }
 
-  public func rsplit(separator: PyObject?,
-                     maxCount: PyObject?) -> PyResult<[PyBytes]> {
-    let result = self.data.rsplit(separator: separator, maxCount: maxCount)
-    return self.asByteList(data: result)
-  }
-
   // sourcery: pymethod = splitlines
   internal func splitLines(args: [PyObject],
                            kwargs: PyDict?) -> PyResult<[PyBytes]> {
     let result = self.data.splitLines(args: args, kwargs: kwargs)
-    return self.asByteList(data: result)
-  }
-
-  public func splitLines(keepEnds: PyObject?) -> PyResult<[PyBytes]> {
-    let result = self.data.splitLines(keepEnds: keepEnds)
     return self.asByteList(data: result)
   }
 
@@ -577,7 +560,7 @@ public class PyBytes: PyObject, PyBytesType {
   public func count(_ element: PyObject,
                     start: PyObject?,
                     end: PyObject?) -> PyResult<BigInt> {
-    return self.data.count(element, start: start, end: end)
+    return self.data.count(element: element, start: start, end: end)
   }
 
   // MARK: - Join

@@ -11,6 +11,8 @@ import VioletCore
 /// and not here.
 internal struct PyStringData: PyStringImpl, CustomStringConvertible {
 
+  internal typealias Implementation = StringImplementation
+
   internal let value: String
 
   internal var description: String {
@@ -68,7 +70,7 @@ internal struct PyStringData: PyStringImpl, CustomStringConvertible {
       case "\r":
         result.append("\\r")
       default:
-        if self.isPrintable(scalar: element) {
+        if StringImplementation.isPrintable(scalar: element) {
           result.append(element)
         } else {
           let repr = self.createNonPrintableRepr(scalar: element)
@@ -148,34 +150,34 @@ internal struct PyStringData: PyStringImpl, CustomStringConvertible {
   // MARK: - Case
 
   internal func lowerCased() -> String {
-    return self.value.lowercased()
+    return Implementation.lowerCase(scalars: self.scalars)
   }
 
   internal func upperCased() -> String {
-    return self.value.uppercased()
+    return Implementation.upperCase(scalars: self.scalars)
   }
 
   internal func titleCased() -> String {
-    return self.titleCasedString()
+    return Implementation.titleCase(scalars: self.scalars)
   }
 
   internal func swapCase() -> String {
-    return self.swapCaseString()
+    return Implementation.swapCase(scalars: self.scalars)
   }
 
   internal func caseFold() -> String {
-    return self.caseFoldString()
+    return Implementation.caseFold(scalars: self.scalars)
   }
 
   internal func capitalize() -> String {
-    return self.capitalizeString()
+    return Implementation.capitalize(scalars: self.scalars)
   }
 
   // MARK: - Helpers
 
   /// Helper for commonly used path.
   internal func contains(_ value: String) -> Bool {
-    let data = PyStringData(value)
-    return self.contains(data)
+    return Implementation.contains(scalars: self.scalars,
+                                   element: value.unicodeScalars)
   }
 }

@@ -22,3 +22,11 @@ internal protocol StringBuilderType {
   /// Append multiple elements.
   mutating func append<C: Sequence>(contentsOf other: C) where C.Element == Self.Element
 }
+
+extension StringBuilderType {
+  mutating func append(element: Element, repeated: Int) {
+    for _ in 0..<repeated {
+      self.append(element)
+    }
+  }
+}

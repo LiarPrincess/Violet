@@ -329,7 +329,7 @@ private let splitLinesArguments = ArgumentParser.createOrTrap(
 )
 
 extension PyStringImpl {
-
+/*
   internal func splitLines(args: [PyObject],
                            kwargs: PyDict?) -> PyResult<[SubSequence]> {
     switch splitLinesArguments.bind(args: args, kwargs: kwargs) {
@@ -396,4 +396,5 @@ extension PyStringImpl {
 
     return result
   }
+*/
 }

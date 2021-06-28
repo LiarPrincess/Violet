@@ -16,6 +16,9 @@ private typealias UnicodeScalarViewSub = UnicodeScalarView.SubSequence
 /// Strings are immutable sequences of Unicode code points.
 public class PyString: PyObject {
 
+  // Alias for out implementation type, so we don't have to type that much.
+  private typealias Implementation = StringImplementation
+
   internal static let doc = """
     str(object='') -> str
     str(bytes_or_buffer[, encoding[, errors]]) -> str
@@ -71,18 +74,18 @@ public class PyString: PyObject {
       return .value(true)
     }
 
-    return CompareResult(self.compare(with: other).map { $0 == .equal })
+    let result = self.compare(other: other)
+    return CompareResult(result?.isEqual)
   }
 
   internal func isEqual(_ other: PyString) -> Bool {
-    let result = self.compare(with: other.data)
-    return result == .equal
+    let result = self.compare(other: other.data.value)
+    return result.isEqual
   }
 
   internal func isEqual(_ other: String) -> Bool {
-    let data = PyStringData(other)
-    let result = self.compare(with: data)
-    return result == .equal
+    let result = self.compare(other: other)
+    return result.isEqual
   }
 
   // sourcery: pymethod = __ne__
@@ -94,43 +97,38 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    return CompareResult(self.compare(with: other)
-      .map { $0 == .less })
+    let result = self.compare(other: other)
+    return CompareResult(result?.isLess)
   }
 
   // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return CompareResult(self.compare(with: other)
-      .map { $0 == .less || $0 == .equal })
+    let result = self.compare(other: other)
+    return CompareResult(result?.isLessEqual)
   }
 
   // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> CompareResult {
-    return CompareResult(self.compare(with: other)
-      .map { $0 == .greater })
+    let result = self.compare(other: other)
+    return CompareResult(result?.isGreater)
   }
 
   // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return CompareResult(self.compare(with: other)
-      .map { $0 == .greater || $0 == .equal })
+    let result = self.compare(other: other)
+    return CompareResult(result?.isGreaterEqual)
   }
 
-  private func compare(with other: PyObject) -> StringCompareResult? {
+  private func compare(other: PyObject) -> Implementation.CompareResult? {
     guard let other = PyCast.asString(other) else {
       return nil
     }
 
-    return self.compare(with: other.data)
+    return self.compare(other: other.data.value)
   }
 
-  internal func compare(with other: PyStringData) -> StringCompareResult {
-    return self.data.compare(to: other)
-  }
-
-  internal func compare(with other: String) -> StringCompareResult {
-    let otherData = PyStringData(other)
-    return self.compare(with: otherData)
+  private func compare(other: String) -> Implementation.CompareResult {
+    return Implementation.compare(lhs: self.scalars, rhs: other.unicodeScalars)
   }
 
   // MARK: - Hashable
@@ -185,14 +183,14 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __contains__
   internal func contains(element: PyObject) -> PyResult<Bool> {
-    return self.data.contains(element)
+    return Implementation.contains(scalars: self.scalars, element: element)
   }
 
   // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
   internal func getItem(index: PyObject) -> PyResult<PyObject> {
-    switch self.data.getItem(index: index) {
+    switch Implementation.getItem(scalars: self.scalars, index: index) {
     case let .item(scalar):
       let result = Py.newString(String(scalar))
       return .value(result)
@@ -204,7 +202,7 @@ public class PyString: PyObject {
     }
   }
 
-  // MARK: - Predicates
+  // MARK: - Properties
 
   internal static let isalnumDoc = """
     Return True if the string is an alpha-numeric string, False otherwise.
@@ -215,7 +213,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = isalnum, doc = isalnumDoc
   internal func isAlphaNumeric() -> Bool {
-    return self.data.isAlphaNumeric
+    return Implementation.isAlphaNumeric(scalars: self.scalars)
   }
 
   internal static let isalphaDoc = """
@@ -227,7 +225,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = isalpha, doc = isalphaDoc
   internal func isAlpha() -> Bool {
-    return self.data.isAlpha
+    return Implementation.isAlpha(scalars: self.scalars)
   }
 
   internal static let isasciiDoc = """
@@ -239,7 +237,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = isascii, doc = isasciiDoc
   internal func isAscii() -> Bool {
-    return self.data.isAscii
+    return Implementation.isAscii(scalars: self.scalars)
   }
 
   internal static let isdecimalDoc = """
@@ -251,7 +249,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = isdecimal, doc = isdecimalDoc
   internal func isDecimal() -> Bool {
-    return self.data.isDecimal
+    return Implementation.isDecimal(scalars: self.scalars)
   }
 
   internal static let isdigitDoc = """
@@ -263,7 +261,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = isdigit, doc = isdigitDoc
   internal func isDigit() -> Bool {
-    return self.data.isDigit
+    return Implementation.isDigit(scalars: self.scalars)
   }
 
   internal static let isidentifierDoc = """
@@ -287,7 +285,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = islower, doc = islowerDoc
   internal func isLower() -> Bool {
-    return self.data.isLower
+    return Implementation.isLower(scalars: self.scalars)
   }
 
   internal static let isnumericDoc = """
@@ -299,7 +297,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = isnumeric, doc = isnumericDoc
   internal func isNumeric() -> Bool {
-    return self.data.isNumeric
+    return Implementation.isNumeric(scalars: self.scalars)
   }
 
   internal static let isprintableDoc = """
@@ -311,7 +309,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = isprintable, doc = isprintableDoc
   internal func isPrintable() -> Bool {
-    return self.data.isPrintable
+    return Implementation.isPrintable(scalars: self.scalars)
   }
 
   internal static let isspaceDoc = """
@@ -323,7 +321,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = isspace, doc = isspaceDoc
   internal func isSpace() -> Bool {
-    return self.data.isSpace
+    return Implementation.isSpace(scalars: self.scalars)
   }
 
   internal static let istitleDoc = """
@@ -335,7 +333,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = istitle, doc = istitleDoc
   internal func isTitle() -> Bool {
-    return self.data.isTitle
+    return Implementation.isTitle(scalars: self.scalars)
   }
 
   internal static let isupperDoc = """
@@ -350,7 +348,7 @@ public class PyString: PyObject {
   /// and there is at least one cased character.
   /// https://docs.python.org/3/library/stdtypes.html#str.isupper
   internal func isUpper() -> Bool {
-    return self.data.isUpper
+    return Implementation.isUpper(scalars: self.scalars)
   }
 
   // MARK: - Starts/ends with
@@ -372,7 +370,10 @@ public class PyString: PyObject {
   internal func startsWith(_ element: PyObject,
                            start: PyObject?,
                            end: PyObject?) -> PyResult<Bool> {
-    return self.data.starts(with: element, start: start, end: end)
+    return Implementation.startsWith(scalars: self.scalars,
+                                     element: element,
+                                     start: start,
+                                     end: end)
   }
 
   internal static let endswithDoc = """
@@ -392,7 +393,10 @@ public class PyString: PyObject {
   internal func endsWith(_ element: PyObject,
                          start: PyObject?,
                          end: PyObject?) -> PyResult<Bool> {
-    return self.data.ends(with: element, start: start, end: end)
+    return Implementation.endsWith(scalars: self.scalars,
+                                   element: element,
+                                   start: start,
+                                   end: end)
   }
 
   // MARK: - Strip
@@ -405,7 +409,8 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = strip, doc = stripDoc
   internal func strip(_ chars: PyObject?) -> PyResult<String> {
-    return self.data.strip(chars).map(String.init)
+    let result = Implementation.strip(scalars: self.scalars, chars: chars)
+    return result.map(String.init)
   }
 
   internal static let lstripDoc = """
@@ -416,7 +421,8 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = lstrip, doc = lstripDoc
   internal func lstrip(_ chars: PyObject?) -> PyResult<String> {
-    return self.data.lstrip(chars).map(String.init)
+    let result = Implementation.lstrip(scalars: self.scalars, chars: chars)
+    return result.map(String.init)
   }
 
   internal static let rstripDoc = """
@@ -427,7 +433,8 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = rstrip, doc = rstripDoc
   internal func rstrip(_ chars: PyObject?) -> PyResult<String> {
-    return self.data.rstrip(chars).map(String.init)
+    let result = Implementation.rstrip(scalars: self.scalars, chars: chars)
+    return result.map(String.init)
   }
 
   // MARK: - Find
@@ -495,7 +502,10 @@ public class PyString: PyObject {
   internal func index(of element: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<BigInt> {
-    return self.data.index(of: element, start: start, end: end)
+    return Implementation.indexOf(scalars: self.scalars,
+                                  element: element,
+                                  start: start,
+                                  end: end)
   }
 
   internal static let rindexDoc = """
@@ -516,7 +526,10 @@ public class PyString: PyObject {
   internal func rindex(_ element: PyObject,
                        start: PyObject?,
                        end: PyObject?) -> PyResult<BigInt> {
-    return self.data.rindex(element, start: start, end: end)
+    return Implementation.rindexOf(scalars: self.scalars,
+                                   element: element,
+                                   start: start,
+                                   end: end)
   }
 
   // MARK: - Case
@@ -554,35 +567,31 @@ public class PyString: PyObject {
   // MARK: - Center, just
 
   // sourcery: pymethod = center
-  internal func center(width: PyObject,
-                       fillChar: PyObject?) -> PyResult<String> {
-    return self.data.center(width: width, fill: fillChar)
+  internal func center(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
+    return Implementation.center(scalars: self.scalars,
+                                 width: width,
+                                 fillChar: fillChar)
   }
 
   // sourcery: pymethod = ljust
-  internal func ljust(width: PyObject,
-                      fillChar: PyObject?) -> PyResult<String> {
-    return self.data.ljust(width: width, fill: fillChar)
+  internal func ljust(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
+    return Implementation.ljust(scalars: self.scalars,
+                                width: width,
+                                fillChar: fillChar)
   }
 
   // sourcery: pymethod = rjust
-  internal func rjust(width: PyObject,
-                      fillChar: PyObject?) -> PyResult<String> {
-    return self.data.rjust(width: width, fill: fillChar)
+  internal func rjust(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
+    return Implementation.rjust(scalars: self.scalars,
+                                width: width,
+                                fillChar: fillChar)
   }
 
   // MARK: - Split
 
   // sourcery: pymethod = split
-  internal func split(args: [PyObject],
-                      kwargs: PyDict?) -> PyResult<[String]> {
+  internal func split(args: [PyObject], kwargs: PyDict?) -> PyResult<[String]> {
     return self.data.split(args: args, kwargs: kwargs)
-      .map(self.toStringArray(_:))
-  }
-
-  internal func split(separator: PyObject?,
-                      maxCount: PyObject?) -> PyResult<[String]> {
-    return self.data.split(separator: separator, maxCount: maxCount)
       .map(self.toStringArray(_:))
   }
 
@@ -593,22 +602,14 @@ public class PyString: PyObject {
       .map(self.toStringArray(_:))
   }
 
-  internal func rsplit(separator: PyObject?,
-                       maxCount: PyObject?) -> PyResult<[String]> {
-    return self.data.rsplit(separator: separator, maxCount: maxCount)
-      .map(self.toStringArray(_:))
-  }
-
   // sourcery: pymethod = splitlines
   internal func splitLines(args: [PyObject],
                            kwargs: PyDict?) -> PyResult<[String]> {
-    return self.data.splitLines(args: args, kwargs: kwargs)
-      .map(self.toStringArray(_:))
-  }
+    let result = Implementation.splitLines(scalars: self.scalars,
+                                           args: args,
+                                           kwargs: kwargs)
 
-  internal func splitLines(keepEnds: PyObject?) -> PyResult<[String]> {
-    return self.data.splitLines(keepEnds: keepEnds)
-      .map(self.toStringArray(_:))
+    return result.map(self.toStringArray(_:))
   }
 
   private func toStringArray(_ values: [UnicodeScalarViewSub]) -> [String] {
@@ -619,7 +620,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = partition
   internal func partition(separator: PyObject) -> PyResult<PyTuple> {
-    switch self.data.partition(separator: separator) {
+    switch Implementation.partition(scalars: self.scalars, separator: separator) {
     case .separatorNotFound:
       let empty = Py.emptyString
       return .value(Py.newTuple(elements: self, empty, empty))
@@ -634,7 +635,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = rpartition
   internal func rpartition(separator: PyObject) -> PyResult<PyTuple> {
-    switch self.data.rpartition(separator: separator) {
+    switch Implementation.rpartition(scalars: self.scalars, separator: separator) {
     case .separatorNotFound:
       let empty = Py.emptyString
       return .value(Py.newTuple(elements: empty, empty, self))
@@ -651,7 +652,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = expandtabs
   internal func expandTabs(tabSize: PyObject?) -> PyResult<String> {
-    return self.data.expandTabs(tabSize: tabSize)
+    return Implementation.expandTabs(scalars: self.scalars, tabSize: tabSize)
   }
 
   // MARK: - Count
@@ -673,14 +674,17 @@ public class PyString: PyObject {
   internal func count(_ element: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<BigInt> {
-    return self.data.count(element, start: start, end: end)
+    return Implementation.count(scalars: self.scalars,
+                                element: element,
+                                start: start,
+                                end: end)
   }
 
   // MARK: - Join
 
   // sourcery: pymethod = join
   internal func join(iterable: PyObject) -> PyResult<String> {
-    return self.data.join(iterable: iterable)
+    return Implementation.join(scalars: self.scalars, iterable: iterable)
   }
 
   // MARK: - Replace
@@ -689,33 +693,39 @@ public class PyString: PyObject {
   internal func replace(old: PyObject,
                         new: PyObject,
                         count: PyObject?) -> PyResult<String> {
-    return self.data.replace(old: old, new: new, count: count)
+    return Implementation.replace(scalars: self.scalars,
+                                  old: old,
+                                  new: new,
+                                  count: count)
   }
 
   // MARK: - ZFill
 
   // sourcery: pymethod = zfill
   internal func zfill(width: PyObject) -> PyResult<String> {
-    return self.data.zfill(width: width)
+    return Implementation.zFill(scalars: self.scalars, width: width)
   }
 
   // MARK: - Add
 
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.add(other).map(Py.newString(_:))
+    let result = Implementation.add(lhs: self.scalars, rhs: other)
+    return result.map(Py.newString(_:))
   }
 
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.mul(other).map(Py.newString(_:))
+    let result = Implementation.mul(scalars: self.scalars, count: other)
+    return result.map(Py.newString(_:))
   }
 
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.rmul(other).map(Py.newString(_:))
+    let result = Implementation.rmul(scalars: self.scalars, count: other)
+    return result.map(Py.newString(_:))
   }
 
   // MARK: - Iter

@@ -23,6 +23,9 @@ internal protocol PyBytesType: PyObject {
 /// and not here.
 internal struct PyBytesData: PyStringImpl {
 
+  // Alias for out implementation type, so we don't have to type that much.
+  internal typealias Implementation = StringImplementation
+
   internal private(set) var values: Data
 
   internal init() {
@@ -104,7 +107,7 @@ internal struct PyBytesData: PyStringImpl {
 
   internal func isEqual(_ other: PyObject) -> CompareResult {
     // Homo
-    if let homo = self.compare(other) {
+    if let homo = self.compare(other: other) {
       return CompareResult(homo == .equal)
     }
 
@@ -132,35 +135,35 @@ internal struct PyBytesData: PyStringImpl {
   // MARK: - Comparable
 
   internal func isLess(_ other: PyObject) -> CompareResult {
-    let raw = self.compare(other)
-    let result = raw.map { $0 == .less }
-    return CompareResult(result)
+    let result = self.compare(other: other)
+    return CompareResult(result?.isLess)
   }
 
   internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    let raw = self.compare(other)
-    let result = raw.map { $0 == .less || $0 == .equal }
-    return CompareResult(result)
+    let result = self.compare(other: other)
+    return CompareResult(result?.isLessEqual)
   }
 
   internal func isGreater(_ other: PyObject) -> CompareResult {
-    let raw = self.compare(other)
-    let result = raw.map { $0 == .greater }
-    return CompareResult(result)
+    let result = self.compare(other: other)
+    return CompareResult(result?.isGreater)
   }
 
   internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    let raw = self.compare(other)
-    let result = raw.map { $0 == .greater || $0 == .equal }
-    return CompareResult(result)
+    let result = self.compare(other: other)
+    return CompareResult(result?.isGreaterEqual)
   }
 
-  private func compare(_ other: PyObject) -> StringCompareResult? {
+  private func compare(other: PyObject) -> Implementation.CompareResult? {
     if let bytes = other as? PyBytesType {
-      return self.compare(to: bytes.data)
+      return self.compare(other: bytes.data)
     }
 
     return nil
+  }
+
+  private func compare(other: PyBytesData) -> Implementation.CompareResult? {
+    return Implementation.compare(lhs: self.scalars, rhs: other.scalars)
   }
 
   // MARK: - Repr
@@ -206,6 +209,18 @@ internal struct PyBytesData: PyStringImpl {
     return String(value, radix: 16, uppercase: false)
   }
 
+  // MARK: - Get item
+
+  internal func getItem(index: PyObject) -> Implementation.GetItemResult<UInt8, Data> {
+    return Implementation.getItem(data: self.scalars, index: index)
+  }
+
+  // MARK: - Contains
+
+  internal func contains(element: PyObject) -> PyResult<Bool> {
+    return Implementation.contains(data: self.scalars, element: element)
+  }
+
   // MARK: - String
 
   /// static PyObject *
@@ -227,18 +242,61 @@ internal struct PyBytesData: PyStringImpl {
   }
 
   internal func titleCased() -> Data {
-    let string = self.titleCasedString()
-    return self.encode(string)
+    return Implementation.titleCase(data: self.scalars)
   }
 
   internal func swapCase() -> Data {
-    let string = self.swapCaseString()
-    return self.encode(string)
+    return Implementation.swapCase(data: self.scalars)
   }
 
   internal func capitalize() -> Data {
-    let string = self.capitalizeString()
-    return self.encode(string)
+    return Implementation.capitalize(data: self.scalars)
+  }
+
+  // MARK: - Properties
+
+  internal var isAlphaNumeric: Bool {
+    return Implementation.isAlphaNumeric(data: self.scalars)
+  }
+
+  internal var isAlpha: Bool {
+    return Implementation.isAlpha(data: self.scalars)
+  }
+
+  internal var isAscii: Bool {
+    return Implementation.isAscii(data: self.scalars)
+  }
+
+  internal var isDecimal: Bool {
+    return Implementation.isDecimal(data: self.scalars)
+  }
+
+  internal var isDigit: Bool {
+    return Implementation.isDigit(data: self.scalars)
+  }
+
+  internal var isLower: Bool {
+    return Implementation.isLower(data: self.scalars)
+  }
+
+  internal var isUpper: Bool {
+    return Implementation.isUpper(data: self.scalars)
+  }
+
+  internal var isNumeric: Bool {
+    return Implementation.isNumeric(data: self.scalars)
+  }
+
+  internal var isPrintable: Bool {
+    return Implementation.isPrintable(data: self.scalars)
+  }
+
+  internal var isSpace: Bool {
+    return Implementation.isSpace(data: self.scalars)
+  }
+
+  internal var isTitle: Bool {
+    return Implementation.isTitle(data: self.scalars)
   }
 
   // MARK: - Append
@@ -255,6 +313,20 @@ internal struct PyBytesData: PyStringImpl {
 
   internal mutating func append(element: UInt8) {
     self.values.append(element)
+  }
+
+  // MARK: - Strip
+
+  internal func strip(_ chars: PyObject?) -> PyResult<Data> {
+    return Implementation.strip(data: self.scalars, chars: chars)
+  }
+
+  internal func lstrip(_ chars: PyObject?) -> PyResult<Data> {
+    return Implementation.lstrip(data: self.scalars, chars: chars)
+  }
+
+  internal func rstrip(_ chars: PyObject?) -> PyResult<Data> {
+    return Implementation.rstrip(data: self.scalars, chars: chars)
   }
 
   // MARK: - Extend
@@ -318,6 +390,71 @@ internal struct PyBytesData: PyStringImpl {
 
     self.values.insert(item, at: index)
     return .value()
+  }
+
+  // MARK: - Center, just
+
+  internal func center(width: PyObject, fillChar: PyObject?) -> PyResult<Data> {
+    return Implementation.center(data: self.scalars,
+                                 width: width,
+                                 fillChar: fillChar)
+  }
+
+  internal func ljust(width: PyObject, fillChar: PyObject?) -> PyResult<Data> {
+    return Implementation.ljust(data: self.scalars,
+                                width: width,
+                                fillChar: fillChar)
+  }
+
+  internal func rjust(width: PyObject, fillChar: PyObject?) -> PyResult<Data> {
+    return Implementation.rjust(data: self.scalars,
+                                width: width,
+                                fillChar: fillChar)
+  }
+
+  // MARK: - Expand tabs
+
+  internal func expandTabs(tabSize: PyObject?) -> PyResult<Data> {
+    return Implementation.expandTabs(data: self.scalars, tabSize: tabSize)
+  }
+
+  // MARK: - ZFill
+
+  internal func zfill(width: PyObject) -> PyResult<Data> {
+    return Implementation.zFill(data: self.scalars, width: width)
+  }
+
+  // MARK: - Split
+
+//  internal func split(args: [PyObject], kwargs: PyDict?) -> PyResult<[Data]> {
+//  }
+
+//  internal func rsplit(args: [PyObject],
+//                       kwargs: PyDict?) -> PyResult<[Data]> {
+//  }
+
+  internal func splitLines(args: [PyObject],
+                           kwargs: PyDict?) -> PyResult<[Data]> {
+    return Implementation.splitLines(data: self.scalars,
+                                     args: args,
+                                     kwargs: kwargs)
+  }
+
+  // MARK: - Partition
+
+  internal func partition(separator: PyObject) -> Implementation.PartitionResult<Data> {
+    return Implementation.partition(data: self.scalars, separator: separator)
+  }
+
+  // sourcery: pymethod = rpartition
+  internal func rpartition(separator: PyObject) -> Implementation.PartitionResult<Data> {
+    return Implementation.rpartition(data: self.scalars, separator: separator)
+  }
+
+  // MARK: - Join
+
+  internal func join(iterable: PyObject) -> PyResult<Data> {
+    return Implementation.join(data: self.scalars, iterable: iterable)
   }
 
   // MARK: - Remove
@@ -458,6 +595,68 @@ internal struct PyBytesData: PyStringImpl {
     DelItemImpl.delItem(collection: &self.values, slice: slice)
   }
 
+  // MARK: - Replace
+
+  internal func replace(old: PyObject,
+                        new: PyObject,
+                        count: PyObject?) -> PyResult<Data> {
+    return Implementation.replace(data: self.scalars,
+                                  old: old,
+                                  new: new,
+                                  count: count)
+  }
+
+  // MARK: - Starts/ends with
+
+  internal func startsWith(_ element: PyObject,
+                           start: PyObject?,
+                           end: PyObject?) -> PyResult<Bool> {
+    return Implementation.startsWith(data: self.scalars,
+                                     element: element,
+                                     start: start,
+                                     end: end)
+  }
+
+  internal func endsWith(_ element: PyObject,
+                         start: PyObject?,
+                         end: PyObject?) -> PyResult<Bool> {
+    return Implementation.endsWith(data: self.scalars,
+                                   element: element,
+                                   start: start,
+                                   end: end)
+  }
+
+  // MARK: - Index
+
+  internal func indexOf(element: PyObject,
+                        start: PyObject?,
+                        end: PyObject?) -> PyResult<BigInt> {
+    return Implementation.indexOf(data: self.scalars,
+                                  element: element,
+                                  start: start,
+                                  end: end)
+  }
+
+  internal func rindexOf(element: PyObject,
+                         start: PyObject?,
+                         end: PyObject?) -> PyResult<BigInt> {
+    return Implementation.rindexOf(data: self.scalars,
+                                   element: element,
+                                   start: start,
+                                   end: end)
+  }
+
+  // MARK: - Count
+
+  internal func count(element: PyObject,
+                      start: PyObject?,
+                      end: PyObject?) -> PyResult<BigInt> {
+    return Implementation.count(data: self.scalars,
+                                element: element,
+                                start: start,
+                                end: end)
+  }
+
   // MARK: - Clear
 
   internal mutating func clear() {
@@ -468,6 +667,22 @@ internal struct PyBytesData: PyStringImpl {
 
   internal mutating func reverse() {
     self.values.reverse()
+  }
+
+  // MARK: - Add
+
+  internal func add(_ other: PyObject) -> PyResult<Data> {
+    return Implementation.add(lhs: self.scalars, rhs: other)
+  }
+
+  // MARK: - Mul
+
+  internal func mul(_ other: PyObject) -> PyResult<Data> {
+    return Implementation.mul(data: self.scalars, count: other)
+  }
+
+  internal func rmul(_ other: PyObject) -> PyResult<Data> {
+    return Implementation.rmul(data: self.scalars, count: other)
   }
 
   // MARK: - String conversion
