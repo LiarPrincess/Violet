@@ -45,14 +45,14 @@ extension AbstractString {
 
       let beforeObject = Self._toObject(elements: before)
       let afterObject = Self._toObject(elements: after)
-      let result = Py.newTuple(elements: beforeObject, separatorObject, afterObject)
+      let result = Py.newTuple(beforeObject, separatorObject, afterObject)
       return .value(result)
 
     case .notFound:
       let empty = Self._getEmptyObject()
       let result = isReverse ?
-        Py.newTuple(elements: empty, empty, self) :
-        Py.newTuple(elements: self, empty, empty)
+        Py.newTuple(empty, empty, self) :
+        Py.newTuple(self, empty, empty)
 
       return .value(result)
     }

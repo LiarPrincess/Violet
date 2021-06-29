@@ -13,7 +13,7 @@ extension PyInstance {
   // MARK: - Tuple
 
   /// PyObject * PyTuple_New(Py_ssize_t size)
-  public func newTuple(elements: PyObject...) -> PyTuple {
+  public func newTuple(_ elements: PyObject...) -> PyTuple {
     return self.newTuple(elements: elements)
   }
 
@@ -53,7 +53,7 @@ extension PyInstance {
   // MARK: - List
 
   /// PyObject * PyList_New(Py_ssize_t size)
-  public func newList(elements: PyObject...) -> PyList {
+  public func newList(_ elements: PyObject...) -> PyList {
     return self.newList(elements: elements)
   }
 

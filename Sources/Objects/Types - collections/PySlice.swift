@@ -180,7 +180,7 @@ public class PySlice: PyObject {
       let start = Py.newInt(indices.start)
       let stop = Py.newInt(indices.stop)
       let step = Py.newInt(indices.step)
-      return Py.newTuple(elements: start, stop, step)
+      return Py.newTuple(start, stop, step)
     }
   }
 

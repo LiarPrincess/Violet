@@ -63,7 +63,7 @@ public class PyDictItemIterator: PyObject, OrderedDictionaryBackedIterator {
     case let .value(entry):
       let key = entry.key.object
       let value = entry.value
-      let tuple = Py.newTuple(elements: key, value)
+      let tuple = Py.newTuple(key, value)
       return .value(tuple)
     case let .error(e):
       return .error(e)

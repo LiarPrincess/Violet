@@ -225,7 +225,7 @@ extension PyInstance {
 
   /// Mapping key not found.
   public func newKeyError(key: PyObject) -> PyKeyError {
-    let args = self.newTuple(elements: key)
+    let args = self.newTuple(key)
     return PyKeyError(args: args)
   }
 

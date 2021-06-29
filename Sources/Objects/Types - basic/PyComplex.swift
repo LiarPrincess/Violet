@@ -482,7 +482,7 @@ public class PyComplex: PyObject {
   internal func getNewArgs() -> PyTuple {
     let r = Py.newFloat(self.real)
     let i = Py.newFloat(self.imag)
-    return Py.newTuple(elements: r, i)
+    return Py.newTuple(r, i)
   }
 
   // MARK: - Python new

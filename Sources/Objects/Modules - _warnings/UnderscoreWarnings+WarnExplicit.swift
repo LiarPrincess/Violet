@@ -38,7 +38,7 @@ extension UnderscoreWarnings {
   /// warn_explicit(PyObject *category, PyObject *message, ...)
   internal func warnExplicit(warning: Warning,
                              registry: WarningRegistry) -> PyResult<PyNone> {
-    let key = Py.newTuple(elements: warning.text, warning.category, warning.lineNo)
+    let key = Py.newTuple(warning.text, warning.category, warning.lineNo)
     switch self.hasAlreadyWarned(registry: registry, key: key) {
     case .value(true): return .value(Py.none)
     case .value(false): break

@@ -70,7 +70,7 @@ public class PyBaseException: PyObject {
                             context: PyBaseException? = nil,
                             suppressContext: Bool = false,
                             type: PyType? = nil) {
-    let args = Py.newTuple(elements: Py.newString(msg))
+    let args = Py.newTuple(Py.newString(msg))
     self.init(args: args,
               traceback: traceback,
               cause: cause,

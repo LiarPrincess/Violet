@@ -178,7 +178,7 @@ extension PyInstance {
 
     case .error:
       let msgObject = self.intern(string: msg)
-      let args = self.newTuple(elements: msgObject)
+      let args = self.newTuple(msgObject)
       let error = PyBytesWarning(args: args)
       return error
     }

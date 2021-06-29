@@ -84,7 +84,7 @@ public class PyEnumerate: PyObject {
     }
 
     let index = Py.newInt(self.nextIndex)
-    let result = Py.newTuple(elements: index, item)
+    let result = Py.newTuple(index, item)
 
     self.nextIndex += 1
     return .value(result)

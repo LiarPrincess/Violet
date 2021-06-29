@@ -508,11 +508,11 @@ public class PyBytes: PyObject, PyBytesType {
     switch self.data.partition(separator: separator) {
     case .separatorNotFound:
       let empty = Py.emptyBytes
-      return .value(Py.newTuple(elements: self, empty, empty))
+      return .value(Py.newTuple(self, empty, empty))
     case let .separatorFound(before, _, after):
       let b = Py.newBytes(before)
       let a = Py.newBytes(after)
-      return .value(Py.newTuple(elements: b, separator, a)) // Reuse separator
+      return .value(Py.newTuple(b, separator, a)) // Reuse separator
     case let .error(e):
       return .error(e)
     }
@@ -523,11 +523,11 @@ public class PyBytes: PyObject, PyBytesType {
     switch self.data.rpartition(separator: separator) {
     case .separatorNotFound:
       let empty = Py.emptyBytes
-      return .value(Py.newTuple(elements: empty, empty, self))
+      return .value(Py.newTuple(empty, empty, self))
     case let .separatorFound(before, _, after):
       let b = Py.newBytes(before)
       let a = Py.newBytes(after)
-      return .value(Py.newTuple(elements: b, separator, a)) // Reuse separator
+      return .value(Py.newTuple(b, separator, a)) // Reuse separator
     case let .error(e):
       return .error(e)
     }
