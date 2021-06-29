@@ -37,10 +37,10 @@ extension PyInstance {
     // Unicode character -> integer representing the Unicode code point
 
     if let string = PyCast.asString(object) {
-      let scalars = string.scalars
+      let elements = string.elements
 
-      guard let first = scalars.first, scalars.count == 1 else {
-        let l = scalars.count
+      guard let first = elements.first, elements.count == 1 else {
+        let l = elements.count
         let msg = "ord() expected a character, but string of length \(l) found"
         return .typeError(msg)
       }

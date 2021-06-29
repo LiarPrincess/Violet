@@ -555,8 +555,7 @@ extension PyInstance {
     }
 
     if let string = PyCast.asExactlyString(iterable) {
-      let scalars = string.data.scalars
-      return scalars.map(self.intern(scalar:))
+      return string.elements.map(self.intern(scalar:))
     }
 
     return nil

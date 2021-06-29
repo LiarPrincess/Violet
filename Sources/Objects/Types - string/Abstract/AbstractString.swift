@@ -1,3 +1,5 @@
+import BigInt
+
 // swiftlint:disable type_name
 
 /// Given a `PyObject` we try to extract a valid collection to use in
@@ -96,7 +98,20 @@ internal protocol AbstractString: PyObject {
   static func _asUnicodeScalar(element: Element) -> UnicodeScalar
 }
 
+// MARK: - Common things
+
 extension AbstractString {
+
+  /// This may be `O(n)`, but it is not like we care.
+  ///
+  /// ```
+  /// len("Cafe\u0301") -> 5
+  /// len("Café")       -> 4
+  /// ```
+  internal var _count: BigInt {
+    let result = self.elements.count
+    return BigInt(result)
+  }
 
   /// In some algorithms we require `UnicodeScalars` to conform to conform to
   /// `RandomAccessCollection`, but they don't.

@@ -197,9 +197,9 @@ extension UnderscoreWarnings {
   /// is_internal_frame(PyFrameObject *frame)
   private func isInternalFrame(frame: PyFrame) -> Bool {
     let filename = frame.code.filename
-    let data = filename.data
     // CPython uses '&&', but this seems kind of weird…
-    return data.contains("importlib") || data.contains("_bootstrap")
+    return filename.contains(value: "importlib")
+        || filename.contains(value: "_bootstrap")
   }
 
   // MARK: - Warning registry
@@ -251,8 +251,8 @@ extension UnderscoreWarnings {
     // from arg0.
     if module.isEqual("__main__") {
       switch Py.sys.getArgv0() {
-      case .value(let s) where s.data.any:
-        return s
+      case .value(let string) where !string.isEmpty:
+        return string
       case .value,
            .error:
         break // whatever, just use default

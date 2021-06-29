@@ -28,15 +28,16 @@ extension AbstractString {
   }
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _isEqual(other: Self) -> CompareResult {
+  internal func _isEqual(other: Self) -> Bool {
     if self === other {
-      return .value(true)
+      return true
     }
 
     let result = self._compare(other: other.elements)
-    return CompareResult(result.isEqual)
+    return result.isEqual
   }
 
+  /// DO NOT USE! This is a part of `AbstractString` implementation
   internal func _isEqual(other: Elements) -> Bool {
     let result = self._compare(other: other)
     return result.isEqual

@@ -3,18 +3,21 @@ extension AbstractString {
   /// DO NOT USE! This is a part of `AbstractString` implementation
   internal func _partition(separator: PyObject) -> PyResult<PyTuple> {
     return self._template(separator: separator,
-                          findSeparator: self._findImpl(value:))
+                          findSeparator: self._findImpl(value:),
+                          isReverse: false)
   }
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
   internal func _rpartition(separator: PyObject) -> PyResult<PyTuple> {
     return self._template(separator: separator,
-                          findSeparator: self._rfindImpl(value:))
+                          findSeparator: self._rfindImpl(value:),
+                          isReverse: true)
   }
 
   private func _template(
     separator separatorObject: PyObject,
-    findSeparator: (Elements) -> AbstractString_FindResult<Elements>
+    findSeparator: (Elements) -> AbstractString_FindResult<Elements>,
+    isReverse: Bool
   ) -> PyResult<PyTuple> {
     guard let separator = Self._getElements(object: separatorObject) else {
       let t = Self._pythonTypeName
@@ -47,7 +50,10 @@ extension AbstractString {
 
     case .notFound:
       let empty = Self._getEmptyObject()
-      let result = Py.newTuple(elements: empty, empty, self)
+      let result = isReverse ?
+        Py.newTuple(elements: empty, empty, self) :
+        Py.newTuple(elements: self, empty, empty)
+
       return .value(result)
     }
   }

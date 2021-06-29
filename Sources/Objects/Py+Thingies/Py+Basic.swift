@@ -71,6 +71,22 @@ extension PyInstance {
       PyString(value: value)
   }
 
+  public func newString(_ value: String.UnicodeScalarView) -> PyString {
+    if value.isEmpty {
+      return self.emptyString
+    }
+
+    return PyString(value: String(value))
+  }
+
+  public func newString(_ value: String.UnicodeScalarView.SubSequence) -> PyString {
+    if value.isEmpty {
+      return self.emptyString
+    }
+
+    return PyString(value: String(value))
+  }
+
   public func newString(_ value: CustomStringConvertible) -> PyString {
     let string = String(describing: value)
     return self.newString(string)

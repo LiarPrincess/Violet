@@ -27,7 +27,6 @@ extension AbstractString {
     // In Python: "\u00E9" in "Cafe\u0301" -> False
     // In Swift:  "Cafe\u{0301}".contains("\u{00E9}") -> True
     // which is 'e with acute (as a single char)' in 'Cafe{accent}'
-
     let findResult = self._findImpl(value: value)
     switch findResult {
     case .index: return true
