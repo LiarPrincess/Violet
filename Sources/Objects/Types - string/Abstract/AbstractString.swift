@@ -1,0 +1,108 @@
+// swiftlint:disable type_name
+
+/// Given a `PyObject` we try to extract a valid collection to use in
+/// one of the functions mentioned in type name.
+  internal enum AbstractString_ElementsForFindCountContainsIndexOf<T> {
+    case value(T)
+    case invalidObjectType
+    case error(PyBaseException)
+  }
+
+/// Mixin with (almost) all of the `str/bytes/bytearray` methods.
+/// Everything here is 'best-effort' because strings are hard.
+///
+/// All of the methods/properties should be prefixed with `_`.
+/// DO NOT use them outside of the `str/bytes/bytearray` objects!
+internal protocol AbstractString: PyObject {
+
+  // MARK: - Types
+
+  // All of the things in this protocol will get table-based dispatch.
+  // This is 'meh', but acceptable.
+  // What counts, is that the extensions will have static dispatch.
+
+  /// - `Comparable` because we need to implement `__eq__`, `__lt__` etc.
+  /// - `Hashable` - not needed, but gives us  O(1) `strip` lookups.
+  associatedtype Element where Element: Comparable, Element: Hashable
+  /// `UnicodeScalarView` for `str` and `Data` for `bytes`.
+  ///
+  /// - `Bidirectional` because we need to iterate backwards for `rfind` etc.
+  associatedtype Elements: BidirectionalCollection where Elements.Element == Element
+  /// See `StringBuilderType` documentation.
+  /// `Builder.Result` is abstract and we will never touch it.
+  associatedtype Builder: StringBuilderType2 where Builder.Elements == Elements
+
+  // MARK: - Properties
+
+  /// Name of the type that uses this implementations (e.g. `str` or `bytes`).
+  /// Used in error messages.
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation..
+  static var _pythonTypeName: String { get }
+
+  var elements: Elements { get }
+
+  // MARK: - Fill
+
+  /// Default fill character (for example for `center`).
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static var _defaultFill: Element { get }
+  /// Fill used by `zfill` function
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static var _zFill: Element { get }
+
+  // MARK: - Elements, builder -> Object
+
+  /// Create object with empty `elements`.
+  /// Used by `partition` when we fail to find separator.
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _getEmptyObject() -> Self
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _toObject(element: Element) -> Self
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _toObject(elements: Elements) -> Self
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _toObject(elements: Elements.SubSequence) -> Self
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _toObject(result: Builder.Result) -> Self
+
+  // MARK: - Object -> Elements
+
+  /// Given a `PyObject` we try to extract a valid `Elements`.
+  ///
+  /// Intended use:
+  /// - `str` -> return elements if `other` is `str`.
+  /// - `bytes/bytearray` -> return elements if `other` is `bytes/bytearray`.
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _getElements(object: PyObject) -> Elements?
+
+  /// Given a `PyObject` we try to extract a valid `Elements` to use in
+  /// one of the function mentioned in type name.
+  ///
+  /// Basically the same as `_getElements(object:)`, but for `bytes/bytearray`
+  /// will also handle `int` (`69 in b'Elsa'` -> `True`).
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _getElementsForFindCountContainsIndexOf(
+    object: PyObject
+  ) -> AbstractString_ElementsForFindCountContainsIndexOf<Elements>
+
+  // MARK: - Properties
+
+  static func _asUnicodeScalar(element: Element) -> UnicodeScalar
+}
+
+extension AbstractString {
+
+  /// In some algorithms we require `UnicodeScalars` to conform to conform to
+  /// `RandomAccessCollection`, but they don't.
+  /// In such places call this method, so we know to check them later.
+  ///
+  /// If we ever solve this, then remove this method, so that every function
+  /// that uses it fails to compile.
+  internal func _wouldBeBetterWithRandomAccessCollection() { }
+}
