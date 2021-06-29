@@ -96,9 +96,8 @@ public class PyString: PyObject, AbstractString {
   }
 
   internal static func _toObject(elements: Elements.SubSequence) -> Self {
-    let string = String(elements)
     // swiftlint:disable:next force_cast
-    return Py.newString(string) as! Self
+    return Py.newString(elements) as! Self
   }
 
   internal static func _toObject(result: String) -> Self {
@@ -306,7 +305,7 @@ public class PyString: PyObject, AbstractString {
 
   // sourcery: pymethod = __contains__
   internal func contains(element: PyObject) -> PyResult<Bool> {
-    return self._contains(object: element)
+    return self._contains(element: element)
   }
 
   internal func contains(value: String) -> Bool {
@@ -487,10 +486,10 @@ public class PyString: PyObject, AbstractString {
     """
 
   // sourcery: pymethod = startswith, doc = startswithDoc
-  internal func startsWith(_ element: PyObject,
+  internal func startsWith(prefix: PyObject,
                            start: PyObject?,
                            end: PyObject?) -> PyResult<Bool> {
-    return self._startsWith(prefix: element, start: start, end: end)
+    return self._startsWith(prefix: prefix, start: start, end: end)
   }
 
   internal static let endswithDoc = """
@@ -503,10 +502,10 @@ public class PyString: PyObject, AbstractString {
     """
 
   // sourcery: pymethod = endswith, doc = endswithDoc
-  internal func endsWith(_ element: PyObject,
+  internal func endsWith(suffix: PyObject,
                          start: PyObject?,
                          end: PyObject?) -> PyResult<Bool> {
-    return self._endsWith(suffix: element, start: start, end: end)
+    return self._endsWith(suffix: suffix, start: start, end: end)
   }
 
   // MARK: - Strip
@@ -518,7 +517,7 @@ public class PyString: PyObject, AbstractString {
     """
 
   // sourcery: pymethod = strip, doc = stripDoc
-  internal func strip(_ chars: PyObject?) -> PyResult<PyString> {
+  internal func strip(chars: PyObject?) -> PyResult<PyString> {
     return self._strip(chars: chars)
   }
 
@@ -529,7 +528,7 @@ public class PyString: PyObject, AbstractString {
     """
 
   // sourcery: pymethod = lstrip, doc = lstripDoc
-  internal func lstrip(_ chars: PyObject?) -> PyResult<PyString> {
+  internal func lstrip(chars: PyObject?) -> PyResult<PyString> {
     return self._lstrip(chars: chars)
   }
 
@@ -540,7 +539,7 @@ public class PyString: PyObject, AbstractString {
     """
 
   // sourcery: pymethod = rstrip, doc = rstripDoc
-  internal func rstrip(_ chars: PyObject?) -> PyResult<PyString> {
+  internal func rstrip(chars: PyObject?) -> PyResult<PyString> {
     return self._rstrip(chars: chars)
   }
 
@@ -557,10 +556,10 @@ public class PyString: PyObject, AbstractString {
     """
 
   // sourcery: pymethod = find, doc = findDoc
-  internal func find(_ element: PyObject,
+  internal func find(object: PyObject,
                      start: PyObject?,
                      end: PyObject?) -> PyResult<BigInt> {
-    return self._find(object: element, start: start, end: end)
+    return self._find(object: object, start: start, end: end)
   }
 
   internal static let rfindDoc = """
@@ -574,10 +573,10 @@ public class PyString: PyObject, AbstractString {
     """
 
   // sourcery: pymethod = rfind, doc = rfindDoc
-  internal func rfind(_ element: PyObject,
+  internal func rfind(object: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<BigInt> {
-    return self._rfind(object: element, start: start, end: end)
+    return self._rfind(object: object, start: start, end: end)
   }
 
   // MARK: - Index
@@ -592,16 +591,11 @@ public class PyString: PyObject, AbstractString {
     Raises ValueError when the substring is not found.
     """
 
-  // Special overload for `IndexOwner` protocol
-  internal func index(of element: PyObject) -> PyResult<BigInt> {
-    return self._indexOf(object: element, start: nil, end: nil)
-  }
-
   // sourcery: pymethod = index, doc = indexDoc
-  internal func index(of element: PyObject,
-                      start: PyObject?,
-                      end: PyObject?) -> PyResult<BigInt> {
-    return self._indexOf(object: element, start: start, end: end)
+  internal func indexOf(object: PyObject,
+                        start: PyObject?,
+                        end: PyObject?) -> PyResult<BigInt> {
+    return self._indexOf(object: object, start: start, end: end)
   }
 
   internal static let rindexDoc = """
@@ -615,10 +609,10 @@ public class PyString: PyObject, AbstractString {
     """
 
   // sourcery: pymethod = rindex, doc = rindexDoc
-  internal func rindex(_ element: PyObject,
-                       start: PyObject?,
-                       end: PyObject?) -> PyResult<BigInt> {
-    return self._rindexOf(object: element, start: start, end: end)
+  internal func rindexOf(object: PyObject,
+                         start: PyObject?,
+                         end: PyObject?) -> PyResult<BigInt> {
+    return self._rindexOf(object: object, start: start, end: end)
   }
 
   // MARK: - Case
@@ -716,16 +710,11 @@ public class PyString: PyObject, AbstractString {
     interpreted as in slice notation.
     """
 
-  // Special overload for `CountOwner` protocol.
-  internal func count(_ element: PyObject) -> PyResult<BigInt> {
-    return self._count(object: element, start: nil, end: nil)
-  }
-
   // sourcery: pymethod = count, doc = countDoc
-  internal func count(_ element: PyObject,
+  internal func count(object: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<BigInt> {
-    return self._count(object: element, start: start, end: end)
+    return self._count(object: object, start: start, end: end)
   }
 
   // MARK: - Join

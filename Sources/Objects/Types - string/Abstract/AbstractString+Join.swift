@@ -39,7 +39,7 @@ extension AbstractString {
     // We need some default. 5 is as good as any other.
     var iterableCount = 5
 
-    // If we can easly get the '__len__' then use it.
+    // If we can easily get the '__len__' then use it.
     // If not, then we can't call python method, because it may side-effect.
     if let bigInt = Fast.__len__(iterable), let int = Int(exactly: bigInt) {
       iterableCount = int

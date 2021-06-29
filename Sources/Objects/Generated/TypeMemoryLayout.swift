@@ -271,7 +271,7 @@ extension PyType {
     /// - `__dict__: Py`
     public static let PyStaticMethod = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
-    /// - `data: PyStringData`
+    /// - `value: String`
     public static let PyString = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `string: PyString`
