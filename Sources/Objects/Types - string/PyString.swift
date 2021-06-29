@@ -176,11 +176,11 @@ public class PyString: PyObject, AbstractString {
   // sourcery: pymethod = __hash__
   /// In Swift use `hashImpl` instead.
   internal func hash() -> HashResult {
-    let result = self.hashRaw()
+    let result = self.hashImpl()
     return .value(result)
   }
 
-  internal func hashRaw() -> PyHash {
+  internal func hashImpl() -> PyHash {
     return Py.hasher.hash(self.value)
   }
 
@@ -189,11 +189,11 @@ public class PyString: PyObject, AbstractString {
   // sourcery: pymethod = __repr__
   /// In Swift use `reprImpl` instead.
   internal func repr() -> PyResult<String> {
-    let result = self.reprRaw()
+    let result = self.reprImpl()
     return .value(result)
   }
 
-  internal func reprRaw() -> String {
+  internal func reprImpl() -> String {
     let quote = self.getReprQuoteChar()
 
     var result = String(quote)

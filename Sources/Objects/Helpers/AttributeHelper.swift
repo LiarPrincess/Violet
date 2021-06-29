@@ -54,7 +54,8 @@ internal enum AttributeHelper {
       return .value(p)
     }
 
-    let e = Py.newAttributeError(object: object, hasNoAttribute: name.reprRaw())
+    let nameRepr = name.reprImpl()
+    let e = Py.newAttributeError(object: object, hasNoAttribute: nameRepr)
     return .error(e)
   }
 
@@ -105,9 +106,10 @@ internal enum AttributeHelper {
       }
     }
 
+    let nameRepr = name.reprImpl()
     let e = descriptor == nil ?
-      Py.newAttributeError(object: object, hasNoAttribute: name.reprRaw()) :
-      Py.newAttributeError(object: object, attributeIsReadOnly: name.reprRaw())
+      Py.newAttributeError(object: object, hasNoAttribute: nameRepr) :
+      Py.newAttributeError(object: object, attributeIsReadOnly: nameRepr)
 
     return .error(e)
   }

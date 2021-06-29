@@ -118,7 +118,7 @@ public class PyModule: PyObject {
       }
     }
 
-    let nameQuoted = name.reprRaw().quoted
+    let nameQuoted = name.reprImpl().quoted
     let moduleName = self.getNameOrNil() ?? "<unknown module name>"
     let msg = "module \(moduleName) has no attribute \(nameQuoted)"
     return .attributeError(msg)

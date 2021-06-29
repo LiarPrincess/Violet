@@ -251,7 +251,7 @@ extension PyInstance {
     operation: AttributeOperation
   ) -> PyBaseException {
     let t = object.typeName
-    let name = name.reprRaw()
+    let name = name.reprImpl()
 
     let details: String = {
       switch operation {
