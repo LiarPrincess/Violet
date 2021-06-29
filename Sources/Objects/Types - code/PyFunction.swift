@@ -55,12 +55,12 @@ public class PyFunction: PyObject {
 
   // MARK: - Init
 
-  internal init(qualname: String?,
+  internal init(qualname: PyString?,
                 module: PyObject,
                 code: PyCode,
                 globals: PyDict) {
     self.name = code.name
-    self.qualname = qualname.map(Py.intern) ?? code.name
+    self.qualname = qualname ?? code.name
     self.code = code
     self.module = module
 

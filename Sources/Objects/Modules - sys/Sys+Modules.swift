@@ -97,8 +97,6 @@ extension Sys {
   internal func setBuiltinModules(modules: [PyModule]) {
     assert(!self.hasAlreadyCalled_setBuiltinModules)
 
-    var names = [PyString]()
-
     for module in modules {
       let name: String = {
         switch module.getName() {
@@ -111,7 +109,7 @@ extension Sys {
       }()
 
       let interned = Py.intern(string: name)
-      names.append(interned)
+      self.builtinModuleNames.append(interned)
 
       // sys.modules
       if let e = self.addModule(module: module) {
@@ -119,10 +117,7 @@ extension Sys {
       }
     }
 
-    // sys.builtin_module_names
-    self.builtinModuleNames = names.map { $0.value }
-
-    let tuple = Py.newTuple(elements: names)
+    let tuple = Py.newTuple(elements: self.builtinModuleNames)
     if let e = self.setBuiltinModuleNames(to: tuple) {
       trap("Error when setting 'sys.builtin_module_names': \(e)")
     }

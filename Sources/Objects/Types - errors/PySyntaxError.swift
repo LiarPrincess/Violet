@@ -159,7 +159,7 @@ public class PySyntaxError: PyException {
 
     let filenameOrNil: String? = {
       let filenamePyString = zelf.filename.flatMap(PyCast.asString(_:))
-      guard let path = filenamePyString, path.value.any else {
+      guard let path = filenamePyString, !path.isEmpty else {
         return nil
       }
 

@@ -29,7 +29,7 @@ extension UnderscoreImp {
     }
 
     let builtinNames = Py.sys.builtinModuleNames
-    let result = builtinNames.contains(name.value)
+    let result = builtinNames.contains { $0.isEqual(name) }
 
     let int = Py.newInt(result ? 1 : 0)
     return .value(int)

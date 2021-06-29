@@ -42,7 +42,7 @@ internal enum StringImplementation {
 
   internal static func getScalars(object: PyObject) -> GetCollectionResult<UnicodeScalars> {
     if let string = PyCast.asString(object) {
-      return .value(string.value.unicodeScalars)
+      return .value(string.elements)
     }
 
     return .notCollection

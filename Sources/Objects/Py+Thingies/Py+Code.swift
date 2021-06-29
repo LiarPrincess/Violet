@@ -23,11 +23,11 @@ extension PyInstance {
       return .typeError("function() code must be code, not \(t)")
     }
 
-    let qualnameValue: String?
-    if qualname is PyNone {
+    let qualnameValue: PyString?
+    if qualname.isNone {
       qualnameValue = nil
     } else if let q = PyCast.asString(qualname) {
-      qualnameValue = q.value
+      qualnameValue = q
     } else {
       let t = qualname.typeName
       return .typeError("function() qualname must be None or string, not \(t)")
@@ -40,7 +40,7 @@ extension PyInstance {
     return .value(result)
   }
 
-  public func newFunction(qualname: String?,
+  public func newFunction(qualname: PyString?,
                           code: PyCode,
                           globals: PyDict) -> PyFunction {
     let module = globals.get(id: .__name__) ?? self.none

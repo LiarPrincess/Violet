@@ -92,7 +92,7 @@ internal enum PyObjectType {
 
   // sourcery: pymethod = __format__
   internal static func format(zelf: PyObject, spec: PyObject) -> PyResult<String> {
-    if let spec = PyCast.asString(spec), spec.value.isEmpty {
+    if let spec = PyCast.asString(spec), spec.isEmpty {
       return PyObjectType.str(zelf: zelf)
     }
 

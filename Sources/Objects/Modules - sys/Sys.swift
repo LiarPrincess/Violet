@@ -124,7 +124,7 @@ public final class Sys: PyModuleImplementation {
   }
 
   /// Initial value for `sys.builtin_module_names`.
-  public internal(set) var builtinModuleNames = [String]()
+  public internal(set) var builtinModuleNames = [PyString]()
 
   /// Initial value for `sys.platform`.
   private var platform: String {

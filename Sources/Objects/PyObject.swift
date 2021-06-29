@@ -195,13 +195,13 @@ public class PyObject: CustomStringConvertible {
 
   /// Is this `None`?
   public var isNone: Bool {
-    return self is PyNone
+    return PyCast.isNone(self)
   }
 
   /// Helper to use when implementing binary operations.
   /// [docs](https://docs.python.org/3/library/constants.html#NotImplemented).
   public var isNotImplemented: Bool {
-    return self is PyNotImplemented
+    return PyCast.isNotImplemented(self)
   }
 
   // MARK: - Repr

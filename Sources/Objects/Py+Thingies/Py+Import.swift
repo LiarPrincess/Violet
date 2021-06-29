@@ -120,7 +120,7 @@ extension PyInstance {
                             level: PyInt,
                             globals: PyObject?) -> PyResult<String> {
     if level.value == 0 {
-      if name.value.isEmpty {
+      if name.isEmpty {
         return .valueError("Empty module name")
       }
 
@@ -151,7 +151,7 @@ extension PyInstance {
       base = base[..<index]
     }
 
-    let result = base.isEmpty || name.value.isEmpty ?
+    let result = base.isEmpty || name.isEmpty ?
       "\(base)" :
       "\(base).\(name.value)" // In example: 'disnep' + '.' + 'frozen.elsa'
 
@@ -309,7 +309,7 @@ extension PyInstance {
 
     // No dot in module name, simple exit.
     // It will also handle case of empty name.
-    let nameScalars = name.value.unicodeScalars
+    let nameScalars = name.elements
     guard let nameDotIndex = nameScalars.firstIndex(of: ".") else {
       return .value(module)
     }

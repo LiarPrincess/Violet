@@ -94,7 +94,7 @@ extension UnderscoreWarnings {
   /// static PyObject *
   /// normalize_module(PyObject *filename)
   private func createModuleName(filename: PyString) -> PyString {
-    if filename.value.isEmpty {
+    if filename.isEmpty {
       return Py.intern(string: "<unknown>")
     }
 

@@ -220,7 +220,7 @@ extension PyInstance {
       return .value(p)
     }
 
-    let e = self.newAttributeError(object: object, hasNoAttribute: selector.value)
+    let e = self.newAttributeError(object: object, hasNoAttribute: selector)
     return .notFound(e)
   }
 
