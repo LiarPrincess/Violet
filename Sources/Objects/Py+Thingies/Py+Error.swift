@@ -264,19 +264,35 @@ extension PyInstance {
     encoding: PyStringEncoding
   ) -> PyUnicodeDecodeError {
     let bytes = self.newBytes(data)
-    return self.newUnicodeDecodeError(data: bytes, encoding: encoding)
+    return self.newUnicodeDecodeError(bytes: bytes, encoding: encoding)
   }
 
   /// Unicode decoding error.
   internal func newUnicodeDecodeError(
-    data: PyBytesType,
+    bytes: PyBytes,
+    encoding: PyStringEncoding
+  ) -> PyUnicodeDecodeError {
+    return self.newUnicodeDecodeError(bytes: .init(bytes: bytes), encoding: encoding)
+  }
+
+  /// Unicode decoding error.
+  internal func newUnicodeDecodeError(
+    bytearray: PyByteArray,
+    encoding: PyStringEncoding
+  ) -> PyUnicodeDecodeError {
+    return self.newUnicodeDecodeError(bytes: .init(bytearray: bytearray), encoding: encoding)
+  }
+
+  /// Unicode decoding error.
+  internal func newUnicodeDecodeError(
+    bytes: PyAnyBytes,
     encoding: PyStringEncoding
   ) -> PyUnicodeDecodeError {
     let msg = "'\(encoding)' codec can't decode data"
     let error = PyUnicodeDecodeError(msg: msg)
 
     let dict = error.__dict__
-    dict.set(id: .object, to: data)
+    dict.set(id: .object, to: bytes.object)
     dict.set(id: .encoding, to: self.newString(encoding))
 
     return error

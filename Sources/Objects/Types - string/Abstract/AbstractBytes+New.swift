@@ -31,8 +31,8 @@ extension AbstractBytes {
 
     // Fast path when we don't have encoding and kwargs
     let hasEncoding = encoding != nil || errors != nil
-    if let bytes = object as? PyBytesType, !hasEncoding {
-      return .value(bytes.data.values)
+    if let bytes = PyCast.asAnyBytes(object), !hasEncoding {
+      return .value(bytes.elements)
     }
 
     if hasEncoding {
@@ -109,8 +109,8 @@ extension AbstractBytes {
       return .tryOther
     }
 
-    if let bytes = iterable as? PyBytesType, bytes.checkExact() {
-      return .bytes(bytes.data.values)
+    if let bytes = PyCast.asExactlyAnyBytes(iterable) {
+      return .bytes(bytes.elements)
     }
 
     var result = Data()

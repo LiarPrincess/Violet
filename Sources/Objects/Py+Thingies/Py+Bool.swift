@@ -29,11 +29,20 @@ extension PyInstance {
     return self.isTrueBool(object).map(self.newBool)
   }
 
+  public func isTrueBool(_ object: PyBool) -> Bool {
+    return object.value.isTrue
+  }
+
   /// PyObject_IsTrue(PyObject *v)
   /// slot_nb_bool(PyObject *self)
   public func isTrueBool(_ object: PyObject) -> PyResult<Bool> {
-    if object is PyNone {
+    if object.isNone {
       return .value(false)
+    }
+
+    if let bool = PyCast.asBool(object) {
+      let result = self.isTrueBool(bool)
+      return .value(result)
     }
 
     // Try __bool__

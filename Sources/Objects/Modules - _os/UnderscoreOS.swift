@@ -197,8 +197,9 @@ public final class UnderscoreOS: PyModuleImplementation {
       return .value(str)
     }
 
-    if let bytes = object as? PyBytesType {
-      if let str = bytes.data.string {
+    if let bytes = PyCast.asAnyBytes(object) {
+      let data = PyBytesData(bytes.elements)
+      if let str = data.string {
         let result = Py.newString(str)
         return .value(result)
       }
@@ -232,8 +233,9 @@ public final class UnderscoreOS: PyModuleImplementation {
       return .path(str.value)
     }
 
-    if let bytes = object as? PyBytesType {
-      if let str = bytes.data.string {
+    if let bytes = PyCast.asAnyBytes(object) {
+      let data = PyBytesData(bytes.elements)
+      if let str = data.string {
         return .path(str)
       }
 

@@ -49,8 +49,8 @@ internal enum FileSource {
       return .value(.string(string.value))
     }
 
-    if let bytes = object as? PyBytesType {
-      return .value(.bytes(bytes.data.scalars))
+    if let bytes = PyCast.asAnyBytes(object) {
+      return .value(.bytes(bytes.elements))
     }
 
     let repr = Py.reprOrGeneric(object: object)

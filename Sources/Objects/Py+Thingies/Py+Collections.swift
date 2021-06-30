@@ -549,9 +549,8 @@ extension PyInstance {
       return set.data.elements.map { $0.object }
     }
 
-    if let bytes = iterable as? PyBytesType, bytes.checkExact() {
-      let scalars = bytes.data.scalars
-      return scalars.map(self.newInt)
+    if let bytes = PyCast.asExactlyAnyBytes(iterable) {
+      return bytes.elements.map(self.newInt)
     }
 
     if let string = PyCast.asExactlyString(iterable) {

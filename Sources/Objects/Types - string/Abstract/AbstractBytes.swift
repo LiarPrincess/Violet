@@ -41,8 +41,8 @@ extension AbstractBytes {
   internal static var _zFill: UInt8 { return ascii_zero }
 
   internal static func _getElements(object: PyObject) -> Data? {
-    if let bytes = object as? PyBytesType {
-      return bytes.data.scalars
+    if let bytes = PyCast.asAnyBytes(object) {
+      return bytes.elements
     }
 
     return nil
@@ -51,8 +51,8 @@ extension AbstractBytes {
   internal static func _getElementsForFindCountContainsIndexOf(
     object: PyObject
   ) -> AbstractString_ElementsForFindCountContainsIndexOf<Data> {
-    if let bytes = object as? PyBytesType {
-      return .value(bytes.data.scalars)
+    if let bytes = PyCast.asAnyBytes(object) {
+      return .value(bytes.elements)
     }
 
     // For example: `49 in b'123'`.
@@ -91,8 +91,8 @@ extension AbstractBytes {
     }
 
     // Homo - both bytes/bytearray
-    if let bytes = other as? PyBytesType {
-      let result = self._isEqual(other: bytes.data.scalars)
+    if let bytes = PyCast.asAnyBytes(other) {
+      let result = self._isEqual(other: bytes.elements)
       return CompareResult(result)
     }
 

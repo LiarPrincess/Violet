@@ -183,21 +183,22 @@ extension PyInstance {
 
   internal enum ExtractStringResult {
     case string(PyString, String)
-    case bytes(PyBytesType, String)
-    case byteDecodingError(PyBytesType)
+    case bytes(PyAnyBytes, String)
+    case byteDecodingError(PyAnyBytes)
     case notStringOrBytes
   }
 
   /// Extract `String` from this object (if possible).
   ///
-  /// Mostly targeted towards 'str', `bytes` and `bytearray`.
+  /// Mostly targeted towards `str`, `bytes` and `bytearray`.
   internal func extractString(object: PyObject) -> ExtractStringResult {
     if let str = PyCast.asString(object) {
       return .string(str, str.value)
     }
 
-    if let bytes = object as? PyBytesType {
-      if let string = bytes.data.string {
+    if let bytes = PyCast.asAnyBytes(object) {
+      let data = PyBytesData(bytes.elements)
+      if let string = data.string {
         return .bytes(bytes, string)
       }
 

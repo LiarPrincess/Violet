@@ -9,7 +9,7 @@ import VioletCore
 // Objects -> bytesobject.c
 
 // sourcery: pytype = bytearray, default, baseType
-public class PyByteArray: PyObject, PyBytesType, AbstractBytes {
+public class PyByteArray: PyObject, AbstractBytes {
 
   internal static let doc = """
     bytearray(iterable_of_ints) -> bytearray

@@ -49,8 +49,8 @@ internal enum StringImplementation {
   }
 
   internal static func getData(object: PyObject) -> GetCollectionResult<Data> {
-    if let bytes = object as? PyBytesType {
-      return .value(bytes.data.scalars)
+    if let bytes = PyCast.asAnyBytes(object) {
+      return .value(bytes.elements)
     }
 
     // Most of the `bytes` functions also accept `int`.

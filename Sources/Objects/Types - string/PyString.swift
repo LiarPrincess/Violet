@@ -859,9 +859,8 @@ public class PyString: PyObject, AbstractString {
     case let .error(e): return .error(e)
     }
 
-    if let bytes = object as? PyBytesType {
-      let data = bytes.data.values
-      return encoding.decode(data: data, errors: errors).map { alloca(type, $0) }
+    if let bytes = PyCast.asAnyBytes(object) {
+      return encoding.decode(data: bytes.elements, errors: errors).map { alloca(type, $0) }
     }
 
     if PyCast.isString(object) {

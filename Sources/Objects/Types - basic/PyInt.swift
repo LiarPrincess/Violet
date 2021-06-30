@@ -1103,7 +1103,8 @@ public class PyInt: PyObject {
          .bytes(_, let s):
       string = s
     case .byteDecodingError(let bytes):
-      let msg = "int() bytes at '\(bytes.ptr)' cannot be interpreted as str"
+      let ptr = bytes.object.ptr
+      let msg = "int() bytes at '\(ptr)' cannot be interpreted as str"
       return .error(Py.newValueError(msg: msg))
     case .notStringOrBytes:
       return .notString

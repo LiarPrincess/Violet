@@ -86,8 +86,8 @@ internal struct PyBytesData: PyStringImpl {
       return .value(PyBytesData(Data([byte])))
     }
 
-    if let bytes = object as? PyBytesType {
-      return .value(bytes.data)
+    if let bytes = PyCast.asAnyBytes(object) {
+      return .value(PyBytesData(bytes.elements))
     }
 
     return .notSelf
@@ -145,8 +145,8 @@ internal struct PyBytesData: PyStringImpl {
   }
 
   private func compare(other: PyObject) -> Implementation.CompareResult? {
-    if let bytes = other as? PyBytesType {
-      return self.compare(other: bytes.data)
+    if let bytes = PyCast.asAnyBytes(other) {
+      return self.compare(other: PyBytesData(bytes.elements))
     }
 
     return nil
@@ -733,8 +733,8 @@ internal struct PyBytesData: PyStringImpl {
 
     // Fast path when we don't have encoding and kwargs
     let hasEncoding = encoding != nil || errors != nil
-    if let bytes = object as? PyBytesType, !hasEncoding {
-      return .value(bytes.data.values)
+    if let bytes = PyCast.asAnyBytes(object), !hasEncoding {
+      return .value(bytes.elements)
     }
 
     if hasEncoding {
@@ -808,8 +808,8 @@ internal struct PyBytesData: PyStringImpl {
       return .tryOther
     }
 
-    if let bytes = iterable as? PyBytesType, bytes.checkExact() {
-      return .bytes(bytes.data.values)
+    if let bytes = PyCast.asExactlyAnyBytes(iterable) {
+      return .bytes(bytes.elements)
     }
 
     var result = Data()

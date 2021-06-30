@@ -49,18 +49,16 @@ extension PyInstance {
       return .value(self.newInt(int))
     }
 
-    if let bytes = object as? PyBytesType {
-      let scalars = bytes.data.values
+    if let bytes = PyCast.asAnyBytes(object) {
+      let elements = bytes.elements
 
-      guard let first = scalars.first, scalars.count == 1 else {
-        let l = scalars.count
+      guard let first = elements.first, elements.count == 1 else {
+        let l = elements.count
         let msg = "ord() expected a character, but string of length \(l) found"
         return .typeError(msg)
       }
 
-      let scalar = UnicodeScalar(first) // Does this even make sense?
-      let int = BigInt(scalar.value)
-      return .value(self.newInt(int))
+      return .value(self.newInt(first))
     }
 
     let msg = "ord() expected string of length 1, but \(object.typeName) found"

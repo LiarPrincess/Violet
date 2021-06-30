@@ -842,7 +842,8 @@ public class PyFloat: PyObject {
       return .value(value)
 
     case .byteDecodingError(let bytes):
-      let msg = "float() bytes at '\(bytes.ptr)' cannot be interpreted as str"
+      let ptr = bytes.object.ptr
+      let msg = "float() bytes at '\(ptr)' cannot be interpreted as str"
       return .error(Py.newValueError(msg: msg))
 
     case .notStringOrBytes:
