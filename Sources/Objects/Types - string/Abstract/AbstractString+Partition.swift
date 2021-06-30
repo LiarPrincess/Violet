@@ -33,10 +33,9 @@ extension AbstractString {
     switch findResult {
     case let .index(index: index1, position: _):
       // before | index1 | separator | index2 | after
-      let separatorCount = separator.count
       let endIndex = self.elements.endIndex
       let index2 = self.elements.index(index1,
-                                       offsetBy: separatorCount,
+                                       offsetBy: separator.count,
                                        limitedBy: endIndex) ?? endIndex
 
       self._wouldBeBetterWithRandomAccessCollection()
@@ -45,7 +44,16 @@ extension AbstractString {
 
       let beforeObject = Self._toObject(elements: before)
       let afterObject = Self._toObject(elements: after)
-      let result = Py.newTuple(beforeObject, separatorObject, afterObject)
+
+      // Returned separator has to have the same type as we,
+      // so if we partition 'bytearray' with 'bytes' then we have to return
+      // 'bytearray' separator
+      let separatorHasSelfType = separatorObject.type === self.type
+      let separatorObjectWithSelfType = separatorHasSelfType ?
+        separatorObject :
+        Self._toObject(elements: separator)
+
+      let result = Py.newTuple(beforeObject, separatorObjectWithSelfType, afterObject)
       return .value(result)
 
     case .notFound:

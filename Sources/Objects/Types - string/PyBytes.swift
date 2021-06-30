@@ -40,7 +40,6 @@ public class PyBytes: PyObject, PyBytesType, AbstractBytes {
     self.init(type: type, value: value)
   }
 
-  /// Use only in  `__new__`!
   internal init(type: PyType, value: Data) {
     self.data = PyBytesData(value)
     super.init(type: type)
@@ -128,8 +127,8 @@ public class PyBytes: PyObject, PyBytesType, AbstractBytes {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    let result = "b" + self._repr()
-    return .value(result)
+    let bytes = self._repr()
+    return .value("b" + bytes)
   }
 
   // sourcery: pymethod = __str__
@@ -434,11 +433,6 @@ public class PyBytes: PyObject, PyBytesType, AbstractBytes {
   // sourcery: pymethod = swapcase
   internal func swapcase() -> PyBytes {
     return self._swapCaseBytes()
-  }
-
-  // sourcery: pymethod = casefold
-  internal func casefold() -> PyBytes {
-    return self._caseFoldBytes()
   }
 
   // sourcery: pymethod = capitalize
