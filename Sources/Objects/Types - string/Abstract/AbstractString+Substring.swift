@@ -24,7 +24,7 @@ extension AbstractString {
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
   internal func _substring(start: PyObject?,
-                           end: PyObject?) -> PyResult<Self> {
+                           end: PyObject?) -> PyResult<SwiftType> {
     let substringResult = self._substringImpl(start: start, end: end)
 
     switch substringResult {

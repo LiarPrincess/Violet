@@ -3,7 +3,7 @@ extension AbstractString {
   /// DO NOT USE! This is a part of `AbstractString` implementation
   internal func _replace(old: PyObject,
                          new: PyObject,
-                         count countObject: PyObject?) -> PyResult<Self> {
+                         count countObject: PyObject?) -> PyResult<SwiftType> {
     guard let oldElements = Self._getElements(object: old) else {
       return .typeError("old must be \(Self._pythonTypeName), not \(old.typeName)")
     }

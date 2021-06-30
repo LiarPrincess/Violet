@@ -9,7 +9,7 @@ import VioletCore
 // Objects -> bytesobject.c
 
 // sourcery: pytype = bytes, default, baseType, bytesSubclass
-public class PyBytes: PyObject, PyBytesType {
+public class PyBytes: PyObject, PyBytesType, AbstractBytes {
 
   internal static let doc = """
     bytes(iterable_of_ints) -> bytes
@@ -25,10 +25,8 @@ public class PyBytes: PyObject, PyBytesType {
       - an integer
     """
 
-  internal let data: PyBytesData
-
-  internal var value: Data {
-    return self.data.values
+  internal var elements: Data {
+    return self.data.scalars
   }
 
   override public var description: String {
@@ -37,9 +35,9 @@ public class PyBytes: PyObject, PyBytesType {
 
   // MARK: - Init
 
-  internal init(value: Data) {
-    self.data = PyBytesData(value)
-    super.init(type: Py.types.bytes)
+  internal convenience init(value: Data) {
+    let type = Py.types.bytes
+    self.init(type: type, value: value)
   }
 
   /// Use only in  `__new__`!
@@ -48,109 +46,130 @@ public class PyBytes: PyObject, PyBytesType {
     super.init(type: type)
   }
 
+  // MARK: - AbstractBytes
+
+  internal typealias Element = UInt8
+  internal typealias Elements = Data
+  internal typealias Builder = BytesBuilder2
+  internal typealias SwiftType = PyBytes
+  internal typealias ElementSwiftType = PyInt
+
+  internal static func _getEmptyObject() -> SwiftType {
+    return Py.emptyBytes
+  }
+
+  internal static func _toObject(element: UInt8) -> ElementSwiftType {
+    return Py.newInt(element)
+  }
+
+  internal static func _toObject(elements: Elements) -> SwiftType {
+    return Py.newBytes(elements)
+  }
+
+  internal static func _toObject(result: Elements) -> SwiftType {
+    return Py.newBytes(result)
+  }
+
+  // MARK: - To remove
+
+  internal let data: PyBytesData
+
+  internal var value: Data {
+    return self.data.values
+  }
+
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  public func isEqual(_ other: PyObject) -> CompareResult {
-    if self === other {
-      return .value(true)
-    }
-
-    return self.data.isEqual(other)
+  internal func isEqual(_ other: PyObject) -> CompareResult {
+    return self._isEqualBytes(other: other)
   }
 
   // sourcery: pymethod = __ne__
-  public func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self.isEqual(other).not
+  internal func isNotEqual(_ other: PyObject) -> CompareResult {
+    return self._isNotEqualBytes(other: other)
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  public func isLess(_ other: PyObject) -> CompareResult {
-    return self.data.isLess(other)
+  internal func isLess(_ other: PyObject) -> CompareResult {
+    return self._isLess(other: other)
   }
 
   // sourcery: pymethod = __le__
-  public func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self.data.isLessEqual(other)
+  internal func isLessEqual(_ other: PyObject) -> CompareResult {
+    return self._isLessEqual(other: other)
   }
 
   // sourcery: pymethod = __gt__
-  public func isGreater(_ other: PyObject) -> CompareResult {
-    return self.data.isGreater(other)
+  internal func isGreater(_ other: PyObject) -> CompareResult {
+    return self._isGreater(other: other)
   }
 
   // sourcery: pymethod = __ge__
-  public func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self.data.isGreaterEqual(other)
+  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+    return self._isGreaterEqual(other: other)
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  public func hash() -> HashResult {
-    return .value(Py.hasher.hash(self.value))
+  internal func hash() -> HashResult {
+    let result = self.hashImpl()
+    return .value(result)
+  }
+
+  internal func hashImpl() -> PyHash {
+    return Py.hasher.hash(self.value)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> PyResult<String> {
-    let result = "b" + self.data.createRepr()
+  internal func repr() -> PyResult<String> {
+    let result = "b" + self._repr()
     return .value(result)
   }
 
   // sourcery: pymethod = __str__
-  public func str() -> PyResult<String> {
-    if let e = self.data.strWarnIfNeeded() {
-      return .error(e)
-    }
-    return self.repr()
+  internal func str() -> PyResult<String> {
+    return self._str()
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  public func getLength() -> BigInt {
-    return BigInt(self.data.count)
+  internal func getLength() -> BigInt {
+    return self._count
   }
 
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  public func contains(element: PyObject) -> PyResult<Bool> {
-    return self.data.contains(element: element)
+  internal func contains(element: PyObject) -> PyResult<Bool> {
+    return self._contains(element: element)
   }
 
   // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
-  public func getItem(index: PyObject) -> PyResult<PyObject> {
-    switch self.data.getItem(index: index) {
-    case let .item(int):
-      let result = Py.newInt(int)
-      return .value(result)
-    case let .slice(bytes):
-      let result = Py.newBytes(bytes)
-      return .value(result)
-    case let .error(e):
-      return .error(e)
-    }
+  internal func getItem(index: PyObject) -> PyResult<PyObject> {
+    return self._getItem(index: index)
   }
 
   // MARK: - Properties
@@ -163,8 +182,8 @@ public class PyBytes: PyObject, PyBytesType {
     """
 
   // sourcery: pymethod = isalnum, doc = isalnumDoc
-  public func isAlphaNumeric() -> Bool {
-    return self.data.isAlphaNumeric
+  internal func isAlphaNumeric() -> Bool {
+    return self._isAlphaNumeric()
   }
 
   internal static let isalphaDoc = """
@@ -175,8 +194,8 @@ public class PyBytes: PyObject, PyBytesType {
     """
 
   // sourcery: pymethod = isalpha, doc = isalphaDoc
-  public func isAlpha() -> Bool {
-    return self.data.isAlpha
+  internal func isAlpha() -> Bool {
+    return self._isAlpha()
   }
 
   internal static let isasciiDoc = """
@@ -187,8 +206,8 @@ public class PyBytes: PyObject, PyBytesType {
     """
 
   // sourcery: pymethod = isascii, doc = isasciiDoc
-  public func isAscii() -> Bool {
-    return self.data.isAscii
+  internal func isAscii() -> Bool {
+    return self._isAscii()
   }
 
   internal static let isdigitDoc = """
@@ -199,8 +218,8 @@ public class PyBytes: PyObject, PyBytesType {
     """
 
   // sourcery: pymethod = isdigit, doc = isdigitDoc
-  public func isDigit() -> Bool {
-    return self.data.isDigit
+  internal func isDigit() -> Bool {
+    return self._isDigit()
   }
 
   internal static let islowerDoc = """
@@ -211,8 +230,8 @@ public class PyBytes: PyObject, PyBytesType {
     """
 
   // sourcery: pymethod = islower, doc = islowerDoc
-  public func isLower() -> Bool {
-    return self.data.isLower
+  internal func isLower() -> Bool {
+    return self._isLower()
   }
 
   internal static let isspaceDoc = """
@@ -223,8 +242,8 @@ public class PyBytes: PyObject, PyBytesType {
     """
 
   // sourcery: pymethod = isspace, doc = isspaceDoc
-  public func isSpace() -> Bool {
-    return self.data.isSpace
+  internal func isSpace() -> Bool {
+    return self._isSpace()
   }
 
   internal static let istitleDoc = """
@@ -235,8 +254,8 @@ public class PyBytes: PyObject, PyBytesType {
     """
 
   // sourcery: pymethod = istitle, doc = istitleDoc
-  public func isTitle() -> Bool {
-    return self.data.isTitle
+  internal func isTitle() -> Bool {
+    return self._isTitle()
   }
 
   internal static let isupperDoc = """
@@ -250,8 +269,8 @@ public class PyBytes: PyObject, PyBytesType {
   /// Return true if all cased characters 4 in the string are uppercase
   /// and there is at least one cased character.
   /// https://docs.python.org/3/library/stdtypes.html#str.isupper
-  public func isUpper() -> Bool {
-    return self.data.isUpper
+  internal func isUpper() -> Bool {
+    return self._isUpper()
   }
 
   // MARK: - Starts/ends with
@@ -265,15 +284,11 @@ public class PyBytes: PyObject, PyBytesType {
     prefix can also be a tuple of strings to try.
     """
 
-  public func startsWith(_ element: PyObject) -> PyResult<Bool> {
-    return self.startsWith(element, start: nil, end: nil)
-  }
-
   // sourcery: pymethod = startswith, doc = startswithDoc
-  public func startsWith(_ element: PyObject,
-                         start: PyObject?,
-                         end: PyObject?) -> PyResult<Bool> {
-    return self.data.startsWith(element, start: start, end: end)
+  internal func startsWith(prefix: PyObject,
+                           start: PyObject?,
+                           end: PyObject?) -> PyResult<Bool> {
+    return self._startsWith(prefix: prefix, start: start, end: end)
   }
 
   internal static let endswithDoc = """
@@ -285,15 +300,11 @@ public class PyBytes: PyObject, PyBytesType {
     suffix can also be a tuple of strings to try.
     """
 
-  public func endsWith(_ element: PyObject) -> PyResult<Bool> {
-    return self.endsWith(element, start: nil, end: nil)
-  }
-
   // sourcery: pymethod = endswith, doc = endswithDoc
-  public func endsWith(_ element: PyObject,
-                       start: PyObject?,
-                       end: PyObject?) -> PyResult<Bool> {
-    return self.data.endsWith(element, start: start, end: end)
+  internal func endsWith(suffix: PyObject,
+                         start: PyObject?,
+                         end: PyObject?) -> PyResult<Bool> {
+    return self._endsWith(suffix: suffix, start: start, end: end)
   }
 
   // MARK: - Strip
@@ -305,9 +316,8 @@ public class PyBytes: PyObject, PyBytesType {
     """
 
   // sourcery: pymethod = strip, doc = stripDoc
-  public func strip(_ chars: PyObject?) -> PyResult<PyBytes> {
-    let result = self.data.strip(chars)
-    return self.asBytes(data: result)
+  internal func strip(chars: PyObject?) -> PyResult<PyBytes> {
+    return self._strip(chars: chars)
   }
 
   internal static let lstripDoc = """
@@ -317,9 +327,8 @@ public class PyBytes: PyObject, PyBytesType {
     """
 
   // sourcery: pymethod = lstrip, doc = lstripDoc
-  public func lstrip(_ chars: PyObject?) -> PyResult<PyBytes> {
-    let result = self.data.lstrip(chars)
-    return self.asBytes(data: result)
+  internal func lstrip(chars: PyObject?) -> PyResult<PyBytes> {
+    return self._lstrip(chars: chars)
   }
 
   internal static let rstripDoc = """
@@ -329,9 +338,8 @@ public class PyBytes: PyObject, PyBytesType {
     """
 
   // sourcery: pymethod = rstrip, doc = rstripDoc
-  public func rstrip(_ chars: PyObject?) -> PyResult<PyBytes> {
-    let result = self.data.rstrip(chars)
-    return self.asBytes(data: result)
+  internal func rstrip(chars: PyObject?) -> PyResult<PyBytes> {
+    return self._rstrip(chars: chars)
   }
 
   // MARK: - Find
@@ -346,15 +354,11 @@ public class PyBytes: PyObject, PyBytesType {
     Return -1 on failure.
     """
 
-  public func find(_ element: PyObject) -> PyResult<BigInt> {
-    return self.find(element, start: nil, end: nil)
-  }
-
   // sourcery: pymethod = find, doc = findDoc
-  public func find(_ element: PyObject,
-                   start: PyObject?,
-                   end: PyObject?) -> PyResult<BigInt> {
-    return self.data.find(element, start: start, end: end)
+  internal func find(object: PyObject,
+                     start: PyObject?,
+                     end: PyObject?) -> PyResult<BigInt> {
+    return self._find(object: object, start: start, end: end)
   }
 
   internal static let rfindDoc = """
@@ -367,15 +371,11 @@ public class PyBytes: PyObject, PyBytesType {
     Return -1 on failure.
     """
 
-  public func rfind(_ element: PyObject) -> PyResult<BigInt> {
-    return self.rfind(element, start: nil, end: nil)
-  }
-
   // sourcery: pymethod = rfind, doc = rfindDoc
-  public func rfind(_ element: PyObject,
-                    start: PyObject?,
-                    end: PyObject?) -> PyResult<BigInt> {
-    return self.data.rfind(element, start: start, end: end)
+  internal func rfind(object: PyObject,
+                      start: PyObject?,
+                      end: PyObject?) -> PyResult<BigInt> {
+    return self._rfind(object: object, start: start, end: end)
   }
 
   // MARK: - Index
@@ -390,16 +390,11 @@ public class PyBytes: PyObject, PyBytesType {
     Raises ValueError when the substring is not found.
     """
 
-  // Special overload for `IndexOwner` protocol
-  public func index(of element: PyObject) -> PyResult<BigInt> {
-    return self.index(of: element, start: nil, end: nil)
-  }
-
   // sourcery: pymethod = index, doc = indexDoc
-  public func index(of element: PyObject,
-                    start: PyObject?,
-                    end: PyObject?) -> PyResult<BigInt> {
-    return self.data.indexOf(element: element, start: start, end: end)
+  internal func indexOf(object: PyObject,
+                        start: PyObject?,
+                        end: PyObject?) -> PyResult<BigInt> {
+    return self._indexOf(object: object, start: start, end: end)
   }
 
   internal static let rindexDoc = """
@@ -412,133 +407,96 @@ public class PyBytes: PyObject, PyBytesType {
     Raises ValueError when the substring is not found.
     """
 
-  public func rindex(_ element: PyObject) -> PyResult<BigInt> {
-    return self.rindex(element, start: nil, end: nil)
-  }
-
   // sourcery: pymethod = rindex, doc = rindexDoc
-  public func rindex(_ element: PyObject,
-                     start: PyObject?,
-                     end: PyObject?) -> PyResult<BigInt> {
-    return self.data.rindexOf(element: element, start: start, end: end)
+  internal func rindexOf(object: PyObject,
+                         start: PyObject?,
+                         end: PyObject?) -> PyResult<BigInt> {
+    return self._rindexOf(object: object, start: start, end: end)
   }
 
   // MARK: - Case
 
   // sourcery: pymethod = lower
-  public func lower() -> PyBytes {
-    let result = self.data.lowerCased()
-    return self.asBytes(data: result)
+  internal func lower() -> PyBytes {
+    return self._lowerCaseBytes()
   }
 
   // sourcery: pymethod = upper
-  public func upper() -> PyBytes {
-    let result = self.data.upperCased()
-    return self.asBytes(data: result)
+  internal func upper() -> PyBytes {
+    return self._upperCaseBytes()
   }
 
   // sourcery: pymethod = title
-  public func title() -> PyBytes {
-    let result = self.data.titleCased()
-    return self.asBytes(data: result)
+  internal func title() -> PyBytes {
+    return self._titleCaseBytes()
   }
 
   // sourcery: pymethod = swapcase
-  public func swapcase() -> PyBytes {
-    let result = self.data.swapCase()
-    return self.asBytes(data: result)
+  internal func swapcase() -> PyBytes {
+    return self._swapCaseBytes()
+  }
+
+  // sourcery: pymethod = casefold
+  internal func casefold() -> PyBytes {
+    return self._caseFoldBytes()
   }
 
   // sourcery: pymethod = capitalize
-  public func capitalize() -> PyBytes {
-    let result = self.data.capitalize()
-    return self.asBytes(data: result)
+  internal func capitalize() -> PyBytes {
+    return self._capitalizeBytes()
   }
 
   // MARK: - Center, just
 
   // sourcery: pymethod = center
-  public func center(width: PyObject,
-                     fillChar: PyObject?) -> PyResult<PyBytes> {
-    let result = self.data.center(width: width, fillChar: fillChar)
-    return self.asBytes(data: result)
+  internal func center(width: PyObject, fillChar: PyObject?) -> PyResult<PyBytes> {
+    return self._center(width: width, fillChar: fillChar)
   }
 
   // sourcery: pymethod = ljust
-  public func ljust(width: PyObject,
-                    fillChar: PyObject?) -> PyResult<PyBytes> {
-    let result = self.data.ljust(width: width, fillChar: fillChar)
-    return self.asBytes(data: result)
+  internal func ljust(width: PyObject, fillChar: PyObject?) -> PyResult<PyBytes> {
+    return self._ljust(width: width, fillChar: fillChar)
   }
 
   // sourcery: pymethod = rjust
-  public func rjust(width: PyObject,
-                    fillChar: PyObject?) -> PyResult<PyBytes> {
-    let result = self.data.rjust(width: width, fillChar: fillChar)
-    return self.asBytes(data: result)
+  internal func rjust(width: PyObject, fillChar: PyObject?) -> PyResult<PyBytes> {
+    return self._rjust(width: width, fillChar: fillChar)
   }
 
   // MARK: - Split
 
   // sourcery: pymethod = split
-  internal func split(args: [PyObject],
-                      kwargs: PyDict?) -> PyResult<[PyBytes]> {
-    let result = self.data.split(args: args, kwargs: kwargs)
-    return self.asByteList(data: result)
+  internal func split(args: [PyObject], kwargs: PyDict?) -> PyResult<PyList> {
+    return self._split(args: args, kwargs: kwargs)
   }
 
   // sourcery: pymethod = rsplit
-  internal func rsplit(args: [PyObject],
-                       kwargs: PyDict?) -> PyResult<[PyBytes]> {
-    let result = self.data.rsplit(args: args, kwargs: kwargs)
-    return self.asByteList(data: result)
+  internal func rsplit(args: [PyObject], kwargs: PyDict?) -> PyResult<PyList> {
+    return self._rsplit(args: args, kwargs: kwargs)
   }
 
   // sourcery: pymethod = splitlines
-  internal func splitLines(args: [PyObject],
-                           kwargs: PyDict?) -> PyResult<[PyBytes]> {
-    let result = self.data.splitLines(args: args, kwargs: kwargs)
-    return self.asByteList(data: result)
+  internal func splitLines(args: [PyObject], kwargs: PyDict?) -> PyResult<PyList> {
+    return self._splitLines(args: args, kwargs: kwargs)
   }
 
   // MARK: - Partition
 
   // sourcery: pymethod = partition
-  public func partition(separator: PyObject) -> PyResult<PyTuple> {
-    switch self.data.partition(separator: separator) {
-    case .separatorNotFound:
-      let empty = Py.emptyBytes
-      return .value(Py.newTuple(self, empty, empty))
-    case let .separatorFound(before, _, after):
-      let b = Py.newBytes(before)
-      let a = Py.newBytes(after)
-      return .value(Py.newTuple(b, separator, a)) // Reuse separator
-    case let .error(e):
-      return .error(e)
-    }
+  internal func partition(separator: PyObject) -> PyResult<PyTuple> {
+    return self._partition(separator: separator)
   }
 
   // sourcery: pymethod = rpartition
-  public func rpartition(separator: PyObject) -> PyResult<PyTuple> {
-    switch self.data.rpartition(separator: separator) {
-    case .separatorNotFound:
-      let empty = Py.emptyBytes
-      return .value(Py.newTuple(empty, empty, self))
-    case let .separatorFound(before, _, after):
-      let b = Py.newBytes(before)
-      let a = Py.newBytes(after)
-      return .value(Py.newTuple(b, separator, a)) // Reuse separator
-    case let .error(e):
-      return .error(e)
-    }
+  internal func rpartition(separator: PyObject) -> PyResult<PyTuple> {
+    return self._rpartition(separator: separator)
   }
 
   // MARK: - Expand tabs
 
   // sourcery: pymethod = expandtabs
-  public func expandTabs(tabSize: PyObject?) -> PyResult<PyBytes> {
-    let result = self.data.expandTabs(tabSize: tabSize)
-    return self.asBytes(data: result)
+  internal func expandTabs(tabSize: PyObject?) -> PyResult<PyBytes> {
+    return self._expandTabs(tabSize: tabSize)
   }
 
   // MARK: - Count
@@ -551,96 +509,66 @@ public class PyBytes: PyObject, PyBytesType {
     interpreted as in slice notation.
     """
 
-  // Special overload for `CountOwner` protocol.
-  public func count(_ element: PyObject) -> PyResult<BigInt> {
-    return self.count(element, start: nil, end: nil)
-  }
-
   // sourcery: pymethod = count, doc = countDoc
-  public func count(_ element: PyObject,
-                    start: PyObject?,
-                    end: PyObject?) -> PyResult<BigInt> {
-    return self.data.count(element: element, start: start, end: end)
+  internal func count(object: PyObject,
+                      start: PyObject?,
+                      end: PyObject?) -> PyResult<BigInt> {
+    return self._count(object: object, start: start, end: end)
   }
 
   // MARK: - Join
 
   // sourcery: pymethod = join
-  public func join(iterable: PyObject) -> PyResult<PyBytes> {
-    let result = self.data.join(iterable: iterable)
-    return self.asBytes(data: result)
+  internal func join(iterable: PyObject) -> PyResult<PyBytes> {
+    return self._join(iterable: iterable)
   }
 
   // MARK: - Replace
 
   // sourcery: pymethod = replace
-  public func replace(old: PyObject,
-                      new: PyObject,
-                      count: PyObject?) -> PyResult<PyBytes> {
-    let result = self.data.replace(old: old, new: new, count: count)
-    return self.asBytes(data: result)
+  internal func replace(old: PyObject,
+                        new: PyObject,
+                        count: PyObject?) -> PyResult<PyBytes> {
+    return self._replace(old: old, new: new, count: count)
   }
 
   // MARK: - ZFill
 
   // sourcery: pymethod = zfill
-  public func zfill(width: PyObject) -> PyResult<PyBytes> {
-    let result = self.data.zfill(width: width)
-    return self.asBytes(data: result)
+  internal func zfill(width: PyObject) -> PyResult<PyBytes> {
+    return self._zFill(width: width)
   }
 
   // MARK: - Add
 
   // sourcery: pymethod = __add__
-  public func add(_ other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.add(other)
-    return self.asBytes(data: result).map { $0 as PyObject }
+  internal func add(_ other: PyObject) -> PyResult<PyObject> {
+    return self._add(other: other).map { $0 as PyObject }
   }
 
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
-  public func mul(_ other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.mul(other)
-    return self.asBytes(data: result).map { $0 as PyObject }
+  internal func mul(_ other: PyObject) -> PyResult<PyObject> {
+    return self._mul(count: other).map { $0 as PyObject }
   }
 
   // sourcery: pymethod = __rmul__
-  public func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.rmul(other)
-    return self.asBytes(data: result).map { $0 as PyObject }
+  internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
+    return self._rmul(count: other).map { $0 as PyObject }
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  public func iter() -> PyObject {
+  internal func iter() -> PyObject {
     return PyBytesIterator(bytes: self)
   }
 
   // MARK: - Check exact
 
-  public func checkExact() -> Bool {
+  internal func checkExact() -> Bool {
     return self.type === Py.types.bytes
-  }
-
-  // MARK: - As bytes
-
-  private func asBytes(data: Data) -> PyBytes {
-    return Py.newBytes(data)
-  }
-
-  private func asBytes(data: PyResult<Data>) -> PyResult<PyBytes> {
-    return data.map(self.asBytes(data:))
-  }
-
-  private func asByteList(data: PyResult<[Data]>) -> PyResult<[PyBytes]> {
-    switch data {
-    case let .value(ds):
-      return .value(ds.map(self.asBytes(data:)))
-    case let .error(e):
-      return .error(e)
-    }
   }
 
   // MARK: - Python new
@@ -675,17 +603,17 @@ public class PyBytes: PyObject, PyBytesType {
                             object: PyObject?,
                             encoding: PyObject?,
                             errors: PyObject?) -> PyResult<PyBytes> {
+    let data: Data
+    switch Self._handleNewArgs(object: object, encoding: encoding, errors: errors) {
+    case let .value(d): data = d
+    case let .error(e): return .error(e)
+    }
+
     let isBuiltin = type === Py.types.bytes
-    let alloca = isBuiltin ?
-      self.newBytes(type:value:) :
-      PyBytesHeap.init(type:value:)
+    let result = isBuiltin ?
+      Py.newBytes(data) :
+      PyBytesHeap(type:type, value: data)
 
-    return PyBytesData
-      .handleNewArgs(object: object, encoding: encoding, errors: errors)
-      .map { alloca(type, $0) }
-  }
-
-  private static func newBytes(type: PyType, value: Data) -> PyBytes {
-    return Py.newBytes(value) // Use cached empty bytes
+    return .value(result)
   }
 }

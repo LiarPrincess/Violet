@@ -11,7 +11,7 @@ extension AbstractString {
   // MARK: - Center
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _center(width: PyObject, fillChar: PyObject?) -> PyResult<Self> {
+  internal func _center(width: PyObject, fillChar: PyObject?) -> PyResult<SwiftType> {
     return self._justTemplate(fnName: "center",
                               width: width,
                               fillChar: fillChar,
@@ -38,7 +38,7 @@ extension AbstractString {
   // MARK: - LJust
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _ljust(width: PyObject, fillChar: PyObject?) -> PyResult<Self> {
+  internal func _ljust(width: PyObject, fillChar: PyObject?) -> PyResult<SwiftType> {
     return self._justTemplate(fnName: "ljust",
                               width: width,
                               fillChar: fillChar,
@@ -61,7 +61,7 @@ extension AbstractString {
   // MARK: - RJust
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _rjust(width: PyObject, fillChar: PyObject?) -> PyResult<Self> {
+  internal func _rjust(width: PyObject, fillChar: PyObject?) -> PyResult<SwiftType> {
     return self._justTemplate(fnName: "rjust",
                               width: width,
                               fillChar: fillChar,
@@ -88,7 +88,7 @@ extension AbstractString {
     width widthObject: PyObject,
     fillChar fillCharObject: PyObject?,
     justFn: (Int, Element) -> Builder
-  ) -> PyResult<Self> {
+  ) -> PyResult<SwiftType> {
     let width: Int
     switch self._parseWidth(fnName: fnName, width: widthObject) {
     case let .value(w): width = w
@@ -143,7 +143,7 @@ extension AbstractString {
   // MARK: - ZFill
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _zFill(width widthObject: PyObject) -> PyResult<Self> {
+  internal func _zFill(width widthObject: PyObject) -> PyResult<SwiftType> {
     guard let widthPyInt = PyCast.asInt(widthObject) else {
       return .typeError("width must be int, not \(widthObject.typeName)")
     }

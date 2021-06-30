@@ -1,7 +1,7 @@
 import VioletCore
 
-/// Notice the `_` in front!
-private enum _CompareResult: Equatable {
+// swiftlint:disable:next type_name
+private enum AbstractString_CompareResult: Equatable {
   case less
   case greater
   case equal
@@ -76,7 +76,7 @@ extension AbstractString {
 
   // MARK: - Helpers
 
-  private func _compare(other: PyObject) -> _CompareResult? {
+  private func _compare(other: PyObject) -> AbstractString_CompareResult? {
     guard let otherElements = Self._getElements(object: other) else {
       return nil
     }
@@ -84,7 +84,7 @@ extension AbstractString {
     return self._compare(other: otherElements)
   }
 
-  private func _compare(other: Elements) -> _CompareResult {
+  private func _compare(other: Elements) -> AbstractString_CompareResult {
     // We need to compare on scalars
     // "Cafe\u0301" (e + acute accent) == "Café" (e with acute) -> False
     // "Cafe\u0301" (e + acute accent) <  "Café" (e with acute) -> True

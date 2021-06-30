@@ -60,7 +60,7 @@ extension BidirectionalCollection where Element: Equatable {
 
 private struct SplitResultBuilder<S: AbstractString> {
 
-  fileprivate var elements = [S]()
+  fileprivate var elements = [S.SwiftType]()
 
   fileprivate mutating func append(group: S.Elements) {
     let object = S._toObject(elements: group)
@@ -101,11 +101,7 @@ extension AbstractString {
                           onSeparatorSplit: self._split(separator:maxCount:))
   }
 
-  private func _split(separator: Elements, maxCount: Int) -> [Self] {
-    if self.elements.count < separator.count {
-      return [self]
-    }
-
+  private func _split(separator: Elements, maxCount: Int) -> [SwiftType] {
     var result = SplitResultBuilder<Self>()
     var index = self.elements.startIndex
 
@@ -139,7 +135,7 @@ extension AbstractString {
     return result.elements
   }
 
-  private func _splitWhitespace(maxCount: Int) -> [Self] {
+  private func _splitWhitespace(maxCount: Int) -> [SwiftType] {
     var result = SplitResultBuilder<Self>()
     var index = self.elements.startIndex
 
@@ -194,11 +190,7 @@ extension AbstractString {
   }
 
   // swiftlint:disable:next function_body_length
-  private func _rsplit(separator: Elements, maxCount: Int) -> [Self] {
-    if self.elements.count < separator.count {
-      return [self]
-    }
-
+  private func _rsplit(separator: Elements, maxCount: Int) -> [SwiftType] {
     var result = SplitResultBuilder<Self>()
     var index = self.elements.endIndex
 
@@ -267,7 +259,7 @@ extension AbstractString {
     return result.elements.reversed()
   }
 
-  private func _rsplitWhitespace(maxCount: Int) -> [Self] {
+  private func _rsplitWhitespace(maxCount: Int) -> [SwiftType] {
     var result = SplitResultBuilder<Self>()
     var index = self.elements.endIndex
 
@@ -327,10 +319,12 @@ extension AbstractString {
 
   // MARK: - Template
 
-  private func _template(args: [PyObject],
-                         kwargs: PyDict?,
-                         onWhitespaceSplit: (Int) -> [Self],
-                         onSeparatorSplit: (Elements, Int) -> [Self]) -> PyResult<PyList> {
+  private func _template(
+    args: [PyObject],
+    kwargs: PyDict?,
+    onWhitespaceSplit: (Int) -> [SwiftType],
+    onSeparatorSplit: (Elements, Int) -> [SwiftType]
+  ) -> PyResult<PyList> {
     switch splitArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
@@ -347,10 +341,12 @@ extension AbstractString {
     }
   }
 
-  private func _template(separator separatorObject: PyObject?,
-                         maxCount maxCountObject: PyObject?,
-                         onWhitespaceSplit: (Int) -> [Self],
-                         onSeparatorSplit: (Elements, Int) -> [Self]) -> PyResult<PyList> {
+  private func _template(
+    separator separatorObject: PyObject?,
+    maxCount maxCountObject: PyObject?,
+    onWhitespaceSplit: (Int) -> [SwiftType],
+    onSeparatorSplit: (Elements, Int) -> [SwiftType]
+  ) -> PyResult<PyList> {
     var count: Int
     switch self._parseMaxCount(maxCount: maxCountObject) {
     case let .value(c): count = c
@@ -363,7 +359,16 @@ extension AbstractString {
       let list = Py.newList(elements: result)
       return .value(list)
     case .some(let separator):
-      let result = onSeparatorSplit(separator, count)
+      let result: [PyObject]
+      let separatorIsLongerThanUs = self.elements.count < separator.count
+
+      // This 'switch' is overkill, but it makes it easier to debug
+      // (we can just 'n', without checking the value of 'separatorIsLongerThanUs').
+      switch separatorIsLongerThanUs {
+      case true: result = [self]
+      case false: result = onSeparatorSplit(separator, count)
+      }
+
       let list = Py.newList(elements: result)
       return .value(list)
     case .error(let e):

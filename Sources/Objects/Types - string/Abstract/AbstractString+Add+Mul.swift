@@ -3,7 +3,7 @@ extension AbstractString {
   // MARK: - Add
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _add(other: PyObject) -> PyResult<Self> {
+  internal func _add(other: PyObject) -> PyResult<SwiftType> {
     guard let otherElements = Self._getElements(object: other) else {
       let t = Self._pythonTypeName
       let otherType = other.typeName
@@ -25,7 +25,7 @@ extension AbstractString {
   // MARK: - Mul
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _mul(count countObject: PyObject) -> PyResult<Self> {
+  internal func _mul(count countObject: PyObject) -> PyResult<SwiftType> {
     guard let countPyInt = PyCast.asInt(countObject) else {
       let t = Self._pythonTypeName
       let countType = countObject.typeName
@@ -43,7 +43,7 @@ extension AbstractString {
   }
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _rmul(count: PyObject) -> PyResult<Self> {
+  internal func _rmul(count: PyObject) -> PyResult<SwiftType> {
     return self._mul(count: count)
   }
 

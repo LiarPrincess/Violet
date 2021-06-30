@@ -34,12 +34,19 @@ internal protocol AbstractString: PyObject {
   /// `Builder.Result` is abstract and we will never touch it.
   associatedtype Builder: StringBuilderType2 where Builder.Elements == Elements
 
+  /// Swift type representing this type (not exactly `Self`).
+  associatedtype SwiftType: PyObject
+  /// Swift type representing element type:
+  /// - `str` for `str`
+  /// - `int` for `bytes` and `bytearray`
+  associatedtype ElementSwiftType: PyObject
+
   // MARK: - Properties
 
   /// Name of the type that uses this implementations (e.g. `str` or `bytes`).
   /// Used in error messages.
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation..
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   static var _pythonTypeName: String { get }
 
   var elements: Elements { get }
@@ -58,18 +65,24 @@ internal protocol AbstractString: PyObject {
   // MARK: - Elements, builder -> Object
 
   /// Create object with empty `elements`.
+  ///
+  /// Exists because sometimes empty objects can be specially optimized
+  /// (for example: for immutable objects, we can return the same instance every time).
+  ///
   /// Used by `partition` when we fail to find separator.
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  static func _getEmptyObject() -> Self
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  static func _toObject(element: Element) -> Self
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  static func _toObject(elements: Elements) -> Self
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  static func _toObject(elements: Elements.SubSequence) -> Self
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  static func _toObject(result: Builder.Result) -> Self
+  /// DO NOT USE! This is a part of `AbstractString` implementation
+  static func _getEmptyObject() -> SwiftType
+  /// `str` for `str`; `int` for `bytes` and `bytearray`
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation
+  static func _toObject(element: Element) -> ElementSwiftType
+  /// DO NOT USE! This is a part of `AbstractString` implementation
+  static func _toObject(elements: Elements) -> SwiftType
+  /// DO NOT USE! This is a part of `AbstractString` implementation
+  static func _toObject(elements: Elements.SubSequence) -> SwiftType
+  /// DO NOT USE! This is a part of `AbstractString` implementation
+  static func _toObject(result: Builder.Result) -> SwiftType
 
   // MARK: - Object -> Elements
 

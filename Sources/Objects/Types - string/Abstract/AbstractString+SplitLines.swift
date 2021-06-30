@@ -36,7 +36,7 @@ extension AbstractString {
   }
 
   private func _splitLines(keepEnds: Bool) -> PyList {
-    var result = [Self]()
+    var result = [SwiftType]()
     var index = self.elements.startIndex
 
     self._wouldBeBetterWithRandomAccessCollection()

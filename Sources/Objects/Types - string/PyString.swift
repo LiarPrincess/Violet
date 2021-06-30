@@ -75,34 +75,31 @@ public class PyString: PyObject, AbstractString {
   internal typealias Element = UnicodeScalar
   internal typealias Elements = String.UnicodeScalarView
   internal typealias Builder = UnicodeScalarBuilder
+  internal typealias SwiftType = PyString
+  internal typealias ElementSwiftType = PyString
 
   internal static let _pythonTypeName = "str"
   internal static let _defaultFill: UnicodeScalar = " "
   internal static let _zFill: UnicodeScalar = "0"
 
-  internal static func _getEmptyObject() -> Self {
-    // swiftlint:disable:next force_cast
-    return Py.emptyString as! Self
+  internal static func _getEmptyObject() -> PyString {
+    return Py.emptyString
   }
 
-  internal static func _toObject(element: Element) -> Self {
-    // swiftlint:disable:next force_cast
-    return Py.newString(element) as! Self
+  internal static func _toObject(element: Element) -> ElementSwiftType {
+    return Py.newString(element)
   }
 
-  internal static func _toObject(elements: Elements) -> Self {
-    // swiftlint:disable:next force_cast
-    return Py.newString(elements) as! Self
+  internal static func _toObject(elements: Elements) -> SwiftType {
+    return Py.newString(elements)
   }
 
-  internal static func _toObject(elements: Elements.SubSequence) -> Self {
-    // swiftlint:disable:next force_cast
-    return Py.newString(elements) as! Self
+  internal static func _toObject(elements: Elements.SubSequence) -> SwiftType {
+    return Py.newString(elements)
   }
 
-  internal static func _toObject(result: String) -> Self {
-    // swiftlint:disable:next force_cast
-    return Py.newString(result) as! Self
+  internal static func _toObject(result: String) -> SwiftType {
+    return Py.newString(result)
   }
 
   internal static func _getElements(object: PyObject) -> Elements? {
@@ -316,7 +313,7 @@ public class PyString: PyObject, AbstractString {
 
   // sourcery: pymethod = __getitem__
   internal func getItem(index: PyObject) -> PyResult<PyObject> {
-    return self._getItem(index: index).map { $0 as PyObject }
+    return self._getItem(index: index)
   }
 
   // MARK: - Properties

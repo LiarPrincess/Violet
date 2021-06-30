@@ -3,7 +3,7 @@ extension AbstractString {
   // MARK: - Strip
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _strip(chars: PyObject?) -> PyResult<Self> {
+  internal func _strip(chars: PyObject?) -> PyResult<SwiftType> {
     return self._template(fnName: "strip",
                           chars: chars,
                           onStripWhitespace: self._stripWhitespace,
@@ -23,7 +23,7 @@ extension AbstractString {
   // MARK: - Left strip
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _lstrip(chars: PyObject?) -> PyResult<Self> {
+  internal func _lstrip(chars: PyObject?) -> PyResult<SwiftType> {
     return self._template(fnName: "lstrip",
                           chars: chars,
                           onStripWhitespace: self._lstripWhitespace,
@@ -41,7 +41,7 @@ extension AbstractString {
   // MARK: - Right strip
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _rstrip(chars: PyObject?) -> PyResult<Self> {
+  internal func _rstrip(chars: PyObject?) -> PyResult<SwiftType> {
     return self._template(fnName: "rstrip",
                           chars: chars,
                           onStripWhitespace: self._rstripWhitespace,
@@ -63,7 +63,7 @@ extension AbstractString {
     chars: PyObject?,
     onStripWhitespace: () -> Elements.SubSequence,
     onStripChars: (Set<Element>) -> Elements.SubSequence
-  ) -> PyResult<Self> {
+  ) -> PyResult<SwiftType> {
     // No chars (or 'None') -> whitespace mode
     guard let chars = chars, !chars.isNone else {
       let result = onStripWhitespace()

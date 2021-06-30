@@ -1,7 +1,7 @@
 extension AbstractString {
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _getItem(index indexObject: PyObject) -> PyResult<Self> {
+  internal func _getItem(index indexObject: PyObject) -> PyResult<PyObject> {
     switch IndexHelper.int(indexObject, onOverflow: .indexError) {
     case .value(let index):
       switch self._getItem(index: index) {
@@ -36,8 +36,8 @@ extension AbstractString {
 
   // MARK: - Item
 
-  private func _getItem(index: Int) -> PyResult<Element> {
-    var offset = index
+  private func _getItem(index indexInt: Int) -> PyResult<Element> {
+    var offset = indexInt
     if offset < 0 {
       offset += self.elements.count
     }

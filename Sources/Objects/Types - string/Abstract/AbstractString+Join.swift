@@ -4,7 +4,7 @@ extension AbstractString {
   /// 'A@B@C'
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _join(iterable: PyObject) -> PyResult<Self> {
+  internal func _join(iterable: PyObject) -> PyResult<SwiftType> {
     let capacity = self._approximateCapacity(iterable: iterable)
     var builder = Builder(capacity: capacity)
     var index = 0
