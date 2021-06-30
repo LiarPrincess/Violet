@@ -64,15 +64,6 @@ internal protocol AbstractString: PyObject {
 
   // MARK: - Elements, builder -> Object
 
-  /// Create object with empty `elements`.
-  ///
-  /// Exists because sometimes empty objects can be specially optimized
-  /// (for example: for immutable objects, we can return the same instance every time).
-  ///
-  /// Used by `partition` when we fail to find separator.
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
-  static func _getEmptyObject() -> SwiftType
   /// `str` for `str`; `int` for `bytes` and `bytearray`
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation

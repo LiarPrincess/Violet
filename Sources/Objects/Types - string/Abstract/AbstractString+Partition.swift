@@ -1,14 +1,33 @@
+// swiftlint:disable:next type_name
+internal enum AbstractString_PartitionResult<C: Collection> {
+  /// Separator was found.
+  ///
+  /// Return tuple: `(before, separator, after)`
+  case separatorFound(before: C.SubSequence, separator: C, after: C.SubSequence)
+  /// Separator was not found
+  ///
+  /// Return tuple:
+  /// - `partition` - `(self, empty, empty)`
+  /// - `rpartition`- `(empty, empty, self)`
+  case separatorNotFound
+  case error(PyBaseException)
+}
+
 extension AbstractString {
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _partition(separator: PyObject) -> PyResult<PyTuple> {
+  internal func _partition(
+    separator: PyObject
+  ) -> AbstractString_PartitionResult<Elements> {
     return self._template(separator: separator,
                           findSeparator: self._findImpl(value:),
                           isReverse: false)
   }
 
   /// DO NOT USE! This is a part of `AbstractString` implementation
-  internal func _rpartition(separator: PyObject) -> PyResult<PyTuple> {
+  internal func _rpartition(
+    separator: PyObject
+  ) -> AbstractString_PartitionResult<Elements> {
     return self._template(separator: separator,
                           findSeparator: self._rfindImpl(value:),
                           isReverse: true)
@@ -18,15 +37,15 @@ extension AbstractString {
     separator separatorObject: PyObject,
     findSeparator: (Elements) -> AbstractString_FindResult<Elements>,
     isReverse: Bool
-  ) -> PyResult<PyTuple> {
+  ) -> AbstractString_PartitionResult<Elements> {
     guard let separator = Self._getElements(object: separatorObject) else {
       let t = Self._pythonTypeName
-      let separatorType = separatorObject.typeName
-      return .typeError("sep must be \(t)-like object, not \(separatorType)")
+      let st = separatorObject.typeName
+      return .error(Py.newTypeError(msg: "sep must be \(t)-like object, not \(st)"))
     }
 
     if separator.isEmpty {
-      return .valueError("empty separator")
+      return .error(Py.newValueError(msg: "empty separator"))
     }
 
     let findResult = findSeparator(separator)
@@ -42,27 +61,10 @@ extension AbstractString {
       let before = self.elements[self.elements.startIndex..<index1]
       let after = self.elements[index2..<self.elements.endIndex]
 
-      let beforeObject = Self._toObject(elements: before)
-      let afterObject = Self._toObject(elements: after)
-
-      // Returned separator has to have the same type as we,
-      // so if we partition 'bytearray' with 'bytes' then we have to return
-      // 'bytearray' separator
-      let separatorHasSelfType = separatorObject.type === self.type
-      let separatorObjectWithSelfType = separatorHasSelfType ?
-        separatorObject :
-        Self._toObject(elements: separator)
-
-      let result = Py.newTuple(beforeObject, separatorObjectWithSelfType, afterObject)
-      return .value(result)
+      return .separatorFound(before: before, separator: separator, after: after)
 
     case .notFound:
-      let empty = Self._getEmptyObject()
-      let result = isReverse ?
-        Py.newTuple(empty, empty, self) :
-        Py.newTuple(self, empty, empty)
-
-      return .value(result)
+      return .separatorNotFound
     }
   }
 }

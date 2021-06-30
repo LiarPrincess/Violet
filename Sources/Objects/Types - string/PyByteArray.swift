@@ -54,10 +54,6 @@ public class PyByteArray: PyObject, PyBytesType, AbstractBytes {
   internal typealias SwiftType = PyByteArray
   internal typealias ElementSwiftType = PyInt
 
-  internal static func _getEmptyObject() -> SwiftType {
-    return Py.newByteArray(Data())
-  }
-
   internal static func _toObject(element: UInt8) -> ElementSwiftType {
     return Py.newInt(element)
   }
@@ -485,12 +481,44 @@ public class PyByteArray: PyObject, PyBytesType, AbstractBytes {
 
   // sourcery: pymethod = partition
   internal func partition(separator: PyObject) -> PyResult<PyTuple> {
-    return self._partition(separator: separator)
+    switch self._partition(separator: separator) {
+    case let .separatorFound(before: before, separator: separator, after: after):
+      let beforeObject = Py.newByteArray(before)
+      let separatorObject = Py.newByteArray(separator) // Always new!
+      let afterObject = Py.newByteArray(after)
+      let result = Py.newTuple(beforeObject, separatorObject, afterObject)
+      return .value(result)
+
+    case .separatorNotFound:
+      // 'bytearray' is mutable, so we have to create 2 separate objects
+      let empty1 = Py.newByteArray(Data())
+      let empty2 = Py.newByteArray(Data())
+      return .value(Py.newTuple(self, empty1, empty2))
+
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // sourcery: pymethod = rpartition
   internal func rpartition(separator: PyObject) -> PyResult<PyTuple> {
-    return self._rpartition(separator: separator)
+    switch self._rpartition(separator: separator) {
+    case let .separatorFound(before: before, separator: separator, after: after):
+      let beforeObject = Py.newByteArray(before)
+      let separatorObject = Py.newByteArray(separator) // Always new!
+      let afterObject = Py.newByteArray(after)
+      let result = Py.newTuple(beforeObject, separatorObject, afterObject)
+      return .value(result)
+
+    case .separatorNotFound:
+      // 'bytearray' is mutable, so we have to create 2 separate objects
+      let empty1 = Py.newByteArray(Data())
+      let empty2 = Py.newByteArray(Data())
+      return .value(Py.newTuple(empty1, empty2, self))
+
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Expand tabs

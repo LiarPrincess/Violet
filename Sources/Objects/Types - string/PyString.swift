@@ -82,10 +82,6 @@ public class PyString: PyObject, AbstractString {
   internal static let _defaultFill: UnicodeScalar = " "
   internal static let _zFill: UnicodeScalar = "0"
 
-  internal static func _getEmptyObject() -> PyString {
-    return Py.emptyString
-  }
-
   internal static func _toObject(element: Element) -> ElementSwiftType {
     return Py.newString(element)
   }
@@ -682,12 +678,42 @@ public class PyString: PyObject, AbstractString {
 
   // sourcery: pymethod = partition
   internal func partition(separator: PyObject) -> PyResult<PyTuple> {
-    return self._partition(separator: separator)
+    switch self._partition(separator: separator) {
+    case let .separatorFound(before: before, separator: _, after: after):
+      // We can reuse 'separator' because strings are immutable
+      let beforeObject = Self._toObject(elements: before)
+      let afterObject = Self._toObject(elements: after)
+      let result = Py.newTuple(beforeObject, separator, afterObject)
+      return .value(result)
+
+    case .separatorNotFound:
+      let empty = Py.emptyString
+      let result = Py.newTuple(self, empty, empty)
+      return .value(result)
+
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // sourcery: pymethod = rpartition
   internal func rpartition(separator: PyObject) -> PyResult<PyTuple> {
-    return self._rpartition(separator: separator)
+    switch self._rpartition(separator: separator) {
+    case let .separatorFound(before: before, separator: _, after: after):
+      // We can reuse 'separator' because strings are immutable
+      let beforeObject = Self._toObject(elements: before)
+      let afterObject = Self._toObject(elements: after)
+      let result = Py.newTuple(beforeObject, separator, afterObject)
+      return .value(result)
+
+    case .separatorNotFound:
+      let empty = Py.emptyString
+      let result = Py.newTuple(empty, empty, self)
+      return .value(result)
+
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Expand tabs
