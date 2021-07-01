@@ -26,12 +26,18 @@ public class PyByteArray: PyObject, AbstractBytes {
       - an integer
     """
 
-  internal var elements: Data {
-    return self.data.scalars
+  internal var elements: Data
+
+  internal var isEmpty: Bool {
+    return self.elements.isEmpty
+  }
+
+  internal var count: Int {
+    return self.elements.count
   }
 
   override public var description: String {
-    return "PyByteArray(count: \(self.value.count))"
+    return "PyByteArray(count: \(self.elements.count))"
   }
 
   // MARK: - Init
@@ -42,7 +48,7 @@ public class PyByteArray: PyObject, AbstractBytes {
   }
 
   internal init(type: PyType, value: Data) {
-    self.data = PyBytesData(value)
+    self.elements = value
     super.init(type: type)
   }
 
@@ -64,14 +70,6 @@ public class PyByteArray: PyObject, AbstractBytes {
 
   internal static func _toObject(result: Elements) -> SwiftType {
     return Py.newByteArray(result)
-  }
-
-  // MARK: - To remove
-
-  internal private(set) var data: PyBytesData
-
-  internal var value: Data {
-    return self.data.values
   }
 
   // MARK: - Equatable
@@ -200,7 +198,7 @@ public class PyByteArray: PyObject, AbstractBytes {
       switch result {
       case .bytes(let data):
         return .value(data)
-      case .objectIsNotIterable:
+      case .notIterable:
         return .typeError("can only assign an iterable")
       case .error(let e):
         return .error(e)
@@ -626,13 +624,13 @@ public class PyByteArray: PyObject, AbstractBytes {
 
   // sourcery: pymethod = __iadd__
   internal func iadd(_ other: PyObject) -> PyResult<PyObject> {
-    switch self.data.add(other) {
-    case let .value(data):
-      self.data = PyBytesData(data)
-      return .value(self)
-    case let .error(e):
+    guard let otherElements = Self._getElements(object: other) else {
+      let e = self._createAddTypeError(other: other)
       return .error(e)
     }
+
+    self.elements.append(otherElements)
+    return .value(self)
   }
 
   // MARK: - Mul
@@ -649,13 +647,40 @@ public class PyByteArray: PyObject, AbstractBytes {
 
   // sourcery: pymethod = __imul__
   internal func imul(_ other: PyObject) -> PyResult<PyObject> {
-    switch self.data.mul(other) {
-    case let .value(data):
-      self.data = PyBytesData(data)
-      return .value(self)
+    switch self._parseMulCount(object: other) {
+    case let .value(count):
+      return self.imul(count: count)
     case let .error(e):
       return .error(e)
     }
+  }
+
+  internal func imul(count: Int) -> PyResult<PyObject> {
+    // swiftlint:disable:next empty_count
+    if count <= 0 {
+      self.elements = Data()
+      return .value(self)
+    }
+
+    // Anything multiplied by 1 -> no changes
+    if count == 1 {
+      return .value(self)
+    }
+
+    let minCapacity = self.elements.count * count
+    self.elements.reserveCapacity(minCapacity)
+
+    // 'abc' * 2 = 'abcabc'
+    // This means that we have to append 'count - 1' times
+    let weAlreadyHave = 1
+    let appendCount = count - weAlreadyHave
+
+    let elementsToAppend = self.elements
+    for _ in 0..<appendCount {
+      self.elements.append(elementsToAppend)
+    }
+
+    return .value(self)
   }
 
   // MARK: - Iter
@@ -678,15 +703,30 @@ public class PyByteArray: PyObject, AbstractBytes {
     """
 
   // sourcery: pymethod = append, doc = appendDoc
-  internal func append(_ element: PyObject) -> PyResult<PyNone> {
-    return self.data.append(object: element)
+  internal func append(object: PyObject) -> PyResult<PyNone> {
+    switch Self._asByte(object: object) {
+    case let .value(byte):
+      self.elements.append(byte)
+      return .value(Py.none)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Extend
 
   // sourcery: pymethod = extend
   internal func extend(iterable: PyObject) -> PyResult<PyNone> {
-    return self.data.extend(with: iterable).map { _ in Py.none }
+    // Do not modify `self.values` until we finished iteration!
+    switch Self._getElementsFromIterable(iterable: iterable) {
+    case .bytes(let data):
+      self.elements.append(data)
+      return .value(Py.none)
+    case .notIterable:
+      return .typeError("can't extend bytearray with \(iterable.typeName)")
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // MARK: - Insert
@@ -704,9 +744,44 @@ public class PyByteArray: PyObject, AbstractBytes {
     """
 
   // sourcery: pymethod = insert, doc = insertDoc
-  internal func insert(index: PyObject, item: PyObject) -> PyResult<PyNone> {
-    let result = self.data.insert(index: index, item: item)
-    return result.map { _ in Py.none }
+  internal func insert(index: PyObject, object: PyObject) -> PyResult<PyNone> {
+    let indexInt: Int
+    let overflowMsg = "cannot add more objects to \(Self._pythonTypeName)"
+
+    switch IndexHelper.int(index, onOverflow: .overflowError(msg: overflowMsg)) {
+    case let .value(i):
+      indexInt = i
+    case let .error(e),
+         let .notIndex(e),
+         let .overflow(_, e):
+      return .error(e)
+    }
+
+    let byte: UInt8
+    switch Self._asByte(object: object) {
+    case let .value(b): byte = b
+    case let .error(e): return .error(e)
+    }
+
+    self.insert(index: indexInt, byte: byte)
+    return .value(Py.none)
+  }
+
+  private func insert(index: Int, byte: UInt8) {
+    var index = index
+
+    if index < 0 {
+      index += self.elements.count
+      if index < 0 {
+        index = 0
+      }
+    }
+
+    if index > self.elements.count {
+      index = self.elements.count
+    }
+
+    self.elements.insert(byte, at: index)
   }
 
   // MARK: - Remove
@@ -722,8 +797,19 @@ public class PyByteArray: PyObject, AbstractBytes {
     """
 
   // sourcery: pymethod = remove, doc = removeDoc
-  internal func remove(_ value: PyObject) -> PyResult<PyNone> {
-    return self.data.remove(value).map { _ in Py.none }
+  internal func remove(object: PyObject) -> PyResult<PyNone> {
+    switch Self._asByte(object: object) {
+    case let .value(byte):
+      guard let index = self.elements.firstIndex(of: byte) else {
+        return .valueError("value not found in bytearray")
+      }
+
+      self.elements.remove(at: index)
+      return .value(Py.none)
+
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Pop
@@ -743,7 +829,48 @@ public class PyByteArray: PyObject, AbstractBytes {
 
   // sourcery: pymethod = pop, doc = popDoc
   internal func pop(index: PyObject?) -> PyResult<PyObject> {
-    return self.data.pop(index: index).map(Py.newInt)
+    switch self.parsePopIndex(index: index) {
+    case let .value(int):
+      let byte = self.pop(index: int)
+      return byte.map(Py.newInt)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func pop(index: Int) -> PyResult<UInt8> {
+    if self.isEmpty {
+      return .indexError("pop from empty bytearray")
+    }
+
+    var index = index
+    if index < 0 {
+      index += self.count
+    }
+
+    // swiftlint:disable:next yoda_condition
+    guard 0 <= index && index < self.count else {
+      return .indexError("pop index out of range")
+    }
+
+    let result = self.elements.remove(at: index)
+    return .value(result)
+  }
+
+  private func parsePopIndex(index: PyObject?) -> PyResult<Int> {
+    guard let index = index else {
+      return .value(-1)
+    }
+
+    let msg = "pop index out of range"
+    switch IndexHelper.int(index, onOverflow: .indexError(msg: msg)) {
+    case let .value(int):
+      return .value(int)
+    case let .error(e),
+         let .notIndex(e),
+         let .overflow(_, e):
+      return .error(e)
+    }
   }
 
   // MARK: - Clear
@@ -757,7 +884,7 @@ public class PyByteArray: PyObject, AbstractBytes {
 
   // sourcery: pymethod = clear, doc = clearDoc
   internal func clear() -> PyNone {
-    self.data.clear()
+    self.elements = Data()
     return Py.none
   }
 
@@ -772,7 +899,7 @@ public class PyByteArray: PyObject, AbstractBytes {
 
   // sourcery: pymethod = reverse, doc = reverseDoc
   internal func reverse() -> PyResult<PyNone> {
-    self.data.reverse()
+    self.elements.reverse()
     return .value(Py.none)
   }
 
@@ -787,7 +914,7 @@ public class PyByteArray: PyObject, AbstractBytes {
 
   // sourcery: pymethod = copy, doc = copyDoc
   internal func copy() -> PyObject {
-    return Py.newByteArray(self.data.values)
+    return Py.newByteArray(self.elements)
   }
 
   // MARK: - Check exact
@@ -832,7 +959,7 @@ public class PyByteArray: PyObject, AbstractBytes {
 
       switch Self._handleNewArgs(object: object, encoding: encoding, errors: errors) {
       case let .value(data):
-        self.data = PyBytesData(data)
+        self.elements = data
         return .value(Py.none)
       case let .error(e):
         return .error(e)

@@ -49,7 +49,7 @@ extension AbstractBytes {
 
     switch Self._getElementsFromIterable(iterable: object) {
     case .bytes(let data): return .value(data)
-    case .objectIsNotIterable: break
+    case .notIterable: break
     case .error(let e): return .error(e)
     }
 

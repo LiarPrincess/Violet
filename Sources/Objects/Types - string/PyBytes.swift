@@ -25,12 +25,10 @@ public class PyBytes: PyObject, AbstractBytes {
       - an integer
     """
 
-  internal var elements: Data {
-    return self.data.scalars
-  }
+  internal let elements: Data
 
   override public var description: String {
-    return "PyBytes(count: \(self.value.count))"
+    return "PyBytes(count: \(self.elements.count))"
   }
 
   // MARK: - Init
@@ -41,7 +39,7 @@ public class PyBytes: PyObject, AbstractBytes {
   }
 
   internal init(type: PyType, value: Data) {
-    self.data = PyBytesData(value)
+    self.elements = value
     super.init(type: type)
   }
 
@@ -63,14 +61,6 @@ public class PyBytes: PyObject, AbstractBytes {
 
   internal static func _toObject(result: Elements) -> SwiftType {
     return Py.newBytes(result)
-  }
-
-  // MARK: - To remove
-
-  internal let data: PyBytesData
-
-  internal var value: Data {
-    return self.data.values
   }
 
   // MARK: - Equatable
@@ -116,7 +106,7 @@ public class PyBytes: PyObject, AbstractBytes {
   }
 
   internal func hashImpl() -> PyHash {
-    return Py.hasher.hash(self.value)
+    return Py.hasher.hash(self.elements)
   }
 
   // MARK: - String

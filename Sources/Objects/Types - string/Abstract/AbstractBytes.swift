@@ -26,7 +26,7 @@ private let ascii_endIndex: UInt8 = 127
 // swiftlint:disable:next type_name
 internal enum AbstractBytes_ElementsFromIterable {
   case bytes(Data)
-  case objectIsNotIterable
+  case notIterable
   case error(PyBaseException)
 }
 
@@ -87,7 +87,7 @@ extension AbstractBytes {
     }
 
     guard Py.hasIter(object: iterable) else {
-      return .objectIsNotIterable
+      return .notIterable
     }
 
     var result = Data()

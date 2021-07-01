@@ -89,14 +89,14 @@ extension PyType {
     /// - `doc: String?`
     public static let PyBuiltinMethod = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
-    /// - `data: PyBytesData`
+    /// - `elements: Data`
     public static let PyByteArray = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `bytes: PyByteArray`
     /// - `index: Int`
     public static let PyByteArrayIterator = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
-    /// - `data: PyBytesData`
+    /// - `elements: Data`
     public static let PyBytes = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `bytes: PyBytes`
