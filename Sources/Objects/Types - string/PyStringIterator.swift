@@ -12,7 +12,7 @@ public class PyStringIterator: PyObject {
   internal private(set) var index: Int
 
   override public var description: String {
-    return "PyStringIterator()"
+    return "PyStringIterator(string: \(self.string))"
   }
 
   // MARK: - Init
@@ -48,15 +48,17 @@ public class PyStringIterator: PyObject {
 
   // sourcery: pymethod = __next__
   public func next() -> PyResult<PyObject> {
-    let scalars = self.string.data.scalars
-    let scalarsIndexOrNil = scalars.index(scalars.startIndex,
-                                          offsetBy: self.index,
-                                          limitedBy: scalars.endIndex)
+    let elements = self.string.elements
 
-    if let scalarsIndex = scalarsIndexOrNil, scalarsIndex != scalars.endIndex {
+    let indexOrNil = elements.index(elements.startIndex,
+                                    offsetBy: self.index,
+                                    limitedBy: elements.endIndex)
+
+    if let index = indexOrNil, index != elements.endIndex {
       self.index += 1
-      let char = String(scalars[scalarsIndex])
-      return .value(Py.newString(char))
+      let scalar = elements[index]
+      let string = Py.newString(scalar: scalar)
+      return .value(string)
     }
 
     return .stopIteration()
@@ -66,8 +68,8 @@ public class PyStringIterator: PyObject {
 
   // sourcery: pymethod = __length_hint__
   public func lengthHint() -> PyInt {
-    let data = self.string.data
-    let result = data.count - self.index
+    let elements = self.string.elements
+    let result = elements.count - self.index
     return Py.newInt(result)
   }
 
