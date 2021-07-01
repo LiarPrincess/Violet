@@ -1,6 +1,9 @@
-extension AbstractString {
+// We can't use the 'GetItemHelper' because 'String.UnicodeScalarView' does not
+// conform to 'RandomAccessCollection'.
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+extension PyString {
+
+  /// DO NOT USE! This is a helper method!
   internal func _getItem(index indexObject: PyObject) -> PyResult<PyObject> {
     switch IndexHelper.int(indexObject, onOverflow: .indexError) {
     case .value(let index):

@@ -162,9 +162,26 @@ public class PyBytes: PyObject, AbstractBytes {
 
   // MARK: - Get item
 
+  private enum GetItemImpl: GetItemHelper {
+    // swiftlint:disable nesting
+    fileprivate typealias Source = Data
+    fileprivate typealias SliceBuilder = BytesBuilder2
+    // swiftlint:enable nesting
+  }
+
   // sourcery: pymethod = __getitem__
   internal func getItem(index: PyObject) -> PyResult<PyObject> {
-    return self._getItem(index: index)
+    let result = GetItemImpl.getItem(source: self.elements, index: index)
+    switch result {
+    case let .single(byte):
+      let int = Py.newInt(byte)
+      return .value(int)
+    case let .slice(data):
+      let bytes = Py.newBytes(data)
+      return .value(bytes)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Properties

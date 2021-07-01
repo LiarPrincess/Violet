@@ -184,35 +184,69 @@ internal struct PySequenceData {
 
   // MARK: - Get item
 
-  private enum GetItemImpl: GetItemHelper {
-    // swiftlint:disable:next nesting
-    fileprivate typealias Collection = [PyObject]
+  private struct GetItemSliceBuilder: GetItemSliceBuilderType {
+    // swiftlint:disable nesting
+    fileprivate typealias Element = PyObject
+    fileprivate typealias SourceSubsequence = Array<PyObject>.SubSequence
+    fileprivate typealias Result = [PyObject]
+    // swiftlint:enable nesting
+
+    private var result: [PyObject]
+
+    fileprivate init(capacity: Int) {
+      self.result = [PyObject]()
+      self.result.reserveCapacity(capacity)
+    }
+
+    fileprivate init(sourceSubsequenceWhenStepIs1: Array<PyObject>.SubSequence) {
+      self.result = Array(sourceSubsequenceWhenStepIs1)
+    }
+
+    fileprivate mutating func append(element: PyObject) {
+      self.result.append(element)
+    }
+
+    fileprivate func finalize() -> [PyObject] {
+      return self.result
+    }
   }
 
-  internal func getItem(index: PyObject) -> GetItemResult<PyObject> {
-    return GetItemImpl.getItem(collection: self.elements, index: index)
+  private enum GetItemImpl: GetItemHelper {
+    // swiftlint:disable nesting
+    fileprivate typealias Source = [PyObject]
+    fileprivate typealias SliceBuilder = GetItemSliceBuilder
+    // swiftlint:enable nesting
+  }
+
+  internal func getItem(index: PyObject) -> GetItemResult<PyObject, [PyObject]> {
+    return GetItemImpl.getItem(source: self.elements, index: index)
   }
 
   internal func getItem(index: Int) -> PyResult<PyObject> {
-    return GetItemImpl.getItem(collection: self.elements, index: index)
+    return GetItemImpl.getItem(source: self.elements, index: index)
   }
 
   internal func getItem(slice: PySlice) -> PyResult<[PyObject]> {
-    return GetItemImpl.getItem(collection: self.elements, slice: slice)
+    return GetItemImpl.getSlice(source: self.elements, slice: slice)
   }
 
   // MARK: - Set item
 
   private enum SetItemImpl: SetItemHelper {
+    // swiftlint:disable nesting
+    fileprivate typealias Target = [PyObject]
+    fileprivate typealias SliceSource = [PyObject]
+    // swiftlint:enable nesting
 
-    // swiftlint:disable:next nesting
-    fileprivate typealias Collection = [PyObject]
-
-    fileprivate static func getElement(object: PyObject) -> PyResult<PyObject> {
+    fileprivate static func getElementToSetAtIntIndex(
+      object: PyObject
+    ) -> PyResult<PyObject> {
       return .value(object)
     }
 
-    fileprivate static func getElements(object: PyObject) -> PyResult<[PyObject]> {
+    fileprivate static func getElementsToSetAtSliceIndices(
+      object: PyObject
+    ) -> PyResult<[PyObject]> {
       switch Py.toArray(iterable: object) {
       case let .value(elements):
         return .value(elements)
@@ -224,21 +258,21 @@ internal struct PySequenceData {
 
   internal mutating func setItem(index: PyObject,
                                  value: PyObject) -> PyResult<PyNone> {
-    return SetItemImpl.setItem(collection: &self.elements,
+    return SetItemImpl.setItem(target: &self.elements,
                                index: index,
                                value: value)
   }
 
   internal mutating func setItem(index: Int,
                                  value: PyObject) -> PyResult<PyNone> {
-    return SetItemImpl.setItem(collection: &self.elements,
+    return SetItemImpl.setItem(target: &self.elements,
                                index: index,
                                value: value)
   }
 
   internal mutating func setItem(slice: PySlice,
                                  value: PyObject) -> PyResult<PyNone> {
-    return SetItemImpl.setItem(collection: &self.elements,
+    return SetItemImpl.setItem(target: &self.elements,
                                slice: slice,
                                value: value)
   }
@@ -247,19 +281,19 @@ internal struct PySequenceData {
 
   private enum DelItemImpl: DelItemHelper {
     // swiftlint:disable:next nesting
-    fileprivate typealias Collection = [PyObject]
+    fileprivate typealias Target = [PyObject]
   }
 
   internal mutating func delItem(index: PyObject) -> PyResult<PyNone> {
-    return DelItemImpl.delItem(collection: &self.elements, index: index)
+    return DelItemImpl.delItem(target: &self.elements, index: index)
   }
 
   internal mutating func delItem(index: Int) -> PyResult<PyNone> {
-    return DelItemImpl.delItem(collection: &self.elements, index: index)
+    return DelItemImpl.delItem(target: &self.elements, index: index)
   }
 
   internal mutating func delItem(slice: PySlice) -> PyResult<PyNone> {
-    return DelItemImpl.delItem(collection: &self.elements, slice: slice)
+    return DelItemImpl.delSlice(target: &self.elements, slice: slice)
   }
 
   // MARK: - Count

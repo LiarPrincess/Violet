@@ -21,6 +21,15 @@ private let ascii_space: UInt8 = 32
 private let ascii_zero: UInt8 = 48
 private let ascii_endIndex: UInt8 = 127
 
+// MARK: - AbstractBytes_ElementsFromIterable
+
+// swiftlint:disable:next type_name
+internal enum AbstractBytes_ElementsFromIterable {
+  case bytes(Data)
+  case objectIsNotIterable
+  case error(PyBaseException)
+}
+
 // MARK: - AbstractBytes
 
 /// Shared code between `PyBytes` and `PyBytesArray`.
@@ -67,6 +76,43 @@ extension AbstractBytes {
     }
 
     return .invalidObjectType
+  }
+
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
+  internal static func _getElementsFromIterable(
+    iterable: PyObject
+  ) -> AbstractBytes_ElementsFromIterable {
+    if let bytes = PyCast.asExactlyAnyBytes(iterable) {
+      return .bytes(bytes.elements)
+    }
+
+    guard Py.hasIter(object: iterable) else {
+      return .objectIsNotIterable
+    }
+
+    var result = Data()
+
+    // If we can easily get the '__len__' then use it.
+    // If not, then we can't call python method, because it may side-effect.
+    if let bigInt = Fast.__len__(iterable), let int = Int(exactly: bigInt) {
+      result.reserveCapacity(int)
+    }
+
+    let reduceError = Py.reduce(iterable: iterable, into: &result) { acc, object in
+      switch Self._asByte(object: object) {
+      case let .value(byte):
+        acc.append(byte)
+        return .goToNextElement
+      case let .error(e):
+        return .error(e)
+      }
+    }
+
+    if let e = reduceError {
+      return .error(e)
+    }
+
+    return .bytes(result)
   }
 
   /// DO NOT USE! This is a part of `AbstractBytes` implementation.

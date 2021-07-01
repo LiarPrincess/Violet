@@ -159,19 +159,68 @@ public class PyByteArray: PyObject, AbstractBytes {
 
   // MARK: - Get/set/del item
 
+  private enum GetItemImpl: GetItemHelper {
+    // swiftlint:disable nesting
+    fileprivate typealias Source = Data
+    fileprivate typealias SliceBuilder = BytesBuilder2
+    // swiftlint:enable nesting
+  }
+
   // sourcery: pymethod = __getitem__
   internal func getItem(index: PyObject) -> PyResult<PyObject> {
-    return self._getItem(index: index)
+    let result = GetItemImpl.getItem(source: self.elements, index: index)
+    switch result {
+    case let .single(byte):
+      let int = Py.newInt(byte)
+      return .value(int)
+    case let .slice(data):
+      let bytes = Py.newByteArray(data)
+      return .value(bytes)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private enum SetItemImpl: SetItemHelper {
+    // swiftlint:disable nesting
+    fileprivate typealias Target = Data
+    fileprivate typealias SliceSource = Data
+    // swiftlint:enable nesting
+
+    fileprivate static func getElementToSetAtIntIndex(
+      object: PyObject
+    ) -> PyResult<UInt8> {
+      return PyByteArray._asByte(object: object)
+    }
+
+    fileprivate static func getElementsToSetAtSliceIndices(
+      object: PyObject
+    ) -> PyResult<Data> {
+      let result = PyByteArray._getElementsFromIterable(iterable: object)
+      switch result {
+      case .bytes(let data):
+        return .value(data)
+      case .objectIsNotIterable:
+        return .typeError("can only assign an iterable")
+      case .error(let e):
+        return .error(e)
+      }
+    }
   }
 
   // sourcery: pymethod = __setitem__
   internal func setItem(index: PyObject, value: PyObject) -> PyResult<PyNone> {
-    return self.data.setItem(index: index, value: value)
+    return SetItemImpl.setItem(target: &self.elements, index: index, value: value)
+  }
+
+  private enum DelItemImpl: DelItemHelper {
+    // swiftlint:disable:next nesting
+    fileprivate typealias Target = Data
   }
 
   // sourcery: pymethod = __delitem__
   internal func delItem(index: PyObject) -> PyResult<PyNone> {
-    return self.data.delItem(index: index)
+    return DelItemImpl.delItem(target: &self.elements, index: index)
   }
 
   // MARK: - Properties

@@ -1,6 +1,6 @@
 import Foundation
 
-internal struct BytesBuilder2: StringBuilderType2 {
+internal struct BytesBuilder2: StringBuilderType2, GetItemSliceBuilderType {
 
   internal typealias Elements = Data
   internal typealias Element = UInt8
@@ -39,5 +39,13 @@ internal struct BytesBuilder2: StringBuilderType2 {
 
   internal func finalize() -> Result {
     return self.data
+  }
+
+  // MARK: - GetItemSliceBuilderType
+
+  internal typealias SourceSubsequence = Data
+
+  internal init(sourceSubsequenceWhenStepIs1: Data) {
+    self.data = sourceSubsequenceWhenStepIs1
   }
 }

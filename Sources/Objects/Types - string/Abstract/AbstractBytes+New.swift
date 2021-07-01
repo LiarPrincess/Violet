@@ -1,7 +1,7 @@
 import Foundation
 
 // swiftlint:disable:next type_name
-private enum AbstractBytes_FromXXXResult {
+private enum AbstractBytes_FromCountResult {
   case bytes(Data)
   case tryOther
   case error(PyBaseException)
@@ -47,9 +47,9 @@ extension AbstractBytes {
     case .error(let e): return .error(e)
     }
 
-    switch Self._fromIterable(iterable: object) {
+    switch Self._getElementsFromIterable(iterable: object) {
     case .bytes(let data): return .value(data)
-    case .tryOther: break
+    case .objectIsNotIterable: break
     case .error(let e): return .error(e)
     }
 
@@ -82,7 +82,7 @@ extension AbstractBytes {
 
   // MARK: - From count
 
-  private static func _fromCount(object: PyObject) -> AbstractBytes_FromXXXResult {
+  private static func _fromCount(object: PyObject) -> AbstractBytes_FromCountResult {
     switch IndexHelper.int(object, onOverflow: .overflowError) {
     case .value(let count):
       // swiftlint:disable:next empty_count
@@ -100,35 +100,5 @@ extension AbstractBytes {
          .overflow(_, let e):
       return .error(e)
     }
-  }
-
-  // MARK: - From iterable
-
-  private static func _fromIterable(iterable: PyObject) -> AbstractBytes_FromXXXResult {
-    guard Py.hasIter(object: iterable) else {
-      return .tryOther
-    }
-
-    if let bytes = PyCast.asExactlyAnyBytes(iterable) {
-      return .bytes(bytes.elements)
-    }
-
-    var result = Data()
-
-    let reduceError = Py.reduce(iterable: iterable, into: &result) { acc, object in
-      switch Self._asByte(object: object) {
-      case let .value(byte):
-        acc.append(byte)
-        return .goToNextElement
-      case let .error(e):
-        return .error(e)
-      }
-    }
-
-    if let e = reduceError {
-      return .error(e)
-    }
-
-    return .bytes(result)
   }
 }

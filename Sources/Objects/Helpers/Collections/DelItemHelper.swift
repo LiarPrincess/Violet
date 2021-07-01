@@ -4,19 +4,19 @@
 /// Mostly because… well slices are hard.
 internal protocol DelItemHelper {
 
-  associatedtype Collection where
-    Collection: MutableCollection,
-    Collection: RangeReplaceableCollection,
-    Collection.Index == Int
+  associatedtype Target where
+    Target: MutableCollection,
+    Target: RangeReplaceableCollection,
+    Target.Index == Int
 }
 
 extension DelItemHelper {
 
-  internal static func delItem(collection: inout Collection,
+  internal static func delItem(target: inout Target,
                                index: PyObject) -> PyResult<PyNone> {
     switch IndexHelper.int(index, onOverflow: .indexError) {
     case .value(let int):
-      return Self.delItem(collection: &collection, index: int)
+      return Self.delItem(target: &target, index: int)
     case .notIndex:
       break // Try slice
     case .error(let e),
@@ -25,7 +25,7 @@ extension DelItemHelper {
     }
 
     if let slice = PyCast.asSlice(index) {
-      return Self.delItem(collection: &collection, slice: slice)
+      return Self.delSlice(target: &target, slice: slice)
     }
 
     let msg = "indices must be integers or slices, not \(index.typeName)"
@@ -34,36 +34,36 @@ extension DelItemHelper {
 
   // MARK: - Int index
 
-  internal static func delItem(collection: inout Collection,
+  internal static func delItem(target: inout Target,
                                index: Int) -> PyResult<PyNone> {
     var index = index
 
     if index < 0 {
-      index += collection.count
+      index += target.count
     }
 
-    guard 0 <= index && index < collection.count else {
+    guard 0 <= index && index < target.count else {
       let msg = "assignment index out of range"
       return .error(Py.newIndexError(msg: msg))
     }
 
-    _ = collection.remove(at: index)
+    _ = target.remove(at: index)
     return .value(Py.none)
   }
 
   // MARK: - Slice
 
-  internal static func delItem(collection: inout Collection,
-                               slice: PySlice) -> PyResult<PyNone> {
+  internal static func delSlice(target: inout Target,
+                                slice: PySlice) -> PyResult<PyNone> {
     var indices: PySlice.AdjustedIndices
     switch slice.unpack() {
-    case let .value(u): indices = u.adjust(toCount: collection.count)
+    case let .value(u): indices = u.adjust(toCount: target.count)
     case let .error(e): return .error(e)
     }
 
     if indices.step == 1 {
       let range = indices.start..<indices.stop
-      collection.replaceSubrange(range, with: [])
+      target.replaceSubrange(range, with: [])
       return .value(Py.none)
     }
 
@@ -86,22 +86,22 @@ extension DelItemHelper {
     }
 
     var groupStart = 0
-    var result = [Collection.Element]()
-    result.reserveCapacity(collection.count - indices.count)
+    var result = [Target.Element]()
+    result.reserveCapacity(target.count - indices.count)
 
     for index in stride(from: indices.start, to: indices.stop, by: indices.step) {
-      let elements = collection[groupStart..<index]
+      let elements = target[groupStart..<index]
       result.append(contentsOf: elements)
       groupStart = index + 1 // +1 to skip 'index'
     }
 
     // Include final group
-    if groupStart < collection.count {
-      let elements = collection[groupStart..<collection.count]
+    if groupStart < target.count {
+      let elements = target[groupStart..<target.count]
       result.append(contentsOf: elements)
     }
 
-    collection.replaceSubrange(collection.startIndex..., with: result)
+    target.replaceSubrange(target.startIndex..., with: result)
     return .value(Py.none)
   }
 }
