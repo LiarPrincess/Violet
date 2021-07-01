@@ -92,7 +92,7 @@ extension AbstractString {
 
   // MARK: - Split
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _split(args: [PyObject],
                        kwargs: PyDict?) -> PyResult<PyList> {
     return self._template(args: args,
@@ -180,7 +180,7 @@ extension AbstractString {
 
   // MARK: - RSplit
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _rsplit(args: [PyObject],
                         kwargs: PyDict?) -> PyResult<PyList> {
     return self._template(args: args,

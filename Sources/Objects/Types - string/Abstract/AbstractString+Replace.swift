@@ -1,6 +1,6 @@
 extension AbstractString {
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _replace(old: PyObject,
                          new: PyObject,
                          count countObject: PyObject?) -> PyResult<SwiftType> {

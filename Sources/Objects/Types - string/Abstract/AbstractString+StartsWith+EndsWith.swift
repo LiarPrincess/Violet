@@ -2,7 +2,7 @@ extension AbstractString {
 
   // MARK: - Starts with
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _startsWith(prefix: PyObject,
                             start: PyObject?,
                             end: PyObject?) -> PyResult<Bool> {
@@ -40,7 +40,7 @@ extension AbstractString {
 
   // MARK: - Ends with
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _endsWith(suffix: PyObject,
                           start: PyObject?,
                           end: PyObject?) -> PyResult<Bool> {

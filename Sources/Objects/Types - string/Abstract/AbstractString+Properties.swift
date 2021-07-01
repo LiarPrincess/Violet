@@ -7,7 +7,7 @@ extension AbstractString {
   /// This is not exposed to Python, but it is used in various methods
   /// (for example strip whitespace ones).
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isWhitespace(element: Element) -> Bool {
     let scalar = Self._asUnicodeScalar(element: element)
     let properties = scalar.properties
@@ -19,7 +19,7 @@ extension AbstractString {
   /// This is not exposed to Python, but it is used in various methods
   /// (for example strip whitespace ones).
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isLineBreak(element: Element) -> Bool {
     let scalar = Self._asUnicodeScalar(element: element)
     return Unicode.lineBreaks.contains(scalar)
@@ -33,7 +33,7 @@ extension AbstractString {
   /// c.isalpha(), c.isdecimal(), c.isdigit(), or c.isnumeric()
   /// https://docs.python.org/3/library/stdtypes.html#str.isalnum
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isAlphaNumeric() -> Bool {
     if self.elements.isEmpty {
       return false
@@ -66,7 +66,7 @@ extension AbstractString {
   /// being one of “Lm”, “Lt”, “Lu”, “Ll”, or “Lo”.
   /// https://docs.python.org/3/library/stdtypes.html#str.isalpha
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isAlpha() -> Bool {
     if self.elements.isEmpty {
       return false
@@ -88,7 +88,7 @@ extension AbstractString {
   /// ASCII characters have code points in the range U+0000-U+007F.
   /// https://docs.python.org/3/library/stdtypes.html#str.isascii
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isAscii() -> Bool {
     if self.elements.isEmpty {
       return false
@@ -110,7 +110,7 @@ extension AbstractString {
   /// Category “Nd”.
   /// https://docs.python.org/3/library/stdtypes.html#str.isdecimal
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isDecimal() -> Bool {
     if self.elements.isEmpty {
       return false
@@ -133,7 +133,7 @@ extension AbstractString {
   /// Numeric_Type=Digit or Numeric_Type=Decimal.
   /// https://docs.python.org/3/library/stdtypes.html#str.isdigit
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isDigit() -> Bool {
     if self.elements.isEmpty {
       return false
@@ -159,7 +159,7 @@ extension AbstractString {
   /// and there is at least one cased character.
   /// https://docs.python.org/3/library/stdtypes.html#str.islower
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isLower() -> Bool {
     if self.elements.isEmpty {
       return false
@@ -182,7 +182,7 @@ extension AbstractString {
   /// and there is at least one cased character.
   /// https://docs.python.org/3/library/stdtypes.html#str.isupper
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isUpper() -> Bool {
     if self.elements.isEmpty {
       return false
@@ -207,7 +207,7 @@ extension AbstractString {
   /// Numeric_Type=Digit, Numeric_Type=Decimal or Numeric_Type=Numeric.
   /// https://docs.python.org/3/library/stdtypes.html#str.isnumeric
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isNumeric() -> Bool {
     if self.elements.isEmpty {
       return false
@@ -243,14 +243,14 @@ extension AbstractString {
   ///    * Zs (Separator, Space) other than ASCII space('\x20').
   /// https://docs.python.org/3/library/stdtypes.html#str.isprintable
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isPrintable() -> Bool {
     // We do not have to check if 'self.elements.isEmpty'!
     // Empty string is printable!
     return self.elements.allSatisfy(Self._isPrintable(element:))
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isPrintable(element: Element) -> Bool {
     let scalar = Self._asUnicodeScalar(element: element)
 
@@ -284,7 +284,7 @@ extension AbstractString {
   /// - or its bidirectional class is one of WS, B, or S
   /// https://docs.python.org/3/library/stdtypes.html#str.isspace
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isSpace() -> Bool {
     if self.elements.isEmpty {
       return false
@@ -307,7 +307,7 @@ extension AbstractString {
   /// characters and lowercase characters only cased ones.
   /// https://docs.python.org/3/library/stdtypes.html#str.istitle
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isTitle() -> Bool {
     var cased = false
     var isPreviousCased = false

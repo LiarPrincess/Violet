@@ -15,7 +15,7 @@ internal enum AbstractString_PartitionResult<C: Collection> {
 
 extension AbstractString {
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _partition(
     separator: PyObject
   ) -> AbstractString_PartitionResult<Elements> {
@@ -24,7 +24,7 @@ extension AbstractString {
                           isReverse: false)
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _rpartition(
     separator: PyObject
   ) -> AbstractString_PartitionResult<Elements> {

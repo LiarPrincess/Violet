@@ -22,7 +22,7 @@ internal struct AbstractString_Substring<C: Collection> {
 
 extension AbstractString {
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _substring(start: PyObject?,
                            end: PyObject?) -> PyResult<SwiftType> {
     let substringResult = self._substringImpl(start: start, end: end)
@@ -41,7 +41,7 @@ extension AbstractString {
 
   /// Use this method to extract substring.
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _substringImpl(
     start: PyObject?,
     end: PyObject?
@@ -82,7 +82,7 @@ extension AbstractString {
 
   /// Use this method to extract substring.
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _substringImpl(
     start: AbstractString_Substring<Elements>.Index? = nil,
     end: AbstractString_Substring<Elements>.Index? = nil

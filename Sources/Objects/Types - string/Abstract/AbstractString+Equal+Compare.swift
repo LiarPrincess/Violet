@@ -17,7 +17,7 @@ extension AbstractString {
 
   // MARK: - Equal
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isEqual(other: PyObject) -> CompareResult {
     if self === other {
       return .value(true)
@@ -27,7 +27,7 @@ extension AbstractString {
     return CompareResult(result?.isEqual)
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isEqual(other: Self) -> Bool {
     if self === other {
       return true
@@ -37,38 +37,38 @@ extension AbstractString {
     return result.isEqual
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isEqual(other: Elements) -> Bool {
     let result = self._compare(other: other)
     return result.isEqual
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isNotEqual(other: PyObject) -> CompareResult {
     return self._isEqual(other: other).not
   }
 
   // MARK: - Compare
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isLess(other: PyObject) -> CompareResult {
     let result = self._compare(other: other)
     return CompareResult(result?.isLess)
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isLessEqual(other: PyObject) -> CompareResult {
     let result = self._compare(other: other)
     return CompareResult(result?.isLessEqual)
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isGreater(other: PyObject) -> CompareResult {
     let result = self._compare(other: other)
     return CompareResult(result?.isGreater)
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isGreaterEqual(other: PyObject) -> CompareResult {
     let result = self._compare(other: other)
     return CompareResult(result?.isGreaterEqual)

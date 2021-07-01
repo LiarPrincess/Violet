@@ -3,7 +3,7 @@ extension AbstractString {
   /// >>> '@'.join(['A', 'B', 'C'])
   /// 'A@B@C'
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _join(iterable: PyObject) -> PyResult<SwiftType> {
     let capacity = self._approximateCapacity(iterable: iterable)
     var builder = Builder(capacity: capacity)

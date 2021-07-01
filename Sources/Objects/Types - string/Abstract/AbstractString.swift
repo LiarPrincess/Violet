@@ -66,13 +66,13 @@ internal protocol AbstractString: PyObject {
 
   /// `str` for `str`; `int` for `bytes` and `bytearray`
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _toObject(element: Element) -> ElementSwiftType
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _toObject(elements: Elements) -> SwiftType
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _toObject(elements: Elements.SubSequence) -> SwiftType
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _toObject(result: Builder.Result) -> SwiftType
 
   // MARK: - Object -> Elements

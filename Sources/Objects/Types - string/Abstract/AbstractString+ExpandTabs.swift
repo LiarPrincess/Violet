@@ -1,6 +1,6 @@
 extension AbstractString {
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _expandTabs(tabSize tabSizeObject: PyObject?) -> PyResult<SwiftType> {
     switch self._parseTabSize(tabSize: tabSizeObject) {
     case let .value(tabSize):

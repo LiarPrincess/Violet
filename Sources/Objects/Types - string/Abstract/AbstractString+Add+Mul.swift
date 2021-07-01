@@ -2,7 +2,7 @@ extension AbstractString {
 
   // MARK: - Add
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _add(other: PyObject) -> PyResult<SwiftType> {
     guard let otherElements = Self._getElements(object: other) else {
       let e = self._createAddTypeError(other: other)
@@ -20,7 +20,7 @@ extension AbstractString {
     return builder.finalize()
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _createAddTypeError(other: PyObject) -> PyTypeError {
     let t = Self._pythonTypeName
     let otherType = other.typeName
@@ -30,7 +30,7 @@ extension AbstractString {
 
   // MARK: - Mul
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _mul(count countObject: PyObject) -> PyResult<SwiftType> {
     switch self._parseMulCount(object: countObject) {
     case let .value(count):
@@ -42,7 +42,7 @@ extension AbstractString {
     }
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _parseMulCount(object: PyObject) -> PyResult<Int> {
     guard let pyInt = PyCast.asInt(object) else {
       let t = Self._pythonTypeName
@@ -72,7 +72,7 @@ extension AbstractString {
     return builder.finalize()
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _rmul(count: PyObject) -> PyResult<SwiftType> {
     return self._mul(count: count)
   }

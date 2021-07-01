@@ -5,7 +5,7 @@ private let splitLinesArguments = ArgumentParser.createOrTrap(
 
 extension AbstractString {
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _splitLines(args: [PyObject], kwargs: PyDict?) -> PyResult<PyList> {
     switch splitLinesArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):

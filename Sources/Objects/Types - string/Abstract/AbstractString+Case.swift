@@ -2,7 +2,7 @@ extension AbstractString {
 
   // MARK: - Lower case
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _lowerCase() -> String {
     var result = ""
 
@@ -17,7 +17,7 @@ extension AbstractString {
 
   // MARK: - Upper case
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _upperCase() -> String {
     var result = ""
 
@@ -32,7 +32,7 @@ extension AbstractString {
 
   // MARK: - Title case
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _titleCase() -> String {
     var result = ""
     var isPreviousCased = false
@@ -69,7 +69,7 @@ extension AbstractString {
 
   // MARK: - Swap case
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _swapCase() -> String {
     var result = ""
 
@@ -91,7 +91,7 @@ extension AbstractString {
 
   // MARK: - Case fold
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _caseFold() -> String {
     var result = ""
 
@@ -110,7 +110,7 @@ extension AbstractString {
 
   // MARK: - Capitalize
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _capitalize() -> String {
     // Capitalize only the first scalar:
     // list("e\u0301".capitalize()) -> ['E', '́']

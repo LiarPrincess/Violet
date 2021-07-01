@@ -11,7 +11,7 @@ extension AbstractString {
 
   // MARK: - Find
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _find(object: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<BigInt> {
@@ -23,7 +23,7 @@ extension AbstractString {
 
   /// Use this method to find a `value` in `self`.
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _findImpl(value: Elements) -> AbstractString_FindResult<Elements> {
     let elementsAsSubstring = self.elements[...] // O(1)
     return self._findImpl(in: elementsAsSubstring, value: value)
@@ -31,7 +31,7 @@ extension AbstractString {
 
   /// Use this method to find a `value` in a given `substring`.
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _findImpl(
     in string: Elements.SubSequence,
     value: Elements
@@ -62,7 +62,7 @@ extension AbstractString {
 
   // MARK: - RFind
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _rfind(object: PyObject,
                        start: PyObject?,
                        end: PyObject?) -> PyResult<BigInt> {
@@ -74,7 +74,7 @@ extension AbstractString {
 
   /// Use this method to rfind a `value` in `self`.
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _rfindImpl(value: Elements) -> AbstractString_FindResult<Elements> {
     let elementsAsSubstring = self.elements[...] // O(1)
     return self._rfindImpl(in: elementsAsSubstring, value: value)
@@ -82,7 +82,7 @@ extension AbstractString {
 
   /// Use this method to find a `value` in a given `substring`.
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _rfindImpl(
     in string: Elements.SubSequence,
     value: Elements

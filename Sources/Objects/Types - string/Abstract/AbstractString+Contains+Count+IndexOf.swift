@@ -6,7 +6,7 @@ extension AbstractString {
 
   // MARK: - Contains
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _contains(element: PyObject) -> PyResult<Bool> {
     switch Self._getElementsForFindCountContainsIndexOf(object: element) {
     case .value(let value):
@@ -22,7 +22,7 @@ extension AbstractString {
     }
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _contains(value: Elements) -> Bool {
     // In Python: "\u00E9" in "Cafe\u0301" -> False
     // In Swift:  "Cafe\u{0301}".contains("\u{00E9}") -> True
@@ -40,7 +40,7 @@ extension AbstractString {
   ///                  const STRINGLIB_CHAR* sub, Py_ssize_t sub_len,
   ///                  Py_ssize_t maxcount)
   ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _count(object: PyObject,
                        start: PyObject?,
                        end: PyObject?) -> PyResult<BigInt> {
@@ -96,7 +96,7 @@ extension AbstractString {
 
   // MARK: - Index of
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _indexOf(object: PyObject,
                          start: PyObject?,
                          end: PyObject?) -> PyResult<BigInt> {
@@ -107,7 +107,7 @@ extension AbstractString {
                                  findFn: self._findImpl(in:value:))
   }
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _rindexOf(object: PyObject,
                           start: PyObject?,
                           end: PyObject?) -> PyResult<BigInt> {

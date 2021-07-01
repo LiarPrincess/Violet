@@ -2,7 +2,7 @@ extension AbstractString {
 
   // MARK: - Strip
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _strip(chars: PyObject?) -> PyResult<SwiftType> {
     return self._template(fnName: "strip",
                           chars: chars,
@@ -22,7 +22,7 @@ extension AbstractString {
 
   // MARK: - Left strip
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _lstrip(chars: PyObject?) -> PyResult<SwiftType> {
     return self._template(fnName: "lstrip",
                           chars: chars,
@@ -40,7 +40,7 @@ extension AbstractString {
 
   // MARK: - Right strip
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _rstrip(chars: PyObject?) -> PyResult<SwiftType> {
     return self._template(fnName: "rstrip",
                           chars: chars,
