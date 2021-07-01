@@ -10,7 +10,7 @@ extension AbstractString {
   /// DO NOT USE! This is a part of `AbstractString` implementation
   internal static func _isWhitespace(element: Element) -> Bool {
     let scalar = Self._asUnicodeScalar(element: element)
-    let properties = scalar.asUnicodeScalar.properties
+    let properties = scalar.properties
     return properties.isWhitespace
   }
 
@@ -44,7 +44,7 @@ extension AbstractString {
 
   private static func _isAlphaNumeric(element: Element) -> Bool {
     let scalar = Self._asUnicodeScalar(element: element)
-    let properties = scalar.asUnicodeScalar.properties
+    let properties = scalar.properties
     if properties.numericType != nil {
       return true
     }
@@ -77,7 +77,7 @@ extension AbstractString {
 
   private static func _isAlpha(element: Element) -> Bool {
     let scalar = Self._asUnicodeScalar(element: element)
-    let properties = scalar.asUnicodeScalar.properties
+    let properties = scalar.properties
     let category = properties.generalCategory
     return Unicode.alphaCategories.contains(category)
   }
@@ -99,7 +99,7 @@ extension AbstractString {
 
   private static func _isAscii(element: Element) -> Bool {
     let scalar = Self._asUnicodeScalar(element: element)
-    return scalar.asUnicodeScalar.isASCII
+    return scalar.isASCII
   }
 
   // MARK: - Decimal
@@ -121,7 +121,7 @@ extension AbstractString {
 
   private static func _isDecimal(element: Element) -> Bool {
     let scalar = Self._asUnicodeScalar(element: element)
-    let properties = scalar.asUnicodeScalar.properties
+    let properties = scalar.properties
     return properties.generalCategory == .decimalNumber
   }
 
@@ -144,7 +144,7 @@ extension AbstractString {
 
   private static func _isDigit(element: Element) -> Bool {
     let scalar = Self._asUnicodeScalar(element: element)
-    let properties = scalar.asUnicodeScalar.properties
+    let properties = scalar.properties
 
     guard let numericType = properties.numericType else {
       return false
@@ -172,7 +172,7 @@ extension AbstractString {
     let scalar = Self._asUnicodeScalar(element: element)
     // If a character does not have case then True, for example:
     // "a\u02B0b".islower() -> True
-    let properties = scalar.asUnicodeScalar.properties
+    let properties = scalar.properties
     return !properties.isCased || properties.isLowercase
   }
 
@@ -195,7 +195,7 @@ extension AbstractString {
     let scalar = Self._asUnicodeScalar(element: element)
     // If a character does not have case then True, for example:
     // "a\u02B0b".isupper() -> True
-    let properties = scalar.asUnicodeScalar.properties
+    let properties = scalar.properties
     return !properties.isCased || properties.isUppercase
   }
 
@@ -218,7 +218,7 @@ extension AbstractString {
 
   private static func _isNumeric(element: Element) -> Bool {
     let scalar = Self._asUnicodeScalar(element: element)
-    let properties = scalar.asUnicodeScalar.properties
+    let properties = scalar.properties
     return properties.numericType != nil
   }
 
@@ -250,15 +250,16 @@ extension AbstractString {
     return self.elements.allSatisfy(Self._isPrintable(element:))
   }
 
-  private static func _isPrintable(element: Element) -> Bool {
+  /// DO NOT USE! This is a part of `AbstractString` implementation
+  internal static func _isPrintable(element: Element) -> Bool {
     let scalar = Self._asUnicodeScalar(element: element)
-    let s = scalar.asUnicodeScalar
 
-    if s == " " { // 'space' is considered printable
+    // 'space' is considered printable
+    if scalar == " " {
       return true
     }
 
-    let category = s.properties.generalCategory
+    let category = scalar.properties.generalCategory
     switch category {
     case .control, // Cc
          .format, // Cf
@@ -294,9 +295,9 @@ extension AbstractString {
 
   private static func _isSpace(element: Element) -> Bool {
     let scalar = Self._asUnicodeScalar(element: element)
-    let s = scalar.asUnicodeScalar
-    let category = s.properties.generalCategory
-    return category == .spaceSeparator || Unicode.bidiClass_ws_b_s.contains(s.value)
+    let category = scalar.properties.generalCategory
+    return category == .spaceSeparator
+      || Unicode.bidiClass_ws_b_s.contains(scalar.value)
   }
 
   // MARK: - Title

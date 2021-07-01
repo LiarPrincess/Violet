@@ -3,7 +3,7 @@
 /// We can use `Array` as an accumulator, but then we would have to convert
 /// `Array<Scalar> -> String` and `Array<UInt8> -> Data` which is inefficient.
 /// We will introduce abstract `StringBuilder` to append directly to final object.
-internal protocol StringBuilderType2 {
+internal protocol StringBuilderType {
 
   // We need 'Elements' constraint to optimize 'append' for empty builder.
   // This way we will be able to just replace `self.acc` with 'other'.

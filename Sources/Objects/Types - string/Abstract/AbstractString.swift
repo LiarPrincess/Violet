@@ -32,7 +32,7 @@ internal protocol AbstractString: PyObject {
   associatedtype Elements: BidirectionalCollection where Elements.Element == Element
   /// See `StringBuilderType` documentation.
   /// `Builder.Result` is abstract and we will never touch it.
-  associatedtype Builder: StringBuilderType2 where Builder.Elements == Elements
+  associatedtype Builder: StringBuilderType where Builder.Elements == Elements
 
   /// Swift type representing this type (not exactly `Self`).
   associatedtype SwiftType: PyObject

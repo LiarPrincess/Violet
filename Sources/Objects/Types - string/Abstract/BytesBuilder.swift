@@ -1,6 +1,6 @@
 import Foundation
 
-internal struct BytesBuilder2: StringBuilderType2, GetItemSliceBuilderType {
+internal struct BytesBuilder: StringBuilderType, GetItemSliceBuilderType {
 
   internal typealias Elements = Data
   internal typealias Element = UInt8

@@ -203,7 +203,7 @@ public class PyString: PyObject, AbstractString {
       case "\r":
         result.append("\\r")
       default:
-        if StringImplementation.isPrintable(scalar: element) {
+        if Self._isPrintable(element: element) {
           result.append(element)
         } else {
           let repr = self.createNonPrintableRepr(scalar: element)

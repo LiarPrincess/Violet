@@ -1,4 +1,4 @@
-internal struct UnicodeScalarBuilder: StringBuilderType2 {
+internal struct UnicodeScalarBuilder: StringBuilderType {
 
   internal typealias Elements = String.UnicodeScalarView
   internal typealias Element = UnicodeScalar

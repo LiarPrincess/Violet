@@ -47,7 +47,7 @@ public class PyBytes: PyObject, AbstractBytes {
 
   internal typealias Element = UInt8
   internal typealias Elements = Data
-  internal typealias Builder = BytesBuilder2
+  internal typealias Builder = BytesBuilder
   internal typealias SwiftType = PyBytes
   internal typealias ElementSwiftType = PyInt
 
@@ -155,7 +155,7 @@ public class PyBytes: PyObject, AbstractBytes {
   private enum GetItemImpl: GetItemHelper {
     // swiftlint:disable nesting
     fileprivate typealias Source = Data
-    fileprivate typealias SliceBuilder = BytesBuilder2
+    fileprivate typealias SliceBuilder = BytesBuilder
     // swiftlint:enable nesting
   }
 

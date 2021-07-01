@@ -41,27 +41,6 @@ internal struct PyBytesData {
     return UnicodeScalar(element)
   }
 
-  internal static func extractSelf(
-    from object: PyObject
-  ) -> PyStringImplExtractedSelf<Self> {
-    // Most of the `bytes` functions also accept `int`.
-    // For example: `49 in b'123'`.
-    if let pyInt = PyCast.asInt(object) {
-      guard let byte = UInt8(exactly: pyInt.value) else {
-        let msg = "byte must be in range(0, 256)"
-        return .error(Py.newValueError(msg: msg))
-      }
-
-      return .value(PyBytesData(Data([byte])))
-    }
-
-    if let bytes = PyCast.asAnyBytes(object) {
-      return .value(PyBytesData(bytes.elements))
-    }
-
-    return .notSelf
-  }
-
   // MARK: - String conversion
 
   private var encoding: PyStringEncoding {
