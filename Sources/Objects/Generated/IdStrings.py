@@ -226,6 +226,8 @@ if __name__ == '__main__':
 public struct IdString {{
 
   internal let value: PyString
+  // 'hash' is cached on 'str', but by storing it on 'IdString' we can avoid
+  // memory fetch.
   internal let hash: PyHash
 
   fileprivate init(value: String) {{

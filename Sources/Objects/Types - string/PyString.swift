@@ -29,7 +29,13 @@ public class PyString: PyObject, AbstractString {
     errors defaults to 'strict'.
     """
 
+  private static let invalidHash = PyHash.zero
+
   public let value: String
+  /// Cache hash value because `str` is very often used as `__dict__` key.
+  ///
+  /// We can do this because `str` is immutable.
+  private var cachedHash = PyString.invalidHash
 
   /// We work on scalars (Unicode code points) instead of graphemes because:
   /// - len("Cafe\u0301") = 5 (Swift: "Cafe\u{0301}".unicodeScalars.count)
@@ -173,7 +179,11 @@ public class PyString: PyObject, AbstractString {
   }
 
   internal func hashImpl() -> PyHash {
-    return Py.hasher.hash(self.value)
+    if self.cachedHash == Self.invalidHash {
+      self.cachedHash = Py.hasher.hash(self.value)
+    }
+
+    return self.cachedHash
   }
 
   // MARK: - String

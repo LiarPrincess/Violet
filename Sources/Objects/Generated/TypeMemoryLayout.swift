@@ -272,6 +272,7 @@ extension PyType {
     public static let PyStaticMethod = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `value: String`
+    /// - `cachedHash: PyString`
     public static let PyString = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `string: PyString`
@@ -285,8 +286,8 @@ extension PyType {
     /// Fields:
     /// - `name: String?`
     /// - `fd: FileDescriptorType`
-    /// - `encoding: PyStringEncoding`
-    /// - `errors: PyStringErrorHandler`
+    /// - `encoding: PyString.Encoding`
+    /// - `errorHandling: PyString.ErrorHandling`
     /// - `mode: FileMode`
     public static let PyTextFile = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
