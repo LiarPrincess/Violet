@@ -3,6 +3,8 @@ import BigInt
 import VioletCore
 import VioletBytecode
 
+// swiftlint:disable file_length
+
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
@@ -71,6 +73,17 @@ extension PyInstance {
       PyString(value: value)
   }
 
+  public func newString(scalar: UnicodeScalar) -> PyString {
+    // ASCII values are used quite often, so it does not make sense to allocate
+    // a new object every time.
+    if scalar.isASCII {
+      return self.intern(scalar: scalar)
+    }
+
+    let string = String(scalar)
+    return Py.newString(string)
+  }
+
   public func newString(_ value: String.UnicodeScalarView) -> PyString {
     if value.isEmpty {
       return self.emptyString
@@ -92,22 +105,69 @@ extension PyInstance {
     return self.newString(string)
   }
 
+  // MARK: - Get string
+
+  internal enum GetStringResult {
+    case string(PyString, String)
+    case bytes(PyAnyBytes, String)
+    case byteDecodingError(PyAnyBytes)
+    case notStringOrBytes
+  }
+
+  /// Converts `Object` -> `String` (if possible).
+  ///
+  /// Mostly targeted towards `str`, `bytes` and `bytearray`.
+  internal func getString(object: PyObject) -> GetStringResult {
+    if let str = PyCast.asString(object) {
+      return .string(str, str.value)
+    }
+
+    if let bytes = PyCast.asAnyBytes(object) {
+      if let string = self.getString(data: bytes.elements) {
+        return .bytes(bytes, string)
+      }
+
+      return .byteDecodingError(bytes)
+    }
+
+    return .notStringOrBytes
+  }
+
+  /// Decode `bytes` as string.
+  ///
+  /// If this fails:
+  /// - Option 1: return `valueError` with following message:
+  /// '\(fnName) bytes '\(bytes.ptrString)' cannot be interpreted as str'.
+  /// - Option 2: return `return .byteDecodingError(bytes)`
+  internal func getString(bytes: PyAnyBytes,
+                          encoding: PyStringEncoding? = nil) -> String? {
+    return self.getString(data: bytes.elements)
+  }
+
+  /// Decode `data` as string.
+  ///
+  /// If this fails:
+  /// - Option 1: return `valueError` with following message:
+  /// '\(fnName) bytes '\(bytes.ptrString)' cannot be interpreted as str'.
+  /// - Option 2: return `return .byteDecodingError(bytes)`
+  internal func getString(data: Data,
+                          encoding: PyStringEncoding? = nil) -> String? {
+    let e = encoding ?? Py.sys.defaultEncoding
+    return String(data: data, encoding: e.swift)
+  }
+
+  // MARK: - Bytes
+
   public func newBytes(_ value: Data) -> PyBytes {
     return value.isEmpty ?
       self.emptyBytes :
       PyBytes(value: value)
   }
 
-  internal func newBytes(_ data: PyBytesData) -> PyBytes {
-    return PyBytes(value: data.values)
-  }
+  // MARK: - Byte array
 
   public func newByteArray(_ value: Data) -> PyByteArray {
     return PyByteArray(value: value)
-  }
-
-  internal func newByteArray(_ data: PyBytesData) -> PyByteArray {
-    return PyByteArray(value: data.values)
   }
 
   // MARK: - Namespace

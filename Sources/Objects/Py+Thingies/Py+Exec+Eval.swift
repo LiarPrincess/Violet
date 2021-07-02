@@ -149,7 +149,7 @@ extension ExecEval {
       return .value(code)
     }
 
-    switch Py.extractString(object: arg) {
+    switch Py.getString(object: arg) {
     case .string(_, let source),
          .bytes(_, let source):
       let compileResult = Py.compile(source: source,

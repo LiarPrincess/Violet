@@ -1,13 +1,14 @@
 import Foundation
 import VioletCore
 
+// swiftlint:disable function_parameter_count
+
 // In CPython:
 // Modules -> _io -> _iomodule.c
 // https://docs.python.org/3.7/library/io.html
 
 extension PyInstance {
 
-  // swiftlint:disable function_body_length
   /// open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None,
   ///            closefd=True, opener=None)
   /// See [this](https://docs.python.org/3/library/functions.html#open)
@@ -19,7 +20,6 @@ extension PyInstance {
                    newline newlineArg: PyObject? = nil,
                    closefd closefdArg: PyObject? = nil,
                    opener openerArg: PyObject? = nil) -> PyResult<PyObject> {
-    // swiftlint:enable function_body_length
     // We will ignore 'buffering', 'newline', and 'opener' because we are lazy.
 
     let source: FileSource
@@ -29,11 +29,11 @@ extension PyInstance {
     }
 
     let mode: FileMode
-    let type: FileType
+    let fileType: FileType
     switch FileModeParser.parse(modeArg) {
     case let .value(p):
       mode = p.mode ?? .default
-      type = p.type ?? .default
+      fileType = p.type ?? .default
     case let .error(e):
       return .error(e)
     }
@@ -58,49 +58,66 @@ extension PyInstance {
 
     // Delay `open` syscall until the end of the method,
     // so that we don't have to deal with dangling handles.
-    switch type {
+    return self.open(source: source,
+                     mode: mode,
+                     fileType: fileType,
+                     encoding: encoding,
+                     errors: errors,
+                     closeOnDealloc: closeOnDealloc)
+  }
+
+  private func open(source: FileSource,
+                    mode: FileMode,
+                    fileType: FileType,
+                    encoding: PyStringEncoding,
+                    errors: PyStringErrorHandler,
+                    closeOnDealloc: Bool) -> PyResult<PyObject> {
+    switch fileType {
     case .binary:
-      return .valueError("only text mode is currently supported")
+      return .valueError("only text mode is currently supported in Violet")
+
     case .text:
-      return self.open(source: source, mode: mode)
-        .map { PyTextFile(name: self.path(source: source),
-                          fd: $0,
-                          mode: mode,
-                          encoding: encoding,
-                          errors: errors,
-                          closeOnDealloc: closeOnDealloc)
-        }
+      switch self.openFileDescriptor(source: source, mode: mode) {
+      case let .value(fd):
+        let result = PyTextFile(name: fd.path,
+                                fd: fd.value,
+                                mode: mode,
+                                encoding: encoding,
+                                errors: errors,
+                                closeOnDealloc: closeOnDealloc)
+        return .value(result)
+
+      case let .error(e):
+        return .error(e)
+      }
     }
   }
 
-  private func path(source: FileSource) -> String? {
-    switch source {
-    case .fileDescriptor: return nil
-    case .string(let s): return s
-    case .bytes(let b): return self.toString(bytes: b)
-    }
+  private struct OpenedFileDescriptor {
+    let path: String?
+    let value: FileDescriptorType
   }
 
-  internal func open(source: FileSource,
-                     mode: FileMode) -> PyResult<FileDescriptorType> {
-
+  private func openFileDescriptor(
+    source: FileSource,
+    mode: FileMode
+  ) -> PyResult<OpenedFileDescriptor> {
     switch source {
-    case let .fileDescriptor(fd):
-      return self.fileSystem.open(fd: fd, mode: mode)
+    case let .fileDescriptor(fdInt):
+      let fd = self.fileSystem.open(fd: fdInt, mode: mode)
+      return fd.map { OpenedFileDescriptor(path: nil, value: $0) }
 
     case let .string(path):
-      return self.fileSystem.open(path: path, mode: mode)
+      let fd = self.fileSystem.open(path: path, mode: mode)
+      return fd.map { OpenedFileDescriptor(path: path, value: $0) }
 
-    case let .bytes(bytes):
-      guard let path = self.toString(bytes: bytes) else {
+    case let .bytes(data):
+      guard let path = Py.getString(data: data) else {
         return .valueError("bytes cannot interpreted as path")
       }
 
-      return self.fileSystem.open(path: path, mode: mode)
+      let fd = self.fileSystem.open(path: path, mode: mode)
+      return fd.map { OpenedFileDescriptor(path: path, value: $0) }
     }
-  }
-
-  private func toString(bytes: Data) -> String? {
-    return PyBytesData(bytes).string
   }
 }

@@ -1098,7 +1098,7 @@ public class PyInt: PyObject {
   private static func parseBigInt(string object: PyObject,
                                   base: Int) -> IntFromString {
     let string: String
-    switch Py.extractString(object: object) {
+    switch Py.getString(object: object) {
     case .string(_, let s),
          .bytes(_, let s):
       string = s

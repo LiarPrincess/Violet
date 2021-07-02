@@ -193,22 +193,18 @@ public final class UnderscoreOS: PyModuleImplementation {
   // MARK: - Helpers
 
   private func parsePath(object: PyObject) -> PyResult<PyString> {
-    if let str = PyCast.asString(object) {
-      return .value(str)
-    }
-
-    if let bytes = PyCast.asAnyBytes(object) {
-      let data = PyBytesData(bytes.elements)
-      if let str = data.string {
-        let result = Py.newString(str)
-        return .value(result)
-      }
-
+    switch Py.getString(object: object) {
+    case .string(let pyString, _):
+      return .value(pyString)
+    case .bytes(_, let string):
+      let result = Py.newString(string)
+      return .value(result)
+    case .byteDecodingError:
       return .valueError("cannot decode byte path as string")
+    case .notStringOrBytes:
+      let msg = "path should be string or bytes, not \(object.typeName)"
+      return .typeError(msg)
     }
-
-    let msg = "path should be string or bytes, not \(object.typeName)"
-    return .typeError(msg)
   }
 
   private enum ParsePathOrDescriptorResult {
@@ -229,21 +225,17 @@ public final class UnderscoreOS: PyModuleImplementation {
       return .error(Py.newOverflowError(msg: msg))
     }
 
-    if let str = PyCast.asString(object) {
-      return .path(str.value)
-    }
-
-    if let bytes = PyCast.asAnyBytes(object) {
-      let data = PyBytesData(bytes.elements)
-      if let str = data.string {
-        return .path(str)
-      }
-
+    switch Py.getString(object: object) {
+    case .string(_, let path):
+      return .path(path)
+    case .bytes(_, let path):
+      return .path(path)
+    case .byteDecodingError:
       let msg = "cannot decode byte path as string"
       return .error(Py.newValueError(msg: msg))
+    case .notStringOrBytes:
+      let msg = "path should be string, bytes or integer, not \(object.typeName)"
+      return .error(Py.newTypeError(msg: msg))
     }
-
-    let msg = "path should be string, bytes or integer, not \(object.typeName)"
-    return .error(Py.newTypeError(msg: msg))
   }
 }

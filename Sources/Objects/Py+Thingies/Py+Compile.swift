@@ -198,7 +198,7 @@ extension PyInstance {
 
   private func parseStringArg(argumentIndex index: Int,
                               arg: PyObject) -> PyResult<String> {
-    switch self.extractString(object: arg) {
+    switch self.getString(object: arg) {
     case .string(_, let s),
          .bytes(_, let s):
       return .value(s)

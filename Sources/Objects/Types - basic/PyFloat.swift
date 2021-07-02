@@ -831,7 +831,7 @@ public class PyFloat: PyObject {
   }
 
   private static func pyNew(fromString object: PyObject) -> DoubleFromString {
-    switch Py.extractString(object: object) {
+    switch Py.getString(object: object) {
     case .string(_, let s),
          .bytes(_, let s):
       guard let value = Double(parseUsingPythonRules: s) else {
