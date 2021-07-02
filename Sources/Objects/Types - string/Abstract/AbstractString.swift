@@ -51,6 +51,30 @@ internal protocol AbstractString: PyObject {
 
   var elements: Elements { get }
 
+  // MARK: - Properties
+
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _isWhitespace(element: Element) -> Bool
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _isLineBreak(element: Element) -> Bool
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _isAlphaNumeric(element: Element) -> Bool
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _isAlpha(element: Element) -> Bool
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _isAscii(element: Element) -> Bool
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _isDigit(element: Element) -> Bool
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _isLower(element: Element) -> Bool
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _isUpper(element: Element) -> Bool
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _isSpace(element: Element) -> Bool
+
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _asUnicodeScalar(element: Element) -> UnicodeScalar
+
   // MARK: - Fill
 
   /// Default fill character (for example for `center`).
@@ -96,10 +120,6 @@ internal protocol AbstractString: PyObject {
   static func _getElementsForFindCountContainsIndexOf(
     object: PyObject
   ) -> AbstractString_ElementsForFindCountContainsIndexOf<Elements>
-
-  // MARK: - Properties
-
-  static func _asUnicodeScalar(element: Element) -> UnicodeScalar
 }
 
 // MARK: - Common things
@@ -112,7 +132,7 @@ extension AbstractString {
   /// len("Cafe\u0301") -> 5
   /// len("Café")       -> 4
   /// ```
-  internal var _count: BigInt {
+  internal var _length: BigInt {
     let result = self.elements.count
     return BigInt(result)
   }

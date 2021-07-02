@@ -140,7 +140,7 @@ public class PyBytes: PyObject, AbstractBytes {
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
-    return self._count
+    return self._length
   }
 
   // MARK: - Contains

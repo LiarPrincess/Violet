@@ -1,6 +1,5 @@
 import Foundation
 import BigInt
-import VioletCore
 
 // MARK: - ASCII
 
@@ -114,11 +113,6 @@ extension AbstractBytes {
 
     return .bytes(result)
   }
-
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _asUnicodeScalar(element: UInt8) -> UnicodeScalar {
-    return UnicodeScalar(element)
-  }
 }
 
 // MARK: - Methods
@@ -217,57 +211,6 @@ extension AbstractBytes {
 
     let repr = self._repr()
     return .value(repr)
-  }
-
-  // MARK: - Case
-
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _lowerCaseBytes() -> SwiftType {
-    let string = self._lowerCase()
-    return self._encode(string)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _upperCaseBytes() -> SwiftType {
-    let string = self._upperCase()
-    return self._encode(string)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _titleCaseBytes() -> SwiftType {
-    let string = self._titleCase()
-    return self._encode(string)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _swapCaseBytes() -> SwiftType {
-    let string = self._swapCase()
-    return self._encode(string)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _caseFoldBytes() -> SwiftType {
-    let string = self._caseFold()
-    return self._encode(string)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _capitalizeBytes() -> SwiftType {
-    let string = self._capitalize()
-    return self._encode(string)
-  }
-
-  private func _encode(_ string: String) -> SwiftType {
-    let encoding = Py.sys.defaultEncoding
-    if let data = encoding.encode(string: string) {
-      let result = Self._toObject(result: data)
-      return result
-    }
-
-    let msg = "Violet error: Sometimes we convert 'bytes' to 'string' and back " +
-      "(mostly when we really need string, for example to check for whitespaces). " +
-      "Normally it works, but this time conversion back to bytes failed."
-    trap(msg)
   }
 
   // MARK: - As byte

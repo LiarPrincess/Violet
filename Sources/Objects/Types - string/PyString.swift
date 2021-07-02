@@ -8,9 +8,6 @@ import VioletCore
 // Objects -> unicodeobject.c
 // https://docs.python.org/3/library/stdtypes.html
 
-private typealias UnicodeScalarView = String.UnicodeScalarView
-private typealias UnicodeScalarViewSub = UnicodeScalarView.SubSequence
-
 // sourcery: pytype = str, default, baseType, unicodeSubclass
 /// Textual data in Python is handled with str objects, or strings.
 /// Strings are immutable sequences of Unicode code points.
@@ -41,7 +38,7 @@ public class PyString: PyObject, AbstractString {
   /// - len("Cafe\u0301") = 5 (Swift: "Cafe\u{0301}".unicodeScalars.count)
   /// - len("Café")       = 4 (Swift: "Café".unicodeScalars.count)
   /// See: https://www.python.org/dev/peps/pep-0393/
-  internal var elements: Elements {
+  internal var elements: String.UnicodeScalarView {
     return self.value.unicodeScalars
   }
 
@@ -84,26 +81,34 @@ public class PyString: PyObject, AbstractString {
   internal typealias SwiftType = PyString
   internal typealias ElementSwiftType = PyString
 
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static let _pythonTypeName = "str"
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static let _defaultFill: UnicodeScalar = " "
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static let _zFill: UnicodeScalar = "0"
 
-  internal static func _toObject(element: Element) -> ElementSwiftType {
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  internal static func _toObject(element: UnicodeScalar) -> ElementSwiftType {
     return Py.newString(element)
   }
 
-  internal static func _toObject(elements: Elements) -> SwiftType {
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  internal static func _toObject(elements: String.UnicodeScalarView) -> SwiftType {
     return Py.newString(elements)
   }
 
-  internal static func _toObject(elements: Elements.SubSequence) -> SwiftType {
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  internal static func _toObject(elements: Substring.UnicodeScalarView) -> SwiftType {
     return Py.newString(elements)
   }
 
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _toObject(result: String) -> SwiftType {
     return Py.newString(result)
   }
 
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _getElements(object: PyObject) -> Elements? {
     if let string = PyCast.asString(object) {
       return string.elements
@@ -112,6 +117,7 @@ public class PyString: PyObject, AbstractString {
     return nil
   }
 
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _getElementsForFindCountContainsIndexOf(
     object: PyObject
   ) -> AbstractString_ElementsForFindCountContainsIndexOf<Elements> {
@@ -121,10 +127,6 @@ public class PyString: PyObject, AbstractString {
     }
 
     return .invalidObjectType
-  }
-
-  internal static func _asUnicodeScalar(element: UnicodeScalar) -> UnicodeScalar {
-    return element
   }
 
   // MARK: - Equatable
@@ -301,7 +303,7 @@ public class PyString: PyObject, AbstractString {
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
-    return self._count
+    return self._length
   }
 
   // MARK: - Contains
@@ -369,7 +371,11 @@ public class PyString: PyObject, AbstractString {
 
   // sourcery: pymethod = isdecimal, doc = isdecimalDoc
   internal func isDecimal() -> Bool {
-    return self._isDecimal()
+    if self.elements.isEmpty {
+      return false
+    }
+
+    return self.elements.allSatisfy(Self._isDecimal(element:))
   }
 
   internal static let isdigitDoc = """
@@ -423,7 +429,11 @@ public class PyString: PyObject, AbstractString {
 
   // sourcery: pymethod = isnumeric, doc = isnumericDoc
   internal func isNumeric() -> Bool {
-    return self._isNumeric()
+    if self.elements.isEmpty {
+      return false
+    }
+
+    return self.elements.allSatisfy(Self._isNumeric(element:))
   }
 
   internal static let isprintableDoc = """
@@ -435,7 +445,9 @@ public class PyString: PyObject, AbstractString {
 
   // sourcery: pymethod = isprintable, doc = isprintableDoc
   internal func isPrintable() -> Bool {
-    return self._isPrintable()
+    // We do not have to check if 'self.elements.isEmpty'!
+    // Empty string is printable!
+    return self.elements.allSatisfy(Self._isPrintable(element:))
   }
 
   internal static let isspaceDoc = """
