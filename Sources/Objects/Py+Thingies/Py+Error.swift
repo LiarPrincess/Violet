@@ -261,7 +261,7 @@ extension PyInstance {
   /// Unicode decoding error.
   public func newUnicodeDecodeError(
     data: Data,
-    encoding: PyStringEncoding
+    encoding: PyString.Encoding
   ) -> PyUnicodeDecodeError {
     let bytes = self.newBytes(data)
     return self.newUnicodeDecodeError(bytes: bytes, encoding: encoding)
@@ -270,7 +270,7 @@ extension PyInstance {
   /// Unicode decoding error.
   internal func newUnicodeDecodeError(
     bytes: PyBytes,
-    encoding: PyStringEncoding
+    encoding: PyString.Encoding
   ) -> PyUnicodeDecodeError {
     return self.newUnicodeDecodeError(bytes: .init(bytes: bytes), encoding: encoding)
   }
@@ -278,7 +278,7 @@ extension PyInstance {
   /// Unicode decoding error.
   internal func newUnicodeDecodeError(
     bytearray: PyByteArray,
-    encoding: PyStringEncoding
+    encoding: PyString.Encoding
   ) -> PyUnicodeDecodeError {
     return self.newUnicodeDecodeError(bytes: .init(bytearray: bytearray), encoding: encoding)
   }
@@ -286,7 +286,7 @@ extension PyInstance {
   /// Unicode decoding error.
   internal func newUnicodeDecodeError(
     bytes: PyAnyBytes,
-    encoding: PyStringEncoding
+    encoding: PyString.Encoding
   ) -> PyUnicodeDecodeError {
     let msg = "'\(encoding)' codec can't decode data"
     let error = PyUnicodeDecodeError(msg: msg)
@@ -301,7 +301,7 @@ extension PyInstance {
   /// Unicode encoding error.
   public func newUnicodeEncodeError(
     string: String,
-    encoding: PyStringEncoding
+    encoding: PyString.Encoding
   ) -> PyUnicodeEncodeError {
     let str = self.newString(string)
     return self.newUnicodeEncodeError(string: str, encoding: encoding)
@@ -310,7 +310,7 @@ extension PyInstance {
   /// Unicode encoding error.
   public func newUnicodeEncodeError(
     string: PyString,
-    encoding: PyStringEncoding
+    encoding: PyString.Encoding
   ) -> PyUnicodeEncodeError {
     let msg = "'\(encoding)' codec can't encode data"
     let error = PyUnicodeEncodeError(msg: msg)

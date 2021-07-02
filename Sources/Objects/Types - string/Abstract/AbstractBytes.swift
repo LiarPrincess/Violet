@@ -259,7 +259,7 @@ extension AbstractBytes {
 
   private func _encode(_ string: String) -> SwiftType {
     let encoding = Py.sys.defaultEncoding
-    if let data = string.data(using: encoding.swift) {
+    if let data = encoding.encode(string: string) {
       let result = Self._toObject(result: data)
       return result
     }

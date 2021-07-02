@@ -37,7 +37,7 @@ public class PyTextFile: PyObject {
 
   internal let name: String?
   internal let fd: FileDescriptorType
-  internal let encoding: PyStringEncoding
+  internal let encoding: PyString.Encoding
   internal let errors: PyStringErrorHandler
 
   internal let mode: FileMode
@@ -57,7 +57,7 @@ public class PyTextFile: PyObject {
 
   internal convenience init(fd: FileDescriptorType,
                             mode: FileMode,
-                            encoding: PyStringEncoding,
+                            encoding: PyString.Encoding,
                             errors: PyStringErrorHandler,
                             closeOnDealloc: Bool) {
     self.init(name: nil,
@@ -71,7 +71,7 @@ public class PyTextFile: PyObject {
   internal init(name: String?,
                 fd: FileDescriptorType,
                 mode: FileMode,
-                encoding: PyStringEncoding,
+                encoding: PyString.Encoding,
                 errors: PyStringErrorHandler,
                 closeOnDealloc: Bool) {
     self.name = name
@@ -144,9 +144,13 @@ public class PyTextFile: PyObject {
       return .error(e)
     }
 
-    let data = self.fd.readLine()
-    let string = data.flatMap(self.decode(data:))
-    return string
+    let readLineResult = self.fd.readLine()
+    switch readLineResult {
+    case let .value(data):
+      return self.encoding.decodeOrError(data: data, errorHandling: self.errors)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // sourcery: pymethod = read
@@ -170,24 +174,32 @@ public class PyTextFile: PyObject {
   }
 
   public func read(size: Int) -> PyResult<PyString> {
-    return self.readRaw(size: size).map(Py.newString(_:))
-  }
-
-  internal func readRaw(size: Int) -> PyResult<String> {
     if let e = self.assertFileIsOpenAndReadable() {
       return .error(e)
     }
 
     if size == 0 {
-      return .value("")
+      return .value(Py.emptyString)
     }
 
-    let data = size > 0 ?
+    let readResult = size > 0 ?
       self.fd.read(upToCount: size) :
       self.fd.readToEnd()
 
-    let string = data.flatMap(self.decode(data:))
-    return string
+    let data: Data
+    switch readResult {
+    case let .value(d): data = d
+    case let .error(e): return .error(e)
+    }
+
+    let string: String
+    switch self.encoding.decodeOrError(data: data, errorHandling: self.errors) {
+    case let .value(s): string = s
+    case let .error(e): return .error(e)
+    }
+
+    let result = Py.newString(string)
+    return .value(result)
   }
 
   private func assertFileIsOpenAndReadable() -> PyBaseException? {
@@ -200,10 +212,6 @@ public class PyTextFile: PyObject {
     }
 
     return nil
-  }
-
-  private func decode(data: Data) -> PyResult<String> {
-    return self.encoding.decode(data: data, errors: self.errors)
   }
 
   // MARK: - Write
@@ -239,9 +247,12 @@ public class PyTextFile: PyObject {
       return .error(self.modeError("not writable"))
     }
 
-    let data = self.encoding.encode(string: string, errors: self.errors)
-    let result = data.flatMap(self.fd.write(contentsOf:))
-    return result
+    switch encoding.encodeOrError(string: string, errorHandling: errors) {
+    case let .value(data):
+      return self.fd.write(contentsOf: data)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Flush

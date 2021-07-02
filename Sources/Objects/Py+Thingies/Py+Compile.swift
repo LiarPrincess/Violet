@@ -65,8 +65,8 @@ extension PyInstance {
     case let .error(e): return .error(e)
     }
 
-    let encoding = PyStringEncoding.default
-    guard let source = String(data: data, encoding: encoding.swift) else {
+    let encoding = PyString.Encoding.default
+    guard let source = encoding.decode(data: data) else {
       let e = self.newUnicodeDecodeError(data: data, encoding: encoding)
       return .error(e)
     }

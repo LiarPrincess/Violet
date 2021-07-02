@@ -61,8 +61,8 @@ extension AbstractBytes {
   private static func _fromEncoded(object: PyObject,
                                    encoding encodingObject: PyObject?,
                                    errors errorObject: PyObject?) -> PyResult<Data> {
-    let encoding: PyStringEncoding
-    switch PyStringEncoding.from(encodingObject) {
+    let encoding: PyString.Encoding
+    switch PyString.Encoding.from(object: encodingObject) {
     case let .value(e): encoding = e
     case let .error(e): return .error(e)
     }
@@ -77,7 +77,7 @@ extension AbstractBytes {
       return .typeError("encoding without a string argument")
     }
 
-    return encoding.encode(string: string.value, errors: errors)
+    return encoding.encodeOrError(string: string.value, errorHandling: errors)
   }
 
   // MARK: - From count

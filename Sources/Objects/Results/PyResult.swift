@@ -6,10 +6,11 @@ import VioletCore
 /// On a type-system level:
 /// given a type `Wrapped` it will add `error` possibility to it.
 public enum PyResult<Wrapped> {
+
   /// Use this ctor for ordinary (non-error) values.
   ///
   /// It can still hold `error` (meaning subclass of `BaseException`),
-  /// but in this case it is just a local variable, not object to be raised.
+  /// but in this case it is just a local variable, not an object to be raised.
   case value(Wrapped)
   /// Use this ctor to raise error in VM.
   case error(PyBaseException)
@@ -115,13 +116,13 @@ extension PyResult {
     return PyResult.error(Py.newLookupError(msg: msg))
   }
 
-  public static func unicodeDecodeError(encoding: PyStringEncoding,
+  public static func unicodeDecodeError(encoding: PyString.Encoding,
                                         data: Data) -> PyResult<Wrapped> {
     let error = Py.newUnicodeDecodeError(data: data, encoding: encoding)
     return PyResult.error(error)
   }
 
-  public static func unicodeEncodeError(encoding: PyStringEncoding,
+  public static func unicodeEncodeError(encoding: PyString.Encoding,
                                         string: String) -> PyResult<Wrapped> {
     let error = Py.newUnicodeEncodeError(string: string, encoding: encoding)
     return PyResult.error(error)

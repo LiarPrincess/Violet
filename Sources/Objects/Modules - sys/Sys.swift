@@ -119,7 +119,7 @@ public final class Sys: PyModuleImplementation {
   public let hashInfo = HashInfo()
 
   /// This value will be returned in `sys.getdefaultencoding`.
-  public var defaultEncoding: PyStringEncoding {
+  public var defaultEncoding: PyString.Encoding {
     return .utf8
   }
 

@@ -117,13 +117,14 @@ extension PyInstance {
   /// Converts `Object` -> `String` (if possible).
   ///
   /// Mostly targeted towards `str`, `bytes` and `bytearray`.
-  internal func getString(object: PyObject) -> GetStringResult {
+  internal func getString(object: PyObject,
+                          encoding: PyString.Encoding? = nil) -> GetStringResult {
     if let str = PyCast.asString(object) {
       return .string(str, str.value)
     }
 
     if let bytes = PyCast.asAnyBytes(object) {
-      if let string = self.getString(data: bytes.elements) {
+      if let string = self.getString(data: bytes.elements, encoding: encoding) {
         return .bytes(bytes, string)
       }
 
@@ -140,8 +141,8 @@ extension PyInstance {
   /// '\(fnName) bytes '\(bytes.ptrString)' cannot be interpreted as str'.
   /// - Option 2: return `return .byteDecodingError(bytes)`
   internal func getString(bytes: PyAnyBytes,
-                          encoding: PyStringEncoding? = nil) -> String? {
-    return self.getString(data: bytes.elements)
+                          encoding: PyString.Encoding? = nil) -> String? {
+    return self.getString(data: bytes.elements, encoding: encoding)
   }
 
   /// Decode `data` as string.
@@ -151,9 +152,9 @@ extension PyInstance {
   /// '\(fnName) bytes '\(bytes.ptrString)' cannot be interpreted as str'.
   /// - Option 2: return `return .byteDecodingError(bytes)`
   internal func getString(data: Data,
-                          encoding: PyStringEncoding? = nil) -> String? {
+                          encoding: PyString.Encoding? = nil) -> String? {
     let e = encoding ?? Py.sys.defaultEncoding
-    return String(data: data, encoding: e.swift)
+    return e.decode(data: data)
   }
 
   // MARK: - Bytes

@@ -38,8 +38,8 @@ extension PyInstance {
       return .error(e)
     }
 
-    let encoding: PyStringEncoding
-    switch PyStringEncoding.from(encodingArg) {
+    let encoding: PyString.Encoding
+    switch PyString.Encoding.from(object: encodingArg) {
     case let .value(e): encoding = e
     case let .error(e): return .error(e)
     }
@@ -69,7 +69,7 @@ extension PyInstance {
   private func open(source: FileSource,
                     mode: FileMode,
                     fileType: FileType,
-                    encoding: PyStringEncoding,
+                    encoding: PyString.Encoding,
                     errors: PyStringErrorHandler,
                     closeOnDealloc: Bool) -> PyResult<PyObject> {
     switch fileType {

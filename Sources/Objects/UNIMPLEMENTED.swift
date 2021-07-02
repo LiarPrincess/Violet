@@ -4,7 +4,7 @@ internal enum Unimplemented {
 
   /// For proper implementation see:
   /// static PyObject* create_stdio(PyObject* io, ...)
-  internal static let stdioEncoding = PyStringEncoding.utf8
+  internal static let stdioEncoding = PyString.Encoding.utf8
   /// For proper implementation see:
   /// static PyObject* create_stdio(PyObject* io, ...)
   internal static let stdioErrors = PyStringErrorHandler.strict
@@ -26,6 +26,6 @@ internal enum Unimplemented {
     /// >>> locale.getpreferredencoding()
     /// 'UTF-8'
     /// ```
-    internal static let getpreferredencoding = PyStringEncoding.utf8
+    internal static let getpreferredencoding = PyString.Encoding.utf8
   }
 }

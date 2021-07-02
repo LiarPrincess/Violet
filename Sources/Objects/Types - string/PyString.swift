@@ -819,19 +819,15 @@ public class PyString: PyObject, AbstractString {
 
   private static func pyNew(type: PyType,
                             object: PyObject?,
-                            encoding encodingObj: PyObject?,
-                            errors errorObj: PyObject?) -> PyResult<PyString> {
-    let isBuiltin = type === Py.types.str
-    let alloca = isBuiltin ?
-      self.newString(type:value:) :
-      PyStringHeap.init(type:value:)
-
+                            encoding encodingObject: PyObject?,
+                            errors errorObject: PyObject?) -> PyResult<PyString> {
     guard let object = object else {
-      return .value(alloca(type, ""))
+      let result = Self.allocateString(type: type, value: "")
+      return .value(result)
     }
 
     // Fast path when we don't have encoding and kwargs
-    if encodingObj == nil && errorObj == nil {
+    if encodingObject == nil && errorObject == nil {
       // Is this object already a 'str'?
       if let str = PyCast.asString(object) {
         // If we are builtin 'str' (not a subclass) -> return itself
@@ -843,24 +839,25 @@ public class PyString: PyObject, AbstractString {
         return .value(result)
       }
 
-      // 'str' of a str-subtype should be a 'str', not this subtype
-      return Py.strValue(object: object).map { alloca(type, $0) }
+      let str = Py.strValue(object: object)
+      return str.map { Self.allocateString(type: type, value: $0) }
     }
 
-    let encoding: PyStringEncoding
-    switch PyStringEncoding.from(encodingObj) {
+    let encoding: Encoding
+    switch Encoding.from(object: encodingObject) {
     case let .value(e): encoding = e
     case let .error(e): return .error(e)
     }
 
     let errors: PyStringErrorHandler
-    switch PyStringErrorHandler.from(errorObj) {
+    switch PyStringErrorHandler.from(errorObject) {
     case let .value(e): errors = e
     case let .error(e): return .error(e)
     }
 
     if let bytes = PyCast.asAnyBytes(object) {
-      return encoding.decode(data: bytes.elements, errors: errors).map { alloca(type, $0) }
+      let string = encoding.decodeOrError(data: bytes.elements, errorHandling: errors)
+      return string.map { Self.allocateString(type: type, value: $0) }
     }
 
     if PyCast.isString(object) {
@@ -872,7 +869,10 @@ public class PyString: PyObject, AbstractString {
   }
 
   /// Allocate new PyString (it will use 'builtins' cache if possible).
-  private static func newString(type: PyType, value: String) -> PyString {
-    return Py.newString(value)
+  private static func allocateString(type: PyType, value: String) -> PyString {
+    let isBuiltin = type === Py.types.str
+    return isBuiltin ?
+      Py.newString(value):
+      PyStringHeap(type: type, value: value)
   }
 }
