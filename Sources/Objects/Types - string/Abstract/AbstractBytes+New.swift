@@ -67,9 +67,9 @@ extension AbstractBytes {
     case let .error(e): return .error(e)
     }
 
-    let errors: PyStringErrorHandler
-    switch PyStringErrorHandler.from(errorObject) {
-    case let .value(e): errors = e
+    let errorHandling: PyString.ErrorHandling
+    switch PyString.ErrorHandling.from(object: errorObject) {
+    case let .value(e): errorHandling = e
     case let .error(e): return .error(e)
     }
 
@@ -77,7 +77,7 @@ extension AbstractBytes {
       return .typeError("encoding without a string argument")
     }
 
-    return encoding.encodeOrError(string: string.value, errorHandling: errors)
+    return encoding.encodeOrError(string: string.value, onError: errorHandling)
   }
 
   // MARK: - From count

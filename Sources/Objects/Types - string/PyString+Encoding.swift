@@ -24,7 +24,7 @@ extension PyString {
     /// utf_32_le, UTF-32LE; all languages
     case utf32LittleEndian
 
-    internal static let `default` = Unimplemented.locale.getpreferredencoding
+    public static let `default` = Unimplemented.locale.getpreferredencoding
 
     private var inSwift: String.Encoding {
       switch self {
@@ -57,22 +57,19 @@ extension PyString {
     // MARK: - Decode
 
     /// Decode `data` returning `nil` if it fails.
-    internal func decode(data: Data) -> String? {
+    public func decode(data: Data) -> String? {
       return String(data: data, encoding: self.inSwift)
     }
 
     /// Decode `data`.
     /// If this fails -> handle error according to `errorHandling` argument.
-    internal func decodeOrError(
-      data: Data,
-      errorHandling: PyStringErrorHandler
-    ) -> PyResult<String> {
+    public func decodeOrError(data: Data, onError: ErrorHandling) -> PyResult<String> {
       if let string = self.decode(data: data) {
         return .value(string)
       }
 
       // static int _PyCodecRegistry_Init(void)
-      switch errorHandling {
+      switch onError {
       case .strict:
         return .unicodeDecodeError(encoding: self, data: data)
       case .ignore:
@@ -83,22 +80,19 @@ extension PyString {
     // MARK: - Encode
 
     /// Encode `string` returning `nil` if it fails.
-    internal func encode(string: String) -> Data? {
+    public func encode(string: String) -> Data? {
       return string.data(using: self.inSwift, allowLossyConversion: false)
     }
 
     /// Encode `data`.
     /// If this fails -> handle error according to `errorHandling` argument.
-    internal func encodeOrError(
-      string: String,
-      errorHandling: PyStringErrorHandler
-    ) -> PyResult<Data> {
+    public func encodeOrError(string: String, onError: ErrorHandling) -> PyResult<Data> {
       if let data = self.encode(string: string) {
         return .value(data)
       }
 
       // static int _PyCodecRegistry_Init(void)
-      switch errorHandling {
+      switch onError {
       case .strict:
         return .unicodeEncodeError(encoding: self, string: string)
       case .ignore:
@@ -108,7 +102,7 @@ extension PyString {
 
     // MARK: - From
 
-    internal static func from(object: PyObject?) -> PyResult<Encoding> {
+    public static func from(object: PyObject?) -> PyResult<Encoding> {
       guard let object = object else {
         return .value(.default)
       }
@@ -120,7 +114,7 @@ extension PyString {
       return Self.from(string: string.value)
     }
 
-    internal static func from(string: String) -> PyResult<Encoding> {
+    public static func from(string: String) -> PyResult<Encoding> {
       switch string {
       case "ascii", "646", "us-ascii":
         return .value(.ascii)

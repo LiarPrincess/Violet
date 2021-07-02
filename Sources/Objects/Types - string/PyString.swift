@@ -849,14 +849,14 @@ public class PyString: PyObject, AbstractString {
     case let .error(e): return .error(e)
     }
 
-    let errors: PyStringErrorHandler
-    switch PyStringErrorHandler.from(errorObject) {
-    case let .value(e): errors = e
+    let errorHandling: ErrorHandling
+    switch ErrorHandling.from(object: errorObject) {
+    case let .value(e): errorHandling = e
     case let .error(e): return .error(e)
     }
 
     if let bytes = PyCast.asAnyBytes(object) {
-      let string = encoding.decodeOrError(data: bytes.elements, errorHandling: errors)
+      let string = encoding.decodeOrError(data: bytes.elements, onError: errorHandling)
       return string.map { Self.allocateString(type: type, value: $0) }
     }
 

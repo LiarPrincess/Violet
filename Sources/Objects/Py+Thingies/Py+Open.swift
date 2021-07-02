@@ -44,9 +44,9 @@ extension PyInstance {
     case let .error(e): return .error(e)
     }
 
-    let errors: PyStringErrorHandler
-    switch PyStringErrorHandler.from(errorsArg) {
-    case let .value(e): errors = e
+    let errorHandling: PyString.ErrorHandling
+    switch PyString.ErrorHandling.from(object: errorsArg) {
+    case let .value(e): errorHandling = e
     case let .error(e): return .error(e)
     }
 
@@ -62,7 +62,7 @@ extension PyInstance {
                      mode: mode,
                      fileType: fileType,
                      encoding: encoding,
-                     errors: errors,
+                     errorHandling: errorHandling,
                      closeOnDealloc: closeOnDealloc)
   }
 
@@ -70,7 +70,7 @@ extension PyInstance {
                     mode: FileMode,
                     fileType: FileType,
                     encoding: PyString.Encoding,
-                    errors: PyStringErrorHandler,
+                    errorHandling: PyString.ErrorHandling,
                     closeOnDealloc: Bool) -> PyResult<PyObject> {
     switch fileType {
     case .binary:
@@ -83,7 +83,7 @@ extension PyInstance {
                                 fd: fd.value,
                                 mode: mode,
                                 encoding: encoding,
-                                errors: errors,
+                                errorHandling: errorHandling,
                                 closeOnDealloc: closeOnDealloc)
         return .value(result)
 

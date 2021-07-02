@@ -38,7 +38,7 @@ public class PyTextFile: PyObject {
   internal let name: String?
   internal let fd: FileDescriptorType
   internal let encoding: PyString.Encoding
-  internal let errors: PyStringErrorHandler
+  internal let errorHandling: PyString.ErrorHandling
 
   internal let mode: FileMode
 
@@ -58,13 +58,13 @@ public class PyTextFile: PyObject {
   internal convenience init(fd: FileDescriptorType,
                             mode: FileMode,
                             encoding: PyString.Encoding,
-                            errors: PyStringErrorHandler,
+                            errorHandling: PyString.ErrorHandling,
                             closeOnDealloc: Bool) {
     self.init(name: nil,
               fd: fd,
               mode: mode,
               encoding: encoding,
-              errors: errors,
+              errorHandling: errorHandling,
               closeOnDealloc: closeOnDealloc)
   }
 
@@ -72,12 +72,12 @@ public class PyTextFile: PyObject {
                 fd: FileDescriptorType,
                 mode: FileMode,
                 encoding: PyString.Encoding,
-                errors: PyStringErrorHandler,
+                errorHandling: PyString.ErrorHandling,
                 closeOnDealloc: Bool) {
     self.name = name
     self.fd = fd
     self.encoding = encoding
-    self.errors = errors
+    self.errorHandling = errorHandling
     self.mode = mode
     super.init(type: Py.types.textFile)
     self.closeOnDealloc = closeOnDealloc
@@ -147,7 +147,7 @@ public class PyTextFile: PyObject {
     let readLineResult = self.fd.readLine()
     switch readLineResult {
     case let .value(data):
-      return self.encoding.decodeOrError(data: data, errorHandling: self.errors)
+      return self.encoding.decodeOrError(data: data, onError: self.errorHandling)
     case let .error(e):
       return .error(e)
     }
@@ -193,7 +193,7 @@ public class PyTextFile: PyObject {
     }
 
     let string: String
-    switch self.encoding.decodeOrError(data: data, errorHandling: self.errors) {
+    switch self.encoding.decodeOrError(data: data, onError: self.errorHandling) {
     case let .value(s): string = s
     case let .error(e): return .error(e)
     }
@@ -247,7 +247,7 @@ public class PyTextFile: PyObject {
       return .error(self.modeError("not writable"))
     }
 
-    switch encoding.encodeOrError(string: string, errorHandling: errors) {
+    switch encoding.encodeOrError(string: string, onError: self.errorHandling) {
     case let .value(data):
       return self.fd.write(contentsOf: data)
     case let .error(e):

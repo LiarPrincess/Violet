@@ -139,27 +139,21 @@ extension Sys {
   // MARK: - Initial
 
   internal func createInitialStdin() -> PyTextFile {
-    return self.createStdio(
-      name: "<stdin>",
-      fd: Py.config.standardInput,
-      mode: .read
-    )
+    return self.createStdio(name: "<stdin>",
+                            fd: Py.config.standardInput,
+                            mode: .read)
   }
 
   internal func createInitialStdout() -> PyTextFile {
-    return self.createStdio(
-      name: "<stdout>",
-      fd: Py.config.standardOutput,
-      mode: .write
-    )
+    return self.createStdio(name: "<stdout>",
+                            fd: Py.config.standardOutput,
+                            mode: .write)
   }
 
   internal func createInitialStderr() -> PyTextFile {
-    return self.createStdio(
-      name: "<stderr>",
-      fd: Py.config.standardError,
-      mode: .write
-    )
+    return self.createStdio(name: "<stderr>",
+                            fd: Py.config.standardError,
+                            mode: .write)
   }
 
   /// static PyObject*
@@ -167,13 +161,11 @@ extension Sys {
   private func createStdio(name: String,
                            fd: FileDescriptorType,
                            mode: FileMode) -> PyTextFile {
-    return PyTextFile(
-      name: name,
-      fd: fd,
-      mode: mode,
-      encoding: Unimplemented.stdioEncoding,
-      errors: Unimplemented.stdioErrors,
-      closeOnDealloc: false
-    )
+    return PyTextFile(name: name,
+                      fd: fd,
+                      mode: mode,
+                      encoding: Unimplemented.stdioEncoding,
+                      errorHandling: Unimplemented.stdioErrors,
+                      closeOnDealloc: false)
   }
 }

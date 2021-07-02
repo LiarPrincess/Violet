@@ -7,7 +7,7 @@ internal enum Unimplemented {
   internal static let stdioEncoding = PyString.Encoding.utf8
   /// For proper implementation see:
   /// static PyObject* create_stdio(PyObject* io, ...)
-  internal static let stdioErrors = PyStringErrorHandler.strict
+  internal static let stdioErrors = PyString.ErrorHandling.strict
 
   /// In every place that assumes no threads we will assert on this variable.
   ///
