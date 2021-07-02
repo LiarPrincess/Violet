@@ -3,31 +3,31 @@ extension AbstractString {
   // MARK: - Lower case
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _lowerCase() -> String {
-    var result = ""
+  internal func _lowerCase() -> SwiftType {
+    var builder = Builder(capacity: self.elements.count)
 
     for element in self.elements {
-      let scalar = Self._asUnicodeScalar(element: element)
-      let cased = scalar.properties.lowercaseMapping
-      result.append(contentsOf: cased)
+      let mapping = Self._lowercaseMapping(element: element)
+      builder.append(contentsOf: mapping)
     }
 
-    return result
+    let result = builder.finalize()
+    return Self._toObject(result: result)
   }
 
   // MARK: - Upper case
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _upperCase() -> String {
-    var result = ""
+  internal func _upperCase() -> SwiftType {
+    var builder = Builder(capacity: self.elements.count)
 
     for element in self.elements {
-      let scalar = Self._asUnicodeScalar(element: element)
-      let cased = scalar.properties.uppercaseMapping
-      result.append(contentsOf: cased)
+      let mapping = Self._uppercaseMapping(element: element)
+      builder.append(contentsOf: mapping)
     }
 
-    return result
+    let result = builder.finalize()
+    return Self._toObject(result: result)
   }
 
   // MARK: - Title case

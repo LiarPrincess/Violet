@@ -3,9 +3,6 @@ import BigInt
 
 // MARK: - ASCII
 
-// Use 'man ascii', but also this:
-// http://html-codes.info/ascii/standard/
-
 /// \t
 private let ascii_horizontal_tab: UInt8 = 9
 /// LF, \n

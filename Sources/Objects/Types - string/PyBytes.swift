@@ -420,12 +420,12 @@ public class PyBytes: PyObject, AbstractBytes {
 
   // sourcery: pymethod = lower
   internal func lower() -> PyBytes {
-    return self._lowerCaseBytes()
+    return self._lowerCase()
   }
 
   // sourcery: pymethod = upper
   internal func upper() -> PyBytes {
-    return self._upperCaseBytes()
+    return self._upperCase()
   }
 
   // sourcery: pymethod = title

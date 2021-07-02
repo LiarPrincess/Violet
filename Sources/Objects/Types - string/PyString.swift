@@ -633,12 +633,12 @@ public class PyString: PyObject, AbstractString {
   // MARK: - Case
 
   // sourcery: pymethod = lower
-  internal func lower() -> String {
+  internal func lower() -> PyString {
     return self._lowerCase()
   }
 
   // sourcery: pymethod = upper
-  internal func upper() -> String {
+  internal func upper() -> PyString {
     return self._upperCase()
   }
 

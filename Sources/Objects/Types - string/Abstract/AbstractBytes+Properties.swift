@@ -1,4 +1,14 @@
+import Foundation
 import VioletCore
+
+// swiftlint:disable yoda_condition
+
+extension Data {
+  // This is safe and does not require heap allocation.
+  fileprivate init(byte: UInt8) {
+    self = Data(repeating: byte, count: 1)
+  }
+}
 
 // Use following code:
 //
@@ -44,7 +54,7 @@ extension AbstractBytes {
 
   // MARK: - Whitespace
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal static func _isWhitespace(element: UInt8) -> Bool {
     // Modify the program with following:
     // b = bytearray(2)
@@ -55,23 +65,24 @@ extension AbstractBytes {
     // stripped = b.strip()
     // has_len_changed = len(b) != len(stripped)
     // current = has_len_changed
-    return element == 32  // Space
-      || (9 <= element && element < 14)
+
+    // Space
     // Horizontal Tab, Line Feed, Vertical Tab, Form Feed, Carriage Return
+    return element == 32 || (9 <= element && element < 14)
   }
 
   // MARK: - Space
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal static func _isSpace(element: UInt8) -> Bool {
-    return element == 32  // Space
-      || (9 <= element && element < 14)
+    // Space
     // Horizontal Tab, Line Feed, Vertical Tab, Form Feed, Carriage Return
+    return element == 32 || (9 <= element && element < 14)
   }
 
   // MARK: - Line break
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal static func _isLineBreak(element: UInt8) -> Bool {
     // Modify the program with following:
     // b = bytearray(3)
@@ -83,13 +94,12 @@ extension AbstractBytes {
     // split = b.splitlines()
     // has_many_lines = len(split) != 1
     // current = has_many_lines
-    return element == 10 // // Line Feed
-      || element == 13 // Carriage Return
+    return element == 10 || element == 13 // Line Feed, Carriage Return
   }
 
   // MARK: - AlphaNumeric
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal static func _isAlphaNumeric(element: UInt8) -> Bool {
     return (48 <= element && element < 58)  // digits
       || (65 <= element && element < 91) // uppercase
@@ -98,7 +108,7 @@ extension AbstractBytes {
 
   // MARK: - Alpha
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal static func _isAlpha(element: UInt8) -> Bool {
     return (65 <= element && element < 91) // uppercase
       || (97 <= element && element < 123) // lowercase
@@ -106,45 +116,53 @@ extension AbstractBytes {
 
   // MARK: - ASCII
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal static func _isAscii(element: UInt8) -> Bool {
-    return (0 <= element && element < 128)
+    return 0 <= element && element < 128
   }
 
   // MARK: - Digit
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal static func _isDigit(element: UInt8) -> Bool {
-    return (48 <= element && element < 58) // digits
+    return 48 <= element && element < 58
   }
 
   // MARK: - Lower
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal static func _isLower(element: UInt8) -> Bool {
-    return (97 <= element && element < 123) // lowercase
+    return 97 <= element && element < 123
+  }
+
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
+  internal static func _lowercaseMapping(element: UInt8) -> Data {
+    if 65 <= element && element < 91 {
+      let mapping = element - 32
+      return Data(byte: mapping)
+    }
+
+    return Data(byte: element)
   }
 
   // MARK: - Upper
 
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal static func _isUpper(element: UInt8) -> Bool {
-    return (65 <= element && element < 91) // uppercase
+    return 65 <= element && element < 91
+  }
+
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
+  internal static func _uppercaseMapping(element: UInt8) -> Data {
+    if 97 <= element && element < 123 {
+      let mapping = element + 32
+      return Data(byte: mapping)
+    }
+
+    return Data(byte: element)
   }
 
   // MARK: - Case
-
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _lowerCaseBytes() -> SwiftType {
-    let string = self._lowerCase()
-    return self._encode(string)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _upperCaseBytes() -> SwiftType {
-    let string = self._upperCase()
-    return self._encode(string)
-  }
 
   /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal func _titleCaseBytes() -> SwiftType {

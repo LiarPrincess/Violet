@@ -73,6 +73,11 @@ internal protocol AbstractString: PyObject {
   static func _isSpace(element: Element) -> Bool
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _lowercaseMapping(element: Element) -> CaseMapping
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _uppercaseMapping(element: Element) -> CaseMapping
+
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _asUnicodeScalar(element: Element) -> UnicodeScalar
 
   // MARK: - Fill
@@ -125,6 +130,14 @@ internal protocol AbstractString: PyObject {
 // MARK: - Common things
 
 extension AbstractString {
+
+  /// Type returned by all of the case mapping functions.
+  ///
+  /// It has to be a collection because some scalars may have mapping that
+  /// contains more than 1 scalar.
+  /// For example: lowercases `“İ” (U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE)`
+  /// becomes `U+0069 LATIN SMALL LETTER I` and `U+0307 COMBINING DOT ABOVE`.
+  internal typealias CaseMapping = Builder.Elements
 
   /// This may be `O(n)`, but it is not like we care.
   ///

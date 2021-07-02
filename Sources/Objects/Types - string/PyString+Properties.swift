@@ -126,6 +126,14 @@ extension PyString {
     return !properties.isCased || properties.isLowercase
   }
 
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  internal static func _lowercaseMapping(
+    element: UnicodeScalar
+  ) -> String.UnicodeScalarView {
+    let mapping = element.properties.lowercaseMapping
+    return mapping.unicodeScalars
+  }
+
   // MARK: - Upper
 
   /// https://docs.python.org/3/library/stdtypes.html#str.isupper
@@ -136,6 +144,14 @@ extension PyString {
     // "a\u02B0b".isupper() -> True
     let properties = element.properties
     return !properties.isCased || properties.isUppercase
+  }
+
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  internal static func _uppercaseMapping(
+    element: UnicodeScalar
+  ) -> String.UnicodeScalarView {
+    let mapping = element.properties.uppercaseMapping
+    return mapping.unicodeScalars
   }
 
   // MARK: - Numeric
