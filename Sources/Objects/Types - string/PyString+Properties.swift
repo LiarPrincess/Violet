@@ -7,24 +7,13 @@ extension PyString {
 
   // MARK: - Whitespace
 
-  /// This is not exposed to Python, but it is used in various methods
-  /// (for example strip whitespace ones).
-  ///
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal static func _isWhitespace(element: UnicodeScalar) -> Bool {
-    let properties = element.properties
-    return properties.isWhitespace
-  }
-
-  // MARK: - Space
-
   /// A character is whitespace if in the Unicode character database:
   /// - its general category is Zs (“Separator, space”)
   /// - or its bidirectional class is one of WS, B, or S
   /// https://docs.python.org/3/library/stdtypes.html#str.isspace
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal static func _isSpace(element: UnicodeScalar) -> Bool {
+  internal static func _isWhitespace(element: UnicodeScalar) -> Bool {
     let category = element.properties.generalCategory
     return category == .spaceSeparator
       || Unicode.bidiClass_ws_b_s.contains(element.value)
@@ -33,7 +22,7 @@ extension PyString {
   // MARK: - Line break
 
   /// This is not exposed to Python, but it is used in various methods
-  /// (for example strip whitespace ones).
+  /// (for example `splitlines`).
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isLineBreak(element: UnicodeScalar) -> Bool {

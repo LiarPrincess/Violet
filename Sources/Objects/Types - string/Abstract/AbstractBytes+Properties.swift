@@ -71,15 +71,6 @@ extension AbstractBytes {
     return element == 32 || (9 <= element && element < 14)
   }
 
-  // MARK: - Space
-
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _isSpace(element: UInt8) -> Bool {
-    // Space
-    // Horizontal Tab, Line Feed, Vertical Tab, Form Feed, Carriage Return
-    return element == 32 || (9 <= element && element < 14)
-  }
-
   // MARK: - Line break
 
   /// DO NOT USE! This is a part of `AbstractBytes` implementation.

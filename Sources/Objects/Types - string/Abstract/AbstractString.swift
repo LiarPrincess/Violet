@@ -69,8 +69,6 @@ internal protocol AbstractString: PyObject {
   static func _isLower(element: Element) -> Bool
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _isUpper(element: Element) -> Bool
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  static func _isSpace(element: Element) -> Bool
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _lowercaseMapping(element: Element) -> CaseMapping
