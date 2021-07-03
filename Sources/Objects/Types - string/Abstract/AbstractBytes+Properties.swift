@@ -165,17 +165,18 @@ extension AbstractBytes {
     return Data(byte: element)
   }
 
+  // MARK: - Is cased
+
+  internal static func _isCased(element: UInt8) -> Bool {
+    return (65 <= element && element < 91) // uppercase
+      || (97 <= element && element < 123) // lowercase
+  }
+
   // MARK: - Case
 
   /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal func _titleCaseBytes() -> SwiftType {
     let string = self._titleCase()
-    return self._encode(string)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _swapCaseBytes() -> SwiftType {
-    let string = self._swapCase()
     return self._encode(string)
   }
 

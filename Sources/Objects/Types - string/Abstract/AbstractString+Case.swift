@@ -70,23 +70,26 @@ extension AbstractString {
   // MARK: - Swap case
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _swapCase() -> String {
-    var result = ""
+  internal func _swapCase() -> SwiftType {
+    var builder = Builder(capacity: self.elements.count)
 
     for element in self.elements {
-      let scalar = Self._asUnicodeScalar(element: element)
-      let properties = scalar.properties
+      let isCased = Self._isCased(element: element)
 
-      if properties.isLowercase {
-        result.append(properties.uppercaseMapping)
-      } else if properties.isUppercase {
-        result.append(properties.lowercaseMapping)
+      if isCased && Self._isLower(element: element) {
+        let mapping = Self._uppercaseMapping(element: element)
+        builder.append(contentsOf: mapping)
+      } else if isCased && Self._isUpper(element: element) {
+        let mapping = Self._lowercaseMapping(element: element)
+        builder.append(contentsOf: mapping)
       } else {
-        result.append(scalar)
+        // (is not cased OR is cased but not lower or upper)
+        builder.append(element: element)
       }
     }
 
-    return result
+    let result = builder.finalize()
+    return Self._toObject(result: result)
   }
 
   // MARK: - Capitalize

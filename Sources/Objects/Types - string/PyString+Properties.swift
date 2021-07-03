@@ -165,6 +165,13 @@ extension PyString {
     return mapping.unicodeScalars
   }
 
+  // MARK: - Is cased
+
+  internal static func _isCased(element: UnicodeScalar) -> Bool {
+    let properties = element.properties
+    return properties.isCased
+  }
+
   // MARK: - Printable
 
   /// Return true if all characters in the string are printable

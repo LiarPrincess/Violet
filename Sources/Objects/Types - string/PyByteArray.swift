@@ -482,7 +482,7 @@ public class PyByteArray: PyObject, AbstractBytes {
 
   // sourcery: pymethod = swapcase
   internal func swapcase() -> PyByteArray {
-    return self._swapCaseBytes()
+    return self._swapCase()
   }
 
   // sourcery: pymethod = capitalize

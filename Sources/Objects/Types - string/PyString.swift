@@ -648,7 +648,7 @@ public class PyString: PyObject, AbstractString {
   }
 
   // sourcery: pymethod = swapcase
-  internal func swapcase() -> String {
+  internal func swapcase() -> PyString {
     return self._swapCase()
   }
 
