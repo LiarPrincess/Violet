@@ -89,25 +89,6 @@ extension AbstractString {
     return result
   }
 
-  // MARK: - Case fold
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _caseFold() -> String {
-    var result = ""
-
-    for element in self.elements {
-      let scalar = Self._asUnicodeScalar(element: element)
-
-      if let mapping = Unicode.caseFoldMapping[scalar.value] {
-        result.append(mapping)
-      } else {
-        result.append(scalar)
-      }
-    }
-
-    return result
-  }
-
   // MARK: - Capitalize
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.

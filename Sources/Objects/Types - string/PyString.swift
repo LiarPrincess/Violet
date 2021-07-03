@@ -653,8 +653,19 @@ public class PyString: PyObject, AbstractString {
   }
 
   // sourcery: pymethod = casefold
-  internal func casefold() -> String {
-    return self._caseFold()
+  internal func casefold() -> PyString {
+    var builder = Builder(capacity: self.elements.count)
+
+    for scalar in self.elements {
+      if let mapping = Unicode.caseFoldMapping[scalar.value] {
+        builder.append(contentsOf: mapping.unicodeScalars)
+      } else {
+        builder.append(element: scalar)
+      }
+    }
+
+    let result = builder.finalize()
+    return Self._toObject(result: result)
   }
 
   // sourcery: pymethod = capitalize

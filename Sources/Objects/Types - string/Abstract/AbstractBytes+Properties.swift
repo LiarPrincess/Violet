@@ -179,18 +179,6 @@ extension AbstractBytes {
     return self._encode(string)
   }
 
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _caseFoldBytes() -> SwiftType {
-    let string = self._caseFold()
-    return self._encode(string)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _capitalizeBytes() -> SwiftType {
-    let string = self._capitalize()
-    return self._encode(string)
-  }
-
   private func _encode(_ string: String) -> SwiftType {
     let encoding = Py.sys.defaultEncoding
     if let data = encoding.encode(string: string) {
