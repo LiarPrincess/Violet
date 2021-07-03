@@ -129,7 +129,7 @@ extension AbstractBytes {
   /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal static func _lowercaseMapping(element: UInt8) -> Data {
     if 65 <= element && element < 91 {
-      let mapping = element - 32
+      let mapping = element + 32
       return Data(byte: mapping)
     }
 
@@ -146,7 +146,19 @@ extension AbstractBytes {
   /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal static func _uppercaseMapping(element: UInt8) -> Data {
     if 97 <= element && element < 123 {
-      let mapping = element + 32
+      let mapping = element - 32
+      return Data(byte: mapping)
+    }
+
+    return Data(byte: element)
+  }
+
+  // MARK: - Title
+
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
+  internal static func _titlecaseMapping(element: UInt8) -> Data {
+    if 97 <= element && element < 123 {
+      let mapping = element - 32
       return Data(byte: mapping)
     }
 

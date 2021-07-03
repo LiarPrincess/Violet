@@ -658,7 +658,7 @@ public class PyString: PyObject, AbstractString {
   }
 
   // sourcery: pymethod = capitalize
-  internal func capitalize() -> String {
+  internal func capitalize() -> PyString {
     return self._capitalize()
   }
 

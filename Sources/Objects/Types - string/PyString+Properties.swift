@@ -155,6 +155,16 @@ extension PyString {
     return properties.numericType != nil
   }
 
+  // MARK: - Title
+
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  internal static func _titlecaseMapping(
+    element: UnicodeScalar
+  ) -> String.UnicodeScalarView {
+    let mapping = element.properties.titlecaseMapping
+    return mapping.unicodeScalars
+  }
+
   // MARK: - Printable
 
   /// Return true if all characters in the string are printable

@@ -111,22 +111,26 @@ extension AbstractString {
   // MARK: - Capitalize
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _capitalize() -> String {
+  internal func _capitalize() -> SwiftType {
     // Capitalize only the first scalar:
     // list("e\u0301".capitalize()) -> ['E', '́']
 
+    var builder = Builder(capacity: self.elements.count)
+
     guard let first = self.elements.first else {
-      return ""
+      let result = builder.finalize()
+      return Self._toObject(result: result)
     }
 
-    let firstScalar = Self._asUnicodeScalar(element: first)
-    var result = firstScalar.properties.titlecaseMapping
+    let firstTitle = Self._titlecaseMapping(element: first)
+    builder.append(contentsOf: firstTitle)
 
     for element in self.elements.dropFirst() {
-      let scalar = Self._asUnicodeScalar(element: element)
-      result.append(contentsOf: scalar.properties.lowercaseMapping)
+      let mapping = Self._lowercaseMapping(element: element)
+      builder.append(contentsOf: mapping)
     }
 
-    return result
+    let result = builder.finalize()
+    return Self._toObject(result: result)
   }
 }

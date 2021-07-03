@@ -94,7 +94,7 @@ extension AbstractString {
       return false
     }
 
-    return self.elements.allSatisfy(Self._isSpace(element:))
+    return self.elements.allSatisfy(Self._isWhitespace(element:))
   }
 
   // MARK: - Title

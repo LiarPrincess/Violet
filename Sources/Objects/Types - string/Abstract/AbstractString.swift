@@ -74,6 +74,9 @@ internal protocol AbstractString: PyObject {
   static func _lowercaseMapping(element: Element) -> CaseMapping
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _uppercaseMapping(element: Element) -> CaseMapping
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _titlecaseMapping(element: Element) -> CaseMapping
+  // casefold is only on 'str', not on 'bytes'
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _asUnicodeScalar(element: Element) -> UnicodeScalar

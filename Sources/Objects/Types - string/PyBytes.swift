@@ -440,7 +440,7 @@ public class PyBytes: PyObject, AbstractBytes {
 
   // sourcery: pymethod = capitalize
   internal func capitalize() -> PyBytes {
-    return self._capitalizeBytes()
+    return self._capitalize()
   }
 
   // MARK: - Center, just
