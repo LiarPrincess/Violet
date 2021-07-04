@@ -1,7 +1,10 @@
+import UnicodeData
+
 internal struct UnicodeScalarBuilder: StringBuilderType {
 
   internal typealias Elements = String.UnicodeScalarView
   internal typealias Element = UnicodeScalar
+  internal typealias CaseMapping = UnicodeData.CaseMapping
   internal typealias Result = String
 
   private var scalars: String.UnicodeScalarView
@@ -11,15 +14,15 @@ internal struct UnicodeScalarBuilder: StringBuilderType {
     self.scalars.reserveCapacity(capacity)
   }
 
-  internal init(elements: Elements) {
+  internal init(elements: String.UnicodeScalarView) {
     self.scalars = elements
   }
 
-  internal mutating func append(element: Element) {
+  internal mutating func append(element: UnicodeScalar) {
     self.scalars.append(element)
   }
 
-  internal mutating func append(element: Element, repeated: Int) {
+  internal mutating func append(element: UnicodeScalar, repeated: Int) {
     let newCount = self.scalars.count + repeated
     self.scalars.reserveCapacity(newCount)
 
@@ -28,9 +31,7 @@ internal struct UnicodeScalarBuilder: StringBuilderType {
     }
   }
 
-  internal mutating func append(contentsOf other: Elements) {
-    // This may be O(self.count + other.count), but I'm not sure.
-    // For now it will stay as it is.
+  internal mutating func append(contentsOf other: String.UnicodeScalarView) {
     if self.scalars.isEmpty {
       self.scalars = other
     } else {
@@ -38,10 +39,12 @@ internal struct UnicodeScalarBuilder: StringBuilderType {
     }
   }
 
-  internal mutating func append(contentsOf other: Elements.SubSequence) {
-    // This may be O(self.count + other.count), but I'm not sure.
-    // For now it will stay as it is.
+  internal mutating func append(contentsOf other: String.UnicodeScalarView.SubSequence) {
     self.scalars.append(contentsOf: other)
+  }
+
+  internal mutating func append(mapping: UnicodeData.CaseMapping) {
+    self.scalars.append(contentsOf: mapping)
   }
 
   internal func finalize() -> Result {

@@ -98,9 +98,8 @@ extension PyString {
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _lowercaseMapping(
     element: UnicodeScalar
-  ) -> String.UnicodeScalarView {
-    let mapping = element.properties.lowercaseMapping
-    return mapping.unicodeScalars
+  ) -> UnicodeData.CaseMapping {
+    return UnicodeData.toLowercase(element)
   }
 
   // MARK: - Upper
@@ -117,9 +116,8 @@ extension PyString {
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _uppercaseMapping(
     element: UnicodeScalar
-  ) -> String.UnicodeScalarView {
-    let mapping = element.properties.uppercaseMapping
-    return mapping.unicodeScalars
+  ) -> UnicodeData.CaseMapping {
+    return UnicodeData.toUppercase(element)
   }
 
   // MARK: - Numeric
@@ -143,9 +141,8 @@ extension PyString {
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _titlecaseMapping(
     element: UnicodeScalar
-  ) -> String.UnicodeScalarView {
-    let mapping = element.properties.titlecaseMapping
-    return mapping.unicodeScalars
+  ) -> UnicodeData.CaseMapping {
+    return UnicodeData.toTitlecase(element)
   }
 
   // MARK: - Is cased

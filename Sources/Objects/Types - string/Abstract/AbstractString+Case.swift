@@ -8,7 +8,7 @@ extension AbstractString {
 
     for element in self.elements {
       let mapping = Self._lowercaseMapping(element: element)
-      builder.append(contentsOf: mapping)
+      builder.append(mapping: mapping)
     }
 
     let result = builder.finalize()
@@ -23,7 +23,7 @@ extension AbstractString {
 
     for element in self.elements {
       let mapping = Self._uppercaseMapping(element: element)
-      builder.append(contentsOf: mapping)
+      builder.append(mapping: mapping)
     }
 
     let result = builder.finalize()
@@ -40,10 +40,10 @@ extension AbstractString {
     for element in self.elements {
       if isPreviousCased {
         let mapping = Self._lowercaseMapping(element: element)
-        builder.append(contentsOf: mapping)
+        builder.append(mapping: mapping)
       } else {
         let mapping = Self._titlecaseMapping(element: element)
-        builder.append(contentsOf: mapping)
+        builder.append(mapping: mapping)
       }
 
       isPreviousCased = Self._isCased(element: element)
@@ -64,10 +64,10 @@ extension AbstractString {
 
       if isCased && Self._isLower(element: element) {
         let mapping = Self._uppercaseMapping(element: element)
-        builder.append(contentsOf: mapping)
+        builder.append(mapping: mapping)
       } else if isCased && Self._isUpper(element: element) {
         let mapping = Self._lowercaseMapping(element: element)
-        builder.append(contentsOf: mapping)
+        builder.append(mapping: mapping)
       } else {
         // (is not cased OR is cased but not lower or upper)
         builder.append(element: element)
@@ -93,11 +93,11 @@ extension AbstractString {
     }
 
     let firstUpper = Self._uppercaseMapping(element: first)
-    builder.append(contentsOf: firstUpper)
+    builder.append(mapping: firstUpper)
 
     for element in self.elements.dropFirst() {
       let mapping = Self._lowercaseMapping(element: element)
-      builder.append(contentsOf: mapping)
+      builder.append(mapping: mapping)
     }
 
     let result = builder.finalize()

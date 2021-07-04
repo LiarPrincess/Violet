@@ -2,8 +2,9 @@ import Foundation
 
 internal struct BytesBuilder: StringBuilderType, GetItemSliceBuilderType {
 
-  internal typealias Elements = Data
   internal typealias Element = UInt8
+  internal typealias Elements = Data
+  internal typealias CaseMapping = Data
   internal typealias Result = Data
 
   private var data: Data
@@ -12,15 +13,15 @@ internal struct BytesBuilder: StringBuilderType, GetItemSliceBuilderType {
     self.data = Data(capacity: capacity)
   }
 
-  internal init(elements: Elements) {
+  internal init(elements: Data) {
     self.data = elements
   }
 
-  internal mutating func append(element: Element) {
+  internal mutating func append(element: UInt8) {
     self.data.append(element)
   }
 
-  internal mutating func append(element: Element, repeated: Int) {
+  internal mutating func append(element: UInt8, repeated: Int) {
     let newCount = self.data.count + repeated
     self.data.reserveCapacity(newCount)
 
@@ -29,11 +30,19 @@ internal struct BytesBuilder: StringBuilderType, GetItemSliceBuilderType {
     }
   }
 
-  internal mutating func append(contentsOf other: Elements) {
+  internal mutating func append(contentsOf other: Data) {
     if self.data.isEmpty {
       self.data = other
     } else {
       self.data.append(contentsOf: other)
+    }
+  }
+
+  internal mutating func append(mapping: Data) {
+    if self.data.isEmpty {
+      self.data = mapping
+    } else {
+      self.data.append(contentsOf: mapping)
     }
   }
 

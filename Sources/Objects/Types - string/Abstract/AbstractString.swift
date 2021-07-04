@@ -148,7 +148,7 @@ extension AbstractString {
   /// contains more than 1 scalar.
   /// For example: lowercase `“İ” (U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE)`
   /// becomes `U+0069 LATIN SMALL LETTER I` and `U+0307 COMBINING DOT ABOVE`.
-  internal typealias CaseMapping = Builder.Elements
+  internal typealias CaseMapping = Builder.CaseMapping
 
   /// This may be `O(n)`, but it is not like we care.
   ///

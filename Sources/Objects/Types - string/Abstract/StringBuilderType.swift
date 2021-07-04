@@ -9,6 +9,7 @@ internal protocol StringBuilderType {
   // This way we will be able to just replace `self.acc` with 'other'.
   associatedtype Elements: Collection
   associatedtype Element where Element == Elements.Element
+  associatedtype CaseMapping: Sequence where CaseMapping.Element == Element
 
   /// Builder result.
   /// Totally abstract and defined by specific `Builder` implementation.
@@ -29,6 +30,8 @@ internal protocol StringBuilderType {
   mutating func append(contentsOf other: Elements)
   /// Append multiple elements.
   mutating func append(contentsOf other: Elements.SubSequence)
+  /// Append case mapping.
+  mutating func append(mapping: CaseMapping)
 
   func finalize() -> Result
 }
