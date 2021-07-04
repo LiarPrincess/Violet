@@ -1,3 +1,5 @@
+import UnicodeData
+
 extension PyString {
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
@@ -14,9 +16,7 @@ extension PyString {
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isWhitespace(element: UnicodeScalar) -> Bool {
-    let category = element.properties.generalCategory
-    return category == .spaceSeparator
-      || Unicode.bidiClass_ws_b_s.contains(element.value)
+    return UnicodeData.isWhitespace(element)
   }
 
   // MARK: - Line break
@@ -26,7 +26,7 @@ extension PyString {
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isLineBreak(element: UnicodeScalar) -> Bool {
-    return Unicode.lineBreaks.contains(element)
+    return UnicodeData.isLineBreak(element)
   }
 
   // MARK: - AlphaNumeric
@@ -37,17 +37,7 @@ extension PyString {
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isAlphaNumeric(element: UnicodeScalar) -> Bool {
-    let properties = element.properties
-    if properties.numericType != nil {
-      return true
-    }
-
-    let category = properties.generalCategory
-    if category == .decimalNumber {
-      return true
-    }
-
-    return Unicode.alphaCategories.contains(category)
+    return UnicodeData.isAlphaNumeric(element)
   }
 
   // MARK: - Alpha
@@ -59,9 +49,7 @@ extension PyString {
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isAlpha(element: UnicodeScalar) -> Bool {
-    let properties = element.properties
-    let category = properties.generalCategory
-    return Unicode.alphaCategories.contains(category)
+    return UnicodeData.isAlpha(element)
   }
 
   // MARK: - ASCII
@@ -71,7 +59,7 @@ extension PyString {
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isAscii(element: UnicodeScalar) -> Bool {
-    return element.isASCII
+    return ASCIIData.isASCII(element)
   }
 
   // MARK: - Decimal
@@ -82,8 +70,7 @@ extension PyString {
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isDecimal(element: UnicodeScalar) -> Bool {
-    let properties = element.properties
-    return properties.generalCategory == .decimalNumber
+    return UnicodeData.isDecimalDigit(element)
   }
 
   // MARK: - Digit
@@ -94,13 +81,7 @@ extension PyString {
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isDigit(element: UnicodeScalar) -> Bool {
-    let properties = element.properties
-
-    guard let numericType = properties.numericType else {
-      return false
-    }
-
-    return numericType == .digit || numericType == .decimal
+    return UnicodeData.isDigit(element)
   }
 
   // MARK: - Lower
@@ -111,8 +92,7 @@ extension PyString {
   internal static func _isLower(element: UnicodeScalar) -> Bool {
     // If a character does not have case then True, for example:
     // "a\u02B0b".islower() -> True
-    let properties = element.properties
-    return !properties.isCased || properties.isLowercase
+    return !UnicodeData.isCased(element) || UnicodeData.isLowercase(element)
   }
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
@@ -131,8 +111,7 @@ extension PyString {
   internal static func _isUpper(element: UnicodeScalar) -> Bool {
     // If a character does not have case then True, for example:
     // "a\u02B0b".isupper() -> True
-    let properties = element.properties
-    return !properties.isCased || properties.isUppercase
+    return !UnicodeData.isCased(element) || UnicodeData.isUppercase(element)
   }
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
@@ -151,21 +130,14 @@ extension PyString {
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isNumeric(element: UnicodeScalar) -> Bool {
-    let properties = element.properties
-    return properties.numericType != nil
+    return UnicodeData.isNumeric(element)
   }
 
   // MARK: - Title
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isTitle(element: UnicodeScalar) -> Bool {
-    let properties = element.properties
-    switch properties.generalCategory {
-    case .titlecaseLetter:
-      return true
-    default:
-      return false
-    }
+    return UnicodeData.isTitlecase(element)
   }
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
@@ -179,8 +151,7 @@ extension PyString {
   // MARK: - Is cased
 
   internal static func _isCased(element: UnicodeScalar) -> Bool {
-    let properties = element.properties
-    return properties.isCased
+    return UnicodeData.isCased(element)
   }
 
   // MARK: - Printable
@@ -206,25 +177,6 @@ extension PyString {
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isPrintable(element: UnicodeScalar) -> Bool {
-
-    // 'space' is considered printable
-    if element == " " {
-      return true
-    }
-
-    let category = element.properties.generalCategory
-    switch category {
-    case .control, // Cc
-         .format, // Cf
-         .surrogate, // Cs
-         .privateUse, // Co
-         .unassigned, // Cn
-         .lineSeparator, // Zl
-         .paragraphSeparator, // Zp
-         .spaceSeparator: // Zs
-      return false
-    default:
-      return true
-    }
+    return UnicodeData.isPrintable(element)
   }
 }

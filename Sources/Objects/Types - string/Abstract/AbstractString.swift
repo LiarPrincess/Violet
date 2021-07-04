@@ -1,6 +1,10 @@
 import BigInt
 
 // swiftlint:disable type_name
+// cSpell:ignore unicodeobject
+
+// In CPython:
+// Objects -> unicodeobject.c
 
 /// Given a `PyObject` we try to extract a valid collection to use in
 /// one of the functions mentioned in type name.

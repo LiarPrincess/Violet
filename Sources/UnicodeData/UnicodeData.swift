@@ -106,6 +106,18 @@ public enum UnicodeData {
     return ctype.isAlpha
   }
 
+  // MARK: - Alpha numeric
+
+  public static func isAlphaNumeric(_ ch: UnicodeScalar) -> Bool {
+//    #define Py_UNICODE_ISALNUM(ch) \
+//           (Py_UNICODE_ISALPHA(ch) || \
+//        Py_UNICODE_ISDECIMAL(ch) || \
+//        Py_UNICODE_ISDIGIT(ch) || \
+//        Py_UNICODE_ISNUMERIC(ch))
+    let ctype = Self.getTypeRecord(ch.value)
+    return ctype.isAlpha || ctype.isDecimal || ctype.isDigit || ctype.isNumeric
+  }
+
   // MARK: - Whitespace
 
   public static func isWhitespace(_ ch: UnicodeScalar) -> Bool {
