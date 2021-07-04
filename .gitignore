@@ -3,10 +3,6 @@
 /.build
 /Packages
 
-# It is not like we will include Unicode thingies...
-/Scripts/unicode/CaseFolding.txt
-/Scripts/unicode/UnicodeData.txt
-
 # Python stuff
 /**/.pyc
 /**/__pycache__

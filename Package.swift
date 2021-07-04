@@ -1,4 +1,5 @@
 // swift-tools-version:5.0
+// cSpell:ignore keikaku bunde
 
 import PackageDescription
 
@@ -22,16 +23,18 @@ let package = Package(
     .library(name: "Rapunzel", targets: ["Rapunzel"])
   ],
   dependencies: [
-    // If it is possible we try to avoid adding new dependencies because… oh so many reasons!
+    // We try to avoid adding new dependencies because… oh so many reasons!
     // Tbh. I’m still not sure if we can trust this ‘apple’ person…
     .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.0.1"))
   ],
   targets: [
 
     // IMPORTANT:
-    // Module names have 'Violet' prefix, but directories do not!
-    // Sooo... we wrote the whole VM without this prefix and now we can't add it
-    // because that would mess merges (and git history).
+    // Module names have 'Violet' prefix, but directories do not
+    // (for example: 'VioletParser' module is inside 'Sources/Parser' directory)!
+    //
+    // Sooo… we wrote the whole VM without this prefix and now we can't add it
+    // because that would mess up merges (and git history).
     // Let's just pretend that everything goes according to keikaku
     // (translators note: keikaku means plan).
 
@@ -43,6 +46,15 @@ let package = Package(
     // Ehh…
     .target(name: "BigInt", dependencies: ["VioletCore"]),
     .testTarget(name: "BigIntTests", dependencies: ["BigInt"]),
+
+    // We also bunde our own Unicode database, because why not…
+    // Ehh… Ehh…
+    //
+    // But don't worry, it is basically a 1:1 copy of following things from CPython:
+    // - Objects/unicodectype.c
+    // - Tools/unicode/makeunicodedata.py - generation script (we have it inside '/Scripts/unicode' dir)
+    .target(name: "UnicodeData", dependencies: []),
+    .testTarget(name: "UnicodeDataTests", dependencies: ["UnicodeData"]),
 
     // String -> Tokens
     .target(name: "VioletLexer", dependencies: ["VioletCore", "BigInt"], path: "Sources/Lexer"),
@@ -60,11 +72,11 @@ let package = Package(
     .target(name: "VioletBytecode", dependencies: ["VioletCore", "BigInt"], path: "Sources/Bytecode"),
     .testTarget(name: "VioletBytecodeTests", dependencies: ["VioletBytecode"], path: "Tests/BytecodeTests"),
 
-    // Python objects
-    .target(name: "VioletObjects", dependencies: ["VioletCompiler", "ArgumentParser"], path: "Sources/Objects"),
+    // Python objects (+ part of runtime)
+    .target(name: "VioletObjects", dependencies: ["VioletCompiler", "ArgumentParser", "UnicodeData"], path: "Sources/Objects"),
     .testTarget(name: "VioletObjectsTests", dependencies: ["VioletObjects"], path: "Tests/ObjectsTests"),
 
-    // Python runtime + bytecode interpretation
+    // Bytecode interpretation (+ remaining part of the Python runtime)
     .target(name: "VioletVM", dependencies: ["VioletObjects"], path: "Sources/VM"),
     .testTarget(name: "VioletVMTests", dependencies: ["VioletVM"], path: "Tests/VMTests"),
 

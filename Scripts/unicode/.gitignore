@@ -1,0 +1,3 @@
+# Exclude downloaded Unicode files.
+*.txt
+*.zip

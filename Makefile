@@ -1,3 +1,5 @@
+# cSpell:ignore xcodeproj
+
 SWIFT_BUILD_FLAGS=--configuration debug
 
 .PHONY: all
@@ -7,13 +9,19 @@ all: build
 # -- Usual things --
 # ------------------
 
-.PHONY: build test clean
+.PHONY: build run test pytest clean
 
 build:
 	swift build $(SWIFT_BUILD_FLAGS)
 
+run:
+	swift run Violet
+
 test:
 	swift test
+
+pytest:
+	swift run PyTests
 
 clean:
 	swift package clean
@@ -22,7 +30,7 @@ clean:
 # -- Code generation --
 # ---------------------
 
-.PHONY: elsa gen
+.PHONY: elsa gen unicode
 
 elsa:
 	swift run Elsa
@@ -30,6 +38,9 @@ elsa:
 gen:
 	./Sources/Objects/Generated/run.sh
 	./Scripts/unimplemented_builtins/main.sh
+
+unicode:
+	./Scripts/unicode/main.sh
 
 # -----------------
 # -- Lint/format --
@@ -47,7 +58,17 @@ format:
 # cSpell is our spell checker
 # See: https://github.com/streetsidesoftware/cspell/tree/master/packages/cspell
 spell:
-	cspell --config "./.cspell.json" "./Sources/Lexer/**"
+	cspell --no-progress --relative --config "./.cspell.json" \
+		"./Sources/**" \
+		"./Tests/**" \
+		"./Lib/**" \
+		"./PyTests/**" \
+		"./Scripts/**" \
+		"./Code of Conduct.md" \
+		"./LICENSE" \
+		"./Makefile" \
+		"./Package.swift" \
+		"./README.md"
 
 # -----------
 # -- Xcode --
