@@ -114,7 +114,7 @@ public enum UnicodeData {
 
   // MARK: - Line break
 
-  public static func IsLineBreak(_ ch: UnicodeScalar) -> Bool {
+  public static func isLineBreak(_ ch: UnicodeScalar) -> Bool {
     return _PyUnicode_IsLineBreak(ch)
   }
 
