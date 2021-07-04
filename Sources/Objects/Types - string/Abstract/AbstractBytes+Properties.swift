@@ -156,6 +156,11 @@ extension AbstractBytes {
   // MARK: - Title
 
   /// DO NOT USE! This is a part of `AbstractBytes` implementation.
+  internal static func _isTitle(element: UInt8) -> Bool {
+    return 65 <= element && element < 91 // Upper
+  }
+
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal static func _titlecaseMapping(element: UInt8) -> Data {
     if 97 <= element && element < 123 {
       let mapping = element - 32
@@ -170,26 +175,5 @@ extension AbstractBytes {
   internal static func _isCased(element: UInt8) -> Bool {
     return (65 <= element && element < 91) // uppercase
       || (97 <= element && element < 123) // lowercase
-  }
-
-  // MARK: - Case
-
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal func _titleCaseBytes() -> SwiftType {
-    let string = self._titleCase()
-    return self._encode(string)
-  }
-
-  private func _encode(_ string: String) -> SwiftType {
-    let encoding = Py.sys.defaultEncoding
-    if let data = encoding.encode(string: string) {
-      let result = Self._toObject(result: data)
-      return result
-    }
-
-    let msg = "Violet error: Sometimes we convert 'bytes' to 'string' and back " +
-      "(mostly when we really need string, for example to check for whitespaces). " +
-      "Normally it works, but this time conversion back to bytes failed."
-    trap(msg)
   }
 }

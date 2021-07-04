@@ -69,6 +69,8 @@ internal protocol AbstractString: PyObject {
   static func _isLower(element: Element) -> Bool
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _isUpper(element: Element) -> Bool
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func _isTitle(element: Element) -> Bool
   /// Do you even case, bro?
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation.
@@ -140,7 +142,7 @@ extension AbstractString {
   ///
   /// It has to be a collection because some scalars may have mapping that
   /// contains more than 1 scalar.
-  /// For example: lowercases `“İ” (U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE)`
+  /// For example: lowercase `“İ” (U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE)`
   /// becomes `U+0069 LATIN SMALL LETTER I` and `U+0307 COMBINING DOT ABOVE`.
   internal typealias CaseMapping = Builder.Elements
 

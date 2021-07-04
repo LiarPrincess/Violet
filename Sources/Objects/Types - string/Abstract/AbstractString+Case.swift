@@ -33,38 +33,24 @@ extension AbstractString {
   // MARK: - Title case
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _titleCase() -> String {
-    var result = ""
+  internal func _titleCase() -> SwiftType {
+    var builder = Builder(capacity: self.elements.count)
     var isPreviousCased = false
 
     for element in self.elements {
-      let scalar = Self._asUnicodeScalar(element: element)
-      let properties = scalar.properties
-
-      switch properties.generalCategory {
-      case .lowercaseLetter:
-        if !isPreviousCased {
-          result.append(properties.titlecaseMapping)
-        } else {
-          result.append(scalar)
-        }
-        isPreviousCased = true
-
-      case .uppercaseLetter, .titlecaseLetter:
-        if isPreviousCased {
-          result.append(properties.lowercaseMapping)
-        } else {
-          result.append(scalar)
-        }
-        isPreviousCased = true
-
-      default:
-        isPreviousCased = false
-        result.append(scalar)
+      if isPreviousCased {
+        let mapping = Self._lowercaseMapping(element: element)
+        builder.append(contentsOf: mapping)
+      } else {
+        let mapping = Self._titlecaseMapping(element: element)
+        builder.append(contentsOf: mapping)
       }
+
+      isPreviousCased = Self._isCased(element: element)
     }
 
-    return result
+    let result = builder.finalize()
+    return Self._toObject(result: result)
   }
 
   // MARK: - Swap case
@@ -106,8 +92,8 @@ extension AbstractString {
       return Self._toObject(result: result)
     }
 
-    let firstTitle = Self._titlecaseMapping(element: first)
-    builder.append(contentsOf: firstTitle)
+    let firstUpper = Self._uppercaseMapping(element: first)
+    builder.append(contentsOf: firstUpper)
 
     for element in self.elements.dropFirst() {
       let mapping = Self._lowercaseMapping(element: element)

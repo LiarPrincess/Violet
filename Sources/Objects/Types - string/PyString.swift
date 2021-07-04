@@ -7,6 +7,7 @@ import VioletCore
 // In CPython:
 // Objects -> unicodeobject.c
 // https://docs.python.org/3/library/stdtypes.html
+// https://www.python.org/dev/peps/pep-0393/
 
 // sourcery: pytype = str, default, baseType, unicodeSubclass
 /// Textual data in Python is handled with str objects, or strings.
@@ -643,7 +644,7 @@ public class PyString: PyObject, AbstractString {
   }
 
   // sourcery: pymethod = title
-  internal func title() -> String {
+  internal func title() -> PyString {
     return self._titleCase()
   }
 

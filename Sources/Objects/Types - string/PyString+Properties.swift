@@ -158,6 +158,17 @@ extension PyString {
   // MARK: - Title
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
+  internal static func _isTitle(element: UnicodeScalar) -> Bool {
+    let properties = element.properties
+    switch properties.generalCategory {
+    case .titlecaseLetter:
+      return true
+    default:
+      return false
+    }
+  }
+
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _titlecaseMapping(
     element: UnicodeScalar
   ) -> String.UnicodeScalarView {

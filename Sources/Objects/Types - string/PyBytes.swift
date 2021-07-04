@@ -430,7 +430,7 @@ public class PyBytes: PyObject, AbstractBytes {
 
   // sourcery: pymethod = title
   internal func title() -> PyBytes {
-    return self._titleCaseBytes()
+    return self._titleCase()
   }
 
   // sourcery: pymethod = swapcase

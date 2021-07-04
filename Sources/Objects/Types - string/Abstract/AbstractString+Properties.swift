@@ -100,39 +100,50 @@ extension AbstractString {
   // MARK: - Title
 
   /// Return true if the string is a title-cased string and there is at least
-  /// one character, for example uppercase characters may only follow uncased
-  /// characters and lowercase characters only cased ones.
+  /// one character.
+  ///
+  /// In a title-cased string, upper- and title-case characters may only
+  /// follow uncased characters and lowercase characters only cased ones.
   /// https://docs.python.org/3/library/stdtypes.html#str.istitle
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _isTitle() -> Bool {
+    func isUpperOrTitle(element: Element) -> Bool {
+      return Self._isUpper(element: element) || Self._isTitle(element: element)
+    }
+
+    // Shortcut for single character strings
+    if let first = self.elements.first, self.elements.count == 1 {
+      return isUpperOrTitle(element: first)
+    }
+
     var cased = false
     var isPreviousCased = false
 
     for element in self.elements {
-      let scalar = Self._asUnicodeScalar(element: element)
-      let category = scalar.properties.generalCategory
+      let isElementCased = Self._isCased(element: element)
 
-      switch category {
-      case .lowercaseLetter:
+      if isElementCased && Self._isLower(element: element) {
         if !isPreviousCased {
           return false
         }
 
-        isPreviousCased = true
         cased = true
+        isPreviousCased = true
+        continue
+      }
 
-      case .uppercaseLetter, .titlecaseLetter:
+      if isElementCased && isUpperOrTitle(element: element) {
         if isPreviousCased {
           return false
         }
 
         isPreviousCased = true
         cased = true
-
-      default:
-        isPreviousCased = false
+        continue
       }
+
+      isPreviousCased = false
     }
 
     return cased
