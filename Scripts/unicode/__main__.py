@@ -248,43 +248,43 @@ private typealias CaseMapping = UnicodeData.CaseMapping
     Array("index2", index2).dump(fp, trace)
 
     # Generate code for _PyUnicode_ToNumeric()
-    numeric_items = sorted(numeric.items())
-    print('/// Returns the numeric value as double for Unicode characters', file=fp)
-    print('/// having this property, -1.0 otherwise.', file=fp)
-    print('internal func _PyUnicode_ToNumeric(_ ch: UnicodeScalar) -> Double {', file=fp)
-    print('    switch ch.value {', file=fp)
-    for value, codepoints in numeric_items:
-        # Turn text into float literals
-        parts = value.split('/')
-        parts = [repr(float(part)) for part in parts]
-        value = '/'.join(parts)
+    # numeric_items = sorted(numeric.items())
+    # print('/// Returns the numeric value as double for Unicode characters', file=fp)
+    # print('/// having this property, -1.0 otherwise.', file=fp)
+    # print('internal func _PyUnicode_ToNumeric(_ ch: UnicodeScalar) -> Double {', file=fp)
+    # print('    switch ch.value {', file=fp)
+    # for value, codepoints in numeric_items:
+    #     # Turn text into float literals
+    #     parts = value.split('/')
+    #     parts = [repr(float(part)) for part in parts]
+    #     value = '/'.join(parts)
 
-        assert len(codepoints) != 0
+    #     assert len(codepoints) != 0
 
-        if len(codepoints) == 1:
-            codepoint = codepoints[0]
-            print('    case 0x%04X:' % (codepoint,), file=fp)
-            print('        return %s' % (value,), file=fp)
-        else:
-            codepoints.sort()
-            for index, codepoint in enumerate(codepoints):
-                is_first = index == 0
-                is_last = index == len(codepoints) - 1
+    #     if len(codepoints) == 1:
+    #         codepoint = codepoints[0]
+    #         print('    case 0x%04X:' % (codepoint,), file=fp)
+    #         print('        return %s' % (value,), file=fp)
+    #     else:
+    #         codepoints.sort()
+    #         for index, codepoint in enumerate(codepoints):
+    #             is_first = index == 0
+    #             is_last = index == len(codepoints) - 1
 
-                if is_first:
-                    print('    case 0x%04X,' % (codepoint), file=fp)
-                elif is_last:
-                    print('         0x%04X:' % (codepoint,), file=fp)
-                else:
-                    print('         0x%04X,' % (codepoint,), file=fp)
+    #             if is_first:
+    #                 print('    case 0x%04X,' % (codepoint), file=fp)
+    #             elif is_last:
+    #                 print('         0x%04X:' % (codepoint,), file=fp)
+    #             else:
+    #                 print('         0x%04X,' % (codepoint,), file=fp)
 
-            print('        return %s' % (value,), file=fp)
+    #         print('        return %s' % (value,), file=fp)
 
-    print('    default:', file=fp)
-    print('        return -1.0', file=fp)
-    print('    }', file=fp)
-    print('}', file=fp)
-    print(file=fp)
+    # print('    default:', file=fp)
+    # print('        return -1.0', file=fp)
+    # print('    }', file=fp)
+    # print('}', file=fp)
+    # print(file=fp)
 
     # Generate code for _PyUnicode_IsWhitespace()
     print("/// Returns 1 for Unicode characters having the bidirectional", file=fp)
