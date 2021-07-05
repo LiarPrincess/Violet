@@ -29,7 +29,7 @@ extension PyString {
     return UnicodeData.isLineBreak(element)
   }
 
-  // MARK: - AlphaNumeric
+  // MARK: - Alpha numeric
 
   /// A character c is alphanumeric if one of the following returns True:
   /// c.isalpha(), c.isdecimal(), c.isdigit(), or c.isnumeric()

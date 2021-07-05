@@ -108,6 +108,17 @@ class UnicodeDataASCIITests: XCTestCase {
     }
   }
 
+  // MARK: - Case fold
+
+  func test_casefold() {
+    for (value, scalar, msg) in testData {
+      let isUpper = uppercaseRange.contains(value)
+      let mappingExpected = isUpper ? value + 32 : value
+      let mappingResult = UnicodeData.toCasefold(scalar)
+      XCTAssertEqual(mappingResult, mappingExpected, msg)
+    }
+  }
+
   // MARK: - Cased, case ignorable
 
   func test_isCased() {

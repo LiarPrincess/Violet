@@ -17,6 +17,7 @@ class UnicodeDataDoesNotCrashTests: XCTestCase {
       _ = UnicodeData.toUppercase(scalar)
       _ = UnicodeData.isTitlecase(scalar)
       _ = UnicodeData.toTitlecase(scalar)
+      _ = UnicodeData.toCasefold(scalar)
       _ = UnicodeData.isCased(scalar)
       _ = UnicodeData.isCaseIgnorable(scalar)
       _ = UnicodeData.isAlpha(scalar)

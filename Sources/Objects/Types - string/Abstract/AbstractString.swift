@@ -55,7 +55,7 @@ internal protocol AbstractString: PyObject {
 
   var elements: Elements { get }
 
-  // MARK: - Properties
+  // MARK: - Unicode
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _isWhitespace(element: Element) -> Bool
@@ -120,14 +120,14 @@ internal protocol AbstractString: PyObject {
   /// Given a `PyObject` we try to extract a valid `Elements`.
   ///
   /// Intended use:
-  /// - `str` -> return elements if `other` is `str`.
-  /// - `bytes/bytearray` -> return elements if `other` is `bytes/bytearray`.
+  /// - `str` -> return elements if `object` is `str`.
+  /// - `bytes/bytearray` -> return elements if `object` is `bytes/bytearray`.
   ///
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _getElements(object: PyObject) -> Elements?
 
   /// Given a `PyObject` we try to extract a valid `Elements` to use in
-  /// one of the function mentioned in type name.
+  /// one of the functions mentioned in type name.
   ///
   /// Basically the same as `_getElements(object:)`, but for `bytes/bytearray`
   /// will also handle `int` (`69 in b'Elsa'` -> `True`).
@@ -150,8 +150,6 @@ extension AbstractString {
   /// becomes `U+0069 LATIN SMALL LETTER I` and `U+0307 COMBINING DOT ABOVE`.
   internal typealias CaseMapping = Builder.CaseMapping
 
-  /// This may be `O(n)`, but it is not like we care.
-  ///
   /// ```
   /// len("Cafe\u0301") -> 5
   /// len("Café")       -> 4
@@ -161,7 +159,7 @@ extension AbstractString {
     return BigInt(result)
   }
 
-  /// In some algorithms we require `UnicodeScalars` to conform to conform to
+  /// In some algorithms we require `UnicodeScalars` to conform to
   /// `RandomAccessCollection`, but they don't.
   /// In such places call this method, so we know to check them later.
   ///

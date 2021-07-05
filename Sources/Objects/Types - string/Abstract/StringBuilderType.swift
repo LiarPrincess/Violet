@@ -8,8 +8,7 @@ internal protocol StringBuilderType {
   // We need 'Elements' constraint to optimize 'append' for empty builder.
   // This way we will be able to just replace `self.acc` with 'other'.
   associatedtype Elements: Collection
-  associatedtype Element where Element == Elements.Element
-  associatedtype CaseMapping: Sequence where CaseMapping.Element == Element
+  associatedtype CaseMapping: Sequence where CaseMapping.Element == Elements.Element
 
   /// Builder result.
   /// Totally abstract and defined by specific `Builder` implementation.
@@ -23,9 +22,9 @@ internal protocol StringBuilderType {
   init(elements: Elements)
 
   /// Append a single element.
-  mutating func append(element: Element)
+  mutating func append(element: Elements.Element)
   /// Append a single element repeated multiple times.
-  mutating func append(element: Element, repeated: Int)
+  mutating func append(element: Elements.Element, repeated: Int)
   /// Append multiple elements.
   mutating func append(contentsOf other: Elements)
   /// Append multiple elements.

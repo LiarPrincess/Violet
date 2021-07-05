@@ -1,5 +1,6 @@
 import BigInt
 import VioletCore
+import UnicodeData
 
 // swiftlint:disable file_length
 // cSpell:ignore unicodeobject
@@ -657,12 +658,9 @@ public class PyString: PyObject, AbstractString {
   internal func casefold() -> PyString {
     var builder = Builder(capacity: self.elements.count)
 
-    for scalar in self.elements {
-      if let mapping = Unicode.caseFoldMapping[scalar.value] {
-        builder.append(contentsOf: mapping.unicodeScalars)
-      } else {
-        builder.append(element: scalar)
-      }
+    for element in self.elements {
+      let mapping = UnicodeData.toCasefold(element)
+      builder.append(mapping: mapping)
     }
 
     let result = builder.finalize()

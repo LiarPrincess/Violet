@@ -85,6 +85,22 @@ public enum UnicodeData {
     return CaseMapping(value)
   }
 
+  // MARK: - Casefold
+
+  public static func toCasefold(_ ch: UnicodeScalar) -> CaseMapping {
+    if let mapping = Unicode.caseFoldMapping[ch.value] {
+      let scalars = Array(mapping.unicodeScalars)
+      switch scalars.count {
+      case 1: return CaseMapping(scalars[0])
+      case 2: return CaseMapping(scalars[0], scalars[1])
+      case 3: return CaseMapping(scalars[0], scalars[1], scalars[2])
+      default: fatalError("Too long?")
+      }
+    }
+
+    return CaseMapping(ch)
+  }
+
   // MARK: - Cased/Case ignorable
 
   public static func isCased(_ ch: UnicodeScalar) -> Bool {
