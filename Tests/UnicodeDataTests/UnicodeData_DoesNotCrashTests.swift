@@ -3,7 +3,7 @@ import UnicodeData
 
 private let range = 0..<0x110000
 
-class DoesNotCrash: XCTestCase {
+class UnicodeDataDoesNotCrashTests: XCTestCase {
 
   func test_iterateAll() {
     for value in range {
@@ -20,6 +20,7 @@ class DoesNotCrash: XCTestCase {
       _ = UnicodeData.isCased(scalar)
       _ = UnicodeData.isCaseIgnorable(scalar)
       _ = UnicodeData.isAlpha(scalar)
+      _ = UnicodeData.isAlphaNumeric(scalar)
       _ = UnicodeData.isWhitespace(scalar)
       _ = UnicodeData.isLineBreak(scalar)
       _ = UnicodeData.isXidStart(scalar)
