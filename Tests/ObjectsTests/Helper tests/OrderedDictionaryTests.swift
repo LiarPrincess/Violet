@@ -321,7 +321,7 @@ class OrderedDictionaryTests: XCTestCase {
 
   private func createDictionary(size: Int? = nil) -> OrderedDictionary<Int, String> {
     if let size = size {
-      return OrderedDictionary(size: size)
+      return OrderedDictionary(count: size)
     } else {
       return OrderedDictionary()
     }

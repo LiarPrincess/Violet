@@ -15,7 +15,7 @@ class ArgumentParserTests: PyTestCase {
     ) else { return }
 
     guard let s = self.asSystemError(e) else { return }
-    XCTAssertEqual(s.message, "Format does not contain function name")
+    XCTAssertEqual(s.message, "Format does not contain a function name")
   }
 
   func test_init_withoutFunctionName_withColon_fails() {
@@ -25,7 +25,7 @@ class ArgumentParserTests: PyTestCase {
     ) else { return }
 
     guard let s = self.asSystemError(e) else { return }
-    XCTAssertEqual(s.message, "Format does not contain function name")
+    XCTAssertEqual(s.message, "Format does not contain a function name")
   }
 
   // MARK: - Init - argument count
