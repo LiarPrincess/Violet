@@ -2419,7 +2419,7 @@ class UnicodeDataHiraganaTests: XCTestCase {
     XCTAssertEqual(UnicodeData.isPrintable(scalar), true)
   }
 
-  /// '゙' - COMBINING KATAKANA-HIRAGANA VOICED SOUND MARK (U+3099)
+  /// '◌゙' - COMBINING KATAKANA-HIRAGANA VOICED SOUND MARK (U+3099)
   func test_combiningKatakana_hiraganaVoicedSoundMark() {
     let scalar: UnicodeScalar = "゙"
 
@@ -2447,7 +2447,7 @@ class UnicodeDataHiraganaTests: XCTestCase {
     XCTAssertEqual(UnicodeData.isPrintable(scalar), true)
   }
 
-  /// '゚' - COMBINING KATAKANA-HIRAGANA SEMI-VOICED SOUND MARK (U+309a)
+  /// '◌゚' - COMBINING KATAKANA-HIRAGANA SEMI-VOICED SOUND MARK (U+309a)
   func test_combiningKatakana_hiraganaSemi_voicedSoundMark() {
     let scalar: UnicodeScalar = "゚"
 

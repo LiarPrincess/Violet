@@ -1,6 +1,8 @@
 # What is this?
 
 This script will extract data from Unicode database and generate code inside the “UnicodeData” module.
+It will also generate test cases for more interesting blocks.
+
 It is heavily based on `Tools/unicode/makeunicodedata.py` from CPython.
 
 Example of things not available in standard Swift:

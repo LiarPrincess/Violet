@@ -11,17 +11,17 @@ import UnicodeData
 /// Tests for: 0080..00ff Latin-1 Supplement block
 class UnicodeDataLatin1SupplementTests: XCTestCase {
 
-  /// ' ' - NO-BREAK SPACE (U+00a0)
+  /// NO-BREAK SPACE (U+00a0)
   func test_no_breakSpace() {
-    let scalar: UnicodeScalar = " "
+    let scalar: UnicodeScalar = "\u{00a0}"
 
     XCTAssertEqual(UnicodeData.isLowercase(scalar), false)
-    XCTAssertCase(UnicodeData.toLowercase(scalar), " ")
+    XCTAssertCase(UnicodeData.toLowercase(scalar), "\u{00a0}")
     XCTAssertEqual(UnicodeData.isUppercase(scalar), false)
-    XCTAssertCase(UnicodeData.toUppercase(scalar), " ")
+    XCTAssertCase(UnicodeData.toUppercase(scalar), "\u{00a0}")
     XCTAssertEqual(UnicodeData.isTitlecase(scalar), false)
-    XCTAssertCase(UnicodeData.toTitlecase(scalar), " ")
-    XCTAssertCase(UnicodeData.toCasefold(scalar), " ")
+    XCTAssertCase(UnicodeData.toTitlecase(scalar), "\u{00a0}")
+    XCTAssertCase(UnicodeData.toCasefold(scalar), "\u{00a0}")
 
     XCTAssertEqual(UnicodeData.isDecimalDigit(scalar), false)
     XCTAssertDigit(UnicodeData.toDecimalDigit(scalar), nil)
@@ -375,17 +375,17 @@ class UnicodeDataLatin1SupplementTests: XCTestCase {
     XCTAssertEqual(UnicodeData.isPrintable(scalar), true)
   }
 
-  /// '­' - SOFT HYPHEN (U+00ad)
+  /// SOFT HYPHEN (U+00ad)
   func test_softHyphen() {
-    let scalar: UnicodeScalar = "­"
+    let scalar: UnicodeScalar = "\u{00ad}"
 
     XCTAssertEqual(UnicodeData.isLowercase(scalar), false)
-    XCTAssertCase(UnicodeData.toLowercase(scalar), "­")
+    XCTAssertCase(UnicodeData.toLowercase(scalar), "\u{00ad}")
     XCTAssertEqual(UnicodeData.isUppercase(scalar), false)
-    XCTAssertCase(UnicodeData.toUppercase(scalar), "­")
+    XCTAssertCase(UnicodeData.toUppercase(scalar), "\u{00ad}")
     XCTAssertEqual(UnicodeData.isTitlecase(scalar), false)
-    XCTAssertCase(UnicodeData.toTitlecase(scalar), "­")
-    XCTAssertCase(UnicodeData.toCasefold(scalar), "­")
+    XCTAssertCase(UnicodeData.toTitlecase(scalar), "\u{00ad}")
+    XCTAssertCase(UnicodeData.toCasefold(scalar), "\u{00ad}")
 
     XCTAssertEqual(UnicodeData.isDecimalDigit(scalar), false)
     XCTAssertDigit(UnicodeData.toDecimalDigit(scalar), nil)

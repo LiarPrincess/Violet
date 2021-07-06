@@ -17,10 +17,10 @@ BLOCK_NAMES = (
 
     'Arabic',
 
-    # 'Combining Diacritical Marks',  # Our favourite 'COMBINING ACUTE ACCENT'
+    'Combining Diacritical Marks',  # Our favorite 'COMBINING ACUTE ACCENT'
 
-    # 'Mathematical Operators',
-    # 'Braille Patterns',
+    'Mathematical Operators',
+    'Braille Patterns',
 
     'Hiragana',
     'Katakana',
@@ -28,17 +28,17 @@ BLOCK_NAMES = (
     'Hangul Jamo',
     # 'Hangul Syllables',  # 11183 characters is too much
 
-    # 'Playing Cards',
+    'Playing Cards',
 
-    # 'Emoticons',
-    # 'Transport and Map Symbols',
-    # 'Chess Symbols'
+    'Emoticons',
+    'Transport and Map Symbols',
+    'Chess Symbols'
 )
 
 
 class Block:
     def __init__(self, line: str):
-        # Example lines:
+        # Example line:
         # 0000..007F; Basic Latin
         # 0600..06FF; Arabic
         split = line.split(";")
@@ -51,9 +51,9 @@ class Block:
         self.end = int(range_split[1], 16)
 
 
-# ===============
-# === Helpers ===
-# ===============
+# ====================
+# === Class/method ===
+# ====================
 
 def create_class_name(block_name: str) -> str:
     'PascalCase name'
@@ -87,27 +87,78 @@ def create_method_name(character_name: str) -> str:
     return 'test_' + result
 
 
-def is_lowercase(ch: str) -> bool:
-    # FEMININE ORDINAL INDICATOR - see: https://codepoints.net/U+00AA
-    # MASCULINE ORDINAL INDICATOR - see: https://codepoints.net/U+00BA
-    if ch == 'ª' or ch == 'º':
+def create_method_doc(block: Block, ch: str) -> str:
+    n = ord(ch)
+    name = unicodedata.name(ch)
+
+    if check_printable(block, ch):
+        printed = ch
+
+        is_combining = check_combining(block, ch)
+        if is_combining:
+            printed = '◌' + printed
+
+        return f"'{printed}' - {name} (U+{n:04x})"
+
+    return f"{name} (U+{n:04x})"
+
+
+def check_combining(block: Block, ch: str) -> bool:
+    name = unicodedata.name(ch).casefold()
+    if 'combining' in name:
         return True
 
+    block_name = block.name.casefold()
+    if 'combining' in block_name:
+        return True
+
+    return False
+
+# ==================
+# === Properties ===
+# ==================
+
+# ====================================================================================
+# IMPORTANT: Some of those things depend on the Python version that you are using
+# (to be more precise: Unicode that they bundled).
+# That's why sometimes we will override Python results and comment 'PYTHON IS WRONG?'.
+# ====================================================================================
+
+
+def check_lowercase(block: Block, ch: str) -> Tuple[bool, str]:
+    cased = ch.lower()
+
+    # TODO: PYTHON IS WRONG?
+    # FEMININE ORDINAL INDICATOR - https://codepoints.net/U+00AA
+    # MASCULINE ORDINAL INDICATOR - https://codepoints.net/U+00BA
+    # COMBINING GREEK YPOGEGRAMMENI - https://codepoints.net/U+0345
+    if ch in ('ª', 'º', 'ͅ'):
+        return (True, cased)
+
     category = unicodedata.category(ch)
-    return category == 'Ll'
+    is_cased = category == 'Ll'
+    return (is_cased, cased)
 
 
-def is_uppercase(ch: str) -> bool:
+def check_uppercase(block: Block, ch: str) -> Tuple[bool, str]:
     category = unicodedata.category(ch)
-    return category == 'Lu'
+    is_cased = category == 'Lu'
+    cased = ch.upper()
+    return (is_cased, cased)
 
 
-def is_titlecase(ch: str) -> bool:
+def check_titlecase(block: Block, ch: str) -> Tuple[bool, str]:
     category = unicodedata.category(ch)
-    return category == 'Lt'
+    is_cased = category == 'Lt'
+    cased = ch.title()
+    return (is_cased, cased)
 
 
-def check_decimal(ch: str):
+def get_casefold(block: Block, ch: str) -> str:
+    return ch.casefold()
+
+
+def check_decimal(block: Block, ch: str):
     try:
         d = unicodedata.decimal(ch)
         return (True, str(d))
@@ -115,7 +166,7 @@ def check_decimal(ch: str):
         return (False, 'nil')
 
 
-def check_digit(ch: str) -> Tuple[bool, str]:
+def check_digit(block: Block, ch: str) -> Tuple[bool, str]:
     try:
         d = unicodedata.digit(ch)
         return (True, str(d))
@@ -123,10 +174,11 @@ def check_digit(ch: str) -> Tuple[bool, str]:
         return (False, 'nil')
 
 
-def check_identifier(ch: str) -> Tuple[bool, bool]:
+def check_identifier(block: Block, ch: str) -> Tuple[bool, bool]:
+    # TODO: PYTHON IS WRONG?
+    # '_' is a valid Python identifier start, but not Unicode!
+    # See: https://codepoints.net/U+005F -> 'ID Start'
     if ch == '_':
-        # '_' is a valid Python identifier start, but not Unicode!
-        # See: https://codepoints.net/U+005F -> 'XID Start'
         return (False, True)
 
     start_string = ch + 'A'
@@ -136,30 +188,6 @@ def check_identifier(ch: str) -> Tuple[bool, bool]:
     is_continue = continue_string.isidentifier()
 
     return (is_start, is_continue)
-
-
-def swift_bool(b: bool) -> str:
-    return 'true' if b else 'false'
-
-
-def swift_string(s: str) -> str:
-    if s == '"':
-        return '\\"'
-
-    if s == '\\':
-        return '\\\\'
-
-    return s
-
-
-def swift_escape(ch: str) -> str:
-    if ch == '"':
-        return '\\"'
-
-    if ch == '\\':
-        return '\\\\'
-
-    return ch
 
 
 _LINE_BREAKS = None
@@ -183,9 +211,87 @@ def get_line_breaks():
     return result
 
 
-def is_line_break(ch: str) -> bool:
+def check_line_break(ch: str) -> bool:
     line_breaks = get_line_breaks()
     return ch in line_breaks
+
+
+def check_printable(block: Block, ch: str) -> bool:
+    # Python conditions to consider character 'printable'
+    # char == ord(" ") or category not in ("C", "Z"):
+
+    n = ord(ch)
+
+    # TODO: PYTHON IS WRONG?
+    # 0x1f6d5 - HINDU TEMPLE
+    # 0x1f6fa - AUTO RICKSHAW
+    if n in (0x1f6d5, 0x1f6fa):
+        return False
+
+    block_name = block.name.casefold()
+    is_chess_but_not_xiangqi = 'chess' in block_name and n < 0x1fa60
+    if is_chess_but_not_xiangqi:
+        return False
+
+    return ch.isprintable()
+
+
+class OtherProperties:
+    def __init__(self,
+                 is_ascii: bool,
+                 is_alpha: bool,
+                 is_alpha_numeric: bool,
+                 is_whitespace: bool,
+                 is_lineBreak: bool,
+                 is_numeric: bool,
+                 is_printable: bool):
+        self.is_ascii = is_ascii
+        self.is_alpha = is_alpha
+        self.is_alpha_numeric = is_alpha_numeric
+        self.is_whitespace = is_whitespace
+        self.is_lineBreak = is_lineBreak
+        self.is_numeric = is_numeric
+        self.is_printable = is_printable
+
+
+def check_other_properties(block: Block, ch: str) -> OtherProperties:
+    is_ascii = ch.isascii()
+    is_alpha = ch.isalpha()
+    is_alpha_numeric = ch.isalnum()
+    is_whitespace = ch.isspace()
+    is_line_break = check_line_break(ch)
+    is_numeric = ch.isnumeric()
+    is_printable = check_printable(block, ch)
+
+    return OtherProperties(is_ascii, is_alpha, is_alpha_numeric, is_whitespace, is_line_break, is_numeric, is_printable)
+
+
+# =============
+# === Swift ===
+# =============
+
+def swift_bool(b: bool) -> str:
+    return 'true' if b else 'false'
+
+
+def swift_string(block: Block, s: str) -> str:
+    all_printable = all([check_printable(block, c) for c in s])
+    if not all_printable:
+        # Return code-point notation
+        result = ''
+        for c in s:
+            n = ord(c)
+            result += f'\\u{{{n:04x}}}'
+        #
+        return result
+
+    if s == '"':
+        return '\\"'
+
+    if s == '\\':
+        return '\\\\'
+
+    return s
 
 
 # =======================
@@ -218,16 +324,23 @@ class {class_name}: XCTestCase {{\
 
         for n in range(start, end + 1):
             ch = chr(n)
-            name = ''
+            ch_name = ''
             try:
-                name = unicodedata.name(ch)
+                ch_name = unicodedata.name(ch)
             except:
                 continue
 
-            test_name = create_method_name(name)
-            (is_decimal, decimal_value) = check_decimal(ch)
-            (is_digit, digit_value) = check_digit(ch)
-            (is_identifier_start, is_identifier_continue) = check_identifier(ch)
+            method_name = create_method_name(ch_name)
+            method_doc = create_method_doc(block, ch)
+
+            (is_lowercase, lowercased) = check_lowercase(block, ch)
+            (is_uppercase, uppercased) = check_uppercase(block, ch)
+            (is_titlecase, titlecased) = check_titlecase(block, ch)
+            casefold = get_casefold(block, ch)
+            (is_decimal, decimal_value) = check_decimal(block, ch)
+            (is_digit, digit_value) = check_digit(block, ch)
+            (is_identifier_start, is_identifier_continue) = check_identifier(block, ch)
+            other = check_other_properties(block, ch)
 
             # Not supported:
             # XCTAssertEqual(UnicodeData.isCased(scalar), true)
@@ -235,32 +348,32 @@ class {class_name}: XCTestCase {{\
 
             f.write(f'''
 
-  /// '{ch}' - {name} (U+{n:04x})
-  func {test_name}() {{
-    let scalar: UnicodeScalar = "{swift_escape(ch)}"
+  /// {method_doc}
+  func {method_name}() {{
+    let scalar: UnicodeScalar = "{swift_string(block, ch)}"
 
-    XCTAssertEqual(UnicodeData.isLowercase(scalar), {swift_bool(is_lowercase(ch))})
-    XCTAssertCase(UnicodeData.toLowercase(scalar), "{swift_string(ch.lower())}")
-    XCTAssertEqual(UnicodeData.isUppercase(scalar), {swift_bool(is_uppercase(ch))})
-    XCTAssertCase(UnicodeData.toUppercase(scalar), "{swift_string(ch.upper())}")
-    XCTAssertEqual(UnicodeData.isTitlecase(scalar), {swift_bool(is_titlecase(ch))})
-    XCTAssertCase(UnicodeData.toTitlecase(scalar), "{swift_string(ch.title())}")
-    XCTAssertCase(UnicodeData.toCasefold(scalar), "{swift_string(ch.casefold())}")
+    XCTAssertEqual(UnicodeData.isLowercase(scalar), {swift_bool(is_lowercase)})
+    XCTAssertCase(UnicodeData.toLowercase(scalar), "{swift_string(block, lowercased)}")
+    XCTAssertEqual(UnicodeData.isUppercase(scalar), {swift_bool(is_uppercase)})
+    XCTAssertCase(UnicodeData.toUppercase(scalar), "{swift_string(block, uppercased)}")
+    XCTAssertEqual(UnicodeData.isTitlecase(scalar), {swift_bool(is_titlecase)})
+    XCTAssertCase(UnicodeData.toTitlecase(scalar), "{swift_string(block, titlecased)}")
+    XCTAssertCase(UnicodeData.toCasefold(scalar), "{swift_string(block, casefold)}")
 
     XCTAssertEqual(UnicodeData.isDecimalDigit(scalar), {swift_bool(is_decimal)})
     XCTAssertDigit(UnicodeData.toDecimalDigit(scalar), {decimal_value})
     XCTAssertEqual(UnicodeData.isDigit(scalar), {swift_bool(is_digit)})
     XCTAssertDigit(UnicodeData.toDigit(scalar), {digit_value})
 
-    XCTAssertEqual(ASCIIData.isASCII(scalar), {swift_bool(ch.isascii())})
-    XCTAssertEqual(UnicodeData.isAlpha(scalar), {swift_bool(ch.isalpha())})
-    XCTAssertEqual(UnicodeData.isAlphaNumeric(scalar), {swift_bool(ch.isalnum())})
-    XCTAssertEqual(UnicodeData.isWhitespace(scalar), {swift_bool(ch.isspace())})
-    XCTAssertEqual(UnicodeData.isLineBreak(scalar), {swift_bool(is_line_break(ch))})
+    XCTAssertEqual(ASCIIData.isASCII(scalar), {swift_bool(other.is_ascii)})
+    XCTAssertEqual(UnicodeData.isAlpha(scalar), {swift_bool(other.is_alpha)})
+    XCTAssertEqual(UnicodeData.isAlphaNumeric(scalar), {swift_bool(other.is_alpha_numeric)})
+    XCTAssertEqual(UnicodeData.isWhitespace(scalar), {swift_bool(other.is_whitespace)})
+    XCTAssertEqual(UnicodeData.isLineBreak(scalar), {swift_bool(check_line_break(ch))})
     XCTAssertEqual(UnicodeData.isXidStart(scalar), {swift_bool(is_identifier_start)})
     XCTAssertEqual(UnicodeData.isXidContinue(scalar), {swift_bool(is_identifier_continue)})
-    XCTAssertEqual(UnicodeData.isNumeric(scalar), {swift_bool(ch.isnumeric())})
-    XCTAssertEqual(UnicodeData.isPrintable(scalar), {swift_bool(ch.isprintable())})
+    XCTAssertEqual(UnicodeData.isNumeric(scalar), {swift_bool(other.is_numeric)})
+    XCTAssertEqual(UnicodeData.isPrintable(scalar), {swift_bool(other.is_printable)})
   }}\
 ''')
 
