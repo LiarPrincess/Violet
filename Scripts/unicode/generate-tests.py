@@ -15,18 +15,18 @@ BLOCK_NAMES = (
     'Latin-1 Supplement',  # Letters with accent, some currency symbols etc.
     'Latin Extended-A',  # Polish
 
-    # 'Arabic',
+    'Arabic',
 
     # 'Combining Diacritical Marks',  # Our favourite 'COMBINING ACUTE ACCENT'
 
     # 'Mathematical Operators',
     # 'Braille Patterns',
 
-    # 'Hiragana',
-    # 'Katakana',
+    'Hiragana',
+    'Katakana',
 
-    # 'Hangul Jamo',
-    # # 'Hangul Syllables', # 11183 is too much
+    'Hangul Jamo',
+    # 'Hangul Syllables',  # 11183 characters is too much
 
     # 'Playing Cards',
 
