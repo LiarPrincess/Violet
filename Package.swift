@@ -53,6 +53,8 @@ let package = Package(
     // But don't worry, it is basically a 1:1 copy of following things from CPython:
     // - Objects/unicodectype.c
     // - Tools/unicode/makeunicodedata.py - generation script (we have it inside '/Scripts/unicode' dir)
+    //
+    // Btw. name comes from similar module in Python.
     .target(name: "UnicodeData", dependencies: []),
     .testTarget(name: "UnicodeDataTests", dependencies: ["UnicodeData"]),
 

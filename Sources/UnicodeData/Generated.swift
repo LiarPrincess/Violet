@@ -1,7 +1,7 @@
-// ==========================================================
-// Automatically generated from: /Scripts/unicode/__main__.py
+// ===================================================================
+// Automatically generated from: /Scripts/unicode/generate-database.py
 // DO NOT EDIT!
-// ==========================================================
+// ===================================================================
 
 // swiftlint:disable trailing_comma
 // swiftlint:disable number_separator

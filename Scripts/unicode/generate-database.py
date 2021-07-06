@@ -5,11 +5,10 @@ import sys
 from typing import List, Tuple
 
 from UnicodeData import UnicodeData
+from Common import UNIDATA_VERSION, generated_warning
 
 SCRIPT = sys.argv[0]
 VERSION = "3.3"
-
-UNIDATA_VERSION = "11.0.0"
 
 # note: should match definitions in Objects/unicodectype.c
 ALPHA_MASK = 0x01
@@ -151,7 +150,7 @@ def makeunicodetype(unicode: UnicodeData, trace: int, file_path: str):
 
                 # if case_folding != special_casing[0]:
                 #     lower |= len(case_folding) << 20
-                #     extra_casing.extend(case_folding)
+                # extra_casing.append(case_folding)
 
                 upper = len(extra_casing)
                 extra_casing.append(special_casing[2])
@@ -200,17 +199,9 @@ def makeunicodetype(unicode: UnicodeData, trace: int, file_path: str):
 
     print("--- Writing", FILE, "...")
 
-    script_path = __file__
-    script_path_scripts_index = script_path.index('/Scripts')
-    if script_path_scripts_index != -1:
-        script_path = script_path[script_path_scripts_index:]
-
     fp = open(FILE, "w")
     print(f'''\
-// ==========================================================
-// Automatically generated from: {script_path}
-// DO NOT EDIT!
-// ==========================================================
+{generated_warning(__file__)}
 
 // swiftlint:disable trailing_comma
 // swiftlint:disable number_separator
