@@ -8,10 +8,12 @@ from Common import UNIDATA_VERSION, generated_warning
 
 BLOCKS = "Blocks%s.txt"
 
+# This is awesome:
+# https://unicode-table.com/en/blocks/basic-latin/
 BLOCK_NAMES = (
     'Basic Latin',
-    # 'Latin-1 Supplement',  # Basic currency etc.
-    # 'Latin Extended-A',  # Polish
+    'Latin-1 Supplement',  # Letters with accent, some currency symbols etc.
+    'Latin Extended-A',  # Polish
 
     # 'Arabic',
 
@@ -57,7 +59,7 @@ def create_class_name(block_name: str) -> str:
     'PascalCase name'
 
     result = ''
-    split = block_name.split(' ')
+    split = block_name.replace('-', '').split(' ')
     for block_name in split:
         block_name = block_name[0].upper() + block_name[1:]
         result += block_name
@@ -85,8 +87,24 @@ def create_method_name(character_name: str) -> str:
     return 'test_' + result
 
 
-def swift_bool(b: bool) -> str:
-    return 'true' if b else 'false'
+def is_lowercase(ch: str) -> bool:
+    # FEMININE ORDINAL INDICATOR - see: https://codepoints.net/U+00AA
+    # MASCULINE ORDINAL INDICATOR - see: https://codepoints.net/U+00BA
+    if ch == 'ª' or ch == 'º':
+        return True
+
+    category = unicodedata.category(ch)
+    return category == 'Ll'
+
+
+def is_uppercase(ch: str) -> bool:
+    category = unicodedata.category(ch)
+    return category == 'Lu'
+
+
+def is_titlecase(ch: str) -> bool:
+    category = unicodedata.category(ch)
+    return category == 'Lt'
 
 
 def check_decimal(ch: str):
@@ -120,6 +138,10 @@ def check_identifier(ch: str) -> Tuple[bool, bool]:
     return (is_start, is_continue)
 
 
+def swift_bool(b: bool) -> str:
+    return 'true' if b else 'false'
+
+
 def swift_string(s: str) -> str:
     if s == '"':
         return '\\"'
@@ -128,6 +150,16 @@ def swift_string(s: str) -> str:
         return '\\\\'
 
     return s
+
+
+def swift_escape(ch: str) -> str:
+    if ch == '"':
+        return '\\"'
+
+    if ch == '\\':
+        return '\\\\'
+
+    return ch
 
 
 _LINE_BREAKS = None
@@ -161,9 +193,6 @@ def is_line_break(ch: str) -> bool:
 # =======================
 
 def write_test_file(output_dir_path: str, block: Block):
-    # This is awesome:
-    # https://unicode-table.com/en/blocks/basic-latin/
-
     name = block.name
     start = block.start
     end = block.end
@@ -196,7 +225,6 @@ class {class_name}: XCTestCase {{\
                 continue
 
             test_name = create_method_name(name)
-            category = unicodedata.category(ch)
             (is_decimal, decimal_value) = check_decimal(ch)
             (is_digit, digit_value) = check_digit(ch)
             (is_identifier_start, is_identifier_continue) = check_identifier(ch)
@@ -207,15 +235,15 @@ class {class_name}: XCTestCase {{\
 
             f.write(f'''
 
-  /// '{ch}' - {name}
+  /// '{ch}' - {name} (U+{n:04x})
   func {test_name}() {{
-    let scalar: UnicodeScalar = "\\u{{{n:04x}}}"
+    let scalar: UnicodeScalar = "{swift_escape(ch)}"
 
-    XCTAssertEqual(UnicodeData.isLowercase(scalar), {swift_bool(category == 'Ll')})
+    XCTAssertEqual(UnicodeData.isLowercase(scalar), {swift_bool(is_lowercase(ch))})
     XCTAssertCase(UnicodeData.toLowercase(scalar), "{swift_string(ch.lower())}")
-    XCTAssertEqual(UnicodeData.isUppercase(scalar), {swift_bool(category == 'Lu')})
+    XCTAssertEqual(UnicodeData.isUppercase(scalar), {swift_bool(is_uppercase(ch))})
     XCTAssertCase(UnicodeData.toUppercase(scalar), "{swift_string(ch.upper())}")
-    XCTAssertEqual(UnicodeData.isTitlecase(scalar), {swift_bool(category == 'Lt')})
+    XCTAssertEqual(UnicodeData.isTitlecase(scalar), {swift_bool(is_titlecase(ch))})
     XCTAssertCase(UnicodeData.toTitlecase(scalar), "{swift_string(ch.title())}")
     XCTAssertCase(UnicodeData.toCasefold(scalar), "{swift_string(ch.casefold())}")
 
