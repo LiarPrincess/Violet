@@ -164,9 +164,9 @@ def makeunicodetype(unicode: UnicodeData, trace: int, file_path: str):
                 unique_values.lower = len(extra_casing)
                 extra_casing.append(special_casing[0])
 
-                # if case_folding != special_casing[0]:
-                #     lower |= len(case_folding) << 20
-                # extra_casing.append(case_folding)
+                if case_folding != special_casing[0]:
+                    unique_values.fold = len(extra_casing)
+                    extra_casing.append(case_folding)
 
                 unique_values.upper = len(extra_casing)
                 extra_casing.append(special_casing[2])
@@ -228,7 +228,8 @@ private typealias CaseMapping = UnicodeData.CaseMapping
     print("/// A list of unique character type descriptors", file=fp)
     print("internal let _PyUnicode_TypeRecords: [UnicodeData.Record] = [", file=fp)
     for v in unique_property_values:
-        print(f'  Record(upper: {v.upper}, lower: {v.lower}, title: {v.title}, decimal: {v.decimal}, digit: {v.digit}, flags: {v.flags}),', file=fp)
+        fold = v.fold if v.fold else 'nil'
+        print(f'  Record(upper: {v.upper}, lower: {v.lower}, title: {v.title}, fold: {fold}, decimal: {v.decimal}, digit: {v.digit}, flags: {v.flags}),', file=fp)
     print("]", file=fp)
     print(file=fp)
 

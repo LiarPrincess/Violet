@@ -1,3 +1,5 @@
+// cSpell:ignore caseless
+
 // In CPython:
 // - Objects/unicodectype.c
 // - Tools/unicode/makeunicodedata.py - generation script
@@ -87,18 +89,29 @@ public enum UnicodeData {
 
   // MARK: - Casefold
 
+  /// See section '3.13 Default Case Algorithms' in Unicode standard for details
+  /// (http://www.unicode.org/versions/Unicode12.1.0 -> 'Full Text pdf for Viewing').
+  ///
+  /// Sneak-peak:
+  ///
+  /// > Case folding is related to case conversion.
+  /// > However, the main purpose of case folding is to contribute to caseless
+  /// > matching of strings, whereas the main purpose of case conversion is to put
+  /// > strings into a particular cased form.
+  /// >
+  /// > (...)
+  /// >
+  /// > toCasefold(X): Map each character C in X to Case_Folding(C).
+  /// >
+  /// > Case_Folding(C) uses the mappings with the status field value “C” or “F”
+  /// > in the data file CaseFolding.txt in the Unicode Character Database.
   public static func toCasefold(_ ch: UnicodeScalar) -> CaseMapping {
-    if let mapping = Unicode.caseFoldMapping[ch.value] {
-      let scalars = Array(mapping.unicodeScalars)
-      switch scalars.count {
-      case 1: return CaseMapping(scalars[0])
-      case 2: return CaseMapping(scalars[0], scalars[1])
-      case 3: return CaseMapping(scalars[0], scalars[1], scalars[2])
-      default: fatalError("Too long?")
-      }
+    let ctype = Self.getTypeRecord(ch.value)
+    if let index = ctype.fold {
+      return _PyUnicode_ExtendedCase[index]
     }
 
-    return CaseMapping(ch)
+    return self.toLowercase(ch)
   }
 
   // MARK: - Cased/Case ignorable
