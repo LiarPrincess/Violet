@@ -19,7 +19,7 @@ extension AbstractString {
   }
 
   private func _center(width: Int, fillChar: Element) -> Builder {
-    let count = width - self.elements.count
+    let count = width - self.count
 
     guard count > 0 else {
       return Builder(elements: self.elements)
@@ -46,7 +46,7 @@ extension AbstractString {
   }
 
   private func _ljust(width: Int, fillChar: Element) -> Builder {
-    let count = width - self.elements.count
+    let count = width - self.count
 
     guard count > 0 else {
       return Builder(elements: self.elements)
@@ -69,7 +69,7 @@ extension AbstractString {
   }
 
   private func _rjust(width: Int, fillChar: Element) -> Builder {
-    let count = width - self.elements.count
+    let count = width - self.count
 
     guard count > 0 else {
       return Builder(elements: self.elements)
@@ -159,7 +159,7 @@ extension AbstractString {
   }
 
   private func _zfill(width: Int) -> Builder {
-    let fillCount = width - self.elements.count
+    let fillCount = width - self.count
 
     guard fillCount > 0 else {
       return Builder(elements: self.elements)

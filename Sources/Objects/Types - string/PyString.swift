@@ -28,9 +28,17 @@ public class PyString: PyObject, AbstractString {
     errors defaults to 'strict'.
     """
 
+  private static let invalidCount = -1
   private static let invalidHash = PyHash.zero
 
   public let value: String
+  /// Cache 'count' because 'String.unicodeScalars.count' is O(n)!
+  /// (yes, on EVERY call!)
+  ///
+  /// So never, ever, use 'self.elements.count', use 'self.count'!
+  ///
+  /// We can do this because `str` is immutable.
+  private var cachedCount = PyString.invalidCount
   /// Cache hash value because `str` is very often used as `__dict__` key.
   ///
   /// We can do this because `str` is immutable.
@@ -49,7 +57,11 @@ public class PyString: PyObject, AbstractString {
   }
 
   internal var count: Int {
-    return self.elements.count
+    if self.cachedCount == PyString.invalidCount {
+      self.cachedCount = self.elements.count
+    }
+
+    return self.cachedCount
   }
 
   override public var description: String {
@@ -127,7 +139,7 @@ public class PyString: PyObject, AbstractString {
   }
 
   internal func hashImpl() -> PyHash {
-    if self.cachedHash == Self.invalidHash {
+    if self.cachedHash == PyString.invalidHash {
       self.cachedHash = Py.hasher.hash(self.value)
     }
 
@@ -147,7 +159,7 @@ public class PyString: PyObject, AbstractString {
     let quote = self.getReprQuoteChar()
 
     var result = String(quote)
-    result.reserveCapacity(self.elements.count)
+    result.reserveCapacity(self.count)
 
     for element in self.elements {
       switch element {
@@ -600,7 +612,7 @@ public class PyString: PyObject, AbstractString {
 
   // sourcery: pymethod = casefold
   internal func casefold() -> PyString {
-    var builder = Builder(capacity: self.elements.count)
+    var builder = Builder(capacity: self.count)
 
     for element in self.elements {
       let mapping = UnicodeData.toCasefold(element)

@@ -272,6 +272,7 @@ extension PyType {
     public static let PyStaticMethod = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `value: String`
+    /// - `cachedCount: PyString`
     /// - `cachedHash: PyString`
     public static let PyString = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:

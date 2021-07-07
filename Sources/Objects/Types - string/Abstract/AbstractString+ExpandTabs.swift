@@ -14,7 +14,7 @@ extension AbstractString {
   }
 
   private func _expandTabs(tabSize: Int) -> Builder {
-    var builder = Builder(capacity: self.elements.count + tabSize)
+    var builder = Builder(capacity: self.count + tabSize)
     var linePos = 0
 
     for element in self.elements {

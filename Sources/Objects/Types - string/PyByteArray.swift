@@ -32,12 +32,8 @@ public class PyByteArray: PyObject, AbstractBytes {
     return self.elements.isEmpty
   }
 
-  internal var count: Int {
-    return self.elements.count
-  }
-
   override public var description: String {
-    return "PyByteArray(count: \(self.elements.count))"
+    return "PyByteArray(count: \(self.count))"
   }
 
   // MARK: - Init
@@ -667,7 +663,7 @@ public class PyByteArray: PyObject, AbstractBytes {
       return .value(self)
     }
 
-    let minCapacity = self.elements.count * count
+    let minCapacity = self.count * count
     self.elements.reserveCapacity(minCapacity)
 
     // 'abc' * 2 = 'abcabc'
@@ -771,14 +767,14 @@ public class PyByteArray: PyObject, AbstractBytes {
     var index = index
 
     if index < 0 {
-      index += self.elements.count
+      index += self.count
       if index < 0 {
         index = 0
       }
     }
 
-    if index > self.elements.count {
-      index = self.elements.count
+    if index > self.count {
+      index = self.count
     }
 
     self.elements.insert(byte, at: index)

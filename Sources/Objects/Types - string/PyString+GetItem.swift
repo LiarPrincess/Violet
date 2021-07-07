@@ -42,11 +42,11 @@ extension PyString {
   private func _getItem(index indexInt: Int) -> PyResult<Element> {
     var offset = indexInt
     if offset < 0 {
-      offset += self.elements.count
+      offset += self.count
     }
 
     // swiftlint:disable:next yoda_condition
-    guard 0 <= offset && offset < self.elements.count else {
+    guard 0 <= offset && offset < self.count else {
       return .indexError("\(Self._pythonTypeName) index out of range")
     }
 
@@ -68,7 +68,7 @@ extension PyString {
    private func _getSlice(slice: PySlice) -> PyResult<Builder> {
     switch slice.unpack() {
     case let .value(u):
-      let indices = u.adjust(toCount: self.elements.count)
+      let indices = u.adjust(toCount: self.count)
       return self._getSlice(start: indices.start,
                             step: indices.step,
                             count: indices.count)

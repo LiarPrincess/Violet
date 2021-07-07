@@ -86,7 +86,7 @@ extension AbstractBytes {
   /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal func _repr() -> String {
     var result = String("'")
-    result.reserveCapacity(self.elements.count)
+    result.reserveCapacity(self.count)
 
     for element in self.elements {
       switch element {

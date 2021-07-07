@@ -4,7 +4,7 @@ extension AbstractString {
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _lowerCase() -> SwiftType {
-    var builder = Builder(capacity: self.elements.count)
+    var builder = Builder(capacity: self.count)
 
     for element in self.elements {
       let mapping = Self._lowercaseMapping(element: element)
@@ -19,7 +19,7 @@ extension AbstractString {
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _upperCase() -> SwiftType {
-    var builder = Builder(capacity: self.elements.count)
+    var builder = Builder(capacity: self.count)
 
     for element in self.elements {
       let mapping = Self._uppercaseMapping(element: element)
@@ -34,7 +34,7 @@ extension AbstractString {
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _titleCase() -> SwiftType {
-    var builder = Builder(capacity: self.elements.count)
+    var builder = Builder(capacity: self.count)
     var isPreviousCased = false
 
     for element in self.elements {
@@ -57,7 +57,7 @@ extension AbstractString {
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal func _swapCase() -> SwiftType {
-    var builder = Builder(capacity: self.elements.count)
+    var builder = Builder(capacity: self.count)
 
     for element in self.elements {
       let isCased = Self._isCased(element: element)
@@ -85,7 +85,7 @@ extension AbstractString {
     // Capitalize only the first scalar:
     // list("e\u0301".capitalize()) -> ['E', '́']
 
-    var builder = Builder(capacity: self.elements.count)
+    var builder = Builder(capacity: self.count)
 
     guard let first = self.elements.first else {
       let result = builder.finalize()

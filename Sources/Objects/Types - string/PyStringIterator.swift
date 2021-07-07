@@ -68,8 +68,8 @@ public class PyStringIterator: PyObject {
 
   // sourcery: pymethod = __length_hint__
   public func lengthHint() -> PyInt {
-    let elements = self.string.elements
-    let result = elements.count - self.index
+    let count = self.string.count
+    let result = count - self.index
     return Py.newInt(result)
   }
 

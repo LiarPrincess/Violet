@@ -58,7 +58,7 @@ extension AbstractString {
   }
 
   private func _mul(count: Int) -> Builder.Result {
-    let capacity = self.elements.count * count
+    let capacity = self.count * count
     var builder = Builder(capacity: capacity)
 
     if self.elements.isEmpty {

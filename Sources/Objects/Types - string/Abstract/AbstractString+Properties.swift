@@ -113,7 +113,7 @@ extension AbstractString {
     }
 
     // Shortcut for single character strings
-    if let first = self.elements.first, self.elements.count == 1 {
+    if let first = self.elements.first, self.count == 1 {
       return isUpperOrTitle(element: first)
     }
 

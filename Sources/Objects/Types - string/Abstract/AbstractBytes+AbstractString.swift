@@ -29,7 +29,14 @@ extension Data {
 
 extension AbstractBytes {
 
-  internal static var _pythonTypeName: String { return "bytes" }
+  internal static var _pythonTypeName: String {
+    return "bytes"
+  }
+
+  internal var count: Int {
+    // 'self.elements' has 'Data' type, so it is O(1).
+    return self.elements.count
+  }
 
   // MARK: - Defaults
 

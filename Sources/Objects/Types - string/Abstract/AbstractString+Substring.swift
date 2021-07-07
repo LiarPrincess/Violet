@@ -112,7 +112,7 @@ extension AbstractString {
     case let .value(int):
       var adjustedInt = int
       if adjustedInt < 0 {
-        adjustedInt += self.elements.count
+        adjustedInt += self.count
 
         // >>> 'elsa'[-1234:2]
         // 'el'

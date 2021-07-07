@@ -48,10 +48,8 @@ public class PyBytesIterator: PyObject {
 
   // sourcery: pymethod = __next__
   public func next() -> PyResult<PyObject> {
-    let elements = self.bytes.elements
-
-    if self.index < elements.count {
-      let byte = elements[self.index]
+    if self.index < self.bytes.count {
+      let byte = self.bytes.elements[self.index]
       let result = Py.newInt(byte)
       self.index += 1
       return .value(result)
@@ -64,8 +62,8 @@ public class PyBytesIterator: PyObject {
 
   // sourcery: pymethod = __length_hint__
   public func lengthHint() -> PyInt {
-    let elements = self.bytes.elements
-    let result = elements.count - self.index
+    let count = self.bytes.count
+    let result = count - self.index
     return Py.newInt(result)
   }
 

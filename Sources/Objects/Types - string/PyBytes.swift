@@ -28,7 +28,7 @@ public class PyBytes: PyObject, AbstractBytes {
   internal let elements: Data
 
   override public var description: String {
-    return "PyBytes(count: \(self.elements.count))"
+    return "PyBytes(count: \(self.count))"
   }
 
   // MARK: - Init

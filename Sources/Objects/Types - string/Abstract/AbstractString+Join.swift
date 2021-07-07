@@ -45,7 +45,7 @@ extension AbstractString {
       iterableCount = int
     }
 
-    let ourCount = self.elements.count
+    let ourCount = self.count
     let iterableElementExpectedCount = 2 // Again, 2 is our guess.
     return iterableCount * (ourCount + iterableElementExpectedCount)
   }

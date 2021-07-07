@@ -360,7 +360,7 @@ extension AbstractString {
       return .value(list)
     case .some(let separator):
       let result: [PyObject]
-      let separatorIsLongerThanUs = self.elements.count < separator.count
+      let separatorIsLongerThanUs = self.count < separator.count
 
       // This 'switch' is overkill, but it makes it easier to debug
       // (we can just 'n', without checking the value of 'separatorIsLongerThanUs').

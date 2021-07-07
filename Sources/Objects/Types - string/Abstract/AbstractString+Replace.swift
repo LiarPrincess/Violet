@@ -68,7 +68,7 @@ extension AbstractString {
 
     let countDiff = clamp(new.count - old.count, min: -10, max: 10)
     let expectedChangeCount = clamp(count, min: -10, max: 10)
-    return self.elements.count + countDiff * expectedChangeCount
+    return self.count + countDiff * expectedChangeCount
   }
 
   // MARK: - Count

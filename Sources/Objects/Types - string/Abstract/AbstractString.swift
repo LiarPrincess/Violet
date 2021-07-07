@@ -53,7 +53,13 @@ internal protocol AbstractString: PyObject {
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   static var _pythonTypeName: String { get }
 
+  // Main requirement.
   var elements: Elements { get }
+  // We also need 'count' because 'String.unicodeScalars.count' is O(n).
+  // (yes, on EVERY call!)
+  //
+  // So never, ever, use 'self.elements.count', use 'self.count'!
+  var count: Int { get }
 
   // MARK: - Unicode
 
@@ -155,7 +161,7 @@ extension AbstractString {
   /// len("Café")       -> 4
   /// ```
   internal var _length: BigInt {
-    let result = self.elements.count
+    let result = self.count
     return BigInt(result)
   }
 
