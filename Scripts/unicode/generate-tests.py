@@ -6,6 +6,8 @@ from typing import List, Tuple
 from UnicodeData import open_data
 from Common import UNIDATA_VERSION, generated_warning
 
+# cSpell: ignore YPOGEGRAMMENI xiangqi
+
 BLOCKS = "Blocks%s.txt"
 
 # This is awesome:
@@ -316,6 +318,8 @@ def write_test_file(output_dir_path: str, block: Block):
 import XCTest
 import UnicodeData
 
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable type_name
 // swiftlint:disable file_length
 
 /// Tests for: {start:04x}..{end:04x} {name} block

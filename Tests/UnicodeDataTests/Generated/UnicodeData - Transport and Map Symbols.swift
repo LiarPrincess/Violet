@@ -6,6 +6,8 @@
 import XCTest
 import UnicodeData
 
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable type_name
 // swiftlint:disable file_length
 
 /// Tests for: 1f680..1f6ff Transport and Map Symbols block

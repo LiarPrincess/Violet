@@ -6,6 +6,8 @@
 import XCTest
 import UnicodeData
 
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable type_name
 // swiftlint:disable file_length
 
 /// Tests for: 1f0a0..1f0ff Playing Cards block

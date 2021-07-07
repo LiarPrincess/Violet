@@ -1,8 +1,7 @@
 "Based on 'Tools/unicode/makeunicodedata.py' from CPython."
 
-from genericpath import isfile
 import sys
-from typing import List, Tuple
+from typing import Dict, List, Tuple, Optional
 
 from UnicodeData import UnicodeData
 from Common import UNIDATA_VERSION, generated_warning
@@ -28,6 +27,26 @@ CASED_MASK = 0x2000
 EXTENDED_CASE_MASK = 0x4000
 
 
+class UniquePropertyValues:
+    def __init__(self):
+        self.upper: int = 0
+        self.lower: int = 0
+        self.title: int = 0
+        self.fold: Optional[int] = None
+        self.decimal: int = 0
+        self.digit: int = 0
+        self.flags: int = 0
+
+    def as_tuple(self) -> Tuple:
+        return (self.upper, self.lower, self.title, self.fold, self.decimal, self.digit, self.flags)
+
+    def __hash__(self) -> int:
+        return hash(self.as_tuple())
+
+    def __eq__(self, o: object) -> bool:
+        return self.as_tuple() == o.as_tuple()
+
+
 def maketables(trace, file_path: str):
     # 'UnicodeData' class is taken directly from CPython.
     unicode = UnicodeData(UNIDATA_VERSION)
@@ -41,27 +60,21 @@ def maketables(trace, file_path: str):
 
 def makeunicodetype(unicode: UnicodeData, trace: int, file_path: str):
 
-    # ==============================================================
-    # === Violet: Every change for Violet is commented like this ===
-    # ==============================================================
-
     FILE = file_path
 
     print("--- Preparing", FILE, "...")
 
     # extract unicode types
-    dummy = (0, 0, 0, 0, 0, 0)
-    table = [dummy]
-    cache = {0: dummy}
-    index = [0] * len(unicode.chars)
+    dummy = UniquePropertyValues()
+    unique_property_values: List[UniquePropertyValues] = [dummy]
+    # There is an error in CPython, they have '{0:dummy}',
+    # but it will work anyway, just the 1st entry will be duplicated.
+    unique_values_to_index: Dict[UniquePropertyValues, int] = {dummy: 0}
+    extra_casing: List[Tuple[int]] = []
+    index_by_char = [0] * len(unicode.chars)
     numeric = {}
     spaces = []
     linebreaks = []
-
-    # ==============================================================================================
-    # === Violet: We are using list of tuples to convert them later to 'UnicodeData.CaseMapping' ===
-    # ==============================================================================================
-    extra_casing: List[Tuple[int]] = []
 
     for char in unicode.chars:
         record = unicode.table[char]
@@ -70,34 +83,34 @@ def makeunicodetype(unicode: UnicodeData, trace: int, file_path: str):
             category = record[2]
             bidirectional = record[4]
             properties = record[16]
-            flags = 0
-            delta = True
 
-            # === Mask ===
+            unique_values = UniquePropertyValues()
+
+            # === Flags ===
             if category in ["Lm", "Lt", "Lu", "Ll", "Lo"]:
-                flags |= ALPHA_MASK
+                unique_values.flags |= ALPHA_MASK
             if "Lowercase" in properties:
-                flags |= LOWER_MASK
+                unique_values.flags |= LOWER_MASK
             if 'Line_Break' in properties or bidirectional == "B":
-                flags |= LINEBREAK_MASK
+                unique_values.flags |= LINEBREAK_MASK
                 linebreaks.append(char)
             if category == "Zs" or bidirectional in ("WS", "B", "S"):
-                flags |= SPACE_MASK
+                unique_values.flags |= SPACE_MASK
                 spaces.append(char)
             if category == "Lt":
-                flags |= TITLE_MASK
+                unique_values.flags |= TITLE_MASK
             if "Uppercase" in properties:
-                flags |= UPPER_MASK
+                unique_values.flags |= UPPER_MASK
             if char == ord(" ") or category[0] not in ("C", "Z"):
-                flags |= PRINTABLE_MASK
+                unique_values.flags |= PRINTABLE_MASK
             if "XID_Start" in properties:
-                flags |= XID_START_MASK
+                unique_values.flags |= XID_START_MASK
             if "XID_Continue" in properties:
-                flags |= XID_CONTINUE_MASK
+                unique_values.flags |= XID_CONTINUE_MASK
             if "Cased" in properties:
-                flags |= CASED_MASK
+                unique_values.flags |= CASED_MASK
             if "Case_Ignorable" in properties:
-                flags |= CASE_IGNORABLE_MASK
+                unique_values.flags |= CASE_IGNORABLE_MASK
 
             # === Upper, lower, title ===
             if record[12]:
@@ -124,14 +137,17 @@ def makeunicodetype(unicode: UnicodeData, trace: int, file_path: str):
 
             if special_casing is None:
                 if upper == lower == title:
-                    upper = lower = title = 0
+                    unique_values.upper = 0
+                    unique_values.lower = 0
+                    unique_values.title = 0
                 else:
-                    upper = upper - char  # Store diff
-                    lower = lower - char
-                    title = title - char
-                    assert (abs(upper) <= 2147483647 and
-                            abs(lower) <= 2147483647 and
-                            abs(title) <= 2147483647)
+                    # Store relative index
+                    unique_values.upper = upper - char
+                    unique_values.lower = lower - char
+                    unique_values.title = title - char
+                    assert (abs(unique_values.upper) <= 2147483647 and
+                            abs(unique_values.lower) <= 2147483647 and
+                            abs(unique_values.title) <= 2147483647)
             else:
                 # =======================================================================================
                 # === Violet: Store list of tuples to convert them later to 'UnicodeData.CaseMapping' ===
@@ -143,51 +159,48 @@ def makeunicodetype(unicode: UnicodeData, trace: int, file_path: str):
                 # 2) casefolded version of the character is different from the
                 # lowercase.
                 # The extra characters are stored in a different array.
-                flags |= EXTENDED_CASE_MASK
+                unique_values.flags |= EXTENDED_CASE_MASK
 
-                lower = len(extra_casing)
+                unique_values.lower = len(extra_casing)
                 extra_casing.append(special_casing[0])
 
                 # if case_folding != special_casing[0]:
                 #     lower |= len(case_folding) << 20
                 # extra_casing.append(case_folding)
 
-                upper = len(extra_casing)
+                unique_values.upper = len(extra_casing)
                 extra_casing.append(special_casing[2])
 
                 # Title is probably equal to upper.
                 if special_casing[1] == special_casing[2]:
-                    title = upper
+                    unique_values.title = unique_values.upper
                 else:
-                    title = len(extra_casing)
+                    unique_values.title = len(extra_casing)
                     extra_casing.append(special_casing[1])
 
             # === Decimal digit, integer digit ===
-            decimal = 0
             if record[6]:
-                flags |= DECIMAL_MASK
-                decimal = int(record[6])
+                unique_values.flags |= DECIMAL_MASK
+                unique_values.decimal = int(record[6])
 
-            digit = 0
             if record[7]:
-                flags |= DIGIT_MASK
-                digit = int(record[7])
+                unique_values.flags |= DIGIT_MASK
+                unique_values.digit = int(record[7])
 
             if record[8]:
-                flags |= NUMERIC_MASK
+                unique_values.flags |= NUMERIC_MASK
                 numeric.setdefault(record[8], []).append(char)
 
-            item = (upper, lower, title, decimal, digit, flags)
-
-            # add entry to index and item tables
-            i = cache.get(item)
+            # === Add entry to index and item tables ===
+            i = unique_values_to_index.get(unique_values)
             if i is None:
-                cache[item] = i = len(table)
-                table.append(item)
+                unique_values_to_index[unique_values] = len(unique_property_values)
+                i = len(unique_property_values)
+                unique_property_values.append(unique_values)
 
-            index[char] = i
+            index_by_char[char] = i
 
-    print(len(table), "unique character type entries")
+    print(len(unique_property_values), "unique character type entries")
     print(sum(map(len, numeric.values())), "numeric code points")
     print(len(spaces), "whitespace code points")
     print(len(linebreaks), "linebreak code points")
@@ -214,8 +227,8 @@ private typealias CaseMapping = UnicodeData.CaseMapping
 
     print("/// A list of unique character type descriptors", file=fp)
     print("internal let _PyUnicode_TypeRecords: [UnicodeData.Record] = [", file=fp)
-    for item in table:
-        print('  Record(upper: %d, lower: %d, title: %d, decimal: %d, digit: %d, flags: %d),' % item, file=fp)
+    for v in unique_property_values:
+        print(f'  Record(upper: {v.upper}, lower: {v.lower}, title: {v.title}, decimal: {v.decimal}, digit: {v.digit}, flags: {v.flags}),', file=fp)
     print("]", file=fp)
     print(file=fp)
 
@@ -229,7 +242,7 @@ private typealias CaseMapping = UnicodeData.CaseMapping
     print(file=fp)
 
     # split decomposition index table
-    index1, index2, shift = splitbins(index, trace)
+    index1, index2, shift = splitbins(index_by_char, trace)
 
     print("/// Type indexes", file=fp)
     print("internal let SHIFT =", shift, file=fp)
@@ -283,9 +296,9 @@ private typealias CaseMapping = UnicodeData.CaseMapping
     print('internal func _PyUnicode_IsWhitespace(_ ch: UnicodeScalar) -> Bool {', file=fp)
     print('    switch ch.value {', file=fp)
 
-    for index, codepoint in enumerate(sorted(spaces)):
-        is_first = index == 0
-        is_last = index == len(spaces) - 1
+    for index_by_char, codepoint in enumerate(sorted(spaces)):
+        is_first = index_by_char == 0
+        is_last = index_by_char == len(spaces) - 1
 
         if is_first:
             print('    case 0x%04X,' % (codepoint), file=fp)
@@ -307,9 +320,9 @@ private typealias CaseMapping = UnicodeData.CaseMapping
     print("/// type 'B', 0 otherwise.", file=fp)
     print('internal func _PyUnicode_IsLineBreak(_ ch: UnicodeScalar) -> Bool {', file=fp)
     print('    switch ch.value {', file=fp)
-    for index, codepoint in enumerate(sorted(linebreaks)):
-        is_first = index == 0
-        is_last = index == len(linebreaks) - 1
+    for index_by_char, codepoint in enumerate(sorted(linebreaks)):
+        is_first = index_by_char == 0
+        is_last = index_by_char == len(linebreaks) - 1
 
         if is_first:
             print('    case 0x%04X,' % (codepoint), file=fp)
