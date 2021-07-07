@@ -75,62 +75,6 @@ public class PyString: PyObject, AbstractString {
     super.init(type: type)
   }
 
-  // MARK: - AbstractString
-
-  internal typealias Element = UnicodeScalar
-  internal typealias Elements = String.UnicodeScalarView
-  internal typealias Builder = UnicodeScalarBuilder
-  internal typealias SwiftType = PyString
-  internal typealias ElementSwiftType = PyString
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal static let _pythonTypeName = "str"
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal static let _defaultFill: UnicodeScalar = " "
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal static let _zFill: UnicodeScalar = "0"
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal static func _toObject(element: UnicodeScalar) -> ElementSwiftType {
-    return Py.newString(element)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal static func _toObject(elements: String.UnicodeScalarView) -> SwiftType {
-    return Py.newString(elements)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal static func _toObject(elements: Substring.UnicodeScalarView) -> SwiftType {
-    return Py.newString(elements)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal static func _toObject(result: String) -> SwiftType {
-    return Py.newString(result)
-  }
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal static func _getElements(object: PyObject) -> Elements? {
-    if let string = PyCast.asString(object) {
-      return string.elements
-    }
-
-    return nil
-  }
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal static func _getElementsForFindCountContainsIndexOf(
-    object: PyObject
-  ) -> AbstractString_ElementsForFindCountContainsIndexOf<Elements> {
-    // Nothing special here, only 'str' can be used in 'find', 'count' etc… '.
-    if let string = PyCast.asString(object) {
-      return .value(string.elements)
-    }
-
-    return .invalidObjectType
-  }
-
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__

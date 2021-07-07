@@ -2,6 +2,24 @@ import Foundation
 import VioletCore
 import UnicodeData
 
+// MARK: - ASCII
+
+/// \t
+private let ascii_horizontal_tab: UInt8 = 9
+/// LF, \n
+private let ascii_line_feed: UInt8 = 10
+/// CR, \r
+private let ascii_carriage_return: UInt8 = 13
+/// '
+private let ascii_apostrophe: UInt8 = 39
+private let ascii_slash: UInt8 = 47
+private let ascii_backslash: UInt8 = 92
+private let ascii_space: UInt8 = 32
+private let ascii_zero: UInt8 = 48
+private let ascii_endIndex: UInt8 = 127
+
+// MARK: - Data + byte init
+
 extension Data {
   // This is safe and does not require heap allocation.
   fileprivate init(byte: UInt8) {
@@ -10,6 +28,46 @@ extension Data {
 }
 
 extension AbstractBytes {
+
+  internal static var _pythonTypeName: String { return "bytes" }
+
+  // MARK: - Defaults
+
+  internal static var _defaultFill: UInt8 { return ascii_space }
+  internal static var _zFill: UInt8 { return ascii_zero }
+
+  // MARK: - Get elements
+
+  internal static func _getElements(object: PyObject) -> Data? {
+    if let bytes = PyCast.asAnyBytes(object) {
+      return bytes.elements
+    }
+
+    return nil
+  }
+
+  internal static func _getElementsForFindCountContainsIndexOf(
+    object: PyObject
+  ) -> AbstractString_ElementsForFindCountContainsIndexOf<Data> {
+    if let bytes = PyCast.asAnyBytes(object) {
+      return .value(bytes.elements)
+    }
+
+    // For example: `49 in b'123'`.
+    if let pyInt = PyCast.asInt(object) {
+      guard let byte = UInt8(exactly: pyInt.value) else {
+        let msg = "byte must be in range(0, 256)"
+        return .error(Py.newValueError(msg: msg))
+      }
+
+      let data = Data(byte: byte)
+      return .value(data)
+    }
+
+    return .invalidObjectType
+  }
+
+  // MARK: - As unicode scalar
 
   /// DO NOT USE! This is a part of `AbstractBytes` implementation.
   internal static func _asUnicodeScalar(element: UInt8) -> UnicodeScalar {

@@ -36,83 +36,8 @@ protocol AbstractBytes: AbstractString where Builder == BytesBuilder {
   // Builder constraint will also solve 'Elements' and 'Element'
   //
   // We could also 'extension AbstractString where Builder == BytesBuilder'
-  // but having new name is more self-describing.
+  // but having new name ('AbstractBytes') is more self-describing.
 }
-
-extension AbstractBytes {
-
-  internal static var _pythonTypeName: String { return "bytes" }
-  internal static var _defaultFill: UInt8 { return ascii_space }
-  internal static var _zFill: UInt8 { return ascii_zero }
-
-  internal static func _getElements(object: PyObject) -> Data? {
-    if let bytes = PyCast.asAnyBytes(object) {
-      return bytes.elements
-    }
-
-    return nil
-  }
-
-  internal static func _getElementsForFindCountContainsIndexOf(
-    object: PyObject
-  ) -> AbstractString_ElementsForFindCountContainsIndexOf<Data> {
-    if let bytes = PyCast.asAnyBytes(object) {
-      return .value(bytes.elements)
-    }
-
-    // For example: `49 in b'123'`.
-    if let pyInt = PyCast.asInt(object) {
-      guard let byte = UInt8(exactly: pyInt.value) else {
-        let msg = "byte must be in range(0, 256)"
-        return .error(Py.newValueError(msg: msg))
-      }
-
-      let data = Data([byte])
-      return .value(data)
-    }
-
-    return .invalidObjectType
-  }
-
-  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _getElementsFromIterable(
-    iterable: PyObject
-  ) -> AbstractBytes_ElementsFromIterable {
-    if let bytes = PyCast.asExactlyAnyBytes(iterable) {
-      return .bytes(bytes.elements)
-    }
-
-    guard Py.hasIter(object: iterable) else {
-      return .notIterable
-    }
-
-    var result = Data()
-
-    // If we can easily get the '__len__' then use it.
-    // If not, then we can't call python method, because it may side-effect.
-    if let bigInt = Fast.__len__(iterable), let int = Int(exactly: bigInt) {
-      result.reserveCapacity(int)
-    }
-
-    let reduceError = Py.reduce(iterable: iterable, into: &result) { acc, object in
-      switch Self._asByte(object: object) {
-      case let .value(byte):
-        acc.append(byte)
-        return .goToNextElement
-      case let .error(e):
-        return .error(e)
-      }
-    }
-
-    if let e = reduceError {
-      return .error(e)
-    }
-
-    return .bytes(result)
-  }
-}
-
-// MARK: - Methods
 
 extension AbstractBytes {
 
@@ -208,6 +133,45 @@ extension AbstractBytes {
 
     let repr = self._repr()
     return .value(repr)
+  }
+
+  // MARK: - Elements from iterable
+
+  /// DO NOT USE! This is a part of `AbstractBytes` implementation.
+  internal static func _getElementsFromIterable(
+    iterable: PyObject
+  ) -> AbstractBytes_ElementsFromIterable {
+    if let bytes = PyCast.asExactlyAnyBytes(iterable) {
+      return .bytes(bytes.elements)
+    }
+
+    guard Py.hasIter(object: iterable) else {
+      return .notIterable
+    }
+
+    var result = Data()
+
+    // If we can easily get the '__len__' then use it.
+    // If not, then we can't call python method, because it may side-effect.
+    if let bigInt = Fast.__len__(iterable), let int = Int(exactly: bigInt) {
+      result.reserveCapacity(int)
+    }
+
+    let reduceError = Py.reduce(iterable: iterable, into: &result) { acc, object in
+      switch Self._asByte(object: object) {
+      case let .value(byte):
+        acc.append(byte)
+        return .goToNextElement
+      case let .error(e):
+        return .error(e)
+      }
+    }
+
+    if let e = reduceError {
+      return .error(e)
+    }
+
+    return .bytes(result)
   }
 
   // MARK: - As byte
