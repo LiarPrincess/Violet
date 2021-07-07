@@ -1,5 +1,5 @@
 // swift-tools-version:5.0
-// cSpell:ignore keikaku bunde
+// cSpell:ignore keikaku
 
 import PackageDescription
 
@@ -47,7 +47,7 @@ let package = Package(
     .target(name: "BigInt", dependencies: ["VioletCore"]),
     .testTarget(name: "BigIntTests", dependencies: ["BigInt"]),
 
-    // We also bunde our own Unicode database, because why not…
+    // We also bundle our own Unicode database, because why not…
     // Ehh… Ehh…
     //
     // But don't worry, it is basically a 1:1 copy of following things from CPython:
