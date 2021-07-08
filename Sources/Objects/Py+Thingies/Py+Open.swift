@@ -7,6 +7,20 @@ import VioletCore
 // Modules -> _io -> _iomodule.c
 // https://docs.python.org/3.7/library/io.html
 
+// MARK: - Source
+
+/// Where to find file?
+private enum FileSource {
+  /// We already have it.
+  case fileDescriptor(Int32)
+  /// Path.
+  case string(String)
+  /// Encoded path.
+  case bytes(Data)
+}
+
+// MARK: - Open
+
 extension PyInstance {
 
   /// open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None,
@@ -23,7 +37,7 @@ extension PyInstance {
     // We will ignore 'buffering', 'newline', and 'opener' because we are lazy.
 
     let source: FileSource
-    switch FileSource.from(fileArg) {
+    switch self.parseFileSource(object: fileArg) {
     case let .value(f): source = f
     case let .error(e): return .error(e)
     }
@@ -119,5 +133,25 @@ extension PyInstance {
       let fd = self.fileSystem.open(path: path, mode: mode)
       return fd.map { OpenedFileDescriptor(path: path, value: $0) }
     }
+  }
+
+  // MARK: - File source
+
+  private func parseFileSource(object: PyObject) -> PyResult<FileSource> {
+    if let int = PyCast.asInt(object),
+       let fd = Int32(exactly: int.value) {
+      return .value(.fileDescriptor(fd))
+    }
+
+    if let string = PyCast.asString(object) {
+      return .value(.string(string.value))
+    }
+
+    if let bytes = PyCast.asAnyBytes(object) {
+      return .value(.bytes(bytes.elements))
+    }
+
+    let repr = Py.reprOrGeneric(object: object)
+    return .typeError("invalid file: \(repr)")
   }
 }

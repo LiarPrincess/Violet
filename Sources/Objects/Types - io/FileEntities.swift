@@ -28,36 +28,6 @@ public struct FileStat {
   }
 }
 
-// MARK: - File source
-
-/// Where to find file?
-internal enum FileSource {
-  /// We already have it.
-  case fileDescriptor(Int32)
-  /// Path.
-  case string(String)
-  /// Encoded path.
-  case bytes(Data)
-
-  internal static func from(_ object: PyObject) -> PyResult<FileSource> {
-    if let int = PyCast.asInt(object),
-       let fd = Int32(exactly: int.value) {
-      return .value(.fileDescriptor(fd))
-    }
-
-    if let string = PyCast.asString(object) {
-      return .value(.string(string.value))
-    }
-
-    if let bytes = PyCast.asAnyBytes(object) {
-      return .value(.bytes(bytes.elements))
-    }
-
-    let repr = Py.reprOrGeneric(object: object)
-    return .typeError("invalid file: \(repr)")
-  }
-}
-
 // MARK: - File mode
 
 /// What are we going to do with file?
