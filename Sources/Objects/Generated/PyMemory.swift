@@ -595,6 +595,39 @@ public enum PyMemory {
     )
   }
 
+  // MARK: - String
+
+  /// Allocate new instance of `str` type.
+  public static func newString(
+    value: String
+  ) -> PyString {
+    return PyString(
+      value: value
+    )
+  }
+
+  /// Allocate new instance of `str` type.
+  public static func newString(
+    type: PyType,
+    value: String
+  ) -> PyString {
+    return PyString(
+      type: type,
+      value: value
+    )
+  }
+
+  // MARK: - StringIterator
+
+  /// Allocate new instance of `str_iterator` type.
+  public static func newStringIterator(
+    string: PyString
+  ) -> PyStringIterator {
+    return PyStringIterator(
+      string: string
+    )
+  }
+
   // MARK: - Tuple
 
   /// Allocate new instance of `tuple` type.

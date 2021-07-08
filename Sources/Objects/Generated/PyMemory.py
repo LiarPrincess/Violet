@@ -40,6 +40,8 @@ implemented_types = (
     'PyMap',
     'PyFilter',
     'PyZip',
+    'PyString',  # String
+    'PyStringIterator',
     'PyBytes',  # Bytes
     'PyBytesIterator',
     'PyByteArray',

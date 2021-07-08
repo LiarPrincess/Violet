@@ -70,7 +70,7 @@ extension PyInstance {
   public func newString(_ value: String) -> PyString {
     return value.isEmpty ?
       self.emptyString :
-      PyString(value: value)
+      PyMemory.newString(value: value)
   }
 
   public func newString(scalar: UnicodeScalar) -> PyString {
@@ -89,7 +89,7 @@ extension PyInstance {
       return self.emptyString
     }
 
-    return PyString(value: String(value))
+    return PyMemory.newString(value: String(value))
   }
 
   public func newString(_ value: String.UnicodeScalarView.SubSequence) -> PyString {
@@ -97,7 +97,7 @@ extension PyInstance {
       return self.emptyString
     }
 
-    return PyString(value: String(value))
+    return PyMemory.newString(value: String(value))
   }
 
   public func newString(_ value: CustomStringConvertible) -> PyString {

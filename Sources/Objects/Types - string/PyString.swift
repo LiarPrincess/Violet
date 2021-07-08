@@ -774,7 +774,7 @@ public class PyString: PyObject, AbstractString {
 
   // sourcery: pymethod = __iter__
   internal func iter() -> PyObject {
-    return PyStringIterator(string: self)
+    return PyMemory.newStringIterator(string: self)
   }
 
   // MARK: - Python new
@@ -860,7 +860,7 @@ public class PyString: PyObject, AbstractString {
   private static func allocateString(type: PyType, value: String) -> PyString {
     let isBuiltin = type === Py.types.str
     return isBuiltin ?
-      Py.newString(value):
+      Py.newString(value) : // There is a potential to re-use interned.
       PyStringHeap(type: type, value: value)
   }
 }
