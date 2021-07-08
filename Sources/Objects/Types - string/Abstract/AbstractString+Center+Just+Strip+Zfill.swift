@@ -168,13 +168,12 @@ extension AbstractString {
     var builder = Builder(capacity: width)
 
     guard let first = self.elements.first else {
-      builder.append(element: Self._zFill, repeated: fillCount)
+      // string is empty
+      builder.append(element: Self._zFill, repeated: width)
       return builder
     }
 
-    let firstScalar = Self._asUnicodeScalar(element: first)
-    let hasSign = firstScalar == "+" || firstScalar == "-"
-
+    let hasSign = Self.isPlusOrMinus(element: first)
     if hasSign {
       builder.append(element: first)
     }

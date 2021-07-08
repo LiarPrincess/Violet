@@ -78,7 +78,7 @@ extension AbstractString {
       return
     }
 
-    // Now only 'new line' is possible,
+    // Now only the 'new line' is possible,
     // but we still have to deal with possible 'CRLF'
     let newLine = self.elements[index]
     self.elements.formIndex(after: &index)
@@ -88,12 +88,11 @@ extension AbstractString {
       return
     }
 
-    let newLineAfter = self.elements[index]
+    let afterNewLine = self.elements[index]
 
-    let newLineScalar = Self._asUnicodeScalar(element: newLine)
-    let newLineAfterScalar = Self._asUnicodeScalar(element: newLineAfter)
+    let isCRLF = Self.isCarriageReturn(element: newLine)
+      && Self.isLineFeed(element: afterNewLine)
 
-    let isCRLF = newLineScalar == "\r" && newLineAfterScalar == "\n"
     if isCRLF {
       self.elements.formIndex(after: &index)
     }

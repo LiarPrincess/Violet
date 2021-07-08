@@ -86,6 +86,27 @@ internal protocol AbstractString: PyObject {
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _isCased(element: Element) -> Bool
 
+  /// Is this `+` or `-` (`0x2B` and `0x2D` in ASCII respectively).
+  /// Used inside `zfill`.
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func isPlusOrMinus(element: Element) -> Bool
+  /// Is this `HT` (`0x09` in ASCII)?
+  /// Used inside `expandTabs`.
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func isHorizontalTab(element: Element) -> Bool
+  /// Is this `CR` (`0x0D` in ASCII)?
+  /// Used inside `splitLines`.
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func isCarriageReturn(element: Element) -> Bool
+  /// Is this `LF` (`0x0A` in ASCII)?
+  /// Used inside `splitLines`.
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  static func isLineFeed(element: Element) -> Bool
+
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _lowercaseMapping(element: Element) -> CaseMapping
   /// DO NOT USE! This is a part of `AbstractString` implementation.
@@ -93,9 +114,6 @@ internal protocol AbstractString: PyObject {
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   static func _titlecaseMapping(element: Element) -> CaseMapping
   // casefold is only on 'str', not on 'bytes'
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  static func _asUnicodeScalar(element: Element) -> UnicodeScalar
 
   // MARK: - Fill
 

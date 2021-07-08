@@ -65,13 +65,6 @@ extension PyString {
     return .invalidObjectType
   }
 
-  // MARK: - As unicode scalar
-
-  /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal static func _asUnicodeScalar(element: UnicodeScalar) -> UnicodeScalar {
-    return element
-  }
-
   // MARK: - Whitespace
 
   /// A character is whitespace if in the Unicode character database:
@@ -240,5 +233,43 @@ extension PyString {
   /// DO NOT USE! This is a part of `AbstractString` implementation.
   internal static func _isPrintable(element: UnicodeScalar) -> Bool {
     return UnicodeData.isPrintable(element)
+  }
+
+  // MARK: - Specific characters
+
+  /// Is this `+` or `-` (`0x2B` and `0x2D` in ASCII respectively).
+  /// Used inside `zfill`.
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  internal static func isPlusOrMinus(element: UnicodeScalar) -> Bool {
+    let value = element.value
+    return value == 0x2b || value == 0x2d
+  }
+
+  /// Is this `HT` (`0x09` in ASCII)?
+  /// Used inside `expandTabs`.
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  internal static func isHorizontalTab(element: UnicodeScalar) -> Bool {
+    let value = element.value
+    return value == 0x09
+  }
+
+  /// Is this `CR` (`0x0D` in ASCII)?
+  /// Used inside `splitLines`.
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  internal static func isCarriageReturn(element: UnicodeScalar) -> Bool {
+    let value = element.value
+    return value == 0x0d
+  }
+
+  /// Is this `LF` (`0x0A` in ASCII)?
+  /// Used inside `splitLines`.
+  ///
+  /// DO NOT USE! This is a part of `AbstractString` implementation.
+  internal static func isLineFeed(element: UnicodeScalar) -> Bool {
+    let value = element.value
+    return value == 0x0a
   }
 }

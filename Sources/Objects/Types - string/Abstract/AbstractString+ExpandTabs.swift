@@ -18,21 +18,21 @@ extension AbstractString {
     var linePos = 0
 
     for element in self.elements {
-      let scalar = Self._asUnicodeScalar(element: element)
-
-      switch scalar {
-      case "\t":
+      let isTab = Self.isHorizontalTab(element: element)
+      if isTab {
         if tabSize > 0 {
           let incr = tabSize - (linePos % tabSize)
           linePos += incr
           builder.append(element: Self._defaultFill, repeated: incr)
         }
-
-      default:
+      } else {
         linePos += 1
         builder.append(element: element)
 
-        if scalar == "\n" || scalar == "\r" {
+        let isNewLineStart = Self.isCarriageReturn(element: element)
+          || Self.isLineFeed(element: element)
+
+        if isNewLineStart {
           linePos = 0
         }
       }
