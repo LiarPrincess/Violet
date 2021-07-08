@@ -38,13 +38,13 @@ public class PyByteArray: PyObject, AbstractBytes {
 
   // MARK: - Init
 
-  internal convenience init(value: Data) {
+  internal convenience init(elements: Data) {
     let type = Py.types.bytearray
-    self.init(type: type, value: value)
+    self.init(type: type, elements: elements)
   }
 
-  internal init(type: PyType, value: Data) {
-    self.elements = value
+  internal init(type: PyType, elements: Data) {
+    self.elements = elements
     super.init(type: type)
   }
 
@@ -683,7 +683,7 @@ public class PyByteArray: PyObject, AbstractBytes {
 
   // sourcery: pymethod = __iter__
   internal func iter() -> PyObject {
-    return PyByteArrayIterator(bytes: self)
+    return PyMemory.newByteArrayIterator(bytes: self)
   }
 
   // MARK: - Append
@@ -925,12 +925,12 @@ public class PyByteArray: PyObject, AbstractBytes {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDict?) -> PyResult<PyByteArray> {
-    let data = Data()
+    let elements = Data()
 
     let isBuiltin = type === Py.types.bytes
     let result = isBuiltin ?
-      Py.newByteArray(data) :
-      PyByteArrayHeap(type:type, value: data)
+      Py.newByteArray(elements) :
+      PyByteArrayHeap(type:type, elements: elements)
 
     return .value(result)
   }

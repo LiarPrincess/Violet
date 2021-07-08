@@ -3,6 +3,7 @@
 // DO NOT EDIT!
 // =====================================================================
 
+import Foundation
 import BigInt
 import VioletCore
 import VioletBytecode
@@ -48,6 +49,72 @@ public enum PyMemory {
   ) -> PyBool {
     return PyBool(
       value: value
+    )
+  }
+
+  // MARK: - ByteArray
+
+  /// Allocate new instance of `bytearray` type.
+  public static func newByteArray(
+    elements: Data
+  ) -> PyByteArray {
+    return PyByteArray(
+      elements: elements
+    )
+  }
+
+  /// Allocate new instance of `bytearray` type.
+  public static func newByteArray(
+    type: PyType,
+    elements: Data
+  ) -> PyByteArray {
+    return PyByteArray(
+      type: type,
+      elements: elements
+    )
+  }
+
+  // MARK: - ByteArrayIterator
+
+  /// Allocate new instance of `bytearray_iterator` type.
+  public static func newByteArrayIterator(
+    bytes: PyByteArray
+  ) -> PyByteArrayIterator {
+    return PyByteArrayIterator(
+      bytes: bytes
+    )
+  }
+
+  // MARK: - Bytes
+
+  /// Allocate new instance of `bytes` type.
+  public static func newBytes(
+    elements: Data
+  ) -> PyBytes {
+    return PyBytes(
+      elements: elements
+    )
+  }
+
+  /// Allocate new instance of `bytes` type.
+  public static func newBytes(
+    type: PyType,
+    elements: Data
+  ) -> PyBytes {
+    return PyBytes(
+      type: type,
+      elements: elements
+    )
+  }
+
+  // MARK: - BytesIterator
+
+  /// Allocate new instance of `bytes_iterator` type.
+  public static func newBytesIterator(
+    bytes: PyBytes
+  ) -> PyBytesIterator {
+    return PyBytesIterator(
+      bytes: bytes
     )
   }
 

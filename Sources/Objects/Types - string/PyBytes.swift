@@ -33,13 +33,13 @@ public class PyBytes: PyObject, AbstractBytes {
 
   // MARK: - Init
 
-  internal convenience init(value: Data) {
+  internal convenience init(elements: Data) {
     let type = Py.types.bytes
-    self.init(type: type, value: value)
+    self.init(type: type, elements: elements)
   }
 
-  internal init(type: PyType, value: Data) {
-    self.elements = value
+  internal init(type: PyType, elements: Data) {
+    self.elements = elements
     super.init(type: type)
   }
 
@@ -589,7 +589,7 @@ public class PyBytes: PyObject, AbstractBytes {
 
   // sourcery: pymethod = __iter__
   internal func iter() -> PyObject {
-    return PyBytesIterator(bytes: self)
+    return PyMemory.newBytesIterator(bytes: self)
   }
 
   // MARK: - Check exact
@@ -630,16 +630,16 @@ public class PyBytes: PyObject, AbstractBytes {
                             object: PyObject?,
                             encoding: PyObject?,
                             errors: PyObject?) -> PyResult<PyBytes> {
-    let data: Data
+    let elements: Data
     switch Self._handleNewArgs(object: object, encoding: encoding, errors: errors) {
-    case let .value(d): data = d
+    case let .value(e): elements = e
     case let .error(e): return .error(e)
     }
 
     let isBuiltin = type === Py.types.bytes
     let result = isBuiltin ?
-      Py.newBytes(data) :
-      PyBytesHeap(type:type, value: data)
+      Py.newBytes(elements) : // There is a potential to re-use interned value!
+      PyBytesHeap(type:type, elements: elements)
 
     return .value(result)
   }

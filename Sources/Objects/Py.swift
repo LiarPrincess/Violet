@@ -127,7 +127,7 @@ public final class PyInstance {
   /// Interned empty `str` value (because `str` is immutable).
   public private(set) lazy var emptyString = PyString(value: "")
   /// Interned empty `bytes` value (because `bytes` are immutable).
-  public private(set) lazy var emptyBytes = PyBytes(value: Data())
+  public private(set) lazy var emptyBytes = PyMemory.newBytes(elements: Data())
   /// Interned empty `frozenset` value (because `frozenset` is immutable).
   public private(set) lazy var emptyFrozenSet =
     PyMemory.newFrozenSet(elements: PySet.OrderedSet())

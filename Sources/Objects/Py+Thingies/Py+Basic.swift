@@ -159,16 +159,16 @@ extension PyInstance {
 
   // MARK: - Bytes
 
-  public func newBytes(_ value: Data) -> PyBytes {
-    return value.isEmpty ?
+  public func newBytes(_ elements: Data) -> PyBytes {
+    return elements.isEmpty ?
       self.emptyBytes :
-      PyBytes(value: value)
+      PyMemory.newBytes(elements: elements)
   }
 
   // MARK: - Byte array
 
-  public func newByteArray(_ value: Data) -> PyByteArray {
-    return PyByteArray(value: value)
+  public func newByteArray(_ elements: Data) -> PyByteArray {
+    return PyMemory.newByteArray(elements: elements)
   }
 
   // MARK: - Namespace

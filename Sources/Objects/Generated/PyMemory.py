@@ -40,6 +40,10 @@ implemented_types = (
     'PyMap',
     'PyFilter',
     'PyZip',
+    'PyBytes',  # Bytes
+    'PyBytesIterator',
+    'PyByteArray',
+    'PyByteArrayIterator'
 )
 
 
@@ -128,6 +132,7 @@ if __name__ == '__main__':
     print(f'''\
 {generated_warning(__file__)}
 
+import Foundation
 import BigInt
 import VioletCore
 import VioletBytecode
