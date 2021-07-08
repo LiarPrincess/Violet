@@ -9,12 +9,23 @@ internal var stopAtFirstFailedTest = false
 
 private var passedTests = [String]()
 private var failedTests = [String]()
+private var firstTestStartTime: DispatchTime?
 
-internal func runAllTests(from dir: URL, skip: [String] = []) throws {
-  var filenames = try FileManager.default.contentsOfDirectory(atPath: dir.path)
-  filenames.sort()
+internal func runAllTests(from dir: Path, skip: [String] = []) {
+  if firstTestStartTime == nil {
+    firstTestStartTime = DispatchTime.now()
+  }
 
-  for filename in filenames {
+  var entries = FileSystem.readdirOrTrap(path: dir)
+  entries.sort(by: \.name)
+
+  for entry in entries {
+    let stat = FileSystem.statOrTrap(path: entry.path)
+    guard stat.mode == .regularFile else {
+      continue
+    }
+
+    let filename = entry.name
     guard filename.hasSuffix(".py") else {
       continue
     }
@@ -23,22 +34,21 @@ internal func runAllTests(from dir: URL, skip: [String] = []) throws {
       continue
     }
 
-    let dirName = dir.lastPathComponent
+    let dirName = FileSystem.basename(path: dir)
     let testName = "\(dirName) - \(filename)"
 
-    let file = dir.appendingPathComponent(filename)
-    runTest(testName: testName, path: file)
+    runTest(testName: testName, path: entry.path)
   }
 }
 
 /// This will leak memory on every call!
 /// (because we do not have GC to break circular references)
-internal func runTest(testName: String, path: URL) {
+internal func runTest(testName: String, path: Path) {
   print(testName)
 
   var arguments = Arguments()
   let environment = Environment()
-  arguments.script = path.path
+  arguments.script = path.string
 
   let vm = VM(arguments: arguments, environment: environment)
   switch vm.run() {
@@ -97,11 +107,13 @@ internal func printSummary() {
     }
   }
 
-  // Did we even run any test?
-  guard passedTests.any || failedTests.any else {
-    return
-  }
-
   printSummary(title: "Passed tests:", tests: passedTests)
   printSummary(title: "Failed tests:", tests: failedTests)
+
+  if let firstTestStartTime = firstTestStartTime {
+    let now = DispatchTime.now()
+    let diffNano = now.uptimeNanoseconds - firstTestStartTime.uptimeNanoseconds
+    let diffSeconds = Double(diffNano) / 1_000_000_000
+    print("Running time: \(diffSeconds)s")
+  }
 }
