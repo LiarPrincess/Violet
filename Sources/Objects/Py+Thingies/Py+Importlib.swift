@@ -205,7 +205,7 @@ extension PyInstance {
       let modulePath = Py.fileSystem.join(paths: path.value, spec.filename)
       triedPaths.append(path.value)
 
-      let stat: FileStat
+      let stat: PyFileSystem_Stat
       switch self.fileSystem.stat(path: modulePath) {
       case .value(let s): stat = s
       case .enoent: continue // No such file - just try next 'path'

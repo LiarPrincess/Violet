@@ -35,7 +35,7 @@ public final class UnderscoreOS: PyModuleImplementation {
     self.setOrTrap(.getcwd, doc: nil, fn: self.getCwd)
     self.setOrTrap(.fspath, doc: nil, fn: self.getFSPath(path:))
     self.setOrTrap(.stat, doc: nil, fn: self.getStat(path:))
-    self.setOrTrap(.listdir, doc: nil, fn: self.listDir(path:))
+    self.setOrTrap(.listdir, doc: nil, fn: self.listdir(path:))
   }
 
   // MARK: - Cwd
@@ -89,7 +89,7 @@ public final class UnderscoreOS: PyModuleImplementation {
     }
   }
 
-  private func createStat(from stat: FileStatResult,
+  private func createStat(from stat: PyFileSystem_StatResult,
                           path: String? = nil) -> PyResult<PyObject> {
     switch stat {
     case .value(let stat):
@@ -103,7 +103,7 @@ public final class UnderscoreOS: PyModuleImplementation {
     }
   }
 
-  private func createStat(from stat: FileStat) -> PyResult<PyNamespace> {
+  private func createStat(from stat: PyFileSystem_Stat) -> PyResult<PyNamespace> {
     let dict = Py.newDict()
 
     let modeKey = Py.intern(string: "st_mode")
@@ -133,22 +133,22 @@ public final class UnderscoreOS: PyModuleImplementation {
   ///
   /// static PyObject *
   /// os_listdir_impl(PyObject *module, path_t *path)
-  public func listDir(path: PyObject? = nil) -> PyResult<PyObject> {
-    switch self.parseListDirPath(path: path) {
+  public func listdir(path: PyObject? = nil) -> PyResult<PyObject> {
+    switch self.parseListdirPath(path: path) {
     case let .descriptor(fd):
-      let result = Py.fileSystem.listDir(fd: fd)
-      return self.handleListDirResult(result: result, path: nil)
+      let result = Py.fileSystem.listdir(fd: fd)
+      return self.handleListdirResult(result: result, path: nil)
 
     case let .path(path):
-      let result = Py.fileSystem.listDir(path: path)
-      return self.handleListDirResult(result: result, path: path)
+      let result = Py.fileSystem.listdir(path: path)
+      return self.handleListdirResult(result: result, path: path)
 
     case let .error(e):
       return .error(e)
     }
   }
 
-  private func parseListDirPath(path: PyObject?) -> ParsePathOrDescriptorResult {
+  private func parseListdirPath(path: PyObject?) -> ParsePathOrDescriptorResult {
     guard let path = path else {
       return .path(".")
     }
@@ -156,7 +156,7 @@ public final class UnderscoreOS: PyModuleImplementation {
     return self.parsePathOrDescriptor(object: path)
   }
 
-  private func handleListDirResult(result: ListDirResult,
+  private func handleListdirResult(result: PyFileSystem_ListdirResult,
                                    path: String?) -> PyResult<PyObject> {
     switch result {
     case .entries(let entries):

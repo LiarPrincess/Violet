@@ -1,22 +1,47 @@
 import Foundation
 import VioletCore
 
+// swiftlint:disable type_name
 // cSpell:ignore asdf
 
-// MARK: - FileStatResult
+// MARK: - Stat
 
-public enum FileStatResult {
+public enum PyFileSystem_StatResult {
   /// Valid result
-  case value(FileStat)
+  case value(PyFileSystem_Stat)
   /// No such file or directory
   case enoent
   /// Ooops…
   case error(PyOSError)
 }
 
-// MARK: - ListDirResult
+/// Basically a `stat`, but with only the stuff we need.
+public struct PyFileSystem_Stat {
 
-public enum ListDirResult {
+  /// File type & permissions.
+  ///
+  /// https://www.gnu.org/software/libc/manual/html_node/Testing-File-Type.html
+  public let st_mode: mode_t
+  /// Modification time.
+  public let st_mtimespec: timespec
+
+  public var isRegularFile: Bool {
+    return (self.st_mode & S_IFMT) == S_IFREG
+  }
+
+  public var isDirectory: Bool {
+    return (self.st_mode & S_IFMT) == S_IFDIR
+  }
+
+  public init(st_mode: mode_t, st_mtime: timespec) {
+    self.st_mode = st_mode
+    self.st_mtimespec = st_mtime
+  }
+}
+
+// MARK: - Listdir
+
+public enum PyFileSystem_ListdirResult {
   /// List containing names of the entries
   case entries([String])
   /// No such file or directory
@@ -25,9 +50,9 @@ public enum ListDirResult {
   case error(PyOSError)
 }
 
-// MARK: - DirnameResult
+// MARK: - Dirname
 
-public struct DirnameResult {
+public struct PyFileSystem_DirnameResult {
 
   public let path: String
   /// Is file system (or local) root.
@@ -78,18 +103,18 @@ public protocol PyFileSystem: AnyObject {
   /// Information about given file/dir.
   ///
   /// Always chase the link.
-  func stat(fd: Int32) -> FileStatResult
+  func stat(fd: Int32) -> PyFileSystem_StatResult
   /// Information about given file/dir.
   ///
   /// Always chase the link.
-  func stat(path: String) -> FileStatResult
+  func stat(path: String) -> PyFileSystem_StatResult
 
   // MARK: - List dir
 
   /// List containing the names of the entries in the directory given by `fd`.
-  func listDir(fd: Int32) -> ListDirResult
+  func listdir(fd: Int32) -> PyFileSystem_ListdirResult
   /// List containing the names of the entries in the directory given by `path`.
-  func listDir(path: String) -> ListDirResult
+  func listdir(path: String) -> PyFileSystem_ListdirResult
 
   // MARK: - Read
 
@@ -128,7 +153,7 @@ public protocol PyFileSystem: AnyObject {
   /// ```
   ///
   /// This doc was sponsored (aka. shamelessly stolen) by Node.
-  func dirname(path: String) -> DirnameResult
+  func dirname(path: String) -> PyFileSystem_DirnameResult
 
   // MARK: - Join
 

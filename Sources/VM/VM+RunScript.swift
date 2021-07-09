@@ -72,7 +72,7 @@ extension VM {
   }
 
   private func getScriptLocation(path: String) -> PyResult<ScriptLocation> {
-    let stat: FileStat
+    let stat: PyFileSystem_Stat
 
     switch self.fileSystem.stat(path: path) {
     case .value(let s):

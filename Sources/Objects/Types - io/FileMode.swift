@@ -1,35 +1,5 @@
 import Foundation
 
-// cSpell:ignore xrwa
-
-// MARK: - Stat
-
-/// Basically a `stat`, but with only the stuff we need.
-public struct FileStat {
-
-  /// File type & permissions.
-  ///
-  /// https://www.gnu.org/software/libc/manual/html_node/Testing-File-Type.html
-  public let st_mode: mode_t
-  /// Modification time.
-  public let st_mtimespec: timespec
-
-  public var isRegularFile: Bool {
-    return (self.st_mode & S_IFMT) == S_IFREG
-  }
-
-  public var isDirectory: Bool {
-    return (self.st_mode & S_IFMT) == S_IFDIR
-  }
-
-  public init(st_mode: mode_t, st_mtime: timespec) {
-    self.st_mode = st_mode
-    self.st_mtimespec = st_mtime
-  }
-}
-
-// MARK: - File mode
-
 /// What are we going to do with file?
 public enum FileMode: CustomStringConvertible {
   /// `r` - open for reading (default)

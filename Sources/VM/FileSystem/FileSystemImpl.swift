@@ -105,7 +105,7 @@ internal class FileSystemImpl: PyFileSystem {
 
   // MARK: - Stat
 
-  internal func stat(fd: Int32) -> FileStatResult {
+  internal func stat(fd: Int32) -> PyFileSystem_StatResult {
     var info = Foundation.stat()
     guard fstat(fd, &info) == 0 else {
       return self.handleStatError(path: nil)
@@ -117,7 +117,7 @@ internal class FileSystemImpl: PyFileSystem {
 
   /// Foundation:
   /// func _fileExists(atPath path: String, , isDirectory: UnsafeMutablePointer<ObjCBool>?)
-  internal func stat(path: String) -> FileStatResult {
+  internal func stat(path: String) -> PyFileSystem_StatResult {
     guard let nonEmpty = NonEmptyPath(from: path) else {
       return .enoent
     }
@@ -133,14 +133,14 @@ internal class FileSystemImpl: PyFileSystem {
     }
   }
 
-  private func createStat(from stat: stat) -> FileStat {
-    return FileStat(
+  private func createStat(from stat: stat) -> PyFileSystem_Stat {
+    return PyFileSystem_Stat(
       st_mode: stat.st_mode,
       st_mtime: stat.st_mtimespec
     )
   }
 
-  private func handleStatError(path: String?) -> FileStatResult {
+  private func handleStatError(path: String?) -> PyFileSystem_StatResult {
     if errno == ENOENT {
       return .enoent
     }
@@ -154,13 +154,13 @@ internal class FileSystemImpl: PyFileSystem {
 
   // MARK: - List dir
 
-  internal func listDir(fd: Int32) -> ListDirResult {
+  internal func listdir(fd: Int32) -> PyFileSystem_ListdirResult {
     guard let dir = fdopendir(fd) else {
       return .enoent
     }
     defer { closedir(dir) }
 
-    switch self.listDir(dir: dir) {
+    switch self.listdir(dir: dir) {
     case let .entries(e):
       return .entries(e)
     case let .error(errno: e):
@@ -170,7 +170,7 @@ internal class FileSystemImpl: PyFileSystem {
 
   /// Foundation:
   /// func _contentsOfDir(atPath path: String, _ closure: (String, Int32) throws -> ())
-  internal func listDir(path: String) -> ListDirResult {
+  internal func listdir(path: String) -> PyFileSystem_ListdirResult {
     guard let nonEmpty = NonEmptyPath(from: path) else {
       return .enoent
     }
@@ -181,7 +181,7 @@ internal class FileSystemImpl: PyFileSystem {
       }
       defer { closedir(dir) }
 
-      switch self.listDir(dir: dir) {
+      switch self.listdir(dir: dir) {
       case let .entries(e):
         return .entries(e)
       case let .error(errno: e):
@@ -190,12 +190,12 @@ internal class FileSystemImpl: PyFileSystem {
     }
   }
 
-  private enum ListDirInnerResult {
+  private enum ListdirInnerResult {
     case entries([String])
     case error(errno: Int32)
   }
 
-  private func listDir(dir: UnsafeMutablePointer<DIR>) -> ListDirInnerResult {
+  private func listdir(dir: UnsafeMutablePointer<DIR>) -> ListdirInnerResult {
     // readdir returns NULL on EOF and error so set errno to 0 to check for errors
     var result = [String]()
     errno = 0
@@ -242,9 +242,10 @@ internal class FileSystemImpl: PyFileSystem {
 
   // MARK: - Dirname
 
-  internal func dirname(path: String) -> DirnameResult {
+  internal func dirname(path: String) -> PyFileSystem_DirnameResult {
     guard let nonEmpty = NonEmptyPath(from: path) else {
-      return DirnameResult(path: ".", isTop: true) // $ dirname ""
+      // $ dirname ""
+      return PyFileSystem_DirnameResult(path: ".", isTop: true)
     }
 
     // 'Foundation.dirname' returns 'UnsafeMutablePointer<Int8>!',
@@ -258,11 +259,11 @@ internal class FileSystemImpl: PyFileSystem {
     let result = String(cString: cString)
     switch result {
     case ".":
-      return DirnameResult(path: ".", isTop: true)
+      return PyFileSystem_DirnameResult(path: ".", isTop: true)
     case "/":
-      return DirnameResult(path: "/", isTop: true)
+      return PyFileSystem_DirnameResult(path: "/", isTop: true)
     default:
-      return DirnameResult(path: result, isTop: false)
+      return PyFileSystem_DirnameResult(path: result, isTop: false)
     }
   }
 

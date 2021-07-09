@@ -64,8 +64,8 @@ struct TestRunner {
         continue
       }
 
-      let dirName = FileSystem.basename(path: dir)
-      let testName = "\(dirName) - \(filename)"
+      let dirname = FileSystem.dirname(path: dir)
+      let testName = "\(dirname) - \(filename)"
 
       self.runTest(name: testName, path: entry.path)
     }

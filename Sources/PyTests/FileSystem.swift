@@ -87,11 +87,11 @@ extension FileSystem {
   }
 }
 
-// MARK: - Basename
+// MARK: - Dirname
 
 extension FileSystem {
 
-  static func basename(path: Path) -> String {
+  static func dirname(path: Path) -> String {
     let url = path.url
     return url.lastPathComponent
   }
@@ -271,7 +271,7 @@ extension FileSystem {
         let isDirectory = stat.mode == .directory
 
         // We know if 'entry' is directory or not because we have stat,
-        // 'listDir' does not have this information.
+        // 'listdir' does not have this information.
         let absolutePath = Path(url: entry.path.url, isDirectory: isDirectory)
 
         let relativePath = Self.getRelativePath(dir: path,

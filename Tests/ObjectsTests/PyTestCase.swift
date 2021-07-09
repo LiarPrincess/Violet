@@ -83,19 +83,19 @@ class PyTestCase: XCTestCase, PyDelegate, PyFileSystem {
     unreachable()
   }
 
-  func stat(fd: Int32) -> FileStatResult {
+  func stat(fd: Int32) -> PyFileSystem_StatResult {
     unreachable()
   }
 
-  func stat(path: String) -> FileStatResult {
+  func stat(path: String) -> PyFileSystem_StatResult {
     unreachable()
   }
 
-  func listDir(fd: Int32) -> ListDirResult {
+  func listdir(fd: Int32) -> PyFileSystem_ListdirResult {
     unreachable()
   }
 
-  func listDir(path: String) -> ListDirResult {
+  func listdir(path: String) -> PyFileSystem_ListdirResult {
     unreachable()
   }
 
@@ -111,7 +111,7 @@ class PyTestCase: XCTestCase, PyDelegate, PyFileSystem {
     unreachable()
   }
 
-  func dirname(path: String) -> DirnameResult {
+  func dirname(path: String) -> PyFileSystem_DirnameResult {
     unreachable()
   }
 
