@@ -287,9 +287,9 @@ extension PyType {
     /// Fields:
     /// - `name: String?`
     /// - `fd: FileDescriptorType`
+    /// - `mode: FileMode`
     /// - `encoding: PyString.Encoding`
     /// - `errorHandling: PyString.ErrorHandling`
-    /// - `mode: FileMode`
     public static let PyTextFile = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `next: PyTraceback?`

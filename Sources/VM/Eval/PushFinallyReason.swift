@@ -54,7 +54,8 @@ internal enum PushFinallyReason {
   }
 
   /// Remember what we were doing before we started `finally` block.
-  internal static func push(reason: UnwindReason, on stack: inout ObjectStack) {
+  internal static func push(reason: UnwindReason,
+                            on stack: inout PyFrame.ObjectStack) {
     let value: PushFinallyReason.Push = {
       switch reason {
       case .return(let value):
@@ -76,7 +77,7 @@ internal enum PushFinallyReason {
   }
 
   /// Remember what we were doing before we started `finally` block.
-  internal static func push(_ value: Push, on stack: inout ObjectStack) {
+  internal static func push(_ value: Push, on stack: inout PyFrame.ObjectStack) {
     switch value {
     case .return(let value):
       stack.push(value)
@@ -118,7 +119,7 @@ internal enum PushFinallyReason {
   }
 
   /// CPython: TARGET(END_FINALLY)
-  internal static func pop(from stack: inout ObjectStack) -> Pop {
+  internal static func pop(from stack: inout PyFrame.ObjectStack) -> Pop {
     let marker = stack.pop()
 
     if let pyInt = PyCast.asInt(marker) {

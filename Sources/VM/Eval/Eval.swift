@@ -18,6 +18,10 @@ import VioletObjects
 /// So… just do not store `Eval` as property on `VM`.
 internal struct Eval {
 
+  internal typealias Block = PyFrame.Block
+  internal typealias BlockStack = PyFrame.BlockStack
+  internal typealias ObjectStack = PyFrame.ObjectStack
+
   // MARK: - Properties
 
   /// Only here so that we can manage `vm.currentlyHandledException`

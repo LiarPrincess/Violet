@@ -61,7 +61,7 @@ internal enum Debug {
     print("--- Frame end: \(frame.code.name.value) ---")
   }
 
-  internal static func stack(stack: ObjectStack) {
+  internal static func stack(stack: PyFrame.ObjectStack) {
     guard isEnabled else { return }
 
     if stack.isEmpty {
@@ -77,7 +77,7 @@ internal enum Debug {
     }
   }
 
-  internal static func stack(stack: BlockStack) {
+  internal static func stack(stack: PyFrame.BlockStack) {
     guard isEnabled else { return }
 
     if stack.isEmpty {
@@ -134,12 +134,12 @@ internal enum Debug {
 
   // MARK: - Block
 
-  internal static func push(block: Block) {
+  internal static func push(block: PyFrame.Block) {
     guard isEnabled else { return }
     print("  push block:", block)
   }
 
-  internal static func pop(block: Block?) {
+  internal static func pop(block: PyFrame.Block?) {
     guard isEnabled else { return }
     let s = block.map(String.init(describing:)) ?? "nil"
     print("  pop block:", s)

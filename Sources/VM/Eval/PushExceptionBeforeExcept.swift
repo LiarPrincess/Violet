@@ -26,10 +26,14 @@ import VioletObjects
 /// ```
 internal enum PushExceptionBeforeExcept {
 
+  // MARK: - Push
+
   internal static func push(_ exception: PyBaseException?,
-                            on stack: inout ObjectStack) {
+                            on stack: inout PyFrame.ObjectStack) {
     stack.push(exception ?? Self.noExceptionMarker)
   }
+
+  // MARK: - Pop
 
   internal enum Pop {
     /// Exception was pushed
@@ -40,7 +44,7 @@ internal enum PushExceptionBeforeExcept {
     case invalidValue(PyObject)
   }
 
-  internal static func pop(from stack: inout ObjectStack) -> Pop {
+  internal static func pop(from stack: inout PyFrame.ObjectStack) -> Pop {
     let value = stack.pop()
 
     if let exception = PyCast.asBaseException(value) {
