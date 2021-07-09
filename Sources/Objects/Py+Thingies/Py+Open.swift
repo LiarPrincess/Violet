@@ -80,12 +80,12 @@ extension PyInstance {
     case .text:
       switch self.openFileDescriptor(source: source, mode: mode) {
       case let .value(fd):
-        let result = PyTextFile(name: fd.path,
-                                fd: fd.value,
-                                mode: mode,
-                                encoding: encoding,
-                                errorHandling: errorHandling,
-                                closeOnDealloc: closeOnDealloc)
+        let result = PyMemory.newTextFile(name: fd.path,
+                                          fd: fd.value,
+                                          mode: mode,
+                                          encoding: encoding,
+                                          errorHandling: errorHandling,
+                                          closeOnDealloc: closeOnDealloc)
         return .value(result)
 
       case let .error(e):

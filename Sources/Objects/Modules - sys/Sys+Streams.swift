@@ -161,11 +161,11 @@ extension Sys {
   private func createStdio(name: String,
                            fd: FileDescriptorType,
                            mode: FileMode) -> PyTextFile {
-    return PyTextFile(name: name,
-                      fd: fd,
-                      mode: mode,
-                      encoding: Unimplemented.stdioEncoding,
-                      errorHandling: Unimplemented.stdioErrors,
-                      closeOnDealloc: false)
+    return PyMemory.newTextFile(name: name,
+                                fd: fd,
+                                mode: mode,
+                                encoding: Unimplemented.stdioEncoding,
+                                errorHandling: Unimplemented.stdioErrors,
+                                closeOnDealloc: false)
   }
 }

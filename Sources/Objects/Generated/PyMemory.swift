@@ -628,6 +628,44 @@ public enum PyMemory {
     )
   }
 
+  // MARK: - TextFile
+
+  /// Allocate new instance of `TextFile` type.
+  public static func newTextFile(
+    fd: FileDescriptorType,
+    mode: FileMode,
+    encoding: PyString.Encoding,
+    errorHandling: PyString.ErrorHandling,
+    closeOnDealloc: Bool
+  ) -> PyTextFile {
+    return PyTextFile(
+      fd: fd,
+      mode: mode,
+      encoding: encoding,
+      errorHandling: errorHandling,
+      closeOnDealloc: closeOnDealloc
+    )
+  }
+
+  /// Allocate new instance of `TextFile` type.
+  public static func newTextFile(
+    name: String?,
+    fd: FileDescriptorType,
+    mode: FileMode,
+    encoding: PyString.Encoding,
+    errorHandling: PyString.ErrorHandling,
+    closeOnDealloc: Bool
+  ) -> PyTextFile {
+    return PyTextFile(
+      name: name,
+      fd: fd,
+      mode: mode,
+      encoding: encoding,
+      errorHandling: errorHandling,
+      closeOnDealloc: closeOnDealloc
+    )
+  }
+
   // MARK: - Tuple
 
   /// Allocate new instance of `tuple` type.

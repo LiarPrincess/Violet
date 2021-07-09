@@ -45,7 +45,8 @@ implemented_types = (
     'PyBytes',  # Bytes
     'PyBytesIterator',
     'PyByteArray',
-    'PyByteArrayIterator'
+    'PyByteArrayIterator',
+    'PyTextFile'
 )
 
 

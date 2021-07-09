@@ -37,10 +37,9 @@ public class PyTextFile: PyObject {
 
   internal let name: String?
   internal let fd: FileDescriptorType
+  internal let mode: FileMode
   internal let encoding: PyString.Encoding
   internal let errorHandling: PyString.ErrorHandling
-
-  internal let mode: FileMode
 
   /// Should we close the file when deallocating?
   internal var closeOnDealloc: Bool {
