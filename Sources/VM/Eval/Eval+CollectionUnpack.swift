@@ -92,7 +92,7 @@ extension Eval {
     }
 
     if let fn = PyCast.asBuiltinFunction(object) {
-      return fn.getName()
+      return Py.getName(fn: fn)
     }
 
     if let method = PyCast.asMethod(object) {
@@ -102,7 +102,7 @@ extension Eval {
     }
 
      if let fn = PyCast.asBuiltinMethod(object) {
-      return fn.getName()
+      return Py.getName(fn: fn)
     }
 
     if let fn = PyCast.asStaticMethod(object), let callable = fn.getFunc() {

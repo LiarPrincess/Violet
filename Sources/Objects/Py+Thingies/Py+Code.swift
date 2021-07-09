@@ -15,6 +15,25 @@ import VioletCompiler
 
 extension PyInstance {
 
+  // MARK: - Builtin function
+
+  public func getName(fn: PyBuiltinFunction) -> String {
+    return fn.getName()
+  }
+
+  // MARK: - Builtin method
+
+  public func newMethod(fn: PyBuiltinFunction,
+                        object: PyObject) -> PyBuiltinMethod {
+    return PyBuiltinMethod(fn: fn.function, object: object)
+  }
+
+  public func getName(fn: PyBuiltinMethod) -> String {
+    return fn.getName()
+  }
+
+  // MARK: - Function
+
   public func newFunction(qualname: PyObject,
                           code: PyObject,
                           globals: PyDict) -> PyResult<PyFunction> {
@@ -58,11 +77,6 @@ extension PyInstance {
   public func newMethod(fn: PyFunction,
                         object: PyObject) -> PyMethod {
     return PyMethod(fn: fn, object: object)
-  }
-
-  public func newMethod(fn: PyBuiltinFunction,
-                        object: PyObject) -> PyBuiltinMethod {
-    return PyBuiltinMethod(fn: fn.function, object: object)
   }
 
   public func newMethod(fn: PyObject,
