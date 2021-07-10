@@ -211,12 +211,11 @@ extension PyInstance {
       return nil
     }
 
-    let name = type.getName()
-
     // If content is nil -> it may be warning
     if cell.content == nil {
+      let typeName = type.getNameString()
       let typeRepr = self.reprOrGeneric(object: type)
-      let msg = "__class__ not set defining \(name) as \(typeRepr). " +
+      let msg = "__class__ not set defining \(typeName) as \(typeRepr). " +
                 "Was __classcell__ propagated to type.__new__?"
       if let e = self.warn(type: .deprecation, msg: msg) {
         return e
@@ -225,9 +224,10 @@ extension PyInstance {
 
     // If we already have content that is not our class -> throw
     if let content = cell.content, content !== type {
-      let contentRepr = self.reprOrGeneric(object: content)
+      let typeName = type.getNameString()
       let typeRepr = self.reprOrGeneric(object: type)
-      let msg = "__class__ set to \(contentRepr) defining \(name) as \(typeRepr)"
+      let contentRepr = self.reprOrGeneric(object: content)
+      let msg = "__class__ set to \(contentRepr) defining \(typeName) as \(typeRepr)"
       return self.newTypeError(msg: msg)
     }
 

@@ -124,7 +124,7 @@ public class PyBuiltinMethod: PyObject, AbstractBuiltinFunction {
     // Return type(m.__self__).__qualname__ + '.' + m.__name__
     // >>> [].append.__qualname__
     // 'list.append'
-    let typeQualname = type.getQualname()
+    let typeQualname = type.getQualnameString()
     return typeQualname + "." + self.name
   }
 

@@ -506,7 +506,7 @@ extension PyInstance {
 
     // Class name
     let className: String = {
-      let typeName = type.getName()
+      let typeName = type.getNameString()
 
       if let moduleEndIndex = typeName.firstIndex(of: ".") {
         let afterDot = typeName.index(after: moduleEndIndex)

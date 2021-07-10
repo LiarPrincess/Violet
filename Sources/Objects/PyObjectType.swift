@@ -213,7 +213,7 @@ internal enum PyObjectType {
       }
 
       if !Self.hasOverridden__init__(type: type) {
-        let typeName = type.getName()
+        let typeName = type.getNameString()
         return .typeError("\(typeName) takes no arguments")
       }
     }
@@ -237,7 +237,7 @@ internal enum PyObjectType {
       }
 
       if !Self.hasOverridden__new__(type: zelf.type) {
-        let typeName = zelf.type.getName()
+        let typeName = zelf.type.getNameString()
         let msg = "\(typeName).__init__() takes exactly one argument " +
                   "(the instance to initialize)"
         return .typeError(msg)
@@ -264,7 +264,7 @@ internal enum PyObjectType {
 
   private static func hasOverridden(type: PyType, name: IdString) -> Bool {
     guard let lookup = type.lookupWithType(name: name) else {
-      let t = type.getName()
+      let t = type.getNameString()
       let fn = name.value.value
       trap("Uh… oh… So '\(fn)' lookup on \(t) failed to find anything. " +
            "It should not be possible since every type derives from 'object', " +

@@ -192,12 +192,12 @@ public class PyType: PyObject, HasCustomGetMethod {
   // MARK: - Name
 
   // sourcery: pyproperty = __name__, setter = setName
-  public func getNamePy() -> PyString {
-    let name = self.getName()
+  internal func getName() -> PyString {
+    let name = self.getNameString()
     return Py.intern(string: name)
   }
 
-  public func getName() -> String {
+  internal func getNameString() -> String {
     if self.isHeapType {
       return self.name
     }
@@ -229,20 +229,20 @@ public class PyType: PyObject, HasCustomGetMethod {
   // MARK: - Qualname
 
   // sourcery: pyproperty = __qualname__, setter = setQualname
-  public func getQualnamePy() -> PyString {
-    let qualname = self.getQualname()
+  internal func getQualname() -> PyString {
+    let qualname = self.getQualnameString()
     return Py.intern(string: qualname)
   }
 
-  public func getQualname() -> String {
+  internal func getQualnameString() -> String {
     if self.isHeapType {
       return self.qualname
     }
 
-    return self.getName()
+    return self.getNameString()
   }
 
-  public func setQualname(_ value: PyObject?) -> PyResult<Void> {
+  internal func setQualname(_ value: PyObject?) -> PyResult<Void> {
     let object: PyObject
     switch self.checkSetSpecialAttribute(name: .__qualname__, value: value) {
     case let .value(v): object = v

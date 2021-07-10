@@ -294,7 +294,7 @@ public final class BuiltinTypes {
     case .ok:
       break
     case .error(let e):
-      let typeName = type.getName()
+      let typeName = type.getNameString()
       trap("Error when inserting '\(name)' to '\(typeName)' type: \(e)")
     }
   }
@@ -2647,10 +2647,10 @@ public final class BuiltinTypes {
     type.flags.set(PyType.hasGCFlag)
     type.flags.set(PyType.typeSubclassFlag)
 
-    self.insert(type: type, name: "__name__", value: PyProperty.wrap(doc: nil, get: PyType.getNamePy, set: PyType.setName, castSelf: Self.asType))
-    self.insert(type: type, name: "__qualname__", value: PyProperty.wrap(doc: nil, get: PyType.getQualnamePy, set: PyType.setQualname, castSelf: Self.asType))
+    self.insert(type: type, name: "__name__", value: PyProperty.wrap(doc: nil, get: PyType.getName, set: PyType.setName, castSelf: Self.asType))
+    self.insert(type: type, name: "__qualname__", value: PyProperty.wrap(doc: nil, get: PyType.getQualname, set: PyType.setQualname, castSelf: Self.asType))
     self.insert(type: type, name: "__doc__", value: PyProperty.wrap(doc: nil, get: PyType.getDoc, set: PyType.setDoc, castSelf: Self.asType))
-    self.insert(type: type, name: "__module__", value: PyProperty.wrap(doc: nil, get: PyType.getModulePy, set: PyType.setModule, castSelf: Self.asType))
+    self.insert(type: type, name: "__module__", value: PyProperty.wrap(doc: nil, get: PyType.getModule, set: PyType.setModule, castSelf: Self.asType))
     self.insert(type: type, name: "__bases__", value: PyProperty.wrap(doc: nil, get: PyType.getBasesPy, set: PyType.setBases, castSelf: Self.asType))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyType.getDict, castSelf: Self.asType))
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyType.getClass, castSelf: Self.asType))

@@ -151,7 +151,7 @@ public class PyObject: CustomStringConvertible {
 
   /// Name of the type (mostly for convenience).
   public var typeName: String {
-    return self.type.getName()
+    return self.type.getNameString()
   }
 
   public var description: String {

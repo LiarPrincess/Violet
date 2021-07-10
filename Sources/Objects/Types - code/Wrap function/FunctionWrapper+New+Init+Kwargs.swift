@@ -13,7 +13,7 @@ extension FunctionWrapper {
     private let fn: NewFn<PyObject>
 
     internal var fnName: String {
-      let typeName = self.type.getName()
+      let typeName = self.type.getNameString()
       return typeName + ".__new__"
     }
 
@@ -39,8 +39,8 @@ extension FunctionWrapper {
 
       // For example: type(int).__new__(None)
       guard subtype.isSubtype(of: self.type) else {
-        let t = self.type.getName()
-        let s = subtype.getName()
+        let t = self.type.getNameString()
+        let s = subtype.getNameString()
         return .typeError("\(t).__new__(\(s)): \(s) is not a subtype of \(t)")
       }
 
@@ -106,7 +106,7 @@ extension FunctionWrapper {
     }
 
     private static func getTypeNameAndFnName(type: PyType) -> (String, String) {
-      let typeName = type.getName()
+      let typeName = type.getNameString()
       let fnName = typeName + ".__init__"
       return (typeName, fnName)
     }
