@@ -71,31 +71,18 @@ public class PyProperty: PyObject {
 
   override public var description: String {
     var properties = [String]()
-
-    if let o = self.get {
-      properties.append("get: \(String(describing: o))")
-    }
-
-    if let o = self.set {
-      properties.append("set: \(String(describing: o))")
-    }
-
-    if let o = self.del {
-      properties.append("del: \(String(describing: o))")
-    }
-
+    if let o = self.get { properties.append("get: \(o)") }
+    if let o = self.set { properties.append("set: \(o)") }
+    if let o = self.del { properties.append("del: \(o)") }
     let p = properties.joined(separator: ", ")
     return "PyProperty(\(p))"
   }
 
-  internal init(get: PyObject?,
-                set: PyObject?,
-                del: PyObject?) {
+  internal init(get: PyObject?, set: PyObject?, del: PyObject?) {
     self._get = get
     self._set = set
     self._del = del
     self.doc = nil
-
     super.init(type: Py.types.property)
   }
 
@@ -111,38 +98,38 @@ public class PyProperty: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Getters
 
   // sourcery: pyproperty = fget
-  public func getFGet() -> PyObject? {
+  internal func getFGet() -> PyObject? {
     return self.get
   }
 
   // sourcery: pyproperty = fset
-  public func getFSet() -> PyObject? {
+  internal func getFSet() -> PyObject? {
     return self.set
   }
 
   // sourcery: pyproperty = fdel
-  public func getFDel() -> PyObject? {
+  internal func getFDel() -> PyObject? {
     return self.del
   }
 
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  public func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
+  internal func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
     if object.isDescriptorStaticMarker {
       return .value(self)
     }
@@ -150,7 +137,7 @@ public class PyProperty: PyObject {
     return self.bind(to: object)
   }
 
-  public func bind(to object: PyObject) -> PyResult<PyObject> {
+  internal func bind(to object: PyObject) -> PyResult<PyObject> {
     guard let propGet = self.get else {
       return .attributeError("unreadable attribute")
     }
@@ -166,7 +153,7 @@ public class PyProperty: PyObject {
   // MARK: - Set
 
   // sourcery: pymethod = __set__
-  public func set(object: PyObject, value: PyObject) -> PyResult<PyObject> {
+  internal func set(object: PyObject, value: PyObject) -> PyResult<PyObject> {
     let isDelete = value.isNone
     if isDelete {
       guard let fn = self.del else {
@@ -188,18 +175,18 @@ public class PyProperty: PyObject {
   // MARK: - Del
 
   // sourcery: pymethod = __delete__
-  public func del(object: PyObject) -> PyResult<PyObject> {
+  internal func del(object: PyObject) -> PyResult<PyObject> {
     self.set(object: object, value: Py.none)
   }
 
   // MARK: - Doc
 
   // sourcery: pyproperty = __doc__, setter = setDoc
-  public func getDoc() -> PyObject? {
+  internal func getDoc() -> PyObject? {
     return self.doc
   }
 
-  public func setDoc(_ object: PyObject) -> PyResult<Void> {
+  internal func setDoc(_ object: PyObject) -> PyResult<Void> {
     if object.isNone {
       self.doc = nil
       return .value()
@@ -214,21 +201,21 @@ public class PyProperty: PyObject {
   internal static let getterDoc = "Descriptor to change the getter on a property."
 
   // sourcery: pymethod = getter, doc = getterDoc
-  public func getter(value: PyObject) -> PyResult<PyObject> {
+  internal func getter(value: PyObject) -> PyResult<PyObject> {
     return self.copy(get: value, set: nil, del: nil)
   }
 
   internal static let setterDoc = "Descriptor to change the setter on a property."
 
   // sourcery: pymethod = setter
-  public func setter(value: PyObject) -> PyResult<PyObject> {
+  internal func setter(value: PyObject) -> PyResult<PyObject> {
     return self.copy(get: nil, set: value, del: nil)
   }
 
   internal static let deleterDoc = "Descriptor to change the deleter on a property."
 
   // sourcery: pymethod = deleter
-  public func deleter(value: PyObject) -> PyResult<PyObject> {
+  internal func deleter(value: PyObject) -> PyResult<PyObject> {
     return self.copy(get: nil, set: nil, del: value)
   }
 
@@ -237,24 +224,23 @@ public class PyProperty: PyObject {
   private func copy(get: PyObject?,
                     set: PyObject?,
                     del: PyObject?) -> PyResult<PyObject> {
-    func arg(selfProperty: PyObject?, override: PyObject?) -> PyObject {
+    func resolveOverride(value: PyObject?, override: PyObject?) -> PyObject {
       if let o = override, !o.isNone {
         return o
       }
 
-      return selfProperty ?? Py.none
+      return value ?? Py.none
     }
 
-    let getArg = arg(selfProperty: self.get, override: get)
-    let setArg = arg(selfProperty: self.set, override: set)
-    let delArg = arg(selfProperty: self.del, override: del)
+    let getArg = resolveOverride(value: self.get, override: get)
+    let setArg = resolveOverride(value: self.set, override: set)
+    let delArg = resolveOverride(value: self.del, override: del)
 
     let docArg: PyObject
     if let d = self.doc, !d.isNone {
-      // make _init use __doc__ from getter
-      docArg = Py.none
+      docArg = d
     } else {
-      docArg = self.doc ?? Py.none
+      docArg = Py.none
     }
 
     let type = self.type

@@ -34,8 +34,8 @@ public class PyClassMethod: PyObject {
     return "PyClassMethod(callable: \(c))"
   }
 
-  private var callable: PyObject?
-  private lazy var __dict__ = Py.newDict()
+  internal var callable: PyObject?
+  internal lazy var __dict__ = Py.newDict()
 
   internal convenience init(callable: PyObject) {
     let type = Py.types.classmethod
@@ -51,28 +51,28 @@ public class PyClassMethod: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  public func getDict() -> PyDict {
+  internal func getDict() -> PyDict {
     return self.__dict__
   }
 
   // MARK: - Func
 
   // sourcery: pyproperty = __func__
-  public func getFunc() -> PyObject? {
+  internal func getFunction() -> PyObject? {
     return self.callable
   }
 
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  public func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
+  internal func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
     guard let callable = self.callable else {
       return .runtimeError("uninitialized classmethod object")
     }
@@ -84,7 +84,7 @@ public class PyClassMethod: PyObject {
   // MARK: - Is abstract method
 
   // sourcery: pymethod = __isabstractmethod__
-  public func isAbstractMethod() -> PyResult<Bool> {
+  internal func isAbstractMethod() -> PyResult<Bool> {
     guard let callable = self.callable else {
       return .value(false)
     }

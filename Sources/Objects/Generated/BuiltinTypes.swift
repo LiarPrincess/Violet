@@ -787,7 +787,7 @@ public final class BuiltinTypes {
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyClassMethod.getClass, castSelf: Self.asClassMethod))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyClassMethod.getDict, castSelf: Self.asClassMethod))
-    self.insert(type: type, name: "__func__", value: PyProperty.wrap(doc: nil, get: PyClassMethod.getFunc, castSelf: Self.asClassMethod))
+    self.insert(type: type, name: "__func__", value: PyProperty.wrap(doc: nil, get: PyClassMethod.getFunction, castSelf: Self.asClassMethod))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyClassMethod.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyClassMethod.pyInit(args:kwargs:), castSelf: Self.asClassMethodOptional))
@@ -1814,7 +1814,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyMethod.getAttribute(name:), castSelf: Self.asMethod))
     self.insert(type: type, name: "__setattr__", value: PyBuiltinFunction.wrap(name: "__setattr__", doc: nil, fn: PyMethod.setAttribute(name:value:), castSelf: Self.asMethod))
     self.insert(type: type, name: "__delattr__", value: PyBuiltinFunction.wrap(name: "__delattr__", doc: nil, fn: PyMethod.delAttribute(name:), castSelf: Self.asMethod))
-    self.insert(type: type, name: "__func__", value: PyBuiltinFunction.wrap(name: "__func__", doc: nil, fn: PyMethod.getFunc, castSelf: Self.asMethod))
+    self.insert(type: type, name: "__func__", value: PyBuiltinFunction.wrap(name: "__func__", doc: nil, fn: PyMethod.getFunction, castSelf: Self.asMethod))
     self.insert(type: type, name: "__self__", value: PyBuiltinFunction.wrap(name: "__self__", doc: nil, fn: PyMethod.getSelf, castSelf: Self.asMethod))
     self.insert(type: type, name: "__get__", value: PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyMethod.get(object:type:), castSelf: Self.asMethod))
     self.insert(type: type, name: "__call__", value: PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyMethod.call(args:kwargs:), castSelf: Self.asMethod))
@@ -2292,7 +2292,7 @@ public final class BuiltinTypes {
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyStaticMethod.getClass, castSelf: Self.asStaticMethod))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyStaticMethod.getDict, castSelf: Self.asStaticMethod))
-    self.insert(type: type, name: "__func__", value: PyProperty.wrap(doc: nil, get: PyStaticMethod.getFunc, castSelf: Self.asStaticMethod))
+    self.insert(type: type, name: "__func__", value: PyProperty.wrap(doc: nil, get: PyStaticMethod.getFunction, castSelf: Self.asStaticMethod))
 
     self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyStaticMethod.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStaticMethod.pyInit(args:kwargs:), castSelf: Self.asStaticMethodOptional))

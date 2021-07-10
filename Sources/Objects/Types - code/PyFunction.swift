@@ -81,25 +81,25 @@ public class PyFunction: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> PyResult<String> {
+  internal func repr() -> PyResult<String> {
     return .value("<function \(self.qualname.value) at \(self.ptr)>")
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Name
 
   // sourcery: pyproperty = __name__, setter = setName
-  public func getName() -> PyString {
+  internal func getName() -> PyString {
     return self.name
   }
 
-  public func setName(_ value: PyObject?) -> PyResult<Void> {
+  internal func setName(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       return .value()
     }
@@ -115,11 +115,11 @@ public class PyFunction: PyObject {
   // MARK: - Qualname
 
   // sourcery: pyproperty = __qualname__, setter = setQualname
-  public func getQualname() -> PyString {
+  internal func getQualname() -> PyString {
     return self.qualname
   }
 
-  public func setQualname(_ value: PyObject?) -> PyResult<Void> {
+  internal func setQualname(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       return .value()
     }
@@ -135,11 +135,11 @@ public class PyFunction: PyObject {
   // MARK: - Defaults
 
   // sourcery: pyproperty = __defaults__, setter = setDefaults
-  public func getDefaults() -> PyTuple? {
+  internal func getDefaults() -> PyTuple? {
     return self.defaults
   }
 
-  public func setDefaults(_ object: PyObject) -> PyResult<Void> {
+  internal func setDefaults(_ object: PyObject) -> PyResult<Void> {
     if object.isNone {
       self.defaults = nil
       return .value()
@@ -156,11 +156,11 @@ public class PyFunction: PyObject {
   // MARK: - Keyword defaults
 
   // sourcery: pyproperty = __kwdefaults__, setter = setKeywordDefaults
-  public func getKeywordDefaults() -> PyDict? {
+  internal func getKeywordDefaults() -> PyDict? {
     return self.kwDefaults
   }
 
-  public func setKeywordDefaults(_ object: PyObject) -> PyResult<Void> {
+  internal func setKeywordDefaults(_ object: PyObject) -> PyResult<Void> {
     if object.isNone {
       self.kwDefaults = nil
       return .value()
@@ -177,13 +177,13 @@ public class PyFunction: PyObject {
   // MARK: - Closure
 
   // sourcery: pyproperty = __closure__, setter = setClosure
-  public func getClosure() -> PyTuple? {
+  internal func getClosure() -> PyTuple? {
     return self.closure
   }
 
   /// Note that there is not `Python` setter for closure.
   /// It can be only set from `Swift`.
-  public func setClosure(_ object: PyObject) -> PyResult<Void> {
+  internal func setClosure(_ object: PyObject) -> PyResult<Void> {
     if object.isNone {
       self.closure = nil
       return .value()
@@ -200,11 +200,11 @@ public class PyFunction: PyObject {
   // MARK: - Globals
 
   // sourcery: pyproperty = __globals__, setter = setGlobals
-  public func getGlobals() -> PyDict {
+  internal func getGlobals() -> PyDict {
     return self.globals
   }
 
-  public func setGlobals(_ object: PyObject) -> PyResult<Void> {
+  internal func setGlobals(_ object: PyObject) -> PyResult<Void> {
     if let dict = PyCast.asDict(object) {
       self.globals = dict
       return .value()
@@ -216,11 +216,11 @@ public class PyFunction: PyObject {
   // MARK: - Annotations
 
   // sourcery: pyproperty = __annotations__, setter = setAnnotations
-  public func getAnnotations() -> PyDict? {
+  internal func getAnnotations() -> PyDict? {
     return self.annotations
   }
 
-  public func setAnnotations(_ object: PyObject) -> PyResult<Void> {
+  internal func setAnnotations(_ object: PyObject) -> PyResult<Void> {
     if object.isNone {
       self.annotations = nil
       return .value()
@@ -237,11 +237,11 @@ public class PyFunction: PyObject {
   // MARK: - Code
 
   // sourcery: pyproperty = __code__, setter = setCode
-  public func getCode() -> PyCode {
+  internal func getCode() -> PyCode {
     return self.code
   }
 
-  public func setCode(_ object: PyObject) -> PyResult<Void> {
+  internal func setCode(_ object: PyObject) -> PyResult<Void> {
     guard let code = PyCast.asCode(object) else {
       return .typeError("__code__ must be set to a code object")
     }
@@ -262,11 +262,11 @@ public class PyFunction: PyObject {
   // MARK: - Doc
 
   // sourcery: pyproperty = __doc__, setter = setDoc
-  public func getDoc() -> PyString? {
+  internal func getDoc() -> PyString? {
     return self.doc
   }
 
-  public func setDoc(_ object: PyObject) -> PyResult<Void> {
+  internal func setDoc(_ object: PyObject) -> PyResult<Void> {
     if object.isNone {
       self.doc = nil
       return .value()
@@ -284,7 +284,7 @@ public class PyFunction: PyObject {
   // MARK: - Module
 
   // sourcery: pyproperty = __module__, setter = setModule
-  public func getModule() -> PyResult<String> {
+  internal func getModule() -> PyResult<String> {
     if let module = PyCast.asModule(self.module) {
       return module.getName()
     }
@@ -292,7 +292,7 @@ public class PyFunction: PyObject {
     return Py.strValue(object: self.module)
   }
 
-  public func setModule(_ object: PyObject) -> PyResult<Void> {
+  internal func setModule(_ object: PyObject) -> PyResult<Void> {
     self.module = object
     return .value()
   }
@@ -300,14 +300,14 @@ public class PyFunction: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  public func getDict() -> PyDict {
+  internal func getDict() -> PyDict {
     return self.__dict__
   }
 
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  public func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
+  internal func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
     if object.isDescriptorStaticMarker {
       return .value(self)
     }
@@ -315,7 +315,7 @@ public class PyFunction: PyObject {
     return .value(self.bind(to: object))
   }
 
-  public func bind(to object: PyObject) -> PyMethod {
+  internal func bind(to object: PyObject) -> PyMethod {
     return PyMethod(fn: self, object: object)
   }
 
@@ -324,7 +324,7 @@ public class PyFunction: PyObject {
   // sourcery: pymethod = __call__
   /// static PyObject *
   /// function_call(PyObject *func, PyObject *args, PyObject *kwargs)
-  public func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
     // Caller and callee functions should not share the kwargs dictionary.
     var kwargsCopy: PyDict?
     if let kwargs = kwargs {
