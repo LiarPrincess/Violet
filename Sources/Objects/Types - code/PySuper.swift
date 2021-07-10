@@ -1,6 +1,5 @@
 import VioletBytecode
 
-// swiftlint:disable file_length
 // cSpell:ignore typeobject cmeth
 
 // In CPython:
@@ -32,9 +31,9 @@ public class PySuper: PyObject, HasCustomGetMethod {
   ///
   /// For example:
   /// `super(int, True)` -> `requestedType` = `int` (even though value is `bool`).
-  private var thisClass: PyType?
-  private var object: PyObject?
-  private var objectType: PyType?
+  internal var thisClass: PyType?
+  internal var object: PyObject?
+  internal var objectType: PyType?
 
   override public var description: String {
     func describe(value: PyObject?) -> String {
@@ -62,7 +61,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
                requestedType: PyType?,
                object: PyObject?,
                objectType: PyType?) {
-    self.thisClass = type
+    self.thisClass = requestedType
     self.object = object
     self.objectType = objectType
     super.init(type: type)
@@ -71,7 +70,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> PyResult<String> {
+  internal func repr() -> PyResult<String> {
     let typeName = self.thisClass?.getName() ?? "NULL"
 
     if let objectType = self.objectType {
@@ -171,28 +170,28 @@ public class PySuper: PyObject, HasCustomGetMethod {
   internal static let thisClassDoc = "the class invoking super()"
 
   // sourcery: pyproperty = __thisclass__, doc = thisClassDoc
-  public func getThisClass() -> PyType? {
+  internal func getThisClass() -> PyType? {
     return self.thisClass
   }
 
   internal static let selfDoc = "the instance invoking super(); may be None"
 
   // sourcery: pyproperty = __self__, doc = selfDoc
-  public func getSelf() -> PyObject? {
+  internal func getSelf() -> PyObject? {
     return self.object
   }
 
   internal static let selfClassDoc = "the type of the instance invoking super(); may be None"
 
   // sourcery: pyproperty = __self_class__, doc = selfClassDoc
-  public func getSelfClass() -> PyObject? {
+  internal func getSelfClass() -> PyObject? {
     return self.object
   }
 
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  public func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
+  internal func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
     // Basically 'object.isNone'
     if object.isDescriptorStaticMarker {
       return .value(self)
@@ -220,10 +219,10 @@ public class PySuper: PyObject, HasCustomGetMethod {
     case let .error(e): return .error(e)
     }
 
-    let result = PySuper.pyNewRaw(type: Py.types.super)
-    result.thisClass = suType
-    result.object = object
-    result.objectType = objectType
+    let result = PySuper(requestedType: suType,
+                         object: object,
+                         objectType: objectType)
+
     return .value(result)
   }
 
@@ -233,21 +232,12 @@ public class PySuper: PyObject, HasCustomGetMethod {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PySuper> {
-    let result = Self.pyNewRaw(type: type)
+    let result = PySuper(type: type,
+                         requestedType: nil,
+                         object: nil,
+                         objectType: nil)
+
     return .value(result)
-  }
-
-  /// Actual function for '__new__'
-  /// (the one that does not care about conforming, to '__new__Owner' protocol)
-  internal static func pyNewRaw(type: PyType) -> PySuper {
-    let result = PySuper(
-      type: type,
-      requestedType: nil,
-      object: nil,
-      objectType: nil
-    )
-
-    return result
   }
 
   // MARK: - Python init
@@ -270,211 +260,10 @@ public class PySuper: PyObject, HasCustomGetMethod {
 
       let type = binding.optional(at: 0)
       let object = binding.optional(at: 1)
-      return self.pyInit(type: type, object: object)
+      return self.pyInit(type: type, object: object) // In separate file
 
     case let .error(e):
       return .error(e)
     }
-  }
-
-  internal func pyInit(type typeArg: PyObject?,
-                       object objectArg: PyObject?) -> PyResult<PyNone> {
-    let type: PyType
-    var object = objectArg
-
-    if let typeAsObject = typeArg {
-      guard let typeAsType = PyCast.asType(typeAsObject) else {
-        let t = typeAsObject.typeName
-        return .typeError("super() argument 1 must be type, not \(t)")
-      }
-
-      type = typeAsType
-    } else {
-      // Call super(), without args, fill:
-      // - object from first local variable on the stack
-      // - type from '__class__'
-      assert(object == nil)
-
-      switch Self.getObjectAndTypeFromFrame() {
-      case let .value(objectType):
-        type = objectType.type
-        object = objectType.object
-      case let .error(e):
-        return .error(e)
-      }
-    }
-
-    if let o = object, o.isNone {
-      object = nil
-    }
-
-    var objectType: PyType?
-    if let o = object {
-      switch self.checkSuper(type: type, object: o) {
-      case let .value(t): objectType = t
-      case let .error(e): return .error(e)
-      }
-    }
-
-    self.thisClass = type
-    self.object = object
-    self.objectType = objectType
-    return .value(Py.none)
-  }
-
-  // MARK: - Without args (from frame)
-
-  private struct ObjectAndType {
-    fileprivate let object: PyObject
-    fileprivate let type: PyType
-  }
-
-  private static func getObjectAndTypeFromFrame() -> PyResult<ObjectAndType> {
-    guard let frame = Py.delegate.frame else {
-      return .runtimeError("super(): no current frame")
-    }
-
-    let code = frame.code
-
-    if code.argCount == 0 {
-      return .runtimeError("super(): no arguments")
-    }
-
-    let object: PyObject
-    switch Self.getSelfObjectFromFirstArgument(frame: frame, code: code) {
-    case let .value(o): object = o
-    case let .error(e): return .error(e)
-    }
-
-    switch Self.getTypeFrom__class__(frame: frame, code: code) {
-    case .value(let type):
-      let result = ObjectAndType(object: object, type: type)
-      return .value(result)
-    case .notFound:
-      return .runtimeError("super(): __class__ cell not found")
-    case .error(let e):
-      return .error(e)
-    }
-  }
-
-  // MARK: - Get 'self' object from 1st arg
-
-  /// By convention 'firstArgument' should be named 'self',
-  /// but users can actually put anything they want there,
-  /// so we can't rely that.
-  private static func getSelfObjectFromFirstArgument(
-    frame: PyFrame,
-    code: PyCode
-  ) -> PyResult<PyObject> {
-    // Note double optional below:
-    // - 'frame.fastLocals' stores 'PyObject?'
-    // - 'Collection.first' returns 'Element?'
-    // 'guard' will handle optional from 'Collection.first'
-    guard var firstArgOrNil = frame.fastLocals.first else {
-      return .runtimeError("super(): arg[0] deleted")
-    }
-
-    // The first argument might be a cell.
-    if firstArgOrNil == nil {
-      firstArgOrNil = Self.handleFirstArgumentCell(frame: frame, code: code)
-    }
-
-    guard let firstArg = firstArgOrNil else {
-      return .runtimeError("super(): arg[0] deleted")
-    }
-
-    return .value(firstArg)
-  }
-
-  private static func handleFirstArgumentCell(frame: PyFrame,
-                                              code: PyCode) -> PyObject? {
-    guard let firstArgument = code.variableNames.first else {
-      return nil
-    }
-
-    // We will try to find cell with the same name as 'firstArgument'
-    for (i, cellName) in code.cellVariableNames.enumerated() {
-      // swiftlint:disable:next for_where
-      if cellName == firstArgument {
-        let cell = frame.cellsAndFreeVariables[i]
-        return cell.content
-      }
-    }
-
-    return nil
-  }
-
-  // MARK: - Get 'type' from __class__
-
-  private enum TypeFromClass {
-    case value(PyType)
-    case notFound
-    case error(PyBaseException)
-  }
-
-  private static func getTypeFrom__class__(frame: PyFrame,
-                                           code: PyCode) -> TypeFromClass {
-    for (i, name) in code.freeVariableNames.enumerated() {
-      guard name.value == "__class__" else {
-        continue
-      }
-
-      // We store cells and free in the same array,
-      // cells are first so we have to offset 'free'.
-      let index = code.cellVariableNames.count + i
-      let cell = frame.cellsAndFreeVariables[index]
-
-      guard let content = cell.content else {
-        let msg = "super(): empty __class__ cell"
-        return .error(Py.newRuntimeError(msg: msg))
-      }
-
-      guard let type = PyCast.asType(content) else {
-        let msg = "super(): __class__ is not a type (\(content.typeName))"
-        return .error(Py.newRuntimeError(msg: msg))
-      }
-
-      return .value(type)
-    }
-
-    return .notFound
-  }
-
-  // MARK: - Check super
-
-  /// Check that a super() call makes sense.
-  ///
-  /// `object` can be a class, or an instance of one:
-  ///
-  /// - If it is a class, it must be a subclass of 'type'.
-  ///   This case is used for class methods; the return value is `object`.
-  ///
-  /// - If it is an instance, it must be an instance of `type`.
-  ///   This is the normal case; the return value is `obj.__class__`.
-  ///
-  /// But… when obj is an instance, we want to allow for the case where
-  /// `Py_TYPE(obj)` is not a subclass of type, but `object.__class__` is!
-  /// This will allow using `super()` with a proxy for `object`.
-  private func checkSuper(type: PyType, object: PyObject) -> PyResult<PyType> {
-    if let objectAsType = PyCast.asType(object), objectAsType.isSubtype(of: type) {
-      return .value(objectAsType)
-    }
-
-    let objectType = object.type
-    if objectType.isSubtype(of: type) {
-      return .value(objectType)
-    }
-
-    switch Py.getattr(object: objectType, name: .__class__) {
-    case .value(let classObject):
-      if let classType = PyCast.asType(classObject), classType.isSubtype(of: type) {
-        return .value(classType)
-      }
-    case .error:
-      break // Ignore, we have our own error
-    }
-
-    let msg = "super(type, obj): obj must be an instance or subtype of type"
-    return .typeError(msg)
   }
 }
