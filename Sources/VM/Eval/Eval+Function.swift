@@ -269,7 +269,7 @@ extension Eval {
 
     guard Py.hasIter(object: args) else {
       let t = args.typeName
-      let fnName = self.getFunctionName(object: fn) ?? "function"
+      let fnName = Py.getFunctionName(object: fn) ?? "function"
       let msg = "\(fnName) argument after * must be an iterable, not \(t)"
       return .typeError(msg)
     }

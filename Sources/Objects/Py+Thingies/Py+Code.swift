@@ -11,25 +11,13 @@ import VioletCompiler
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-// MARK: - Function
-
 extension PyInstance {
-
-  // MARK: - Builtin function
-
-  public func getName(fn: PyBuiltinFunction) -> String {
-    return fn.getName()
-  }
 
   // MARK: - Builtin method
 
   public func newMethod(fn: PyBuiltinFunction,
                         object: PyObject) -> PyBuiltinMethod {
     return PyBuiltinMethod(fn: fn.function, object: object)
-  }
-
-  public func getName(fn: PyBuiltinMethod) -> String {
-    return fn.getName()
   }
 
   // MARK: - Function
@@ -92,6 +80,39 @@ extension PyInstance {
     }
 
     return .typeError("method() func must be function, not \(fn.typeName)")
+  }
+
+  // MARK: - Function name
+
+  public func getFunctionName(object: PyObject) -> String? {
+    if let fn = PyCast.asBuiltinFunction(object) {
+      return fn.getName()
+    }
+
+    if let fn = PyCast.asBuiltinMethod(object) {
+      return fn.getName()
+    }
+
+    if let fn = PyCast.asFunction(object) {
+      let result = fn.getName()
+      return result.value
+    }
+
+    if let method = PyCast.asMethod(object) {
+      let fn = method.getFunction()
+      let result = fn.getName()
+      return result.value
+    }
+
+    if let method = PyCast.asStaticMethod(object), let fn = method.getFunction() {
+      return self.getFunctionName(object: fn)
+    }
+
+    if let method = PyCast.asClassMethod(object), let fn = method.getFunction() {
+      return self.getFunctionName(object: fn)
+    }
+
+    return nil
   }
 
   // MARK: - Module

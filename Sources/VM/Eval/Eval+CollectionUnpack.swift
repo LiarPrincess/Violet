@@ -79,41 +79,10 @@ extension Eval {
     }
 
     let fn = self.stack.top
-    let fnName = self.getFunctionName(object: fn) ?? "function"
+    let fnName = Py.getFunctionName(object: fn) ?? "function"
 
     let msg = "\(fnName) argument after * must be an iterable, not \(iterable.type)"
     return Py.newTypeError(msg: msg)
-  }
-
-  internal func getFunctionName(object: PyObject) -> String? {
-    if let fn = PyCast.asFunction(object) {
-      let result = fn.getName()
-      return result.value
-    }
-
-    if let fn = PyCast.asBuiltinFunction(object) {
-      return Py.getName(fn: fn)
-    }
-
-    if let method = PyCast.asMethod(object) {
-      let fn = method.getFunc()
-      let result = fn.getName()
-      return result.value
-    }
-
-     if let fn = PyCast.asBuiltinMethod(object) {
-      return Py.getName(fn: fn)
-    }
-
-    if let fn = PyCast.asStaticMethod(object), let callable = fn.getFunc() {
-      return self.getFunctionName(object: callable)
-    }
-
-    if let fn = PyCast.asClassMethod(object), let callable = fn.getFunc() {
-      return self.getFunctionName(object: callable)
-    }
-
-    return nil
   }
 
   // MARK: - Unpack set
@@ -199,7 +168,7 @@ extension Eval {
     if self.stack.count >= 2 {
       let fnObject = self.stack.second
 
-      if let name = self.getFunctionName(object: fnObject) {
+      if let name = Py.getFunctionName(object: fnObject) {
         msg.append(name + "() ")
       } else {
         msg.append(fnObject.typeName + "object ")
@@ -227,7 +196,7 @@ extension Eval {
   ) -> PyBaseException? {
 
     let fn = self.stack.second
-    let fnName = self.getFunctionName(object: fn) ?? "function"
+    let fnName = Py.getFunctionName(object: fn) ?? "function"
 
     if error.isAttributeError {
       let t = iterable.typeName
