@@ -42,6 +42,10 @@ public class PyModule: PyObject {
 
   /// This method is called in Swift `init` and also in Python `__init__`.
   private func initDictContent(name: PyObject, doc: PyObject?) {
+    // Name can be anything, 'str' is not required:
+    // >>> builtins.__dict__['__name__'] = 1
+    // >>> repr(builtins)
+    // "<module 1 (built-in)>"
     self.__dict__.set(id: .__name__, to: name)
     self.__dict__.set(id: .__doc__, to: doc ?? Py.none)
     self.__dict__.set(id: .__package__, to: Py.none)
@@ -59,30 +63,56 @@ public class PyModule: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> PyResult<String> {
-    return self.getName().map { "<module \($0)>" }
+  internal func repr() -> PyResult<String> {
+    switch self.getNameString() {
+    case .string(let s):
+      return .value("<module \(s)>")
+    case .stringConversionFailed(_, let e):
+      return .error(e)
+    case .namelessModule:
+      let e = self.createNamelessModuleError()
+      return .error(e)
+    }
   }
 
   // MARK: - Name
 
   /// PyObject*
   /// PyModule_GetNameObject(PyObject *m)
-  public func getName() -> PyResult<String> {
-    if let name = self.__dict__.get(id: .__name__) {
-      return Py.strValue(object: name)
+  internal func getName() -> PyResult<PyObject> {
+    if let object = self.getNameObjectOrNil() {
+      return .value(object)
     }
 
-    return .systemError("nameless module")
+    let e = self.createNamelessModuleError()
+    return .error(e)
   }
 
-  /// Just like `self.getName`, but ignores error and returns `nil`.
-  public func getNameOrNil() -> String? {
-    switch self.getName() {
-    case .value(let n):
-      return n
-    case .error:
-      return nil
+  private enum NameAsString {
+    case string(String)
+    case stringConversionFailed(PyObject, PyBaseException)
+    case namelessModule
+  }
+
+  private func getNameString() -> NameAsString {
+    if let object = self.getNameObjectOrNil() {
+      switch Py.strValue(object: object) {
+      case let .value(s):
+        return .string(s)
+      case let .error(e):
+        return .stringConversionFailed(object, e)
+      }
     }
+
+    return .namelessModule
+  }
+
+  private func getNameObjectOrNil() -> PyObject? {
+    return self.__dict__.get(id: .__name__)
+  }
+
+  private func createNamelessModuleError() -> PyBaseException {
+    return Py.newSystemError(msg: "nameless module")
   }
 
   // MARK: - Attributes
@@ -118,9 +148,16 @@ public class PyModule: PyObject {
       }
     }
 
-    let nameQuoted = name.reprImpl().quoted
-    let moduleName = self.getNameOrNil() ?? "<unknown module name>"
-    let msg = "module \(moduleName) has no attribute \(nameQuoted)"
+    let attributeNameRepr = name.reprImpl()
+    let attributeName = attributeNameRepr.quoted
+
+    var moduleName = "<unknown module name>"
+    switch self.getNameString() {
+    case .string(let s): moduleName = s
+    case .stringConversionFailed, .namelessModule: break
+    }
+
+    let msg = "module \(moduleName) has no attribute \(attributeName)"
     return .attributeError(msg)
   }
 

@@ -81,15 +81,16 @@ extension AbstractBuiltinFunction {
   // MARK: - Module
 
   /// DO NOT USE! This is a part of `AbstractBuiltinFunction` implementation.
-  internal func _getModule() -> PyResult<String> {
+  internal func _getModule() -> PyResult<PyObject> {
     guard let moduleObject = self.module else {
-      return .value("")
+      return .value(Py.emptyString)
     }
 
-    if let module = PyCast.asModule(moduleObject) {
-      return module.getName()
+    guard let module = PyCast.asModule(moduleObject) else {
+      let str = Py.str(object: moduleObject)
+      return str.map { $0 as PyObject }
     }
 
-    return Py.strValue(object: moduleObject)
+    return module.getName()
   }
 }

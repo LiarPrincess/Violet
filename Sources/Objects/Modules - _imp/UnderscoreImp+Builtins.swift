@@ -9,7 +9,7 @@ import VioletCore
 
 extension UnderscoreImp {
 
-  // MARK: - Is
+  // MARK: - Is builtin
 
   internal static var isBuiltinDoc: String {
     return """
@@ -28,11 +28,19 @@ extension UnderscoreImp {
       return .typeError(msg)
     }
 
-    let builtinNames = Py.sys.builtinModuleNames
-    let result = builtinNames.contains { $0.isEqual(name) }
+    let builtinModuleNames: PyTuple
+    switch Py.sys.getBuiltinModuleNames() {
+    case let .value(t): builtinModuleNames = t
+    case let .error(e): return .error(e)
+    }
 
-    let int = Py.newInt(result ? 1 : 0)
-    return .value(int)
+    switch Py.contains(iterable: builtinModuleNames, element: name) {
+    case let .value(b):
+      let int = Py.newInt(b ? 1 : 0)
+      return .value(int)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Create

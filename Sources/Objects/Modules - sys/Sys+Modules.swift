@@ -72,21 +72,23 @@ extension Sys {
   }
 
   public func addModule(module: PyModule) -> PyBaseException? {
-    let name: String
+    let name: PyObject
     switch module.getName() {
     case let .value(n): name = n
     case let .error(e): return e
     }
 
-    let interned = Py.intern(string: name)
+    return self.addModule(name: name, module: module)
+  }
 
+  private func addModule(name: PyObject, module: PyModule) -> PyBaseException? {
     let modulesDict: PyDict
     switch self.getModules() {
     case let .value(d): modulesDict = d
     case let .error(e): return e
     }
 
-    switch modulesDict.set(key: interned, to: module) {
+    switch modulesDict.set(key: name, to: module) {
     case .ok: return nil
     case .error(let e): return e
     }
@@ -97,27 +99,25 @@ extension Sys {
   internal func setBuiltinModules(modules: [PyModule]) {
     assert(!self.hasAlreadyCalled_setBuiltinModules)
 
+    var builtinModuleNames = [PyObject]()
     for module in modules {
-      let name: String = {
-        switch module.getName() {
-        case .value(let s):
-          return s
-        case .error(let e):
-          trap("Error when inserting '\(module)' to 'sys.builtin_module_names': " +
-            "unable to extract module name: \(e).")
-        }
-      }()
+      let name: PyObject
+      switch module.getName() {
+      case let .value(n): name = n
+      case let .error(e):
+        trap("Error when inserting '\(module)' to 'sys.builtin_module_names': " +
+              "unable to extract module name: \(e).")
+      }
 
-      let interned = Py.intern(string: name)
-      self.builtinModuleNames.append(interned)
+      builtinModuleNames.append(name)
 
       // sys.modules
-      if let e = self.addModule(module: module) {
+      if let e = self.addModule(name: name, module: module) {
         trap("Error when inserting '\(name)' module to 'sys.modules': \(e)")
       }
     }
 
-    let tuple = Py.newTuple(elements: self.builtinModuleNames)
+    let tuple = Py.newTuple(elements: builtinModuleNames)
     if let e = self.setBuiltinModuleNames(to: tuple) {
       trap("Error when setting 'sys.builtin_module_names': \(e)")
     }
@@ -125,9 +125,9 @@ extension Sys {
 
   private var hasAlreadyCalled_setBuiltinModules: Bool {
     switch self.getBuiltinModuleNames() {
-    case let .value(t):
+    case let .value(tuple):
       // If we have any elements -> we called it before.
-      return t.elements.any
+      return tuple.elements.any
     case let .error(e):
       trap("Error when checking if 'builtin_module_names' was already filled: \(e)")
     }

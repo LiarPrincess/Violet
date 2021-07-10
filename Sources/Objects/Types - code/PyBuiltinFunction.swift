@@ -116,7 +116,7 @@ public class PyBuiltinFunction: PyObject, AbstractBuiltinFunction {
   // MARK: - Module
 
   // sourcery: pyproperty = __module__
-  internal func getModule() -> PyResult<String> {
+  internal func getModule() -> PyResult<PyObject> {
     return self._getModule()
   }
 

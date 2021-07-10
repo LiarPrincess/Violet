@@ -284,12 +284,15 @@ public class PyFunction: PyObject {
   // MARK: - Module
 
   // sourcery: pyproperty = __module__, setter = setModule
-  internal func getModule() -> PyResult<String> {
-    if let module = PyCast.asModule(self.module) {
+  internal func getModule() -> PyResult<PyObject> {
+    let moduleObject = self.module
+
+    if let module = PyCast.asModule(moduleObject) {
       return module.getName()
     }
 
-    return Py.strValue(object: self.module)
+    let str = Py.str(object: moduleObject)
+    return str.map { $0 as PyObject }
   }
 
   internal func setModule(_ object: PyObject) -> PyResult<Void> {
