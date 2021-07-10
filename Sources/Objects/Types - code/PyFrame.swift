@@ -153,7 +153,7 @@ public class PyFrame: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> PyResult<String> {
+  internal func repr() -> PyResult<String> {
     let ptr = self.ptr
     let file = self.code.filename
     let line = self.currentInstructionLine
@@ -165,7 +165,7 @@ public class PyFrame: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
@@ -182,7 +182,7 @@ public class PyFrame: PyObject {
   }
 
   // sourcery: pymethod = __delattr__
-  public func delAttribute(name: PyObject) -> PyResult<PyNone> {
+  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(on: self, name: name)
   }
 
@@ -241,7 +241,7 @@ public class PyFrame: PyObject {
   /// CPython:
   /// int
   /// PyFrame_FastToLocalsWithError(PyFrameObject *f)
-  public func copyFastToLocals() -> PyBaseException? {
+  internal func copyFastToLocals() -> PyBaseException? {
     let variableNames = self.code.variableNames
     let fastLocals = self.fastLocals
     assert(variableNames.count == fastLocals.count)
@@ -325,7 +325,7 @@ public class PyFrame: PyObject {
 
   /// What should `PyFrame.copyLocalsToFast` do when the value is missing from
   /// `self.locals`?
-  public enum LocalMissingStrategy {
+  internal enum LocalMissingStrategy {
     /// Leave the current value.
     case ignore
     /// Remove value (set to `nil`).
@@ -333,7 +333,7 @@ public class PyFrame: PyObject {
   }
 
   /// Reversal of `self.copyFastToLocals` (<-- go there for documentation).
-  public func copyLocalsToFast(
+  internal func copyLocalsToFast(
     onLocalMissing: LocalMissingStrategy
   ) -> PyBaseException? {
     let variableNames = self.code.variableNames

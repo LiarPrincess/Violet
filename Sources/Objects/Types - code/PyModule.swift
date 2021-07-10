@@ -56,7 +56,7 @@ public class PyModule: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  public func getDict() -> PyDict {
+  internal func getDict() -> PyDict {
     return self.__dict__
   }
 
@@ -165,35 +165,39 @@ public class PyModule: PyObject {
     return self.getAttribute(name: id.value)
   }
 
+  // MARK: - Set attribute
+
   // sourcery: pymethod = __setattr__
-  public func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
+  internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(on: self, name: name, to: value)
   }
 
-  public func setAttribute(id: IdString, value: PyObject?) -> PyResult<PyNone> {
+  internal func setAttribute(id: IdString, value: PyObject?) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(on: self, name: id.value, to: value)
   }
 
+  // MARK: - Del attribute
+
   // sourcery: pymethod = __delattr__
-  public func delAttribute(name: PyObject) -> PyResult<PyNone> {
+  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(on: self, name: name)
   }
 
-  public func delAttribute(id: IdString) -> PyResult<PyNone> {
+  internal func delAttribute(id: IdString) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(on: self, name: id.value)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
-  public func dir() -> PyResult<DirResult> {
+  internal func dir() -> PyResult<DirResult> {
     // Do not add 'self.type' dir!
     // We are only interested in functions in this module!
 

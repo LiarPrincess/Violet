@@ -210,7 +210,7 @@ public class PyType: PyObject, HasCustomGetMethod {
     return self.name
   }
 
-  public func setName(_ value: PyObject?) -> PyResult<Void> {
+  internal func setName(_ value: PyObject?) -> PyResult<Void> {
     let object: PyObject
     switch self.checkSetSpecialAttribute(name: .__name__, value: value) {
     case let .value(v): object = v
@@ -261,7 +261,7 @@ public class PyType: PyObject, HasCustomGetMethod {
   // MARK: - Doc
 
   // sourcery: pyproperty = __doc__, setter = setDoc
-  public func getDoc() -> PyResult<PyObject> {
+  internal func getDoc() -> PyResult<PyObject> {
     guard let doc = self.__dict__.get(id: .__doc__) else {
       return .value(Py.none)
     }
@@ -273,7 +273,7 @@ public class PyType: PyObject, HasCustomGetMethod {
     return .value(doc)
   }
 
-  public func setDoc(_ value: PyObject?) -> PyResult<Void> {
+  internal func setDoc(_ value: PyObject?) -> PyResult<Void> {
     let object: PyObject
     switch self.checkSetSpecialAttribute(name: .__doc__, value: value) {
     case let .value(v): object = v
@@ -347,7 +347,7 @@ public class PyType: PyObject, HasCustomGetMethod {
     return .builtins
   }
 
-  public func setModule(_ value: PyObject?) -> PyResult<Void> {
+  internal func setModule(_ value: PyObject?) -> PyResult<Void> {
     let object: PyObject
     switch self.checkSetSpecialAttribute(name: .__module__, value: value) {
     case let .value(v): object = v
@@ -366,11 +366,11 @@ public class PyType: PyObject, HasCustomGetMethod {
     return Py.newTuple(elements: bases)
   }
 
-  public func getBases() -> [PyType] {
+  internal func getBases() -> [PyType] {
     return self.bases
   }
 
-  public func setBases(_ value: PyObject?) -> PyResult<Void> {
+  internal func setBases(_ value: PyObject?) -> PyResult<Void> {
     // Violet currently does not support this
     return .typeError("can't set \(self.name).__bases__")
   }
@@ -378,7 +378,7 @@ public class PyType: PyObject, HasCustomGetMethod {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  public func getDict() -> PyDict {
+  internal func getDict() -> PyDict {
     return self.__dict__
   }
 
@@ -389,14 +389,14 @@ public class PyType: PyObject, HasCustomGetMethod {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> PyResult<String> {
+  internal func repr() -> PyResult<String> {
     switch self.getModule() {
     case .builtins:
       return .value("<class '\(self.name)'>")
@@ -410,7 +410,7 @@ public class PyType: PyObject, HasCustomGetMethod {
   // MARK: - Base
 
   // sourcery: pyproperty = __base__
-  public func getBase() -> PyType? {
+  internal func getBase() -> PyType? {
     return self.base
   }
 
@@ -441,14 +441,14 @@ public class PyType: PyObject, HasCustomGetMethod {
     return Py.newList(elements: mro)
   }
 
-  public func getMRO() -> [PyType] {
+  internal func getMRO() -> [PyType] {
     return self.mro
   }
 
   // MARK: - Subtypes
 
   // sourcery: pymethod = __subclasscheck__
-  public func isSubtype(of object: PyObject) -> PyResult<Bool> {
+  internal func isSubtype(of object: PyObject) -> PyResult<Bool> {
     if let type = PyCast.asType(object) {
       return .value(self.isSubtype(of: type))
     }
@@ -456,25 +456,25 @@ public class PyType: PyObject, HasCustomGetMethod {
     return .typeError("issubclass() arg 1 must be a class")
   }
 
-  public func isSubtype(of type: PyType) -> Bool {
+  internal func isSubtype(of type: PyType) -> Bool {
     return self.mro.contains { $0 === type }
   }
 
   // sourcery: pymethod = __instancecheck__
-  public func isType(of object: PyObject) -> Bool {
+  internal func isType(of object: PyObject) -> Bool {
     return object.type.isSubtype(of: self)
   }
 
   /// Is `self` subtype of `baseException`?
   ///
   /// PyExceptionInstance_Check
-  public var isException: Bool {
+  internal var isException: Bool {
     let baseException = Py.errorTypes.baseException
     return self.isSubtype(of: baseException)
   }
 
   // sourcery: pymethod = __subclasses__
-  public func getSubclasses() -> [PyType] {
+  internal func getSubclasses() -> [PyType] {
     var result = [PyType]()
     for subclassRef in self.subclasses {
       if let subclass = subclassRef.value {
@@ -487,12 +487,12 @@ public class PyType: PyObject, HasCustomGetMethod {
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.extractName(from: name)
       .flatMap(self.getAttribute(name:))
   }
 
-  public func getAttribute(name: PyString) -> PyResult<PyObject> {
+  internal func getAttribute(name: PyString) -> PyResult<PyObject> {
     return self.getAttribute(name: name, searchDict: true)
   }
 
@@ -549,7 +549,7 @@ public class PyType: PyObject, HasCustomGetMethod {
   }
 
   // sourcery: pymethod = __setattr__
-  public func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
+  internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
     if let error = self.preventSetAttributeOnBuiltin() {
       return .error(error)
     }
@@ -558,7 +558,7 @@ public class PyType: PyObject, HasCustomGetMethod {
       .flatMap { self.setAttribute(name: $0, value: value) }
   }
 
-  public func setAttribute(name: PyString, value: PyObject?) -> PyResult<PyNone> {
+  internal func setAttribute(name: PyString, value: PyObject?) -> PyResult<PyNone> {
     if let error = self.preventSetAttributeOnBuiltin() {
       return .error(error)
     }
@@ -576,13 +576,13 @@ public class PyType: PyObject, HasCustomGetMethod {
   }
 
   // sourcery: pymethod = __delattr__
-  public func delAttribute(name: PyObject) -> PyResult<PyNone> {
+  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
     return self.setAttribute(name: name, value: nil)
   }
 
   // MARK: - Get method
 
-  public func getMethod(
+  internal func getMethod(
     selector: PyString,
     allowsCallableFromDict: Bool
   ) -> PyInstance.GetMethodResult {
@@ -608,7 +608,7 @@ public class PyType: PyObject, HasCustomGetMethod {
   ///
   /// We deliberately don't suck up its __class__, as methods belonging to the
   /// metaclass would probably be more confusing than helpful.
-  public func dir() -> PyResult<DirResult> {
+  internal func dir() -> PyResult<DirResult> {
     let result = DirResult()
 
     for base in self.mro {
@@ -698,7 +698,7 @@ public class PyType: PyObject, HasCustomGetMethod {
   // sourcery: pymethod = __call__
   /// static PyObject *
   /// type_call(PyTypeObject *type, PyObject *args, PyObject *kwds)
-  public func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
     let object: PyObject
     switch self.call__new__(args: args, kwargs: kwargs) {
     case let .value(o):
