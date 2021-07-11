@@ -55,7 +55,7 @@ extension VM {
     }
 
     // Set '__file__' (remember to cleanup later!).
-    let mainDict = main.getDict()
+    let mainDict = Py.get__dict__(module: main)
     mainDict.set(id: .__file__, to: Py.newString(scriptPath))
     defer { _ = mainDict.del(id: .__file__) }
 

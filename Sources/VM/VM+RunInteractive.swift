@@ -50,7 +50,7 @@ extension VM {
     }
 
     let builtins = Py.builtinsModule
-    let builtinsDict = builtins.getDict()
+    let builtinsDict = Py.get__dict__(module: builtins)
 
     let exit = Py.newString("exit")
     switch builtinsDict.set(key: exit, to: exitFn) {
@@ -130,7 +130,7 @@ extension VM {
       case let .error(e): return e
       }
 
-      let mainDict = main.getDict()
+      let mainDict = Py.get__dict__(module: main)
       switch self.eval(code: code, globals: mainDict, locals: mainDict) {
       case .value:
         // We are not responsible for printing value, 'printExpr' instruction is

@@ -305,7 +305,7 @@ extension VM {
 
     let name = self.__main__ModuleName
     let module = Py.newModule(name: name)
-    let dict = module.getDict()
+    let dict = Py.get__dict__(module: module)
 
     if dict.get(id: .__annotations__) == nil {
       dict.set(id: .__annotations__, to: Py.newDict())
