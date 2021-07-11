@@ -74,7 +74,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
     let typeName = self.thisClass?.getNameString() ?? "NULL"
 
     if let objectType = self.objectType {
-      let objectTypeName = objectType.getName()
+      let objectTypeName = objectType.getNameString()
       return .value("<super: <class '\(typeName)'>, <\(objectTypeName) object>>")
     }
 

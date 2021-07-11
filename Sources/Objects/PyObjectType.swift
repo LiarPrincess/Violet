@@ -74,10 +74,10 @@ internal enum PyObjectType {
 
   // sourcery: pymethod = __repr__
   internal static func repr(zelf: PyObject) -> PyResult<String> {
-    switch zelf.type.getModule() {
+    switch zelf.type.getModuleString() {
     case .builtins:
       return .value("<\(zelf.typeName) object at \(zelf.ptr)>")
-    case .module(let module):
+    case .string(let module):
       return .value("<\(module).\(zelf.typeName) object at \(zelf.ptr)>")
     case .error(let e):
       return .error(e)

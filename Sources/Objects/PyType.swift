@@ -299,33 +299,67 @@ public class PyType: PyObject, HasCustomGetMethod {
   // MARK: - Module
 
   // sourcery: pyproperty = __module__, setter = setModule
-  public func getModulePy() -> PyResult<String> {
-    switch self.getModule() {
+  internal func getModule() -> PyResult<PyObject> {
+    switch self.getModuleImpl() {
     case .builtins:
-      return .value("builtins")
-    case .module(let name):
-      return .value(name)
+      let builtins = Py.intern(string: "builtins")
+      return .value(builtins)
+    case .string(let s):
+      let interned = Py.intern(string: s)
+      return .value(interned)
+    case .pyString(let s):
+      return .value(s)
+    case .objectNotYetConvertedToString(let o):
+      return .value(o)
     case .error(let e):
       return .error(e)
     }
   }
 
-  public enum GetModuleResult {
+  internal enum ModuleAsString {
     case builtins
-    case module(String)
+    case string(String)
     case error(PyBaseException)
   }
 
-  public func getModule() -> GetModuleResult {
+  /// The same as `self.getModule` but with a builtin `string` conversion.
+  internal func getModuleString() -> ModuleAsString {
+    switch self.getModuleImpl() {
+    case .builtins:
+      return .builtins
+    case .string(let s):
+      return .string(s)
+    case .pyString(let s):
+      return .string(s.value)
+    case .objectNotYetConvertedToString(let o):
+      switch Py.strValue(object: o) {
+      case let .value(s): return .string(s)
+      case let .error(e): return .error(e)
+      }
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  private enum GetModuleImplResult {
+    case builtins
+    case string(String)
+    case pyString(PyString)
+    case objectNotYetConvertedToString(PyObject)
+    case error(PyBaseException)
+  }
+
+  private func getModuleImpl() -> GetModuleImplResult {
     if self.isHeapType {
       guard let object = self.__dict__.get(id: .__module__) else {
-        return .error(Py.newAttributeError(msg: "__module__"))
+        let e = Py.newAttributeError(msg: "__module__")
+        return .error(e)
       }
 
       guard let module = PyCast.asModule(object) else {
-        switch Py.strValue(object: object) {
+        switch Py.str(object: object) {
         case let .value(s):
-          return .module(s)
+          return .pyString(s)
         case let .error(e):
           return .error(e)
         }
@@ -333,15 +367,15 @@ public class PyType: PyObject, HasCustomGetMethod {
 
       switch module.getName() {
       case let .value(name):
-        return .module(name)
+        return .objectNotYetConvertedToString(name)
       case let .error(e):
         return .error(e)
       }
     }
 
     if let dotIndex = self.name.firstIndex(of: ".") {
-      let module = self.name.prefix(upTo: dotIndex)
-      return .module(String(module))
+      let moduleName = self.name.prefix(upTo: dotIndex)
+      return .string(String(moduleName))
     }
 
     return .builtins
@@ -397,10 +431,10 @@ public class PyType: PyObject, HasCustomGetMethod {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    switch self.getModule() {
+    switch self.getModuleString() {
     case .builtins:
       return .value("<class '\(self.name)'>")
-    case .module(let module):
+    case .string(let module):
       return .value("<class '\(module).\(self.name)'>")
     case .error(let e):
       return .error(e)
@@ -468,7 +502,7 @@ public class PyType: PyObject, HasCustomGetMethod {
   /// Is `self` subtype of `baseException`?
   ///
   /// PyExceptionInstance_Check
-  internal var isException: Bool {
+  public var isException: Bool {
     let baseException = Py.errorTypes.baseException
     return self.isSubtype(of: baseException)
   }

@@ -489,15 +489,13 @@ extension PyInstance {
     assert(type.isException)
 
     // Module
-    switch type.getModule() {
-    case .module(let name):
+    switch type.getModuleString() {
+    case .builtins:
+      break // do not write module
+    case .string(let name):
       if let e = self.write(file: file, string: name + ".") {
         return e
       }
-
-    case .builtins:
-      break // do not write module
-
     case .error:
       if let e = self.write(file: file, string: "<unknown>.") {
         return e
