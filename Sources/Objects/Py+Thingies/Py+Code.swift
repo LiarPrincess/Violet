@@ -171,6 +171,28 @@ extension PyInstance {
     return PyModule(name: name, doc: doc, dict: dict)
   }
 
+  public enum ModuleName {
+    case notModule
+    case string(String)
+    case stringConversionFailed(PyObject, PyBaseException)
+    case namelessModule
+  }
+
+  public func getModuleName(object: PyObject) -> ModuleName {
+    guard let module = PyCast.asModule(object) else {
+      return .notModule
+    }
+
+    switch module.getNameString() {
+    case let .string(string):
+      return .string(string)
+    case let .stringConversionFailed(object, e):
+      return .stringConversionFailed(object, e)
+    case .namelessModule:
+      return .namelessModule
+    }
+  }
+
   // MARK: - Code
 
   public func newCode(code: CodeObject) -> PyCode {

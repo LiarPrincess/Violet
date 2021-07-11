@@ -88,13 +88,13 @@ public class PyModule: PyObject {
     return .error(e)
   }
 
-  private enum NameAsString {
+  internal enum NameAsString {
     case string(String)
     case stringConversionFailed(PyObject, PyBaseException)
     case namelessModule
   }
 
-  private func getNameString() -> NameAsString {
+  internal func getNameString() -> NameAsString {
     if let object = self.getNameObjectOrNil() {
       switch Py.strValue(object: object) {
       case let .value(s):
@@ -115,12 +115,16 @@ public class PyModule: PyObject {
     return Py.newSystemError(msg: "nameless module")
   }
 
-  // MARK: - Attributes
+  // MARK: - Get attribute
 
   // sourcery: pymethod = __getattribute__
-  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.extractName(from: name)
-      .flatMap(self.getAttribute(name:))
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    switch AttributeHelper.extractName(from: name) {
+    case let .value(n):
+      return self.getAttribute(name: n)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   /// static PyObject*
@@ -136,7 +140,7 @@ public class PyModule: PyObject {
         break // there is still hope!
       }
 
-      return attr // 'attr' is an error, just return it
+      return .error(e)
     }
 
     if let getAttr = self.__dict__.get(id: .__getattr__) {
@@ -205,8 +209,8 @@ public class PyModule: PyObject {
     let error: PyBaseException?
 
     // If we have our own '__dir__' method then call it.
-    if let dirFunc = self.__dict__.get(id: .__dir__) {
-      switch Py.call(callable: dirFunc) {
+    if let dirFn = self.__dict__.get(id: .__dir__) {
+      switch Py.call(callable: dirFn) {
       case .value(let o):
         error = result.append(elementsFrom: o)
       case let .notCallable(e),
@@ -239,7 +243,8 @@ public class PyModule: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyModule> {
-    return .value(PyModule(type: type))
+    let result = PyModule(type: type)
+    return .value(result)
   }
 
   // MARK: - Python init

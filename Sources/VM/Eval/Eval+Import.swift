@@ -131,33 +131,35 @@ extension Eval {
   }
 
   private func getExportedNames(module: PyObject) -> ExportedNames {
+    // Try '__all__'
     switch self.getAttribute(module: module, name: .__all__) {
     case .value(let o):
       return .all(o)
-
     case .notFound:
-      switch self.getAttribute(module: module, name: .__dict__) {
-      case .value(let o):
-        switch Py.getKeys(object: o) {
-        case let .value(keys):
-          return .dict(keys)
-        case let .missingMethod(e),
-             let .error(e):
-          return .error(e)
-        }
-
-      case .notFound:
-        let moduleOrNil = PyCast.asModule(module)
-        let moduleNameOrNil = moduleOrNil?.getNameOrNil()
-        let msg = "from-import-* object has no __dict__ and no __all__"
-        return .error(Py.newImportError(msg: msg, moduleName: moduleNameOrNil))
-
-      case .error(let e):
-         return .error(e)
-      }
-
+      break
     case .error(let e):
       return .error(e)
+    }
+
+    // Try '__dict__'
+    switch self.getAttribute(module: module, name: .__dict__) {
+    case .value(let o):
+      switch Py.getKeys(object: o) {
+      case let .value(keys):
+        return .dict(keys)
+      case let .missingMethod(e),
+           let .error(e):
+        return .error(e)
+      }
+
+    case .notFound:
+      let msg = "from-import-* object has no __dict__ and no __all__"
+      let moduleNameOrNil = self.getModuleName(module: module)
+      let e = Py.newImportError(msg: msg, moduleName: moduleNameOrNil)
+      return .error(e)
+
+    case .error(let e):
+       return .error(e)
     }
   }
 
@@ -181,6 +183,17 @@ extension Eval {
       }
 
       return .error(e)
+    }
+  }
+
+  private func getModuleName(module: PyObject) -> String? {
+    switch Py.getModuleName(object: module) {
+    case let .string(s):
+      return s
+    case .notModule,
+         .stringConversionFailed,
+         .namelessModule:
+      return nil
     }
   }
 
