@@ -241,7 +241,7 @@ public class PyFrame: PyObject {
   /// CPython:
   /// int
   /// PyFrame_FastToLocalsWithError(PyFrameObject *f)
-  internal func copyFastToLocals() -> PyBaseException? {
+  public func copyFastToLocals() -> PyBaseException? {
     let variableNames = self.code.variableNames
     let fastLocals = self.fastLocals
     assert(variableNames.count == fastLocals.count)
@@ -325,7 +325,7 @@ public class PyFrame: PyObject {
 
   /// What should `PyFrame.copyLocalsToFast` do when the value is missing from
   /// `self.locals`?
-  internal enum LocalMissingStrategy {
+  public enum LocalMissingStrategy {
     /// Leave the current value.
     case ignore
     /// Remove value (set to `nil`).
@@ -333,7 +333,7 @@ public class PyFrame: PyObject {
   }
 
   /// Reversal of `self.copyFastToLocals` (<-- go there for documentation).
-  internal func copyLocalsToFast(
+  public func copyLocalsToFast(
     onLocalMissing: LocalMissingStrategy
   ) -> PyBaseException? {
     let variableNames = self.code.variableNames

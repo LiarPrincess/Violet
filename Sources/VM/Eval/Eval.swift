@@ -14,7 +14,7 @@ import VioletObjects
 /// for all of the code that does not fit anywhere else, so it is still a mess).
 ///
 /// But wait a sec, it gets even worse:
-/// It will hold strong reference to `VM`!
+/// It will hold a strong reference to `VM`!
 /// So… just do not store `Eval` as property on `VM`.
 internal struct Eval {
 
@@ -31,8 +31,12 @@ internal struct Eval {
   internal let frame: PyFrame
 
   /// Code to run.
-  internal var code: PyCode {
-    return self.frame.code
+  internal var code: PyCode
+
+  internal init(vm: VM, frame: PyFrame) {
+    self.vm = vm
+    self.frame = frame
+    self.code = frame.code
   }
 
   // MARK: - Stacks

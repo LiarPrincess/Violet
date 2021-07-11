@@ -174,8 +174,10 @@ extension PyInstance {
     }
   }
 
+  /// `self.isEqual` + `self.asBool`
   public func isEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
-    return self.asBool(self.isEqual(left: left, right: right))
+    let raw = self.isEqual(left: left, right: right)
+    return self.asBool(raw)
   }
 }
 
