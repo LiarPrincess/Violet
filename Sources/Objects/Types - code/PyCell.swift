@@ -10,6 +10,7 @@
 /// can interact with value in parent frame.
 public class PyCell: PyObject {
 
+  // This has to be public for performance
   public var content: PyObject?
 
   override public var description: String {
@@ -25,103 +26,88 @@ public class PyCell: PyObject {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  public func isEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(
-      with: other,
-      bothHaveContent: Py.isEqualBool(left:right:),
-      oneIsNil: self.bothNil(zelf:other:)
-    )
-  }
-
-  private func bothNil(zelf: PyObject?, other: PyObject?) -> Bool {
-    return zelf == nil && other == nil
+  internal func isEqual(_ other: PyObject) -> CompareResult {
+    return self.compare(with: other,
+                        compareContent: Py.isEqualBool(left:right:),
+                        whenSelfIsNil: false,
+                        whenOtherIsNil: false,
+                        whenBothNil: true)
   }
 
   // sourcery: pymethod = __ne__
-  public func isNotEqual(_ other: PyObject) -> CompareResult {
+  internal func isNotEqual(_ other: PyObject) -> CompareResult {
     return self.isEqual(other).not
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  public func isLess(_ other: PyObject) -> CompareResult {
-    return self.compare(
-      with: other,
-      bothHaveContent: Py.isLessBool(left:right:),
-      oneIsNil: self.zelfIsNil(zelf:other:)
-    )
-  }
-
-  private func zelfIsNil(zelf: PyObject?, other: PyObject?) -> Bool {
-    return zelf == nil && other != nil
+  internal func isLess(_ other: PyObject) -> CompareResult {
+    return self.compare(with: other,
+                        compareContent: Py.isLessBool(left:right:),
+                        whenSelfIsNil: true,
+                        whenOtherIsNil: false,
+                        whenBothNil: false)
   }
 
   // sourcery: pymethod = __le__
-  public func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(
-      with: other,
-      bothHaveContent: Py.isLessEqualBool(left:right:),
-      oneIsNil: self.zelfOrBothAreNil(zelf:other:)
-    )
-  }
-
-  private func zelfOrBothAreNil(zelf: PyObject?, other: PyObject?) -> Bool {
-    return self.zelfIsNil(zelf: zelf, other: other)
-        || self.bothNil(zelf: zelf, other: other)
+  internal func isLessEqual(_ other: PyObject) -> CompareResult {
+    return self.compare(with: other,
+                        compareContent: Py.isLessEqualBool(left:right:),
+                        whenSelfIsNil: true,
+                        whenOtherIsNil: false,
+                        whenBothNil: true)
   }
 
   // sourcery: pymethod = __gt__
-  public func isGreater(_ other: PyObject) -> CompareResult {
-    return self.compare(
-      with: other,
-      bothHaveContent: Py.isGreaterBool(left:right:),
-      oneIsNil: self.otherIsNil(zelf:other:)
-    )
-  }
-
-  private func otherIsNil(zelf: PyObject?, other: PyObject?) -> Bool {
-    return zelf != nil && other == nil
+  internal func isGreater(_ other: PyObject) -> CompareResult {
+    return self.compare(with: other,
+                        compareContent: Py.isGreaterBool(left:right:),
+                        whenSelfIsNil: false,
+                        whenOtherIsNil: true,
+                        whenBothNil: false)
   }
 
   // sourcery: pymethod = __ge__
-  public func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(
-      with: other,
-      bothHaveContent: Py.isGreaterEqualBool(left:right:),
-      oneIsNil: self.otherOrBothAreNil(zelf:other:)
-    )
+  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+    return self.compare(with: other,
+                        compareContent: Py.isGreaterEqualBool(left:right:),
+                        whenSelfIsNil: false,
+                        whenOtherIsNil: true,
+                        whenBothNil: true)
   }
 
-  private func otherOrBothAreNil(zelf: PyObject?, other: PyObject?) -> Bool {
-    return self.otherIsNil(zelf: zelf, other: other)
-        || self.bothNil(zelf: zelf, other: other)
-  }
-
-  private func compare(
-    with other: PyObject,
-    bothHaveContent: (PyObject, PyObject) -> PyResult<Bool>,
-    oneIsNil: (PyObject?, PyObject?) -> Bool
-  ) -> CompareResult {
+  /// Generar rule: `nil` is less.
+  private func compare(with other: PyObject,
+                       compareContent: (PyObject, PyObject) -> PyResult<Bool>,
+                       whenSelfIsNil: Bool,
+                       whenOtherIsNil: Bool,
+                       whenBothNil: Bool) -> CompareResult {
     guard let other = PyCast.asCell(other) else {
       return .notImplemented
     }
 
-    if let selfContent = self.content, let otherContent = other.content {
-      switch bothHaveContent(selfContent, otherContent) {
+    switch (self.content, other.content) {
+    case let (.some(selfContent), .some(otherContent)):
+      let compareResult = compareContent(selfContent, otherContent)
+      switch compareResult {
       case let .value(v): return .value(v)
       case let .error(e): return .error(e)
       }
-    }
 
-    let result = oneIsNil(self.content, other.content)
-    return .value(result)
+    case (.some, nil):
+      return .value(whenOtherIsNil)
+    case (nil, .some):
+      return .value(whenSelfIsNil)
+    case (nil, nil):
+      return .value(whenBothNil)
+    }
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> PyResult<String> {
+  internal func repr() -> PyResult<String> {
     let ptr = self.ptr
 
     guard let content = self.content else {
@@ -136,7 +122,7 @@ public class PyCell: PyObject {
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 }
