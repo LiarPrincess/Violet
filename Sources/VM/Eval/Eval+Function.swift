@@ -24,46 +24,41 @@ extension Eval {
     let code = self.stack.pop()
     let globals = self.globals
 
-    let fn: PyFunction
-    switch Py.newFunction(qualname: qualname, code: code, globals: globals) {
-    case let .value(f): fn = f
-    case let .error(e): return .exception(e)
-    }
-
+    var closure: PyObject?
     if flags.contains(.hasFreeVariables) {
-      let value = self.stack.pop()
-      switch fn.setClosure(value) {
-      case .value: break
-      case .error(let e): return .exception(e)
-      }
+      closure = self.stack.pop()
     }
 
+    var annotations: PyObject?
     if flags.contains(.hasAnnotations) {
-      let value = self.stack.pop()
-      switch fn.setAnnotations(value) {
-      case .value: break
-      case .error(let e): return .exception(e)
-      }
+      annotations = self.stack.pop()
     }
 
+    var keywordDefaults: PyObject?
     if flags.contains(.hasKwOnlyArgDefaults) {
-      let value = self.stack.pop()
-      switch fn.setKeywordDefaults(value) {
-      case .value: break
-      case .error(let e): return .exception(e)
-      }
+      keywordDefaults = self.stack.pop()
     }
 
+    var defaults: PyObject?
     if flags.contains(.hasPositionalArgDefaults) {
-      let value = self.stack.pop()
-      switch fn.setDefaults(value) {
-      case .value: break
-      case .error(let e): return .exception(e)
-      }
+      defaults = self.stack.pop()
     }
 
-    self.stack.push(fn)
-    return .ok
+    let result = Py.newFunction(qualname: qualname,
+                                code: code,
+                                globals: globals,
+                                defaults: defaults,
+                                keywordDefaults: keywordDefaults,
+                                closure: closure,
+                                annotations: annotations)
+
+    switch result {
+    case let .value(fn):
+      self.stack.push(fn)
+      return .ok
+    case let .error(e):
+      return .exception(e)
+    }
   }
 
   // MARK: - Return

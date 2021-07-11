@@ -22,9 +22,14 @@ extension PyInstance {
 
   // MARK: - Function
 
+  // swiftlint:disable:next function_parameter_count
   public func newFunction(qualname: PyObject,
                           code: PyObject,
-                          globals: PyDict) -> PyResult<PyFunction> {
+                          globals: PyDict,
+                          defaults: PyObject?,
+                          keywordDefaults: PyObject?,
+                          closure: PyObject?,
+                          annotations: PyObject?) -> PyResult<PyFunction> {
     guard let codeValue = PyCast.asCode(code) else {
       let t = code.typeName
       return .typeError("function() code must be code, not \(t)")
@@ -40,24 +45,59 @@ extension PyInstance {
       return .typeError("function() qualname must be None or string, not \(t)")
     }
 
-    let result = self.newFunction(qualname: qualnameValue,
-                                  code: codeValue,
-                                  globals: globals)
-
-    return .value(result)
+    return self.newFunction(qualname: qualnameValue,
+                            code: codeValue,
+                            globals: globals,
+                            defaults: defaults,
+                            keywordDefaults: keywordDefaults,
+                            closure: closure,
+                            annotations: annotations)
   }
 
+  // swiftlint:disable:next function_parameter_count
   public func newFunction(qualname: PyString?,
                           code: PyCode,
-                          globals: PyDict) -> PyFunction {
+                          globals: PyDict,
+                          defaults: PyObject?,
+                          keywordDefaults: PyObject?,
+                          closure: PyObject?,
+                          annotations: PyObject?) -> PyResult<PyFunction> {
     let module = globals.get(id: .__name__) ?? self.none
 
-    return PyFunction(
-      qualname: qualname,
-      module: module,
-      code: code,
-      globals: globals
-    )
+    let result = PyFunction(qualname: qualname,
+                            module: module,
+                            code: code,
+                            globals: globals)
+
+    if let defaults = defaults {
+      switch result.setDefaults(defaults) {
+      case .value: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    if let keywordDefaults = keywordDefaults {
+      switch result.setKeywordDefaults(keywordDefaults) {
+      case .value: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    if let closure = closure {
+      switch result.setClosure(closure) {
+      case .value: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    if let annotations = annotations {
+      switch result.setAnnotations(annotations) {
+      case .value: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    return .value(result)
   }
 
   // MARK: - Method
