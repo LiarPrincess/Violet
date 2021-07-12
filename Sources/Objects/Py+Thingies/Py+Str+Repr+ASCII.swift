@@ -21,7 +21,8 @@ extension PyInstance {
     case .pyString(let s):
       return .value(s)
     case .methodReturnedNonString(let o):
-      return .typeError("__repr__ returned non-string (\(o.typeName))")
+      let e = self.createReprReturnedNonStringError(object: o)
+      return .error(e)
     case .error(let e),
          .notCallable(let e):
       return .error(e)
@@ -37,7 +38,8 @@ extension PyInstance {
     case .pyString(let s):
       return .value(s.value)
     case .methodReturnedNonString(let o):
-      return .typeError("__repr__ returned non-string (\(o.typeName))")
+      let e = self.createReprReturnedNonStringError(object: o)
+      return .error(e)
     case .error(let e),
          .notCallable(let e):
       return .error(e)
@@ -96,6 +98,11 @@ extension PyInstance {
     case let .error(e):
       return .error(e)
     }
+  }
+
+  private func createReprReturnedNonStringError(object: PyObject) -> PyBaseException {
+    let type = object.typeName
+    return Py.newTypeError(msg: "__repr__ returned non-string (\(type))")
   }
 
   private func genericRepr(object: PyObject) -> String {
@@ -221,22 +228,68 @@ extension PyInstance {
 
   /// ascii(object)
   /// See [this](https://docs.python.org/3/library/functions.html#ascii)
-  public func ascii(object: PyObject) -> PyResult<String> {
-    let repr: String
-    switch self.reprString(object: object) {
-    case let .value(s): repr = s
-    case let .error(e): return .error(e)
+  public func ascii(object: PyObject) -> PyResult<PyString> {
+    switch self.asciiImpl(object: object) {
+    case let .string(s):
+      let py = Py.newString(s)
+      return .value(py)
+    case let .pystring(s):
+      return .value(s)
+    case let .error(e):
+      return .error(e)
     }
+  }
 
-    let scalars = repr.unicodeScalars
-
-    let allASCII = scalars.allSatisfy { $0.isASCII }
-    if allASCII {
-      return .value(repr)
+  /// ascii(object)
+  /// See [this](https://docs.python.org/3/library/functions.html#ascii)
+  public func asciiString(object: PyObject) -> PyResult<String> {
+    switch self.asciiImpl(object: object) {
+    case let .string(s):
+      return .value(s)
+    case let .pystring(s):
+      return .value(s.value)
+    case let .error(e):
+      return .error(e)
     }
+  }
 
+  private enum AsciiImplResult {
+    case string(String)
+    case pystring(PyString)
+    case error(PyBaseException)
+  }
+
+  private func asciiImpl(object: PyObject) -> AsciiImplResult {
+    switch self.reprImpl(object: object) {
+    case .string(let s):
+      let allASCII = s.unicodeScalars.allSatisfy { $0.isASCII }
+      if allASCII {
+        return .string(s)
+      }
+
+      return self.asciiImpl(string: s)
+
+    case .pyString(let s):
+      let allASCII = s.elements.allSatisfy { $0.isASCII }
+      if allASCII {
+        return .pystring(s)
+      }
+
+      return self.asciiImpl(string: s.value)
+
+    case .methodReturnedNonString(let o):
+      let e = self.createReprReturnedNonStringError(object: o)
+      return .error(e)
+    case let .notCallable(e),
+         let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func asciiImpl(string: String) -> AsciiImplResult {
     var result = ""
-    for scalar in scalars {
+
+    for scalar in string.unicodeScalars {
       if scalar.isASCII {
         result.append(String(scalar))
       } else if scalar.value < 0x1_0000 {
@@ -250,7 +303,7 @@ extension PyInstance {
       }
     }
 
-    return .value(result)
+    return .string(result)
   }
 
   // MARK: - Join

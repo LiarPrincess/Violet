@@ -886,7 +886,7 @@ extension Builtins {
 
   /// ascii(object)
   /// See [this](https://docs.python.org/3/library/functions.html#ascii)
-  internal static func ascii(object: PyObject) -> PyResult<String> {
+  internal static func ascii(object: PyObject) -> PyResult<PyString> {
     return Py.ascii(object: object)
   }
 }

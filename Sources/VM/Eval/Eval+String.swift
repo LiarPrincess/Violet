@@ -43,7 +43,7 @@ extension Eval {
     case .repr:
       return Py.repr(object: object).map { $0 as PyObject }
     case .ascii:
-      return Py.ascii(object: object).map(Py.newString)
+      return Py.ascii(object: object).map { $0 as PyObject }
     }
   }
 
