@@ -13,33 +13,93 @@ extension PyInstance {
 
   /// repr(object)
   /// See [this](https://docs.python.org/3/library/functions.html#repr)
-  public func repr(object: PyObject) -> PyResult<String> {
-    if let result = Fast.__repr__(object) {
-      return result
+  public func repr(object: PyObject) -> PyResult<PyString> {
+    switch self.reprImpl(object: object) {
+    case .string(let s):
+      let py = Py.newString(s)
+      return .value(py)
+    case .pyString(let s):
+      return .value(s)
+    case .methodReturnedNonString(let o):
+      return .typeError("__repr__ returned non-string (\(o.typeName))")
+    case .error(let e),
+         .notCallable(let e):
+      return .error(e)
     }
+  }
 
-    switch self.callMethod(object: object, selector: .__repr__) {
-    case .value(let result):
-      guard let resultStr = PyCast.asString(result) else {
-        return .typeError("__repr__ returned non-string (\(result.typeName))")
-      }
-
-      return .value(resultStr.value)
-
-    case .missingMethod:
-      return .value(self.genericRepr(object: object))
-
-    case .error(let e), .notCallable(let e):
+  /// repr(object)
+  /// See [this](https://docs.python.org/3/library/functions.html#repr)
+  public func reprString(object: PyObject) -> PyResult<String> {
+    switch self.reprImpl(object: object) {
+    case .string(let s):
+      return .value(s)
+    case .pyString(let s):
+      return .value(s.value)
+    case .methodReturnedNonString(let o):
+      return .typeError("__repr__ returned non-string (\(o.typeName))")
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }
 
   /// Get object `__repr__` if that fail then use generic representation.
   public func reprOrGeneric(object: PyObject) -> String {
-    switch self.repr(object: object) {
-    case .value(let s): return s
-    case .error: return self.genericRepr(object: object)
+    switch self.reprImpl(object: object) {
+    case .string(let s):
+      return s
+    case .pyString(let s):
+      return s.value
+    case .methodReturnedNonString,
+         .error,
+         .notCallable:
+      return self.genericRepr(object: object)
     }
+  }
+
+  private enum ReprImplResult {
+    /// Result of the static call
+    case string(String)
+    /// Result of the dynamic call
+    case pyString(PyString)
+    /// When the dynamic call returns non-string
+    case methodReturnedNonString(PyObject)
+    case notCallable(PyBaseException)
+    case error(PyBaseException)
+  }
+
+  private func reprImpl(object: PyObject) -> ReprImplResult {
+    if let result = Fast.__repr__(object) {
+      switch result {
+      case let .value(s):
+        return .string(s)
+      case let .error(e):
+        return .error(e)
+      }
+    }
+
+    switch self.callMethod(object: object, selector: .__repr__) {
+    case let .value(result):
+      guard let pyString = PyCast.asString(result) else {
+        return .methodReturnedNonString(result)
+      }
+
+      return .pyString(pyString)
+
+    case .missingMethod:
+      let generic = self.genericRepr(object: object)
+      return .string(generic)
+
+    case let .notCallable(e):
+      return .notCallable(e)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func genericRepr(object: PyObject) -> String {
+    return "<\(object.typeName) object at \(object.ptr)>"
   }
 
   // MARK: - Str
@@ -163,7 +223,7 @@ extension PyInstance {
   /// See [this](https://docs.python.org/3/library/functions.html#ascii)
   public func ascii(object: PyObject) -> PyResult<String> {
     let repr: String
-    switch self.repr(object: object) {
+    switch self.reprString(object: object) {
     case let .value(s): repr = s
     case let .error(e): return .error(e)
     }
@@ -260,9 +320,5 @@ extension PyInstance {
     let padding = String(repeating: "0", count: paddingCount)
 
     return padding + string
-  }
-
-  private func genericRepr(object: PyObject) -> String {
-    return "<\(object.typeName) object at \(object.ptr)>"
   }
 }

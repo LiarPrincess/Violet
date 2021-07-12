@@ -61,7 +61,7 @@ public final class PyKeyError: PyLookupError {
     switch args.getLength() {
     case 1:
       let first = args.elements[0]
-      return Py.reprObject(object: first)
+      return Py.repr(object: first).map { $0 as PyObject }
     default:
       return PyBaseException.str(baseException: zelf)
     }

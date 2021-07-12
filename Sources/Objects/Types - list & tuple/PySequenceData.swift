@@ -141,7 +141,7 @@ internal struct PySequenceData {
         result += ", " // so that we don't have ', )'.
       }
 
-      switch Py.repr(object: element) {
+      switch Py.reprString(object: element) {
       case let .value(s): result += s
       case let .error(e): return .error(e)
       }

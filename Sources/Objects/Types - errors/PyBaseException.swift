@@ -168,11 +168,16 @@ public class PyBaseException: PyObject {
     case 1:
       // BaseException('Elsa')
       let first = args.elements[0]
-      return Py.repr(object: first).map { name + "(" + $0 + ")" }
+      switch Py.reprString(object: first) {
+      case let .value(s): return .value(name + "(" + s + ")")
+      case let .error(e): return .error(e)
+      }
     default:
       // BaseException('Elsa', 'Anna')
-      let argsRepr = args.repr()
-      return argsRepr.map { name + $0 }
+      switch args.repr() {
+      case let .value(s): return .value(name + s)
+      case let .error(e): return .error(e)
+      }
     }
   }
 

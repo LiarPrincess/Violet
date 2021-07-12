@@ -869,7 +869,7 @@ extension Builtins {
 
   /// repr(object)
   /// See [this](https://docs.python.org/3/library/functions.html#repr)
-  internal static func repr(object: PyObject) -> PyResult<String> {
+  internal static func repr(object: PyObject) -> PyResult<PyString> {
     return Py.repr(object: object)
   }
 

@@ -164,7 +164,7 @@ internal struct PySetData {
         result.append(", ")
       }
 
-      switch Py.repr(object: element.object) {
+      switch Py.reprString(object: element.object) {
       case let .value(s): result.append(s)
       case let .error(e): return .error(e)
       }

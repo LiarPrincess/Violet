@@ -67,7 +67,8 @@ internal enum PyObjectType {
   // sourcery: pymethod = __hash__
   internal static func hash(zelf: PyObject) -> HashResult {
     let id = ObjectIdentifier(zelf)
-    return .value(Py.hasher.hash(id))
+    let hash = Py.hasher.hash(id)
+    return .value(hash)
   }
 
   // MARK: - String
@@ -85,13 +86,13 @@ internal enum PyObjectType {
   }
 
   // sourcery: pymethod = __str__
-  internal static func str(zelf: PyObject) -> PyResult<String> {
+  internal static func str(zelf: PyObject) -> PyResult<PyString> {
     // If '__str__' is not implemented then we will use '__repr__'.
     return Py.repr(object: zelf)
   }
 
   // sourcery: pymethod = __format__
-  internal static func format(zelf: PyObject, spec: PyObject) -> PyResult<String> {
+  internal static func format(zelf: PyObject, spec: PyObject) -> PyResult<PyString> {
     if let spec = PyCast.asString(spec), spec.isEmpty {
       return PyObjectType.str(zelf: zelf)
     }

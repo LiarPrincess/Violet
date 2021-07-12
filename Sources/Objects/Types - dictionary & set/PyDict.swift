@@ -171,14 +171,14 @@ public class PyDict: PyObject {
           result += ", " // so that we don't have ugly ', }'.
         }
 
-        switch Py.repr(object: element.key.object) {
+        switch Py.reprString(object: element.key.object) {
         case let .value(s): result += s
         case let .error(e): return .error(e)
         }
 
         result += ": "
 
-        switch Py.repr(object: element.value) {
+        switch Py.reprString(object: element.value) {
         case let .value(s): result += s
         case let .error(e): return .error(e)
         }

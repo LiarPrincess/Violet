@@ -92,13 +92,13 @@ public class PyNamespace: PyObject {
         }
 
         let keyRepr: String
-        switch Py.repr(object: entry.key.object) {
+        switch Py.reprString(object: entry.key.object) {
         case let .value(r): keyRepr = r
         case let .error(e): return .error(e)
         }
 
         let valueRepr: String
-        switch Py.repr(object: entry.value) {
+        switch Py.reprString(object: entry.value) {
         case let .value(r): valueRepr = r
         case let .error(e): return .error(e)
         }
