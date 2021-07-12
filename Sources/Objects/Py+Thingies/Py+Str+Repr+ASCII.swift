@@ -46,20 +46,6 @@ extension PyInstance {
     }
   }
 
-  /// Get object `__repr__` if that fail then use generic representation.
-  public func reprOrGeneric(object: PyObject) -> String {
-    switch self.reprImpl(object: object) {
-    case .string(let s):
-      return s
-    case .pyString(let s):
-      return s.value
-    case .methodReturnedNonString,
-         .error,
-         .notCallable:
-      return self.genericRepr(object: object)
-    }
-  }
-
   private enum ReprImplResult {
     /// Result of the static call
     case string(String)
@@ -103,6 +89,41 @@ extension PyInstance {
   private func createReprReturnedNonStringError(object: PyObject) -> PyBaseException {
     let type = object.typeName
     return Py.newTypeError(msg: "__repr__ returned non-string (\(type))")
+  }
+
+  // MARK: - Repr or generic
+
+  /// Get object `__repr__`, if that fails then use generic representation.
+  ///
+  /// This is mostly for error messages, where we have to use _something_.
+  public func reprOrGeneric(object: PyObject) -> PyString {
+    switch self.reprImpl(object: object) {
+    case .string(let s):
+      return Py.newString(s)
+    case .pyString(let s):
+      return s
+    case .methodReturnedNonString,
+         .error,
+         .notCallable:
+      let generic = self.genericRepr(object: object)
+      return Py.newString(generic)
+    }
+  }
+
+  /// Get object `__repr__`, if that fails then use generic representation.
+  ///
+  /// This is mostly for error messages, where we have to use _something_.
+  public func reprOrGenericString(object: PyObject) -> String {
+    switch self.reprImpl(object: object) {
+    case .string(let s):
+      return s
+    case .pyString(let s):
+      return s.value
+    case .methodReturnedNonString,
+         .error,
+         .notCallable:
+      return self.genericRepr(object: object)
+    }
   }
 
   private func genericRepr(object: PyObject) -> String {

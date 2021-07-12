@@ -348,7 +348,7 @@ public class PyDict: PyObject {
   private func idErrorNotHandled(operation: String,
                                  error: PyBaseException) -> Never {
     // TODO: PyDict.idErrorNotHandled
-    let repr = Py.reprOrGeneric(object: error)
+    let repr = Py.reprOrGenericString(object: error)
     trap("Dict operation '\(operation)' returned an error: '\(repr)'")
   }
 

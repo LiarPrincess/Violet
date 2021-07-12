@@ -244,8 +244,8 @@ extension UnderscoreWarnings {
       return nil // Nothing to do
 
     case .other:
-      let actStr = Py.reprOrGeneric(object: filter.actionObject)
-      let objStr = Py.reprOrGeneric(object: filter.object.py)
+      let actStr = Py.reprOrGenericString(object: filter.actionObject)
+      let objStr = Py.reprOrGenericString(object: filter.object.py)
       let msg = "Unrecognized action (\(actStr))) in warnings.filters:\n \(objStr)"
       return Py.newRuntimeError(msg: msg)
 

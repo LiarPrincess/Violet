@@ -148,7 +148,7 @@ extension PyInstance {
       return .value(.bytes(bytes.elements))
     }
 
-    let repr = Py.reprOrGeneric(object: object)
+    let repr = Py.reprOrGenericString(object: object)
     return .typeError("invalid file: \(repr)")
   }
 

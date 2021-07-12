@@ -98,7 +98,7 @@ struct TestRunner {
         case let int as PyInt:
           return String(describing: int.value)
         default:
-          return Py.reprOrGeneric(object: object)
+          return Py.reprOrGenericString(object: object)
         }
       }()
 
