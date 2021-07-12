@@ -13,45 +13,21 @@ import VioletBytecode
 // sourcery: pytype = code, default
 public class PyCode: PyObject {
 
-  // MARK: - Types
-
-  public enum Constant {
-    case `true`
-    case `false`
-    case none
-    case ellipsis
-    case integer(PyInt)
-    case float(PyFloat)
-    case complex(PyComplex)
-    case string(PyString)
-    case bytes(PyBytes)
-    case code(PyCode)
-    case tuple(PyTuple)
-
-    public var asObject: PyObject {
-      switch self {
-      case .true: return Py.true
-      case .false: return Py.false
-      case .none: return Py.none
-      case .ellipsis: return Py.ellipsis
-      case let .integer(object): return object
-      case let .float(object): return object
-      case let .complex(object): return object
-      case let .string(object): return object
-      case let .bytes(object): return object
-      case let .code(object): return object
-      case let .tuple(object): return object
-      }
-    }
-  }
-
   // MARK: - Basic properties
 
   internal static let doc: String = """
     Create a code object. Not for the faint of heart.
     """
 
+  override public var description: String {
+    let name = self.qualifiedName.value
+    let file = self.filename.value
+    return "PyCode(qualifiedName: \(name), file: \(file))"
+  }
+
+  #if DEBUG
   public let codeObject: CodeObject
+  #endif
 
   /// Non-unique name of this code object.
   ///
@@ -64,7 +40,7 @@ public class PyCode: PyObject {
   /// - list comprehension -> \<listcomp\>
   /// - set comprehension -> \<setcomp\>
   /// - dictionary comprehension -> \<dictcomp\>
-  public var name: PyString
+  public let name: PyString
 
   /// Unique dot-separated qualified name.
   ///
@@ -74,34 +50,33 @@ public class PyCode: PyObject {
   ///   def elsa:   <- qualified name: frozen.elsa
   ///     pass
   /// ```
-  public var qualifiedName: PyString
-
-  /// Various flags used during the compilation process.
-  public var codeFlags: CodeObject.Flags {
-    return self.codeObject.flags
-  }
-
-  public var firstLine: SourceLine {
-    return self.codeObject.firstLine
-  }
+  public let qualifiedName: PyString
 
   /// The filename from which the code was compiled.
   /// Will be `<stdin>` for code entered in the interactive interpreter
   /// or whatever name is given as the second argument to `compile`
   /// for code objects created with `compile`.
-  public var filename: PyString
+  public let filename: PyString
+
+  /// Various flags used during the compilation process.
+  public let codeFlags: CodeObject.Flags
 
   // MARK: - Instructions
 
   /// Instruction opcodes.
   /// CPython: `co_code`.
-  public var instructions: [Instruction] {
-    return self.codeObject.instructions
-  }
+  public let instructions: [Instruction]
+
+  // MARK: - Lines
+
+  /// First line that contains a valid instruction.
+  public let firstLine: SourceLine
+
+  private let instructionLines: [SourceLine]
 
   /// CPython: `co_lnotab` <- but not exactly the same.
   public func getLine(instructionIndex index: Int) -> SourceLine {
-    let lines = self.codeObject.instructionLines
+    let lines = self.instructionLines
     assert(0 <= index && index < lines.count)
     return lines[index]
   }
@@ -111,15 +86,13 @@ public class PyCode: PyObject {
   /// Constants used.
   /// E.g. `LoadConst 5` loads `self.constants[5]` value.
   /// CPython: `co_consts`.
-  public let constants: [Constant]
+  public let constants: [PyObject]
 
   // MARK: - Labels
 
   /// Absolute jump targets.
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
-  public var labels: [CodeObject.Label] {
-    return self.codeObject.labels
-  }
+  public var labels: [CodeObject.Label]
 
   // MARK: - Names
 
@@ -134,10 +107,6 @@ public class PyCode: PyObject {
   public let names: [PyString]
 
   // MARK: - Variables
-
-  public var variableCount: Int {
-    return self.variableNames.count
-  }
 
   /// Names of the local variables (including arguments).
   ///
@@ -154,15 +123,13 @@ public class PyCode: PyObject {
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
   /// CPython: `co_varnames`.
-  public var variableNames: [MangledName] {
-    return self.codeObject.variableNames
+  public var variableNames: [MangledName]
+
+  public var variableCount: Int {
+    return self.variableNames.count
   }
 
   // MARK: - Cell variables
-
-  public var cellVariableCount: Int {
-    return self.cellVariableNames.count
-  }
 
   /// List of cell variable names.
   /// Cell = source for 'free' variable.
@@ -172,15 +139,13 @@ public class PyCode: PyObject {
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
   /// CPython: `co_cellvars`.
-  public var cellVariableNames: [MangledName] {
-    return self.codeObject.cellVariableNames
+  public var cellVariableNames: [MangledName]
+
+  public var cellVariableCount: Int {
+    return self.cellVariableNames.count
   }
 
   // MARK: - Free variables
-
-  public var freeVariableCount: Int {
-    return self.freeVariableNames.count
-  }
 
   /// List of free variable names.
   ///
@@ -192,8 +157,10 @@ public class PyCode: PyObject {
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
   /// CPython: `co_freevars`.
-  public var freeVariableNames: [MangledName] {
-    return self.codeObject.freeVariableNames
+  public var freeVariableNames: [MangledName]
+
+  public var freeVariableCount: Int {
+    return self.freeVariableNames.count
   }
 
   // MARK: - Count
@@ -201,50 +168,48 @@ public class PyCode: PyObject {
   /// The number of positional arguments the code object expects to receive,
   /// including those with default values (but excluding `*args`).
   /// CPython: `co_argcount`.
-  public var argCount: Int {
-    return self.codeObject.argCount
-  }
+  public var argCount: Int
 
   /// The number of keyword arguments the code object can receive.
   /// CPython: `co_kwonlyargcount`.
-  public var kwOnlyArgCount: Int {
-    return self.codeObject.kwOnlyArgCount
-  }
-
-  /// The number of local variables used in the code object (including arguments).
-  /// CPython: `co_nlocals`.
-  public var localsCount: Int {
-    return self.variableCount
-  }
-
-  // MARK: - Description
-
-  override public var description: String {
-    let name = self.qualifiedName.value
-    let file = self.filename.value
-    return "PyCode(qualifiedName: '\(name)', file: \(file))"
-  }
+  public var kwOnlyArgCount: Int
 
   // MARK: - Init
 
   internal init(code: CodeObject) {
-    let totalArgs = PyCode.totalArgs(code: code)
+    #if DEBUG
+    self.codeObject = code
+    #endif
+
+    let totalArgs = PyCode.countArguments(code: code)
     assert(code.variableNames.count >= totalArgs)
 
-    self.codeObject = code
     self.name = Py.intern(string: code.name)
     self.qualifiedName = Py.intern(string: code.qualifiedName)
     self.filename = Py.intern(string: code.filename)
+    self.codeFlags = code.flags
+
+    self.instructions = code.instructions
+    self.firstLine = code.firstLine
+    self.instructionLines = code.instructionLines
 
     // We will convert constants and names here.
     // Otherwise we would have to convert them on each use.
-    self.constants = code.constants.map(PyCode.intern(constant:))
+    self.constants = code.constants.map(PyCode.toObject(constant:))
+    self.labels = code.labels
+
     self.names = code.names.map(Py.intern)
+    self.variableNames = code.variableNames
+    self.cellVariableNames = code.cellVariableNames
+    self.freeVariableNames = code.freeVariableNames
+
+    self.argCount = code.argCount
+    self.kwOnlyArgCount = code.kwOnlyArgCount
 
     super.init(type: Py.types.code)
   }
 
-  private static func totalArgs(code: CodeObject) -> Int {
+  private static func countArguments(code: CodeObject) -> Int {
     let argCount = code.argCount
     let kwOnlyArgCount = code.kwOnlyArgCount
     let variableCount = code.variableNames.count
@@ -258,31 +223,31 @@ public class PyCode: PyObject {
     return variableCount + 1
   }
 
-  private static func intern(constant: CodeObject.Constant) -> Constant {
+  private static func toObject(constant: CodeObject.Constant) -> PyObject {
     switch constant {
-    case .true: return .true
-    case .false: return .false
-    case .none: return .none
-    case .ellipsis: return .ellipsis
+    case .true: return Py.true
+    case .false: return Py.false
+    case .none: return Py.none
+    case .ellipsis: return Py.ellipsis
 
     case let .integer(i):
-      return .integer(Py.newInt(i))
+      return Py.newInt(i)
     case let .float(d):
-      return .float(Py.newFloat(d))
+      return Py.newFloat(d)
     case let .complex(real, imag):
-      return .complex(Py.newComplex(real: real, imag: imag))
+      return Py.newComplex(real: real, imag: imag)
 
     case let .string(s):
-      return .string(Py.newString(s))
+      return Py.newString(s)
     case let .bytes(b):
-      return .bytes(Py.newBytes(b))
+      return Py.newBytes(b)
 
     case let .code(c):
-      return .code(Py.newCode(code: c))
+      return Py.newCode(code: c)
 
     case let .tuple(t):
-      let elements = t.map { PyCode.intern(constant: $0).asObject }
-      return .tuple(Py.newTuple(elements: elements))
+      let elements = t.map(PyCode.toObject(constant:))
+      return Py.newTuple(elements: elements)
     }
   }
 
@@ -338,10 +303,10 @@ public class PyCode: PyObject {
 
   // sourcery: pymethod = __repr__
   public func repr() -> PyResult<String> {
-    let name = self.codeObject.name
+    let name = self.name.value
     let ptr = self.ptr
-    let file = self.codeObject.filename
-    let line = self.codeObject.firstLine
+    let file = self.filename.value
+    let line = self.firstLine
     return .value("<code object \(name) at \(ptr), file '\(file)', line \(line)>")
   }
 
@@ -388,6 +353,6 @@ public class PyCode: PyObject {
 
   // sourcery: pyproperty = co_nlocals
   internal func getNLocals() -> Int {
-    return self.localsCount
+    return self.variableCount
   }
 }

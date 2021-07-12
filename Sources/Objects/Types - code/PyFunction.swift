@@ -70,10 +70,8 @@ public class PyFunction: PyObject {
     self.closure = nil
     self.annotations = nil
 
-    switch code.constants.first {
-    case .some(.string(let s)): self.doc = s
-    default: self.doc = nil
-    }
+    let firstConstant = code.constants.first
+    self.doc = firstConstant.flatMap(PyCast.asString(_:))
 
     super.init(type: Py.types.function)
   }

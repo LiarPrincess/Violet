@@ -14,8 +14,7 @@ extension Eval {
   /// Pushes constant pointed by `index` onto the stack.
   internal func loadConst(index: Int) -> InstructionResult {
     let constant = self.getConstant(index: index)
-    let object = constant.asObject
-    self.stack.push(object)
+    self.stack.push(constant)
     return .ok
   }
 

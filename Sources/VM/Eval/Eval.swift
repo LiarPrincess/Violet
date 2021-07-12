@@ -109,7 +109,7 @@ internal struct Eval {
 
   // MARK: - Code object getters
 
-  internal func getConstant(index: Int) -> PyCode.Constant {
+  internal func getConstant(index: Int) -> PyObject {
     assert(0 <= index && index < self.code.constants.count)
     return self.code.constants[index]
   }
