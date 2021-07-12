@@ -96,7 +96,7 @@ public class PyModule: PyObject {
 
   internal func getNameString() -> NameAsString {
     if let object = self.getNameObjectOrNil() {
-      switch Py.strValue(object: object) {
+      switch Py.strString(object: object) {
       case let .value(s):
         return .string(s)
       case let .error(e):

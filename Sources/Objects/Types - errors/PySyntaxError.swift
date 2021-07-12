@@ -172,7 +172,7 @@ public class PySyntaxError: PyException {
     }()
 
     let msg: String
-    switch Py.strValue(object: zelf.msg ?? Py.none) {
+    switch Py.strString(object: zelf.msg ?? Py.none) {
     case let .value(m): msg = m
     case let .error(e): return .error(e)
     }

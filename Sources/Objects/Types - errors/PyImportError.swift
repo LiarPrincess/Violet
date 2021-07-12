@@ -112,7 +112,8 @@ public class PyImportError: PyException {
       return .value(msg.value)
     }
 
-    return Self.str(baseException: zelf)
+    let result = Self.str(baseException: zelf)
+    return result.flatMap(Py.strString(object:))
   }
 
   // MARK: - Msg

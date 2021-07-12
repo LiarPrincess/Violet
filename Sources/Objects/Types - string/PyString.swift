@@ -827,8 +827,13 @@ public class PyString: PyObject, AbstractString {
         return .value(result)
       }
 
-      let str = Py.strValue(object: object)
-      return str.map { Self.allocateString(type: type, value: $0) }
+      switch Py.str(object: object) {
+      case let .value(str):
+        let result = PyString.allocateString(type: type, value: str.value)
+        return .value(result)
+      case let .error(e):
+        return .error(e)
+      }
     }
 
     let encoding: Encoding

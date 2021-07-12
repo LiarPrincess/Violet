@@ -1,5 +1,6 @@
 import VioletCore
 
+// swiftlint:disable file_length
 // cSpell:ignore uxxxx Uxxxxxxxx
 
 // In CPython:
@@ -45,32 +46,99 @@ extension PyInstance {
 
   /// class str(object='')
   /// class str(object=b'', encoding='utf-8', errors='strict')
-  public func strValue(object: PyObject) -> PyResult<String> {
-    if object.hasReprLock {
+  public func str(object: PyObject) -> PyResult<PyString> {
+    switch self.strImpl(object: object) {
+    case .reprLock:
+      return .value(Py.emptyString)
+    case .string(let s):
+      let py = Py.newString(s)
+      return .value(py)
+    case .pyString(let s):
+      return .value(s)
+    case .methodReturnedNonString(let o):
+      return .typeError("__str__ returned non-string (\(o.typeName))")
+    case .notCallable(let e):
+      return .error(e)
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  /// class str(object='')
+  /// class str(object=b'', encoding='utf-8', errors='strict')
+  public func strString(object: PyObject) -> PyResult<String> {
+    switch self.strImpl(object: object) {
+    case .reprLock:
       return .value("")
+    case .string(let s):
+      return .value(s)
+    case .pyString(let s):
+      return .value(s.value)
+    case .methodReturnedNonString(let o):
+      return .typeError("__str__ returned non-string (\(o.typeName))")
+    case .notCallable(let e):
+      return .error(e)
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  private enum StrImplResult {
+    case reprLock
+    /// Result of the static call
+    case string(String)
+    /// Result of the dynamic call
+    case pyString(PyString)
+    /// When the dynamic call returns non-string
+    case methodReturnedNonString(PyObject)
+    case notCallable(PyBaseException)
+    case error(PyBaseException)
+
+    fileprivate init(repr: ReprImplResult) {
+      switch repr {
+      case let .string(s): self = .string(s)
+      case let .pyString(s): self = .pyString(s)
+      case let .methodReturnedNonString(o): self = .methodReturnedNonString(o)
+      case let .notCallable(e): self = .notCallable(e)
+      case let .error(e): self = .error(e)
+      }
+    }
+  }
+
+  private func strImpl(object: PyObject) -> StrImplResult {
+    if object.hasReprLock {
+      return .reprLock
     }
 
     // If we do not override '__str__' then we have to use '__repr__'.
     guard self.hasCustom__str__(object: object) else {
-      return self.repr(object: object)
+      let repr = self.reprImpl(object: object)
+      return StrImplResult(repr: repr)
     }
 
     if let result = Fast.__str__(object) {
-      return result
+      switch result {
+      case let .value(s): return .string(s)
+      case let .error(e): return .error(e)
+      }
     }
 
     switch self.callMethod(object: object, selector: .__str__) {
-    case .value(let result):
-      guard let resultStr = PyCast.asString(result) else {
-        return .typeError("__str__ returned non-string (\(result.typeName))")
+    case let .value(result):
+      guard let pyString = PyCast.asString(result) else {
+        return .methodReturnedNonString(result)
       }
 
-      return .value(resultStr.value)
+      return .pyString(pyString)
 
     case .missingMethod:
-      return self.repr(object: object)
+      // Hmm… we checked that we have custom '__str__', so we should not end up here
+      let repr = self.reprImpl(object: object)
+      return StrImplResult(repr: repr)
 
-    case .error(let e), .notCallable(let e):
+    case let .notCallable(e):
+      return .notCallable(e)
+    case let .error(e):
       return .error(e)
     }
   }

@@ -9,20 +9,20 @@ extension Eval {
   internal func formatValue(conversion: Instruction.StringConversion,
                             hasFormat: Bool) -> InstructionResult {
     let format: PyObject? = hasFormat ? self.stack.pop() : nil
-    let rawValue = self.stack.pop()
+    let objectFromStack = self.stack.pop()
 
-    let value: PyObject
-    switch self.convert(value: rawValue, conversion: conversion) {
-    case let .value(o): value = o
+    let object: PyObject
+    switch self.convert(object: objectFromStack, conversion: conversion) {
+    case let .value(o): object = o
     case let .error(e): return .exception(e)
     }
 
-    if value is PyString && format == nil {
-      self.stack.push(value)
+    if PyCast.isString(object) && format == nil {
+      self.stack.push(object)
       return .ok
     }
 
-    switch self.format(value: value, format: format) {
+    switch self.format(object: object, format: format) {
     case let .value(o):
       self.stack.push(o)
       return .ok
@@ -32,18 +32,18 @@ extension Eval {
   }
 
   private func convert(
-    value: PyObject,
+    object: PyObject,
     conversion: Instruction.StringConversion
   ) -> PyResult<PyObject> {
     switch conversion {
     case .none:
-      return .value(value)
+      return .value(object)
     case .str:
-      return Py.strValue(object: value).map(Py.newString)
+      return Py.str(object: object).map { $0 as PyObject }
     case .repr:
-      return Py.repr(object: value).map(Py.newString)
+      return Py.repr(object: object).map(Py.newString)
     case .ascii:
-      return Py.ascii(object: value).map(Py.newString)
+      return Py.ascii(object: object).map(Py.newString)
     }
   }
 

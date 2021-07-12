@@ -332,7 +332,7 @@ public class PyType: PyObject, HasCustomGetMethod {
     case .pyString(let s):
       return .string(s.value)
     case .objectNotYetConvertedToString(let o):
-      switch Py.strValue(object: o) {
+      switch Py.strString(object: o) {
       case let .value(s): return .string(s)
       case let .error(e): return .error(e)
       }

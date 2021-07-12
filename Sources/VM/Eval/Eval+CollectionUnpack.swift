@@ -179,7 +179,7 @@ extension Eval {
 
     let args = keyError.getArgs()
     if let firstArg = args.elements.first {
-      switch Py.strValue(object: firstArg) {
+      switch Py.strString(object: firstArg) {
       case .value(let s):
         msg.append(" \(s.quoted)")
       case .error:

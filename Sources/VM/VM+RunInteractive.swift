@@ -268,7 +268,7 @@ extension VM {
       return s.value
     }
 
-    switch Py.strValue(object: object) {
+    switch Py.strString(object: object) {
     case .value(let s):
       return s
     case .error:

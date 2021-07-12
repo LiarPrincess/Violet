@@ -100,7 +100,7 @@ extension PyInstance {
       }
 
       let string: String
-      switch self.strValue(object: object) {
+      switch self.strString(object: object) {
       case let .value(s): string = s
       case let .error(e): return .error(e)
       }
@@ -256,7 +256,7 @@ extension PyInstance {
     }
 
     let str: String = {
-      switch self.strValue(object: error) {
+      switch self.strString(object: error) {
       case .value(let s) where s.isEmpty:
         return "\n"
       case .value(let s):
@@ -478,7 +478,7 @@ extension PyInstance {
     case let .error(e): return .error(e)
     }
 
-    return self.strValue(object: object)
+    return self.strString(object: object)
   }
 
   // MARK: - Module (dot) class

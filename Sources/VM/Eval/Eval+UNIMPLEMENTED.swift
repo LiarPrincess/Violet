@@ -62,8 +62,8 @@ extension Eval {
 
   /// PyObject *format_spec
   /// PyObject_Format(PyObject *obj, PyObject *)
-  public func format(value: PyObject,
-                     format _format: PyObject?) -> PyResult<PyObject> {
+  public func format(object: PyObject,
+                     format _format: PyObject?) -> PyResult<PyString> {
     // Move this to 'Py.format' after we finish the whole implementation.
     let format: PyString?
     switch self.parseFormat(format: _format) {
@@ -75,12 +75,11 @@ extension Eval {
     // Fast path for common types
     let isFormatEmpty = format?.value.isEmpty ?? true
     if isFormatEmpty {
-      if let str = PyCast.asExactlyString(value) {
+      if let str = PyCast.asExactlyString(object) {
         return .value(str)
       }
 
-      let result = Py.strValue(object: value)
-      return result.map(Py.newString(_:))
+      return Py.str(object: object)
     }
 
     self.unimplemented()
