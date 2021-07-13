@@ -17,7 +17,7 @@ extension Eval {
   internal func popJumpIfTrue(labelIndex: Int) -> InstructionResult {
     let top = self.stack.pop()
 
-    switch Py.isTrueBool(top) {
+    switch Py.isTrueBool(object: top) {
     case let .value(isTrue):
       self.popJumpIf(isTrue, to: labelIndex)
       return .ok
@@ -30,7 +30,7 @@ extension Eval {
   internal func popJumpIfFalse(labelIndex: Int) -> InstructionResult {
     let top = self.stack.pop()
 
-    switch Py.isTrueBool(top) {
+    switch Py.isTrueBool(object: top) {
     case let .value(isTrue):
       self.popJumpIf(!isTrue, to: labelIndex)
       return .ok
@@ -46,7 +46,7 @@ extension Eval {
   internal func jumpIfTrueOrPop(labelIndex: Int) -> InstructionResult {
     let top = self.stack.top
 
-    switch Py.isTrueBool(top) {
+    switch Py.isTrueBool(object: top) {
     case let .value(isTrue):
       self.jumpIfOrPop(isTrue, to: labelIndex)
       return .ok
@@ -60,7 +60,7 @@ extension Eval {
   internal func jumpIfFalseOrPop(labelIndex: Int) -> InstructionResult {
     let top = self.stack.top
 
-    switch Py.isTrueBool(top) {
+    switch Py.isTrueBool(object: top) {
     case let .value(isTrue):
       self.jumpIfOrPop(!isTrue, to: labelIndex)
       return .ok

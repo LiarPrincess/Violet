@@ -64,7 +64,7 @@ public class PyFilter: PyObject {
       switch Py.next(iterator: self.iterator) {
       case let .value(item):
         if useTrivialBoolCheck {
-          switch Py.isTrueBool(item) {
+          switch Py.isTrueBool(object: item) {
           case .value(true): return .value(item)
           case .value(false): continue loop // try next item
           case .error(let e): return .error(e)
@@ -73,7 +73,7 @@ public class PyFilter: PyObject {
 
         switch Py.call(callable: self.fn, args: [item]) {
         case .value(let r):
-          switch Py.isTrueBool(r) {
+          switch Py.isTrueBool(object: r) {
           case .value(true): return .value(item)
           case .value(false): continue loop // try next item
           case .error(let e): return .error(e)

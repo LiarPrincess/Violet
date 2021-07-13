@@ -444,7 +444,7 @@ extension PyInstance {
 
     switch self.callMethod(object: iterable, selector: .__contains__, arg: element) {
     case .value(let o):
-      return self.isTrueBool(o)
+      return self.isTrueBool(object: o)
     case .missingMethod:
       break // try other things
     case .error(let e), .notCallable(let e):

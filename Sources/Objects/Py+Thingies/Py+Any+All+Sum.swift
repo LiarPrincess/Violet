@@ -10,7 +10,7 @@ extension PyInstance {
   /// See [this](https://docs.python.org/3/library/functions.html#any)
   public func any(iterable: PyObject) -> PyResult<Bool> {
     return self.reduce(iterable: iterable, initial: false) { _, object in
-      switch self.isTrueBool(object) {
+      switch self.isTrueBool(object: object) {
       case .value(true): return .finish(true)
       case .value(false): return .goToNextElement
       case .error(let e): return .error(e)
@@ -24,7 +24,7 @@ extension PyInstance {
   /// See [this](https://docs.python.org/3/library/functions.html#all)
   public func all(iterable: PyObject) -> PyResult<Bool> {
     return self.reduce(iterable: iterable, initial: true) { _, object in
-      switch self.isTrueBool(object) {
+      switch self.isTrueBool(object: object) {
       case .value(true): return .goToNextElement
       case .value(false): return .finish(false)
       case .error(let e): return .error(e)

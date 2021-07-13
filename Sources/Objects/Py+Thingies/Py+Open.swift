@@ -52,7 +52,7 @@ extension PyInstance {
     }
 
     let closeOnDealloc: Bool
-    switch self.isTrueBool(closefdArg ?? self.true) {
+    switch self.isTrueBool(object: closefdArg ?? self.true) {
     case let .value(b): closeOnDealloc = b
     case let .error(e): return .error(e)
     }

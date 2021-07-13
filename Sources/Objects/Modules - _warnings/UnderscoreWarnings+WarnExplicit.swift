@@ -194,7 +194,7 @@ extension UnderscoreWarnings {
     case .dict(let dict):
       switch dict.get(key: key) {
       case .value(let o):
-        return Py.isTrueBool(o)
+        return Py.isTrueBool(object: o)
       case .notFound:
         return .value(false)
       case .error(let e):

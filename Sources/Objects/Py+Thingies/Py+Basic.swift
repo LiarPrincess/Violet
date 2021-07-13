@@ -301,7 +301,7 @@ extension PyInstance {
 
     switch self.getattr(object: object, name: .__isabstractmethod__) {
     case let .value(o):
-      return self.isTrueBool(o)
+      return self.isTrueBool(object: o)
     case let .error(e):
       return .error(e)
     }

@@ -19,7 +19,7 @@ extension PyList {
       return self.sort(key: key, isReverse: false)
     }
 
-    switch Py.isTrueBool(isReverse) {
+    switch Py.isTrueBool(object: isReverse) {
     case let .value(b):
       return self.sort(key: key, isReverse: b)
     case let .error(e):

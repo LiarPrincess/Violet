@@ -37,7 +37,7 @@ extension Eval {
   internal func unaryNot() -> InstructionResult {
     let top = self.stack.top
 
-    switch Py.not(top) {
+    switch Py.not(object: top) {
     case let .value(not):
       self.stack.top = not
       return .ok

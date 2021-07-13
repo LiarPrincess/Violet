@@ -12,36 +12,51 @@ extension PyInstance {
   /// Equivalent of 'not v'.
   ///
   /// int PyObject_Not(PyObject *v)
-  public func not(_ object: PyObject) -> PyResult<PyBool> {
-    return self.isTrueBool(object)
-      .map { !$0 }
-      .map(self.newBool)
+  public func not(object: PyObject) -> PyResult<PyBool> {
+    switch Py.isTrueBool(object: object) {
+    case let .value(b):
+      let py = Py.newBool(!b)
+      return .value(py)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
-  public func notBool(_ object: PyObject) -> PyResult<Bool> {
-    return self.isTrueBool(object).map { !$0 }
+  public func notBool(object: PyObject) -> PyResult<Bool> {
+    switch Py.isTrueBool(object: object) {
+    case let .value(b):
+      return .value(!b)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Is true
 
   /// Test a value used as condition, e.g.,  `if`  or `in` statement.
-  public func isTrue(_ object: PyObject) -> PyResult<PyBool> {
-    return self.isTrueBool(object).map(self.newBool)
+  public func isTrue(object: PyObject) -> PyResult<PyBool> {
+    switch self.isTrueBool(object: object) {
+    case let .value(b):
+      let py = Py.newBool(b)
+      return .value(py)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
-  public func isTrueBool(_ object: PyBool) -> Bool {
+  public func isTrueBool(object: PyBool) -> Bool {
     return object.value.isTrue
   }
 
   /// PyObject_IsTrue(PyObject *v)
   /// slot_nb_bool(PyObject *self)
-  public func isTrueBool(_ object: PyObject) -> PyResult<Bool> {
+  public func isTrueBool(object: PyObject) -> PyResult<Bool> {
     if object.isNone {
       return .value(false)
     }
 
     if let bool = PyCast.asBool(object) {
-      let result = self.isTrueBool(bool)
+      let result = self.isTrueBool(object: bool)
       return .value(result)
     }
 

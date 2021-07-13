@@ -173,7 +173,7 @@ extension Eval {
 
     var isExceptionSuppressed = false
     if !exception.isNone {
-      switch Py.isTrueBool(result) {
+      switch Py.isTrueBool(object: result) {
       case let .value(value):
         isExceptionSuppressed = value
       case let .error(e):

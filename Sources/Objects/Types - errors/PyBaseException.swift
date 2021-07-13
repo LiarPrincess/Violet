@@ -493,7 +493,7 @@ public class PyBaseException: PyObject {
       return .value()
     }
 
-    switch Py.isTrueBool(value) {
+    switch Py.isTrueBool(object: value) {
     case let .value(b):
       self.suppressContext = b
       return .value()

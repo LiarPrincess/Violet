@@ -184,6 +184,6 @@ public class PyBool: PyInt {
       return .value(Py.false)
     }
 
-    return Py.isTrue(args[0])
+    return Py.isTrue(object: args[0])
   }
 }

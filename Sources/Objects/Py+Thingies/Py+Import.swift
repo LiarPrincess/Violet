@@ -297,7 +297,7 @@ extension PyInstance {
                               fromList: PyObject?) -> PyResult<PyObject> {
     // If we have 'fromList' then call '_handle_fromlist' from 'importlib'
     if let fl = fromList, !fl.isNone {
-      switch self.isTrueBool(fl) {
+      switch self.isTrueBool(object: fl) {
       case .value(true):
         return self.call_handle_fromlist(module: module, fromList: fl)
       case .value(false):
