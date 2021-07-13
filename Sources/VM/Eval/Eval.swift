@@ -138,8 +138,8 @@ internal struct Eval {
         break // go to next instruction
 
       case .unwind(let reason):
-        if case let .exception(error, fillTracebackEtc) = reason, fillTracebackEtc {
-          self.fillContextAndTraceback(error: error)
+        if case let .exception(exception, fillTracebackEtc) = reason, fillTracebackEtc {
+          self.fillContextAndTraceback(exception: exception)
         }
 
         switch self.unwind(reason: reason) {
@@ -150,7 +150,7 @@ internal struct Eval {
         case .reportExceptionToParentFrame(let e):
           // 'FromUnwind' means not the one from 'case .unwind(let reason):'
           self.fillContextAndTracebackIfNotExceptionFromUnwind(
-            error: e,
+            exception: e,
             unwindReason: reason
           )
 
@@ -163,19 +163,19 @@ internal struct Eval {
     }
   }
 
-  private func fillContextAndTraceback(error: PyBaseException) {
+  private func fillContextAndTraceback(exception: PyBaseException) {
     // Context - another exception during whose handling this exception was raised.
     Py.setContextUsingCurrentlyHandledExceptionFromDelegate(
-      on: error,
+      on: exception,
       overrideCurrent: false
     )
 
     // Traceback - stack trace, call stack etc.
-    Py.addTraceback(to: error, frame: self.frame)
+    Py.addTraceback(to: exception, frame: self.frame)
   }
 
   private func fillContextAndTracebackIfNotExceptionFromUnwind(
-    error: PyBaseException,
+    exception: PyBaseException,
     unwindReason: UnwindReason
   ) {
     // Is the same exception as in unwind reason?
@@ -189,12 +189,12 @@ internal struct Eval {
     //   except BaseException as ee:
     //     pass
 
-    if case let UnwindReason.exception(unwindError, _) = unwindReason,
-      error === unwindError {
+    if case let UnwindReason.exception(unwindException, _) = unwindReason,
+       exception === unwindException {
       return
     }
 
-    self.fillContextAndTraceback(error: error)
+    self.fillContextAndTraceback(exception: exception)
   }
 
   // MARK: - Execute instruction

@@ -321,7 +321,7 @@ public class PyBaseException: PyObject {
       return .typeError("__cause__ may not be deleted") // set to 'None' instead
     }
 
-    if value is PyNone {
+    if PyCast.isNone(value) {
       self.delCause()
       return .value()
     }
@@ -359,7 +359,7 @@ public class PyBaseException: PyObject {
       return .typeError("__context__ may not be deleted") // use 'None'
     }
 
-    if value is PyNone {
+    if PyCast.isNone(value) {
       self.delContext()
       return .value()
     }

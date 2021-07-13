@@ -69,7 +69,7 @@ extension Eval {
       }
     }
 
-    let result = Py.exceptionMatches(error: left, expectedType: right)
+    let result = Py.exceptionMatches(exception: left, expectedType: right)
     return .value(Py.newBool(result))
   }
 
