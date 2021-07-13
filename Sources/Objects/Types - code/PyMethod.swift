@@ -165,7 +165,8 @@ public class PyMethod: PyObject {
       return .value(self)
     }
 
-    return .value(PyMethod(fn: self.function, object: object))
+    let result = PyMemory.newMethod(fn: self.function, object: object)
+    return .value(result)
   }
 
   // MARK: - Call

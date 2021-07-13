@@ -118,8 +118,18 @@ extension PyType {
     /// - `name: PyString`
     /// - `qualifiedName: PyString`
     /// - `filename: PyString`
-    /// - `constants: [Constant]`
+    /// - `codeFlags: CodeObject.Flags`
+    /// - `instructions: [Instruction]`
+    /// - `firstLine: SourceLine`
+    /// - `instructionLines: [SourceLine]`
+    /// - `constants: [PyObject]`
+    /// - `labels: [CodeObject.Label]`
     /// - `names: [PyString]`
+    /// - `variableNames: [MangledName]`
+    /// - `cellVariableNames: [MangledName]`
+    /// - `freeVariableNames: [MangledName]`
+    /// - `argCount: Int`
+    /// - `kwOnlyArgCount: Int`
     public static let PyCode = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `real: Double`

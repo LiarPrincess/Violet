@@ -16,7 +16,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -26,7 +26,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -37,7 +37,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf>(
@@ -48,7 +48,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -58,7 +58,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -68,7 +68,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -78,7 +78,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -88,7 +88,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -99,7 +99,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -110,7 +110,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -121,7 +121,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf>(
@@ -132,7 +132,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -143,7 +143,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf>(
@@ -154,7 +154,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -164,7 +164,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -174,7 +174,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -185,7 +185,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf>(
@@ -196,7 +196,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -207,7 +207,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf>(
@@ -218,7 +218,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -229,7 +229,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf>(
@@ -240,7 +240,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -250,7 +250,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -260,7 +260,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -270,7 +270,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -280,7 +280,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -290,7 +290,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -300,7 +300,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -310,7 +310,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -320,7 +320,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -331,7 +331,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -342,7 +342,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -353,7 +353,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -364,7 +364,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -375,7 +375,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf>(
@@ -386,7 +386,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -397,7 +397,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf>(
@@ -408,7 +408,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -419,7 +419,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf>(
@@ -430,7 +430,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -440,7 +440,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -450,7 +450,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -460,7 +460,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -470,7 +470,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -480,7 +480,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -490,7 +490,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -500,7 +500,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -510,7 +510,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -521,7 +521,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -532,7 +532,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -543,7 +543,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -554,7 +554,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -565,7 +565,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -576,7 +576,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -587,7 +587,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf>(
@@ -598,7 +598,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -609,7 +609,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf>(
@@ -620,7 +620,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -631,7 +631,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf>(
@@ -642,7 +642,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -653,7 +653,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf>(
@@ -664,7 +664,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -674,7 +674,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -684,7 +684,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -694,7 +694,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -704,7 +704,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -714,7 +714,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -724,7 +724,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -734,7 +734,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -744,7 +744,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -754,7 +754,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -764,7 +764,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -775,7 +775,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -786,7 +786,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -797,7 +797,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -808,7 +808,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -819,7 +819,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -830,7 +830,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -841,7 +841,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap(
@@ -852,7 +852,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castType: castType)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
 }

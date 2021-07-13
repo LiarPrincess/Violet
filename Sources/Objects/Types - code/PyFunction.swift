@@ -317,7 +317,7 @@ public class PyFunction: PyObject {
   }
 
   internal func bind(to object: PyObject) -> PyMethod {
-    return PyMethod(fn: self, object: object)
+    return PyMemory.newMethod(fn: self, object: object)
   }
 
   // MARK: - Call

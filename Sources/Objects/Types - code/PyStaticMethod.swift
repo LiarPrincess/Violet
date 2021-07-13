@@ -39,8 +39,7 @@ public class PyStaticMethod: PyObject {
     self.init(type: type, callable: callable)
   }
 
-  /// Use only in `__new__`!
-  private init(type: PyType, callable: PyObject?) {
+  internal init(type: PyType, callable: PyObject?) {
     self.callable = callable
     super.init(type: type)
   }
@@ -94,7 +93,7 @@ public class PyStaticMethod: PyObject {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDict?) -> PyResult<PyStaticMethod> {
-    let result = PyStaticMethod(type: type, callable: nil)
+    let result = PyMemory.newStaticMethod(type: type, callable: nil)
     return .value(result)
   }
 

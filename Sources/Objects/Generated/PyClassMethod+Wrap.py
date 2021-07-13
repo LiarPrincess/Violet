@@ -52,7 +52,7 @@ extension PyClassMethod {{
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }}
 ''')
 

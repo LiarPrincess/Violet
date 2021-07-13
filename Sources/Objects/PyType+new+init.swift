@@ -372,7 +372,7 @@ extension PyType {
       return
     }
 
-    let method = PyStaticMethod(callable: function)
+    let method = PyMemory.newStaticMethod(callable: function)
     dict.set(id: fnName, to: method)
   }
 
@@ -390,7 +390,7 @@ extension PyType {
       return
     }
 
-    let method = PyClassMethod(callable: function)
+    let method = PyMemory.newClassMethod(callable: function)
     dict.set(id: fnName, to: method)
   }
 

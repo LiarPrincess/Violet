@@ -12,7 +12,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(type: type, newFn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   // MARK: - Init
@@ -25,7 +25,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(type: type, initFn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   /// Static `__init__` function
@@ -37,7 +37,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(type: type, initFn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   // MARK: - Args kwargs
@@ -49,7 +49,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -60,7 +60,7 @@ extension PyBuiltinFunction {
     module: PyString? = nil
   ) -> PyBuiltinFunction {
     let wrapper = FunctionWrapper(name: name, fn: fn, castSelf: castSelf)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 
   // MARK: - Setter property
@@ -87,6 +87,6 @@ extension PyBuiltinFunction {
     }
 
     let wrapper = FunctionWrapper(name: name, fn: setReturningNone)
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 }

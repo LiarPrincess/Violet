@@ -40,7 +40,7 @@ if __name__ == '__main__':
     module: PyString? = nil
   ) -> PyBuiltinFunction {{
     let wrapper = FunctionWrapper(name: name, fn: fn{cast_self_call_argument}{cast_type_call_argument})
-    return PyBuiltinFunction(fn: wrapper, module: module, doc: doc)
+    return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }}
 ''')
 

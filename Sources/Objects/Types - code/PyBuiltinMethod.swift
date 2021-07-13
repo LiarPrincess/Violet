@@ -157,10 +157,10 @@ public class PyBuiltinMethod: PyObject, AbstractBuiltinFunction {
       return .value(self)
     }
 
-    let result = PyBuiltinMethod(fn: self.function,
-                                 object: object,
-                                 module: self.module,
-                                 doc: self.doc)
+    let result = PyMemory.newBuiltinMethod(fn: self.function,
+                                           object: object,
+                                           module: self.module,
+                                           doc: self.doc)
 
     return .value(result)
   }

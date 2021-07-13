@@ -52,6 +52,38 @@ internal enum PyMemory {
     )
   }
 
+  // MARK: - BuiltinFunction
+
+  /// Allocate new instance of `builtinFunction` type.
+  internal static func newBuiltinFunction(
+    fn: FunctionWrapper,
+    module: PyString? = nil,
+    doc: String? = nil
+  ) -> PyBuiltinFunction {
+    return PyBuiltinFunction(
+      fn: fn,
+      module: module,
+      doc: doc
+    )
+  }
+
+  // MARK: - BuiltinMethod
+
+  /// Allocate new instance of `builtinMethod` type.
+  internal static func newBuiltinMethod(
+    fn: FunctionWrapper,
+    object: PyObject,
+    module: PyObject? = nil,
+    doc: String? = nil
+  ) -> PyBuiltinMethod {
+    return PyBuiltinMethod(
+      fn: fn,
+      object: object,
+      module: module,
+      doc: doc
+    )
+  }
+
   // MARK: - ByteArray
 
   /// Allocate new instance of `bytearray` type.
@@ -128,6 +160,28 @@ internal enum PyMemory {
     return PyCallableIterator(
       callable: callable,
       sentinel: sentinel
+    )
+  }
+
+  // MARK: - ClassMethod
+
+  /// Allocate new instance of `classmethod` type.
+  internal static func newClassMethod(
+    callable: PyObject
+  ) -> PyClassMethod {
+    return PyClassMethod(
+      callable: callable
+    )
+  }
+
+  /// Allocate new instance of `classmethod` type.
+  internal static func newClassMethod(
+    type: PyType,
+    callable: PyObject?
+  ) -> PyClassMethod {
+    return PyClassMethod(
+      type: type,
+      callable: callable
     )
   }
 
@@ -350,6 +404,23 @@ internal enum PyMemory {
     )
   }
 
+  // MARK: - Function
+
+  /// Allocate new instance of `function` type.
+  internal static func newFunction(
+    qualname: PyString?,
+    module: PyObject,
+    code: PyCode,
+    globals: PyDict
+  ) -> PyFunction {
+    return PyFunction(
+      qualname: qualname,
+      module: module,
+      code: code,
+      globals: globals
+    )
+  }
+
   // MARK: - Int
 
   /// Allocate new instance of `int` type.
@@ -450,6 +521,19 @@ internal enum PyMemory {
       type: type,
       fn: fn,
       iterators: iterators
+    )
+  }
+
+  // MARK: - Method
+
+  /// Allocate new instance of `method` type.
+  internal static func newMethod(
+    fn: PyFunction,
+    object: PyObject
+  ) -> PyMethod {
+    return PyMethod(
+      fn: fn,
+      object: object
     )
   }
 
@@ -592,6 +676,28 @@ internal enum PyMemory {
       start: start,
       stop: stop,
       step: step
+    )
+  }
+
+  // MARK: - StaticMethod
+
+  /// Allocate new instance of `staticmethod` type.
+  internal static func newStaticMethod(
+    callable: PyObject
+  ) -> PyStaticMethod {
+    return PyStaticMethod(
+      callable: callable
+    )
+  }
+
+  /// Allocate new instance of `staticmethod` type.
+  internal static func newStaticMethod(
+    type: PyType,
+    callable: PyObject?
+  ) -> PyStaticMethod {
+    return PyStaticMethod(
+      type: type,
+      callable: callable
     )
   }
 

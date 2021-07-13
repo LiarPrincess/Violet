@@ -37,7 +37,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap(
@@ -54,7 +54,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -71,7 +71,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap(
@@ -88,7 +88,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -105,7 +105,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap(
@@ -122,7 +122,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -139,7 +139,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap(
@@ -156,7 +156,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -173,7 +173,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap(
@@ -190,7 +190,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -207,7 +207,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap(
@@ -224,7 +224,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -241,7 +241,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap(
@@ -258,7 +258,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -275,7 +275,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap(
@@ -292,7 +292,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -309,7 +309,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap(
@@ -326,7 +326,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap<R: PyFunctionResultConvertible>(
@@ -343,7 +343,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
   internal static func wrap(
@@ -360,7 +360,7 @@ extension PyClassMethod {
       module: module
     )
 
-    return PyClassMethod(callable: builtinFunction)
+    return PyMemory.newClassMethod(callable: builtinFunction)
   }
 
 }

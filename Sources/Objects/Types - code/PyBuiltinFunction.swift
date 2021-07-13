@@ -140,10 +140,10 @@ public class PyBuiltinFunction: PyObject, AbstractBuiltinFunction {
   }
 
   internal func bind(to object: PyObject) -> PyBuiltinMethod {
-    return PyBuiltinMethod(fn: self.function,
-                           object: object,
-                           module: self.module,
-                           doc: self.doc)
+    return PyMemory.newBuiltinMethod(fn: self.function,
+                                     object: object,
+                                     module: self.module,
+                                     doc: self.doc)
   }
 
   // MARK: - Call

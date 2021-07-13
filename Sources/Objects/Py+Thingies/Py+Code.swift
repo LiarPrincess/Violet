@@ -17,7 +17,7 @@ extension PyInstance {
 
   public func newMethod(fn: PyBuiltinFunction,
                         object: PyObject) -> PyBuiltinMethod {
-    return PyBuiltinMethod(fn: fn.function, object: object)
+    return PyMemory.newBuiltinMethod(fn: fn.function, object: object)
   }
 
   // MARK: - Function
@@ -64,10 +64,10 @@ extension PyInstance {
                           annotations: PyObject?) -> PyResult<PyFunction> {
     let module = globals.get(id: .__name__) ?? self.none
 
-    let result = PyFunction(qualname: qualname,
-                            module: module,
-                            code: code,
-                            globals: globals)
+    let result = PyMemory.newFunction(qualname: qualname,
+                                      module: module,
+                                      code: code,
+                                      globals: globals)
 
     if let defaults = defaults {
       switch result.setDefaults(defaults) {
@@ -104,7 +104,7 @@ extension PyInstance {
 
   public func newMethod(fn: PyFunction,
                         object: PyObject) -> PyMethod {
-    return PyMethod(fn: fn, object: object)
+    return PyMemory.newMethod(fn: fn, object: object)
   }
 
   public func newMethod(fn: PyObject,

@@ -42,8 +42,7 @@ public class PyClassMethod: PyObject {
     self.init(type: type, callable: callable)
   }
 
-  /// Use only in `__new__`!
-  private init(type: PyType, callable: PyObject?) {
+  internal init(type: PyType, callable: PyObject?) {
     self.callable = callable
     super.init(type: type)
   }
@@ -98,7 +97,7 @@ public class PyClassMethod: PyObject {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDict?) -> PyResult<PyClassMethod> {
-    let result = PyClassMethod(type: type, callable: nil)
+    let result = PyMemory.newClassMethod(type: type, callable: nil)
     return .value(result)
   }
 

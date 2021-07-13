@@ -533,7 +533,7 @@ public class PyBuiltinFunction: PyObject {
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
     module: PyString? = nil
   ) -> PyBuiltinFunction {
-    return PyBuiltinFunction(
+    return PyMemory.newBuiltinFunction(
       fn: BinaryFunctionWrapper(name: name) { arg0, arg1 in
         let zelf = castSelf(arg0, name)
         let result = zelf.map { fn($0)(arg1) }

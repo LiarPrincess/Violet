@@ -16,6 +16,6 @@ extension PyStaticMethod {
       module: module
     )
 
-    return PyStaticMethod(callable: builtinFunction)
+    return PyMemory.newStaticMethod(callable: builtinFunction)
   }
 }
