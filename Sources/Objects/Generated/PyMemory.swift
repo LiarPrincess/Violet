@@ -18,12 +18,12 @@ import VioletCompiler
 /// Please note that with every call of `new` method a new Python object will be
 /// allocated! It will not reuse existing instances or do any fancy checks.
 /// This is basically the same thing as calling `init` on Swift type.
-public enum PyMemory {
+internal enum PyMemory {
 
   // MARK: - Object
 
   /// Allocate new instance of `object` type.
-  public static func newObject(
+  internal static func newObject(
     type: PyType
   ) -> PyObject {
     return PyObject(
@@ -44,7 +44,7 @@ public enum PyMemory {
   // MARK: - Bool
 
   /// Allocate new instance of `bool` type.
-  public static func newBool(
+  internal static func newBool(
     value: Bool
   ) -> PyBool {
     return PyBool(
@@ -55,7 +55,7 @@ public enum PyMemory {
   // MARK: - ByteArray
 
   /// Allocate new instance of `bytearray` type.
-  public static func newByteArray(
+  internal static func newByteArray(
     elements: Data
   ) -> PyByteArray {
     return PyByteArray(
@@ -64,7 +64,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `bytearray` type.
-  public static func newByteArray(
+  internal static func newByteArray(
     type: PyType,
     elements: Data
   ) -> PyByteArray {
@@ -77,7 +77,7 @@ public enum PyMemory {
   // MARK: - ByteArrayIterator
 
   /// Allocate new instance of `bytearray_iterator` type.
-  public static func newByteArrayIterator(
+  internal static func newByteArrayIterator(
     bytes: PyByteArray
   ) -> PyByteArrayIterator {
     return PyByteArrayIterator(
@@ -88,7 +88,7 @@ public enum PyMemory {
   // MARK: - Bytes
 
   /// Allocate new instance of `bytes` type.
-  public static func newBytes(
+  internal static func newBytes(
     elements: Data
   ) -> PyBytes {
     return PyBytes(
@@ -97,7 +97,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `bytes` type.
-  public static func newBytes(
+  internal static func newBytes(
     type: PyType,
     elements: Data
   ) -> PyBytes {
@@ -110,7 +110,7 @@ public enum PyMemory {
   // MARK: - BytesIterator
 
   /// Allocate new instance of `bytes_iterator` type.
-  public static func newBytesIterator(
+  internal static func newBytesIterator(
     bytes: PyBytes
   ) -> PyBytesIterator {
     return PyBytesIterator(
@@ -121,7 +121,7 @@ public enum PyMemory {
   // MARK: - CallableIterator
 
   /// Allocate new instance of `callable_iterator` type.
-  public static func newCallableIterator(
+  internal static func newCallableIterator(
     callable: PyObject,
     sentinel: PyObject
   ) -> PyCallableIterator {
@@ -134,7 +134,7 @@ public enum PyMemory {
   // MARK: - Complex
 
   /// Allocate new instance of `complex` type.
-  public static func newComplex(
+  internal static func newComplex(
     real: Double,
     imag: Double
   ) -> PyComplex {
@@ -145,7 +145,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `complex` type.
-  public static func newComplex(
+  internal static func newComplex(
     type: PyType,
     real: Double,
     imag: Double
@@ -160,7 +160,7 @@ public enum PyMemory {
   // MARK: - Dict
 
   /// Allocate new instance of `dict` type.
-  public static func newDict(
+  internal static func newDict(
     elements: PyDict.OrderedDictionary
   ) -> PyDict {
     return PyDict(
@@ -169,7 +169,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `dict` type.
-  public static func newDict(
+  internal static func newDict(
     type: PyType,
     elements: PyDict.OrderedDictionary
   ) -> PyDict {
@@ -182,7 +182,7 @@ public enum PyMemory {
   // MARK: - DictItemIterator
 
   /// Allocate new instance of `dict_itemiterator` type.
-  public static func newDictItemIterator(
+  internal static func newDictItemIterator(
     dict: PyDict
   ) -> PyDictItemIterator {
     return PyDictItemIterator(
@@ -193,7 +193,7 @@ public enum PyMemory {
   // MARK: - DictItems
 
   /// Allocate new instance of `dict_items` type.
-  public static func newDictItems(
+  internal static func newDictItems(
     dict: PyDict
   ) -> PyDictItems {
     return PyDictItems(
@@ -204,7 +204,7 @@ public enum PyMemory {
   // MARK: - DictKeyIterator
 
   /// Allocate new instance of `dict_keyiterator` type.
-  public static func newDictKeyIterator(
+  internal static func newDictKeyIterator(
     dict: PyDict
   ) -> PyDictKeyIterator {
     return PyDictKeyIterator(
@@ -215,7 +215,7 @@ public enum PyMemory {
   // MARK: - DictKeys
 
   /// Allocate new instance of `dict_keys` type.
-  public static func newDictKeys(
+  internal static func newDictKeys(
     dict: PyDict
   ) -> PyDictKeys {
     return PyDictKeys(
@@ -226,7 +226,7 @@ public enum PyMemory {
   // MARK: - DictValueIterator
 
   /// Allocate new instance of `dict_valueiterator` type.
-  public static func newDictValueIterator(
+  internal static func newDictValueIterator(
     dict: PyDict
   ) -> PyDictValueIterator {
     return PyDictValueIterator(
@@ -237,7 +237,7 @@ public enum PyMemory {
   // MARK: - DictValues
 
   /// Allocate new instance of `dict_values` type.
-  public static func newDictValues(
+  internal static func newDictValues(
     dict: PyDict
   ) -> PyDictValues {
     return PyDictValues(
@@ -248,7 +248,7 @@ public enum PyMemory {
   // MARK: - Ellipsis
 
   /// Allocate new instance of `ellipsis` type.
-  public static func newEllipsis(
+  internal static func newEllipsis(
   ) -> PyEllipsis {
     return PyEllipsis(
     )
@@ -257,7 +257,7 @@ public enum PyMemory {
   // MARK: - Enumerate
 
   /// Allocate new instance of `enumerate` type.
-  public static func newEnumerate(
+  internal static func newEnumerate(
     iterator: PyObject,
     startFrom index: BigInt
   ) -> PyEnumerate {
@@ -268,7 +268,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `enumerate` type.
-  public static func newEnumerate(
+  internal static func newEnumerate(
     type: PyType,
     iterator: PyObject,
     startFrom index: BigInt
@@ -283,7 +283,7 @@ public enum PyMemory {
   // MARK: - Filter
 
   /// Allocate new instance of `filter` type.
-  public static func newFilter(
+  internal static func newFilter(
     fn: PyObject,
     iterator: PyObject
   ) -> PyFilter {
@@ -294,7 +294,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `filter` type.
-  public static func newFilter(
+  internal static func newFilter(
     type: PyType,
     fn: PyObject,
     iterator: PyObject
@@ -309,7 +309,7 @@ public enum PyMemory {
   // MARK: - Float
 
   /// Allocate new instance of `float` type.
-  public static func newFloat(
+  internal static func newFloat(
     value: Double
   ) -> PyFloat {
     return PyFloat(
@@ -318,7 +318,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `float` type.
-  public static func newFloat(
+  internal static func newFloat(
     type: PyType,
     value: Double
   ) -> PyFloat {
@@ -331,7 +331,7 @@ public enum PyMemory {
   // MARK: - FrozenSet
 
   /// Allocate new instance of `frozenset` type.
-  public static func newFrozenSet(
+  internal static func newFrozenSet(
     elements: PyFrozenSet.OrderedSet
   ) -> PyFrozenSet {
     return PyFrozenSet(
@@ -340,7 +340,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `frozenset` type.
-  public static func newFrozenSet(
+  internal static func newFrozenSet(
     type: PyType,
     elements: PyFrozenSet.OrderedSet
   ) -> PyFrozenSet {
@@ -353,7 +353,7 @@ public enum PyMemory {
   // MARK: - Int
 
   /// Allocate new instance of `int` type.
-  public static func newInt(
+  internal static func newInt(
     value: BigInt
   ) -> PyInt {
     return PyInt(
@@ -362,7 +362,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `int` type.
-  public static func newInt(
+  internal static func newInt(
     type: PyType,
     value: BigInt
   ) -> PyInt {
@@ -375,7 +375,7 @@ public enum PyMemory {
   // MARK: - Iterator
 
   /// Allocate new instance of `iterator` type.
-  public static func newIterator(
+  internal static func newIterator(
     sequence: PyObject
   ) -> PyIterator {
     return PyIterator(
@@ -386,7 +386,7 @@ public enum PyMemory {
   // MARK: - List
 
   /// Allocate new instance of `list` type.
-  public static func newList(
+  internal static func newList(
     elements: [PyObject]
   ) -> PyList {
     return PyList(
@@ -395,7 +395,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `list` type.
-  public static func newList(
+  internal static func newList(
     type: PyType,
     elements: [PyObject]
   ) -> PyList {
@@ -408,7 +408,7 @@ public enum PyMemory {
   // MARK: - ListIterator
 
   /// Allocate new instance of `list_iterator` type.
-  public static func newListIterator(
+  internal static func newListIterator(
     list: PyList
   ) -> PyListIterator {
     return PyListIterator(
@@ -419,7 +419,7 @@ public enum PyMemory {
   // MARK: - ListReverseIterator
 
   /// Allocate new instance of `list_reverseiterator` type.
-  public static func newListReverseIterator(
+  internal static func newListReverseIterator(
     list: PyList
   ) -> PyListReverseIterator {
     return PyListReverseIterator(
@@ -430,7 +430,7 @@ public enum PyMemory {
   // MARK: - Map
 
   /// Allocate new instance of `map` type.
-  public static func newMap(
+  internal static func newMap(
     fn: PyObject,
     iterators: [PyObject]
   ) -> PyMap {
@@ -441,7 +441,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `map` type.
-  public static func newMap(
+  internal static func newMap(
     type: PyType,
     fn: PyObject,
     iterators: [PyObject]
@@ -456,7 +456,7 @@ public enum PyMemory {
   // MARK: - Namespace
 
   /// Allocate new instance of `types.SimpleNamespace` type.
-  public static func newNamespace(
+  internal static func newNamespace(
     dict: PyDict
   ) -> PyNamespace {
     return PyNamespace(
@@ -467,7 +467,7 @@ public enum PyMemory {
   // MARK: - None
 
   /// Allocate new instance of `NoneType` type.
-  public static func newNone(
+  internal static func newNone(
   ) -> PyNone {
     return PyNone(
     )
@@ -476,7 +476,7 @@ public enum PyMemory {
   // MARK: - NotImplemented
 
   /// Allocate new instance of `NotImplementedType` type.
-  public static func newNotImplemented(
+  internal static func newNotImplemented(
   ) -> PyNotImplemented {
     return PyNotImplemented(
     )
@@ -485,7 +485,7 @@ public enum PyMemory {
   // MARK: - Range
 
   /// Allocate new instance of `range` type.
-  public static func newRange(
+  internal static func newRange(
     start: PyInt,
     stop: PyInt,
     step: PyInt?
@@ -500,7 +500,7 @@ public enum PyMemory {
   // MARK: - RangeIterator
 
   /// Allocate new instance of `range_iterator` type.
-  public static func newRangeIterator(
+  internal static func newRangeIterator(
     start: BigInt,
     step: BigInt,
     length: BigInt
@@ -515,7 +515,7 @@ public enum PyMemory {
   // MARK: - Reversed
 
   /// Allocate new instance of `reversed` type.
-  public static func newReversed(
+  internal static func newReversed(
     sequence: PyObject,
     count: Int
   ) -> PyReversed {
@@ -526,7 +526,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `reversed` type.
-  public static func newReversed(
+  internal static func newReversed(
     type: PyType,
     sequence: PyObject,
     count: Int
@@ -541,7 +541,7 @@ public enum PyMemory {
   // MARK: - Set
 
   /// Allocate new instance of `set` type.
-  public static func newSet(
+  internal static func newSet(
     elements: PySet.OrderedSet
   ) -> PySet {
     return PySet(
@@ -550,7 +550,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `set` type.
-  public static func newSet(
+  internal static func newSet(
     type: PyType,
     elements: PySet.OrderedSet
   ) -> PySet {
@@ -563,7 +563,7 @@ public enum PyMemory {
   // MARK: - SetIterator
 
   /// Allocate new instance of `set_iterator` type.
-  public static func newSetIterator(
+  internal static func newSetIterator(
     set: PySet
   ) -> PySetIterator {
     return PySetIterator(
@@ -572,7 +572,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `set_iterator` type.
-  public static func newSetIterator(
+  internal static func newSetIterator(
     frozenSet: PyFrozenSet
   ) -> PySetIterator {
     return PySetIterator(
@@ -583,7 +583,7 @@ public enum PyMemory {
   // MARK: - Slice
 
   /// Allocate new instance of `slice` type.
-  public static func newSlice(
+  internal static func newSlice(
     start: PyObject,
     stop: PyObject,
     step: PyObject
@@ -598,7 +598,7 @@ public enum PyMemory {
   // MARK: - String
 
   /// Allocate new instance of `str` type.
-  public static func newString(
+  internal static func newString(
     value: String
   ) -> PyString {
     return PyString(
@@ -607,7 +607,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `str` type.
-  public static func newString(
+  internal static func newString(
     type: PyType,
     value: String
   ) -> PyString {
@@ -620,7 +620,7 @@ public enum PyMemory {
   // MARK: - StringIterator
 
   /// Allocate new instance of `str_iterator` type.
-  public static func newStringIterator(
+  internal static func newStringIterator(
     string: PyString
   ) -> PyStringIterator {
     return PyStringIterator(
@@ -631,7 +631,7 @@ public enum PyMemory {
   // MARK: - TextFile
 
   /// Allocate new instance of `TextFile` type.
-  public static func newTextFile(
+  internal static func newTextFile(
     fd: FileDescriptorType,
     mode: FileMode,
     encoding: PyString.Encoding,
@@ -648,7 +648,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `TextFile` type.
-  public static func newTextFile(
+  internal static func newTextFile(
     name: String?,
     fd: FileDescriptorType,
     mode: FileMode,
@@ -669,7 +669,7 @@ public enum PyMemory {
   // MARK: - Tuple
 
   /// Allocate new instance of `tuple` type.
-  public static func newTuple(
+  internal static func newTuple(
     elements: [PyObject]
   ) -> PyTuple {
     return PyTuple(
@@ -678,7 +678,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `tuple` type.
-  public static func newTuple(
+  internal static func newTuple(
     type: PyType,
     elements: [PyObject]
   ) -> PyTuple {
@@ -691,7 +691,7 @@ public enum PyMemory {
   // MARK: - TupleIterator
 
   /// Allocate new instance of `tuple_iterator` type.
-  public static func newTupleIterator(
+  internal static func newTupleIterator(
     tuple: PyTuple
   ) -> PyTupleIterator {
     return PyTupleIterator(
@@ -702,7 +702,7 @@ public enum PyMemory {
   // MARK: - Type
 
   /// Allocate new instance of `type` type.
-  public static func newType(
+  internal static func newType(
     name: String,
     qualname: String,
     metatype: PyType,
@@ -743,7 +743,7 @@ public enum PyMemory {
   // MARK: - Zip
 
   /// Allocate new instance of `zip` type.
-  public static func newZip(
+  internal static func newZip(
     iterators: [PyObject]
   ) -> PyZip {
     return PyZip(
@@ -752,7 +752,7 @@ public enum PyMemory {
   }
 
   /// Allocate new instance of `zip` type.
-  public static func newZip(
+  internal static func newZip(
     type: PyType,
     iterators: [PyObject]
   ) -> PyZip {

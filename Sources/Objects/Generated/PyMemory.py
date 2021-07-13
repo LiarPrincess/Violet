@@ -74,20 +74,13 @@ def print_new_function(t: TypeInfo, i: SwiftInitInfo):
     python_type = t.python_type_name
     init_arguments = i.arguments
 
-    access_modifier = 'public'
     additional_docs = ''
 
-    if python_type == 'object' and not init_arguments:
-        access_modifier = 'internal'
-        additional_docs = '''\
-  ///
-  /// Unsafe `new` without `type` property filled.
-  /// Reserved for `objectType` and `typeType` to create mutual recursion.\
-'''
-
+    is_object_init_without_arguments = python_type == 'object' and not init_arguments
     has_metatype_arg = any(map(lambda a: a.name == 'metatype', init_arguments))
-    if python_type == 'type' and not has_metatype_arg:
-        access_modifier = 'internal'
+    is_type_init_without_type_argument = python_type == 'type' and not has_metatype_arg
+
+    if is_object_init_without_arguments or is_type_init_without_type_argument:
         additional_docs = '''\
   ///
   /// Unsafe `new` without `type` property filled.
@@ -98,7 +91,7 @@ def print_new_function(t: TypeInfo, i: SwiftInitInfo):
     if additional_docs:
         print(additional_docs)
 
-    print(f'  {access_modifier} static func new{swift_type_without_py}(')
+    print(f'  {i.access_modifier} static func new{swift_type_without_py}(')
 
     for index, arg in enumerate(init_arguments):
         is_last = index == len(init_arguments) - 1
@@ -150,7 +143,7 @@ import VioletCompiler
 /// Please note that with every call of `new` method a new Python object will be
 /// allocated! It will not reuse existing instances or do any fancy checks.
 /// This is basically the same thing as calling `init` on Swift type.
-public enum PyMemory {{
+internal enum PyMemory {{
 ''')
 
     for t in all_types:
