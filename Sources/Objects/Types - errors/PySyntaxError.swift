@@ -136,20 +136,20 @@ public class PySyntaxError: PyException {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  override public func getClass() -> PyType {
+  override internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  override public func getDict() -> PyDict {
+  override internal func getDict() -> PyDict {
     return self.__dict__
   }
 
   // MARK: - String
 
-  override public func str() -> PyResult<String> {
+  override internal func str() -> PyResult<String> {
     return Self.str(syntaxError: self)
   }
 
@@ -195,11 +195,11 @@ public class PySyntaxError: PyException {
   // MARK: - Msg
 
   // sourcery: pyproperty = msg, setter = setMsg
-  public func getMsg() -> PyObject? {
+  internal func getMsg() -> PyObject? {
     return self.msg
   }
 
-  public func setMsg(_ value: PyObject?) -> PyResult<Void> {
+  internal func setMsg(_ value: PyObject?) -> PyResult<Void> {
     self.msg = value
     return .value()
   }
@@ -207,11 +207,11 @@ public class PySyntaxError: PyException {
   // MARK: - Filename
 
   // sourcery: pyproperty = filename, setter = setFilename
-  public func getFilename() -> PyObject? {
+  internal func getFilename() -> PyObject? {
     return self.filename
   }
 
-  public func setFilename(_ value: PyObject?) -> PyResult<Void> {
+  internal func setFilename(_ value: PyObject?) -> PyResult<Void> {
     self.filename = value
     return .value()
   }
@@ -219,11 +219,11 @@ public class PySyntaxError: PyException {
   // MARK: - Lineno
 
   // sourcery: pyproperty = lineno, setter = setLineno
-  public func getLineno() -> PyObject? {
+  internal func getLineno() -> PyObject? {
     return self.lineno
   }
 
-  public func setLineno(_ value: PyObject?) -> PyResult<Void> {
+  internal func setLineno(_ value: PyObject?) -> PyResult<Void> {
     self.lineno = value
     return .value()
   }
@@ -231,11 +231,11 @@ public class PySyntaxError: PyException {
   // MARK: - Offset
 
   // sourcery: pyproperty = offset, setter = setOffset
-  public func getOffset() -> PyObject? {
+  internal func getOffset() -> PyObject? {
     return self.offset
   }
 
-  public func setOffset(_ value: PyObject?) -> PyResult<Void> {
+  internal func setOffset(_ value: PyObject?) -> PyResult<Void> {
     self.offset = value
     return .value()
   }
@@ -243,11 +243,11 @@ public class PySyntaxError: PyException {
   // MARK: - Text
 
   // sourcery: pyproperty = text, setter = setText
-  public func getText() -> PyObject? {
+  internal func getText() -> PyObject? {
     return self.text
   }
 
-  public func setText(_ value: PyObject?) -> PyResult<Void> {
+  internal func setText(_ value: PyObject?) -> PyResult<Void> {
     self.text = value
     return .value()
   }
@@ -255,11 +255,11 @@ public class PySyntaxError: PyException {
   // MARK: - Print file and line
 
   // sourcery: pyproperty = print_file_and_line, setter = setPrintFileAndLine
-  public func getPrintFileAndLine() -> PyObject? {
+  internal func getPrintFileAndLine() -> PyObject? {
     return self.printFileAndLine
   }
 
-  public func setPrintFileAndLine(_ value: PyObject?) -> PyResult<Void> {
+  internal func setPrintFileAndLine(_ value: PyObject?) -> PyResult<Void> {
     self.printFileAndLine = value
     return .value()
   }

@@ -86,20 +86,20 @@ public class PyImportError: PyException {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  override public func getClass() -> PyType {
+  override internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  override public func getDict() -> PyDict {
+  override internal func getDict() -> PyDict {
     return self.__dict__
   }
 
   // MARK: - String
 
-  override public func str() -> PyResult<String> {
+  override internal func str() -> PyResult<String> {
     return Self.str(importError: self)
   }
 
@@ -119,11 +119,11 @@ public class PyImportError: PyException {
   // MARK: - Msg
 
   // sourcery: pyproperty = msg, setter = setMsg
-  public func getMsg() -> PyObject? {
+  internal func getMsg() -> PyObject? {
     return self.msg
   }
 
-  public func setMsg(_ value: PyObject?) -> PyResult<Void> {
+  internal func setMsg(_ value: PyObject?) -> PyResult<Void> {
     self.msg = value
     return .value()
   }
@@ -131,11 +131,11 @@ public class PyImportError: PyException {
   // MARK: - Name
 
   // sourcery: pyproperty = name, setter = setName
-  public func getName() -> PyObject? {
+  internal func getName() -> PyObject? {
     return self.moduleName
   }
 
-  public func setName(_ value: PyObject?) -> PyResult<Void> {
+  internal func setName(_ value: PyObject?) -> PyResult<Void> {
     self.moduleName = value
     return .value()
   }
@@ -143,11 +143,11 @@ public class PyImportError: PyException {
   // MARK: - Path
 
   // sourcery: pyproperty = path, setter = setPath
-  public func getPath() -> PyObject? {
+  internal func getPath() -> PyObject? {
     return self.modulePath
   }
 
-  public func setPath(_ value: PyObject?) -> PyResult<Void> {
+  internal func setPath(_ value: PyObject?) -> PyResult<Void> {
     self.modulePath = value
     return .value()
   }

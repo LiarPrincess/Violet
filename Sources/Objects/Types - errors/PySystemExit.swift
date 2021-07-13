@@ -73,25 +73,25 @@ public final class PySystemExit: PyBaseException {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  override public func getClass() -> PyType {
+  override internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  override public func getDict() -> PyDict {
+  override internal func getDict() -> PyDict {
     return self.__dict__
   }
 
   // MARK: - Code
 
   // sourcery: pyproperty = code, setter = setCode
-  public func getCode() -> PyObject? {
+  internal func getCode() -> PyObject? {
     return self.code
   }
 
-  public func setCode(_ value: PyObject?) -> PyResult<Void> {
+  internal func setCode(_ value: PyObject?) -> PyResult<Void> {
     self.code = value
     return .value()
   }

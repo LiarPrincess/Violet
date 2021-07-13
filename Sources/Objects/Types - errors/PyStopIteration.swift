@@ -65,25 +65,25 @@ public final class PyStopIteration: PyException {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  override public func getClass() -> PyType {
+  override internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  override public func getDict() -> PyDict {
+  override internal func getDict() -> PyDict {
     return self.__dict__
   }
 
   // MARK: - Value
 
   // sourcery: pyproperty = value, setter = setValue
-  public func getValue() -> PyObject {
+  internal func getValue() -> PyObject {
     return self.value
   }
 
-  public func setValue(_ value: PyObject) -> PyResult<Void> {
+  internal func setValue(_ value: PyObject) -> PyResult<Void> {
     self.value = value
     return .value()
   }

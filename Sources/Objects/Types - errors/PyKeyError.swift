@@ -25,20 +25,20 @@ public final class PyKeyError: PyLookupError {
   // MARK: - Class
 
    // sourcery: pyproperty = __class__
-   override public func getClass() -> PyType {
+   override internal func getClass() -> PyType {
      return self.type
    }
 
   // MARK: - Dict
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> PyDict {
+   override internal func getDict() -> PyDict {
      return self.__dict__
    }
 
   // MARK: - String
 
-  override public func str() -> PyResult<String> {
+  override internal func str() -> PyResult<String> {
     let result = Self.str(keyError: self)
     return result.flatMap(Py.strString(object:))
   }

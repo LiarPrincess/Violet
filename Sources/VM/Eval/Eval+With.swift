@@ -115,7 +115,7 @@ extension Eval {
     case let .exception(e):
       exceptionType = e.type
       exception = e
-      traceback = e.getTraceback() ?? Py.none
+      traceback = Py.getTraceback(exception: e) ?? Py.none
 
       let previousException = self.stack.pop() // may also be 'None'
       __exit__ = self.stack.pop()

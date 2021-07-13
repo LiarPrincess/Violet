@@ -72,7 +72,7 @@ extension UnderscoreWarnings {
   }
 
   private func createException(warning: Warning) -> PyBaseException {
-    switch Py.newException(type: warning.category, value: warning.message) {
+    switch Py.newException(type: warning.category, arg: warning.message) {
     case let .value(e):
       return e
     case let .error(e):

@@ -177,7 +177,7 @@ extension Eval {
 
     msg.append("got multiple values for keyword argument")
 
-    let args = keyError.getArgs()
+    let args = Py.getArgs(exception: keyError)
     if let firstArg = args.elements.first {
       switch Py.strString(object: firstArg) {
       case .value(let s):
@@ -205,7 +205,7 @@ extension Eval {
     }
 
     if let keyError = PyCast.asKeyError(error) {
-      let args = keyError.getArgs()
+      let args = Py.getArgs(exception: keyError)
       guard let first = args.elements.first else { return nil }
 
       if let key = PyCast.asString(first) {

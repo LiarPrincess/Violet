@@ -99,7 +99,7 @@ public class PyBaseException: PyObject {
   ///
   /// If it fails then…
   /// Well whatever.
-  public var message: String? {
+  internal var message: String? {
     guard let firstArg = self.args.elements.first else {
       return nil
     }
@@ -160,7 +160,7 @@ public class PyBaseException: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> PyResult<String> {
+  internal func repr() -> PyResult<String> {
     let name = self.typeName
     let args = self.args
 
@@ -181,7 +181,7 @@ public class PyBaseException: PyObject {
     }
   }
 
-  public func str() -> PyResult<String> {
+  internal func str() -> PyResult<String> {
     let result = Self.str(baseException: self)
     return result.flatMap(Py.strString(object:))
   }
@@ -209,42 +209,42 @@ public class PyBaseException: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  public func getDict() -> PyDict {
+  internal func getDict() -> PyDict {
     return self.__dict__
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // sourcery: pymethod = __setattr__
-  public func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
+  internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(on: self, name: name, to: value)
   }
 
   // sourcery: pymethod = __delattr__
-  public func delAttribute(name: PyObject) -> PyResult<PyNone> {
+  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(on: self, name: name)
   }
 
   // MARK: - Args
 
   // sourcery: pyproperty = args, setter = setArgs
-  public func getArgs() -> PyTuple {
+  internal func getArgs() -> PyTuple {
     return self.args
   }
 
-  public func setArgs(_ value: PyObject?) -> PyResult<Void> {
+  internal func setArgs(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       return .typeError("args may not be deleted")
     }
@@ -261,18 +261,18 @@ public class PyBaseException: PyObject {
     }
   }
 
-  public func setArgs(_ value: PyTuple) {
+  internal func setArgs(_ value: PyTuple) {
     self.args = value
   }
 
   // MARK: - Traceback
 
   // sourcery: pyproperty = __traceback__, setter = setTraceback
-  public func getTraceback() -> PyTraceback? {
+  internal func getTraceback() -> PyTraceback? {
     return self.traceback
   }
 
-  public func setTraceback(_ value: PyObject?) -> PyResult<Void> {
+  internal func setTraceback(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       return .typeError("__traceback__ may not be deleted")
     }
@@ -290,7 +290,7 @@ public class PyBaseException: PyObject {
     return .typeError("__traceback__ must be a traceback or None")
   }
 
-  public func setTraceback(traceback: PyTraceback) {
+  internal func setTraceback(traceback: PyTraceback) {
     self.traceback = traceback
   }
 
@@ -312,11 +312,11 @@ public class PyBaseException: PyObject {
   internal static let getCauseDoc = "exception cause"
 
   // sourcery: pyproperty = __cause__, setter = setCause, doc = getCauseDoc
-  public func getCause() -> PyBaseException? {
+  internal func getCause() -> PyBaseException? {
     return self.cause
   }
 
-  public func setCause(_ value: PyObject?) -> PyResult<Void> {
+  internal func setCause(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       return .typeError("__cause__ may not be deleted") // set to 'None' instead
     }
@@ -335,13 +335,13 @@ public class PyBaseException: PyObject {
     return .typeError(msg)
   }
 
-  public func setCause(_ value: PyBaseException) {
+  internal func setCause(_ value: PyBaseException) {
     // https://www.python.org/dev/peps/pep-0415/#proposal
     self.suppressContext = true
     self.cause = value
   }
 
-  public func delCause() {
+  internal func delCause() {
     self.cause = nil
   }
 
@@ -350,11 +350,11 @@ public class PyBaseException: PyObject {
   internal static let getContextDoc = "exception context"
 
   // sourcery: pyproperty = __context__, setter = setContext, doc = getContextDoc
-  public func getContext() -> PyBaseException? {
+  internal func getContext() -> PyBaseException? {
     return self.context
   }
 
-  public func setContext(_ value: PyObject?) -> PyResult<Void> {
+  internal func setContext(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       return .typeError("__context__ may not be deleted") // use 'None'
     }
@@ -373,7 +373,7 @@ public class PyBaseException: PyObject {
     return .typeError(msg)
   }
 
-  public func setContext(_ value: PyBaseException) {
+  internal func setContext(_ value: PyBaseException) {
     // When we are just setting the '__context__' property we are allowed
     // to have cycles:
     //
@@ -432,7 +432,7 @@ public class PyBaseException: PyObject {
   /// except:
   ///   assert elsa.__context__ == None
   /// ```
-  public func setContext(
+  internal func setContext(
     _ value: PyBaseException,
     checkAndPossiblyBreakCycle: Bool
   ) {
@@ -476,18 +476,18 @@ public class PyBaseException: PyObject {
     }
   }
 
-  public func delContext() {
+  internal func delContext() {
     self.context = nil
   }
 
   // MARK: - Suppress context
 
   // sourcery: pyproperty = __suppress_context__, setter = setSuppressContext
-  public func getSuppressContext() -> Bool {
+  internal func getSuppressContext() -> Bool {
     return self.suppressContext
   }
 
-  public func setSuppressContext(_ value: PyObject?) -> PyResult<Void> {
+  internal func setSuppressContext(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       self.suppressContext = false
       return .value()

@@ -67,12 +67,12 @@ public {final}class {class_name}: Py{base} {{
   }}
 
   // sourcery: pyproperty = __class__
-  override public func getClass() -> PyType {{
+  override internal func getClass() -> PyType {{
     return self.type
   }}
 
   // sourcery: pyproperty = __dict__
-  override public func getDict() -> PyDict {{
+  override internal func getDict() -> PyDict {{
     return self.__dict__
   }}
 

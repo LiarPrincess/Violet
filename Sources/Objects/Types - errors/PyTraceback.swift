@@ -49,14 +49,14 @@ public class PyTraceback: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
@@ -65,7 +65,7 @@ public class PyTraceback: PyObject {
   // sourcery: pymethod = __dir__
   /// static PyObject *
   /// tb_dir(PyTracebackObject *self)
-  public func dir() -> PyResult<DirResult> {
+  internal func dir() -> PyResult<DirResult> {
     let result = DirResult()
     result.append(Py.intern(string: "tb_frame"))
     result.append(Py.intern(string: "tb_next"))
@@ -77,32 +77,32 @@ public class PyTraceback: PyObject {
   // MARK: - Frame
 
   // sourcery: pyproperty = tb_frame
-  public func getFrame() -> PyFrame {
+  internal func getFrame() -> PyFrame {
     return self.frame
   }
 
   // MARK: - Last instruction
 
   // sourcery: pyproperty = tb_lasti
-  public func getLastInstruction() -> PyInt {
+  internal func getLastInstruction() -> PyInt {
     return self.lastInstruction
   }
 
   // MARK: - Line number
 
   // sourcery: pyproperty = tb_lineno
-  public func getLineNo() -> PyInt {
+  internal func getLineNo() -> PyInt {
     return self.lineNo
   }
 
   // MARK: - Next
 
   // sourcery: pyproperty = tb_next, setter = setNext
-  public func getNext() -> PyTraceback? {
+  internal func getNext() -> PyTraceback? {
     return self.next
   }
 
-  public func setNext(_ value: PyObject?) -> PyResult<Void> {
+  internal func setNext(_ value: PyObject?) -> PyResult<Void> {
     guard let value = value else {
       return .typeError("can't delete tb_next attribute")
     }

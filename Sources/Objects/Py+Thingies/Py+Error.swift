@@ -501,12 +501,12 @@ extension PyInstance {
   /// static PyObject*
   /// _PyErr_CreateException(PyObject *exception, PyObject *value)
   public func newException(type: PyType,
-                           value: PyObject?) -> PyResult<PyBaseException> {
+                           arg: PyObject?) -> PyResult<PyBaseException> {
     guard type.isException else {
       return .typeError("exceptions must derive from BaseException")
     }
 
-    switch self.callExceptionType(type: type, arg: value) {
+    switch self.callExceptionType(type: type, arg: arg) {
     case let .value(object):
       guard let exception = PyCast.asBaseException(object) else {
         let typeName = type.getNameString()
@@ -527,7 +527,7 @@ extension PyInstance {
       return self.call(callable: type, args: [])
     }
 
-    if arg is PyNone {
+    if PyCast.isNone(arg) {
       return self.call(callable: type, args: [])
     }
 
@@ -536,6 +536,26 @@ extension PyInstance {
     }
 
     return self.call(callable: type, args: [arg])
+  }
+
+  // MARK: - Getters
+
+  public func getArgs(exception: PyBaseException) -> PyTuple {
+    return exception.getArgs()
+  }
+
+  public func getTraceback(exception: PyBaseException) -> PyTraceback? {
+    return exception.getTraceback()
+  }
+
+  public func getFrame(traceback: PyTraceback) -> PyFrame {
+    return traceback.getFrame()
+  }
+
+  // MARK: - Setters
+
+  public func setCause(exception: PyBaseException, cause: PyBaseException) {
+    exception.setCause(cause)
   }
 
   // MARK: - Exception matches

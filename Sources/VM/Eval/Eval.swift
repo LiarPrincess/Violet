@@ -154,7 +154,9 @@ internal struct Eval {
             unwindReason: reason
           )
 
-          assert(e.getTraceback()?.getFrame() === self.frame)
+          let eTraceback = Py.getTraceback(exception: e)
+          let eFrame = eTraceback.map(Py.getFrame(traceback:))
+          assert(eFrame === self.frame)
           return .error(e)
         }
       }
