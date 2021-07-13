@@ -78,19 +78,15 @@ public class PyProperty: PyObject {
     return "PyProperty(\(p))"
   }
 
-  internal init(get: PyObject?, set: PyObject?, del: PyObject?) {
+  internal convenience init(get: PyObject?, set: PyObject?, del: PyObject?) {
+    let type = Py.types.property
+    self.init(type: type, get: get, set: set, del: del)
+  }
+
+  internal init(type: PyType, get: PyObject?, set: PyObject?, del: PyObject?) {
     self._get = get
     self._set = set
     self._del = del
-    self.doc = nil
-    super.init(type: Py.types.property)
-  }
-
-  /// Use only in `__new__`!
-  override internal init(type: PyType) {
-    self._get = nil
-    self._set = nil
-    self._del = nil
     self.doc = nil
     super.init(type: type)
   }
@@ -256,8 +252,11 @@ public class PyProperty: PyObject {
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyProperty> {
     let isBuiltin = type === Py.types.property
-    let alloca = isBuiltin ? PyProperty.init(type:) : PyPropertyHeap.init(type:)
-    return .value(alloca(type))
+    let result = isBuiltin ?
+      PyMemory.newProperty(type: type, get: nil, set: nil, del: nil):
+      PyPropertyHeap(type: type, get: nil, set: nil, del: nil)
+
+    return .value(result)
   }
 
   // MARK: - Python init

@@ -163,6 +163,17 @@ internal enum PyMemory {
     )
   }
 
+  // MARK: - Cell
+
+  /// Allocate new instance of `cell` type.
+  internal static func newCell(
+    content: PyObject?
+  ) -> PyCell {
+    return PyCell(
+      content: content
+    )
+  }
+
   // MARK: - ClassMethod
 
   /// Allocate new instance of `classmethod` type.
@@ -182,6 +193,17 @@ internal enum PyMemory {
     return PyClassMethod(
       type: type,
       callable: callable
+    )
+  }
+
+  // MARK: - Code
+
+  /// Allocate new instance of `code` type.
+  internal static func newCode(
+    code: CodeObject
+  ) -> PyCode {
+    return PyCode(
+      code: code
     )
   }
 
@@ -382,6 +404,23 @@ internal enum PyMemory {
     )
   }
 
+  // MARK: - Frame
+
+  /// Allocate new instance of `frame` type.
+  internal static func newFrame(
+    code: PyCode,
+    locals: PyDict,
+    globals: PyDict,
+    parent: PyFrame?
+  ) -> PyFrame {
+    return PyFrame(
+      code: code,
+      locals: locals,
+      globals: globals,
+      parent: parent
+    )
+  }
+
   // MARK: - FrozenSet
 
   /// Allocate new instance of `frozenset` type.
@@ -537,6 +576,36 @@ internal enum PyMemory {
     )
   }
 
+  // MARK: - Module
+
+  /// Allocate new instance of `module` type.
+  internal static func newModule(
+    name: PyObject,
+    doc: PyObject?,
+    dict: PyDict? = nil
+  ) -> PyModule {
+    return PyModule(
+      name: name,
+      doc: doc,
+      dict: dict
+    )
+  }
+
+  /// Allocate new instance of `module` type.
+  internal static func newModule(
+    type: PyType,
+    name: PyObject?,
+    doc: PyObject?,
+    dict: PyDict? = nil
+  ) -> PyModule {
+    return PyModule(
+      type: type,
+      name: name,
+      doc: doc,
+      dict: dict
+    )
+  }
+
   // MARK: - Namespace
 
   /// Allocate new instance of `types.SimpleNamespace` type.
@@ -563,6 +632,36 @@ internal enum PyMemory {
   internal static func newNotImplemented(
   ) -> PyNotImplemented {
     return PyNotImplemented(
+    )
+  }
+
+  // MARK: - Property
+
+  /// Allocate new instance of `property` type.
+  internal static func newProperty(
+    get: PyObject?,
+    set: PyObject?,
+    del: PyObject?
+  ) -> PyProperty {
+    return PyProperty(
+      get: get,
+      set: set,
+      del: del
+    )
+  }
+
+  /// Allocate new instance of `property` type.
+  internal static func newProperty(
+    type: PyType,
+    get: PyObject?,
+    set: PyObject?,
+    del: PyObject?
+  ) -> PyProperty {
+    return PyProperty(
+      type: type,
+      get: get,
+      set: set,
+      del: del
     )
   }
 
@@ -731,6 +830,36 @@ internal enum PyMemory {
   ) -> PyStringIterator {
     return PyStringIterator(
       string: string
+    )
+  }
+
+  // MARK: - Super
+
+  /// Allocate new instance of `super` type.
+  internal static func newSuper(
+    requestedType: PyType?,
+    object: PyObject?,
+    objectType: PyType?
+  ) -> PySuper {
+    return PySuper(
+      requestedType: requestedType,
+      object: object,
+      objectType: objectType
+    )
+  }
+
+  /// Allocate new instance of `super` type.
+  internal static func newSuper(
+    type: PyType,
+    requestedType: PyType?,
+    object: PyObject?,
+    objectType: PyType?
+  ) -> PySuper {
+    return PySuper(
+      type: type,
+      requestedType: requestedType,
+      object: object,
+      objectType: objectType
     )
   }
 

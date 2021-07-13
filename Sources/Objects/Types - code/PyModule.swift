@@ -27,26 +27,28 @@ public class PyModule: PyObject {
 
   // MARK: - Init
 
-  internal init(name: PyObject, doc: PyObject?, dict: PyDict? = nil) {
+  internal convenience init(name: PyObject, doc: PyObject?, dict: PyDict? = nil) {
+    let type = Py.types.module
+    self.init(type: type, name: name, doc: doc, dict: dict)
+  }
+
+  internal init(type: PyType,
+                name: PyObject?,
+                doc: PyObject?,
+                dict: PyDict? = nil) {
     self.__dict__ = dict ?? Py.newDict()
-    super.init(type: Py.types.module)
+    super.init(type: type)
 
     self.initDictContent(name: name, doc: doc)
   }
 
-  /// Use only in `__new__`!
-  override private init(type: PyType) {
-    self.__dict__ = Py.newDict()
-    super.init(type: type)
-  }
-
   /// This method is called in Swift `init` and also in Python `__init__`.
-  private func initDictContent(name: PyObject, doc: PyObject?) {
+  private func initDictContent(name: PyObject?, doc: PyObject?) {
     // Name can be anything, 'str' is not required:
     // >>> builtins.__dict__['__name__'] = 1
     // >>> repr(builtins)
     // "<module 1 (built-in)>"
-    self.__dict__.set(id: .__name__, to: name)
+    self.__dict__.set(id: .__name__, to: name ?? Py.none)
     self.__dict__.set(id: .__doc__, to: doc ?? Py.none)
     self.__dict__.set(id: .__package__, to: Py.none)
     self.__dict__.set(id: .__loader__, to: Py.none)
@@ -243,7 +245,7 @@ public class PyModule: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyModule> {
-    let result = PyModule(type: type)
+    let result = PyMemory.newModule(type: type, name: nil, doc: nil, dict: nil)
     return .value(result)
   }
 

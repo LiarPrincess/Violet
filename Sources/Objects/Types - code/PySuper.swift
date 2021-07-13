@@ -50,17 +50,17 @@ public class PySuper: PyObject, HasCustomGetMethod {
   internal convenience init(requestedType: PyType?,
                             object: PyObject?,
                             objectType: PyType?) {
-    self.init(type: Py.types.super,
+    let type = Py.types.super
+    self.init(type: type,
               requestedType: requestedType,
               object: object,
               objectType: objectType)
   }
 
-  /// Use only in `__new__`!
-  private init(type: PyType,
-               requestedType: PyType?,
-               object: PyObject?,
-               objectType: PyType?) {
+  internal init(type: PyType,
+                requestedType: PyType?,
+                object: PyObject?,
+                objectType: PyType?) {
     self.thisClass = requestedType
     self.object = object
     self.objectType = objectType
@@ -232,10 +232,10 @@ public class PySuper: PyObject, HasCustomGetMethod {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PySuper> {
-    let result = PySuper(type: type,
-                         requestedType: nil,
-                         object: nil,
-                         objectType: nil)
+    let result = PyMemory.newSuper(type: type,
+                                   requestedType: nil,
+                                   object: nil,
+                                   objectType: nil)
 
     return .value(result)
   }

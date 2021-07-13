@@ -616,7 +616,7 @@ public class PyProperty: PyObject {
     get: @escaping (Zelf) -> () -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>
   ) -> PyProperty {
-    return PyProperty(
+    return PyMemory.newProperty(
       get: self.wrapGetter(get: get, castSelf: castSelf),
       set: nil,
       del: nil

@@ -168,7 +168,7 @@ extension PyInstance {
   public func newModule(name: PyObject,
                         doc: PyObject? = nil,
                         dict: PyDict? = nil) -> PyModule {
-    return PyModule(name: name, doc: doc, dict: dict)
+    return PyMemory.newModule(name: name, doc: doc, dict: dict)
   }
 
   public enum ModuleName {
@@ -196,7 +196,7 @@ extension PyInstance {
   // MARK: - Code
 
   public func newCode(code: CodeObject) -> PyCode {
-    return PyCode(code: code)
+    return PyMemory.newCode(code: code)
   }
 
   // MARK: - Frame
@@ -207,12 +207,15 @@ extension PyInstance {
                        locals: PyDict,
                        globals: PyDict,
                        parent: PyFrame?) -> PyFrame {
-    return PyFrame(code: code, locals: locals, globals: globals, parent: parent)
+    return PyMemory.newFrame(code: code,
+                             locals: locals,
+                             globals: globals,
+                             parent: parent)
   }
 
   // MARK: - Cell
 
   public func newCell(content: PyObject?) -> PyCell {
-    return PyCell(content: content)
+    return PyMemory.newCell(content: content)
   }
 }

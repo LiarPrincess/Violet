@@ -53,6 +53,12 @@ implemented_types = (
     'PyMethod',
     'PyClassMethod',
     'PyStaticMethod',
+    'PyProperty',  # Property
+    'PyCode',  # Code/frame
+    'PyFrame',
+    'PyCell',
+    'PyModule',
+    'PySuper',  # Super
 )
 
 

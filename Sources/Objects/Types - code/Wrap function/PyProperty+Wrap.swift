@@ -11,7 +11,7 @@ extension PyProperty {
     castSelf: @escaping FunctionWrapper.CastSelf<Zelf>
   ) -> PyProperty {
     let fget = self.wrapGetter(get: get, castSelf: castSelf)
-    return PyProperty(get: fget, set: nil, del: nil)
+    return PyMemory.newProperty(get: fget, set: nil, del: nil)
   }
 
   /// Getter is a static method.
@@ -21,7 +21,7 @@ extension PyProperty {
     castSelf: @escaping FunctionWrapper.CastSelf<Zelf>
   ) -> PyProperty {
     let fget = self.wrapGetter(get: get, castSelf: castSelf)
-    return PyProperty(get: fget, set: nil, del: nil)
+    return PyMemory.newProperty(get: fget, set: nil, del: nil)
   }
 
   // MARK: - Wrap get/set property
@@ -34,7 +34,7 @@ extension PyProperty {
   ) -> PyProperty {
     let fget = self.wrapGetter(get: get, castSelf: castSelf)
     let fset = self.wrapSetter(set: set, castSelf: castSelf)
-    return PyProperty(get: fget, set: fset, del: nil)
+    return PyMemory.newProperty(get: fget, set: fset, del: nil)
   }
 
   // MARK: - Wrap get/set/del property
@@ -57,7 +57,7 @@ extension PyProperty {
                                       doc: nil,
                                       fn: del)
 
-    return PyProperty(get: fget, set: fset, del: fdel)
+    return PyMemory.newProperty(get: fget, set: fset, del: fdel)
   }
 
   // MARK: - Wrap getter
