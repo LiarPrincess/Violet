@@ -12,9 +12,8 @@ import VioletCore
 // sourcery: pyerrortype = SyntaxError, default, baseType, hasGC, baseExceptionSubclass
 public class PySyntaxError: PyException {
 
-  override internal class var doc: String {
-    return "Invalid syntax."
-  }
+  // sourcery: pytypedoc
+  internal static let syntaxErrorDoc = "Invalid syntax."
 
   override public var description: String {
     return self.createDescription(typeName: "PySyntaxError")

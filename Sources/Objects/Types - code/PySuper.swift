@@ -11,7 +11,8 @@ public class PySuper: PyObject, HasCustomGetMethod {
 
   // MARK: - Doc
 
-  internal static var doc = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     super() -> same as super(__class__, <first argument>)
     super(type) -> unbound super object
     super(type, obj) -> bound super object; requires isinstance(obj, type)

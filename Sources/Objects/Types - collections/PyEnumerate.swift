@@ -11,7 +11,8 @@ import VioletCore
 /// or some other object which supports iteration.
 public class PyEnumerate: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     enumerate(iterable, start=0)
     --
 

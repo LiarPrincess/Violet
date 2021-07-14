@@ -345,7 +345,7 @@ public final class BuiltinTypes {
 
   private func fillBool() {
     let type = self.bool
-    type.setBuiltinTypeDoc(PyBool.doc)
+    type.setBuiltinTypeDoc(PyBool.boolDoc)
     type.flags.set(PyType.defaultFlag)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBool.getClass, castSelf: Self.asBool))
@@ -1512,7 +1512,7 @@ public final class BuiltinTypes {
 
   private func fillInt() {
     let type = self.int
-    type.setBuiltinTypeDoc(PyInt.doc)
+    type.setBuiltinTypeDoc(PyInt.intDoc)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
     type.flags.set(PyType.longSubclassFlag)

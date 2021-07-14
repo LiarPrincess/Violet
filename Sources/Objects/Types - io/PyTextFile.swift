@@ -24,6 +24,7 @@ public class PyTextFile: PyObject {
 
   private static let closeOnDeallocFlag = PyObject.Flags.custom0
 
+  // sourcery: pytypedoc
   internal static let doc = """
     Type used to read/write file-thingies.
 

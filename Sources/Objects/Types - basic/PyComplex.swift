@@ -12,7 +12,8 @@ import VioletCore
 /// This subtype of PyObject represents a Python complex number object.
 public class PyComplex: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     complex(real=0, imag=0)
     --
 

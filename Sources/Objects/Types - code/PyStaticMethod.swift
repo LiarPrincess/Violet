@@ -6,7 +6,8 @@
 // sourcery: pytype = staticmethod, default, baseType, hasGC
 public class PyStaticMethod: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     staticmethod(function) -> method
 
     Convert a function to be a static method.

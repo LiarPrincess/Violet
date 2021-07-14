@@ -25,14 +25,14 @@ extension BigInt {
 /// As such, the normal creation and deletion functions don’t apply to booleans.
 public class PyBool: PyInt {
 
-  override internal class var doc: String { return """
+  // sourcery: pytypedoc
+  internal static let boolDoc = """
     bool(x) -> bool
 
     Returns True when the argument x is true, False otherwise.
     The builtins True and False are the only two instances of the class bool.
     The class bool is a subclass of the class int, and cannot be subclassed
     """
-  }
 
   override public var description: String {
     return "PyBool(\(self.value.isTrue))"

@@ -13,6 +13,12 @@ def is_final(name):
     return True
 
 
+def create_doc_property_name(swift_class_name: str) -> str:
+    result = swift_class_name.replace('Py', '', 1)
+    result = result[0].lower() + result[1:]
+    return result + 'Doc'
+
+
 if __name__ == '__main__':
     print(f'''\
 {generated_warning(__file__)}
@@ -46,6 +52,7 @@ if __name__ == '__main__':
         doc = doc.replace('\n', ' " +\n"')
         final = 'final ' if is_final(name) else ''
         builtins_type_variable = get_builtin_type_property_name(name)
+        doc_property_name = create_doc_property_name(class_name)
 
         print(f'''\
 // MARK: - {name}
@@ -53,9 +60,8 @@ if __name__ == '__main__':
 // sourcery: pyerrortype = {name}, default, baseType, hasGC, baseExceptionSubclass
 public {final}class {class_name}: Py{base} {{
 
-  override internal class var doc: String {{
-    return "{doc}"
-  }}
+  // sourcery: pytypedoc
+  internal static let {doc_property_name} = "{doc}"
 
   override public var description: String {{
     return self.createDescription(typeName: "{class_name}")

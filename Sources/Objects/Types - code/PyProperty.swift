@@ -7,7 +7,8 @@
 /// Native property implemented in Swift.
 public class PyProperty: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     property(fget=None, fset=None, fdel=None, doc=None)
     --
 

@@ -6,7 +6,8 @@
 // sourcery: pytype = classmethod, default, baseType, hasGC
 public class PyClassMethod: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     classmethod(function) -> method
 
     Convert a function to be a class method.

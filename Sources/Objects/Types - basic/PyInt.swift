@@ -16,7 +16,8 @@ internal let LONG_MIN = Int.min // -9223372036854775808
 /// All integers are implemented as “long” integer objects.
 public class PyInt: PyObject {
 
-  internal class var doc: String { return """
+  // sourcery: pytypedoc
+  internal static let intDoc = """
     int([x]) -> integer
     int(x, base=10) -> integer
 
@@ -32,7 +33,6 @@ public class PyInt: PyObject {
     >>> int('0b100', base=0)
     4
     """
-  }
 
   // This has to be `let` because we cache most used ints!
   public let value: BigInt

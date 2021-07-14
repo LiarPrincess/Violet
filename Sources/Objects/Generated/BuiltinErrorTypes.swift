@@ -326,7 +326,7 @@ public final class BuiltinErrorTypes {
 
   private func fillBaseException() {
     let type = self.baseException
-    type.setBuiltinTypeDoc(PyBaseException.doc)
+    type.setBuiltinTypeDoc(PyBaseException.baseExceptionDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -371,7 +371,7 @@ public final class BuiltinErrorTypes {
 
   private func fillSystemExit() {
     let type = self.systemExit
-    type.setBuiltinTypeDoc(PySystemExit.doc)
+    type.setBuiltinTypeDoc(PySystemExit.systemExitDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -405,7 +405,7 @@ public final class BuiltinErrorTypes {
 
   private func fillKeyboardInterrupt() {
     let type = self.keyboardInterrupt
-    type.setBuiltinTypeDoc(PyKeyboardInterrupt.doc)
+    type.setBuiltinTypeDoc(PyKeyboardInterrupt.keyboardInterruptDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -438,7 +438,7 @@ public final class BuiltinErrorTypes {
 
   private func fillGeneratorExit() {
     let type = self.generatorExit
-    type.setBuiltinTypeDoc(PyGeneratorExit.doc)
+    type.setBuiltinTypeDoc(PyGeneratorExit.generatorExitDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -471,7 +471,7 @@ public final class BuiltinErrorTypes {
 
   private func fillException() {
     let type = self.exception
-    type.setBuiltinTypeDoc(PyException.doc)
+    type.setBuiltinTypeDoc(PyException.exceptionDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -504,7 +504,7 @@ public final class BuiltinErrorTypes {
 
   private func fillStopIteration() {
     let type = self.stopIteration
-    type.setBuiltinTypeDoc(PyStopIteration.doc)
+    type.setBuiltinTypeDoc(PyStopIteration.stopIterationDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -538,7 +538,7 @@ public final class BuiltinErrorTypes {
 
   private func fillStopAsyncIteration() {
     let type = self.stopAsyncIteration
-    type.setBuiltinTypeDoc(PyStopAsyncIteration.doc)
+    type.setBuiltinTypeDoc(PyStopAsyncIteration.stopAsyncIterationDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -571,7 +571,7 @@ public final class BuiltinErrorTypes {
 
   private func fillArithmeticError() {
     let type = self.arithmeticError
-    type.setBuiltinTypeDoc(PyArithmeticError.doc)
+    type.setBuiltinTypeDoc(PyArithmeticError.arithmeticErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -604,7 +604,7 @@ public final class BuiltinErrorTypes {
 
   private func fillFloatingPointError() {
     let type = self.floatingPointError
-    type.setBuiltinTypeDoc(PyFloatingPointError.doc)
+    type.setBuiltinTypeDoc(PyFloatingPointError.floatingPointErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -637,7 +637,7 @@ public final class BuiltinErrorTypes {
 
   private func fillOverflowError() {
     let type = self.overflowError
-    type.setBuiltinTypeDoc(PyOverflowError.doc)
+    type.setBuiltinTypeDoc(PyOverflowError.overflowErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -670,7 +670,7 @@ public final class BuiltinErrorTypes {
 
   private func fillZeroDivisionError() {
     let type = self.zeroDivisionError
-    type.setBuiltinTypeDoc(PyZeroDivisionError.doc)
+    type.setBuiltinTypeDoc(PyZeroDivisionError.zeroDivisionErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -703,7 +703,7 @@ public final class BuiltinErrorTypes {
 
   private func fillAssertionError() {
     let type = self.assertionError
-    type.setBuiltinTypeDoc(PyAssertionError.doc)
+    type.setBuiltinTypeDoc(PyAssertionError.assertionErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -736,7 +736,7 @@ public final class BuiltinErrorTypes {
 
   private func fillAttributeError() {
     let type = self.attributeError
-    type.setBuiltinTypeDoc(PyAttributeError.doc)
+    type.setBuiltinTypeDoc(PyAttributeError.attributeErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -769,7 +769,7 @@ public final class BuiltinErrorTypes {
 
   private func fillBufferError() {
     let type = self.bufferError
-    type.setBuiltinTypeDoc(PyBufferError.doc)
+    type.setBuiltinTypeDoc(PyBufferError.bufferErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -802,7 +802,7 @@ public final class BuiltinErrorTypes {
 
   private func fillEOFError() {
     let type = self.eofError
-    type.setBuiltinTypeDoc(PyEOFError.doc)
+    type.setBuiltinTypeDoc(PyEOFError.eOFErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -835,7 +835,7 @@ public final class BuiltinErrorTypes {
 
   private func fillImportError() {
     let type = self.importError
-    type.setBuiltinTypeDoc(PyImportError.doc)
+    type.setBuiltinTypeDoc(PyImportError.importErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -873,7 +873,7 @@ public final class BuiltinErrorTypes {
 
   private func fillModuleNotFoundError() {
     let type = self.moduleNotFoundError
-    type.setBuiltinTypeDoc(PyModuleNotFoundError.doc)
+    type.setBuiltinTypeDoc(PyModuleNotFoundError.moduleNotFoundErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -906,7 +906,7 @@ public final class BuiltinErrorTypes {
 
   private func fillLookupError() {
     let type = self.lookupError
-    type.setBuiltinTypeDoc(PyLookupError.doc)
+    type.setBuiltinTypeDoc(PyLookupError.lookupErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -939,7 +939,7 @@ public final class BuiltinErrorTypes {
 
   private func fillIndexError() {
     let type = self.indexError
-    type.setBuiltinTypeDoc(PyIndexError.doc)
+    type.setBuiltinTypeDoc(PyIndexError.indexErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -972,7 +972,7 @@ public final class BuiltinErrorTypes {
 
   private func fillKeyError() {
     let type = self.keyError
-    type.setBuiltinTypeDoc(PyKeyError.doc)
+    type.setBuiltinTypeDoc(PyKeyError.keyErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1007,7 +1007,7 @@ public final class BuiltinErrorTypes {
 
   private func fillMemoryError() {
     let type = self.memoryError
-    type.setBuiltinTypeDoc(PyMemoryError.doc)
+    type.setBuiltinTypeDoc(PyMemoryError.memoryErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1040,7 +1040,7 @@ public final class BuiltinErrorTypes {
 
   private func fillNameError() {
     let type = self.nameError
-    type.setBuiltinTypeDoc(PyNameError.doc)
+    type.setBuiltinTypeDoc(PyNameError.nameErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1073,7 +1073,7 @@ public final class BuiltinErrorTypes {
 
   private func fillUnboundLocalError() {
     let type = self.unboundLocalError
-    type.setBuiltinTypeDoc(PyUnboundLocalError.doc)
+    type.setBuiltinTypeDoc(PyUnboundLocalError.unboundLocalErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1106,7 +1106,7 @@ public final class BuiltinErrorTypes {
 
   private func fillOSError() {
     let type = self.osError
-    type.setBuiltinTypeDoc(PyOSError.doc)
+    type.setBuiltinTypeDoc(PyOSError.oSErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1139,7 +1139,7 @@ public final class BuiltinErrorTypes {
 
   private func fillBlockingIOError() {
     let type = self.blockingIOError
-    type.setBuiltinTypeDoc(PyBlockingIOError.doc)
+    type.setBuiltinTypeDoc(PyBlockingIOError.blockingIOErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1172,7 +1172,7 @@ public final class BuiltinErrorTypes {
 
   private func fillChildProcessError() {
     let type = self.childProcessError
-    type.setBuiltinTypeDoc(PyChildProcessError.doc)
+    type.setBuiltinTypeDoc(PyChildProcessError.childProcessErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1205,7 +1205,7 @@ public final class BuiltinErrorTypes {
 
   private func fillConnectionError() {
     let type = self.connectionError
-    type.setBuiltinTypeDoc(PyConnectionError.doc)
+    type.setBuiltinTypeDoc(PyConnectionError.connectionErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1238,7 +1238,7 @@ public final class BuiltinErrorTypes {
 
   private func fillBrokenPipeError() {
     let type = self.brokenPipeError
-    type.setBuiltinTypeDoc(PyBrokenPipeError.doc)
+    type.setBuiltinTypeDoc(PyBrokenPipeError.brokenPipeErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1271,7 +1271,7 @@ public final class BuiltinErrorTypes {
 
   private func fillConnectionAbortedError() {
     let type = self.connectionAbortedError
-    type.setBuiltinTypeDoc(PyConnectionAbortedError.doc)
+    type.setBuiltinTypeDoc(PyConnectionAbortedError.connectionAbortedErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1304,7 +1304,7 @@ public final class BuiltinErrorTypes {
 
   private func fillConnectionRefusedError() {
     let type = self.connectionRefusedError
-    type.setBuiltinTypeDoc(PyConnectionRefusedError.doc)
+    type.setBuiltinTypeDoc(PyConnectionRefusedError.connectionRefusedErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1337,7 +1337,7 @@ public final class BuiltinErrorTypes {
 
   private func fillConnectionResetError() {
     let type = self.connectionResetError
-    type.setBuiltinTypeDoc(PyConnectionResetError.doc)
+    type.setBuiltinTypeDoc(PyConnectionResetError.connectionResetErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1370,7 +1370,7 @@ public final class BuiltinErrorTypes {
 
   private func fillFileExistsError() {
     let type = self.fileExistsError
-    type.setBuiltinTypeDoc(PyFileExistsError.doc)
+    type.setBuiltinTypeDoc(PyFileExistsError.fileExistsErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1403,7 +1403,7 @@ public final class BuiltinErrorTypes {
 
   private func fillFileNotFoundError() {
     let type = self.fileNotFoundError
-    type.setBuiltinTypeDoc(PyFileNotFoundError.doc)
+    type.setBuiltinTypeDoc(PyFileNotFoundError.fileNotFoundErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1436,7 +1436,7 @@ public final class BuiltinErrorTypes {
 
   private func fillInterruptedError() {
     let type = self.interruptedError
-    type.setBuiltinTypeDoc(PyInterruptedError.doc)
+    type.setBuiltinTypeDoc(PyInterruptedError.interruptedErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1469,7 +1469,7 @@ public final class BuiltinErrorTypes {
 
   private func fillIsADirectoryError() {
     let type = self.isADirectoryError
-    type.setBuiltinTypeDoc(PyIsADirectoryError.doc)
+    type.setBuiltinTypeDoc(PyIsADirectoryError.isADirectoryErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1502,7 +1502,7 @@ public final class BuiltinErrorTypes {
 
   private func fillNotADirectoryError() {
     let type = self.notADirectoryError
-    type.setBuiltinTypeDoc(PyNotADirectoryError.doc)
+    type.setBuiltinTypeDoc(PyNotADirectoryError.notADirectoryErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1535,7 +1535,7 @@ public final class BuiltinErrorTypes {
 
   private func fillPermissionError() {
     let type = self.permissionError
-    type.setBuiltinTypeDoc(PyPermissionError.doc)
+    type.setBuiltinTypeDoc(PyPermissionError.permissionErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1568,7 +1568,7 @@ public final class BuiltinErrorTypes {
 
   private func fillProcessLookupError() {
     let type = self.processLookupError
-    type.setBuiltinTypeDoc(PyProcessLookupError.doc)
+    type.setBuiltinTypeDoc(PyProcessLookupError.processLookupErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1601,7 +1601,7 @@ public final class BuiltinErrorTypes {
 
   private func fillTimeoutError() {
     let type = self.timeoutError
-    type.setBuiltinTypeDoc(PyTimeoutError.doc)
+    type.setBuiltinTypeDoc(PyTimeoutError.timeoutErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1634,7 +1634,7 @@ public final class BuiltinErrorTypes {
 
   private func fillReferenceError() {
     let type = self.referenceError
-    type.setBuiltinTypeDoc(PyReferenceError.doc)
+    type.setBuiltinTypeDoc(PyReferenceError.referenceErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1667,7 +1667,7 @@ public final class BuiltinErrorTypes {
 
   private func fillRuntimeError() {
     let type = self.runtimeError
-    type.setBuiltinTypeDoc(PyRuntimeError.doc)
+    type.setBuiltinTypeDoc(PyRuntimeError.runtimeErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1700,7 +1700,7 @@ public final class BuiltinErrorTypes {
 
   private func fillNotImplementedError() {
     let type = self.notImplementedError
-    type.setBuiltinTypeDoc(PyNotImplementedError.doc)
+    type.setBuiltinTypeDoc(PyNotImplementedError.notImplementedErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1733,7 +1733,7 @@ public final class BuiltinErrorTypes {
 
   private func fillRecursionError() {
     let type = self.recursionError
-    type.setBuiltinTypeDoc(PyRecursionError.doc)
+    type.setBuiltinTypeDoc(PyRecursionError.recursionErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1766,7 +1766,7 @@ public final class BuiltinErrorTypes {
 
   private func fillSyntaxError() {
     let type = self.syntaxError
-    type.setBuiltinTypeDoc(PySyntaxError.doc)
+    type.setBuiltinTypeDoc(PySyntaxError.syntaxErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1807,7 +1807,7 @@ public final class BuiltinErrorTypes {
 
   private func fillIndentationError() {
     let type = self.indentationError
-    type.setBuiltinTypeDoc(PyIndentationError.doc)
+    type.setBuiltinTypeDoc(PyIndentationError.indentationErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1840,7 +1840,7 @@ public final class BuiltinErrorTypes {
 
   private func fillTabError() {
     let type = self.tabError
-    type.setBuiltinTypeDoc(PyTabError.doc)
+    type.setBuiltinTypeDoc(PyTabError.tabErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1873,7 +1873,7 @@ public final class BuiltinErrorTypes {
 
   private func fillSystemError() {
     let type = self.systemError
-    type.setBuiltinTypeDoc(PySystemError.doc)
+    type.setBuiltinTypeDoc(PySystemError.systemErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1906,7 +1906,7 @@ public final class BuiltinErrorTypes {
 
   private func fillTypeError() {
     let type = self.typeError
-    type.setBuiltinTypeDoc(PyTypeError.doc)
+    type.setBuiltinTypeDoc(PyTypeError.typeErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1939,7 +1939,7 @@ public final class BuiltinErrorTypes {
 
   private func fillValueError() {
     let type = self.valueError
-    type.setBuiltinTypeDoc(PyValueError.doc)
+    type.setBuiltinTypeDoc(PyValueError.valueErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -1972,7 +1972,7 @@ public final class BuiltinErrorTypes {
 
   private func fillUnicodeError() {
     let type = self.unicodeError
-    type.setBuiltinTypeDoc(PyUnicodeError.doc)
+    type.setBuiltinTypeDoc(PyUnicodeError.unicodeErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -2005,7 +2005,7 @@ public final class BuiltinErrorTypes {
 
   private func fillUnicodeDecodeError() {
     let type = self.unicodeDecodeError
-    type.setBuiltinTypeDoc(PyUnicodeDecodeError.doc)
+    type.setBuiltinTypeDoc(PyUnicodeDecodeError.unicodeDecodeErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -2038,7 +2038,7 @@ public final class BuiltinErrorTypes {
 
   private func fillUnicodeEncodeError() {
     let type = self.unicodeEncodeError
-    type.setBuiltinTypeDoc(PyUnicodeEncodeError.doc)
+    type.setBuiltinTypeDoc(PyUnicodeEncodeError.unicodeEncodeErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -2071,7 +2071,7 @@ public final class BuiltinErrorTypes {
 
   private func fillUnicodeTranslateError() {
     let type = self.unicodeTranslateError
-    type.setBuiltinTypeDoc(PyUnicodeTranslateError.doc)
+    type.setBuiltinTypeDoc(PyUnicodeTranslateError.unicodeTranslateErrorDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -2104,7 +2104,7 @@ public final class BuiltinErrorTypes {
 
   private func fillWarning() {
     let type = self.warning
-    type.setBuiltinTypeDoc(PyWarning.doc)
+    type.setBuiltinTypeDoc(PyWarning.warningDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -2137,7 +2137,7 @@ public final class BuiltinErrorTypes {
 
   private func fillDeprecationWarning() {
     let type = self.deprecationWarning
-    type.setBuiltinTypeDoc(PyDeprecationWarning.doc)
+    type.setBuiltinTypeDoc(PyDeprecationWarning.deprecationWarningDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -2170,7 +2170,7 @@ public final class BuiltinErrorTypes {
 
   private func fillPendingDeprecationWarning() {
     let type = self.pendingDeprecationWarning
-    type.setBuiltinTypeDoc(PyPendingDeprecationWarning.doc)
+    type.setBuiltinTypeDoc(PyPendingDeprecationWarning.pendingDeprecationWarningDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -2203,7 +2203,7 @@ public final class BuiltinErrorTypes {
 
   private func fillRuntimeWarning() {
     let type = self.runtimeWarning
-    type.setBuiltinTypeDoc(PyRuntimeWarning.doc)
+    type.setBuiltinTypeDoc(PyRuntimeWarning.runtimeWarningDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -2236,7 +2236,7 @@ public final class BuiltinErrorTypes {
 
   private func fillSyntaxWarning() {
     let type = self.syntaxWarning
-    type.setBuiltinTypeDoc(PySyntaxWarning.doc)
+    type.setBuiltinTypeDoc(PySyntaxWarning.syntaxWarningDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -2269,7 +2269,7 @@ public final class BuiltinErrorTypes {
 
   private func fillUserWarning() {
     let type = self.userWarning
-    type.setBuiltinTypeDoc(PyUserWarning.doc)
+    type.setBuiltinTypeDoc(PyUserWarning.userWarningDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -2302,7 +2302,7 @@ public final class BuiltinErrorTypes {
 
   private func fillFutureWarning() {
     let type = self.futureWarning
-    type.setBuiltinTypeDoc(PyFutureWarning.doc)
+    type.setBuiltinTypeDoc(PyFutureWarning.futureWarningDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -2335,7 +2335,7 @@ public final class BuiltinErrorTypes {
 
   private func fillImportWarning() {
     let type = self.importWarning
-    type.setBuiltinTypeDoc(PyImportWarning.doc)
+    type.setBuiltinTypeDoc(PyImportWarning.importWarningDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -2368,7 +2368,7 @@ public final class BuiltinErrorTypes {
 
   private func fillUnicodeWarning() {
     let type = self.unicodeWarning
-    type.setBuiltinTypeDoc(PyUnicodeWarning.doc)
+    type.setBuiltinTypeDoc(PyUnicodeWarning.unicodeWarningDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -2401,7 +2401,7 @@ public final class BuiltinErrorTypes {
 
   private func fillBytesWarning() {
     let type = self.bytesWarning
-    type.setBuiltinTypeDoc(PyBytesWarning.doc)
+    type.setBuiltinTypeDoc(PyBytesWarning.bytesWarningDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)
@@ -2434,7 +2434,7 @@ public final class BuiltinErrorTypes {
 
   private func fillResourceWarning() {
     let type = self.resourceWarning
-    type.setBuiltinTypeDoc(PyResourceWarning.doc)
+    type.setBuiltinTypeDoc(PyResourceWarning.resourceWarningDoc)
     type.flags.set(PyType.baseExceptionSubclassFlag)
     type.flags.set(PyType.baseTypeFlag)
     type.flags.set(PyType.defaultFlag)

@@ -7,6 +7,7 @@ import VioletCore
 // sourcery: pytype = traceback, default, hasGC
 public class PyTraceback: PyObject {
 
+  // sourcery: pytypedoc
   internal static let doc = """
     TracebackType(tb_next, tb_frame, tb_lasti, tb_lineno)
     --

@@ -11,6 +11,7 @@ import VioletCore
 // sourcery: pytype = bytes, default, baseType, bytesSubclass
 public class PyBytes: PyObject, AbstractBytes {
 
+  // sourcery: pytypedoc
   internal static let doc = """
     bytes(iterable_of_ints) -> bytes
     bytes(string, encoding[, errors]) -> bytes

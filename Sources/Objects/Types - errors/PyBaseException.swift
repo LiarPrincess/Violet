@@ -13,9 +13,8 @@ public class PyBaseException: PyObject {
 
   private static let suppressContextFlag = PyObject.Flags.custom0
 
-  internal class var doc: String {
-    return "Common base class for all exceptions"
-  }
+  // sourcery: pytypedoc
+  internal static let baseExceptionDoc = "Common base class for all exceptions"
 
   private var args: PyTuple
   private var traceback: PyTraceback?

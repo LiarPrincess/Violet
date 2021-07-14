@@ -6,7 +6,8 @@ import VioletCore
 // sourcery: pytype = map, default, hasGC, baseType
 public class PyMap: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     map(func, *iterables) --> map object
 
     Make an iterator that computes the function using arguments from

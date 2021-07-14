@@ -15,6 +15,7 @@ import UnicodeData
 /// Strings are immutable sequences of Unicode code points.
 public class PyString: PyObject, AbstractString {
 
+  // sourcery: pytypedoc
   internal static let doc = """
     str(object='') -> str
     str(bytes_or_buffer[, encoding[, errors]]) -> str

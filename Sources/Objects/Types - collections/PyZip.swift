@@ -6,7 +6,8 @@ import VioletCore
 // sourcery: pytype = zip, default, hasGC, baseType
 public class PyZip: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     zip(iter1 [,iter2 [...]]) --> zip object
 
     Return a zip object whose .__next__() method returns a tuple where

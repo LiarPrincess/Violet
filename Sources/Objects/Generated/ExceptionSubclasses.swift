@@ -18,9 +18,8 @@
 // sourcery: pyerrortype = KeyboardInterrupt, default, baseType, hasGC, baseExceptionSubclass
 public final class PyKeyboardInterrupt: PyBaseException {
 
-  override internal class var doc: String {
-    return "Program interrupted by user."
-  }
+  // sourcery: pytypedoc
+  internal static let keyboardInterruptDoc = "Program interrupted by user."
 
   override public var description: String {
     return self.createDescription(typeName: "PyKeyboardInterrupt")
@@ -65,9 +64,8 @@ public final class PyKeyboardInterrupt: PyBaseException {
 // sourcery: pyerrortype = GeneratorExit, default, baseType, hasGC, baseExceptionSubclass
 public final class PyGeneratorExit: PyBaseException {
 
-  override internal class var doc: String {
-    return "Request that a generator exit."
-  }
+  // sourcery: pytypedoc
+  internal static let generatorExitDoc = "Request that a generator exit."
 
   override public var description: String {
     return self.createDescription(typeName: "PyGeneratorExit")
@@ -112,9 +110,8 @@ public final class PyGeneratorExit: PyBaseException {
 // sourcery: pyerrortype = Exception, default, baseType, hasGC, baseExceptionSubclass
 public class PyException: PyBaseException {
 
-  override internal class var doc: String {
-    return "Common base class for all non-exit exceptions."
-  }
+  // sourcery: pytypedoc
+  internal static let exceptionDoc = "Common base class for all non-exit exceptions."
 
   override public var description: String {
     return self.createDescription(typeName: "PyException")
@@ -159,9 +156,8 @@ public class PyException: PyBaseException {
 // sourcery: pyerrortype = StopAsyncIteration, default, baseType, hasGC, baseExceptionSubclass
 public final class PyStopAsyncIteration: PyException {
 
-  override internal class var doc: String {
-    return "Signal the end from iterator.__anext__()."
-  }
+  // sourcery: pytypedoc
+  internal static let stopAsyncIterationDoc = "Signal the end from iterator.__anext__()."
 
   override public var description: String {
     return self.createDescription(typeName: "PyStopAsyncIteration")
@@ -206,9 +202,8 @@ public final class PyStopAsyncIteration: PyException {
 // sourcery: pyerrortype = ArithmeticError, default, baseType, hasGC, baseExceptionSubclass
 public class PyArithmeticError: PyException {
 
-  override internal class var doc: String {
-    return "Base class for arithmetic errors."
-  }
+  // sourcery: pytypedoc
+  internal static let arithmeticErrorDoc = "Base class for arithmetic errors."
 
   override public var description: String {
     return self.createDescription(typeName: "PyArithmeticError")
@@ -253,9 +248,8 @@ public class PyArithmeticError: PyException {
 // sourcery: pyerrortype = FloatingPointError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyFloatingPointError: PyArithmeticError {
 
-  override internal class var doc: String {
-    return "Floating point operation failed."
-  }
+  // sourcery: pytypedoc
+  internal static let floatingPointErrorDoc = "Floating point operation failed."
 
   override public var description: String {
     return self.createDescription(typeName: "PyFloatingPointError")
@@ -300,9 +294,8 @@ public final class PyFloatingPointError: PyArithmeticError {
 // sourcery: pyerrortype = OverflowError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyOverflowError: PyArithmeticError {
 
-  override internal class var doc: String {
-    return "Result too large to be represented."
-  }
+  // sourcery: pytypedoc
+  internal static let overflowErrorDoc = "Result too large to be represented."
 
   override public var description: String {
     return self.createDescription(typeName: "PyOverflowError")
@@ -347,9 +340,8 @@ public final class PyOverflowError: PyArithmeticError {
 // sourcery: pyerrortype = ZeroDivisionError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyZeroDivisionError: PyArithmeticError {
 
-  override internal class var doc: String {
-    return "Second argument to a division or modulo operation was zero."
-  }
+  // sourcery: pytypedoc
+  internal static let zeroDivisionErrorDoc = "Second argument to a division or modulo operation was zero."
 
   override public var description: String {
     return self.createDescription(typeName: "PyZeroDivisionError")
@@ -394,9 +386,8 @@ public final class PyZeroDivisionError: PyArithmeticError {
 // sourcery: pyerrortype = AssertionError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyAssertionError: PyException {
 
-  override internal class var doc: String {
-    return "Assertion failed."
-  }
+  // sourcery: pytypedoc
+  internal static let assertionErrorDoc = "Assertion failed."
 
   override public var description: String {
     return self.createDescription(typeName: "PyAssertionError")
@@ -441,9 +432,8 @@ public final class PyAssertionError: PyException {
 // sourcery: pyerrortype = AttributeError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyAttributeError: PyException {
 
-  override internal class var doc: String {
-    return "Attribute not found."
-  }
+  // sourcery: pytypedoc
+  internal static let attributeErrorDoc = "Attribute not found."
 
   override public var description: String {
     return self.createDescription(typeName: "PyAttributeError")
@@ -488,9 +478,8 @@ public final class PyAttributeError: PyException {
 // sourcery: pyerrortype = BufferError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyBufferError: PyException {
 
-  override internal class var doc: String {
-    return "Buffer error."
-  }
+  // sourcery: pytypedoc
+  internal static let bufferErrorDoc = "Buffer error."
 
   override public var description: String {
     return self.createDescription(typeName: "PyBufferError")
@@ -535,9 +524,8 @@ public final class PyBufferError: PyException {
 // sourcery: pyerrortype = EOFError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyEOFError: PyException {
 
-  override internal class var doc: String {
-    return "Read beyond end of file."
-  }
+  // sourcery: pytypedoc
+  internal static let eOFErrorDoc = "Read beyond end of file."
 
   override public var description: String {
     return self.createDescription(typeName: "PyEOFError")
@@ -582,9 +570,8 @@ public final class PyEOFError: PyException {
 // sourcery: pyerrortype = ModuleNotFoundError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyModuleNotFoundError: PyImportError {
 
-  override internal class var doc: String {
-    return "Module not found."
-  }
+  // sourcery: pytypedoc
+  internal static let moduleNotFoundErrorDoc = "Module not found."
 
   override public var description: String {
     return self.createDescription(typeName: "PyModuleNotFoundError")
@@ -629,9 +616,8 @@ public final class PyModuleNotFoundError: PyImportError {
 // sourcery: pyerrortype = LookupError, default, baseType, hasGC, baseExceptionSubclass
 public class PyLookupError: PyException {
 
-  override internal class var doc: String {
-    return "Base class for lookup errors."
-  }
+  // sourcery: pytypedoc
+  internal static let lookupErrorDoc = "Base class for lookup errors."
 
   override public var description: String {
     return self.createDescription(typeName: "PyLookupError")
@@ -676,9 +662,8 @@ public class PyLookupError: PyException {
 // sourcery: pyerrortype = IndexError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyIndexError: PyLookupError {
 
-  override internal class var doc: String {
-    return "Sequence index out of range."
-  }
+  // sourcery: pytypedoc
+  internal static let indexErrorDoc = "Sequence index out of range."
 
   override public var description: String {
     return self.createDescription(typeName: "PyIndexError")
@@ -723,9 +708,8 @@ public final class PyIndexError: PyLookupError {
 // sourcery: pyerrortype = MemoryError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyMemoryError: PyException {
 
-  override internal class var doc: String {
-    return "Out of memory."
-  }
+  // sourcery: pytypedoc
+  internal static let memoryErrorDoc = "Out of memory."
 
   override public var description: String {
     return self.createDescription(typeName: "PyMemoryError")
@@ -770,9 +754,8 @@ public final class PyMemoryError: PyException {
 // sourcery: pyerrortype = NameError, default, baseType, hasGC, baseExceptionSubclass
 public class PyNameError: PyException {
 
-  override internal class var doc: String {
-    return "Name not found globally."
-  }
+  // sourcery: pytypedoc
+  internal static let nameErrorDoc = "Name not found globally."
 
   override public var description: String {
     return self.createDescription(typeName: "PyNameError")
@@ -817,9 +800,8 @@ public class PyNameError: PyException {
 // sourcery: pyerrortype = UnboundLocalError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyUnboundLocalError: PyNameError {
 
-  override internal class var doc: String {
-    return "Local name referenced but not bound to a value."
-  }
+  // sourcery: pytypedoc
+  internal static let unboundLocalErrorDoc = "Local name referenced but not bound to a value."
 
   override public var description: String {
     return self.createDescription(typeName: "PyUnboundLocalError")
@@ -864,9 +846,8 @@ public final class PyUnboundLocalError: PyNameError {
 // sourcery: pyerrortype = OSError, default, baseType, hasGC, baseExceptionSubclass
 public class PyOSError: PyException {
 
-  override internal class var doc: String {
-    return "Base class for I/O related errors."
-  }
+  // sourcery: pytypedoc
+  internal static let oSErrorDoc = "Base class for I/O related errors."
 
   override public var description: String {
     return self.createDescription(typeName: "PyOSError")
@@ -911,9 +892,8 @@ public class PyOSError: PyException {
 // sourcery: pyerrortype = BlockingIOError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyBlockingIOError: PyOSError {
 
-  override internal class var doc: String {
-    return "I/O operation would block."
-  }
+  // sourcery: pytypedoc
+  internal static let blockingIOErrorDoc = "I/O operation would block."
 
   override public var description: String {
     return self.createDescription(typeName: "PyBlockingIOError")
@@ -958,9 +938,8 @@ public final class PyBlockingIOError: PyOSError {
 // sourcery: pyerrortype = ChildProcessError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyChildProcessError: PyOSError {
 
-  override internal class var doc: String {
-    return "Child process error."
-  }
+  // sourcery: pytypedoc
+  internal static let childProcessErrorDoc = "Child process error."
 
   override public var description: String {
     return self.createDescription(typeName: "PyChildProcessError")
@@ -1005,9 +984,8 @@ public final class PyChildProcessError: PyOSError {
 // sourcery: pyerrortype = ConnectionError, default, baseType, hasGC, baseExceptionSubclass
 public class PyConnectionError: PyOSError {
 
-  override internal class var doc: String {
-    return "Connection error."
-  }
+  // sourcery: pytypedoc
+  internal static let connectionErrorDoc = "Connection error."
 
   override public var description: String {
     return self.createDescription(typeName: "PyConnectionError")
@@ -1052,9 +1030,8 @@ public class PyConnectionError: PyOSError {
 // sourcery: pyerrortype = BrokenPipeError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyBrokenPipeError: PyConnectionError {
 
-  override internal class var doc: String {
-    return "Broken pipe."
-  }
+  // sourcery: pytypedoc
+  internal static let brokenPipeErrorDoc = "Broken pipe."
 
   override public var description: String {
     return self.createDescription(typeName: "PyBrokenPipeError")
@@ -1099,9 +1076,8 @@ public final class PyBrokenPipeError: PyConnectionError {
 // sourcery: pyerrortype = ConnectionAbortedError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyConnectionAbortedError: PyConnectionError {
 
-  override internal class var doc: String {
-    return "Connection aborted."
-  }
+  // sourcery: pytypedoc
+  internal static let connectionAbortedErrorDoc = "Connection aborted."
 
   override public var description: String {
     return self.createDescription(typeName: "PyConnectionAbortedError")
@@ -1146,9 +1122,8 @@ public final class PyConnectionAbortedError: PyConnectionError {
 // sourcery: pyerrortype = ConnectionRefusedError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyConnectionRefusedError: PyConnectionError {
 
-  override internal class var doc: String {
-    return "Connection refused."
-  }
+  // sourcery: pytypedoc
+  internal static let connectionRefusedErrorDoc = "Connection refused."
 
   override public var description: String {
     return self.createDescription(typeName: "PyConnectionRefusedError")
@@ -1193,9 +1168,8 @@ public final class PyConnectionRefusedError: PyConnectionError {
 // sourcery: pyerrortype = ConnectionResetError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyConnectionResetError: PyConnectionError {
 
-  override internal class var doc: String {
-    return "Connection reset."
-  }
+  // sourcery: pytypedoc
+  internal static let connectionResetErrorDoc = "Connection reset."
 
   override public var description: String {
     return self.createDescription(typeName: "PyConnectionResetError")
@@ -1240,9 +1214,8 @@ public final class PyConnectionResetError: PyConnectionError {
 // sourcery: pyerrortype = FileExistsError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyFileExistsError: PyOSError {
 
-  override internal class var doc: String {
-    return "File already exists."
-  }
+  // sourcery: pytypedoc
+  internal static let fileExistsErrorDoc = "File already exists."
 
   override public var description: String {
     return self.createDescription(typeName: "PyFileExistsError")
@@ -1287,9 +1260,8 @@ public final class PyFileExistsError: PyOSError {
 // sourcery: pyerrortype = FileNotFoundError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyFileNotFoundError: PyOSError {
 
-  override internal class var doc: String {
-    return "File not found."
-  }
+  // sourcery: pytypedoc
+  internal static let fileNotFoundErrorDoc = "File not found."
 
   override public var description: String {
     return self.createDescription(typeName: "PyFileNotFoundError")
@@ -1334,9 +1306,8 @@ public final class PyFileNotFoundError: PyOSError {
 // sourcery: pyerrortype = InterruptedError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyInterruptedError: PyOSError {
 
-  override internal class var doc: String {
-    return "Interrupted by signal."
-  }
+  // sourcery: pytypedoc
+  internal static let interruptedErrorDoc = "Interrupted by signal."
 
   override public var description: String {
     return self.createDescription(typeName: "PyInterruptedError")
@@ -1381,9 +1352,8 @@ public final class PyInterruptedError: PyOSError {
 // sourcery: pyerrortype = IsADirectoryError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyIsADirectoryError: PyOSError {
 
-  override internal class var doc: String {
-    return "Operation doesn't work on directories."
-  }
+  // sourcery: pytypedoc
+  internal static let isADirectoryErrorDoc = "Operation doesn't work on directories."
 
   override public var description: String {
     return self.createDescription(typeName: "PyIsADirectoryError")
@@ -1428,9 +1398,8 @@ public final class PyIsADirectoryError: PyOSError {
 // sourcery: pyerrortype = NotADirectoryError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyNotADirectoryError: PyOSError {
 
-  override internal class var doc: String {
-    return "Operation only works on directories."
-  }
+  // sourcery: pytypedoc
+  internal static let notADirectoryErrorDoc = "Operation only works on directories."
 
   override public var description: String {
     return self.createDescription(typeName: "PyNotADirectoryError")
@@ -1475,9 +1444,8 @@ public final class PyNotADirectoryError: PyOSError {
 // sourcery: pyerrortype = PermissionError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyPermissionError: PyOSError {
 
-  override internal class var doc: String {
-    return "Not enough permissions."
-  }
+  // sourcery: pytypedoc
+  internal static let permissionErrorDoc = "Not enough permissions."
 
   override public var description: String {
     return self.createDescription(typeName: "PyPermissionError")
@@ -1522,9 +1490,8 @@ public final class PyPermissionError: PyOSError {
 // sourcery: pyerrortype = ProcessLookupError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyProcessLookupError: PyOSError {
 
-  override internal class var doc: String {
-    return "Process not found."
-  }
+  // sourcery: pytypedoc
+  internal static let processLookupErrorDoc = "Process not found."
 
   override public var description: String {
     return self.createDescription(typeName: "PyProcessLookupError")
@@ -1569,9 +1536,8 @@ public final class PyProcessLookupError: PyOSError {
 // sourcery: pyerrortype = TimeoutError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyTimeoutError: PyOSError {
 
-  override internal class var doc: String {
-    return "Timeout expired."
-  }
+  // sourcery: pytypedoc
+  internal static let timeoutErrorDoc = "Timeout expired."
 
   override public var description: String {
     return self.createDescription(typeName: "PyTimeoutError")
@@ -1616,9 +1582,8 @@ public final class PyTimeoutError: PyOSError {
 // sourcery: pyerrortype = ReferenceError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyReferenceError: PyException {
 
-  override internal class var doc: String {
-    return "Weak ref proxy used after referent went away."
-  }
+  // sourcery: pytypedoc
+  internal static let referenceErrorDoc = "Weak ref proxy used after referent went away."
 
   override public var description: String {
     return self.createDescription(typeName: "PyReferenceError")
@@ -1663,9 +1628,8 @@ public final class PyReferenceError: PyException {
 // sourcery: pyerrortype = RuntimeError, default, baseType, hasGC, baseExceptionSubclass
 public class PyRuntimeError: PyException {
 
-  override internal class var doc: String {
-    return "Unspecified run-time error."
-  }
+  // sourcery: pytypedoc
+  internal static let runtimeErrorDoc = "Unspecified run-time error."
 
   override public var description: String {
     return self.createDescription(typeName: "PyRuntimeError")
@@ -1710,9 +1674,8 @@ public class PyRuntimeError: PyException {
 // sourcery: pyerrortype = NotImplementedError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyNotImplementedError: PyRuntimeError {
 
-  override internal class var doc: String {
-    return "Method or function hasn't been implemented yet."
-  }
+  // sourcery: pytypedoc
+  internal static let notImplementedErrorDoc = "Method or function hasn't been implemented yet."
 
   override public var description: String {
     return self.createDescription(typeName: "PyNotImplementedError")
@@ -1757,9 +1720,8 @@ public final class PyNotImplementedError: PyRuntimeError {
 // sourcery: pyerrortype = RecursionError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyRecursionError: PyRuntimeError {
 
-  override internal class var doc: String {
-    return "Recursion limit exceeded."
-  }
+  // sourcery: pytypedoc
+  internal static let recursionErrorDoc = "Recursion limit exceeded."
 
   override public var description: String {
     return self.createDescription(typeName: "PyRecursionError")
@@ -1804,9 +1766,8 @@ public final class PyRecursionError: PyRuntimeError {
 // sourcery: pyerrortype = IndentationError, default, baseType, hasGC, baseExceptionSubclass
 public class PyIndentationError: PySyntaxError {
 
-  override internal class var doc: String {
-    return "Improper indentation."
-  }
+  // sourcery: pytypedoc
+  internal static let indentationErrorDoc = "Improper indentation."
 
   override public var description: String {
     return self.createDescription(typeName: "PyIndentationError")
@@ -1851,9 +1812,8 @@ public class PyIndentationError: PySyntaxError {
 // sourcery: pyerrortype = TabError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyTabError: PyIndentationError {
 
-  override internal class var doc: String {
-    return "Improper mixture of spaces and tabs."
-  }
+  // sourcery: pytypedoc
+  internal static let tabErrorDoc = "Improper mixture of spaces and tabs."
 
   override public var description: String {
     return self.createDescription(typeName: "PyTabError")
@@ -1898,12 +1858,11 @@ public final class PyTabError: PyIndentationError {
 // sourcery: pyerrortype = SystemError, default, baseType, hasGC, baseExceptionSubclass
 public final class PySystemError: PyException {
 
-  override internal class var doc: String {
-    return "Internal error in the Python interpreter. " +
+  // sourcery: pytypedoc
+  internal static let systemErrorDoc = "Internal error in the Python interpreter. " +
 " " +
 "Please report this to the Python maintainer, along with the traceback, " +
 "the Python version, and the hardware/OS platform and version."
-  }
 
   override public var description: String {
     return self.createDescription(typeName: "PySystemError")
@@ -1948,9 +1907,8 @@ public final class PySystemError: PyException {
 // sourcery: pyerrortype = TypeError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyTypeError: PyException {
 
-  override internal class var doc: String {
-    return "Inappropriate argument type."
-  }
+  // sourcery: pytypedoc
+  internal static let typeErrorDoc = "Inappropriate argument type."
 
   override public var description: String {
     return self.createDescription(typeName: "PyTypeError")
@@ -1995,9 +1953,8 @@ public final class PyTypeError: PyException {
 // sourcery: pyerrortype = ValueError, default, baseType, hasGC, baseExceptionSubclass
 public class PyValueError: PyException {
 
-  override internal class var doc: String {
-    return "Inappropriate argument value (of correct type)."
-  }
+  // sourcery: pytypedoc
+  internal static let valueErrorDoc = "Inappropriate argument value (of correct type)."
 
   override public var description: String {
     return self.createDescription(typeName: "PyValueError")
@@ -2042,9 +1999,8 @@ public class PyValueError: PyException {
 // sourcery: pyerrortype = UnicodeError, default, baseType, hasGC, baseExceptionSubclass
 public class PyUnicodeError: PyValueError {
 
-  override internal class var doc: String {
-    return "Unicode related error."
-  }
+  // sourcery: pytypedoc
+  internal static let unicodeErrorDoc = "Unicode related error."
 
   override public var description: String {
     return self.createDescription(typeName: "PyUnicodeError")
@@ -2089,9 +2045,8 @@ public class PyUnicodeError: PyValueError {
 // sourcery: pyerrortype = UnicodeDecodeError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyUnicodeDecodeError: PyUnicodeError {
 
-  override internal class var doc: String {
-    return "Unicode decoding error."
-  }
+  // sourcery: pytypedoc
+  internal static let unicodeDecodeErrorDoc = "Unicode decoding error."
 
   override public var description: String {
     return self.createDescription(typeName: "PyUnicodeDecodeError")
@@ -2136,9 +2091,8 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
 // sourcery: pyerrortype = UnicodeEncodeError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyUnicodeEncodeError: PyUnicodeError {
 
-  override internal class var doc: String {
-    return "Unicode encoding error."
-  }
+  // sourcery: pytypedoc
+  internal static let unicodeEncodeErrorDoc = "Unicode encoding error."
 
   override public var description: String {
     return self.createDescription(typeName: "PyUnicodeEncodeError")
@@ -2183,9 +2137,8 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
 // sourcery: pyerrortype = UnicodeTranslateError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyUnicodeTranslateError: PyUnicodeError {
 
-  override internal class var doc: String {
-    return "Unicode translation error."
-  }
+  // sourcery: pytypedoc
+  internal static let unicodeTranslateErrorDoc = "Unicode translation error."
 
   override public var description: String {
     return self.createDescription(typeName: "PyUnicodeTranslateError")
@@ -2230,9 +2183,8 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
 // sourcery: pyerrortype = Warning, default, baseType, hasGC, baseExceptionSubclass
 public class PyWarning: PyException {
 
-  override internal class var doc: String {
-    return "Base class for warning categories."
-  }
+  // sourcery: pytypedoc
+  internal static let warningDoc = "Base class for warning categories."
 
   override public var description: String {
     return self.createDescription(typeName: "PyWarning")
@@ -2277,9 +2229,8 @@ public class PyWarning: PyException {
 // sourcery: pyerrortype = DeprecationWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyDeprecationWarning: PyWarning {
 
-  override internal class var doc: String {
-    return "Base class for warnings about deprecated features."
-  }
+  // sourcery: pytypedoc
+  internal static let deprecationWarningDoc = "Base class for warnings about deprecated features."
 
   override public var description: String {
     return self.createDescription(typeName: "PyDeprecationWarning")
@@ -2324,10 +2275,9 @@ public final class PyDeprecationWarning: PyWarning {
 // sourcery: pyerrortype = PendingDeprecationWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyPendingDeprecationWarning: PyWarning {
 
-  override internal class var doc: String {
-    return "Base class for warnings about features which will be deprecated " +
+  // sourcery: pytypedoc
+  internal static let pendingDeprecationWarningDoc = "Base class for warnings about features which will be deprecated " +
 "in the future."
-  }
 
   override public var description: String {
     return self.createDescription(typeName: "PyPendingDeprecationWarning")
@@ -2372,9 +2322,8 @@ public final class PyPendingDeprecationWarning: PyWarning {
 // sourcery: pyerrortype = RuntimeWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyRuntimeWarning: PyWarning {
 
-  override internal class var doc: String {
-    return "Base class for warnings about dubious runtime behavior."
-  }
+  // sourcery: pytypedoc
+  internal static let runtimeWarningDoc = "Base class for warnings about dubious runtime behavior."
 
   override public var description: String {
     return self.createDescription(typeName: "PyRuntimeWarning")
@@ -2419,9 +2368,8 @@ public final class PyRuntimeWarning: PyWarning {
 // sourcery: pyerrortype = SyntaxWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PySyntaxWarning: PyWarning {
 
-  override internal class var doc: String {
-    return "Base class for warnings about dubious syntax."
-  }
+  // sourcery: pytypedoc
+  internal static let syntaxWarningDoc = "Base class for warnings about dubious syntax."
 
   override public var description: String {
     return self.createDescription(typeName: "PySyntaxWarning")
@@ -2466,9 +2414,8 @@ public final class PySyntaxWarning: PyWarning {
 // sourcery: pyerrortype = UserWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyUserWarning: PyWarning {
 
-  override internal class var doc: String {
-    return "Base class for warnings generated by user code."
-  }
+  // sourcery: pytypedoc
+  internal static let userWarningDoc = "Base class for warnings generated by user code."
 
   override public var description: String {
     return self.createDescription(typeName: "PyUserWarning")
@@ -2513,10 +2460,9 @@ public final class PyUserWarning: PyWarning {
 // sourcery: pyerrortype = FutureWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyFutureWarning: PyWarning {
 
-  override internal class var doc: String {
-    return "Base class for warnings about constructs that will change semantically " +
+  // sourcery: pytypedoc
+  internal static let futureWarningDoc = "Base class for warnings about constructs that will change semantically " +
 "in the future."
-  }
 
   override public var description: String {
     return self.createDescription(typeName: "PyFutureWarning")
@@ -2561,9 +2507,8 @@ public final class PyFutureWarning: PyWarning {
 // sourcery: pyerrortype = ImportWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyImportWarning: PyWarning {
 
-  override internal class var doc: String {
-    return "Base class for warnings about probable mistakes in module imports"
-  }
+  // sourcery: pytypedoc
+  internal static let importWarningDoc = "Base class for warnings about probable mistakes in module imports"
 
   override public var description: String {
     return self.createDescription(typeName: "PyImportWarning")
@@ -2608,10 +2553,9 @@ public final class PyImportWarning: PyWarning {
 // sourcery: pyerrortype = UnicodeWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyUnicodeWarning: PyWarning {
 
-  override internal class var doc: String {
-    return "Base class for warnings about Unicode related problems, mostly " +
+  // sourcery: pytypedoc
+  internal static let unicodeWarningDoc = "Base class for warnings about Unicode related problems, mostly " +
 "related to conversion problems."
-  }
 
   override public var description: String {
     return self.createDescription(typeName: "PyUnicodeWarning")
@@ -2656,10 +2600,9 @@ public final class PyUnicodeWarning: PyWarning {
 // sourcery: pyerrortype = BytesWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyBytesWarning: PyWarning {
 
-  override internal class var doc: String {
-    return "Base class for warnings about bytes and buffer related problems, mostly " +
+  // sourcery: pytypedoc
+  internal static let bytesWarningDoc = "Base class for warnings about bytes and buffer related problems, mostly " +
 "related to conversion from str or comparing to str."
-  }
 
   override public var description: String {
     return self.createDescription(typeName: "PyBytesWarning")
@@ -2704,9 +2647,8 @@ public final class PyBytesWarning: PyWarning {
 // sourcery: pyerrortype = ResourceWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyResourceWarning: PyWarning {
 
-  override internal class var doc: String {
-    return "Base class for warnings about resource usage."
-  }
+  // sourcery: pytypedoc
+  internal static let resourceWarningDoc = "Base class for warnings about resource usage."
 
   override public var description: String {
     return self.createDescription(typeName: "PyResourceWarning")

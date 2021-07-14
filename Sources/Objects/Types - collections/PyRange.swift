@@ -14,7 +14,8 @@ import VioletCore
 /// and is commonly used for looping a specific number of times in for loops.
 public class PyRange: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     range(stop) -> range object
     range(start, stop[, step]) -> range object
 

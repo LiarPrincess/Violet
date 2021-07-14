@@ -11,7 +11,8 @@ import VioletCore
 /// (root of `Python` type hierarchy).
 internal enum PyObjectType {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     object()
     --
 

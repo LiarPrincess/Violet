@@ -23,8 +23,8 @@ Annotation|{{name}}
 {# === Doc === #}
 
 {% macro print_doc type %}
-{% for variable in type.staticVariables where variable.name == "doc" %}
-Doc|doc
+{% for variable in type.staticVariables|annotated:"pytypedoc" %}
+Doc|{{variable.name}}
 {% endfor %}
 {% endmacro %}
 

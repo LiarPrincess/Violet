@@ -9,7 +9,8 @@ import VioletCore
 /// Return a reverse iterator over the values of the given sequence.
 public class PyReversed: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     reversed(sequence, /)
     --
 

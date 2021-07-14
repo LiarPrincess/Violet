@@ -15,9 +15,8 @@ public class PyCode: PyObject {
 
   // MARK: - Basic properties
 
-  internal static let doc: String = """
-    Create a code object. Not for the faint of heart.
-    """
+  // sourcery: pytypedoc
+  internal static let doc = "Create a code object. Not for the faint of heart."
 
   override public var description: String {
     let name = self.qualifiedName.value

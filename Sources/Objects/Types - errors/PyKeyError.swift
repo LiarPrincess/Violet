@@ -9,9 +9,8 @@ import VioletCore
 // sourcery: pyerrortype = KeyError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyKeyError: PyLookupError {
 
-  override internal class var doc: String {
-    return "Mapping key not found."
-  }
+  // sourcery: pytypedoc
+  internal static let keyErrorDoc = "Mapping key not found."
 
   override public var description: String {
     return self.createDescription(typeName: "PyKeyError")

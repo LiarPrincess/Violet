@@ -6,7 +6,8 @@
 // sourcery: pytype = module, default, hasGC, baseType
 public class PyModule: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     module(name, doc=None)
     --
 

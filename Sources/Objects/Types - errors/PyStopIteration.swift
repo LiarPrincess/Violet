@@ -9,9 +9,8 @@ import VioletCore
 // sourcery: pyerrortype = StopIteration, default, baseType, hasGC, baseExceptionSubclass
 public final class PyStopIteration: PyException {
 
-  override internal class var doc: String {
-    return "Signal the end from iterator.__next__()."
-  }
+  // sourcery: pytypedoc
+  internal static let stopIterationDoc = "Signal the end from iterator.__next__()."
 
   override public var description: String {
     return self.createDescription(typeName: "PyStopIteration")

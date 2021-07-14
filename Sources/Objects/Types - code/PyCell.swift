@@ -77,7 +77,7 @@ public class PyCell: PyObject {
                         whenBothNil: true)
   }
 
-  /// Generar rule: `nil` is less.
+  /// General rule: `nil` is less.
   private func compare(with other: PyObject,
                        compareContent: (PyObject, PyObject) -> PyResult<Bool>,
                        whenSelfIsNil: Bool,

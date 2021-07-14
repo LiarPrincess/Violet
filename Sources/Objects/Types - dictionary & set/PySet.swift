@@ -44,7 +44,8 @@ public class PySet: PyObject {
 
   // MARK: - Properties
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     set() -> new empty set object
     set(iterable) -> new set object
 

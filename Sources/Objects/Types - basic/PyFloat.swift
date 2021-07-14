@@ -60,7 +60,8 @@ internal struct Frexp {
 /// This subtype of PyObject represents a Python floating point object.
 public class PyFloat: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     float(x) -> floating point number
 
     Convert a string or number to a floating point number, if possible.

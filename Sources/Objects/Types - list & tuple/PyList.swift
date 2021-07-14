@@ -12,7 +12,8 @@ import VioletCore
 /// This subtype of PyObject represents a Python list object.
 public class PyList: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     list(iterable=(), /)
     --
 

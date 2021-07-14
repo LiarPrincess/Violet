@@ -58,7 +58,8 @@ public class PyDict: PyObject {
 
   // MARK: - Properties
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     dict() -> new empty dictionary
     dict(mapping) -> new dictionary initialized from a mapping object's
     (key, value) pairs

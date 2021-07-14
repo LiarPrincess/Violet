@@ -64,7 +64,8 @@ public class PyType: PyObject, HasCustomGetMethod {
 
   // MARK: - Properties & init
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     type(object_or_name, bases, dict)
     type(object) -> the object's type
     type(name, bases, dict) -> a new type

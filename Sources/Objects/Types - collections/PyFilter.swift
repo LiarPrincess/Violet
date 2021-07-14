@@ -6,7 +6,8 @@ import VioletCore
 // sourcery: pytype = filter, default, hasGC, baseType
 public class PyFilter: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     filter(function or None, iterable) --> filter object
 
     Return an iterator yielding those items of iterable for which function(item)

@@ -9,9 +9,9 @@ import VioletCore
 // sourcery: pyerrortype = ImportError, default, baseType, hasGC, baseExceptionSubclass
 public class PyImportError: PyException {
 
-  override internal class var doc: String {
-    return "Import can't find module, or can't find name in module."
-  }
+  // sourcery: pytypedoc
+  internal static let importErrorDoc =
+    "Import can't find module, or can't find name in module."
 
   override public var description: String {
     return self.createDescription(typeName: "PyImportError")

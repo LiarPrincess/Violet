@@ -19,7 +19,8 @@ public class PyFrozenSet: PyObject {
 
   // MARK: - Properties
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     frozenset() -> empty frozenset object
     frozenset(iterable) -> frozenset object
 

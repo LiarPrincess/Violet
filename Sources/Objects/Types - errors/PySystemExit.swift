@@ -9,9 +9,8 @@ import VioletCore
 // sourcery: pyerrortype = SystemExit, default, baseType, hasGC, baseExceptionSubclass
 public final class PySystemExit: PyBaseException {
 
-  override internal class var doc: String {
-    return "Request to exit from the interpreter."
-  }
+  // sourcery: pytypedoc
+  internal static let systemExitDoc = "Request to exit from the interpreter."
 
   override public var description: String {
     return self.createDescription(typeName: "PySystemExit")

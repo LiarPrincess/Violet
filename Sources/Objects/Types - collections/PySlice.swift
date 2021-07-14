@@ -13,7 +13,8 @@ import VioletCore
 /// This is the same as slice in the Python layer.
 public class PySlice: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     slice(stop)
     slice(start, stop[, step])
 

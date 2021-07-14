@@ -6,7 +6,8 @@
 // sourcery: pytype = types.SimpleNamespace, default, hasGC, baseType
 public class PyNamespace: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     A simple attribute-based namespace.
 
     SimpleNamespace(**kwargs)

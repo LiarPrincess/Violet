@@ -12,7 +12,8 @@ import VioletCore
 /// it is the same object as tuple in the Python layer.
 public class PyTuple: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     tuple() -> an empty tuple
     tuple(sequence) -> tuple initialized from sequence's items
 

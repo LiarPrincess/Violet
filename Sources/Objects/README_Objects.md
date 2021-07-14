@@ -1025,6 +1025,7 @@ Let us assume following `int` definition:
 // sourcery: pytype = int, default, baseType, longSubclass
 public class PyInt: PyObject {
 
+  // sourcery: pytypedoc
   internal static let doc = """
     int([x]) -> integer
     int(x, base=10) -> integer

@@ -9,7 +9,8 @@ import VioletBytecode
 /// Function bound to an object.
 public class PyMethod: PyObject {
 
-  internal static let doc: String = """
+  // sourcery: pytypedoc
+  internal static let doc = """
     method(function, instance)
 
     Create a bound instance method object.
