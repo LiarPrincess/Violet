@@ -98,11 +98,12 @@ public final class PySystemExit: PyBaseException {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal class func pySystemExitNew(type: PyType,
-                                      args: [PyObject],
-                                      kwargs: PyDict?) -> PyResult<PySystemExit> {
+  internal static func pySystemExitNew(type: PyType,
+                                       args: [PyObject],
+                                       kwargs: PyDict?) -> PyResult<PySystemExit> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PySystemExit(args: argsTuple, type: type))
+    let result = PySystemExit(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // MARK: - Python init

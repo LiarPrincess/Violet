@@ -41,13 +41,14 @@ public final class PyKeyboardInterrupt: PyBaseException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyKeyboardInterruptNew(
+  internal static func pyKeyboardInterruptNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyKeyboardInterrupt> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyKeyboardInterrupt(args: argsTuple, type: type))
+    let result = PyKeyboardInterrupt(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -87,13 +88,14 @@ public final class PyGeneratorExit: PyBaseException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyGeneratorExitNew(
+  internal static func pyGeneratorExitNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyGeneratorExit> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyGeneratorExit(args: argsTuple, type: type))
+    let result = PyGeneratorExit(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -133,13 +135,14 @@ public class PyException: PyBaseException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyExceptionNew(
+  internal static func pyExceptionNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyException> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyException(args: argsTuple, type: type))
+    let result = PyException(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -179,13 +182,14 @@ public final class PyStopAsyncIteration: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyStopAsyncIterationNew(
+  internal static func pyStopAsyncIterationNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyStopAsyncIteration> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyStopAsyncIteration(args: argsTuple, type: type))
+    let result = PyStopAsyncIteration(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -225,13 +229,14 @@ public class PyArithmeticError: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyArithmeticErrorNew(
+  internal static func pyArithmeticErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyArithmeticError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyArithmeticError(args: argsTuple, type: type))
+    let result = PyArithmeticError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -271,13 +276,14 @@ public final class PyFloatingPointError: PyArithmeticError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyFloatingPointErrorNew(
+  internal static func pyFloatingPointErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyFloatingPointError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyFloatingPointError(args: argsTuple, type: type))
+    let result = PyFloatingPointError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -317,13 +323,14 @@ public final class PyOverflowError: PyArithmeticError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyOverflowErrorNew(
+  internal static func pyOverflowErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyOverflowError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyOverflowError(args: argsTuple, type: type))
+    let result = PyOverflowError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -363,13 +370,14 @@ public final class PyZeroDivisionError: PyArithmeticError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyZeroDivisionErrorNew(
+  internal static func pyZeroDivisionErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyZeroDivisionError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyZeroDivisionError(args: argsTuple, type: type))
+    let result = PyZeroDivisionError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -409,13 +417,14 @@ public final class PyAssertionError: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyAssertionErrorNew(
+  internal static func pyAssertionErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyAssertionError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyAssertionError(args: argsTuple, type: type))
+    let result = PyAssertionError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -455,13 +464,14 @@ public final class PyAttributeError: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyAttributeErrorNew(
+  internal static func pyAttributeErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyAttributeError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyAttributeError(args: argsTuple, type: type))
+    let result = PyAttributeError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -501,13 +511,14 @@ public final class PyBufferError: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyBufferErrorNew(
+  internal static func pyBufferErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyBufferError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyBufferError(args: argsTuple, type: type))
+    let result = PyBufferError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -547,13 +558,14 @@ public final class PyEOFError: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyEOFErrorNew(
+  internal static func pyEOFErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyEOFError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyEOFError(args: argsTuple, type: type))
+    let result = PyEOFError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -593,13 +605,14 @@ public final class PyModuleNotFoundError: PyImportError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyModuleNotFoundErrorNew(
+  internal static func pyModuleNotFoundErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyModuleNotFoundError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyModuleNotFoundError(args: argsTuple, type: type))
+    let result = PyModuleNotFoundError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -639,13 +652,14 @@ public class PyLookupError: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyLookupErrorNew(
+  internal static func pyLookupErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyLookupError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyLookupError(args: argsTuple, type: type))
+    let result = PyLookupError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -685,13 +699,14 @@ public final class PyIndexError: PyLookupError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyIndexErrorNew(
+  internal static func pyIndexErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyIndexError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyIndexError(args: argsTuple, type: type))
+    let result = PyIndexError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -731,13 +746,14 @@ public final class PyMemoryError: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyMemoryErrorNew(
+  internal static func pyMemoryErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyMemoryError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyMemoryError(args: argsTuple, type: type))
+    let result = PyMemoryError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -777,13 +793,14 @@ public class PyNameError: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyNameErrorNew(
+  internal static func pyNameErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNameError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyNameError(args: argsTuple, type: type))
+    let result = PyNameError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -823,13 +840,14 @@ public final class PyUnboundLocalError: PyNameError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyUnboundLocalErrorNew(
+  internal static func pyUnboundLocalErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyUnboundLocalError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyUnboundLocalError(args: argsTuple, type: type))
+    let result = PyUnboundLocalError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -869,13 +887,14 @@ public class PyOSError: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyOSErrorNew(
+  internal static func pyOSErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyOSError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyOSError(args: argsTuple, type: type))
+    let result = PyOSError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -915,13 +934,14 @@ public final class PyBlockingIOError: PyOSError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyBlockingIOErrorNew(
+  internal static func pyBlockingIOErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyBlockingIOError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyBlockingIOError(args: argsTuple, type: type))
+    let result = PyBlockingIOError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -961,13 +981,14 @@ public final class PyChildProcessError: PyOSError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyChildProcessErrorNew(
+  internal static func pyChildProcessErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyChildProcessError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyChildProcessError(args: argsTuple, type: type))
+    let result = PyChildProcessError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1007,13 +1028,14 @@ public class PyConnectionError: PyOSError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyConnectionErrorNew(
+  internal static func pyConnectionErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyConnectionError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyConnectionError(args: argsTuple, type: type))
+    let result = PyConnectionError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1053,13 +1075,14 @@ public final class PyBrokenPipeError: PyConnectionError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyBrokenPipeErrorNew(
+  internal static func pyBrokenPipeErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyBrokenPipeError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyBrokenPipeError(args: argsTuple, type: type))
+    let result = PyBrokenPipeError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1099,13 +1122,14 @@ public final class PyConnectionAbortedError: PyConnectionError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyConnectionAbortedErrorNew(
+  internal static func pyConnectionAbortedErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyConnectionAbortedError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyConnectionAbortedError(args: argsTuple, type: type))
+    let result = PyConnectionAbortedError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1145,13 +1169,14 @@ public final class PyConnectionRefusedError: PyConnectionError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyConnectionRefusedErrorNew(
+  internal static func pyConnectionRefusedErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyConnectionRefusedError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyConnectionRefusedError(args: argsTuple, type: type))
+    let result = PyConnectionRefusedError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1191,13 +1216,14 @@ public final class PyConnectionResetError: PyConnectionError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyConnectionResetErrorNew(
+  internal static func pyConnectionResetErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyConnectionResetError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyConnectionResetError(args: argsTuple, type: type))
+    let result = PyConnectionResetError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1237,13 +1263,14 @@ public final class PyFileExistsError: PyOSError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyFileExistsErrorNew(
+  internal static func pyFileExistsErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyFileExistsError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyFileExistsError(args: argsTuple, type: type))
+    let result = PyFileExistsError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1283,13 +1310,14 @@ public final class PyFileNotFoundError: PyOSError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyFileNotFoundErrorNew(
+  internal static func pyFileNotFoundErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyFileNotFoundError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyFileNotFoundError(args: argsTuple, type: type))
+    let result = PyFileNotFoundError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1329,13 +1357,14 @@ public final class PyInterruptedError: PyOSError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyInterruptedErrorNew(
+  internal static func pyInterruptedErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyInterruptedError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyInterruptedError(args: argsTuple, type: type))
+    let result = PyInterruptedError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1375,13 +1404,14 @@ public final class PyIsADirectoryError: PyOSError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyIsADirectoryErrorNew(
+  internal static func pyIsADirectoryErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyIsADirectoryError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyIsADirectoryError(args: argsTuple, type: type))
+    let result = PyIsADirectoryError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1421,13 +1451,14 @@ public final class PyNotADirectoryError: PyOSError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyNotADirectoryErrorNew(
+  internal static func pyNotADirectoryErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNotADirectoryError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyNotADirectoryError(args: argsTuple, type: type))
+    let result = PyNotADirectoryError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1467,13 +1498,14 @@ public final class PyPermissionError: PyOSError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyPermissionErrorNew(
+  internal static func pyPermissionErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyPermissionError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyPermissionError(args: argsTuple, type: type))
+    let result = PyPermissionError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1513,13 +1545,14 @@ public final class PyProcessLookupError: PyOSError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyProcessLookupErrorNew(
+  internal static func pyProcessLookupErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyProcessLookupError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyProcessLookupError(args: argsTuple, type: type))
+    let result = PyProcessLookupError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1559,13 +1592,14 @@ public final class PyTimeoutError: PyOSError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyTimeoutErrorNew(
+  internal static func pyTimeoutErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyTimeoutError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyTimeoutError(args: argsTuple, type: type))
+    let result = PyTimeoutError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1605,13 +1639,14 @@ public final class PyReferenceError: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyReferenceErrorNew(
+  internal static func pyReferenceErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyReferenceError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyReferenceError(args: argsTuple, type: type))
+    let result = PyReferenceError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1651,13 +1686,14 @@ public class PyRuntimeError: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyRuntimeErrorNew(
+  internal static func pyRuntimeErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyRuntimeError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyRuntimeError(args: argsTuple, type: type))
+    let result = PyRuntimeError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1697,13 +1733,14 @@ public final class PyNotImplementedError: PyRuntimeError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyNotImplementedErrorNew(
+  internal static func pyNotImplementedErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNotImplementedError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyNotImplementedError(args: argsTuple, type: type))
+    let result = PyNotImplementedError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1743,13 +1780,14 @@ public final class PyRecursionError: PyRuntimeError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyRecursionErrorNew(
+  internal static func pyRecursionErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyRecursionError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyRecursionError(args: argsTuple, type: type))
+    let result = PyRecursionError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1789,13 +1827,14 @@ public class PyIndentationError: PySyntaxError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyIndentationErrorNew(
+  internal static func pyIndentationErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyIndentationError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyIndentationError(args: argsTuple, type: type))
+    let result = PyIndentationError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1835,13 +1874,14 @@ public final class PyTabError: PyIndentationError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyTabErrorNew(
+  internal static func pyTabErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyTabError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyTabError(args: argsTuple, type: type))
+    let result = PyTabError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1884,13 +1924,14 @@ public final class PySystemError: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pySystemErrorNew(
+  internal static func pySystemErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PySystemError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PySystemError(args: argsTuple, type: type))
+    let result = PySystemError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1930,13 +1971,14 @@ public final class PyTypeError: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyTypeErrorNew(
+  internal static func pyTypeErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyTypeError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyTypeError(args: argsTuple, type: type))
+    let result = PyTypeError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -1976,13 +2018,14 @@ public class PyValueError: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyValueErrorNew(
+  internal static func pyValueErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyValueError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyValueError(args: argsTuple, type: type))
+    let result = PyValueError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2022,13 +2065,14 @@ public class PyUnicodeError: PyValueError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyUnicodeErrorNew(
+  internal static func pyUnicodeErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyUnicodeError(args: argsTuple, type: type))
+    let result = PyUnicodeError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2068,13 +2112,14 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyUnicodeDecodeErrorNew(
+  internal static func pyUnicodeDecodeErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeDecodeError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyUnicodeDecodeError(args: argsTuple, type: type))
+    let result = PyUnicodeDecodeError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2114,13 +2159,14 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyUnicodeEncodeErrorNew(
+  internal static func pyUnicodeEncodeErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeEncodeError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyUnicodeEncodeError(args: argsTuple, type: type))
+    let result = PyUnicodeEncodeError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2160,13 +2206,14 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyUnicodeTranslateErrorNew(
+  internal static func pyUnicodeTranslateErrorNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeTranslateError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyUnicodeTranslateError(args: argsTuple, type: type))
+    let result = PyUnicodeTranslateError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2206,13 +2253,14 @@ public class PyWarning: PyException {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyWarningNew(
+  internal static func pyWarningNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyWarning(args: argsTuple, type: type))
+    let result = PyWarning(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2252,13 +2300,14 @@ public final class PyDeprecationWarning: PyWarning {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyDeprecationWarningNew(
+  internal static func pyDeprecationWarningNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyDeprecationWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyDeprecationWarning(args: argsTuple, type: type))
+    let result = PyDeprecationWarning(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2299,13 +2348,14 @@ public final class PyPendingDeprecationWarning: PyWarning {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyPendingDeprecationWarningNew(
+  internal static func pyPendingDeprecationWarningNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyPendingDeprecationWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyPendingDeprecationWarning(args: argsTuple, type: type))
+    let result = PyPendingDeprecationWarning(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2345,13 +2395,14 @@ public final class PyRuntimeWarning: PyWarning {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyRuntimeWarningNew(
+  internal static func pyRuntimeWarningNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyRuntimeWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyRuntimeWarning(args: argsTuple, type: type))
+    let result = PyRuntimeWarning(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2391,13 +2442,14 @@ public final class PySyntaxWarning: PyWarning {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pySyntaxWarningNew(
+  internal static func pySyntaxWarningNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PySyntaxWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PySyntaxWarning(args: argsTuple, type: type))
+    let result = PySyntaxWarning(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2437,13 +2489,14 @@ public final class PyUserWarning: PyWarning {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyUserWarningNew(
+  internal static func pyUserWarningNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyUserWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyUserWarning(args: argsTuple, type: type))
+    let result = PyUserWarning(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2484,13 +2537,14 @@ public final class PyFutureWarning: PyWarning {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyFutureWarningNew(
+  internal static func pyFutureWarningNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyFutureWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyFutureWarning(args: argsTuple, type: type))
+    let result = PyFutureWarning(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2530,13 +2584,14 @@ public final class PyImportWarning: PyWarning {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyImportWarningNew(
+  internal static func pyImportWarningNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyImportWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyImportWarning(args: argsTuple, type: type))
+    let result = PyImportWarning(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2577,13 +2632,14 @@ public final class PyUnicodeWarning: PyWarning {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyUnicodeWarningNew(
+  internal static func pyUnicodeWarningNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyUnicodeWarning(args: argsTuple, type: type))
+    let result = PyUnicodeWarning(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2624,13 +2680,14 @@ public final class PyBytesWarning: PyWarning {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyBytesWarningNew(
+  internal static func pyBytesWarningNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyBytesWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyBytesWarning(args: argsTuple, type: type))
+    let result = PyBytesWarning(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__
@@ -2670,13 +2727,14 @@ public final class PyResourceWarning: PyWarning {
   }
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyResourceWarningNew(
+  internal static func pyResourceWarningNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyResourceWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyResourceWarning(args: argsTuple, type: type))
+    let result = PyResourceWarning(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // sourcery: pymethod = __init__

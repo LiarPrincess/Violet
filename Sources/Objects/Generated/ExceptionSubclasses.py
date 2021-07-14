@@ -83,13 +83,14 @@ public {final}class {class_name}: Py{base} {{
   }}
 
   // sourcery: pystaticmethod = __new__
-  internal class func py{name}New(
+  internal static func py{name}New(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<{class_name}> {{
     let argsTuple = Py.newTuple(elements: args)
-    return .value({class_name}(args: argsTuple, type: type))
+    let result = {class_name}(args: argsTuple, type: type)
+    return .value(result)
   }}
 
   // sourcery: pymethod = __init__

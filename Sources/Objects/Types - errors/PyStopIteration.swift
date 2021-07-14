@@ -90,11 +90,12 @@ public final class PyStopIteration: PyException {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyStopIterationNew(type: PyType,
-                                         args: [PyObject],
-                                         kwargs: PyDict?) -> PyResult<PyStopIteration> {
+  internal static func pyStopIterationNew(type: PyType,
+                                          args: [PyObject],
+                                          kwargs: PyDict?) -> PyResult<PyStopIteration> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyStopIteration(args: argsTuple, type: type))
+    let result = PyStopIteration(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // MARK: - Python init

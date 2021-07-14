@@ -504,13 +504,14 @@ public class PyBaseException: PyObject {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyBaseExceptionNew(
+  internal static func pyBaseExceptionNew(
     type: PyType,
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyBaseException(args: argsTuple, type: type))
+    let result = PyBaseException(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // MARK: - Python init

@@ -155,11 +155,12 @@ public class PyImportError: PyException {
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__
-  internal class func pyImportErrorNew(type: PyType,
-                                       args: [PyObject],
-                                       kwargs: PyDict?) -> PyResult<PyImportError> {
+  internal static func pyImportErrorNew(type: PyType,
+                                        args: [PyObject],
+                                        kwargs: PyDict?) -> PyResult<PyImportError> {
     let argsTuple = Py.newTuple(elements: args)
-    return .value(PyImportError(args: argsTuple, type: type))
+    let result = PyImportError(args: argsTuple, type: type)
+    return .value(result)
   }
 
   // MARK: - Python init
