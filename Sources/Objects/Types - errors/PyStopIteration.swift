@@ -12,10 +12,6 @@ public final class PyStopIteration: PyException {
   // sourcery: pytypedoc
   internal static let stopIterationDoc = "Signal the end from iterator.__next__()."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyStopIteration")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.stopIteration

@@ -21,10 +21,6 @@ public final class PyKeyboardInterrupt: PyBaseException {
   // sourcery: pytypedoc
   internal static let keyboardInterruptDoc = "Program interrupted by user."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyKeyboardInterrupt")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.keyboardInterrupt
@@ -67,10 +63,6 @@ public final class PyGeneratorExit: PyBaseException {
 
   // sourcery: pytypedoc
   internal static let generatorExitDoc = "Request that a generator exit."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyGeneratorExit")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -115,10 +107,6 @@ public class PyException: PyBaseException {
   // sourcery: pytypedoc
   internal static let exceptionDoc = "Common base class for all non-exit exceptions."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyException")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.exception
@@ -161,10 +149,6 @@ public final class PyStopAsyncIteration: PyException {
 
   // sourcery: pytypedoc
   internal static let stopAsyncIterationDoc = "Signal the end from iterator.__anext__()."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyStopAsyncIteration")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -209,10 +193,6 @@ public class PyArithmeticError: PyException {
   // sourcery: pytypedoc
   internal static let arithmeticErrorDoc = "Base class for arithmetic errors."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyArithmeticError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.arithmeticError
@@ -255,10 +235,6 @@ public final class PyFloatingPointError: PyArithmeticError {
 
   // sourcery: pytypedoc
   internal static let floatingPointErrorDoc = "Floating point operation failed."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyFloatingPointError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -303,10 +279,6 @@ public final class PyOverflowError: PyArithmeticError {
   // sourcery: pytypedoc
   internal static let overflowErrorDoc = "Result too large to be represented."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyOverflowError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.overflowError
@@ -349,10 +321,6 @@ public final class PyZeroDivisionError: PyArithmeticError {
 
   // sourcery: pytypedoc
   internal static let zeroDivisionErrorDoc = "Second argument to a division or modulo operation was zero."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyZeroDivisionError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -397,10 +365,6 @@ public final class PyAssertionError: PyException {
   // sourcery: pytypedoc
   internal static let assertionErrorDoc = "Assertion failed."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyAssertionError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.assertionError
@@ -443,10 +407,6 @@ public final class PyAttributeError: PyException {
 
   // sourcery: pytypedoc
   internal static let attributeErrorDoc = "Attribute not found."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyAttributeError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -491,10 +451,6 @@ public final class PyBufferError: PyException {
   // sourcery: pytypedoc
   internal static let bufferErrorDoc = "Buffer error."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyBufferError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.bufferError
@@ -537,10 +493,6 @@ public final class PyEOFError: PyException {
 
   // sourcery: pytypedoc
   internal static let eOFErrorDoc = "Read beyond end of file."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyEOFError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -585,10 +537,6 @@ public final class PyModuleNotFoundError: PyImportError {
   // sourcery: pytypedoc
   internal static let moduleNotFoundErrorDoc = "Module not found."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyModuleNotFoundError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.moduleNotFoundError
@@ -631,10 +579,6 @@ public class PyLookupError: PyException {
 
   // sourcery: pytypedoc
   internal static let lookupErrorDoc = "Base class for lookup errors."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyLookupError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -679,10 +623,6 @@ public final class PyIndexError: PyLookupError {
   // sourcery: pytypedoc
   internal static let indexErrorDoc = "Sequence index out of range."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyIndexError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.indexError
@@ -725,10 +665,6 @@ public final class PyMemoryError: PyException {
 
   // sourcery: pytypedoc
   internal static let memoryErrorDoc = "Out of memory."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyMemoryError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -773,10 +709,6 @@ public class PyNameError: PyException {
   // sourcery: pytypedoc
   internal static let nameErrorDoc = "Name not found globally."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyNameError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.nameError
@@ -819,10 +751,6 @@ public final class PyUnboundLocalError: PyNameError {
 
   // sourcery: pytypedoc
   internal static let unboundLocalErrorDoc = "Local name referenced but not bound to a value."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyUnboundLocalError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -867,10 +795,6 @@ public class PyOSError: PyException {
   // sourcery: pytypedoc
   internal static let oSErrorDoc = "Base class for I/O related errors."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyOSError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.osError
@@ -913,10 +837,6 @@ public final class PyBlockingIOError: PyOSError {
 
   // sourcery: pytypedoc
   internal static let blockingIOErrorDoc = "I/O operation would block."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyBlockingIOError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -961,10 +881,6 @@ public final class PyChildProcessError: PyOSError {
   // sourcery: pytypedoc
   internal static let childProcessErrorDoc = "Child process error."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyChildProcessError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.childProcessError
@@ -1007,10 +923,6 @@ public class PyConnectionError: PyOSError {
 
   // sourcery: pytypedoc
   internal static let connectionErrorDoc = "Connection error."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyConnectionError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -1055,10 +967,6 @@ public final class PyBrokenPipeError: PyConnectionError {
   // sourcery: pytypedoc
   internal static let brokenPipeErrorDoc = "Broken pipe."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyBrokenPipeError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.brokenPipeError
@@ -1101,10 +1009,6 @@ public final class PyConnectionAbortedError: PyConnectionError {
 
   // sourcery: pytypedoc
   internal static let connectionAbortedErrorDoc = "Connection aborted."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyConnectionAbortedError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -1149,10 +1053,6 @@ public final class PyConnectionRefusedError: PyConnectionError {
   // sourcery: pytypedoc
   internal static let connectionRefusedErrorDoc = "Connection refused."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyConnectionRefusedError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.connectionRefusedError
@@ -1195,10 +1095,6 @@ public final class PyConnectionResetError: PyConnectionError {
 
   // sourcery: pytypedoc
   internal static let connectionResetErrorDoc = "Connection reset."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyConnectionResetError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -1243,10 +1139,6 @@ public final class PyFileExistsError: PyOSError {
   // sourcery: pytypedoc
   internal static let fileExistsErrorDoc = "File already exists."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyFileExistsError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.fileExistsError
@@ -1289,10 +1181,6 @@ public final class PyFileNotFoundError: PyOSError {
 
   // sourcery: pytypedoc
   internal static let fileNotFoundErrorDoc = "File not found."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyFileNotFoundError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -1337,10 +1225,6 @@ public final class PyInterruptedError: PyOSError {
   // sourcery: pytypedoc
   internal static let interruptedErrorDoc = "Interrupted by signal."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyInterruptedError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.interruptedError
@@ -1383,10 +1267,6 @@ public final class PyIsADirectoryError: PyOSError {
 
   // sourcery: pytypedoc
   internal static let isADirectoryErrorDoc = "Operation doesn't work on directories."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyIsADirectoryError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -1431,10 +1311,6 @@ public final class PyNotADirectoryError: PyOSError {
   // sourcery: pytypedoc
   internal static let notADirectoryErrorDoc = "Operation only works on directories."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyNotADirectoryError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.notADirectoryError
@@ -1477,10 +1353,6 @@ public final class PyPermissionError: PyOSError {
 
   // sourcery: pytypedoc
   internal static let permissionErrorDoc = "Not enough permissions."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyPermissionError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -1525,10 +1397,6 @@ public final class PyProcessLookupError: PyOSError {
   // sourcery: pytypedoc
   internal static let processLookupErrorDoc = "Process not found."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyProcessLookupError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.processLookupError
@@ -1571,10 +1439,6 @@ public final class PyTimeoutError: PyOSError {
 
   // sourcery: pytypedoc
   internal static let timeoutErrorDoc = "Timeout expired."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyTimeoutError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -1619,10 +1483,6 @@ public final class PyReferenceError: PyException {
   // sourcery: pytypedoc
   internal static let referenceErrorDoc = "Weak ref proxy used after referent went away."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyReferenceError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.referenceError
@@ -1665,10 +1525,6 @@ public class PyRuntimeError: PyException {
 
   // sourcery: pytypedoc
   internal static let runtimeErrorDoc = "Unspecified run-time error."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyRuntimeError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -1713,10 +1569,6 @@ public final class PyNotImplementedError: PyRuntimeError {
   // sourcery: pytypedoc
   internal static let notImplementedErrorDoc = "Method or function hasn't been implemented yet."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyNotImplementedError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.notImplementedError
@@ -1759,10 +1611,6 @@ public final class PyRecursionError: PyRuntimeError {
 
   // sourcery: pytypedoc
   internal static let recursionErrorDoc = "Recursion limit exceeded."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyRecursionError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -1807,10 +1655,6 @@ public class PyIndentationError: PySyntaxError {
   // sourcery: pytypedoc
   internal static let indentationErrorDoc = "Improper indentation."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyIndentationError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.indentationError
@@ -1853,10 +1697,6 @@ public final class PyTabError: PyIndentationError {
 
   // sourcery: pytypedoc
   internal static let tabErrorDoc = "Improper mixture of spaces and tabs."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyTabError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -1904,10 +1744,6 @@ public final class PySystemError: PyException {
 "Please report this to the Python maintainer, along with the traceback, " +
 "the Python version, and the hardware/OS platform and version."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PySystemError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.systemError
@@ -1950,10 +1786,6 @@ public final class PyTypeError: PyException {
 
   // sourcery: pytypedoc
   internal static let typeErrorDoc = "Inappropriate argument type."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyTypeError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -1998,10 +1830,6 @@ public class PyValueError: PyException {
   // sourcery: pytypedoc
   internal static let valueErrorDoc = "Inappropriate argument value (of correct type)."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyValueError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.valueError
@@ -2044,10 +1872,6 @@ public class PyUnicodeError: PyValueError {
 
   // sourcery: pytypedoc
   internal static let unicodeErrorDoc = "Unicode related error."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyUnicodeError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -2092,10 +1916,6 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
   // sourcery: pytypedoc
   internal static let unicodeDecodeErrorDoc = "Unicode decoding error."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyUnicodeDecodeError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.unicodeDecodeError
@@ -2138,10 +1958,6 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
 
   // sourcery: pytypedoc
   internal static let unicodeEncodeErrorDoc = "Unicode encoding error."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyUnicodeEncodeError")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -2186,10 +2002,6 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
   // sourcery: pytypedoc
   internal static let unicodeTranslateErrorDoc = "Unicode translation error."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyUnicodeTranslateError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.unicodeTranslateError
@@ -2233,10 +2045,6 @@ public class PyWarning: PyException {
   // sourcery: pytypedoc
   internal static let warningDoc = "Base class for warning categories."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyWarning")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.warning
@@ -2279,10 +2087,6 @@ public final class PyDeprecationWarning: PyWarning {
 
   // sourcery: pytypedoc
   internal static let deprecationWarningDoc = "Base class for warnings about deprecated features."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyDeprecationWarning")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -2328,10 +2132,6 @@ public final class PyPendingDeprecationWarning: PyWarning {
   internal static let pendingDeprecationWarningDoc = "Base class for warnings about features which will be deprecated " +
 "in the future."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyPendingDeprecationWarning")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.pendingDeprecationWarning
@@ -2374,10 +2174,6 @@ public final class PyRuntimeWarning: PyWarning {
 
   // sourcery: pytypedoc
   internal static let runtimeWarningDoc = "Base class for warnings about dubious runtime behavior."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyRuntimeWarning")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -2422,10 +2218,6 @@ public final class PySyntaxWarning: PyWarning {
   // sourcery: pytypedoc
   internal static let syntaxWarningDoc = "Base class for warnings about dubious syntax."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PySyntaxWarning")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.syntaxWarning
@@ -2468,10 +2260,6 @@ public final class PyUserWarning: PyWarning {
 
   // sourcery: pytypedoc
   internal static let userWarningDoc = "Base class for warnings generated by user code."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyUserWarning")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -2517,10 +2305,6 @@ public final class PyFutureWarning: PyWarning {
   internal static let futureWarningDoc = "Base class for warnings about constructs that will change semantically " +
 "in the future."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyFutureWarning")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.futureWarning
@@ -2563,10 +2347,6 @@ public final class PyImportWarning: PyWarning {
 
   // sourcery: pytypedoc
   internal static let importWarningDoc = "Base class for warnings about probable mistakes in module imports"
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyImportWarning")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
@@ -2612,10 +2392,6 @@ public final class PyUnicodeWarning: PyWarning {
   internal static let unicodeWarningDoc = "Base class for warnings about Unicode related problems, mostly " +
 "related to conversion problems."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyUnicodeWarning")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.unicodeWarning
@@ -2660,10 +2436,6 @@ public final class PyBytesWarning: PyWarning {
   internal static let bytesWarningDoc = "Base class for warnings about bytes and buffer related problems, mostly " +
 "related to conversion from str or comparing to str."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyBytesWarning")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.bytesWarning
@@ -2706,10 +2478,6 @@ public final class PyResourceWarning: PyWarning {
 
   // sourcery: pytypedoc
   internal static let resourceWarningDoc = "Base class for warnings about resource usage."
-
-  override public var description: String {
-    return self.createDescription(typeName: "PyResourceWarning")
-  }
 
   /// Type to set in `init`.
   override internal class var pythonType: PyType {

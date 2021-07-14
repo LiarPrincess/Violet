@@ -15,10 +15,6 @@ public class PySyntaxError: PyException {
   // sourcery: pytypedoc
   internal static let syntaxErrorDoc = "Invalid syntax."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PySyntaxError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.syntaxError

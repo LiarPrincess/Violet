@@ -63,10 +63,6 @@ public {final}class {class_name}: Py{base} {{
   // sourcery: pytypedoc
   internal static let {doc_property_name} = "{doc}"
 
-  override public var description: String {{
-    return self.createDescription(typeName: "{class_name}")
-  }}
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {{
     return Py.errorTypes.{builtins_type_variable}

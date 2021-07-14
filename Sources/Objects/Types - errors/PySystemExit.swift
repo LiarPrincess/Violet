@@ -12,10 +12,6 @@ public final class PySystemExit: PyBaseException {
   // sourcery: pytypedoc
   internal static let systemExitDoc = "Request to exit from the interpreter."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PySystemExit")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.systemExit

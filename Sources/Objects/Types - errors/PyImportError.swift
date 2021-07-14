@@ -13,10 +13,6 @@ public class PyImportError: PyException {
   internal static let importErrorDoc =
     "Import can't find module, or can't find name in module."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyImportError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.importError

@@ -33,10 +33,8 @@ public class PyBaseException: PyObject {
   internal lazy var __dict__ = Py.newDict()
 
   override public var description: String {
-    return self.createDescription(typeName: "PyBaseException")
-  }
-
-  internal func createDescription(typeName: String) -> String {
+    let type = Swift.type(of: self)
+    let typeName = String(describing: type)
     let msg = self.message.map { "msg: \($0)" } ?? ""
     return "\(typeName)(\(msg))"
   }

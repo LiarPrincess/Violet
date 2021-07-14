@@ -12,10 +12,6 @@ public final class PyKeyError: PyLookupError {
   // sourcery: pytypedoc
   internal static let keyErrorDoc = "Mapping key not found."
 
-  override public var description: String {
-    return self.createDescription(typeName: "PyKeyError")
-  }
-
   /// Type to set in `init`.
   override internal class var pythonType: PyType {
     return Py.errorTypes.keyError
