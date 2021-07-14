@@ -1,40 +1,60 @@
-object
-  Why do we even have this?
-    __init_subclass__
-    __subclasshook__
-
 bool
-  Why do we even have this?
+  Missing:
+    from_bytes
+  This should not be here:
     __str__
 
-builtin_function_or_method
-  Why do we even have this?
+builtinFunction
+  Missing:
+    __doc__
+    __new__
+  This should not be here:
+    __get__
+
+builtinMethod
+  Missing:
+    __doc__
+    __new__
+  This should not be here:
     __get__
 
 bytearray
-  Unimplemented:
-    fromhex - <class 'builtin_function_or_method'>
-    maketrans - <class 'builtin_function_or_method'>
+  Missing:
     __alloc__
     __mod__
     __rmod__
     decode
+    fromhex
     hex
+    maketrans
     translate
 
+bytearray_iterator
+  Missing:
+    __doc__
+
 bytes
-  Unimplemented:
-    fromhex - <class 'builtin_function_or_method'>
-    maketrans - <class 'builtin_function_or_method'>
+  Missing:
     __mod__
     __rmod__
     decode
+    fromhex
     hex
+    maketrans
     translate
 
+bytes_iterator
+  Missing:
+    __doc__
+
+callable_iterator
+  Missing:
+    __doc__
+    __new__
+
 code
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
+  Missing:
+    __new__
     co_cellvars
     co_code
     co_consts
@@ -48,19 +68,23 @@ code
     replace
 
 complex
-  Unimplemented:
+  Missing:
     __format__
-  Why do we even have this?
+  This should not be here:
     __str__
-    __getnewargs__
 
 dict
-  Unimplemented:
+  Missing:
     __reversed__
+
+dict_itemiterator
+  Missing:
+    __doc__
 
 dict_items
-  Unimplemented:
+  Missing:
     __and__
+    __doc__
     __or__
     __rand__
     __reversed__
@@ -70,10 +94,15 @@ dict_items
     __sub__
     __xor__
     isdisjoint
+
+dict_keyiterator
+  Missing:
+    __doc__
 
 dict_keys
-  Unimplemented:
+  Missing:
     __and__
+    __doc__
     __or__
     __rand__
     __reversed__
@@ -84,70 +113,101 @@ dict_keys
     __xor__
     isdisjoint
 
+dict_valueiterator
+  Missing:
+    __doc__
+
 dict_values
-  Unimplemented:
-    __class__ - <class 'type'>
-    __new__ - <class 'builtin_function_or_method'>
+  Missing:
+    __class__
+    __doc__
+    __new__
     __reversed__
 
 ellipsis
-  Why do we even have this?
-    __reduce__
+  Missing:
+    __doc__
 
 float
-  Unimplemented:
-    __getformat__ - <class 'builtin_function_or_method'>
-    __set_format__ - <class 'builtin_function_or_method'>
+  Missing:
     __format__
-  Why do we even have this?
+    __getformat__
+    __set_format__
+  This should not be here:
     __str__
 
 frame
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
+  Missing:
+    __doc__
+    __new__
     clear
     f_trace
     f_trace_lines
     f_trace_opcodes
 
 function
-  Why do we even have this?
-    __doc__
+  Missing:
+    __new__
 
 int
-  Unimplemented:
-    from_bytes - <class 'builtin_function_or_method'>
+  Missing:
     __format__
     as_integer_ratio
+    from_bytes
     to_bytes
-  Why do we even have this?
+  This should not be here:
     __str__
 
-Iterator
-  Why do we even have this?
+iterator
+  Missing:
+    __abstractmethods__
+    __doc__
+    __module__
+    __new__
+    __slots__
+    _abc_impl
+  This should not be here:
     __getattribute__
     __length_hint__
 
-method
-  Why do we even have this?
+list_iterator
+  Missing:
     __doc__
+
+list_reverseiterator
+  Missing:
+    __doc__
+
+method
+  Missing:
+    __new__
+
+types.SimpleNamespace
+  Missing:
+    __class__
+    __hash__
+    __new__
 
 NoneType
-  Why do we even have this?
+  Missing:
+    __doc__
+  This should not be here:
     __getattribute__
 
-property
-  Unimplemented:
-    __isabstractmethod__
-  Why do we even have this?
+NotImplementedType
+  Missing:
     __doc__
 
-range
-  Why do we even have this?
-    __reduce__
+property
+  Missing:
+    __isabstractmethod__
+
+range_iterator
+  Missing:
+    __doc__
 
 set
-  Unimplemented:
+  Missing:
     __iand__
     __ior__
     __isub__
@@ -156,23 +216,31 @@ set
     intersection_update
     symmetric_difference_update
 
+set_iterator
+  Missing:
+    __doc__
+
 str
-  Unimplemented:
-    maketrans - <class 'builtin_function_or_method'>
+  Missing:
     __format__
     __mod__
     __rmod__
     encode
     format
     format_map
+    maketrans
     translate
 
-TextIOWrapper
-  Unimplemented:
-    __dict__ - <class 'mappingproxy'>
-    __new__ - <class 'builtin_function_or_method'>
+str_iterator
+  Missing:
+    __doc__
+
+TextFile
+  Missing:
     _CHUNK_SIZE
+    __dict__
     __init__
+    __new__
     __next__
     _finalizing
     buffer
@@ -190,26 +258,28 @@ TextIOWrapper
     tell
     truncate
     write_through
-  Why do we even have this?
+  This should not be here:
     __del__
     __enter__
     __exit__
 
-type
-  Unimplemented:
-    __basicsize__ - <class 'int'>
-    __dictoffset__ - <class 'int'>
-    __flags__ - <class 'int'>
-    __itemsize__ - <class 'int'>
-    __prepare__ - <class 'builtin_function_or_method'>
-    __text_signature__ - <class 'NoneType'>
-    __weakrefoffset__ - <class 'int'>
-    __abstractmethods__
-  Why do we even have this?
+tuple_iterator
+  Missing:
     __doc__
 
+type
+  Missing:
+    __abstractmethods__
+    __basicsize__
+    __dictoffset__
+    __flags__
+    __itemsize__
+    __prepare__
+    __text_signature__
+    __weakrefoffset__
+
 OSError
-  Unimplemented:
+  Missing:
     __str__
     characters_written
     errno
@@ -218,7 +288,7 @@ OSError
     strerror
 
 UnicodeDecodeError
-  Unimplemented:
+  Missing:
     __str__
     encoding
     end
@@ -227,7 +297,7 @@ UnicodeDecodeError
     start
 
 UnicodeEncodeError
-  Unimplemented:
+  Missing:
     __str__
     encoding
     end
@@ -236,7 +306,7 @@ UnicodeEncodeError
     start
 
 UnicodeTranslateError
-  Unimplemented:
+  Missing:
     __str__
     encoding
     end
