@@ -149,11 +149,11 @@ public class PySyntaxError: PyException {
   }
 
   // sourcery: pymethod = __str__
-  internal static func str(syntaxError zelf: PySyntaxError) -> PyResult<String> {
+  internal static func str(syntaxError: PySyntaxError) -> PyResult<String> {
     // Why this is static? See comment in 'PyBaseException.str'.
 
     let filenameOrNil: String? = {
-      let filenamePyString = zelf.filename.flatMap(PyCast.asString(_:))
+      let filenamePyString = syntaxError.filename.flatMap(PyCast.asString(_:))
       guard let path = filenamePyString, !path.isEmpty else {
         return nil
       }
@@ -162,12 +162,12 @@ public class PySyntaxError: PyException {
     }()
 
     let linenoOrNil: BigInt? = {
-      let linenoPyInt = zelf.lineno.flatMap(PyCast.asInt(_:))
+      let linenoPyInt = syntaxError.lineno.flatMap(PyCast.asInt(_:))
       return linenoPyInt?.value
     }()
 
     let msg: String
-    switch Py.strString(object: zelf.msg ?? Py.none) {
+    switch Py.strString(object: syntaxError.msg ?? Py.none) {
     case let .value(m): msg = m
     case let .error(e): return .error(e)
     }

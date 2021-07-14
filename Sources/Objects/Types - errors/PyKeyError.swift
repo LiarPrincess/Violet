@@ -33,13 +33,14 @@ public final class PyKeyError: PyLookupError {
 
   // MARK: - String
 
+  // This is for `__str__Owner` protocol
   override internal func str() -> PyResult<String> {
     let result = Self.str(keyError: self)
-    return result.flatMap(Py.strString(object:))
+    return result.map { $0.value }
   }
 
   // sourcery: pymethod = __str__
-  internal static func str(keyError zelf: PyKeyError) -> PyResult<PyObject> {
+  internal static func str(keyError: PyKeyError) -> PyResult<PyString> {
     // Why this is static? See comment in 'PyBaseException.str'.
 
     // If args is a tuple of exactly one item, apply repr to args[0].
@@ -51,14 +52,14 @@ public final class PyKeyError: PyLookupError {
     // string, that string will be displayed in quotes.  Too bad.
     // If args is anything else, use the default BaseException__str__().
 
-    let args = zelf.getArgs()
+    let args = keyError.getArgs()
 
     switch args.getLength() {
     case 1:
       let first = args.elements[0]
-      return Py.repr(object: first).map { $0 as PyObject }
+      return Py.repr(object: first)
     default:
-      return PyBaseException.str(baseException: zelf)
+      return Self.str(baseException: keyError)
     }
   }
 
