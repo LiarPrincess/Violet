@@ -13,12 +13,6 @@ def is_final(name):
     return True
 
 
-def create_doc_property_name(swift_class_name: str) -> str:
-    result = swift_class_name.replace('Py', '', 1)
-    result = result[0].lower() + result[1:]
-    return result + 'Doc'
-
-
 if __name__ == '__main__':
     print(f'''\
 {generated_warning(__file__)}
@@ -52,7 +46,8 @@ if __name__ == '__main__':
         doc = doc.replace('\n', ' " +\n"')
         final = 'final ' if is_final(name) else ''
         builtins_type_variable = get_builtin_type_property_name(name)
-        doc_property_name = create_doc_property_name(class_name)
+        name_camel_case = name[0].lower() + name[1:]
+        doc_property_name = name_camel_case + 'Doc'
 
         print(f'''\
 // MARK: - {name}
@@ -69,13 +64,13 @@ public {final}class {class_name}: Py{base} {{
   }}
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {{
-    return self.type
+  internal static func getClass({name_camel_case}: {class_name}) -> PyType {{
+    return {name_camel_case}.type
   }}
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {{
-    return self.__dict__
+  internal static func getDict({name_camel_case}: {class_name}) -> PyDict {{
+    return {name_camel_case}.__dict__
   }}
 
   // sourcery: pystaticmethod = __new__

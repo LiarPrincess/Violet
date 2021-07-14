@@ -60,15 +60,15 @@ public final class PyStopIteration: PyException {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(stopIteration: PyStopIteration) -> PyType {
+    return stopIteration.type
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(stopIteration: PyStopIteration) -> PyDict {
+    return stopIteration.__dict__
   }
 
   // MARK: - Value

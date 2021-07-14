@@ -68,15 +68,15 @@ public final class PySystemExit: PyBaseException {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(systemExit: PySystemExit) -> PyType {
+    return systemExit.type
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(systemExit: PySystemExit) -> PyDict {
+    return systemExit.__dict__
   }
 
   // MARK: - Code

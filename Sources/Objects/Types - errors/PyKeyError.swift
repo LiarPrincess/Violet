@@ -19,17 +19,17 @@ public final class PyKeyError: PyLookupError {
 
   // MARK: - Class
 
-   // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
-     return self.type
-   }
+  // sourcery: pyproperty = __class__
+  internal static func getClass(keyError: PyKeyError) -> PyType {
+    return keyError.type
+  }
 
   // MARK: - Dict
 
-   // sourcery: pyproperty = __dict__
-   override internal func getDict() -> PyDict {
-     return self.__dict__
-   }
+  // sourcery: pyproperty = __dict__
+  internal static func getDict(keyError: PyKeyError) -> PyDict {
+    return keyError.__dict__
+  }
 
   // MARK: - String
 

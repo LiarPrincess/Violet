@@ -131,15 +131,15 @@ public class PySyntaxError: PyException {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(syntaxError: PySyntaxError) -> PyType {
+    return syntaxError.type
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(syntaxError: PySyntaxError) -> PyDict {
+    return syntaxError.__dict__
   }
 
   // MARK: - String

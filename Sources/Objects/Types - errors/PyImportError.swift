@@ -82,15 +82,15 @@ public class PyImportError: PyException {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(importError: PyImportError) -> PyType {
+    return importError.type
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(importError: PyImportError) -> PyDict {
+    return importError.__dict__
   }
 
   // MARK: - String

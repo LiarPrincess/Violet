@@ -206,6 +206,11 @@ public class PyBaseException: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
+  internal static func getDict(baseException: PyBaseException) -> PyDict {
+    return baseException.__dict__
+  }
+
+  // This is for `__dict__Owner` protocol
   internal func getDict() -> PyDict {
     return self.__dict__
   }
@@ -213,8 +218,8 @@ public class PyBaseException: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(baseException: PyBaseException) -> PyType {
+    return baseException.type
   }
 
   // MARK: - Attributes

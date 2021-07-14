@@ -27,13 +27,13 @@ public final class PyKeyboardInterrupt: PyBaseException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(keyboardInterrupt: PyKeyboardInterrupt) -> PyType {
+    return keyboardInterrupt.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(keyboardInterrupt: PyKeyboardInterrupt) -> PyDict {
+    return keyboardInterrupt.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -70,13 +70,13 @@ public final class PyGeneratorExit: PyBaseException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(generatorExit: PyGeneratorExit) -> PyType {
+    return generatorExit.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(generatorExit: PyGeneratorExit) -> PyDict {
+    return generatorExit.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -113,13 +113,13 @@ public class PyException: PyBaseException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(exception: PyException) -> PyType {
+    return exception.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(exception: PyException) -> PyDict {
+    return exception.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -156,13 +156,13 @@ public final class PyStopAsyncIteration: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(stopAsyncIteration: PyStopAsyncIteration) -> PyType {
+    return stopAsyncIteration.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(stopAsyncIteration: PyStopAsyncIteration) -> PyDict {
+    return stopAsyncIteration.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -199,13 +199,13 @@ public class PyArithmeticError: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(arithmeticError: PyArithmeticError) -> PyType {
+    return arithmeticError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(arithmeticError: PyArithmeticError) -> PyDict {
+    return arithmeticError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -242,13 +242,13 @@ public final class PyFloatingPointError: PyArithmeticError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(floatingPointError: PyFloatingPointError) -> PyType {
+    return floatingPointError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(floatingPointError: PyFloatingPointError) -> PyDict {
+    return floatingPointError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -285,13 +285,13 @@ public final class PyOverflowError: PyArithmeticError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(overflowError: PyOverflowError) -> PyType {
+    return overflowError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(overflowError: PyOverflowError) -> PyDict {
+    return overflowError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -328,13 +328,13 @@ public final class PyZeroDivisionError: PyArithmeticError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(zeroDivisionError: PyZeroDivisionError) -> PyType {
+    return zeroDivisionError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(zeroDivisionError: PyZeroDivisionError) -> PyDict {
+    return zeroDivisionError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -371,13 +371,13 @@ public final class PyAssertionError: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(assertionError: PyAssertionError) -> PyType {
+    return assertionError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(assertionError: PyAssertionError) -> PyDict {
+    return assertionError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -414,13 +414,13 @@ public final class PyAttributeError: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(attributeError: PyAttributeError) -> PyType {
+    return attributeError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(attributeError: PyAttributeError) -> PyDict {
+    return attributeError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -457,13 +457,13 @@ public final class PyBufferError: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(bufferError: PyBufferError) -> PyType {
+    return bufferError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(bufferError: PyBufferError) -> PyDict {
+    return bufferError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -500,13 +500,13 @@ public final class PyEOFError: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(eOFError: PyEOFError) -> PyType {
+    return eOFError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(eOFError: PyEOFError) -> PyDict {
+    return eOFError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -543,13 +543,13 @@ public final class PyModuleNotFoundError: PyImportError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(moduleNotFoundError: PyModuleNotFoundError) -> PyType {
+    return moduleNotFoundError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(moduleNotFoundError: PyModuleNotFoundError) -> PyDict {
+    return moduleNotFoundError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -586,13 +586,13 @@ public class PyLookupError: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(lookupError: PyLookupError) -> PyType {
+    return lookupError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(lookupError: PyLookupError) -> PyDict {
+    return lookupError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -629,13 +629,13 @@ public final class PyIndexError: PyLookupError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(indexError: PyIndexError) -> PyType {
+    return indexError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(indexError: PyIndexError) -> PyDict {
+    return indexError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -672,13 +672,13 @@ public final class PyMemoryError: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(memoryError: PyMemoryError) -> PyType {
+    return memoryError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(memoryError: PyMemoryError) -> PyDict {
+    return memoryError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -715,13 +715,13 @@ public class PyNameError: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(nameError: PyNameError) -> PyType {
+    return nameError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(nameError: PyNameError) -> PyDict {
+    return nameError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -758,13 +758,13 @@ public final class PyUnboundLocalError: PyNameError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(unboundLocalError: PyUnboundLocalError) -> PyType {
+    return unboundLocalError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(unboundLocalError: PyUnboundLocalError) -> PyDict {
+    return unboundLocalError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -801,13 +801,13 @@ public class PyOSError: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(oSError: PyOSError) -> PyType {
+    return oSError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(oSError: PyOSError) -> PyDict {
+    return oSError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -844,13 +844,13 @@ public final class PyBlockingIOError: PyOSError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(blockingIOError: PyBlockingIOError) -> PyType {
+    return blockingIOError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(blockingIOError: PyBlockingIOError) -> PyDict {
+    return blockingIOError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -887,13 +887,13 @@ public final class PyChildProcessError: PyOSError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(childProcessError: PyChildProcessError) -> PyType {
+    return childProcessError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(childProcessError: PyChildProcessError) -> PyDict {
+    return childProcessError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -930,13 +930,13 @@ public class PyConnectionError: PyOSError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(connectionError: PyConnectionError) -> PyType {
+    return connectionError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(connectionError: PyConnectionError) -> PyDict {
+    return connectionError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -973,13 +973,13 @@ public final class PyBrokenPipeError: PyConnectionError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(brokenPipeError: PyBrokenPipeError) -> PyType {
+    return brokenPipeError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(brokenPipeError: PyBrokenPipeError) -> PyDict {
+    return brokenPipeError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1016,13 +1016,13 @@ public final class PyConnectionAbortedError: PyConnectionError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(connectionAbortedError: PyConnectionAbortedError) -> PyType {
+    return connectionAbortedError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(connectionAbortedError: PyConnectionAbortedError) -> PyDict {
+    return connectionAbortedError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1059,13 +1059,13 @@ public final class PyConnectionRefusedError: PyConnectionError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(connectionRefusedError: PyConnectionRefusedError) -> PyType {
+    return connectionRefusedError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(connectionRefusedError: PyConnectionRefusedError) -> PyDict {
+    return connectionRefusedError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1102,13 +1102,13 @@ public final class PyConnectionResetError: PyConnectionError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(connectionResetError: PyConnectionResetError) -> PyType {
+    return connectionResetError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(connectionResetError: PyConnectionResetError) -> PyDict {
+    return connectionResetError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1145,13 +1145,13 @@ public final class PyFileExistsError: PyOSError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(fileExistsError: PyFileExistsError) -> PyType {
+    return fileExistsError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(fileExistsError: PyFileExistsError) -> PyDict {
+    return fileExistsError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1188,13 +1188,13 @@ public final class PyFileNotFoundError: PyOSError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(fileNotFoundError: PyFileNotFoundError) -> PyType {
+    return fileNotFoundError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(fileNotFoundError: PyFileNotFoundError) -> PyDict {
+    return fileNotFoundError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1231,13 +1231,13 @@ public final class PyInterruptedError: PyOSError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(interruptedError: PyInterruptedError) -> PyType {
+    return interruptedError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(interruptedError: PyInterruptedError) -> PyDict {
+    return interruptedError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1274,13 +1274,13 @@ public final class PyIsADirectoryError: PyOSError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(isADirectoryError: PyIsADirectoryError) -> PyType {
+    return isADirectoryError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(isADirectoryError: PyIsADirectoryError) -> PyDict {
+    return isADirectoryError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1317,13 +1317,13 @@ public final class PyNotADirectoryError: PyOSError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(notADirectoryError: PyNotADirectoryError) -> PyType {
+    return notADirectoryError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(notADirectoryError: PyNotADirectoryError) -> PyDict {
+    return notADirectoryError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1360,13 +1360,13 @@ public final class PyPermissionError: PyOSError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(permissionError: PyPermissionError) -> PyType {
+    return permissionError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(permissionError: PyPermissionError) -> PyDict {
+    return permissionError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1403,13 +1403,13 @@ public final class PyProcessLookupError: PyOSError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(processLookupError: PyProcessLookupError) -> PyType {
+    return processLookupError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(processLookupError: PyProcessLookupError) -> PyDict {
+    return processLookupError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1446,13 +1446,13 @@ public final class PyTimeoutError: PyOSError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(timeoutError: PyTimeoutError) -> PyType {
+    return timeoutError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(timeoutError: PyTimeoutError) -> PyDict {
+    return timeoutError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1489,13 +1489,13 @@ public final class PyReferenceError: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(referenceError: PyReferenceError) -> PyType {
+    return referenceError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(referenceError: PyReferenceError) -> PyDict {
+    return referenceError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1532,13 +1532,13 @@ public class PyRuntimeError: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(runtimeError: PyRuntimeError) -> PyType {
+    return runtimeError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(runtimeError: PyRuntimeError) -> PyDict {
+    return runtimeError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1575,13 +1575,13 @@ public final class PyNotImplementedError: PyRuntimeError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(notImplementedError: PyNotImplementedError) -> PyType {
+    return notImplementedError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(notImplementedError: PyNotImplementedError) -> PyDict {
+    return notImplementedError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1618,13 +1618,13 @@ public final class PyRecursionError: PyRuntimeError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(recursionError: PyRecursionError) -> PyType {
+    return recursionError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(recursionError: PyRecursionError) -> PyDict {
+    return recursionError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1661,13 +1661,13 @@ public class PyIndentationError: PySyntaxError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(indentationError: PyIndentationError) -> PyType {
+    return indentationError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(indentationError: PyIndentationError) -> PyDict {
+    return indentationError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1704,13 +1704,13 @@ public final class PyTabError: PyIndentationError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(tabError: PyTabError) -> PyType {
+    return tabError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(tabError: PyTabError) -> PyDict {
+    return tabError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1750,13 +1750,13 @@ public final class PySystemError: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(systemError: PySystemError) -> PyType {
+    return systemError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(systemError: PySystemError) -> PyDict {
+    return systemError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1793,13 +1793,13 @@ public final class PyTypeError: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(typeError: PyTypeError) -> PyType {
+    return typeError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(typeError: PyTypeError) -> PyDict {
+    return typeError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1836,13 +1836,13 @@ public class PyValueError: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(valueError: PyValueError) -> PyType {
+    return valueError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(valueError: PyValueError) -> PyDict {
+    return valueError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1879,13 +1879,13 @@ public class PyUnicodeError: PyValueError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(unicodeError: PyUnicodeError) -> PyType {
+    return unicodeError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(unicodeError: PyUnicodeError) -> PyDict {
+    return unicodeError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1922,13 +1922,13 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(unicodeDecodeError: PyUnicodeDecodeError) -> PyType {
+    return unicodeDecodeError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(unicodeDecodeError: PyUnicodeDecodeError) -> PyDict {
+    return unicodeDecodeError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -1965,13 +1965,13 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(unicodeEncodeError: PyUnicodeEncodeError) -> PyType {
+    return unicodeEncodeError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(unicodeEncodeError: PyUnicodeEncodeError) -> PyDict {
+    return unicodeEncodeError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2008,13 +2008,13 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(unicodeTranslateError: PyUnicodeTranslateError) -> PyType {
+    return unicodeTranslateError.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(unicodeTranslateError: PyUnicodeTranslateError) -> PyDict {
+    return unicodeTranslateError.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2051,13 +2051,13 @@ public class PyWarning: PyException {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(warning: PyWarning) -> PyType {
+    return warning.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(warning: PyWarning) -> PyDict {
+    return warning.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2094,13 +2094,13 @@ public final class PyDeprecationWarning: PyWarning {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(deprecationWarning: PyDeprecationWarning) -> PyType {
+    return deprecationWarning.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(deprecationWarning: PyDeprecationWarning) -> PyDict {
+    return deprecationWarning.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2138,13 +2138,13 @@ public final class PyPendingDeprecationWarning: PyWarning {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(pendingDeprecationWarning: PyPendingDeprecationWarning) -> PyType {
+    return pendingDeprecationWarning.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(pendingDeprecationWarning: PyPendingDeprecationWarning) -> PyDict {
+    return pendingDeprecationWarning.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2181,13 +2181,13 @@ public final class PyRuntimeWarning: PyWarning {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(runtimeWarning: PyRuntimeWarning) -> PyType {
+    return runtimeWarning.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(runtimeWarning: PyRuntimeWarning) -> PyDict {
+    return runtimeWarning.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2224,13 +2224,13 @@ public final class PySyntaxWarning: PyWarning {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(syntaxWarning: PySyntaxWarning) -> PyType {
+    return syntaxWarning.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(syntaxWarning: PySyntaxWarning) -> PyDict {
+    return syntaxWarning.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2267,13 +2267,13 @@ public final class PyUserWarning: PyWarning {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(userWarning: PyUserWarning) -> PyType {
+    return userWarning.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(userWarning: PyUserWarning) -> PyDict {
+    return userWarning.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2311,13 +2311,13 @@ public final class PyFutureWarning: PyWarning {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(futureWarning: PyFutureWarning) -> PyType {
+    return futureWarning.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(futureWarning: PyFutureWarning) -> PyDict {
+    return futureWarning.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2354,13 +2354,13 @@ public final class PyImportWarning: PyWarning {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(importWarning: PyImportWarning) -> PyType {
+    return importWarning.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(importWarning: PyImportWarning) -> PyDict {
+    return importWarning.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2398,13 +2398,13 @@ public final class PyUnicodeWarning: PyWarning {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(unicodeWarning: PyUnicodeWarning) -> PyType {
+    return unicodeWarning.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(unicodeWarning: PyUnicodeWarning) -> PyDict {
+    return unicodeWarning.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2442,13 +2442,13 @@ public final class PyBytesWarning: PyWarning {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(bytesWarning: PyBytesWarning) -> PyType {
+    return bytesWarning.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(bytesWarning: PyBytesWarning) -> PyDict {
+    return bytesWarning.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
@@ -2485,13 +2485,13 @@ public final class PyResourceWarning: PyWarning {
   }
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
-    return self.type
+  internal static func getClass(resourceWarning: PyResourceWarning) -> PyType {
+    return resourceWarning.type
   }
 
   // sourcery: pyproperty = __dict__
-  override internal func getDict() -> PyDict {
-    return self.__dict__
+  internal static func getDict(resourceWarning: PyResourceWarning) -> PyDict {
+    return resourceWarning.__dict__
   }
 
   // sourcery: pystaticmethod = __new__
