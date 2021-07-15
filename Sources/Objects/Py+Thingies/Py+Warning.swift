@@ -149,7 +149,7 @@ extension PyInstance {
                                column: BigInt,
                                text: String) -> PySyntaxWarning {
     let msg = "\(text) (\(filename), line \(line), offset: \(column))"
-    return PySyntaxWarning(msg: msg)
+    return PyMemory.newSyntaxWarning(msg: msg)
   }
 
   public func newSyntaxWarning(filename: PyString,
@@ -179,8 +179,7 @@ extension PyInstance {
     case .error:
       let msgObject = self.intern(string: msg)
       let args = self.newTuple(msgObject)
-      let error = PyBytesWarning(args: args)
-      return error
+      return PyMemory.newBytesWarning(args: args)
     }
   }
 

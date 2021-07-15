@@ -227,9 +227,9 @@ public class PySuper: PyObject, HasCustomGetMethod {
     case let .error(e): return .error(e)
     }
 
-    let result = PySuper(requestedType: suType,
-                         object: object,
-                         objectType: objectType)
+    let result = PyMemory.newSuper(requestedType: suType,
+                                   object: object,
+                                   objectType: objectType)
 
     return .value(result)
   }

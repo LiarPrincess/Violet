@@ -289,7 +289,7 @@ extension PyInstance {
     encoding: PyString.Encoding
   ) -> PyUnicodeDecodeError {
     let msg = "'\(encoding)' codec can't decode data"
-    let error = PyUnicodeDecodeError(msg: msg)
+    let error = PyMemory.newUnicodeDecodeError(msg: msg)
 
     let dict = error.__dict__
     dict.set(id: .object, to: bytes.object)
@@ -313,7 +313,7 @@ extension PyInstance {
     encoding: PyString.Encoding
   ) -> PyUnicodeEncodeError {
     let msg = "'\(encoding)' codec can't encode data"
-    let error = PyUnicodeEncodeError(msg: msg)
+    let error = PyMemory.newUnicodeEncodeError(msg: msg)
 
     let dict = error.__dict__
     dict.set(id: .object, to: string)
