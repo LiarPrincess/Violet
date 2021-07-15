@@ -19,28 +19,28 @@ extension PyInstance {
 
   /// Inappropriate argument type.
   public func newTypeError(msg: String) -> PyTypeError {
-    return PyTypeError(msg: msg)
+    return PyMemory.newTypeError(msg: msg)
   }
 
   // MARK: - Value error
 
   /// Inappropriate argument value (of correct type).
   public func newValueError(msg: String) -> PyValueError {
-    return PyValueError(msg: msg)
+    return PyMemory.newValueError(msg: msg)
   }
 
   // MARK: - Index error
 
   /// Sequence index out of range.
   public func newIndexError(msg: String) -> PyIndexError {
-    return PyIndexError(msg: msg)
+    return PyMemory.newIndexError(msg: msg)
   }
 
   // MARK: - Attribute error
 
   /// Attribute not found.
   public func newAttributeError(msg: String) -> PyAttributeError {
-    return PyAttributeError(msg: msg)
+    return PyMemory.newAttributeError(msg: msg)
   }
 
   /// Attribute not found.
@@ -83,33 +83,33 @@ extension PyInstance {
 
   /// Second argument to a division or modulo operation was zero.
   public func newZeroDivisionError(msg: String) -> PyZeroDivisionError {
-    return PyZeroDivisionError(msg: msg)
+    return PyMemory.newZeroDivisionError(msg: msg)
   }
 
   /// Result too large to be represented.
   public func newOverflowError(msg: String) -> PyOverflowError {
-    return PyOverflowError(msg: msg)
+    return PyMemory.newOverflowError(msg: msg)
   }
 
   // MARK: - System
 
   /// Internal error in the Python interpreter.
   public func newSystemError(msg: String) -> PySystemError {
-    return PySystemError(msg: msg)
+    return PyMemory.newSystemError(msg: msg)
   }
 
   // MARK: - System exit
 
   /// Request to exit from the interpreter.
   public func newSystemExit(code: PyObject?) -> PySystemExit {
-    return PySystemExit(code: code)
+    return PyMemory.newSystemExit(code: code)
   }
 
   // MARK: - Runtime error
 
   /// Unspecified run-time error.
   public func newRuntimeError(msg: String) -> PyRuntimeError {
-    return PyRuntimeError(msg: msg)
+    return PyMemory.newRuntimeError(msg: msg)
   }
 
   // MARK: - OS error
@@ -118,7 +118,7 @@ extension PyInstance {
   ///
   /// https://docs.python.org/3/library/exceptions.html#OSError
   public func newOSError(msg: String) -> PyOSError {
-    return PyOSError(msg: msg)
+    return PyMemory.newOSError(msg: msg)
   }
 
   /// Base class for I/O related errors.
@@ -157,23 +157,23 @@ extension PyInstance {
     case EAGAIN,
          EALREADY,
          EINPROGRESS,
-         EWOULDBLOCK: return PyBlockingIOError(args: args)
+         EWOULDBLOCK: return PyMemory.newBlockingIOError(args: args)
     case EPIPE,
-         ESHUTDOWN: return PyBrokenPipeError(args: args)
-    case ECHILD: return PyChildProcessError(args: args)
-    case ECONNABORTED: return PyConnectionAbortedError(args: args)
-    case ECONNREFUSED: return PyConnectionRefusedError(args: args)
-    case ECONNRESET: return PyConnectionResetError(args: args)
-    case EEXIST: return PyFileExistsError(args: args)
-    case ENOENT: return PyFileNotFoundError(args: args)
-    case EISDIR: return PyIsADirectoryError(args: args)
-    case ENOTDIR: return PyNotADirectoryError(args: args)
-    case EINTR: return PyInterruptedError(args: args)
+         ESHUTDOWN: return PyMemory.newBrokenPipeError(args: args)
+    case ECHILD: return PyMemory.newChildProcessError(args: args)
+    case ECONNABORTED: return PyMemory.newConnectionAbortedError(args: args)
+    case ECONNREFUSED: return PyMemory.newConnectionRefusedError(args: args)
+    case ECONNRESET: return PyMemory.newConnectionResetError(args: args)
+    case EEXIST: return PyMemory.newFileExistsError(args: args)
+    case ENOENT: return PyMemory.newFileNotFoundError(args: args)
+    case EISDIR: return PyMemory.newIsADirectoryError(args: args)
+    case ENOTDIR: return PyMemory.newNotADirectoryError(args: args)
+    case EINTR: return PyMemory.newInterruptedError(args: args)
     case EACCES,
-         EPERM: return PyPermissionError(args: args)
-    case ESRCH: return PyProcessLookupError(args: args)
-    case ETIMEDOUT: return PyTimeoutError(args: args)
-    default: return PyOSError(args: args)
+         EPERM: return PyMemory.newPermissionError(args: args)
+    case ESRCH: return PyMemory.newProcessLookupError(args: args)
+    case ETIMEDOUT: return PyMemory.newTimeoutError(args: args)
+    default: return PyMemory.newOSError(args: args)
     }
   }
 
@@ -213,47 +213,47 @@ extension PyInstance {
     }
 
     let argsTuple = self.newTuple(elements: args)
-    return PyFileNotFoundError(args: argsTuple)
+    return PyMemory.newFileNotFoundError(args: argsTuple)
   }
 
   // MARK: - Key error
 
   /// Mapping key not found.
   public func newKeyError(msg: String) -> PyKeyError {
-    return PyKeyError(msg: msg)
+    return PyMemory.newKeyError(msg: msg)
   }
 
   /// Mapping key not found.
   public func newKeyError(key: PyObject) -> PyKeyError {
     let args = self.newTuple(key)
-    return PyKeyError(args: args)
+    return PyMemory.newKeyError(args: args)
   }
 
   // MARK: - Lookup error
 
   /// Base class for lookup errors.
   public func newLookupError(msg: String) -> PyLookupError {
-    return PyLookupError(msg: msg)
+    return PyMemory.newLookupError(msg: msg)
   }
 
   // MARK: - Stop iteration
 
   /// Signal the end from iterator.__next__().
   public func newStopIteration(value: PyObject? = nil) -> PyStopIteration {
-    return PyStopIteration(value: value)
+    return PyMemory.newStopIteration(value: value)
   }
 
   // MARK: - Name errors
 
   /// Name not found globally.
   public func newNameError(msg: String) -> PyNameError {
-    return PyNameError(msg: msg)
+    return PyMemory.newNameError(msg: msg)
   }
 
   /// Local name referenced but not bound to a value.
   public func newUnboundLocalError(variableName: String) -> PyUnboundLocalError {
     let msg = "local variable '\(variableName)' referenced before assignment"
-    return PyUnboundLocalError(msg: msg)
+    return PyMemory.newUnboundLocalError(msg: msg)
   }
 
   // MARK: - Unicode encoding
@@ -326,7 +326,7 @@ extension PyInstance {
 
   /// Assertion failed.
   public func newAssertionError(msg: String) -> PyAssertionError {
-    return PyAssertionError(msg: msg)
+    return PyMemory.newAssertionError(msg: msg)
   }
 
   // MARK: - Import error
@@ -335,9 +335,9 @@ extension PyInstance {
   public func newImportError(msg: String,
                              moduleName: String? = nil,
                              modulePath: String? = nil) -> PyImportError {
-    return PyImportError(msg: msg,
-                         moduleName: moduleName,
-                         modulePath: modulePath)
+    return PyMemory.newImportError(msg: msg,
+                                   moduleName: moduleName,
+                                   modulePath: modulePath)
   }
 
   // MARK: - Syntax error
@@ -428,12 +428,12 @@ extension PyInstance {
                              offset: BigInt?,
                              text: String?,
                              printFileAndLine: PyObject?) -> PySyntaxError {
-    return PySyntaxError(msg: msg,
-                         filename: filename,
-                         lineno: lineno,
-                         offset: offset,
-                         text: text,
-                         printFileAndLine: printFileAndLine)
+    return PyMemory.newSyntaxError(msg: msg,
+                                   filename: filename,
+                                   lineno: lineno,
+                                   offset: offset,
+                                   text: text,
+                                   printFileAndLine: printFileAndLine)
   }
 
   // swiftlint:disable:next function_parameter_count
@@ -443,12 +443,12 @@ extension PyInstance {
                              offset: PyInt?,
                              text: PyString?,
                              printFileAndLine: PyObject?) -> PySyntaxError {
-    return PySyntaxError(msg: msg,
-                         filename: filename,
-                         lineno: lineno,
-                         offset: offset,
-                         text: text,
-                         printFileAndLine: printFileAndLine)
+    return PyMemory.newSyntaxError(msg: msg,
+                                   filename: filename,
+                                   lineno: lineno,
+                                   offset: offset,
+                                   text: text,
+                                   printFileAndLine: printFileAndLine)
   }
 
   // MARK: - Indentation error
@@ -460,12 +460,12 @@ extension PyInstance {
                                   offset: BigInt?,
                                   text: String?,
                                   printFileAndLine: PyObject?) -> PySyntaxError {
-    return PyIndentationError(msg: msg,
-                              filename: filename,
-                              lineno: lineno,
-                              offset: offset,
-                              text: text,
-                              printFileAndLine: printFileAndLine)
+    return PyMemory.newIndentationError(msg: msg,
+                                        filename: filename,
+                                        lineno: lineno,
+                                        offset: offset,
+                                        text: text,
+                                        printFileAndLine: printFileAndLine)
   }
 
   // swiftlint:disable:next function_parameter_count
@@ -475,25 +475,25 @@ extension PyInstance {
                                   offset: PyInt?,
                                   text: PyString?,
                                   printFileAndLine: PyObject?) -> PySyntaxError {
-    return PyIndentationError(msg: msg,
-                              filename: filename,
-                              lineno: lineno,
-                              offset: offset,
-                              text: text,
-                              printFileAndLine: printFileAndLine)
+    return PyMemory.newIndentationError(msg: msg,
+                                        filename: filename,
+                                        lineno: lineno,
+                                        offset: offset,
+                                        text: text,
+                                        printFileAndLine: printFileAndLine)
   }
 
   // MARK: - Keyboard interrupt
 
   public func newKeyboardInterrupt() -> PyKeyboardInterrupt {
-    return PyKeyboardInterrupt(args: self.emptyTuple)
+    return PyMemory.newKeyboardInterrupt(args: self.emptyTuple)
   }
 
   // MARK: - Recursion
 
   public func newRecursionError() -> PyRecursionError {
     let msg = "maximum recursion depth exceeded"
-    return PyRecursionError(msg: msg)
+    return PyMemory.newRecursionError(msg: msg)
   }
 
   // MARK: - Factory from type
@@ -511,7 +511,7 @@ extension PyInstance {
       guard let exception = PyCast.asBaseException(object) else {
         let typeName = type.getNameString()
         let msg = "calling \(typeName) should have returned " +
-                  "an instance of BaseException, not \(object.typeName)"
+          "an instance of BaseException, not \(object.typeName)"
         return .typeError(msg)
       }
 

@@ -158,7 +158,7 @@ public class PyImportError: PyException {
                                         args: [PyObject],
                                         kwargs: PyDict?) -> PyResult<PyImportError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyImportError(args: argsTuple, type: type)
+    let result = PyMemory.newImportError(args: argsTuple, type: type)
     return .value(result)
   }
 

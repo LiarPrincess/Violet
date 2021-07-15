@@ -90,7 +90,7 @@ public final class PyStopIteration: PyException {
                                           args: [PyObject],
                                           kwargs: PyDict?) -> PyResult<PyStopIteration> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyStopIteration(args: argsTuple, type: type)
+    let result = PyMemory.newStopIteration(args: argsTuple, type: type)
     return .value(result)
   }
 

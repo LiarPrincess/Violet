@@ -514,7 +514,7 @@ public class PyBaseException: PyObject {
     kwargs: PyDict?
   ) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyBaseException(args: argsTuple, type: type)
+    let result = PyMemory.newBaseException(args: argsTuple, type: type)
     return .value(result)
   }
 

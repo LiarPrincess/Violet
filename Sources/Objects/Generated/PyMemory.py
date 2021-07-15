@@ -1,7 +1,7 @@
-from typing import List, Union
-from Sourcery import get_types, TypeInfo, SwiftInitInfo
+from typing import Dict, Optional
+
 from Common.strings import generated_warning
-from Common.builtin_types import get_property_name_escaped as get_builtin_type_property_name
+from Sourcery import get_types, TypeInfo, SwiftInitInfo
 
 # Types for which we want to generate 'new' function
 implemented_types = (
@@ -59,18 +59,84 @@ implemented_types = (
     'PyCell',
     'PyModule',
     'PySuper',  # Super
+    'PyBaseException',  # Exceptions
+    'PySystemExit',
+    'PyKeyboardInterrupt',
+    'PyGeneratorExit',
+    'PyException',
+    'PyStopIteration',
+    'PyStopAsyncIteration',
+    'PyArithmeticError',
+    'PyFloatingPointError',
+    'PyOverflowError',
+    'PyZeroDivisionError',
+    'PyAssertionError',
+    'PyAttributeError',
+    'PyBufferError',
+    'PyEOFError',
+    'PyImportError',
+    'PyModuleNotFoundError',
+    'PyLookupError',
+    'PyIndexError',
+    'PyKeyError',
+    'PyMemoryError',
+    'PyNameError',
+    'PyUnboundLocalError',
+    'PyOSError',
+    'PyBlockingIOError',
+    'PyChildProcessError',
+    'PyConnectionError',
+    'PyBrokenPipeError',
+    'PyConnectionAbortedError',
+    'PyConnectionRefusedError',
+    'PyConnectionResetError',
+    'PyFileExistsError',
+    'PyFileNotFoundError',
+    'PyInterruptedError',
+    'PyIsADirectoryError',
+    'PyNotADirectoryError',
+    'PyPermissionError',
+    'PyProcessLookupError',
+    'PyTimeoutError',
+    'PyReferenceError',
+    'PyRuntimeError',
+    'PyNotImplementedError',
+    'PyRecursionError',
+    'PySyntaxError',
+    'PyIndentationError',
+    'PyTabError',
+    'PySystemError',
+    'PyTypeError',
+    'PyValueError',
+    'PyUnicodeError',
+    'PyUnicodeDecodeError',
+    'PyUnicodeEncodeError',
+    'PyUnicodeTranslateError',
+    'PyWarning',  # Warnings
+    'PyDeprecationWarning',
+    'PyPendingDeprecationWarning',
+    'PyRuntimeWarning',
+    'PySyntaxWarning',
+    'PyUserWarning',
+    'PyFutureWarning',
+    'PyImportWarning',
+    'PyUnicodeWarning',
+    'PyBytesWarning',
+    'PyResourceWarning',
 )
 
 
-def get_init(types_by_name: dict, t: TypeInfo) -> SwiftInitInfo:
-    current_type = t
+def get_initializers(types_by_swift_name: Dict[str, TypeInfo], t: TypeInfo) -> SwiftInitInfo:
+    "If we do not have any 'initializers' then try parent"
+
+    current_type: Optional[TypeInfo] = t
     while current_type:
-        if current_type.swift_init:
-            return current_type.swift_init
+        if current_type.swift_initializers:
+            return current_type.swift_initializers
 
         base_type_name = current_type.swift_base_type_name
         if base_type_name:
-            current_type = types_by_name[base_type_name]
+            current_type = types_by_swift_name[base_type_name]
         else:
             current_type = None
 
@@ -132,10 +198,10 @@ def print_new_function(t: TypeInfo, i: SwiftInitInfo):
 if __name__ == '__main__':
     all_types = get_types()
 
-    types_by_name = {}
+    types_by_swift_name = {}
     for t in all_types:
         name = t.swift_type_name
-        types_by_name[name] = t
+        types_by_swift_name[name] = t
 
     print(f'''\
 {generated_warning(__file__)}
@@ -168,7 +234,8 @@ internal enum PyMemory {{
         print(f'  // MARK: - {swift_type_without_py}')
         print()
 
-        for i in t.swift_initializers:
+        initializers = get_initializers(types_by_swift_name, t)
+        for i in initializers:
             print_new_function(t, i)
 
     print('}')  # Type end

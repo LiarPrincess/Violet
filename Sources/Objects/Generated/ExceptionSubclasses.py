@@ -49,6 +49,7 @@ if __name__ == '__main__':
         doc = doc.replace('\n', '\\n" +\n"')
         final = 'final ' if is_final(python_type_name) else ''
         builtins_type_variable = get_builtin_type_property_name(python_type_name)
+        py_memory_function_name = 'new' + python_type_name
 
         print(f'''\
 // MARK: - {python_type_name}
@@ -81,7 +82,7 @@ public {final}class {swift_class_name}: {swift_base_class_name} {{
     kwargs: PyDict?
   ) -> PyResult<{swift_class_name}> {{
     let argsTuple = Py.newTuple(elements: args)
-    let result = {swift_class_name}(args: argsTuple, type: type)
+    let result = PyMemory.{py_memory_function_name}(args: argsTuple, type: type)
     return .value(result)
   }}
 

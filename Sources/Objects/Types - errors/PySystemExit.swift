@@ -98,7 +98,7 @@ public final class PySystemExit: PyBaseException {
                                        args: [PyObject],
                                        kwargs: PyDict?) -> PyResult<PySystemExit> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PySystemExit(args: argsTuple, type: type)
+    let result = PyMemory.newSystemExit(args: argsTuple, type: type)
     return .value(result)
   }
 

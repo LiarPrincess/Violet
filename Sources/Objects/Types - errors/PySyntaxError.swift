@@ -264,7 +264,7 @@ public class PySyntaxError: PyException {
                                         args: [PyObject],
                                         kwargs: PyDict?) -> PyResult<PySyntaxError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PySyntaxError(args: argsTuple, type: type)
+    let result = PyMemory.newSyntaxError(args: argsTuple, type: type)
     return .value(result)
   }
 
