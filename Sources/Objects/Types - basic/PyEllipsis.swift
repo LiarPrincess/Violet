@@ -11,6 +11,9 @@ import VioletCore
 /// Like Py_None it is a singleton object.
 public class PyEllipsis: PyObject {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   override public var description: String {
     return "PyEllipsis()"
   }

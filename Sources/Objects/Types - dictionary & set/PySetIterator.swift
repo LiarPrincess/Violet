@@ -8,6 +8,9 @@ import VioletCore
 // sourcery: pytype = set_iterator, default, hasGC
 public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   private let set: PyAnySet
   internal var index: Int // 'internal' for 'OrderedDictionaryBackedIterator'
   private var initialCount: Int

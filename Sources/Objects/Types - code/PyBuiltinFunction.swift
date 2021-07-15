@@ -106,6 +106,13 @@ public class PyBuiltinFunction: PyObject, AbstractBuiltinFunction {
     return self.name
   }
 
+  // MARK: - Doc
+
+  // sourcery: pyproperty = __doc__
+  internal func getDoc() -> String? {
+    return self._getDoc()
+  }
+
   // MARK: - TextSignature
 
   // sourcery: pyproperty = __text_signature__

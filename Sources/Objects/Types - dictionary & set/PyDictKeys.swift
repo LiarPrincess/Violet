@@ -9,6 +9,9 @@ import VioletCore
 // sourcery: pytype = dict_keys, default, hasGC
 public class PyDictKeys: PyObject, PyDictViewsShared {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   internal let dict: PyDict
 
   override public var description: String {

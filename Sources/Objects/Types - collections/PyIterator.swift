@@ -9,6 +9,9 @@ import VioletCore
 // sourcery: pytype = iterator, default, hasGC
 public class PyIterator: PyObject {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   internal let sequence: PyObject
   internal private(set) var index: Int
 

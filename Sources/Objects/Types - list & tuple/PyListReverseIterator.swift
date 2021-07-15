@@ -8,6 +8,9 @@ import VioletCore
 // sourcery: pytype = list_reverseiterator, default, hasGC
 public class PyListReverseIterator: PyObject {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   internal let list: PyList
   internal private(set) var index: Int
 

@@ -9,6 +9,9 @@ import VioletCore
 // sourcery: pytype = range_iterator, default
 public class PyRangeIterator: PyObject {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   internal let start: BigInt
   internal let step: BigInt
   internal let length: BigInt

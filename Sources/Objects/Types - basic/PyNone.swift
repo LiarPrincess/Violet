@@ -8,6 +8,9 @@ import VioletCore
 /// The Python None object, denoting lack of value.
 public class PyNone: PyObject, HasCustomGetMethod {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   override public var description: String {
     return "PyNone()"
   }

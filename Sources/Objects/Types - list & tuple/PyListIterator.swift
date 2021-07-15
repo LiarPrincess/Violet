@@ -8,6 +8,9 @@ import VioletCore
 // sourcery: pytype = list_iterator, default, hasGC
 public class PyListIterator: PyObject {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   internal let list: PyList
   internal private(set) var index: Int
 

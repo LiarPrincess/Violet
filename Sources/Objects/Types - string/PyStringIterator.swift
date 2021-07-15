@@ -8,6 +8,9 @@ import VioletCore
 // sourcery: pytype = str_iterator, default, hasGC
 public class PyStringIterator: PyObject {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   internal let string: PyString
   internal private(set) var index: Int
 

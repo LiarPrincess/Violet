@@ -71,6 +71,13 @@ extension AbstractBuiltinFunction {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
+  // MARK: - Doc
+
+  /// DO NOT USE! This is a part of `AbstractBuiltinFunction` implementation.
+  internal func _getDoc() -> String? {
+    return self.doc.map(DocHelper.getDocWithoutSignature(_:))
+  }
+
   // MARK: - TextSignature
 
   /// DO NOT USE! This is a part of `AbstractBuiltinFunction` implementation.

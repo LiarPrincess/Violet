@@ -8,6 +8,9 @@ import VioletCore
 // sourcery: pytype = tuple_iterator, default, hasGC
 public class PyTupleIterator: PyObject {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   internal let tuple: PyTuple
   internal private(set) var index: Int
 

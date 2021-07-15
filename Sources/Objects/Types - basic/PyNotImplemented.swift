@@ -8,6 +8,9 @@ import VioletCore
 /// operation is not implemented for the given type combination.
 public class PyNotImplemented: PyObject {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   override public var description: String {
     return "PyNotImplemented()"
   }

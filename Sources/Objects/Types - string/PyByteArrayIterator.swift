@@ -8,6 +8,9 @@ import VioletCore
 // sourcery: pytype = bytearray_iterator, default, hasGC
 public class PyByteArrayIterator: PyObject {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   internal let bytes: PyByteArray
   internal private(set) var index: Int
 

@@ -8,6 +8,9 @@ import VioletCore
 // sourcery: pytype = dict_itemiterator, default, hasGC
 public class PyDictItemIterator: PyObject, OrderedDictionaryBackedIterator {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   internal let object: PyDict
   internal var index: Int
   private var initCount: Int

@@ -6,14 +6,12 @@ bool
 
 builtinFunction
   Missing:
-    __doc__
     __new__
   This should not be here:
     __get__
 
 builtinMethod
   Missing:
-    __doc__
     __new__
   This should not be here:
     __get__
@@ -29,10 +27,6 @@ bytearray
     maketrans
     translate
 
-bytearray_iterator
-  Missing:
-    __doc__
-
 bytes
   Missing:
     __mod__
@@ -43,13 +37,8 @@ bytes
     maketrans
     translate
 
-bytes_iterator
-  Missing:
-    __doc__
-
 callable_iterator
   Missing:
-    __doc__
     __new__
 
 code
@@ -77,14 +66,9 @@ dict
   Missing:
     __reversed__
 
-dict_itemiterator
-  Missing:
-    __doc__
-
 dict_items
   Missing:
     __and__
-    __doc__
     __or__
     __rand__
     __reversed__
@@ -94,15 +78,10 @@ dict_items
     __sub__
     __xor__
     isdisjoint
-
-dict_keyiterator
-  Missing:
-    __doc__
 
 dict_keys
   Missing:
     __and__
-    __doc__
     __or__
     __rand__
     __reversed__
@@ -113,19 +92,10 @@ dict_keys
     __xor__
     isdisjoint
 
-dict_valueiterator
-  Missing:
-    __doc__
-
 dict_values
   Missing:
-    __doc__
     __new__
     __reversed__
-
-ellipsis
-  Missing:
-    __doc__
 
 float
   Missing:
@@ -137,7 +107,6 @@ float
 
 frame
   Missing:
-    __doc__
     __new__
     clear
     f_trace
@@ -160,7 +129,6 @@ int
 iterator
   Missing:
     __abstractmethods__
-    __doc__
     __module__
     __new__
     __slots__
@@ -168,14 +136,6 @@ iterator
   This should not be here:
     __getattribute__
     __length_hint__
-
-list_iterator
-  Missing:
-    __doc__
-
-list_reverseiterator
-  Missing:
-    __doc__
 
 method
   Missing:
@@ -187,22 +147,12 @@ types.SimpleNamespace
     __new__
 
 NoneType
-  Missing:
-    __doc__
   This should not be here:
     __getattribute__
-
-NotImplementedType
-  Missing:
-    __doc__
 
 property
   Missing:
     __isabstractmethod__
-
-range_iterator
-  Missing:
-    __doc__
 
 set
   Missing:
@@ -214,10 +164,6 @@ set
     intersection_update
     symmetric_difference_update
 
-set_iterator
-  Missing:
-    __doc__
-
 str
   Missing:
     __format__
@@ -228,10 +174,6 @@ str
     format_map
     maketrans
     translate
-
-str_iterator
-  Missing:
-    __doc__
 
 TextFile
   Missing:
@@ -260,10 +202,6 @@ TextFile
     __del__
     __enter__
     __exit__
-
-tuple_iterator
-  Missing:
-    __doc__
 
 type
   Missing:

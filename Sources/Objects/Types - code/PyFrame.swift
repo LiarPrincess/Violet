@@ -25,6 +25,9 @@ import VioletBytecode
 /// (`[PyCell]` instead of `[PyObject]`).
 public class PyFrame: PyObject {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   // MARK: - Properties
 
   /// Code object being executed in this frame.

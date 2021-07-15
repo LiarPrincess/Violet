@@ -8,6 +8,9 @@ import VioletCore
 // sourcery: pytype = callable_iterator, default, hasGC
 public class PyCallableIterator: PyObject {
 
+  // sourcery: pytypedoc
+  internal static let doc: String? = nil
+
   internal let callable: PyObject
   internal let sentinel: PyObject
 
