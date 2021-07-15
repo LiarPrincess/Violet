@@ -100,6 +100,6 @@ public final class PyStopIteration: PyException {
   internal func pyStopIterationInit(args: [PyObject],
                                     kwargs: PyDict?) -> PyResult<PyNone> {
     self.value = Self.extractValue(args: args)
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }

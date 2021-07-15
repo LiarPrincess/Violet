@@ -52,7 +52,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyBaseExceptionInit(args: args, kwargs: kwargs)
+    return self.pyBaseExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -95,7 +95,7 @@ public final class PyGeneratorExit: PyBaseException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyBaseExceptionInit(args: args, kwargs: kwargs)
+    return self.pyBaseExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -138,7 +138,7 @@ public class PyException: PyBaseException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyBaseExceptionInit(args: args, kwargs: kwargs)
+    return self.pyBaseExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -181,7 +181,7 @@ public final class PyStopAsyncIteration: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -224,7 +224,7 @@ public class PyArithmeticError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -267,7 +267,7 @@ public final class PyFloatingPointError: PyArithmeticError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyArithmeticErrorInit(args: args, kwargs: kwargs)
+    return self.pyArithmeticErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -310,7 +310,7 @@ public final class PyOverflowError: PyArithmeticError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyArithmeticErrorInit(args: args, kwargs: kwargs)
+    return self.pyArithmeticErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -353,7 +353,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyArithmeticErrorInit(args: args, kwargs: kwargs)
+    return self.pyArithmeticErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -396,7 +396,7 @@ public final class PyAssertionError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -439,7 +439,7 @@ public final class PyAttributeError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -482,7 +482,7 @@ public final class PyBufferError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -525,7 +525,7 @@ public final class PyEOFError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -568,7 +568,7 @@ public final class PyModuleNotFoundError: PyImportError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyImportErrorInit(args: args, kwargs: kwargs)
+    return self.pyImportErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -611,7 +611,7 @@ public class PyLookupError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -654,7 +654,7 @@ public final class PyIndexError: PyLookupError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyLookupErrorInit(args: args, kwargs: kwargs)
+    return self.pyLookupErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -697,7 +697,7 @@ public final class PyMemoryError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -740,7 +740,7 @@ public class PyNameError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -783,7 +783,7 @@ public final class PyUnboundLocalError: PyNameError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyNameErrorInit(args: args, kwargs: kwargs)
+    return self.pyNameErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -826,7 +826,7 @@ public class PyOSError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -869,7 +869,7 @@ public final class PyBlockingIOError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyOSErrorInit(args: args, kwargs: kwargs)
+    return self.pyOSErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -912,7 +912,7 @@ public final class PyChildProcessError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyOSErrorInit(args: args, kwargs: kwargs)
+    return self.pyOSErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -955,7 +955,7 @@ public class PyConnectionError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyOSErrorInit(args: args, kwargs: kwargs)
+    return self.pyOSErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -998,7 +998,7 @@ public final class PyBrokenPipeError: PyConnectionError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyConnectionErrorInit(args: args, kwargs: kwargs)
+    return self.pyConnectionErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1041,7 +1041,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyConnectionErrorInit(args: args, kwargs: kwargs)
+    return self.pyConnectionErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1084,7 +1084,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyConnectionErrorInit(args: args, kwargs: kwargs)
+    return self.pyConnectionErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1127,7 +1127,7 @@ public final class PyConnectionResetError: PyConnectionError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyConnectionErrorInit(args: args, kwargs: kwargs)
+    return self.pyConnectionErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1170,7 +1170,7 @@ public final class PyFileExistsError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyOSErrorInit(args: args, kwargs: kwargs)
+    return self.pyOSErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1213,7 +1213,7 @@ public final class PyFileNotFoundError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyOSErrorInit(args: args, kwargs: kwargs)
+    return self.pyOSErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1256,7 +1256,7 @@ public final class PyInterruptedError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyOSErrorInit(args: args, kwargs: kwargs)
+    return self.pyOSErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1299,7 +1299,7 @@ public final class PyIsADirectoryError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyOSErrorInit(args: args, kwargs: kwargs)
+    return self.pyOSErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1342,7 +1342,7 @@ public final class PyNotADirectoryError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyOSErrorInit(args: args, kwargs: kwargs)
+    return self.pyOSErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1385,7 +1385,7 @@ public final class PyPermissionError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyOSErrorInit(args: args, kwargs: kwargs)
+    return self.pyOSErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1428,7 +1428,7 @@ public final class PyProcessLookupError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyOSErrorInit(args: args, kwargs: kwargs)
+    return self.pyOSErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1471,7 +1471,7 @@ public final class PyTimeoutError: PyOSError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyOSErrorInit(args: args, kwargs: kwargs)
+    return self.pyOSErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1514,7 +1514,7 @@ public final class PyReferenceError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1557,7 +1557,7 @@ public class PyRuntimeError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1600,7 +1600,7 @@ public final class PyNotImplementedError: PyRuntimeError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyRuntimeErrorInit(args: args, kwargs: kwargs)
+    return self.pyRuntimeErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1643,7 +1643,7 @@ public final class PyRecursionError: PyRuntimeError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyRuntimeErrorInit(args: args, kwargs: kwargs)
+    return self.pyRuntimeErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1686,7 +1686,7 @@ public class PyIndentationError: PySyntaxError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pySyntaxErrorInit(args: args, kwargs: kwargs)
+    return self.pySyntaxErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1729,7 +1729,7 @@ public final class PyTabError: PyIndentationError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyIndentationErrorInit(args: args, kwargs: kwargs)
+    return self.pyIndentationErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1775,7 +1775,7 @@ public final class PySystemError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1818,7 +1818,7 @@ public final class PyTypeError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1861,7 +1861,7 @@ public class PyValueError: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1904,7 +1904,7 @@ public class PyUnicodeError: PyValueError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyValueErrorInit(args: args, kwargs: kwargs)
+    return self.pyValueErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1947,7 +1947,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyUnicodeErrorInit(args: args, kwargs: kwargs)
+    return self.pyUnicodeErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -1990,7 +1990,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyUnicodeErrorInit(args: args, kwargs: kwargs)
+    return self.pyUnicodeErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2033,7 +2033,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyUnicodeErrorInit(args: args, kwargs: kwargs)
+    return self.pyUnicodeErrorInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2076,7 +2076,7 @@ public class PyWarning: PyException {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyExceptionInit(args: args, kwargs: kwargs)
+    return self.pyExceptionInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2119,7 +2119,7 @@ public final class PyDeprecationWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyWarningInit(args: args, kwargs: kwargs)
+    return self.pyWarningInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2163,7 +2163,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyWarningInit(args: args, kwargs: kwargs)
+    return self.pyWarningInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2206,7 +2206,7 @@ public final class PyRuntimeWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyWarningInit(args: args, kwargs: kwargs)
+    return self.pyWarningInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2249,7 +2249,7 @@ public final class PySyntaxWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyWarningInit(args: args, kwargs: kwargs)
+    return self.pyWarningInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2292,7 +2292,7 @@ public final class PyUserWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyWarningInit(args: args, kwargs: kwargs)
+    return self.pyWarningInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2336,7 +2336,7 @@ public final class PyFutureWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyWarningInit(args: args, kwargs: kwargs)
+    return self.pyWarningInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2379,7 +2379,7 @@ public final class PyImportWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyWarningInit(args: args, kwargs: kwargs)
+    return self.pyWarningInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2423,7 +2423,7 @@ public final class PyUnicodeWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyWarningInit(args: args, kwargs: kwargs)
+    return self.pyWarningInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2467,7 +2467,7 @@ public final class PyBytesWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyWarningInit(args: args, kwargs: kwargs)
+    return self.pyWarningInit(args: args, kwargs: kwargs)
   }
 }
 
@@ -2510,7 +2510,7 @@ public final class PyResourceWarning: PyWarning {
     args: [PyObject],
     kwargs: PyDict?
   ) -> PyResult<PyNone> {
-    return super.pyWarningInit(args: args, kwargs: kwargs)
+    return self.pyWarningInit(args: args, kwargs: kwargs)
   }
 }
 

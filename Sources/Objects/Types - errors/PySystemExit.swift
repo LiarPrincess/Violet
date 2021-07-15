@@ -113,22 +113,22 @@ public final class PySystemExit: PyBaseException {
     case 1:
       self.code = args[0]
     default:
-      // Check if we already are this tuple (to avoid allocation)
-      if !self.isCodeTupleEqual(to: args) {
+      // Check if 'self.code' is already this tuple (to avoid allocation).
+      if !self.isCodeEqual(to: args) {
         self.code = Py.newTuple(elements: args)
       }
     }
 
-    return super.pyBaseExceptionInit(args: args, kwargs: kwargs)
+    return self.pyBaseExceptionInit(args: args, kwargs: kwargs)
   }
 
-  private func isCodeTupleEqual(to args: [PyObject]) -> Bool {
-    let codeTupleOrNil = self.code.flatMap(PyCast.asTuple(_:))
-    guard let codeTuple = codeTupleOrNil else {
+  private func isCodeEqual(to args: [PyObject]) -> Bool {
+    let codeOrNil = self.code.flatMap(PyCast.asTuple(_:))
+    guard let code = codeOrNil else {
       return false
     }
 
-    let codeElements = codeTuple.elements
+    let codeElements = code.elements
     return codeElements.count == args.count
       && zip(codeElements, args).allSatisfy { $0.0 === $0.1 }
   }

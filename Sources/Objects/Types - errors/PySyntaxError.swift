@@ -53,19 +53,17 @@ public class PySyntaxError: PyException {
     let text = text.map(Py.newString(_:))
     let printFileAndLine = printFileAndLine
 
-    self.init(
-      msg: msg,
-      filename: filename,
-      lineno: lineno,
-      offset: offset,
-      text: text,
-      printFileAndLine: printFileAndLine,
-      traceback: traceback,
-      cause: cause,
-      context: context,
-      suppressContext: suppressContext,
-      type: type
-    )
+    self.init(msg: msg,
+              filename: filename,
+              lineno: lineno,
+              offset: offset,
+              text: text,
+              printFileAndLine: printFileAndLine,
+              traceback: traceback,
+              cause: cause,
+              context: context,
+              suppressContext: suppressContext,
+              type: type)
   }
 
   internal convenience init(msg: PyString?,
@@ -277,7 +275,7 @@ public class PySyntaxError: PyException {
                                   kwargs: PyDict?) -> PyResult<PyNone> {
     // Run 'super.pyInit' before our custom code, to avoid situation where
     // 'super.pyInit' errors but we already mutated entity.
-    switch super.pyExceptionInit(args: args, kwargs: kwargs) {
+    switch self.pyExceptionInit(args: args, kwargs: kwargs) {
     case .value:
       break
     case .error(let e):
