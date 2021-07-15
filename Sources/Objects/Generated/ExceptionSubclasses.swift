@@ -1739,9 +1739,9 @@ public final class PyTabError: PyIndentationError {
 public final class PySystemError: PyException {
 
   // sourcery: pytypedoc
-  internal static let systemErrorDoc = "Internal error in the Python interpreter. " +
-" " +
-"Please report this to the Python maintainer, along with the traceback, " +
+  internal static let systemErrorDoc = "Internal error in the Python interpreter.\n" +
+"\n" +
+"Please report this to the Python maintainer, along with the traceback,\n" +
 "the Python version, and the hardware/OS platform and version."
 
   /// Type to set in `init`.
@@ -2129,7 +2129,7 @@ public final class PyDeprecationWarning: PyWarning {
 public final class PyPendingDeprecationWarning: PyWarning {
 
   // sourcery: pytypedoc
-  internal static let pendingDeprecationWarningDoc = "Base class for warnings about features which will be deprecated " +
+  internal static let pendingDeprecationWarningDoc = "Base class for warnings about features which will be deprecated\n" +
 "in the future."
 
   /// Type to set in `init`.
@@ -2302,7 +2302,7 @@ public final class PyUserWarning: PyWarning {
 public final class PyFutureWarning: PyWarning {
 
   // sourcery: pytypedoc
-  internal static let futureWarningDoc = "Base class for warnings about constructs that will change semantically " +
+  internal static let futureWarningDoc = "Base class for warnings about constructs that will change semantically\n" +
 "in the future."
 
   /// Type to set in `init`.
@@ -2389,7 +2389,7 @@ public final class PyImportWarning: PyWarning {
 public final class PyUnicodeWarning: PyWarning {
 
   // sourcery: pytypedoc
-  internal static let unicodeWarningDoc = "Base class for warnings about Unicode related problems, mostly " +
+  internal static let unicodeWarningDoc = "Base class for warnings about Unicode related problems, mostly\n" +
 "related to conversion problems."
 
   /// Type to set in `init`.
@@ -2433,7 +2433,7 @@ public final class PyUnicodeWarning: PyWarning {
 public final class PyBytesWarning: PyWarning {
 
   // sourcery: pytypedoc
-  internal static let bytesWarningDoc = "Base class for warnings about bytes and buffer related problems, mostly " +
+  internal static let bytesWarningDoc = "Base class for warnings about bytes and buffer related problems, mostly\n" +
 "related to conversion from str or comparing to str."
 
   /// Type to set in `init`.
