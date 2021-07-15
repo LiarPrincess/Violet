@@ -29,7 +29,8 @@ echo 'Running Sourcery'
 sourcery \
   --sources $OBJECTS \
   --templates $GENERATED/Sourcery/dump.stencil \
-  --output $GENERATED/Sourcery/dump.txt
+  --output $GENERATED/Sourcery/dump.txt \
+  --quiet
 echo ''
 
 # === Builtin types ===

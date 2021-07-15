@@ -36,6 +36,13 @@ public class PyDictValues: PyObject, PyDictViewsShared {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - Length
 
   // sourcery: pymethod = __len__

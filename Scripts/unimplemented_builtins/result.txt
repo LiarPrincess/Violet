@@ -119,7 +119,6 @@ dict_valueiterator
 
 dict_values
   Missing:
-    __class__
     __doc__
     __new__
     __reversed__
@@ -184,7 +183,6 @@ method
 
 types.SimpleNamespace
   Missing:
-    __class__
     __hash__
     __new__
 

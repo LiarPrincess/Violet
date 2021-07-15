@@ -430,6 +430,7 @@ public final class BuiltinTypes {
     type.flags.set(PyType.defaultFlag)
     type.flags.set(PyType.hasGCFlag)
 
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBuiltinMethod.getClass, castSelf: Self.asBuiltinMethod))
     self.insert(type: type, name: "__name__", value: PyProperty.wrap(doc: nil, get: PyBuiltinMethod.getName, castSelf: Self.asBuiltinMethod))
     self.insert(type: type, name: "__qualname__", value: PyProperty.wrap(doc: nil, get: PyBuiltinMethod.getQualname, castSelf: Self.asBuiltinMethod))
     self.insert(type: type, name: "__text_signature__", value: PyProperty.wrap(doc: nil, get: PyBuiltinMethod.getTextSignature, castSelf: Self.asBuiltinMethod))
@@ -1174,6 +1175,8 @@ public final class BuiltinTypes {
     type.flags.set(PyType.defaultFlag)
     type.flags.set(PyType.hasGCFlag)
 
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDictValues.getClass, castSelf: Self.asDictValues))
+
     self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyDictValues.repr, castSelf: Self.asDictValues))
     self.insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyDictValues.getAttribute(name:), castSelf: Self.asDictValues))
     self.insert(type: type, name: "__len__", value: PyBuiltinFunction.wrap(name: "__len__", doc: nil, fn: PyDictValues.getLength, castSelf: Self.asDictValues))
@@ -1883,6 +1886,7 @@ public final class BuiltinTypes {
     type.flags.set(PyType.defaultFlag)
     type.flags.set(PyType.hasGCFlag)
 
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyNamespace.getClass, castSelf: Self.asNamespace))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyNamespace.getDict, castSelf: Self.asNamespace))
 
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNamespace.pyInit(args:kwargs:), castSelf: Self.asNamespaceOptional))
@@ -2448,6 +2452,7 @@ public final class BuiltinTypes {
     type.flags.set(PyType.defaultFlag)
     type.flags.set(PyType.hasGCFlag)
 
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySuper.getClass, castSelf: Self.asSuper))
     self.insert(type: type, name: "__thisclass__", value: PyProperty.wrap(doc: PySuper.thisClassDoc, get: PySuper.getThisClass, castSelf: Self.asSuper))
     self.insert(type: type, name: "__self__", value: PyProperty.wrap(doc: PySuper.selfDoc, get: PySuper.getSelf, castSelf: Self.asSuper))
     self.insert(type: type, name: "__self_class__", value: PyProperty.wrap(doc: PySuper.selfClassDoc, get: PySuper.getSelfClass, castSelf: Self.asSuper))

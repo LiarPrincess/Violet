@@ -95,6 +95,13 @@ public class PyBuiltinMethod: PyObject, AbstractBuiltinFunction {
     return self._getAttribute(name: name)
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - Name
 
   // sourcery: pyproperty = __name__

@@ -148,6 +148,13 @@ public class PySuper: PyObject, HasCustomGetMethod {
     return string.value == "__class__"
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - Get method
 
   internal func getMethod(

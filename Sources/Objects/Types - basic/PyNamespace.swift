@@ -66,6 +66,13 @@ public class PyNamespace: PyObject {
     return .notImplemented
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
