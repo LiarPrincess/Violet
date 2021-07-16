@@ -118,10 +118,10 @@ extension PyInstance {
     let instruction = self.newInt(frame.currentInstructionIndex ?? 0)
     let line = self.newInt(frame.currentInstructionLine)
 
-    return PyTraceback(next: next,
-                       frame: frame,
-                       lastInstruction: instruction,
-                       lineNo: line)
+    return PyMemory.newTraceback(next: next,
+                                 frame: frame,
+                                 lastInstruction: instruction,
+                                 lineNo: line)
   }
 
   public func getTraceback(exception: PyBaseException) -> PyTraceback? {

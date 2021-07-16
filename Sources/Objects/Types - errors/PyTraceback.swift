@@ -205,12 +205,10 @@ public class PyTraceback: PyObject {
       return .typeError("\(fn) argument 4 must be int, not \(t)")
     }
 
-    let result = PyTraceback(
-      next: next,
-      frame: frame,
-      lastInstruction: lastInstruction,
-      lineNo: lineNo
-    )
+    let result = PyMemory.newTraceback(next: next,
+                                       frame: frame,
+                                       lastInstruction: lastInstruction,
+                                       lineNo: lineNo)
 
     return .value(result)
   }

@@ -901,6 +901,23 @@ internal enum PyMemory {
     )
   }
 
+  // MARK: - Traceback
+
+  /// Allocate new instance of `traceback` type.
+  internal static func newTraceback(
+    next: PyTraceback?,
+    frame: PyFrame,
+    lastInstruction: PyInt,
+    lineNo: PyInt
+  ) -> PyTraceback {
+    return PyTraceback(
+      next: next,
+      frame: frame,
+      lastInstruction: lastInstruction,
+      lineNo: lineNo
+    )
+  }
+
   // MARK: - Tuple
 
   /// Allocate new instance of `tuple` type.

@@ -3,127 +3,15 @@ from typing import Dict, Optional
 from Common.strings import generated_warning
 from Sourcery import get_types, TypeInfo, SwiftInitInfo
 
-# Types for which we want to generate 'new' function
-implemented_types = (
-    'PyNone',  # Basic
-    'PyEllipsis',
-    'PyNamespace',
-    'PyNotImplemented',
-    'PyBool',
-    'PyInt',
-    'PyFloat',
-    'PyComplex',
-    'PyType',  # Type and object
-    'PyObject',
-    'PyList',  # List
-    'PyListIterator',
-    'PyListReverseIterator',
-    'PyTuple',  # Tuple
-    'PyTupleIterator',
-    'PyDict',  # Dict
-    'PyDictItemIterator',
-    'PyDictItems',
-    'PyDictKeyIterator',
-    'PyDictKeys',
-    'PyDictValueIterator',
-    'PyDictValues',
-    'PyFrozenSet',  # Set
-    'PySet',
-    'PySetIterator',
-    'PyIterator',  # Iterators
-    'PyCallableIterator',
-    'PyReversed',
-    'PyRange',  # Range
-    'PyRangeIterator',
-    'PySlice',  # Slice
-    'PyEnumerate',  # Enumerate, map, filter, zip
-    'PyMap',
-    'PyFilter',
-    'PyZip',
-    'PyString',  # String
-    'PyStringIterator',
-    'PyBytes',  # Bytes
-    'PyBytesIterator',
-    'PyByteArray',
-    'PyByteArrayIterator',
-    'PyTextFile',
-    'PyBuiltinFunction',  # Function/method
-    'PyBuiltinMethod',
-    'PyFunction',
-    'PyMethod',
-    'PyClassMethod',
-    'PyStaticMethod',
-    'PyProperty',  # Property
-    'PyCode',  # Code/frame
-    'PyFrame',
-    'PyCell',
-    'PyModule',
-    'PySuper',  # Super
-    'PyBaseException',  # Exceptions
-    'PySystemExit',
-    'PyKeyboardInterrupt',
-    'PyGeneratorExit',
-    'PyException',
-    'PyStopIteration',
-    'PyStopAsyncIteration',
-    'PyArithmeticError',
-    'PyFloatingPointError',
-    'PyOverflowError',
-    'PyZeroDivisionError',
-    'PyAssertionError',
-    'PyAttributeError',
-    'PyBufferError',
-    'PyEOFError',
-    'PyImportError',
-    'PyModuleNotFoundError',
-    'PyLookupError',
-    'PyIndexError',
-    'PyKeyError',
-    'PyMemoryError',
-    'PyNameError',
-    'PyUnboundLocalError',
-    'PyOSError',
-    'PyBlockingIOError',
-    'PyChildProcessError',
-    'PyConnectionError',
-    'PyBrokenPipeError',
-    'PyConnectionAbortedError',
-    'PyConnectionRefusedError',
-    'PyConnectionResetError',
-    'PyFileExistsError',
-    'PyFileNotFoundError',
-    'PyInterruptedError',
-    'PyIsADirectoryError',
-    'PyNotADirectoryError',
-    'PyPermissionError',
-    'PyProcessLookupError',
-    'PyTimeoutError',
-    'PyReferenceError',
-    'PyRuntimeError',
-    'PyNotImplementedError',
-    'PyRecursionError',
-    'PySyntaxError',
-    'PyIndentationError',
-    'PyTabError',
-    'PySystemError',
-    'PyTypeError',
-    'PyValueError',
-    'PyUnicodeError',
-    'PyUnicodeDecodeError',
-    'PyUnicodeEncodeError',
-    'PyUnicodeTranslateError',
-    'PyWarning',  # Warnings
-    'PyDeprecationWarning',
-    'PyPendingDeprecationWarning',
-    'PyRuntimeWarning',
-    'PySyntaxWarning',
-    'PyUserWarning',
-    'PyFutureWarning',
-    'PyImportWarning',
-    'PyUnicodeWarning',
-    'PyBytesWarning',
-    'PyResourceWarning',
-)
+# If you want to grep missing calls:
+#
+# OPTIONS="-R --line-number --exclude PyMemory.swift --exclude *.pyc"
+# DIR="./Sources/Objects/"
+#
+# grep ${OPTIONS} " PyNone(" ${DIR}
+# grep ${OPTIONS} " PyEllipsis(" ${DIR}
+# grep ${OPTIONS} " PyNamespace(" ${DIR}
+# grep ${OPTIONS} " PyNotImplemented(" ${DIR}
 
 
 def get_initializers(types_by_swift_name: Dict[str, TypeInfo], t: TypeInfo) -> SwiftInitInfo:
@@ -195,7 +83,7 @@ def print_new_function(t: TypeInfo, i: SwiftInitInfo):
     print()
 
 
-if __name__ == '__main__':
+def main():
     all_types = get_types()
 
     types_by_swift_name = {}
@@ -225,9 +113,6 @@ internal enum PyMemory {{
 ''')
 
     for t in all_types:
-        if t.swift_type_name not in implemented_types:
-            continue
-
         swift_type = t.swift_type_name
         swift_type_without_py = swift_type[2:]
 
@@ -239,3 +124,7 @@ internal enum PyMemory {{
             print_new_function(t, i)
 
     print('}')  # Type end
+
+
+if __name__ == '__main__':
+    main()
