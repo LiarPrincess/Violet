@@ -71,7 +71,7 @@ public class PyReversed: PyObject {
         return .value(o)
 
       case .error(let e):
-        if e.isIndexError || e.isStopIteration {
+        if PyCast.isIndexError(e) || PyCast.isStopIteration(e) {
           break
         }
 

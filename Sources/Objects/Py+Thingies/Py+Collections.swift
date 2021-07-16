@@ -607,7 +607,7 @@ extension PyInstance {
         }
 
       case .error(let e):
-        if e.isStopIteration {
+        if PyCast.isStopIteration(e) {
           return .value(acc)
         }
 
@@ -698,7 +698,7 @@ extension PyInstance {
         }
 
       case .error(let e):
-        if e.isStopIteration {
+        if PyCast.isStopIteration(e) {
           return nil
         }
 

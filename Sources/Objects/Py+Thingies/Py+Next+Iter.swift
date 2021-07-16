@@ -11,7 +11,7 @@ extension PyInstance {
       return .value(r)
 
     case .error(let e):
-      if let d = `default`, e.isStopIteration {
+      if let d = `default`, PyCast.isStopIteration(e) {
         return .value(d)
       }
 

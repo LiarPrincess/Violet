@@ -324,7 +324,7 @@ extension Eval {
          let .notCallable(e):
       return .error(e)
     case let .error(e):
-      if e.isKeyError {
+      if PyCast.isKeyError(e) {
         return .notFound
       }
 

@@ -165,7 +165,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
     case let .value(o):
       return .value(o)
     case let .error(e):
-      if e.isAttributeError {
+      if PyCast.isAttributeError(e) {
         return .notFound(e)
       }
 

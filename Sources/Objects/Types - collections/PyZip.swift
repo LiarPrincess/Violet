@@ -98,7 +98,7 @@ public class PyZip: PyObject {
         iters.append(i)
 
       case .error(let e):
-        if e.isTypeError {
+        if PyCast.isTypeError(e) {
           return .typeError("zip argument \(index + 1) must support iteration")
         }
 

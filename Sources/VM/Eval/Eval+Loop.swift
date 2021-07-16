@@ -45,7 +45,7 @@ extension Eval {
       return .ok
 
     case .error(let e):
-      if e.isStopIteration {
+      if PyCast.isStopIteration(e) {
         _ = self.stack.pop() // iter
         self.jumpTo(labelIndex: ifEmptyLabelIndex)
         return .ok

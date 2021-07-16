@@ -227,7 +227,7 @@ public func next(iterator: PyObject,
     return .value(r)
 
   case .error(let e):
-    if let d = `default`, e.isStopIteration { // (2)
+    if let d = `default`, PyCast.isStopIteration(e) { // (2)
       return .value(d)
     }
 

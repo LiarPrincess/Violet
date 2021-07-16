@@ -113,47 +113,6 @@ public class PyBaseException: PyObject {
     return string.value
   }
 
-  // MARK: - Subclass checks
-
-  public var isAttributeError: Bool {
-    let type = Py.errorTypes.attributeError
-    return self.isSubtype(of: type)
-  }
-
-  public var isStopIteration: Bool {
-    let type = Py.errorTypes.stopIteration
-    return self.isSubtype(of: type)
-  }
-
-  public var isIndexError: Bool {
-    let type = Py.errorTypes.indexError
-    return self.isSubtype(of: type)
-  }
-
-  public var isTypeError: Bool {
-    let type = Py.errorTypes.typeError
-    return self.isSubtype(of: type)
-  }
-
-  public var isKeyError: Bool {
-    let type = Py.errorTypes.keyError
-    return self.isSubtype(of: type)
-  }
-
-  public var isSystemExit: Bool {
-    let type = Py.errorTypes.systemExit
-    return self.isSubtype(of: type)
-  }
-
-  public var isKeyboardInterrupt: Bool {
-    let type = Py.errorTypes.keyboardInterrupt
-    return self.isSubtype(of: type)
-  }
-
-  private func isSubtype(of type: PyType) -> Bool {
-    return self.type.isSubtype(of: type)
-  }
-
   // MARK: - String
 
   // sourcery: pymethod = __repr__

@@ -139,7 +139,7 @@ public class PyModule: PyObject {
     case let .value(v):
       return .value(v)
     case let .error(e):
-      if e.isAttributeError {
+      if PyCast.isAttributeError(e) {
         break // there is still hope!
       }
 

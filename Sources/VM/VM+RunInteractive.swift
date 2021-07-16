@@ -140,7 +140,7 @@ extension VM {
         }
 
       case .error(let e):
-        if e.isSystemExit {
+        if PyCast.isSystemExit(e) {
           return e
         }
 

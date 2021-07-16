@@ -73,7 +73,7 @@ extension Eval {
     iterable: PyObject,
     error: PyBaseException
   ) -> PyBaseException? {
-    let isTypeErrorForIter = error.isTypeError && !Py.hasIter(object: iterable)
+    let isTypeErrorForIter = PyCast.isTypeError(error) && !Py.hasIter(object: iterable)
     guard isTypeErrorForIter else {
       return nil
     }
@@ -120,7 +120,7 @@ extension Eval {
       case .value:
         break // just go to the next element
       case .error(let e):
-        if e.isAttributeError {
+        if PyCast.isAttributeError(e) {
           let msg = "'\(object.typeName)' object is not a mapping"
           return .exception(Py.newTypeError(msg: msg))
         }
@@ -144,7 +144,7 @@ extension Eval {
       case .value:
         break // just go to the next element
       case .error(let e):
-        if e.isKeyError {
+        if PyCast.isKeyError(e) {
           let e2 = self.mapUnpackWithCallDuplicateError(keyError: e)
           return .exception(e2)
         }
@@ -198,7 +198,7 @@ extension Eval {
     let fn = self.stack.second
     let fnName = Py.getFunctionName(object: fn) ?? "function"
 
-    if error.isAttributeError {
+    if PyCast.isAttributeError(error) {
       let t = iterable.typeName
       let msg = "\(fnName) argument after ** must be a mapping, not \(t)"
       return Py.newTypeError(msg: msg)

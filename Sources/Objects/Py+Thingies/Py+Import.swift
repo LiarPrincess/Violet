@@ -246,7 +246,7 @@ extension PyInstance {
          .notFound:
       return self.call_find_and_load(absName: absName)
     case let .error(e):
-      assert(!e.isKeyError, "KeyError means not found")
+      assert(!PyCast.isKeyError(e), "KeyError means not found")
       return .error(e)
     }
   }

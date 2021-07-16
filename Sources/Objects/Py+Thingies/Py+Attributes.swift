@@ -52,7 +52,7 @@ extension PyInstance {
     case let .value(o):
       return .value(o)
     case let .error(e):
-      if e.isAttributeError {
+      if PyCast.isAttributeError(e) {
         __getattribute__AttributeError = e
         break // There is still a hope! Let's ask '__getattr__'.
       }
@@ -68,7 +68,7 @@ extension PyInstance {
     case .missingMethod:
       break // __getattr__ is optional
     case let .error(e):
-      if e.isAttributeError {
+      if PyCast.isAttributeError(e) {
         __getattr__AttributeError = e
         break
       }
@@ -183,7 +183,7 @@ extension PyInstance {
       return .value(true)
 
     case .error(let e):
-      if e.isAttributeError {
+      if PyCast.isAttributeError(e) {
         return .value(false)
       }
 

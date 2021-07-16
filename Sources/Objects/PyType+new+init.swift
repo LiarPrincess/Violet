@@ -590,7 +590,7 @@ extension PyType {
     case let .value(i):
       __init_subclass__ = i
     case let .error(e):
-      if e.isAttributeError {
+      if PyCast.isAttributeError(e) {
         return nil
       }
 

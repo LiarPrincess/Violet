@@ -64,7 +64,7 @@ public class PyIterator: PyObject {
       return .value(o)
 
     case .error(let e):
-      if e.isIndexError || e.isStopIteration {
+      if PyCast.isIndexError(e) || PyCast.isStopIteration(e) {
         self.index = PyIterator.endIndex
         return .stopIteration()
       }

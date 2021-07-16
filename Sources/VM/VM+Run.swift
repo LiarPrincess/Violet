@@ -124,7 +124,7 @@ extension VM {
   }
 
   private func handleErrorOrSystemExit(error: PyBaseException) -> RunResult {
-    guard error.isSystemExit else {
+    guard PyCast.isSystemExit(error) else {
       return .error(error)
     }
 
