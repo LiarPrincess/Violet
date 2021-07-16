@@ -68,6 +68,6 @@ internal enum PushExceptionBeforeExcept {
   }
 
   private static func isNoExceptionMarker(_ value: PyObject) -> Bool {
-    return value.isNone
+    return PyCast.isNone(value)
   }
 }

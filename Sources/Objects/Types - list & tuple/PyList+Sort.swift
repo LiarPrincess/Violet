@@ -12,8 +12,7 @@ extension PyList {
 
   internal func sort(key _key: PyObject?,
                      isReverse: PyObject?) -> PyResult<PyNone> {
-    let isKeyNilOrNone = _key?.isNone ?? true
-    let key = isKeyNilOrNone ? nil : _key
+    let key = PyCast.isNilOrNone(_key) ? nil : _key
 
     guard let isReverse = isReverse else {
       return self.sort(key: key, isReverse: false)

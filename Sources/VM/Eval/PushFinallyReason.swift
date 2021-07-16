@@ -150,7 +150,7 @@ internal enum PushFinallyReason {
       return .exception(e)
     }
 
-    if marker.isNone {
+    if PyCast.isNone(marker) {
       return .none
     }
 

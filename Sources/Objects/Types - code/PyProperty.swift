@@ -48,24 +48,20 @@ public class PyProperty: PyObject {
 
   private var _get: PyObject?
   internal var get: PyObject? {
-    get { return self.isNilOrNone(object: self._get) ? nil : self._get }
+    get { PyCast.isNilOrNone(self._get) ? nil : self._get }
     set { self._get = newValue }
   }
 
   private var _set: PyObject?
   internal var set: PyObject? {
-    get { return self.isNilOrNone(object: self._set) ? nil : self._set }
+    get { PyCast.isNilOrNone(self._set) ? nil : self._set }
     set { self._set = newValue }
   }
 
   private var _del: PyObject?
   internal var del: PyObject? {
-    get { return self.isNilOrNone(object: self._del) ? nil : self._del }
+    get { PyCast.isNilOrNone(self._del) ? nil : self._del }
     set { self._del = newValue }
-  }
-
-  private func isNilOrNone(object: PyObject?) -> Bool {
-    return object?.isNone ?? true
   }
 
   internal private(set) var doc: PyObject?
@@ -151,7 +147,7 @@ public class PyProperty: PyObject {
 
   // sourcery: pymethod = __set__
   internal func set(object: PyObject, value: PyObject) -> PyResult<PyObject> {
-    let isDelete = value.isNone
+    let isDelete = PyCast.isNone(value)
     if isDelete {
       guard let fn = self.del else {
         return .attributeError("can't delete attribute")
@@ -184,7 +180,7 @@ public class PyProperty: PyObject {
   }
 
   internal func setDoc(_ object: PyObject) -> PyResult<Void> {
-    if object.isNone {
+    if PyCast.isNone(object) {
       self.doc = nil
       return .value()
     }
@@ -222,7 +218,7 @@ public class PyProperty: PyObject {
                     set: PyObject?,
                     del: PyObject?) -> PyResult<PyObject> {
     func resolveOverride(value: PyObject?, override: PyObject?) -> PyObject {
-      if let o = override, !o.isNone {
+      if let o = override, !PyCast.isNone(o) {
         return o
       }
 
@@ -234,7 +230,7 @@ public class PyProperty: PyObject {
     let delArg = resolveOverride(value: self.del, override: del)
 
     let docArg: PyObject
-    if let d = self.doc, !d.isNone {
+    if let d = self.doc, !PyCast.isNone(d) {
       docArg = d
     } else {
       docArg = Py.none

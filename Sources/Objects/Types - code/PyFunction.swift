@@ -139,7 +139,7 @@ public class PyFunction: PyObject {
   }
 
   internal func setDefaults(_ object: PyObject) -> PyResult<Void> {
-    if object.isNone {
+    if PyCast.isNone(object) {
       self.defaults = nil
       return .value()
     }
@@ -160,7 +160,7 @@ public class PyFunction: PyObject {
   }
 
   internal func setKeywordDefaults(_ object: PyObject) -> PyResult<Void> {
-    if object.isNone {
+    if PyCast.isNone(object) {
       self.kwDefaults = nil
       return .value()
     }
@@ -183,7 +183,7 @@ public class PyFunction: PyObject {
   /// Note that there is not `Python` setter for closure.
   /// It can be only set from `Swift`.
   internal func setClosure(_ object: PyObject) -> PyResult<Void> {
-    if object.isNone {
+    if PyCast.isNone(object) {
       self.closure = nil
       return .value()
     }
@@ -220,7 +220,7 @@ public class PyFunction: PyObject {
   }
 
   internal func setAnnotations(_ object: PyObject) -> PyResult<Void> {
-    if object.isNone {
+    if PyCast.isNone(object) {
       self.annotations = nil
       return .value()
     }
@@ -266,7 +266,7 @@ public class PyFunction: PyObject {
   }
 
   internal func setDoc(_ object: PyObject) -> PyResult<Void> {
-    if object.isNone {
+    if PyCast.isNone(object) {
       self.doc = nil
       return .value()
     }

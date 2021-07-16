@@ -65,7 +65,7 @@ extension AbstractString {
     onStripChars: (Set<Element>) -> Elements.SubSequence
   ) -> PyResult<SwiftType> {
     // No chars (or 'None') -> whitespace mode
-    guard let chars = chars, !chars.isNone else {
+    guard let chars = chars, !PyCast.isNone(chars) else {
       let result = onStripWhitespace()
       let resultObject = Self._toObject(elements: result)
       return .value(resultObject)

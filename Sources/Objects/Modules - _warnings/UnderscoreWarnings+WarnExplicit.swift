@@ -155,7 +155,7 @@ extension UnderscoreWarnings {
   private func compareStringOrNone(filter object: PyObject,
                                    arg: PyObject) -> PyResult<Bool> {
     // A 'None' filter always matches
-    if object.isNone {
+    if PyCast.isNone(object) {
       return .value(true)
     }
 

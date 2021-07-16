@@ -110,7 +110,7 @@ public class PyTraceback: PyObject {
 
     // We accept None or a traceback object, and map None -> nil
 
-    if value.isNone {
+    if PyCast.isNone(value) {
       self.next = nil
       return .value()
     }
@@ -181,7 +181,7 @@ public class PyTraceback: PyObject {
     let fn = "TracebackType.__new__()"
 
     var next: PyTraceback?
-    if _next.isNone {
+    if PyCast.isNone(_next) {
       next = nil
     } else if let traceback = PyCast.asTraceback(_next) {
       next = traceback

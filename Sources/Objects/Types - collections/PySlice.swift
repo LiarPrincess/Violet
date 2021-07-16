@@ -265,7 +265,7 @@ public class PySlice: PyObject {
 
   /// CPython: evaluate_slice_index
   private func getLongIndex(_ value: PyObject) -> GetLongIndexResult {
-    if value.isNone {
+    if PyCast.isNone(value) {
       return .none
     }
 
@@ -404,7 +404,7 @@ public class PySlice: PyObject {
   /// int
   /// _PyEval_SliceIndex(PyObject *v, Py_ssize_t *pi)
   private func unpackIndex(_ value: PyObject) -> UnpackIndexResult {
-    if value.isNone {
+    if PyCast.isNone(value) {
       return .none
     }
 

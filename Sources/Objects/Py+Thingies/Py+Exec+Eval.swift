@@ -131,7 +131,7 @@ extension ExecEval {
       return .dict(dict)
     }
 
-    if obj.isNone {
+    if PyCast.isNone(obj) {
       return .none
     }
 

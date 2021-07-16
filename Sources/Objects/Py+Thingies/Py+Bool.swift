@@ -51,7 +51,7 @@ extension PyInstance {
   /// PyObject_IsTrue(PyObject *v)
   /// slot_nb_bool(PyObject *self)
   public func isTrueBool(object: PyObject) -> PyResult<Bool> {
-    if object.isNone {
+    if PyCast.isNone(object) {
       return .value(false)
     }
 

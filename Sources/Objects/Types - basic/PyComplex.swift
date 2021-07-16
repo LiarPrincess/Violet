@@ -335,7 +335,7 @@ public class PyComplex: PyObject {
 
   // sourcery: pymethod = __pow__
   internal func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
-    guard self.isNilOrNone(mod) else {
+    guard PyCast.isNilOrNone(mod) else {
       return .valueError("complex modulo")
     }
 
@@ -355,7 +355,7 @@ public class PyComplex: PyObject {
 
   // sourcery: pymethod = __rpow__
   internal func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
-    guard self.isNilOrNone(mod) else {
+    guard PyCast.isNilOrNone(mod) else {
       return .valueError("complex modulo")
     }
 
@@ -367,14 +367,6 @@ public class PyComplex: PyObject {
     case .notComplex:
       return .value(Py.notImplemented)
     }
-  }
-
-  private func isNilOrNone(_ value: PyObject?) -> Bool {
-    guard let value = value else {
-      return true
-    }
-
-    return value.isNone
   }
 
   private func pow(base: Raw, exp: Raw) -> PyResult<PyObject> {

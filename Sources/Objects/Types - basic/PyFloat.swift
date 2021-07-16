@@ -433,8 +433,7 @@ public class PyFloat: PyObject {
   }
 
   private func disallowPowMod(mod: PyObject?) -> PyBaseException? {
-    let isNilOrNone = mod?.isNone ?? true
-    if isNilOrNone {
+    if PyCast.isNilOrNone(mod) {
       return nil
     }
 
@@ -681,7 +680,7 @@ public class PyFloat: PyObject {
       return .none
     }
 
-    if object.isNone {
+    if PyCast.isNone(object) {
       return .none
     }
 

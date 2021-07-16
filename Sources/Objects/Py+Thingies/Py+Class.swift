@@ -207,7 +207,7 @@ extension PyInstance {
                                  with _type: PyObject) -> PyBaseException? {
     guard let type = PyCast.asType(_type),
           let cell = PyCast.asCell(_cell) else {
-      assert(_cell.isNone, "__class__ should be cell or None. Compiler error?")
+      assert(PyCast.isNone(_cell), "__class__ should be cell or None. Compiler error?")
       return nil
     }
 

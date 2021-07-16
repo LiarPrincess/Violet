@@ -63,7 +63,7 @@ extension Sys {
     // Print value except if None
     // After printing, also assign to '_'
     // Before, set '_' to None to avoid recursion
-    if value.isNone {
+    if PyCast.isNone(value) {
       return .value(Py.none)
     }
 

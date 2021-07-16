@@ -10,8 +10,7 @@ extension PyInstance {
   /// See [this](https://docs.python.org/3/library/functions.html#round)
   public func round(number: PyObject,
                     nDigits: PyObject? = nil) -> PyResult<PyObject> {
-    let isDigitsNilOrNone = nDigits?.isNone ?? true
-    let nDigits = isDigitsNilOrNone ? nil : nDigits
+    let nDigits = PyCast.isNilOrNone(nDigits) ? nil : nDigits
 
     if let result = Fast.__round__(number, nDigits: nDigits) {
       return result

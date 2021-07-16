@@ -193,11 +193,6 @@ public class PyObject: CustomStringConvertible {
 
   // MARK: - Type predicates
 
-  /// Is this `None`?
-  public var isNone: Bool {
-    return PyCast.isNone(self)
-  }
-
   /// Helper to use when implementing binary operations.
   /// [docs](https://docs.python.org/3/library/constants.html#NotImplemented).
   public var isNotImplemented: Bool {

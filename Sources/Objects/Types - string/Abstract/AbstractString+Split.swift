@@ -399,7 +399,7 @@ extension AbstractString {
       return .whitespace
     }
 
-    if object.isNone {
+    if PyCast.isNone(object) {
       return .whitespace
     }
 

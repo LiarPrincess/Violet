@@ -169,7 +169,7 @@ extension PyInstance {
     }
 
     // Try to get 'globals.__package__':
-    if let package = globals.get(id: .__package__), !package.isNone {
+    if let package = globals.get(id: .__package__), !PyCast.isNone(package) {
       guard let result = PyCast.asString(package) else {
         return .typeError("package must be a string")
       }
@@ -179,7 +179,7 @@ extension PyInstance {
     }
 
     // Try to get 'globals.__spec__.parent':
-    if let spec = globals.get(id: .__spec__), !spec.isNone {
+    if let spec = globals.get(id: .__spec__), !PyCast.isNone(spec) {
       return self.getParent(spec: spec).map { $0.value }
     }
 
@@ -296,7 +296,7 @@ extension PyInstance {
                               module: PyObject,
                               fromList: PyObject?) -> PyResult<PyObject> {
     // If we have 'fromList' then call '_handle_fromlist' from 'importlib'
-    if let fl = fromList, !fl.isNone {
+    if let fl = fromList, !PyCast.isNone(fl) {
       switch self.isTrueBool(object: fl) {
       case .value(true):
         return self.call_handle_fromlist(module: module, fromList: fl)

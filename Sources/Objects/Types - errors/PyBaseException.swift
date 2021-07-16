@@ -280,7 +280,7 @@ public class PyBaseException: PyObject {
       return .typeError("__traceback__ may not be deleted")
     }
 
-    if value.isNone {
+    if PyCast.isNone(value) {
       self.traceback = nil
       return .value()
     }

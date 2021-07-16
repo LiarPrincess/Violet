@@ -172,7 +172,7 @@ extension Eval {
   private func getAttribute(module: PyObject, name: IdString) -> GetAttribute {
     switch Py.getattr(object: module, name: name) {
     case let .value(o):
-      if o.isNone {
+      if PyCast.isNone(o) {
         return .notFound
       }
       return .value(o)

@@ -39,7 +39,7 @@ extension Sys {
     }
 
     if error.getTraceback() == nil {
-      if traceback.isNone {
+      if PyCast.isNone(traceback) {
         // nothing
       } else if let tb = PyCast.asTraceback(traceback) {
         error.setTraceback(traceback: tb)

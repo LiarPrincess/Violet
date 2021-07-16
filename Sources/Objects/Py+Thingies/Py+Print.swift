@@ -120,7 +120,7 @@ extension PyInstance {
   }
 
   private func getTextFile(file: PyObject?) -> PyResult<PyTextFile> {
-    guard let file = file, !file.isNone else {
+    guard let file = file, !PyCast.isNone(file) else {
       return self.defaultPrintStream.getFile()
     }
 
@@ -137,7 +137,7 @@ extension PyInstance {
       return .value(.none)
     }
 
-    if object.isNone {
+    if PyCast.isNone(object) {
       return .value(.none)
     }
 

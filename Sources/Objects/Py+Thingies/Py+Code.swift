@@ -36,7 +36,7 @@ extension PyInstance {
     }
 
     let qualnameValue: PyString?
-    if qualname.isNone {
+    if PyCast.isNone(qualname) {
       qualnameValue = nil
     } else if let q = PyCast.asString(qualname) {
       qualnameValue = q

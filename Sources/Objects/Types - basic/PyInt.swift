@@ -409,12 +409,12 @@ public class PyInt: PyObject {
       return .none
     }
 
-    if let int = PyCast.asInt(mod) {
-      return .int(int)
+    if PyCast.isNone(mod) {
+      return .none
     }
 
-    if mod.isNone {
-      return .none
+    if let int = PyCast.asInt(mod) {
+      return .int(int)
     }
 
     return .notImplemented

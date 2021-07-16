@@ -61,12 +61,12 @@ public enum PyCast {{
         print(f'''
   // MARK: - {swift_type_without_py}
 
-  /// Is this object {article} `{python_type}` (or its subclass)?
+  /// Is this object an instance of `{python_type}` (or its subclass)?
   public static func is{swift_type_without_py}(_ object: PyObject) -> Bool {{
     return self.isInstance(object, of: {builtin_types}.{builtin_property})
   }}
 
-  /// Is this object {article} `{python_type}` (but not its subclass)?
+  /// Is this object an instance of `{python_type}` (but not its subclass)?
   public static func isExactly{swift_type_without_py}(_ object: PyObject) -> Bool {{
     return self.isExactlyInstance(object, of: {builtin_types}.{builtin_property})
   }}
@@ -79,6 +79,19 @@ public enum PyCast {{
   /// Cast this object to `{swift_type_name}` if it is {article} `{python_type}` (but not its subclass).
   public static func asExactly{swift_type_without_py}(_ object: PyObject) -> {swift_type_name}? {{
     return Self.isExactly{swift_type_without_py}(object) ? (object as! {swift_type_name}) : nil
+  }}\
+''')
+
+        is_none = t.python_type_name == 'NoneType'
+        if is_none:
+            print(f'''
+  /// Is this object Swift `nil` or an instance of `{python_type}`?
+  public static func isNilOrNone(_ object: PyObject?) -> Bool {{
+    guard let object = object else {{
+      return true
+    }}
+
+    return PyCast.isNone(object)
   }}\
 ''')
 

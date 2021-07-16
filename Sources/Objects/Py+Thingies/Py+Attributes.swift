@@ -228,7 +228,7 @@ extension PyInstance {
     case .value:
       return .value(self.none)
     case .missingMethod:
-      let operation: AttributeOperation = value.isNone ? .del : .set
+      let operation: AttributeOperation = PyCast.isNone(value) ? .del : .set
       let error = self.attributeModificationError(object: object,
                                                   name: name,
                                                   operation: operation)

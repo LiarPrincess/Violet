@@ -31,12 +31,12 @@ public enum PyCast {
 
   // MARK: - Bool
 
-  /// Is this object a `bool` (or its subclass)?
+  /// Is this object an instance of `bool` (or its subclass)?
   public static func isBool(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.bool)
   }
 
-  /// Is this object a `bool` (but not its subclass)?
+  /// Is this object an instance of `bool` (but not its subclass)?
   public static func isExactlyBool(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.bool)
   }
@@ -53,12 +53,12 @@ public enum PyCast {
 
   // MARK: - BuiltinFunction
 
-  /// Is this object a `builtinFunction` (or its subclass)?
+  /// Is this object an instance of `builtinFunction` (or its subclass)?
   public static func isBuiltinFunction(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.builtinFunction)
   }
 
-  /// Is this object a `builtinFunction` (but not its subclass)?
+  /// Is this object an instance of `builtinFunction` (but not its subclass)?
   public static func isExactlyBuiltinFunction(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.builtinFunction)
   }
@@ -75,12 +75,12 @@ public enum PyCast {
 
   // MARK: - BuiltinMethod
 
-  /// Is this object a `builtinMethod` (or its subclass)?
+  /// Is this object an instance of `builtinMethod` (or its subclass)?
   public static func isBuiltinMethod(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.builtinMethod)
   }
 
-  /// Is this object a `builtinMethod` (but not its subclass)?
+  /// Is this object an instance of `builtinMethod` (but not its subclass)?
   public static func isExactlyBuiltinMethod(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.builtinMethod)
   }
@@ -97,12 +97,12 @@ public enum PyCast {
 
   // MARK: - ByteArray
 
-  /// Is this object a `bytearray` (or its subclass)?
+  /// Is this object an instance of `bytearray` (or its subclass)?
   public static func isByteArray(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.bytearray)
   }
 
-  /// Is this object a `bytearray` (but not its subclass)?
+  /// Is this object an instance of `bytearray` (but not its subclass)?
   public static func isExactlyByteArray(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.bytearray)
   }
@@ -119,12 +119,12 @@ public enum PyCast {
 
   // MARK: - ByteArrayIterator
 
-  /// Is this object a `bytearray_iterator` (or its subclass)?
+  /// Is this object an instance of `bytearray_iterator` (or its subclass)?
   public static func isByteArrayIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.bytearray_iterator)
   }
 
-  /// Is this object a `bytearray_iterator` (but not its subclass)?
+  /// Is this object an instance of `bytearray_iterator` (but not its subclass)?
   public static func isExactlyByteArrayIterator(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.bytearray_iterator)
   }
@@ -141,12 +141,12 @@ public enum PyCast {
 
   // MARK: - Bytes
 
-  /// Is this object a `bytes` (or its subclass)?
+  /// Is this object an instance of `bytes` (or its subclass)?
   public static func isBytes(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.bytes)
   }
 
-  /// Is this object a `bytes` (but not its subclass)?
+  /// Is this object an instance of `bytes` (but not its subclass)?
   public static func isExactlyBytes(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.bytes)
   }
@@ -163,12 +163,12 @@ public enum PyCast {
 
   // MARK: - BytesIterator
 
-  /// Is this object a `bytes_iterator` (or its subclass)?
+  /// Is this object an instance of `bytes_iterator` (or its subclass)?
   public static func isBytesIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.bytes_iterator)
   }
 
-  /// Is this object a `bytes_iterator` (but not its subclass)?
+  /// Is this object an instance of `bytes_iterator` (but not its subclass)?
   public static func isExactlyBytesIterator(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.bytes_iterator)
   }
@@ -185,12 +185,12 @@ public enum PyCast {
 
   // MARK: - CallableIterator
 
-  /// Is this object a `callable_iterator` (or its subclass)?
+  /// Is this object an instance of `callable_iterator` (or its subclass)?
   public static func isCallableIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.callable_iterator)
   }
 
-  /// Is this object a `callable_iterator` (but not its subclass)?
+  /// Is this object an instance of `callable_iterator` (but not its subclass)?
   public static func isExactlyCallableIterator(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.callable_iterator)
   }
@@ -207,12 +207,12 @@ public enum PyCast {
 
   // MARK: - Cell
 
-  /// Is this object a `cell` (or its subclass)?
+  /// Is this object an instance of `cell` (or its subclass)?
   public static func isCell(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.cell)
   }
 
-  /// Is this object a `cell` (but not its subclass)?
+  /// Is this object an instance of `cell` (but not its subclass)?
   public static func isExactlyCell(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.cell)
   }
@@ -229,12 +229,12 @@ public enum PyCast {
 
   // MARK: - ClassMethod
 
-  /// Is this object a `classmethod` (or its subclass)?
+  /// Is this object an instance of `classmethod` (or its subclass)?
   public static func isClassMethod(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.classmethod)
   }
 
-  /// Is this object a `classmethod` (but not its subclass)?
+  /// Is this object an instance of `classmethod` (but not its subclass)?
   public static func isExactlyClassMethod(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.classmethod)
   }
@@ -251,12 +251,12 @@ public enum PyCast {
 
   // MARK: - Code
 
-  /// Is this object a `code` (or its subclass)?
+  /// Is this object an instance of `code` (or its subclass)?
   public static func isCode(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.code)
   }
 
-  /// Is this object a `code` (but not its subclass)?
+  /// Is this object an instance of `code` (but not its subclass)?
   public static func isExactlyCode(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.code)
   }
@@ -273,12 +273,12 @@ public enum PyCast {
 
   // MARK: - Complex
 
-  /// Is this object a `complex` (or its subclass)?
+  /// Is this object an instance of `complex` (or its subclass)?
   public static func isComplex(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.complex)
   }
 
-  /// Is this object a `complex` (but not its subclass)?
+  /// Is this object an instance of `complex` (but not its subclass)?
   public static func isExactlyComplex(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.complex)
   }
@@ -295,12 +295,12 @@ public enum PyCast {
 
   // MARK: - Dict
 
-  /// Is this object a `dict` (or its subclass)?
+  /// Is this object an instance of `dict` (or its subclass)?
   public static func isDict(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.dict)
   }
 
-  /// Is this object a `dict` (but not its subclass)?
+  /// Is this object an instance of `dict` (but not its subclass)?
   public static func isExactlyDict(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.dict)
   }
@@ -317,12 +317,12 @@ public enum PyCast {
 
   // MARK: - DictItemIterator
 
-  /// Is this object a `dict_itemiterator` (or its subclass)?
+  /// Is this object an instance of `dict_itemiterator` (or its subclass)?
   public static func isDictItemIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.dict_itemiterator)
   }
 
-  /// Is this object a `dict_itemiterator` (but not its subclass)?
+  /// Is this object an instance of `dict_itemiterator` (but not its subclass)?
   public static func isExactlyDictItemIterator(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.dict_itemiterator)
   }
@@ -339,12 +339,12 @@ public enum PyCast {
 
   // MARK: - DictItems
 
-  /// Is this object a `dict_items` (or its subclass)?
+  /// Is this object an instance of `dict_items` (or its subclass)?
   public static func isDictItems(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.dict_items)
   }
 
-  /// Is this object a `dict_items` (but not its subclass)?
+  /// Is this object an instance of `dict_items` (but not its subclass)?
   public static func isExactlyDictItems(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.dict_items)
   }
@@ -361,12 +361,12 @@ public enum PyCast {
 
   // MARK: - DictKeyIterator
 
-  /// Is this object a `dict_keyiterator` (or its subclass)?
+  /// Is this object an instance of `dict_keyiterator` (or its subclass)?
   public static func isDictKeyIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.dict_keyiterator)
   }
 
-  /// Is this object a `dict_keyiterator` (but not its subclass)?
+  /// Is this object an instance of `dict_keyiterator` (but not its subclass)?
   public static func isExactlyDictKeyIterator(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.dict_keyiterator)
   }
@@ -383,12 +383,12 @@ public enum PyCast {
 
   // MARK: - DictKeys
 
-  /// Is this object a `dict_keys` (or its subclass)?
+  /// Is this object an instance of `dict_keys` (or its subclass)?
   public static func isDictKeys(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.dict_keys)
   }
 
-  /// Is this object a `dict_keys` (but not its subclass)?
+  /// Is this object an instance of `dict_keys` (but not its subclass)?
   public static func isExactlyDictKeys(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.dict_keys)
   }
@@ -405,12 +405,12 @@ public enum PyCast {
 
   // MARK: - DictValueIterator
 
-  /// Is this object a `dict_valueiterator` (or its subclass)?
+  /// Is this object an instance of `dict_valueiterator` (or its subclass)?
   public static func isDictValueIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.dict_valueiterator)
   }
 
-  /// Is this object a `dict_valueiterator` (but not its subclass)?
+  /// Is this object an instance of `dict_valueiterator` (but not its subclass)?
   public static func isExactlyDictValueIterator(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.dict_valueiterator)
   }
@@ -427,12 +427,12 @@ public enum PyCast {
 
   // MARK: - DictValues
 
-  /// Is this object a `dict_values` (or its subclass)?
+  /// Is this object an instance of `dict_values` (or its subclass)?
   public static func isDictValues(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.dict_values)
   }
 
-  /// Is this object a `dict_values` (but not its subclass)?
+  /// Is this object an instance of `dict_values` (but not its subclass)?
   public static func isExactlyDictValues(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.dict_values)
   }
@@ -449,12 +449,12 @@ public enum PyCast {
 
   // MARK: - Ellipsis
 
-  /// Is this object an `ellipsis` (or its subclass)?
+  /// Is this object an instance of `ellipsis` (or its subclass)?
   public static func isEllipsis(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.ellipsis)
   }
 
-  /// Is this object an `ellipsis` (but not its subclass)?
+  /// Is this object an instance of `ellipsis` (but not its subclass)?
   public static func isExactlyEllipsis(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.ellipsis)
   }
@@ -471,12 +471,12 @@ public enum PyCast {
 
   // MARK: - Enumerate
 
-  /// Is this object an `enumerate` (or its subclass)?
+  /// Is this object an instance of `enumerate` (or its subclass)?
   public static func isEnumerate(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.enumerate)
   }
 
-  /// Is this object an `enumerate` (but not its subclass)?
+  /// Is this object an instance of `enumerate` (but not its subclass)?
   public static func isExactlyEnumerate(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.enumerate)
   }
@@ -493,12 +493,12 @@ public enum PyCast {
 
   // MARK: - Filter
 
-  /// Is this object a `filter` (or its subclass)?
+  /// Is this object an instance of `filter` (or its subclass)?
   public static func isFilter(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.filter)
   }
 
-  /// Is this object a `filter` (but not its subclass)?
+  /// Is this object an instance of `filter` (but not its subclass)?
   public static func isExactlyFilter(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.filter)
   }
@@ -515,12 +515,12 @@ public enum PyCast {
 
   // MARK: - Float
 
-  /// Is this object a `float` (or its subclass)?
+  /// Is this object an instance of `float` (or its subclass)?
   public static func isFloat(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.float)
   }
 
-  /// Is this object a `float` (but not its subclass)?
+  /// Is this object an instance of `float` (but not its subclass)?
   public static func isExactlyFloat(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.float)
   }
@@ -537,12 +537,12 @@ public enum PyCast {
 
   // MARK: - Frame
 
-  /// Is this object a `frame` (or its subclass)?
+  /// Is this object an instance of `frame` (or its subclass)?
   public static func isFrame(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.frame)
   }
 
-  /// Is this object a `frame` (but not its subclass)?
+  /// Is this object an instance of `frame` (but not its subclass)?
   public static func isExactlyFrame(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.frame)
   }
@@ -559,12 +559,12 @@ public enum PyCast {
 
   // MARK: - FrozenSet
 
-  /// Is this object a `frozenset` (or its subclass)?
+  /// Is this object an instance of `frozenset` (or its subclass)?
   public static func isFrozenSet(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.frozenset)
   }
 
-  /// Is this object a `frozenset` (but not its subclass)?
+  /// Is this object an instance of `frozenset` (but not its subclass)?
   public static func isExactlyFrozenSet(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.frozenset)
   }
@@ -581,12 +581,12 @@ public enum PyCast {
 
   // MARK: - Function
 
-  /// Is this object a `function` (or its subclass)?
+  /// Is this object an instance of `function` (or its subclass)?
   public static func isFunction(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.function)
   }
 
-  /// Is this object a `function` (but not its subclass)?
+  /// Is this object an instance of `function` (but not its subclass)?
   public static func isExactlyFunction(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.function)
   }
@@ -603,12 +603,12 @@ public enum PyCast {
 
   // MARK: - Int
 
-  /// Is this object an `int` (or its subclass)?
+  /// Is this object an instance of `int` (or its subclass)?
   public static func isInt(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.int)
   }
 
-  /// Is this object an `int` (but not its subclass)?
+  /// Is this object an instance of `int` (but not its subclass)?
   public static func isExactlyInt(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.int)
   }
@@ -625,12 +625,12 @@ public enum PyCast {
 
   // MARK: - Iterator
 
-  /// Is this object an `iterator` (or its subclass)?
+  /// Is this object an instance of `iterator` (or its subclass)?
   public static func isIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.iterator)
   }
 
-  /// Is this object an `iterator` (but not its subclass)?
+  /// Is this object an instance of `iterator` (but not its subclass)?
   public static func isExactlyIterator(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.iterator)
   }
@@ -647,12 +647,12 @@ public enum PyCast {
 
   // MARK: - List
 
-  /// Is this object a `list` (or its subclass)?
+  /// Is this object an instance of `list` (or its subclass)?
   public static func isList(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.list)
   }
 
-  /// Is this object a `list` (but not its subclass)?
+  /// Is this object an instance of `list` (but not its subclass)?
   public static func isExactlyList(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.list)
   }
@@ -669,12 +669,12 @@ public enum PyCast {
 
   // MARK: - ListIterator
 
-  /// Is this object a `list_iterator` (or its subclass)?
+  /// Is this object an instance of `list_iterator` (or its subclass)?
   public static func isListIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.list_iterator)
   }
 
-  /// Is this object a `list_iterator` (but not its subclass)?
+  /// Is this object an instance of `list_iterator` (but not its subclass)?
   public static func isExactlyListIterator(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.list_iterator)
   }
@@ -691,12 +691,12 @@ public enum PyCast {
 
   // MARK: - ListReverseIterator
 
-  /// Is this object a `list_reverseiterator` (or its subclass)?
+  /// Is this object an instance of `list_reverseiterator` (or its subclass)?
   public static func isListReverseIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.list_reverseiterator)
   }
 
-  /// Is this object a `list_reverseiterator` (but not its subclass)?
+  /// Is this object an instance of `list_reverseiterator` (but not its subclass)?
   public static func isExactlyListReverseIterator(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.list_reverseiterator)
   }
@@ -713,12 +713,12 @@ public enum PyCast {
 
   // MARK: - Map
 
-  /// Is this object a `map` (or its subclass)?
+  /// Is this object an instance of `map` (or its subclass)?
   public static func isMap(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.map)
   }
 
-  /// Is this object a `map` (but not its subclass)?
+  /// Is this object an instance of `map` (but not its subclass)?
   public static func isExactlyMap(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.map)
   }
@@ -735,12 +735,12 @@ public enum PyCast {
 
   // MARK: - Method
 
-  /// Is this object a `method` (or its subclass)?
+  /// Is this object an instance of `method` (or its subclass)?
   public static func isMethod(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.method)
   }
 
-  /// Is this object a `method` (but not its subclass)?
+  /// Is this object an instance of `method` (but not its subclass)?
   public static func isExactlyMethod(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.method)
   }
@@ -757,12 +757,12 @@ public enum PyCast {
 
   // MARK: - Module
 
-  /// Is this object a `module` (or its subclass)?
+  /// Is this object an instance of `module` (or its subclass)?
   public static func isModule(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.module)
   }
 
-  /// Is this object a `module` (but not its subclass)?
+  /// Is this object an instance of `module` (but not its subclass)?
   public static func isExactlyModule(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.module)
   }
@@ -779,12 +779,12 @@ public enum PyCast {
 
   // MARK: - Namespace
 
-  /// Is this object a `types.SimpleNamespace` (or its subclass)?
+  /// Is this object an instance of `types.SimpleNamespace` (or its subclass)?
   public static func isNamespace(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.simpleNamespace)
   }
 
-  /// Is this object a `types.SimpleNamespace` (but not its subclass)?
+  /// Is this object an instance of `types.SimpleNamespace` (but not its subclass)?
   public static func isExactlyNamespace(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.simpleNamespace)
   }
@@ -801,12 +801,12 @@ public enum PyCast {
 
   // MARK: - None
 
-  /// Is this object a `NoneType` (or its subclass)?
+  /// Is this object an instance of `NoneType` (or its subclass)?
   public static func isNone(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.none)
   }
 
-  /// Is this object a `NoneType` (but not its subclass)?
+  /// Is this object an instance of `NoneType` (but not its subclass)?
   public static func isExactlyNone(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.none)
   }
@@ -821,14 +821,23 @@ public enum PyCast {
     return Self.isExactlyNone(object) ? (object as! PyNone) : nil
   }
 
+  /// Is this object Swift `nil` or an instance of `NoneType`?
+  public static func isNilOrNone(_ object: PyObject?) -> Bool {
+    guard let object = object else {
+      return true
+    }
+
+    return PyCast.isNone(object)
+  }
+
   // MARK: - NotImplemented
 
-  /// Is this object a `NotImplementedType` (or its subclass)?
+  /// Is this object an instance of `NotImplementedType` (or its subclass)?
   public static func isNotImplemented(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.notImplemented)
   }
 
-  /// Is this object a `NotImplementedType` (but not its subclass)?
+  /// Is this object an instance of `NotImplementedType` (but not its subclass)?
   public static func isExactlyNotImplemented(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.notImplemented)
   }
@@ -845,12 +854,12 @@ public enum PyCast {
 
   // MARK: - Property
 
-  /// Is this object a `property` (or its subclass)?
+  /// Is this object an instance of `property` (or its subclass)?
   public static func isProperty(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.property)
   }
 
-  /// Is this object a `property` (but not its subclass)?
+  /// Is this object an instance of `property` (but not its subclass)?
   public static func isExactlyProperty(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.property)
   }
@@ -867,12 +876,12 @@ public enum PyCast {
 
   // MARK: - Range
 
-  /// Is this object a `range` (or its subclass)?
+  /// Is this object an instance of `range` (or its subclass)?
   public static func isRange(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.range)
   }
 
-  /// Is this object a `range` (but not its subclass)?
+  /// Is this object an instance of `range` (but not its subclass)?
   public static func isExactlyRange(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.range)
   }
@@ -889,12 +898,12 @@ public enum PyCast {
 
   // MARK: - RangeIterator
 
-  /// Is this object a `range_iterator` (or its subclass)?
+  /// Is this object an instance of `range_iterator` (or its subclass)?
   public static func isRangeIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.range_iterator)
   }
 
-  /// Is this object a `range_iterator` (but not its subclass)?
+  /// Is this object an instance of `range_iterator` (but not its subclass)?
   public static func isExactlyRangeIterator(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.range_iterator)
   }
@@ -911,12 +920,12 @@ public enum PyCast {
 
   // MARK: - Reversed
 
-  /// Is this object a `reversed` (or its subclass)?
+  /// Is this object an instance of `reversed` (or its subclass)?
   public static func isReversed(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.reversed)
   }
 
-  /// Is this object a `reversed` (but not its subclass)?
+  /// Is this object an instance of `reversed` (but not its subclass)?
   public static func isExactlyReversed(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.reversed)
   }
@@ -933,12 +942,12 @@ public enum PyCast {
 
   // MARK: - Set
 
-  /// Is this object a `set` (or its subclass)?
+  /// Is this object an instance of `set` (or its subclass)?
   public static func isSet(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.set)
   }
 
-  /// Is this object a `set` (but not its subclass)?
+  /// Is this object an instance of `set` (but not its subclass)?
   public static func isExactlySet(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.set)
   }
@@ -955,12 +964,12 @@ public enum PyCast {
 
   // MARK: - SetIterator
 
-  /// Is this object a `set_iterator` (or its subclass)?
+  /// Is this object an instance of `set_iterator` (or its subclass)?
   public static func isSetIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.set_iterator)
   }
 
-  /// Is this object a `set_iterator` (but not its subclass)?
+  /// Is this object an instance of `set_iterator` (but not its subclass)?
   public static func isExactlySetIterator(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.set_iterator)
   }
@@ -977,12 +986,12 @@ public enum PyCast {
 
   // MARK: - Slice
 
-  /// Is this object a `slice` (or its subclass)?
+  /// Is this object an instance of `slice` (or its subclass)?
   public static func isSlice(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.slice)
   }
 
-  /// Is this object a `slice` (but not its subclass)?
+  /// Is this object an instance of `slice` (but not its subclass)?
   public static func isExactlySlice(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.slice)
   }
@@ -999,12 +1008,12 @@ public enum PyCast {
 
   // MARK: - StaticMethod
 
-  /// Is this object a `staticmethod` (or its subclass)?
+  /// Is this object an instance of `staticmethod` (or its subclass)?
   public static func isStaticMethod(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.staticmethod)
   }
 
-  /// Is this object a `staticmethod` (but not its subclass)?
+  /// Is this object an instance of `staticmethod` (but not its subclass)?
   public static func isExactlyStaticMethod(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.staticmethod)
   }
@@ -1021,12 +1030,12 @@ public enum PyCast {
 
   // MARK: - String
 
-  /// Is this object a `str` (or its subclass)?
+  /// Is this object an instance of `str` (or its subclass)?
   public static func isString(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.str)
   }
 
-  /// Is this object a `str` (but not its subclass)?
+  /// Is this object an instance of `str` (but not its subclass)?
   public static func isExactlyString(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.str)
   }
@@ -1043,12 +1052,12 @@ public enum PyCast {
 
   // MARK: - StringIterator
 
-  /// Is this object a `str_iterator` (or its subclass)?
+  /// Is this object an instance of `str_iterator` (or its subclass)?
   public static func isStringIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.str_iterator)
   }
 
-  /// Is this object a `str_iterator` (but not its subclass)?
+  /// Is this object an instance of `str_iterator` (but not its subclass)?
   public static func isExactlyStringIterator(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.str_iterator)
   }
@@ -1065,12 +1074,12 @@ public enum PyCast {
 
   // MARK: - Super
 
-  /// Is this object a `super` (or its subclass)?
+  /// Is this object an instance of `super` (or its subclass)?
   public static func isSuper(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.`super`)
   }
 
-  /// Is this object a `super` (but not its subclass)?
+  /// Is this object an instance of `super` (but not its subclass)?
   public static func isExactlySuper(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.`super`)
   }
@@ -1087,12 +1096,12 @@ public enum PyCast {
 
   // MARK: - TextFile
 
-  /// Is this object a `TextFile` (or its subclass)?
+  /// Is this object an instance of `TextFile` (or its subclass)?
   public static func isTextFile(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.textFile)
   }
 
-  /// Is this object a `TextFile` (but not its subclass)?
+  /// Is this object an instance of `TextFile` (but not its subclass)?
   public static func isExactlyTextFile(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.textFile)
   }
@@ -1109,12 +1118,12 @@ public enum PyCast {
 
   // MARK: - Traceback
 
-  /// Is this object a `traceback` (or its subclass)?
+  /// Is this object an instance of `traceback` (or its subclass)?
   public static func isTraceback(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.traceback)
   }
 
-  /// Is this object a `traceback` (but not its subclass)?
+  /// Is this object an instance of `traceback` (but not its subclass)?
   public static func isExactlyTraceback(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.traceback)
   }
@@ -1131,12 +1140,12 @@ public enum PyCast {
 
   // MARK: - Tuple
 
-  /// Is this object a `tuple` (or its subclass)?
+  /// Is this object an instance of `tuple` (or its subclass)?
   public static func isTuple(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.tuple)
   }
 
-  /// Is this object a `tuple` (but not its subclass)?
+  /// Is this object an instance of `tuple` (but not its subclass)?
   public static func isExactlyTuple(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.tuple)
   }
@@ -1153,12 +1162,12 @@ public enum PyCast {
 
   // MARK: - TupleIterator
 
-  /// Is this object a `tuple_iterator` (or its subclass)?
+  /// Is this object an instance of `tuple_iterator` (or its subclass)?
   public static func isTupleIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.tuple_iterator)
   }
 
-  /// Is this object a `tuple_iterator` (but not its subclass)?
+  /// Is this object an instance of `tuple_iterator` (but not its subclass)?
   public static func isExactlyTupleIterator(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.tuple_iterator)
   }
@@ -1175,12 +1184,12 @@ public enum PyCast {
 
   // MARK: - Type
 
-  /// Is this object a `type` (or its subclass)?
+  /// Is this object an instance of `type` (or its subclass)?
   public static func isType(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.type)
   }
 
-  /// Is this object a `type` (but not its subclass)?
+  /// Is this object an instance of `type` (but not its subclass)?
   public static func isExactlyType(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.type)
   }
@@ -1197,12 +1206,12 @@ public enum PyCast {
 
   // MARK: - Zip
 
-  /// Is this object a `zip` (or its subclass)?
+  /// Is this object an instance of `zip` (or its subclass)?
   public static func isZip(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.zip)
   }
 
-  /// Is this object a `zip` (but not its subclass)?
+  /// Is this object an instance of `zip` (but not its subclass)?
   public static func isExactlyZip(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.zip)
   }
@@ -1219,12 +1228,12 @@ public enum PyCast {
 
   // MARK: - ArithmeticError
 
-  /// Is this object an `ArithmeticError` (or its subclass)?
+  /// Is this object an instance of `ArithmeticError` (or its subclass)?
   public static func isArithmeticError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.arithmeticError)
   }
 
-  /// Is this object an `ArithmeticError` (but not its subclass)?
+  /// Is this object an instance of `ArithmeticError` (but not its subclass)?
   public static func isExactlyArithmeticError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.arithmeticError)
   }
@@ -1241,12 +1250,12 @@ public enum PyCast {
 
   // MARK: - AssertionError
 
-  /// Is this object an `AssertionError` (or its subclass)?
+  /// Is this object an instance of `AssertionError` (or its subclass)?
   public static func isAssertionError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.assertionError)
   }
 
-  /// Is this object an `AssertionError` (but not its subclass)?
+  /// Is this object an instance of `AssertionError` (but not its subclass)?
   public static func isExactlyAssertionError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.assertionError)
   }
@@ -1263,12 +1272,12 @@ public enum PyCast {
 
   // MARK: - AttributeError
 
-  /// Is this object an `AttributeError` (or its subclass)?
+  /// Is this object an instance of `AttributeError` (or its subclass)?
   public static func isAttributeError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.attributeError)
   }
 
-  /// Is this object an `AttributeError` (but not its subclass)?
+  /// Is this object an instance of `AttributeError` (but not its subclass)?
   public static func isExactlyAttributeError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.attributeError)
   }
@@ -1285,12 +1294,12 @@ public enum PyCast {
 
   // MARK: - BaseException
 
-  /// Is this object a `BaseException` (or its subclass)?
+  /// Is this object an instance of `BaseException` (or its subclass)?
   public static func isBaseException(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.baseException)
   }
 
-  /// Is this object a `BaseException` (but not its subclass)?
+  /// Is this object an instance of `BaseException` (but not its subclass)?
   public static func isExactlyBaseException(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.baseException)
   }
@@ -1307,12 +1316,12 @@ public enum PyCast {
 
   // MARK: - BlockingIOError
 
-  /// Is this object a `BlockingIOError` (or its subclass)?
+  /// Is this object an instance of `BlockingIOError` (or its subclass)?
   public static func isBlockingIOError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.blockingIOError)
   }
 
-  /// Is this object a `BlockingIOError` (but not its subclass)?
+  /// Is this object an instance of `BlockingIOError` (but not its subclass)?
   public static func isExactlyBlockingIOError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.blockingIOError)
   }
@@ -1329,12 +1338,12 @@ public enum PyCast {
 
   // MARK: - BrokenPipeError
 
-  /// Is this object a `BrokenPipeError` (or its subclass)?
+  /// Is this object an instance of `BrokenPipeError` (or its subclass)?
   public static func isBrokenPipeError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.brokenPipeError)
   }
 
-  /// Is this object a `BrokenPipeError` (but not its subclass)?
+  /// Is this object an instance of `BrokenPipeError` (but not its subclass)?
   public static func isExactlyBrokenPipeError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.brokenPipeError)
   }
@@ -1351,12 +1360,12 @@ public enum PyCast {
 
   // MARK: - BufferError
 
-  /// Is this object a `BufferError` (or its subclass)?
+  /// Is this object an instance of `BufferError` (or its subclass)?
   public static func isBufferError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.bufferError)
   }
 
-  /// Is this object a `BufferError` (but not its subclass)?
+  /// Is this object an instance of `BufferError` (but not its subclass)?
   public static func isExactlyBufferError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.bufferError)
   }
@@ -1373,12 +1382,12 @@ public enum PyCast {
 
   // MARK: - BytesWarning
 
-  /// Is this object a `BytesWarning` (or its subclass)?
+  /// Is this object an instance of `BytesWarning` (or its subclass)?
   public static func isBytesWarning(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.bytesWarning)
   }
 
-  /// Is this object a `BytesWarning` (but not its subclass)?
+  /// Is this object an instance of `BytesWarning` (but not its subclass)?
   public static func isExactlyBytesWarning(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.bytesWarning)
   }
@@ -1395,12 +1404,12 @@ public enum PyCast {
 
   // MARK: - ChildProcessError
 
-  /// Is this object a `ChildProcessError` (or its subclass)?
+  /// Is this object an instance of `ChildProcessError` (or its subclass)?
   public static func isChildProcessError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.childProcessError)
   }
 
-  /// Is this object a `ChildProcessError` (but not its subclass)?
+  /// Is this object an instance of `ChildProcessError` (but not its subclass)?
   public static func isExactlyChildProcessError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.childProcessError)
   }
@@ -1417,12 +1426,12 @@ public enum PyCast {
 
   // MARK: - ConnectionAbortedError
 
-  /// Is this object a `ConnectionAbortedError` (or its subclass)?
+  /// Is this object an instance of `ConnectionAbortedError` (or its subclass)?
   public static func isConnectionAbortedError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.connectionAbortedError)
   }
 
-  /// Is this object a `ConnectionAbortedError` (but not its subclass)?
+  /// Is this object an instance of `ConnectionAbortedError` (but not its subclass)?
   public static func isExactlyConnectionAbortedError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.connectionAbortedError)
   }
@@ -1439,12 +1448,12 @@ public enum PyCast {
 
   // MARK: - ConnectionError
 
-  /// Is this object a `ConnectionError` (or its subclass)?
+  /// Is this object an instance of `ConnectionError` (or its subclass)?
   public static func isConnectionError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.connectionError)
   }
 
-  /// Is this object a `ConnectionError` (but not its subclass)?
+  /// Is this object an instance of `ConnectionError` (but not its subclass)?
   public static func isExactlyConnectionError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.connectionError)
   }
@@ -1461,12 +1470,12 @@ public enum PyCast {
 
   // MARK: - ConnectionRefusedError
 
-  /// Is this object a `ConnectionRefusedError` (or its subclass)?
+  /// Is this object an instance of `ConnectionRefusedError` (or its subclass)?
   public static func isConnectionRefusedError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.connectionRefusedError)
   }
 
-  /// Is this object a `ConnectionRefusedError` (but not its subclass)?
+  /// Is this object an instance of `ConnectionRefusedError` (but not its subclass)?
   public static func isExactlyConnectionRefusedError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.connectionRefusedError)
   }
@@ -1483,12 +1492,12 @@ public enum PyCast {
 
   // MARK: - ConnectionResetError
 
-  /// Is this object a `ConnectionResetError` (or its subclass)?
+  /// Is this object an instance of `ConnectionResetError` (or its subclass)?
   public static func isConnectionResetError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.connectionResetError)
   }
 
-  /// Is this object a `ConnectionResetError` (but not its subclass)?
+  /// Is this object an instance of `ConnectionResetError` (but not its subclass)?
   public static func isExactlyConnectionResetError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.connectionResetError)
   }
@@ -1505,12 +1514,12 @@ public enum PyCast {
 
   // MARK: - DeprecationWarning
 
-  /// Is this object a `DeprecationWarning` (or its subclass)?
+  /// Is this object an instance of `DeprecationWarning` (or its subclass)?
   public static func isDeprecationWarning(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.deprecationWarning)
   }
 
-  /// Is this object a `DeprecationWarning` (but not its subclass)?
+  /// Is this object an instance of `DeprecationWarning` (but not its subclass)?
   public static func isExactlyDeprecationWarning(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.deprecationWarning)
   }
@@ -1527,12 +1536,12 @@ public enum PyCast {
 
   // MARK: - EOFError
 
-  /// Is this object an `EOFError` (or its subclass)?
+  /// Is this object an instance of `EOFError` (or its subclass)?
   public static func isEOFError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.eofError)
   }
 
-  /// Is this object an `EOFError` (but not its subclass)?
+  /// Is this object an instance of `EOFError` (but not its subclass)?
   public static func isExactlyEOFError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.eofError)
   }
@@ -1549,12 +1558,12 @@ public enum PyCast {
 
   // MARK: - Exception
 
-  /// Is this object an `Exception` (or its subclass)?
+  /// Is this object an instance of `Exception` (or its subclass)?
   public static func isException(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.exception)
   }
 
-  /// Is this object an `Exception` (but not its subclass)?
+  /// Is this object an instance of `Exception` (but not its subclass)?
   public static func isExactlyException(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.exception)
   }
@@ -1571,12 +1580,12 @@ public enum PyCast {
 
   // MARK: - FileExistsError
 
-  /// Is this object a `FileExistsError` (or its subclass)?
+  /// Is this object an instance of `FileExistsError` (or its subclass)?
   public static func isFileExistsError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.fileExistsError)
   }
 
-  /// Is this object a `FileExistsError` (but not its subclass)?
+  /// Is this object an instance of `FileExistsError` (but not its subclass)?
   public static func isExactlyFileExistsError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.fileExistsError)
   }
@@ -1593,12 +1602,12 @@ public enum PyCast {
 
   // MARK: - FileNotFoundError
 
-  /// Is this object a `FileNotFoundError` (or its subclass)?
+  /// Is this object an instance of `FileNotFoundError` (or its subclass)?
   public static func isFileNotFoundError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.fileNotFoundError)
   }
 
-  /// Is this object a `FileNotFoundError` (but not its subclass)?
+  /// Is this object an instance of `FileNotFoundError` (but not its subclass)?
   public static func isExactlyFileNotFoundError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.fileNotFoundError)
   }
@@ -1615,12 +1624,12 @@ public enum PyCast {
 
   // MARK: - FloatingPointError
 
-  /// Is this object a `FloatingPointError` (or its subclass)?
+  /// Is this object an instance of `FloatingPointError` (or its subclass)?
   public static func isFloatingPointError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.floatingPointError)
   }
 
-  /// Is this object a `FloatingPointError` (but not its subclass)?
+  /// Is this object an instance of `FloatingPointError` (but not its subclass)?
   public static func isExactlyFloatingPointError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.floatingPointError)
   }
@@ -1637,12 +1646,12 @@ public enum PyCast {
 
   // MARK: - FutureWarning
 
-  /// Is this object a `FutureWarning` (or its subclass)?
+  /// Is this object an instance of `FutureWarning` (or its subclass)?
   public static func isFutureWarning(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.futureWarning)
   }
 
-  /// Is this object a `FutureWarning` (but not its subclass)?
+  /// Is this object an instance of `FutureWarning` (but not its subclass)?
   public static func isExactlyFutureWarning(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.futureWarning)
   }
@@ -1659,12 +1668,12 @@ public enum PyCast {
 
   // MARK: - GeneratorExit
 
-  /// Is this object a `GeneratorExit` (or its subclass)?
+  /// Is this object an instance of `GeneratorExit` (or its subclass)?
   public static func isGeneratorExit(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.generatorExit)
   }
 
-  /// Is this object a `GeneratorExit` (but not its subclass)?
+  /// Is this object an instance of `GeneratorExit` (but not its subclass)?
   public static func isExactlyGeneratorExit(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.generatorExit)
   }
@@ -1681,12 +1690,12 @@ public enum PyCast {
 
   // MARK: - ImportError
 
-  /// Is this object an `ImportError` (or its subclass)?
+  /// Is this object an instance of `ImportError` (or its subclass)?
   public static func isImportError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.importError)
   }
 
-  /// Is this object an `ImportError` (but not its subclass)?
+  /// Is this object an instance of `ImportError` (but not its subclass)?
   public static func isExactlyImportError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.importError)
   }
@@ -1703,12 +1712,12 @@ public enum PyCast {
 
   // MARK: - ImportWarning
 
-  /// Is this object an `ImportWarning` (or its subclass)?
+  /// Is this object an instance of `ImportWarning` (or its subclass)?
   public static func isImportWarning(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.importWarning)
   }
 
-  /// Is this object an `ImportWarning` (but not its subclass)?
+  /// Is this object an instance of `ImportWarning` (but not its subclass)?
   public static func isExactlyImportWarning(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.importWarning)
   }
@@ -1725,12 +1734,12 @@ public enum PyCast {
 
   // MARK: - IndentationError
 
-  /// Is this object an `IndentationError` (or its subclass)?
+  /// Is this object an instance of `IndentationError` (or its subclass)?
   public static func isIndentationError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.indentationError)
   }
 
-  /// Is this object an `IndentationError` (but not its subclass)?
+  /// Is this object an instance of `IndentationError` (but not its subclass)?
   public static func isExactlyIndentationError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.indentationError)
   }
@@ -1747,12 +1756,12 @@ public enum PyCast {
 
   // MARK: - IndexError
 
-  /// Is this object an `IndexError` (or its subclass)?
+  /// Is this object an instance of `IndexError` (or its subclass)?
   public static func isIndexError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.indexError)
   }
 
-  /// Is this object an `IndexError` (but not its subclass)?
+  /// Is this object an instance of `IndexError` (but not its subclass)?
   public static func isExactlyIndexError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.indexError)
   }
@@ -1769,12 +1778,12 @@ public enum PyCast {
 
   // MARK: - InterruptedError
 
-  /// Is this object an `InterruptedError` (or its subclass)?
+  /// Is this object an instance of `InterruptedError` (or its subclass)?
   public static func isInterruptedError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.interruptedError)
   }
 
-  /// Is this object an `InterruptedError` (but not its subclass)?
+  /// Is this object an instance of `InterruptedError` (but not its subclass)?
   public static func isExactlyInterruptedError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.interruptedError)
   }
@@ -1791,12 +1800,12 @@ public enum PyCast {
 
   // MARK: - IsADirectoryError
 
-  /// Is this object an `IsADirectoryError` (or its subclass)?
+  /// Is this object an instance of `IsADirectoryError` (or its subclass)?
   public static func isIsADirectoryError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.isADirectoryError)
   }
 
-  /// Is this object an `IsADirectoryError` (but not its subclass)?
+  /// Is this object an instance of `IsADirectoryError` (but not its subclass)?
   public static func isExactlyIsADirectoryError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.isADirectoryError)
   }
@@ -1813,12 +1822,12 @@ public enum PyCast {
 
   // MARK: - KeyError
 
-  /// Is this object a `KeyError` (or its subclass)?
+  /// Is this object an instance of `KeyError` (or its subclass)?
   public static func isKeyError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.keyError)
   }
 
-  /// Is this object a `KeyError` (but not its subclass)?
+  /// Is this object an instance of `KeyError` (but not its subclass)?
   public static func isExactlyKeyError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.keyError)
   }
@@ -1835,12 +1844,12 @@ public enum PyCast {
 
   // MARK: - KeyboardInterrupt
 
-  /// Is this object a `KeyboardInterrupt` (or its subclass)?
+  /// Is this object an instance of `KeyboardInterrupt` (or its subclass)?
   public static func isKeyboardInterrupt(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.keyboardInterrupt)
   }
 
-  /// Is this object a `KeyboardInterrupt` (but not its subclass)?
+  /// Is this object an instance of `KeyboardInterrupt` (but not its subclass)?
   public static func isExactlyKeyboardInterrupt(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.keyboardInterrupt)
   }
@@ -1857,12 +1866,12 @@ public enum PyCast {
 
   // MARK: - LookupError
 
-  /// Is this object a `LookupError` (or its subclass)?
+  /// Is this object an instance of `LookupError` (or its subclass)?
   public static func isLookupError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.lookupError)
   }
 
-  /// Is this object a `LookupError` (but not its subclass)?
+  /// Is this object an instance of `LookupError` (but not its subclass)?
   public static func isExactlyLookupError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.lookupError)
   }
@@ -1879,12 +1888,12 @@ public enum PyCast {
 
   // MARK: - MemoryError
 
-  /// Is this object a `MemoryError` (or its subclass)?
+  /// Is this object an instance of `MemoryError` (or its subclass)?
   public static func isMemoryError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.memoryError)
   }
 
-  /// Is this object a `MemoryError` (but not its subclass)?
+  /// Is this object an instance of `MemoryError` (but not its subclass)?
   public static func isExactlyMemoryError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.memoryError)
   }
@@ -1901,12 +1910,12 @@ public enum PyCast {
 
   // MARK: - ModuleNotFoundError
 
-  /// Is this object a `ModuleNotFoundError` (or its subclass)?
+  /// Is this object an instance of `ModuleNotFoundError` (or its subclass)?
   public static func isModuleNotFoundError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.moduleNotFoundError)
   }
 
-  /// Is this object a `ModuleNotFoundError` (but not its subclass)?
+  /// Is this object an instance of `ModuleNotFoundError` (but not its subclass)?
   public static func isExactlyModuleNotFoundError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.moduleNotFoundError)
   }
@@ -1923,12 +1932,12 @@ public enum PyCast {
 
   // MARK: - NameError
 
-  /// Is this object a `NameError` (or its subclass)?
+  /// Is this object an instance of `NameError` (or its subclass)?
   public static func isNameError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.nameError)
   }
 
-  /// Is this object a `NameError` (but not its subclass)?
+  /// Is this object an instance of `NameError` (but not its subclass)?
   public static func isExactlyNameError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.nameError)
   }
@@ -1945,12 +1954,12 @@ public enum PyCast {
 
   // MARK: - NotADirectoryError
 
-  /// Is this object a `NotADirectoryError` (or its subclass)?
+  /// Is this object an instance of `NotADirectoryError` (or its subclass)?
   public static func isNotADirectoryError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.notADirectoryError)
   }
 
-  /// Is this object a `NotADirectoryError` (but not its subclass)?
+  /// Is this object an instance of `NotADirectoryError` (but not its subclass)?
   public static func isExactlyNotADirectoryError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.notADirectoryError)
   }
@@ -1967,12 +1976,12 @@ public enum PyCast {
 
   // MARK: - NotImplementedError
 
-  /// Is this object a `NotImplementedError` (or its subclass)?
+  /// Is this object an instance of `NotImplementedError` (or its subclass)?
   public static func isNotImplementedError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.notImplementedError)
   }
 
-  /// Is this object a `NotImplementedError` (but not its subclass)?
+  /// Is this object an instance of `NotImplementedError` (but not its subclass)?
   public static func isExactlyNotImplementedError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.notImplementedError)
   }
@@ -1989,12 +1998,12 @@ public enum PyCast {
 
   // MARK: - OSError
 
-  /// Is this object an `OSError` (or its subclass)?
+  /// Is this object an instance of `OSError` (or its subclass)?
   public static func isOSError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.osError)
   }
 
-  /// Is this object an `OSError` (but not its subclass)?
+  /// Is this object an instance of `OSError` (but not its subclass)?
   public static func isExactlyOSError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.osError)
   }
@@ -2011,12 +2020,12 @@ public enum PyCast {
 
   // MARK: - OverflowError
 
-  /// Is this object an `OverflowError` (or its subclass)?
+  /// Is this object an instance of `OverflowError` (or its subclass)?
   public static func isOverflowError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.overflowError)
   }
 
-  /// Is this object an `OverflowError` (but not its subclass)?
+  /// Is this object an instance of `OverflowError` (but not its subclass)?
   public static func isExactlyOverflowError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.overflowError)
   }
@@ -2033,12 +2042,12 @@ public enum PyCast {
 
   // MARK: - PendingDeprecationWarning
 
-  /// Is this object a `PendingDeprecationWarning` (or its subclass)?
+  /// Is this object an instance of `PendingDeprecationWarning` (or its subclass)?
   public static func isPendingDeprecationWarning(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.pendingDeprecationWarning)
   }
 
-  /// Is this object a `PendingDeprecationWarning` (but not its subclass)?
+  /// Is this object an instance of `PendingDeprecationWarning` (but not its subclass)?
   public static func isExactlyPendingDeprecationWarning(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.pendingDeprecationWarning)
   }
@@ -2055,12 +2064,12 @@ public enum PyCast {
 
   // MARK: - PermissionError
 
-  /// Is this object a `PermissionError` (or its subclass)?
+  /// Is this object an instance of `PermissionError` (or its subclass)?
   public static func isPermissionError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.permissionError)
   }
 
-  /// Is this object a `PermissionError` (but not its subclass)?
+  /// Is this object an instance of `PermissionError` (but not its subclass)?
   public static func isExactlyPermissionError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.permissionError)
   }
@@ -2077,12 +2086,12 @@ public enum PyCast {
 
   // MARK: - ProcessLookupError
 
-  /// Is this object a `ProcessLookupError` (or its subclass)?
+  /// Is this object an instance of `ProcessLookupError` (or its subclass)?
   public static func isProcessLookupError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.processLookupError)
   }
 
-  /// Is this object a `ProcessLookupError` (but not its subclass)?
+  /// Is this object an instance of `ProcessLookupError` (but not its subclass)?
   public static func isExactlyProcessLookupError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.processLookupError)
   }
@@ -2099,12 +2108,12 @@ public enum PyCast {
 
   // MARK: - RecursionError
 
-  /// Is this object a `RecursionError` (or its subclass)?
+  /// Is this object an instance of `RecursionError` (or its subclass)?
   public static func isRecursionError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.recursionError)
   }
 
-  /// Is this object a `RecursionError` (but not its subclass)?
+  /// Is this object an instance of `RecursionError` (but not its subclass)?
   public static func isExactlyRecursionError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.recursionError)
   }
@@ -2121,12 +2130,12 @@ public enum PyCast {
 
   // MARK: - ReferenceError
 
-  /// Is this object a `ReferenceError` (or its subclass)?
+  /// Is this object an instance of `ReferenceError` (or its subclass)?
   public static func isReferenceError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.referenceError)
   }
 
-  /// Is this object a `ReferenceError` (but not its subclass)?
+  /// Is this object an instance of `ReferenceError` (but not its subclass)?
   public static func isExactlyReferenceError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.referenceError)
   }
@@ -2143,12 +2152,12 @@ public enum PyCast {
 
   // MARK: - ResourceWarning
 
-  /// Is this object a `ResourceWarning` (or its subclass)?
+  /// Is this object an instance of `ResourceWarning` (or its subclass)?
   public static func isResourceWarning(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.resourceWarning)
   }
 
-  /// Is this object a `ResourceWarning` (but not its subclass)?
+  /// Is this object an instance of `ResourceWarning` (but not its subclass)?
   public static func isExactlyResourceWarning(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.resourceWarning)
   }
@@ -2165,12 +2174,12 @@ public enum PyCast {
 
   // MARK: - RuntimeError
 
-  /// Is this object a `RuntimeError` (or its subclass)?
+  /// Is this object an instance of `RuntimeError` (or its subclass)?
   public static func isRuntimeError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.runtimeError)
   }
 
-  /// Is this object a `RuntimeError` (but not its subclass)?
+  /// Is this object an instance of `RuntimeError` (but not its subclass)?
   public static func isExactlyRuntimeError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.runtimeError)
   }
@@ -2187,12 +2196,12 @@ public enum PyCast {
 
   // MARK: - RuntimeWarning
 
-  /// Is this object a `RuntimeWarning` (or its subclass)?
+  /// Is this object an instance of `RuntimeWarning` (or its subclass)?
   public static func isRuntimeWarning(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.runtimeWarning)
   }
 
-  /// Is this object a `RuntimeWarning` (but not its subclass)?
+  /// Is this object an instance of `RuntimeWarning` (but not its subclass)?
   public static func isExactlyRuntimeWarning(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.runtimeWarning)
   }
@@ -2209,12 +2218,12 @@ public enum PyCast {
 
   // MARK: - StopAsyncIteration
 
-  /// Is this object a `StopAsyncIteration` (or its subclass)?
+  /// Is this object an instance of `StopAsyncIteration` (or its subclass)?
   public static func isStopAsyncIteration(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.stopAsyncIteration)
   }
 
-  /// Is this object a `StopAsyncIteration` (but not its subclass)?
+  /// Is this object an instance of `StopAsyncIteration` (but not its subclass)?
   public static func isExactlyStopAsyncIteration(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.stopAsyncIteration)
   }
@@ -2231,12 +2240,12 @@ public enum PyCast {
 
   // MARK: - StopIteration
 
-  /// Is this object a `StopIteration` (or its subclass)?
+  /// Is this object an instance of `StopIteration` (or its subclass)?
   public static func isStopIteration(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.stopIteration)
   }
 
-  /// Is this object a `StopIteration` (but not its subclass)?
+  /// Is this object an instance of `StopIteration` (but not its subclass)?
   public static func isExactlyStopIteration(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.stopIteration)
   }
@@ -2253,12 +2262,12 @@ public enum PyCast {
 
   // MARK: - SyntaxError
 
-  /// Is this object a `SyntaxError` (or its subclass)?
+  /// Is this object an instance of `SyntaxError` (or its subclass)?
   public static func isSyntaxError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.syntaxError)
   }
 
-  /// Is this object a `SyntaxError` (but not its subclass)?
+  /// Is this object an instance of `SyntaxError` (but not its subclass)?
   public static func isExactlySyntaxError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.syntaxError)
   }
@@ -2275,12 +2284,12 @@ public enum PyCast {
 
   // MARK: - SyntaxWarning
 
-  /// Is this object a `SyntaxWarning` (or its subclass)?
+  /// Is this object an instance of `SyntaxWarning` (or its subclass)?
   public static func isSyntaxWarning(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.syntaxWarning)
   }
 
-  /// Is this object a `SyntaxWarning` (but not its subclass)?
+  /// Is this object an instance of `SyntaxWarning` (but not its subclass)?
   public static func isExactlySyntaxWarning(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.syntaxWarning)
   }
@@ -2297,12 +2306,12 @@ public enum PyCast {
 
   // MARK: - SystemError
 
-  /// Is this object a `SystemError` (or its subclass)?
+  /// Is this object an instance of `SystemError` (or its subclass)?
   public static func isSystemError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.systemError)
   }
 
-  /// Is this object a `SystemError` (but not its subclass)?
+  /// Is this object an instance of `SystemError` (but not its subclass)?
   public static func isExactlySystemError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.systemError)
   }
@@ -2319,12 +2328,12 @@ public enum PyCast {
 
   // MARK: - SystemExit
 
-  /// Is this object a `SystemExit` (or its subclass)?
+  /// Is this object an instance of `SystemExit` (or its subclass)?
   public static func isSystemExit(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.systemExit)
   }
 
-  /// Is this object a `SystemExit` (but not its subclass)?
+  /// Is this object an instance of `SystemExit` (but not its subclass)?
   public static func isExactlySystemExit(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.systemExit)
   }
@@ -2341,12 +2350,12 @@ public enum PyCast {
 
   // MARK: - TabError
 
-  /// Is this object a `TabError` (or its subclass)?
+  /// Is this object an instance of `TabError` (or its subclass)?
   public static func isTabError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.tabError)
   }
 
-  /// Is this object a `TabError` (but not its subclass)?
+  /// Is this object an instance of `TabError` (but not its subclass)?
   public static func isExactlyTabError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.tabError)
   }
@@ -2363,12 +2372,12 @@ public enum PyCast {
 
   // MARK: - TimeoutError
 
-  /// Is this object a `TimeoutError` (or its subclass)?
+  /// Is this object an instance of `TimeoutError` (or its subclass)?
   public static func isTimeoutError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.timeoutError)
   }
 
-  /// Is this object a `TimeoutError` (but not its subclass)?
+  /// Is this object an instance of `TimeoutError` (but not its subclass)?
   public static func isExactlyTimeoutError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.timeoutError)
   }
@@ -2385,12 +2394,12 @@ public enum PyCast {
 
   // MARK: - TypeError
 
-  /// Is this object a `TypeError` (or its subclass)?
+  /// Is this object an instance of `TypeError` (or its subclass)?
   public static func isTypeError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.typeError)
   }
 
-  /// Is this object a `TypeError` (but not its subclass)?
+  /// Is this object an instance of `TypeError` (but not its subclass)?
   public static func isExactlyTypeError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.typeError)
   }
@@ -2407,12 +2416,12 @@ public enum PyCast {
 
   // MARK: - UnboundLocalError
 
-  /// Is this object an `UnboundLocalError` (or its subclass)?
+  /// Is this object an instance of `UnboundLocalError` (or its subclass)?
   public static func isUnboundLocalError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.unboundLocalError)
   }
 
-  /// Is this object an `UnboundLocalError` (but not its subclass)?
+  /// Is this object an instance of `UnboundLocalError` (but not its subclass)?
   public static func isExactlyUnboundLocalError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.unboundLocalError)
   }
@@ -2429,12 +2438,12 @@ public enum PyCast {
 
   // MARK: - UnicodeDecodeError
 
-  /// Is this object an `UnicodeDecodeError` (or its subclass)?
+  /// Is this object an instance of `UnicodeDecodeError` (or its subclass)?
   public static func isUnicodeDecodeError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.unicodeDecodeError)
   }
 
-  /// Is this object an `UnicodeDecodeError` (but not its subclass)?
+  /// Is this object an instance of `UnicodeDecodeError` (but not its subclass)?
   public static func isExactlyUnicodeDecodeError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.unicodeDecodeError)
   }
@@ -2451,12 +2460,12 @@ public enum PyCast {
 
   // MARK: - UnicodeEncodeError
 
-  /// Is this object an `UnicodeEncodeError` (or its subclass)?
+  /// Is this object an instance of `UnicodeEncodeError` (or its subclass)?
   public static func isUnicodeEncodeError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.unicodeEncodeError)
   }
 
-  /// Is this object an `UnicodeEncodeError` (but not its subclass)?
+  /// Is this object an instance of `UnicodeEncodeError` (but not its subclass)?
   public static func isExactlyUnicodeEncodeError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.unicodeEncodeError)
   }
@@ -2473,12 +2482,12 @@ public enum PyCast {
 
   // MARK: - UnicodeError
 
-  /// Is this object an `UnicodeError` (or its subclass)?
+  /// Is this object an instance of `UnicodeError` (or its subclass)?
   public static func isUnicodeError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.unicodeError)
   }
 
-  /// Is this object an `UnicodeError` (but not its subclass)?
+  /// Is this object an instance of `UnicodeError` (but not its subclass)?
   public static func isExactlyUnicodeError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.unicodeError)
   }
@@ -2495,12 +2504,12 @@ public enum PyCast {
 
   // MARK: - UnicodeTranslateError
 
-  /// Is this object an `UnicodeTranslateError` (or its subclass)?
+  /// Is this object an instance of `UnicodeTranslateError` (or its subclass)?
   public static func isUnicodeTranslateError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.unicodeTranslateError)
   }
 
-  /// Is this object an `UnicodeTranslateError` (but not its subclass)?
+  /// Is this object an instance of `UnicodeTranslateError` (but not its subclass)?
   public static func isExactlyUnicodeTranslateError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.unicodeTranslateError)
   }
@@ -2517,12 +2526,12 @@ public enum PyCast {
 
   // MARK: - UnicodeWarning
 
-  /// Is this object an `UnicodeWarning` (or its subclass)?
+  /// Is this object an instance of `UnicodeWarning` (or its subclass)?
   public static func isUnicodeWarning(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.unicodeWarning)
   }
 
-  /// Is this object an `UnicodeWarning` (but not its subclass)?
+  /// Is this object an instance of `UnicodeWarning` (but not its subclass)?
   public static func isExactlyUnicodeWarning(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.unicodeWarning)
   }
@@ -2539,12 +2548,12 @@ public enum PyCast {
 
   // MARK: - UserWarning
 
-  /// Is this object an `UserWarning` (or its subclass)?
+  /// Is this object an instance of `UserWarning` (or its subclass)?
   public static func isUserWarning(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.userWarning)
   }
 
-  /// Is this object an `UserWarning` (but not its subclass)?
+  /// Is this object an instance of `UserWarning` (but not its subclass)?
   public static func isExactlyUserWarning(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.userWarning)
   }
@@ -2561,12 +2570,12 @@ public enum PyCast {
 
   // MARK: - ValueError
 
-  /// Is this object a `ValueError` (or its subclass)?
+  /// Is this object an instance of `ValueError` (or its subclass)?
   public static func isValueError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.valueError)
   }
 
-  /// Is this object a `ValueError` (but not its subclass)?
+  /// Is this object an instance of `ValueError` (but not its subclass)?
   public static func isExactlyValueError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.valueError)
   }
@@ -2583,12 +2592,12 @@ public enum PyCast {
 
   // MARK: - Warning
 
-  /// Is this object a `Warning` (or its subclass)?
+  /// Is this object an instance of `Warning` (or its subclass)?
   public static func isWarning(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.warning)
   }
 
-  /// Is this object a `Warning` (but not its subclass)?
+  /// Is this object an instance of `Warning` (but not its subclass)?
   public static func isExactlyWarning(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.warning)
   }
@@ -2605,12 +2614,12 @@ public enum PyCast {
 
   // MARK: - ZeroDivisionError
 
-  /// Is this object a `ZeroDivisionError` (or its subclass)?
+  /// Is this object an instance of `ZeroDivisionError` (or its subclass)?
   public static func isZeroDivisionError(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.errorTypes.zeroDivisionError)
   }
 
-  /// Is this object a `ZeroDivisionError` (but not its subclass)?
+  /// Is this object an instance of `ZeroDivisionError` (but not its subclass)?
   public static func isExactlyZeroDivisionError(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.errorTypes.zeroDivisionError)
   }

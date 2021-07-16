@@ -104,7 +104,7 @@ extension AbstractString {
       return .value(nil)
     }
 
-    if indexObject.isNone {
+    if PyCast.isNone(indexObject) {
       return .value(nil)
     }
 

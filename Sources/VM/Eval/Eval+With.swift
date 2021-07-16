@@ -172,7 +172,8 @@ extension Eval {
     // Otherwise, the exception will be processed normally upon exit from this method.
 
     var isExceptionSuppressed = false
-    if !exception.isNone {
+    let isExceptionNone = PyCast.isNone(exception)
+    if !isExceptionNone {
       switch Py.isTrueBool(object: result) {
       case let .value(value):
         isExceptionSuppressed = value

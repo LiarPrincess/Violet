@@ -527,7 +527,7 @@ extension PyInstance {
       return self.call(callable: type, args: [])
     }
 
-    if arg.isNone {
+    if PyCast.isNone(arg) {
       return self.call(callable: type, args: [])
     }
 

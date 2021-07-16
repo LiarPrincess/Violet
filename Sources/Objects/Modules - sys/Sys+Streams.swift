@@ -79,7 +79,7 @@ extension Sys {
   private func getStreamOrNone(property: Sys.Properties) -> StreamOrNone {
     switch self.get(property) {
     case .value(let object):
-      if object.isNone {
+      if PyCast.isNone(object) {
         return .none
       }
 

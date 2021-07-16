@@ -564,7 +564,7 @@ internal struct PySequenceData {
       return .none
     }
 
-    if value.isNone {
+    if PyCast.isNone(value) {
       return .none
     }
 

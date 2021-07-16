@@ -27,7 +27,7 @@ extension PySuper {
       }
     }
 
-    if let o = object, o.isNone {
+    if let o = object, PyCast.isNone(o) {
       object = nil
     }
 

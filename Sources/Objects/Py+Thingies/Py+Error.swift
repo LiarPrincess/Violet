@@ -97,8 +97,9 @@ extension PyInstance {
       return
     }
 
-    let hasEmptyContext = exception.getContext()?.isNone ?? true
-    guard hasEmptyContext || overrideCurrent else {
+    let currentContext = exception.getContext()
+    let hasNoContext = PyCast.isNilOrNone(currentContext)
+    guard hasNoContext || overrideCurrent else {
       return
     }
 

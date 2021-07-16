@@ -114,7 +114,7 @@ extension UnderscoreWarnings {
       return .value(userWarning)
     }
 
-    if category.isNone {
+    if PyCast.isNone(category) {
       return .value(userWarning)
     }
 
@@ -211,7 +211,7 @@ extension UnderscoreWarnings {
 
   public func getWarningRegistry(globals: PyDict) -> PyResult<WarningRegistry> {
     if let object = globals.get(id: .__warningregistry__) {
-      if object.isNone {
+      if PyCast.isNone(object) {
         return .value(.none)
       }
 

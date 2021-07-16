@@ -171,7 +171,7 @@ extension Eval {
       return .none
     }
 
-    if cause.isNone {
+    if PyCast.isNone(cause) {
       return .none
     }
 

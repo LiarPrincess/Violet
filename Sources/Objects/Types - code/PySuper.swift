@@ -200,7 +200,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
 
   // sourcery: pymethod = __get__
   internal func get(object: PyObject, type: PyObject?) -> PyResult<PyObject> {
-    // Basically 'object.isNone'
+    // Basically 'PyCast.isNone(object)'
     if object.isDescriptorStaticMarker {
       return .value(self)
     }
