@@ -70,7 +70,7 @@ extension TernaryOp {
                                right: PyObject) -> PyResult<PyObject> {
     switch self.callInner(left: left, middle: middle, right: right) {
     case let .value(result):
-      if result.isNotImplemented {
+      if PyCast.isNotImplemented(result) {
         let msg = "unsupported operand type(s) for \(op): " +
                   "\(left.typeName), \(middle.typeName) and \(right.typeName)"
         return .typeError(msg)
@@ -89,7 +89,7 @@ extension TernaryOp {
                                       right: PyObject) -> PyResult<PyObject> {
     switch self.callInPlaceOp(left: left, middle: middle, right: right) {
     case let .value(result):
-      if result.isNotImplemented {
+      if PyCast.isNotImplemented(result) {
         break // try other options
       }
 
@@ -102,7 +102,7 @@ extension TernaryOp {
     // Try standard operation, for example '**'
     switch self.callInner(left: left, middle: middle, right: right) {
     case let .value(result):
-      if result.isNotImplemented {
+      if PyCast.isNotImplemented(result) {
         let msg = "unsupported operand type(s) for \(inPlaceOp): " +
                   "\(left.typeName), \(middle.typeName) and \(right.typeName)"
         return .typeError(msg)
@@ -128,7 +128,7 @@ extension TernaryOp {
 
       switch self.callReflectedOp(left: left, middle: middle, right: right) {
       case .value(let result):
-        if result.isNotImplemented {
+        if PyCast.isNotImplemented(result) {
           break // try other options
         }
         return .value(result)
@@ -140,7 +140,7 @@ extension TernaryOp {
     // Try left `op` middle, right (default path)
     switch self.callOp(left: left, middle: middle, right: right) {
     case .value(let result):
-      if result.isNotImplemented {
+      if PyCast.isNotImplemented(result) {
         break // try other options
       }
       return .value(result)
@@ -152,7 +152,7 @@ extension TernaryOp {
     if !checkedReflected {
       switch self.callReflectedOp(left: left, middle: middle, right: right) {
       case .value(let result):
-        if result.isNotImplemented {
+        if PyCast.isNotImplemented(result) {
           break // try other options
         }
         return .value(result)

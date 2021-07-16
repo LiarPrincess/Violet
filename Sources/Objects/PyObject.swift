@@ -191,14 +191,6 @@ public class PyObject: CustomStringConvertible {
     self._type = type
   }
 
-  // MARK: - Type predicates
-
-  /// Helper to use when implementing binary operations.
-  /// [docs](https://docs.python.org/3/library/constants.html#NotImplemented).
-  public var isNotImplemented: Bool {
-    return PyCast.isNotImplemented(self)
-  }
-
   // MARK: - Repr
 
   /// This flag is used to control infinite recursion

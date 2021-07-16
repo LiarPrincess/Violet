@@ -77,7 +77,7 @@ extension BinaryOp {
                                right: PyObject) -> PyResult<PyObject> {
     switch self.callInner(left: left, right: right) {
     case let .value(result):
-      if result.isNotImplemented {
+      if PyCast.isNotImplemented(result) {
         let leftType = left.typeName
         let rightType = right.typeName
         var msg = "unsupported operand type(s) for \(op): \(leftType) and \(rightType)."
@@ -105,7 +105,7 @@ extension BinaryOp {
                                       right: PyObject) -> PyResult<PyObject> {
     switch self.callInPlaceOp(left: left, right: right) {
     case let .value(result):
-      if result.isNotImplemented {
+      if PyCast.isNotImplemented(result) {
         break // try other options
       }
 
@@ -118,7 +118,7 @@ extension BinaryOp {
     // Try standard operation, for example '+'
     switch self.callInner(left: left, right: right) {
     case let .value(result):
-      if result.isNotImplemented {
+      if PyCast.isNotImplemented(result) {
         let msg = "unsupported operand type(s) for \(inPlaceOp): " +
                   "\(left.typeName) and \(right.typeName)."
         return .typeError(msg)
@@ -148,7 +148,7 @@ extension BinaryOp {
 
       switch self.callReflectedOp(left: left, right: right) {
       case .value(let result):
-        if result.isNotImplemented {
+        if PyCast.isNotImplemented(result) {
           break // try other options
         }
         return .value(result)
@@ -160,7 +160,7 @@ extension BinaryOp {
     // Try left `op` right (default path)
     switch self.callOp(left: left, right: right) {
     case .value(let result):
-      if result.isNotImplemented {
+      if PyCast.isNotImplemented(result) {
         break // try other options
       }
       return .value(result)
@@ -172,7 +172,7 @@ extension BinaryOp {
     if !checkedReflected {
       switch self.callReflectedOp(left: left, right: right) {
       case .value(let result):
-        if result.isNotImplemented {
+        if PyCast.isNotImplemented(result) {
           break // try other options
         }
         return .value(result)
