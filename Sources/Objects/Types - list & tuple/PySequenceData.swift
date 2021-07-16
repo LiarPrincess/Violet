@@ -564,7 +564,7 @@ internal struct PySequenceData {
       return .none
     }
 
-    if value is PyNone {
+    if value.isNone {
       return .none
     }
 

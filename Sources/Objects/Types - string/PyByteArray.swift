@@ -914,12 +914,6 @@ public class PyByteArray: PyObject, AbstractBytes {
     return Py.newByteArray(self.elements)
   }
 
-  // MARK: - Check exact
-
-  internal func checkExact() -> Bool {
-    return self.type === Py.types.bytearray
-  }
-
   // MARK: - Python new
 
   // sourcery: pystaticmethod = __new__

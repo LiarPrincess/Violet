@@ -11,7 +11,8 @@ class PyComplexParseTests: PyTestCase {
       return
     }
 
-    XCTAssert(e is PyValueError)
+    let isValueError = PyCast.isValueError(e)
+    XCTAssert(isValueError)
   }
 
   // MARK: - Real only

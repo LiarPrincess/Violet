@@ -161,7 +161,7 @@ public class PyTextFile: PyObject {
       return self.read(size: -1)
     }
 
-    if size is PyNone {
+    if size.isNone {
       return self.read(size: -1)
     }
 

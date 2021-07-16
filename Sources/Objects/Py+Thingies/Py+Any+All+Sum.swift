@@ -37,19 +37,25 @@ extension PyInstance {
   /// sum(iterable, /, start=0)
   /// See [this](https://docs.python.org/3/library/functions.html#sum)
   public func sum(iterable: PyObject, start: PyObject?) -> PyResult<PyObject> {
-    if start is PyString {
-      return .typeError("sum() can't sum strings [use ''.join(seq) instead]")
-    }
+    let initial: PyObject
 
-    if start is PyBytes {
-      return .typeError("sum() can't sum bytes [use b''.join(seq) instead]")
-    }
+    if let start = start {
+      if PyCast.isString(start) {
+        return .typeError("sum() can't sum strings [use ''.join(seq) instead]")
+      }
 
-    if start is PyByteArray {
-      return .typeError("sum() can't sum bytearray [use b''.join(seq) instead]")
-    }
+      if PyCast.isBytes(start) {
+        return .typeError("sum() can't sum bytes [use b''.join(seq) instead]")
+      }
 
-    let initial = start ?? self.newInt(0)
+      if PyCast.isByteArray(start) {
+        return .typeError("sum() can't sum bytearray [use b''.join(seq) instead]")
+      }
+
+      initial = start
+    } else {
+      initial = Py.newInt(0)
+    }
 
     return self.reduce(iterable: iterable, initial: initial) { acc, object in
       switch self.add(left: acc, right: object) {

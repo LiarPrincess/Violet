@@ -97,7 +97,7 @@ extension Eval {
     let locals = self.locals
 
     if let object = locals.get(id: .__annotations__) {
-      guard object is PyDict else {
+      guard PyCast.isDict(object) else {
         let t = object.typeName
         let msg = "You thought __annotations__ would be dict, but it was me Dio (\(t))!"
         return .exception(Py.newTypeError(msg: msg))

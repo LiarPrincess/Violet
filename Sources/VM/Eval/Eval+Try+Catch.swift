@@ -171,7 +171,7 @@ extension Eval {
       return .none
     }
 
-    if cause is PyNone {
+    if cause.isNone {
       return .none
     }
 

@@ -413,7 +413,7 @@ public class PyInt: PyObject {
       return .int(int)
     }
 
-    if mod is PyNone {
+    if mod.isNone {
       return .none
     }
 

@@ -19,11 +19,11 @@ case .systemExit(let object):
   // https://www.youtube.com/watch?v=d-nxW9qBtxQ
   // CPython: handle_system_exit(void)
 
-  if object.isNone {
+  if PyCast.isNone(object) {
     exit(0)
   }
 
-  if let pyInt = object as? PyInt {
+  if let pyInt = PyCast.asInt(object) {
     guard let status = Int32(exactly: pyInt.value) else {
       exit(1) // Python does not define what to do
     }

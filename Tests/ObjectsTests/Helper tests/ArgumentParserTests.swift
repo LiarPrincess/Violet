@@ -332,7 +332,7 @@ class ArgumentParserTests: PyTestCase {
   private func asSystemError(_ e: PyBaseException?,
                              file: StaticString = #file,
                              line: UInt = #line) -> PySystemError? {
-    if let s = e as? PySystemError {
+    if let e = e, let s = PyCast.asSystemError(e) {
       return s
     }
 
@@ -343,7 +343,7 @@ class ArgumentParserTests: PyTestCase {
   private func asTypeError(_ e: PyBaseException?,
                            file: StaticString = #file,
                            line: UInt = #line) -> PyTypeError? {
-    if let s = e as? PyTypeError {
+    if let e = e, let s = PyCast.asTypeError(e) {
       return s
     }
 

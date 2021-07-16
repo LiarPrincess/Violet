@@ -370,7 +370,11 @@ public class PyComplex: PyObject {
   }
 
   private func isNilOrNone(_ value: PyObject?) -> Bool {
-    return value == nil || value is PyNone
+    guard let value = value else {
+      return true
+    }
+
+    return value.isNone
   }
 
   private func pow(base: Raw, exp: Raw) -> PyResult<PyObject> {

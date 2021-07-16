@@ -92,14 +92,15 @@ struct TestRunner {
 
     case .systemExit(let object):
       let status: String = {
-        switch object {
-        case let o where o.isNone:
+        if PyCast.isNone(object) {
           return "None"
-        case let int as PyInt:
-          return String(describing: int.value)
-        default:
-          return Py.reprOrGenericString(object: object)
         }
+
+        if let pyInt = PyCast.asInt(object) {
+          return String(describing: pyInt.value)
+        }
+
+        return Py.reprOrGenericString(object: object)
       }()
 
       print("  ✔ Success (SystemExit: \(status))")

@@ -43,7 +43,7 @@ extension Abstract {
     // so it doesn't matter which int we compare it with.
     // If 'left' is a NaN, similarly.
     guard left.isFinite else {
-      if right is PyInt {
+      if PyCast.isInt(right) {
         let result = Self.compare(left: left, right: 0.0)
         return .value(result)
       }

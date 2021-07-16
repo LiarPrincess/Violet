@@ -6,7 +6,8 @@ internal func XCTAssertTypeError(error: PyBaseException,
                                  msg: String,
                                  file: StaticString = #file,
                                  line: UInt = #line) {
-  XCTAssert(error is PyTypeError,
+  let isTypeError = PyCast.isTypeError(error)
+  XCTAssert(isTypeError,
             "'\(error.typeName)' is not a type error.",
             file: file,
             line: line)
@@ -26,7 +27,7 @@ private func extractMsgFromFirstArg(error: PyBaseException,
     return nil
   }
 
-  guard let msgString = firstArg as? PyString else {
+  guard let msgString = PyCast.asString(firstArg) else {
     XCTAssert(false, String(describing: firstArg), file: file, line: line)
     return nil
   }

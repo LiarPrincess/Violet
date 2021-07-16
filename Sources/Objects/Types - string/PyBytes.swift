@@ -593,12 +593,6 @@ public class PyBytes: PyObject, AbstractBytes {
     return PyMemory.newBytesIterator(bytes: self)
   }
 
-  // MARK: - Check exact
-
-  internal func checkExact() -> Bool {
-    return self.type === Py.types.bytes
-  }
-
   // MARK: - Python new
 
   private static let newArguments = ArgumentParser.createOrTrap(
