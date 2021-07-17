@@ -8,6 +8,7 @@ import VioletCore
 // https://docs.python.org/3/c-api/typeobj.html
 
 // sourcery: pytype = type, default, hasGC, baseType, typeSubclass
+// sourcery: instancesHave__dict__
 public class PyType: PyObject, HasCustomGetMethod {
 
   // MARK: - Weak ref
@@ -32,10 +33,16 @@ public class PyType: PyObject, HasCustomGetMethod {
   /// Set if the type allows sub-classing.
   internal static let baseTypeFlag = Flags.custom1
   /// Objects support garbage collection.
+  ///
+  /// This flag was taken from CPython and is not used in Violet.
   internal static let hasGCFlag = Flags.custom2
   /// Type is abstract and cannot be instantiated
+  ///
+  /// This flag was taken from CPython and is not used in Violet..
   internal static let isAbstractFlag = Flags.custom3
   /// Type structure has tp_finalize member (3.4)
+  ///
+  /// This flag was taken from CPython and is not used in Violet.
   internal static let hasFinalizeFlag = Flags.custom4
 
   /// ```c
@@ -45,22 +52,60 @@ public class PyType: PyObject, HasCustomGetMethod {
   /// ```
   internal static let `defaultFlag` = Flags.custom5
 
-  /// These flags are used to determine if a type is a `int` subclass.
+  /// This type is a `int` subclass.
+  ///
+  /// This flag was taken from CPython and is not used in Violet.
   internal static let longSubclassFlag = Flags.custom8
-  /// These flags are used to determine if a type is a `list` subclass.
+  /// This type is a `list` subclass.
+  ///
+  /// This flag was taken from CPython and is not used in Violet.
   internal static let listSubclassFlag = Flags.custom9
-  /// These flags are used to determine if a type is a `tuple` subclass.
+  /// This type is a `tuple` subclass.
+  ///
+  /// This flag was taken from CPython and is not used in Violet.
   internal static let tupleSubclassFlag = Flags.custom10
-  /// These flags are used to determine if a type is a `bytes` subclass.
+  /// This type is a `bytes` subclass.
+  ///
+  /// This flag was taken from CPython and is not used in Violet.
   internal static let bytesSubclassFlag = Flags.custom11
-  /// These flags are used to determine if a type is a `str` subclass.
+  /// This type is a `str` subclass.
+  ///
+  /// This flag was taken from CPython and is not used in Violet.
   internal static let unicodeSubclassFlag = Flags.custom12
-  /// These flags are used to determine if a type is a `dict` subclass.
+  /// This type is a `dict` subclass.
+  ///
+  /// This flag was taken from CPython and is not used in Violet.
   internal static let dictSubclassFlag = Flags.custom13
-  /// These flags are used to determine if a type is a `baseException` subclass.
+  /// This type is a `baseException` subclass.
+  ///
+  /// This flag was taken from CPython and is not used in Violet.
   internal static let baseExceptionSubclassFlag = Flags.custom14
-  /// These flags are used to determine if a type is a `type` subclass.
+  /// This type is a `type` subclass.
+  ///
+  /// This flag was taken from CPython and is not used in Violet.
   internal static let typeSubclassFlag = Flags.custom15
+
+  /// (VIOLET ONLY) Flag used to denote that instances of this type have access
+  /// to `__dict__`.
+  internal static let instancesHave__dict__Flag = Flags.custom20
+  /// (VIOLET ONLY) Flag used to denote that instances of subclass of this type
+  /// have access to `__dict__` (yeah… I know that sounds complicated).
+  ///
+  /// Normally most builtin types (like `int`, `float` etc.) do not have `__dict__`:
+  /// ``` py
+  /// >>> (1).__dict__
+  /// Traceback (most recent call last):
+  ///   File "<stdin>", line 1, in <module>
+  /// AttributeError: 'int' object has no attribute '__dict__'
+  /// ```
+  ///
+  /// But if we subclass them, then the `__dict__` becomes available:
+  /// ```py
+  /// >>> class MyInt(int): pass
+  /// >>> MyInt().__dict__
+  /// { }
+  /// ```
+  internal static let subclassInstancesHave__dict__Flag = Flags.custom21
 
   // MARK: - Properties & init
 
@@ -80,7 +125,6 @@ public class PyType: PyObject, HasCustomGetMethod {
   private var bases: [PyType]
   private var mro: [PyType]
   private var subclasses: [WeakRef] = []
-  private lazy var __dict__ = Py.newDict()
 
   /// Swift storage (layout).
   /// See `PyType.MemoryLayout` documentation for details.
@@ -114,6 +158,7 @@ public class PyType: PyObject, HasCustomGetMethod {
               base: base,
               mro: mro,
               layout: layout)
+
     self.setType(to: metatype)
   }
 

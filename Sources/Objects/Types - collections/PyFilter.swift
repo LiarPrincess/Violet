@@ -4,6 +4,7 @@ import VioletCore
 // Python -> builtinmodule.c
 
 // sourcery: pytype = filter, default, hasGC, baseType
+// sourcery: subclassInstancesHave__dict__
 public class PyFilter: PyObject {
 
   // sourcery: pytypedoc

@@ -11,6 +11,8 @@ extension PyObject {
 
     private var rawValue: UInt32
 
+    // MARK: - Present on every object
+
     /// This flag is used to control infinite recursion
     /// in `repr`, `str`, `print` etc.
     ///
@@ -25,56 +27,73 @@ extension PyObject {
     /// Use `PyObject.withReprLock()` to automate setting/resetting this flag.
     public static let reprLock = Flags(rawValue: 1 << 0)
 
-    // Flags present on every 'PyObject'.
+    /// (VIOLET ONLY!)
+    /// Flag denoting that this object has access to `__dict__`.
+    ///
+    /// This flag is automatically copied from `self.type`.
+    public static let has__dict__ = Flags(rawValue: 1 << 1)
+
+    // *** Reserved for future use ***
     // Not assigned (for now), but we expect garbage collection to use some of them.
-//    public static let reserved1 = Flags(rawValue: 1 << 1)
 //    public static let reserved2 = Flags(rawValue: 1 << 2)
 //    public static let reserved3 = Flags(rawValue: 1 << 3)
 //    public static let reserved4 = Flags(rawValue: 1 << 4)
 //    public static let reserved5 = Flags(rawValue: 1 << 5)
 //    public static let reserved6 = Flags(rawValue: 1 << 6)
 //    public static let reserved7 = Flags(rawValue: 1 << 7)
-//    public static let reserved8 = Flags(rawValue: 1 << 8)
-//    public static let reserved9 = Flags(rawValue: 1 << 9)
-//    public static let reserved10 = Flags(rawValue: 1 << 10)
-//    public static let reserved11 = Flags(rawValue: 1 << 11)
-//    public static let reserved12 = Flags(rawValue: 1 << 12)
-//    public static let reserved13 = Flags(rawValue: 1 << 13)
-//    public static let reserved14 = Flags(rawValue: 1 << 14)
-//    public static let reserved15 = Flags(rawValue: 1 << 15)
+
+    // MARK: - Depend on object type
 
     /// Flag `0` that can be used based on object type.
-    public static let custom0 = Flags(rawValue: 1 << 16)
+    public static let custom0 = Flags(rawValue: 1 << 8)
     /// Flag `1` that can be used based on object type.
-    public static let custom1 = Flags(rawValue: 1 << 17)
+    public static let custom1 = Flags(rawValue: 1 << 9)
     /// Flag `2` that can be used based on object type.
-    public static let custom2 = Flags(rawValue: 1 << 18)
+    public static let custom2 = Flags(rawValue: 1 << 10)
     /// Flag `3` that can be used based on object type.
-    public static let custom3 = Flags(rawValue: 1 << 19)
+    public static let custom3 = Flags(rawValue: 1 << 11)
     /// Flag `4` that can be used based on object type.
-    public static let custom4 = Flags(rawValue: 1 << 20)
+    public static let custom4 = Flags(rawValue: 1 << 12)
     /// Flag `5` that can be used based on object type.
-    public static let custom5 = Flags(rawValue: 1 << 21)
+    public static let custom5 = Flags(rawValue: 1 << 13)
     /// Flag `6` that can be used based on object type.
-    public static let custom6 = Flags(rawValue: 1 << 22)
+    public static let custom6 = Flags(rawValue: 1 << 14)
     /// Flag `7` that can be used based on object type.
-    public static let custom7 = Flags(rawValue: 1 << 23)
+    public static let custom7 = Flags(rawValue: 1 << 15)
     /// Flag `8` that can be used based on object type.
-    public static let custom8 = Flags(rawValue: 1 << 24)
+    public static let custom8 = Flags(rawValue: 1 << 16)
     /// Flag `9` that can be used based on object type.
-    public static let custom9 = Flags(rawValue: 1 << 25)
+    public static let custom9 = Flags(rawValue: 1 << 17)
     /// Flag `10` that can be used based on object type.
-    public static let custom10 = Flags(rawValue: 1 << 26)
+    public static let custom10 = Flags(rawValue: 1 << 18)
     /// Flag `11` that can be used based on object type.
-    public static let custom11 = Flags(rawValue: 1 << 27)
+    public static let custom11 = Flags(rawValue: 1 << 19)
     /// Flag `12` that can be used based on object type.
-    public static let custom12 = Flags(rawValue: 1 << 28)
+    public static let custom12 = Flags(rawValue: 1 << 20)
     /// Flag `13` that can be used based on object type.
-    public static let custom13 = Flags(rawValue: 1 << 29)
+    public static let custom13 = Flags(rawValue: 1 << 21)
     /// Flag `14` that can be used based on object type.
-    public static let custom14 = Flags(rawValue: 1 << 30)
+    public static let custom14 = Flags(rawValue: 1 << 22)
     /// Flag `15` that can be used based on object type.
-    public static let custom15 = Flags(rawValue: 1 << 31)
+    public static let custom15 = Flags(rawValue: 1 << 23)
+    /// Flag `16` that can be used based on object type.
+    public static let custom16 = Flags(rawValue: 1 << 24)
+    /// Flag `17` that can be used based on object type.
+    public static let custom17 = Flags(rawValue: 1 << 25)
+    /// Flag `18` that can be used based on object type.
+    public static let custom18 = Flags(rawValue: 1 << 26)
+    /// Flag `19` that can be used based on object type.
+    public static let custom19 = Flags(rawValue: 1 << 27)
+    /// Flag `20` that can be used based on object type.
+    public static let custom20 = Flags(rawValue: 1 << 28)
+    /// Flag `21` that can be used based on object type.
+    public static let custom21 = Flags(rawValue: 1 << 29)
+    /// Flag `22` that can be used based on object type.
+    public static let custom22 = Flags(rawValue: 1 << 30)
+    /// Flag `23` that can be used based on object type.
+    public static let custom23 = Flags(rawValue: 1 << 31)
+
+    // MARK: - Methods
 
     /// Is given flag set?
     public func isSet(_ flag: Flags) -> Bool {

@@ -6,7 +6,7 @@ import VioletCore
 // In CPython:
 // Objects -> typeobject.c
 
-// sourcery: default, baseType
+// sourcery: default, baseType, subclassInstancesHave__dict__
 /// Container for things attached to `object` type
 /// (root of `Python` type hierarchy).
 internal enum PyObjectType {

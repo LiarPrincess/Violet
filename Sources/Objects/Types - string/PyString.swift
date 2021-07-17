@@ -11,6 +11,7 @@ import UnicodeData
 // https://www.python.org/dev/peps/pep-0393/
 
 // sourcery: pytype = str, default, baseType, unicodeSubclass
+// sourcery: subclassInstancesHave__dict__
 /// Textual data in Python is handled with str objects, or strings.
 /// Strings are immutable sequences of Unicode code points.
 public class PyString: PyObject, AbstractString {

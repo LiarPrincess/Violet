@@ -13,6 +13,7 @@ internal let LONG_MAX = Int.max // 9223372036854775807
 internal let LONG_MIN = Int.min // -9223372036854775808
 
 // sourcery: pytype = int, default, baseType, longSubclass
+// sourcery: subclassInstancesHave__dict__
 /// All integers are implemented as “long” integer objects.
 public class PyInt: PyObject {
 

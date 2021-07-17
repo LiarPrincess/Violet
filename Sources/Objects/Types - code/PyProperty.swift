@@ -4,6 +4,7 @@
 // Objects -> descrobject.c
 
 // sourcery: pytype = property, default, hasGC, baseType
+// sourcery: subclassInstancesHave__dict__
 /// Native property implemented in Swift.
 public class PyProperty: PyObject {
 

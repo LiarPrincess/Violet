@@ -4,6 +4,7 @@
 // Objects -> funcobject.c
 
 // sourcery: pytype = classmethod, default, baseType, hasGC
+// sourcery: instancesHave__dict__
 public class PyClassMethod: PyObject {
 
   // sourcery: pytypedoc
@@ -36,7 +37,6 @@ public class PyClassMethod: PyObject {
   }
 
   internal var callable: PyObject?
-  internal lazy var __dict__ = Py.newDict()
 
   internal convenience init(callable: PyObject) {
     let type = Py.types.classmethod

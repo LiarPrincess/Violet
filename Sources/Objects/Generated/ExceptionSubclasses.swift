@@ -15,7 +15,8 @@
 
 // MARK: - KeyboardInterrupt
 
-// sourcery: pyerrortype = KeyboardInterrupt, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = KeyboardInterrupt, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyKeyboardInterrupt: PyBaseException {
 
   // sourcery: pytypedoc
@@ -58,7 +59,8 @@ public final class PyKeyboardInterrupt: PyBaseException {
 
 // MARK: - GeneratorExit
 
-// sourcery: pyerrortype = GeneratorExit, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = GeneratorExit, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyGeneratorExit: PyBaseException {
 
   // sourcery: pytypedoc
@@ -101,7 +103,8 @@ public final class PyGeneratorExit: PyBaseException {
 
 // MARK: - Exception
 
-// sourcery: pyerrortype = Exception, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = Exception, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public class PyException: PyBaseException {
 
   // sourcery: pytypedoc
@@ -144,7 +147,8 @@ public class PyException: PyBaseException {
 
 // MARK: - StopAsyncIteration
 
-// sourcery: pyerrortype = StopAsyncIteration, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = StopAsyncIteration, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyStopAsyncIteration: PyException {
 
   // sourcery: pytypedoc
@@ -187,7 +191,8 @@ public final class PyStopAsyncIteration: PyException {
 
 // MARK: - ArithmeticError
 
-// sourcery: pyerrortype = ArithmeticError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = ArithmeticError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public class PyArithmeticError: PyException {
 
   // sourcery: pytypedoc
@@ -230,7 +235,8 @@ public class PyArithmeticError: PyException {
 
 // MARK: - FloatingPointError
 
-// sourcery: pyerrortype = FloatingPointError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = FloatingPointError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyFloatingPointError: PyArithmeticError {
 
   // sourcery: pytypedoc
@@ -273,7 +279,8 @@ public final class PyFloatingPointError: PyArithmeticError {
 
 // MARK: - OverflowError
 
-// sourcery: pyerrortype = OverflowError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = OverflowError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyOverflowError: PyArithmeticError {
 
   // sourcery: pytypedoc
@@ -316,7 +323,8 @@ public final class PyOverflowError: PyArithmeticError {
 
 // MARK: - ZeroDivisionError
 
-// sourcery: pyerrortype = ZeroDivisionError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = ZeroDivisionError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyZeroDivisionError: PyArithmeticError {
 
   // sourcery: pytypedoc
@@ -359,7 +367,8 @@ public final class PyZeroDivisionError: PyArithmeticError {
 
 // MARK: - AssertionError
 
-// sourcery: pyerrortype = AssertionError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = AssertionError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyAssertionError: PyException {
 
   // sourcery: pytypedoc
@@ -402,7 +411,8 @@ public final class PyAssertionError: PyException {
 
 // MARK: - AttributeError
 
-// sourcery: pyerrortype = AttributeError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = AttributeError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyAttributeError: PyException {
 
   // sourcery: pytypedoc
@@ -445,7 +455,8 @@ public final class PyAttributeError: PyException {
 
 // MARK: - BufferError
 
-// sourcery: pyerrortype = BufferError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = BufferError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyBufferError: PyException {
 
   // sourcery: pytypedoc
@@ -488,7 +499,8 @@ public final class PyBufferError: PyException {
 
 // MARK: - EOFError
 
-// sourcery: pyerrortype = EOFError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = EOFError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyEOFError: PyException {
 
   // sourcery: pytypedoc
@@ -531,7 +543,8 @@ public final class PyEOFError: PyException {
 
 // MARK: - ModuleNotFoundError
 
-// sourcery: pyerrortype = ModuleNotFoundError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = ModuleNotFoundError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyModuleNotFoundError: PyImportError {
 
   // sourcery: pytypedoc
@@ -574,7 +587,8 @@ public final class PyModuleNotFoundError: PyImportError {
 
 // MARK: - LookupError
 
-// sourcery: pyerrortype = LookupError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = LookupError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public class PyLookupError: PyException {
 
   // sourcery: pytypedoc
@@ -617,7 +631,8 @@ public class PyLookupError: PyException {
 
 // MARK: - IndexError
 
-// sourcery: pyerrortype = IndexError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = IndexError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyIndexError: PyLookupError {
 
   // sourcery: pytypedoc
@@ -660,7 +675,8 @@ public final class PyIndexError: PyLookupError {
 
 // MARK: - MemoryError
 
-// sourcery: pyerrortype = MemoryError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = MemoryError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyMemoryError: PyException {
 
   // sourcery: pytypedoc
@@ -703,7 +719,8 @@ public final class PyMemoryError: PyException {
 
 // MARK: - NameError
 
-// sourcery: pyerrortype = NameError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = NameError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public class PyNameError: PyException {
 
   // sourcery: pytypedoc
@@ -746,7 +763,8 @@ public class PyNameError: PyException {
 
 // MARK: - UnboundLocalError
 
-// sourcery: pyerrortype = UnboundLocalError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = UnboundLocalError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyUnboundLocalError: PyNameError {
 
   // sourcery: pytypedoc
@@ -789,7 +807,8 @@ public final class PyUnboundLocalError: PyNameError {
 
 // MARK: - OSError
 
-// sourcery: pyerrortype = OSError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = OSError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public class PyOSError: PyException {
 
   // sourcery: pytypedoc
@@ -832,7 +851,8 @@ public class PyOSError: PyException {
 
 // MARK: - BlockingIOError
 
-// sourcery: pyerrortype = BlockingIOError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = BlockingIOError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyBlockingIOError: PyOSError {
 
   // sourcery: pytypedoc
@@ -875,7 +895,8 @@ public final class PyBlockingIOError: PyOSError {
 
 // MARK: - ChildProcessError
 
-// sourcery: pyerrortype = ChildProcessError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = ChildProcessError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyChildProcessError: PyOSError {
 
   // sourcery: pytypedoc
@@ -918,7 +939,8 @@ public final class PyChildProcessError: PyOSError {
 
 // MARK: - ConnectionError
 
-// sourcery: pyerrortype = ConnectionError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = ConnectionError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public class PyConnectionError: PyOSError {
 
   // sourcery: pytypedoc
@@ -961,7 +983,8 @@ public class PyConnectionError: PyOSError {
 
 // MARK: - BrokenPipeError
 
-// sourcery: pyerrortype = BrokenPipeError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = BrokenPipeError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyBrokenPipeError: PyConnectionError {
 
   // sourcery: pytypedoc
@@ -1004,7 +1027,8 @@ public final class PyBrokenPipeError: PyConnectionError {
 
 // MARK: - ConnectionAbortedError
 
-// sourcery: pyerrortype = ConnectionAbortedError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = ConnectionAbortedError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyConnectionAbortedError: PyConnectionError {
 
   // sourcery: pytypedoc
@@ -1047,7 +1071,8 @@ public final class PyConnectionAbortedError: PyConnectionError {
 
 // MARK: - ConnectionRefusedError
 
-// sourcery: pyerrortype = ConnectionRefusedError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = ConnectionRefusedError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyConnectionRefusedError: PyConnectionError {
 
   // sourcery: pytypedoc
@@ -1090,7 +1115,8 @@ public final class PyConnectionRefusedError: PyConnectionError {
 
 // MARK: - ConnectionResetError
 
-// sourcery: pyerrortype = ConnectionResetError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = ConnectionResetError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyConnectionResetError: PyConnectionError {
 
   // sourcery: pytypedoc
@@ -1133,7 +1159,8 @@ public final class PyConnectionResetError: PyConnectionError {
 
 // MARK: - FileExistsError
 
-// sourcery: pyerrortype = FileExistsError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = FileExistsError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyFileExistsError: PyOSError {
 
   // sourcery: pytypedoc
@@ -1176,7 +1203,8 @@ public final class PyFileExistsError: PyOSError {
 
 // MARK: - FileNotFoundError
 
-// sourcery: pyerrortype = FileNotFoundError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = FileNotFoundError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyFileNotFoundError: PyOSError {
 
   // sourcery: pytypedoc
@@ -1219,7 +1247,8 @@ public final class PyFileNotFoundError: PyOSError {
 
 // MARK: - InterruptedError
 
-// sourcery: pyerrortype = InterruptedError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = InterruptedError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyInterruptedError: PyOSError {
 
   // sourcery: pytypedoc
@@ -1262,7 +1291,8 @@ public final class PyInterruptedError: PyOSError {
 
 // MARK: - IsADirectoryError
 
-// sourcery: pyerrortype = IsADirectoryError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = IsADirectoryError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyIsADirectoryError: PyOSError {
 
   // sourcery: pytypedoc
@@ -1305,7 +1335,8 @@ public final class PyIsADirectoryError: PyOSError {
 
 // MARK: - NotADirectoryError
 
-// sourcery: pyerrortype = NotADirectoryError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = NotADirectoryError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyNotADirectoryError: PyOSError {
 
   // sourcery: pytypedoc
@@ -1348,7 +1379,8 @@ public final class PyNotADirectoryError: PyOSError {
 
 // MARK: - PermissionError
 
-// sourcery: pyerrortype = PermissionError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = PermissionError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyPermissionError: PyOSError {
 
   // sourcery: pytypedoc
@@ -1391,7 +1423,8 @@ public final class PyPermissionError: PyOSError {
 
 // MARK: - ProcessLookupError
 
-// sourcery: pyerrortype = ProcessLookupError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = ProcessLookupError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyProcessLookupError: PyOSError {
 
   // sourcery: pytypedoc
@@ -1434,7 +1467,8 @@ public final class PyProcessLookupError: PyOSError {
 
 // MARK: - TimeoutError
 
-// sourcery: pyerrortype = TimeoutError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = TimeoutError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyTimeoutError: PyOSError {
 
   // sourcery: pytypedoc
@@ -1477,7 +1511,8 @@ public final class PyTimeoutError: PyOSError {
 
 // MARK: - ReferenceError
 
-// sourcery: pyerrortype = ReferenceError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = ReferenceError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyReferenceError: PyException {
 
   // sourcery: pytypedoc
@@ -1520,7 +1555,8 @@ public final class PyReferenceError: PyException {
 
 // MARK: - RuntimeError
 
-// sourcery: pyerrortype = RuntimeError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = RuntimeError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public class PyRuntimeError: PyException {
 
   // sourcery: pytypedoc
@@ -1563,7 +1599,8 @@ public class PyRuntimeError: PyException {
 
 // MARK: - NotImplementedError
 
-// sourcery: pyerrortype = NotImplementedError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = NotImplementedError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyNotImplementedError: PyRuntimeError {
 
   // sourcery: pytypedoc
@@ -1606,7 +1643,8 @@ public final class PyNotImplementedError: PyRuntimeError {
 
 // MARK: - RecursionError
 
-// sourcery: pyerrortype = RecursionError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = RecursionError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyRecursionError: PyRuntimeError {
 
   // sourcery: pytypedoc
@@ -1649,7 +1687,8 @@ public final class PyRecursionError: PyRuntimeError {
 
 // MARK: - IndentationError
 
-// sourcery: pyerrortype = IndentationError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = IndentationError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public class PyIndentationError: PySyntaxError {
 
   // sourcery: pytypedoc
@@ -1692,7 +1731,8 @@ public class PyIndentationError: PySyntaxError {
 
 // MARK: - TabError
 
-// sourcery: pyerrortype = TabError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = TabError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyTabError: PyIndentationError {
 
   // sourcery: pytypedoc
@@ -1735,7 +1775,8 @@ public final class PyTabError: PyIndentationError {
 
 // MARK: - SystemError
 
-// sourcery: pyerrortype = SystemError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = SystemError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PySystemError: PyException {
 
   // sourcery: pytypedoc
@@ -1781,7 +1822,8 @@ public final class PySystemError: PyException {
 
 // MARK: - TypeError
 
-// sourcery: pyerrortype = TypeError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = TypeError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyTypeError: PyException {
 
   // sourcery: pytypedoc
@@ -1824,7 +1866,8 @@ public final class PyTypeError: PyException {
 
 // MARK: - ValueError
 
-// sourcery: pyerrortype = ValueError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = ValueError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public class PyValueError: PyException {
 
   // sourcery: pytypedoc
@@ -1867,7 +1910,8 @@ public class PyValueError: PyException {
 
 // MARK: - UnicodeError
 
-// sourcery: pyerrortype = UnicodeError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = UnicodeError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public class PyUnicodeError: PyValueError {
 
   // sourcery: pytypedoc
@@ -1910,7 +1954,8 @@ public class PyUnicodeError: PyValueError {
 
 // MARK: - UnicodeDecodeError
 
-// sourcery: pyerrortype = UnicodeDecodeError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = UnicodeDecodeError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyUnicodeDecodeError: PyUnicodeError {
 
   // sourcery: pytypedoc
@@ -1953,7 +1998,8 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
 
 // MARK: - UnicodeEncodeError
 
-// sourcery: pyerrortype = UnicodeEncodeError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = UnicodeEncodeError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyUnicodeEncodeError: PyUnicodeError {
 
   // sourcery: pytypedoc
@@ -1996,7 +2042,8 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
 
 // MARK: - UnicodeTranslateError
 
-// sourcery: pyerrortype = UnicodeTranslateError, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = UnicodeTranslateError, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyUnicodeTranslateError: PyUnicodeError {
 
   // sourcery: pytypedoc
@@ -2039,7 +2086,8 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
 
 // MARK: - Warning
 
-// sourcery: pyerrortype = Warning, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = Warning, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public class PyWarning: PyException {
 
   // sourcery: pytypedoc
@@ -2082,7 +2130,8 @@ public class PyWarning: PyException {
 
 // MARK: - DeprecationWarning
 
-// sourcery: pyerrortype = DeprecationWarning, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = DeprecationWarning, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyDeprecationWarning: PyWarning {
 
   // sourcery: pytypedoc
@@ -2125,7 +2174,8 @@ public final class PyDeprecationWarning: PyWarning {
 
 // MARK: - PendingDeprecationWarning
 
-// sourcery: pyerrortype = PendingDeprecationWarning, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = PendingDeprecationWarning, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyPendingDeprecationWarning: PyWarning {
 
   // sourcery: pytypedoc
@@ -2169,7 +2219,8 @@ public final class PyPendingDeprecationWarning: PyWarning {
 
 // MARK: - RuntimeWarning
 
-// sourcery: pyerrortype = RuntimeWarning, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = RuntimeWarning, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyRuntimeWarning: PyWarning {
 
   // sourcery: pytypedoc
@@ -2212,7 +2263,8 @@ public final class PyRuntimeWarning: PyWarning {
 
 // MARK: - SyntaxWarning
 
-// sourcery: pyerrortype = SyntaxWarning, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = SyntaxWarning, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PySyntaxWarning: PyWarning {
 
   // sourcery: pytypedoc
@@ -2255,7 +2307,8 @@ public final class PySyntaxWarning: PyWarning {
 
 // MARK: - UserWarning
 
-// sourcery: pyerrortype = UserWarning, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = UserWarning, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyUserWarning: PyWarning {
 
   // sourcery: pytypedoc
@@ -2298,7 +2351,8 @@ public final class PyUserWarning: PyWarning {
 
 // MARK: - FutureWarning
 
-// sourcery: pyerrortype = FutureWarning, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = FutureWarning, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyFutureWarning: PyWarning {
 
   // sourcery: pytypedoc
@@ -2342,7 +2396,8 @@ public final class PyFutureWarning: PyWarning {
 
 // MARK: - ImportWarning
 
-// sourcery: pyerrortype = ImportWarning, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = ImportWarning, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyImportWarning: PyWarning {
 
   // sourcery: pytypedoc
@@ -2385,7 +2440,8 @@ public final class PyImportWarning: PyWarning {
 
 // MARK: - UnicodeWarning
 
-// sourcery: pyerrortype = UnicodeWarning, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = UnicodeWarning, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyUnicodeWarning: PyWarning {
 
   // sourcery: pytypedoc
@@ -2429,7 +2485,8 @@ public final class PyUnicodeWarning: PyWarning {
 
 // MARK: - BytesWarning
 
-// sourcery: pyerrortype = BytesWarning, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = BytesWarning, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyBytesWarning: PyWarning {
 
   // sourcery: pytypedoc
@@ -2473,7 +2530,8 @@ public final class PyBytesWarning: PyWarning {
 
 // MARK: - ResourceWarning
 
-// sourcery: pyerrortype = ResourceWarning, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = ResourceWarning, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public final class PyResourceWarning: PyWarning {
 
   // sourcery: pytypedoc

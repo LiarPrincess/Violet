@@ -4,6 +4,7 @@ import VioletCore
 // Python -> builtinmodule.c
 
 // sourcery: pytype = map, default, hasGC, baseType
+// sourcery: subclassInstancesHave__dict__
 public class PyMap: PyObject {
 
   // sourcery: pytypedoc

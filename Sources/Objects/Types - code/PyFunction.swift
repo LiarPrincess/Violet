@@ -7,6 +7,7 @@ import VioletBytecode
 // Objects -> funcobject.c
 
 // sourcery: pytype = function, default, hasGC
+// sourcery: instancesHave__dict__
 public class PyFunction: PyObject {
 
   // sourcery: pytypedoc
@@ -44,9 +45,6 @@ public class PyFunction: PyObject {
   internal private(set) var kwDefaults: PyDict?
   internal private(set) var closure: PyTuple?
   internal private(set) var annotations: PyDict?
-
-  /// The `__dict__` attribute, a dict or NULL
-  internal let __dict__ = Py.newDict()
 
   override public var description: String {
     let name = self.name.value

@@ -9,6 +9,7 @@ import VioletCore
 // https://docs.python.org/3.7/c-api/set.html
 
 // sourcery: pytype = set, default, hasGC, baseType
+// sourcery: subclassInstancesHave__dict__
 /// This subtype of PyObject is used to hold the internal data for both set
 /// and frozenset objects.
 public class PySet: PyObject {

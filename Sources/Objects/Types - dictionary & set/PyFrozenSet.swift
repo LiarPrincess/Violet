@@ -9,6 +9,7 @@ import VioletCore
 // https://docs.python.org/3.7/c-api/set.html
 
 // sourcery: pytype = frozenset, default, hasGC, baseType
+// sourcery: subclassInstancesHave__dict__
 /// This is an instance of PyTypeObject representing the Python frozenset type.
 public class PyFrozenSet: PyObject {
 

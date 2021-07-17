@@ -73,6 +73,7 @@ extension PyType {
 
     /// Fields:
     /// - `_type: PyType!`
+    /// - `___dict__: PyDict?`
     /// - `flags: Flags`
     public static let PyObject = MemoryLayout()
     /// `PyBool` uses the same layout as it s base type (`PyInt`).
@@ -111,7 +112,6 @@ extension PyType {
     public static let PyCell = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `callable: PyObject?`
-    /// - `__dict__: Py`
     public static let PyClassMethod = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `codeObject: CodeObject`
@@ -202,7 +202,6 @@ extension PyType {
     /// - `kwDefaults: PyDict?`
     /// - `closure: PyTuple?`
     /// - `annotations: PyDict?`
-    /// - `__dict__: Py`
     public static let PyFunction = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `value: BigInt`
@@ -230,12 +229,10 @@ extension PyType {
     /// - `function: PyFunction`
     /// - `object: PyObject`
     public static let PyMethod = MemoryLayout(base: MemoryLayout.PyObject)
-    /// Fields:
-    /// - `__dict__: PyDict`
-    public static let PyModule = MemoryLayout(base: MemoryLayout.PyObject)
-    /// Fields:
-    /// - `__dict__: PyDict`
-    public static let PyNamespace = MemoryLayout(base: MemoryLayout.PyObject)
+    /// `PyModule` uses the same layout as it s base type (`PyObject`).
+    public static let PyModule = MemoryLayout.PyObject
+    /// `PyNamespace` uses the same layout as it s base type (`PyObject`).
+    public static let PyNamespace = MemoryLayout.PyObject
     /// `PyNone` uses the same layout as it s base type (`PyObject`).
     public static let PyNone = MemoryLayout.PyObject
     /// `PyNotImplemented` uses the same layout as it s base type (`PyObject`).
@@ -278,7 +275,6 @@ extension PyType {
     public static let PySlice = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `callable: PyObject?`
-    /// - `__dict__: Py`
     public static let PyStaticMethod = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `value: String`
@@ -321,7 +317,6 @@ extension PyType {
     /// - `bases: [PyType]`
     /// - `mro: [PyType]`
     /// - `subclasses: [WeakRef]`
-    /// - `__dict__: Py`
     /// - `layout: MemoryLayout`
     public static let PyType = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
@@ -338,7 +333,6 @@ extension PyType {
     /// - `traceback: PyTraceback?`
     /// - `cause: PyBaseException?`
     /// - `context: PyBaseException?`
-    /// - `__dict__: Py`
     public static let PyBaseException = MemoryLayout(base: MemoryLayout.PyObject)
     /// `PyBlockingIOError` uses the same layout as it s base type (`PyOSError`).
     public static let PyBlockingIOError = MemoryLayout.PyOSError

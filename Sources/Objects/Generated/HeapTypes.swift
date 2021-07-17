@@ -34,11 +34,7 @@ extension HeapType {
 
 /// Type used when we subclass builtin `object` class.
 /// For example: `class Rapunzel(object): pass`.
-internal final class PyObjectHeap: PyObject, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyObjectHeap: PyObject, HeapType { }
 
 // MARK: - Bool
 
@@ -56,11 +52,7 @@ internal final class PyObjectHeap: PyObject, HeapType {
 
 /// Type used when we subclass builtin `bytearray` class.
 /// For example: `class Rapunzel(bytearray): pass`.
-internal final class PyByteArrayHeap: PyByteArray, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyByteArrayHeap: PyByteArray, HeapType { }
 
 // MARK: - ByteArrayIterator
 
@@ -70,11 +62,7 @@ internal final class PyByteArrayHeap: PyByteArray, HeapType {
 
 /// Type used when we subclass builtin `bytes` class.
 /// For example: `class Rapunzel(bytes): pass`.
-internal final class PyBytesHeap: PyBytes, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyBytesHeap: PyBytes, HeapType { }
 
 // MARK: - BytesIterator
 
@@ -100,21 +88,13 @@ internal final class PyBytesHeap: PyBytes, HeapType {
 
 /// Type used when we subclass builtin `complex` class.
 /// For example: `class Rapunzel(complex): pass`.
-internal final class PyComplexHeap: PyComplex, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyComplexHeap: PyComplex, HeapType { }
 
 // MARK: - Dict
 
 /// Type used when we subclass builtin `dict` class.
 /// For example: `class Rapunzel(dict): pass`.
-internal final class PyDictHeap: PyDict, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyDictHeap: PyDict, HeapType { }
 
 // MARK: - DictItemIterator
 
@@ -148,31 +128,19 @@ internal final class PyDictHeap: PyDict, HeapType {
 
 /// Type used when we subclass builtin `enumerate` class.
 /// For example: `class Rapunzel(enumerate): pass`.
-internal final class PyEnumerateHeap: PyEnumerate, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyEnumerateHeap: PyEnumerate, HeapType { }
 
 // MARK: - Filter
 
 /// Type used when we subclass builtin `filter` class.
 /// For example: `class Rapunzel(filter): pass`.
-internal final class PyFilterHeap: PyFilter, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyFilterHeap: PyFilter, HeapType { }
 
 // MARK: - Float
 
 /// Type used when we subclass builtin `float` class.
 /// For example: `class Rapunzel(float): pass`.
-internal final class PyFloatHeap: PyFloat, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyFloatHeap: PyFloat, HeapType { }
 
 // MARK: - Frame
 
@@ -182,11 +150,7 @@ internal final class PyFloatHeap: PyFloat, HeapType {
 
 /// Type used when we subclass builtin `frozenset` class.
 /// For example: `class Rapunzel(frozenset): pass`.
-internal final class PyFrozenSetHeap: PyFrozenSet, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyFrozenSetHeap: PyFrozenSet, HeapType { }
 
 // MARK: - Function
 
@@ -196,11 +160,7 @@ internal final class PyFrozenSetHeap: PyFrozenSet, HeapType {
 
 /// Type used when we subclass builtin `int` class.
 /// For example: `class Rapunzel(int): pass`.
-internal final class PyIntHeap: PyInt, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyIntHeap: PyInt, HeapType { }
 
 // MARK: - Iterator
 
@@ -210,11 +170,7 @@ internal final class PyIntHeap: PyInt, HeapType {
 
 /// Type used when we subclass builtin `list` class.
 /// For example: `class Rapunzel(list): pass`.
-internal final class PyListHeap: PyList, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyListHeap: PyList, HeapType { }
 
 // MARK: - ListIterator
 
@@ -228,11 +184,7 @@ internal final class PyListHeap: PyList, HeapType {
 
 /// Type used when we subclass builtin `map` class.
 /// For example: `class Rapunzel(map): pass`.
-internal final class PyMapHeap: PyMap, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyMapHeap: PyMap, HeapType { }
 
 // MARK: - Method
 
@@ -258,11 +210,7 @@ internal final class PyMapHeap: PyMap, HeapType {
 
 /// Type used when we subclass builtin `property` class.
 /// For example: `class Rapunzel(property): pass`.
-internal final class PyPropertyHeap: PyProperty, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyPropertyHeap: PyProperty, HeapType { }
 
 // MARK: - Range
 
@@ -276,21 +224,13 @@ internal final class PyPropertyHeap: PyProperty, HeapType {
 
 /// Type used when we subclass builtin `reversed` class.
 /// For example: `class Rapunzel(reversed): pass`.
-internal final class PyReversedHeap: PyReversed, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyReversedHeap: PyReversed, HeapType { }
 
 // MARK: - Set
 
 /// Type used when we subclass builtin `set` class.
 /// For example: `class Rapunzel(set): pass`.
-internal final class PySetHeap: PySet, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PySetHeap: PySet, HeapType { }
 
 // MARK: - SetIterator
 
@@ -308,11 +248,7 @@ internal final class PySetHeap: PySet, HeapType {
 
 /// Type used when we subclass builtin `str` class.
 /// For example: `class Rapunzel(str): pass`.
-internal final class PyStringHeap: PyString, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyStringHeap: PyString, HeapType { }
 
 // MARK: - StringIterator
 
@@ -322,11 +258,7 @@ internal final class PyStringHeap: PyString, HeapType {
 
 /// Type used when we subclass builtin `super` class.
 /// For example: `class Rapunzel(super): pass`.
-internal final class PySuperHeap: PySuper, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PySuperHeap: PySuper, HeapType { }
 
 // MARK: - TextFile
 
@@ -340,11 +272,7 @@ internal final class PySuperHeap: PySuper, HeapType {
 
 /// Type used when we subclass builtin `tuple` class.
 /// For example: `class Rapunzel(tuple): pass`.
-internal final class PyTupleHeap: PyTuple, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyTupleHeap: PyTuple, HeapType { }
 
 // MARK: - TupleIterator
 
@@ -358,11 +286,7 @@ internal final class PyTupleHeap: PyTuple, HeapType {
 
 /// Type used when we subclass builtin `zip` class.
 /// For example: `class Rapunzel(zip): pass`.
-internal final class PyZipHeap: PyZip, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = Py.newDict()
-}
+internal final class PyZipHeap: PyZip, HeapType { }
 
 // MARK: - ArithmeticError
 

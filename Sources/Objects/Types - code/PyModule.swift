@@ -4,6 +4,7 @@
 // Objects -> moduleobject.c
 
 // sourcery: pytype = module, default, hasGC, baseType
+// sourcery: instancesHave__dict__
 public class PyModule: PyObject {
 
   // sourcery: pytypedoc
@@ -14,8 +15,6 @@ public class PyModule: PyObject {
     Create a module object.
     The name must be a string; the optional doc argument can have any type.
     """
-
-  internal let __dict__: PyDict
 
   override public var description: String {
     switch self.getName() {
@@ -37,8 +36,11 @@ public class PyModule: PyObject {
                 name: PyObject?,
                 doc: PyObject?,
                 dict: PyDict? = nil) {
-    self.__dict__ = dict ?? Py.newDict()
     super.init(type: type)
+
+    if let dict = dict {
+      self.__dict__ = dict
+    }
 
     self.initDictContent(name: name, doc: doc)
   }

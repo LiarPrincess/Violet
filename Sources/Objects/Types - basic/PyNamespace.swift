@@ -4,6 +4,7 @@
 // Objects -> namespaceobject.c
 
 // sourcery: pytype = types.SimpleNamespace, default, hasGC, baseType
+// sourcery: instancesHave__dict__
 public class PyNamespace: PyObject {
 
   // sourcery: pytypedoc
@@ -12,8 +13,6 @@ public class PyNamespace: PyObject {
 
     SimpleNamespace(**kwargs)
     """
-
-  internal let __dict__: PyDict
 
   override public var description: String {
     return "PyNamespace()"
@@ -24,8 +23,8 @@ public class PyNamespace: PyObject {
   internal init(dict: PyDict) {
     // 'namespace' can't be subclassed,
     // so we can just pass the correct type to 'super.init'.
-    self.__dict__ = dict
     super.init(type: Py.types.simpleNamespace)
+    self.__dict__ = dict
   }
 
   // MARK: - Equatable

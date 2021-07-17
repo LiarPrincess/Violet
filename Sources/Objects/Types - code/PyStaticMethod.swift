@@ -4,6 +4,7 @@
 // Objects -> funcobject.c
 
 // sourcery: pytype = staticmethod, default, baseType, hasGC
+// sourcery: instancesHave__dict__
 public class PyStaticMethod: PyObject {
 
   // sourcery: pytypedoc
@@ -33,7 +34,6 @@ public class PyStaticMethod: PyObject {
   }
 
   private var callable: PyObject?
-  private lazy var __dict__ = Py.newDict()
 
   internal convenience init(callable: PyObject) {
     let type = Py.types.staticmethod

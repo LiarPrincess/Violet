@@ -7,6 +7,7 @@ import VioletBytecode
 // https://docs.python.org/3/library/functions.html#super
 
 // sourcery: pytype = super, default, hasGC, baseType
+// sourcery: subclassInstancesHave__dict__
 public class PySuper: PyObject, HasCustomGetMethod {
 
   // MARK: - Doc

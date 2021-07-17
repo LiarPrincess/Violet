@@ -179,6 +179,13 @@ extension PyType {
       type.flags.set(Self.hasGCFlag)
     }
 
+    let instancesHave__dict__ = base.flags.isSet(Self.instancesHave__dict__Flag)
+      || base.flags.isSet(Self.subclassInstancesHave__dict__Flag)
+
+    if instancesHave__dict__ {
+      type.flags.set(Self.instancesHave__dict__Flag)
+    }
+
     // Initialize '__dict__' from passed-in dict
     // Also: we have to COPY it! Swift COW will take care of this.
     let dict = args.dict.copy()
@@ -421,24 +428,28 @@ extension PyType {
     type: PyType,
     name: IdString
   ) -> Bool {
-    func has(base: PyType) -> Bool {
+    let mro = type.getMRO()
+
+    for base in mro {
       let isObject = base === Py.types.object
       if isObject {
-        return false // 'except for object' <- see this method name
+        // 'except for object' <- see this method name
+        // 'break' because object is always last in 'mro'
+        break
       }
 
       let value = base.lookup(name: name)
-      return value != nil
+      if value != nil {
+        return true
+      }
     }
 
-    let mro = type.getMRO()
-    return mro.contains(where: has(base:))
+    return false
   }
 
-  /// This method will be called when we get '__dict__' property
+  /// This method will be called when we get `__dict__` property
   /// on heap type instance.
   private static func getHeapType__dict__(object: PyObject) -> PyDict {
-    let object = self.asHeapObjectOrTrap(object: object)
     return object.__dict__
   }
 
@@ -449,7 +460,6 @@ extension PyType {
       return .typeError("__dict__ must be set to a dictionary, not a '\(t)'")
     }
 
-    let object = self.asHeapObjectOrTrap(object: object)
     object.__dict__ = dict
     return .value(Py.none)
   }
@@ -462,18 +472,8 @@ extension PyType {
     // >>> del elsa.__dict__
     // >>> print(elsa.__dict__)
     // {}
-
-    let object = self.asHeapObjectOrTrap(object: object)
     object.__dict__ = Py.newDict()
     return .value(Py.none)
-  }
-
-  private static func asHeapObjectOrTrap(object: PyObject) -> HeapType {
-    if let result = object as? HeapType {
-      return result
-    }
-
-    trap("Heap type '__dict__' called on non heap type.")
   }
 
   // MARK: - __getattribute__ method

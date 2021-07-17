@@ -8,7 +8,8 @@ import VioletCore
 
 // swiftlint:disable file_length
 
-// sourcery: pyerrortype = BaseException, default, baseType, hasGC, baseExceptionSubclass
+// sourcery: pyerrortype = BaseException, default, baseType, hasGC
+// sourcery: baseExceptionSubclass, instancesHave__dict__
 public class PyBaseException: PyObject {
 
   private static let suppressContextFlag = PyObject.Flags.custom0
@@ -29,8 +30,6 @@ public class PyBaseException: PyObject {
     get { self.flags.isSet(Self.suppressContextFlag) }
     set { self.flags.set(Self.suppressContextFlag, to: newValue) }
   }
-
-  internal lazy var __dict__ = Py.newDict()
 
   override public var description: String {
     let type = Swift.type(of: self)

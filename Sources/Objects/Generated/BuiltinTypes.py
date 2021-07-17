@@ -68,6 +68,17 @@ import VioletCore
     // 2. both 'type' and 'object' are instances of 'type'
     self.object = PyType.initObjectType()
     self.type = PyType.initTypeType(objectType: self.object)
+
+    // This flag is copied from type to instance, and because 'type' type has not
+    // yet been filled it is not set, which means that all of the instances will
+    // not get it.
+    //
+    // Example why this is needed:
+    // When filling 'type' type we will need to access its '__dict__'.
+    // If the 'has__dict__' flag is not set then we don't have '__dict__'!
+    self.type.flags.set(PyType.instancesHave__dict__Flag)
+
+    // Usual things.
     self.object.setType(to: self.type)
     self.type.setType(to: self.type)
 
