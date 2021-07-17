@@ -36,16 +36,6 @@ SwiftField|{{field.name}}|{{field.typeName}}
 {% endfor %}
 {% endmacro %}
 
-{# === SwiftInit === #}
-
-{% macro print_swift_initializers type %}
-{% for init in type.initializers %}
-{% set swift_access_modifier %}{{ init.accessLevel }}{% endset %}
-{% set swift_selector_with_types %}{{ init.name }}{% endset %}
-SwiftInit|{{swift_access_modifier}}|{{swift_selector_with_types}}
-{% endfor %}
-{% endmacro %}
-
 {# === SwiftMethod === #}
 
 {% macro print_swift_methods type %}
@@ -113,7 +103,7 @@ PyClassMethod|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}
 {% call start_new_type "Type" "object" "PyObject" "" %}
 {% for type in types.classes where type.name == "PyObject" %}
 {% call print_swift_fields type %}
-{% call print_swift_initializers type %}
+{% call print_swift_methods type %}
 {% endfor %}
 {% for type in types.enums where type.name == "PyObjectType" %}
 {% call print_annotations type %}
@@ -138,7 +128,6 @@ PyClassMethod|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}
 {% call print_annotations type %}
 {% call print_doc type %}
 {% call print_swift_fields type %}
-{% call print_swift_initializers type %}
 {% call print_swift_methods type %}
 {% call print_py_properties type %}
 {% call print_py_methods type %}
@@ -159,7 +148,6 @@ PyClassMethod|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}
 {% call print_annotations type %}
 {% call print_doc type %}
 {% call print_swift_fields type %}
-{% call print_swift_initializers type %}
 {% call print_swift_methods type %}
 {% call print_py_properties type %}
 {% call print_py_methods type %}

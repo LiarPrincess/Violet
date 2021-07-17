@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 
 from Common.strings import generated_warning
-from Sourcery import get_types, TypeInfo, SwiftInitInfo
+from Sourcery import get_types, TypeInfo, SwiftFunctionInfo
 
 # If you want to grep missing calls:
 #
@@ -14,7 +14,7 @@ from Sourcery import get_types, TypeInfo, SwiftInitInfo
 # grep ${OPTIONS} " PyNotImplemented(" ${DIR}
 
 
-def get_initializers(types_by_swift_name: Dict[str, TypeInfo], t: TypeInfo) -> SwiftInitInfo:
+def get_initializers(types_by_swift_name: Dict[str, TypeInfo], t: TypeInfo) -> SwiftFunctionInfo:
     "If we do not have any 'initializers' then try parent"
 
     current_type: Optional[TypeInfo] = t
@@ -28,10 +28,10 @@ def get_initializers(types_by_swift_name: Dict[str, TypeInfo], t: TypeInfo) -> S
         else:
             current_type = None
 
-    assert False, 'Unable to find init for:' + t.swift_type_name
+    assert False, 'Unable to find init for: ' + t.swift_type_name
 
 
-def print_new_function(t: TypeInfo, i: SwiftInitInfo):
+def print_new_function(t: TypeInfo, i: SwiftFunctionInfo):
     if not i.is_open_public_internal:
         return
 

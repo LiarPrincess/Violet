@@ -1,7 +1,7 @@
 import os.path
 from typing import List, Union
 
-from Sourcery.entities import TypeInfo, SwiftInitInfo, SwiftFieldInfo, SwiftFunctionInfo, PyPropertyInfo, PyFunctionInfo
+from Sourcery.entities import TypeInfo, SwiftFieldInfo, SwiftFunctionInfo, PyPropertyInfo, PyFunctionInfo
 from Sourcery.validate_overridden_pymethods import check_for_overridden_pymethods
 from Sourcery.validate_final_keyword import check_final_keyword
 
@@ -66,16 +66,6 @@ def get_types() -> List[TypeInfo]:
                 field = SwiftFieldInfo(field_name, field_type)
                 current_type.swift_fields.append(field)
 
-            elif line_type == 'SwiftInit':
-                assert current_type
-                assert len(split) == 3
-
-                access_modifier = split[1]
-                selector_with_types = split[2]
-
-                init = SwiftInitInfo(access_modifier, selector_with_types)
-                current_type.swift_initializers.append(init)
-
             elif line_type == 'SwiftMethod':
                 assert current_type
                 assert len(split) == 4
@@ -86,6 +76,9 @@ def get_types() -> List[TypeInfo]:
 
                 method = SwiftFunctionInfo(access_modifier, selector_with_types, return_type)
                 current_type.swift_methods.append(method)
+
+                if method.name == 'init':
+                    current_type.swift_initializers.append(method)
 
             elif line_type == 'PyProperty':
                 assert current_type
