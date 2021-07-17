@@ -5,7 +5,7 @@ import VioletCore
 public struct OrderedSet<Element: PyHashable> {
 
   // Small trick: when we use `Void` (which is the same as `()`) as value
-  // then it would not take any space in dictionary!
+  // then it does not take any space in dictionary!
   // For example `struct { Int, Void }` has the same storage as `struct { Int }`.
   // This trick is sponsored by 'go lang': `map[T]struct{}`.
   public typealias Dict = OrderedDictionary<Element, Void>

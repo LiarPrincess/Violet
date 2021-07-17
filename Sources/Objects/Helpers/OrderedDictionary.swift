@@ -85,8 +85,8 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
 
     private let value: Int
 
-    /// Slot contains an entry. Use `self.entries[arrayIndex]` to get its value.
-    fileprivate var asArrayIndex: Int {
+    /// Slot contains an entry. Use `self.entries[entryIndex]` to get its value.
+    fileprivate var asEntryIndex: Int {
       assert(self.isEntryIndex, "Can't index array with 'notAssigned' or 'deleted'")
       return self.value
     }
@@ -397,24 +397,25 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
       case .deleted:
         break
 
-      case let entryIndex:
-        assert(entryIndex.isEntryIndex)
-        let arrayIndex = entryIndex.asArrayIndex
+      case let i:
+        assert(i.isEntryIndex)
+        let entryIndex = i.asEntryIndex
 
-        guard case let .entry(old) = self.entries[arrayIndex] else {
+        guard case let .entry(old) = self.entries[entryIndex] else {
           trap("Ordered dictionary - index was deleted, but entry was not.")
         }
 
         if hash == old.key.hash {
           switch key.isEqual(to: old.key) {
           case .value(true):
-            return .entry(indicesIndex: index.value, entriesIndex: arrayIndex, entry: old)
+            return .entry(indicesIndex: index.value, entriesIndex: entryIndex, entry: old)
           case .value(false):
-            break // Try next entry
+            break // Hash collision -> iterate more
           case .error(let e):
             return .error(e)
           }
         }
+        // else: it is a totally different object -> iterate more
       }
 
       // Try next entry
@@ -435,7 +436,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   // MARK: - Copy
 
   public func copy() -> OrderedDictionary<Key, Value> {
-    return OrderedDictionary<Key, Value>(copy: self)
+    return OrderedDictionary(copy: self)
   }
 
   // MARK: - Clear
@@ -468,17 +469,15 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
 
     let newSize = nextPowerOf2(minSize)
 
-    // Take not-deleted entries entries
-    var newEntries = [Entry]()
-    for case let EntryOrDeleted.entry(entry) in self.entries {
-      newEntries.append(entry)
-    }
-
-    // Insert entries to newIndices
+    var newEntries = [EntryOrDeleted]()
+    newEntries.reserveCapacity(newSize)
     var newIndices = [EntryIndex](repeating: .notAssigned, count: newSize)
 
     let mask = getIndexMask(size: newSize)
-    for (n, entry) in newEntries.enumerated() {
+    for (n, entry) in self.enumerated() {
+      let entryOrDeleted = EntryOrDeleted.entry(entry)
+      newEntries.append(entryOrDeleted)
+
       var index = IndexCalculation(hash: entry.key.hash, mask: mask)
       while newIndices[index.value] != EntryIndex.notAssigned {
         index.calculateNext()
@@ -487,8 +486,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
       newIndices[index.value] = EntryIndex(n)
     }
 
-    // Update self
-    self.entries = newEntries.map { EntryOrDeleted.entry($0) }
+    self.entries = newEntries
     self.indices = newIndices
     self.used = newEntries.count
     self.usable = usableFraction(size: newSize) - newEntries.count
@@ -512,7 +510,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
 
     var indexEntryCount = 0
     for entryIndex in self.indices where entryIndex.isEntryIndex {
-      assert(entryIndex.asArrayIndex <= self.entries.count)
+      assert(entryIndex.asEntryIndex <= self.entries.count)
       indexEntryCount += 1
     }
 
