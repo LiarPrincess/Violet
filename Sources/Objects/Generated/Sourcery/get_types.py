@@ -1,8 +1,9 @@
-import os
+import os.path
 from typing import List, Union
 
-from Sourcery.entities import SwiftInitInfo, TypeInfo, SwiftFieldInfo, PyPropertyInfo, PyFunctionInfo
-from Sourcery.validation import run as run_validation
+from Sourcery.entities import TypeInfo, SwiftInitInfo, SwiftFieldInfo, SwiftFunctionInfo, PyPropertyInfo, PyFunctionInfo
+from Sourcery.validate_overridden_pymethods import check_for_overridden_pymethods
+from Sourcery.validate_final_keyword import check_final_keyword
 
 
 def get_types() -> List[TypeInfo]:
@@ -58,20 +59,33 @@ def get_types() -> List[TypeInfo]:
             elif line_type == 'SwiftField':
                 assert current_type
                 assert len(split) == 3
-                swift_field_name = split[1]
-                swift_field_type = split[2]
 
-                field = SwiftFieldInfo(swift_field_name, swift_field_type)
+                field_name = split[1]
+                field_type = split[2]
+
+                field = SwiftFieldInfo(field_name, field_type)
                 current_type.swift_fields.append(field)
 
             elif line_type == 'SwiftInit':
                 assert current_type
                 assert len(split) == 3
 
-                swift_access_modifier = split[1]
-                swift_selector_with_types = split[2]
-                init = SwiftInitInfo(swift_access_modifier, swift_selector_with_types)
+                access_modifier = split[1]
+                selector_with_types = split[2]
+
+                init = SwiftInitInfo(access_modifier, selector_with_types)
                 current_type.swift_initializers.append(init)
+
+            elif line_type == 'SwiftMethod':
+                assert current_type
+                assert len(split) == 4
+
+                access_modifier = split[1]
+                selector_with_types = split[2]
+                return_type = split[3]
+
+                method = SwiftFunctionInfo(access_modifier, selector_with_types, return_type)
+                current_type.swift_methods.append(method)
 
             elif line_type == 'PyProperty':
                 assert current_type

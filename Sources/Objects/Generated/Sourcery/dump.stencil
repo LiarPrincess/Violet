@@ -30,7 +30,7 @@ Doc|{{variable.name}}
 
 {# === SwiftField === #}
 
-{% macro print_fields type %}
+{% macro print_swift_fields type %}
 {% for field in type.storedVariables %}
 SwiftField|{{field.name}}|{{field.typeName}}
 {% endfor %}
@@ -38,7 +38,7 @@ SwiftField|{{field.name}}|{{field.typeName}}
 
 {# === SwiftInit === #}
 
-{% macro print_initializers type %}
+{% macro print_swift_initializers type %}
 {% for init in type.initializers %}
 {% set swift_access_modifier %}{{ init.accessLevel }}{% endset %}
 {% set swift_selector_with_types %}{{ init.name }}{% endset %}
@@ -46,9 +46,20 @@ SwiftInit|{{swift_access_modifier}}|{{swift_selector_with_types}}
 {% endfor %}
 {% endmacro %}
 
+{# === SwiftMethod === #}
+
+{% macro print_swift_methods type %}
+{% for method in type.methods %}
+{% set swift_access_modifier %}{{ method.accessLevel }}{% endset %}
+{% set swift_selector_with_types %}{{ method.name }}{% endset %}
+{% set swift_return_type %}{{ method.returnTypeName }}{% endset %}
+SwiftMethod|{{swift_access_modifier}}|{{swift_selector_with_types}}|{{swift_return_type}}
+{% endfor %}
+{% endmacro %}
+
 {# === PyProperty === #}
 
-{% macro print_properties type %}
+{% macro print_py_properties type %}
 {% for prop in type.methods|annotated:"pyproperty" %}
 {% set python_name %}{{ prop.annotations.pyproperty }}{% endset %}
 {% set swift_getter_fn %}{{ prop.selectorName }}{% endset %}
@@ -61,7 +72,7 @@ PyProperty|{{python_name}}|{{swift_getter_fn}}|{{swift_setter_fn}}|{{swift_type}
 
 {# === PyMethod === #}
 
-{% macro print_methods type %}
+{% macro print_py_methods type %}
 {% for method in type.methods|annotated:"pymethod" %}
 {% set python_name %}{{ method.annotations.pymethod }}{% endset %}
 {% set swift_selector_with_types %}{{ method.name }}{% endset %}
@@ -73,7 +84,7 @@ PyMethod|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}}|{{s
 
 {# === PyStaticMethod === #}
 
-{% macro print_static_methods type %}
+{% macro print_py_static_methods type %}
 {% for method in type.methods|annotated:"pystaticmethod" %}
 {% set python_name %}{{ method.annotations.pystaticmethod }}{% endset %}
 {% set swift_selector_with_types %}{{ method.name }}{% endset %}
@@ -85,7 +96,7 @@ PyStaticMethod|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type
 
 {# === PyClassMethod === #}
 
-{% macro print_class_methods type %}
+{% macro print_py_class_methods type %}
 {% for method in type.methods|annotated:"pyclassmethod" %}
 {% set python_name %}{{ method.annotations.pyclassmethod }}{% endset %}
 {% set swift_selector_with_types %}{{ method.name }}{% endset %}
@@ -101,16 +112,17 @@ PyClassMethod|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}
 
 {% call start_new_type "Type" "object" "PyObject" "" %}
 {% for type in types.classes where type.name == "PyObject" %}
-{% call print_fields type %}
-{% call print_initializers type %}
+{% call print_swift_fields type %}
+{% call print_swift_initializers type %}
 {% endfor %}
 {% for type in types.enums where type.name == "PyObjectType" %}
 {% call print_annotations type %}
 {% call print_doc type %}
-{% call print_properties type %}
-{% call print_methods type %}
-{% call print_static_methods type %}
-{% call print_class_methods type %}
+{% call print_swift_methods type %}
+{% call print_py_properties type %}
+{% call print_py_methods type %}
+{% call print_py_static_methods type %}
+{% call print_py_class_methods type %}
 {% endfor %}
 
 {# ============= #}
@@ -125,12 +137,13 @@ PyClassMethod|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}
 {% call start_new_type "Type" python_name swift_name swift_base_type %}
 {% call print_annotations type %}
 {% call print_doc type %}
-{% call print_fields type %}
-{% call print_initializers type %}
-{% call print_properties type %}
-{% call print_methods type %}
-{% call print_static_methods type %}
-{% call print_class_methods type %}
+{% call print_swift_fields type %}
+{% call print_swift_initializers type %}
+{% call print_swift_methods type %}
+{% call print_py_properties type %}
+{% call print_py_methods type %}
+{% call print_py_static_methods type %}
+{% call print_py_class_methods type %}
 {% endfor %}
 
 {# =================== #}
@@ -145,10 +158,11 @@ PyClassMethod|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}
 {% call start_new_type "ErrorType" python_name swift_name swift_base_type %}
 {% call print_annotations type %}
 {% call print_doc type %}
-{% call print_fields type %}
-{% call print_initializers type %}
-{% call print_properties type %}
-{% call print_methods type %}
-{% call print_static_methods type %}
-{% call print_class_methods type %}
+{% call print_swift_fields type %}
+{% call print_swift_initializers type %}
+{% call print_swift_methods type %}
+{% call print_py_properties type %}
+{% call print_py_methods type %}
+{% call print_py_static_methods type %}
+{% call print_py_class_methods type %}
 {% endfor %}

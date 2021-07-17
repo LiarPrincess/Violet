@@ -67,7 +67,11 @@ def print_new_function(t: TypeInfo, i: SwiftInitInfo):
         if arg.label:
             label = arg.label + ' '
 
-        print(f'    {label}{arg.name}: {arg.typ}{comma}')
+        default_value = ''
+        if arg.default_value:
+            default_value = ' = ' + arg.default_value
+
+        print(f'    {label}{arg.name}: {arg.typ}{default_value}{comma}')
 
     print(f'  ) -> {swift_type} {{')
     print(f'    return {swift_type}(')

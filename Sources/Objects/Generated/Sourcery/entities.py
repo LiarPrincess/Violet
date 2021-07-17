@@ -25,6 +25,7 @@ class TypeInfo:
         # Properties, methods - to be filled later
         self.swift_fields: List[SwiftFieldInfo] = []
         self.swift_initializers: List[SwiftInitInfo] = []
+        self.swift_methods: List[SwiftFunctionInfo] = []
         self.python_properties: List[PyPropertyInfo] = []
         self.python_methods: List[PyFunctionInfo] = []
         self.python_static_functions: List[PyFunctionInfo] = []
@@ -72,6 +73,24 @@ class SwiftInitInfo:
         assert signature.name == 'init'
         assert signature.return_type == ''
 
+        self.arguments = signature.arguments
+        # Function name with full arguments.
+        # For example: foo(bar: Int)
+        self.selector_with_types = signature.selector_with_types
+        # Function name with arguments.
+        # For example: foo(bar:)
+        self.swift_selector = _create_selector(signature)
+
+
+class SwiftFunctionInfo:
+    def __init__(self,
+                 access_modifier: str,
+                 selector_with_types: str,
+                 return_type: str):
+        self.access_modifier = access_modifier
+        self.is_open_public_internal = access_modifier in ('open', 'public', 'internal')
+
+        signature = SignatureInfo(selector_with_types, return_type)
         self.arguments = signature.arguments
         # Function name with full arguments.
         # For example: foo(bar: Int)
