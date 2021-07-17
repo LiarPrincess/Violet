@@ -119,6 +119,10 @@ def get_types() -> List[TypeInfo]:
             else:
                 assert False, f"Unknown line type: '{line_type}'"
 
-    commit_current_type()  # Commit last type
-    run_validation(result)
+    # Commit last type
+    commit_current_type()
+
+    # Validation
+    check_for_overridden_pymethods(result)
+
     return result
