@@ -11,7 +11,7 @@ import VioletCore
 // sourcery: pytype = dict, default, hasGC, baseType, dictSubclass
 // sourcery: subclassInstancesHave__dict__
 /// This subtype of PyObject represents a Python dictionary object.
-public class PyDict: PyObject {
+public final class PyDict: PyObject {
 
   // MARK: - OrderedDictionary
 

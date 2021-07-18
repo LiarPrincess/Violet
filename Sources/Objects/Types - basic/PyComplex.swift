@@ -11,7 +11,7 @@ import VioletCore
 // sourcery: pytype = complex, default, baseType
 // sourcery: subclassInstancesHave__dict__
 /// This subtype of PyObject represents a Python complex number object.
-public class PyComplex: PyObject {
+public final class PyComplex: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

@@ -11,7 +11,7 @@ import VioletCore
 // sourcery: pytype = list, default, hasGC, baseType, listSubclass
 // sourcery: subclassInstancesHave__dict__
 /// This subtype of PyObject represents a Python list object.
-public class PyList: PyObject {
+public final class PyList: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

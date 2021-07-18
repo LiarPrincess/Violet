@@ -6,7 +6,7 @@ import VioletCore
 // Objects -> bytesobject.c
 
 // sourcery: pytype = bytes_iterator, default, hasGC
-public class PyBytesIterator: PyObject {
+public final class PyBytesIterator: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

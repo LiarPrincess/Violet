@@ -12,7 +12,7 @@ import VioletCore
 // sourcery: subclassInstancesHave__dict__
 /// This subtype of PyObject is used to hold the internal data for both set
 /// and frozenset objects.
-public class PySet: PyObject {
+public final class PySet: PyObject {
 
   // MARK: - OrderedSet
 

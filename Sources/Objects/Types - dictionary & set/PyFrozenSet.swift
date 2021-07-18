@@ -11,7 +11,7 @@ import VioletCore
 // sourcery: pytype = frozenset, default, hasGC, baseType
 // sourcery: subclassInstancesHave__dict__
 /// This is an instance of PyTypeObject representing the Python frozenset type.
-public class PyFrozenSet: PyObject {
+public final class PyFrozenSet: PyObject {
 
   // MARK: - OrderedSet & Element
 

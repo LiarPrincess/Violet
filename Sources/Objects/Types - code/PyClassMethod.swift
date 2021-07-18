@@ -5,7 +5,7 @@
 
 // sourcery: pytype = classmethod, default, baseType, hasGC
 // sourcery: instancesHave__dict__
-public class PyClassMethod: PyObject {
+public final class PyClassMethod: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

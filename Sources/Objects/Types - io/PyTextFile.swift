@@ -20,7 +20,7 @@ import Foundation
 /// - some methods are missing
 /// - it is in` builtins` module (because we are too lazy to introduce a new one)
 /// - class hierarchy is missing
-public class PyTextFile: PyObject {
+public final class PyTextFile: PyObject {
 
   private static let closeOnDeallocFlag = PyObject.Flags.custom0
 

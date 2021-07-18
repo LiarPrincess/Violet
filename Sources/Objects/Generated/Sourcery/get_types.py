@@ -32,14 +32,22 @@ def get_types() -> List[TypeInfo]:
             if line_type == 'Type' or line_type == 'ErrorType':
                 commit_current_type()  # We are starting new type
 
-                assert len(split) == 4
+                assert len(split) == 5
                 python_type = split[1]
                 swift_type = split[2]
                 swift_base_type = split[3]
+                swift_is_final = split[4]
+
+                assert swift_is_final in ('0', '1')
+                swift_is_final = True if swift_is_final == '1' else False
+
                 is_error = line_type == 'ErrorType'
+
                 current_type = TypeInfo(python_type,
                                         swift_type,
-                                        swift_base_type, is_error)
+                                        swift_base_type,
+                                        swift_is_final,
+                                        is_error)
 
             elif line_type == 'Annotation':
                 assert current_type
@@ -124,5 +132,6 @@ def get_types() -> List[TypeInfo]:
 
     # Validation
     check_for_overridden_pymethods(result)
+    check_final_keyword(result)
 
     return result

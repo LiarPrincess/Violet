@@ -23,7 +23,7 @@ extension BigInt {
 /// Booleans in Python are implemented as a subclass of integers.
 /// There are only two booleans, Py_False and Py_True.
 /// As such, the normal creation and deletion functions don’t apply to booleans.
-public class PyBool: PyInt {
+public final class PyBool: PyInt {
 
   // sourcery: pytypedoc
   internal static let boolDoc = """

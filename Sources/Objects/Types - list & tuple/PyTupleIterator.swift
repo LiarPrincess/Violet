@@ -6,7 +6,7 @@ import VioletCore
 // Objects -> tupleobject.c
 
 // sourcery: pytype = tuple_iterator, default, hasGC
-public class PyTupleIterator: PyObject {
+public final class PyTupleIterator: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

@@ -6,7 +6,7 @@ import VioletCore
 // Objects -> unicodeobject.c
 
 // sourcery: pytype = str_iterator, default, hasGC
-public class PyStringIterator: PyObject {
+public final class PyStringIterator: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

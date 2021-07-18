@@ -59,7 +59,7 @@ internal struct Frexp {
 // sourcery: pytype = float, default, baseType
 // sourcery: subclassInstancesHave__dict__
 /// This subtype of PyObject represents a Python floating point object.
-public class PyFloat: PyObject {
+public final class PyFloat: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

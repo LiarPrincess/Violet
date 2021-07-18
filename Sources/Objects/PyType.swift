@@ -9,7 +9,7 @@ import VioletCore
 
 // sourcery: pytype = type, default, hasGC, baseType, typeSubclass
 // sourcery: instancesHave__dict__
-public class PyType: PyObject, HasCustomGetMethod {
+public final class PyType: PyObject, HasCustomGetMethod {
 
   // MARK: - Weak ref
 

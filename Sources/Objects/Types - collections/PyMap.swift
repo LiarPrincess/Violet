@@ -5,7 +5,7 @@ import VioletCore
 
 // sourcery: pytype = map, default, hasGC, baseType
 // sourcery: subclassInstancesHave__dict__
-public class PyMap: PyObject {
+public final class PyMap: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

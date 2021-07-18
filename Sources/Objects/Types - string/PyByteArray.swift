@@ -10,7 +10,7 @@ import VioletCore
 
 // sourcery: pytype = bytearray, default, baseType
 // sourcery: subclassInstancesHave__dict__
-public class PyByteArray: PyObject, AbstractBytes {
+public final class PyByteArray: PyObject, AbstractBytes {
 
   // sourcery: pytypedoc
   internal static let doc = """

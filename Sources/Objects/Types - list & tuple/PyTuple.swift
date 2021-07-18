@@ -11,7 +11,7 @@ import VioletCore
 // sourcery: subclassInstancesHave__dict__
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
-public class PyTuple: PyObject {
+public final class PyTuple: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

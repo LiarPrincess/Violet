@@ -4,12 +4,12 @@
 
 {# === Start type === #}
 
-{% macro start_new_type marker python_name swift_name swift_base_type %}
+{% macro start_new_type marker python_name swift_name swift_base_type swift_is_final %}
 ############
 # {{python_name}}
 ############
 
-{{marker}}|{{python_name}}|{{swift_name}}|{{swift_base_type }}
+{{marker}}|{{python_name}}|{{swift_name}}|{{swift_base_type }}|{{swift_is_final}}
 {% endmacro %}
 
 {# === Annotations === #}
@@ -100,7 +100,7 @@ PyClassMethod|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}
 {# === Object === #}
 {# ============== #}
 
-{% call start_new_type "Type" "object" "PyObject" "" %}
+{% call start_new_type "Type" "object" "PyObject" "" "0" %}
 {% for type in types.classes where type.name == "PyObject" %}
 {% call print_swift_fields type %}
 {% call print_swift_methods type %}
@@ -123,8 +123,9 @@ PyClassMethod|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}
 {% set python_name %}{{ type.annotations.pytype }}{% endset %}
 {% set swift_name %}{{ type.name }}{% endset %}
 {% set swift_base_type %}{{ type.supertype.name }}{% endset %}
+{% set swift_is_final %}{{ type.isFinal.name }}{% endset %}
 
-{% call start_new_type "Type" python_name swift_name swift_base_type %}
+{% call start_new_type "Type" python_name swift_name swift_base_type swift_is_final %}
 {% call print_annotations type %}
 {% call print_doc type %}
 {% call print_swift_fields type %}
@@ -143,8 +144,9 @@ PyClassMethod|{{python_name}}|{{swift_selector_with_types}}|{{swift_return_type}
 {% set python_name %}{{ type.annotations.pyerrortype }}{% endset %}
 {% set swift_name %}{{ type.name }}{% endset %}
 {% set swift_base_type %}{{ type.supertype.name }}{% endset %}
+{% set swift_is_final %}{{ type.isFinal.name }}{% endset %}
 
-{% call start_new_type "ErrorType" python_name swift_name swift_base_type %}
+{% call start_new_type "ErrorType" python_name swift_name swift_base_type swift_is_final %}
 {% call print_annotations type %}
 {% call print_doc type %}
 {% call print_swift_fields type %}

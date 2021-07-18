@@ -5,7 +5,7 @@ import VioletCore
 
 // sourcery: pytype = filter, default, hasGC, baseType
 // sourcery: subclassInstancesHave__dict__
-public class PyFilter: PyObject {
+public final class PyFilter: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

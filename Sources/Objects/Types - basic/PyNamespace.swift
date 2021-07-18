@@ -5,7 +5,7 @@
 
 // sourcery: pytype = types.SimpleNamespace, default, hasGC, baseType
 // sourcery: instancesHave__dict__
-public class PyNamespace: PyObject {
+public final class PyNamespace: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

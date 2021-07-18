@@ -6,7 +6,7 @@
 // sourcery: pytype = builtinMethod, default, hasGC
 /// This is about the type `builtin_function_or_method`,
 /// not Python methods in user-defined classes.
-public class PyBuiltinMethod: PyObject, AbstractBuiltinFunction {
+public final class PyBuiltinMethod: PyObject, AbstractBuiltinFunction {
 
   /// The Swift function that will be called.
   internal let function: FunctionWrapper

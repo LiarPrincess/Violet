@@ -9,7 +9,7 @@ import VioletCore
 // sourcery: pytype = ellipsis, default
 /// The Python Ellipsis object. This object has no methods.
 /// Like Py_None it is a singleton object.
-public class PyEllipsis: PyObject {
+public final class PyEllipsis: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

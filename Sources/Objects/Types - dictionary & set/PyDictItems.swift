@@ -7,7 +7,7 @@ import VioletCore
 // Objects -> dictobject.c
 
 // sourcery: pytype = dict_items, default, hasGC
-public class PyDictItems: PyObject, PyDictViewsShared {
+public final class PyDictItems: PyObject, PyDictViewsShared {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

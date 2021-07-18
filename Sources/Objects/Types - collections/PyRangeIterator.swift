@@ -7,7 +7,7 @@ import VioletCore
 // Objects -> rangeobject.c
 
 // sourcery: pytype = range_iterator, default
-public class PyRangeIterator: PyObject {
+public final class PyRangeIterator: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

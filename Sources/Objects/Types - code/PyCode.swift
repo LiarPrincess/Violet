@@ -11,7 +11,7 @@ import VioletBytecode
 // https://tech.blog.aknin.name/2010/07/03/pythons-innards-code-objects/
 
 // sourcery: pytype = code, default
-public class PyCode: PyObject {
+public final class PyCode: PyObject {
 
   // MARK: - Basic properties
 

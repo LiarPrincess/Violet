@@ -6,7 +6,7 @@ import VioletCore
 
 // sourcery: pytype = NoneType, default
 /// The Python None object, denoting lack of value.
-public class PyNone: PyObject, HasCustomGetMethod {
+public final class PyNone: PyObject, HasCustomGetMethod {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

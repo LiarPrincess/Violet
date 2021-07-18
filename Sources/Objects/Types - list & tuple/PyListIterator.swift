@@ -6,7 +6,7 @@ import VioletCore
 // Objects -> listobject.c
 
 // sourcery: pytype = list_iterator, default, hasGC
-public class PyListIterator: PyObject {
+public final class PyListIterator: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

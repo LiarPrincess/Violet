@@ -14,7 +14,7 @@ import UnicodeData
 // sourcery: subclassInstancesHave__dict__
 /// Textual data in Python is handled with str objects, or strings.
 /// Strings are immutable sequences of Unicode code points.
-public class PyString: PyObject, AbstractString {
+public final class PyString: PyObject, AbstractString {
 
   // sourcery: pytypedoc
   internal static let doc = """

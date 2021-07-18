@@ -6,7 +6,7 @@ import VioletCore
 // Objects -> iterobject.c
 
 // sourcery: pytype = callable_iterator, default, hasGC
-public class PyCallableIterator: PyObject {
+public final class PyCallableIterator: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

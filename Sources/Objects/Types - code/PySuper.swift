@@ -8,7 +8,7 @@ import VioletBytecode
 
 // sourcery: pytype = super, default, hasGC, baseType
 // sourcery: subclassInstancesHave__dict__
-public class PySuper: PyObject, HasCustomGetMethod {
+public final class PySuper: PyObject, HasCustomGetMethod {
 
   // MARK: - Doc
 

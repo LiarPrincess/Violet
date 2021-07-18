@@ -12,10 +12,12 @@ class TypeInfo:
                  python_type_name: str,
                  swift_type_name: str,
                  swift_base_type_name: str,
+                 swift_is_final: bool,
                  is_error: bool):
         self.python_type_name = python_type_name
         self.swift_type_name = swift_type_name
         self.swift_base_type_name = swift_base_type_name
+        self.swift_is_final = swift_is_final
         self.is_error = is_error
 
         # To be filled later

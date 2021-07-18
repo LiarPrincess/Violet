@@ -5,7 +5,7 @@
 
 // sourcery: pytype = staticmethod, default, baseType, hasGC
 // sourcery: instancesHave__dict__
-public class PyStaticMethod: PyObject {
+public final class PyStaticMethod: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

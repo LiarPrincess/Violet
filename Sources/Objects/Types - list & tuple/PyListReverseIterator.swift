@@ -6,7 +6,7 @@ import VioletCore
 // Objects -> listobject.c
 
 // sourcery: pytype = list_reverseiterator, default, hasGC
-public class PyListReverseIterator: PyObject {
+public final class PyListReverseIterator: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

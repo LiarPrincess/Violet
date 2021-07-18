@@ -23,7 +23,7 @@ import VioletBytecode
 /// Our cache usage will suck (3 arrays stored on heap), but… oh well….
 /// This allows us to have typed `cellsAndFreeVariables`
 /// (`[PyCell]` instead of `[PyObject]`).
-public class PyFrame: PyObject {
+public final class PyFrame: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

@@ -8,7 +8,7 @@ import VioletBytecode
 
 // sourcery: pytype = function, default, hasGC
 // sourcery: instancesHave__dict__
-public class PyFunction: PyObject {
+public final class PyFunction: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

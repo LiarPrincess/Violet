@@ -6,7 +6,7 @@
 // sourcery: pytype = property, default, hasGC, baseType
 // sourcery: subclassInstancesHave__dict__
 /// Native property implemented in Swift.
-public class PyProperty: PyObject {
+public final class PyProperty: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

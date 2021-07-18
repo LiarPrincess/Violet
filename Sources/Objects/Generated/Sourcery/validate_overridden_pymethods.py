@@ -24,7 +24,7 @@ So we called 'PyInt.f' with 'bool' and it returned 'bool'.
 In Python this would return 'int'.
 '''
 
-from typing import List, Dict,  NamedTuple
+from typing import List, Dict, NamedTuple
 
 from Sourcery.entities import TypeInfo, PyFunctionInfo
 

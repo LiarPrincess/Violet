@@ -5,7 +5,7 @@ import VioletCore
 // https://docs.python.org/3/library/traceback.html
 
 // sourcery: pytype = traceback, default, hasGC
-public class PyTraceback: PyObject {
+public final class PyTraceback: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

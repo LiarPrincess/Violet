@@ -6,7 +6,7 @@ import VioletCore
 // Objects -> setobject.c
 
 // sourcery: pytype = set_iterator, default, hasGC
-public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
+public final class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

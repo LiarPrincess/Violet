@@ -7,7 +7,7 @@ import VioletCore
 // Objects -> iterobject.c
 
 // sourcery: pytype = iterator, default, hasGC
-public class PyIterator: PyObject {
+public final class PyIterator: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

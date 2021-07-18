@@ -12,7 +12,7 @@ import VioletCore
 // sourcery: pytype = range, default
 /// The range type represents an immutable sequence of numbers
 /// and is commonly used for looping a specific number of times in for loops.
-public class PyRange: PyObject {
+public final class PyRange: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

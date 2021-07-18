@@ -5,7 +5,7 @@
 
 // sourcery: pytype = module, default, hasGC, baseType
 // sourcery: instancesHave__dict__
-public class PyModule: PyObject {
+public final class PyModule: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

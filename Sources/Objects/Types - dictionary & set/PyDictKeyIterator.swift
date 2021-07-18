@@ -6,7 +6,7 @@ import VioletCore
 // Objects -> dictobject.c
 
 // sourcery: pytype = dict_keyiterator, default, hasGC
-public class PyDictKeyIterator: PyObject, OrderedDictionaryBackedIterator {
+public final class PyDictKeyIterator: PyObject, OrderedDictionaryBackedIterator {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

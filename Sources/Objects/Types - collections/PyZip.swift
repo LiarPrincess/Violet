@@ -5,7 +5,7 @@ import VioletCore
 
 // sourcery: pytype = zip, default, hasGC, baseType
 // sourcery: subclassInstancesHave__dict__
-public class PyZip: PyObject {
+public final class PyZip: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

@@ -8,7 +8,7 @@
 ///
 /// Cells will be shared between multiple frames, so that child frame
 /// can interact with value in parent frame.
-public class PyCell: PyObject {
+public final class PyCell: PyObject {
 
   // This has to be public for performance
   public var content: PyObject?

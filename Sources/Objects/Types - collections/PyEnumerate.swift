@@ -10,7 +10,7 @@ import VioletCore
 // sourcery: subclassInstancesHave__dict__
 /// Return an enumerate object. iterable must be a sequence, an iterator,
 /// or some other object which supports iteration.
-public class PyEnumerate: PyObject {
+public final class PyEnumerate: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """

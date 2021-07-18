@@ -6,7 +6,7 @@ import VioletCore
 // sourcery: pytype = NotImplementedType, default
 /// `NotImplemented` is an object that can be used to signal that an
 /// operation is not implemented for the given type combination.
-public class PyNotImplemented: PyObject {
+public final class PyNotImplemented: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil

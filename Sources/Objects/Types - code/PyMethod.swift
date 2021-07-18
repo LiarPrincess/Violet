@@ -7,7 +7,7 @@ import VioletBytecode
 
 // sourcery: pytype = method, default, hasGC
 /// Function bound to an object.
-public class PyMethod: PyObject {
+public final class PyMethod: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc = """
