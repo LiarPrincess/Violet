@@ -86,15 +86,15 @@ def print_fill_function(t: TypeInfo):
     print(f'  private func {function_name}() {{')
     print(f'    let type = self.{get_property_name(t.python_type_name)}')
 
+    sourcery_flags = t.sourcery_flags
+    for flag in sourcery_flags:
+        print(f'    type.flags.set(PyType.{flag}Flag)')
+
     static_doc_property = t.swift_static_doc_property
     if static_doc_property:
         print(f'    type.setBuiltinTypeDoc({swift_type_name}.{static_doc_property})')
     else:
         print(f'    type.setBuiltinTypeDoc(nil)')
-
-    sourcery_flags = t.sourcery_flags
-    for flag in sourcery_flags:
-        print(f'    type.flags.set(PyType.{flag}Flag)')
 
     # ==================
     # === Properties ===
