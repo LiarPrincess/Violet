@@ -10,6 +10,8 @@ import VioletCompiler
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
+private let sourceFileEncoding = PyString.Encoding.default
+
 extension PyInstance {
 
   /// compile(source, filename, mode, flags=0, dont_inherit=False, optimize=-1)
@@ -59,15 +61,12 @@ extension PyInstance {
   public func compile(path: String,
                       mode: Parser.Mode,
                       optimize: Compiler.OptimizationLevel? = nil) -> CompileResult {
-    let data: Data
-    switch self.fileSystem.read(path: path) {
-    case let .value(d): data = d
-    case let .error(e): return .error(e)
-    }
-
-    let encoding = PyString.Encoding.default
-    guard let source = encoding.decode(data: data) else {
-      let e = self.newUnicodeDecodeError(data: data, encoding: encoding)
+    let source: String
+    switch self.readSourceFile(path: path) {
+    case let .value(s):
+      source = s
+    case let .readError(e),
+         let .decodingError(e):
       return .error(e)
     }
 
@@ -76,6 +75,29 @@ extension PyInstance {
                         filename: filename,
                         mode: mode,
                         optimize: optimize)
+  }
+
+  internal enum ReadSourceFileResult {
+    case value(String)
+    /// Error when reading a file (it may not exist etc.)
+    case readError(PyBaseException)
+    /// File exists but we cant read it
+    case decodingError(PyBaseException)
+  }
+
+  internal func readSourceFile(path: String) -> ReadSourceFileResult {
+    let data: Data
+    switch self.fileSystem.read(path: path) {
+    case let .value(d): data = d
+    case let .error(e): return .readError(e)
+    }
+
+    guard let source = sourceFileEncoding.decode(data: data) else {
+      let e = self.newUnicodeDecodeError(data: data, encoding: sourceFileEncoding)
+      return .decodingError(e)
+    }
+
+    return .value(source)
   }
 
   public enum CompileResult {

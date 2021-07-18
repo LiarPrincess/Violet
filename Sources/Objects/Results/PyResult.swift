@@ -139,4 +139,8 @@ extension PyResult {
   public static func importError(_ msg: String) -> PyResult<Wrapped> {
     return PyResult.error(Py.newImportError(msg: msg))
   }
+
+  public static func eofError(_ msg: String) -> PyResult<Wrapped> {
+    return PyResult.error(Py.newEOFError(msg: msg))
+  }
 }

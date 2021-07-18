@@ -340,6 +340,12 @@ extension PyInstance {
                                    modulePath: modulePath)
   }
 
+  // MARK: - EOF error
+
+  public func newEOFError(msg: String) -> PyEOFError {
+    return PyMemory.newEOFError(msg: msg)
+  }
+
   // MARK: - Syntax error
 
   public func newSyntaxError(filename: String,

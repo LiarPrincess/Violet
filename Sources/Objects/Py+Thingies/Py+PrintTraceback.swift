@@ -1,7 +1,9 @@
 import Foundation
 import BigInt
+import UnicodeData
 import VioletCore
 
+// swiftlint:disable file_length
 // cSpell:ignore printinternal displayline
 
 // In CPython:
@@ -80,7 +82,7 @@ extension PyInstance {
       recursiveCount += 1
 
       if recursiveCount <= recursiveCutoff {
-        if let e = self.displayLine(file: file, traceback: tb) {
+        if let e = self.printLine(file: file, traceback: tb) {
           return e
         }
       }
@@ -96,6 +98,8 @@ extension PyInstance {
 
     return nil
   }
+
+  // MARK: - Limit
 
   private func limit(traceback: PyTraceback, to limit: Int) -> PyTraceback {
     assert(limit > 0)
@@ -128,6 +132,8 @@ extension PyInstance {
     return result
   }
 
+  // MARK: - Equal file, line and name
+
   private func hasEqualFileLineAndName(current: PyTraceback,
                                        previous: PyTraceback?) -> Bool {
     // No previous -> definitely not equal
@@ -143,6 +149,8 @@ extension PyInstance {
         && code.name.isEqual(previousCode.name)
   }
 
+  // MARK: - Line repeated X times
+
   /// static int
   /// tb_print_line_repeated(PyObject *f, long cnt)
   private func printLineRepeated(file: PyTextFile,
@@ -157,10 +165,12 @@ extension PyInstance {
     return self.write(file: file, string: string)
   }
 
+  // MARK: - Print line
+
   /// static int
   /// tb_displayline(PyObject *f, PyObject *filename, int lineno, PyObject *name)
-  private func displayLine(file: PyTextFile,
-                           traceback: PyTraceback) -> PyBaseException? {
+  private func printLine(file: PyTextFile,
+                         traceback: PyTraceback) -> PyBaseException? {
     let frame = traceback.getFrame()
     let code = frame.code
 
@@ -173,11 +183,165 @@ extension PyInstance {
       return e
     }
 
-    // TODO: Print line when printing traceback
-    // (Remember that 'file' parameter is the file we are writing TO,
-    //  not an actual file from which we have to print line! Use 'code' for this.)
-    let line = "    ... (some code, probably, idk, not implemented)\n"
-    return self.write(file: file, string: line)
+    switch self.getLine(filename: filename, lineno: lineno) {
+    case .value(let code):
+      let line = "    \(code)\n"
+      return self.write(file: file, string: line)
+    case .fileNotFound:
+      return nil
+    case .error(let e):
+      return e
+    }
+  }
+
+  private enum GetLineResult {
+    case value(Substring)
+    case fileNotFound
+    case error(PyBaseException)
+  }
+
+  /// int
+  /// _Py_DisplaySourceLine(PyObject *f, PyObject *filename, int lineno, int indent)
+  private func getLine(filename: String, lineno: BigInt) -> GetLineResult {
+    let source: String
+    switch self.readSourceFileForTraceback(filename: filename) {
+    case .value(let s):
+      source = s
+    case .notFound:
+      return .fileNotFound
+    case .decodingError(let e), .error(let e):
+      return .error(e)
+    }
+
+    switch self.getLine(source: source, lineno: lineno) {
+    case let .value(l):
+      return .value(l)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Print line - read file
+
+  private enum SourceFile {
+    case value(String)
+    case notFound
+    /// File exists, but can't be read.
+    case decodingError(PyBaseException)
+    case error(PyBaseException)
+  }
+
+  private func readSourceFileForTraceback(filename: String) -> SourceFile {
+    switch self.readSourceFile(path: filename) {
+    case .value(let s): return .value(s)
+    case .decodingError(let e): return .decodingError(e)
+    case .readError: break // File may not exit, try 'sys.path'
+    }
+
+    let basename = Py.fileSystem.basename(path: filename)
+
+    let sysPath: PyList
+    switch Py.sys.getPath() {
+    case let .value(l): sysPath = l
+    case let .error(e): return .error(e)
+    }
+
+    // swiftlint:disable:next nesting
+    enum Result {
+      case value(String)
+      case decodingError(PyBaseException)
+      case notFound
+    }
+
+    let result = Py.reduce(iterable: sysPath, initial: Result.notFound) { _, object in
+      guard let dir = PyCast.asString(object) else {
+        return .goToNextElement
+      }
+
+      let path = Py.fileSystem.join(paths: dir.value, basename)
+
+      switch self.readSourceFile(path: path) {
+      case .value(let s) : return .finish(.value(s))
+      case .decodingError(let e): return .finish(.decodingError(e))
+      case .readError: return .goToNextElement // File may not exit, ignore
+      }
+    }
+
+    switch result {
+    case .value(.value(let s)): return .value(s)
+    case .value(.decodingError(let e)): return .decodingError(e)
+    case .value(.notFound): return .notFound
+    case .error(let e): return .error(e) // Iteration error
+    }
+  }
+
+  // MARK: - Print line - n-th line
+
+  /// PyObject *
+  /// PyFile_GetLine(PyObject *f, int n)
+  private func getLine(source: String,
+                       lineno requestedLineNumber: BigInt) -> PyResult<Substring> {
+    guard let requestedLineNumber = Int(exactly: requestedLineNumber),
+          requestedLineNumber >= 0 else {
+      return .eofError("EOF when reading a line")
+    }
+
+    let scalars = source.unicodeScalars
+
+    var lineNumber = 1 // Lines in editor start from 1, not from 0!
+    var index = scalars.startIndex
+    var lineStartIndex = index
+
+    // 'while' check will also handle empty string
+    while index != scalars.endIndex {
+      let scalar = scalars[index]
+      let isLineBreak = UnicodeData.isLineBreak(scalar)
+
+      if isLineBreak {
+        let isRequestedLine = lineNumber == requestedLineNumber
+        if isRequestedLine {
+          let line = source[lineStartIndex..<index]
+          let lineTrim = self.trim(substring: line)
+          return .value(lineTrim)
+        }
+
+        lineNumber += 1
+        lineStartIndex = index
+
+        // Consume CRLF as one
+        self.advanceIfCRLF(scalars: scalars, index: &index)
+      }
+
+      scalars.formIndex(after: &index)
+    }
+
+    return .eofError("EOF when reading a line")
+  }
+
+  private func trim(substring: Substring) -> Substring {
+    var result = substring.drop { $0.isWhitespace }
+    result = result.dropLast { $0.isWhitespace }
+    return result
+  }
+
+  private func advanceIfCRLF(scalars: String.UnicodeScalarView,
+                             index: inout String.Index) {
+    let scalar = scalars[index]
+    let isCarriageReturn = scalar.value == 0x0d
+    guard isCarriageReturn else {
+      return
+    }
+
+    let indexAfter = scalars.index(after: index)
+    guard indexAfter != scalars.endIndex else {
+      return
+    }
+
+    let scalarAfter = scalars[indexAfter]
+    let isLineFeedAfter = scalarAfter.value == 0x0a
+    if isLineFeedAfter {
+      scalars.formIndex(after: &index)
+    }
   }
 
   // MARK: - Write
