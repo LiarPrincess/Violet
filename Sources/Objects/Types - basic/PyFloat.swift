@@ -821,8 +821,8 @@ public class PyFloat: PyObject {
     // (do we even have interned floats?)
     let isBuiltin = type === Py.types.float
     return isBuiltin ?
-      Py.newFloat(value):
-      PyFloatHeap(type: type, value: value)
+      Py.newFloat(value) :
+      PyMemory.newFloat(type: type, value: value)
   }
 
   private enum DoubleFromString {

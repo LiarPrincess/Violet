@@ -926,7 +926,7 @@ public class PyByteArray: PyObject, AbstractBytes {
     let isBuiltin = type === Py.types.bytes
     let result = isBuiltin ?
       Py.newByteArray(elements) :
-      PyByteArrayHeap(type:type, elements: elements)
+      PyMemory.newByteArray(type: type, elements: elements)
 
     return .value(result)
   }

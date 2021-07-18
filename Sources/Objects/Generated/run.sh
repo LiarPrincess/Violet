@@ -40,16 +40,6 @@ echo 'Generating builtin type instances'
 python3 $GENERATED/BuiltinTypes.py > $GENERATED/BuiltinTypes.swift
 python3 $GENERATED/BuiltinErrorTypes.py > $GENERATED/BuiltinErrorTypes.swift
 
-# === Heap types ===
-# This will add new types that will be used when user subclasses one of the
-# builtin types (for example 'class Rapunzel(int): pass' is a subclass
-# of builtin 'int' class).
-# It is mainly there to add '__dict__'.
-# We use CPython naming convention where user generated types are 'heap' types,
-# even though in Violet all of the types are technically 'heap' types.
-echo 'Generating heap types'
-python3 $GENERATED/HeapTypes.py > $GENERATED/HeapTypes.swift
-
 # === Type memory layout ===
 # When creating new class we will check if all of the base classes have
 # the same layout.

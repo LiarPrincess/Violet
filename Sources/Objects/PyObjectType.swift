@@ -220,8 +220,7 @@ internal enum PyObjectType {
       }
     }
 
-    let isBuiltin = type === Py.types.object
-    let result = isBuiltin ? PyMemory.newObject(type: type) : PyObjectHeap(type: type)
+    let result = PyMemory.newObject(type: type)
     return .value(result)
   }
 

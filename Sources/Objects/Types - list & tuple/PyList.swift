@@ -381,9 +381,11 @@ public class PyList: PyObject {
     let elements = [PyObject]()
     let isBuiltin = type === Py.types.list
 
+    // If this is a builtin then try to re-use interned values
+    // (if we even have interned 'list').
     let result: PyList = isBuiltin ?
       Py.newList(elements: elements) :
-      PyListHeap(type: type, elements: elements)
+      PyMemory.newList(type: type, elements: elements)
 
     return .value(result)
   }

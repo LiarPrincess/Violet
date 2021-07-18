@@ -264,7 +264,7 @@ public class PyTuple: PyObject {
     let isBuiltin = type === Py.types.tuple
     let result: PyTuple = isBuiltin ?
       Py.newTuple(elements: elements) :
-      PyTupleHeap(type: type, elements: elements)
+      PyMemory.newTuple(type: type, elements: elements)
 
     return .value(result)
   }

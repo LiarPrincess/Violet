@@ -140,11 +140,7 @@ public class PyReversed: PyObject {
     case let .error(e): return .error(e)
     }
 
-    let isBuiltin = type === Py.types.reversed
-    let result = isBuiltin ?
-      PyMemory.newReversed(type: type, sequence: object, count: count):
-      PyReversedHeap(type: type, sequence: object, count: count)
-
+    let result = PyMemory.newReversed(type: type, sequence: object, count: count)
     return .value(result)
   }
 

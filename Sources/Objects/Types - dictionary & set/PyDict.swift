@@ -795,7 +795,7 @@ public class PyDict: PyObject {
     let isBuiltin = type === Py.types.dict
     let dict = isBuiltin ?
       Py.newDict(elements: elements) :
-      PyDictHeap(type: type, elements: elements)
+      PyMemory.newDict(type: type, elements: elements)
 
     return .value(dict)
   }

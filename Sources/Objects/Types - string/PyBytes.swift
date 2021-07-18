@@ -635,7 +635,7 @@ public class PyBytes: PyObject, AbstractBytes {
     let isBuiltin = type === Py.types.bytes
     let result = isBuiltin ?
       Py.newBytes(elements) : // There is a potential to re-use interned value!
-      PyBytesHeap(type:type, elements: elements)
+      PyMemory.newBytes(type: type, elements: elements)
 
     return .value(result)
   }

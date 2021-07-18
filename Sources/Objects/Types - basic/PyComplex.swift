@@ -562,7 +562,7 @@ public class PyComplex: PyObject {
     let isBuiltin = type === Py.types.complex
     return isBuiltin ?
       Py.newComplex(real: real, imag: imag) :
-      PyComplexHeap(type: type, real: real, imag: imag)
+      PyMemory.newComplex(type: type, real: real, imag: imag)
   }
 
   /// A valid complex string usually takes one of the three forms:

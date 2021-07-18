@@ -812,7 +812,7 @@ public class PyString: PyObject, AbstractString {
                             encoding encodingObject: PyObject?,
                             errors errorObject: PyObject?) -> PyResult<PyString> {
     guard let object = object else {
-      let result = Self.allocateString(type: type, value: "")
+      let result = Self.allocate(type: type, value: "")
       return .value(result)
     }
 
@@ -831,7 +831,7 @@ public class PyString: PyObject, AbstractString {
 
       switch Py.str(object: object) {
       case let .value(str):
-        let result = PyString.allocateString(type: type, value: str.value)
+        let result = PyString.allocate(type: type, value: str.value)
         return .value(result)
       case let .error(e):
         return .error(e)
@@ -852,7 +852,7 @@ public class PyString: PyObject, AbstractString {
 
     if let bytes = PyCast.asAnyBytes(object) {
       let string = encoding.decodeOrError(data: bytes.elements, onError: errorHandling)
-      return string.map { Self.allocateString(type: type, value: $0) }
+      return string.map { Self.allocate(type: type, value: $0) }
     }
 
     if PyCast.isString(object) {
@@ -864,10 +864,11 @@ public class PyString: PyObject, AbstractString {
   }
 
   /// Allocate new PyString (it will use 'builtins' cache if possible).
-  private static func allocateString(type: PyType, value: String) -> PyString {
+  private static func allocate(type: PyType, value: String) -> PyString {
+    // If this is a builtin then try to re-use interned values
     let isBuiltin = type === Py.types.str
     return isBuiltin ?
-      Py.newString(value) : // There is a potential to re-use interned.
-      PyStringHeap(type: type, value: value)
+      Py.newString(value) :
+      PyMemory.newString(type: type, value: value)
   }
 }

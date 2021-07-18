@@ -249,11 +249,7 @@ public class PyProperty: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyProperty> {
-    let isBuiltin = type === Py.types.property
-    let result = isBuiltin ?
-      PyMemory.newProperty(type: type, get: nil, set: nil, del: nil):
-      PyPropertyHeap(type: type, get: nil, set: nil, del: nil)
-
+    let result = PyMemory.newProperty(type: type, get: nil, set: nil, del: nil)
     return .value(result)
   }
 

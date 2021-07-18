@@ -995,8 +995,8 @@ public class PyInt: PyObject {
     // If this is a builtin then try to re-use interned values
     let isBuiltin = type === Py.types.int
     return isBuiltin ?
-      Py.newInt(value):
-      PyIntHeap(type: type, value: value)
+      Py.newInt(value) :
+      PyMemory.newInt(type: type, value: value)
   }
 
   /// PyObject *

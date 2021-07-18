@@ -402,7 +402,7 @@ public class PySet: PyObject {
 
     let result: PySet = isBuiltin ?
       Py.newSet(elements: elements) :
-      PySetHeap(type: type, elements: elements)
+      PyMemory.newSet(type: type, elements: elements)
 
     return .value(result)
   }

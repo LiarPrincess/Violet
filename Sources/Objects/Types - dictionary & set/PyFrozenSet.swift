@@ -341,7 +341,7 @@ public class PyFrozenSet: PyObject {
 
     let result: PyFrozenSet = isBuiltin ?
       Py.newFrozenSet(elements: elements) :
-      PyFrozenSetHeap(type: type, elements: elements)
+      PyMemory.newFrozenSet(type: type, elements: elements)
 
     return .value(result)
   }
