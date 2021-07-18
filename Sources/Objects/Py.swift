@@ -8,7 +8,7 @@ import VioletCore
 /// `Py` represents a `Python` context.
 ///
 /// You can use it to interact with `Python` objects.
-/// For example: to call `getattr` function on `elsa` instance you call
+/// For example: to call `getattr` function on `elsa` object you call
 /// `Py.getattr(object: elsa, name: "let_it_go")`.
 ///
 /// # Global variable
@@ -17,23 +17,26 @@ import VioletCore
 /// book/manual).
 /// The thing is that it is way easier to use than alternative.
 ///
-/// And the alternative would be to pass additional `py` parameter to every
-/// function that needs to act on context.
+/// And the alternative would be to pass an additional `context` parameter to
+/// every function.
 /// The thing is: 95% of our functions (in `Objects` module) need to call some
 /// `Python` function (directly on indirectly).
 /// And having this artificial parameter would be a pure boilerplate
 /// (in addition to our usual error handling boilerplate).
 ///
-/// I would argue that at this point just making it global is an acceptable
+/// One could argue that at this point just making it global is an acceptable
 /// trade-off/simplification.
 ///
 /// Btw. in some early version of `Objects` we actually had `PyContext` type
-/// that we passed to every function (or injected in `ctor`).
+/// that we passed to every function (or injected in `init`).
 /// The user/programmer experience was… not that great.
-/// Most notably in functions which had 2 `PyObject` arguments that could
-/// potentially come from 2 different `PyContexts`. In such case we had to decide
-/// if we want to allocate result object (think `3` in `1 + 2 = 3`)
-/// in context of object `1` or `2`. Now we just use global `Py` context.
+/// As an example let's use: `elsa = 1 + 2`
+/// Should `elsa` be allocated in the context that owns `1` or `2`?
+/// In theory they should point to exactly the same object (mixing object from
+/// different context should be an error), but as a programmers we still have to
+/// choose one or the other.
+///
+/// In current approach we just use implicit global `Py`  context.
 ///
 /// # Instance vs static
 /// `Py` is heap-allocated instance of `PyInstance` class.
@@ -49,26 +52,25 @@ import VioletCore
 ///
 /// ## Instance (current model)
 /// Pros:
-/// - we can have multiple `PyInstances` at the same time (for example 1 per thread)
+/// - we can have multiple `PyInstances` at the same time (for example 1 per thread):
+///    ```Swift
+///    public var Py: PyInstance {
+///      // get `PyInstance` from thread local storage (TLS) or something, idk…
+///    }
+///    ```
+///
+///    That would allow us to have `Py` per thread.
+///    Not really sure what we would use this for, but we can.
+///    (Maybe multi-threaded testing? What we would need is something like app
+///    domains from `.Net`.)
+///
 /// - encapsulation? object-orientation fetish? (because we need to have dem
 ///   instances?)
 ///
 /// We use it mostly because in early days we had `PyContext` instance passed
-/// to every function (or injected in `ctor`).
+/// to every function (or injected in `init`).
 /// Then we moved to global `Py`, so naturally we made `Py` also an instance.
-/// Making it static would require bigger mental-leap.
-///
-/// And about that 'multiple `PyInstances`', we can do following:
-/// ```Swift
-/// public var Py: PyInstance {
-///   // get `PyInstance` from thread local storage (TLS) or something, idk…
-/// }
-/// ```
-///
-/// That would allow us to have `Py` per thread.
-/// Not really sure what we would use this for, but we can.
-/// (Maybe multi-threaded testing? But we can just `fork` to run each test in
-/// separate process. What we would need is something like app domains from `.Net`.)
+/// Making it static would require more work.
 ///
 /// ## Static
 /// Pros:
@@ -78,18 +80,16 @@ import VioletCore
 /// That would require us to make some code changes.
 /// Not only in `Py` but also in other types.
 ///
-/// For example we could make `BuiltinTypes` an `enum` a with static property for
-/// each type.
-/// For source compatibility we would make `Py.types` property an `typealias`.
+/// For example we would have to make `BuiltinTypes` an `enum` a with static
+/// property for each type. Then, we would make `Py.types` property an `typealias`.
 /// Note that, even though `BuiltinTypes` will be `static`, the types itself will
 /// still be allocated on a heap (although semantic-wise types are reference types,
 /// so it kind of makes sense).
 ///
-/// ## Note about 'heap types'
+/// ** Note about 'heap types' **
 /// (this is partially connected to 'Instance vs static' debate)
 ///
-/// Heap type is a type created by user with 'class' statement
-/// (see 'Generated/HeapTypes.swift' for more details).
+/// Heap type is a type created by user with 'class' statement.
 ///
 /// This name comes from `CPython`.
 /// Opposite of 'heap type' is 'builtin type' that uses static allocation
@@ -106,7 +106,7 @@ import VioletCore
 /// In `Violet` all of the types are heap-allocated (even builtin ones).
 /// But, we will still use 'heap-type' name with the same meaning as in `CPython`.
 /// Partially because they leak 'heap-type' implementation-detail in error
-/// messages, so we assume that this is the part of the lingo.
+/// messages, so we assume that this is a part of the domain.
 public private(set) var Py = PyInstance()
 
 /// Read `Py` documentation.

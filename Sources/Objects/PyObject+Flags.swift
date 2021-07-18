@@ -7,7 +7,7 @@ extension PyObject {
   /// (so basically, you can use `Flags` to store `Bool` properties).
   ///
   /// Btw. it does not implement 'OptionSet', its interface is a bit awkward.
-  public struct Flags {
+  public struct Flags: CustomStringConvertible {
 
     private var rawValue: UInt32
 
@@ -42,7 +42,7 @@ extension PyObject {
 //    public static let reserved6 = Flags(rawValue: 1 << 6)
 //    public static let reserved7 = Flags(rawValue: 1 << 7)
 
-    // MARK: - Depend on object type
+    // MARK: - Depends on object type
 
     /// Flag `0` that can be used based on object type.
     public static let custom0 = Flags(rawValue: 1 << 8)
@@ -92,6 +92,39 @@ extension PyObject {
     public static let custom22 = Flags(rawValue: 1 << 30)
     /// Flag `23` that can be used based on object type.
     public static let custom23 = Flags(rawValue: 1 << 31)
+
+    // MARK: - Description
+
+    public var description: String {
+      var result = ""
+      func append(_ s: String) {
+        if !result.isEmpty {
+          result += ", "
+        }
+
+        result.append(s)
+      }
+
+      if self.isSet(.reprLock) {
+        append("reprLock")
+      }
+
+      if self.isSet(.has__dict__) {
+        append("has__dict__")
+      }
+
+      let customStart = Self.custom0.rawValue
+      let customEnd = Self.custom23.rawValue
+      for rawValue in customStart...customEnd {
+        let flag = Flags(rawValue: rawValue)
+        if self.isSet(flag) {
+          let index = rawValue - customStart
+          append("custom\(index)")
+        }
+      }
+
+      return "PyObject.Flags(\(result))"
+    }
 
     // MARK: - Methods
 

@@ -11,7 +11,7 @@ import VioletCore
 /// to go through translation step: description in docs -> our implementation).
 public class PyObject: CustomStringConvertible {
 
-  // MARK: - Properties
+  // MARK: - Type field
 
   // `self_type` has to be implicitly unwrapped optional because:
   // - `objectType` has `typeType` type
@@ -23,6 +23,7 @@ public class PyObject: CustomStringConvertible {
 
   // swiftlint:disable:next implicitly_unwrapped_optional
   private var _type: PyType!
+
   /// Also known as `klass`, but we are using CPython naming convention.
   public final var type: PyType {
     // Not really sure if this property wrapper is needed (we could just expose
@@ -32,14 +33,39 @@ public class PyObject: CustomStringConvertible {
     return self._type
   }
 
+  /// Name of the type (mostly for convenience when creating error messages).
+  public final var typeName: String {
+    return self.type.getNameString()
+  }
+
+  // MARK: - __dict__ field
+
   // Note 3x '_' prefix!
   private var ___dict__: PyDict?
+
   /// Internal dictionary of attributes for the specific instance.
   ///
-  /// Note that not all objects have `__dict__`!
-  /// Accessing `__dict__` on such type will trap!
+  /// We will reserve space for `PyDict` reference on EVERY object, even though
+  /// not all of them can actually use it:
+  /// ``` py
+  /// >>> (1).__dict__
+  /// Traceback (most recent call last):
+  ///   File "<stdin>", line 1, in <module>
+  /// AttributeError: 'int' object has no attribute '__dict__'
+  /// ```
+  ///
+  /// Whether the object has access to `__dict__` or not is controlled by
+  /// `has__dict__` flag.
+  ///
+  /// Alternative approach:
+  /// For every type that can access `__dict__` create a Swift subclass that adds
+  /// this property (+ some runtime magic). We actually did that (at some point),
+  /// but it relied too much on Swift runtime, so we moved to current approach.
+  ///
+  /// - Important:
+  /// Accessing `__dict__` on object that does not have it will trap!
   /// Use `Py.get__dict__` instead.
-  public final var __dict__: PyDict {
+  public internal(set) final var __dict__: PyDict {
     get {
       self.assertHas__dict__()
 
@@ -58,25 +84,24 @@ public class PyObject: CustomStringConvertible {
     }
   }
 
-  internal var has__dict__: Bool {
+  internal final var has__dict__: Bool {
     return self.flags.isSet(.has__dict__)
   }
 
-  private func assertHas__dict__() {
+  private final func assertHas__dict__() {
     if !self.has__dict__ {
       trap("\(self.typeName) does not even '__dict__'.")
     }
   }
+
+  // MARK: - Flags field
 
   /// Various flags that describe the current state of the `PyObject`.
   ///
   /// It can also be used to store `Bool` properties (via `custom` flags).
   public var flags = Flags()
 
-  /// Name of the type (mostly for convenience).
-  public var typeName: String {
-    return self.type.getNameString()
-  }
+  // MARK: - Other properties
 
   public var description: String {
     return "PyObject(type: \(self.typeName))"
@@ -87,14 +112,14 @@ public class PyObject: CustomStringConvertible {
   /// It should be used only for:
   /// - `builtins.id` function
   /// - error messages (for debugging).
-  internal var ptr: UnsafeMutableRawPointer {
+  internal final var ptr: UnsafeMutableRawPointer {
     return Unmanaged.passUnretained(self).toOpaque()
   }
 
   // MARK: - Init
 
   /// Create new Python object.
-  /// When in doubt use this ctor!
+  /// When in doubt use this `init`!
   internal init(type: PyType) {
     self._type = type
     self.copyFlagsFromType()
@@ -117,7 +142,7 @@ public class PyObject: CustomStringConvertible {
     self.copyFlagsFromType()
   }
 
-  private func copyFlagsFromType() {
+  private final func copyFlagsFromType() {
     let typeFlags = self.type.flags
 
     let has__dict__ = typeFlags.isSet(PyType.instancesHave__dict__Flag)
@@ -128,13 +153,13 @@ public class PyObject: CustomStringConvertible {
 
   /// This flag is used to control infinite recursion
   /// in `repr`, `str`, `print` etc.
-  internal var hasReprLock: Bool {
+  internal final var hasReprLock: Bool {
     return self.flags.isSet(.reprLock)
   }
 
   /// Set, execute `body` and then unset `reprLock` flag
   /// (the one that is used to control recursion in `repr`, `str`, `print` etc).
-  internal func withReprLock<T>(body: () -> T) -> T {
+  internal final func withReprLock<T>(body: () -> T) -> T {
     // We do not need 'defer' because 'body' is not throwing
     self.flags.set(.reprLock)
     let result = body()
