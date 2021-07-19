@@ -568,8 +568,12 @@ public final class PyType: PyObject, HasCustomGetMethod {
 
   // sourcery: pymethod = __getattribute__
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.extractName(from: name)
-      .flatMap(self.getAttribute(name:))
+    switch AttributeHelper.extractName(from: name) {
+    case let .value(n):
+      return self.getAttribute(name: n)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   internal func getAttribute(name: PyString) -> PyResult<PyObject> {
@@ -634,8 +638,12 @@ public final class PyType: PyObject, HasCustomGetMethod {
       return .error(error)
     }
 
-    return AttributeHelper.extractName(from: name)
-      .flatMap { self.setAttribute(name: $0, value: value) }
+    switch AttributeHelper.extractName(from: name) {
+    case let .value(n):
+      return self.setAttribute(name: n, value: value)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   internal func setAttribute(name: PyString, value: PyObject?) -> PyResult<PyNone> {

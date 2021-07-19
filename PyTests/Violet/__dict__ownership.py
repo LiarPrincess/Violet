@@ -445,7 +445,10 @@ except AttributeError:
     pass
 
 try:
-    str.count.__dict__
+    # We can't just use 'str.count',
+    # we have to bind it to specific instance
+    method = ''.count
+    method.__dict__
     assert False, 'builtinMethod'
 except AttributeError:
     pass
@@ -456,24 +459,32 @@ except AttributeError:
 def dummy_fn(): pass
 
 
+dummy_fn.__dict__
+
+
 class DummyClass:
     def method(self): pass
 
-    @classmethod
-    def class_method(cls): pass
 
-    @staticmethod
-    def static_method_(): pass
+# We can't just use 'DummyClass.method',
+# we have to bind it to specific instance
+c = DummyClass()
+method = c.method
+method.__dict__
 
+# We can't use ' @classmethod DummyClass.class_method',
+# because then getter ('DummyClass.class_method' thingy)
+# would bind it to 'cls' ('DummyClass') creating 'method'.
+class_method = classmethod(dummy_fn)
+class_method.__dict__
 
-dummy_fn.__dict__
-DummyClass.method.__dict__
-# print(type(DummyClass.class_method))
-# DummyClass.classmethod.__dict__ # TODO: XXX
-DummyClass.static_method_.__dict__
+# While we could use '@staticmethod' inside 'DummyClass',
+# we will just use '__init__' for symmetry with 'classmethod'.
+static_method_ = staticmethod(dummy_fn)
+static_method_.__dict__
+
 
 # === property ===
-
 
 class DummyClass:
     @property

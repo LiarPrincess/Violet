@@ -48,8 +48,12 @@ public final class PyNone: PyObject, HasCustomGetMethod {
 
   // sourcery: pymethod = __getattribute__
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.extractName(from: name)
-      .flatMap(self.getAttribute(name:))
+    switch AttributeHelper.extractName(from: name) {
+    case let .value(n):
+      return self.getAttribute(name: n)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   public func getAttribute(name: PyString) -> PyResult<PyObject> {

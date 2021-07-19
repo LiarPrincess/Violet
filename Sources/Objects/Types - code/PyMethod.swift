@@ -1,6 +1,6 @@
 import VioletBytecode
 
-// cSpell:ignore classobject
+// cSpell:ignore classobject method_getattro
 
 // In CPython:
 // Objects -> classobject.c
@@ -86,16 +86,15 @@ public final class PyMethod: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    let funcNamePyObject =
-      self.function.__dict__.get(id: .__qualname__) ??
-      self.function.__dict__.get(id: .__name__)
+    let objectRepr: String
+    switch Py.reprString(object: self.object) {
+    case let .value(s): objectRepr = s
+    case let .error(e): return .error(e)
+    }
 
-    let funcNamePyString = funcNamePyObject.flatMap(PyCast.asString(_:))
-    let funcName = funcNamePyString?.value ?? self.function.name.value
-
-    let ptr = self.object.ptr
-    let type = self.object.typeName
-    return .value("<bound method \(funcName) of \(type) object at \(ptr)>")
+    let functionName = self.function.qualname.value
+    let result = "<bound method \(functionName) of \(objectRepr)>"
+    return .value(result)
   }
 
   // MARK: - Class
@@ -127,8 +126,38 @@ public final class PyMethod: PyObject {
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
+  /// static PyObject *
+  /// method_getattro(PyObject *obj, PyObject *name)
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
+    switch AttributeHelper.extractName(from: name) {
+    case let .value(n):
+      return self.getAttribute(name: n)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  /// static PyObject *
+  /// method_getattro(PyObject *obj, PyObject *name)
+  internal func getAttribute(name: PyString) -> PyResult<PyObject> {
+    switch self.type.lookup(name: name) {
+    case .value(let value):
+      if let descriptor = GetDescriptor(object: self, attribute: value) {
+        return descriptor.call()
+      } else {
+        return .value(value)
+      }
+
+    case .notFound:
+      // Take 'attribute' from function!
+      // Easy to miss.
+      // (In fact we totally did miss it when implementing this type)
+      let function = self.function
+      return AttributeHelper.getAttribute(from: function, name: name)
+
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // sourcery: pymethod = __setattr__
