@@ -139,7 +139,7 @@ public final class CodeObject: Equatable {
       case let .complex(r, i): return "complex(real: \(r), imag: \(i))"
       case let .string(s): return "string(\(s))"
       case let .bytes(b): return "bytes(\(b))"
-      case let .code(c): return "code(\(c))"
+      case let .code(c): return "code(name: \(c.name), qualifiedName: \(c.qualifiedName))"
       case let .tuple(t): return "tuple(\(t))"
       }
     }

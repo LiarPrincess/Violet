@@ -4,9 +4,13 @@
 
 extension CodeObject {
 
-  public struct FilledInstruction {
+  public struct FilledInstruction: CustomStringConvertible {
     public let instruction: Instruction.Filled
     public let nextInstructionIndex: Int?
+
+    public var description: String {
+      return String(describing: self.instruction)
+    }
   }
 
   /// Get instruction with proper typed argument.
