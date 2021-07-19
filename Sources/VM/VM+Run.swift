@@ -120,6 +120,11 @@ extension VM {
     case .error(let e): return e
     }
 
+    #if DEBUG
+    // Most of the time we don't want to debug importlib
+    Debug.isAfterImportlib = true
+    #endif
+
     return nil
   }
 

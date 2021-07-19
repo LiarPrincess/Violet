@@ -12,11 +12,20 @@ private let isEnabled = false
 /// Printing various things (to help with debugging)
 internal enum Debug {
 
+  #if DEBUG
+  // Most of the time we don't want to debug importlib
+  internal static var isAfterImportlib = false
+
+  private static var isEnabledAndAfterImportlib: Bool {
+    return isEnabled && self.isAfterImportlib
+  }
+  #endif
+
   // MARK: - Parser, compiler
 
   internal static func ast(_ ast: AST) {
     #if DEBUG
-    guard isEnabled else { return }
+    guard Self.isEnabledAndAfterImportlib else { return }
     print("=== AST ===")
     print(ast)
     print()
@@ -25,7 +34,7 @@ internal enum Debug {
 
   internal static func code(_ code: PyCode) {
     #if DEBUG
-    guard isEnabled else { return }
+    guard Self.isEnabledAndAfterImportlib else { return }
 
     let qualifiedName = code.qualifiedName.value
     let title = qualifiedName.isEmpty ? "(no name)" : qualifiedName
@@ -47,7 +56,7 @@ internal enum Debug {
                                    index: Int,
                                    extendedArg: Int) {
     #if DEBUG
-    guard isEnabled else { return }
+    guard Self.isEnabledAndAfterImportlib else { return }
     let byte = index * Instruction.byteSize
     let dump = code.codeObject.getFilledInstruction(index: index)
     print("\(byte): \(dump)")
@@ -58,14 +67,14 @@ internal enum Debug {
 
   internal static func frameStart(frame: PyFrame) {
     #if DEBUG
-    guard isEnabled else { return }
+    guard Self.isEnabledAndAfterImportlib else { return }
     print("--- Frame start: \(frame.code.name.value) ---")
     #endif
   }
 
   internal static func frameEnd(frame: PyFrame) {
     #if DEBUG
-    guard isEnabled else { return }
+    guard Self.isEnabledAndAfterImportlib else { return }
     print("--- Frame end: \(frame.code.name.value) ---")
     #endif
   }
@@ -74,7 +83,7 @@ internal enum Debug {
 
   internal static func stack(stack: PyFrame.ObjectStack) {
     #if DEBUG
-    guard isEnabled else { return }
+    guard Self.isEnabledAndAfterImportlib else { return }
 
     if stack.isEmpty {
       print("  Stack: (empty)")
@@ -94,7 +103,7 @@ internal enum Debug {
 
   internal static func stack(stack: PyFrame.BlockStack) {
     #if DEBUG
-    guard isEnabled else { return }
+    guard Self.isEnabledAndAfterImportlib else { return }
 
     if stack.isEmpty {
       print("  Blocks: (empty)")
@@ -112,14 +121,14 @@ internal enum Debug {
 
   internal static func push(block: PyFrame.Block) {
     #if DEBUG
-    guard isEnabled else { return }
+    guard Self.isEnabledAndAfterImportlib else { return }
     print("  push block:", block)
     #endif
   }
 
   internal static func pop(block: PyFrame.Block?) {
     #if DEBUG
-    guard isEnabled else { return }
+    guard Self.isEnabledAndAfterImportlib else { return }
     let s = block.map(String.init(describing:)) ?? "nil"
     print("  pop block:", s)
     #endif
@@ -132,7 +141,7 @@ internal enum Debug {
                                b: PyObject,
                                result: PyResult<PyObject>) {
     #if DEBUG
-    guard isEnabled else { return }
+    guard Self.isEnabledAndAfterImportlib else { return }
     print("  type:", type)
     print("  a:", a)
     print("  b:", b)
@@ -147,7 +156,7 @@ internal enum Debug {
                                     kwargs: PyDict.OrderedDictionary?,
                                     result: PyInstance.CallResult) {
     #if DEBUG
-    guard isEnabled else { return }
+    guard Self.isEnabledAndAfterImportlib else { return }
     print("  fn:", fn)
     print("  args:", args)
     if let kwargs = kwargs {
@@ -159,7 +168,7 @@ internal enum Debug {
 
   internal static func loadMethod(method: PyInstance.GetMethodResult) {
     #if DEBUG
-    guard isEnabled else { return }
+    guard Self.isEnabledAndAfterImportlib else { return }
     print("  method:", method)
     #endif
   }
@@ -168,7 +177,7 @@ internal enum Debug {
                                   args: [PyObject],
                                   result: PyInstance.CallResult) {
     #if DEBUG
-    guard isEnabled else { return }
+    guard Self.isEnabledAndAfterImportlib else { return }
     print("  method:", method)
     print("  args:", args)
     print("  result:", result)
