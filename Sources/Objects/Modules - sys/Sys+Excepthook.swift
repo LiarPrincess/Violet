@@ -54,8 +54,7 @@ extension Sys {
       // User does not want any printing
       return .value(Py.none)
     case .value(let file):
-      // 'printRecursive' swallows any errors
-      Py.printRecursive(error: error, file: file)
+      Py.printRecursiveIgnoringErrors(error: error, file: file)
       return .value(Py.none)
     case .error(let e):
       return .error(e)

@@ -117,7 +117,7 @@ struct TestRunner {
 
       // 'printRecursive' ignores any new errors
       print("  ✖ Error:")
-      Py.printRecursive(error: error, file: stdout)
+      Py.printRecursiveIgnoringErrors(error: error, file: stdout)
       self.failedTests.append(test)
 
       if self.stopAtFirstFailedTest {

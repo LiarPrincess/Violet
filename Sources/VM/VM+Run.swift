@@ -216,8 +216,7 @@ extension VM {
   internal func writeToStderr(error: PyBaseException) -> WriteToStreamResult {
     switch Py.sys.getStderrOrNone() {
     case .value(let file):
-      // 'printRecursive' swallows any error
-      Py.printRecursive(error: error, file: file)
+      Py.printRecursiveIgnoringErrors(error: error, file: file)
       return .ok
     case .none:
       return .streamIsNone

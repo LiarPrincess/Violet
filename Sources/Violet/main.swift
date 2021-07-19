@@ -64,7 +64,8 @@ case .error(let error):
   }
 
   func write(string: String) {
-    _ = stderr.write(string: string) // Ignore error (again)
+    // Ignore error (again, yep… there is a pattern here)
+    _ = stderr.write(string: string)
   }
 
   // 'switch' is better than series of 'ifs', because it checks for exhaustiveness
@@ -78,18 +79,17 @@ case .error(let error):
 
   case .missing:
     write(string: "sys.excepthook is missing\n")
-    // 'printRecursive' ignores any new errors (just like we are doing right now)
-    Py.printRecursive(error: error, file: stderr)
+    Py.printRecursiveIgnoringErrors(error: error, file: stderr)
 
   case .notCallable(let hookError),
        .error(let hookError):
     // There was an error when displaying an error… well… bad day?
 
     write(string: "Error in sys.excepthook:\n")
-    Py.printRecursive(error: hookError, file: stderr)
+    Py.printRecursiveIgnoringErrors(error: hookError, file: stderr)
 
     write(string: "\nOriginal exception was:\n")
-    Py.printRecursive(error: error, file: stderr)
+    Py.printRecursiveIgnoringErrors(error: error, file: stderr)
   }
 
   // Regardless of whether we did print something or not, it is still an error

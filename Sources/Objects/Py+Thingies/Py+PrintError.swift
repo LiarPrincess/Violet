@@ -80,20 +80,21 @@ extension PyInstance {
   ///
   /// static void
   /// print_exception_recursive(PyObject *f, PyObject *value, PyObject *seen)
-  public func printRecursive(error: PyBaseException, file: PyTextFile) {
+  public func printRecursiveIgnoringErrors(error: PyBaseException,
+                                           file: PyTextFile) {
     var alreadyPrinted = Set<ObjectIdentifier>()
-    self.printRecursive(error: error,
-                        file: file,
-                        alreadyPrinted: &alreadyPrinted)
+    self.printRecursiveIgnoringErrors(error: error,
+                                      file: file,
+                                      alreadyPrinted: &alreadyPrinted)
   }
 
   /// This function will swallow any error and continue printing!
   ///
   /// static void
   /// print_exception_recursive(PyObject *f, PyObject *value, PyObject *seen)
-  private func printRecursive(error: PyBaseException,
-                              file: PyTextFile,
-                              alreadyPrinted: inout Set<ObjectIdentifier>) {
+  private func printRecursiveIgnoringErrors(error: PyBaseException,
+                                            file: PyTextFile,
+                                            alreadyPrinted: inout Set<ObjectIdentifier>) {
     // Mark it as 'already printed' (even though it was not yet printed),
     // to prevent infinite recursion.
     let id = ObjectIdentifier(error)
@@ -102,18 +103,18 @@ extension PyInstance {
     if let cause = error.getCause() {
       let causeId = ObjectIdentifier(cause)
       if !alreadyPrinted.contains(causeId) {
-        self.printRecursive(error: cause,
-                            file: file,
-                            alreadyPrinted: &alreadyPrinted)
+        self.printRecursiveIgnoringErrors(error: cause,
+                                          file: file,
+                                          alreadyPrinted: &alreadyPrinted)
 
         _ = self.write(file: file, string: causeMsg) // swallow error
       }
     } else if let context = error.getContext(), !error.getSuppressContext() {
       let contextId = ObjectIdentifier(context)
       if !alreadyPrinted.contains(contextId) {
-        self.printRecursive(error: context,
-                            file: file,
-                            alreadyPrinted: &alreadyPrinted)
+        self.printRecursiveIgnoringErrors(error: context,
+                                          file: file,
+                                          alreadyPrinted: &alreadyPrinted)
 
         _ = self.write(file: file, string: contextMsg) // swallow error
       }
