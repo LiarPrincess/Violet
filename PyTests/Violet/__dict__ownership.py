@@ -1,6 +1,13 @@
 import builtins
 import sys
 
+# === Not tested ===
+
+# cell
+# TextFile
+
+# === Basic ===
+
 # object
 try:
     o = object()
@@ -554,7 +561,69 @@ try:
 except AttributeError:
     pass
 
-# === Not tested ===
+# === Errors ===
 
-# cell
-# TextFile
+BaseException('').__dict__
+SystemExit('').__dict__
+KeyboardInterrupt('').__dict__
+GeneratorExit('').__dict__
+Exception('').__dict__
+StopIteration('').__dict__
+StopAsyncIteration('').__dict__
+ArithmeticError('').__dict__
+FloatingPointError('').__dict__
+OverflowError('').__dict__
+ZeroDivisionError('').__dict__
+AssertionError('').__dict__
+AttributeError('').__dict__
+BufferError('').__dict__
+EOFError('').__dict__
+ImportError('').__dict__
+ModuleNotFoundError('').__dict__
+LookupError('').__dict__
+IndexError('').__dict__
+KeyError('').__dict__
+MemoryError('').__dict__
+NameError('').__dict__
+UnboundLocalError('').__dict__
+OSError('').__dict__
+BlockingIOError('').__dict__
+ChildProcessError('').__dict__
+ConnectionError('').__dict__
+BrokenPipeError('').__dict__
+ConnectionAbortedError('').__dict__
+ConnectionRefusedError('').__dict__
+ConnectionResetError('').__dict__
+FileExistsError('').__dict__
+FileNotFoundError('').__dict__
+InterruptedError('').__dict__
+IsADirectoryError('').__dict__
+NotADirectoryError('').__dict__
+PermissionError('').__dict__
+ProcessLookupError('').__dict__
+TimeoutError('').__dict__
+ReferenceError('').__dict__
+RuntimeError('').__dict__
+NotImplementedError('').__dict__
+RecursionError('').__dict__
+SyntaxError('').__dict__
+IndentationError('').__dict__
+TabError('').__dict__
+SystemError('').__dict__
+TypeError('').__dict__
+ValueError('').__dict__
+UnicodeError('').__dict__
+UnicodeDecodeError('ascii', b'', 0, 1, '?').__dict__
+UnicodeEncodeError('ascii', '', 0, 1, '?').__dict__
+UnicodeTranslateError('ascii', 0, 1, '?').__dict__
+Warning('').__dict__
+DeprecationWarning('').__dict__
+PendingDeprecationWarning('').__dict__
+RuntimeWarning('').__dict__
+SyntaxWarning('').__dict__
+UserWarning('').__dict__
+FutureWarning('').__dict__
+ImportWarning('').__dict__
+UnicodeWarning('').__dict__
+BytesWarning('').__dict__
+ResourceWarning('').__dict__
