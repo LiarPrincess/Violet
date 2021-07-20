@@ -103,19 +103,17 @@ def print_expected(lines: List[str]):
                 '.isNot' if args == 'is not' else \
                 '.in' if args == 'in' else \
                 '.notIn' if args == 'not in' else \
+                '.exceptionMatch' if args == 'exception match' else \
                 args
 
             args = 'type: ' + compare_type
 
         elif name == 'setupLoop':
-            value = int(args).__floordiv__(2)
-            args = f'loopEndLabel: CodeObject.Label(jumpAddress: {value})'
+            args = 'loopEndTarget: ' + args
         elif name == 'forIter':
-            value = int(args).__floordiv__(2)
-            args = f'ifEmptyLabel: CodeObject.Label(jumpAddress: {value})'
+            args = 'ifEmptyTarget: ' + args
         elif name == '':
-            value = int(args).__floordiv__(2)
-            args = f'loopStartLabel: CodeObject.Label(jumpAddress: {value})'
+            args = 'loopStartTarget: ' + args
 
         elif name in ('buildTuple', 'buildList', 'buildSet', 'buildMap', 'buildConstKeyMap'):
             args = 'elementCount: ' + args
@@ -144,6 +142,8 @@ def print_expected(lines: List[str]):
                     args = 'float: ' + args
                 else:
                     args = 'integer: ' + args
+            elif 'code object' in args:
+                args = 'codeObject: .any'
 
             elif args.startswith("'") or args.startswith('"'):
                 args = args.replace("'", '"')  # ' -> "
@@ -164,7 +164,7 @@ def print_expected(lines: List[str]):
         elif name in ('loadGlobal', 'storeGlobal', 'deleteGlobal'):
             args = f'name: "{args}"'
         elif name in ('loadFast', 'storeFast', 'deleteFast'):
-            args = f'variable: "{args}"'
+            args = f'variable: MangledName(withoutClass: "{args}")'
         # TODO: cell and free
         # case loadCellOrFree(cellOrFree: MangledName)
         # case storeCellOrFree(cellOrFree: MangledName)
@@ -191,24 +191,27 @@ def print_expected(lines: List[str]):
             args = 'name: ' + args
 
         elif name == 'setupExcept':
-            args = 'firstExceptLabel:' + args
+            args = f'firstExceptTarget: {args}'
         elif name == 'setupFinally':
-            args = 'finallyStartLabel:' + args
+            args = f'finallyStartTarget: {args}'
         elif name == 'raiseVarargs':
-            pass  # TODO: raiseVarargs
+            if args == '1':
+                args = 'type: .exceptionOnly'
+            else:
+                # TODO: Other 'raiseVarargs'
+                assert False, 'Add missing raiseVarargs arguments'
 
         elif name == 'setupWith':
-            args = 'afterBodyLabel:' + args
+            args = 'afterBodyTarget: ' + args
 
         elif name in ('jumpAbsolute', 'popJumpIfTrue', 'popJumpIfFalse', 'jumpIfTrueOrPop', 'jumpIfFalseOrPop'):
-            value = int(args).__floordiv__(2)
-            args = f'label: CodeObject.Label(jumpAddress: {value})'
+            args = f'target: {args}'
 
         elif name == 'formatValue':
             pass  # TODO: formatValue
 
         elif name == 'buildString':
-            args = 'elementCount: Int):' + args
+            args = 'elementCount:' + args
         elif name == 'buildSlice':
             pass  # TODO: buildSlice
 
