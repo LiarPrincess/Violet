@@ -158,6 +158,7 @@ extension CompilerImpl {
     for (index, handler) in handlers.enumerated() {
       let isLast = index == handlers.count - 1
 
+      // default 'except:' must be last
       if case .default = handler.kind, !isLast {
         throw self.error(.defaultExceptNotLast)
       }
@@ -175,7 +176,8 @@ extension CompilerImpl {
 
       if case let .typed(type: _, asName: asName) = handler.kind,
               let name = asName {
-        self.builder.appendStoreName(name) // we have name -> store exception
+        // we have name -> store exception
+        self.visitName(name: name, context: .store)
 
         // try:
         //     # body
@@ -201,9 +203,9 @@ extension CompilerImpl {
         self.inBlock(.finallyEnd) {
           // name = None
           self.builder.appendNone()
-          self.builder.appendStoreName(name)
+          self.visitName(name: name, context: .store)
           // del name
-          self.builder.appendDeleteName(name)
+          self.visitName(name: name, context: .del)
           // cleanup
           self.builder.appendEndFinally()
           self.builder.appendPopExcept()

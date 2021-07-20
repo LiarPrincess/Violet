@@ -123,6 +123,8 @@ class CompileTry: CompileTestCase {
     )
   }
 
+  // MARK: - Except with type
+
   /// try: mulan
   /// except soldier: ping
   ///
@@ -197,6 +199,8 @@ class CompileTry: CompileTestCase {
       ]
     )
   }
+
+  // MARK: - Except with type and binding
 
   /// try: mulan
   /// except disguise as soldier: ping
@@ -287,6 +291,161 @@ class CompileTry: CompileTestCase {
       ]
     )
   }
+
+  /// def disquise():
+  ///     try:
+  ///         raise Woman('Mulan')
+  ///     except NotAMan as e:
+  ///         e.name
+  ///
+  ///  0 LOAD_CONST               0 (<code object disquise at 0x106791710, file "<dis>", line 1>)
+  ///  2 LOAD_CONST               1 ('disquise')
+  ///  4 MAKE_FUNCTION            0
+  ///  6 STORE_NAME               0 (disquise)
+  ///  8 LOAD_CONST               2 (None)
+  /// 10 RETURN_VALUE
+  /// f <code object disquise at 0x106791710, file "<dis>", line 1>:
+  ///  0 SETUP_FINALLY           12 (to 14)
+  ///  2 LOAD_GLOBAL              0 (Woman)
+  ///  4 LOAD_CONST               1 ('Mulan')
+  ///  6 CALL_FUNCTION            1
+  ///  8 RAISE_VARARGS            1
+  /// 10 POP_BLOCK
+  /// 12 JUMP_FORWARD            40 (to 54)
+  /// 14 DUP_TOP
+  /// 16 LOAD_GLOBAL              1 (NotAMan)
+  /// 18 COMPARE_OP              10 (exception match)
+  /// 20 POP_JUMP_IF_FALSE       52
+  /// 22   POP_TOP  - NOPE, we only store exception on stack (without type and traceback)
+  /// 24 STORE_FAST               0 (e)
+  /// 26   POP_TOP  - NOPE, we only store exception on stack (without type and traceback)
+  /// 28 SETUP_FINALLY           10 (to 40)
+  /// 30 LOAD_FAST                0 (e)
+  /// 32 LOAD_ATTR                2 (name)
+  /// 34 POP_TOP
+  /// 36 POP_BLOCK
+  /// 38 BEGIN_FINALLY
+  /// 40 LOAD_CONST               0 (None)
+  /// 42 STORE_FAST               0 (e)
+  /// 44 DELETE_FAST              0 (e)
+  /// 46 END_FINALLY
+  /// 48 POP_EXCEPT
+  /// 50 JUMP_FORWARD             2 (to 54)
+  /// 52 END_FINALLY
+  /// 54 LOAD_CONST               0 (None)
+  /// 56 RETURN_VALUE
+  func test_except_type_withName_inFunction() {
+    // We need this test, because functions should use 'fast' for arguments
+
+    let stmt = self.functionDefStmt(
+      name: "disquise",
+      args: self.arguments(),
+      body: [
+        self.tryStmt(
+          body: [
+            self.raiseStmt(
+              exception:
+                self.callExpr(
+                  function: self.identifierExpr(value: "Woman"),
+                  args: [self.stringExpr(value: .literal("Mulan"))],
+                  keywords: []
+                ),
+              cause: nil
+            )
+          ],
+          handlers: [
+            self.exceptHandler(
+              kind: .typed(
+                type: self.identifierExpr(value: "NotAMan"),
+                asName: "e"
+              ),
+              body: [
+                self.exprStmt(
+                  expression: self.attributeExpr(
+                    object: self.identifierExpr(value: "e"),
+                    name: "name"
+                  )
+                )
+              ]
+            )
+          ],
+          orElse: [],
+          finally: []
+        )
+      ]
+    )
+
+    guard let code = self.compile(stmt: stmt) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadConst(codeObject: .any), // 0
+        .loadConst(string: "disquise"), // 1
+        .makeFunction(flags: []), // 2
+        .storeName(name: "disquise"), // 3
+        .loadConst(.none), // 4
+        .return // 5
+      ],
+      childCodeObjectCount: 1
+    )
+
+    guard let functionCode = code.getChildCodeObject(atIndex: 0) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      functionCode,
+      name: "disquise",
+      qualifiedName: "disquise",
+      kind: .function,
+      flags: [.nested, .newLocals, .optimized],
+      instructions: [
+        // different label as we pop only once
+        .setupExcept(firstExceptTarget: 14),
+        .loadGlobal(name: "Woman"),
+        .loadConst(string: "Mulan"),
+        .callFunction(argumentCount: 1),
+        .raiseVarargs(type: .exceptionOnly),
+        .popBlock,
+        // different label as we pop only once
+        .jumpAbsolute(target: 50),
+        .dupTop, // this is 7
+        .loadGlobal(name: "NotAMan"),
+        .compareOp(type: .exceptionMatch),
+        // different label as we pop only once
+        .popJumpIfFalse(target: 48),
+//        .popTop,
+        .storeFast(variable: MangledName(withoutClass: "e")),
+//        .popTop,
+        // different label as we pop only once
+        .setupFinally(finallyStartTarget: 36),
+        .loadFast(variable: MangledName(withoutClass: "e")),
+        .loadAttribute(name: "name"),
+        .popTop,
+        .popBlock,
+        .loadConst(.none),
+        .loadConst(.none), // this is 36
+        .storeFast(variable: MangledName(withoutClass: "e")),
+        .deleteFast(variable: MangledName(withoutClass: "e")),
+        .endFinally,
+        .popExcept,
+        .jumpAbsolute(target: 50),
+        // different label as we pop only once
+        .endFinally, // this is 48
+        .loadConst(.none), // this is 50
+        .return
+      ]
+    )
+  }
+
+  // MARK: - Multiple except
 
   /// try: mulan
   /// except soldier: ping
@@ -383,6 +542,8 @@ class CompileTry: CompileTestCase {
     )
   }
 
+  // MARK: - Except, else
+
   /// try: mulan
   /// except: ping
   /// else: faMulan
@@ -450,6 +611,8 @@ class CompileTry: CompileTestCase {
       ]
     )
   }
+
+  // MARK: - Except, finally
 
   /// try: mulan
   /// except: ping
@@ -527,6 +690,8 @@ class CompileTry: CompileTestCase {
       ]
     )
   }
+
+  // MARK: - Except, else, finally
 
   /// try: mulan
   /// except: ping

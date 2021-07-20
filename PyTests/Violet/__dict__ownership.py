@@ -540,7 +540,6 @@ except AttributeError:
 
 # traceback
 
-# TODO: XXX
 def give_me_traceback():
     try:
         raise ValueError('dummy')
@@ -548,12 +547,12 @@ def give_me_traceback():
         return e.__traceback__
 
 
-# try:
-#     tb = give_me_traceback()
-#     tb.__dict__
-#     assert False, 'traceback'
-# except AttributeError:
-#     pass
+try:
+    tb = give_me_traceback()
+    tb.__dict__
+    assert False, 'traceback'
+except AttributeError:
+    pass
 
 # === Not tested ===
 

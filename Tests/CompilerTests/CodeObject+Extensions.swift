@@ -40,8 +40,8 @@ extension CodeObject {
 
 extension CodeObject {
 
-  func getAllFilledInstructions(file: StaticString,
-                                line: UInt) -> [Instruction.Filled] {
+  func getAllFilledInstructions(file: StaticString = #file,
+                                line: UInt = #line) -> [Instruction.Filled] {
     if self.instructions.isEmpty {
       return []
     }
