@@ -6,7 +6,6 @@ func withRedirectedStandardOutput(to file: URL, block: () -> Void) {
   fclose(stdout)
 }
 
-// swiftlint:disable:next unavailable_function
 func trap(_ msg: String) -> Never {
   fatalError(msg)
 }

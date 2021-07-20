@@ -244,7 +244,6 @@ class OrderedDictionaryTests: XCTestCase {
   // MARK: - Index calculation
 
   func test_indexCalculation_eventually_triesAllIndices() {
-    // swiftlint:disable:next nesting
     typealias Dict = OrderedDictionary<Int, String>
 
     let size = 32

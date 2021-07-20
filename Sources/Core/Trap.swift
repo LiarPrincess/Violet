@@ -1,5 +1,3 @@
-// swiftlint:disable unavailable_function
-
 /// Our own version of `fatalError`.
 ///
 /// Call this when one of the core invariants is broken and it may not be safe

@@ -246,7 +246,6 @@ extension PyInstance {
     case let .error(e): return .error(e)
     }
 
-    // swiftlint:disable:next nesting
     enum Result {
       case value(String)
       case decodingError(PyBaseException)
