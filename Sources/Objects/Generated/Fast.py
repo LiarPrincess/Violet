@@ -114,6 +114,7 @@ if __name__ == '__main__':
 import BigInt
 import VioletCore
 
+// swiftlint:disable colon
 // swiftlint:disable line_length
 // swiftlint:disable opening_brace
 // swiftlint:disable trailing_newline

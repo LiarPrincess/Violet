@@ -5,8 +5,7 @@ import VioletObjects
 ///
 /// Basically it will call a method on provided `FileDescriptor`
 /// and then in case of exception it will convert it to Python error.
-internal struct FileDescriptorAdapter:
-  CustomStringConvertible, FileDescriptorType {
+internal struct FileDescriptorAdapter: CustomStringConvertible, FileDescriptorType {
 
   private let fd: FileDescriptor
   /// Path for error messages

@@ -3,12 +3,12 @@ import Foundation
 /// Case name -> value to print
 private let specialCases = [
   // Instruction.CompareType
-  "equal" : "==",
-  "notEqual" : "!=",
-  "less" : "<",
-  "lessEqual" : "<=",
-  "greater" : ">",
-  "greaterEqual" : ">="
+  "equal": "==",
+  "notEqual": "!=",
+  "less": "<",
+  "lessEqual": "<=",
+  "greater": ">",
+  "greaterEqual": ">="
 ]
 
 class EmitBytecodeDescriptionVisitor: BytecodeFileVisitor {

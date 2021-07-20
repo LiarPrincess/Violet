@@ -99,7 +99,7 @@ class UnicodeDataASCIITests: XCTestCase {
   func test_titlecase() {
     for (value, scalar, msg) in testData {
       let isResult = UnicodeData.isTitlecase(scalar)
-      XCTAssertEqual(isResult, false, msg)
+      XCTAssertFalse(isResult, msg)
 
       let isLower = lowercaseRange.contains(value)
       let mappingExpected = isLower ? value - 32 : value

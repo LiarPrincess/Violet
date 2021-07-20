@@ -9,8 +9,9 @@ import VioletBytecode
 
 /// Just like `Compiler` is a wrapper for `CompilerImpl`,
 /// we have `SymbolTableBuilder` as a wrapper for `SymbolTableBuilderImpl`.
-internal final class SymbolTableBuilderImpl:
-  ASTVisitor, StatementVisitor, ExpressionVisitor {
+internal final class SymbolTableBuilderImpl: ASTVisitor,
+                                             StatementVisitor,
+                                             ExpressionVisitor {
 
   internal typealias ASTResult = Void
   internal typealias StatementResult = Void

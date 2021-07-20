@@ -7,6 +7,7 @@ import XCTest
 import UnicodeData
 
 // swiftlint:disable superfluous_disable_command
+// swiftlint:disable xct_specific_matcher
 // swiftlint:disable type_name
 // swiftlint:disable file_length
 
@@ -2393,34 +2394,6 @@ class UnicodeDataTransportAndMapSymbolsTests: XCTestCase {
     XCTAssertEqual(UnicodeData.isPrintable(scalar), true)
   }
 
-  /// HINDU TEMPLE (U+1f6d5)
-  func test_hinduTemple() {
-    let scalar: UnicodeScalar = "\u{1f6d5}"
-
-    XCTAssertEqual(UnicodeData.isLowercase(scalar), false)
-    XCTAssertCase(UnicodeData.toLowercase(scalar), "\u{1f6d5}")
-    XCTAssertEqual(UnicodeData.isUppercase(scalar), false)
-    XCTAssertCase(UnicodeData.toUppercase(scalar), "\u{1f6d5}")
-    XCTAssertEqual(UnicodeData.isTitlecase(scalar), false)
-    XCTAssertCase(UnicodeData.toTitlecase(scalar), "\u{1f6d5}")
-    XCTAssertCase(UnicodeData.toCasefold(scalar), "\u{1f6d5}")
-
-    XCTAssertEqual(UnicodeData.isDecimalDigit(scalar), false)
-    XCTAssertDigit(UnicodeData.toDecimalDigit(scalar), nil)
-    XCTAssertEqual(UnicodeData.isDigit(scalar), false)
-    XCTAssertDigit(UnicodeData.toDigit(scalar), nil)
-
-    XCTAssertEqual(ASCIIData.isASCII(scalar), false)
-    XCTAssertEqual(UnicodeData.isAlpha(scalar), false)
-    XCTAssertEqual(UnicodeData.isAlphaNumeric(scalar), false)
-    XCTAssertEqual(UnicodeData.isWhitespace(scalar), false)
-    XCTAssertEqual(UnicodeData.isLineBreak(scalar), false)
-    XCTAssertEqual(UnicodeData.isXidStart(scalar), false)
-    XCTAssertEqual(UnicodeData.isXidContinue(scalar), false)
-    XCTAssertEqual(UnicodeData.isNumeric(scalar), false)
-    XCTAssertEqual(UnicodeData.isPrintable(scalar), false)
-  }
-
   /// '🛠' - HAMMER AND WRENCH (U+1f6e0)
   func test_hammerAndWrench() {
     let scalar: UnicodeScalar = "🛠"
@@ -3063,33 +3036,5 @@ class UnicodeDataTransportAndMapSymbolsTests: XCTestCase {
     XCTAssertEqual(UnicodeData.isXidContinue(scalar), false)
     XCTAssertEqual(UnicodeData.isNumeric(scalar), false)
     XCTAssertEqual(UnicodeData.isPrintable(scalar), true)
-  }
-
-  /// AUTO RICKSHAW (U+1f6fa)
-  func test_autoRickshaw() {
-    let scalar: UnicodeScalar = "\u{1f6fa}"
-
-    XCTAssertEqual(UnicodeData.isLowercase(scalar), false)
-    XCTAssertCase(UnicodeData.toLowercase(scalar), "\u{1f6fa}")
-    XCTAssertEqual(UnicodeData.isUppercase(scalar), false)
-    XCTAssertCase(UnicodeData.toUppercase(scalar), "\u{1f6fa}")
-    XCTAssertEqual(UnicodeData.isTitlecase(scalar), false)
-    XCTAssertCase(UnicodeData.toTitlecase(scalar), "\u{1f6fa}")
-    XCTAssertCase(UnicodeData.toCasefold(scalar), "\u{1f6fa}")
-
-    XCTAssertEqual(UnicodeData.isDecimalDigit(scalar), false)
-    XCTAssertDigit(UnicodeData.toDecimalDigit(scalar), nil)
-    XCTAssertEqual(UnicodeData.isDigit(scalar), false)
-    XCTAssertDigit(UnicodeData.toDigit(scalar), nil)
-
-    XCTAssertEqual(ASCIIData.isASCII(scalar), false)
-    XCTAssertEqual(UnicodeData.isAlpha(scalar), false)
-    XCTAssertEqual(UnicodeData.isAlphaNumeric(scalar), false)
-    XCTAssertEqual(UnicodeData.isWhitespace(scalar), false)
-    XCTAssertEqual(UnicodeData.isLineBreak(scalar), false)
-    XCTAssertEqual(UnicodeData.isXidStart(scalar), false)
-    XCTAssertEqual(UnicodeData.isXidContinue(scalar), false)
-    XCTAssertEqual(UnicodeData.isNumeric(scalar), false)
-    XCTAssertEqual(UnicodeData.isPrintable(scalar), false)
   }
 }

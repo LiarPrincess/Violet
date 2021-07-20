@@ -137,7 +137,7 @@ class SysFlagsTests: XCTestCase {
     args.inspectInteractively = true
 
     let flags = SysFlags(arguments: args, environment: env)
-    XCTAssertEqual(flags.inspect, true)
+    XCTAssertTrue(flags.inspect)
   }
 
   func test_ignoreEnvironment() {
@@ -147,7 +147,7 @@ class SysFlagsTests: XCTestCase {
     args.ignoreEnvironment = true
     let flags = SysFlags(arguments: args, environment: env)
 
-    XCTAssertEqual(flags.ignoreEnvironment, true)
+    XCTAssertTrue(flags.ignoreEnvironment)
   }
 
   func test_isolated() {
@@ -157,6 +157,6 @@ class SysFlagsTests: XCTestCase {
     args.isolated = true
     let flags = SysFlags(arguments: args, environment: env)
 
-    XCTAssertEqual(flags.isolated, true)
+    XCTAssertTrue(flags.isolated)
   }
 }

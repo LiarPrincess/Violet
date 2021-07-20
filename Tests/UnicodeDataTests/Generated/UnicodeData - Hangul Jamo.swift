@@ -7,6 +7,7 @@ import XCTest
 import UnicodeData
 
 // swiftlint:disable superfluous_disable_command
+// swiftlint:disable xct_specific_matcher
 // swiftlint:disable type_name
 // swiftlint:disable file_length
 

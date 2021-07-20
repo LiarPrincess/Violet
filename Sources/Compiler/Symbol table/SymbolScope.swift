@@ -58,7 +58,7 @@ public final class SymbolScope {
 
     enum Comprehension {
       /// Name of the `list` comprehension scope.
-      internal static let list  = "listcomp"
+      internal static let list = "listcomp"
       /// Name of the `set` comprehension scope.
       internal static let set = "setcomp"
       /// Name of the `dict` comprehension scope.

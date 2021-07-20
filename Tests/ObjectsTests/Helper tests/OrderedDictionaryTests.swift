@@ -125,7 +125,7 @@ class OrderedDictionaryTests: XCTestCase {
     var dict = self.createDictionary()
     self.insert(&dict, key: 2010, value: "Tangled")
 
-    XCTAssertEqual(self.remove(&dict, key: 2013), nil)
+    XCTAssertNil(self.remove(&dict, key: 2013))
 
     // Do we still have old entry?
     XCTAssertEqual(dict.count, 1)

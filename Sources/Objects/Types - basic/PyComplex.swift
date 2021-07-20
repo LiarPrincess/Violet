@@ -556,7 +556,7 @@ public final class PyComplex: PyObject {
     return .value(result)
   }
 
-  private static func allocate(type: PyType, real:Double, imag: Double) -> PyComplex {
+  private static func allocate(type: PyType, real: Double, imag: Double) -> PyComplex {
     // If this is a builtin then try to re-use interned values
     // (do we even have interned complex?)
     let isBuiltin = type === Py.types.complex

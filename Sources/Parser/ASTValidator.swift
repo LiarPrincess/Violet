@@ -17,8 +17,9 @@ public final class ASTValidator {
   }
 }
 
-internal final class ASTValidatorPass:
-  ASTVisitor, StatementVisitor, ExpressionVisitorWithPayload {
+internal final class ASTValidatorPass: ASTVisitor,
+                                       StatementVisitor,
+                                       ExpressionVisitorWithPayload {
 
   internal typealias ASTResult = Void
   internal typealias StatementResult = Void

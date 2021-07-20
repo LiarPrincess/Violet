@@ -299,7 +299,7 @@ class BigIntHeapShiftTests: XCTestCase {
     let shiftCount = Smi.Storage(Word.bitWidth + 1)
     value.shiftRight(count: shiftCount)
 
-    XCTAssertEqual(value.isNegative, false)
+    XCTAssertFalse(value.isNegative)
 
     XCTAssertEqual(value.storage.count, 2)
     guard value.storage.count == 2 else { return } // Prevent 'out of range' trap
