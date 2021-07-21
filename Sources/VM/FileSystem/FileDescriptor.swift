@@ -11,8 +11,8 @@
 // === Why? ===
 // Darwin version of 'Foundation' (macOS 10.14.6) has following problems:
 // 1) Read/write/etc. methods are not marked as throwing.
-//    This means that operating on closed/invalid files will always traps without
-//    giving us a chance to handle errors (well technically…).
+//    This means that operating on closed/invalid files will always trap without
+//    giving us a chance to handle errors (well technically… but we are not going there).
 //    As of 10.15 those methods are deprecated:
 //    https://developer.apple.com/documentation/foundation/filehandle/1410936-write
 // 2) In 10.15 new methods were introduced, for example:
@@ -50,18 +50,20 @@
 // - we are no longer NSObject
 // - no queues/barriers
 
+import Foundation
 import VioletCore
-import Foundation.NSData
 
 // FileHandle has a .read(upToCount:) method.
 // Just invoking read() will cause an ambiguity warning. Use _read instead.
 #if canImport(Darwin)
 import Darwin
+
 private let _read = Darwin.read(_:_:_:)
 private let _write = Darwin.write(_:_:_:)
 private let _close = Darwin.close(_:)
 #elseif canImport(Glibc)
 import Glibc
+
 private let _read = Glibc.read(_:_:_:)
 private let _write = Glibc.write(_:_:_:)
 private let _close = Glibc.close(_:)

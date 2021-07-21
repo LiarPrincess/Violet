@@ -16,6 +16,7 @@ private struct ObjectPropertyPair {
 private protocol MinMaxImpl {
   static var fnName: String { get }
   static var argumentParser: ArgumentParser { get }
+
   static func compare(current: PyObject, with element: PyObject) -> MinMaxResult
 }
 

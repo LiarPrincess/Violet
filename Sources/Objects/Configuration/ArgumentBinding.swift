@@ -1,5 +1,6 @@
 import ArgumentParser
 
+// swiftlint:disable let_var_whitespace
 // cSpell:ignore wstrlist
 
 // In CPython:

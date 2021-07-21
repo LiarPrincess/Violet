@@ -127,8 +127,8 @@ only_rules:
   # === Enabled optional rules ===
   # ==============================
 
-  # This may seem like a lot, but basically I like to write some code
-  # and then enable all of the optional rules that do not break the project.
+  # This may seem like a lot, but basically we enable all of the optional rules
+  # that do not break existing code.
 
   - anyobject_protocol
   - array_init
@@ -140,7 +140,9 @@ only_rules:
   - contains_over_filter_count
   - contains_over_filter_is_empty
   - contains_over_first_not_nil
+  - contains_over_range_nil_comparison
   - convenience_type
+  - discouraged_assert
   - discouraged_object_literal
   - discouraged_optional_boolean
   - discouraged_optional_collection
@@ -148,12 +150,14 @@ only_rules:
   - empty_count
   - empty_string
   - empty_xctest_method
+  - enum_case_associated_values_count
   - explicit_init
   - explicit_self
   - fallthrough
   - fatal_error_message
   - file_header
   - first_where
+  - flatmap_over_map_reduce
   - force_unwrapping
   - function_default_parameter_at_end
   - identical_operands
@@ -161,7 +165,9 @@ only_rules:
   - joined_default_parameter
   - last_where
   - legacy_multiple
+  - legacy_objc_type # we don't use Objective-C, but why not?
   - legacy_random
+  - let_var_whitespace
   - literal_expression_end_indentation
   - lower_acl_than_parent
   - modifier_order
@@ -174,9 +180,12 @@ only_rules:
   - number_separator
   - object_literal
   - operator_usage_whitespace
+  - optional_enum_case_matching
   - overridden_super_call
   - override_in_extension
   - pattern_matching_keywords
+  - prefer_self_type_over_type_of_self
+  - prefer_zero_over_explicit_init
   - private_action
   - private_outlet
   - prohibited_interface_builder
@@ -184,6 +193,7 @@ only_rules:
   - quick_discouraged_call
   - quick_discouraged_focused_test
   - quick_discouraged_pending_test
+  - raw_value_for_camel_cased_codable_enum # we don't use 'Codable', but why not
   - reduce_into
   - redundant_nil_coalescing
   - redundant_type_annotation
@@ -214,27 +224,35 @@ only_rules:
   # === Disabled optional rules ===
   # ===============================
 
+  # - balanced_xctest_lifecycle # this does not make sense for us
   # - conditional_returns_on_newline # Very often we do 'if X { return Y }'
+  # - discarded_notification_center_observer # we do not use NotificationCenter
+  # - expiring_todo # just use TODO, we do not have deadlines
   # - explicit_acl # we don't need acl in tests
   # - explicit_enum_raw_value # 'String' enums do not need explicit value
   # - explicit_top_level_acl # this one requires us to put acl before 'extension XXX'
   # - explicit_type_interface # this is weird
   # - extension_access_modifier
   # - file_name # we heavily use extensions for single type
+  # - file_name_no_space # we have tons of those
   # - file_types_order # declare helper type near usage
+  # - ibinspectable_in_extension # only for iOS
   # - implicit_return # Cool for properties, not cool for functions
-  # - let_var_whitespace
-  # - multiline_arguments_brackets
-  # - multiline_parameters_brackets
+  # - indentation_width # breaks when we have arguments/parameters in multiple lines
+  # - multiline_arguments_brackets # we sometimes put '(' at the same line as call
+  # - multiline_parameters_brackets # we sometimes put '(' at the same line as 'func' declaration
   # - no_grouping_extension
-  # - nslocalizedstring_key # is is not iOS
-  # - nslocalizedstring_require_bundle # is is not iOS
+  # - nslocalizedstring_key # only for iOS
+  # - nslocalizedstring_require_bundle # only for iOS
+  # - prefer_nimble # We are using 'XCTAssert'
   # - prefixed_toplevel_constant
+  # - private_subject # we do not use 'Combine'
   # - required_deinit
   # - sorted_imports # use 'Scripts/sort_swift_imports'
   # - strict_fileprivate # this one does not work properly?
-  # - strong_iboutlet  # is is not iOS
-  # - switch_case_on_newline
+  # - strong_iboutlet  # only for iOS
+  # - switch_case_on_newline # 'case let .error(e): return .error(e)' is an Violet idiom
+  # - test_case_accessibility # We sometimes create class hierarchy
   # - type_contents_order
   # - vertical_whitespace_between_cases
   # - vertical_whitespace_opening_braces

@@ -142,7 +142,8 @@ extension CompareOp {
 
 private enum EqualCompare: CompareOp {
 
-  typealias reflected = EqualCompare
+  fileprivate typealias reflected = EqualCompare
+
   fileprivate static let selector = IdString.__eq__
   fileprivate static let baseCompare = PyObjectType.isEqual
 
@@ -185,7 +186,8 @@ extension PyInstance {
 
 private enum NotEqualCompare: CompareOp {
 
-  typealias reflected = NotEqualCompare
+  fileprivate typealias reflected = NotEqualCompare
+
   fileprivate static let selector = IdString.__ne__
   fileprivate static let baseCompare = PyObjectType.isNotEqual
 
@@ -225,7 +227,8 @@ extension PyInstance {
 
 private enum LessCompare: CompareOp {
 
-  typealias reflected = GreaterCompare
+  fileprivate typealias reflected = GreaterCompare
+
   fileprivate static let selector = IdString.__lt__
   fileprivate static let baseCompare = PyObjectType.isLess
 
@@ -260,7 +263,8 @@ extension PyInstance {
 
 private enum LessEqualCompare: CompareOp {
 
-  typealias reflected = GreaterEqualCompare
+  fileprivate typealias reflected = GreaterEqualCompare
+
   fileprivate static let selector = IdString.__le__
   fileprivate static let baseCompare = PyObjectType.isLessEqual
 
@@ -295,7 +299,8 @@ extension PyInstance {
 
 private enum GreaterCompare: CompareOp {
 
-  typealias reflected = LessCompare
+  fileprivate typealias reflected = LessCompare
+
   fileprivate static let selector = IdString.__gt__
   fileprivate static let baseCompare = PyObjectType.isGreater
 
@@ -330,7 +335,8 @@ extension PyInstance {
 
 private enum GreaterEqualCompare: CompareOp {
 
-  typealias reflected = LessEqualCompare
+  fileprivate typealias reflected = LessEqualCompare
+
   fileprivate static let selector = IdString.__ge__
   fileprivate static let baseCompare = PyObjectType.isGreaterEqual
 

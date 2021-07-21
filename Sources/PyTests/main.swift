@@ -2,6 +2,8 @@ import Foundation
 import VioletCore
 import VioletObjects
 
+// swiftlint:disable let_var_whitespace
+
 let rootDir = FileSystem.getRepositoryRoot()
 let testDir = FileSystem.join(path: rootDir, element: "PyTests")
 

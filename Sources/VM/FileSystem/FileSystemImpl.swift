@@ -10,9 +10,11 @@ import VioletObjects
 
 #if canImport(Darwin)
 import Darwin
+
 private let _stat = Darwin.stat(_:_:)
 #elseif canImport(Glibc)
 import Glibc
+
 private let _stat = Darwin.stat(_:_:)
 #endif
 
