@@ -14,11 +14,11 @@ class InstructionTests: XCTestCase {
 
     base = 0xfafb
     result = Instruction.extend(base: base, arg: 0xff)
-    XCTAssertEqual(result, 0xfafbff)
+    XCTAssertEqual(result, 0xfa_fbff)
 
     base = 0xfa_fbfc
     result = Instruction.extend(base: base, arg: 0xff)
-    XCTAssertEqual(result, 0xfafbfcff)
+    XCTAssertEqual(result, 0xfafb_fcff)
   }
 
   // MARK: - Function flags

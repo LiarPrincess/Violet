@@ -334,6 +334,7 @@ public final class PySlice: PyObject {
       var length = 0
       if isGoingDown {
         if stop < start {
+          // swiftformat:disable:next redundantParens
           length = (start - stop - 1) / (-step) + 1
         }
       } else {

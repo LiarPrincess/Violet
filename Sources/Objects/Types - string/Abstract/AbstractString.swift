@@ -189,5 +189,5 @@ extension AbstractString {
   ///
   /// If we ever solve this, then remove this method, so that every function
   /// that uses it fails to compile.
-  internal func _wouldBeBetterWithRandomAccessCollection() { }
+  internal func _wouldBeBetterWithRandomAccessCollection() {}
 }

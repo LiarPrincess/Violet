@@ -93,10 +93,10 @@ class InstructionFilledDescriptionTests: XCTestCase {
     XCTAssertDescription(.compareOp(type: .greater), "compareOp(type: >)")
     XCTAssertDescription(.compareOp(type: .greaterEqual), "compareOp(type: >=)")
 
-    XCTAssertDescription(.compareOp(type: .`is`), "compareOp(type: is)")
+    XCTAssertDescription(.compareOp(type: .is), "compareOp(type: is)")
     XCTAssertDescription(.compareOp(type: .isNot), "compareOp(type: isNot)")
 
-    XCTAssertDescription(.compareOp(type: .`in`), "compareOp(type: in)")
+    XCTAssertDescription(.compareOp(type: .in), "compareOp(type: in)")
     XCTAssertDescription(.compareOp(type: .notIn), "compareOp(type: notIn)")
 
     XCTAssertDescription(
@@ -125,6 +125,7 @@ class InstructionFilledDescriptionTests: XCTestCase {
   }
 
   // MARK: - Loops and collections
+
 /*
   func test_loops() {
     XCTAssertDescription(
@@ -390,7 +391,7 @@ class InstructionFilledDescriptionTests: XCTestCase {
       "callFunctionEx(hasKeywordArguments: false)"
     )
     XCTAssertDescription(
-      .`return`,
+      .return,
       "return"
     )
     XCTAssertDescription(

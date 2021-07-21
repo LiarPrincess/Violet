@@ -50,7 +50,7 @@ public final class PyType: PyObject, HasCustomGetMethod {
   ///     Py_TPFLAGS_HAVE_STACKLESS_EXTENSION | \
   ///     Py_TPFLAGS_HAVE_VERSION_TAG)
   /// ```
-  internal static let `defaultFlag` = Flags.custom5
+  internal static let defaultFlag = Flags.custom5
 
   /// This type is a `int` subclass.
   ///

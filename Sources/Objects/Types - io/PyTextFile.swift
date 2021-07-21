@@ -247,7 +247,7 @@ public final class PyTextFile: PyObject {
       return .error(self.modeError("not writable"))
     }
 
-    switch encoding.encodeOrError(string: string, onError: self.errorHandling) {
+    switch self.encoding.encodeOrError(string: string, onError: self.errorHandling) {
     case let .value(data):
       return self.fd.write(contentsOf: data)
     case let .error(e):

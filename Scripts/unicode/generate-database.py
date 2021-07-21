@@ -220,6 +220,7 @@ def makeunicodetype(unicode: UnicodeData, trace: int, file_path: str):
 // swiftlint:disable number_separator
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
+// swiftformat:disable all
 
 private typealias Record = UnicodeData.Record
 private typealias CaseMapping = UnicodeData.CaseMapping

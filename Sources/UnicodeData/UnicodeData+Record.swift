@@ -136,7 +136,7 @@ extension UnicodeData {
         assert(0 <= title && title < maxIndex)
       } else {
         // Not extended -> relative offset to cased version.
-        let maxCode = 0x10ffff
+        let maxCode = 0x10_ffff
         assert(Swift.abs(upper) < maxCode)
         assert(Swift.abs(lower) < maxCode)
         assert(Swift.abs(title) < maxCode)

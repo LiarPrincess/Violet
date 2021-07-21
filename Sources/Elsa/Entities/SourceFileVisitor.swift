@@ -58,14 +58,14 @@ class SourceFileVisitor {
     """
   }
 
-  func printHeader() { }
-  func printAlias(_ def: SourceFile.Alias) { }
-  func printEnum(_ def: Enumeration) { }
-  func printIndirectEnum(_ def: Enumeration) { }
-  func printStruct(_ def: ProductType) { }
-  func printClass(_ def: ProductType) { }
-  func printFinalClass(_ def: ProductType) { }
-  func printFooter() { }
+  func printHeader() {}
+  func printAlias(_ def: SourceFile.Alias) {}
+  func printEnum(_ def: Enumeration) {}
+  func printIndirectEnum(_ def: Enumeration) {}
+  func printStruct(_ def: ProductType) {}
+  func printClass(_ def: ProductType) {}
+  func printFinalClass(_ def: ProductType) {}
+  func printFooter() {}
 
   // MARK: - Print enum
 
@@ -80,7 +80,7 @@ class SourceFileVisitor {
   /// For each case print: `case elsa(power: Magic) {`
   func printCases(_ def: Enumeration, indent: String) {
     for caseDef in def.cases {
-      printDoc(caseDef.doc, indent: indent + "  ")
+      self.printDoc(caseDef.doc, indent: indent + "  ")
 
       var properties = ""
       if !caseDef.properties.isEmpty {
@@ -101,7 +101,7 @@ class SourceFileVisitor {
   enum ProductKind: String {
     case `struct` = "struct"
     case `class` = "class"
-    case `finalClass` = "final class"
+    case finalClass = "final class"
   }
 
   /// Print: `public class Elsa: CustomStringConvertible {`
@@ -119,7 +119,7 @@ class SourceFileVisitor {
     }
 
     for propertyDef in def.properties {
-      printDoc(propertyDef.doc, indent: indent + "  ")
+      self.printDoc(propertyDef.doc, indent: indent + "  ")
       print("  \(indent)public var \(propertyDef.nameColonType)")
     }
   }

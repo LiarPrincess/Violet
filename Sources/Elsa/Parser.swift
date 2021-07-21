@@ -31,10 +31,10 @@ class Parser {
         self.result.appendAlias(def)
       case .enum:
         let def = self.handleEnum()
-        result.appendEnum(def)
+        self.result.appendEnum(def)
       case .indirect:
         let def = self.handleEnum()
-        result.appendIndirectEnum(def)
+        self.result.appendIndirectEnum(def)
       case .struct:
         let def = self.handleProductType()
         self.result.appendStruct(def)

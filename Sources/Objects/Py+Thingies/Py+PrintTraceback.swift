@@ -260,7 +260,7 @@ extension PyInstance {
       let path = Py.fileSystem.join(paths: dir.value, basename)
 
       switch self.readSourceFile(path: path) {
-      case .value(let s) : return .finish(.value(s))
+      case .value(let s): return .finish(.value(s))
       case .decodingError(let e): return .finish(.decodingError(e))
       case .readError: return .goToNextElement // File may not exit, ignore
       }

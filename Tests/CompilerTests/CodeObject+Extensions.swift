@@ -155,7 +155,7 @@ extension Instruction.Filled {
     return .forIter(ifEmptyLabel: label)
   }
 
-  static func `continue`(loopStartTarget: Int)-> Instruction.Filled {
+  static func `continue`(loopStartTarget: Int) -> Instruction.Filled {
     let label = Self.toLabel(bytecodeIndex: loopStartTarget)
     return .continue(loopStartLabel: label)
   }

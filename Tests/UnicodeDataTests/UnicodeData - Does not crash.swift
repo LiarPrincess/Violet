@@ -1,7 +1,7 @@
 import XCTest
 import UnicodeData
 
-private let range = 0..<0x110000
+private let range = 0..<0x11_0000
 
 class UnicodeDataDoesNotCrashTests: XCTestCase {
 

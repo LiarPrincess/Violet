@@ -253,7 +253,7 @@ extension PyInstance {
       return .value(o)
     case let .missingMethod(e):
       return .missingMethod(e)
-    case let.error(e),
+    case let .error(e),
          let .notCallable(e):
       return .error(e)
     }

@@ -199,14 +199,14 @@ public enum ASCIIData {
   // MARK: - Alpha numeric
 
   public static func isAlphaNumeric(_ ch: UInt8) -> Bool {
-    return (48 <= ch && ch < 58)  // digits
+    return (48 <= ch && ch < 58) // digits
           || (65 <= ch && ch < 91) // uppercase
           || (97 <= ch && ch < 123) // lowercase
   }
 
   public static func isAlphaNumeric(_ ch: UnicodeScalar) -> Bool {
     let value = ch.value
-    return (48 <= value && value < 58)  // digits
+    return (48 <= value && value < 58) // digits
           || (65 <= value && value < 91) // uppercase
           || (97 <= value && value < 123) // lowercase
   }

@@ -34,7 +34,7 @@ struct Path: Equatable, Comparable, CustomStringConvertible {
 private let fm = FileManager.default
 
 /// Wrapper around 'FileManager' and other file-system related things.
-enum FileSystem { }
+enum FileSystem {}
 
 // MARK: - Root dir
 

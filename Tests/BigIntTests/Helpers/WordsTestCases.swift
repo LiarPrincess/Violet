@@ -111,7 +111,7 @@ internal enum WordsTestCases {
       for (_, value) in allPositivePowersOf2(type: Word.self) {
         let words = zeroWords + [value]
 
-        let valueCompliment = (~value) + 1
+        let valueCompliment = ~value + 1
         let expectedWords = zeroWords + [valueCompliment]
 
         let tuple = HeapTestCase(words, expectedWords)

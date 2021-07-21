@@ -413,7 +413,7 @@ class BigIntIntegerInitTests: XCTestCase {
       let truncated = T(truncatingIfNeeded: moreWords)
       let truncatedBigInt = BigInt(truncated)
 
-      let complement = (~lowWord) + 1 // no overflow possible
+      let complement = ~lowWord + 1 // no overflow possible
       let expected = BigInt(T(truncatingIfNeeded: complement))
       XCTAssertEqual(truncatedBigInt, expected, "\(moreWordsHeap)", file: file, line: line)
     }

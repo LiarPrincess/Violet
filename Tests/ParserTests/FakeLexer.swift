@@ -16,12 +16,12 @@ internal class FakeLexer: LexerType {
   }
 
   internal func getToken() throws -> Token {
-    if self.index == tokens.count {
-      let eofLocation = tokens.last?.end ?? loc0
+    if self.index == self.tokens.count {
+      let eofLocation = self.tokens.last?.end ?? loc0
       return Token(.eof, start: eofLocation, end: eofLocation)
     }
 
-    let token = tokens[self.index]
+    let token = self.tokens[self.index]
     self.index += 1
     return token
   }

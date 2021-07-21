@@ -4,6 +4,7 @@ import VioletCore
 
 // swiftlint:disable number_separator
 // swiftlint:disable function_body_length
+// swiftformat:disable numberFormatting
 
 // After mangling: '_Frozen__Elsa' etc.
 private let elsa = MangledName(className: "Frozen", name: "__Elsa")

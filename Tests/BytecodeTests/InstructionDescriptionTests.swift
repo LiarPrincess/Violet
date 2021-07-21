@@ -80,10 +80,10 @@ class InstructionDescriptionTests: XCTestCase {
     XCTAssertDescription(.compareOp(type: .greater), "compareOp(type: >)")
     XCTAssertDescription(.compareOp(type: .greaterEqual), "compareOp(type: >=)")
 
-    XCTAssertDescription(.compareOp(type: .`is`), "compareOp(type: is)")
+    XCTAssertDescription(.compareOp(type: .is), "compareOp(type: is)")
     XCTAssertDescription(.compareOp(type: .isNot), "compareOp(type: isNot)")
 
-    XCTAssertDescription(.compareOp(type: .`in`), "compareOp(type: in)")
+    XCTAssertDescription(.compareOp(type: .in), "compareOp(type: in)")
     XCTAssertDescription(.compareOp(type: .notIn), "compareOp(type: notIn)")
 
     XCTAssertDescription(
@@ -131,11 +131,11 @@ class InstructionDescriptionTests: XCTestCase {
       "getYieldFromIter"
     )
     XCTAssertDescription(
-      .`break`,
+      .break,
       "break"
     )
     XCTAssertDescription(
-      .`continue`(loopStartLabelIndex: 42),
+      .continue(loopStartLabelIndex: 42),
       "continue(loopStartLabelIndex: 42)"
     )
   }
@@ -341,7 +341,7 @@ class InstructionDescriptionTests: XCTestCase {
       "callFunctionEx(hasKeywordArguments: false)"
     )
     XCTAssertDescription(
-      .`return`,
+      .return,
       "return"
     )
     XCTAssertDescription(

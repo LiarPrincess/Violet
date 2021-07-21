@@ -9,12 +9,12 @@ public enum UnicodeData {
   private static func getTypeRecord(_ code: UInt32) -> Record {
     var index: Int
 
-    if code >= 0x110000 {
+    if code >= 0x11_0000 {
       index = 0
     } else {
       let codeInt = Int(code)
 
-      let fromIndex1 = index1[(codeInt >> SHIFT)]
+      let fromIndex1 = index1[codeInt >> SHIFT]
       index = Int(fromIndex1)
 
       let fromIndex2 = index2[(index << SHIFT) + (codeInt & ((1 << SHIFT) - 1))]
