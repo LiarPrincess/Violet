@@ -15,19 +15,121 @@ file_length:
   warning: 300
   error:   350
 
-# It is compiler after all:
+# It is a compiler after all:
 cyclomatic_complexity:
   ignores_case_statements: true
 
-disabled_rules:
-  - identifier_name # annoying
-  - colon # align properties
-  - comma # align func params
-  - type_body_length # we are using 'file_length' rule
+# We will list all of the SwiftLint rules deciding on a case-by-case basis
+# whether we want to enable them or not.
+# Otherwise if some contributor has newer version of SwiftLint installed they
+# my be flooded with errors from rules that Violet was not checked against.
+#
+# When upgrading SwiftLint (and thus adding new rules) use
+# 'Scripts/swiftlint_version_migration' to list all of the rules not mentioned
+# in this file.
+only_rules:
 
-# This may seem like a lot, but basically I like to write some code
-# and then enable all of the optional rules that do not break the project.
-opt_in_rules:
+  # =============
+  # === Rules ===
+  # =============
+
+  # Here we are listing all of the non-optional rules.
+  # If some rule should be disabled then the line should be commented.
+
+  - block_based_kvo
+  - class_delegate_protocol
+  - closing_brace
+  - closure_parameter_position
+  - colon
+  # - comma # sometimes we align func params
+  - comment_spacing
+  - compiler_protocol_init
+  - computed_accessors_order
+  - control_statement
+  - custom_rules
+  - cyclomatic_complexity
+  - deployment_target
+  - discouraged_direct_init
+  - duplicate_enum_cases
+  - duplicate_imports
+  - dynamic_inline
+  - empty_enum_arguments
+  - empty_parameters
+  - empty_parentheses_with_trailing_closure
+  - file_length
+  - for_where
+  - force_cast
+  - force_try
+  - function_body_length
+  - function_parameter_count
+  - generic_type_name
+  # - identifier_name # annoying
+  - implicit_getter
+  - inclusive_language
+  - inert_defer
+  - is_disjoint
+  - large_tuple
+  - leading_whitespace
+  - legacy_cggeometry_functions
+  - legacy_constant
+  - legacy_constructor
+  - legacy_hashing
+  - legacy_nsgeometry_functions
+  - line_length
+  - mark
+  - multiple_closures_with_trailing_closure
+  - nesting
+  - no_fallthrough_only
+  - no_space_in_method_call
+  - notification_center_detachment
+  - nsobject_prefer_isequal
+  - opening_brace
+  - operator_whitespace
+  - orphaned_doc_comment
+  - private_over_fileprivate
+  - private_unit_test
+  - protocol_property_accessors_order
+  - reduce_boolean
+  - redundant_discardable_let
+  - redundant_objc_attribute
+  - redundant_optional_initialization
+  - redundant_set_access_control
+  - redundant_string_enum_value
+  - redundant_void_return
+  - return_arrow_whitespace
+  - shorthand_operator
+  - statement_position
+  - superfluous_disable_command
+  - switch_case_alignment
+  - syntactic_sugar
+  - todo
+  - trailing_comma
+  - trailing_newline
+  - trailing_semicolon
+  - trailing_whitespace
+  # - type_body_length # we are using 'file_length' rule
+  - type_name
+  - unneeded_break_in_switch
+  - unused_capture_list
+  - unused_closure_parameter
+  - unused_control_flow_label
+  - unused_enumerated
+  - unused_optional_binding
+  - unused_setter_value
+  - valid_ibinspectable
+  - vertical_parameter_alignment
+  - vertical_whitespace
+  - void_return
+  - weak_delegate
+  - xctfail_message
+
+  # ==============================
+  # === Enabled optional rules ===
+  # ==============================
+
+  # This may seem like a lot, but basically I like to write some code
+  # and then enable all of the optional rules that do not break the project.
+
   - anyobject_protocol
   - array_init
   - attributes
@@ -102,10 +204,16 @@ opt_in_rules:
   - xct_specific_matcher
   - yoda_condition
 
-  # Maybe later:
+  # ===================
+  # === Maybe later ===
+  # ===================
+
   # - missing_docs
 
-  # Following optional rules are disabled:
+  # ===============================
+  # === Disabled optional rules ===
+  # ===============================
+
   # - conditional_returns_on_newline # Very often we do 'if X { return Y }'
   # - explicit_acl # we don't need acl in tests
   # - explicit_enum_raw_value # 'String' enums do not need explicit value
@@ -123,7 +231,7 @@ opt_in_rules:
   # - nslocalizedstring_require_bundle # is is not iOS
   # - prefixed_toplevel_constant
   # - required_deinit
-  # - sorted_imports
+  # - sorted_imports # use 'Scripts/sort_swift_imports'
   # - strict_fileprivate # this one does not work properly?
   # - strong_iboutlet  # is is not iOS
   # - switch_case_on_newline
