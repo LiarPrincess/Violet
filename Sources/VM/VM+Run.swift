@@ -153,7 +153,7 @@ extension VM {
     // - 1st element of sys.argv will be "-c"
     // - current directory will be added to the start of sys.path
     //   (allowing modules in that directory to be imported as top level modules).
-    self.unimplemented()
+    VM.unimplemented()
   }
 
   // MARK: - Run module
@@ -168,7 +168,7 @@ extension VM {
     //   (while the module file is being located, it will be set to "-m")
     // - As with the -c option, the current directory will be added
     //   to the start of sys.path.
-    self.unimplemented()
+    VM.unimplemented()
   }
 
   // MARK: - Helpers - write to stream

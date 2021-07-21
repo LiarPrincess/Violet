@@ -165,10 +165,11 @@ extension CompilerImpl {
     var result = [CodeObject.Constant]()
     for keyword in keywords {
       switch keyword.kind {
-      case .dictionaryUnpack: assert(false)
+      case .dictionaryUnpack: unreachable()
       case .named(let name): result.append(.string(name))
       }
     }
+
     return result
   }
 

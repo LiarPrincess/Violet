@@ -1,5 +1,6 @@
 import Foundation
 import BigInt
+import VioletCore
 
 // swiftlint:disable type_name
 // swiftlint:disable nesting
@@ -79,7 +80,7 @@ extension Abstract {
         return .value(result)
       case .overflow:
         // It's impossible that <= 48 bits overflowed
-        assert(false)
+        unreachable()
       }
     }
 

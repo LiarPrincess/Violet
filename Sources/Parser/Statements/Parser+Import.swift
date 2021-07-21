@@ -39,7 +39,6 @@ extension Parser {
     case .from:
       return try self.parseImportFrom(closingTokens: closingTokens)
     default:
-      assert(false)
       throw self.unexpectedToken(expected: [.import, .from])
     }
   }
@@ -206,7 +205,7 @@ extension Parser {
       switch self.peek.kind {
       case .dot: count += 1
       case .ellipsis: count += 3
-      default: assert(false)
+      default: unreachable() // see 'while' condition
       }
 
       try self.advance() // '.' or '...'

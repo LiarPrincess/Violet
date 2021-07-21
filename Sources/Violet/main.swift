@@ -71,11 +71,9 @@ case .error(let error):
   // 'switch' is better than series of 'ifs', because it checks for exhaustiveness
   switch excepthookResult {
   case .value:
-    assert(
-      false,
-      "We checked that already " +
-      "(btw. you broke Swift… https://www.youtube.com/watch?v=oyFQVZ2h0V8)"
-    )
+    // We checked that already
+    // (btw. you broke Swift… https://www.youtube.com/watch?v=oyFQVZ2h0V8)
+    unreachable()
 
   case .missing:
     write(string: "sys.excepthook is missing\n")

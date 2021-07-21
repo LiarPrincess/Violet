@@ -1,4 +1,5 @@
 import XCTest
+import VioletCore
 @testable import BigInt
 
 // swiftlint:disable file_length
@@ -248,7 +249,8 @@ class BigIntHeapPropertyTests: XCTestCase {
 
         switch int.value {
         case .smi:
-          assert(false) // We have separate test for this
+          // We have separate test for this
+          unreachable()
         case .heap(let h):
           let result = h.minRequiredWidth
           XCTAssertEqual(result, expected, string)

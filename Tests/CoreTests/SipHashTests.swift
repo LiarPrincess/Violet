@@ -42,7 +42,8 @@ class SipHashTests: XCTestCase {
     }
 
     guard let h = hash else {
-      assert(false)
+      XCTFail("Array does not have contiguous storage?")
+      return
     }
 
     XCTAssertEqual(h, 0xa129ca6149be45e5)

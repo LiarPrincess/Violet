@@ -57,7 +57,7 @@ public enum SipHash {
     case 2: b |= UInt64(bytes[remainingBytesStart + 1]) &<< 8; fallthrough
     case 1: b |= UInt64(bytes[remainingBytesStart]); fallthrough
     case 0: state.process(b)
-    default: assert(false, "0 <= remainingBytes < 8")
+    default: unreachable() // "0 <= remainingBytes < 8"
     }
 
     return state.finalize()

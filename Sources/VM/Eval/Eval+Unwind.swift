@@ -277,7 +277,7 @@ extension Eval {
     case .noException:
       self.setCurrentlyHandledException(exception: nil)
     case .invalidValue(let o):
-      assert(false, "Expected to pop exception (or None), but popped '\(o)'.")
+      trap("Expected to pop exception (or None), but popped '\(o)'.")
     }
 
     assert(self.stack.count == block.stackCount)

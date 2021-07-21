@@ -1,4 +1,5 @@
 import Foundation
+import VioletCore
 import VioletLexer
 
 // In CPython:
@@ -57,8 +58,9 @@ extension Parser {
         } catch let error as FStringError {
           throw self.error(.fStringError(error))
         }
-      default: // should not happen
-        assert(false)
+      default:
+        // see 'while' condition
+        unreachable()
       }
 
       end = self.peek.end

@@ -136,9 +136,9 @@ internal enum PushFinallyReason {
         }
         trap("Invalid argument (\(value)) for 'continue' after finally block")
       case Marker.exception:
-        assert(false)
+        VM.unimplemented()
       case Marker.yield:
-        assert(false)
+        VM.unimplemented()
       case Marker.silenced:
         return .silenced
       default:

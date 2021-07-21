@@ -252,8 +252,7 @@ extension UnderscoreWarnings {
     case .error,
          .ignore,
          .always:
-      assert(false, "This should never be stored!")
-      return nil
+      trap("This should never be stored!")
     }
   }
 
