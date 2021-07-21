@@ -1,6 +1,6 @@
 import VioletBytecode
 
-// cSpell:ignore classobject method_getattro
+// cSpell:ignore classobject getattro
 
 // In CPython:
 // Objects -> classobject.c

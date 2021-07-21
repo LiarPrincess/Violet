@@ -292,19 +292,19 @@ class CompileTry: CompileTestCase {
     )
   }
 
-  /// def disquise():
+  /// def disguise():
   ///     try:
   ///         raise Woman('Mulan')
   ///     except NotAMan as e:
   ///         e.name
   ///
-  ///  0 LOAD_CONST               0 (<code object disquise at 0x106791710, file "<dis>", line 1>)
-  ///  2 LOAD_CONST               1 ('disquise')
+  ///  0 LOAD_CONST               0 (<code object disguise at 0x106791710, file "<dis>", line 1>)
+  ///  2 LOAD_CONST               1 ('disguise')
   ///  4 MAKE_FUNCTION            0
-  ///  6 STORE_NAME               0 (disquise)
+  ///  6 STORE_NAME               0 (disguise)
   ///  8 LOAD_CONST               2 (None)
   /// 10 RETURN_VALUE
-  /// f <code object disquise at 0x106791710, file "<dis>", line 1>:
+  /// f <code object disguise at 0x106791710, file "<dis>", line 1>:
   ///  0 SETUP_FINALLY           12 (to 14)
   ///  2 LOAD_GLOBAL              0 (Woman)
   ///  4 LOAD_CONST               1 ('Mulan')
@@ -338,7 +338,7 @@ class CompileTry: CompileTestCase {
     // We need this test, because functions should use 'fast' for arguments
 
     let stmt = self.functionDefStmt(
-      name: "disquise",
+      name: "disguise",
       args: self.arguments(),
       body: [
         self.tryStmt(
@@ -387,9 +387,9 @@ class CompileTry: CompileTestCase {
       flags: [],
       instructions: [
         .loadConst(codeObject: .any), // 0
-        .loadConst(string: "disquise"), // 1
+        .loadConst(string: "disguise"), // 1
         .makeFunction(flags: []), // 2
-        .storeName(name: "disquise"), // 3
+        .storeName(name: "disguise"), // 3
         .loadConst(.none), // 4
         .return // 5
       ],
@@ -402,8 +402,8 @@ class CompileTry: CompileTestCase {
 
     XCTAssertCodeObject(
       functionCode,
-      name: "disquise",
-      qualifiedName: "disquise",
+      name: "disguise",
+      qualifiedName: "disguise",
       kind: .function,
       flags: [.nested, .newLocals, .optimized],
       instructions: [

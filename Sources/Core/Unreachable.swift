@@ -1,5 +1,7 @@
 import Foundation
 
+// cSpell:ignore Anakin Padmé
+
 #if DEBUG
 
 /// Don't bother reading this, it will never be called.
