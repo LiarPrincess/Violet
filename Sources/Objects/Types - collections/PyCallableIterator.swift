@@ -62,7 +62,8 @@ public final class PyCallableIterator: PyObject {
       case .error(let e):
         return .error(e)
       }
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       // This also handles 'StopIteration'
       return .error(e)
     }

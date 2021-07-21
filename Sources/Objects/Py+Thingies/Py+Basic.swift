@@ -272,7 +272,8 @@ extension PyInstance {
 
     case .missingMethod:
       return .typeError("object does not provide __dir__")
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }

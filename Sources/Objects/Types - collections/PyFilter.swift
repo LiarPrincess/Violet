@@ -80,7 +80,8 @@ public final class PyFilter: PyObject {
           case .value(false): continue loop // try next item
           case .error(let e): return .error(e)
           }
-        case .error(let e), .notCallable(let e):
+        case .error(let e),
+             .notCallable(let e):
           return .error(e)
         }
 

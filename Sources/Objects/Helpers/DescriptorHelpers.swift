@@ -113,7 +113,8 @@ internal class GetDescriptor {
     switch Py.call(callable: self.get, args: args) {
     case .value(let r):
       return .value(r)
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }
@@ -139,7 +140,8 @@ internal class SetDescriptor {
     switch object.type.lookup(name: attributeName) {
     case .value(let a):
       attribute = a
-    case .notFound, .error:
+    case .notFound,
+         .error:
       return nil
     }
 
@@ -159,7 +161,8 @@ internal class SetDescriptor {
     switch Py.call(callable: self.set, args: args) {
     case .value(let r):
       return .value(r)
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }

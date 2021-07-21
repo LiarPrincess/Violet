@@ -606,16 +606,14 @@ public final class PyFloat: PyObject {
 
   /// See comment in `round(nDigits: PyObject?)`.
   private var roundDigitCountMax: Int {
-    // swiftformat:disable numberFormatting
+    // swiftformat:disable:next numberFormatting
     return Int(Double(DBL_MANT_DIG - DBL_MIN_EXP) * 0.301_03)
-    // swiftformat:enable numberFormatting
   }
 
   /// See comment in `round(nDigits: PyObject?)`.
   private var roundDigitCountMin: Int {
-    // swiftformat:disable numberFormatting
+    // swiftformat:disable:next numberFormatting
     return -Int(Double(DBL_MAX_EXP + 1) * 0.301_03)
-    // swiftformat:enable numberFormatting
   }
 
   internal static let roundDoc = """

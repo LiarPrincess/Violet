@@ -135,7 +135,8 @@ extension BigInt {
 
     fileprivate var isNegative: Bool {
       switch self {
-      case .positive, .notSpecified:
+      case .positive,
+           .notSpecified:
         return false
       case .negative:
         return true
@@ -144,7 +145,8 @@ extension BigInt {
 
     internal var wasExplicitlyProvided: Bool {
       switch self {
-      case .positive, .negative:
+      case .positive,
+           .negative:
         return true
       case .notSpecified:
         return false

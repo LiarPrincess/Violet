@@ -39,9 +39,13 @@ public final class SymbolScope {
     /// CPython has only `module`, `class` and `function`, use this for mapping.
     internal var isFunctionLambdaComprehension: Bool {
       switch self {
-      case .module, .class:
+      case .module,
+           .class:
         return false
-      case .function, .asyncFunction, .lambda, .comprehension:
+      case .function,
+           .asyncFunction,
+           .lambda,
+           .comprehension:
         return true
       }
     }

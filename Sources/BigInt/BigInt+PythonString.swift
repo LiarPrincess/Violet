@@ -227,11 +227,14 @@ extension BigInt {
     }
 
     switch second {
-    case "b", "B":
+    case "b",
+         "B":
       return PythonBase(base: 2)
-    case "o", "O":
+    case "o",
+         "O":
       return PythonBase(base: 8)
-    case "x", "X":
+    case "x",
+         "X":
       return PythonBase(base: 16)
     default:
       // "old" (C-style) octal literal, now invalid.

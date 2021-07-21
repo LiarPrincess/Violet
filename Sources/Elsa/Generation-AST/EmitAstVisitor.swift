@@ -98,14 +98,19 @@ class EmitAstVisitor: AstSourceFileVisitor {
 
     let prefix: String = {
       switch nodeKind {
-      case .ast, .astSubclass: return "AST"
-      case .statement, .statementSubclass: return "Statement"
-      case .expression, .expressionSubclass: return "Expression"
+      case .ast,
+           .astSubclass: return "AST"
+      case .statement,
+           .statementSubclass: return "Statement"
+      case .expression,
+           .expressionSubclass: return "Expression"
       }
     }()
 
     switch nodeKind {
-    case .ast, .statement, .expression:
+    case .ast,
+         .statement,
+         .expression:
       print("""
         public func accept<V: \(prefix)Visitor>(
             _ visitor: V
@@ -120,7 +125,9 @@ class EmitAstVisitor: AstSourceFileVisitor {
           trap("'accept' method should be overridden in subclass")
         }
       """)
-    case .astSubclass, .statementSubclass, .expressionSubclass:
+    case .astSubclass,
+         .statementSubclass,
+         .expressionSubclass:
       print("""
         override public func accept<V: \(prefix)Visitor>(
             _ visitor: V

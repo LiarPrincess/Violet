@@ -209,7 +209,8 @@ extension PyInstance {
       source = s
     case .notFound:
       return .fileNotFound
-    case .decodingError(let e), .error(let e):
+    case .decodingError(let e),
+         .error(let e):
       return .error(e)
     }
 

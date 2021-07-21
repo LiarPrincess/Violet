@@ -152,7 +152,8 @@ public final class PyModule: PyObject {
       switch Py.call(callable: getAttr, args: [self, name]) {
       case .value(let r):
         return .value(r)
-      case .error(let e), .notCallable(let e):
+      case .error(let e),
+           .notCallable(let e):
         return .error(e)
       }
     }
@@ -163,7 +164,8 @@ public final class PyModule: PyObject {
     var moduleName = "<unknown module name>"
     switch self.getNameString() {
     case .string(let s): moduleName = s
-    case .stringConversionFailed, .namelessModule: break
+    case .stringConversionFailed,
+         .namelessModule: break
     }
 
     let msg = "module \(moduleName) has no attribute \(attributeName)"

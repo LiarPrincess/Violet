@@ -291,6 +291,13 @@ public final class PySlice: PyObject {
     internal var step: Int
     /// Number of entries between `self.start` and `self.stop` using `self.step`.
     internal let count: Int
+
+    internal var isEmpty: Bool {
+      // Both 'SwiftLint' and 'SwiftFormat' will fail on the following line
+
+      // swiftformat:disable:next isEmpty
+      return self.count == 0 // swiftlint:disable:this empty_count
+    }
   }
 
   /// We store `PyObjects` as slice `start, stop, step` properties,

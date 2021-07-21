@@ -545,7 +545,8 @@ internal struct PySetData {
 
   internal mutating func discard(element: Element) -> PyResult<PyNone> {
     switch self.elements.remove(element: element) {
-    case .ok, .notFound:
+    case .ok,
+         .notFound:
       return .value(Py.none)
     case .error(let e):
       return .error(e)

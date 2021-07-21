@@ -117,7 +117,8 @@ extension VM {
         code = c
       case .syntaxError(let e):
         switch self.writeToStderr(error: e) {
-        case .ok, .streamIsNone: continue
+        case .ok,
+             .streamIsNone: continue
         case .error(let e): return e
         }
       case .error(let e):
@@ -148,7 +149,8 @@ extension VM {
         // But that does not mean that we should stop REPL!
         // Just print this error and wait for next input.
         switch self.writeToStderr(error: e) {
-        case .ok, .streamIsNone: break
+        case .ok,
+             .streamIsNone: break
         case .error(let e): return e
         }
       }
@@ -186,7 +188,8 @@ extension VM {
       defer { isFirstLine = false }
 
       switch self.writeToStdout(msg: isFirstLine ? ps1 : ps2) {
-      case .ok, .streamIsNone: break
+      case .ok,
+           .streamIsNone: break
       case .error(let e): return .error(e)
       }
 

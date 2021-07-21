@@ -77,7 +77,8 @@ extension Parser {
                                       start: start,
                                       end: end)
 
-    case .string, .formatString:
+    case .string,
+         .formatString:
       return try self.strPlus()
     case .bytes:
       return try self.bytesPlus()

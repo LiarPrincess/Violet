@@ -124,7 +124,8 @@ extension CompareOp {
       return .value(result)
     case .missingMethod:
       break // Try other options…
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
 

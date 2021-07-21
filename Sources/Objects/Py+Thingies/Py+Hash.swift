@@ -26,7 +26,8 @@ extension PyInstance {
       result = o
     case .missingMethod:
       return .error(self.hashNotImplemented(object))
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
 

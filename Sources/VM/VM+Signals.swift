@@ -41,6 +41,7 @@ extension VM {
 // MARK: - Helpers
 
 // swiftlint:disable type_name
+// swiftformat:disable wrapAttributes
 
 /// Normally this is an `C` extension.
 private typealias sighandler_t = @convention(c) (Int32) -> Void

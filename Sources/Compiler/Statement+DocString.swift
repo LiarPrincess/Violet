@@ -20,8 +20,11 @@ extension Statement {
     }
 
     switch stringExpr.value {
-    case let .literal(s): return s
-    case .formattedValue, .joined: return nil
+    case .literal(let s):
+      return s
+    case .formattedValue,
+         .joined:
+      return nil
     }
   }
 }

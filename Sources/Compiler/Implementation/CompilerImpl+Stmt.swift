@@ -342,7 +342,8 @@ extension CompilerImpl {
           self.builder.appendContinue(loopStartLabel: continueTarget)
           return
 
-        case .except, .finallyTry:
+        case .except,
+             .finallyTry:
           break // ignore
 
         case .finallyEnd:

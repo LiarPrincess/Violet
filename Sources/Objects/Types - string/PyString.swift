@@ -165,7 +165,8 @@ public final class PyString: PyObject, AbstractString {
 
     for element in self.elements {
       switch element {
-      case quote, "\\":
+      case quote,
+           "\\":
         result.append("\\")
         result.append(element)
       case "\n":
@@ -363,7 +364,8 @@ public final class PyString: PyObject, AbstractString {
     switch self.elements.isValidIdentifier {
     case .yes:
       return true
-    case .no, .emptyString:
+    case .no,
+         .emptyString:
       return false
     }
   }

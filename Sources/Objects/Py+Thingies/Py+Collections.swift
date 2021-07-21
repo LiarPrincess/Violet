@@ -194,7 +194,8 @@ extension PyInstance {
       case let .value(hash):
         let dictKey = PyDict.Key(hash: hash, object: key)
         switch result.insert(key: dictKey, value: value) {
-        case .inserted, .updated: break
+        case .inserted,
+             .updated: break
         case .error(let e): return .error(e)
         }
       case let .error(e):
@@ -447,7 +448,8 @@ extension PyInstance {
       return self.isTrueBool(object: o)
     case .missingMethod:
       break // try other things
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
 

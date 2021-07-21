@@ -213,7 +213,8 @@ internal final class SetLoadExpressionContext: ExpressionVisitor {
 
   private func visitVararg(_ arg: Vararg) {
     switch arg {
-    case .none, .unnamed:
+    case .none,
+         .unnamed:
       break
     case let .named(arg):
       self.visit(arg.annotation)

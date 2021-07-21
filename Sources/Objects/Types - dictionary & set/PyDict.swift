@@ -415,7 +415,8 @@ public final class PyDict: PyObject {
     let key = Key(hash: hash, object: index)
 
     switch self.elements.insert(key: key, value: value) {
-    case .inserted, .updated:
+    case .inserted,
+         .updated:
       return .value(Py.none)
     case .error(let e):
       return .error(e)
@@ -555,7 +556,8 @@ public final class PyDict: PyObject {
     case .notFound:
       let value = `default` ?? Py.none
       switch self.elements.insert(key: key, value: value) {
-      case .inserted, .updated:
+      case .inserted,
+           .updated:
         return .value(value)
       case .error(let e):
         return .error(e)

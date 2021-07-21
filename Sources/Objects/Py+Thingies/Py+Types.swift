@@ -47,7 +47,8 @@ extension PyInstance {
       return self.isTrueBool(object: o)
     case .missingMethod:
       return .typeError("isinstance() arg 2 must be a type or tuple of types")
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }

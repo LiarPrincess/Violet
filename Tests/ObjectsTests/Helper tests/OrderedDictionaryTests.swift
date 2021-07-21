@@ -296,7 +296,8 @@ class OrderedDictionaryTests: XCTestCase {
                       file: StaticString = #file,
                       line: UInt = #line) {
     switch dict.insert(key: key, value: value) {
-    case .inserted, .updated:
+    case .inserted,
+         .updated:
       break
     case .error(let e):
       XCTAssertNotNil(e, file: file, line: line)

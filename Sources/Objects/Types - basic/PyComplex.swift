@@ -654,7 +654,8 @@ public final class PyComplex: PyObject {
       return .value(Raw(real: complex.real, imag: complex.imag))
     case .missingMethod:
       break // try other possibilities
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
 

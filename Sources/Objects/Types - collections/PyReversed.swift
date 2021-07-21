@@ -120,7 +120,8 @@ public final class PyReversed: PyObject {
       return .value(r)
     case .missingMethod:
       break // try other options
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
 

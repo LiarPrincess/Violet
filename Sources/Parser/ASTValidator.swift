@@ -500,7 +500,8 @@ internal final class ASTValidatorPass: ASTVisitor,
   /// validate_arguments(arguments_ty args)
   private func visitVararg(_ arg: Vararg) throws {
     switch arg {
-    case .none, .unnamed:
+    case .none,
+         .unnamed:
       break
     case let .named(arg):
       try self.visitExpression(arg.annotation, payload: .load)

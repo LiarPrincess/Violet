@@ -8,54 +8,18 @@
 --exclude Sources/Objects/Generated/*
 --exclude Tests/CompilerTests/Helpers/EmittedInstruction.swift
 
-# =============
-# == Options ==
-# =============
+# ==================
+# == Control flow ==
+# ==================
 
-# Use 'swiftformat --options' to list all of the possible options
-# For most of the options we use default value (except for '--self')
+--disable andOperator # Use '&&' ot ',' wherever you want
+--enable wrapEnumCases
+--enable wrapSwitchCases
+--disable sortedSwitchCases
 
---allman false
---commas always
 --elseposition same-line # I hate it, but this is 'community choice' in Swift
---empty void
---header ignore # We don't have a header. Headers are ugly.
---ifdef indent
---indent 2
---indentcase false
---linebreaks lf
---maxwidth none # 80 is preferred (but not required), don't go over 100
---nospaceoperators ..<, ...
---operatorfunc spaced
---self insert # Yes!
---selfrequired
---semicolons inline
---stripunusedargs closure-only
---tabwidth unspecified # Don't use tabs!
---trailingclosures
---trimwhitespace always
---xcodeindentation disabled
-
-# Arguments are
-# - group - group size (count % group == 0)
-# - threshold - min digit count to apply (number.count >= threshold)
---decimalgrouping 3,1
---binarygrouping 4,1
---octalgrouping 4,1
---hexgrouping 4,1
---exponentcase lowercase
---exponentgrouping enabled
---fractiongrouping enabled
---hexliteralcase lowercase
-
---wraparguments preserve
---wrapcollections preserve
---wrapparameters preserve
---closingparen balanced
-
-# We have our own (see: './Scipts/sort_swift_imports')
-# But it is not required to follow it.
---importgrouping alphabetized
+--guardelse auto
+--enable elseOnSameLine
 
 # Our own rule: all patterns should start at the same column,
 # otherwise reader has to 'zig-zag' to read which pattern is bound where.
@@ -67,32 +31,132 @@
 # case let .anna(x) <-- nope, both 'elsa' and 'anna' should start the same column
 # }
 --patternlet hoist
-
-# ===========
-# == Rules ==
-# ===========
-
---disable andOperator # Use '&&' ot ',' wherever you want
---enable anyObjectProtocol
---enable blankLinesAroundMark
---enable blankLinesAtEndOfScope
---disable blankLinesAtStartOfScope # Empty line after 'class' definition
---enable blankLinesBetweenScopes
---enable braces
---enable consecutiveBlankLines
---enable consecutiveSpaces
---enable duplicateImports
---enable elseOnSameLine
---enable emptyBraces
---enable fileHeader
 --disable hoistPatternLet
---disable indent # This breaks a lof of already written stuff.
---disable isEmpty # False-positives
---enable leadingDelimiters
---enable linebreakAtEndOfFile
+
+# ==================
+# == Declarations ==
+# ==================
+
+--enable anyObjectProtocol
+
+--funcattributes prev-line # Function @attributes: "preserve", "prev-line", or "same-line"
+--typeattributes prev-line # Type @attributes: "preserve", "prev-line", or "same-line"
+--varattributes prev-line # Property @attributes: "preserve", "prev-line", or "same-line"
+--enable wrapAttributes
+
+# --wraparguments # Wrap all arguments: "before-first", "after-first", "preserve"
+# --wrapparameters # Wrap func params: "before-first", "after-first", "preserve"
+# --wrapcollections # Wrap array/dict: "before-first", "after-first", "preserve"
+# --closingparen # Closing paren position: "balanced" (default) or "same-line"
+# --wrapreturntype # Wrap return type: "if-multiline", "preserve" (default)
+# --wrapconditions # Wrap conditions: "before-first", "after-first", "preserve"
+--disable wrapArguments
+
+# --modifierorder # we will use default order
+--enable modifierOrder
+
+--extensionacl on-declarations
+--enable extensionAccessControl
+
+--stripunusedargs closure-only
+--enable unusedArguments
+
+# ============
+# == Braces ==
+# ============
+
+--allman false
+--enable braces
+--enable emptyBraces
+--disable wrapMultilineStatementBraces
+
+# =================
+# == Whitespaces ==
+# =================
+
+--linebreaks lf
 --enable linebreaks
---enable numberFormatting
-# --enable ranges - deprecated
+
+--enable blankLinesAroundMark
+--disable blankLinesAtStartOfScope # we sometimes want empty line after 'class' definition
+--enable blankLinesBetweenScopes
+--enable blankLinesAtEndOfScope
+--enable consecutiveBlankLines
+
+--enable spaceAroundBraces
+--enable spaceAroundBrackets
+--enable spaceAroundComments
+--enable spaceAroundGenerics
+--enable spaceAroundParens
+--enable spaceInsideBraces
+--enable spaceInsideBrackets
+--enable spaceInsideComments
+--enable spaceInsideGenerics
+--enable spaceInsideParens
+
+--ifdef indent #if indenting: "indent" (default), "no-indent" or "outdent"
+--indent 2
+--indentcase false # Indent cases inside a switch: "true" or "false" (default)
+--smarttabs enabled # Align code independently of tab width. defaults to "enabled"
+--tabwidth unspecified # Don't use tabs!
+--xcodeindentation disabled
+--disable indent # This breaks a lof of already written stuff.
+
+--trimwhitespace always
+--enable trailingSpace
+
+--nospaceoperators ..<, ...
+--operatorfunc spaced
+--ranges spaced # Spacing for ranges: "spaced" (default) or "no-space"
+--enable spaceAroundOperators
+
+--enable consecutiveSpaces
+--enable linebreakAtEndOfFile
+
+# =======================
+# == File organization ==
+# =======================
+
+# We have our own (see: './Scipts/sort_swift_imports')
+# But it is not required to follow it.
+# --importgrouping alphabetized
+--disable sortedImports
+
+--enable duplicateImports
+--enable enumNamespaces
+--enable initCoderUnavailable # we dont use 'init(coder:)', but whatever
+
+--header ignore # We don't have a header. Headers are ugly.
+--enable fileHeader
+
+# --marktypes never
+# --typemark "MARK: - %t"
+# --markextensions "never"
+# --extensionmark "MARK: - %t + %c"
+# --groupedextension "MARK: %c"
+--disable markTypes # we do this by hand
+
+# --categorymark - Template for category mark comments. Defaults to "MARK: %c"
+# --beforemarks - Declarations placed before first mark (e.g. typealias,struct)
+# --lifecycle - Names of additional Lifecycle methods (e.g. viewDidLoad)
+# --organizetypes - Declarations to organize (default: class,actor,struct,enum)
+# --structthreshold - Minimum line count to organize struct body. Defaults to 0
+# --classthreshold - Minimum line count to organize class body. Defaults to 0
+# --enumthreshold - Minimum line count to organize enum body. Defaults to 0
+# --extensionlength - Minimum line count to organize extension body. Defaults to 0
+--disable organizeDeclarations # we do this by hand
+
+# --nowrapoperators # Comma-delimited list of operators that shouldn't be wrapped
+# --assetliterals # Color/image literal width. "actual-width" or "visual-width"
+# --maxwidth none # 80 is preferred (but not required), don't go over 100
+--disable wrap # Breaks already written code
+
+# ===============
+# == Redundant ==
+# ===============
+
+--enable strongifiedSelf
+
 --enable redundantBackticks
 --enable redundantBreak
 --enable redundantExtensionACL
@@ -105,33 +169,65 @@
 --enable redundantObjc
 --enable redundantParens
 --enable redundantPattern
---disable redundantRawValues # It is 'ok' to specify raw value (even if it is the same as value)
---disable redundantReturn # implicit = bad
---enable redundantSelf
 --enable redundantVoidReturnType
+--disable redundantRawValues # It is 'ok' to specify raw value (even if it is the same as value)
+--disable redundantReturn # Implicit = bad
+
+--self insert # Yes!
+--selfrequired
+--enable redundantSelf
+
+# --redundanttype # - Keep "inferred" (default) or "explicit" type annotation
+--enable redundantType
+
+# =============
+# == Numbers ==
+# =============
+
+# Arguments are
+# - group - group size (count % group == 0)
+# - threshold - min digit count to apply (number.count >= threshold)
+--decimalgrouping 3,1
+--binarygrouping 4,1
+--octalgrouping 4,1
+--hexgrouping 4,1
+--fractiongrouping enabled
+--exponentgrouping enabled
+--hexliteralcase lowercase
+--exponentcase lowercase
+--enable numberFormatting
+
+# ===========
+# == Other ==
+# ===========
+
+--semicolons inline
 --enable semicolons
---disable sortedImports
---enable spaceAroundBraces
---enable spaceAroundBrackets
---enable spaceAroundComments
---enable spaceAroundGenerics
---enable spaceAroundOperators
---enable spaceAroundParens
---enable spaceInsideBraces
---enable spaceInsideBrackets
---enable spaceInsideComments
---enable spaceInsideGenerics
---enable spaceInsideParens
---disable specifiers # Conflict with SwiftLint
---enable strongOutlets
---enable strongifiedSelf
+
+--commas always
+--disable trailingCommas
+
+--enable isEmpty
+--enable preferKeyPath
+--enable leadingDelimiters
+--enable strongOutlets # Only applies to iOS
 --enable todos
---enable trailingClosures
---disable trailingCommas #
---enable trailingSpace
---enable typeSugar
---enable unusedArguments
+
+--voidtype void # How Void types are represented: "void" (default) or "tuple"
 --enable void
---disable wrap # Breaks already written code
---disable wrapArguments # See above
---disable yodaConditions # '0 < x && x < 10' is better than ' x > 0 && x < 10'
+
+--shortoptionals always # Use ? for Optionals "always" (default) or "except-properties"
+--enable typeSugar
+
+# --trailingclosures # Comma-delimited list of functions that use trailing closures
+# --nevertrailing # List of functions that should never use trailing closures
+--enable trailingClosures
+
+# '0 < x && x < 10' is better than ' x > 0 && x < 10'
+--disable yodaConditions
+
+# ================
+# == Deprecated ==
+# ================
+
+--disable specifiers

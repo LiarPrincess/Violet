@@ -9,7 +9,9 @@ internal enum BlockType {
   internal var isLoop: Bool {
     switch self {
     case .loop: return true
-    case .except, .finallyTry, .finallyEnd: return false
+    case .except,
+         .finallyTry,
+         .finallyEnd: return false
     }
   }
 }

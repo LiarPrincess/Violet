@@ -69,7 +69,8 @@ extension PyInstance {
       return .value(result)
     case .missingMethod:
       return .typeError("bad operand type for \(operation): '\(object.typeName)'")
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }

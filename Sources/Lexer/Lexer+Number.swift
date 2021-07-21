@@ -26,11 +26,14 @@ extension Lexer {
 
     if self.peek == "0" {
       switch self.peekNext {
-      case "B", "b":
+      case "B",
+           "b":
         return try self.integerWithBase(start: start, base: BinaryNumber.self)
-      case "O", "o":
+      case "O",
+           "o":
         return try self.integerWithBase(start: start, base: OctalNumber.self)
-      case "X", "x":
+      case "X",
+           "x":
         return try self.integerWithBase(start: start, base: HexNumber.self)
       default:
         break

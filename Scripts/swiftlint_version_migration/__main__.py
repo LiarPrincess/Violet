@@ -1,4 +1,5 @@
 from typing import List
+
 from parse_config import parse_config
 from get_all_available_rules import Rule, get_all_available_rules
 

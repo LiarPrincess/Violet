@@ -112,8 +112,7 @@ extension SetItemHelper {
       return .valueError(msg)
     }
 
-    // swiftlint:disable:next empty_count
-    if indices.count == 0 {
+    if indices.isEmpty {
       return .value(Py.none)
     }
 

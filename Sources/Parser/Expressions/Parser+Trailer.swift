@@ -123,7 +123,8 @@ extension Parser {
     for slice in slices {
       switch slice.kind {
       case let .index(e): indices.append(e)
-      case .slice, .extSlice: return nil
+      case .slice,
+           .extSlice: return nil
       }
     }
 

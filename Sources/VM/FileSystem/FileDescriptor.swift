@@ -138,16 +138,19 @@ internal class FileDescriptor: CustomStringConvertible {
         switch self.errno {
         case EFBIG: return .fileReadTooLarge
         case ENOENT: return .fileReadNoSuchFile
-        case EPERM, EACCES: return .fileReadNoPermission
+        case EPERM,
+             EACCES: return .fileReadNoPermission
         case ENAMETOOLONG: return .fileReadUnknown
         default: return .fileReadUnknown
         }
       case .write:
         switch self.errno {
         case ENOENT: return .noSuchFile
-        case EPERM, EACCES: return .fileWriteNoPermission
+        case EPERM,
+             EACCES: return .fileWriteNoPermission
         case ENAMETOOLONG: return .fileWriteInvalidFileName
-        case EDQUOT, ENOSPC: return .fileWriteOutOfSpace
+        case EDQUOT,
+             ENOSPC: return .fileWriteOutOfSpace
         case EROFS: return .fileWriteVolumeReadOnly
         case EEXIST: return .fileWriteFileExists
         default: return .fileWriteUnknown

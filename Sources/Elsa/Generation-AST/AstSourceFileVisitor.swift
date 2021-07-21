@@ -24,11 +24,14 @@ class AstSourceFileVisitor: SourceFileVisitor {
 
     fileprivate var asSubclass: ASTNodeKind {
       switch self {
-      case .ast, .astSubclass:
+      case .ast,
+           .astSubclass:
         return .astSubclass
-      case .statement, .statementSubclass:
+      case .statement,
+           .statementSubclass:
         return .statementSubclass
-      case .expression, .expressionSubclass:
+      case .expression,
+           .expressionSubclass:
         return .expressionSubclass
       }
     }
@@ -67,6 +70,7 @@ class AstSourceFileVisitor: SourceFileVisitor {
     fileprivate(set) var expressionSubclasses = [ProductType]()
   }
 
+  // swiftlint:disable:next function_body_length
   func groupASTNodes() -> GroupedAST {
     var result = GroupedAST()
 
@@ -96,7 +100,10 @@ class AstSourceFileVisitor: SourceFileVisitor {
         case .none:
           break
         }
-      case .alias, .enum, .indirectEnum, .struct:
+      case .alias,
+           .enum,
+           .indirectEnum,
+           .struct:
         break
       }
     }

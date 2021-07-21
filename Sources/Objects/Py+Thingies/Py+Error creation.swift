@@ -523,7 +523,8 @@ extension PyInstance {
 
       return .value(exception)
 
-    case let .error(e), let .notCallable(e):
+    case let .error(e),
+         let .notCallable(e):
       return .error(e)
     }
   }

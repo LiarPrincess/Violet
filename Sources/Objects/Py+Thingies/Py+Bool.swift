@@ -75,7 +75,8 @@ extension PyInstance {
       return .typeError("__bool__ should return bool, returned '\(typeName)'")
     case .missingMethod:
       break // Try other methods
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
 

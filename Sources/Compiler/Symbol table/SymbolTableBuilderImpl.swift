@@ -193,7 +193,8 @@ internal final class SymbolTableBuilderImpl: ASTVisitor,
     case let .named(a):
       try self.addSymbol(name: a.name, flags: .defParam, location: a.start)
       self.currentScope.hasVarargs = true
-    case .none, .unnamed:
+    case .none,
+         .unnamed:
       break
     }
 
@@ -213,7 +214,8 @@ internal final class SymbolTableBuilderImpl: ASTVisitor,
     switch args.vararg {
     case let .named(a):
       try self.visit(a.annotation)
-    case .none, .unnamed:
+    case .none,
+         .unnamed:
       break
     }
 

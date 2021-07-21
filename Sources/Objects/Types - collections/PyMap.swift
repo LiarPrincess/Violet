@@ -73,7 +73,8 @@ public final class PyMap: PyObject {
     switch Py.call(callable: self.fn, args: args) {
     case .value(let r):
       return .value(r)
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }

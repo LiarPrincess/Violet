@@ -264,9 +264,13 @@ extension CompilerImpl {
     // We only allow 'await' inside async functions
     // (and comprehensions inside those async functions).
     switch self.builder.kind {
-    case .asyncFunction, .comprehension:
+    case .asyncFunction,
+         .comprehension:
       break
-    case .module, .class, .function, .lambda:
+    case .module,
+         .class,
+         .function,
+         .lambda:
       throw self.error(.awaitOutsideAsyncFunction)
     }
 
@@ -477,7 +481,8 @@ extension CompilerImpl {
     switch node.context {
     case .store:
       throw self.error(.starredAssignmentNotListOrTuple)
-    case .load, .del:
+    case .load,
+         .del:
       throw self.error(.invalidStarredExpression)
     }
   }
@@ -498,7 +503,9 @@ extension CompilerImpl {
       case .not:
         try self.visit(unaryOp.right, andJumpTo: next, ifBooleanValueIs: !cond)
         return
-      case .plus, .minus, .invert:
+      case .plus,
+           .minus,
+           .invert:
         break // fallback to general implementation
       }
     } else if let boolOp = expression as? BoolOpExpr {

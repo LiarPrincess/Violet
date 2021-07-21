@@ -114,25 +114,47 @@ extension PyString {
       return Self.from(string: string.value)
     }
 
+    // swiftlint:disable:next function_body_length
     public static func from(string: String) -> PyResult<Encoding> {
       switch string {
-      case "ascii", "646", "us-ascii":
+      case "ascii",
+           "646",
+           "us-ascii":
         return .value(.ascii)
-      case "latin_1", "iso-8859-1", "iso8859-1", "8859", "cp819", "latin", "latin1", "L1":
+      case "latin_1",
+           "iso-8859-1",
+           "iso8859-1",
+           "8859",
+           "cp819",
+           "latin",
+           "latin1",
+           "L1":
         return .value(.isoLatin1)
-      case "utf_8", "U8", "UTF", "utf8", "utf-8":
+      case "utf_8",
+           "U8",
+           "UTF",
+           "utf8",
+           "utf-8":
         return .value(.utf8)
-      case "utf_16", "U16", "utf16":
+      case "utf_16",
+           "U16",
+           "utf16":
         return .value(.utf16)
-      case "utf_16_be", "UTF-16BE":
+      case "utf_16_be",
+           "UTF-16BE":
         return .value(.utf16BigEndian)
-      case "utf_16_le", "UTF-16LE":
+      case "utf_16_le",
+           "UTF-16LE":
         return .value(.utf16LittleEndian)
-      case "utf_32", "U32", "utf32":
+      case "utf_32",
+           "U32",
+           "utf32":
         return .value(.utf32)
-      case "utf_32_be", "UTF-32BE":
+      case "utf_32_be",
+           "UTF-32BE":
         return .value(.utf32BigEndian)
-      case "utf_32_le", "UTF-32LE":
+      case "utf_32_le",
+           "UTF-32LE":
         return .value(.utf32LittleEndian)
       default:
         return .unboundLocalError(variableName: "unknown encoding: \(string)")

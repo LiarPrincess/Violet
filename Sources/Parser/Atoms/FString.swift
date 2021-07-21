@@ -139,7 +139,8 @@ internal struct FString {
       // Violet does not support \N{xxx} escapes (e.g. \N{EULER CONSTANT}).
 
       switch ch {
-      case "{", "}":
+      case "{",
+           "}":
         let nextIndex = view.index(after: index)
         guard nextIndex != view.endIndex else {
           // we are starting expr but end of string happened: "abc{" or "abc}"

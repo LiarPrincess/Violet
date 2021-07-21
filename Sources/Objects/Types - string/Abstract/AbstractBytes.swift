@@ -90,7 +90,8 @@ extension AbstractBytes {
 
     for element in self.elements {
       switch element {
-      case ascii_apostrophe, ascii_slash:
+      case ascii_apostrophe,
+           ascii_slash:
         result.append("\\")
         result.append(UnicodeScalar(element))
       case ascii_line_feed:

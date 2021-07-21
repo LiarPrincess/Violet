@@ -40,7 +40,8 @@ extension Lexer {
         }
         // just consume it, nothing else
 
-      case " ", "\t":
+      case " ",
+           "\t":
         // just consume it, nothing else
         // we don't collect trivia
         repeat {
@@ -55,7 +56,8 @@ extension Lexer {
         return try self.number()
       case "#":
         return try self.comment()
-      case "'", "\"":
+      case "'",
+           "\"":
         return try self.string()
 
       case "\\":

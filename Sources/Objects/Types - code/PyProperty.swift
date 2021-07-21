@@ -139,7 +139,8 @@ public final class PyProperty: PyObject {
     switch Py.call(callable: propGet, args: [object]) {
     case .value(let r):
       return .value(r)
-    case .error(let e), .notCallable(let e):
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }
