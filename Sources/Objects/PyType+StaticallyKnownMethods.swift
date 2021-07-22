@@ -1,3 +1,4 @@
+import BigInt
 import VioletCore
 
 // swiftlint:disable nesting
@@ -34,36 +35,44 @@ extension PyType {
 
     internal var __repr__: StringConversionWrapper?
     internal var __str__: StringConversionWrapper?
+
     internal var __hash__: HashWrapper?
+
     internal var __eq__: ComparisonWrapper?
     internal var __ne__: ComparisonWrapper?
     internal var __lt__: ComparisonWrapper?
     internal var __le__: ComparisonWrapper?
     internal var __gt__: ComparisonWrapper?
     internal var __ge__: ComparisonWrapper?
+
     internal var __bool__: AsBoolWrapper?
-    internal var __float__: AsFloatWrapper?
     internal var __int__: AsIntWrapper?
+    internal var __float__: AsFloatWrapper?
     internal var __complex__: AsComplexWrapper?
     internal var __index__: AsIndexWrapper?
+
     internal var __getattr__: GetAttributeWrapper?
     internal var __getattribute__: GetAttributeWrapper?
     internal var __setattr__: SetAttributeWrapper?
     internal var __delattr__: DelAttributeWrapper?
+
     internal var __getitem__: GetItemWrapper?
     internal var __setitem__: SetItemWrapper?
     internal var __delitem__: DelItemWrapper?
+
     internal var __iter__: IterWrapper?
     internal var __next__: NextWrapper?
     internal var __len__: GetLengthWrapper?
     internal var __contains__: ContainsWrapper?
     internal var __reversed__: ReversedWrapper?
     internal var keys: KeysWrapper?
+
     internal var __del__: DelWrapper?
     internal var __dir__: DirWrapper?
     internal var __call__: CallWrapper?
-    internal var __instancecheck__: IsTypeWrapper?
-    internal var __subclasscheck__: IsSubtypeWrapper?
+
+    internal var __instancecheck__: InstanceCheckWrapper?
+    internal var __subclasscheck__: SubclassCheckWrapper?
     internal var __isabstractmethod__: IsAbstractMethodWrapper?
 
     internal var __pos__: NumericUnaryWrapper?
@@ -72,6 +81,7 @@ extension PyType {
     internal var __invert__: NumericUnaryWrapper?
     internal var __trunc__: NumericTruncWrapper?
     internal var __round__: NumericRoundWrapper?
+
     internal var __add__: NumericBinaryWrapper?
     internal var __and__: NumericBinaryWrapper?
     internal var __divmod__: NumericBinaryWrapper?
@@ -85,6 +95,7 @@ extension PyType {
     internal var __sub__: NumericBinaryWrapper?
     internal var __truediv__: NumericBinaryWrapper?
     internal var __xor__: NumericBinaryWrapper?
+
     internal var __radd__: NumericBinaryWrapper?
     internal var __rand__: NumericBinaryWrapper?
     internal var __rdivmod__: NumericBinaryWrapper?
@@ -98,6 +109,7 @@ extension PyType {
     internal var __rsub__: NumericBinaryWrapper?
     internal var __rtruediv__: NumericBinaryWrapper?
     internal var __rxor__: NumericBinaryWrapper?
+
     internal var __iadd__: NumericBinaryWrapper?
     internal var __iand__: NumericBinaryWrapper?
     internal var __idivmod__: NumericBinaryWrapper?
@@ -111,6 +123,7 @@ extension PyType {
     internal var __isub__: NumericBinaryWrapper?
     internal var __itruediv__: NumericBinaryWrapper?
     internal var __ixor__: NumericBinaryWrapper?
+
     internal var __pow__: NumericTernaryWrapper?
     internal var __rpow__: NumericTernaryWrapper?
     internal var __ipow__: NumericTernaryWrapper?
@@ -126,103 +139,109 @@ extension PyType {
 
     // MARK: StringConversionWrapper
 
-    /// repr(zelf: PyObject) -> PyResult<String>
-    /// repr(bool zelf: PyBool) -> PyResult<String>
-    /// repr() -> PyResult<String>
-    /// repr(int zelf: PyInt) -> PyResult<String>
     internal struct StringConversionWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject) -> PyResult<String>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(_ fn: @escaping (T) -> PyResult<String>) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)
+        }
+      }
+
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyResult<String>) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
+
+      internal init<T: PyObject>(_ fn: @escaping (T) -> PyResult<PyString>) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          let result = fn(zelf)
+          return result.map { $0.value }
+        }
+      }
     }
 
     // MARK: HashWrapper
 
-    /// hash(zelf: PyObject) -> HashResult
-    /// hash() -> HashResult
     internal struct HashWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject) -> HashResult
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init(_ fn: @escaping (PyObject) -> HashResult) {
+        self.fn = fn
+      }
+
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> HashResult) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
     }
 
     // MARK: ComparisonWrapper
 
-    /// isEqual(zelf: PyObject, other: PyObject) -> CompareResult
-    /// isEqual(_ other: PyObject) -> CompareResult
     internal struct ComparisonWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject, PyObject) -> CompareResult
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init(_ fn: @escaping (PyObject, PyObject) -> CompareResult) {
+        self.fn = fn
+      }
+
+      internal init<T: PyObject>(_ fn: @escaping (T) -> (PyObject) -> CompareResult) {
+        self.fn = { (arg0: PyObject, arg1: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)(arg1)
+        }
+      }
     }
 
     // MARK: AsBoolWrapper
 
-    /// asBool() -> Bool
     internal struct AsBoolWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject) -> Bool
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
-    }
-
-    // MARK: AsFloatWrapper
-
-    /// asFloat() -> PyResult<PyFloat>
-    internal struct AsFloatWrapper {
-
-      internal let fn: (PyObject) -> PyObject
-
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> Bool) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
     }
 
     // MARK: AsIntWrapper
 
-    /// asInt() -> PyResult<PyInt>
     internal struct AsIntWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject) -> PyResult<PyInt>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyResult<PyInt>) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
+    }
+
+    // MARK: AsFloatWrapper
+
+    internal struct AsFloatWrapper {
+
+      internal let fn: (PyObject) -> PyResult<PyFloat>
+
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyResult<PyFloat>) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
     }
 
     // MARK: AsComplexWrapper
@@ -231,400 +250,388 @@ extension PyType {
 
       internal let fn: (PyObject) -> PyObject
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      // This one is never used, so we do not need 'init'.
     }
 
     // MARK: AsIndexWrapper
 
-    /// asIndex() -> BigInt
     internal struct AsIndexWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject) -> BigInt
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> BigInt) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
     }
 
     // MARK: GetAttributeWrapper
 
     internal struct GetAttributeWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject, PyObject) -> PyResult<PyObject>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init(_ fn: @escaping (PyObject, PyObject) -> PyResult<PyObject>) {
+        self.fn = fn
+      }
+
+      internal init<T: PyObject>(
+        _ fn: @escaping (T) -> (PyObject) -> PyResult<PyObject>
+      ) {
+        self.fn = { (arg0: PyObject, arg1: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)(arg1)
+        }
+      }
     }
 
     // MARK: SetAttributeWrapper
 
-    /// setAttribute(zelf: PyObject, name: PyObject, value: PyObject?) -> PyResult<PyNone>
-    /// setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
     internal struct SetAttributeWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject, PyObject, PyObject?) -> PyResult<PyNone>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init(
+        _ fn: @escaping (PyObject, PyObject, PyObject?) -> PyResult<PyNone>
+      ) {
+        self.fn = fn
+      }
+
+      internal init<T: PyObject>(
+        _ fn: @escaping (T) -> (PyObject, PyObject?) -> PyResult<PyNone>
+      ) {
+        self.fn = { (arg0: PyObject, arg1: PyObject, arg2: PyObject?) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)(arg1, arg2)
+        }
+      }
     }
 
     // MARK: DelAttributeWrapper
 
-    /// delAttribute(zelf: PyObject, name: PyObject) -> PyResult<PyNone>
-    /// delAttribute(name: PyObject) -> PyResult<PyNone>
     internal struct DelAttributeWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject, PyObject) -> PyResult<PyNone>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init(_ fn: @escaping (PyObject, PyObject) -> PyResult<PyNone>) {
+        self.fn = fn
+      }
+
+      internal init<T: PyObject>(_ fn: @escaping (T) -> (PyObject) -> PyResult<PyNone>) {
+        self.fn = { (arg0: PyObject, arg1: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)(arg1)
+        }
+      }
     }
 
     // MARK: GetItemWrapper
 
-    /// getItem(index: PyObject) -> PyResult<PyObject>
     internal struct GetItemWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject, PyObject) -> PyResult<PyObject>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(
+        _ fn: @escaping (T) -> (PyObject) -> PyResult<PyObject>
+      ) {
+        self.fn = { (arg0: PyObject, arg1: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)(arg1)
+        }
+      }
     }
 
     // MARK: SetItemWrapper
 
-    /// setItem(index: PyObject, value: PyObject) -> PyResult<PyNone>
     internal struct SetItemWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject, PyObject, PyObject) -> PyResult<PyNone>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(
+        _ fn: @escaping (T) -> (PyObject, PyObject) -> PyResult<PyNone>
+      ) {
+        self.fn = { (arg0: PyObject, arg1: PyObject, arg2: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)(arg1, arg2)
+        }
+      }
     }
 
     // MARK: DelItemWrapper
 
-    /// delItem(index: PyObject) -> PyResult<PyNone>
     internal struct DelItemWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject, PyObject) -> PyResult<PyNone>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(
+        _ fn: @escaping (T) -> (PyObject) -> PyResult<PyNone>
+      ) {
+        self.fn = { (arg0: PyObject, arg1: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)(arg1)
+        }
+      }
     }
 
     // MARK: IterWrapper
 
-    /// iter() -> PyObject
     internal struct IterWrapper {
 
       internal let fn: (PyObject) -> PyObject
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyObject) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
     }
 
     // MARK: NextWrapper
 
-    /// next() -> PyResult<PyObject>
     internal struct NextWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject) -> PyResult<PyObject>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyResult<PyObject>) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
     }
 
     // MARK: GetLengthWrapper
 
-    /// getLength() -> BigInt
     internal struct GetLengthWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject) -> BigInt
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> BigInt) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
     }
 
     // MARK: ContainsWrapper
 
-    /// contains(element: PyObject) -> PyResult<Bool>
     internal struct ContainsWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject, PyObject) -> PyResult<Bool>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(_ fn: @escaping (T) -> (PyObject) -> PyResult<Bool>) {
+        self.fn = { (arg0: PyObject, arg1: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)(arg1)
+        }
+      }
     }
 
     // MARK: ReversedWrapper
 
-    /// reversed() -> PyObject
     internal struct ReversedWrapper {
 
       internal let fn: (PyObject) -> PyObject
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyObject) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
     }
 
     // MARK: KeysWrapper
 
-    /// keys() -> PyObject
     internal struct KeysWrapper {
 
       internal let fn: (PyObject) -> PyObject
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init(_ fn: @escaping (PyDict) -> () -> PyObject) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: PyDict.self)
+          return fn(zelf)()
+        }
+      }
     }
 
     // MARK: DelWrapper
 
-    /// del() -> PyResult<PyNone>
     internal struct DelWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject) -> PyResult<PyNone>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyResult<PyNone>) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
     }
 
     // MARK: DirWrapper
 
-    /// dir(zelf: PyObject) -> PyResult<DirResult>
-    /// dir() -> PyResult<DirResult>
     internal struct DirWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject) -> PyResult<DirResult>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init(_ fn: @escaping (PyObject) -> PyResult<DirResult>) {
+        self.fn = fn
+      }
+
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyResult<DirResult>) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
     }
 
     // MARK: CallWrapper
 
-    /// call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
     internal struct CallWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject, [PyObject], PyDict?) -> PyResult<PyObject>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(
+        _ fn: @escaping (T) -> ([PyObject], PyDict?) -> PyResult<PyObject>
+      ) {
+        self.fn = { (arg0: PyObject, args: [PyObject], kwargs: PyDict?) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)(args, kwargs)
+        }
+      }
     }
 
-    // MARK: IsTypeWrapper
+    // MARK: InstanceCheckWrapper
 
-    /// isType(of object: PyObject) -> Bool
-    internal struct IsTypeWrapper {
+    internal struct InstanceCheckWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject, PyObject) -> Bool
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init(_ fn: @escaping (PyType) -> (PyObject) -> Bool) {
+        self.fn = { (arg0: PyObject, arg1: PyObject) in
+          let zelf = forceCast(object: arg0, as: PyType.self)
+          return fn(zelf)(arg1)
+        }
+      }
     }
 
-    // MARK: IsSubtypeWrapper
+    // MARK: SubclassCheckWrapper
 
-    /// isSubtype(of object: PyObject) -> PyResult<Bool>
-    internal struct IsSubtypeWrapper {
+    internal struct SubclassCheckWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject, PyType) -> Bool
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init(_ fn: @escaping (PyType) -> (PyType) -> Bool) {
+        self.fn = { (arg0: PyObject, arg1: PyType) in
+          let zelf = forceCast(object: arg0, as: PyType.self)
+          return fn(zelf)(arg1)
+        }
+      }
     }
 
     // MARK: IsAbstractMethodWrapper
 
-    /// isAbstractMethod() -> PyResult<Bool>
     internal struct IsAbstractMethodWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject) -> PyResult<Bool>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyResult<Bool>) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
     }
 
     // MARK: NumericUnaryWrapper
 
-    /// positive() -> PyObject
     internal struct NumericUnaryWrapper {
 
       internal let fn: (PyObject) -> PyObject
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyObject) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
     }
 
     // MARK: NumericTruncWrapper
 
-    /// trunc() -> PyResult<PyInt>
     internal struct NumericTruncWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject) -> PyResult<PyInt>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyResult<PyInt>) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)()
+        }
+      }
     }
 
     // MARK: NumericRoundWrapper
 
-    /// round(nDigits: PyObject?) -> PyResult<PyObject>
-    /// round(nDigits _nDigits: PyObject?) -> PyResult<PyObject>
     internal struct NumericRoundWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject, PyObject?) -> PyResult<PyObject>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(
+        _ fn: @escaping (T) -> (PyObject?) -> PyResult<PyObject>
+      ) {
+        self.fn = { (arg0: PyObject, arg1: PyObject?) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)(arg1)
+        }
+      }
     }
 
     // MARK: NumericBinaryWrapper
 
-    /// add(_ other: PyObject) -> PyResult<PyObject>
     internal struct NumericBinaryWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject, PyObject) -> PyResult<PyObject>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(
+        _ fn: @escaping (T, PyObject) -> PyResult<PyObject>
+      ) {
+        self.fn = { (arg0: PyObject, arg1: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf, arg1)
+        }
+      }
+
+      internal init<T: PyObject>(
+        _ fn: @escaping (T) -> (PyObject) -> PyResult<PyObject>
+      ) {
+        self.fn = { (arg0: PyObject, arg1: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)(arg1)
+        }
+      }
     }
 
     // MARK: NumericTernaryWrapper
 
-    /// pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject>
     internal struct NumericTernaryWrapper {
 
-      internal let fn: (PyObject) -> PyObject
+      internal let fn: (PyObject, PyObject, PyObject) -> PyResult<PyObject>
 
-//      internal init<T: PyObject>(_ fn: @escaping (T) -> PyObject) {
-//        self.fn = { (arg0: PyObject) in
-//          let zelf = forceCast(object: arg0, as: T)
-//          return fn(zelf)
-//        }
-//        fatalError()
-//      }
+      internal init<T: PyObject>(
+        _ fn: @escaping (T) -> (PyObject, PyObject) -> PyResult<PyObject>
+      ) {
+        self.fn = { (arg0: PyObject, arg1: PyObject, arg2: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          return fn(zelf)(arg1, arg2)
+        }
+      }
     }
   }
 }

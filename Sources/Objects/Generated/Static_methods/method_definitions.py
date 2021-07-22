@@ -59,8 +59,8 @@ STATIC_METHODS = [
     StaticMethod('__ge__', _comparison),
 
     StaticMethod('__bool__', _asBool),
-    StaticMethod('__float__', _asFloat),
     StaticMethod('__int__', _asInt),
+    StaticMethod('__float__', _asFloat),
     StaticMethod('__complex__', _asComplex),
     StaticMethod('__index__', _asIndex),
 
