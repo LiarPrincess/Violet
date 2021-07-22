@@ -319,6 +319,7 @@ extension PyType {
     /// - `mro: [PyType]`
     /// - `subclasses: [WeakRef]`
     /// - `layout: MemoryLayout`
+    /// - `staticMethods: StaticallyKnownNotOverriddenMethods`
     public static let PyType = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `iterators: [PyObject]`

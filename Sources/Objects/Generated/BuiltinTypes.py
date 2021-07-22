@@ -3,9 +3,11 @@ from Common.strings import generated_warning
 from TypeMemoryLayout import get_layout_name
 from Common.builtin_types import (
     get_property_name_escaped, print_property,
+    print_type_mark,
     get_fill_function_name, print_fill_function, print_fill_helpers,
     print_castSelf_functions
 )
+
 
 if __name__ == '__main__':
     print(f'''\
@@ -159,6 +161,7 @@ import VioletCore
     print_fill_helpers()
 
     for t in types:
+        print_type_mark(t)
         print_fill_function(t)
         print_castSelf_functions(t)
 

@@ -44,6 +44,15 @@ def get_property_name_escaped(python_type_name: str) -> str:
 
 
 # ====
+# MARK
+# ====
+
+def print_type_mark(t: TypeInfo):
+    print(f'  // MARK: - {t.swift_type_name.replace("Py", "")}')
+    print()
+
+
+# ====
 # Fill
 # ====
 
@@ -78,9 +87,6 @@ def print_fill_function(t: TypeInfo):
     swift_type_name = t.swift_type_name
     if swift_type_name == 'PyObject':
         swift_type_name = 'PyObjectType'
-
-    print(f'  // MARK: - {t.swift_type_name.replace("Py", "")}')
-    print()
 
     function_name = get_fill_function_name(t)
     print(f'  private func {function_name}() {{')

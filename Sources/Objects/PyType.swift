@@ -130,6 +130,11 @@ public final class PyType: PyObject, HasCustomGetMethod {
   /// See `PyType.MemoryLayout` documentation for details.
   internal let layout: MemoryLayout
 
+  /// Methods needed to make `PyStaticCall` work.
+  ///
+  /// See `PyStaticCall` documentation for more information.
+  internal let staticMethods = StaticallyKnownNotOverriddenMethods()
+
   internal var isHeapType: Bool {
     return self.flags.isSet(Self.heapTypeFlag)
   }
