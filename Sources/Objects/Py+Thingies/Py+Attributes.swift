@@ -98,8 +98,8 @@ extension PyInstance {
 
   private func call__getattribute__(object: PyObject,
                                     name: PyString) -> PyResult<PyObject> {
-    // Fast protocol-based path
-    if let result = Fast.__getattribute__(object, name: name) {
+    // Fast path: we know the method at compile time
+    if let result = PyStaticCall.__getattribute__(object, name: name) {
       return result
     }
 
@@ -139,8 +139,8 @@ extension PyInstance {
 
   private func call__getattr__(object: PyObject,
                                name: PyString) -> CallGetattrResult {
-    // Fast protocol-based path
-    if let result = Fast.__getattr__(object, name: name) {
+    // Fast path: we know the method at compile time
+    if let result = PyStaticCall.__getattr__(object, name: name) {
       return CallGetattrResult(result: result)
     }
 
@@ -219,7 +219,7 @@ extension PyInstance {
       return .typeError("setattr(): attribute name must be string")
     }
 
-    if let result = Fast.__setattr__(object, name: name, value: value) {
+    if let result = PyStaticCall.__setattr__(object, name: name, value: value) {
       return result
     }
 
@@ -294,7 +294,7 @@ extension PyInstance {
       return .typeError("delattr(): attribute name must be string")
     }
 
-    if let result = Fast.__delattr__(object, name: name) {
+    if let result = PyStaticCall.__delattr__(object, name: name) {
       return result
     }
 

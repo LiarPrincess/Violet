@@ -61,7 +61,7 @@ extension PyInstance {
     }
 
     // Try __bool__
-    if let result = Fast.__bool__(object) {
+    if let result = PyStaticCall.__bool__(object) {
       return .value(result)
     }
 
@@ -81,7 +81,7 @@ extension PyInstance {
     }
 
     // Try __len__
-    if let len = Fast.__len__(object) {
+    if let len = PyStaticCall.__len__(object) {
       return .value(len.isTrue)
     }
 

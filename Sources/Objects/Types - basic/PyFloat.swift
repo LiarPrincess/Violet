@@ -886,7 +886,7 @@ public final class PyFloat: PyObject {
   }
 
   private static func callFloat(_ object: PyObject) -> PyInstance.CallMethodResult {
-    if let result = Fast.__float__(object) {
+    if let result = PyStaticCall.__float__(object) {
       switch result {
       case let .value(f): return .value(f)
       case let .error(e): return .error(e)

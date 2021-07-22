@@ -146,7 +146,7 @@ public final class PyReversed: PyObject {
   }
 
   private static func call__reversed__(object: PyObject) -> PyInstance.CallMethodResult {
-    if let result = Fast.__reversed__(object) {
+    if let result = PyStaticCall.__reversed__(object) {
       return .value(result)
     }
 

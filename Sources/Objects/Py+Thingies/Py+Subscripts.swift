@@ -12,7 +12,7 @@ extension PyInstance {
 
   /// PyObject_GetItem
   public func getItem(object: PyObject, index: PyObject) -> PyResult<PyObject> {
-    if let result = Fast.__getitem__(object, index: index) {
+    if let result = PyStaticCall.__getitem__(object, index: index) {
       return result
     }
 
@@ -33,7 +33,7 @@ extension PyInstance {
   public func setItem(object: PyObject,
                       index: PyObject,
                       value: PyObject) -> PyResult<PyNone> {
-    if let result = Fast.__setitem__(object, index: index, value: value) {
+    if let result = PyStaticCall.__setitem__(object, index: index, value: value) {
       return result
     }
 
@@ -54,7 +54,7 @@ extension PyInstance {
 
   /// PyObject_DelItem
   public func deleteItem(object: PyObject, index: PyObject) -> PyResult<PyNone> {
-    if let result = Fast.__delitem__(object, index: index) {
+    if let result = PyStaticCall.__delitem__(object, index: index) {
       return result
     }
 

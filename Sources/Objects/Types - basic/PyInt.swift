@@ -1041,7 +1041,7 @@ public class PyInt: PyObject {
   }
 
   private static func call__int__(object: PyObject) -> NumberConverterResult {
-    if let result = Fast.__int__(object) {
+    if let result = PyStaticCall.__int__(object) {
       switch result {
       case let .value(int): return .value(int)
       case let .error(e): return .error(e)
@@ -1066,7 +1066,7 @@ public class PyInt: PyObject {
   }
 
   private static func call__trunc__(object: PyObject) -> NumberConverterResult {
-    if let result = Fast.__trunc__(object) {
+    if let result = PyStaticCall.__trunc__(object) {
       switch result {
       case let .value(int): return .value(int)
       case let .error(e): return .error(e)

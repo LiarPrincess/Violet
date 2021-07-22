@@ -8,7 +8,7 @@ extension PyInstance {
 
   /// PyObject * PyNumber_Positive(PyObject *o)
   public func pos(object: PyObject) -> PyResult<PyObject> {
-    if let result = Fast.__pos__(object) {
+    if let result = PyStaticCall.__pos__(object) {
       return .value(result)
     }
 
@@ -21,7 +21,7 @@ extension PyInstance {
 
   /// PyObject * PyNumber_Negative(PyObject *o)
   public func neg(object: PyObject) -> PyResult<PyObject> {
-    if let result = Fast.__neg__(object) {
+    if let result = PyStaticCall.__neg__(object) {
       return .value(result)
     }
 
@@ -34,7 +34,7 @@ extension PyInstance {
 
   /// PyObject * PyNumber_Invert(PyObject *o)
   public func invert(object: PyObject) -> PyResult<PyObject> {
-    if let result = Fast.__invert__(object) {
+    if let result = PyStaticCall.__invert__(object) {
       return .value(result)
     }
 
@@ -50,7 +50,7 @@ extension PyInstance {
   ///
   /// PyObject * PyNumber_Absolute(PyObject *o)
   public func abs(object: PyObject) -> PyResult<PyObject> {
-    if let result = Fast.__abs__(object) {
+    if let result = PyStaticCall.__abs__(object) {
       return .value(result)
     }
 

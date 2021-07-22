@@ -93,20 +93,20 @@ private struct {struct_name}: BinaryOp {{
   fileprivate static let reflectedSelector = IdString.__r{name}__
   fileprivate static let inPlaceSelector = IdString.__i{name}__
 
-  fileprivate static func callFastOp(left: PyObject,
-                                     right: PyObject) -> FastCallResult {{
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {{
     let result = Fast.__{name}__(left, right)
     return FastCallResult(result)
   }}
 
-  fileprivate static func callFastReflected(left: PyObject,
-                                            right: PyObject) -> FastCallResult {{
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              right: PyObject) -> StaticCallResult {{
     let result = Fast.__r{name}__(right, left)
     return FastCallResult(result)
   }}
 
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          right: PyObject) -> FastCallResult {{
+  fileprivate static func callStaticInPlace(left: PyObject,
+                                            right: PyObject) -> StaticCallResult {{
     let result = Fast.__i{name}__(left, right)
     return FastCallResult(result)
   }}

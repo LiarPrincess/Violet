@@ -256,7 +256,7 @@ extension PyInstance {
   /// static PyObject *
   /// _dir_object(PyObject *obj)
   private func objectDir(object: PyObject) -> PyResult<PyObject> {
-    if let result = Fast.__dir__(object) {
+    if let result = PyStaticCall.__dir__(object) {
       return result.asFunctionResult
     }
 
@@ -296,7 +296,7 @@ extension PyInstance {
   // MARK: - Is abstract method
 
   public func isAbstractMethod(object: PyObject) -> PyResult<Bool> {
-    if let result = Fast.__isabstractmethod__(object) {
+    if let result = PyStaticCall.__isabstractmethod__(object) {
       return result
     }
 

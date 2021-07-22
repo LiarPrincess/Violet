@@ -169,7 +169,7 @@ import VioletCore
 // === Table of contents ===
 // 1. Owner protocol definitions - protocols for each operation
 // 2. func hasOverridenBuiltinMethod
-// 3. Fast enum - try to call given function with protocol dispatch
+// 3. PyStaticCall enum - try to call given function with protocol dispatch
 // 4. Owner protocol conformance - this type supports given operation/protocol
 ''')
 
@@ -210,7 +210,7 @@ internal protocol __dict__Owner {{
             protocols_by_name[swift_protocol_name] = protocol
 
     for t in types:
-        # Object will never participate in 'Fast'
+        # Object will never participate in 'PyStaticCall'
         if t.python_type_name == 'object':
             continue
 
@@ -298,13 +298,13 @@ private func hasOverridenBuiltinMethod(
 }
 ''')
 
-    # ============
-    # === Fast ===
-    # ============
+    # ====================
+    # === PyStaticCall ===
+    # ====================
 
-    print('// MARK: - Fast')
+    print('// MARK: - PyStaticCall')
     print()
-    print('internal enum Fast {')
+    print('internal enum PyStaticCall {')
 
     for protocol_name in sorted(protocols_by_name):
         protocol = protocols_by_name[protocol_name]

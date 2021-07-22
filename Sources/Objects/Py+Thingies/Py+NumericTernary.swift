@@ -4,10 +4,10 @@
 
 // MARK: - Abstract
 
-private enum FastCallResult {
+private enum StaticCallResult {
   case value(PyObject)
   case error(PyBaseException)
-  /// Fast call is not available
+  /// Static call is not available
   case unavailable
 
   fileprivate init(_ value: PyResult<PyObject>?) {
@@ -46,19 +46,19 @@ private protocol TernaryOp {
   static var inPlaceSelector: IdString { get }
 
   /// Call op with fast protocol dispatch.
-  static func callFastOp(left: PyObject,
+  static func callStatic(left: PyObject,
                          middle: PyObject,
-                         right: PyObject) -> FastCallResult
+                         right: PyObject) -> StaticCallResult
   /// Call reflected op with fast protocol dispatch.
   /// For `__pow__` it should call `__rpow__`.
-  static func callFastReflected(left: PyObject,
-                                middle: PyObject,
-                                right: PyObject) -> FastCallResult
+  static func callStaticReflected(left: PyObject,
+                                  middle: PyObject,
+                                  right: PyObject) -> StaticCallResult
   /// Call in-place op with fast protocol dispatch.
   /// For `__pow__` it should call `__ipow__`.
-  static func callFastInPlace(left: PyObject,
-                              middle: PyObject,
-                              right: PyObject) -> FastCallResult
+  static func callStaticInPlace(left: PyObject,
+                                middle: PyObject,
+                                right: PyObject) -> StaticCallResult
 }
 
 extension TernaryOp {
@@ -72,7 +72,7 @@ extension TernaryOp {
     case let .value(result):
       if PyCast.isNotImplemented(result) {
         let msg = "unsupported operand type(s) for \(op): " +
-                  "\(left.typeName), \(middle.typeName) and \(right.typeName)"
+          "\(left.typeName), \(middle.typeName) and \(right.typeName)"
         return .typeError(msg)
       }
 
@@ -104,7 +104,7 @@ extension TernaryOp {
     case let .value(result):
       if PyCast.isNotImplemented(result) {
         let msg = "unsupported operand type(s) for \(inPlaceOp): " +
-                  "\(left.typeName), \(middle.typeName) and \(right.typeName)"
+          "\(left.typeName), \(middle.typeName) and \(right.typeName)"
         return .typeError(msg)
       }
 
@@ -170,8 +170,8 @@ extension TernaryOp {
   private static func callOp(left: PyObject,
                              middle: PyObject,
                              right: PyObject) -> PyResult<PyObject> {
-    // Try fast protocol-based dispatch
-    switch callFastOp(left: left, middle: middle, right: right) {
+    // Fast path: we know the method at compile time
+    switch self.callStatic(left: left, middle: middle, right: right) {
     case .value(let result):
       return .value(result)
     case .unavailable:
@@ -195,8 +195,8 @@ extension TernaryOp {
   private static func callReflectedOp(left: PyObject,
                                       middle: PyObject,
                                       right: PyObject) -> PyResult<PyObject> {
-    // Try fast protocol-based dispatch
-    switch callFastReflected(left: left, middle: middle, right: right) {
+    // Fast path: we know the method at compile time
+    switch self.callStaticReflected(left: left, middle: middle, right: right) {
     case .value(let result):
       return .value(result)
     case .unavailable:
@@ -220,8 +220,8 @@ extension TernaryOp {
   private static func callInPlaceOp(left: PyObject,
                                     middle: PyObject,
                                     right: PyObject) -> PyResult<PyObject> {
-    // Try fast protocol-based dispatch
-    switch callFastInPlace(left: left, middle: middle, right: right) {
+    // Fast path: we know the method at compile time
+    switch self.callStaticInPlace(left: left, middle: middle, right: right) {
     case .value(let result):
       return .value(result)
     case .unavailable:
@@ -255,25 +255,25 @@ private enum PowOp: TernaryOp {
   fileprivate static var reflectedSelector = IdString.__rpow__
   fileprivate static var inPlaceSelector = IdString.__ipow__
 
-  fileprivate static func callFastOp(left: PyObject,
+  fileprivate static func callStatic(left: PyObject,
                                      middle: PyObject,
-                                     right: PyObject) -> FastCallResult {
-    let result = Fast.__pow__(left, exp: middle, mod: right)
-    return FastCallResult(result)
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__pow__(left, exp: middle, mod: right)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastReflected(left: PyObject,
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              middle: PyObject,
+                                              right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__rpow__(middle, base: left, mod: right)
+    return StaticCallResult(result)
+  }
+
+  fileprivate static func callStaticInPlace(left: PyObject,
                                             middle: PyObject,
-                                            right: PyObject) -> FastCallResult {
-    let result = Fast.__rpow__(middle, base: left, mod: right)
-    return FastCallResult(result)
-  }
-
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          middle: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__ipow__(left, base: middle, mod: right)
-    return FastCallResult(result)
+                                            right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__ipow__(left, base: middle, mod: right)
+    return StaticCallResult(result)
   }
 }
 

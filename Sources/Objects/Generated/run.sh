@@ -57,11 +57,6 @@ python3 $GENERATED/TypeMemoryLayout.py > $GENERATED/TypeMemoryLayout.swift
 
 # This stage does not really depend on type definitions.
 
-# === Fast dispatch ===
-# Sometimes instead of doing slow Python dispatch we will use Swift protocols.
-echo 'Generating Fast (protocol based dispatch)'
-python3 $GENERATED/Fast.py > $GENERATED/Fast.swift
-
 # === Casting ===
 # Sometimes we have to cast from 'PyObject' to specific Swift type.
 # This file generates casting methods.
@@ -81,6 +76,11 @@ echo "Generating PyBuiltinFunction+Wrap (factory methods for 'builtinfunction')"
 python3 $GENERATED/PyBuiltinFunction+Wrap.py > $GENERATED/PyBuiltinFunction+Wrap.swift
 echo "Generating PyClassMethod+Wrap (factory methods for 'classmethod')"
 python3 $GENERATED/PyClassMethod+Wrap.py > $GENERATED/PyClassMethod+Wrap.swift
+
+# === Static dispatch ===
+# Sometimes instead of doing slow Python dispatch we will use 'object.type.staticMethods'.
+echo "Generating PyStaticCall (call method via 'object.type.staticMethods' if possible)"
+python3 $GENERATED/PyStaticCall.py > $GENERATED/PyStaticCall.swift
 
 # === IdString ===
 # Predefined commonly used `__dict__` keys.

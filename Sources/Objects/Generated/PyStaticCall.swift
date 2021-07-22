@@ -1,8 +1,8 @@
-// =================================================================
-// Automatically generated from: ./Sources/Objects/Generated/Fast.py
+// =========================================================================
+// Automatically generated from: ./Sources/Objects/Generated/PyStaticCall.py
 // Use 'make gen' in repository root to regenerate.
 // DO NOT EDIT!
-// =================================================================
+// =========================================================================
 
 import BigInt
 import VioletCore
@@ -62,7 +62,7 @@ import VioletCore
 // === Table of contents ===
 // 1. Owner protocol definitions - protocols for each operation
 // 2. func hasOverridenBuiltinMethod
-// 3. Fast enum - try to call given function with protocol dispatch
+// 3. PyStaticCall enum - try to call given function with protocol dispatch
 // 4. Owner protocol conformance - this type supports given operation/protocol
 
 // MARK: - Owner protocols
@@ -179,9 +179,9 @@ private func hasOverridenBuiltinMethod(
   return isHeapType
 }
 
-// MARK: - Fast
+// MARK: - PyStaticCall
 
-internal enum Fast {
+internal enum PyStaticCall {
 
   internal static func __abs__(_ zelf: PyObject) -> PyObject? {
     if let owner = zelf as? __abs__Owner,

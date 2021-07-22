@@ -58,7 +58,7 @@ extension PyInstance {
   }
 
   private func reprImpl(object: PyObject) -> ReprImplResult {
-    if let result = Fast.__repr__(object) {
+    if let result = PyStaticCall.__repr__(object) {
       switch result {
       case let .value(s):
         return .string(s)
@@ -204,7 +204,7 @@ extension PyInstance {
       return StrImplResult(repr: repr)
     }
 
-    if let result = Fast.__str__(object) {
+    if let result = PyStaticCall.__str__(object) {
       switch result {
       case let .value(s): return .string(s)
       case let .error(e): return .error(e)

@@ -154,7 +154,7 @@ extension AbstractBytes {
 
     // If we can easily get the '__len__' then use it.
     // If not, then we can't call python method, because it may side-effect.
-    if let bigInt = Fast.__len__(iterable), let int = Int(exactly: bigInt) {
+    if let bigInt = PyStaticCall.__len__(iterable), let int = Int(exactly: bigInt) {
       result.reserveCapacity(int)
     }
 

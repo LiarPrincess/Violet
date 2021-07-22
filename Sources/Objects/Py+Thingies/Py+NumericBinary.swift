@@ -10,10 +10,10 @@
 
 // MARK: - Abstract
 
-private enum FastCallResult {
+private enum StaticCallResult {
   case value(PyObject)
   case error(PyBaseException)
-  /// Fast call is not available
+  /// Static call is not available
   case unavailable
 
   fileprivate init(_ value: PyResult<PyObject>?) {
@@ -51,17 +51,16 @@ private protocol BinaryOp {
   /// For `__add__` it is `__iadd__`.
   static var inPlaceSelector: IdString { get }
 
-  /// Call op with fast protocol dispatch.
-  static func callFastOp(left: PyObject,
-                         right: PyObject) -> FastCallResult
-  /// Call reflected op with fast protocol dispatch.
+  /// Fast path: we know the method at compile time
+  static func callStatic(left: PyObject, right: PyObject) -> StaticCallResult
+  /// Fast path: we know the reflected method at compile time
+  ///
   /// For `__add__` it should call `__radd__`.
-  static func callFastReflected(left: PyObject,
-                                right: PyObject) -> FastCallResult
-  /// Call in-place op with fast protocol dispatch.
+  static func callStaticReflected(left: PyObject, right: PyObject) -> StaticCallResult
+  /// Fast path: we know the in-place method at compile time
+  ///
   /// For `__add__` it should call `__iadd__`.
-  static func callFastInPlace(left: PyObject,
-                              right: PyObject) -> FastCallResult
+  static func callStaticInPlace(left: PyObject, right: PyObject) -> StaticCallResult
 }
 
 extension BinaryOp {
@@ -120,7 +119,7 @@ extension BinaryOp {
     case let .value(result):
       if PyCast.isNotImplemented(result) {
         let msg = "unsupported operand type(s) for \(inPlaceOp): " +
-                  "\(left.typeName) and \(right.typeName)."
+          "\(left.typeName) and \(right.typeName)."
         return .typeError(msg)
       }
 
@@ -189,8 +188,8 @@ extension BinaryOp {
 
   private static func callOp(left: PyObject,
                              right: PyObject) -> PyResult<PyObject> {
-    // Try fast protocol-based dispatch
-    switch callFastOp(left: left, right: right) {
+    // Fast path: we know the method at compile time
+    switch self.callStatic(left: left, right: right) {
     case .value(let result):
       return .value(result)
     case .unavailable:
@@ -213,8 +212,8 @@ extension BinaryOp {
 
   private static func callReflectedOp(left: PyObject,
                                       right: PyObject) -> PyResult<PyObject> {
-    // Try fast protocol-based dispatch
-    switch callFastReflected(left: left, right: right) {
+    // Fast path: we know the method at compile time
+    switch self.callStaticReflected(left: left, right: right) {
     case .value(let result):
       return .value(result)
     case .unavailable:
@@ -237,8 +236,8 @@ extension BinaryOp {
 
   private static func callInPlaceOp(left: PyObject,
                                     right: PyObject) -> PyResult<PyObject> {
-    // Try fast protocol-based dispatch
-    switch callFastInPlace(left: left, right: right) {
+    // Fast path: we know the method at compile time
+    switch self.callStaticInPlace(left: left, right: right) {
     case .value(let result):
       return .value(result)
     case .unavailable:
@@ -270,22 +269,22 @@ private struct AddOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__radd__
   fileprivate static let inPlaceSelector = IdString.__iadd__
 
-  fileprivate static func callFastOp(left: PyObject,
-                                     right: PyObject) -> FastCallResult {
-    let result = Fast.__add__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__add__(left, right)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastReflected(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-    let result = Fast.__radd__(right, left)
-    return FastCallResult(result)
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__radd__(right, left)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__iadd__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStaticInPlace(left: PyObject,
+                                            right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__iadd__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -310,22 +309,22 @@ private struct SubOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rsub__
   fileprivate static let inPlaceSelector = IdString.__isub__
 
-  fileprivate static func callFastOp(left: PyObject,
-                                     right: PyObject) -> FastCallResult {
-    let result = Fast.__sub__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__sub__(left, right)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastReflected(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-    let result = Fast.__rsub__(right, left)
-    return FastCallResult(result)
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__rsub__(right, left)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__isub__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStaticInPlace(left: PyObject,
+                                            right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__isub__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -350,22 +349,22 @@ private struct MulOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rmul__
   fileprivate static let inPlaceSelector = IdString.__imul__
 
-  fileprivate static func callFastOp(left: PyObject,
-                                     right: PyObject) -> FastCallResult {
-    let result = Fast.__mul__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__mul__(left, right)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastReflected(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-    let result = Fast.__rmul__(right, left)
-    return FastCallResult(result)
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__rmul__(right, left)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__imul__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStaticInPlace(left: PyObject,
+                                            right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__imul__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -390,22 +389,22 @@ private struct MatmulOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rmatmul__
   fileprivate static let inPlaceSelector = IdString.__imatmul__
 
-  fileprivate static func callFastOp(left: PyObject,
-                                     right: PyObject) -> FastCallResult {
-    let result = Fast.__matmul__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__matmul__(left, right)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastReflected(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-    let result = Fast.__rmatmul__(right, left)
-    return FastCallResult(result)
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__rmatmul__(right, left)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__imatmul__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStaticInPlace(left: PyObject,
+                                            right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__imatmul__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -430,22 +429,22 @@ private struct TruedivOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rtruediv__
   fileprivate static let inPlaceSelector = IdString.__itruediv__
 
-  fileprivate static func callFastOp(left: PyObject,
-                                     right: PyObject) -> FastCallResult {
-    let result = Fast.__truediv__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__truediv__(left, right)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastReflected(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-    let result = Fast.__rtruediv__(right, left)
-    return FastCallResult(result)
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__rtruediv__(right, left)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__itruediv__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStaticInPlace(left: PyObject,
+                                            right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__itruediv__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -470,22 +469,22 @@ private struct FloordivOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rfloordiv__
   fileprivate static let inPlaceSelector = IdString.__ifloordiv__
 
-  fileprivate static func callFastOp(left: PyObject,
-                                     right: PyObject) -> FastCallResult {
-    let result = Fast.__floordiv__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__floordiv__(left, right)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastReflected(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-    let result = Fast.__rfloordiv__(right, left)
-    return FastCallResult(result)
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__rfloordiv__(right, left)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__ifloordiv__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStaticInPlace(left: PyObject,
+                                            right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__ifloordiv__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -510,22 +509,22 @@ private struct ModOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rmod__
   fileprivate static let inPlaceSelector = IdString.__imod__
 
-  fileprivate static func callFastOp(left: PyObject,
-                                     right: PyObject) -> FastCallResult {
-    let result = Fast.__mod__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__mod__(left, right)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastReflected(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-    let result = Fast.__rmod__(right, left)
-    return FastCallResult(result)
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__rmod__(right, left)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__imod__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStaticInPlace(left: PyObject,
+                                            right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__imod__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -550,22 +549,22 @@ private struct DivmodOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rdivmod__
   fileprivate static let inPlaceSelector = IdString.__idivmod__
 
-  fileprivate static func callFastOp(left: PyObject,
-                                     right: PyObject) -> FastCallResult {
-    let result = Fast.__divmod__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__divmod__(left, right)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastReflected(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-    let result = Fast.__rdivmod__(right, left)
-    return FastCallResult(result)
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__rdivmod__(right, left)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__idivmod__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStaticInPlace(left: PyObject,
+                                            right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__idivmod__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -590,22 +589,22 @@ private struct LshiftOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rlshift__
   fileprivate static let inPlaceSelector = IdString.__ilshift__
 
-  fileprivate static func callFastOp(left: PyObject,
-                                     right: PyObject) -> FastCallResult {
-    let result = Fast.__lshift__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__lshift__(left, right)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastReflected(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-    let result = Fast.__rlshift__(right, left)
-    return FastCallResult(result)
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__rlshift__(right, left)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__ilshift__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStaticInPlace(left: PyObject,
+                                            right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__ilshift__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -630,22 +629,22 @@ private struct RshiftOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rrshift__
   fileprivate static let inPlaceSelector = IdString.__irshift__
 
-  fileprivate static func callFastOp(left: PyObject,
-                                     right: PyObject) -> FastCallResult {
-    let result = Fast.__rshift__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__rshift__(left, right)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastReflected(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-    let result = Fast.__rrshift__(right, left)
-    return FastCallResult(result)
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__rrshift__(right, left)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__irshift__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStaticInPlace(left: PyObject,
+                                            right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__irshift__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -670,22 +669,22 @@ private struct AndOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rand__
   fileprivate static let inPlaceSelector = IdString.__iand__
 
-  fileprivate static func callFastOp(left: PyObject,
-                                     right: PyObject) -> FastCallResult {
-    let result = Fast.__and__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__and__(left, right)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastReflected(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-    let result = Fast.__rand__(right, left)
-    return FastCallResult(result)
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__rand__(right, left)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__iand__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStaticInPlace(left: PyObject,
+                                            right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__iand__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -710,22 +709,22 @@ private struct OrOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__ror__
   fileprivate static let inPlaceSelector = IdString.__ior__
 
-  fileprivate static func callFastOp(left: PyObject,
-                                     right: PyObject) -> FastCallResult {
-    let result = Fast.__or__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__or__(left, right)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastReflected(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-    let result = Fast.__ror__(right, left)
-    return FastCallResult(result)
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__ror__(right, left)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__ior__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStaticInPlace(left: PyObject,
+                                            right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__ior__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -750,22 +749,22 @@ private struct XorOp: BinaryOp {
   fileprivate static let reflectedSelector = IdString.__rxor__
   fileprivate static let inPlaceSelector = IdString.__ixor__
 
-  fileprivate static func callFastOp(left: PyObject,
-                                     right: PyObject) -> FastCallResult {
-    let result = Fast.__xor__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__xor__(left, right)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastReflected(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-    let result = Fast.__rxor__(right, left)
-    return FastCallResult(result)
+  fileprivate static func callStaticReflected(left: PyObject,
+                                              right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__rxor__(right, left)
+    return StaticCallResult(result)
   }
 
-  fileprivate static func callFastInPlace(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__ixor__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStaticInPlace(left: PyObject,
+                                            right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__ixor__(left, right)
+    return StaticCallResult(result)
   }
 }
 

@@ -88,7 +88,7 @@ internal enum IndexHelper {
       return .value(int.value)
     }
 
-    if let result = Fast.__index__(value) {
+    if let result = PyStaticCall.__index__(value) {
       return .value(result)
     }
 

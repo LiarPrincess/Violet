@@ -20,7 +20,7 @@ extension PyInstance {
   }
 
   private func callNext(iterator: PyObject) -> PyResult<PyObject> {
-    if let result = Fast.__next__(iterator) {
+    if let result = PyStaticCall.__next__(iterator) {
       return result
     }
 
@@ -41,7 +41,7 @@ extension PyInstance {
   /// (as opposed to the one with `sentinel` argument)
   public func iter(object: PyObject) -> PyResult<PyObject> {
     // Check for '__iter__'.
-    if let result = Fast.__iter__(object) {
+    if let result = PyStaticCall.__iter__(object) {
       return .value(result)
     }
 

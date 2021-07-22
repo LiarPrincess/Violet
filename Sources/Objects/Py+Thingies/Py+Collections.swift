@@ -245,7 +245,7 @@ extension PyInstance {
 
   /// Call the `keys` method on object.
   public func getKeys(object: PyObject) -> GetKeysResult {
-    if let result = Fast.keys(object) {
+    if let result = PyStaticCall.keys(object) {
       return .value(result)
     }
 
@@ -382,7 +382,7 @@ extension PyInstance {
   /// len(s)
   /// See [this](https://docs.python.org/3/library/functions.html#len)
   public func len(iterable: PyObject) -> PyResult<PyObject> {
-    if let result = Fast.__len__(iterable) {
+    if let result = PyStaticCall.__len__(iterable) {
       return .value(self.newInt(result))
     }
 
@@ -399,7 +399,7 @@ extension PyInstance {
 
   public func lenBigInt(iterable: PyObject) -> PyResult<BigInt> {
     // Avoid 'PyObject' allocation inside `self.length(iterable: PyObject)`
-    if let result = Fast.__len__(iterable) {
+    if let result = PyStaticCall.__len__(iterable) {
       return .value(result)
     }
 
@@ -439,7 +439,7 @@ extension PyInstance {
   /// int
   /// PySequence_Contains(PyObject *seq, PyObject *ob)
   public func contains(iterable: PyObject, element: PyObject) -> PyResult<Bool> {
-    if let result = Fast.__contains__(iterable, element: element) {
+    if let result = PyStaticCall.__contains__(iterable, element: element) {
       return result
     }
 

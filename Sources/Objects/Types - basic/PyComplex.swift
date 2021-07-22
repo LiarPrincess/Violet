@@ -676,7 +676,7 @@ public final class PyComplex: PyObject {
   private static func callComplex(
     _ object: PyObject
   ) -> PyInstance.CallMethodResult {
-    if let result = Fast.__complex__(object) {
+    if let result = PyStaticCall.__complex__(object) {
       return .value(result)
     }
 

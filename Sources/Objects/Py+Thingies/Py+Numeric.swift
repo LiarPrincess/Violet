@@ -12,7 +12,7 @@ extension PyInstance {
                     nDigits: PyObject? = nil) -> PyResult<PyObject> {
     let nDigits = PyCast.isNilOrNone(nDigits) ? nil : nDigits
 
-    if let result = Fast.__round__(number, nDigits: nDigits) {
+    if let result = PyStaticCall.__round__(number, nDigits: nDigits) {
       return result
     }
 

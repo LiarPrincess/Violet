@@ -7,11 +7,11 @@
 
 // MARK: - Abstract
 
-private enum FastCallResult {
+private enum StaticCallResult {
   case value(Bool)
   case error(PyBaseException)
   case notImplemented
-  /// Fast call is not available
+  /// Static call is not available
   case unavailable
 
   fileprivate init(_ value: CompareResult?) {
@@ -53,8 +53,8 @@ private protocol CompareOp {
   static var baseCompare: (PyObject, PyObject) -> CompareResult { get }
   /// Reflected compare operation, for example 'less' -> 'greater'.
   associatedtype reflected: CompareOp
-  /// Call compare with fast protocol dispatch.
-  static func callFastCompare(left: PyObject, right: PyObject) -> FastCallResult
+  /// Fast path: we know the method at compile time
+  static func callStatic(left: PyObject, right: PyObject) -> StaticCallResult
 }
 
 extension CompareOp {
@@ -110,8 +110,8 @@ extension CompareOp {
 
   private static func callCompare(left: PyObject,
                                   right: PyObject) -> PyResult<PyObject> {
-    // Try fast protocol-based dispatch
-    switch callFastCompare(left: left, right: right) {
+    // Fast path: we know the method at compile time
+    switch self.callStatic(left: left, right: right) {
     case .value(let bool): return .value(Py.newBool(bool))
     case .error(let e): return .error(e)
     case .notImplemented: return .value(Py.notImplemented)
@@ -119,7 +119,7 @@ extension CompareOp {
     }
 
     // Try standard Python dispatch
-    switch Py.callMethod(object: left, selector: selector, arg: right) {
+    switch Py.callMethod(object: left, selector: self.selector, arg: right) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
@@ -131,7 +131,7 @@ extension CompareOp {
 
     // Use base object implementation
     // (all objects derive from Object to this is probably a dead code)
-    switch baseCompare(left, right) {
+    switch self.baseCompare(left, right) {
     case .value(let bool): return .value(Py.newBool(bool))
     case .error(let e): return .error(e)
     case .notImplemented: return .value(Py.notImplemented)
@@ -148,10 +148,10 @@ private enum EqualCompare: CompareOp {
   fileprivate static let selector = IdString.__eq__
   fileprivate static let baseCompare = PyObjectType.isEqual
 
-  fileprivate static func callFastCompare(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__eq__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__eq__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -192,10 +192,10 @@ private enum NotEqualCompare: CompareOp {
   fileprivate static let selector = IdString.__ne__
   fileprivate static let baseCompare = PyObjectType.isNotEqual
 
-  fileprivate static func callFastCompare(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__ne__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__ne__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -233,10 +233,10 @@ private enum LessCompare: CompareOp {
   fileprivate static let selector = IdString.__lt__
   fileprivate static let baseCompare = PyObjectType.isLess
 
-  fileprivate static func callFastCompare(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__lt__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__lt__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -269,10 +269,10 @@ private enum LessEqualCompare: CompareOp {
   fileprivate static let selector = IdString.__le__
   fileprivate static let baseCompare = PyObjectType.isLessEqual
 
-  fileprivate static func callFastCompare(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__le__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__le__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -296,7 +296,7 @@ extension PyInstance {
   }
 }
 
-  // MARK: - Greater
+// MARK: - Greater
 
 private enum GreaterCompare: CompareOp {
 
@@ -305,10 +305,10 @@ private enum GreaterCompare: CompareOp {
   fileprivate static let selector = IdString.__gt__
   fileprivate static let baseCompare = PyObjectType.isGreater
 
-  fileprivate static func callFastCompare(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__gt__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__gt__(left, right)
+    return StaticCallResult(result)
   }
 }
 
@@ -341,10 +341,10 @@ private enum GreaterEqualCompare: CompareOp {
   fileprivate static let selector = IdString.__ge__
   fileprivate static let baseCompare = PyObjectType.isGreaterEqual
 
-  fileprivate static func callFastCompare(left: PyObject,
-                                          right: PyObject) -> FastCallResult {
-    let result = Fast.__ge__(left, right)
-    return FastCallResult(result)
+  fileprivate static func callStatic(left: PyObject,
+                                     right: PyObject) -> StaticCallResult {
+    let result = PyStaticCall.__ge__(left, right)
+    return StaticCallResult(result)
   }
 }
 

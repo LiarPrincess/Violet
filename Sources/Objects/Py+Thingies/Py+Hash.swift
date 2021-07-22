@@ -12,7 +12,7 @@ extension PyInstance {
   /// Py_hash_t PyObject_Hash(PyObject *v)
   /// slot_tp_hash(PyObject *self)
   public func hash(object: PyObject) -> PyResult<PyHash> {
-    if let result = Fast.__hash__(object) {
+    if let result = PyStaticCall.__hash__(object) {
       switch result {
       case .value(let hash): return .value(hash)
       case .notImplemented: return .error(self.hashNotImplemented(object))

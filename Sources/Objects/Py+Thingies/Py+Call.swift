@@ -66,7 +66,7 @@ extension PyInstance {
   public func call(callable: PyObject,
                    args: [PyObject] = [],
                    kwargs: PyDict? = nil) -> CallResult {
-    if let result = Fast.__call__(callable, args: args, kwargs: kwargs) {
+    if let result = PyStaticCall.__call__(callable, args: args, kwargs: kwargs) {
       switch result {
       case let .value(result): return .value(result)
       case let .error(e): return .error(e)
