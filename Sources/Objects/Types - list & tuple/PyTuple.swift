@@ -33,7 +33,7 @@ public final class PyTuple: PyObject {
 
   // MARK: - Init
 
-  init(elements: [PyObject]) {
+  internal init(elements: [PyObject]) {
     self.data = PySequenceData(elements: elements)
     super.init(type: Py.types.tuple)
   }

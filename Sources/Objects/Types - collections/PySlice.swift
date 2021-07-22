@@ -186,9 +186,9 @@ public final class PySlice: PyObject {
   }
 
   internal struct GetLongIndicesResult {
-    var start: BigInt
-    var stop: BigInt
-    var step: BigInt
+    internal var start: BigInt
+    internal var stop: BigInt
+    internal var step: BigInt
   }
 
   /// int _PySlice_GetLongIndices(PySliceObject *self, PyObject *length, ...)

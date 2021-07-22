@@ -4,8 +4,8 @@ import VioletLexer
 // MARK: - Expr list
 
 internal struct ExprListResult {
-  let context: ExpressionContext
-  let kind: Kind
+  internal let context: ExpressionContext
+  internal let kind: Kind
 
   internal enum Kind {
     case single(Expression)
@@ -62,8 +62,8 @@ extension Parser {
 // MARK: - Test list
 
 internal struct TestListResult {
-  let context: ExpressionContext
-  let kind: Kind
+  internal let context: ExpressionContext
+  internal let kind: Kind
 
   internal enum Kind {
     case single(Expression)
@@ -167,8 +167,8 @@ extension Parser {
 // MARK: - Test list star expr
 
 internal struct TestListStarExprResult {
-  let context: ExpressionContext
-  let kind: Kind
+  internal let context: ExpressionContext
+  internal let kind: Kind
 
   internal enum Kind {
     case single(Expression)

@@ -13,7 +13,7 @@ public final class ASTPrinter: ASTVisitor, StatementVisitor, ExpressionVisitor {
 
   // MARK: - AST
 
-  func astBase(ast: AST, lines: [Doc]) -> Doc {
+  internal func astBase(ast: AST, lines: [Doc]) -> Doc {
     let type = self.typeName(of: ast)
     let title = "\(type)(start: \(ast.start), end: \(ast.end))"
     return self.block(title: title, lines: lines)

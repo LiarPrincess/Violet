@@ -20,17 +20,17 @@ extension UnderscoreWarnings {
     /// Message as passed by the user.
     ///
     /// It may be `str`, or `Warning` subclass or anything else.
-    let message: PyObject
+    internal let message: PyObject
     /// Text to print.
     ///
     /// Most of the time (but not always) it will be something similar
     /// to `str(self.message)`.
-    let text: PyObject
-    let category: PyType
-    let filename: PyString
-    let lineNo: PyInt
-    let module: PyString
-    let source: PyObject?
+    internal let text: PyObject
+    internal let category: PyType
+    internal let filename: PyString
+    internal let lineNo: PyInt
+    internal let module: PyString
+    internal let source: PyObject?
   }
 
   // swiftlint:disable function_parameter_count

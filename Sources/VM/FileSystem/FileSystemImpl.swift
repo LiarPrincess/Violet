@@ -19,9 +19,9 @@ private let _stat = Darwin.stat(_:_:)
 #endif
 
 #if os(Windows)
-let pathSeparators: [Character] = ["\\", "/"]
+private let pathSeparators: [Character] = ["\\", "/"]
 #else
-let pathSeparators: [Character] = ["/"]
+private let pathSeparators: [Character] = ["/"]
 #endif
 
 internal class FileSystemImpl: PyFileSystem {

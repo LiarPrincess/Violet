@@ -32,7 +32,7 @@ internal enum AbstractBytes_ElementsFromIterable {
 ///
 /// Anyway, if you are looking for something it is probably in `AbstractString`
 /// and not here.
-protocol AbstractBytes: AbstractString where Builder == BytesBuilder {
+internal protocol AbstractBytes: AbstractString where Builder == BytesBuilder {
   // Builder constraint will also solve 'Elements' and 'Element'
   //
   // We could also 'extension AbstractString where Builder == BytesBuilder'
