@@ -1,5 +1,6 @@
 // =====================================================================
 // Automatically generated from: ./Sources/Objects/Generated/PyMemory.py
+// Use 'make gen' in repository root to regenerate.
 // DO NOT EDIT!
 // =====================================================================
 

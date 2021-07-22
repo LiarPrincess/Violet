@@ -1,5 +1,6 @@
 // =================================================================
 // Automatically generated from: ./Sources/Objects/Generated/Fast.py
+// Use 'make gen' in repository root to regenerate.
 // DO NOT EDIT!
 // =================================================================
 
