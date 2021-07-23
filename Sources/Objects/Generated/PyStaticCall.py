@@ -1,111 +1,7 @@
 from Sourcery import get_types, TypeInfo
 from Sourcery.signature import SignatureInfo
 from Common.strings import generated_warning
-
-# All of the operations for which protocols will be generated
-# (Feel free to add new ones)
-generated_protocols = set([
-    '__abs__',
-    '__add__',
-    '__and__',
-    '__bool__',
-    '__call__',
-    '__contains__',
-    '__del__',
-    '__delattr__',
-    '__delitem__',
-    '__dir__',
-    '__divmod__',
-    '__eq__',
-    '__float__',
-    '__floordiv__',
-    '__ge__',
-    '__getattr__',
-    '__getattribute__',
-    '__getitem__',
-    '__gt__',
-    '__hash__',
-    '__iadd__',
-    '__index__',
-    '__instancecheck__',
-    '__int__',
-    '__invert__',
-    '__isabstractmethod__',
-    '__iter__',
-    '__le__',
-    '__len__',
-    '__lshift__',
-    '__lt__',
-    '__mod__',
-    '__mul__',
-    '__ne__',
-    '__neg__',
-    '__next__',
-    '__or__',
-    '__pos__',
-    '__pow__',
-    '__radd__',
-    '__rand__',
-    '__rdivmod__',
-    '__repr__',
-    '__reversed__',
-    '__rfloordiv__',
-    '__rlshift__',
-    '__rmod__',
-    '__rmul__',
-    '__ror__',
-    '__round__',
-    '__rpow__',
-    '__rrshift__',
-    '__rshift__',
-    '__rsub__',
-    '__rtruediv__',
-    '__rxor__',
-    '__setattr__',
-    '__setitem__',
-    '__str__',
-    '__sub__',
-    '__subclasscheck__',
-    '__truediv__',
-    '__trunc__',
-    '__xor__',
-    'keys',
-])
-
-
-def is_python_name_in_generated_protocols(name) -> bool:
-    return name.python_name in generated_protocols
-
-
-def get_properties(t: TypeInfo):
-    return filter(is_python_name_in_generated_protocols, t.python_properties)
-
-
-def get_methods(t: TypeInfo):
-    return filter(is_python_name_in_generated_protocols, t.python_methods)
-
-# ------
-# Helpers
-# ------
-
-
-def getter_protocol_name(name: str) -> str:
-    name = name if name.startswith('__') else name.title()
-    return f'{name}Owner'
-
-
-def setter_protocol_name(name: str) -> str:
-    name = name if name.startswith('__') else name.title()
-    return f'{name}SetterOwner'
-
-
-def func_protocol_name(name: str) -> str:
-    return f'{name}Owner'
-
-# ----
-# Main
-# ----
-
+from Static_methods import STATIC_METHODS
 
 if __name__ == '__main__':
     print(f'''\
@@ -114,317 +10,112 @@ if __name__ == '__main__':
 import BigInt
 import VioletCore
 
-// swiftlint:disable colon
-// swiftlint:disable line_length
-// swiftlint:disable opening_brace
-// swiftlint:disable trailing_newline
 // swiftlint:disable discouraged_optional_boolean
+// swiftlint:disable line_length
 // swiftlint:disable file_length
 
-// == What is this? ==
-// Sometimes instead of doing slow Python dispatch we will use Swift protocols.
-// For example: when user has an 'list' and ask for '__len__' we could lookup
-// this method in MRO, create bound object and dispatch it.
-// But this is a lot of work.
-// We can also: check if this method was overriden ('list' can be subclassed),
-// if not then we can go directly to our Swift implementation.
-// We could do this for all of the common magic methods.
-
-// == Why? ==
-// REASON 1: Debugging (trust me, you don't want to debug raw Python dispatch)
-//
-// Even for simple 'len([])' will have:
-// 1. Check if 'list' implements '__len__'
-// 2. Create bound method that will wrap 'list.__len__' function
-// 3. Call this method - it will (eventually) call 'PyList.__len__' in Swift
-// Now imagine going through this in lldb.
-//
-// That's a lot of work for such a simple operation.
-//
-// With protocol dispatch we will:
-// 1. Check if 'list' implements '__len__Owner'
-// 2. Check user has not overriden '__len__'
-// 3. Directly call 'PyList.__len__' in Swift
-// In lldb this is: n (check protocol), n (check override), s (step into Swift method).
-//
-// REASON 2: Static calls during 'Py.initialize'
-// This also allows us to call Python methods during 'Py.initialize',
-// when not all of the types are yet fully initialized.
-// For example when we have not yet added '__hash__' to 'str.__dict__'
-// we can still call this method because:
-// - 'str' conforms to '__hash__Owner' protocol
-// - it does not override builtin 'str.__hash__' method
-
-// == Is this bullet-proof? ==
-// Not really.
-// If you remove one of the builtin methods from a type, then static protocol
-// conformance will still remain.
-//
-// But most of the time you can't do this:
-// >>> del list.__len__
-// Traceback (most recent call last):
-//   File "<stdin>", line 1, in <module>
-// TypeError: can't set attributes of built-in/extension type 'list'
-
-// === Table of contents ===
-// 1. Owner protocol definitions - protocols for each operation
-// 2. func hasOverridenBuiltinMethod
-// 3. PyStaticCall enum - try to call given function with protocol dispatch
-// 4. Owner protocol conformance - this type supports given operation/protocol
+/// Call Swift method directly without going through full Python dispatch
+/// (if possible).
+///
+/// # What is this?
+///
+/// Certain Python methods are used very often.
+/// While we could do the full Python dispatch on every call, we can also store the
+/// pointer to resolved Swift function directly on type (`PyType` instance).
+/// Then when this method is called we would use the stored function instead
+/// of doing the costly `MRO` lookup.
+///
+/// Example: we want to call `list.__len__`
+///
+/// Python dispatch:
+/// 1. Lookup `__len__` in `list` `MRO` - this operation is complicated,
+///    especially when the method is defined on one of the base types.
+/// 2. Create method object bound to specific `list` instance - this means heap
+///    allocation.
+/// 3. Dispatch bound method - it will (eventually) call `PyList.__len__` in Swift.
+///
+/// Static dispatch (the one defined in this file):
+/// 1. Check if `object.type` contains pointer to `__len__` function - if this fails
+///    (for example when method is overridden) then do full 'Python dispatch'.
+/// 2. Call Swift function stored in this pointer - this is (almost) a direct call
+///    to `PyList.__len__`.
+///
+/// Ofc. It does not make sense to do this for every method, in our case we will
+/// just use the most common magic methods.
+///
+/// # Why?
+///
+/// REASON 1: Debugging
+///
+/// Trust me, you don't want to debug a raw Python dispatch.
+/// There is a lot of code involved, with multiple method calls (which can fail).
+///
+/// On the other hand static calls in lldb look like this:
+/// 1. Check if `list` has stored `__len__` function pointer (lldb: `n`)
+/// 2. Go into method wrapper (lldb: `s`)
+/// 3. Step over `self` cast (lldb: `n`)
+/// 4. Go into the final method (lldb: `s`)
+///
+/// REASON 2: Static calls during `Py.initialize`
+///
+/// This also allows us to call Python methods during `Py.initialize`,
+/// when not all of the types are yet fully initialized.
+///
+/// For example when we have not yet added `__hash__` to `str.__dict__`
+/// we can still call this method because we know (statically) that `str` does
+/// implement this operation. This has a side-effect of using `str.__hash__`
+/// (via static call) to insert `__hash__` inside `str.__dict__`.
+///
+/// # Is this bullet-proof?
+///
+/// Not really.
+/// If you remove one of the builtin methods from a type, then function pointer
+/// on type still remains.
+///
+/// But most of the time you can't do this:
+/// ```py
+/// >>> del list.__len__
+/// Traceback (most recent call last):
+///   File "<stdin>", line 1, in <module>
+/// TypeError: can't set attributes of built-in/extension type 'list'
+/// ```
+///
+/// Also you have to take care of overridden methods in classes written by user:
+/// - Option 1: do not fill any of the function pointers on subclass -> all of the
+///             methods will use Python dispatch.
+/// - Option 2: use pointers from base class, but remove entries for overridden methods.
+internal enum PyStaticCall {{\
 ''')
 
-    # =================
-    # === Protocols ===
-    # =================
+    for m in STATIC_METHODS:
+        name = m.name
+        return_type = m.kind.return_type
+        arguments = m.kind.arguments
 
-    types = get_types()
+        assert len(arguments) != 0
+        self_argument = arguments[0]
 
-    print(f'''\
-// MARK: - Owner protocols
-
-// This is the only protocol marked as 'internal'.
-/// Special protocol to get '__dict__' property.
-internal protocol __dict__Owner {{
-  func getDict() -> PyDict
-}}
-''')
-
-    class ProtocolEntry:
-        def __init__(self,
-                     python_name: str,
-                     swift_protocol_name: str,
-                     swift_signature: SignatureInfo):
-            self.python_name = python_name
-            self.swift_protocol_name = swift_protocol_name
-            self.swift_signature = swift_signature
-
-    protocols_by_name = {}
-
-    def add_protocol(python_name: str,
-                     swift_protocol_name: str,
-                     swift_selector_with_types: str,
-                     swift_return_type: str):
-        if swift_protocol_name not in protocols_by_name:
-            signature = SignatureInfo(swift_selector_with_types, swift_return_type)
-            protocol = ProtocolEntry(python_name, swift_protocol_name, signature)
-            protocols_by_name[swift_protocol_name] = protocol
-
-    for t in types:
-        # Object will never participate in 'PyStaticCall'
-        if t.python_type_name == 'object':
-            continue
-
-        for prop in get_properties(t):
-            python_type_name = prop.python_name
-            swift_getter_fn = prop.swift_getter_fn + '()'
-            swift_return_type = prop.swift_type
-            protocol_name = getter_protocol_name(python_type_name)
-            add_protocol(python_type_name, protocol_name, swift_getter_fn, swift_return_type)
-
-            # Setters are not supported
-
-        for meth in get_methods(t):
-            python_type_name = meth.python_name
-            swift_selector_with_types = meth.swift_selector_with_types
-            swift_return_type = meth.swift_return_type
-            protocol_name = func_protocol_name(python_type_name)
-
-            # 'int' and 'bool' have static versions of some methods
-            # (because we can't override pymethods).
-            # But they provide correct methods for protocol conformance.
-            if t.python_type_name in ('int', 'bool') and python_type_name in ('__repr__', '__str__', '__and__', '__rand__', '__or__', '__ror__', '__xor__', '__rxor__'):
-                continue
-
-            add_protocol(python_type_name, protocol_name, swift_selector_with_types, swift_return_type)
-
-        # From static methods we have hand-written '__new__' and '__init__'.
-        # We ignore others.
-
-    # Additional protocols (none of the builtin types implement them)
-    #            python_name,     swift_protocol_name,  swift_function,                 swift_return_type
-    add_protocol('__matmul__',    '__matmul__Owner',    'matmul(_ other: PyObject)',    'PyResult<PyObject>')
-    add_protocol('__rmatmul__',   '__rmatmul__Owner',   'rmatmul(_ other: PyObject)',   'PyResult<PyObject>')
-    add_protocol('__isub__',      '__isub__Owner',      'isub(_ other: PyObject)',      'PyResult<PyObject>')
-    add_protocol('__imul__',      '__imul__Owner',      'imul(_ other: PyObject)',      'PyResult<PyObject>')
-    add_protocol('__imatmul__',   '__imatmul__Owner',   'imatmul(_ other: PyObject)',   'PyResult<PyObject>')
-    add_protocol('__itruediv__',  '__itruediv__Owner',  'itruediv(_ other: PyObject)',  'PyResult<PyObject>')
-    add_protocol('__ifloordiv__', '__ifloordiv__Owner', 'ifloordiv(_ other: PyObject)', 'PyResult<PyObject>')
-    add_protocol('__imod__',      '__imod__Owner',      'imod(_ other: PyObject)',      'PyResult<PyObject>')
-    add_protocol('__ilshift__',   '__ilshift__Owner',   'ilshift(_ other: PyObject)',   'PyResult<PyObject>')
-    add_protocol('__irshift__',   '__irshift__Owner',   'irshift(_ other: PyObject)',   'PyResult<PyObject>')
-    add_protocol('__iand__',      '__iand__Owner',      'iand(_ other: PyObject)',      'PyResult<PyObject>')
-    add_protocol('__ixor__',      '__ixor__Owner',      'ixor(_ other: PyObject)',      'PyResult<PyObject>')
-    add_protocol('__ior__',       '__ior__Owner',       'ior(_ other: PyObject)',       'PyResult<PyObject>')
-    add_protocol('__ipow__',      '__ipow__Owner',      'ipow(base: PyObject, mod: PyObject)', 'PyResult<PyObject>')
-    add_protocol('__idivmod__',   '__idivmod__Owner',   'idivmod(_ other: PyObject)',   'PyResult<PyObject>')
-    add_protocol('__complex__',   '__complex__Owner',   'asComplex()',                  'PyObject')
-    add_protocol('__getattr__',   '__getattr__Owner',   'getAttribute(name: PyObject)', 'PyResult<PyObject>')
-
-    for protocol_name in sorted(protocols_by_name):
-        protocol = protocols_by_name[protocol_name]
-        python_type_name = protocol.python_name
-        protocol_name = protocol.swift_protocol_name
-        s = protocol.swift_signature
-        print(f'private protocol {protocol_name} {{ func {s.selector_with_types} -> {s.return_type} }}')
-    print()
-
-    # =====================
-    # === Has overriden ===
-    # =====================
-
-    print('''\
-// MARK: - Has overriden
-
-/// Check if the user has overriden given method.
-private func hasOverridenBuiltinMethod(
-  object: PyObject,
-  selector: IdString
-) -> Bool {
-  // Soo… we could actually check if if the user has overriden builtin method:
-  // 1. Get method from MRO: let lookup = type.lookupWithType(name: selector)
-  // 2. Check if type is builtin/heap type: lookup.type.isHeapType
-  //    - If builtin: user has not overriden
-  //    - If heap: user has overriden
-  //
-  // Or we can just assume that all heap types override.
-  // In most of the cases it will not be true (how ofter do you see '__len__'
-  // overriden on a list subclass?), but it does not matter.
-  //
-  // Just a reminder: heap type - type created by user with 'class' statement.
-
-  let type = object.type
-  let isHeapType = type.isHeapType
-  return isHeapType
-}
-''')
-
-    # ====================
-    # === PyStaticCall ===
-    # ====================
-
-    print('// MARK: - PyStaticCall')
-    print()
-    print('internal enum PyStaticCall {')
-
-    for protocol_name in sorted(protocols_by_name):
-        protocol = protocols_by_name[protocol_name]
-        python_type_name = protocol.python_name
-        protocol_name = protocol.swift_protocol_name
-
-        s = protocol.swift_signature
-        swift_function_name = s.name
-
-        fn_arguments = ''  # technically those are called 'parameters'
+        func_arguments = ''
         call_arguments = ''
-        for index, arg in enumerate(s.arguments):
-            label = arg.label  # str | None
-            name = arg.name
-            typ = arg.typ
+        for index, arg in enumerate(arguments):
+            if len(func_arguments) > 0:
+                func_arguments += ', '
+                call_arguments += ', '
 
-            is_last = index == len(s.arguments) - 1
-
-            fn_label = label + ' ' if label else ''
-            fn_arguments += f', {fn_label}{name}: {typ}'
-
-            if label is None:
-                call_label = name + ': '
-            elif label == '_':
-                call_label = ''
-            else:
-                call_label = label + ': '
-
-            call_comma = '' if is_last else ', '
-            call_arguments += f'{call_label}{name}{call_comma}'
+            label = '_ ' if arg.has_underscore_label else ''
+            func_arguments += f'{label}{arg.name}: {arg.typ}'
+            call_arguments += arg.name
 
         print(f'''
-  internal static func {python_type_name}(_ zelf: PyObject{fn_arguments}) -> {s.return_type}? {{
-    if let owner = zelf as? {protocol_name},
-       !hasOverridenBuiltinMethod(object: zelf, selector: .{python_type_name}) {{
-      return owner.{swift_function_name}({call_arguments})
+  // MARK: - {name}
+
+  internal static func {name}({func_arguments}) -> {return_type}? {{
+    if let method = {self_argument.name}.type.staticMethods.{name}?.fn {{
+      return method({call_arguments})
     }}
 
     return nil
   }}\
 ''')
 
-    print('}')
-    print()
-
-    # ===================
-    # === Conformance ===
-    # ===================
-
-    print('// MARK: - Conformance')
-    print()
-
-    class ConformanceEntry:
-        def __init__(self, swift_type, swift_base_type):
-            self.swift_type = swift_type
-            self.swift_base_type = swift_base_type
-            self.protocols = []
-
-    # swift_type name pointing to ConformanceEntry
-    entries_by_swift_type = {}
-
-    for t in types:
-        python_type_name = t.python_type_name
-        swift_type_name = t.swift_type_name
-        swift_base_type = t.swift_base_type_name
-
-        # We will not generate conformances for 'object'
-        if t.swift_type_name == 'PyObject':
-            continue
-
-        entry = entries_by_swift_type.get(swift_type_name)
-        if not entry:
-            entry = ConformanceEntry(swift_type_name, swift_base_type)
-            entries_by_swift_type[swift_type_name] = entry
-
-        def add_protocol_conformance(protocol_name):
-            # 'protocols_by_name' - all generated protocols
-            # And special case for '__dict__'
-            protocol_exists = protocol_name in protocols_by_name or protocol_name == '__dict__Owner'
-            if protocol_exists:
-                entry.protocols.append(protocol_name)
-
-        for prop in t.python_properties:
-            python_type_name = prop.python_name
-            protocol_name = getter_protocol_name(python_type_name)
-            add_protocol_conformance(protocol_name)
-
-        for meth in t.python_methods:
-            python_type_name = meth.python_name
-            protocol_name = func_protocol_name(python_type_name)
-            add_protocol_conformance(protocol_name)
-
-    for entry in entries_by_swift_type.values():
-        swift_type_name = entry.swift_type
-        swift_base_type = entry.swift_base_type
-        self_protocols = entry.protocols
-
-        # Remove parent conformances
-        base = swift_base_type
-        while base:
-            base_entry = entries_by_swift_type.get(base)
-            if not base_entry:
-                base = None
-                continue
-
-            for base_protocol in base_entry.protocols:
-                if base_protocol in self_protocols:
-                    self_protocols.remove(base_protocol)
-
-            base = base_entry.swift_base_type
-
-        # Print extension
-        if not self_protocols:
-            print(f'// {swift_type_name} does not add any new protocols to {swift_base_type}')
-            print(f'extension {swift_type_name} {{ }}')
-        else:
-            print(f'extension {swift_type_name}:')
-            for protocol in self_protocols:
-                comma = '' if protocol == self_protocols[-1] else ','
-                print(f'  {protocol}{comma}')
-            print('{ }')
-
-        print()
+    print('}')  # PyStaticCall end

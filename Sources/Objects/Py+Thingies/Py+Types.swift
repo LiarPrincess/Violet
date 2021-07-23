@@ -36,7 +36,7 @@ extension PyInstance {
 
   private func call__instancecheck__(instance: PyObject,
                                      type: PyObject) -> PyResult<Bool> {
-    if let result = PyStaticCall.__instancecheck__(type, of: instance) {
+    if let result = PyStaticCall.__instancecheck__(type: type, object: instance) {
       return .value(result)
     }
 
@@ -86,7 +86,7 @@ extension PyInstance {
   private func call__subclasscheck__(type: PyObject,
                                      super: PyObject) -> PyResult<Bool> {
     // This method is called on 'super'! Not on object!
-    if let result = PyStaticCall.__subclasscheck__(`super`, of: type) {
+    if let result = PyStaticCall.__subclasscheck__(type: `super`, base: type) {
       return result
     }
 

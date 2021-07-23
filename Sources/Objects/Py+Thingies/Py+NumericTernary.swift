@@ -258,21 +258,21 @@ private enum PowOp: TernaryOp {
   fileprivate static func callStatic(left: PyObject,
                                      middle: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__pow__(left, exp: middle, mod: right)
+    let result = PyStaticCall.__pow__(base: left, exp: middle, mod: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticReflected(left: PyObject,
                                               middle: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rpow__(middle, base: left, mod: right)
+    let result = PyStaticCall.__rpow__(base: middle, exp: left, mod: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticInPlace(left: PyObject,
                                             middle: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__ipow__(left, base: middle, mod: right)
+    let result = PyStaticCall.__ipow__(base: left, exp: middle, mod: right)
     return StaticCallResult(result)
   }
 }

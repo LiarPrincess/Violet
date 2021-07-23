@@ -8,14 +8,15 @@ import VioletCore
 // type, then we are in deep trouble (this is one of the main invariants in Violet).
 private func forceCast<T: PyObject>(object: PyObject, as type: T.Type) -> T {
   #if DEBUG
-  let swiftType = Swift.type(of: object)
-  guard swiftType == T.self else {
-    trap("Swift type (\(type)) does not match Python type (\(object.typeName))")
+  guard let result = object as? T else {
+    trap("Python type (\(object.typeName)) does not match Swift type (\(type)).")
   }
-  #endif
 
+  return result
+  #else
   // swiftlint:disable:next force_cast
   return object as! T
+  #endif
 }
 
 // MARK: - Statically known not overridden methods
@@ -124,9 +125,9 @@ extension PyType {
     internal var __itruediv__: NumericBinaryWrapper?
     internal var __ixor__: NumericBinaryWrapper?
 
-    internal var __pow__: NumericTernaryWrapper?
-    internal var __rpow__: NumericTernaryWrapper?
-    internal var __ipow__: NumericTernaryWrapper?
+    internal var __pow__: NumericPowWrapper?
+    internal var __rpow__: NumericPowWrapper?
+    internal var __ipow__: NumericPowWrapper?
 
     // MARK: - Copy
 
@@ -513,9 +514,9 @@ extension PyType {
 
       internal let fn: (PyObject, PyObject) -> Bool
 
-      internal init(_ fn: @escaping (PyType) -> (PyObject) -> Bool) {
+      internal init<T: PyObject>(_ fn: @escaping (T) -> (PyObject) -> Bool) {
         self.fn = { (arg0: PyObject, arg1: PyObject) in
-          let zelf = forceCast(object: arg0, as: PyType.self)
+          let zelf = forceCast(object: arg0, as: T.self)
           return fn(zelf)(arg1)
         }
       }
@@ -525,11 +526,11 @@ extension PyType {
 
     internal struct SubclassCheckWrapper {
 
-      internal let fn: (PyObject, PyType) -> Bool
+      internal let fn: (PyObject, PyObject) -> PyResult<Bool>
 
-      internal init(_ fn: @escaping (PyType) -> (PyType) -> Bool) {
-        self.fn = { (arg0: PyObject, arg1: PyType) in
-          let zelf = forceCast(object: arg0, as: PyType.self)
+      internal init<T: PyObject>(_ fn: @escaping (T) -> (PyObject) -> PyResult<Bool>) {
+        self.fn = { (arg0: PyObject, arg1: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
           return fn(zelf)(arg1)
         }
       }
@@ -620,7 +621,7 @@ extension PyType {
 
     // MARK: NumericTernaryWrapper
 
-    internal struct NumericTernaryWrapper {
+    internal struct NumericPowWrapper {
 
       internal let fn: (PyObject, PyObject, PyObject) -> PyResult<PyObject>
 

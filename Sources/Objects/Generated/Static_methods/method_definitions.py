@@ -1,42 +1,75 @@
-from typing import NamedTuple
+from typing import List, NamedTuple
 
 
-class StaticMethodKind(NamedTuple):
+class Argument(NamedTuple):
     name: str
-    example: str
+    typ: str
+    has_underscore_label: bool
 
 
-_hash = StaticMethodKind('Hash', 'func hash() -> HashResult')
-_stringConversion = StaticMethodKind('StringConversion', 'func repr() -> PyResult<String>')
-_comparison = StaticMethodKind('Comparison', 'func isEqual(_ other: PyObject) -> CompareResult')
-_asBool = StaticMethodKind('AsBool', 'func asBool() -> PyBool')
-_asFloat = StaticMethodKind('AsFloat', 'func asFloat() -> PyResult<PyFloat>')
-_asInt = StaticMethodKind('AsInt', 'func asInt() -> PyResult<PyInt>')
-_asComplex = StaticMethodKind('AsComplex', 'func asComplex() -> PyObject')
-_asIndex = StaticMethodKind('AsIndex', 'func asIndex() -> BigInt')
-_getAttribute = StaticMethodKind('GetAttribute', 'func getAttribute(name: PyObject) -> PyResult<PyObject>')
-_setAttribute = StaticMethodKind('SetAttribute', 'func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>')
-_delAttribute = StaticMethodKind('DelAttribute', 'func delAttribute(name: PyObject) -> PyResult<PyNone>')
-_getItem = StaticMethodKind('GetItem', 'func getItem(index: PyObject) -> PyResult<PyObject>')
-_setItem = StaticMethodKind('SetItem', 'func setItem(index: PyObject, value: PyObject) -> PyResult<PyNone>')
-_delItem = StaticMethodKind('DelItem', 'func delItem(index: PyObject) -> PyResult<PyNone>')
-_iter = StaticMethodKind('Iter', 'func iter() -> PyObject')
-_next = StaticMethodKind('Next', 'func next() -> PyResult<PyObject>')
-_getLength = StaticMethodKind('GetLength', 'func getLength() -> BigInt')
-_contains = StaticMethodKind('Contains', 'func contains(element: PyObject) -> PyResult<PyBool>')
-_reversed = StaticMethodKind('Reversed', 'func reversed() -> PyObject')
-_keys = StaticMethodKind('Keys', 'func keys() -> PyObject')
-_del = StaticMethodKind('Del', 'func del() -> PyResult<PyNone>')
-_dir = StaticMethodKind('Dir', 'func dir() -> PyResult<DirResult>')
-_call = StaticMethodKind('Call', 'func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>')
-_isType = StaticMethodKind('IsType', 'func isType(of object: PyObject) -> Bool')
-_isSubtype = StaticMethodKind('IsSubtype', 'func isSubtype(of object: PyObject) -> PyResult<Bool>')
-_isAbstractMethod = StaticMethodKind('IsAbstractMethod', 'func isAbstractMethod() -> PyResult<Bool>')
-_numericUnary = StaticMethodKind('NumericUnary', 'func positive() -> PyObject')
-_numericTrunc = StaticMethodKind('NumericTrunc', 'func trunc() -> PyResult<PyInt>')
-_numericRound = StaticMethodKind('NumericRound', 'func round(nDigits: PyObject?) -> PyResult<PyObject>')
-_numericBinary = StaticMethodKind('NumericBinary', 'func add(_ other: PyObject) -> PyResult<PyObject>')
-_numericTernary = StaticMethodKind('NumericTernary', 'func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject>')
+class StaticMethodKind:
+
+    def __init__(self, name: str, signature: str):
+        self.name = name
+
+        split = signature.split('->')
+        assert len(split) == 2
+        self.return_type = split[1].strip()
+
+        arguments = split[0].strip()
+
+        # Remove '(' and ')'
+        assert arguments.startswith('(')
+        assert arguments.endswith(')')
+        arguments = arguments[1:-1].strip()
+
+        self.arguments: List[Argument] = []
+        argument_split = arguments.split(', ')
+        for arg in argument_split:
+            # On 'func' arguments: '_ object: PyObject' vs 'object: PyObject'
+            has_underscore_label = arg.startswith('_')
+            if has_underscore_label:
+                arg = arg[1:]
+
+            arg_split = arg.split(': ')
+            assert len(arg_split) == 2
+
+            arg_name = arg_split[0].strip()
+            arg_typ = arg_split[1].strip()
+            self.arguments.append(Argument(arg_name, arg_typ, has_underscore_label))
+
+
+_stringConversion = StaticMethodKind('StringConversion', '(_ object: PyObject) -> PyResult<String>')
+_hash = StaticMethodKind('Hash', '(_ object: PyObject) -> HashResult')
+_comparison = StaticMethodKind('Comparison', '(_ left: PyObject, _ right: PyObject) -> CompareResult')
+_asBool = StaticMethodKind('AsBool', '(_ object: PyObject) -> Bool')
+_asInt = StaticMethodKind('AsInt', '(_ object: PyObject) -> PyResult<PyInt>')
+_asFloat = StaticMethodKind('AsFloat', '(_ object: PyObject) -> PyResult<PyFloat>')
+_asComplex = StaticMethodKind('AsComplex', '(_ object: PyObject) -> PyObject')
+_asIndex = StaticMethodKind('AsIndex', '(_ object: PyObject) -> BigInt')
+_getAttribute = StaticMethodKind('GetAttribute', '(_ object: PyObject, name: PyObject) -> PyResult<PyObject>')
+_setAttribute = StaticMethodKind('SetAttribute', '(_ object: PyObject, name: PyObject, value: PyObject?) -> PyResult<PyNone>')
+_delAttribute = StaticMethodKind('DelAttribute', '(_ object: PyObject, name: PyObject) -> PyResult<PyNone>')
+_getItem = StaticMethodKind('GetItem', '(_ object: PyObject, index: PyObject) -> PyResult<PyObject>')
+_setItem = StaticMethodKind('SetItem', '(_ object: PyObject, index: PyObject, value: PyObject) -> PyResult<PyNone>')
+_delItem = StaticMethodKind('DelItem', '(_ object: PyObject, index: PyObject) -> PyResult<PyNone>')
+_iter = StaticMethodKind('Iter', '(_ object: PyObject) -> PyObject')
+_next = StaticMethodKind('Next', '(_ object: PyObject) -> PyResult<PyObject>')
+_getLength = StaticMethodKind('GetLength', '(_ object: PyObject) -> BigInt')
+_contains = StaticMethodKind('Contains', '(_ object: PyObject, element: PyObject) -> PyResult<Bool>')
+_reversed = StaticMethodKind('Reversed', '(_ object: PyObject) -> PyObject')
+_keys = StaticMethodKind('Keys', '(_ object: PyObject) -> PyObject')
+_del = StaticMethodKind('Del', '(_ object: PyObject) -> PyResult<PyNone>')
+_dir = StaticMethodKind('Dir', '(_ object: PyObject) -> PyResult<DirResult>')
+_call = StaticMethodKind('Call', '(_ object: PyObject, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>')
+_instanceCheck = StaticMethodKind('InstanceCheck', '(type: PyObject, object: PyObject) -> Bool')
+_subclassCheck = StaticMethodKind('SubclassCheck', '(type: PyObject, base: PyObject) -> PyResult<Bool>')
+_isAbstractMethod = StaticMethodKind('IsAbstractMethod', '(_ object: PyObject) -> PyResult<Bool>')
+_numericUnary = StaticMethodKind('NumericUnary', '(_ object: PyObject) -> PyObject')
+_numericTrunc = StaticMethodKind('NumericTrunc', '(_ object: PyObject) -> PyResult<PyInt>')
+_numericRound = StaticMethodKind('NumericRound', '(_ object: PyObject, nDigits: PyObject?) -> PyResult<PyObject>')
+_numericBinary = StaticMethodKind('NumericBinary', '(_ left: PyObject, _ right: PyObject) -> PyResult<PyObject>')
+_numericPow = StaticMethodKind('NumericPow', '(base: PyObject, exp: PyObject, mod: PyObject) -> PyResult<PyObject>')
 
 
 class StaticMethod(NamedTuple):
@@ -85,8 +118,8 @@ STATIC_METHODS = [
 
     StaticMethod('__call__', _call),
 
-    StaticMethod('__instancecheck__', _isType),
-    StaticMethod('__subclasscheck__', _isSubtype),
+    StaticMethod('__instancecheck__', _instanceCheck),
+    StaticMethod('__subclasscheck__', _subclassCheck),
     StaticMethod('__isabstractmethod__', _isAbstractMethod),
 
     StaticMethod('__pos__', _numericUnary),
@@ -139,7 +172,7 @@ STATIC_METHODS = [
     StaticMethod('__itruediv__', _numericBinary),
     StaticMethod('__ixor__', _numericBinary),
 
-    StaticMethod('__pow__', _numericTernary),
-    StaticMethod('__rpow__', _numericTernary),
-    StaticMethod('__ipow__', _numericTernary),
+    StaticMethod('__pow__', _numericPow),
+    StaticMethod('__rpow__', _numericPow),
+    StaticMethod('__ipow__', _numericPow),
 ]
