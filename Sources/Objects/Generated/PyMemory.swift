@@ -961,6 +961,7 @@ internal enum PyMemory {
     metatype: PyType,
     base: PyType,
     mro: MRO,
+    staticMethods: PyType.StaticallyKnownNotOverriddenMethods,
     layout: PyType.MemoryLayout
   ) -> PyType {
     return PyType(
@@ -969,6 +970,7 @@ internal enum PyMemory {
       metatype: metatype,
       base: base,
       mro: mro,
+      staticMethods: staticMethods,
       layout: layout
     )
   }
@@ -982,6 +984,7 @@ internal enum PyMemory {
     qualname: String,
     base: PyType?,
     mro: MRO?,
+    staticMethods: PyType.StaticallyKnownNotOverriddenMethods,
     layout: PyType.MemoryLayout
   ) -> PyType {
     return PyType(
@@ -989,6 +992,7 @@ internal enum PyMemory {
       qualname: qualname,
       base: base,
       mro: mro,
+      staticMethods: staticMethods,
       layout: layout
     )
   }

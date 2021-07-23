@@ -1,7 +1,8 @@
 from Exception_hierarchy import data
 from Sourcery import get_types
-from Common.strings import generated_warning, where_to_find_errors_in_cpython
 from TypeMemoryLayout import get_layout_name
+from StaticMethodsForBuiltinTypes import get_property_name as get_static_methods_property_name
+from Common.strings import generated_warning, where_to_find_errors_in_cpython
 from Common.builtin_types import (
     get_property_name_escaped, print_property,
     print_type_mark,
@@ -86,7 +87,8 @@ import VioletCore
 
         layout = get_layout_name(t)
         property_name = get_property_name_escaped(python_type_name)
-        print(f'    self.{property_name} = PyType.initBuiltinType(name: "{python_type_name}", type: types.type, base: {base_property}, layout: .{layout})')
+        static_methods = get_static_methods_property_name(t.swift_type_name)
+        print(f'    self.{property_name} = PyType.initBuiltinType(name: "{python_type_name}", type: types.type, base: {base_property}, staticMethods: StaticMethodsForBuiltinTypes.{static_methods}, layout: .{layout})')
     print('  }')
     print()
 

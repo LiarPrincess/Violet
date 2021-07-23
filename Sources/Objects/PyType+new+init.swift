@@ -158,13 +158,18 @@ extension PyType {
     }
 
     // Create type object
+    let name = args.name.value
+    let layout = base.layout
+    let staticMethods = StaticallyKnownNotOverriddenMethods()
+
     let type = PyMemory.newType(
-      name: args.name.value,
-      qualname: args.name.value, // May be overridden later (if we have it in dict)
+      name: name,
+      qualname: name, // May be overridden later (if we have it in dict)
       metatype: metatype,
       base: base,
       mro: mro,
-      layout: base.layout // Heap types will use the same layout as base (+- __dict__)
+      staticMethods: staticMethods,
+      layout: layout
     )
 
     // Flags have to be set ASAP!
@@ -193,7 +198,7 @@ extension PyType {
 
     // =========================================================================
     // === We filled flags and set __dict__, so the 'core' type is finished. ===
-    // === Now we *just* need to fill some additional properties             ===
+    // ===       Now we *just* need to fill some additional properties       ===
     // =========================================================================
 
     // Set __module__ (but remember that we may already have it)

@@ -133,7 +133,7 @@ public final class PyType: PyObject, HasCustomGetMethod {
   /// Methods needed to make `PyStaticCall` work.
   ///
   /// See `PyStaticCall` documentation for more information.
-  internal let staticMethods = StaticallyKnownNotOverriddenMethods()
+  internal let staticMethods: StaticallyKnownNotOverriddenMethods
 
   internal var isHeapType: Bool {
     return self.flags.isSet(Self.heapTypeFlag)
@@ -155,6 +155,7 @@ public final class PyType: PyObject, HasCustomGetMethod {
                             metatype: PyType,
                             base: PyType,
                             mro: MRO,
+                            staticMethods: PyType.StaticallyKnownNotOverriddenMethods,
                             layout: PyType.MemoryLayout) {
     assert(mro.baseClasses.contains { $0 === base })
 
@@ -162,6 +163,7 @@ public final class PyType: PyObject, HasCustomGetMethod {
               qualname: qualname,
               base: base,
               mro: mro,
+              staticMethods: staticMethods,
               layout: layout)
 
     self.setType(to: metatype)
@@ -175,12 +177,14 @@ public final class PyType: PyObject, HasCustomGetMethod {
                 qualname: String,
                 base: PyType?,
                 mro: MRO?,
+                staticMethods: PyType.StaticallyKnownNotOverriddenMethods,
                 layout: PyType.MemoryLayout) {
     self.name = name
     self.qualname = qualname
     self.base = base
     self.bases = mro?.baseClasses ?? []
     self.mro = [] // temporary, until we are able to use self
+    self.staticMethods = staticMethods
     self.layout = layout
 
     // Special init() without 'type' argument, just for `PyType` and `BaseType`.
@@ -198,45 +202,57 @@ public final class PyType: PyObject, HasCustomGetMethod {
     }
   }
 
-  /// NEVER EVER use this function! It is a reserved for `objectType`.
+  /// NEVER EVER use this function! It is a reserved for `object` type.
   ///
   /// - Warning:
   /// It will not set `self.type` property!
   internal static func initObjectType() -> PyType {
     let name = "object"
+    let staticMethods = StaticMethodsForBuiltinTypes.object
+    let layout = MemoryLayout.PyObject
+
     return PyMemory.newType(name: name,
                             qualname: name,
                             base: nil,
                             mro: nil,
-                            layout: .PyObject)
+                            staticMethods: staticMethods,
+                            layout: layout)
   }
 
-  /// NEVER EVER use this function! It is a reserved for `typeType`.
+  /// NEVER EVER use this function! It is a reserved for `type` type.
   ///
   /// - Warning:
   /// It will not set `self.type` property!
   internal static func initTypeType(objectType: PyType) -> PyType {
     let name = "type"
     let mro = MRO.linearizeForBuiltinType(baseClass: objectType)
+    let staticMethods = StaticMethodsForBuiltinTypes.type
+    let layout = MemoryLayout.PyType
+
     return PyMemory.newType(name: name,
                             qualname: name,
                             base: objectType,
                             mro: mro,
-                            layout: .PyType)
+                            staticMethods: staticMethods,
+                            layout: layout)
   }
 
   /// NEVER EVER use this function! It is a reserved for builtin types
   /// (except for `objectType` and `typeType` they have their own inits).
-  internal static func initBuiltinType(name: String,
-                                       type: PyType,
-                                       base: PyType,
-                                       layout: MemoryLayout) -> PyType {
+  internal static func initBuiltinType(
+    name: String,
+    type: PyType,
+    base: PyType,
+    staticMethods: StaticallyKnownNotOverriddenMethods,
+    layout: MemoryLayout
+  ) -> PyType {
     let mro = MRO.linearizeForBuiltinType(baseClass: base)
     return PyMemory.newType(name: name,
                             qualname: name,
                             metatype: type,
                             base: base,
                             mro: mro,
+                            staticMethods: staticMethods,
                             layout: layout)
   }
 
