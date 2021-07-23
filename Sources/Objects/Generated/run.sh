@@ -81,8 +81,8 @@ python3 $GENERATED/PyClassMethod+Wrap.py > $GENERATED/PyClassMethod+Wrap.swift
 # Sometimes instead of doing slow Python dispatch we will use 'object.type.staticMethods'.
 echo "Generating PyStaticCall (call method via 'object.type.staticMethods' if possible)"
 python3 $GENERATED/PyStaticCall.py > $GENERATED/PyStaticCall.swift
-echo 'Generating BuiltinStaticMethods (static methods defined on builtin types)'
-python3 $GENERATED/BuiltinStaticMethods.py > $GENERATED/BuiltinStaticMethods.swift
+echo 'Generating StaticMethodsForBuiltinTypes (static methods defined on builtin types)'
+python3 $GENERATED/StaticMethodsForBuiltinTypes.py > $GENERATED/StaticMethodsForBuiltinTypes.swift
 
 # === IdString ===
 # Predefined commonly used `__dict__` keys.

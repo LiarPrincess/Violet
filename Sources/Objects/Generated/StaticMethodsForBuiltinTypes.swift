@@ -1,3 +1,9 @@
+// =========================================================================================
+// Automatically generated from: ./Sources/Objects/Generated/StaticMethodsForBuiltinTypes.py
+// Use 'make gen' in repository root to regenerate.
+// DO NOT EDIT!
+// =========================================================================================
+
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable closure_body_length
 // swiftlint:disable file_length
@@ -5,7 +11,7 @@
 /// Static methods defined on builtin types.
 ///
 /// See `PyStaticCall` documentation for more information.
-internal enum BuiltinStaticMethods {
+internal enum StaticMethodsForBuiltinTypes {
 
   // MARK: - Object
 
@@ -30,7 +36,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Bool
 
   internal static var bool: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.int.copy()
+    var result = StaticMethodsForBuiltinTypes.int.copy()
     result.__repr__ = .init(PyBool.repr(bool:))
     result.__str__ = .init(PyBool.str(bool:))
     result.__and__ = .init(PyBool.and(bool:other:))
@@ -45,7 +51,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - BuiltinFunction
 
   internal static var builtinFunction: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyBuiltinFunction.repr)
     result.__hash__ = .init(PyBuiltinFunction.hash)
     result.__eq__ = .init(PyBuiltinFunction.isEqual(_:))
@@ -62,7 +68,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - BuiltinMethod
 
   internal static var builtinMethod: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyBuiltinMethod.repr)
     result.__hash__ = .init(PyBuiltinMethod.hash)
     result.__eq__ = .init(PyBuiltinMethod.isEqual(_:))
@@ -79,7 +85,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - ByteArray
 
   internal static var byteArray: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyByteArray.repr)
     result.__str__ = .init(PyByteArray.str)
     result.__hash__ = .init(PyByteArray.hash)
@@ -107,7 +113,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - ByteArrayIterator
 
   internal static var byteArrayIterator: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyByteArrayIterator.getAttribute(name:))
     result.__iter__ = .init(PyByteArrayIterator.iter)
     result.__next__ = .init(PyByteArrayIterator.next)
@@ -117,7 +123,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Bytes
 
   internal static var bytes: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyBytes.repr)
     result.__str__ = .init(PyBytes.str)
     result.__hash__ = .init(PyBytes.hash)
@@ -141,7 +147,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - BytesIterator
 
   internal static var bytesIterator: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyBytesIterator.getAttribute(name:))
     result.__iter__ = .init(PyBytesIterator.iter)
     result.__next__ = .init(PyBytesIterator.next)
@@ -151,7 +157,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - CallableIterator
 
   internal static var callableIterator: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyCallableIterator.getAttribute(name:))
     result.__iter__ = .init(PyCallableIterator.iter)
     result.__next__ = .init(PyCallableIterator.next)
@@ -161,7 +167,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Cell
 
   internal static var cell: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyCell.repr)
     result.__eq__ = .init(PyCell.isEqual(_:))
     result.__ne__ = .init(PyCell.isNotEqual(_:))
@@ -176,7 +182,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - ClassMethod
 
   internal static var classMethod: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__isabstractmethod__ = .init(PyClassMethod.isAbstractMethod)
     return result
   }()
@@ -184,7 +190,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Code
 
   internal static var code: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyCode.repr)
     result.__hash__ = .init(PyCode.hash)
     result.__eq__ = .init(PyCode.isEqual(_:))
@@ -200,7 +206,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Complex
 
   internal static var complex: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyComplex.repr)
     result.__str__ = .init(PyComplex.str)
     result.__hash__ = .init(PyComplex.hash)
@@ -239,7 +245,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Dict
 
   internal static var dict: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyDict.repr)
     result.__hash__ = .init(PyDict.hash)
     result.__eq__ = .init(PyDict.isEqual(_:))
@@ -262,7 +268,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - DictItemIterator
 
   internal static var dictItemIterator: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyDictItemIterator.getAttribute(name:))
     result.__iter__ = .init(PyDictItemIterator.iter)
     result.__next__ = .init(PyDictItemIterator.next)
@@ -272,7 +278,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - DictItems
 
   internal static var dictItems: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyDictItems.repr)
     result.__hash__ = .init(PyDictItems.hash)
     result.__eq__ = .init(PyDictItems.isEqual(_:))
@@ -291,7 +297,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - DictKeyIterator
 
   internal static var dictKeyIterator: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyDictKeyIterator.getAttribute(name:))
     result.__iter__ = .init(PyDictKeyIterator.iter)
     result.__next__ = .init(PyDictKeyIterator.next)
@@ -301,7 +307,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - DictKeys
 
   internal static var dictKeys: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyDictKeys.repr)
     result.__hash__ = .init(PyDictKeys.hash)
     result.__eq__ = .init(PyDictKeys.isEqual(_:))
@@ -320,7 +326,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - DictValueIterator
 
   internal static var dictValueIterator: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyDictValueIterator.getAttribute(name:))
     result.__iter__ = .init(PyDictValueIterator.iter)
     result.__next__ = .init(PyDictValueIterator.next)
@@ -330,7 +336,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - DictValues
 
   internal static var dictValues: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyDictValues.repr)
     result.__getattribute__ = .init(PyDictValues.getAttribute(name:))
     result.__iter__ = .init(PyDictValues.iter)
@@ -341,7 +347,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Ellipsis
 
   internal static var ellipsis: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyEllipsis.repr)
     result.__getattribute__ = .init(PyEllipsis.getAttribute(name:))
     return result
@@ -350,7 +356,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Enumerate
 
   internal static var enumerate: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyEnumerate.getAttribute(name:))
     result.__iter__ = .init(PyEnumerate.iter)
     result.__next__ = .init(PyEnumerate.next)
@@ -360,7 +366,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Filter
 
   internal static var filter: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyFilter.getAttribute(name:))
     result.__iter__ = .init(PyFilter.iter)
     result.__next__ = .init(PyFilter.next)
@@ -370,7 +376,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Float
 
   internal static var float: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyFloat.repr)
     result.__str__ = .init(PyFloat.str)
     result.__hash__ = .init(PyFloat.hash)
@@ -411,7 +417,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Frame
 
   internal static var frame: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyFrame.repr)
     result.__getattribute__ = .init(PyFrame.getAttribute(name:))
     result.__setattr__ = .init(PyFrame.setAttribute(name:value:))
@@ -422,7 +428,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - FrozenSet
 
   internal static var frozenSet: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyFrozenSet.repr)
     result.__hash__ = .init(PyFrozenSet.hash)
     result.__eq__ = .init(PyFrozenSet.isEqual(_:))
@@ -449,7 +455,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Function
 
   internal static var function: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyFunction.repr)
     result.__call__ = .init(PyFunction.call(args:kwargs:))
     return result
@@ -458,7 +464,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Int
 
   internal static var int: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyInt.repr(int:))
     result.__str__ = .init(PyInt.str(int:))
     result.__hash__ = .init(PyInt.hash)
@@ -511,7 +517,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Iterator
 
   internal static var iterator: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyIterator.getAttribute(name:))
     result.__iter__ = .init(PyIterator.iter)
     result.__next__ = .init(PyIterator.next)
@@ -521,7 +527,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - List
 
   internal static var list: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyList.repr)
     result.__hash__ = .init(PyList.hash)
     result.__eq__ = .init(PyList.isEqual(_:))
@@ -549,7 +555,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - ListIterator
 
   internal static var listIterator: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyListIterator.getAttribute(name:))
     result.__iter__ = .init(PyListIterator.iter)
     result.__next__ = .init(PyListIterator.next)
@@ -559,7 +565,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - ListReverseIterator
 
   internal static var listReverseIterator: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyListReverseIterator.getAttribute(name:))
     result.__iter__ = .init(PyListReverseIterator.iter)
     result.__next__ = .init(PyListReverseIterator.next)
@@ -569,7 +575,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Map
 
   internal static var map: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyMap.getAttribute(name:))
     result.__iter__ = .init(PyMap.iter)
     result.__next__ = .init(PyMap.next)
@@ -579,7 +585,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Method
 
   internal static var method: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyMethod.repr)
     result.__hash__ = .init(PyMethod.hash)
     result.__eq__ = .init(PyMethod.isEqual(_:))
@@ -598,7 +604,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Module
 
   internal static var module: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyModule.repr)
     result.__getattribute__ = .init(PyModule.getAttribute(name:))
     result.__setattr__ = .init(PyModule.setAttribute(name:value:))
@@ -610,7 +616,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Namespace
 
   internal static var namespace: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyNamespace.repr)
     result.__eq__ = .init(PyNamespace.isEqual(_:))
     result.__ne__ = .init(PyNamespace.isNotEqual(_:))
@@ -627,7 +633,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - None
 
   internal static var none: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyNone.repr)
     result.__bool__ = .init(PyNone.asBool)
     result.__getattribute__ = .init(PyNone.getAttribute(name:))
@@ -637,7 +643,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - NotImplemented
 
   internal static var notImplemented: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyNotImplemented.repr)
     return result
   }()
@@ -645,7 +651,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Property
 
   internal static var property: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyProperty.getAttribute(name:))
     return result
   }()
@@ -653,7 +659,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Range
 
   internal static var range: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyRange.repr)
     result.__hash__ = .init(PyRange.hash)
     result.__eq__ = .init(PyRange.isEqual(_:))
@@ -675,7 +681,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - RangeIterator
 
   internal static var rangeIterator: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyRangeIterator.getAttribute(name:))
     result.__iter__ = .init(PyRangeIterator.iter)
     result.__next__ = .init(PyRangeIterator.next)
@@ -685,7 +691,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Reversed
 
   internal static var reversed: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyReversed.getAttribute(name:))
     result.__iter__ = .init(PyReversed.iter)
     result.__next__ = .init(PyReversed.next)
@@ -695,7 +701,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Set
 
   internal static var set: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PySet.repr)
     result.__hash__ = .init(PySet.hash)
     result.__eq__ = .init(PySet.isEqual(_:))
@@ -722,7 +728,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - SetIterator
 
   internal static var setIterator: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PySetIterator.getAttribute(name:))
     result.__iter__ = .init(PySetIterator.iter)
     result.__next__ = .init(PySetIterator.next)
@@ -732,7 +738,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Slice
 
   internal static var slice: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PySlice.repr)
     result.__hash__ = .init(PySlice.hash)
     result.__eq__ = .init(PySlice.isEqual(_:))
@@ -748,7 +754,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - StaticMethod
 
   internal static var staticMethod: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__isabstractmethod__ = .init(PyStaticMethod.isAbstractMethod)
     return result
   }()
@@ -756,7 +762,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - String
 
   internal static var string: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyString.repr)
     result.__str__ = .init(PyString.str)
     result.__hash__ = .init(PyString.hash)
@@ -780,7 +786,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - StringIterator
 
   internal static var stringIterator: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyStringIterator.getAttribute(name:))
     result.__iter__ = .init(PyStringIterator.iter)
     result.__next__ = .init(PyStringIterator.next)
@@ -790,7 +796,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Super
 
   internal static var `super`: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PySuper.repr)
     result.__getattribute__ = .init(PySuper.getAttribute(name:))
     return result
@@ -799,7 +805,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - TextFile
 
   internal static var textFile: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyTextFile.repr)
     result.__del__ = .init(PyTextFile.del)
     return result
@@ -808,7 +814,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Traceback
 
   internal static var traceback: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyTraceback.getAttribute(name:))
     result.__dir__ = .init(PyTraceback.dir)
     return result
@@ -817,7 +823,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Tuple
 
   internal static var tuple: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyTuple.repr)
     result.__hash__ = .init(PyTuple.hash)
     result.__eq__ = .init(PyTuple.isEqual(_:))
@@ -840,7 +846,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - TupleIterator
 
   internal static var tupleIterator: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyTupleIterator.getAttribute(name:))
     result.__iter__ = .init(PyTupleIterator.iter)
     result.__next__ = .init(PyTupleIterator.next)
@@ -850,7 +856,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Type
 
   internal static var type: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyType.repr)
     result.__getattribute__ = .init(PyType.getAttribute(name:))
     result.__setattr__ = .init(PyType.setAttribute(name:value:))
@@ -865,7 +871,7 @@ internal enum BuiltinStaticMethods {
   // MARK: - Zip
 
   internal static var zip: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__getattribute__ = .init(PyZip.getAttribute(name:))
     result.__iter__ = .init(PyZip.iter)
     result.__next__ = .init(PyZip.next)
@@ -875,22 +881,22 @@ internal enum BuiltinStaticMethods {
   // MARK: - ArithmeticError
 
   // 'PyArithmeticError' does not any interesting methods to 'PyException'.
-  internal static let arithmeticError = BuiltinStaticMethods.exception.copy()
+  internal static let arithmeticError = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - AssertionError
 
   // 'PyAssertionError' does not any interesting methods to 'PyException'.
-  internal static let assertionError = BuiltinStaticMethods.exception.copy()
+  internal static let assertionError = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - AttributeError
 
   // 'PyAttributeError' does not any interesting methods to 'PyException'.
-  internal static let attributeError = BuiltinStaticMethods.exception.copy()
+  internal static let attributeError = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - BaseException
 
   internal static var baseException: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.object.copy()
+    var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyBaseException.repr)
     result.__str__ = .init(PyBaseException.str(baseException:))
     result.__getattribute__ = .init(PyBaseException.getAttribute(name:))
@@ -902,92 +908,92 @@ internal enum BuiltinStaticMethods {
   // MARK: - BlockingIOError
 
   // 'PyBlockingIOError' does not any interesting methods to 'PyOSError'.
-  internal static let blockingIOError = BuiltinStaticMethods.oSError.copy()
+  internal static let blockingIOError = StaticMethodsForBuiltinTypes.oSError.copy()
 
   // MARK: - BrokenPipeError
 
   // 'PyBrokenPipeError' does not any interesting methods to 'PyConnectionError'.
-  internal static let brokenPipeError = BuiltinStaticMethods.connectionError.copy()
+  internal static let brokenPipeError = StaticMethodsForBuiltinTypes.connectionError.copy()
 
   // MARK: - BufferError
 
   // 'PyBufferError' does not any interesting methods to 'PyException'.
-  internal static let bufferError = BuiltinStaticMethods.exception.copy()
+  internal static let bufferError = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - BytesWarning
 
   // 'PyBytesWarning' does not any interesting methods to 'PyWarning'.
-  internal static let bytesWarning = BuiltinStaticMethods.warning.copy()
+  internal static let bytesWarning = StaticMethodsForBuiltinTypes.warning.copy()
 
   // MARK: - ChildProcessError
 
   // 'PyChildProcessError' does not any interesting methods to 'PyOSError'.
-  internal static let childProcessError = BuiltinStaticMethods.oSError.copy()
+  internal static let childProcessError = StaticMethodsForBuiltinTypes.oSError.copy()
 
   // MARK: - ConnectionAbortedError
 
   // 'PyConnectionAbortedError' does not any interesting methods to 'PyConnectionError'.
-  internal static let connectionAbortedError = BuiltinStaticMethods.connectionError.copy()
+  internal static let connectionAbortedError = StaticMethodsForBuiltinTypes.connectionError.copy()
 
   // MARK: - ConnectionError
 
   // 'PyConnectionError' does not any interesting methods to 'PyOSError'.
-  internal static let connectionError = BuiltinStaticMethods.oSError.copy()
+  internal static let connectionError = StaticMethodsForBuiltinTypes.oSError.copy()
 
   // MARK: - ConnectionRefusedError
 
   // 'PyConnectionRefusedError' does not any interesting methods to 'PyConnectionError'.
-  internal static let connectionRefusedError = BuiltinStaticMethods.connectionError.copy()
+  internal static let connectionRefusedError = StaticMethodsForBuiltinTypes.connectionError.copy()
 
   // MARK: - ConnectionResetError
 
   // 'PyConnectionResetError' does not any interesting methods to 'PyConnectionError'.
-  internal static let connectionResetError = BuiltinStaticMethods.connectionError.copy()
+  internal static let connectionResetError = StaticMethodsForBuiltinTypes.connectionError.copy()
 
   // MARK: - DeprecationWarning
 
   // 'PyDeprecationWarning' does not any interesting methods to 'PyWarning'.
-  internal static let deprecationWarning = BuiltinStaticMethods.warning.copy()
+  internal static let deprecationWarning = StaticMethodsForBuiltinTypes.warning.copy()
 
   // MARK: - EOFError
 
   // 'PyEOFError' does not any interesting methods to 'PyException'.
-  internal static let eOFError = BuiltinStaticMethods.exception.copy()
+  internal static let eOFError = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - Exception
 
   // 'PyException' does not any interesting methods to 'PyBaseException'.
-  internal static let exception = BuiltinStaticMethods.baseException.copy()
+  internal static let exception = StaticMethodsForBuiltinTypes.baseException.copy()
 
   // MARK: - FileExistsError
 
   // 'PyFileExistsError' does not any interesting methods to 'PyOSError'.
-  internal static let fileExistsError = BuiltinStaticMethods.oSError.copy()
+  internal static let fileExistsError = StaticMethodsForBuiltinTypes.oSError.copy()
 
   // MARK: - FileNotFoundError
 
   // 'PyFileNotFoundError' does not any interesting methods to 'PyOSError'.
-  internal static let fileNotFoundError = BuiltinStaticMethods.oSError.copy()
+  internal static let fileNotFoundError = StaticMethodsForBuiltinTypes.oSError.copy()
 
   // MARK: - FloatingPointError
 
   // 'PyFloatingPointError' does not any interesting methods to 'PyArithmeticError'.
-  internal static let floatingPointError = BuiltinStaticMethods.arithmeticError.copy()
+  internal static let floatingPointError = StaticMethodsForBuiltinTypes.arithmeticError.copy()
 
   // MARK: - FutureWarning
 
   // 'PyFutureWarning' does not any interesting methods to 'PyWarning'.
-  internal static let futureWarning = BuiltinStaticMethods.warning.copy()
+  internal static let futureWarning = StaticMethodsForBuiltinTypes.warning.copy()
 
   // MARK: - GeneratorExit
 
   // 'PyGeneratorExit' does not any interesting methods to 'PyBaseException'.
-  internal static let generatorExit = BuiltinStaticMethods.baseException.copy()
+  internal static let generatorExit = StaticMethodsForBuiltinTypes.baseException.copy()
 
   // MARK: - ImportError
 
   internal static var importError: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.exception.copy()
+    var result = StaticMethodsForBuiltinTypes.exception.copy()
     result.__str__ = .init(PyImportError.str(importError:))
     return result
   }()
@@ -995,32 +1001,32 @@ internal enum BuiltinStaticMethods {
   // MARK: - ImportWarning
 
   // 'PyImportWarning' does not any interesting methods to 'PyWarning'.
-  internal static let importWarning = BuiltinStaticMethods.warning.copy()
+  internal static let importWarning = StaticMethodsForBuiltinTypes.warning.copy()
 
   // MARK: - IndentationError
 
   // 'PyIndentationError' does not any interesting methods to 'PySyntaxError'.
-  internal static let indentationError = BuiltinStaticMethods.syntaxError.copy()
+  internal static let indentationError = StaticMethodsForBuiltinTypes.syntaxError.copy()
 
   // MARK: - IndexError
 
   // 'PyIndexError' does not any interesting methods to 'PyLookupError'.
-  internal static let indexError = BuiltinStaticMethods.lookupError.copy()
+  internal static let indexError = StaticMethodsForBuiltinTypes.lookupError.copy()
 
   // MARK: - InterruptedError
 
   // 'PyInterruptedError' does not any interesting methods to 'PyOSError'.
-  internal static let interruptedError = BuiltinStaticMethods.oSError.copy()
+  internal static let interruptedError = StaticMethodsForBuiltinTypes.oSError.copy()
 
   // MARK: - IsADirectoryError
 
   // 'PyIsADirectoryError' does not any interesting methods to 'PyOSError'.
-  internal static let isADirectoryError = BuiltinStaticMethods.oSError.copy()
+  internal static let isADirectoryError = StaticMethodsForBuiltinTypes.oSError.copy()
 
   // MARK: - KeyError
 
   internal static var keyError: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.lookupError.copy()
+    var result = StaticMethodsForBuiltinTypes.lookupError.copy()
     result.__str__ = .init(PyKeyError.str(keyError:))
     return result
   }()
@@ -1028,102 +1034,102 @@ internal enum BuiltinStaticMethods {
   // MARK: - KeyboardInterrupt
 
   // 'PyKeyboardInterrupt' does not any interesting methods to 'PyBaseException'.
-  internal static let keyboardInterrupt = BuiltinStaticMethods.baseException.copy()
+  internal static let keyboardInterrupt = StaticMethodsForBuiltinTypes.baseException.copy()
 
   // MARK: - LookupError
 
   // 'PyLookupError' does not any interesting methods to 'PyException'.
-  internal static let lookupError = BuiltinStaticMethods.exception.copy()
+  internal static let lookupError = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - MemoryError
 
   // 'PyMemoryError' does not any interesting methods to 'PyException'.
-  internal static let memoryError = BuiltinStaticMethods.exception.copy()
+  internal static let memoryError = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - ModuleNotFoundError
 
   // 'PyModuleNotFoundError' does not any interesting methods to 'PyImportError'.
-  internal static let moduleNotFoundError = BuiltinStaticMethods.importError.copy()
+  internal static let moduleNotFoundError = StaticMethodsForBuiltinTypes.importError.copy()
 
   // MARK: - NameError
 
   // 'PyNameError' does not any interesting methods to 'PyException'.
-  internal static let nameError = BuiltinStaticMethods.exception.copy()
+  internal static let nameError = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - NotADirectoryError
 
   // 'PyNotADirectoryError' does not any interesting methods to 'PyOSError'.
-  internal static let notADirectoryError = BuiltinStaticMethods.oSError.copy()
+  internal static let notADirectoryError = StaticMethodsForBuiltinTypes.oSError.copy()
 
   // MARK: - NotImplementedError
 
   // 'PyNotImplementedError' does not any interesting methods to 'PyRuntimeError'.
-  internal static let notImplementedError = BuiltinStaticMethods.runtimeError.copy()
+  internal static let notImplementedError = StaticMethodsForBuiltinTypes.runtimeError.copy()
 
   // MARK: - OSError
 
   // 'PyOSError' does not any interesting methods to 'PyException'.
-  internal static let oSError = BuiltinStaticMethods.exception.copy()
+  internal static let oSError = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - OverflowError
 
   // 'PyOverflowError' does not any interesting methods to 'PyArithmeticError'.
-  internal static let overflowError = BuiltinStaticMethods.arithmeticError.copy()
+  internal static let overflowError = StaticMethodsForBuiltinTypes.arithmeticError.copy()
 
   // MARK: - PendingDeprecationWarning
 
   // 'PyPendingDeprecationWarning' does not any interesting methods to 'PyWarning'.
-  internal static let pendingDeprecationWarning = BuiltinStaticMethods.warning.copy()
+  internal static let pendingDeprecationWarning = StaticMethodsForBuiltinTypes.warning.copy()
 
   // MARK: - PermissionError
 
   // 'PyPermissionError' does not any interesting methods to 'PyOSError'.
-  internal static let permissionError = BuiltinStaticMethods.oSError.copy()
+  internal static let permissionError = StaticMethodsForBuiltinTypes.oSError.copy()
 
   // MARK: - ProcessLookupError
 
   // 'PyProcessLookupError' does not any interesting methods to 'PyOSError'.
-  internal static let processLookupError = BuiltinStaticMethods.oSError.copy()
+  internal static let processLookupError = StaticMethodsForBuiltinTypes.oSError.copy()
 
   // MARK: - RecursionError
 
   // 'PyRecursionError' does not any interesting methods to 'PyRuntimeError'.
-  internal static let recursionError = BuiltinStaticMethods.runtimeError.copy()
+  internal static let recursionError = StaticMethodsForBuiltinTypes.runtimeError.copy()
 
   // MARK: - ReferenceError
 
   // 'PyReferenceError' does not any interesting methods to 'PyException'.
-  internal static let referenceError = BuiltinStaticMethods.exception.copy()
+  internal static let referenceError = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - ResourceWarning
 
   // 'PyResourceWarning' does not any interesting methods to 'PyWarning'.
-  internal static let resourceWarning = BuiltinStaticMethods.warning.copy()
+  internal static let resourceWarning = StaticMethodsForBuiltinTypes.warning.copy()
 
   // MARK: - RuntimeError
 
   // 'PyRuntimeError' does not any interesting methods to 'PyException'.
-  internal static let runtimeError = BuiltinStaticMethods.exception.copy()
+  internal static let runtimeError = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - RuntimeWarning
 
   // 'PyRuntimeWarning' does not any interesting methods to 'PyWarning'.
-  internal static let runtimeWarning = BuiltinStaticMethods.warning.copy()
+  internal static let runtimeWarning = StaticMethodsForBuiltinTypes.warning.copy()
 
   // MARK: - StopAsyncIteration
 
   // 'PyStopAsyncIteration' does not any interesting methods to 'PyException'.
-  internal static let stopAsyncIteration = BuiltinStaticMethods.exception.copy()
+  internal static let stopAsyncIteration = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - StopIteration
 
   // 'PyStopIteration' does not any interesting methods to 'PyException'.
-  internal static let stopIteration = BuiltinStaticMethods.exception.copy()
+  internal static let stopIteration = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - SyntaxError
 
   internal static var syntaxError: PyType.StaticallyKnownNotOverriddenMethods = {
-    var result = BuiltinStaticMethods.exception.copy()
+    var result = StaticMethodsForBuiltinTypes.exception.copy()
     result.__str__ = .init(PySyntaxError.str(syntaxError:))
     return result
   }()
@@ -1131,81 +1137,81 @@ internal enum BuiltinStaticMethods {
   // MARK: - SyntaxWarning
 
   // 'PySyntaxWarning' does not any interesting methods to 'PyWarning'.
-  internal static let syntaxWarning = BuiltinStaticMethods.warning.copy()
+  internal static let syntaxWarning = StaticMethodsForBuiltinTypes.warning.copy()
 
   // MARK: - SystemError
 
   // 'PySystemError' does not any interesting methods to 'PyException'.
-  internal static let systemError = BuiltinStaticMethods.exception.copy()
+  internal static let systemError = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - SystemExit
 
   // 'PySystemExit' does not any interesting methods to 'PyBaseException'.
-  internal static let systemExit = BuiltinStaticMethods.baseException.copy()
+  internal static let systemExit = StaticMethodsForBuiltinTypes.baseException.copy()
 
   // MARK: - TabError
 
   // 'PyTabError' does not any interesting methods to 'PyIndentationError'.
-  internal static let tabError = BuiltinStaticMethods.indentationError.copy()
+  internal static let tabError = StaticMethodsForBuiltinTypes.indentationError.copy()
 
   // MARK: - TimeoutError
 
   // 'PyTimeoutError' does not any interesting methods to 'PyOSError'.
-  internal static let timeoutError = BuiltinStaticMethods.oSError.copy()
+  internal static let timeoutError = StaticMethodsForBuiltinTypes.oSError.copy()
 
   // MARK: - TypeError
 
   // 'PyTypeError' does not any interesting methods to 'PyException'.
-  internal static let typeError = BuiltinStaticMethods.exception.copy()
+  internal static let typeError = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - UnboundLocalError
 
   // 'PyUnboundLocalError' does not any interesting methods to 'PyNameError'.
-  internal static let unboundLocalError = BuiltinStaticMethods.nameError.copy()
+  internal static let unboundLocalError = StaticMethodsForBuiltinTypes.nameError.copy()
 
   // MARK: - UnicodeDecodeError
 
   // 'PyUnicodeDecodeError' does not any interesting methods to 'PyUnicodeError'.
-  internal static let unicodeDecodeError = BuiltinStaticMethods.unicodeError.copy()
+  internal static let unicodeDecodeError = StaticMethodsForBuiltinTypes.unicodeError.copy()
 
   // MARK: - UnicodeEncodeError
 
   // 'PyUnicodeEncodeError' does not any interesting methods to 'PyUnicodeError'.
-  internal static let unicodeEncodeError = BuiltinStaticMethods.unicodeError.copy()
+  internal static let unicodeEncodeError = StaticMethodsForBuiltinTypes.unicodeError.copy()
 
   // MARK: - UnicodeError
 
   // 'PyUnicodeError' does not any interesting methods to 'PyValueError'.
-  internal static let unicodeError = BuiltinStaticMethods.valueError.copy()
+  internal static let unicodeError = StaticMethodsForBuiltinTypes.valueError.copy()
 
   // MARK: - UnicodeTranslateError
 
   // 'PyUnicodeTranslateError' does not any interesting methods to 'PyUnicodeError'.
-  internal static let unicodeTranslateError = BuiltinStaticMethods.unicodeError.copy()
+  internal static let unicodeTranslateError = StaticMethodsForBuiltinTypes.unicodeError.copy()
 
   // MARK: - UnicodeWarning
 
   // 'PyUnicodeWarning' does not any interesting methods to 'PyWarning'.
-  internal static let unicodeWarning = BuiltinStaticMethods.warning.copy()
+  internal static let unicodeWarning = StaticMethodsForBuiltinTypes.warning.copy()
 
   // MARK: - UserWarning
 
   // 'PyUserWarning' does not any interesting methods to 'PyWarning'.
-  internal static let userWarning = BuiltinStaticMethods.warning.copy()
+  internal static let userWarning = StaticMethodsForBuiltinTypes.warning.copy()
 
   // MARK: - ValueError
 
   // 'PyValueError' does not any interesting methods to 'PyException'.
-  internal static let valueError = BuiltinStaticMethods.exception.copy()
+  internal static let valueError = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - Warning
 
   // 'PyWarning' does not any interesting methods to 'PyException'.
-  internal static let warning = BuiltinStaticMethods.exception.copy()
+  internal static let warning = StaticMethodsForBuiltinTypes.exception.copy()
 
   // MARK: - ZeroDivisionError
 
   // 'PyZeroDivisionError' does not any interesting methods to 'PyArithmeticError'.
-  internal static let zeroDivisionError = BuiltinStaticMethods.arithmeticError.copy()
+  internal static let zeroDivisionError = StaticMethodsForBuiltinTypes.arithmeticError.copy()
 
 }

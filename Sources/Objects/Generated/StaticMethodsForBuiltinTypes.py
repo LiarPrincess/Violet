@@ -2,9 +2,10 @@ from typing import Dict, List
 
 from Sourcery import TypeInfo, PyFunctionInfo, get_types
 from Static_methods import STATIC_METHODS
+from Common.strings import generated_warning
 from Common.builtin_types import print_type_mark
 
-TYPE_NAME = 'BuiltinStaticMethods'
+TYPE_NAME = 'StaticMethodsForBuiltinTypes'
 
 
 def get_property_name(swift_type_name: str) -> str:
@@ -79,6 +80,8 @@ def print_static_methods(t: TypeInfo):
 
 if __name__ == '__main__':
     print(f'''\
+{generated_warning(__file__)}
+
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable closure_body_length
 // swiftlint:disable file_length
