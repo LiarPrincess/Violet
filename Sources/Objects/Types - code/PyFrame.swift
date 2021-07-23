@@ -157,13 +157,12 @@ public final class PyFrame: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  internal func repr() -> String {
     let ptr = self.ptr
     let file = self.code.filename
     let line = self.currentInstructionLine
     let name = self.code.name
-    let result = "<frame at \(ptr), file \(file), line \(line), code \(name)>"
-    return .value(result)
+    return "<frame at \(ptr), file \(file), line \(line), code \(name)>"
   }
 
   // MARK: - Class

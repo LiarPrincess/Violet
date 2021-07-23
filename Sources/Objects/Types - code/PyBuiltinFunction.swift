@@ -74,8 +74,8 @@ public final class PyBuiltinFunction: PyObject, AbstractBuiltinFunction {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
-    return .value("<built-in function \(self.name)>")
+  internal func repr() -> String {
+    return "<built-in function \(self.name)>"
   }
 
   // MARK: - Attributes

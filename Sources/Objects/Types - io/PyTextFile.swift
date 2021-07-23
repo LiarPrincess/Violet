@@ -98,9 +98,9 @@ public final class PyTextFile: PyObject {
    // MARK: - String
 
    // sourcery: pymethod = __repr__
-  public func repr() -> PyResult<String> {
+  public func repr() -> String {
     if self.hasReprLock {
-      return .value("<TextFile - reentrant call>")
+      return "<TextFile - reentrant call>"
     }
 
     return self.withReprLock {
@@ -114,7 +114,7 @@ public final class PyTextFile: PyObject {
       result += " encoding=\(self.encoding)"
       result += ">"
 
-      return .value(result)
+      return result
     }
   }
 

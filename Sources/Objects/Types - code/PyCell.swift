@@ -107,16 +107,16 @@ public final class PyCell: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  internal func repr() -> String {
     let ptr = self.ptr
 
     guard let content = self.content else {
-      return .value("<cell at \(ptr): empty>")
+      return "<cell at \(ptr): empty>"
     }
 
     let type = content.typeName
     let contentPtr = content.ptr
-    return .value("<cell at \(ptr): \(type) object at \(contentPtr)>")
+    return "<cell at \(ptr): \(type) object at \(contentPtr)>"
   }
 
   // MARK: - Attributes

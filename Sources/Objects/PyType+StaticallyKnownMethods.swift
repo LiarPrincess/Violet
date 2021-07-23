@@ -165,14 +165,6 @@ extension PyType {
           return fn(zelf)()
         }
       }
-
-      internal init<T: PyObject>(_ fn: @escaping (T) -> PyResult<PyString>) {
-        self.fn = { (arg0: PyObject) in
-          let zelf = forceCast(object: arg0, as: T.self)
-          let result = fn(zelf)
-          return result.map { $0.value }
-        }
-      }
     }
 
     // MARK: HashWrapper

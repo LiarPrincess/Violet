@@ -301,12 +301,12 @@ public final class PyCode: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> PyResult<String> {
+  public func repr() -> String {
     let name = self.name.value
     let ptr = self.ptr
     let file = self.filename.value
     let line = self.firstLine
-    return .value("<code object \(name) at \(ptr), file '\(file)', line \(line)>")
+    return "<code object \(name) at \(ptr), file '\(file)', line \(line)>"
   }
 
   // MARK: - Class

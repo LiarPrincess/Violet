@@ -33,7 +33,8 @@ extension PyFloat {
   // sourcery: pymethod = hex, doc = hexDoc
   public func hex() -> PyResult<String> {
     if self.value.isNaN || self.value.isInfinite {
-      return self.repr()
+      let repr = self.repr()
+      return .value(repr)
     }
 
     if self.value.isZero {

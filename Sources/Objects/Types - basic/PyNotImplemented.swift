@@ -26,8 +26,8 @@ public final class PyNotImplemented: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
-    return .value("NotImplemented")
+  internal func repr() -> String {
+    return "NotImplemented"
   }
 
   // MARK: - Class
@@ -35,12 +35,6 @@ public final class PyNotImplemented: PyObject {
   // sourcery: pyproperty = __class__
   internal func getClass() -> PyType {
     return self.type
-  }
-
-  // MARK: - Reduce
-
-  internal var reduce: String {
-    return "NotImplemented"
   }
 
   // MARK: - Python new

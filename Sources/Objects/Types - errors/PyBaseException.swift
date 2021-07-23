@@ -136,14 +136,8 @@ public class PyBaseException: PyObject {
     }
   }
 
-  // This is for `__str__Owner` protocol
-  internal func str() -> PyResult<String> {
-    let result = Self.str(baseException: self)
-    return result.map { $0.value }
-  }
-
   // sourcery: pymethod = __str__
-  internal static func str(baseException: PyBaseException) -> PyResult<PyString> {
+  internal static func str(baseException: PyBaseException) -> PyResult<String> {
     // This is a special (and unusual) place where normally we would override
     // 'pymethod'. But we can't do that because Swift would always call the
     // overridden function (even if we did 'BaseClass.fn(childInstance)').
@@ -153,12 +147,12 @@ public class PyBaseException: PyObject {
 
     switch args.getLength() {
     case 0:
-      return .value(Py.emptyString)
+      return .value("")
     case 1:
       let first = args.elements[0]
-      return Py.str(object: first)
+      return Py.strString(object: first)
     default:
-      return Py.str(object: args)
+      return Py.strString(object: args)
     }
   }
 

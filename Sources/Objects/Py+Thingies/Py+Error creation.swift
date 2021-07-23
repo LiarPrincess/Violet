@@ -48,7 +48,7 @@ extension PyInstance {
     object: PyObject,
     hasNoAttribute name: PyString
   ) -> PyAttributeError {
-    let repr = name.reprImpl()
+    let repr = name.repr()
     return self.newAttributeError(object: object, hasNoAttribute: repr)
   }
 
@@ -66,7 +66,7 @@ extension PyInstance {
     object: PyObject,
     attributeIsReadOnly name: PyString
   ) -> PyAttributeError {
-    let repr = name.reprImpl()
+    let repr = name.repr()
     return self.newAttributeError(object: object, attributeIsReadOnly: repr)
   }
 

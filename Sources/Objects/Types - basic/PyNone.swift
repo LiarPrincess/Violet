@@ -26,8 +26,8 @@ public final class PyNone: PyObject, HasCustomGetMethod {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
-    return .value("None")
+  internal func repr() -> String {
+    return "None"
   }
 
   // MARK: - Convertible

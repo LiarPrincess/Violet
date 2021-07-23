@@ -78,14 +78,14 @@ public final class PyBuiltinMethod: PyObject, AbstractBuiltinFunction {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  internal func repr() -> String {
     if PyCast.isModule(self.object) {
-      return .value("<built-in method \(self.name)>")
+      return "<built-in method \(self.name)>"
     }
 
     let ptr = self.object.ptr
     let type = self.object.typeName
-    return .value("<built-in method \(self.name) of \(type) object at \(ptr)>")
+    return "<built-in method \(self.name) of \(type) object at \(ptr)>"
   }
 
   // MARK: - Attributes

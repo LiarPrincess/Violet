@@ -152,12 +152,7 @@ public final class PyString: PyObject, AbstractString {
 
   // sourcery: pymethod = __repr__
   /// In Swift use `reprImpl` instead.
-  internal func repr() -> PyResult<String> {
-    let result = self.reprImpl()
-    return .value(result)
-  }
-
-  internal func reprImpl() -> String {
+  internal func repr() -> String {
     let quote = self.getReprQuoteChar()
 
     var result = String(quote)
@@ -242,8 +237,8 @@ public final class PyString: PyObject, AbstractString {
   }
 
   // sourcery: pymethod = __str__
-  internal func str() -> PyResult<String> {
-    return .value(self.value)
+  internal func str() -> String {
+    return self.value
   }
 
   // MARK: - Class

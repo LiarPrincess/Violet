@@ -158,7 +158,7 @@ public final class PyModule: PyObject {
       }
     }
 
-    let attributeNameRepr = name.reprImpl()
+    let attributeNameRepr = name.repr()
     let attributeName = attributeNameRepr.quoted
 
     var moduleName = "<unknown module name>"

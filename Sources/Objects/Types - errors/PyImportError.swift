@@ -96,20 +96,14 @@ public class PyImportError: PyException {
 
   // MARK: - String
 
-  // This is for `__str__Owner` protocol
-  override internal func str() -> PyResult<String> {
-    let result = Self.str(importError: self)
-    return result.map { $0.value }
-  }
-
   // sourcery: pymethod = __str__
-  internal static func str(importError: PyImportError) -> PyResult<PyString> {
+  internal static func str(importError: PyImportError) -> PyResult<String> {
     // Why this is static? See comment in 'PyBaseException.str'.
 
     // If we have 'msg' then use it.
     let msgPyString = importError.msg.flatMap(PyCast.asString(_:))
     if let msg = msgPyString {
-      return .value(msg)
+      return .value(msg.value)
     }
 
     // Otherwise just use standard path.

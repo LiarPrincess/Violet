@@ -120,17 +120,17 @@ public final class PyComplex: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  internal func repr() -> String {
     // Real part is 0: just output the imaginary part and do not include parens.
     if self.real.isZero {
       let imag = self.dimensionRepr(self.imag)
-      return .value(imag + "j")
+      return imag + "j"
     }
 
     let sign = self.imag >= 0 ? "+" : ""
     let real = self.dimensionRepr(self.real)
     let imag = self.dimensionRepr(self.imag)
-    return .value("(\(real)\(sign)\(imag)j)")
+    return "(\(real)\(sign)\(imag)j)"
   }
 
   private func dimensionRepr(_ value: Double) -> String {
@@ -146,7 +146,7 @@ public final class PyComplex: PyObject {
   }
 
   // sourcery: pymethod = __str__
-  internal func str() -> PyResult<String> {
+  internal func str() -> String {
     return self.repr()
   }
 

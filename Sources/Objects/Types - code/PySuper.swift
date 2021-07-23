@@ -72,15 +72,15 @@ public final class PySuper: PyObject, HasCustomGetMethod {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  internal func repr() -> String {
     let typeName = self.thisClass?.getNameString() ?? "NULL"
 
     if let objectType = self.objectType {
       let objectTypeName = objectType.getNameString()
-      return .value("<super: <class '\(typeName)'>, <\(objectTypeName) object>>")
+      return "<super: <class '\(typeName)'>, <\(objectTypeName) object>>"
     }
 
-    return .value("<super: <class '\(typeName)'>, NULL>")
+    return "<super: <class '\(typeName)'>, NULL>"
   }
 
   // MARK: - Attributes

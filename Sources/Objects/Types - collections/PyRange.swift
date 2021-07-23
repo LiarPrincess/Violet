@@ -171,16 +171,16 @@ public final class PyRange: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> PyResult<String> {
+  public func repr() -> String {
     let start = self.start.repr()
     let stop = self.stop.repr()
 
     switch self.stepType {
     case .implicit:
-      return .value("range(\(start), \(stop))")
+      return "range(\(start), \(stop))"
     case .explicit:
       let step = self.step.repr()
-      return .value("range(\(start), \(stop), \(step))")
+      return "range(\(start), \(stop), \(step))"
     }
   }
 

@@ -87,13 +87,13 @@ internal enum PyObjectType {
   }
 
   // sourcery: pymethod = __str__
-  internal static func str(zelf: PyObject) -> PyResult<PyString> {
+  internal static func str(zelf: PyObject) -> PyResult<String> {
     // If '__str__' is not implemented then we will use '__repr__'.
-    return Py.repr(object: zelf)
+    return Py.reprString(object: zelf)
   }
 
   // sourcery: pymethod = __format__
-  internal static func format(zelf: PyObject, spec: PyObject) -> PyResult<PyString> {
+  internal static func format(zelf: PyObject, spec: PyObject) -> PyResult<String> {
     if let spec = PyCast.asString(spec), spec.isEmpty {
       return PyObjectType.str(zelf: zelf)
     }

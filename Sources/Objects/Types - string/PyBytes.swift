@@ -114,9 +114,9 @@ public final class PyBytes: PyObject, AbstractBytes {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  internal func repr() -> String {
     let bytes = self._repr()
-    return .value("b" + bytes)
+    return "b" + bytes
   }
 
   // sourcery: pymethod = __str__

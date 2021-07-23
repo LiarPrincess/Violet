@@ -143,10 +143,6 @@ public class PySyntaxError: PyException {
 
   // MARK: - String
 
-  override internal func str() -> PyResult<String> {
-    return Self.str(syntaxError: self)
-  }
-
   // sourcery: pymethod = __str__
   internal static func str(syntaxError: PySyntaxError) -> PyResult<String> {
     // Why this is static? See comment in 'PyBaseException.str'.

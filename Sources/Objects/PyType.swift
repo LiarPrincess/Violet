@@ -648,7 +648,7 @@ public final class PyType: PyObject, HasCustomGetMethod {
       return .value(a)
     }
 
-    let nameQuoted = name.reprImpl().quoted
+    let nameQuoted = name.repr().quoted
     let msg = "type object '\(self.name)' has no attribute \(nameQuoted)"
     return .attributeError(msg)
   }

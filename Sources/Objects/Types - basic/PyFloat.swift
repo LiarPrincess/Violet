@@ -130,12 +130,12 @@ public final class PyFloat: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> PyResult<String> {
-    return .value(String(describing: self.value))
+  public func repr() -> String {
+    return String(describing: self.value)
   }
 
   // sourcery: pymethod = __str__
-  public func str() -> PyResult<String> {
+  public func str() -> String {
     return self.repr()
   }
 
