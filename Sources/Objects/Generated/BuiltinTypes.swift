@@ -359,20 +359,20 @@ public final class BuiltinTypes {
   private func fillBool() {
     let type = self.bool
     type.flags.set(PyType.defaultFlag)
-    type.setBuiltinTypeDoc(PyBool.boolDoc)
+    type.setBuiltinTypeDoc(PyBool.docBool)
 
-    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBool.getClass, castSelf: Self.asBool))
+    self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBool.getClassBool, castSelf: Self.asBool))
 
-    self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyBool.pyBoolNew(type:args:kwargs:)))
+    self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyBool.pyNewBool(type:args:kwargs:)))
 
-    self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyBool.repr(bool:), castSelf: Self.asBool))
-    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyBool.str(bool:), castSelf: Self.asBool))
-    self.insert(type: type, name: "__and__", value: PyBuiltinFunction.wrap(name: "__and__", doc: nil, fn: PyBool.and(bool:other:), castSelf: Self.asBool))
-    self.insert(type: type, name: "__rand__", value: PyBuiltinFunction.wrap(name: "__rand__", doc: nil, fn: PyBool.rand(bool:other:), castSelf: Self.asBool))
-    self.insert(type: type, name: "__or__", value: PyBuiltinFunction.wrap(name: "__or__", doc: nil, fn: PyBool.or(bool:other:), castSelf: Self.asBool))
-    self.insert(type: type, name: "__ror__", value: PyBuiltinFunction.wrap(name: "__ror__", doc: nil, fn: PyBool.ror(bool:other:), castSelf: Self.asBool))
-    self.insert(type: type, name: "__xor__", value: PyBuiltinFunction.wrap(name: "__xor__", doc: nil, fn: PyBool.xor(bool:other:), castSelf: Self.asBool))
-    self.insert(type: type, name: "__rxor__", value: PyBuiltinFunction.wrap(name: "__rxor__", doc: nil, fn: PyBool.rxor(bool:other:), castSelf: Self.asBool))
+    self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyBool.reprBool, castSelf: Self.asBool))
+    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyBool.strBool, castSelf: Self.asBool))
+    self.insert(type: type, name: "__and__", value: PyBuiltinFunction.wrap(name: "__and__", doc: nil, fn: PyBool.andBool(_:), castSelf: Self.asBool))
+    self.insert(type: type, name: "__rand__", value: PyBuiltinFunction.wrap(name: "__rand__", doc: nil, fn: PyBool.randBool(_:), castSelf: Self.asBool))
+    self.insert(type: type, name: "__or__", value: PyBuiltinFunction.wrap(name: "__or__", doc: nil, fn: PyBool.orBool(_:), castSelf: Self.asBool))
+    self.insert(type: type, name: "__ror__", value: PyBuiltinFunction.wrap(name: "__ror__", doc: nil, fn: PyBool.rorBool(_:), castSelf: Self.asBool))
+    self.insert(type: type, name: "__xor__", value: PyBuiltinFunction.wrap(name: "__xor__", doc: nil, fn: PyBool.xorBool(_:), castSelf: Self.asBool))
+    self.insert(type: type, name: "__rxor__", value: PyBuiltinFunction.wrap(name: "__rxor__", doc: nil, fn: PyBool.rxorBool(_:), castSelf: Self.asBool))
   }
 
   private static func asBool(functionName: String, object: PyObject) -> PyResult<PyBool> {
@@ -1544,7 +1544,7 @@ public final class BuiltinTypes {
     type.flags.set(PyType.defaultFlag)
     type.flags.set(PyType.longSubclassFlag)
     type.flags.set(PyType.subclassInstancesHave__dict__Flag)
-    type.setBuiltinTypeDoc(PyInt.intDoc)
+    type.setBuiltinTypeDoc(PyInt.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyInt.getClass, castSelf: Self.asInt))
     self.insert(type: type, name: "real", value: PyProperty.wrap(doc: nil, get: PyInt.asReal, castSelf: Self.asInt))
@@ -1552,7 +1552,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "numerator", value: PyProperty.wrap(doc: nil, get: PyInt.numerator, castSelf: Self.asInt))
     self.insert(type: type, name: "denominator", value: PyProperty.wrap(doc: nil, get: PyInt.denominator, castSelf: Self.asInt))
 
-    self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyInt.pyIntNew(type:args:kwargs:)))
+    self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyInt.pyNew(type:args:kwargs:)))
 
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyInt.isEqual(_:), castSelf: Self.asInt))
     self.insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyInt.isNotEqual(_:), castSelf: Self.asInt))
@@ -1561,8 +1561,8 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__gt__", value: PyBuiltinFunction.wrap(name: "__gt__", doc: nil, fn: PyInt.isGreater(_:), castSelf: Self.asInt))
     self.insert(type: type, name: "__ge__", value: PyBuiltinFunction.wrap(name: "__ge__", doc: nil, fn: PyInt.isGreaterEqual(_:), castSelf: Self.asInt))
     self.insert(type: type, name: "__hash__", value: PyBuiltinFunction.wrap(name: "__hash__", doc: nil, fn: PyInt.hash, castSelf: Self.asInt))
-    self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyInt.repr(int:), castSelf: Self.asInt))
-    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyInt.str(int:), castSelf: Self.asInt))
+    self.insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyInt.repr, castSelf: Self.asInt))
+    self.insert(type: type, name: "__str__", value: PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyInt.str, castSelf: Self.asInt))
     self.insert(type: type, name: "__bool__", value: PyBuiltinFunction.wrap(name: "__bool__", doc: nil, fn: PyInt.asBool, castSelf: Self.asInt))
     self.insert(type: type, name: "__int__", value: PyBuiltinFunction.wrap(name: "__int__", doc: nil, fn: PyInt.asInt, castSelf: Self.asInt))
     self.insert(type: type, name: "__float__", value: PyBuiltinFunction.wrap(name: "__float__", doc: nil, fn: PyInt.asFloat, castSelf: Self.asInt))
@@ -1596,12 +1596,12 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__rlshift__", value: PyBuiltinFunction.wrap(name: "__rlshift__", doc: nil, fn: PyInt.rlshift(_:), castSelf: Self.asInt))
     self.insert(type: type, name: "__rshift__", value: PyBuiltinFunction.wrap(name: "__rshift__", doc: nil, fn: PyInt.rshift(_:), castSelf: Self.asInt))
     self.insert(type: type, name: "__rrshift__", value: PyBuiltinFunction.wrap(name: "__rrshift__", doc: nil, fn: PyInt.rrshift(_:), castSelf: Self.asInt))
-    self.insert(type: type, name: "__and__", value: PyBuiltinFunction.wrap(name: "__and__", doc: nil, fn: PyInt.and(int:other:), castSelf: Self.asInt))
-    self.insert(type: type, name: "__rand__", value: PyBuiltinFunction.wrap(name: "__rand__", doc: nil, fn: PyInt.rand(int:other:), castSelf: Self.asInt))
-    self.insert(type: type, name: "__or__", value: PyBuiltinFunction.wrap(name: "__or__", doc: nil, fn: PyInt.or(int:other:), castSelf: Self.asInt))
-    self.insert(type: type, name: "__ror__", value: PyBuiltinFunction.wrap(name: "__ror__", doc: nil, fn: PyInt.ror(int:other:), castSelf: Self.asInt))
-    self.insert(type: type, name: "__xor__", value: PyBuiltinFunction.wrap(name: "__xor__", doc: nil, fn: PyInt.xor(int:other:), castSelf: Self.asInt))
-    self.insert(type: type, name: "__rxor__", value: PyBuiltinFunction.wrap(name: "__rxor__", doc: nil, fn: PyInt.rxor(int:other:), castSelf: Self.asInt))
+    self.insert(type: type, name: "__and__", value: PyBuiltinFunction.wrap(name: "__and__", doc: nil, fn: PyInt.and(_:), castSelf: Self.asInt))
+    self.insert(type: type, name: "__rand__", value: PyBuiltinFunction.wrap(name: "__rand__", doc: nil, fn: PyInt.rand(_:), castSelf: Self.asInt))
+    self.insert(type: type, name: "__or__", value: PyBuiltinFunction.wrap(name: "__or__", doc: nil, fn: PyInt.or(_:), castSelf: Self.asInt))
+    self.insert(type: type, name: "__ror__", value: PyBuiltinFunction.wrap(name: "__ror__", doc: nil, fn: PyInt.ror(_:), castSelf: Self.asInt))
+    self.insert(type: type, name: "__xor__", value: PyBuiltinFunction.wrap(name: "__xor__", doc: nil, fn: PyInt.xor(_:), castSelf: Self.asInt))
+    self.insert(type: type, name: "__rxor__", value: PyBuiltinFunction.wrap(name: "__rxor__", doc: nil, fn: PyInt.rxor(_:), castSelf: Self.asInt))
     self.insert(type: type, name: "__invert__", value: PyBuiltinFunction.wrap(name: "__invert__", doc: nil, fn: PyInt.invert, castSelf: Self.asInt))
     self.insert(type: type, name: "__round__", value: PyBuiltinFunction.wrap(name: "__round__", doc: nil, fn: PyInt.round(nDigits:), castSelf: Self.asInt))
   }

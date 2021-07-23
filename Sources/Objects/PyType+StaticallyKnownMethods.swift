@@ -151,6 +151,14 @@ extension PyType {
         }
       }
 
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> String) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          let result = fn(zelf)()
+          return .value(result)
+        }
+      }
+
       internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyResult<String>) {
         self.fn = { (arg0: PyObject) in
           let zelf = forceCast(object: arg0, as: T.self)
@@ -175,6 +183,14 @@ extension PyType {
 
       internal init(_ fn: @escaping (PyObject) -> HashResult) {
         self.fn = fn
+      }
+
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyHash) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          let result = fn(zelf)()
+          return .value(result)
+        }
       }
 
       internal init<T: PyObject>(_ fn: @escaping (T) -> () -> HashResult) {
@@ -222,6 +238,14 @@ extension PyType {
     internal struct AsIntWrapper {
 
       internal let fn: (PyObject) -> PyResult<PyInt>
+
+      internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyInt) {
+        self.fn = { (arg0: PyObject) in
+          let zelf = forceCast(object: arg0, as: T.self)
+          let result = fn(zelf)()
+          return .value(result)
+        }
+      }
 
       internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyResult<PyInt>) {
         self.fn = { (arg0: PyObject) in

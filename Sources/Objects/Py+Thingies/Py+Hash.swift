@@ -32,9 +32,8 @@ extension PyInstance {
     }
 
     guard let pyInt = PyCast.asInt(result) else {
-      return .typeError(
-        "__hash__ method should return an integer, not \(result.typeName)"
-      )
+      let t = result.typeName
+      return .typeError("__hash__ method should return an integer, not \(t)")
     }
 
     if let hash = PyHash(exactly: pyInt.value) {
@@ -44,7 +43,8 @@ extension PyInstance {
     // `result` was not within the range of a Py_hash_t, so we're free to
     // use any sufficiently bit-mixing transformation;
     // long.__hash__ will do nicely.
-    return .value(pyInt.hashRaw())
+    let pyIntHash = pyInt.hash()
+    return .value(pyIntHash)
   }
 
   /// Py_hash_t PyObject_HashNotImplemented(PyObject *v)

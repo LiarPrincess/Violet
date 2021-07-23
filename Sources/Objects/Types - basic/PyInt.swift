@@ -18,7 +18,7 @@ internal let LONG_MIN = Int.min // -9223372036854775808
 public class PyInt: PyObject {
 
   // sourcery: pytypedoc
-  internal static let intDoc = """
+  internal static let doc = """
     int([x]) -> integer
     int(x, base=10) -> integer
 
@@ -107,34 +107,20 @@ public class PyInt: PyObject {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  public func hash() -> HashResult {
-    return .value(self.hashRaw())
-  }
-
-  internal func hashRaw() -> PyHash {
+  internal func hash() -> PyHash {
     return Py.hasher.hash(self.value)
   }
 
   // MARK: - String
 
-  public func repr() -> PyResult<String> {
-    return Self.repr(int: self)
-  }
-
   // sourcery: pymethod = __repr__
-  internal static func repr(int zelf: PyInt) -> PyResult<String> {
-    // Why static? See comment at the top of 'PyBool'.
-    return .value(String(describing: zelf.value))
-  }
-
-  public func str() -> PyResult<String> {
-    return Self.str(int: self)
+  internal func repr() -> String {
+    return String(describing: self.value)
   }
 
   // sourcery: pymethod = __str__
-  internal static func str(int zelf: PyInt) -> PyResult<String> {
-    // Why static? See comment at the top of 'PyBool'.
-    return .value(String(describing: zelf.value))
+  internal func str() -> String {
+    return String(describing: self.value)
   }
 
   // MARK: - Convertible
@@ -726,87 +712,55 @@ public class PyInt: PyObject {
 
   // MARK: - And
 
-  public func and(_ other: PyObject) -> PyResult<PyObject> {
-    return Self.and(int: self, other: other)
-  }
-
   // sourcery: pymethod = __and__
-  internal static func and(int zelf: PyInt,
-                           other: PyObject) -> PyResult<PyObject> {
+  internal func and(_ other: PyObject) -> PyResult<PyObject> {
     // Why static? See comment at the top of 'PyBool'.
     guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
-    let result = zelf.value & other.value
+    let result = self.value & other.value
     return .value(Py.newInt(result))
   }
 
-  public func rand(_ other: PyObject) -> PyResult<PyObject> {
-    return Self.rand(int: self, other: other)
-  }
-
   // sourcery: pymethod = __rand__
-  internal static func rand(int zelf: PyInt,
-                            other: PyObject) -> PyResult<PyObject> {
-    // Why static? See comment at the top of 'PyBool'.
-    return Self.and(int: zelf, other: other)
+  internal func rand(_ other: PyObject) -> PyResult<PyObject> {
+    return self.and(other)
   }
 
   // MARK: - Or
 
-  public func or(_ other: PyObject) -> PyResult<PyObject> {
-    return Self.or(int: self, other: other)
-  }
-
   // sourcery: pymethod = __or__
-  internal static func or(int zelf: PyInt,
-                          other: PyObject) -> PyResult<PyObject> {
+  internal func or(_ other: PyObject) -> PyResult<PyObject> {
     // Why static? See comment at the top of 'PyBool'.
     guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
-    let result = zelf.value | other.value
+    let result = self.value | other.value
     return .value(Py.newInt(result))
   }
 
-  public func ror(_ other: PyObject) -> PyResult<PyObject> {
-    return Self.ror(int: self, other: other)
-  }
-
   // sourcery: pymethod = __ror__
-  internal static func ror(int zelf: PyInt,
-                           other: PyObject) -> PyResult<PyObject> {
-    // Why static? See comment at the top of 'PyBool'.
-    return Self.or(int: zelf, other: other)
+  internal func ror(_ other: PyObject) -> PyResult<PyObject> {
+    return self.or(other)
   }
 
   // MARK: - Xor
 
-  public func xor(_ other: PyObject) -> PyResult<PyObject> {
-    return Self.xor(int: self, other: other)
-  }
-
   // sourcery: pymethod = __xor__
-  internal static func xor(int zelf: PyInt,
-                           other: PyObject) -> PyResult<PyObject> {
+  internal func xor(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = PyCast.asInt(other) else {
       return .value(Py.notImplemented)
     }
 
-    let result = zelf.value ^ other.value
+    let result = self.value ^ other.value
     return .value(Py.newInt(result))
   }
 
-  public func rxor(_ other: PyObject) -> PyResult<PyObject> {
-    return Self.rxor(int: self, other: other)
-  }
-
   // sourcery: pymethod = __rxor__
-  internal static func rxor(int zelf: PyInt,
-                            other: PyObject) -> PyResult<PyObject> {
-    return Self.xor(int: zelf, other: other)
+  internal func rxor(_ other: PyObject) -> PyResult<PyObject> {
+    return self.xor(other)
   }
 
   // MARK: - Invert
@@ -932,9 +886,9 @@ public class PyInt: PyObject {
   )
 
   // sourcery: pystaticmethod = __new__
-  internal static func pyIntNew(type: PyType,
-                                args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyInt> {
+  internal static func pyNew(type: PyType,
+                             args: [PyObject],
+                             kwargs: PyDict?) -> PyResult<PyInt> {
     switch self.newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
@@ -942,15 +896,15 @@ public class PyInt: PyObject {
 
       let object = binding.optional(at: 0)
       let base = binding.optional(at: 1)
-      return Self.pyIntNew(type: type, object: object, base: base)
+      return Self.pyNew(type: type, object: object, base: base)
     case let .error(e):
       return .error(e)
     }
   }
 
-  private static func pyIntNew(type: PyType,
-                               object: PyObject?,
-                               base: PyObject?) -> PyResult<PyInt> {
+  private static func pyNew(type: PyType,
+                            object: PyObject?,
+                            base: PyObject?) -> PyResult<PyInt> {
     // If we do not have 1st argument -> 0
     guard let object = object else {
       if base != nil {
