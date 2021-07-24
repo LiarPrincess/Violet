@@ -59,20 +59,20 @@ extension Eval {
       return .exception(e)
     }
 
-    switch self.importAllFrom(module: module) {
-    case .value:
-      if let e = self.frame.copyLocalsToFast(onLocalMissing: .ignore) {
-        return .exception(e)
-      }
-      return .ok
-    case .error(let e):
-      // Ignore errors, import error is more important
+    if let e = self.importAllFrom(module: module) {
+      // Ignore errors from 'copyLocalsToFast', import error is more important
       _ = self.frame.copyLocalsToFast(onLocalMissing: .ignore)
       return .exception(e)
     }
+
+    if let e = self.frame.copyLocalsToFast(onLocalMissing: .ignore) {
+      return .exception(e)
+    }
+
+    return .ok
   }
 
-  private func importAllFrom(module: PyObject) -> PyResult<Void> {
+  private func importAllFrom(module: PyObject) -> PyBaseException? {
     // Names can come from:
     // - '__all__' - user decides which names are exported
     // - '__dict__' - ignore the ones that start with underscore
@@ -88,24 +88,18 @@ extension Eval {
       namesObject = o
       skipLeadingUnderscores = true
     case let .error(e):
-      return .error(e)
+      return e
     }
 
-    let names: [PyObject]
-    switch Py.toArray(iterable: namesObject) {
-    case let .value(n): names = n
-    case let .error(e): return .error(e)
-    }
-
-    for name in names {
+    let e = Py.forEach(iterable: namesObject) { name in
       if skipLeadingUnderscores && self.startsWithUnderscore(name: name) {
-        continue
+        return .goToNextElement
       }
 
       switch Py.getattr(object: module, name: name) {
       case let .value(value):
-        switch self.locals.setItem(index: name, value: value) {
-        case .value: break
+        switch self.locals.set(key: name, to: value) {
+        case .ok: return .goToNextElement
         case .error(let e): return .error(e)
         }
       case let .error(e):
@@ -113,7 +107,8 @@ extension Eval {
       }
     }
 
-    return .value()
+    // We could 'return Py.forEach' but this is better for debugging.
+    return e
   }
 
   private func startsWithUnderscore(name: PyObject) -> Bool {

@@ -153,7 +153,7 @@ internal enum Debug {
 
   internal static func callFunction(fn: PyObject,
                                     args: [PyObject],
-                                    kwargs: PyDict.OrderedDictionary?,
+                                    kwargs: PyDict?,
                                     result: PyInstance.CallResult) {
     #if DEBUG
     guard Self.isEnabledAndAfterImportlib else { return }

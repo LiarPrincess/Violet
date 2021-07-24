@@ -128,6 +128,7 @@ internal struct FillFastLocals {
 
   // MARK: - Kwargs
 
+  // swiftlint:disable:next function_body_length
   private mutating func fillFromKwargs() -> PyBaseException? {
     // Create a dictionary for keyword parameters (**kwargs)
     // We have to do this even if we were not called with **kwargs.
@@ -142,13 +143,15 @@ internal struct FillFastLocals {
     }
 
     // Handle keyword arguments
-    nextKwarg: for entry in kwargs.elements {
-      guard let keyword = PyCast.asString(entry.key.object) else {
+    // swiftlint:disable:next closure_body_length
+    let e = Py.forEach(dict: kwargs) { key, value in
+      guard let keyword = PyCast.asString(key) else {
         let name = self.code.name
-        return Py.newTypeError(msg: "\(name)() keywords must be strings")
+        let e = Py.newTypeError(msg: "\(name)() keywords must be strings")
+        return .error(e)
       }
 
-      // Try to find proper index in locals
+      // Try to find entry in 'args'
       for index in 0..<self.totalArgs {
         let name = self.getName(self.code.variableNames[index])
         guard name == keyword.value else {
@@ -158,27 +161,30 @@ internal struct FillFastLocals {
         guard !self.isSet(index: index) else {
           let name = self.code.name
           let msg = "\(name)() got multiple values for argument '\(keyword)'"
-          return Py.newTypeError(msg: msg)
+          let e = Py.newTypeError(msg: msg)
+          return .error(e)
         }
 
-        self.set(index: index, value: entry.value)
-        continue nextKwarg
+        self.set(index: index, value: value)
+        return .goToNextElement
       }
 
-      // If none of the 'code.variableNames' fit:
+      // Ok, this is proper 'kwarg', but do we even have 'kwargs'?
       if let dict = self.varKwargs {
-        switch dict.set(key: keyword, to: entry.value) {
-        case .ok: break
-        case .error(let e): return e
+        switch dict.set(key: keyword, to: value) {
+        case .ok: return .goToNextElement
+        case .error(let e): return .error(e)
         }
-      } else {
-        let name = self.code.name
-        let msg = "\(name)() got an unexpected keyword argument '\(keyword)'"
-        return Py.newTypeError(msg: msg)
       }
+
+      let name = self.code.name
+      let msg = "\(name)() got an unexpected keyword argument '\(keyword)'"
+      let e = Py.newTypeError(msg: msg)
+      return .error(e)
     }
 
-    return nil
+    // We could 'return Py.forEach' but this is better for debugging.
+    return e
   }
 
   // MARK: - Args defaults

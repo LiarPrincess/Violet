@@ -189,7 +189,7 @@ extension Eval {
       }
     }
 
-    assert(result.elements.count == names.count)
+    assert(Py.lenInt(dict: result) == names.count)
     return .value(result)
   }
 

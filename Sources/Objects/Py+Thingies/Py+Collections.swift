@@ -425,6 +425,10 @@ extension PyInstance {
     return tuple.data.count
   }
 
+  public func lenInt(dict: PyDict) -> Int {
+    return dict.elements.count
+  }
+
   public func lenInt(iterable: PyObject) -> PyResult<Int> {
     return self.lenBigInt(iterable: iterable)
       .flatMap { bigInt -> PyResult<Int> in
@@ -566,6 +570,61 @@ extension PyInstance {
     return nil
   }
 
+  // MARK: - For each
+
+  public enum ForEachStep {
+    /// Go to the next item.
+    case goToNextElement
+    /// Finish iteration.
+    case finish
+    /// Finish iteration with given error.
+    case error(PyBaseException)
+  }
+
+  public typealias ForEachFn = (PyObject) -> ForEachStep
+
+  /// Iterate `iterable` without returning any result (just for the side-effects).
+  public func forEach(iterable: PyObject, fn: ForEachFn) -> PyBaseException? {
+    let result = self.reduce(iterable: iterable, initial: ()) { _, object in
+      switch fn(object) {
+      case .goToNextElement: return .goToNextElement
+      case .finish: return .finish(())
+      case .error(let e): return .error(e)
+      }
+    }
+
+    switch result {
+    case .value:
+      return nil
+    case .error(let e):
+      return e
+    }
+  }
+
+  public typealias ForEachDictFn = (PyObject, PyObject) -> ForEachStep
+
+  /// Iterate `dict` without returning any result (just for the side-effects).
+  ///
+  /// 1st argument is `key`.
+  /// 2nd argument is `value`.
+  public func forEach(dict: PyDict, fn: ForEachDictFn) -> PyBaseException? {
+    for e in dict.elements {
+      let key = e.key.object
+      let value = e.value
+
+      switch fn(key, value) {
+      case .goToNextElement:
+        break
+      case .finish:
+        return nil
+      case .error(let e):
+        return e
+      }
+    }
+
+    return nil
+  }
+
   // MARK: - Reduce
 
   /// `Builtins.reduce(iterable:initial:fn)` trampoline.
@@ -574,7 +633,7 @@ extension PyInstance {
     case goToNextElement
     /// Go to the next item using given `acc`.
     case setAcc(Acc)
-    /// End reduction with given `acc`.
+    /// Finish reduction with given `acc`.
     /// Use this if you already have the result and don't need to iterate anymore.
     case finish(Acc)
     /// Finish reduction with given error.
@@ -645,7 +704,7 @@ extension PyInstance {
   public enum ReduceIntoStep<Acc> {
     /// Go to the next item.
     case goToNextElement
-    /// End reduction.
+    /// Finish reduction.
     /// Use this if you already have the result and don't need to iterate anymore.
     case finish
     /// Finish reduction with given error.
