@@ -253,7 +253,7 @@ public final class PyCode: PyObject {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  public func isEqual(_ other: PyObject) -> CompareResult {
+  internal func isEqual(_ other: PyObject) -> CompareResult {
     // We are simplifying things a bit.
     // We should do property based equal instead, but comparing code objects
     // is not that frequent to waste time on this.
@@ -263,36 +263,36 @@ public final class PyCode: PyObject {
   }
 
   // sourcery: pymethod = __ne__
-  public func isNotEqual(_ other: PyObject) -> CompareResult {
+  internal func isNotEqual(_ other: PyObject) -> CompareResult {
     return self.isEqual(other).not
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  public func isLess(_ other: PyObject) -> CompareResult {
+  internal func isLess(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __le__
-  public func isLessEqual(_ other: PyObject) -> CompareResult {
+  internal func isLessEqual(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __gt__
-  public func isGreater(_ other: PyObject) -> CompareResult {
+  internal func isGreater(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __ge__
-  public func isGreaterEqual(_ other: PyObject) -> CompareResult {
+  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  public func hash() -> PyHash {
+  internal func hash() -> PyHash {
     // See the comment in '__eq__'.
     let id = ObjectIdentifier(self)
     return Py.hasher.hash(id)
@@ -301,7 +301,7 @@ public final class PyCode: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> String {
+  internal func repr() -> String {
     let name = self.name.value
     let ptr = self.ptr
     let file = self.filename.value
@@ -312,7 +312,7 @@ public final class PyCode: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 

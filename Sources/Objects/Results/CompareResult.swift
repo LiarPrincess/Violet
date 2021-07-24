@@ -1,7 +1,8 @@
-public enum CompareResult {
+internal enum CompareResult {
   case value(Bool)
-  case error(PyBaseException)
+  /// Shortcut for `Py.notImplemented`
   case notImplemented
+  case error(PyBaseException)
 
   // swiftlint:disable:next discouraged_optional_boolean
   internal init(_ value: Bool?) {
@@ -16,7 +17,7 @@ public enum CompareResult {
   /// Method used when implementing `__ne__`.
   ///
   /// We don't want to override `!` operator, because it is tiny and easy to miss.
-  public var not: CompareResult {
+  internal var not: CompareResult {
     switch self {
     case .value(let bool):
       return .value(!bool)
@@ -42,7 +43,7 @@ extension CompareResult: PyFunctionResultConvertible {
 }
 
 extension PyResult where Wrapped == Bool {
-  public var asCompareResult: CompareResult {
+  internal var asCompareResult: CompareResult {
     switch self {
     case let .value(v):
       return .value(v)
