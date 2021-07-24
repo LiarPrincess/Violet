@@ -42,26 +42,6 @@ extension String: PyFunctionResultConvertible {
   }
 }
 
-// MARK: - Collections
-
-extension Array: PyFunctionResultConvertible
-  where Element: PyFunctionResultConvertible {
-
-  internal var asFunctionResult: PyFunctionResult {
-    var elements = [PyObject]()
-    elements.reserveCapacity(self.count)
-
-    for e in self {
-      switch e.asFunctionResult {
-      case .value(let v): elements.append(v)
-      case .error(let e): return .error(e)
-      }
-    }
-
-    return .value(Py.newList(elements: elements))
-  }
-}
-
 extension Optional: PyFunctionResultConvertible
   where Wrapped: PyFunctionResultConvertible {
 

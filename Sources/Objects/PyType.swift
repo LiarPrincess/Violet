@@ -575,14 +575,16 @@ public final class PyType: PyObject, HasCustomGetMethod {
   }
 
   // sourcery: pymethod = __subclasses__
-  internal func getSubclasses() -> [PyType] {
-    var result = [PyType]()
+  internal func getSubclasses() -> PyList {
+    var elements = [PyType]()
+
     for subclassRef in self.subclasses {
       if let subclass = subclassRef.value {
-        result.append(subclass)
+        elements.append(subclass)
       }
     }
-    return result
+
+    return Py.newList(elements: elements)
   }
 
   // MARK: - Attributes
