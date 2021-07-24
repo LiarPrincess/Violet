@@ -259,8 +259,8 @@ public final class PyString: PyObject, AbstractString {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(element: PyObject) -> PyResult<Bool> {
-    return self._contains(element: element)
+  internal func contains(object: PyObject) -> PyResult<Bool> {
+    return self._contains(object: object)
   }
 
   internal func contains(value: String) -> Bool {

@@ -97,8 +97,8 @@ public final class PyDictItems: PyObject, PyDictViewsShared {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(element: PyObject) -> PyResult<Bool> {
-    guard let tuple = PyCast.asTuple(element), tuple.data.count == 2 else {
+  internal func contains(object: PyObject) -> PyResult<Bool> {
+    guard let tuple = PyCast.asTuple(object), tuple.data.count == 2 else {
       return .value(false)
     }
 

@@ -143,8 +143,8 @@ public final class PyBytes: PyObject, AbstractBytes {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(element: PyObject) -> PyResult<Bool> {
-    return self._contains(element: element)
+  internal func contains(object: PyObject) -> PyResult<Bool> {
+    return self._contains(object: object)
   }
 
   // MARK: - Get item

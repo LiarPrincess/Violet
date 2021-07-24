@@ -323,12 +323,11 @@ public final class PyTextFile: PyObject {
   // sourcery: pymethod = __exit__
   public func exit(exceptionType: PyObject,
                    exception: PyObject,
-                   traceback: PyObject) -> PyResult<PyObject> {
+                   traceback: PyObject) -> PyResult<PyNone> {
     // Remember that if we return 'truthy' value (yes, we JavasScript now)
     // then the exception will be suppressed (and we don't want this).
     // So we return 'None' which is 'falsy'.
-    let result = self.closeIfNotAlreadyClosed()
-    return result.map { $0 as PyObject }
+    return self.closeIfNotAlreadyClosed()
   }
 
   // MARK: - Helpers

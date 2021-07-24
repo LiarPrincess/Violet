@@ -213,17 +213,17 @@ public final class PyRange: PyObject {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(element: PyObject) -> PyResult<Bool> {
-    guard let int = PyCast.asInt(element) else {
+  internal func contains(object: PyObject) -> PyResult<Bool> {
+    guard let int = PyCast.asInt(object) else {
       return .value(false)
     }
 
-    let result = self.contains(element: int)
+    let result = self.contains(int: int)
     return .value(result)
   }
 
-  internal func contains(element: PyInt) -> Bool {
-    let value = element.value
+  internal func contains(int: PyInt) -> Bool {
+    let value = int.value
 
     // Check if the value can possibly be in the range.
     if self.isGoingUp {
@@ -378,9 +378,9 @@ public final class PyRange: PyObject {
   // MARK: - Count
 
   // sourcery: pymethod = count
-  internal func count(element: PyObject) -> PyResult<BigInt> {
-    if let int = PyCast.asInt(element) {
-      let contains = self.contains(element: int)
+  internal func count(object: PyObject) -> PyResult<BigInt> {
+    if let int = PyCast.asInt(object) {
+      let contains = self.contains(int: int)
       return .value(contains ? 1 : 0)
     }
 
@@ -390,9 +390,9 @@ public final class PyRange: PyObject {
   // MARK: - Index
 
   // sourcery: pymethod = index
-  internal func index(of element: PyObject) -> PyResult<BigInt> {
-    guard let int = PyCast.asInt(element), self.contains(element: int) else {
-      switch Py.strString(object: element) {
+  internal func indexOf(object: PyObject) -> PyResult<BigInt> {
+    guard let int = PyCast.asInt(object), self.contains(int: int) else {
+      switch Py.strString(object: object) {
       case .value(let str):
         return .valueError("\(str) is not in range")
       case .error:

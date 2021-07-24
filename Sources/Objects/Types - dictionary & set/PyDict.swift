@@ -570,8 +570,8 @@ public final class PyDict: PyObject {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(element: PyObject) -> PyResult<Bool> {
-    switch Self.createKey(from: element) {
+  internal func contains(object: PyObject) -> PyResult<Bool> {
+    switch Self.createKey(from: object) {
     case let .value(key):
       return self.contains(key: key)
     case let .error(e):

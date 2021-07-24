@@ -4,7 +4,6 @@
 // DO NOT EDIT!
 // =========================================================================================
 
-// swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable closure_body_length
 // swiftlint:disable file_length
 
@@ -99,7 +98,7 @@ internal enum StaticMethodsForBuiltinTypes {
     result.__delitem__ = .init(PyByteArray.delItem(index:))
     result.__iter__ = .init(PyByteArray.iter)
     result.__len__ = .init(PyByteArray.getLength)
-    result.__contains__ = .init(PyByteArray.contains(element:))
+    result.__contains__ = .init(PyByteArray.contains(object:))
     result.__add__ = .init(PyByteArray.add(_:))
     result.__mul__ = .init(PyByteArray.mul(_:))
     result.__rmul__ = .init(PyByteArray.rmul(_:))
@@ -135,7 +134,7 @@ internal enum StaticMethodsForBuiltinTypes {
     result.__getitem__ = .init(PyBytes.getItem(index:))
     result.__iter__ = .init(PyBytes.iter)
     result.__len__ = .init(PyBytes.getLength)
-    result.__contains__ = .init(PyBytes.contains(element:))
+    result.__contains__ = .init(PyBytes.contains(object:))
     result.__add__ = .init(PyBytes.add(_:))
     result.__mul__ = .init(PyBytes.mul(_:))
     result.__rmul__ = .init(PyBytes.rmul(_:))
@@ -258,7 +257,7 @@ internal enum StaticMethodsForBuiltinTypes {
     result.__delitem__ = .init(PyDict.delItem(index:))
     result.__iter__ = .init(PyDict.iter)
     result.__len__ = .init(PyDict.getLength)
-    result.__contains__ = .init(PyDict.contains(element:))
+    result.__contains__ = .init(PyDict.contains(object:))
     result.keys = .init(PyDict.keys)
     return result
   }()
@@ -288,7 +287,7 @@ internal enum StaticMethodsForBuiltinTypes {
     result.__getattribute__ = .init(PyDictItems.getAttribute(name:))
     result.__iter__ = .init(PyDictItems.iter)
     result.__len__ = .init(PyDictItems.getLength)
-    result.__contains__ = .init(PyDictItems.contains(element:))
+    result.__contains__ = .init(PyDictItems.contains(object:))
     return result
   }()
 
@@ -317,7 +316,7 @@ internal enum StaticMethodsForBuiltinTypes {
     result.__getattribute__ = .init(PyDictKeys.getAttribute(name:))
     result.__iter__ = .init(PyDictKeys.iter)
     result.__len__ = .init(PyDictKeys.getLength)
-    result.__contains__ = .init(PyDictKeys.contains(element:))
+    result.__contains__ = .init(PyDictKeys.contains(object:))
     return result
   }()
 
@@ -438,7 +437,7 @@ internal enum StaticMethodsForBuiltinTypes {
     result.__getattribute__ = .init(PyFrozenSet.getAttribute(name:))
     result.__iter__ = .init(PyFrozenSet.iter)
     result.__len__ = .init(PyFrozenSet.getLength)
-    result.__contains__ = .init(PyFrozenSet.contains(element:))
+    result.__contains__ = .init(PyFrozenSet.contains(object:))
     result.__and__ = .init(PyFrozenSet.and(_:))
     result.__or__ = .init(PyFrozenSet.or(_:))
     result.__sub__ = .init(PyFrozenSet.sub(_:))
@@ -536,11 +535,11 @@ internal enum StaticMethodsForBuiltinTypes {
     result.__ge__ = .init(PyList.isGreaterEqual(_:))
     result.__getattribute__ = .init(PyList.getAttribute(name:))
     result.__getitem__ = .init(PyList.getItem(index:))
-    result.__setitem__ = .init(PyList.setItem(index:value:))
+    result.__setitem__ = .init(PyList.setItem(index:object:))
     result.__delitem__ = .init(PyList.delItem(index:))
     result.__iter__ = .init(PyList.iter)
     result.__len__ = .init(PyList.getLength)
-    result.__contains__ = .init(PyList.contains(element:))
+    result.__contains__ = .init(PyList.contains(object:))
     result.__reversed__ = .init(PyList.reversed)
     result.__add__ = .init(PyList.add(_:))
     result.__mul__ = .init(PyList.mul(_:))
@@ -671,7 +670,7 @@ internal enum StaticMethodsForBuiltinTypes {
     result.__getitem__ = .init(PyRange.getItem(index:))
     result.__iter__ = .init(PyRange.iter)
     result.__len__ = .init(PyRange.getLength)
-    result.__contains__ = .init(PyRange.contains(element:))
+    result.__contains__ = .init(PyRange.contains(object:))
     result.__reversed__ = .init(PyRange.reversed)
     return result
   }()
@@ -711,7 +710,7 @@ internal enum StaticMethodsForBuiltinTypes {
     result.__getattribute__ = .init(PySet.getAttribute(name:))
     result.__iter__ = .init(PySet.iter)
     result.__len__ = .init(PySet.getLength)
-    result.__contains__ = .init(PySet.contains(element:))
+    result.__contains__ = .init(PySet.contains(object:))
     result.__and__ = .init(PySet.and(_:))
     result.__or__ = .init(PySet.or(_:))
     result.__sub__ = .init(PySet.sub(_:))
@@ -774,7 +773,7 @@ internal enum StaticMethodsForBuiltinTypes {
     result.__getitem__ = .init(PyString.getItem(index:))
     result.__iter__ = .init(PyString.iter)
     result.__len__ = .init(PyString.getLength)
-    result.__contains__ = .init(PyString.contains(element:))
+    result.__contains__ = .init(PyString.contains(object:))
     result.__add__ = .init(PyString.add(_:))
     result.__mul__ = .init(PyString.mul(_:))
     result.__rmul__ = .init(PyString.rmul(_:))
@@ -834,7 +833,7 @@ internal enum StaticMethodsForBuiltinTypes {
     result.__getitem__ = .init(PyTuple.getItem(index:))
     result.__iter__ = .init(PyTuple.iter)
     result.__len__ = .init(PyTuple.getLength)
-    result.__contains__ = .init(PyTuple.contains(element:))
+    result.__contains__ = .init(PyTuple.contains(object:))
     result.__add__ = .init(PyTuple.add(_:))
     result.__mul__ = .init(PyTuple.mul(_:))
     result.__rmul__ = .init(PyTuple.rmul(_:))
@@ -1211,5 +1210,4 @@ internal enum StaticMethodsForBuiltinTypes {
 
   // 'PyZeroDivisionError' does not any interesting methods to 'PyArithmeticError'.
   internal static let zeroDivisionError = StaticMethodsForBuiltinTypes.arithmeticError.copy()
-
 }

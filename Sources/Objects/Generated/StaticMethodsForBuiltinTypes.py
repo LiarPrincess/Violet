@@ -31,6 +31,7 @@ static_method_names = set(static_method_names)
 
 
 def print_static_methods(t: TypeInfo):
+    print()
     print_type_mark(t)
 
     python_methods_by_name: Dict[str, PyFunctionInfo] = {}
@@ -49,7 +50,6 @@ def print_static_methods(t: TypeInfo):
         base_property_name = get_property_name(t.swift_base_type_name)
         print(f"  // '{t.swift_type_name}' does not any interesting methods to '{base_type_name}'.")
         print(f'  internal static let {property_name} = {TYPE_NAME}.{base_property_name}.copy()')
-        print()
         return
 
     print(f'  internal static var {property_name}: PyType.StaticallyKnownNotOverriddenMethods = {{')
@@ -75,21 +75,19 @@ def print_static_methods(t: TypeInfo):
 
     print('    return result')
     print('  }()')
-    print()
 
 
 if __name__ == '__main__':
     print(f'''\
 {generated_warning(__file__)}
 
-// swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable closure_body_length
 // swiftlint:disable file_length
 
 /// Static methods defined on builtin types.
 ///
 /// See `PyStaticCall` documentation for more information.
-internal enum {TYPE_NAME} {{
+internal enum {TYPE_NAME} {{\
 ''')
 
     types = get_types()

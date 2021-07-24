@@ -83,7 +83,7 @@ extension Sys {
     switch path {
     case let .value(list):
       let object = Py.newString(value)
-      list.data.prepend(object)
+      list.data.prepend(object: object)
       return nil
     case let .error(e):
       return e

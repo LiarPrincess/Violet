@@ -78,7 +78,7 @@ extension PyInstance {
   }
 
   public func add(list: PyList, element: PyObject) {
-    list.append(element)
+    list.append(object: element)
   }
 
   // MARK: - Set
@@ -125,7 +125,7 @@ extension PyInstance {
   }
 
   public func add(set: PySet, element: PyObject) -> PyResult<PyNone> {
-    return set.add(element)
+    return set.add(object: element)
   }
 
   public func update(set: PySet, from object: PyObject) -> PyResult<PyNone> {

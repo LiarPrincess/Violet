@@ -148,9 +148,9 @@ internal struct PySequenceData {
 
   // MARK: - Contains
 
-  internal func contains(value: PyObject) -> PyResult<Bool> {
+  internal func contains(object: PyObject) -> PyResult<Bool> {
     for element in self.elements {
-      switch Py.isEqualBool(left: element, right: value) {
+      switch Py.isEqualBool(left: element, right: object) {
       case .value(true):
         return .value(true)
       case .value(false):
@@ -238,24 +238,24 @@ internal struct PySequenceData {
   }
 
   internal mutating func setItem(index: PyObject,
-                                 value: PyObject) -> PyResult<PyNone> {
+                                 object: PyObject) -> PyResult<PyNone> {
     return SetItemImpl.setItem(target: &self.elements,
                                index: index,
-                               value: value)
+                               value: object)
   }
 
   internal mutating func setItem(index: Int,
-                                 value: PyObject) -> PyResult<PyNone> {
+                                 object: PyObject) -> PyResult<PyNone> {
     return SetItemImpl.setItem(target: &self.elements,
                                index: index,
-                               value: value)
+                               value: object)
   }
 
   internal mutating func setItem(slice: PySlice,
-                                 value: PyObject) -> PyResult<PyNone> {
+                                 object: PyObject) -> PyResult<PyNone> {
     return SetItemImpl.setItem(target: &self.elements,
                                slice: slice,
-                               value: value)
+                               value: object)
   }
 
   // MARK: - Del item
@@ -279,11 +279,11 @@ internal struct PySequenceData {
 
   // MARK: - Count
 
-  internal func count(element: PyObject) -> PyResult<BigInt> {
+  internal func count(object: PyObject) -> PyResult<BigInt> {
     var result = BigInt()
 
     for e in self.elements {
-      switch Py.isEqualBool(left: e, right: element) {
+      switch Py.isEqualBool(left: e, right: object) {
       case .value(true): result += 1
       case .value(false): break // go to next element
       case .error(let e): return .error(e)
@@ -295,10 +295,10 @@ internal struct PySequenceData {
 
   // MARK: - Get index
 
-  internal func index(of element: PyObject,
-                      start: PyObject?,
-                      end: PyObject?,
-                      typeName: String) -> PyResult<BigInt> {
+  internal func indexOf(object: PyObject,
+                        start: PyObject?,
+                        end: PyObject?,
+                        typeName: String) -> PyResult<BigInt> {
     let subsequence: SubSequence
     switch self.getSubsequence(start: start, end: end) {
     case let .value(s): subsequence = s
@@ -306,7 +306,7 @@ internal struct PySequenceData {
     }
 
     for (index, e) in subsequence.enumerated() {
-      switch Py.isEqualBool(left: e, right: element) {
+      switch Py.isEqualBool(left: e, right: object) {
       case .value(true):
         return .value(BigInt(index))
       case .value(false):
@@ -321,20 +321,20 @@ internal struct PySequenceData {
 
   // MARK: - Append
 
-  internal mutating func append(_ element: PyObject) {
-    self.elements.append(element)
+  internal mutating func append(object: PyObject) {
+    self.elements.append(object)
   }
 
   // MARK: - Prepend
 
-  internal mutating func prepend(_ element: PyObject) {
-    self.elements.insert(element, at: 0)
+  internal mutating func prepend(object: PyObject) {
+    self.elements.insert(object, at: 0)
   }
 
   // MARK: - Insert
 
   internal mutating func insert(index: PyObject,
-                                item: PyObject) -> PyResult<PyNone> {
+                                object: PyObject) -> PyResult<PyNone> {
     let unwrappedIndex = IndexHelper.int(
       index,
       onOverflow: .overflowError(msg: "cannot add more objects to list")
@@ -342,7 +342,7 @@ internal struct PySequenceData {
 
     switch unwrappedIndex {
     case let .value(int):
-      self.insert(index: int, item: item)
+      self.insert(index: int, object: object)
       return .value(Py.none)
     case let .error(e),
          let .notIndex(e),
@@ -351,7 +351,7 @@ internal struct PySequenceData {
     }
   }
 
-  internal mutating func insert(index: Int, item: PyObject) {
+  internal mutating func insert(index: Int, object: PyObject) {
     var index = index
 
     if index < 0 {
@@ -365,14 +365,14 @@ internal struct PySequenceData {
       index = self.elements.count
     }
 
-    self.elements.insert(item, at: index)
+    self.elements.insert(object, at: index)
   }
 
   // MARK: - Remove
 
   internal mutating func remove(typeName: String,
-                                value: PyObject) -> PyResult<PyNone> {
-    switch self.find(value) {
+                                object: PyObject) -> PyResult<PyNone> {
+    switch self.find(object: object) {
     case .index(let index):
       self.elements.remove(at: index)
       return .value(Py.none)
@@ -393,9 +393,9 @@ internal struct PySequenceData {
     case error(PyBaseException)
   }
 
-  internal func find(_ value: PyObject) -> FindResult {
+  internal func find(object: PyObject) -> FindResult {
     for (index, element) in self.elements.enumerated() {
-      switch Py.isEqualBool(left: element, right: value) {
+      switch Py.isEqualBool(left: element, right: object) {
       case .value(true): return .index(index)
       case .value(false): break // go to next element
       case .error(let e): return .error(e)

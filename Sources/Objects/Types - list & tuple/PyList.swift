@@ -135,8 +135,8 @@ public final class PyList: PyObject {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(element: PyObject) -> PyResult<Bool> {
-    return self.data.contains(value: element)
+  internal func contains(object: PyObject) -> PyResult<Bool> {
+    return self.data.contains(object: object)
   }
 
   // MARK: - Get/set/del item
@@ -151,8 +151,8 @@ public final class PyList: PyObject {
   }
 
   // sourcery: pymethod = __setitem__
-  internal func setItem(index: PyObject, value: PyObject) -> PyResult<PyNone> {
-    return self.data.setItem(index: index, value: value)
+  internal func setItem(index: PyObject, object: PyObject) -> PyResult<PyNone> {
+    return self.data.setItem(index: index, object: object)
   }
 
   // sourcery: pymethod = __delitem__
@@ -163,25 +163,25 @@ public final class PyList: PyObject {
   // MARK: - Count
 
   // sourcery: pymethod = count
-  internal func count(element: PyObject) -> PyResult<BigInt> {
-    return self.data.count(element: element)
+  internal func count(object: PyObject) -> PyResult<BigInt> {
+    return self.data.count(object: object)
   }
 
   // MARK: - Index
 
   // Special overload for `IndexOwner` protocol
-  internal func index(of element: PyObject) -> PyResult<BigInt> {
-    return self.index(of: element, start: nil, end: nil)
+  internal func indexOf(object: PyObject) -> PyResult<BigInt> {
+    return self.indexOf(object: object, start: nil, end: nil)
   }
 
   // sourcery: pymethod = index
-  internal func index(of element: PyObject,
-                      start: PyObject?,
-                      end: PyObject?) -> PyResult<BigInt> {
-    return self.data.index(of: element,
-                           start: start,
-                           end: end,
-                           typeName: "list")
+  internal func indexOf(object: PyObject,
+                        start: PyObject?,
+                        end: PyObject?) -> PyResult<BigInt> {
+    return self.data.indexOf(object: object,
+                             start: start,
+                             end: end,
+                             typeName: "list")
   }
 
   // MARK: - Iter
@@ -199,8 +199,8 @@ public final class PyList: PyObject {
   // MARK: - Append
 
   // sourcery: pymethod = append
-  internal func append(_ element: PyObject) {
-    self.data.append(element)
+  internal func append(object: PyObject) {
+    self.data.append(object: object)
   }
 
   // MARK: - Insert
@@ -213,8 +213,8 @@ public final class PyList: PyObject {
     """
 
   // sourcery: pymethod = insert, doc = insertDoc
-  internal func insert(index: PyObject, item: PyObject) -> PyResult<PyNone> {
-    return self.data.insert(index: index, item: item)
+  internal func insert(index: PyObject, object: PyObject) -> PyResult<PyNone> {
+    return self.data.insert(index: index, object: object)
   }
 
   // MARK: - Extend
@@ -236,8 +236,8 @@ public final class PyList: PyObject {
     """
 
   // sourcery: pymethod = remove, doc = removeDoc
-  internal func remove(_ value: PyObject) -> PyResult<PyNone> {
-    return self.data.remove(typeName: self.typeName, value: value)
+  internal func remove(object: PyObject) -> PyResult<PyNone> {
+    return self.data.remove(typeName: self.typeName, object: object)
   }
 
   // MARK: - Pop

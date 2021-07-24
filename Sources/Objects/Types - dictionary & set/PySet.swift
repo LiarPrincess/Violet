@@ -156,8 +156,8 @@ public final class PySet: PyObject {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(element: PyObject) -> PyResult<Bool> {
-    return self.data.contains(object: element)
+  internal func contains(object: PyObject) -> PyResult<Bool> {
+    return self.data.contains(object: object)
   }
 
   // MARK: - And
@@ -311,8 +311,8 @@ public final class PySet: PyObject {
     """
 
   // sourcery: pymethod = add, doc = addDoc
-  internal func add(_ value: PyObject) -> PyResult<PyNone> {
-    return self.data.add(object: value)
+  internal func add(object: PyObject) -> PyResult<PyNone> {
+    return self.data.add(object: object)
   }
 
   // MARK: - Update
@@ -335,8 +335,8 @@ public final class PySet: PyObject {
     """
 
   // sourcery: pymethod = remove, doc = removeDoc
-  internal func remove(_ value: PyObject) -> PyResult<PyNone> {
-    return self.data.remove(object: value)
+  internal func remove(object: PyObject) -> PyResult<PyNone> {
+    return self.data.remove(object: object)
   }
 
   // MARK: - Discard
@@ -348,8 +348,8 @@ public final class PySet: PyObject {
     """
 
   // sourcery: pymethod = discard, doc = discardDoc
-  internal func discard(_ value: PyObject) -> PyResult<PyNone> {
-    return self.data.discard(object: value)
+  internal func discard(object: PyObject) -> PyResult<PyNone> {
+    return self.data.discard(object: object)
   }
 
   // MARK: - Clear

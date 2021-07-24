@@ -7,14 +7,14 @@ extension AbstractString {
   // MARK: - Contains
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
-  internal func _contains(element: PyObject) -> PyResult<Bool> {
-    switch Self._getElementsForFindCountContainsIndexOf(object: element) {
+  internal func _contains(object: PyObject) -> PyResult<Bool> {
+    switch Self._getElementsForFindCountContainsIndexOf(object: object) {
     case .value(let value):
       let result = self._contains(value: value)
       return .value(result)
     case .invalidObjectType:
       let t = Self._pythonTypeName
-      let objectType = element.typeName
+      let objectType = object.typeName
       let msg = "'in <\(t)>' requires \(t) as left operand, not \(objectType)"
       return .typeError(msg)
     case .error(let e):

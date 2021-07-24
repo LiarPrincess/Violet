@@ -143,8 +143,8 @@ public final class PyFrozenSet: PyObject {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(element: PyObject) -> PyResult<Bool> {
-    return self.data.contains(object: element)
+  internal func contains(object: PyObject) -> PyResult<Bool> {
+    return self.data.contains(object: object)
   }
 
   // MARK: - And

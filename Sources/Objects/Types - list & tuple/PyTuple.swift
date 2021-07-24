@@ -154,8 +154,8 @@ public final class PyTuple: PyObject {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(element: PyObject) -> PyResult<Bool> {
-    return self.data.contains(value: element)
+  internal func contains(object: PyObject) -> PyResult<Bool> {
+    return self.data.contains(object: object)
   }
 
   // MARK: - Get item
@@ -172,25 +172,25 @@ public final class PyTuple: PyObject {
   // MARK: - Count
 
   // sourcery: pymethod = count
-  internal func count(element: PyObject) -> PyResult<BigInt> {
-    return self.data.count(element: element)
+  internal func count(object: PyObject) -> PyResult<BigInt> {
+    return self.data.count(object: object)
   }
 
   // MARK: - Index of
 
   // Special overload for `IndexOwner` protocol
-  internal func index(of element: PyObject) -> PyResult<BigInt> {
-    return self.index(of: element, start: nil, end: nil)
+  internal func indexOf(object: PyObject) -> PyResult<BigInt> {
+    return self.indexOf(object: object, start: nil, end: nil)
   }
 
   // sourcery: pymethod = index
-  internal func index(of element: PyObject,
-                      start: PyObject?,
-                      end: PyObject?) -> PyResult<BigInt> {
-    return self.data.index(of: element,
-                           start: start,
-                           end: end,
-                           typeName: "tuple")
+  internal func indexOf(object: PyObject,
+                        start: PyObject?,
+                        end: PyObject?) -> PyResult<BigInt> {
+    return self.data.indexOf(object: object,
+                             start: start,
+                             end: end,
+                             typeName: "tuple")
   }
 
   // MARK: - Iter
