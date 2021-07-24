@@ -88,7 +88,7 @@ extension PyInstance {
     return self.newSet(elements: elements)
   }
 
-  public func newSet(elements: PySet.OrderedSet) -> PySet {
+  internal func newSet(elements: PySet.OrderedSet) -> PySet {
     return PyMemory.newSet(elements: elements)
   }
 
@@ -128,13 +128,17 @@ extension PyInstance {
     return set.add(element)
   }
 
+  public func update(set: PySet, from object: PyObject) -> PyResult<PyNone> {
+    return set.update(from: object)
+  }
+
   // MARK: - Frozen set
 
   public func newFrozenSet() -> PyFrozenSet {
     return self.emptyFrozenSet
   }
 
-  public func newFrozenSet(elements: PyFrozenSet.OrderedSet) -> PyFrozenSet {
+  internal func newFrozenSet(elements: PyFrozenSet.OrderedSet) -> PyFrozenSet {
     return elements.isEmpty ?
       self.emptyFrozenSet :
       PyMemory.newFrozenSet(elements: elements)
@@ -152,7 +156,7 @@ extension PyInstance {
     return self.newDict(elements: elements)
   }
 
-  public func newDict(elements: PyDict.OrderedDictionary) -> PyDict {
+  internal func newDict(elements: PyDict.OrderedDictionary) -> PyDict {
     return PyMemory.newDict(elements: elements)
   }
 

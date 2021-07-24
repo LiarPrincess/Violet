@@ -29,28 +29,28 @@ public final class PyStringIterator: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  public func iter() -> PyObject {
+  internal func iter() -> PyObject {
     return self
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  public func next() -> PyResult<PyObject> {
+  internal func next() -> PyResult<PyObject> {
     let elements = self.string.elements
 
     let indexOrNil = elements.index(elements.startIndex,
@@ -70,7 +70,7 @@ public final class PyStringIterator: PyObject {
   // MARK: - Length hint
 
   // sourcery: pymethod = __length_hint__
-  public func lengthHint() -> PyInt {
+  internal func lengthHint() -> PyInt {
     let count = self.string.count
     let result = count - self.index
     return Py.newInt(result)

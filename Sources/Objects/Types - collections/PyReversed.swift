@@ -43,28 +43,28 @@ public final class PyReversed: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  public func iter() -> PyObject {
+  internal func iter() -> PyObject {
     return self
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  public func next() -> PyResult<PyObject> {
+  internal func next() -> PyResult<PyObject> {
     if self.index != PyReversed.endIndex {
       switch Py.getItem(object: self.sequence, index: self.index) {
       case .value(let o):
@@ -87,7 +87,7 @@ public final class PyReversed: PyObject {
   // MARK: - Length hint
 
   // sourcery: pymethod = __length_hint__
-  public func lengthHint() -> PyInt {
+  internal func lengthHint() -> PyInt {
     // '+1' because users start counting from 1, not from 0
     return Py.newInt(self.index + 1)
   }

@@ -29,28 +29,28 @@ public final class PyByteArrayIterator: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  public func iter() -> PyObject {
+  internal func iter() -> PyObject {
     return self
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
-  public func next() -> PyResult<PyObject> {
+  internal func next() -> PyResult<PyObject> {
     if self.index < self.bytes.count {
       let byte = self.bytes.elements[self.index]
       let result = Py.newInt(byte)
@@ -64,7 +64,7 @@ public final class PyByteArrayIterator: PyObject {
   // MARK: - Length hint
 
   // sourcery: pymethod = __length_hint__
-  public func lengthHint() -> PyInt {
+  internal func lengthHint() -> PyInt {
     let count = self.bytes.count
     let result = count - self.index
     return Py.newInt(result)

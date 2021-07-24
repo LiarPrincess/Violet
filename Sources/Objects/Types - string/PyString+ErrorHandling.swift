@@ -12,7 +12,7 @@ extension PyString {
 
     public static let `default` = ErrorHandling.strict
 
-    public static func from(object: PyObject?) -> PyResult<ErrorHandling> {
+    internal static func from(object: PyObject?) -> PyResult<ErrorHandling> {
       guard let object = object else {
         return .value(.default)
       }
@@ -24,7 +24,7 @@ extension PyString {
       return Self.from(string: string.value)
     }
 
-    public static func from(string: String) -> PyResult<ErrorHandling> {
+    internal static func from(string: String) -> PyResult<ErrorHandling> {
       switch string {
       case "strict":
         return .value(.strict)

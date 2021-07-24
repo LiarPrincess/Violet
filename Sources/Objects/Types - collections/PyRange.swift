@@ -93,7 +93,7 @@ public final class PyRange: PyObject {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  public func isEqual(_ other: PyObject) -> CompareResult {
+  internal func isEqual(_ other: PyObject) -> CompareResult {
     guard let otherRange = PyCast.asRange(other) else {
       return .notImplemented
     }
@@ -101,7 +101,7 @@ public final class PyRange: PyObject {
     return .value(self.isEqual(otherRange))
   }
 
-  public func isEqual(_ other: PyRange) -> Bool {
+  internal func isEqual(_ other: PyRange) -> Bool {
     guard self.length.value == other.length.value else {
       return false
     }
@@ -122,29 +122,29 @@ public final class PyRange: PyObject {
   }
 
   // sourcery: pymethod = __ne__
-  public func isNotEqual(_ other: PyObject) -> CompareResult {
+  internal func isNotEqual(_ other: PyObject) -> CompareResult {
     return self.isEqual(other).not
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  public func isLess(_ other: PyObject) -> CompareResult {
+  internal func isLess(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __le__
-  public func isLessEqual(_ other: PyObject) -> CompareResult {
+  internal func isLessEqual(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __gt__
-  public func isGreater(_ other: PyObject) -> CompareResult {
+  internal func isGreater(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __ge__
-  public func isGreaterEqual(_ other: PyObject) -> CompareResult {
+  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
@@ -169,7 +169,7 @@ public final class PyRange: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> String {
+  internal func repr() -> String {
     let start = self.start.repr()
     let stop = self.stop.repr()
 
@@ -185,35 +185,35 @@ public final class PyRange: PyObject {
   // MARK: - Convertible
 
   // sourcery: pymethod = __bool__
-  public func asBool() -> Bool {
+  internal func asBool() -> Bool {
     return self.length.value.isTrue
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  public func getLength() -> BigInt {
+  internal func getLength() -> BigInt {
     return self.length.value
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  public func contains(element: PyObject) -> PyResult<Bool> {
+  internal func contains(element: PyObject) -> PyResult<Bool> {
     guard let int = PyCast.asInt(element) else {
       return .value(false)
     }
@@ -222,7 +222,7 @@ public final class PyRange: PyObject {
     return .value(result)
   }
 
-  public func contains(element: PyInt) -> Bool {
+  internal func contains(element: PyInt) -> Bool {
     let value = element.value
 
     // Check if the value can possibly be in the range.
@@ -248,7 +248,7 @@ public final class PyRange: PyObject {
   // sourcery: pymethod = __getitem__
   /// static PyObject *
   /// range_subscript(rangeobject* self, PyObject* item)
-  public func getItem(index: PyObject) -> PyResult<PyObject> {
+  internal func getItem(index: PyObject) -> PyResult<PyObject> {
     switch IndexHelper.bigInt(index) {
     case .value(let int):
       // swiftlint:disable:next array_init
@@ -268,15 +268,15 @@ public final class PyRange: PyObject {
     return .typeError(msg)
   }
 
-  public func getItem(index: PyInt) -> PyResult<PyInt> {
+  internal func getItem(index: PyInt) -> PyResult<PyInt> {
     return self.getItem(index: index.value)
   }
 
-  public func getItem(index: Int) -> PyResult<PyInt> {
+  internal func getItem(index: Int) -> PyResult<PyInt> {
     return self.getItem(index: BigInt(index))
   }
 
-  public func getItem(index: BigInt) -> PyResult<PyInt> {
+  internal func getItem(index: BigInt) -> PyResult<PyInt> {
     var index = index
 
     if index < 0 {
@@ -293,7 +293,7 @@ public final class PyRange: PyObject {
 
   /// static PyObject *
   /// compute_slice(rangeobject *r, PyObject *_slice)
-  public func getItem(slice: PySlice) -> PyResult<PyRange> {
+  internal func getItem(slice: PySlice) -> PyResult<PyRange> {
     let length = self.length.value
 
     let indices: PySlice.GetLongIndicesResult
@@ -320,28 +320,28 @@ public final class PyRange: PyObject {
   // MARK: - Start
 
   // sourcery: pyproperty = start
-  public func getStart() -> PyObject {
+  internal func getStart() -> PyObject {
     return self.start
   }
 
   // MARK: - Stop
 
   // sourcery: pyproperty = stop
-  public func getStop() -> PyObject {
+  internal func getStop() -> PyObject {
     return self.stop
   }
 
   // MARK: - Step
 
   // sourcery: pyproperty = step
-  public func getStep() -> PyObject {
+  internal func getStep() -> PyObject {
     return self.step
   }
 
   // MARK: - Reversed
 
   // sourcery: pymethod = __reversed__
-  public func reversed() -> PyObject {
+  internal func reversed() -> PyObject {
     // `reversed(range(start, stop, step))` can be expressed as
     // `range(start + (n-1) * step, start-step, -step)`,
     // where n is the number of integers in the range (length).
@@ -369,7 +369,7 @@ public final class PyRange: PyObject {
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  public func iter() -> PyObject {
+  internal func iter() -> PyObject {
     return PyMemory.newRangeIterator(start: self.start.value,
                                      step: self.step.value,
                                      length: self.length.value)
@@ -378,7 +378,7 @@ public final class PyRange: PyObject {
   // MARK: - Count
 
   // sourcery: pymethod = count
-  public func count(element: PyObject) -> PyResult<BigInt> {
+  internal func count(element: PyObject) -> PyResult<BigInt> {
     if let int = PyCast.asInt(element) {
       let contains = self.contains(element: int)
       return .value(contains ? 1 : 0)
@@ -390,7 +390,7 @@ public final class PyRange: PyObject {
   // MARK: - Index
 
   // sourcery: pymethod = index
-  public func index(of element: PyObject) -> PyResult<BigInt> {
+  internal func index(of element: PyObject) -> PyResult<BigInt> {
     guard let int = PyCast.asInt(element), self.contains(element: int) else {
       switch Py.strString(object: element) {
       case .value(let str):
@@ -408,7 +408,7 @@ public final class PyRange: PyObject {
   // MARK: - Range
 
   // sourcery: pymethod = __reduce__
-  public func reduce(args: [PyObject], kwargs: PyDict?) -> PyTuple {
+  internal func reduce(args: [PyObject], kwargs: PyDict?) -> PyTuple {
     let props = Py.newTuple(self.start, self.stop, self.step)
     return Py.newTuple(self.type, props)
   }

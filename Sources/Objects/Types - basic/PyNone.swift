@@ -56,7 +56,7 @@ public final class PyNone: PyObject, HasCustomGetMethod {
     }
   }
 
-  public func getAttribute(name: PyString) -> PyResult<PyObject> {
+  internal func getAttribute(name: PyString) -> PyResult<PyObject> {
     // (Read following sentences with Bernadette Banner voice.)
     //
     // Descriptors use a comparision with 'None' to determine if they are either
@@ -76,7 +76,7 @@ public final class PyNone: PyObject, HasCustomGetMethod {
       staticProperty = nil
       descriptor = nil
     case .error(let e):
-    return .error(e)
+      return .error(e)
     }
 
     if let descr = descriptor {
@@ -114,7 +114,7 @@ public final class PyNone: PyObject, HasCustomGetMethod {
 
   // MARK: - Get method
 
-  public func getMethod(
+  internal func getMethod(
     selector: PyString,
     allowsCallableFromDict: Bool
   ) -> PyInstance.GetMethodResult {

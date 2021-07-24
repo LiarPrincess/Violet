@@ -31,7 +31,7 @@ extension PyFloat {
   }
 
   // sourcery: pymethod = hex, doc = hexDoc
-  public func hex() -> PyResult<String> {
+  internal func hex() -> PyResult<String> {
     if self.value.isNaN || self.value.isInfinite {
       let repr = self.repr()
       return .value(repr)
@@ -98,8 +98,8 @@ extension PyFloat {
       """
 
   // sourcery: pyclassmethod = fromhex, doc = fromHexDoc
-  public static func fromHex(type: PyType,
-                             value: PyObject) -> PyResult<PyObject> {
+  internal static func fromHex(type: PyType,
+                               value: PyObject) -> PyResult<PyObject> {
     guard let stringObject = PyCast.asString(value) else {
       // This message looks weird, but argument name is 'string'
       let t = value.typeName

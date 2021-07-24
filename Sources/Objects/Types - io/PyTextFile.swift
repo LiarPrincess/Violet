@@ -95,9 +95,9 @@ public final class PyTextFile: PyObject {
     }
   }
 
-   // MARK: - String
+  // MARK: - String
 
-   // sourcery: pymethod = __repr__
+  // sourcery: pymethod = __repr__
   public func repr() -> String {
     if self.hasReprLock {
       return "<TextFile - reentrant call>"

@@ -57,13 +57,14 @@ extension PyString {
     // MARK: - Decode
 
     /// Decode `data` returning `nil` if it fails.
-    public func decode(data: Data) -> String? {
+    internal func decode(data: Data) -> String? {
       return String(data: data, encoding: self.inSwift)
     }
 
     /// Decode `data`.
     /// If this fails -> handle error according to `errorHandling` argument.
-    public func decodeOrError(data: Data, onError: ErrorHandling) -> PyResult<String> {
+    internal func decodeOrError(data: Data,
+                                onError: ErrorHandling) -> PyResult<String> {
       if let string = self.decode(data: data) {
         return .value(string)
       }
@@ -80,13 +81,14 @@ extension PyString {
     // MARK: - Encode
 
     /// Encode `string` returning `nil` if it fails.
-    public func encode(string: String) -> Data? {
+    internal func encode(string: String) -> Data? {
       return string.data(using: self.inSwift, allowLossyConversion: false)
     }
 
     /// Encode `data`.
     /// If this fails -> handle error according to `errorHandling` argument.
-    public func encodeOrError(string: String, onError: ErrorHandling) -> PyResult<Data> {
+    internal func encodeOrError(string: String,
+                                onError: ErrorHandling) -> PyResult<Data> {
       if let data = self.encode(string: string) {
         return .value(data)
       }
@@ -102,7 +104,7 @@ extension PyString {
 
     // MARK: - From
 
-    public static func from(object: PyObject?) -> PyResult<Encoding> {
+    internal static func from(object: PyObject?) -> PyResult<Encoding> {
       guard let object = object else {
         return .value(.default)
       }
@@ -115,7 +117,7 @@ extension PyString {
     }
 
     // swiftlint:disable:next function_body_length
-    public static func from(string: String) -> PyResult<Encoding> {
+    internal static func from(string: String) -> PyResult<Encoding> {
       switch string {
       case "ascii",
            "646",

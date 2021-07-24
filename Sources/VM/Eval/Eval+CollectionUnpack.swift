@@ -94,7 +94,7 @@ extension Eval {
     let iterables = self.stack.popElementsInPushOrder(count: elementCount)
 
     for object in iterables {
-      switch set.update(from: object) {
+      switch Py.update(set: set, from: object) {
       case .value:
         break // just go to the next element
       case .error(let e):

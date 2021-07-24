@@ -44,7 +44,7 @@ extension PyDict {
 
   // MARK: - From other dict
 
-  public func update(
+  internal func update(
     from data: OrderedDictionary,
     onKeyDuplicate: OnUpdateKeyDuplicate
   ) -> PyResult<PyNone> {

@@ -68,7 +68,7 @@ public final class PyFloat: PyObject {
     Convert a string or number to a floating point number, if possible.
     """
 
-  public let value: Double
+  internal let value: Double
 
   override public var description: String {
     return "PyFloat(\(self.value))"
@@ -89,80 +89,81 @@ public final class PyFloat: PyObject {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  public func isEqual(_ other: PyObject) -> CompareResult {
+  internal func isEqual(_ other: PyObject) -> CompareResult {
     return FloatCompareHelper.isEqual(left: self.value, right: other)
   }
 
   // sourcery: pymethod = __ne__
-  public func isNotEqual(_ other: PyObject) -> CompareResult {
+  internal func isNotEqual(_ other: PyObject) -> CompareResult {
     return self.isEqual(other).not
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  public func isLess(_ other: PyObject) -> CompareResult {
+  internal func isLess(_ other: PyObject) -> CompareResult {
     return FloatCompareHelper.isLess(left: self.value, right: other)
   }
 
   // sourcery: pymethod = __le__
-  public func isLessEqual(_ other: PyObject) -> CompareResult {
+  internal func isLessEqual(_ other: PyObject) -> CompareResult {
     return FloatCompareHelper.isLessEqual(left: self.value, right: other)
   }
 
   // sourcery: pymethod = __gt__
-  public func isGreater(_ other: PyObject) -> CompareResult {
+  internal func isGreater(_ other: PyObject) -> CompareResult {
     return FloatCompareHelper.isGreater(left: self.value, right: other)
   }
 
   // sourcery: pymethod = __ge__
-  public func isGreaterEqual(_ other: PyObject) -> CompareResult {
+  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
     return FloatCompareHelper.isGreaterEqual(left: self.value, right: other)
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  public func hash() -> PyHash {
+  internal func hash() -> PyHash {
     return Py.hasher.hash(self.value)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> String {
+  internal func repr() -> String {
     return String(describing: self.value)
   }
 
   // sourcery: pymethod = __str__
-  public func str() -> String {
+  internal func str() -> String {
     return self.repr()
   }
 
   // MARK: - Convertible
 
   // sourcery: pymethod = __bool__
-  public func asBool() -> Bool {
+  internal func asBool() -> Bool {
     return !self.value.isZero
   }
 
   // sourcery: pymethod = __int__
-  public func asInt() -> PyResult<PyInt> {
-    return .value(Py.newInt(BigInt(self.value)))
+  internal func asInt() -> PyInt {
+    let result = BigInt(self.value)
+    return Py.newInt(result)
   }
 
   // sourcery: pymethod = __float__
-  public func asFloat() -> PyResult<PyFloat> {
+  internal func asFloat() -> PyResult<PyFloat> {
     return .value(self)
   }
 
   // sourcery: pyproperty = real
-  public func asReal() -> PyObject {
+  internal func asReal() -> PyObject {
     return self
   }
 
   // sourcery: pyproperty = imag
-  public func asImag() -> PyObject {
+  internal func asImag() -> PyObject {
     return Py.newFloat(0.0)
   }
 
@@ -178,40 +179,40 @@ public final class PyFloat: PyObject {
   // sourcery: pymethod = conjugate, doc = conjugateDoc
   /// float.conjugate
   /// Return self, the complex conjugate of any float.
-  public func conjugate() -> PyObject {
+  internal func conjugate() -> PyObject {
     return self
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Sign
 
   // sourcery: pymethod = __pos__
-  public func positive() -> PyObject {
+  internal func positive() -> PyObject {
     return self
   }
 
   // sourcery: pymethod = __neg__
-  public func negative() -> PyObject {
+  internal func negative() -> PyObject {
     return Py.newFloat(-self.value)
   }
 
   // MARK: - Abs
 
   // sourcery: pymethod = __abs__
-  public func abs() -> PyObject {
+  internal func abs() -> PyObject {
     return Py.newFloat(Swift.abs(self.value))
   }
 
@@ -225,7 +226,7 @@ public final class PyFloat: PyObject {
     """
 
   // sourcery: pymethod = is_integer, , doc = isIntegerDoc
-  public func isInteger() -> PyBool {
+  internal func isInteger() -> PyBool {
     guard self.value.isFinite else {
       return Py.false
     }
@@ -256,7 +257,7 @@ public final class PyFloat: PyObject {
     """
 
   // sourcery: pymethod = as_integer_ratio, doc = asIntegerRatioDoc
-  public func asIntegerRatio() -> PyResult<PyObject> {
+  internal func asIntegerRatio() -> PyResult<PyObject> {
     if self.value.isInfinite {
       return .overflowError("cannot convert Infinity to integer ratio")
     }
@@ -300,7 +301,7 @@ public final class PyFloat: PyObject {
   // MARK: - Add
 
   // sourcery: pymethod = __add__
-  public func add(_ other: PyObject) -> PyResult<PyObject> {
+  internal func add(_ other: PyObject) -> PyResult<PyObject> {
     switch Self.asDouble(object: other) {
     case let .value(d):
       let result = self.value + d
@@ -315,14 +316,14 @@ public final class PyFloat: PyObject {
   }
 
   // sourcery: pymethod = __radd__
-  public func radd(_ other: PyObject) -> PyResult<PyObject> {
+  internal func radd(_ other: PyObject) -> PyResult<PyObject> {
     return self.add(other)
   }
 
   // MARK: - Sub
 
   // sourcery: pymethod = __sub__
-  public func sub(_ other: PyObject) -> PyResult<PyObject> {
+  internal func sub(_ other: PyObject) -> PyResult<PyObject> {
     switch Self.asDouble(object: other) {
     case let .value(d):
       let result = self.value - d
@@ -337,7 +338,7 @@ public final class PyFloat: PyObject {
   }
 
   // sourcery: pymethod = __rsub__
-  public func rsub(_ other: PyObject) -> PyResult<PyObject> {
+  internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
     switch Self.asDouble(object: other) {
     case let .value(d):
       let result = d - self.value
@@ -354,7 +355,7 @@ public final class PyFloat: PyObject {
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
-  public func mul(_ other: PyObject) -> PyResult<PyObject> {
+  internal func mul(_ other: PyObject) -> PyResult<PyObject> {
     switch Self.asDouble(object: other) {
     case let .value(d):
       let result = self.value * d
@@ -369,18 +370,18 @@ public final class PyFloat: PyObject {
   }
 
   // sourcery: pymethod = __rmul__
-  public func rmul(_ other: PyObject) -> PyResult<PyObject> {
+  internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
     return self.mul(other)
   }
 
   // MARK: - Pow
 
-  public func pow(exp: PyObject) -> PyResult<PyObject> {
+  internal func pow(exp: PyObject) -> PyResult<PyObject> {
     return self.pow(exp: exp, mod: nil)
   }
 
   // sourcery: pymethod = __pow__
-  public func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
+  internal func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     if let e = self.disallowPowMod(mod: mod) {
       return .error(e)
     }
@@ -404,12 +405,12 @@ public final class PyFloat: PyObject {
     }
   }
 
-  public func rpow(base: PyObject) -> PyResult<PyObject> {
+  internal func rpow(base: PyObject) -> PyResult<PyObject> {
     return self.rpow(base: base, mod: nil)
   }
 
   // sourcery: pymethod = __rpow__
-  public func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
+  internal func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     if let e = self.disallowPowMod(mod: mod) {
       return .error(e)
     }
@@ -454,7 +455,7 @@ public final class PyFloat: PyObject {
   // MARK: - True div
 
   // sourcery: pymethod = __truediv__
-  public func truediv(_ other: PyObject) -> PyResult<PyObject> {
+  internal func truediv(_ other: PyObject) -> PyResult<PyObject> {
     switch Self.asDouble(object: other) {
     case let .value(d):
       return self.truediv(left: self.value, right: d)
@@ -466,7 +467,7 @@ public final class PyFloat: PyObject {
   }
 
   // sourcery: pymethod = __rtruediv__
-  public func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
+  internal func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
     switch Self.asDouble(object: other) {
     case let .value(d):
       return self.truediv(left: d, right: self.value)
@@ -488,7 +489,7 @@ public final class PyFloat: PyObject {
   // MARK: - Floor div
 
   // sourcery: pymethod = __floordiv__
-  public func floordiv(_ other: PyObject) -> PyResult<PyObject> {
+  internal func floordiv(_ other: PyObject) -> PyResult<PyObject> {
     switch Self.asDouble(object: other) {
     case let .value(d):
       return self.floordiv(left: self.value, right: d)
@@ -500,7 +501,7 @@ public final class PyFloat: PyObject {
   }
 
   // sourcery: pymethod = __rfloordiv__
-  public func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
+  internal func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
     switch Self.asDouble(object: other) {
     case let .value(d):
       return self.floordiv(left: d, right: self.value)
@@ -527,7 +528,7 @@ public final class PyFloat: PyObject {
   // MARK: - Mod
 
   // sourcery: pymethod = __mod__
-  public func mod(_ other: PyObject) -> PyResult<PyObject> {
+  internal func mod(_ other: PyObject) -> PyResult<PyObject> {
     switch Self.asDouble(object: other) {
     case let .value(d):
       return self.mod(left: self.value, right: d)
@@ -539,7 +540,7 @@ public final class PyFloat: PyObject {
   }
 
   // sourcery: pymethod = __rmod__
-  public func rmod(_ other: PyObject) -> PyResult<PyObject> {
+  internal func rmod(_ other: PyObject) -> PyResult<PyObject> {
     switch Self.asDouble(object: other) {
     case let .value(d):
       return self.mod(left: d, right: self.value)
@@ -566,7 +567,7 @@ public final class PyFloat: PyObject {
   // MARK: - Div mod
 
   // sourcery: pymethod = __divmod__
-  public func divmod(_ other: PyObject) -> PyResult<PyObject> {
+  internal func divmod(_ other: PyObject) -> PyResult<PyObject> {
     switch Self.asDouble(object: other) {
     case let .value(d):
       return self.divmod(left: self.value, right: d)
@@ -578,7 +579,7 @@ public final class PyFloat: PyObject {
   }
 
   // sourcery: pymethod = __rdivmod__
-  public func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
+  internal func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
     switch Self.asDouble(object: other) {
     case let .value(d):
       return self.divmod(left: d, right: self.value)
@@ -633,7 +634,7 @@ public final class PyFloat: PyObject {
   ///
   /// If `nDigits` is not given or is `None` returns the nearest integer.
   /// If `nDigits` is given returns the number rounded off to the `ndigits`.
-  public func round(nDigits: PyObject?) -> PyResult<PyObject> {
+  internal func round(nDigits: PyObject?) -> PyResult<PyObject> {
     switch self.parseRoundDigitCount(object: nDigits) {
     case .none:
       let rounded = self.roundToEven(value: self.value)
@@ -726,7 +727,7 @@ public final class PyFloat: PyObject {
 
     let scaledToDigits: Double, pow10: Double
     if nDigit >= 0 {
-       // CPython has special case for overflow, we are too lazy for that
+      // CPython has special case for overflow, we are too lazy for that
       pow10 = Foundation.pow(10.0, Double(nDigit))
       scaledToDigits = self.value * pow10
 
@@ -760,7 +761,7 @@ public final class PyFloat: PyObject {
     """
 
   // sourcery: pymethod = __trunc__, doc = truncDoc
-  public func trunc() -> PyResult<PyInt> {
+  internal func trunc() -> PyResult<PyInt> {
     var intPart: Double = 0
     _ = Foundation.modf(self.value, &intPart)
     return Py.newInt(double: intPart)
