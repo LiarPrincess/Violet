@@ -29,7 +29,7 @@ public struct IdString {
 
   fileprivate init(value: String) {
     self.value = Py.newString(value)
-    self.hash = self.value.hashImpl()
+    self.hash = self.value.hash()
   }
 
   // MARK: - Initialize

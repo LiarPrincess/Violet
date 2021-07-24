@@ -57,13 +57,6 @@ extension AbstractBuiltinFunction {
     return .notImplemented
   }
 
-  // MARK: - Hashable
-
-  /// DO NOT USE! This is a part of `AbstractBuiltinFunction` implementation.
-  internal func _hash() -> HashResult {
-    return .notImplemented
-  }
-
   // MARK: - Attributes
 
   /// DO NOT USE! This is a part of `AbstractBuiltinFunction` implementation.

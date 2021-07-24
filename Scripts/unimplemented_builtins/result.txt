@@ -1,17 +1,17 @@
 bool
   Missing:
     from_bytes
-  This should not be here:
-    __str__
 
 builtinFunction
   Missing:
+    __hash__
     __new__
   This should not be here:
     __get__
 
 builtinMethod
   Missing:
+    __hash__
     __new__
   This should not be here:
     __get__

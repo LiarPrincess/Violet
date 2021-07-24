@@ -123,8 +123,8 @@ public final class PyFloat: PyObject {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  public func hash() -> HashResult {
-    return .value(Py.hasher.hash(self.value))
+  public func hash() -> PyHash {
+    return Py.hasher.hash(self.value)
   }
 
   // MARK: - String

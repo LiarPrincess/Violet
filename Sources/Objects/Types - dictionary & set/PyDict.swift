@@ -150,8 +150,8 @@ public final class PyDict: PyObject {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  public func hash() -> HashResult {
-    return .error(Py.hashNotImplemented(self))
+  internal func hash() -> HashResult {
+    return .unhashable(self)
   }
 
   // MARK: - String

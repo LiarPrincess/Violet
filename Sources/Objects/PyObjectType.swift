@@ -66,10 +66,9 @@ internal enum PyObjectType {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal static func hash(zelf: PyObject) -> HashResult {
+  internal static func hash(zelf: PyObject) -> PyHash {
     let id = ObjectIdentifier(zelf)
-    let hash = Py.hasher.hash(id)
-    return .value(hash)
+    return Py.hasher.hash(id)
   }
 
   // MARK: - String

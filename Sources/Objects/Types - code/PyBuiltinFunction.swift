@@ -64,13 +64,6 @@ public final class PyBuiltinFunction: PyObject, AbstractBuiltinFunction {
     return self._isGreaterEqual(other)
   }
 
-  // MARK: - Hashable
-
-  // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
-    return self._hash()
-  }
-
   // MARK: - String
 
   // sourcery: pymethod = __repr__

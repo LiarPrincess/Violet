@@ -85,7 +85,7 @@ public final class PyFrozenSet: PyObject {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  public func hash() -> HashResult {
+  public func hash() -> PyHash {
     // This is hash function from 'tuple', which means that 'frozenset'
     // and 'tuple' with the same elements (in the same order) will have
     // the same hash.
@@ -98,7 +98,7 @@ public final class PyFrozenSet: PyObject {
       multiplier += 82_520 + PyHash(2 * self.data.count)
     }
 
-    return .value(x + 97_531)
+    return x + 97_531
   }
 
   // MARK: - String

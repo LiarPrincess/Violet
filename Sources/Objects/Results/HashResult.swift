@@ -1,27 +1,19 @@
-public enum HashResult {
+internal enum HashResult {
   case value(PyHash)
+  /// Basically a `type error` from `Py.hashNotAvailable()`,
+  /// but without allocation.
+  case unhashable(PyObject)
   case error(PyBaseException)
-  case notImplemented
 }
 
 extension HashResult: PyFunctionResultConvertible {
   internal var asFunctionResult: PyFunctionResult {
     switch self {
-    case .value(let hash):
+    case let .value(hash):
       return hash.asFunctionResult
-    case .error(let e):
+    case let .unhashable(object):
+      let e = Py.hashNotAvailable(object)
       return .error(e)
-    case .notImplemented:
-      return .value(Py.notImplemented)
-    }
-  }
-}
-
-extension PyResult where Wrapped == PyHash {
-  public var asHashResult: HashResult {
-    switch self {
-    case let .value(v):
-      return .value(v)
     case let .error(e):
       return .error(e)
     }

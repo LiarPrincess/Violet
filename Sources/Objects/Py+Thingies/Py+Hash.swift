@@ -14,9 +14,13 @@ extension PyInstance {
   public func hash(object: PyObject) -> PyResult<PyHash> {
     if let result = PyStaticCall.__hash__(object) {
       switch result {
-      case .value(let hash): return .value(hash)
-      case .notImplemented: return .error(self.hashNotImplemented(object))
-      case .error(let e): return .error(e)
+      case let .value(hash):
+        return .value(hash)
+      case let .unhashable(object):
+        let e = self.hashNotAvailable(object)
+        return .error(e)
+      case let .error(e):
+        return .error(e)
       }
     }
 
@@ -25,7 +29,8 @@ extension PyInstance {
     case .value(let o):
       result = o
     case .missingMethod:
-      return .error(self.hashNotImplemented(object))
+      let e = self.hashNotAvailable(object)
+      return .error(e)
     case .error(let e),
          .notCallable(let e):
       return .error(e)
@@ -48,7 +53,8 @@ extension PyInstance {
   }
 
   /// Py_hash_t PyObject_HashNotImplemented(PyObject *v)
-  public func hashNotImplemented(_ object: PyObject) -> PyBaseException {
-    return self.newTypeError(msg: "unhashable type: '\(object.typeName)'")
+  internal func hashNotAvailable(_ object: PyObject) -> PyBaseException {
+    let msg = "unhashable type: '\(object.typeName)'"
+    return self.newTypeError(msg: msg)
   }
 }

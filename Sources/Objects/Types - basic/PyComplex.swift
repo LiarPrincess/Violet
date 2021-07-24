@@ -102,7 +102,7 @@ public final class PyComplex: PyObject {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
+  internal func hash() -> PyHash {
     let realHash = Py.hasher.hash(self.real)
     let imagHash = Py.hasher.hash(self.imag)
 
@@ -114,7 +114,7 @@ public final class PyComplex: PyObject {
 
     // Overflows are acceptable (and surprisingly common).
     let imagHashNeg = Hasher.imag &* imagHash
-    return .value(realHash &+ imagHashNeg)
+    return realHash &+ imagHashNeg
   }
 
   // MARK: - String

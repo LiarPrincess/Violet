@@ -53,7 +53,6 @@ internal enum StaticMethodsForBuiltinTypes {
   internal static var builtinFunction: PyType.StaticallyKnownNotOverriddenMethods = {
     var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyBuiltinFunction.repr)
-    result.__hash__ = .init(PyBuiltinFunction.hash)
     result.__eq__ = .init(PyBuiltinFunction.isEqual(_:))
     result.__ne__ = .init(PyBuiltinFunction.isNotEqual(_:))
     result.__lt__ = .init(PyBuiltinFunction.isLess(_:))
@@ -70,7 +69,6 @@ internal enum StaticMethodsForBuiltinTypes {
   internal static var builtinMethod: PyType.StaticallyKnownNotOverriddenMethods = {
     var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyBuiltinMethod.repr)
-    result.__hash__ = .init(PyBuiltinMethod.hash)
     result.__eq__ = .init(PyBuiltinMethod.isEqual(_:))
     result.__ne__ = .init(PyBuiltinMethod.isNotEqual(_:))
     result.__lt__ = .init(PyBuiltinMethod.isLess(_:))

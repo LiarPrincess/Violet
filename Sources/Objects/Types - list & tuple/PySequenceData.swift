@@ -107,25 +107,6 @@ internal struct PySequenceData {
     return .allEqualUpToShorterCount
   }
 
-  // MARK: - Hash
-
-  internal var hash: PyResult<PyHash> {
-    var x: PyHash = 0x34_5678
-    var multiplier = Hasher.multiplier
-
-    for e in self.elements {
-      switch Py.hash(object: e) {
-      case let .value(y):
-        x = (x ^ y) &* multiplier
-        multiplier &+= 82_520 + PyHash(2 * self.elements.count)
-      case let .error(e):
-        return .error(e)
-      }
-    }
-
-    return .value(x &+ 97_531)
-  }
-
   // MARK: - Repr
 
   internal func repr(openBracket: String,

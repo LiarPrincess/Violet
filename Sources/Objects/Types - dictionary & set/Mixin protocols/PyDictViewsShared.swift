@@ -95,7 +95,7 @@ extension PyDictViewsShared {
   // MARK: - Hashable
 
   internal func hashShared() -> HashResult {
-    return .error(Py.hashNotImplemented(self))
+    return .unhashable(self)
   }
 
   // MARK: - String

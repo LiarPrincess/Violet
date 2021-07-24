@@ -173,8 +173,11 @@ extension PyType {
 
       internal let fn: (PyObject) -> HashResult
 
-      internal init(_ fn: @escaping (PyObject) -> HashResult) {
-        self.fn = fn
+      internal init(_ fn: @escaping (PyObject) -> PyHash) {
+        self.fn = { (arg0: PyObject) in
+          let result = fn(arg0)
+          return .value(result)
+        }
       }
 
       internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyHash) {

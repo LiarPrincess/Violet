@@ -134,13 +134,7 @@ public final class PyString: PyObject, AbstractString {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  /// In Swift use `hashImpl` instead.
-  internal func hash() -> HashResult {
-    let result = self.hashImpl()
-    return .value(result)
-  }
-
-  internal func hashImpl() -> PyHash {
+  internal func hash() -> PyHash {
     if self.cachedHash == PyString.invalidHash {
       self.cachedHash = Py.hasher.hash(self.value)
     }

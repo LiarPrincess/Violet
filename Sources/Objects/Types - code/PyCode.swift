@@ -292,10 +292,10 @@ public final class PyCode: PyObject {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  public func hash() -> HashResult {
+  public func hash() -> PyHash {
     // See the comment in '__eq__'.
     let id = ObjectIdentifier(self)
-    return .value(Py.hasher.hash(id))
+    return Py.hasher.hash(id)
   }
 
   // MARK: - String

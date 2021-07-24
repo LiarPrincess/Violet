@@ -108,7 +108,7 @@ public final class PyByteArray: PyObject, AbstractBytes {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    return .error(Py.hashNotImplemented(self))
+    return .unhashable(self)
   }
 
   // MARK: - String

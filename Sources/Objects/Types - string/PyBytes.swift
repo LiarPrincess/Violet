@@ -102,12 +102,7 @@ public final class PyBytes: PyObject, AbstractBytes {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
-    let result = self.hashImpl()
-    return .value(result)
-  }
-
-  internal func hashImpl() -> PyHash {
+  internal func hash() -> PyHash {
     return Py.hasher.hash(self.elements)
   }
 

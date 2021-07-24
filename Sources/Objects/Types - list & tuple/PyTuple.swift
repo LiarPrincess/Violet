@@ -92,7 +92,24 @@ public final class PyTuple: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    return self.data.hash.asHashResult
+    return PyTuple.calculateHash(elements: self.elements)
+  }
+
+  internal static func calculateHash(elements: [PyObject]) -> HashResult {
+    var x: PyHash = 0x34_5678
+    var multiplier = Hasher.multiplier
+
+    for e in elements {
+      switch Py.hash(object: e) {
+      case let .value(y):
+        x = (x ^ y) &* multiplier
+        multiplier &+= 82_520 + PyHash(2 * elements.count)
+      case let .error(e):
+        return .error(e)
+      }
+    }
+
+    return .value(x &+ 97_531)
   }
 
   // MARK: - String

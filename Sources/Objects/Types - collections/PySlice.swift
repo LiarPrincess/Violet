@@ -99,7 +99,7 @@ public final class PySlice: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    return .error(Py.hashNotImplemented(self))
+    return .unhashable(self)
   }
 
   // MARK: - String
