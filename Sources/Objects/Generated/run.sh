@@ -84,7 +84,7 @@ echo "=== Static dispatch ==="
 echo "Sometimes instead of doing slow Python dispatch we will use 'object.type.staticMethods'."
 echo "- PyStaticCall.swift - interface for calling static methods"
 python3 $GENERATED/PyStaticCall.py > $GENERATED/PyStaticCall.swift
-echo "- PyType+StaticallyKnownMethods.swift - the actuall type responsible for storing static methods"
+echo "- PyType+StaticallyKnownMethods.swift - the actual type responsible for storing static methods"
 python3 $GENERATED/PyType+StaticallyKnownMethods.py > $GENERATED/PyType+StaticallyKnownMethods.swift
 echo "- StaticMethodsForBuiltinTypes.swift - static methods defined on builtin types"
 python3 $GENERATED/StaticMethodsForBuiltinTypes.py > $GENERATED/StaticMethodsForBuiltinTypes.swift

@@ -1,5 +1,6 @@
 import VioletCore
 
+// swiftlint:disable function_body_length
 // swiftlint:disable file_length
 
 private struct PyTypeNewArgs {
@@ -31,16 +32,12 @@ extension PyType {
     format: "OOO:type.__new__"
   )
 
-// swiftlint:disable function_body_length
-
   // sourcery: pystaticmethod = __new__
   /// static PyObject *
   /// type_new(PyTypeObject *metatype, PyObject *args, PyObject *kwds)
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyObject> {
-    // swiftlint:enable function_body_length
-
     // Special case: type(x) should return x->ob_type
     if type === Py.types.type {
       let hasSingleArg = args.count == 1
@@ -61,21 +58,22 @@ extension PyType {
       assert(binding.requiredCount == 3, "Invalid required argument count.")
       assert(binding.optionalCount == 0, "Invalid optional argument count.")
 
-      let fn = "type.__new__()"
-
       let arg0 = binding.required(at: 0)
       guard let name = PyCast.asString(arg0) else {
-        return .typeError("\(fn) argument 1 must be str, not \(arg0.typeName)")
+        let t = arg0.typeName
+        return .typeError("type.__new__() argument 1 must be str, not \(t)")
       }
 
       let arg1 = binding.required(at: 1)
       guard let bases = PyCast.asTuple(arg1) else {
-        return .typeError("\(fn) argument 2 must be tuple, not \(arg1.typeName)")
+        let t = arg1.typeName
+        return .typeError("type.__new__() argument 2 must be tuple, not \(t)")
       }
 
       let arg2 = binding.required(at: 2)
       guard let dict = PyCast.asDict(arg2) else {
-        return .typeError("\(fn) argument 3 must be dict, not \(arg2.typeName)")
+        let t = arg2.typeName
+        return .typeError("type.__new__() argument 3 must be dict, not \(t)")
       }
 
       var baseTypes = [PyType]()
@@ -104,6 +102,8 @@ extension PyType {
     bases: PyTuple
   ) -> PyResult<[PyType]> {
     var result = [PyType]()
+    result.reserveCapacity(bases.elements.count)
+
     for object in bases.elements {
       guard let base = PyCast.asType(object) else {
         return .typeError("bases must be types")
@@ -120,13 +120,9 @@ extension PyType {
     return .value(result)
   }
 
-  // swiftlint:disable function_body_length
-
   /// static PyObject *
   /// type_new(PyTypeObject *metatype, PyObject *args, PyObject *kwds)
   private static func pyNew(args: PyTypeNewArgs) -> PyResult<PyObject> {
-    // swiftlint:enable function_body_length
-
     let base: PyType
     var bases = args.bases
     var metatype = args.metatype
@@ -160,7 +156,10 @@ extension PyType {
     // Create type object
     let name = args.name.value
     let layout = base.layout
-    let staticMethods = StaticallyKnownNotOverriddenMethods()
+    let staticMethods = StaticallyKnownNotOverriddenMethods(
+      mroWithoutCurrentlyCreatedType: mro,
+      dictForCurrentlyCreatedType: args.dict
+    )
 
     let type = PyMemory.newType(
       name: name,
@@ -179,17 +178,12 @@ extension PyType {
     type.flags.set(Self.heapTypeFlag)
     type.flags.set(Self.baseTypeFlag)
     type.flags.set(Self.hasFinalizeFlag)
-
-    if base.flags.isSet(Self.hasGCFlag) {
-      type.flags.set(Self.hasGCFlag)
-    }
+    type.flags.set(Self.hasGCFlag, to: base.flags.isSet(Self.hasGCFlag))
 
     let instancesHave__dict__ = base.flags.isSet(Self.instancesHave__dict__Flag)
       || base.flags.isSet(Self.subclassInstancesHave__dict__Flag)
 
-    if instancesHave__dict__ {
-      type.flags.set(Self.instancesHave__dict__Flag)
-    }
+    type.flags.set(Self.instancesHave__dict__Flag, to: instancesHave__dict__)
 
     // Initialize '__dict__' from passed-in dict
     // Also: we have to COPY it! Swift COW will take care of this.

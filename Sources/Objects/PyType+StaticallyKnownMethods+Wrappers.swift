@@ -1,7 +1,6 @@
 import BigInt
 import VioletCore
 
-// swiftlint:disable nesting
 // swiftlint:disable file_length
 
 // We can force cast, because if the Swift type does not correspond to the Python
