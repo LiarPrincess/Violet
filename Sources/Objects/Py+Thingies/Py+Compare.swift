@@ -150,7 +150,7 @@ private enum EqualCompare: CompareOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__eq__(left, right)
+    let result = PyStaticCall.__eq__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -194,7 +194,7 @@ private enum NotEqualCompare: CompareOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__ne__(left, right)
+    let result = PyStaticCall.__ne__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -235,7 +235,7 @@ private enum LessCompare: CompareOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__lt__(left, right)
+    let result = PyStaticCall.__lt__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -271,7 +271,7 @@ private enum LessEqualCompare: CompareOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__le__(left, right)
+    let result = PyStaticCall.__le__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -307,7 +307,7 @@ private enum GreaterCompare: CompareOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__gt__(left, right)
+    let result = PyStaticCall.__gt__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -343,7 +343,7 @@ private enum GreaterEqualCompare: CompareOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__ge__(left, right)
+    let result = PyStaticCall.__ge__(left: left, right: right)
     return StaticCallResult(result)
   }
 }

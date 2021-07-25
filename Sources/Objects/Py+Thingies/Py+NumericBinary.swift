@@ -271,19 +271,19 @@ private struct AddOp: BinaryOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__add__(left, right)
+    let result = PyStaticCall.__add__(left: left, right: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticReflected(left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__radd__(right, left)
+    let result = PyStaticCall.__radd__(left: right, right: left)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticInPlace(left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__iadd__(left, right)
+    let result = PyStaticCall.__iadd__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -311,19 +311,19 @@ private struct SubOp: BinaryOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__sub__(left, right)
+    let result = PyStaticCall.__sub__(left: left, right: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticReflected(left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rsub__(right, left)
+    let result = PyStaticCall.__rsub__(left: right, right: left)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticInPlace(left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__isub__(left, right)
+    let result = PyStaticCall.__isub__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -351,19 +351,19 @@ private struct MulOp: BinaryOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__mul__(left, right)
+    let result = PyStaticCall.__mul__(left: left, right: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticReflected(left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rmul__(right, left)
+    let result = PyStaticCall.__rmul__(left: right, right: left)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticInPlace(left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__imul__(left, right)
+    let result = PyStaticCall.__imul__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -391,19 +391,19 @@ private struct MatmulOp: BinaryOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__matmul__(left, right)
+    let result = PyStaticCall.__matmul__(left: left, right: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticReflected(left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rmatmul__(right, left)
+    let result = PyStaticCall.__rmatmul__(left: right, right: left)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticInPlace(left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__imatmul__(left, right)
+    let result = PyStaticCall.__imatmul__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -431,19 +431,19 @@ private struct TruedivOp: BinaryOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__truediv__(left, right)
+    let result = PyStaticCall.__truediv__(left: left, right: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticReflected(left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rtruediv__(right, left)
+    let result = PyStaticCall.__rtruediv__(left: right, right: left)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticInPlace(left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__itruediv__(left, right)
+    let result = PyStaticCall.__itruediv__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -471,19 +471,19 @@ private struct FloordivOp: BinaryOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__floordiv__(left, right)
+    let result = PyStaticCall.__floordiv__(left: left, right: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticReflected(left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rfloordiv__(right, left)
+    let result = PyStaticCall.__rfloordiv__(left: right, right: left)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticInPlace(left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__ifloordiv__(left, right)
+    let result = PyStaticCall.__ifloordiv__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -511,19 +511,19 @@ private struct ModOp: BinaryOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__mod__(left, right)
+    let result = PyStaticCall.__mod__(left: left, right: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticReflected(left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rmod__(right, left)
+    let result = PyStaticCall.__rmod__(left: right, right: left)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticInPlace(left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__imod__(left, right)
+    let result = PyStaticCall.__imod__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -551,19 +551,19 @@ private struct DivmodOp: BinaryOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__divmod__(left, right)
+    let result = PyStaticCall.__divmod__(left: left, right: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticReflected(left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rdivmod__(right, left)
+    let result = PyStaticCall.__rdivmod__(left: right, right: left)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticInPlace(left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__idivmod__(left, right)
+    let result = PyStaticCall.__idivmod__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -591,19 +591,19 @@ private struct LshiftOp: BinaryOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__lshift__(left, right)
+    let result = PyStaticCall.__lshift__(left: left, right: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticReflected(left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rlshift__(right, left)
+    let result = PyStaticCall.__rlshift__(left: right, right: left)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticInPlace(left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__ilshift__(left, right)
+    let result = PyStaticCall.__ilshift__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -631,19 +631,19 @@ private struct RshiftOp: BinaryOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rshift__(left, right)
+    let result = PyStaticCall.__rshift__(left: left, right: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticReflected(left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rrshift__(right, left)
+    let result = PyStaticCall.__rrshift__(left: right, right: left)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticInPlace(left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__irshift__(left, right)
+    let result = PyStaticCall.__irshift__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -671,19 +671,19 @@ private struct AndOp: BinaryOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__and__(left, right)
+    let result = PyStaticCall.__and__(left: left, right: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticReflected(left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rand__(right, left)
+    let result = PyStaticCall.__rand__(left: right, right: left)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticInPlace(left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__iand__(left, right)
+    let result = PyStaticCall.__iand__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -711,19 +711,19 @@ private struct OrOp: BinaryOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__or__(left, right)
+    let result = PyStaticCall.__or__(left: left, right: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticReflected(left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__ror__(right, left)
+    let result = PyStaticCall.__ror__(left: right, right: left)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticInPlace(left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__ior__(left, right)
+    let result = PyStaticCall.__ior__(left: left, right: right)
     return StaticCallResult(result)
   }
 }
@@ -751,19 +751,19 @@ private struct XorOp: BinaryOp {
 
   fileprivate static func callStatic(left: PyObject,
                                      right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__xor__(left, right)
+    let result = PyStaticCall.__xor__(left: left, right: right)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticReflected(left: PyObject,
                                               right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__rxor__(right, left)
+    let result = PyStaticCall.__rxor__(left: right, right: left)
     return StaticCallResult(result)
   }
 
   fileprivate static func callStaticInPlace(left: PyObject,
                                             right: PyObject) -> StaticCallResult {
-    let result = PyStaticCall.__ixor__(left, right)
+    let result = PyStaticCall.__ixor__(left: left, right: right)
     return StaticCallResult(result)
   }
 }

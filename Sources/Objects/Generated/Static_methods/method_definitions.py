@@ -41,7 +41,7 @@ class StaticMethodKind:
 
 _stringConversion = StaticMethodKind('StringConversion', '(_ object: PyObject) -> PyResult<String>')
 _hash = StaticMethodKind('Hash', '(_ object: PyObject) -> HashResult')
-_comparison = StaticMethodKind('Comparison', '(_ left: PyObject, _ right: PyObject) -> CompareResult')
+_comparison = StaticMethodKind('Comparison', '(left: PyObject, right: PyObject) -> CompareResult')
 _asBool = StaticMethodKind('AsBool', '(_ object: PyObject) -> Bool')
 _asInt = StaticMethodKind('AsInt', '(_ object: PyObject) -> PyResult<PyInt>')
 _asFloat = StaticMethodKind('AsFloat', '(_ object: PyObject) -> PyResult<PyFloat>')
@@ -68,7 +68,7 @@ _isAbstractMethod = StaticMethodKind('IsAbstractMethod', '(_ object: PyObject) -
 _numericUnary = StaticMethodKind('NumericUnary', '(_ object: PyObject) -> PyObject')
 _numericTrunc = StaticMethodKind('NumericTrunc', '(_ object: PyObject) -> PyResult<PyInt>')
 _numericRound = StaticMethodKind('NumericRound', '(_ object: PyObject, nDigits: PyObject?) -> PyResult<PyObject>')
-_numericBinary = StaticMethodKind('NumericBinary', '(_ left: PyObject, _ right: PyObject) -> PyResult<PyObject>')
+_numericBinary = StaticMethodKind('NumericBinary', '(left: PyObject, right: PyObject) -> PyResult<PyObject>')
 _numericPow = StaticMethodKind('NumericPow', '(base: PyObject, exp: PyObject, mod: PyObject) -> PyResult<PyObject>')
 
 
