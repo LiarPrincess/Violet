@@ -1,5 +1,3 @@
-from Sourcery import get_types, TypeInfo
-from Sourcery.signature import SignatureInfo
 from Common.strings import generated_warning
 from Static_methods import STATIC_METHODS
 
