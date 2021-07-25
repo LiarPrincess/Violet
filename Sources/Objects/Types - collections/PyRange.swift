@@ -14,6 +14,8 @@ import VioletCore
 /// and is commonly used for looping a specific number of times in for loops.
 public final class PyRange: PyObject {
 
+  private static let isStepImplicitFlag = PyObject.Flags.custom0
+
   // sourcery: pytypedoc
   internal static let doc = """
     range(stop) -> range object
@@ -31,14 +33,26 @@ public final class PyRange: PyObject {
   internal let step: PyInt
   /// Number of elements in range.
   internal let length: PyInt
-  /// Remember how user created this range (`repr` depends on it).
-  private let stepType: StepType
 
   private enum StepType {
-    /// Step was provided in ctor
+    /// Step was provided in `init`.
     case explicit
-    /// Step was deducted automatically
+    /// Step was deducted automatically.
     case implicit
+  }
+
+  /// Remember how user created this range (`repr` depends on it).
+  private var stepType: StepType {
+    get {
+      let isImplicit = self.flags.isSet(PyRange.isStepImplicitFlag)
+      return isImplicit ? .implicit : .explicit
+    }
+    set {
+      switch newValue {
+      case .implicit: self.flags.set(PyRange.isStepImplicitFlag, to: true)
+      case .explicit: self.flags.set(PyRange.isStepImplicitFlag, to: false)
+      }
+    }
   }
 
   private var isGoingUp: Bool {
@@ -68,10 +82,10 @@ public final class PyRange: PyObject {
     self.start = start
     self.stop = stop
     self.step = Py.newInt(unwrappedStep)
-    self.stepType = step == nil ? .implicit : .explicit
     self.length = Py.newInt(length)
-
     super.init(type: Py.types.range)
+
+    self.stepType = step == nil ? .implicit : .explicit
   }
 
   private static func calculateLength(start: BigInt,

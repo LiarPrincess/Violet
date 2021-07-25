@@ -249,7 +249,6 @@ extension PyType {
     /// - `stop: PyInt`
     /// - `step: PyInt`
     /// - `length: PyInt`
-    /// - `stepType: StepType`
     public static let PyRange = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `start: BigInt`
