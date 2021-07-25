@@ -178,7 +178,7 @@ public final class PyTuple: PyObject {
 
   // MARK: - Index of
 
-  // Special overload for `IndexOwner` protocol
+  // Special overload for `index` static method
   internal func indexOf(object: PyObject) -> PyResult<BigInt> {
     return self.indexOf(object: object, start: nil, end: nil)
   }

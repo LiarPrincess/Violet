@@ -163,11 +163,6 @@ public class PyBaseException: PyObject {
     return baseException.__dict__
   }
 
-  // This is for `__dict__Owner` protocol
-  internal func getDict() -> PyDict {
-    return self.__dict__
-  }
-
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
