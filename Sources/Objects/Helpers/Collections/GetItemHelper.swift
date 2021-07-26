@@ -6,6 +6,7 @@ internal enum GetItemResult<Element, SliceBuilderResult> {
   case error(PyBaseException)
 }
 
+/// This type will be used when `GetItemImpl.getItem` gets called with slice.
 internal protocol GetItemSliceBuilderType {
 
   /// Type of the element that we will be appending.
