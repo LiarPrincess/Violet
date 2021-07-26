@@ -14,6 +14,15 @@ internal enum CompareResult {
     }
   }
 
+  internal init(_ value: PyResult<Bool>) {
+    switch value {
+    case let .value(b):
+      self = .value(b)
+    case let .error(e):
+      self = .error(e)
+    }
+  }
+
   /// Method used when implementing `__ne__`.
   ///
   /// We don't want to override `!` operator, because it is tiny and easy to miss.
@@ -34,20 +43,9 @@ extension CompareResult: PyFunctionResultConvertible {
     switch self {
     case .value(let bool):
       return bool.asFunctionResult
-    case .error(let e):
-      return .error(e)
     case .notImplemented:
       return .value(Py.notImplemented)
-    }
-  }
-}
-
-extension PyResult where Wrapped == Bool {
-  internal var asCompareResult: CompareResult {
-    switch self {
-    case let .value(v):
-      return .value(v)
-    case let .error(e):
+    case .error(let e):
       return .error(e)
     }
   }

@@ -23,7 +23,8 @@ extension PyDictViewsShared {
       return .value(false)
     }
 
-    return Py.contains(iterable: self, allFrom: other).asCompareResult
+    let result = Py.contains(iterable: self, allFrom: other)
+    return CompareResult(result)
   }
 
   internal func isNotEqualShared(_ other: PyObject) -> CompareResult {
@@ -41,7 +42,8 @@ extension PyDictViewsShared {
       return .value(false)
     }
 
-    return Py.contains(iterable: other, allFrom: self).asCompareResult
+    let result = Py.contains(iterable: other, allFrom: self)
+    return CompareResult(result)
   }
 
   internal func isLessEqualShared(_ other: PyObject) -> CompareResult {
@@ -53,7 +55,8 @@ extension PyDictViewsShared {
       return .value(false)
     }
 
-    return Py.contains(iterable: other, allFrom: self).asCompareResult
+    let result = Py.contains(iterable: other, allFrom: self)
+    return CompareResult(result)
   }
 
   internal func isGreaterShared(_ other: PyObject) -> CompareResult {
@@ -65,7 +68,8 @@ extension PyDictViewsShared {
       return .value(false)
     }
 
-    return Py.contains(iterable: self, allFrom: other).asCompareResult
+    let result = Py.contains(iterable: self, allFrom: other)
+    return CompareResult(result)
   }
 
   internal func isGreaterEqualShared(_ other: PyObject) -> CompareResult {
@@ -77,7 +81,8 @@ extension PyDictViewsShared {
       return .value(false)
     }
 
-    return Py.contains(iterable: self, allFrom: other).asCompareResult
+    let result = Py.contains(iterable: self, allFrom: other)
+    return CompareResult(result)
   }
 
   private func getDictOrSetSize(_ other: PyObject) -> Int? {

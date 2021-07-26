@@ -45,7 +45,8 @@ internal struct PySequenceData {
   internal func isLess(than other: PySequenceData) -> CompareResult {
     switch self.getFirstNotEqualElement(with: other) {
     case let .elements(selfElement: l, otherElement: r):
-      return Py.isLessBool(left: l, right: r).asCompareResult
+      let result = Py.isLessBool(left: l, right: r)
+      return CompareResult(result)
     case .allEqualUpToShorterCount:
       return .value(self.count < other.count)
     case let .error(e):
@@ -56,7 +57,8 @@ internal struct PySequenceData {
   internal func isLessEqual(than other: PySequenceData) -> CompareResult {
     switch self.getFirstNotEqualElement(with: other) {
     case let .elements(selfElement: l, otherElement: r):
-      return Py.isLessEqualBool(left: l, right: r).asCompareResult
+      let result = Py.isLessEqualBool(left: l, right: r)
+      return CompareResult(result)
     case .allEqualUpToShorterCount:
       return .value(self.count <= other.count)
     case let .error(e):
@@ -67,7 +69,8 @@ internal struct PySequenceData {
   internal func isGreater(than other: PySequenceData) -> CompareResult {
     switch self.getFirstNotEqualElement(with: other) {
     case let .elements(selfElement: l, otherElement: r):
-      return Py.isGreaterBool(left: l, right: r).asCompareResult
+      let result = Py.isGreaterBool(left: l, right: r)
+      return CompareResult(result)
     case .allEqualUpToShorterCount:
       return .value(self.count > other.count)
     case let .error(e):
@@ -78,7 +81,8 @@ internal struct PySequenceData {
   internal func isGreaterEqual(than other: PySequenceData) -> CompareResult {
     switch self.getFirstNotEqualElement(with: other) {
     case let .elements(selfElement: l, otherElement: r):
-      return Py.isGreaterEqualBool(left: l, right: r).asCompareResult
+      let result = Py.isGreaterEqualBool(left: l, right: r)
+      return CompareResult(result)
     case .allEqualUpToShorterCount:
       return .value(self.count >= other.count)
     case let .error(e):
