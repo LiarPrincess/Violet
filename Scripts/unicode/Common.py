@@ -8,6 +8,7 @@ def generated_warning(file_path: str) -> str:
 
     header = f'''
 // Automatically generated from: {file_path}
+// Use 'make unicode' in repository root to regenerate.
 // DO NOT EDIT!
 '''
 

@@ -1,5 +1,6 @@
 // ===================================================================
 // Automatically generated from: /Scripts/unicode/generate-database.py
+// Use 'make unicode' in repository root to regenerate.
 // DO NOT EDIT!
 // ===================================================================
 
