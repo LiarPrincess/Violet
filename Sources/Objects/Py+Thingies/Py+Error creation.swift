@@ -218,12 +218,12 @@ extension PyInstance {
 
   // MARK: - Key error
 
-  /// Mapping key not found.
+  /// Mapping key not found or duplicate entry when updating.
   public func newKeyError(msg: String) -> PyKeyError {
     return PyMemory.newKeyError(msg: msg)
   }
 
-  /// Mapping key not found.
+  /// Mapping key not found or duplicate entry when updating.
   public func newKeyError(key: PyObject) -> PyKeyError {
     let args = self.newTuple(key)
     return PyMemory.newKeyError(args: args)

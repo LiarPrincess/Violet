@@ -717,19 +717,18 @@ public final class PyDict: PyObject {
       }
     }
 
-    let result = Py.reduce(iterable: iterable, initial: 0) { _, object in
+    let e = Py.forEach(iterable: iterable) { object in
       switch Py.setItem(object: dictObject, index: object, value: value) {
       case .value: return .goToNextElement
       case .error(let e): return .error(e)
       }
     }
 
-    switch result {
-    case .value:
-      return .value(dictObject)
-    case .error(let e):
+    if let e = e {
       return .error(e)
     }
+
+    return .value(dictObject)
   }
 
   private static let onFillFromKeysDuplicate = OnUpdateKeyDuplicate.continue

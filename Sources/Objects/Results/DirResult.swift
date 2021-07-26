@@ -45,14 +45,13 @@ public class DirResult: PyFunctionResultConvertible {
     }
   }
 
-  internal func append(elementsFrom object: PyObject) -> PyBaseException? {
-    switch Py.toArray(iterable: object) {
-    case let .value(elements):
-      self.append(contentsOf: elements)
-      return nil
-    case let .error(e):
-      return e
+  internal func append(elementsFrom iterable: PyObject) -> PyBaseException? {
+    let e = Py.forEach(iterable: iterable) { object in
+      self.append(object)
+      return .goToNextElement
     }
+
+    return e
   }
 
   // MARK: - PyFunctionResultConvertible

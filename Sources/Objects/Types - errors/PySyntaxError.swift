@@ -268,6 +268,8 @@ public class PySyntaxError: PyException {
   // MARK: - Python init
 
   // sourcery: pymethod = __init__
+  // static int
+  // SyntaxError_init(PySyntaxErrorObject *self, PyObject *args, PyObject *kwds)
   internal func pySyntaxErrorInit(args: [PyObject],
                                   kwargs: PyDict?) -> PyResult<PyNone> {
     // Run 'super.pyInit' before our custom code, to avoid situation where
@@ -282,24 +284,58 @@ public class PySyntaxError: PyException {
     self.fillMsgFromArgs(args: args)
 
     if args.count == 2 {
-      let info: [PyObject]
-      switch Py.toArray(iterable: args[1]) {
+      switch self.unpackInitArgs(iterable: args[1]) {
       case let .value(i):
-        info = i
+        self.filename = i.filename
+        self.lineno = i.lineno
+        self.offset = i.offset
+        self.text = i.text
       case let .error(e):
         return .error(e)
       }
-
-      guard info.count == 4 else {
-        return .indexError("tuple index out of range")
-      }
-
-      self.filename = info[0]
-      self.lineno = info[1]
-      self.offset = info[2]
-      self.text = info[3]
     }
 
     return .value(Py.none)
+  }
+
+  private struct InitArgs {
+    fileprivate var filename: PyObject?
+    fileprivate var lineno: PyObject?
+    fileprivate var offset: PyObject?
+    fileprivate var text: PyObject?
+    fileprivate var count = 0
+  }
+
+  private func unpackInitArgs(iterable: PyObject) -> PyResult<InitArgs> {
+    var result = InitArgs()
+    let e = Py.reduce(iterable: iterable, into: &result) { acc, object in
+      acc.count += 1
+
+      if acc.filename == nil {
+        acc.filename = object
+      } else if acc.lineno == nil {
+        acc.lineno = object
+      } else if acc.offset == nil {
+        acc.offset = object
+      } else if acc.text == nil {
+        acc.text = object
+      }
+
+      return .goToNextElement
+    }
+
+    if let e = e {
+      return .error(e)
+    }
+
+    guard result.count == 4 else {
+      return .indexError("tuple index out of range")
+    }
+
+    assert(result.filename != nil)
+    assert(result.lineno != nil)
+    assert(result.offset != nil)
+    assert(result.text != nil)
+    return .value(result)
   }
 }

@@ -61,7 +61,10 @@ extension PyDict {
 
   // MARK: - From iterable of pairs
 
-  private typealias KeyValue = (key: Key, value: PyObject)
+  private struct KeyValue {
+    fileprivate let key: Key
+    fileprivate let value: PyObject
+  }
 
   /// int
   /// PyDict_MergeFromSeq2(PyObject *d, PyObject *seq2, int override)
@@ -84,9 +87,9 @@ extension PyDict {
       return .error(e)
     }
 
-    for (key, value) in keyValues {
-      if let e = self.updateSingleEntry(key: key,
-                                        value: value,
+    for kv in keyValues {
+      if let e = self.updateSingleEntry(key: kv.key,
+                                        value: kv.value,
                                         onKeyDuplicate: onKeyDuplicate) {
         return .error(e)
       }
@@ -98,19 +101,39 @@ extension PyDict {
   /// Given iterable of 2 elements it will return
   /// `iterable[0]` as key and `iterable[1]` as value.
   private func unpackKeyValue(fromIterable iterable: PyObject) -> PyResult<KeyValue> {
-    switch Py.toArray(iterable: iterable) {
-    case let .value(array):
-      guard array.count == 2 else {
-        let msg = "dictionary update sequence element has length \(array.count); 2 is required"
-        return .valueError(msg)
+    struct Tmp {
+      var key: Key?
+      var value: PyObject?
+      var count = 0
+    }
+
+    var tmp = Tmp()
+    let e = Py.reduce(iterable: iterable, into: &tmp) { acc, object in
+      acc.count += 1
+
+      if acc.key == nil {
+        switch PyDict.createKey(from: object) {
+        case let .value(k): acc.key = k
+        case let .error(e): return .error(e)
+        }
+      } else if acc.value == nil {
+        acc.value = object
       }
 
-      let key = Self.createKey(from: array[0])
-      return key.map { ($0, array[1]) }
+      return .goToNextElement
+    }
 
-    case let .error(e):
+    if let e = e {
       return .error(e)
     }
+
+    guard let key = tmp.key, let value = tmp.value, tmp.count == 2 else {
+      let msg = "dictionary update sequence element has length \(tmp.count); 2 is required"
+      return .valueError(msg)
+    }
+
+    let result = KeyValue(key: key, value: value)
+    return .value(result)
   }
 
   // MARK: - From keys owner
@@ -120,15 +143,9 @@ extension PyDict {
   private func update(fromKeysOwner dict: PyObject,
                       keys keyIterable: PyObject,
                       onKeyDuplicate: OnUpdateKeyDuplicate) -> PyResult<PyNone> {
-    let keys: [PyObject]
-    switch Py.toArray(iterable: keyIterable) {
-    case let .value(k): keys = k
-    case let .error(e): return .error(e)
-    }
-
-    for keyObject in keys {
+    let e = Py.forEach(iterable: keyIterable) { keyObject in
       let key: Key
-      switch Self.createKey(from: keyObject) {
+      switch PyDict.createKey(from: keyObject) {
       case let .value(k): key = k
       case let .error(e): return .error(e)
       }
@@ -144,6 +161,12 @@ extension PyDict {
                                         onKeyDuplicate: onKeyDuplicate) {
         return .error(e)
       }
+
+      return .goToNextElement
+    }
+
+    if let e = e {
+      return .error(e)
     }
 
     return .value(Py.none)

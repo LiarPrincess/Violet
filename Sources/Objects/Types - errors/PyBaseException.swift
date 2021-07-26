@@ -203,9 +203,10 @@ public class PyBaseException: PyObject {
       return self.setArgs(tuple)
     }
 
-    switch Py.toArray(iterable: value) {
-    case let .value(elements):
-      return self.setArgs(Py.newTuple(elements: elements))
+    switch Py.newTuple(iterable: value) {
+    case let .value(tuple):
+      self.setArgs(tuple)
+      return .value()
     case let .error(e):
       return .error(e)
     }
