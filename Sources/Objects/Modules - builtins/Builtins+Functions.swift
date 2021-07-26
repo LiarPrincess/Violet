@@ -299,7 +299,7 @@ extension Builtins {
 
   /// callable(object)
   /// See [this](https://docs.python.org/3/library/functions.html#callable)
-  internal static func callable(object: PyObject) -> PyResult<Bool> {
+  internal static func callable(object: PyObject) -> Bool {
     return Py.callable(object: object)
   }
 }

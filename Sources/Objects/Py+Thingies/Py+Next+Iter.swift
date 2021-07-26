@@ -76,13 +76,8 @@ extension PyInstance {
       return self.iter(object: object)
     }
 
-    switch self.callable(object: object) {
-    case .value(true):
-      break
-    case .value(false):
+    guard self.callable(object: object) else {
       return .typeError("iter(v, w): v must be callable")
-    case .error(let e):
-      return .error(e)
     }
 
     let result = PyMemory.newCallableIterator(callable: object, sentinel: sentinel)

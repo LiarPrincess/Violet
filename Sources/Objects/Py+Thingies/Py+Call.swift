@@ -95,12 +95,9 @@ extension PyInstance {
 
   /// callable(object)
   /// See [this](https://docs.python.org/3/library/functions.html#callable)
-  public func callable(object: PyObject) -> PyResult<Bool> {
-    if object.type.lookup(name: .__call__) != nil {
-      return .value(true)
-    }
-
-    return .value(false)
+  public func callable(object: PyObject) -> Bool {
+    let lookup = object.type.mroLookup(name: .__call__)
+    return lookup != nil
   }
 }
 
