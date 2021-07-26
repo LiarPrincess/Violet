@@ -325,18 +325,18 @@ extension PyInstance {
   /// _PyObject_LookupSpecial(PyObject *self, _Py_Identifier *attrid)
   public func getFromType(object: PyObject, name: IdString) -> LookupResult {
     let type = object.type
-    guard let attribute = type.lookup(name: name) else {
+    guard let lookup = type.mroLookup(name: name) else {
       return .notFound
     }
 
-    if let descr = GetDescriptor(object: object, attribute: attribute) {
+    if let descr = GetDescriptor(object: object, attribute: lookup.object) {
       switch descr.call() {
       case let .value(o): return .value(o)
       case let .error(e): return .error(e)
       }
     }
 
-    return .value(attribute)
+    return .value(lookup.object)
   }
 
   // MARK: - Helpers

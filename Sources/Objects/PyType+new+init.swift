@@ -408,7 +408,7 @@ extension PyType {
     // Even if we have custom '__dict__' getter what else can it return?
     // Anyway, we will not override it.
 
-    if Self.anyBaseClassExceptForObjectHas(type: type, name: .__dict__) {
+    if Self.isInMroExcludingObject(type: type, name: .__dict__) {
       return
     }
 
@@ -423,22 +423,20 @@ extension PyType {
     dict.set(id: .__dict__, to: property)
   }
 
-  private static func anyBaseClassExceptForObjectHas(
-    type: PyType,
-    name: IdString
-  ) -> Bool {
+  private static func isInMroExcludingObject(type: PyType,
+                                             name: IdString) -> Bool {
     let mro = type.getMRO()
 
     for base in mro {
       let isObject = base === Py.types.object
       if isObject {
-        // 'except for object' <- see this method name
+        // 'Excluding object' <- see this method name
         // 'break' because object is always last in 'mro'
         break
       }
 
-      let value = base.lookup(name: name)
-      if value != nil {
+      let lookup = base.mroLookup(name: name)
+      if lookup != nil {
         return true
       }
     }
@@ -479,7 +477,7 @@ extension PyType {
 
   private static func add__getattribute__MethodIfNotPresent(type: PyType) {
     // If any base class has '__getattribute__' then we don't have to re-add it.
-    if Self.anyBaseClassExceptForObjectHas(type: type, name: .__getattribute__) {
+    if Self.isInMroExcludingObject(type: type, name: .__getattribute__) {
       return
     }
 
@@ -497,7 +495,7 @@ extension PyType {
 
   private static func add__setattr__MethodIfNotPresent(type: PyType) {
     // If any base class has '__setattr__' then we don't have to re-add it.
-    if Self.anyBaseClassExceptForObjectHas(type: type, name: .__setattr__) {
+    if Self.isInMroExcludingObject(type: type, name: .__setattr__) {
       return
     }
 
@@ -545,12 +543,13 @@ extension PyType {
       let value = entry.value
 
       // Do we even have such thingie?
-      guard let __set_name__ = value.type.lookup(name: .__set_name__) else {
+      guard let lookup = value.type.mroLookup(name: .__set_name__) else {
         continue
       }
 
+      let callable = lookup.object
       let args = [type, key]
-      let callResult = Py.call(callable: __set_name__, args: args, kwargs: nil)
+      let callResult = Py.call(callable: callable, args: args, kwargs: nil)
 
       switch callResult {
       case .value:

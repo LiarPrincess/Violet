@@ -68,10 +68,10 @@ public final class PyNone: PyObject, HasCustomGetMethod {
     let staticProperty: PyObject?
     let descriptor: GetDescriptor?
 
-    switch self.type.lookup(name: name) {
-    case .value(let p):
-      staticProperty = p
-      descriptor = GetDescriptor(object: self, attribute: p)
+    switch self.type.mroLookup(name: name) {
+    case .value(let l):
+      staticProperty = l.object
+      descriptor = GetDescriptor(object: self, attribute: l.object)
     case .notFound:
       staticProperty = nil
       descriptor = nil

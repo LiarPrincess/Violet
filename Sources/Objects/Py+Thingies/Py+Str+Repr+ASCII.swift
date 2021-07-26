@@ -234,7 +234,7 @@ extension PyInstance {
   private func hasCustom__str__(object: PyObject) -> Bool {
     let type = object.type
 
-    guard let lookup = type.lookupWithType(name: .__str__) else {
+    guard let lookup = type.mroLookup(name: .__str__) else {
       // 'object' has default implementation for '__str__',
       // if we did not find it then something went really wrong.
       let typeName = type.getNameString()

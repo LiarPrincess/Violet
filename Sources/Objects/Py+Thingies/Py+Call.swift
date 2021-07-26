@@ -183,10 +183,10 @@ extension PyInstance {
     let staticProperty: PyObject?
     let staticDescriptor: GetDescriptor?
 
-    switch object.type.lookup(name: selector) {
-    case .value(let attr):
-      staticProperty = attr
-      staticDescriptor = GetDescriptor(object: object, attribute: attr)
+    switch object.type.mroLookup(name: selector) {
+    case .value(let lookup):
+      staticProperty = lookup.object
+      staticDescriptor = GetDescriptor(object: object, attribute: lookup.object)
     case .notFound:
       staticProperty = nil
       staticDescriptor = nil

@@ -20,10 +20,10 @@ internal enum AttributeHelper {
     let staticProperty: PyObject?
     let descriptor: GetDescriptor?
 
-    switch object.type.lookup(name: name) {
-    case .value(let p):
-      staticProperty = p
-      descriptor = GetDescriptor(object: object, attribute: p)
+    switch object.type.mroLookup(name: name) {
+    case .value(let l):
+      staticProperty = l.object
+      descriptor = GetDescriptor(object: object, attribute: l.object)
     case .notFound:
       staticProperty = nil
       descriptor = nil

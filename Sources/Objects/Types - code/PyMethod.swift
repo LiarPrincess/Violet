@@ -140,12 +140,12 @@ public final class PyMethod: PyObject {
   /// static PyObject *
   /// method_getattro(PyObject *obj, PyObject *name)
   internal func getAttribute(name: PyString) -> PyResult<PyObject> {
-    switch self.type.lookup(name: name) {
-    case .value(let value):
-      if let descriptor = GetDescriptor(object: self, attribute: value) {
+    switch self.type.mroLookup(name: name) {
+    case .value(let lookup):
+      if let descriptor = GetDescriptor(object: self, attribute: lookup.object) {
         return descriptor.call()
       } else {
-        return .value(value)
+        return .value(lookup.object)
       }
 
     case .notFound:

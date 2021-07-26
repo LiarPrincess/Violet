@@ -263,7 +263,7 @@ internal enum PyObjectType {
   }
 
   private static func hasOverridden(type: PyType, name: IdString) -> Bool {
-    guard let lookup = type.lookupWithType(name: name) else {
+    guard let lookup = type.mroLookup(name: name) else {
       let t = type.getNameString()
       let fn = name.value.value
       trap("Uh… oh… So '\(fn)' lookup on \(t) failed to find anything. " +

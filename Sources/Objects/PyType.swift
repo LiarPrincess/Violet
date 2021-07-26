@@ -609,10 +609,10 @@ public final class PyType: PyObject, HasCustomGetMethod {
     let metaDescriptor: GetDescriptor?
 
     // Look for the attribute in the metatype
-    switch self.type.lookup(name: name) {
-    case .value(let attribute):
-      metaAttribute = attribute
-      metaDescriptor = GetDescriptor(object: self, attribute: attribute)
+    switch self.type.mroLookup(name: name) {
+    case .value(let r):
+      metaAttribute = r.object
+      metaDescriptor = GetDescriptor(object: self, attribute: r.object)
     case .notFound:
       metaAttribute = nil
       metaDescriptor = nil
@@ -625,15 +625,15 @@ public final class PyType: PyObject, HasCustomGetMethod {
     }
 
     // No data descriptor found on metatype.
-    // Look in __dict__ of this type and its bases.
+    // Look in '__dict__' of this type and its bases.
     if searchDict {
-      switch self.lookup(name: name) {
-      case .value(let attribute):
-        if let descr = GetDescriptor(type: self, attribute: attribute) {
+      switch self.mroLookup(name: name) {
+      case .value(let r):
+        if let descr = GetDescriptor(type: self, attribute: r.object) {
           return descr.call()
         }
 
-        return .value(attribute)
+        return .value(r.object)
       case .notFound: break
       case .error(let e): return .error(e)
       }
@@ -731,77 +731,52 @@ public final class PyType: PyObject, HasCustomGetMethod {
     return .value(result)
   }
 
-  // MARK: - Lookup
-
-  internal enum LookupResult {
-    case value(PyObject)
-    case notFound
-    case error(PyBaseException)
-  }
-
-  /// Internal API to look for a name through the MRO.
-  ///
-  /// PyObject *
-  /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
-  internal func lookup(name: PyString) -> LookupResult {
-    switch self.lookupWithType(name: name) {
-    case .value(let lookup):
-      return .value(lookup.value)
-    case .notFound:
-      return .notFound
-    case .error(let e):
-      return .error(e)
-    }
-  }
-
-  /// Internal API to look for a name through the MRO.
-  ///
-  /// PyObject *
-  /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
-  internal func lookup(name: IdString) -> PyObject? {
-    return self.lookupWithType(name: name)?.value
-  }
-
-  // MARK: - Lookup with type
+  // MARK: - MRO lookup
 
   /// Tuple: lookup result + type on which it was found
-  internal struct ValueAndType {
-    internal let value: PyObject
-    /// Type on which `self.value` was found.
+  internal struct MroLookupResult {
+    internal let object: PyObject
+    /// Type on which `self.object` was found.
     internal let type: PyType
   }
 
-  internal enum LookupWithTypeResult {
-    case value(ValueAndType)
+  /// Internal API to look for a name through the MRO.
+  ///
+  /// PyObject *
+  /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
+  internal func mroLookup(name: IdString) -> MroLookupResult? {
+    for type in self.mro {
+      if let object = type.__dict__.get(id: name) {
+        return MroLookupResult(object: object, type: type)
+      }
+    }
+
+    return nil
+  }
+
+  internal enum MroLookupByStringResult {
+    case value(MroLookupResult)
     case notFound
     case error(PyBaseException)
   }
 
   /// Internal API to look for a name through the MRO.
-  internal func lookupWithType(name: PyString) -> LookupWithTypeResult {
-    for base in self.mro {
-      switch base.__dict__.get(key: name) {
+  ///
+  /// PyObject *
+  /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
+  internal func mroLookup(name: PyString) -> MroLookupByStringResult {
+    for type in self.mro {
+      switch type.__dict__.get(key: name) {
       case .value(let o):
-        return .value(ValueAndType(value: o, type: base))
+        return .value(MroLookupResult(object: o, type: type))
       case .notFound:
-        break // not in dict, move to next item
+        break // not in this type, move to next one
       case .error(let e):
         return .error(e)
       }
     }
 
     return .notFound
-  }
-
-  /// Internal API to look for a name through the MRO.
-  internal func lookupWithType(name: IdString) -> ValueAndType? {
-    for base in self.mro {
-      if let value = base.__dict__.get(id: name) {
-        return ValueAndType(value: value, type: base)
-      }
-    }
-
-    return nil
   }
 
   // MARK: - Call
@@ -848,14 +823,14 @@ public final class PyType: PyObject, HasCustomGetMethod {
     }
 
     // '__new__' is a static method, so we can't just use 'callMethod'
-    guard let newAttribute = self.lookup(name: .__new__) else {
+    guard let newLookup = self.mroLookup(name: .__new__) else {
       return .typeError("cannot create '\(self.name)' instances")
     }
 
     // '__new__' can (and probably will) be an descriptor,
     // in the most common case (staticmethod) we still have to call '__get__'
     let newFn: PyObject
-    if let descr = GetDescriptor(type: self, attribute: newAttribute) {
+    if let descr = GetDescriptor(type: self, attribute: newLookup.object) {
       switch descr.call() {
       case let .value(f):
         newFn = f
@@ -863,7 +838,7 @@ public final class PyType: PyObject, HasCustomGetMethod {
         return .error(e)
       }
     } else {
-      newFn = newAttribute
+      newFn = newLookup.object
     }
 
     let argsWithType = [self] + args
