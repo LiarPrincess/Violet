@@ -124,9 +124,8 @@ extension AbstractBytes {
   }
 
   /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _lowercaseMapping(element: UInt8) -> Data {
-    let mapping = ASCIIData.toLowercase(element)
-    return Data(byte: mapping)
+  internal static func _lowercaseMapping(element: UInt8) -> UInt8 {
+    return ASCIIData.toLowercase(element)
   }
 
   // MARK: - Upper
@@ -137,9 +136,8 @@ extension AbstractBytes {
   }
 
   /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _uppercaseMapping(element: UInt8) -> Data {
-    let mapping = ASCIIData.toUppercase(element)
-    return Data(byte: mapping)
+  internal static func _uppercaseMapping(element: UInt8) -> UInt8 {
+    return ASCIIData.toUppercase(element)
   }
 
   // MARK: - Title
@@ -150,9 +148,8 @@ extension AbstractBytes {
   }
 
   /// DO NOT USE! This is a part of `AbstractBytes` implementation.
-  internal static func _titlecaseMapping(element: UInt8) -> Data {
-    let mapping = ASCIIData.toTitlecase(element)
-    return Data(byte: mapping)
+  internal static func _titlecaseMapping(element: UInt8) -> UInt8 {
+    return ASCIIData.toTitlecase(element)
   }
 
   // MARK: - Is cased

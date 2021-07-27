@@ -2,10 +2,12 @@ import Foundation
 
 internal struct BytesBuilder: StringBuilderType, GetItemSliceBuilderType {
 
-  internal typealias Element = UInt8
   internal typealias Elements = Data
-  internal typealias CaseMapping = Data
+  internal typealias CaseMapping = UInt8
   internal typealias Result = Data
+
+  // This is for 'GetItemSliceBuilderType'
+  internal typealias Source = Data
 
   private var data: Data
 
@@ -38,12 +40,8 @@ internal struct BytesBuilder: StringBuilderType, GetItemSliceBuilderType {
     }
   }
 
-  internal mutating func append(mapping: Data) {
-    if self.data.isEmpty {
-      self.data = mapping
-    } else {
-      self.data.append(contentsOf: mapping)
-    }
+  internal mutating func append(mapping: UInt8) {
+    self.data.append(mapping)
   }
 
   internal func finalize() -> Result {

@@ -8,8 +8,8 @@ internal protocol StringBuilderType {
   // We need 'Elements' constraint to optimize 'append' for empty builder.
   // This way we will be able to just replace `self.acc` with 'other'.
   associatedtype Elements: Collection
-  associatedtype CaseMapping: Sequence where CaseMapping.Element == Elements.Element
-
+  /// Append result of a case transformation.
+  associatedtype CaseMapping
   /// Builder result.
   /// Totally abstract and defined by specific `Builder` implementation.
   /// `AbstractString` will never interact with it directly.
