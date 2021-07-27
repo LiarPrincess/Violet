@@ -98,12 +98,12 @@ public final class PyDictItems: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __contains__
   internal func contains(object: PyObject) -> PyResult<Bool> {
-    guard let tuple = PyCast.asTuple(object), tuple.data.count == 2 else {
+    guard let tuple = PyCast.asTuple(object), tuple.count == 2 else {
       return .value(false)
     }
 
-    let key = tuple.data.elements[0]
-    let value = tuple.data.elements[1]
+    let key = tuple.elements[0]
+    let value = tuple.elements[1]
 
     switch self.dict.get(key: key) {
     case let .value(o):

@@ -64,8 +64,8 @@ public final class PyTupleIterator: PyObject {
 
   // sourcery: pymethod = __length_hint__
   internal func lengthHint() -> PyInt {
-    let data = self.tuple.data
-    let result = data.count - self.index
+    let tupleCount = self.tuple.count
+    let result = tupleCount - self.index
     return Py.newInt(result)
   }
 

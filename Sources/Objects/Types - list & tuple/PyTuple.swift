@@ -11,7 +11,7 @@ import VioletCore
 // sourcery: subclassInstancesHave__dict__
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
-public final class PyTuple: PyObject {
+public final class PyTuple: PyObject, AbstractSequence {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -21,10 +21,14 @@ public final class PyTuple: PyObject {
     If the argument is a tuple, the return value is the same object.
     """
 
-  internal let data: PySequenceData
+  public let elements: [PyObject]
 
-  public var elements: [PyObject] {
-    return self.data.elements
+  internal var isEmpty: Bool {
+    return self.elements.isEmpty
+  }
+
+  internal var count: Int {
+    return self.elements.count
   }
 
   override public var description: String {
@@ -33,59 +37,60 @@ public final class PyTuple: PyObject {
 
   // MARK: - Init
 
-  internal init(elements: [PyObject]) {
-    self.data = PySequenceData(elements: elements)
-    super.init(type: Py.types.tuple)
+  internal convenience init(elements: [PyObject]) {
+    let type = Py.types.tuple
+    self.init(type: type, elements: elements)
   }
 
   internal init(type: PyType, elements: [PyObject]) {
-    self.data = PySequenceData(elements: elements)
+    self.elements = elements
     super.init(type: type)
+  }
+
+  // MARK: - AbstractSequence
+
+  internal static let _pythonTypeName = "tuple"
+
+  internal static func _toSelf(elements: [PyObject]) -> PyTuple {
+    return Py.newTuple(elements: elements)
+  }
+
+  internal static func _asSelf(object: PyObject) -> PyTuple? {
+    return PyCast.asTuple(object)
   }
 
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isEqual(to: $1) }
+    return self._isEqual(other: other)
   }
 
   // sourcery: pymethod = __ne__
   internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self.isEqual(other).not
+    return self._isNotEqual(other: other)
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isLess(than: $1) }
+    return self._isLess(other: other)
   }
 
   // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isLessEqual(than: $1) }
+    return self._isLessEqual(other: other)
   }
 
   // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isGreater(than: $1) }
+    return self._isGreater(other: other)
   }
 
   // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isGreaterEqual(than: $1) }
-  }
-
-  private func compare(
-    with other: PyObject,
-    using compareFn: (PySequenceData, PySequenceData) -> CompareResult
-  ) -> CompareResult {
-    guard let other = PyCast.asTuple(other) else {
-      return .notImplemented
-    }
-
-    return compareFn(self.data, other.data)
+    return self._isGreaterEqual(other: other)
   }
 
   // MARK: - Hashable
@@ -116,18 +121,9 @@ public final class PyTuple: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    // While not mutable, it is still possible to end up with a cycle in a tuple
-    // through an object that stores itself within a tuple (and thus infinitely
-    // asks for the repr of itself).
-    if self.hasReprLock {
-      return .value("(...)")
-    }
-
-    return self.withReprLock {
-      self.data.repr(openBracket: "(",
-                     closeBracket: ")",
-                     appendCommaIfSingleElement: true)
-    }
+    return self._repr(openBracket: "(",
+                      closeBracket: ")",
+                      appendCommaIfSingleElement: true)
   }
 
   // MARK: - Attributes
@@ -148,32 +144,28 @@ public final class PyTuple: PyObject {
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
-    return BigInt(self.data.count)
+    return BigInt(self._length)
   }
 
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
   internal func contains(object: PyObject) -> PyResult<Bool> {
-    return self.data.contains(object: object)
+    return self._contains(object: object)
   }
 
   // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
   internal func getItem(index: PyObject) -> PyResult<PyObject> {
-    switch self.data.getItem(index: index) {
-    case let .single(s): return .value(s)
-    case let .slice(s): return .value(Py.newTuple(elements: s))
-    case let .error(e): return .error(e)
-    }
+    return self._getItem(index: index)
   }
 
   // MARK: - Count
 
   // sourcery: pymethod = count
   internal func count(object: PyObject) -> PyResult<BigInt> {
-    return self.data.count(object: object)
+    return self._count(object: object)
   }
 
   // MARK: - Index of
@@ -187,10 +179,7 @@ public final class PyTuple: PyObject {
   internal func indexOf(object: PyObject,
                         start: PyObject?,
                         end: PyObject?) -> PyResult<BigInt> {
-    return self.data.indexOf(object: object,
-                             start: start,
-                             end: end,
-                             typeName: "tuple")
+    return self._indexOf(object: object, start: start, end: end)
   }
 
   // MARK: - Iter
@@ -204,46 +193,59 @@ public final class PyTuple: PyObject {
 
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    if self.data.isEmpty {
-      return .value(other)
+    switch self._handleAddArgument(object: other) {
+    case let .value(tuple):
+      let result = self.add(tuple)
+      return .value(result)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func add(_ other: PyTuple) -> PyTuple {
+    // Tuples are immutable, so we can do some minor performance improvements
+    if self._isEmpty {
+      return other
     }
 
-    guard let otherTuple = PyCast.asTuple(other) else {
-      let msg = "can only concatenate tuple (not '\(other.typeName)') to tuple"
-      return .typeError(msg)
+    if other._isEmpty {
+      return self
     }
 
-    if otherTuple.data.isEmpty {
-      return .value(self)
-    }
-
-    let result = self.data.add(other: otherTuple.data)
-    return .value(Py.newTuple(elements: result))
+    return self._add(other: other)
   }
 
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.mul(count: other)
-    return self.handle(mulResult: result)
+    switch self._handleMulArgument(object: other) {
+    case .value(let int):
+      let result = self.mul(int)
+      return .value(result)
+    case .notImplemented:
+      return .value(Py.notImplemented)
+    }
+  }
+
+  private func mul(_ count: BigInt) -> PyTuple {
+    // Tuples are immutable, so we can do some minor performance improvements
+
+    // swiftlint:disable:next empty_count
+    if count == 0 {
+      return Py.emptyTuple
+    }
+
+    if count == 1 {
+      return self
+    }
+
+    return self._mul(count: count)
   }
 
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.rmul(count: other)
-    return self.handle(mulResult: result)
-  }
-
-  private func handle(mulResult: PySequenceData.MulResult) -> PyResult<PyObject> {
-    switch mulResult {
-    case .value(let elements):
-      return .value(Py.newTuple(elements: elements))
-    case .error(let e):
-      return .error(e)
-    case .notImplemented:
-      return .value(Py.notImplemented)
-    }
+    return self.mul(other)
   }
 
   // MARK: - Python new

@@ -25,6 +25,15 @@ extension AbstractSequence {
     return .value(objectAsSelf)
   }
 
+  /// DO NOT USE! This is a part of `AbstractSequence` implementation.
+  internal func _add(other: Self) -> Self {
+    var elements = Elements()
+    elements.reserveCapacity(self._length + other._length)
+    elements.append(contentsOf: self.elements)
+    elements.append(contentsOf: other.elements)
+    return Self._toSelf(elements: elements)
+  }
+
   // MARK: - Mul
 
   /// We can't handle the whole `__mul__` operation in an abstract way,
@@ -43,6 +52,7 @@ extension AbstractSequence {
 
   /// DO NOT USE! This is a part of `AbstractSequence` implementation.
   internal func _mul(count: BigInt) -> Self {
+    assert(count >= 0) // swiftlint:disable:this empty_count
     var elements = [PyObject]()
 
     let capacityBig = BigInt(self._length) * count

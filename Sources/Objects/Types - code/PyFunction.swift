@@ -244,7 +244,7 @@ public final class PyFunction: PyObject {
     }
 
     let nFree = code.freeVariableCount
-    let nClosure = self.closure?.data.count ?? 0
+    let nClosure = self.closure?.count ?? 0
 
     if nClosure != nFree {
       let name = self.name.value

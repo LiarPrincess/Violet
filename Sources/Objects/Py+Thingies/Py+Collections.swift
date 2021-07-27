@@ -422,7 +422,7 @@ extension PyInstance {
   }
 
   public func lenInt(tuple: PyTuple) -> Int {
-    return tuple.data.count
+    return tuple.count
   }
 
   public func lenInt(dict: PyDict) -> Int {
