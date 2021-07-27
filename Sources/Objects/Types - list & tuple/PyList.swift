@@ -11,7 +11,7 @@ import VioletCore
 // sourcery: pytype = list, default, hasGC, baseType, listSubclass
 // sourcery: subclassInstancesHave__dict__
 /// This subtype of PyObject represents a Python list object.
-public final class PyList: PyObject {
+public final class PyList: PyObject, AbstractSequence {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -30,15 +30,23 @@ public final class PyList: PyObject {
     return self.data.elements
   }
 
+  internal var isEmpty: Bool {
+    return self.elements.isEmpty
+  }
+
+  internal var count: Int {
+    return self.elements.count
+  }
+
   override public var description: String {
     return "PyList(count: \(self.elements.count))"
   }
 
   // MARK: - Init
 
-  internal init(elements: [PyObject]) {
-    self.data = PySequenceData(elements: elements)
-    super.init(type: Py.types.list)
+  internal convenience init(elements: [PyObject]) {
+    let type = Py.types.list
+    self.init(type: type, elements: elements)
   }
 
   internal init(type: PyType, elements: [PyObject]) {
@@ -46,49 +54,50 @@ public final class PyList: PyObject {
     super.init(type: type)
   }
 
+  // MARK: - AbstractSequence
+
+  internal static let _pythonTypeName = "list"
+
+  internal static func _toSelf(elements: [PyObject]) -> PyList {
+    return Py.newList(elements: elements)
+  }
+
+  internal static func _asSelf(object: PyObject) -> PyList? {
+    return PyCast.asList(object)
+  }
+
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isEqual(to: $1) }
+    return self._isEqual(other: other)
   }
 
   // sourcery: pymethod = __ne__
   internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self.isEqual(other).not
+    return self._isNotEqual(other: other)
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isLess(than: $1) }
+    return self._isLess(other: other)
   }
 
   // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isLessEqual(than: $1) }
+    return self._isLessEqual(other: other)
   }
 
   // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isGreater(than: $1) }
+    return self._isGreater(other: other)
   }
 
   // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isGreaterEqual(than: $1) }
-  }
-
-  private func compare(
-    with other: PyObject,
-    using compareFn: (PySequenceData, PySequenceData) -> CompareResult
-  ) -> CompareResult {
-    guard let other = PyCast.asList(other) else {
-      return .notImplemented
-    }
-
-    return compareFn(self.data, other.data)
+    return self._isGreaterEqual(other: other)
   }
 
   // MARK: - Hashable
@@ -102,15 +111,9 @@ public final class PyList: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    if self.hasReprLock {
-      return .value("[...]")
-    }
-
-    return self.withReprLock {
-      self.data.repr(openBracket: "[",
-                     closeBracket: "]",
-                     appendCommaIfSingleElement: false)
-    }
+    return self._repr(openBracket: "[",
+                      closeBracket: "]",
+                      appendCommaIfSingleElement: false)
   }
 
   // MARK: - Attributes
@@ -129,25 +132,21 @@ public final class PyList: PyObject {
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
-    return BigInt(self.data.count)
+    return BigInt(self._length)
   }
 
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
   internal func contains(object: PyObject) -> PyResult<Bool> {
-    return self.data.contains(object: object)
+    return self._contains(object: object)
   }
 
   // MARK: - Get/set/del item
 
   // sourcery: pymethod = __getitem__
   internal func getItem(index: PyObject) -> PyResult<PyObject> {
-    switch self.data.getItem(index: index) {
-    case let .single(s): return .value(s)
-    case let .slice(s): return .value(Py.newList(elements: s))
-    case let .error(e): return .error(e)
-    }
+    return self._getItem(index: index)
   }
 
   // sourcery: pymethod = __setitem__
@@ -164,7 +163,7 @@ public final class PyList: PyObject {
 
   // sourcery: pymethod = count
   internal func count(object: PyObject) -> PyResult<BigInt> {
-    return self.data.count(object: object)
+    return self._count(object: object)
   }
 
   // MARK: - Index
@@ -178,10 +177,7 @@ public final class PyList: PyObject {
   internal func indexOf(object: PyObject,
                         start: PyObject?,
                         end: PyObject?) -> PyResult<BigInt> {
-    return self.data.indexOf(object: object,
-                             start: start,
-                             end: end,
-                             typeName: "list")
+    return self._indexOf(object: object, start: start, end: end)
   }
 
   // MARK: - Iter
@@ -315,13 +311,13 @@ public final class PyList: PyObject {
 
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    guard let otherList = PyCast.asList(other) else {
-      let msg = "can only concatenate list (not '\(other.typeName)') to list"
-      return .typeError(msg)
+    switch self._handleAddArgument(object: other) {
+    case let .value(list):
+      let result = self._add(other: list)
+      return .value(result)
+    case let .error(e):
+      return .error(e)
     }
-
-    let result = self.data.add(other: otherList.data)
-    return .value(Py.newList(elements: result))
   }
 
   // sourcery: pymethod = __iadd__
@@ -338,25 +334,18 @@ public final class PyList: PyObject {
 
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.mul(count: other)
-    return self.handle(mulResult: result)
+    switch self._handleMulArgument(object: other) {
+    case .value(let int):
+      let result = self._mul(count: int)
+      return .value(result)
+    case .notImplemented:
+      return .value(Py.notImplemented)
+    }
   }
 
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.rmul(count: other)
-    return self.handle(mulResult: result)
-  }
-
-  private func handle(mulResult: PySequenceData.MulResult) -> PyResult<PyObject> {
-    switch mulResult {
-    case .value(let elements):
-      return .value(Py.newList(elements: elements))
-    case .error(let e):
-      return .error(e)
-    case .notImplemented:
-      return .value(Py.notImplemented)
-    }
+    return self.mul(other)
   }
 
   // sourcery: pymethod = __imul__
@@ -369,6 +358,17 @@ public final class PyList: PyObject {
       return .value(Py.notImplemented)
     case .error(let e):
       return .error(e)
+    }
+  }
+
+  private func handle(mulResult: PySequenceData.MulResult) -> PyResult<PyObject> {
+    switch mulResult {
+    case .value(let elements):
+      return .value(Py.newList(elements: elements))
+    case .error(let e):
+      return .error(e)
+    case .notImplemented:
+      return .value(Py.notImplemented)
     }
   }
 
