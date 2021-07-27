@@ -171,8 +171,7 @@ internal struct PySequenceData {
 
   private struct GetItemSliceBuilder: GetItemSliceBuilderType {
     // swiftlint:disable nesting
-    fileprivate typealias Element = PyObject
-    fileprivate typealias SourceSubsequence = Array<PyObject>.SubSequence
+    fileprivate typealias Source = [PyObject]
     fileprivate typealias Result = [PyObject]
     // swiftlint:enable nesting
 
@@ -183,7 +182,7 @@ internal struct PySequenceData {
       self.result.reserveCapacity(capacity)
     }
 
-    fileprivate init(sourceSubsequenceWhenStepIs1: Array<PyObject>.SubSequence) {
+    fileprivate init(sourceSubsequenceWhenStepIs1: Source.SubSequence) {
       self.result = Array(sourceSubsequenceWhenStepIs1)
     }
 

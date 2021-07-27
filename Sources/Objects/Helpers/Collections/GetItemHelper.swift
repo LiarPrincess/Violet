@@ -9,18 +9,17 @@ internal enum GetItemResult<Element, SliceBuilderResult> {
 /// This type will be used when `GetItemImpl.getItem` gets called with slice.
 internal protocol GetItemSliceBuilderType {
 
-  /// Type of the element that we will be appending.
-  associatedtype Element
-  /// If slice has step '1' then we will just assign `Source` subsequence.
-  associatedtype SourceSubsequence: Collection where
-    SourceSubsequence.Element == Element
+  /// Type from which we are getting elements.
+  associatedtype Source: Collection
   /// Type of the final result (probably some collection of `Elements`).
   associatedtype Result
 
   init(capacity: Int)
-  init(sourceSubsequenceWhenStepIs1: SourceSubsequence)
 
-  mutating func append(element: Element)
+  /// If slice has step '1' then we will just assign `Source` subsequence.
+  init(sourceSubsequenceWhenStepIs1: Source.SubSequence)
+
+  mutating func append(element: Source.Element)
   func finalize() -> Result
 }
 
@@ -34,8 +33,7 @@ internal protocol GetItemHelper {
     Source.Index == Int
 
   /// Type used to accumulate slice values.
-  associatedtype SliceBuilder: GetItemSliceBuilderType where
-    SliceBuilder.SourceSubsequence == Source.SubSequence
+  associatedtype SliceBuilder: GetItemSliceBuilderType where SliceBuilder.Source == Source
 }
 
 extension GetItemHelper {

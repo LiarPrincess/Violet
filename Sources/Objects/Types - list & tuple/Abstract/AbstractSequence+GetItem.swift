@@ -4,8 +4,7 @@ private enum GetItemImpl: GetItemHelper {
 }
 
 private struct GetItemSliceBuilder: GetItemSliceBuilderType {
-  fileprivate typealias Element = PyObject
-  fileprivate typealias SourceSubsequence = Array<PyObject>.SubSequence
+  fileprivate typealias Source = [PyObject]
   fileprivate typealias Result = [PyObject]
 
   private var result: [PyObject]
@@ -15,7 +14,7 @@ private struct GetItemSliceBuilder: GetItemSliceBuilderType {
     self.result.reserveCapacity(capacity)
   }
 
-  fileprivate init(sourceSubsequenceWhenStepIs1: Array<PyObject>.SubSequence) {
+  fileprivate init(sourceSubsequenceWhenStepIs1: Source.SubSequence) {
     self.result = Array(sourceSubsequenceWhenStepIs1)
   }
 
