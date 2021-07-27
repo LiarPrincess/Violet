@@ -46,7 +46,12 @@ public final class PySlice: PyObject {
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isEqual(to: $1) }
+    switch self.getFirstNonEqualValues(other: other) {
+    case .values: return .value(false)
+    case .allValuesEqual: return .value(true)
+    case .notImplemented: return .notImplemented
+    case .error(let e): return .error(e)
+    }
   }
 
   // sourcery: pymethod = __ne__
@@ -58,41 +63,80 @@ public final class PySlice: PyObject {
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isLess(than: $1) }
+    return self.compare(other: other,
+                        compareFn: Py.isLessBool(left:right:),
+                        onEqual: false)
   }
 
   // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isLessEqual(than: $1) }
+    return self.compare(other: other,
+                        compareFn: Py.isLessEqualBool(left:right:),
+                        onEqual: true)
   }
 
   // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isGreater(than: $1) }
+    return self.compare(other: other,
+                        compareFn: Py.isGreaterBool(left:right:),
+                        onEqual: false)
   }
 
   // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self.compare(with: other) { $0.isGreaterEqual(than: $1) }
+    return self.compare(other: other,
+                        compareFn: Py.isGreaterEqualBool(left:right:),
+                        onEqual: true)
   }
 
-  private func compare(
-    with other: PyObject,
-    using compareFn: (PySequenceData, PySequenceData) -> CompareResult
-  ) -> CompareResult {
-    guard let other = PyCast.asSlice(other) else {
+  private enum FirstNonEqualValues {
+    case values(selfValue: PyObject, otherValue: PyObject)
+    case allValuesEqual
+    case notImplemented
+    case error(PyBaseException)
+  }
+
+  private func getFirstNonEqualValues(other: PyObject) -> FirstNonEqualValues {
+    guard let o = PyCast.asSlice(other) else {
       return .notImplemented
     }
 
-    let selfSeq = self.asStartStopStepSequence
-    let otherSeq = other.asStartStopStepSequence
-    return compareFn(selfSeq, otherSeq)
+    switch Py.isEqualBool(left: self.start, right: o.start) {
+    case .value(true): break
+    case .value(false): return .values(selfValue: self.start, otherValue: o.start)
+    case .error(let e): return .error(e)
+    }
+
+    switch Py.isEqualBool(left: self.stop, right: o.stop) {
+    case .value(true): break
+    case .value(false): return .values(selfValue: self.stop, otherValue: o.stop)
+    case .error(let e): return .error(e)
+    }
+
+    switch Py.isEqualBool(left: self.step, right: o.step) {
+    case .value(true): break
+    case .value(false): return .values(selfValue: self.step, otherValue: o.step)
+    case .error(let e): return .error(e)
+    }
+
+    return .allValuesEqual
   }
 
-  /// Create `self.start, self.stop, self.step` sequence.
-  private var asStartStopStepSequence: PySequenceData {
-    let elements = [self.start, self.stop, self.step]
-    return PySequenceData(elements: elements)
+  private func compare(other: PyObject,
+                       compareFn: (PyObject, PyObject) -> PyResult<Bool>,
+                       onEqual: Bool) -> CompareResult {
+    switch self.getFirstNonEqualValues(other: other) {
+    case let .values(selfValue: s, otherValue: o):
+      let result = compareFn(s, o)
+      return CompareResult(result)
+
+    case .allValuesEqual:
+      return .value(onEqual)
+    case .notImplemented:
+      return .notImplemented
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Hashable
