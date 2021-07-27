@@ -77,12 +77,12 @@ extension Sys {
 
     let object = Py.newString(value)
 
-    if list.data.isEmpty {
-      list.data.append(object: object)
+    if list.isEmpty {
+      list.append(object: object)
       return .value(Py.none)
     }
 
-    return list.data.setItem(index: 0, object: object)
+    return list.setItem(index: 0, object: object)
   }
 
   // MARK: - Flags

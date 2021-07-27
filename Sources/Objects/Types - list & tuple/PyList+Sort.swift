@@ -49,8 +49,8 @@ extension PyList {
     // []
     // []
     // []
-    var copy = self.data.elements
-    _ = self.data.clear()
+    var copy = self.elements
+    _ = self.elements = []
 
     // Cache keys (for a brief moment we will use 3*memory)
     var keyedElements = [ElementWithKey]()
@@ -59,20 +59,20 @@ extension PyList {
       case let .value(k):
         keyedElements.append(ElementWithKey(key: k, element: object))
       case let .error(e):
-        self.data = PySequenceData(elements: copy) // Go back to elements before keys
+        self.elements = copy // Go back to elements before keys
         return .error(e)
       }
     }
 
-    guard self.data.isEmpty else {
-      self.data = PySequenceData(elements: copy) // Go back to elements before keys
+    guard self.isEmpty else {
+      self.elements = copy // Go back to elements before keys
       return .error(self.createListModifiedDuringSortError())
     }
 
     // On exit we will assign sorted elements to 'self.data'.
     // Even if sort fails we will assign partially sorted elements.
     // Also, we no longer need 'copy' (we moved data to 'keyedElements').
-    defer { self.data = PySequenceData(elements: keyedElements.map { $0.element }) }
+    defer { self.elements = keyedElements.map { $0.element } }
     copy = []
 
     do {
@@ -95,7 +95,7 @@ extension PyList {
       // Check if user tried to touch our list.
       // Remember that 'self.data' was set to []
       // (and it still should be empty because 'defer' did not run yet)!
-      guard self.data.isEmpty else {
+      guard self.isEmpty else {
         return .error(self.createListModifiedDuringSortError())
       }
 

@@ -24,11 +24,7 @@ public final class PyList: PyObject, AbstractSequence {
     The argument must be an iterable if specified.
     """
 
-  internal var data: PySequenceData
-
-  internal var elements: [PyObject] {
-    return self.data.elements
-  }
+  internal var elements: [PyObject]
 
   internal var isEmpty: Bool {
     return self.elements.isEmpty
@@ -39,7 +35,7 @@ public final class PyList: PyObject, AbstractSequence {
   }
 
   override public var description: String {
-    return "PyList(count: \(self.elements.count))"
+    return "PyList(count: \(self.count))"
   }
 
   // MARK: - Init
@@ -50,7 +46,7 @@ public final class PyList: PyObject, AbstractSequence {
   }
 
   internal init(type: PyType, elements: [PyObject]) {
-    self.data = PySequenceData(elements: elements)
+    self.elements = elements
     super.init(type: type)
   }
 
@@ -142,21 +138,62 @@ public final class PyList: PyObject, AbstractSequence {
     return self._contains(object: object)
   }
 
-  // MARK: - Get/set/del item
+  // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
   internal func getItem(index: PyObject) -> PyResult<PyObject> {
     return self._getItem(index: index)
   }
 
+  // MARK: - Set item
+
+  private enum SetItemImpl: SetItemHelper {
+    // swiftlint:disable nesting
+    fileprivate typealias Target = [PyObject]
+    fileprivate typealias SliceSource = [PyObject]
+    // swiftlint:enable nesting
+
+    fileprivate static func getElementToSetAtIntIndex(
+      object: PyObject
+    ) -> PyResult<PyObject> {
+      return .value(object)
+    }
+
+    fileprivate static func getElementsToSetAtSliceIndices(
+      object: PyObject
+    ) -> PyResult<[PyObject]> {
+      switch Py.toArray(iterable: object) {
+      case let .value(elements):
+        return .value(elements)
+      case .error:
+        return .typeError("can only assign an iterable")
+      }
+    }
+  }
+
   // sourcery: pymethod = __setitem__
   internal func setItem(index: PyObject, object: PyObject) -> PyResult<PyNone> {
-    return self.data.setItem(index: index, object: object)
+    return SetItemImpl.setItem(target: &self.elements,
+                               index: index,
+                               value: object)
+  }
+
+  internal func setItem(index: Int, object: PyObject) -> PyResult<PyNone> {
+    return SetItemImpl.setItem(target: &self.elements,
+                               index: index,
+                               value: object)
+  }
+
+  // MARK: - Del item
+
+  private enum DelItemImpl: DelItemHelper {
+    // swiftlint:disable:next nesting
+    fileprivate typealias Target = [PyObject]
   }
 
   // sourcery: pymethod = __delitem__
   internal func delItem(index: PyObject) -> PyResult<PyNone> {
-    return self.data.delItem(index: index)
+    return DelItemImpl.delItem(target: &self.elements, index: index)
   }
 
   // MARK: - Count
@@ -196,7 +233,14 @@ public final class PyList: PyObject, AbstractSequence {
 
   // sourcery: pymethod = append
   internal func append(object: PyObject) {
-    self.data.append(object: object)
+    self.elements.append(object)
+  }
+
+  // MARK: - Prepend
+
+  // This is not a Python method, but it is used by other types
+  internal func prepend(object: PyObject) {
+    self.elements.insert(object, at: 0)
   }
 
   // MARK: - Insert
@@ -210,14 +254,52 @@ public final class PyList: PyObject, AbstractSequence {
 
   // sourcery: pymethod = insert, doc = insertDoc
   internal func insert(index: PyObject, object: PyObject) -> PyResult<PyNone> {
-    return self.data.insert(index: index, object: object)
+    let unwrappedIndex = IndexHelper.int(
+      index,
+      onOverflow: .overflowError(msg: "cannot add more objects to list")
+    )
+
+    switch unwrappedIndex {
+    case let .value(int):
+      self.insert(index: int, object: object)
+      return .value(Py.none)
+    case let .error(e),
+         let .notIndex(e),
+         let .overflow(_, e):
+      return .error(e)
+    }
+  }
+
+  private func insert(index: Int, object: PyObject) {
+    var index = index
+
+    if index < 0 {
+      index += self.count
+      if index < 0 {
+        index = 0
+      }
+    }
+
+    if index > self.count {
+      index = self.count
+    }
+
+    self.elements.insert(object, at: index)
   }
 
   // MARK: - Extend
 
   // sourcery: pymethod = extend
   internal func extend(iterable: PyObject) -> PyResult<PyNone> {
-    return self.data.extend(iterable: iterable)
+    // Do not modify 'self.elements' until we finished iteration!
+    // We do not want to end with half-baked product!
+    switch Py.toArray(iterable: iterable) {
+    case let .value(elements):
+      self.elements.append(contentsOf: elements)
+      return .value(Py.none)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Remove
@@ -233,14 +315,86 @@ public final class PyList: PyObject, AbstractSequence {
 
   // sourcery: pymethod = remove, doc = removeDoc
   internal func remove(object: PyObject) -> PyResult<PyNone> {
-    return self.data.remove(typeName: self.typeName, object: object)
+    switch self.findIndex(object: object) {
+    case .index(let index):
+      self.elements.remove(at: index)
+      return .value(Py.none)
+
+    case .notFound:
+      return .valueError("list.remove(x): x not in list")
+
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  private enum FindIndexResult {
+    case index(Int)
+    case notFound
+    case error(PyBaseException)
+  }
+
+  private func findIndex(object: PyObject) -> FindIndexResult {
+    for (index, element) in self.elements.enumerated() {
+      switch Py.isEqualBool(left: element, right: object) {
+      case .value(true): return .index(index)
+      case .value(false): break // go to next element
+      case .error(let e): return .error(e)
+      }
+    }
+
+    return .notFound
   }
 
   // MARK: - Pop
 
   // sourcery: pymethod = pop
   internal func pop(index: PyObject?) -> PyResult<PyObject> {
-    return self.data.pop(index: index, typeName: "list")
+    switch self.parsePopIndex(from: index) {
+    case let .value(int):
+      return self.pop(index: int)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func parsePopIndex(from index: PyObject?) -> PyResult<Int> {
+    guard let index = index else {
+      return .value(-1)
+    }
+
+    let unwrappedIndex = IndexHelper.int(
+      index,
+      onOverflow: .indexError(msg: "pop index out of range")
+    )
+
+    switch unwrappedIndex {
+    case let .value(int):
+      return .value(int)
+    case let .error(e),
+          let .notIndex(e),
+          let .overflow(_, e):
+      return .error(e)
+    }
+  }
+
+  private func pop(index: Int) -> PyResult<PyObject> {
+    if self.isEmpty {
+      return .indexError("pop from empty list")
+    }
+
+    var index = index
+    if index < 0 {
+      index += self.count
+    }
+
+    // swiftlint:disable:next yoda_condition
+    guard 0 <= index && index < self.count else {
+      return .indexError("pop index out of range")
+    }
+
+    let result = self.elements.remove(at: index)
+    return .value(result)
   }
 
   // MARK: - Sort
@@ -290,21 +444,23 @@ public final class PyList: PyObject, AbstractSequence {
 
   // sourcery: pymethod = reverse, doc = reverseDoc
   internal func reverse() -> PyResult<PyNone> {
-    return self.data.reverse()
+    self.elements.reverse()
+    return .value(Py.none)
   }
 
   // MARK: - Clear
 
   // sourcery: pymethod = clear
   internal func clear() -> PyNone {
-    return self.data.clear()
+    self.elements.removeAll()
+    return Py.none
   }
 
   // MARK: - Copy
 
   // sourcery: pymethod = copy
   internal func copy() -> PyObject {
-    return Py.newList(elements: self.data.elements)
+    return Py.newList(elements: self.elements)
   }
 
   // MARK: - Add
@@ -336,7 +492,9 @@ public final class PyList: PyObject, AbstractSequence {
   internal func mul(_ other: PyObject) -> PyResult<PyObject> {
     switch self._handleMulArgument(object: other) {
     case .value(let int):
-      let result = self._mul(count: int)
+      var copy = self.elements
+      self._mul(elements: &copy, count: int)
+      let result = Py.newList(elements: copy)
       return .value(result)
     case .notImplemented:
       return .value(Py.notImplemented)
@@ -350,23 +508,10 @@ public final class PyList: PyObject, AbstractSequence {
 
   // sourcery: pymethod = __imul__
   internal func imul(_ other: PyObject) -> PyResult<PyObject> {
-    switch self.data.mul(count: other) {
-    case .value(let elements):
-      self.data = PySequenceData(elements: elements)
+    switch self._handleMulArgument(object: other) {
+    case .value(let int):
+      self._mul(elements: &self.elements, count: int)
       return .value(self)
-    case .notImplemented:
-      return .value(Py.notImplemented)
-    case .error(let e):
-      return .error(e)
-    }
-  }
-
-  private func handle(mulResult: PySequenceData.MulResult) -> PyResult<PyObject> {
-    switch mulResult {
-    case .value(let elements):
-      return .value(Py.newList(elements: elements))
-    case .error(let e):
-      return .error(e)
     case .notImplemented:
       return .value(Py.notImplemented)
     }
@@ -409,7 +554,7 @@ public final class PyList: PyObject, AbstractSequence {
     }
 
     if let iterable = args.first {
-      switch self.data.extend(iterable: iterable) {
+      switch self.extend(iterable: iterable) {
       case .value: break
       case .error(let e): return .error(e)
       }

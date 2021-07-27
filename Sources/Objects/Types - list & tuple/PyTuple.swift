@@ -32,7 +32,7 @@ public final class PyTuple: PyObject, AbstractSequence {
   }
 
   override public var description: String {
-    return "PyTuple(count: \(self.elements.count))"
+    return "PyTuple(count: \(self.count))"
   }
 
   // MARK: - Init
@@ -240,7 +240,9 @@ public final class PyTuple: PyObject, AbstractSequence {
       return self
     }
 
-    return self._mul(count: count)
+    var copy = self.elements
+    self._mul(elements: &copy, count: count)
+    return Py.newTuple(elements: copy)
   }
 
   // sourcery: pymethod = __rmul__

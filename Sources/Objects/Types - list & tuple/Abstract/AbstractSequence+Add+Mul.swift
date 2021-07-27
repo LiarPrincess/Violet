@@ -1,5 +1,7 @@
 import BigInt
 
+// swiftlint:disable empty_count
+
 // swiftlint:disable:next type_name
 internal enum AbstractSequence_MulCount {
   case value(BigInt)
@@ -51,20 +53,35 @@ extension AbstractSequence {
   }
 
   /// DO NOT USE! This is a part of `AbstractSequence` implementation.
-  internal func _mul(count: BigInt) -> Self {
-    assert(count >= 0) // swiftlint:disable:this empty_count
-    var elements = [PyObject]()
+  internal func _mul(elements: inout Elements, count: BigInt) {
+    assert(count >= 0)
 
-    let capacityBig = BigInt(self._length) * count
+    if count == 0 {
+      elements = []
+      return
+    }
+
+    let alreadyHave = BigInt(1)
+    if count == alreadyHave {
+      return
+    }
+
+    let capacityBig = BigInt(elements.count) * count
     if let capacity = Int(exactly: capacityBig) {
       elements.reserveCapacity(capacity)
     }
     // else: we are in deep trouble, but we will let it crash
 
-    for _ in 0..<count {
-      elements.append(contentsOf: self.elements)
-    }
+    let remainingCount = count - alreadyHave
+    let initialElementCount = elements.count
 
-    return Self._toSelf(elements: elements)
+    for _ in 0..<remainingCount {
+      // We have to do it manually, otherwise we would need to create a copy of
+      // orginal 'elements'.
+      for i in 0..<initialElementCount {
+        let e = elements[i]
+        elements.append(e)
+      }
+    }
   }
 }

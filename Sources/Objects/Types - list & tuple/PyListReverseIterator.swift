@@ -15,7 +15,7 @@ public final class PyListReverseIterator: PyObject {
   internal private(set) var index: Int
 
   override public var description: String {
-    let count = self.list.data.count
+    let count = self.list.count
     return "PyListReverseIterator(count: \(count), index: \(self.index))"
   }
 

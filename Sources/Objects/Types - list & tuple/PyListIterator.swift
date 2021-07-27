@@ -23,7 +23,7 @@ public final class PyListIterator: PyObject {
   }
 
   override public var description: String {
-    let count = self.list.data.count
+    let count = self.list.count
     return "PyListIterator(count: \(count), index: \(self.index))"
   }
 
@@ -65,8 +65,8 @@ public final class PyListIterator: PyObject {
 
   // sourcery: pymethod = __length_hint__
   internal func lengthHint() -> PyInt {
-    let data = self.list.data
-    let result = data.count - self.index
+    let count = self.list.count
+    let result = count - self.index
     return Py.newInt(result)
   }
 

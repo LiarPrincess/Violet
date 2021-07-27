@@ -37,8 +37,6 @@ extension AbstractSequence {
     return .value(result)
   }
 
-  // MARK: - Find
-
   // MARK: - Index of
 
   /// DO NOT USE! This is a part of `AbstractSequence` implementation.
