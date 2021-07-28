@@ -263,9 +263,13 @@ public final class PyList: PyObject, AbstractSequence {
     case let .value(int):
       self.insert(index: int, object: object)
       return .value(Py.none)
-    case let .error(e),
-         let .notIndex(e),
-         let .overflow(_, e):
+    case let .notIndex(lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .overflow(_, lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .error(e):
       return .error(e)
     }
   }
@@ -371,9 +375,13 @@ public final class PyList: PyObject, AbstractSequence {
     switch unwrappedIndex {
     case let .value(int):
       return .value(int)
-    case let .error(e),
-          let .notIndex(e),
-          let .overflow(_, e):
+    case let .notIndex(lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .overflow(_, lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .error(e):
       return .error(e)
     }
   }

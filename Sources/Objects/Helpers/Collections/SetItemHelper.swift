@@ -34,8 +34,10 @@ extension SetItemHelper {
       return Self.setItem(target: &target, index: int, value: value)
     case .notIndex:
       break // Try other
-    case .error(let e),
-         .overflow(_, let e):
+    case let .overflow(_, lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case .error(let e):
       return .error(e)
     }
 

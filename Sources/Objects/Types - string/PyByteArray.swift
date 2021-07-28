@@ -748,9 +748,13 @@ public final class PyByteArray: PyObject, AbstractBytes {
     switch IndexHelper.int(index, onOverflow: .overflowError(msg: overflowMsg)) {
     case let .value(i):
       indexInt = i
-    case let .error(e),
-         let .notIndex(e),
-         let .overflow(_, e):
+    case let .notIndex(lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .overflow(_, lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .error(e):
       return .error(e)
     }
 
@@ -863,9 +867,13 @@ public final class PyByteArray: PyObject, AbstractBytes {
     switch IndexHelper.int(index, onOverflow: .indexError(msg: msg)) {
     case let .value(int):
       return .value(int)
-    case let .error(e),
-         let .notIndex(e),
-         let .overflow(_, e):
+    case let .notIndex(lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .overflow(_, lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .error(e):
       return .error(e)
     }
   }

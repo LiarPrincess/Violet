@@ -1,6 +1,8 @@
 import BigInt
 import VioletCore
 
+// swiftlint:disable nesting
+
 /// Helper for dealing with `__index__` Python method.
 internal enum IndexHelper {
 
@@ -8,13 +10,12 @@ internal enum IndexHelper {
 
   internal enum IntIndex {
     case value(Int)
-    case overflow(BigInt, PyBaseException)
-    case notIndex(PyBaseException)
+    case overflow(BigInt, LazyIntOverflowError)
+    case notIndex(LazyNotIndexError)
     case error(PyBaseException)
   }
 
   internal struct OnIntOverflow {
-    // swiftlint:disable:next nesting
     fileprivate enum ErrorKind {
       case overflow
       case index
@@ -41,6 +42,44 @@ internal enum IndexHelper {
     }
   }
 
+  /// Wrapper for Int overflow error to avoid an actual error object allocation
+  /// if this is not needed.
+  internal struct LazyIntOverflowError {
+    private enum Message {
+      case string(value: String)
+      case generic(typeName: String)
+    }
+
+    private let errorKind: OnIntOverflow.ErrorKind
+    private let msg: Message
+
+    fileprivate init(convertedObject: PyObject, onOverflow: OnIntOverflow) {
+      if let msg = onOverflow.msg {
+        self.msg = .string(value: msg)
+      } else {
+        self.msg = .generic(typeName: convertedObject.typeName)
+      }
+
+      self.errorKind = onOverflow.errorKind
+    }
+
+    internal func create() -> PyBaseException {
+      let msg: String = {
+        switch self.msg {
+        case let .generic(typeName: typeName):
+          return "cannot fit '\(typeName)' into an index-sized integer"
+        case let .string(value: s):
+          return s
+        }
+      }()
+
+      switch self.errorKind {
+      case .overflow: return Py.newOverflowError(msg: msg)
+      case .index: return Py.newIndexError(msg: msg)
+      }
+    }
+  }
+
   /// Try to extract `Int` index from `PyObject`.
   ///
   /// When object is not convertible to index it will return `.notIndex`.
@@ -51,10 +90,10 @@ internal enum IndexHelper {
   /// Py_ssize_t PyNumber_AsSsize_t(PyObject *item, PyObject *err)
   /// _PyEval_SliceIndexNotNone
   /// ```
-  internal static func int(_ value: PyObject,
+  internal static func int(_ object: PyObject,
                            onOverflow: OnIntOverflow) -> IntIndex {
     let bigInt: BigInt
-    switch Self.bigInt(value) {
+    switch Self.bigInt(object) {
     case .value(let v): bigInt = v
     case .notIndex(let i): return .notIndex(i)
     case .error(let e): return .error(e)
@@ -64,16 +103,7 @@ internal enum IndexHelper {
       return .value(int)
     }
 
-    let e: PyBaseException = {
-      let t = value.typeName
-      let msg = onOverflow.msg ?? "cannot fit '\(t)' into an index-sized integer"
-
-      switch onOverflow.errorKind {
-      case .overflow: return Py.newOverflowError(msg: msg)
-      case .index: return Py.newIndexError(msg: msg)
-      }
-    }()
-
+    let e = LazyIntOverflowError(convertedObject: object, onOverflow: onOverflow)
     return .overflow(bigInt, e)
   }
 
@@ -81,8 +111,19 @@ internal enum IndexHelper {
 
   internal enum BigIntIndex {
     case value(BigInt)
-    case notIndex(PyBaseException)
+    case notIndex(LazyNotIndexError)
     case error(PyBaseException)
+  }
+
+  /// Wrapper type error to avoid an actual error object allocation
+  /// if this is not needed.
+  internal struct LazyNotIndexError {
+    fileprivate let typeName: String
+
+    internal func create() -> PyBaseException {
+      let msg = "'\(typeName)' object cannot be interpreted as an integer"
+      return Py.newTypeError(msg: msg)
+    }
   }
 
   /// Try to extract `BigInt` index from `PyObject`.
@@ -94,16 +135,16 @@ internal enum IndexHelper {
   /// PyObject *
   /// PyNumber_Index(PyObject *item)
   /// ```
-  internal static func bigInt(_ value: PyObject) -> BigIntIndex {
-    if let int = PyCast.asInt(value) {
+  internal static func bigInt(_ object: PyObject) -> BigIntIndex {
+    if let int = PyCast.asInt(object) {
       return .value(int.value)
     }
 
-    if let result = PyStaticCall.__index__(value) {
+    if let result = PyStaticCall.__index__(object) {
       return .value(result)
     }
 
-    switch Py.callMethod(object: value, selector: .__index__) {
+    switch Py.callMethod(object: object, selector: .__index__) {
     case .value(let object):
       guard let int = PyCast.asInt(object) else {
         let msg = "__index__ returned non-int (type \(object.typeName)"
@@ -124,9 +165,8 @@ internal enum IndexHelper {
       return .value(int.value)
 
     case .missingMethod:
-      let typeName = value.typeName
-      let msg = "'\(typeName)' object cannot be interpreted as an integer"
-      return .notIndex(Py.newTypeError(msg: msg))
+      let e = LazyNotIndexError(typeName: object.typeName)
+      return .notIndex(e)
 
     case .error(let e),
          .notCallable(let e):

@@ -19,8 +19,10 @@ extension DelItemHelper {
       return Self.delItem(target: &target, index: int)
     case .notIndex:
       break // Try slice
-    case .error(let e),
-         .overflow(_, let e):
+    case .overflow(_, let lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case .error(let e):
       return .error(e)
     }
 

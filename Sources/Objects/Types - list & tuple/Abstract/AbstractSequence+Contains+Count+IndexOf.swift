@@ -122,9 +122,15 @@ extension AbstractSequence {
       let result = self.elements.index(start, offsetBy: index, limitedBy: end)
       return .index(result ?? end)
 
-    case let .error(e),
-         let .notIndex(e),
-         let .overflow(_, e):
+    case let .notIndex(lazyError):
+      let e = lazyError.create()
+      return .error(e)
+
+    case let .overflow(_, lazyError):
+      let e = lazyError.create()
+      return .error(e)
+
+    case let .error(e):
       return .error(e)
     }
   }

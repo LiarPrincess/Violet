@@ -687,9 +687,13 @@ public final class PyFloat: PyObject {
     switch IndexHelper.int(object, onOverflow: .overflowError) {
     case let .value(i):
       return .int(i)
-    case let .error(e),
-         let .notIndex(e),
-         let .overflow(_, e):
+    case let .notIndex(lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .overflow(_, lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .error(e):
       return .error(e)
     }
   }

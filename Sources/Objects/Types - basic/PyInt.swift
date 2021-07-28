@@ -821,8 +821,10 @@ public class PyInt: PyObject {
     switch IndexHelper.bigInt(object) {
     case let .value(int):
       return .value(int)
-    case let .error(e),
-         let .notIndex(e):
+    case let .notIndex(lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .error(e):
       return .error(e)
     }
   }
@@ -930,9 +932,13 @@ public class PyInt: PyObject {
     switch IndexHelper.int(base, onOverflow: .overflowError) {
     case let .value(b):
       baseInt = b
-    case let .error(e),
-         let .notIndex(e),
-         let .overflow(_, e):
+    case let .notIndex(lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .overflow(_, lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .error(e):
       return .error(e)
     }
 

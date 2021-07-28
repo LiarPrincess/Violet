@@ -186,8 +186,10 @@ extension AbstractBytes {
     switch IndexHelper.bigInt(object) {
     case let .value(b):
       bigInt = b
-    case let .error(e),
-         let .notIndex(e):
+    case let .notIndex(lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .error(e):
       return .error(e)
     }
 

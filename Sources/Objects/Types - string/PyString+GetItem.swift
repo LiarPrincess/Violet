@@ -16,8 +16,10 @@ extension PyString {
       }
     case .notIndex:
       break // Try slice
-    case .error(let e),
-         .overflow(_, let e):
+    case let .overflow(_, lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case .error(let e):
       return .error(e)
     }
 

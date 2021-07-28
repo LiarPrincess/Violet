@@ -77,7 +77,7 @@ extension AbstractSequence {
 
     for _ in 0..<remainingCount {
       // We have to do it manually, otherwise we would need to create a copy of
-      // orginal 'elements'.
+      // original 'elements'.
       for i in 0..<initialElementCount {
         let e = elements[i]
         elements.append(e)

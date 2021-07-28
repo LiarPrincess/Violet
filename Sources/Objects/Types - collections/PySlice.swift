@@ -212,8 +212,10 @@ public final class PySlice: PyObject {
     switch IndexHelper.bigInt(length) {
     case let .value(v):
       lengthInt = v
-    case let .error(e),
-         let .notIndex(e):
+    case let .notIndex(lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .error(e):
       return .error(e)
     }
 

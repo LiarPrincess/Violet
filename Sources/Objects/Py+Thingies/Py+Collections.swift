@@ -340,8 +340,10 @@ extension PyInstance {
     switch IndexHelper.bigInt(object) {
     case let .value(int):
       return .value(self.newInt(int))
-    case let .error(e),
-         let .notIndex(e):
+    case let .notIndex(lazyError):
+      let e = lazyError.create()
+      return .error(e)
+    case let .error(e):
       return .error(e)
     }
   }

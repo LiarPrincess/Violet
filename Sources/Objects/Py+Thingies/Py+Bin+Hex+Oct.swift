@@ -31,8 +31,11 @@ extension PyInstance {
       let result = sign + prefix + number
       return .value(self.newString(result))
 
-    case let .error(e),
-         let .notIndex(e):
+    case let .notIndex(lazyError):
+      let e = lazyError.create()
+      return .error(e)
+
+    case let .error(e):
       return .error(e)
     }
   }
