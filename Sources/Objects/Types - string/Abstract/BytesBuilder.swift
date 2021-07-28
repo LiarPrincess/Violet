@@ -6,9 +6,6 @@ internal struct BytesBuilder: StringBuilderType, GetItemSliceBuilderType {
   internal typealias CaseMapping = UInt8
   internal typealias Result = Data
 
-  // This is for 'GetItemSliceBuilderType'
-  internal typealias Source = Data
-
   private var data: Data
 
   internal init(capacity: Int) {
@@ -50,9 +47,10 @@ internal struct BytesBuilder: StringBuilderType, GetItemSliceBuilderType {
 
   // MARK: - GetItemSliceBuilderType
 
-  internal typealias SourceSubsequence = Data
+  // This is for 'GetItemSliceBuilderType'
+  internal typealias Source = Data
 
-  internal init(sourceSubsequenceWhenStepIs1: Data) {
-    self.data = sourceSubsequenceWhenStepIs1
+  internal static func whenStepIs1(subsequence: Data) -> Data {
+    return subsequence
   }
 }

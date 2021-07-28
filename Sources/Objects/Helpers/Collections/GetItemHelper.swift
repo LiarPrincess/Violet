@@ -14,10 +14,12 @@ internal protocol GetItemSliceBuilderType {
   /// Type of the final result (probably some collection of `Elements`).
   associatedtype Result
 
-  init(capacity: Int)
-
   /// If slice has step '1' then we will just assign `Source` subsequence.
-  init(sourceSubsequenceWhenStepIs1: Source.SubSequence)
+  ///
+  /// This may be faster than assigning each element separately.
+  static func whenStepIs1(subsequence: Source.SubSequence) -> Result
+
+  init(capacity: Int)
 
   mutating func append(element: Source.Element)
   func finalize() -> Result
@@ -113,8 +115,7 @@ extension GetItemHelper {
 
     if indices.step == 1 {
       let subsequence = source.dropFirst(indices.start).prefix(indices.count)
-      let builder = SliceBuilder(sourceSubsequenceWhenStepIs1: subsequence)
-      let result = builder.finalize()
+      let result = SliceBuilder.whenStepIs1(subsequence: subsequence)
       return .value(result)
     }
 

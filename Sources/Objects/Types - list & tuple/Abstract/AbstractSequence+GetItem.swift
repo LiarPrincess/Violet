@@ -9,13 +9,13 @@ private struct GetItemSliceBuilder: GetItemSliceBuilderType {
 
   private var result: [PyObject]
 
+  fileprivate static func whenStepIs1(subsequence: Source.SubSequence) -> Result {
+    return Array(subsequence)
+  }
+
   fileprivate init(capacity: Int) {
     self.result = [PyObject]()
     self.result.reserveCapacity(capacity)
-  }
-
-  fileprivate init(sourceSubsequenceWhenStepIs1: Source.SubSequence) {
-    self.result = Array(sourceSubsequenceWhenStepIs1)
   }
 
   fileprivate mutating func append(element: PyObject) {
