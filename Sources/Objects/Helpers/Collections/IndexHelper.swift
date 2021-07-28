@@ -13,22 +13,38 @@ internal enum IndexHelper {
     case error(PyBaseException)
   }
 
-  // We model this as '(1 * 2) + (1 * 2)' instead of '2 * 2' (errorKind * message),
-  // so that our users can just type '.overflowError' without parens.
-  internal enum OnIntOverflow {
-    case overflowError(msg: String?)
-    case indexError(msg: String?)
+  internal struct OnIntOverflow {
+    // swiftlint:disable:next nesting
+    fileprivate enum ErrorKind {
+      case overflow
+      case index
+    }
 
-    /// .default = .overflow
-    internal static let `default` = OnIntOverflow.overflowError(msg: nil)
-    internal static let overflowError = OnIntOverflow.overflowError(msg: nil)
-    internal static let indexError = OnIntOverflow.indexError(msg: nil)
+    fileprivate let errorKind: ErrorKind
+    fileprivate let msg: String?
+
+    private init(errorKind: ErrorKind, msg: String?) {
+      self.errorKind = errorKind
+      self.msg = msg
+    }
+
+    internal static var overflowError = Self.overflowError(msg: nil)
+
+    internal static func overflowError(msg: String?) -> OnIntOverflow {
+      return OnIntOverflow(errorKind: .overflow, msg: msg)
+    }
+
+    internal static var indexError = Self.indexError(msg: nil)
+
+    internal static func indexError(msg: String?) -> OnIntOverflow {
+      return OnIntOverflow(errorKind: .index, msg: msg)
+    }
   }
 
   /// Try to extract `Int` index from `PyObject`.
   ///
   /// When object is not convertible to index it will return `.notIndex`.
-  /// When index is out of range of `int` it will return `.overflow`.
+  /// When index is out of range of an `int` it will return `.overflow`.
   ///
   /// CPython:
   /// ```
@@ -48,22 +64,17 @@ internal enum IndexHelper {
       return .value(int)
     }
 
-    let e = Self.createOverflowError(object: value, type: onOverflow)
+    let e: PyBaseException = {
+      let t = value.typeName
+      let msg = onOverflow.msg ?? "cannot fit '\(t)' into an index-sized integer"
+
+      switch onOverflow.errorKind {
+      case .overflow: return Py.newOverflowError(msg: msg)
+      case .index: return Py.newIndexError(msg: msg)
+      }
+    }()
+
     return .overflow(bigInt, e)
-  }
-
-  private static func createOverflowError(object: PyObject,
-                                          type: OnIntOverflow) -> PyBaseException {
-    switch type {
-    case let .overflowError(msg):
-      let defaultMsg = "Python int too large to convert to Swift int"
-      return Py.newOverflowError(msg: msg ?? defaultMsg)
-
-    case let .indexError(msg):
-      let typeName = object.typeName
-      let defaultMsg = "cannot fit '\(typeName)' into an index-sized integer"
-      return Py.newIndexError(msg: msg ?? defaultMsg)
-    }
   }
 
   // MARK: - BigInt
@@ -99,9 +110,8 @@ internal enum IndexHelper {
         return .error(Py.newTypeError(msg: msg))
       }
 
-      let isExactlyIntNotSubclass = PyCast.isExactlyInt(int)
-      let isSubclass = !isExactlyIntNotSubclass
-      if isSubclass {
+      let isIntSubclass = !PyCast.isExactlyInt(int)
+      if isIntSubclass {
         let msg = "__index__ returned non-int (type \(int.typeName)).  " +
           "The ability to return an instance of a strict subclass of int " +
           "is deprecated, and may be removed in a future version of Python."

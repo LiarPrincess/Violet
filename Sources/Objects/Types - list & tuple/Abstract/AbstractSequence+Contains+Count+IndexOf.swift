@@ -108,7 +108,7 @@ extension AbstractSequence {
       return .none
     }
 
-    switch IndexHelper.int(value, onOverflow: .default) {
+    switch IndexHelper.int(value, onOverflow: .overflowError) {
     case var .value(index):
       if index < 0 {
         index += self.elements.count

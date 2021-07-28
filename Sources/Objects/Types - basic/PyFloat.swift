@@ -684,7 +684,7 @@ public final class PyFloat: PyObject {
       return .none
     }
 
-    switch IndexHelper.int(object, onOverflow: .default) {
+    switch IndexHelper.int(object, onOverflow: .overflowError) {
     case let .value(i):
       return .int(i)
     case let .error(e),

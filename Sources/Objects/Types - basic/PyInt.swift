@@ -927,7 +927,7 @@ public class PyInt: PyObject {
 
     // Check if base is 'int'
     let baseInt: Int
-    switch IndexHelper.int(base, onOverflow: .default) {
+    switch IndexHelper.int(base, onOverflow: .overflowError) {
     case let .value(b):
       baseInt = b
     case let .error(e),
