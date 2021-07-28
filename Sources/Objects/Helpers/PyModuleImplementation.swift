@@ -75,65 +75,63 @@ extension PyModuleImplementation {
 
   /// Get value from `self.__dict__` and cast it to `int`.
   internal func getInt(_ name: Properties) -> PyResult<PyInt> {
-    return self.get(name, andCastAs: PyInt.self, typeName: "int")
+    return self.get(name, castFn: PyCast.asInt, typeName: "int")
   }
 
   /// Get value from `self.__dict__` and cast it to `str`.
   internal func getString(_ name: Properties) -> PyResult<PyString> {
-    return self.get(name, andCastAs: PyString.self, typeName: "str")
+    return self.get(name, castFn: PyCast.asString, typeName: "str")
   }
 
   /// Get value from `self.__dict__` and cast it to `list`.
   internal func getList(_ name: Properties) -> PyResult<PyList> {
-    return self.get(name, andCastAs: PyList.self, typeName: "list")
+    return self.get(name, castFn: PyCast.asList, typeName: "list")
   }
 
   /// Get value from `self.__dict__` and cast it to `tuple`.
   internal func getTuple(_ name: Properties) -> PyResult<PyTuple> {
-    return self.get(name, andCastAs: PyTuple.self, typeName: "tuple")
+    return self.get(name, castFn: PyCast.asTuple, typeName: "tuple")
   }
 
   /// Get value from `self.__dict__` and cast it to `dict`.
   internal func getDict(_ name: Properties) -> PyResult<PyDict> {
-    return self.get(name, andCastAs: PyDict.self, typeName: "dict")
+    return self.get(name, castFn: PyCast.asDict, typeName: "dict")
   }
 
   /// Get value from `self.__dict__` and cast it to `text file`.
   internal func getTextFile(_ name: Properties) -> PyResult<PyTextFile> {
-    return self.get(name, andCastAs: PyTextFile.self, typeName: "textFile")
+    return self.get(name, castFn: PyCast.asTextFile, typeName: "textFile")
   }
 
   /// Call `self.get(_:)` and then cast to specific type.
   private func get<T>(
     _ name: Properties,
-    andCastAs type: T.Type,
+    castFn: (PyObject) -> T?,
     typeName: String
   ) -> PyResult<T> {
-    // Technically we don't need 'type' argument
-    // (because Swift can infer it from return type)
-    // but we want to be extra explicit.
-
     let object: PyObject
     switch self.get(name) {
     case let .value(o): object = o
     case let .error(e): return .error(e)
     }
 
-    if let typed = object as? T {
+    if let typed = castFn(object) {
       return .value(typed)
     }
 
     let msg = self.createPropertyTypeError(name,
                                            got: object,
                                            expectedType: typeName)
+
     return .typeError(msg)
   }
 
   internal func createPropertyTypeError(_ name: Properties,
                                         got object: PyObject,
                                         expectedType: String) -> String {
-    return "expected '\(Self.moduleName).\(name)' to be \(expectedType) " +
-              "not \(object.typeName) <surprised Pikachu face>"
+    let module = Self.moduleName
+    let objectType = object.typeName
+    return "expected '\(module).\(name)' to be \(expectedType) not \(objectType)"
   }
 
   // MARK: - Set
