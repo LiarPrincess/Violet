@@ -11,12 +11,12 @@ import VioletCore
 // sourcery: pytype = frozenset, default, hasGC, baseType
 // sourcery: subclassInstancesHave__dict__
 /// This is an instance of PyTypeObject representing the Python frozenset type.
-public final class PyFrozenSet: PyObject {
+public final class PyFrozenSet: PyObject, AbstractSet {
 
-  // MARK: - OrderedSet & Element
+  // MARK: - Element, OrderedSet
 
-  internal typealias OrderedSet = PySet.OrderedSet
-  internal typealias Element = PySet.Element
+  internal typealias Element = AbstractSet_Element
+  internal typealias OrderedSet = VioletObjects.OrderedSet<Element>
 
   // MARK: - Properties
 
@@ -30,15 +30,19 @@ public final class PyFrozenSet: PyObject {
 
   internal let data: PySetData
 
+  internal var elements: OrderedSet {
+    return self.data.elements
+  }
+
   override public var description: String {
     return "PyFrozenSet(count: \(self.data.count))"
   }
 
   // MARK: - Init
 
-  internal init(elements: PyFrozenSet.OrderedSet) {
-    self.data = PySetData(elements: elements)
-    super.init(type: Py.types.frozenset)
+  internal convenience init(elements: PyFrozenSet.OrderedSet) {
+    let type = Py.types.frozenset
+    self.init(type: type, elements: elements)
   }
 
   internal init(type: PyType, elements: PyFrozenSet.OrderedSet) {
@@ -46,40 +50,44 @@ public final class PyFrozenSet: PyObject {
     super.init(type: type)
   }
 
+  // MARK: - AbstractSet
+
+  internal static func _toSelf(elements: OrderedSet) -> PyFrozenSet {
+    return Py.newFrozenSet(elements: elements)
+  }
+
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    return self.data.isEqual(to: other)
+    return self._isEqual(other: other)
   }
 
   // sourcery: pymethod = __ne__
   internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    // CPython has different implementation here,
-    // but in the end it all comes down to:
-    return self.isEqual(other).not
+    return self._isNotEqual(other: other)
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    return self.data.isLess(than: other)
+    return self._isLess(other: other)
   }
 
   // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self.data.isLessEqual(than: other)
+    return self._isLessEqual(other: other)
   }
 
   // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> CompareResult {
-    return self.data.isGreater(than: other)
+    return self._isGreater(other: other)
   }
 
   // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self.data.isGreaterEqual(than: other)
+    return self._isGreaterEqual(other: other)
   }
 
   // MARK: - Hashable
@@ -114,7 +122,7 @@ public final class PyFrozenSet: PyObject {
     }
 
     return self.withReprLock {
-      let elements = self.data.joinElementsForRepr()
+      let elements = self._joinElementsForRepr()
       return elements.map { "\(typeName)({" + $0 + "})" }
     }
   }
@@ -137,70 +145,65 @@ public final class PyFrozenSet: PyObject {
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
-    return BigInt(self.data.count)
+    return BigInt(self._count)
   }
 
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
   internal func contains(object: PyObject) -> PyResult<Bool> {
-    return self.data.contains(object: object)
+    return self._contains(object: object)
   }
 
   // MARK: - And
 
   // sourcery: pymethod = __and__
   internal func and(_ other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.and(other: other)
-    return self.createSet(result: result)
+    return self._and(other: other)
   }
 
   // sourcery: pymethod = __rand__
   internal func rand(_ other: PyObject) -> PyResult<PyObject> {
-    return self.and(other)
+    return self._rand(other: other)
   }
 
   // MARK: - Or
 
   // sourcery: pymethod = __or__
   internal func or(_ other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.or(other: other)
-    return self.createSet(result: result)
+    return self._or(other: other)
   }
 
   // sourcery: pymethod = __ror__
   internal func ror(_ other: PyObject) -> PyResult<PyObject> {
-    return self.or(other)
+    return self._ror(other: other)
   }
 
   // MARK: - Xor
 
   // sourcery: pymethod = __xor__
   internal func xor(_ other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.xor(other: other)
-    return self.createSet(result: result)
+    return self._xor(other: other)
   }
 
   // sourcery: pymethod = __rxor__
   internal func rxor(_ other: PyObject) -> PyResult<PyObject> {
-    return self.xor(other)
+    return self._rxor(other: other)
   }
 
   // MARK: - Sub
 
   // sourcery: pymethod = __sub__
   internal func sub(_ other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.sub(other: other)
-    return self.createSet(result: result)
+    return self._sub(other: other)
   }
 
   // sourcery: pymethod = __rsub__
   internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.rsub(other: other)
-    return self.createSet(result: result)
+    return self._rsub(other: other)
   }
 
-  // MARK: - Subset
+  // MARK: - Is subset
 
   internal static let isSubsetDoc = """
     Report whether another set contains this set.
@@ -208,10 +211,10 @@ public final class PyFrozenSet: PyObject {
 
   // sourcery: pymethod = issubset, doc = isSubsetDoc
   internal func isSubset(of other: PyObject) -> PyResult<Bool> {
-    return self.data.isSubset(of: other)
+    return self._isSubset(of: other)
   }
 
-  // MARK: - Superset
+  // MARK: - Is superset
 
   internal static let isSupersetDoc = """
     Report whether this set contains another set.
@@ -219,7 +222,18 @@ public final class PyFrozenSet: PyObject {
 
   // sourcery: pymethod = issuperset, doc = isSupersetDoc
   internal func isSuperset(of other: PyObject) -> PyResult<Bool> {
-    return self.data.isSuperset(of: other)
+    return self._isSuperset(of: other)
+  }
+
+  // MARK: - Is disjoint
+
+  internal static let isDisjointDoc = """
+    Return True if two sets have a null intersection.
+    """
+
+  // sourcery: pymethod = isdisjoint, doc = isDisjointDoc
+  internal func isDisjoint(with other: PyObject) -> PyResult<Bool> {
+    return self._isDisjoint(with: other)
   }
 
   // MARK: - Intersection
@@ -232,8 +246,7 @@ public final class PyFrozenSet: PyObject {
 
   // sourcery: pymethod = intersection, doc = intersectionDoc
   internal func intersection(with other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.intersection(with: other)
-    return self.createSet(result: result)
+    return self._intersection(with: other)
   }
 
   // MARK: - Union
@@ -246,8 +259,7 @@ public final class PyFrozenSet: PyObject {
 
   // sourcery: pymethod = union, doc = unionDoc
   internal func union(with other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.union(with: other)
-    return self.createSet(result: result)
+    return self._union(with: other)
   }
 
   // MARK: - Difference
@@ -260,8 +272,7 @@ public final class PyFrozenSet: PyObject {
 
   // sourcery: pymethod = difference, doc = differenceDoc
   internal func difference(with other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.difference(with: other)
-    return self.createSet(result: result)
+    return self._difference(with: other)
   }
 
   // MARK: - Symmetric difference
@@ -274,19 +285,7 @@ public final class PyFrozenSet: PyObject {
 
   // sourcery: pymethod = symmetric_difference, doc = symmetricDifferenceDoc
   internal func symmetricDifference(with other: PyObject) -> PyResult<PyObject> {
-    let result = self.data.symmetricDifference(with: other)
-    return self.createSet(result: result)
-  }
-
-  // MARK: - Is disjoint
-
-  internal static let isDisjointDoc = """
-    Return True if two sets have a null intersection.
-    """
-
-  // sourcery: pymethod = isdisjoint, doc = isDisjointDoc
-  internal func isDisjoint(with other: PyObject) -> PyResult<Bool> {
-    return self.data.isDisjoint(with: other)
+    return self._symmetricDifference(with: other)
   }
 
   // MARK: - Copy
@@ -295,7 +294,7 @@ public final class PyFrozenSet: PyObject {
 
   // sourcery: pymethod = copy, doc = copyDoc
   internal func copy() -> PyObject {
-    return self.createSet(data: self.data)
+    return Py.newFrozenSet(elements: self.elements)
   }
 
   // MARK: - Iter
@@ -327,48 +326,20 @@ public final class PyFrozenSet: PyObject {
       return .error(e)
     }
 
-    let data: PySetData
+    let elements: OrderedSet
     if let iterable = args.first {
-      switch PySetData.from(iterable: iterable) {
-      case let .value(d): data = d
+      switch Self._getElements(iterable: iterable) {
+      case let .value(e): elements = e
       case let .error(e): return .error(e)
       }
     } else {
-      data = PySetData()
+      elements = OrderedSet()
     }
-
-    let elements = data.elements
 
     let result: PyFrozenSet = isBuiltin ?
       Py.newFrozenSet(elements: elements) :
       PyMemory.newFrozenSet(type: type, elements: elements)
 
     return .value(result)
-  }
-
-  // MARK: - Helpers
-
-  private func createSet(result: PySetData.BitOperationResult) -> PyResult<PyObject> {
-    switch result {
-    case .set(let data):
-      return .value(self.createSet(data: data))
-    case .notImplemented:
-      return .value(Py.notImplemented)
-    case .error(let e):
-      return .error(e)
-    }
-  }
-
-  private func createSet(result: PyResult<PySetData>) -> PyResult<PyObject> {
-    switch result {
-    case let .value(data):
-      return .value(self.createSet(data: data))
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  private func createSet(data: PySetData) -> PyFrozenSet {
-    return Py.newFrozenSet(elements: data.elements)
   }
 }
