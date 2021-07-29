@@ -288,7 +288,19 @@ public final class PySet: PyObject, AbstractSet {
 
   // sourcery: pymethod = add, doc = addDoc
   internal func add(object: PyObject) -> PyResult<PyNone> {
-    return self.data.add(object: object)
+    switch Self._createElement(from: object) {
+    case let .value(element):
+      switch self.elements.insert(element: element) {
+      case .inserted,
+           .updated:
+        return .value(Py.none)
+      case .error(let e):
+        return .error(e)
+      }
+
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Update
@@ -299,7 +311,26 @@ public final class PySet: PyObject, AbstractSet {
 
   // sourcery: pymethod = update, doc = updateDoc
   internal func update(from other: PyObject) -> PyResult<PyNone> {
-    return self.data.update(from: other)
+    switch Self._getElements(iterable: other) {
+    case let .value(set):
+      return self.update(from: set)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func update(from other: OrderedSet) -> PyResult<PyNone> {
+    for element in other {
+      switch self.elements.insert(element: element) {
+      case .inserted,
+           .updated:
+        break
+      case .error(let e):
+        return .error(e)
+      }
+    }
+
+    return .value(Py.none)
   }
 
   // MARK: - Remove
@@ -312,7 +343,24 @@ public final class PySet: PyObject, AbstractSet {
 
   // sourcery: pymethod = remove, doc = removeDoc
   internal func remove(object: PyObject) -> PyResult<PyNone> {
-    return self.data.remove(object: object)
+    switch Self._createElement(from: object) {
+    case let .value(element):
+      return self.remove(element: element)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func remove(element: Element) -> PyResult<PyNone> {
+    switch self.elements.remove(element: element) {
+    case .ok:
+      return .value(Py.none)
+    case .notFound:
+      let e = Py.newKeyError(key: element.object)
+      return .error(e)
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // MARK: - Discard
@@ -325,7 +373,22 @@ public final class PySet: PyObject, AbstractSet {
 
   // sourcery: pymethod = discard, doc = discardDoc
   internal func discard(object: PyObject) -> PyResult<PyNone> {
-    return self.data.discard(object: object)
+    switch Self._createElement(from: object) {
+    case let .value(element):
+      return self.discard(element: element)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func discard(element: Element) -> PyResult<PyNone> {
+    switch self.elements.remove(element: element) {
+    case .ok,
+         .notFound:
+      return .value(Py.none)
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // MARK: - Clear
@@ -336,7 +399,8 @@ public final class PySet: PyObject, AbstractSet {
 
   // sourcery: pymethod = clear, doc = clearDoc
   internal func clear() -> PyNone {
-    return self.data.clear()
+    self.elements.clear()
+    return Py.none
   }
 
   // MARK: - Copy
@@ -357,7 +421,12 @@ public final class PySet: PyObject, AbstractSet {
 
   // sourcery: pymethod = pop, doc = popDoc
   internal func pop() -> PyResult<PyObject> {
-    return self.data.pop()
+    guard let lastElement = self.elements.last else {
+      return .keyError("pop from an empty set")
+    }
+
+    _ = self.remove(element: lastElement)
+    return .value(lastElement.object)
   }
 
   // MARK: - Iter
