@@ -7,7 +7,10 @@ import VioletCore
 // Objects -> dictobject.c
 
 // sourcery: pytype = dict_keys, default, hasGC
-public final class PyDictKeys: PyObject, PyDictViewsShared {
+public final class PyDictKeys: PyObject, AbstractDictView {
+
+  internal typealias OrderedDictionary = PyDict.OrderedDictionary
+  internal typealias Element = OrderedDictionary.Element
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
@@ -15,7 +18,7 @@ public final class PyDictKeys: PyObject, PyDictViewsShared {
   internal let dict: PyDict
 
   override public var description: String {
-    return "PyDictKeys(count: \(self.elements.count))"
+    return "PyDictKeys(count: \(self._elements.count))"
   }
 
   // MARK: - Init
@@ -29,41 +32,41 @@ public final class PyDictKeys: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    return self.isEqualShared(other)
+    return self._isEqual(other)
   }
 
   // sourcery: pymethod = __ne__
   internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return self.isNotEqualShared(other)
+    return self._isNotEqual(other)
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    return self.isLessShared(other)
+    return self._isLess(other)
   }
 
   // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    return self.isLessEqualShared(other)
+    return self._isLessEqual(other)
   }
 
   // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> CompareResult {
-    return self.isGreaterShared(other)
+    return self._isGreater(other)
   }
 
   // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    return self.isGreaterEqualShared(other)
+    return self._isGreaterEqual(other)
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    return self.hashShared()
+    return self._hash()
   }
 
   // MARK: - Class
@@ -77,7 +80,18 @@ public final class PyDictKeys: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    return self.reprShared(typeName: "dict_keys")
+    return self._repr(typeName: "dict_keys", elementRepr: Self.repr(element:))
+  }
+
+  private static func repr(element: Element) -> PyResult<String> {
+    // >>> d = {'a': 1, 'b': 2, 'c': 3}
+    //
+    // >>> k = d.keys()
+    // >>> repr(k)
+    // "dict_keys(['a', 'b', 'c'])"
+
+    let key = element.key.object
+    return Py.reprString(object: key)
   }
 
   // MARK: - Attributes
@@ -91,7 +105,7 @@ public final class PyDictKeys: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
-    return self.getLengthShared()
+    return self._getLength()
   }
 
   // MARK: - Contains

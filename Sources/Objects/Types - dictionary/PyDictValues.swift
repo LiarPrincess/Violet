@@ -7,7 +7,10 @@ import VioletCore
 // Objects -> dictobject.c
 
 // sourcery: pytype = dict_values, default, hasGC
-public final class PyDictValues: PyObject, PyDictViewsShared {
+public final class PyDictValues: PyObject, AbstractDictView {
+
+  internal typealias OrderedDictionary = PyDict.OrderedDictionary
+  internal typealias Element = OrderedDictionary.Element
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
@@ -15,7 +18,7 @@ public final class PyDictValues: PyObject, PyDictViewsShared {
   internal let dict: PyDict
 
   override public var description: String {
-    return "PyDictValues(count: \(self.elements.count))"
+    return "PyDictValues(count: \(self._elements.count))"
   }
 
   // MARK: - Init
@@ -29,7 +32,18 @@ public final class PyDictValues: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    return self.reprShared(typeName: "dict_values")
+    return self._repr(typeName: "dict_values", elementRepr: Self.repr(element:))
+  }
+
+  private static func repr(element: Element) -> PyResult<String> {
+    // >>> d = {'a': 1, 'b': 2, 'c': 3}
+    //
+    // >>> v = d.values()
+    // >>> repr(v)
+    // 'dict_values([1, 2, 3])'
+
+    let value = element.value
+    return Py.reprString(object: value)
   }
 
   // MARK: - Attributes
@@ -50,7 +64,7 @@ public final class PyDictValues: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
-    return self.getLengthShared()
+    return self._getLength()
   }
 
   // MARK: - Iter
