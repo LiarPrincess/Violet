@@ -10,7 +10,6 @@ import VioletCore
 
 // sourcery: pytype = frozenset, default, hasGC, baseType
 // sourcery: subclassInstancesHave__dict__
-/// This is an instance of PyTypeObject representing the Python frozenset type.
 public final class PyFrozenSet: PyObject, AbstractSet {
 
   // MARK: - Element, OrderedSet
@@ -28,14 +27,10 @@ public final class PyFrozenSet: PyObject, AbstractSet {
     Build an immutable unordered collection of unique elements.
     """
 
-  internal let data: PySetData
-
-  internal var elements: OrderedSet {
-    return self.data.elements
-  }
+  internal let elements: OrderedSet
 
   override public var description: String {
-    return "PyFrozenSet(count: \(self.data.count))"
+    return "PyFrozenSet(count: \(self.elements.count))"
   }
 
   // MARK: - Init
@@ -46,7 +41,7 @@ public final class PyFrozenSet: PyObject, AbstractSet {
   }
 
   internal init(type: PyType, elements: PyFrozenSet.OrderedSet) {
-    self.data = PySetData(elements: elements)
+    self.elements = elements
     super.init(type: type)
   }
 
@@ -100,10 +95,10 @@ public final class PyFrozenSet: PyObject, AbstractSet {
     var x: PyHash = 0x34_5678
     var multiplier = Hasher.multiplier
 
-    for element in self.data.elements {
+    for element in self.elements {
       let y = element.hash
       x = (x ^ y) * multiplier
-      multiplier += 82_520 + PyHash(2 * self.data.count)
+      multiplier += 82_520 + PyHash(2 * self.elements.count)
     }
 
     return x + 97_531
@@ -113,7 +108,7 @@ public final class PyFrozenSet: PyObject, AbstractSet {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    if self.data.isEmpty {
+    if self.elements.isEmpty {
       return .value(self.typeName + "()")
     }
 

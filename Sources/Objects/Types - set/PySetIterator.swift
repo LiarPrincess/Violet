@@ -17,7 +17,7 @@ public final class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
 
   // For 'OrderedDictionaryBackedIterator'
   internal var dict: OrderedDictionary<PySet.Element, Void> {
-    let orderedSet = self.set.data.elements
+    let orderedSet = self.set.elements
     return orderedSet.dict
   }
 
@@ -38,7 +38,7 @@ public final class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
   private init(set: PyAnySet) {
     self.set = set
     self.index = 0
-    self.initialCount = set.data.count
+    self.initialCount = set.elements.count
     super.init(type: Py.types.set_iterator)
   }
 
@@ -67,7 +67,7 @@ public final class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
 
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
-    let currentCount = self.set.data.count
+    let currentCount = self.set.elements.count
     guard currentCount == self.initialCount else {
       self.index = -1 // Make this state sticky
       return .runtimeError("Set changed size during iteration")
@@ -80,8 +80,8 @@ public final class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
 
   // sourcery: pymethod = __length_hint__
   internal func lengthHint() -> PyInt {
-    let data = self.set.data
-    let result = data.count - self.index
+    let count = self.set.elements.count
+    let result = count - self.index
     return Py.newInt(result)
   }
 

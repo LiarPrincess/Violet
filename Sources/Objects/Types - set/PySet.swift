@@ -10,8 +10,6 @@ import VioletCore
 
 // sourcery: pytype = set, default, hasGC, baseType
 // sourcery: subclassInstancesHave__dict__
-/// This subtype of PyObject is used to hold the internal data for both set
-/// and frozenset objects.
 public final class PySet: PyObject, AbstractSet {
 
   // MARK: - Element, OrderedSet
@@ -29,15 +27,10 @@ public final class PySet: PyObject, AbstractSet {
     Build an unordered collection of unique elements.
     """
 
-  internal var data: PySetData
-
-  internal var elements: OrderedSet {
-    get { return self.data.elements }
-    set { self.data = PySetData(elements: newValue) }
-  }
+  internal var elements: OrderedSet
 
   override public var description: String {
-    return "PySet(count: \(self.data.count))"
+    return "PySet(count: \(self.elements.count))"
   }
 
   // MARK: - Init
@@ -48,7 +41,7 @@ public final class PySet: PyObject, AbstractSet {
   }
 
   internal init(type: PyType, elements: PySet.OrderedSet) {
-    self.data = PySetData(elements: elements)
+    self.elements = elements
     super.init(type: type)
   }
 
@@ -103,7 +96,7 @@ public final class PySet: PyObject, AbstractSet {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    if self.data.isEmpty {
+    if self.elements.isEmpty {
       return .value(self.typeName + "()")
     }
 
@@ -112,7 +105,7 @@ public final class PySet: PyObject, AbstractSet {
     }
 
     return self.withReprLock {
-      let elements = self.data.joinElementsForRepr()
+      let elements = self._joinElementsForRepr()
       return elements.map { "{" + $0 + "}" } // no 'self.typeName'!
     }
   }

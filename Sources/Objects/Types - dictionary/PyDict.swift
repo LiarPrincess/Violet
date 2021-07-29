@@ -756,11 +756,13 @@ public final class PyDict: PyObject {
     assert(PyCast.isExactlyDict(target))
     assert(PyCast.isExactlyAnySet(set))
 
-    for element in set.data.elements {
+    for element in set.elements {
       let key = Key(hash: element.hash, object: element.object)
-      if let e = target.updateSingleEntry(key: key,
-                                          value: value,
-                                          onKeyDuplicate: Self.onFillFromKeysDuplicate) {
+      if let e = target.updateSingleEntry(
+          key: key,
+          value: value,
+          onKeyDuplicate: Self.onFillFromKeysDuplicate
+      ) {
         return .error(e)
       }
     }

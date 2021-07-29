@@ -28,13 +28,6 @@ internal struct PyAnySet: CustomStringConvertible {
     }
   }
 
-  internal var data: PySetData {
-    switch self.storage {
-    case let .set(s): return s.data
-    case let .frozenSet(s): return s.data
-    }
-  }
-
   internal init(set: PySet) {
     self.storage = .set(set)
   }

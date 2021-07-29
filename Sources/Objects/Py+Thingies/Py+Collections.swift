@@ -99,18 +99,26 @@ extension PyInstance {
   }
 
   private func asSetElements(args: [PyObject]) -> PyResult<PySet.OrderedSet> {
-    var data = PySetData()
+    var result = PySet.OrderedSet(count: args.count)
 
     for object in args {
-      switch data.insert(object: object) {
-      case .ok:
-        break
-      case .error(let e):
+      switch Py.hash(object: object) {
+      case let .value(hash):
+        let element = PySet.Element(hash: hash, object: object)
+
+        switch result.insert(element: element) {
+        case .inserted,
+             .updated:
+          break
+        case let .error(e):
+          return .error(e)
+        }
+
+      case let .error(e):
         return .error(e)
       }
     }
 
-    let result = data.elements
     return .value(result)
   }
 
@@ -553,12 +561,8 @@ extension PyInstance {
       return dict.elements.map { $0.key.object }
     }
 
-    if let set = PyCast.asSet(iterable) {
-      return set.data.elements.map { $0.object }
-    }
-
-    if let set = PyCast.asFrozenSet(iterable) {
-      return set.data.elements.map { $0.object }
+    if let set = PyCast.asExactlyAnySet(iterable) {
+      return set.elements.map { $0.object }
     }
 
     if let bytes = PyCast.asExactlyAnyBytes(iterable) {
