@@ -113,6 +113,16 @@ internal enum PyStaticCall {
     return nil
   }
 
+  // MARK: - __dir__
+
+  internal static func __dir__(_ object: PyObject) -> PyResult<DirResult>? {
+    if let method = object.type.staticMethods.__dir__?.fn {
+      return method(object)
+    }
+
+    return nil
+  }
+
   // MARK: - __eq__
 
   internal static func __eq__(left: PyObject, right: PyObject) -> CompareResult? {
@@ -363,16 +373,6 @@ internal enum PyStaticCall {
     return nil
   }
 
-  // MARK: - __dir__
-
-  internal static func __dir__(_ object: PyObject) -> PyResult<DirResult>? {
-    if let method = object.type.staticMethods.__dir__?.fn {
-      return method(object)
-    }
-
-    return nil
-  }
-
   // MARK: - __call__
 
   internal static func __call__(_ object: PyObject, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>? {
@@ -433,20 +433,20 @@ internal enum PyStaticCall {
     return nil
   }
 
-  // MARK: - __abs__
+  // MARK: - __invert__
 
-  internal static func __abs__(_ object: PyObject) -> PyObject? {
-    if let method = object.type.staticMethods.__abs__?.fn {
+  internal static func __invert__(_ object: PyObject) -> PyObject? {
+    if let method = object.type.staticMethods.__invert__?.fn {
       return method(object)
     }
 
     return nil
   }
 
-  // MARK: - __invert__
+  // MARK: - __abs__
 
-  internal static func __invert__(_ object: PyObject) -> PyObject? {
-    if let method = object.type.staticMethods.__invert__?.fn {
+  internal static func __abs__(_ object: PyObject) -> PyObject? {
+    if let method = object.type.staticMethods.__abs__?.fn {
       return method(object)
     }
 

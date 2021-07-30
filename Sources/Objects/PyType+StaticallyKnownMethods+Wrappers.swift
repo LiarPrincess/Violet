@@ -81,6 +81,24 @@ extension PyType.StaticallyKnownNotOverriddenMethods {
     }
   }
 
+  // MARK: DirWrapper
+
+  internal struct DirWrapper {
+
+    internal let fn: (PyObject) -> PyResult<DirResult>
+
+    internal init(_ fn: @escaping (PyObject) -> PyResult<DirResult>) {
+      self.fn = fn
+    }
+
+    internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyResult<DirResult>) {
+      self.fn = { (arg0: PyObject) in
+        let zelf = forceCast(object: arg0, as: T.self)
+        return fn(zelf)()
+      }
+    }
+  }
+
   // MARK: ComparisonWrapper
 
   internal struct ComparisonWrapper {
@@ -371,24 +389,6 @@ extension PyType.StaticallyKnownNotOverriddenMethods {
     internal let fn: (PyObject) -> PyResult<PyNone>
 
     internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyResult<PyNone>) {
-      self.fn = { (arg0: PyObject) in
-        let zelf = forceCast(object: arg0, as: T.self)
-        return fn(zelf)()
-      }
-    }
-  }
-
-  // MARK: DirWrapper
-
-  internal struct DirWrapper {
-
-    internal let fn: (PyObject) -> PyResult<DirResult>
-
-    internal init(_ fn: @escaping (PyObject) -> PyResult<DirResult>) {
-      self.fn = fn
-    }
-
-    internal init<T: PyObject>(_ fn: @escaping (T) -> () -> PyResult<DirResult>) {
       self.fn = { (arg0: PyObject) in
         let zelf = forceCast(object: arg0, as: T.self)
         return fn(zelf)()

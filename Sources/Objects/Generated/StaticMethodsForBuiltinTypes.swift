@@ -19,6 +19,7 @@ internal enum StaticMethodsForBuiltinTypes {
     result.__repr__ = .init(PyObjectType.repr(zelf:))
     result.__str__ = .init(PyObjectType.str(zelf:))
     result.__hash__ = .init(PyObjectType.hash(zelf:))
+    result.__dir__ = .init(PyObjectType.dir(zelf:))
     result.__eq__ = .init(PyObjectType.isEqual(zelf:other:))
     result.__ne__ = .init(PyObjectType.isNotEqual(zelf:other:))
     result.__lt__ = .init(PyObjectType.isLess(zelf:other:))
@@ -28,7 +29,6 @@ internal enum StaticMethodsForBuiltinTypes {
     result.__getattribute__ = .init(PyObjectType.getAttribute(zelf:name:))
     result.__setattr__ = .init(PyObjectType.setAttribute(zelf:name:value:))
     result.__delattr__ = .init(PyObjectType.delAttribute(zelf:name:))
-    result.__dir__ = .init(PyObjectType.dir(zelf:))
     return result
   }()
 
@@ -478,8 +478,8 @@ internal enum StaticMethodsForBuiltinTypes {
     result.__getattribute__ = .init(PyInt.getAttribute(name:))
     result.__pos__ = .init(PyInt.positive)
     result.__neg__ = .init(PyInt.negative)
-    result.__abs__ = .init(PyInt.abs)
     result.__invert__ = .init(PyInt.invert)
+    result.__abs__ = .init(PyInt.abs)
     result.__trunc__ = .init(PyInt.trunc)
     result.__round__ = .init(PyInt.round(nDigits:))
     result.__add__ = .init(PyInt.add(_:))
@@ -603,10 +603,10 @@ internal enum StaticMethodsForBuiltinTypes {
   internal static var module: PyType.StaticallyKnownNotOverriddenMethods = {
     var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyModule.repr)
+    result.__dir__ = .init(PyModule.dir)
     result.__getattribute__ = .init(PyModule.getAttribute(name:))
     result.__setattr__ = .init(PyModule.setAttribute(name:value:))
     result.__delattr__ = .init(PyModule.delAttribute(name:))
-    result.__dir__ = .init(PyModule.dir)
     return result
   }()
 
@@ -812,8 +812,8 @@ internal enum StaticMethodsForBuiltinTypes {
 
   internal static var traceback: PyType.StaticallyKnownNotOverriddenMethods = {
     var result = StaticMethodsForBuiltinTypes.object.copy()
-    result.__getattribute__ = .init(PyTraceback.getAttribute(name:))
     result.__dir__ = .init(PyTraceback.dir)
+    result.__getattribute__ = .init(PyTraceback.getAttribute(name:))
     return result
   }()
 
@@ -855,10 +855,10 @@ internal enum StaticMethodsForBuiltinTypes {
   internal static var type: PyType.StaticallyKnownNotOverriddenMethods = {
     var result = StaticMethodsForBuiltinTypes.object.copy()
     result.__repr__ = .init(PyType.repr)
+    result.__dir__ = .init(PyType.dir)
     result.__getattribute__ = .init(PyType.getAttribute(name:))
     result.__setattr__ = .init(PyType.setAttribute(name:value:))
     result.__delattr__ = .init(PyType.delAttribute(name:))
-    result.__dir__ = .init(PyType.dir)
     result.__call__ = .init(PyType.call(args:kwargs:))
     result.__instancecheck__ = .init(PyType.isType(of:))
     result.__subclasscheck__ = .init(PyType.isSubtype(of:))

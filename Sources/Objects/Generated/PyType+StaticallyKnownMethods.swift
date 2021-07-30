@@ -24,6 +24,7 @@ extension PyType {
     internal var __str__: StringConversionWrapper?
 
     internal var __hash__: HashWrapper?
+    internal var __dir__: DirWrapper?
 
     internal var __eq__: ComparisonWrapper?
     internal var __ne__: ComparisonWrapper?
@@ -55,7 +56,6 @@ extension PyType {
     internal var keys: KeysWrapper?
 
     internal var __del__: DelWrapper?
-    internal var __dir__: DirWrapper?
     internal var __call__: CallWrapper?
 
     internal var __instancecheck__: InstanceCheckWrapper?
@@ -64,8 +64,8 @@ extension PyType {
 
     internal var __pos__: NumericUnaryWrapper?
     internal var __neg__: NumericUnaryWrapper?
-    internal var __abs__: NumericUnaryWrapper?
     internal var __invert__: NumericUnaryWrapper?
+    internal var __abs__: NumericUnaryWrapper?
     internal var __trunc__: NumericTruncWrapper?
     internal var __round__: NumericRoundWrapper?
 
@@ -123,6 +123,7 @@ extension PyType {
       self.__str__ = nil
 
       self.__hash__ = nil
+      self.__dir__ = nil
 
       self.__eq__ = nil
       self.__ne__ = nil
@@ -154,7 +155,6 @@ extension PyType {
       self.keys = nil
 
       self.__del__ = nil
-      self.__dir__ = nil
       self.__call__ = nil
 
       self.__instancecheck__ = nil
@@ -163,8 +163,8 @@ extension PyType {
 
       self.__pos__ = nil
       self.__neg__ = nil
-      self.__abs__ = nil
       self.__invert__ = nil
+      self.__abs__ = nil
       self.__trunc__ = nil
       self.__round__ = nil
 
@@ -242,6 +242,7 @@ extension PyType {
       self.__str__ = other.__str__ ?? self.__str__
 
       self.__hash__ = other.__hash__ ?? self.__hash__
+      self.__dir__ = other.__dir__ ?? self.__dir__
 
       self.__eq__ = other.__eq__ ?? self.__eq__
       self.__ne__ = other.__ne__ ?? self.__ne__
@@ -273,7 +274,6 @@ extension PyType {
       self.keys = other.keys ?? self.keys
 
       self.__del__ = other.__del__ ?? self.__del__
-      self.__dir__ = other.__dir__ ?? self.__dir__
       self.__call__ = other.__call__ ?? self.__call__
 
       self.__instancecheck__ = other.__instancecheck__ ?? self.__instancecheck__
@@ -282,8 +282,8 @@ extension PyType {
 
       self.__pos__ = other.__pos__ ?? self.__pos__
       self.__neg__ = other.__neg__ ?? self.__neg__
-      self.__abs__ = other.__abs__ ?? self.__abs__
       self.__invert__ = other.__invert__ ?? self.__invert__
+      self.__abs__ = other.__abs__ ?? self.__abs__
       self.__trunc__ = other.__trunc__ ?? self.__trunc__
       self.__round__ = other.__round__ ?? self.__round__
 
@@ -348,6 +348,7 @@ extension PyType {
         case "__str__": self.__str__ = nil
 
         case "__hash__": self.__hash__ = nil
+        case "__dir__": self.__dir__ = nil
 
         case "__eq__": self.__eq__ = nil
         case "__ne__": self.__ne__ = nil
@@ -379,7 +380,6 @@ extension PyType {
         case "keys": self.keys = nil
 
         case "__del__": self.__del__ = nil
-        case "__dir__": self.__dir__ = nil
         case "__call__": self.__call__ = nil
 
         case "__instancecheck__": self.__instancecheck__ = nil
@@ -388,8 +388,8 @@ extension PyType {
 
         case "__pos__": self.__pos__ = nil
         case "__neg__": self.__neg__ = nil
-        case "__abs__": self.__abs__ = nil
         case "__invert__": self.__invert__ = nil
+        case "__abs__": self.__abs__ = nil
         case "__trunc__": self.__trunc__ = nil
         case "__round__": self.__round__ = nil
 

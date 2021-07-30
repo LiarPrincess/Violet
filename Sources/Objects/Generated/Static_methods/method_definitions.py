@@ -41,6 +41,7 @@ class StaticMethodKind:
 
 _stringConversion = StaticMethodKind('StringConversion', '(_ object: PyObject) -> PyResult<String>')
 _hash = StaticMethodKind('Hash', '(_ object: PyObject) -> HashResult')
+_dir = StaticMethodKind('Dir', '(_ object: PyObject) -> PyResult<DirResult>')
 _comparison = StaticMethodKind('Comparison', '(left: PyObject, right: PyObject) -> CompareResult')
 _asBool = StaticMethodKind('AsBool', '(_ object: PyObject) -> Bool')
 _asInt = StaticMethodKind('AsInt', '(_ object: PyObject) -> PyResult<PyInt>')
@@ -60,7 +61,6 @@ _contains = StaticMethodKind('Contains', '(_ object: PyObject, element: PyObject
 _reversed = StaticMethodKind('Reversed', '(_ object: PyObject) -> PyObject')
 _keys = StaticMethodKind('Keys', '(_ object: PyObject) -> PyObject')
 _del = StaticMethodKind('Del', '(_ object: PyObject) -> PyResult<PyNone>')
-_dir = StaticMethodKind('Dir', '(_ object: PyObject) -> PyResult<DirResult>')
 _call = StaticMethodKind('Call', '(_ object: PyObject, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>')
 _instanceCheck = StaticMethodKind('InstanceCheck', '(type: PyObject, object: PyObject) -> Bool')
 _subclassCheck = StaticMethodKind('SubclassCheck', '(type: PyObject, base: PyObject) -> PyResult<Bool>')
@@ -83,6 +83,7 @@ STATIC_METHODS = [
     StaticMethod('__str__', _stringConversion),
 
     StaticMethod('__hash__', _hash),
+    StaticMethod('__dir__', _dir),
 
     StaticMethod('__eq__', _comparison),
     StaticMethod('__ne__', _comparison),
@@ -114,8 +115,6 @@ STATIC_METHODS = [
     StaticMethod('keys', _keys),
 
     StaticMethod('__del__', _del),
-    StaticMethod('__dir__', _dir),
-
     StaticMethod('__call__', _call),
 
     StaticMethod('__instancecheck__', _instanceCheck),
@@ -124,8 +123,8 @@ STATIC_METHODS = [
 
     StaticMethod('__pos__', _numericUnary),
     StaticMethod('__neg__', _numericUnary),
-    StaticMethod('__abs__', _numericUnary),
     StaticMethod('__invert__', _numericUnary),
+    StaticMethod('__abs__', _numericUnary),
 
     StaticMethod('__trunc__', _numericTrunc),
     StaticMethod('__round__', _numericRound),
