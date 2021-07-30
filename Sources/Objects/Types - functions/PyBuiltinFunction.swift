@@ -10,7 +10,7 @@ public final class PyBuiltinFunction: PyObject, AbstractBuiltinFunction {
 
   /// The Swift function that will be called.
   internal let function: FunctionWrapper
-  /// The `__module__` attribute, can be anything
+  /// The `__module__` attribute, can be anything.
   internal let module: PyObject?
   /// The `__doc__` attribute, or `nil`.
   internal let doc: String?

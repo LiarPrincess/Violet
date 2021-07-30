@@ -70,7 +70,7 @@ internal class GetDescriptor {
     return self.set != nil
   }
 
-  /// Create (potential) descriptor for static property.
+  /// Create a (potential) descriptor for static property.
   ///
   /// Most of the time this is not what you want to use!
   /// You probably want `init?(object:attribute:)`.
@@ -86,12 +86,12 @@ internal class GetDescriptor {
     )
   }
 
-  /// Create (potential) descriptor for instance property.
+  /// Create a (potential) descriptor for instance property.
   internal convenience init?(object: PyObject, attribute: PyObject) {
     self.init(object: object, type: object.type, attribute: attribute)
   }
 
-  /// Create (potential) descriptor.
+  /// Create a (potential) descriptor.
   ///
   /// Most of the time this is not what you want to use!
   /// You probably want `init?(object:attribute:)`.
