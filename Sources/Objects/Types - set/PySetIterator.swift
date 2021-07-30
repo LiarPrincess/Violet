@@ -6,20 +6,14 @@ import VioletCore
 // Objects -> setobject.c
 
 // sourcery: pytype = set_iterator, default, hasGC
-public final class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
+public final class PySetIterator: PyObject {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
   private let set: PyAnySet
-  internal var index: Int // 'internal' for 'OrderedDictionaryBackedIterator'
+  private var index: Int
   private var initialCount: Int
-
-  // For 'OrderedDictionaryBackedIterator'
-  internal var dict: OrderedDictionary<PySet.Element, Void> {
-    let orderedSet = self.set.elements
-    return orderedSet.dict
-  }
 
   override public var description: String {
     return "PySetIterator(set: \(self.set), index: \(self.index))"
@@ -60,7 +54,7 @@ public final class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
 
   // sourcery: pymethod = __iter__
   internal func iter() -> PyObject {
-    return self.iterShared()
+    return self
   }
 
   // MARK: - Next
@@ -73,7 +67,24 @@ public final class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
       return .runtimeError("Set changed size during iteration")
     }
 
-    return self.nextShared().map { $0.key.object }
+    let entries = self.set.elements.dict.entries
+    while self.index < entries.count {
+      let entry = entries[self.index]
+
+      // Increment index NOW, so that the regardless of whether we return 'entry'
+      // or iterate more we move to next element.
+      self.index += 1
+
+      switch entry {
+      case .entry(let e):
+        let result = e.key.object
+        return .value(result)
+      case .deleted:
+        break // move to next element
+      }
+    }
+
+    return .error(Py.newStopIteration())
   }
 
   // MARK: - Length hint

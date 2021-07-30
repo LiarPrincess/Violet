@@ -6,29 +6,25 @@ import VioletCore
 // Objects -> dictobject.c
 
 // sourcery: pytype = dict_keyiterator, default, hasGC
-public final class PyDictKeyIterator: PyObject, OrderedDictionaryBackedIterator {
+public final class PyDictKeyIterator: PyObject, AbstractDictViewIterator {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal let object: PyDict
+  internal let dict: PyDict
   internal var index: Int
-  private var initCount: Int
-
-  internal var dict: PyDict.OrderedDictionary {
-    return self.object.elements
-  }
+  internal let initialCount: Int
 
   override public var description: String {
-    return "PyDictKeyIterator(count: \(self.dict.count))"
+    return "PyDictKeyIterator(count: \(self.dict.elements.count))"
   }
 
   // MARK: - Init
 
   internal init(dict: PyDict) {
-    self.object = dict
+    self.dict = dict
     self.index = 0
-    self.initCount = dict.elements.count
+    self.initialCount = dict.elements.count
     super.init(type: Py.types.dict_keyiterator)
   }
 
@@ -50,26 +46,27 @@ public final class PyDictKeyIterator: PyObject, OrderedDictionaryBackedIterator 
 
   // sourcery: pymethod = __iter__
   internal func iter() -> PyObject {
-    return self.iterShared()
+    return self._iter()
   }
 
   // MARK: - Next
 
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
-    guard self.initCount == self.object.elements.count else {
-      self.index = -1 // Make this state sticky
-      return .runtimeError("dictionary changed size during iteration")
+    switch self._next() {
+    case let .value(entry):
+      let key = entry.key.object
+      return .value(key)
+    case let .error(e):
+      return .error(e)
     }
-
-    return self.nextShared().map { $0.key.object }
   }
 
   // MARK: - Length hint
 
   // sourcery: pymethod = __length_hint__
   internal func lengthHint() -> PyInt {
-    return self.lengthHintShared()
+    return self._lengthHint()
   }
 
   // MARK: - Python new
