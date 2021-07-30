@@ -809,15 +809,12 @@ public final class PyString: PyObject, AbstractString {
 
     // Fast path when we don't have encoding and kwargs
     if encodingObject == nil && errorObject == nil {
-      // Is this object already a 'str'?
-      if let str = PyCast.asString(object) {
-        // If we are builtin 'str' (not a subclass) -> return itself
-        if PyCast.isExactlyString(str) {
-          return .value(str)
-        }
-
-        let result = Py.newString(str.value)
-        return .value(result)
+      // If we are builtin 'str' (not a subclass) -> return itself
+      // (because str is immutable).
+      // If we are a subclass then we have to do a proper 'str' dispatch, because
+      // '__str__' may be overriden.
+      if let str = PyCast.asExactlyString(object) {
+        return .value(str)
       }
 
       switch Py.str(object: object) {
