@@ -108,7 +108,7 @@ def get_type(name: str) -> type:
     if name == 'module':
         return types.ModuleType
 
-    if name == 'types.SimpleNamespace':
+    if name == 'SimpleNamespace':
         return types.SimpleNamespace
 
     if name == 'NoneType':

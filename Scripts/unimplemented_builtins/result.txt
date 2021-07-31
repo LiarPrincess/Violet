@@ -141,10 +141,9 @@ method
   Missing:
     __new__
 
-types.SimpleNamespace
+SimpleNamespace
   Missing:
     __hash__
-    __new__
 
 NoneType
   This should not be here:

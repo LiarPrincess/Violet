@@ -22,10 +22,13 @@ public final class PyNamespace: PyObject {
 
   // MARK: - Init
 
-  internal init(dict: PyDict) {
-    // 'namespace' can't be subclassed,
-    // so we can just pass the correct type to 'super.init'.
-    super.init(type: Py.types.simpleNamespace)
+  internal convenience init(dict: PyDict) {
+    let type = Py.types.simpleNamespace
+    self.init(type: type, dict: dict)
+  }
+
+  internal init(type: PyType, dict: PyDict) {
+    super.init(type: type)
     self.__dict__ = dict
   }
 
@@ -134,6 +137,17 @@ public final class PyNamespace: PyObject {
   // sourcery: pymethod = __delattr__
   internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(on: self, name: name)
+  }
+
+  // MARK: - Python new
+
+  // sourcery: pystaticmethod = __new__
+  internal static func pyNew(type: PyType,
+                             args: [PyObject],
+                             kwargs: PyDict?) -> PyResult<PyNamespace> {
+    let dict = Py.newDict()
+    let result = PyMemory.newNamespace(type: type, dict: dict)
+    return .value(result)
   }
 
   // MARK: - Python init

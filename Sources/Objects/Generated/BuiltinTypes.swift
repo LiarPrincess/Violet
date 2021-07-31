@@ -1917,6 +1917,7 @@ public final class BuiltinTypes {
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyNamespace.getClass, castSelf: Self.asNamespace))
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyNamespace.getDict, castSelf: Self.asNamespace))
 
+    self.insert(type: type, name: "__new__", value: PyStaticMethod.wrapNew(type: type, doc: nil, fn: PyNamespace.pyNew(type:args:kwargs:)))
     self.insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNamespace.pyInit(args:kwargs:), castSelf: Self.asNamespaceOptional))
 
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyNamespace.isEqual(_:), castSelf: Self.asNamespace))
@@ -1937,7 +1938,7 @@ public final class BuiltinTypes {
         return .value(o)
     case .none:
       return .typeError(
-        "descriptor '\(functionName)' requires a 'types.SimpleNamespace' object " +
+        "descriptor '\(functionName)' requires a 'SimpleNamespace' object " +
         "but received a '\(object.typeName)'"
       )
     }
