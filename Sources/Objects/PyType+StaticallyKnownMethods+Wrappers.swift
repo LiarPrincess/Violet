@@ -527,12 +527,12 @@ extension PyType.StaticallyKnownNotOverriddenMethods {
 
   internal struct NumericPowWrapper {
 
-    internal let fn: (PyObject, PyObject, PyObject) -> PyResult<PyObject>
+    internal let fn: (PyObject, PyObject, PyObject?) -> PyResult<PyObject>
 
     internal init<T: PyObject>(
-      _ fn: @escaping (T) -> (PyObject, PyObject) -> PyResult<PyObject>
+      _ fn: @escaping (T) -> (PyObject, PyObject?) -> PyResult<PyObject>
     ) {
-      self.fn = { (arg0: PyObject, arg1: PyObject, arg2: PyObject) in
+      self.fn = { (arg0: PyObject, arg1: PyObject, arg2: PyObject?) in
         let zelf = forceCast(object: arg0, as: T.self)
         return fn(zelf)(arg1, arg2)
       }

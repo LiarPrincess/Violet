@@ -281,6 +281,9 @@ extension PyInstance {
 
   /// pow(base, exp[, mod])
   /// See [this](https://docs.python.org/3/library/functions.html#pow)
+  ///
+  /// PyObject *
+  /// PyNumber_Power(PyObject *v, PyObject *w, PyObject *z)
   public func pow(base: PyObject,
                   exp: PyObject,
                   mod: PyObject? = nil) -> PyResult<PyObject> {

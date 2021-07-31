@@ -334,10 +334,6 @@ public final class PyFloat: PyObject {
 
   // MARK: - Pow
 
-  internal func pow(exp: PyObject) -> PyResult<PyObject> {
-    return self.pow(exp: exp, mod: nil)
-  }
-
   // sourcery: pymethod = __pow__
   internal func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     if let e = self.disallowPowMod(mod: mod) {
@@ -361,10 +357,6 @@ public final class PyFloat: PyObject {
     case .notDouble:
       return .value(Py.notImplemented)
     }
-  }
-
-  internal func rpow(base: PyObject) -> PyResult<PyObject> {
-    return self.rpow(base: base, mod: nil)
   }
 
   // sourcery: pymethod = __rpow__

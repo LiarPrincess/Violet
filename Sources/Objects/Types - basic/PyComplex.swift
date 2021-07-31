@@ -330,10 +330,6 @@ public final class PyComplex: PyObject {
 
   // MARK: - Pow
 
-  internal func pow(exp: PyObject) -> PyResult<PyObject> {
-    return self.pow(exp: exp, mod: nil)
-  }
-
   // sourcery: pymethod = __pow__
   internal func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     guard PyCast.isNilOrNone(mod) else {
@@ -348,10 +344,6 @@ public final class PyComplex: PyObject {
     case .notComplex:
       return .value(Py.notImplemented)
     }
-  }
-
-  internal func rpow(base: PyObject) -> PyResult<PyObject> {
-    return self.rpow(base: base, mod: nil)
   }
 
   // sourcery: pymethod = __rpow__
