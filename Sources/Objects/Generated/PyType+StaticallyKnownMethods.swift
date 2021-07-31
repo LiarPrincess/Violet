@@ -229,9 +229,9 @@ extension PyType {
       self = StaticallyKnownNotOverriddenMethods()
 
       // We need to start from the back (the most base type, probably 'object').
-      for type in mro.baseClasses.reversed() {
-        self.copyMethods(from: type.staticMethods)
+      for type in mro.resolutionOrder.reversed() {
         self.removeOverriddenMethods(from: type.__dict__)
+        self.copyMethods(from: type.staticMethods)
       }
 
       self.removeOverriddenMethods(from: dict)
