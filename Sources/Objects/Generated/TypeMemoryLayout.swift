@@ -140,25 +140,25 @@ extension PyType {
     /// - `elements: OrderedDictionary`
     public static let PyDict = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
-    /// - `object: PyDict`
+    /// - `dict: PyDict`
     /// - `index: Int`
-    /// - `initCount: Int`
+    /// - `initialCount: Int`
     public static let PyDictItemIterator = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `dict: PyDict`
     public static let PyDictItems = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
-    /// - `object: PyDict`
+    /// - `dict: PyDict`
     /// - `index: Int`
-    /// - `initCount: Int`
+    /// - `initialCount: Int`
     public static let PyDictKeyIterator = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `dict: PyDict`
     public static let PyDictKeys = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
-    /// - `object: PyDict`
+    /// - `dict: PyDict`
     /// - `index: Int`
-    /// - `initCount: Int`
+    /// - `initialCount: Int`
     public static let PyDictValueIterator = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `dict: PyDict`
@@ -190,7 +190,7 @@ extension PyType {
     /// - `nextInstructionIndex: Int`
     public static let PyFrame = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
-    /// - `data: PySetData`
+    /// - `elements: OrderedSet`
     public static let PyFrozenSet = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `name: PyString`
@@ -212,7 +212,7 @@ extension PyType {
     /// - `index: Int`
     public static let PyIterator = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
-    /// - `data: PySequenceData`
+    /// - `elements: [PyObject]`
     public static let PyList = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `list: PyList`
@@ -261,7 +261,7 @@ extension PyType {
     /// - `index: Int`
     public static let PyReversed = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
-    /// - `data: PySetData`
+    /// - `elements: OrderedSet`
     public static let PySet = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `set: PyAnySet`
@@ -304,7 +304,7 @@ extension PyType {
     /// - `lineNo: PyInt`
     public static let PyTraceback = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
-    /// - `data: PySequenceData`
+    /// - `elements: [PyObject]`
     public static let PyTuple = MemoryLayout(base: MemoryLayout.PyObject)
     /// Fields:
     /// - `tuple: PyTuple`

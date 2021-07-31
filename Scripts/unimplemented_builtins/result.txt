@@ -51,27 +51,18 @@ code
     co_freevars
     co_lnotab
     co_names
-    co_posonlyargcount
     co_stacksize
     co_varnames
-    replace
 
 complex
   Missing:
     __format__
-  This should not be here:
-    __str__
-
-dict
-  Missing:
-    __reversed__
 
 dict_items
   Missing:
     __and__
     __or__
     __rand__
-    __reversed__
     __ror__
     __rsub__
     __rxor__
@@ -84,7 +75,6 @@ dict_keys
     __and__
     __or__
     __rand__
-    __reversed__
     __ror__
     __rsub__
     __rxor__
@@ -95,15 +85,12 @@ dict_keys
 dict_values
   Missing:
     __new__
-    __reversed__
 
 float
   Missing:
     __format__
     __getformat__
     __set_format__
-  This should not be here:
-    __str__
 
 frame
   Missing:
@@ -120,11 +107,8 @@ function
 int
   Missing:
     __format__
-    as_integer_ratio
     from_bytes
     to_bytes
-  This should not be here:
-    __str__
 
 iterator
   Missing:
@@ -178,6 +162,7 @@ TextFile
   Missing:
     _CHUNK_SIZE
     __dict__
+    __getstate__
     __init__
     __new__
     __next__
