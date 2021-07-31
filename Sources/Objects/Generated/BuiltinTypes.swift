@@ -144,7 +144,7 @@ public final class BuiltinTypes {
     self.map = PyType.initBuiltinType(name: "map", type: self.type, base: self.object, staticMethods: StaticMethodsForBuiltinTypes.map, layout: .PyMap)
     self.method = PyType.initBuiltinType(name: "method", type: self.type, base: self.object, staticMethods: StaticMethodsForBuiltinTypes.method, layout: .PyMethod)
     self.module = PyType.initBuiltinType(name: "module", type: self.type, base: self.object, staticMethods: StaticMethodsForBuiltinTypes.module, layout: .PyModule)
-    self.simpleNamespace = PyType.initBuiltinType(name: "types.SimpleNamespace", type: self.type, base: self.object, staticMethods: StaticMethodsForBuiltinTypes.namespace, layout: .PyNamespace)
+    self.simpleNamespace = PyType.initBuiltinType(name: "SimpleNamespace", type: self.type, base: self.object, staticMethods: StaticMethodsForBuiltinTypes.namespace, layout: .PyNamespace)
     self.none = PyType.initBuiltinType(name: "NoneType", type: self.type, base: self.object, staticMethods: StaticMethodsForBuiltinTypes.none, layout: .PyNone)
     self.notImplemented = PyType.initBuiltinType(name: "NotImplementedType", type: self.type, base: self.object, staticMethods: StaticMethodsForBuiltinTypes.notImplemented, layout: .PyNotImplemented)
     self.property = PyType.initBuiltinType(name: "property", type: self.type, base: self.object, staticMethods: StaticMethodsForBuiltinTypes.property, layout: .PyProperty)

@@ -3,8 +3,10 @@
 // In CPython:
 // Objects -> namespaceobject.c
 
-// sourcery: pytype = types.SimpleNamespace, default, hasGC, baseType
+// sourcery: pytype = SimpleNamespace, default, hasGC, baseType
 // sourcery: instancesHave__dict__
+/// `types.SimpleNamespace` is not an part of `builtins`, but it is used in
+/// various `sys` properties, so we have to implement it anyway.
 public final class PyNamespace: PyObject {
 
   // sourcery: pytypedoc

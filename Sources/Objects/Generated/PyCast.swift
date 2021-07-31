@@ -780,22 +780,22 @@ public enum PyCast {
 
   // MARK: - Namespace
 
-  /// Is this object an instance of `types.SimpleNamespace` (or its subclass)?
+  /// Is this object an instance of `SimpleNamespace` (or its subclass)?
   public static func isNamespace(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.simpleNamespace)
   }
 
-  /// Is this object an instance of `types.SimpleNamespace` (but not its subclass)?
+  /// Is this object an instance of `SimpleNamespace` (but not its subclass)?
   public static func isExactlyNamespace(_ object: PyObject) -> Bool {
     return self.isExactlyInstance(object, of: Py.types.simpleNamespace)
   }
 
-  /// Cast this object to `PyNamespace` if it is a `types.SimpleNamespace` (or its subclass).
+  /// Cast this object to `PyNamespace` if it is a `SimpleNamespace` (or its subclass).
   public static func asNamespace(_ object: PyObject) -> PyNamespace? {
     return Self.isNamespace(object) ? (object as! PyNamespace) : nil
   }
 
-  /// Cast this object to `PyNamespace` if it is a `types.SimpleNamespace` (but not its subclass).
+  /// Cast this object to `PyNamespace` if it is a `SimpleNamespace` (but not its subclass).
   public static func asExactlyNamespace(_ object: PyObject) -> PyNamespace? {
     return Self.isExactlyNamespace(object) ? (object as! PyNamespace) : nil
   }

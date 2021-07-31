@@ -609,11 +609,22 @@ internal enum PyMemory {
 
   // MARK: - Namespace
 
-  /// Allocate new instance of `types.SimpleNamespace` type.
+  /// Allocate new instance of `SimpleNamespace` type.
   internal static func newNamespace(
     dict: PyDict
   ) -> PyNamespace {
     return PyNamespace(
+      dict: dict
+    )
+  }
+
+  /// Allocate new instance of `SimpleNamespace` type.
+  internal static func newNamespace(
+    type: PyType,
+    dict: PyDict
+  ) -> PyNamespace {
+    return PyNamespace(
+      type: type,
       dict: dict
     )
   }
