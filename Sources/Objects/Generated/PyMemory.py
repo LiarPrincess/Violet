@@ -53,7 +53,7 @@ def print_new_function(t: TypeInfo, i: SwiftFunctionInfo):
   /// Reserved for `objectType` and `typeType` to create mutual recursion.\
 '''
 
-    print(f'  /// Allocate new instance of `{python_type}` type.')
+    print(f'  /// Allocate a new instance of `{python_type}` type.')
     if additional_docs:
         print(additional_docs)
 

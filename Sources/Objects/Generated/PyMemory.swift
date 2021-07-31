@@ -23,7 +23,7 @@ internal enum PyMemory {
 
   // MARK: - Object
 
-  /// Allocate new instance of `object` type.
+  /// Allocate a new instance of `object` type.
   internal static func newObject(
     type: PyType
   ) -> PyObject {
@@ -32,7 +32,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `object` type.
+  /// Allocate a new instance of `object` type.
   ///
   /// Unsafe `new` without `type` property filled.
   /// Reserved for `objectType` and `typeType` to create mutual recursion.
@@ -44,7 +44,7 @@ internal enum PyMemory {
 
   // MARK: - Bool
 
-  /// Allocate new instance of `bool` type.
+  /// Allocate a new instance of `bool` type.
   internal static func newBool(
     value: Bool
   ) -> PyBool {
@@ -55,7 +55,7 @@ internal enum PyMemory {
 
   // MARK: - BuiltinFunction
 
-  /// Allocate new instance of `builtinFunction` type.
+  /// Allocate a new instance of `builtinFunction` type.
   internal static func newBuiltinFunction(
     fn: FunctionWrapper,
     module: PyString? = nil,
@@ -70,7 +70,7 @@ internal enum PyMemory {
 
   // MARK: - BuiltinMethod
 
-  /// Allocate new instance of `builtinMethod` type.
+  /// Allocate a new instance of `builtinMethod` type.
   internal static func newBuiltinMethod(
     fn: FunctionWrapper,
     object: PyObject,
@@ -87,7 +87,7 @@ internal enum PyMemory {
 
   // MARK: - ByteArray
 
-  /// Allocate new instance of `bytearray` type.
+  /// Allocate a new instance of `bytearray` type.
   internal static func newByteArray(
     elements: Data
   ) -> PyByteArray {
@@ -96,7 +96,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `bytearray` type.
+  /// Allocate a new instance of `bytearray` type.
   internal static func newByteArray(
     type: PyType,
     elements: Data
@@ -109,7 +109,7 @@ internal enum PyMemory {
 
   // MARK: - ByteArrayIterator
 
-  /// Allocate new instance of `bytearray_iterator` type.
+  /// Allocate a new instance of `bytearray_iterator` type.
   internal static func newByteArrayIterator(
     bytes: PyByteArray
   ) -> PyByteArrayIterator {
@@ -120,7 +120,7 @@ internal enum PyMemory {
 
   // MARK: - Bytes
 
-  /// Allocate new instance of `bytes` type.
+  /// Allocate a new instance of `bytes` type.
   internal static func newBytes(
     elements: Data
   ) -> PyBytes {
@@ -129,7 +129,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `bytes` type.
+  /// Allocate a new instance of `bytes` type.
   internal static func newBytes(
     type: PyType,
     elements: Data
@@ -142,7 +142,7 @@ internal enum PyMemory {
 
   // MARK: - BytesIterator
 
-  /// Allocate new instance of `bytes_iterator` type.
+  /// Allocate a new instance of `bytes_iterator` type.
   internal static func newBytesIterator(
     bytes: PyBytes
   ) -> PyBytesIterator {
@@ -153,7 +153,7 @@ internal enum PyMemory {
 
   // MARK: - CallableIterator
 
-  /// Allocate new instance of `callable_iterator` type.
+  /// Allocate a new instance of `callable_iterator` type.
   internal static func newCallableIterator(
     callable: PyObject,
     sentinel: PyObject
@@ -166,7 +166,7 @@ internal enum PyMemory {
 
   // MARK: - Cell
 
-  /// Allocate new instance of `cell` type.
+  /// Allocate a new instance of `cell` type.
   internal static func newCell(
     content: PyObject?
   ) -> PyCell {
@@ -177,7 +177,7 @@ internal enum PyMemory {
 
   // MARK: - ClassMethod
 
-  /// Allocate new instance of `classmethod` type.
+  /// Allocate a new instance of `classmethod` type.
   internal static func newClassMethod(
     callable: PyObject
   ) -> PyClassMethod {
@@ -186,7 +186,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `classmethod` type.
+  /// Allocate a new instance of `classmethod` type.
   internal static func newClassMethod(
     type: PyType,
     callable: PyObject?
@@ -199,7 +199,7 @@ internal enum PyMemory {
 
   // MARK: - Code
 
-  /// Allocate new instance of `code` type.
+  /// Allocate a new instance of `code` type.
   internal static func newCode(
     code: CodeObject
   ) -> PyCode {
@@ -210,7 +210,7 @@ internal enum PyMemory {
 
   // MARK: - Complex
 
-  /// Allocate new instance of `complex` type.
+  /// Allocate a new instance of `complex` type.
   internal static func newComplex(
     real: Double,
     imag: Double
@@ -221,7 +221,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `complex` type.
+  /// Allocate a new instance of `complex` type.
   internal static func newComplex(
     type: PyType,
     real: Double,
@@ -236,7 +236,7 @@ internal enum PyMemory {
 
   // MARK: - Dict
 
-  /// Allocate new instance of `dict` type.
+  /// Allocate a new instance of `dict` type.
   internal static func newDict(
     elements: PyDict.OrderedDictionary
   ) -> PyDict {
@@ -245,7 +245,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `dict` type.
+  /// Allocate a new instance of `dict` type.
   internal static func newDict(
     type: PyType,
     elements: PyDict.OrderedDictionary
@@ -258,7 +258,7 @@ internal enum PyMemory {
 
   // MARK: - DictItemIterator
 
-  /// Allocate new instance of `dict_itemiterator` type.
+  /// Allocate a new instance of `dict_itemiterator` type.
   internal static func newDictItemIterator(
     dict: PyDict
   ) -> PyDictItemIterator {
@@ -269,7 +269,7 @@ internal enum PyMemory {
 
   // MARK: - DictItems
 
-  /// Allocate new instance of `dict_items` type.
+  /// Allocate a new instance of `dict_items` type.
   internal static func newDictItems(
     dict: PyDict
   ) -> PyDictItems {
@@ -280,7 +280,7 @@ internal enum PyMemory {
 
   // MARK: - DictKeyIterator
 
-  /// Allocate new instance of `dict_keyiterator` type.
+  /// Allocate a new instance of `dict_keyiterator` type.
   internal static func newDictKeyIterator(
     dict: PyDict
   ) -> PyDictKeyIterator {
@@ -291,7 +291,7 @@ internal enum PyMemory {
 
   // MARK: - DictKeys
 
-  /// Allocate new instance of `dict_keys` type.
+  /// Allocate a new instance of `dict_keys` type.
   internal static func newDictKeys(
     dict: PyDict
   ) -> PyDictKeys {
@@ -302,7 +302,7 @@ internal enum PyMemory {
 
   // MARK: - DictValueIterator
 
-  /// Allocate new instance of `dict_valueiterator` type.
+  /// Allocate a new instance of `dict_valueiterator` type.
   internal static func newDictValueIterator(
     dict: PyDict
   ) -> PyDictValueIterator {
@@ -313,7 +313,7 @@ internal enum PyMemory {
 
   // MARK: - DictValues
 
-  /// Allocate new instance of `dict_values` type.
+  /// Allocate a new instance of `dict_values` type.
   internal static func newDictValues(
     dict: PyDict
   ) -> PyDictValues {
@@ -324,7 +324,7 @@ internal enum PyMemory {
 
   // MARK: - Ellipsis
 
-  /// Allocate new instance of `ellipsis` type.
+  /// Allocate a new instance of `ellipsis` type.
   internal static func newEllipsis(
   ) -> PyEllipsis {
     return PyEllipsis(
@@ -333,7 +333,7 @@ internal enum PyMemory {
 
   // MARK: - Enumerate
 
-  /// Allocate new instance of `enumerate` type.
+  /// Allocate a new instance of `enumerate` type.
   internal static func newEnumerate(
     iterator: PyObject,
     startFrom index: BigInt
@@ -344,7 +344,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `enumerate` type.
+  /// Allocate a new instance of `enumerate` type.
   internal static func newEnumerate(
     type: PyType,
     iterator: PyObject,
@@ -359,7 +359,7 @@ internal enum PyMemory {
 
   // MARK: - Filter
 
-  /// Allocate new instance of `filter` type.
+  /// Allocate a new instance of `filter` type.
   internal static func newFilter(
     fn: PyObject,
     iterator: PyObject
@@ -370,7 +370,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `filter` type.
+  /// Allocate a new instance of `filter` type.
   internal static func newFilter(
     type: PyType,
     fn: PyObject,
@@ -385,7 +385,7 @@ internal enum PyMemory {
 
   // MARK: - Float
 
-  /// Allocate new instance of `float` type.
+  /// Allocate a new instance of `float` type.
   internal static func newFloat(
     value: Double
   ) -> PyFloat {
@@ -394,7 +394,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `float` type.
+  /// Allocate a new instance of `float` type.
   internal static func newFloat(
     type: PyType,
     value: Double
@@ -407,7 +407,7 @@ internal enum PyMemory {
 
   // MARK: - Frame
 
-  /// Allocate new instance of `frame` type.
+  /// Allocate a new instance of `frame` type.
   internal static func newFrame(
     code: PyCode,
     locals: PyDict,
@@ -424,7 +424,7 @@ internal enum PyMemory {
 
   // MARK: - FrozenSet
 
-  /// Allocate new instance of `frozenset` type.
+  /// Allocate a new instance of `frozenset` type.
   internal static func newFrozenSet(
     elements: PyFrozenSet.OrderedSet
   ) -> PyFrozenSet {
@@ -433,7 +433,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `frozenset` type.
+  /// Allocate a new instance of `frozenset` type.
   internal static func newFrozenSet(
     type: PyType,
     elements: PyFrozenSet.OrderedSet
@@ -446,7 +446,7 @@ internal enum PyMemory {
 
   // MARK: - Function
 
-  /// Allocate new instance of `function` type.
+  /// Allocate a new instance of `function` type.
   internal static func newFunction(
     qualname: PyString?,
     module: PyObject,
@@ -463,7 +463,7 @@ internal enum PyMemory {
 
   // MARK: - Int
 
-  /// Allocate new instance of `int` type.
+  /// Allocate a new instance of `int` type.
   internal static func newInt(
     value: BigInt
   ) -> PyInt {
@@ -472,7 +472,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `int` type.
+  /// Allocate a new instance of `int` type.
   internal static func newInt(
     type: PyType,
     value: BigInt
@@ -485,7 +485,7 @@ internal enum PyMemory {
 
   // MARK: - Iterator
 
-  /// Allocate new instance of `iterator` type.
+  /// Allocate a new instance of `iterator` type.
   internal static func newIterator(
     sequence: PyObject
   ) -> PyIterator {
@@ -496,7 +496,7 @@ internal enum PyMemory {
 
   // MARK: - List
 
-  /// Allocate new instance of `list` type.
+  /// Allocate a new instance of `list` type.
   internal static func newList(
     elements: [PyObject]
   ) -> PyList {
@@ -505,7 +505,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `list` type.
+  /// Allocate a new instance of `list` type.
   internal static func newList(
     type: PyType,
     elements: [PyObject]
@@ -518,7 +518,7 @@ internal enum PyMemory {
 
   // MARK: - ListIterator
 
-  /// Allocate new instance of `list_iterator` type.
+  /// Allocate a new instance of `list_iterator` type.
   internal static func newListIterator(
     list: PyList
   ) -> PyListIterator {
@@ -529,7 +529,7 @@ internal enum PyMemory {
 
   // MARK: - ListReverseIterator
 
-  /// Allocate new instance of `list_reverseiterator` type.
+  /// Allocate a new instance of `list_reverseiterator` type.
   internal static func newListReverseIterator(
     list: PyList
   ) -> PyListReverseIterator {
@@ -540,7 +540,7 @@ internal enum PyMemory {
 
   // MARK: - Map
 
-  /// Allocate new instance of `map` type.
+  /// Allocate a new instance of `map` type.
   internal static func newMap(
     fn: PyObject,
     iterators: [PyObject]
@@ -551,7 +551,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `map` type.
+  /// Allocate a new instance of `map` type.
   internal static func newMap(
     type: PyType,
     fn: PyObject,
@@ -566,7 +566,7 @@ internal enum PyMemory {
 
   // MARK: - Method
 
-  /// Allocate new instance of `method` type.
+  /// Allocate a new instance of `method` type.
   internal static func newMethod(
     fn: PyFunction,
     object: PyObject
@@ -579,7 +579,7 @@ internal enum PyMemory {
 
   // MARK: - Module
 
-  /// Allocate new instance of `module` type.
+  /// Allocate a new instance of `module` type.
   internal static func newModule(
     name: PyObject,
     doc: PyObject?,
@@ -592,7 +592,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `module` type.
+  /// Allocate a new instance of `module` type.
   internal static func newModule(
     type: PyType,
     name: PyObject?,
@@ -609,7 +609,7 @@ internal enum PyMemory {
 
   // MARK: - Namespace
 
-  /// Allocate new instance of `SimpleNamespace` type.
+  /// Allocate a new instance of `SimpleNamespace` type.
   internal static func newNamespace(
     dict: PyDict
   ) -> PyNamespace {
@@ -618,7 +618,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `SimpleNamespace` type.
+  /// Allocate a new instance of `SimpleNamespace` type.
   internal static func newNamespace(
     type: PyType,
     dict: PyDict
@@ -631,7 +631,7 @@ internal enum PyMemory {
 
   // MARK: - None
 
-  /// Allocate new instance of `NoneType` type.
+  /// Allocate a new instance of `NoneType` type.
   internal static func newNone(
   ) -> PyNone {
     return PyNone(
@@ -640,7 +640,7 @@ internal enum PyMemory {
 
   // MARK: - NotImplemented
 
-  /// Allocate new instance of `NotImplementedType` type.
+  /// Allocate a new instance of `NotImplementedType` type.
   internal static func newNotImplemented(
   ) -> PyNotImplemented {
     return PyNotImplemented(
@@ -649,7 +649,7 @@ internal enum PyMemory {
 
   // MARK: - Property
 
-  /// Allocate new instance of `property` type.
+  /// Allocate a new instance of `property` type.
   internal static func newProperty(
     get: PyObject?,
     set: PyObject?,
@@ -662,7 +662,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `property` type.
+  /// Allocate a new instance of `property` type.
   internal static func newProperty(
     type: PyType,
     get: PyObject?,
@@ -679,7 +679,7 @@ internal enum PyMemory {
 
   // MARK: - Range
 
-  /// Allocate new instance of `range` type.
+  /// Allocate a new instance of `range` type.
   internal static func newRange(
     start: PyInt,
     stop: PyInt,
@@ -694,7 +694,7 @@ internal enum PyMemory {
 
   // MARK: - RangeIterator
 
-  /// Allocate new instance of `range_iterator` type.
+  /// Allocate a new instance of `range_iterator` type.
   internal static func newRangeIterator(
     start: BigInt,
     step: BigInt,
@@ -709,7 +709,7 @@ internal enum PyMemory {
 
   // MARK: - Reversed
 
-  /// Allocate new instance of `reversed` type.
+  /// Allocate a new instance of `reversed` type.
   internal static func newReversed(
     sequence: PyObject,
     count: Int
@@ -720,7 +720,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `reversed` type.
+  /// Allocate a new instance of `reversed` type.
   internal static func newReversed(
     type: PyType,
     sequence: PyObject,
@@ -735,7 +735,7 @@ internal enum PyMemory {
 
   // MARK: - Set
 
-  /// Allocate new instance of `set` type.
+  /// Allocate a new instance of `set` type.
   internal static func newSet(
     elements: PySet.OrderedSet
   ) -> PySet {
@@ -744,7 +744,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `set` type.
+  /// Allocate a new instance of `set` type.
   internal static func newSet(
     type: PyType,
     elements: PySet.OrderedSet
@@ -757,7 +757,7 @@ internal enum PyMemory {
 
   // MARK: - SetIterator
 
-  /// Allocate new instance of `set_iterator` type.
+  /// Allocate a new instance of `set_iterator` type.
   internal static func newSetIterator(
     set: PySet
   ) -> PySetIterator {
@@ -766,7 +766,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `set_iterator` type.
+  /// Allocate a new instance of `set_iterator` type.
   internal static func newSetIterator(
     frozenSet: PyFrozenSet
   ) -> PySetIterator {
@@ -777,7 +777,7 @@ internal enum PyMemory {
 
   // MARK: - Slice
 
-  /// Allocate new instance of `slice` type.
+  /// Allocate a new instance of `slice` type.
   internal static func newSlice(
     start: PyObject,
     stop: PyObject,
@@ -792,7 +792,7 @@ internal enum PyMemory {
 
   // MARK: - StaticMethod
 
-  /// Allocate new instance of `staticmethod` type.
+  /// Allocate a new instance of `staticmethod` type.
   internal static func newStaticMethod(
     callable: PyObject
   ) -> PyStaticMethod {
@@ -801,7 +801,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `staticmethod` type.
+  /// Allocate a new instance of `staticmethod` type.
   internal static func newStaticMethod(
     type: PyType,
     callable: PyObject?
@@ -814,7 +814,7 @@ internal enum PyMemory {
 
   // MARK: - String
 
-  /// Allocate new instance of `str` type.
+  /// Allocate a new instance of `str` type.
   internal static func newString(
     value: String
   ) -> PyString {
@@ -823,7 +823,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `str` type.
+  /// Allocate a new instance of `str` type.
   internal static func newString(
     type: PyType,
     value: String
@@ -836,7 +836,7 @@ internal enum PyMemory {
 
   // MARK: - StringIterator
 
-  /// Allocate new instance of `str_iterator` type.
+  /// Allocate a new instance of `str_iterator` type.
   internal static func newStringIterator(
     string: PyString
   ) -> PyStringIterator {
@@ -847,7 +847,7 @@ internal enum PyMemory {
 
   // MARK: - Super
 
-  /// Allocate new instance of `super` type.
+  /// Allocate a new instance of `super` type.
   internal static func newSuper(
     requestedType: PyType?,
     object: PyObject?,
@@ -860,7 +860,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `super` type.
+  /// Allocate a new instance of `super` type.
   internal static func newSuper(
     type: PyType,
     requestedType: PyType?,
@@ -877,7 +877,7 @@ internal enum PyMemory {
 
   // MARK: - TextFile
 
-  /// Allocate new instance of `TextFile` type.
+  /// Allocate a new instance of `TextFile` type.
   internal static func newTextFile(
     fd: FileDescriptorType,
     mode: FileMode,
@@ -894,7 +894,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `TextFile` type.
+  /// Allocate a new instance of `TextFile` type.
   internal static func newTextFile(
     name: String?,
     fd: FileDescriptorType,
@@ -915,7 +915,7 @@ internal enum PyMemory {
 
   // MARK: - Traceback
 
-  /// Allocate new instance of `traceback` type.
+  /// Allocate a new instance of `traceback` type.
   internal static func newTraceback(
     next: PyTraceback?,
     frame: PyFrame,
@@ -932,7 +932,7 @@ internal enum PyMemory {
 
   // MARK: - Tuple
 
-  /// Allocate new instance of `tuple` type.
+  /// Allocate a new instance of `tuple` type.
   internal static func newTuple(
     elements: [PyObject]
   ) -> PyTuple {
@@ -941,7 +941,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `tuple` type.
+  /// Allocate a new instance of `tuple` type.
   internal static func newTuple(
     type: PyType,
     elements: [PyObject]
@@ -954,7 +954,7 @@ internal enum PyMemory {
 
   // MARK: - TupleIterator
 
-  /// Allocate new instance of `tuple_iterator` type.
+  /// Allocate a new instance of `tuple_iterator` type.
   internal static func newTupleIterator(
     tuple: PyTuple
   ) -> PyTupleIterator {
@@ -965,7 +965,7 @@ internal enum PyMemory {
 
   // MARK: - Type
 
-  /// Allocate new instance of `type` type.
+  /// Allocate a new instance of `type` type.
   internal static func newType(
     name: String,
     qualname: String,
@@ -986,7 +986,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `type` type.
+  /// Allocate a new instance of `type` type.
   ///
   /// Unsafe `new` without `type` property filled.
   /// Reserved for `objectType` and `typeType` to create mutual recursion.
@@ -1010,7 +1010,7 @@ internal enum PyMemory {
 
   // MARK: - Zip
 
-  /// Allocate new instance of `zip` type.
+  /// Allocate a new instance of `zip` type.
   internal static func newZip(
     iterators: [PyObject]
   ) -> PyZip {
@@ -1019,7 +1019,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `zip` type.
+  /// Allocate a new instance of `zip` type.
   internal static func newZip(
     type: PyType,
     iterators: [PyObject]
@@ -1032,7 +1032,7 @@ internal enum PyMemory {
 
   // MARK: - ArithmeticError
 
-  /// Allocate new instance of `ArithmeticError` type.
+  /// Allocate a new instance of `ArithmeticError` type.
   internal static func newArithmeticError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1051,7 +1051,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `ArithmeticError` type.
+  /// Allocate a new instance of `ArithmeticError` type.
   internal static func newArithmeticError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1072,7 +1072,7 @@ internal enum PyMemory {
 
   // MARK: - AssertionError
 
-  /// Allocate new instance of `AssertionError` type.
+  /// Allocate a new instance of `AssertionError` type.
   internal static func newAssertionError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1091,7 +1091,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `AssertionError` type.
+  /// Allocate a new instance of `AssertionError` type.
   internal static func newAssertionError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1112,7 +1112,7 @@ internal enum PyMemory {
 
   // MARK: - AttributeError
 
-  /// Allocate new instance of `AttributeError` type.
+  /// Allocate a new instance of `AttributeError` type.
   internal static func newAttributeError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1131,7 +1131,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `AttributeError` type.
+  /// Allocate a new instance of `AttributeError` type.
   internal static func newAttributeError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1152,7 +1152,7 @@ internal enum PyMemory {
 
   // MARK: - BaseException
 
-  /// Allocate new instance of `BaseException` type.
+  /// Allocate a new instance of `BaseException` type.
   internal static func newBaseException(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1171,7 +1171,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `BaseException` type.
+  /// Allocate a new instance of `BaseException` type.
   internal static func newBaseException(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1192,7 +1192,7 @@ internal enum PyMemory {
 
   // MARK: - BlockingIOError
 
-  /// Allocate new instance of `BlockingIOError` type.
+  /// Allocate a new instance of `BlockingIOError` type.
   internal static func newBlockingIOError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1211,7 +1211,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `BlockingIOError` type.
+  /// Allocate a new instance of `BlockingIOError` type.
   internal static func newBlockingIOError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1232,7 +1232,7 @@ internal enum PyMemory {
 
   // MARK: - BrokenPipeError
 
-  /// Allocate new instance of `BrokenPipeError` type.
+  /// Allocate a new instance of `BrokenPipeError` type.
   internal static func newBrokenPipeError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1251,7 +1251,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `BrokenPipeError` type.
+  /// Allocate a new instance of `BrokenPipeError` type.
   internal static func newBrokenPipeError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1272,7 +1272,7 @@ internal enum PyMemory {
 
   // MARK: - BufferError
 
-  /// Allocate new instance of `BufferError` type.
+  /// Allocate a new instance of `BufferError` type.
   internal static func newBufferError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1291,7 +1291,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `BufferError` type.
+  /// Allocate a new instance of `BufferError` type.
   internal static func newBufferError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1312,7 +1312,7 @@ internal enum PyMemory {
 
   // MARK: - BytesWarning
 
-  /// Allocate new instance of `BytesWarning` type.
+  /// Allocate a new instance of `BytesWarning` type.
   internal static func newBytesWarning(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1331,7 +1331,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `BytesWarning` type.
+  /// Allocate a new instance of `BytesWarning` type.
   internal static func newBytesWarning(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1352,7 +1352,7 @@ internal enum PyMemory {
 
   // MARK: - ChildProcessError
 
-  /// Allocate new instance of `ChildProcessError` type.
+  /// Allocate a new instance of `ChildProcessError` type.
   internal static func newChildProcessError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1371,7 +1371,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `ChildProcessError` type.
+  /// Allocate a new instance of `ChildProcessError` type.
   internal static func newChildProcessError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1392,7 +1392,7 @@ internal enum PyMemory {
 
   // MARK: - ConnectionAbortedError
 
-  /// Allocate new instance of `ConnectionAbortedError` type.
+  /// Allocate a new instance of `ConnectionAbortedError` type.
   internal static func newConnectionAbortedError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1411,7 +1411,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `ConnectionAbortedError` type.
+  /// Allocate a new instance of `ConnectionAbortedError` type.
   internal static func newConnectionAbortedError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1432,7 +1432,7 @@ internal enum PyMemory {
 
   // MARK: - ConnectionError
 
-  /// Allocate new instance of `ConnectionError` type.
+  /// Allocate a new instance of `ConnectionError` type.
   internal static func newConnectionError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1451,7 +1451,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `ConnectionError` type.
+  /// Allocate a new instance of `ConnectionError` type.
   internal static func newConnectionError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1472,7 +1472,7 @@ internal enum PyMemory {
 
   // MARK: - ConnectionRefusedError
 
-  /// Allocate new instance of `ConnectionRefusedError` type.
+  /// Allocate a new instance of `ConnectionRefusedError` type.
   internal static func newConnectionRefusedError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1491,7 +1491,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `ConnectionRefusedError` type.
+  /// Allocate a new instance of `ConnectionRefusedError` type.
   internal static func newConnectionRefusedError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1512,7 +1512,7 @@ internal enum PyMemory {
 
   // MARK: - ConnectionResetError
 
-  /// Allocate new instance of `ConnectionResetError` type.
+  /// Allocate a new instance of `ConnectionResetError` type.
   internal static func newConnectionResetError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1531,7 +1531,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `ConnectionResetError` type.
+  /// Allocate a new instance of `ConnectionResetError` type.
   internal static func newConnectionResetError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1552,7 +1552,7 @@ internal enum PyMemory {
 
   // MARK: - DeprecationWarning
 
-  /// Allocate new instance of `DeprecationWarning` type.
+  /// Allocate a new instance of `DeprecationWarning` type.
   internal static func newDeprecationWarning(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1571,7 +1571,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `DeprecationWarning` type.
+  /// Allocate a new instance of `DeprecationWarning` type.
   internal static func newDeprecationWarning(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1592,7 +1592,7 @@ internal enum PyMemory {
 
   // MARK: - EOFError
 
-  /// Allocate new instance of `EOFError` type.
+  /// Allocate a new instance of `EOFError` type.
   internal static func newEOFError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1611,7 +1611,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `EOFError` type.
+  /// Allocate a new instance of `EOFError` type.
   internal static func newEOFError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1632,7 +1632,7 @@ internal enum PyMemory {
 
   // MARK: - Exception
 
-  /// Allocate new instance of `Exception` type.
+  /// Allocate a new instance of `Exception` type.
   internal static func newException(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1651,7 +1651,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `Exception` type.
+  /// Allocate a new instance of `Exception` type.
   internal static func newException(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1672,7 +1672,7 @@ internal enum PyMemory {
 
   // MARK: - FileExistsError
 
-  /// Allocate new instance of `FileExistsError` type.
+  /// Allocate a new instance of `FileExistsError` type.
   internal static func newFileExistsError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1691,7 +1691,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `FileExistsError` type.
+  /// Allocate a new instance of `FileExistsError` type.
   internal static func newFileExistsError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1712,7 +1712,7 @@ internal enum PyMemory {
 
   // MARK: - FileNotFoundError
 
-  /// Allocate new instance of `FileNotFoundError` type.
+  /// Allocate a new instance of `FileNotFoundError` type.
   internal static func newFileNotFoundError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1731,7 +1731,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `FileNotFoundError` type.
+  /// Allocate a new instance of `FileNotFoundError` type.
   internal static func newFileNotFoundError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1752,7 +1752,7 @@ internal enum PyMemory {
 
   // MARK: - FloatingPointError
 
-  /// Allocate new instance of `FloatingPointError` type.
+  /// Allocate a new instance of `FloatingPointError` type.
   internal static func newFloatingPointError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1771,7 +1771,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `FloatingPointError` type.
+  /// Allocate a new instance of `FloatingPointError` type.
   internal static func newFloatingPointError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1792,7 +1792,7 @@ internal enum PyMemory {
 
   // MARK: - FutureWarning
 
-  /// Allocate new instance of `FutureWarning` type.
+  /// Allocate a new instance of `FutureWarning` type.
   internal static func newFutureWarning(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1811,7 +1811,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `FutureWarning` type.
+  /// Allocate a new instance of `FutureWarning` type.
   internal static func newFutureWarning(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1832,7 +1832,7 @@ internal enum PyMemory {
 
   // MARK: - GeneratorExit
 
-  /// Allocate new instance of `GeneratorExit` type.
+  /// Allocate a new instance of `GeneratorExit` type.
   internal static func newGeneratorExit(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1851,7 +1851,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `GeneratorExit` type.
+  /// Allocate a new instance of `GeneratorExit` type.
   internal static func newGeneratorExit(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1872,7 +1872,7 @@ internal enum PyMemory {
 
   // MARK: - ImportError
 
-  /// Allocate new instance of `ImportError` type.
+  /// Allocate a new instance of `ImportError` type.
   internal static func newImportError(
     msg: String?,
     moduleName: String?,
@@ -1895,7 +1895,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `ImportError` type.
+  /// Allocate a new instance of `ImportError` type.
   internal static func newImportError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1916,7 +1916,7 @@ internal enum PyMemory {
 
   // MARK: - ImportWarning
 
-  /// Allocate new instance of `ImportWarning` type.
+  /// Allocate a new instance of `ImportWarning` type.
   internal static func newImportWarning(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -1935,7 +1935,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `ImportWarning` type.
+  /// Allocate a new instance of `ImportWarning` type.
   internal static func newImportWarning(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -1956,7 +1956,7 @@ internal enum PyMemory {
 
   // MARK: - IndentationError
 
-  /// Allocate new instance of `IndentationError` type.
+  /// Allocate a new instance of `IndentationError` type.
   internal static func newIndentationError(
     msg: String?,
     filename: String?,
@@ -1985,7 +1985,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `IndentationError` type.
+  /// Allocate a new instance of `IndentationError` type.
   internal static func newIndentationError(
     msg: PyString?,
     filename: PyString?,
@@ -2014,7 +2014,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `IndentationError` type.
+  /// Allocate a new instance of `IndentationError` type.
   internal static func newIndentationError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2035,7 +2035,7 @@ internal enum PyMemory {
 
   // MARK: - IndexError
 
-  /// Allocate new instance of `IndexError` type.
+  /// Allocate a new instance of `IndexError` type.
   internal static func newIndexError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2054,7 +2054,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `IndexError` type.
+  /// Allocate a new instance of `IndexError` type.
   internal static func newIndexError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2075,7 +2075,7 @@ internal enum PyMemory {
 
   // MARK: - InterruptedError
 
-  /// Allocate new instance of `InterruptedError` type.
+  /// Allocate a new instance of `InterruptedError` type.
   internal static func newInterruptedError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2094,7 +2094,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `InterruptedError` type.
+  /// Allocate a new instance of `InterruptedError` type.
   internal static func newInterruptedError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2115,7 +2115,7 @@ internal enum PyMemory {
 
   // MARK: - IsADirectoryError
 
-  /// Allocate new instance of `IsADirectoryError` type.
+  /// Allocate a new instance of `IsADirectoryError` type.
   internal static func newIsADirectoryError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2134,7 +2134,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `IsADirectoryError` type.
+  /// Allocate a new instance of `IsADirectoryError` type.
   internal static func newIsADirectoryError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2155,7 +2155,7 @@ internal enum PyMemory {
 
   // MARK: - KeyError
 
-  /// Allocate new instance of `KeyError` type.
+  /// Allocate a new instance of `KeyError` type.
   internal static func newKeyError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2174,7 +2174,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `KeyError` type.
+  /// Allocate a new instance of `KeyError` type.
   internal static func newKeyError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2195,7 +2195,7 @@ internal enum PyMemory {
 
   // MARK: - KeyboardInterrupt
 
-  /// Allocate new instance of `KeyboardInterrupt` type.
+  /// Allocate a new instance of `KeyboardInterrupt` type.
   internal static func newKeyboardInterrupt(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2214,7 +2214,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `KeyboardInterrupt` type.
+  /// Allocate a new instance of `KeyboardInterrupt` type.
   internal static func newKeyboardInterrupt(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2235,7 +2235,7 @@ internal enum PyMemory {
 
   // MARK: - LookupError
 
-  /// Allocate new instance of `LookupError` type.
+  /// Allocate a new instance of `LookupError` type.
   internal static func newLookupError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2254,7 +2254,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `LookupError` type.
+  /// Allocate a new instance of `LookupError` type.
   internal static func newLookupError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2275,7 +2275,7 @@ internal enum PyMemory {
 
   // MARK: - MemoryError
 
-  /// Allocate new instance of `MemoryError` type.
+  /// Allocate a new instance of `MemoryError` type.
   internal static func newMemoryError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2294,7 +2294,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `MemoryError` type.
+  /// Allocate a new instance of `MemoryError` type.
   internal static func newMemoryError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2315,7 +2315,7 @@ internal enum PyMemory {
 
   // MARK: - ModuleNotFoundError
 
-  /// Allocate new instance of `ModuleNotFoundError` type.
+  /// Allocate a new instance of `ModuleNotFoundError` type.
   internal static func newModuleNotFoundError(
     msg: String?,
     moduleName: String?,
@@ -2338,7 +2338,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `ModuleNotFoundError` type.
+  /// Allocate a new instance of `ModuleNotFoundError` type.
   internal static func newModuleNotFoundError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2359,7 +2359,7 @@ internal enum PyMemory {
 
   // MARK: - NameError
 
-  /// Allocate new instance of `NameError` type.
+  /// Allocate a new instance of `NameError` type.
   internal static func newNameError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2378,7 +2378,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `NameError` type.
+  /// Allocate a new instance of `NameError` type.
   internal static func newNameError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2399,7 +2399,7 @@ internal enum PyMemory {
 
   // MARK: - NotADirectoryError
 
-  /// Allocate new instance of `NotADirectoryError` type.
+  /// Allocate a new instance of `NotADirectoryError` type.
   internal static func newNotADirectoryError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2418,7 +2418,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `NotADirectoryError` type.
+  /// Allocate a new instance of `NotADirectoryError` type.
   internal static func newNotADirectoryError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2439,7 +2439,7 @@ internal enum PyMemory {
 
   // MARK: - NotImplementedError
 
-  /// Allocate new instance of `NotImplementedError` type.
+  /// Allocate a new instance of `NotImplementedError` type.
   internal static func newNotImplementedError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2458,7 +2458,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `NotImplementedError` type.
+  /// Allocate a new instance of `NotImplementedError` type.
   internal static func newNotImplementedError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2479,7 +2479,7 @@ internal enum PyMemory {
 
   // MARK: - OSError
 
-  /// Allocate new instance of `OSError` type.
+  /// Allocate a new instance of `OSError` type.
   internal static func newOSError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2498,7 +2498,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `OSError` type.
+  /// Allocate a new instance of `OSError` type.
   internal static func newOSError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2519,7 +2519,7 @@ internal enum PyMemory {
 
   // MARK: - OverflowError
 
-  /// Allocate new instance of `OverflowError` type.
+  /// Allocate a new instance of `OverflowError` type.
   internal static func newOverflowError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2538,7 +2538,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `OverflowError` type.
+  /// Allocate a new instance of `OverflowError` type.
   internal static func newOverflowError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2559,7 +2559,7 @@ internal enum PyMemory {
 
   // MARK: - PendingDeprecationWarning
 
-  /// Allocate new instance of `PendingDeprecationWarning` type.
+  /// Allocate a new instance of `PendingDeprecationWarning` type.
   internal static func newPendingDeprecationWarning(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2578,7 +2578,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `PendingDeprecationWarning` type.
+  /// Allocate a new instance of `PendingDeprecationWarning` type.
   internal static func newPendingDeprecationWarning(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2599,7 +2599,7 @@ internal enum PyMemory {
 
   // MARK: - PermissionError
 
-  /// Allocate new instance of `PermissionError` type.
+  /// Allocate a new instance of `PermissionError` type.
   internal static func newPermissionError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2618,7 +2618,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `PermissionError` type.
+  /// Allocate a new instance of `PermissionError` type.
   internal static func newPermissionError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2639,7 +2639,7 @@ internal enum PyMemory {
 
   // MARK: - ProcessLookupError
 
-  /// Allocate new instance of `ProcessLookupError` type.
+  /// Allocate a new instance of `ProcessLookupError` type.
   internal static func newProcessLookupError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2658,7 +2658,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `ProcessLookupError` type.
+  /// Allocate a new instance of `ProcessLookupError` type.
   internal static func newProcessLookupError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2679,7 +2679,7 @@ internal enum PyMemory {
 
   // MARK: - RecursionError
 
-  /// Allocate new instance of `RecursionError` type.
+  /// Allocate a new instance of `RecursionError` type.
   internal static func newRecursionError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2698,7 +2698,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `RecursionError` type.
+  /// Allocate a new instance of `RecursionError` type.
   internal static func newRecursionError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2719,7 +2719,7 @@ internal enum PyMemory {
 
   // MARK: - ReferenceError
 
-  /// Allocate new instance of `ReferenceError` type.
+  /// Allocate a new instance of `ReferenceError` type.
   internal static func newReferenceError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2738,7 +2738,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `ReferenceError` type.
+  /// Allocate a new instance of `ReferenceError` type.
   internal static func newReferenceError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2759,7 +2759,7 @@ internal enum PyMemory {
 
   // MARK: - ResourceWarning
 
-  /// Allocate new instance of `ResourceWarning` type.
+  /// Allocate a new instance of `ResourceWarning` type.
   internal static func newResourceWarning(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2778,7 +2778,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `ResourceWarning` type.
+  /// Allocate a new instance of `ResourceWarning` type.
   internal static func newResourceWarning(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2799,7 +2799,7 @@ internal enum PyMemory {
 
   // MARK: - RuntimeError
 
-  /// Allocate new instance of `RuntimeError` type.
+  /// Allocate a new instance of `RuntimeError` type.
   internal static func newRuntimeError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2818,7 +2818,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `RuntimeError` type.
+  /// Allocate a new instance of `RuntimeError` type.
   internal static func newRuntimeError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2839,7 +2839,7 @@ internal enum PyMemory {
 
   // MARK: - RuntimeWarning
 
-  /// Allocate new instance of `RuntimeWarning` type.
+  /// Allocate a new instance of `RuntimeWarning` type.
   internal static func newRuntimeWarning(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2858,7 +2858,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `RuntimeWarning` type.
+  /// Allocate a new instance of `RuntimeWarning` type.
   internal static func newRuntimeWarning(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2879,7 +2879,7 @@ internal enum PyMemory {
 
   // MARK: - StopAsyncIteration
 
-  /// Allocate new instance of `StopAsyncIteration` type.
+  /// Allocate a new instance of `StopAsyncIteration` type.
   internal static func newStopAsyncIteration(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -2898,7 +2898,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `StopAsyncIteration` type.
+  /// Allocate a new instance of `StopAsyncIteration` type.
   internal static func newStopAsyncIteration(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2919,7 +2919,7 @@ internal enum PyMemory {
 
   // MARK: - StopIteration
 
-  /// Allocate new instance of `StopIteration` type.
+  /// Allocate a new instance of `StopIteration` type.
   internal static func newStopIteration(
     value: PyObject?,
     traceback: PyTraceback? = nil,
@@ -2938,7 +2938,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `StopIteration` type.
+  /// Allocate a new instance of `StopIteration` type.
   internal static func newStopIteration(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -2959,7 +2959,7 @@ internal enum PyMemory {
 
   // MARK: - SyntaxError
 
-  /// Allocate new instance of `SyntaxError` type.
+  /// Allocate a new instance of `SyntaxError` type.
   internal static func newSyntaxError(
     msg: String?,
     filename: String?,
@@ -2988,7 +2988,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `SyntaxError` type.
+  /// Allocate a new instance of `SyntaxError` type.
   internal static func newSyntaxError(
     msg: PyString?,
     filename: PyString?,
@@ -3017,7 +3017,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `SyntaxError` type.
+  /// Allocate a new instance of `SyntaxError` type.
   internal static func newSyntaxError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3038,7 +3038,7 @@ internal enum PyMemory {
 
   // MARK: - SyntaxWarning
 
-  /// Allocate new instance of `SyntaxWarning` type.
+  /// Allocate a new instance of `SyntaxWarning` type.
   internal static func newSyntaxWarning(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -3057,7 +3057,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `SyntaxWarning` type.
+  /// Allocate a new instance of `SyntaxWarning` type.
   internal static func newSyntaxWarning(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3078,7 +3078,7 @@ internal enum PyMemory {
 
   // MARK: - SystemError
 
-  /// Allocate new instance of `SystemError` type.
+  /// Allocate a new instance of `SystemError` type.
   internal static func newSystemError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -3097,7 +3097,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `SystemError` type.
+  /// Allocate a new instance of `SystemError` type.
   internal static func newSystemError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3118,7 +3118,7 @@ internal enum PyMemory {
 
   // MARK: - SystemExit
 
-  /// Allocate new instance of `SystemExit` type.
+  /// Allocate a new instance of `SystemExit` type.
   internal static func newSystemExit(
     code: PyObject?,
     traceback: PyTraceback? = nil,
@@ -3137,7 +3137,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `SystemExit` type.
+  /// Allocate a new instance of `SystemExit` type.
   internal static func newSystemExit(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3158,7 +3158,7 @@ internal enum PyMemory {
 
   // MARK: - TabError
 
-  /// Allocate new instance of `TabError` type.
+  /// Allocate a new instance of `TabError` type.
   internal static func newTabError(
     msg: String?,
     filename: String?,
@@ -3187,7 +3187,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `TabError` type.
+  /// Allocate a new instance of `TabError` type.
   internal static func newTabError(
     msg: PyString?,
     filename: PyString?,
@@ -3216,7 +3216,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `TabError` type.
+  /// Allocate a new instance of `TabError` type.
   internal static func newTabError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3237,7 +3237,7 @@ internal enum PyMemory {
 
   // MARK: - TimeoutError
 
-  /// Allocate new instance of `TimeoutError` type.
+  /// Allocate a new instance of `TimeoutError` type.
   internal static func newTimeoutError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -3256,7 +3256,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `TimeoutError` type.
+  /// Allocate a new instance of `TimeoutError` type.
   internal static func newTimeoutError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3277,7 +3277,7 @@ internal enum PyMemory {
 
   // MARK: - TypeError
 
-  /// Allocate new instance of `TypeError` type.
+  /// Allocate a new instance of `TypeError` type.
   internal static func newTypeError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -3296,7 +3296,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `TypeError` type.
+  /// Allocate a new instance of `TypeError` type.
   internal static func newTypeError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3317,7 +3317,7 @@ internal enum PyMemory {
 
   // MARK: - UnboundLocalError
 
-  /// Allocate new instance of `UnboundLocalError` type.
+  /// Allocate a new instance of `UnboundLocalError` type.
   internal static func newUnboundLocalError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -3336,7 +3336,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `UnboundLocalError` type.
+  /// Allocate a new instance of `UnboundLocalError` type.
   internal static func newUnboundLocalError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3357,7 +3357,7 @@ internal enum PyMemory {
 
   // MARK: - UnicodeDecodeError
 
-  /// Allocate new instance of `UnicodeDecodeError` type.
+  /// Allocate a new instance of `UnicodeDecodeError` type.
   internal static func newUnicodeDecodeError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -3376,7 +3376,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `UnicodeDecodeError` type.
+  /// Allocate a new instance of `UnicodeDecodeError` type.
   internal static func newUnicodeDecodeError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3397,7 +3397,7 @@ internal enum PyMemory {
 
   // MARK: - UnicodeEncodeError
 
-  /// Allocate new instance of `UnicodeEncodeError` type.
+  /// Allocate a new instance of `UnicodeEncodeError` type.
   internal static func newUnicodeEncodeError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -3416,7 +3416,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `UnicodeEncodeError` type.
+  /// Allocate a new instance of `UnicodeEncodeError` type.
   internal static func newUnicodeEncodeError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3437,7 +3437,7 @@ internal enum PyMemory {
 
   // MARK: - UnicodeError
 
-  /// Allocate new instance of `UnicodeError` type.
+  /// Allocate a new instance of `UnicodeError` type.
   internal static func newUnicodeError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -3456,7 +3456,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `UnicodeError` type.
+  /// Allocate a new instance of `UnicodeError` type.
   internal static func newUnicodeError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3477,7 +3477,7 @@ internal enum PyMemory {
 
   // MARK: - UnicodeTranslateError
 
-  /// Allocate new instance of `UnicodeTranslateError` type.
+  /// Allocate a new instance of `UnicodeTranslateError` type.
   internal static func newUnicodeTranslateError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -3496,7 +3496,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `UnicodeTranslateError` type.
+  /// Allocate a new instance of `UnicodeTranslateError` type.
   internal static func newUnicodeTranslateError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3517,7 +3517,7 @@ internal enum PyMemory {
 
   // MARK: - UnicodeWarning
 
-  /// Allocate new instance of `UnicodeWarning` type.
+  /// Allocate a new instance of `UnicodeWarning` type.
   internal static func newUnicodeWarning(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -3536,7 +3536,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `UnicodeWarning` type.
+  /// Allocate a new instance of `UnicodeWarning` type.
   internal static func newUnicodeWarning(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3557,7 +3557,7 @@ internal enum PyMemory {
 
   // MARK: - UserWarning
 
-  /// Allocate new instance of `UserWarning` type.
+  /// Allocate a new instance of `UserWarning` type.
   internal static func newUserWarning(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -3576,7 +3576,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `UserWarning` type.
+  /// Allocate a new instance of `UserWarning` type.
   internal static func newUserWarning(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3597,7 +3597,7 @@ internal enum PyMemory {
 
   // MARK: - ValueError
 
-  /// Allocate new instance of `ValueError` type.
+  /// Allocate a new instance of `ValueError` type.
   internal static func newValueError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -3616,7 +3616,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `ValueError` type.
+  /// Allocate a new instance of `ValueError` type.
   internal static func newValueError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3637,7 +3637,7 @@ internal enum PyMemory {
 
   // MARK: - Warning
 
-  /// Allocate new instance of `Warning` type.
+  /// Allocate a new instance of `Warning` type.
   internal static func newWarning(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -3656,7 +3656,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `Warning` type.
+  /// Allocate a new instance of `Warning` type.
   internal static func newWarning(
     args: PyTuple,
     traceback: PyTraceback? = nil,
@@ -3677,7 +3677,7 @@ internal enum PyMemory {
 
   // MARK: - ZeroDivisionError
 
-  /// Allocate new instance of `ZeroDivisionError` type.
+  /// Allocate a new instance of `ZeroDivisionError` type.
   internal static func newZeroDivisionError(
     msg: String,
     traceback: PyTraceback? = nil,
@@ -3696,7 +3696,7 @@ internal enum PyMemory {
     )
   }
 
-  /// Allocate new instance of `ZeroDivisionError` type.
+  /// Allocate a new instance of `ZeroDivisionError` type.
   internal static func newZeroDivisionError(
     args: PyTuple,
     traceback: PyTraceback? = nil,
