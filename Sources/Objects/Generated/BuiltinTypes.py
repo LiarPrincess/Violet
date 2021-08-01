@@ -2,7 +2,7 @@ from Sourcery import get_types
 from Common.strings import generated_warning
 from TypeMemoryLayout import get_layout_name
 from StaticMethodsForBuiltinTypes import get_property_name as get_static_methods_property_name
-from Common.builtin_types import (
+from Builtin_types import (
     get_property_name_escaped, print_property,
     print_type_mark,
     get_fill_function_name, print_fill_function, print_fill_helpers,

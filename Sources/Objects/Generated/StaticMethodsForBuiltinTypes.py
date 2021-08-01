@@ -3,7 +3,7 @@ from typing import Dict, List
 from Sourcery import TypeInfo, PyFunctionInfo, get_types
 from Static_methods import STATIC_METHODS
 from Common.strings import generated_warning
-from Common.builtin_types import print_type_mark
+from Builtin_types import print_type_mark
 
 TYPE_NAME = 'StaticMethodsForBuiltinTypes'
 

@@ -1,6 +1,6 @@
 from Exception_hierarchy import data
 from Common.strings import generated_warning, where_to_find_errors_in_cpython
-from Common.builtin_types import get_property_name_escaped as get_builtin_type_property_name
+from Builtin_types import get_property_name_escaped as get_builtin_type_property_name
 
 # Some exceptions will be implemented by hand.
 MANUALLY_IMPLEMENTED = [

@@ -1,6 +1,6 @@
 from Sourcery import get_types
 from Common.strings import generated_warning
-from Common.builtin_types import get_property_name_escaped as get_builtin_type_property_name
+from Builtin_types import get_property_name_escaped as get_builtin_type_property_name
 
 
 def get_indefinite_article(word: str) -> str:
