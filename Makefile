@@ -36,11 +36,14 @@ elsa:
 	swift run Elsa
 
 gen:
-	./Sources/Objects/Generated/run.sh
-	./Scripts/unimplemented_builtins/main.sh
+	@./Sources/Objects/Generated/run.sh
+	echo
+	@./Scripts/unimplemented_builtins/refresh.sh
+	echo
+	@./PyTests/generate_tests.sh
 
 unicode:
-	./Scripts/unicode/main.sh
+	@./Scripts/unicode/main.sh
 
 # -----------------
 # -- Lint/format --

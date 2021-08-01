@@ -310,7 +310,6 @@ def write_test_file(output_dir_path: str, block: Block):
 
     with open(file_path, 'w') as f:
         class_name = create_class_name(name)
-        print(f" class name: '{class_name}'")
 
         f.write(f'''\
 {generated_warning(__file__)}

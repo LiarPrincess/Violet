@@ -1,4 +1,7 @@
-script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+#!/bin/bash
 
-python3 "$script_dir/generate-database.py" "Sources/UnicodeData/Generated.swift"
-python3 "$script_dir/generate-tests.py" "Tests/UnicodeDataTests/Generated/"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+python3 "$SCRIPT_DIR/generate-database.py" "Sources/UnicodeData/Generated.swift"
+echo
+python3 "$SCRIPT_DIR/generate-tests.py" "Tests/UnicodeDataTests/Generated/"
