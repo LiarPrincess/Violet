@@ -58,9 +58,13 @@ public enum PyCast {{
 
         article = get_indefinite_article(python_type)
 
-        print(f'''
-  // MARK: - {swift_type_without_py}
+        print()
+        print(f'  // MARK: - {swift_type_without_py}')
+        print()
 
+        is_base_type = 'baseType' in t.sourcery_flags
+        if is_base_type:
+            print(f'''\
   /// Is this object an instance of `{python_type}` (or its subclass)?
   public static func is{swift_type_without_py}(_ object: PyObject) -> Bool {{
     return self.isInstance(object, of: {builtin_types}.{builtin_property})
@@ -81,11 +85,25 @@ public enum PyCast {{
     return Self.isExactly{swift_type_without_py}(object) ? (object as! {swift_type_name}) : nil
   }}\
 ''')
+        else:
+            print(f'''\
+  // '{python_type}' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `{python_type}`?
+  public static func is{swift_type_without_py}(_ object: PyObject) -> Bool {{
+    return self.isInstance(object, of: {builtin_types}.{builtin_property})
+  }}
+
+  /// Cast this object to `{swift_type_name}` if it is {article} `{python_type}`.
+  public static func as{swift_type_without_py}(_ object: PyObject) -> {swift_type_name}? {{
+    return Self.is{swift_type_without_py}(object) ? (object as! {swift_type_name}) : nil
+  }}\
+''')
 
         is_none = t.python_type_name == 'NoneType'
         if is_none:
             print(f'''
-  /// Is this object Swift `nil` or an instance of `{python_type}`?
+  /// Is this object Swift `nil` or an instance of `NoneType`?
   public static func isNilOrNone(_ object: PyObject?) -> Bool {{
     guard let object = object else {{
       return true

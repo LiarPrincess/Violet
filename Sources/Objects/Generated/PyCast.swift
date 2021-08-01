@@ -32,68 +32,44 @@ public enum PyCast {
 
   // MARK: - Bool
 
-  /// Is this object an instance of `bool` (or its subclass)?
+  // 'bool' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `bool`?
   public static func isBool(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.bool)
   }
 
-  /// Is this object an instance of `bool` (but not its subclass)?
-  public static func isExactlyBool(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.bool)
-  }
-
-  /// Cast this object to `PyBool` if it is a `bool` (or its subclass).
+  /// Cast this object to `PyBool` if it is a `bool`.
   public static func asBool(_ object: PyObject) -> PyBool? {
     return Self.isBool(object) ? (object as! PyBool) : nil
   }
 
-  /// Cast this object to `PyBool` if it is a `bool` (but not its subclass).
-  public static func asExactlyBool(_ object: PyObject) -> PyBool? {
-    return Self.isExactlyBool(object) ? (object as! PyBool) : nil
-  }
-
   // MARK: - BuiltinFunction
 
-  /// Is this object an instance of `builtinFunction` (or its subclass)?
+  // 'builtinFunction' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `builtinFunction`?
   public static func isBuiltinFunction(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.builtinFunction)
   }
 
-  /// Is this object an instance of `builtinFunction` (but not its subclass)?
-  public static func isExactlyBuiltinFunction(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.builtinFunction)
-  }
-
-  /// Cast this object to `PyBuiltinFunction` if it is a `builtinFunction` (or its subclass).
+  /// Cast this object to `PyBuiltinFunction` if it is a `builtinFunction`.
   public static func asBuiltinFunction(_ object: PyObject) -> PyBuiltinFunction? {
     return Self.isBuiltinFunction(object) ? (object as! PyBuiltinFunction) : nil
   }
 
-  /// Cast this object to `PyBuiltinFunction` if it is a `builtinFunction` (but not its subclass).
-  public static func asExactlyBuiltinFunction(_ object: PyObject) -> PyBuiltinFunction? {
-    return Self.isExactlyBuiltinFunction(object) ? (object as! PyBuiltinFunction) : nil
-  }
-
   // MARK: - BuiltinMethod
 
-  /// Is this object an instance of `builtinMethod` (or its subclass)?
+  // 'builtinMethod' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `builtinMethod`?
   public static func isBuiltinMethod(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.builtinMethod)
   }
 
-  /// Is this object an instance of `builtinMethod` (but not its subclass)?
-  public static func isExactlyBuiltinMethod(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.builtinMethod)
-  }
-
-  /// Cast this object to `PyBuiltinMethod` if it is a `builtinMethod` (or its subclass).
+  /// Cast this object to `PyBuiltinMethod` if it is a `builtinMethod`.
   public static func asBuiltinMethod(_ object: PyObject) -> PyBuiltinMethod? {
     return Self.isBuiltinMethod(object) ? (object as! PyBuiltinMethod) : nil
-  }
-
-  /// Cast this object to `PyBuiltinMethod` if it is a `builtinMethod` (but not its subclass).
-  public static func asExactlyBuiltinMethod(_ object: PyObject) -> PyBuiltinMethod? {
-    return Self.isExactlyBuiltinMethod(object) ? (object as! PyBuiltinMethod) : nil
   }
 
   // MARK: - ByteArray
@@ -120,24 +96,16 @@ public enum PyCast {
 
   // MARK: - ByteArrayIterator
 
-  /// Is this object an instance of `bytearray_iterator` (or its subclass)?
+  // 'bytearray_iterator' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `bytearray_iterator`?
   public static func isByteArrayIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.bytearray_iterator)
   }
 
-  /// Is this object an instance of `bytearray_iterator` (but not its subclass)?
-  public static func isExactlyByteArrayIterator(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.bytearray_iterator)
-  }
-
-  /// Cast this object to `PyByteArrayIterator` if it is a `bytearray_iterator` (or its subclass).
+  /// Cast this object to `PyByteArrayIterator` if it is a `bytearray_iterator`.
   public static func asByteArrayIterator(_ object: PyObject) -> PyByteArrayIterator? {
     return Self.isByteArrayIterator(object) ? (object as! PyByteArrayIterator) : nil
-  }
-
-  /// Cast this object to `PyByteArrayIterator` if it is a `bytearray_iterator` (but not its subclass).
-  public static func asExactlyByteArrayIterator(_ object: PyObject) -> PyByteArrayIterator? {
-    return Self.isExactlyByteArrayIterator(object) ? (object as! PyByteArrayIterator) : nil
   }
 
   // MARK: - Bytes
@@ -164,68 +132,44 @@ public enum PyCast {
 
   // MARK: - BytesIterator
 
-  /// Is this object an instance of `bytes_iterator` (or its subclass)?
+  // 'bytes_iterator' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `bytes_iterator`?
   public static func isBytesIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.bytes_iterator)
   }
 
-  /// Is this object an instance of `bytes_iterator` (but not its subclass)?
-  public static func isExactlyBytesIterator(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.bytes_iterator)
-  }
-
-  /// Cast this object to `PyBytesIterator` if it is a `bytes_iterator` (or its subclass).
+  /// Cast this object to `PyBytesIterator` if it is a `bytes_iterator`.
   public static func asBytesIterator(_ object: PyObject) -> PyBytesIterator? {
     return Self.isBytesIterator(object) ? (object as! PyBytesIterator) : nil
   }
 
-  /// Cast this object to `PyBytesIterator` if it is a `bytes_iterator` (but not its subclass).
-  public static func asExactlyBytesIterator(_ object: PyObject) -> PyBytesIterator? {
-    return Self.isExactlyBytesIterator(object) ? (object as! PyBytesIterator) : nil
-  }
-
   // MARK: - CallableIterator
 
-  /// Is this object an instance of `callable_iterator` (or its subclass)?
+  // 'callable_iterator' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `callable_iterator`?
   public static func isCallableIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.callable_iterator)
   }
 
-  /// Is this object an instance of `callable_iterator` (but not its subclass)?
-  public static func isExactlyCallableIterator(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.callable_iterator)
-  }
-
-  /// Cast this object to `PyCallableIterator` if it is a `callable_iterator` (or its subclass).
+  /// Cast this object to `PyCallableIterator` if it is a `callable_iterator`.
   public static func asCallableIterator(_ object: PyObject) -> PyCallableIterator? {
     return Self.isCallableIterator(object) ? (object as! PyCallableIterator) : nil
   }
 
-  /// Cast this object to `PyCallableIterator` if it is a `callable_iterator` (but not its subclass).
-  public static func asExactlyCallableIterator(_ object: PyObject) -> PyCallableIterator? {
-    return Self.isExactlyCallableIterator(object) ? (object as! PyCallableIterator) : nil
-  }
-
   // MARK: - Cell
 
-  /// Is this object an instance of `cell` (or its subclass)?
+  // 'cell' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `cell`?
   public static func isCell(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.cell)
   }
 
-  /// Is this object an instance of `cell` (but not its subclass)?
-  public static func isExactlyCell(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.cell)
-  }
-
-  /// Cast this object to `PyCell` if it is a `cell` (or its subclass).
+  /// Cast this object to `PyCell` if it is a `cell`.
   public static func asCell(_ object: PyObject) -> PyCell? {
     return Self.isCell(object) ? (object as! PyCell) : nil
-  }
-
-  /// Cast this object to `PyCell` if it is a `cell` (but not its subclass).
-  public static func asExactlyCell(_ object: PyObject) -> PyCell? {
-    return Self.isExactlyCell(object) ? (object as! PyCell) : nil
   }
 
   // MARK: - ClassMethod
@@ -252,24 +196,16 @@ public enum PyCast {
 
   // MARK: - Code
 
-  /// Is this object an instance of `code` (or its subclass)?
+  // 'code' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `code`?
   public static func isCode(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.code)
   }
 
-  /// Is this object an instance of `code` (but not its subclass)?
-  public static func isExactlyCode(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.code)
-  }
-
-  /// Cast this object to `PyCode` if it is a `code` (or its subclass).
+  /// Cast this object to `PyCode` if it is a `code`.
   public static func asCode(_ object: PyObject) -> PyCode? {
     return Self.isCode(object) ? (object as! PyCode) : nil
-  }
-
-  /// Cast this object to `PyCode` if it is a `code` (but not its subclass).
-  public static func asExactlyCode(_ object: PyObject) -> PyCode? {
-    return Self.isExactlyCode(object) ? (object as! PyCode) : nil
   }
 
   // MARK: - Complex
@@ -318,156 +254,100 @@ public enum PyCast {
 
   // MARK: - DictItemIterator
 
-  /// Is this object an instance of `dict_itemiterator` (or its subclass)?
+  // 'dict_itemiterator' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `dict_itemiterator`?
   public static func isDictItemIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.dict_itemiterator)
   }
 
-  /// Is this object an instance of `dict_itemiterator` (but not its subclass)?
-  public static func isExactlyDictItemIterator(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.dict_itemiterator)
-  }
-
-  /// Cast this object to `PyDictItemIterator` if it is a `dict_itemiterator` (or its subclass).
+  /// Cast this object to `PyDictItemIterator` if it is a `dict_itemiterator`.
   public static func asDictItemIterator(_ object: PyObject) -> PyDictItemIterator? {
     return Self.isDictItemIterator(object) ? (object as! PyDictItemIterator) : nil
   }
 
-  /// Cast this object to `PyDictItemIterator` if it is a `dict_itemiterator` (but not its subclass).
-  public static func asExactlyDictItemIterator(_ object: PyObject) -> PyDictItemIterator? {
-    return Self.isExactlyDictItemIterator(object) ? (object as! PyDictItemIterator) : nil
-  }
-
   // MARK: - DictItems
 
-  /// Is this object an instance of `dict_items` (or its subclass)?
+  // 'dict_items' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `dict_items`?
   public static func isDictItems(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.dict_items)
   }
 
-  /// Is this object an instance of `dict_items` (but not its subclass)?
-  public static func isExactlyDictItems(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.dict_items)
-  }
-
-  /// Cast this object to `PyDictItems` if it is a `dict_items` (or its subclass).
+  /// Cast this object to `PyDictItems` if it is a `dict_items`.
   public static func asDictItems(_ object: PyObject) -> PyDictItems? {
     return Self.isDictItems(object) ? (object as! PyDictItems) : nil
   }
 
-  /// Cast this object to `PyDictItems` if it is a `dict_items` (but not its subclass).
-  public static func asExactlyDictItems(_ object: PyObject) -> PyDictItems? {
-    return Self.isExactlyDictItems(object) ? (object as! PyDictItems) : nil
-  }
-
   // MARK: - DictKeyIterator
 
-  /// Is this object an instance of `dict_keyiterator` (or its subclass)?
+  // 'dict_keyiterator' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `dict_keyiterator`?
   public static func isDictKeyIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.dict_keyiterator)
   }
 
-  /// Is this object an instance of `dict_keyiterator` (but not its subclass)?
-  public static func isExactlyDictKeyIterator(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.dict_keyiterator)
-  }
-
-  /// Cast this object to `PyDictKeyIterator` if it is a `dict_keyiterator` (or its subclass).
+  /// Cast this object to `PyDictKeyIterator` if it is a `dict_keyiterator`.
   public static func asDictKeyIterator(_ object: PyObject) -> PyDictKeyIterator? {
     return Self.isDictKeyIterator(object) ? (object as! PyDictKeyIterator) : nil
   }
 
-  /// Cast this object to `PyDictKeyIterator` if it is a `dict_keyiterator` (but not its subclass).
-  public static func asExactlyDictKeyIterator(_ object: PyObject) -> PyDictKeyIterator? {
-    return Self.isExactlyDictKeyIterator(object) ? (object as! PyDictKeyIterator) : nil
-  }
-
   // MARK: - DictKeys
 
-  /// Is this object an instance of `dict_keys` (or its subclass)?
+  // 'dict_keys' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `dict_keys`?
   public static func isDictKeys(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.dict_keys)
   }
 
-  /// Is this object an instance of `dict_keys` (but not its subclass)?
-  public static func isExactlyDictKeys(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.dict_keys)
-  }
-
-  /// Cast this object to `PyDictKeys` if it is a `dict_keys` (or its subclass).
+  /// Cast this object to `PyDictKeys` if it is a `dict_keys`.
   public static func asDictKeys(_ object: PyObject) -> PyDictKeys? {
     return Self.isDictKeys(object) ? (object as! PyDictKeys) : nil
   }
 
-  /// Cast this object to `PyDictKeys` if it is a `dict_keys` (but not its subclass).
-  public static func asExactlyDictKeys(_ object: PyObject) -> PyDictKeys? {
-    return Self.isExactlyDictKeys(object) ? (object as! PyDictKeys) : nil
-  }
-
   // MARK: - DictValueIterator
 
-  /// Is this object an instance of `dict_valueiterator` (or its subclass)?
+  // 'dict_valueiterator' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `dict_valueiterator`?
   public static func isDictValueIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.dict_valueiterator)
   }
 
-  /// Is this object an instance of `dict_valueiterator` (but not its subclass)?
-  public static func isExactlyDictValueIterator(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.dict_valueiterator)
-  }
-
-  /// Cast this object to `PyDictValueIterator` if it is a `dict_valueiterator` (or its subclass).
+  /// Cast this object to `PyDictValueIterator` if it is a `dict_valueiterator`.
   public static func asDictValueIterator(_ object: PyObject) -> PyDictValueIterator? {
     return Self.isDictValueIterator(object) ? (object as! PyDictValueIterator) : nil
   }
 
-  /// Cast this object to `PyDictValueIterator` if it is a `dict_valueiterator` (but not its subclass).
-  public static func asExactlyDictValueIterator(_ object: PyObject) -> PyDictValueIterator? {
-    return Self.isExactlyDictValueIterator(object) ? (object as! PyDictValueIterator) : nil
-  }
-
   // MARK: - DictValues
 
-  /// Is this object an instance of `dict_values` (or its subclass)?
+  // 'dict_values' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `dict_values`?
   public static func isDictValues(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.dict_values)
   }
 
-  /// Is this object an instance of `dict_values` (but not its subclass)?
-  public static func isExactlyDictValues(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.dict_values)
-  }
-
-  /// Cast this object to `PyDictValues` if it is a `dict_values` (or its subclass).
+  /// Cast this object to `PyDictValues` if it is a `dict_values`.
   public static func asDictValues(_ object: PyObject) -> PyDictValues? {
     return Self.isDictValues(object) ? (object as! PyDictValues) : nil
   }
 
-  /// Cast this object to `PyDictValues` if it is a `dict_values` (but not its subclass).
-  public static func asExactlyDictValues(_ object: PyObject) -> PyDictValues? {
-    return Self.isExactlyDictValues(object) ? (object as! PyDictValues) : nil
-  }
-
   // MARK: - Ellipsis
 
-  /// Is this object an instance of `ellipsis` (or its subclass)?
+  // 'ellipsis' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `ellipsis`?
   public static func isEllipsis(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.ellipsis)
   }
 
-  /// Is this object an instance of `ellipsis` (but not its subclass)?
-  public static func isExactlyEllipsis(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.ellipsis)
-  }
-
-  /// Cast this object to `PyEllipsis` if it is an `ellipsis` (or its subclass).
+  /// Cast this object to `PyEllipsis` if it is an `ellipsis`.
   public static func asEllipsis(_ object: PyObject) -> PyEllipsis? {
     return Self.isEllipsis(object) ? (object as! PyEllipsis) : nil
-  }
-
-  /// Cast this object to `PyEllipsis` if it is an `ellipsis` (but not its subclass).
-  public static func asExactlyEllipsis(_ object: PyObject) -> PyEllipsis? {
-    return Self.isExactlyEllipsis(object) ? (object as! PyEllipsis) : nil
   }
 
   // MARK: - Enumerate
@@ -538,24 +418,16 @@ public enum PyCast {
 
   // MARK: - Frame
 
-  /// Is this object an instance of `frame` (or its subclass)?
+  // 'frame' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `frame`?
   public static func isFrame(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.frame)
   }
 
-  /// Is this object an instance of `frame` (but not its subclass)?
-  public static func isExactlyFrame(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.frame)
-  }
-
-  /// Cast this object to `PyFrame` if it is a `frame` (or its subclass).
+  /// Cast this object to `PyFrame` if it is a `frame`.
   public static func asFrame(_ object: PyObject) -> PyFrame? {
     return Self.isFrame(object) ? (object as! PyFrame) : nil
-  }
-
-  /// Cast this object to `PyFrame` if it is a `frame` (but not its subclass).
-  public static func asExactlyFrame(_ object: PyObject) -> PyFrame? {
-    return Self.isExactlyFrame(object) ? (object as! PyFrame) : nil
   }
 
   // MARK: - FrozenSet
@@ -582,24 +454,16 @@ public enum PyCast {
 
   // MARK: - Function
 
-  /// Is this object an instance of `function` (or its subclass)?
+  // 'function' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `function`?
   public static func isFunction(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.function)
   }
 
-  /// Is this object an instance of `function` (but not its subclass)?
-  public static func isExactlyFunction(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.function)
-  }
-
-  /// Cast this object to `PyFunction` if it is a `function` (or its subclass).
+  /// Cast this object to `PyFunction` if it is a `function`.
   public static func asFunction(_ object: PyObject) -> PyFunction? {
     return Self.isFunction(object) ? (object as! PyFunction) : nil
-  }
-
-  /// Cast this object to `PyFunction` if it is a `function` (but not its subclass).
-  public static func asExactlyFunction(_ object: PyObject) -> PyFunction? {
-    return Self.isExactlyFunction(object) ? (object as! PyFunction) : nil
   }
 
   // MARK: - Int
@@ -626,24 +490,16 @@ public enum PyCast {
 
   // MARK: - Iterator
 
-  /// Is this object an instance of `iterator` (or its subclass)?
+  // 'iterator' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `iterator`?
   public static func isIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.iterator)
   }
 
-  /// Is this object an instance of `iterator` (but not its subclass)?
-  public static func isExactlyIterator(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.iterator)
-  }
-
-  /// Cast this object to `PyIterator` if it is an `iterator` (or its subclass).
+  /// Cast this object to `PyIterator` if it is an `iterator`.
   public static func asIterator(_ object: PyObject) -> PyIterator? {
     return Self.isIterator(object) ? (object as! PyIterator) : nil
-  }
-
-  /// Cast this object to `PyIterator` if it is an `iterator` (but not its subclass).
-  public static func asExactlyIterator(_ object: PyObject) -> PyIterator? {
-    return Self.isExactlyIterator(object) ? (object as! PyIterator) : nil
   }
 
   // MARK: - List
@@ -670,46 +526,30 @@ public enum PyCast {
 
   // MARK: - ListIterator
 
-  /// Is this object an instance of `list_iterator` (or its subclass)?
+  // 'list_iterator' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `list_iterator`?
   public static func isListIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.list_iterator)
   }
 
-  /// Is this object an instance of `list_iterator` (but not its subclass)?
-  public static func isExactlyListIterator(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.list_iterator)
-  }
-
-  /// Cast this object to `PyListIterator` if it is a `list_iterator` (or its subclass).
+  /// Cast this object to `PyListIterator` if it is a `list_iterator`.
   public static func asListIterator(_ object: PyObject) -> PyListIterator? {
     return Self.isListIterator(object) ? (object as! PyListIterator) : nil
   }
 
-  /// Cast this object to `PyListIterator` if it is a `list_iterator` (but not its subclass).
-  public static func asExactlyListIterator(_ object: PyObject) -> PyListIterator? {
-    return Self.isExactlyListIterator(object) ? (object as! PyListIterator) : nil
-  }
-
   // MARK: - ListReverseIterator
 
-  /// Is this object an instance of `list_reverseiterator` (or its subclass)?
+  // 'list_reverseiterator' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `list_reverseiterator`?
   public static func isListReverseIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.list_reverseiterator)
   }
 
-  /// Is this object an instance of `list_reverseiterator` (but not its subclass)?
-  public static func isExactlyListReverseIterator(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.list_reverseiterator)
-  }
-
-  /// Cast this object to `PyListReverseIterator` if it is a `list_reverseiterator` (or its subclass).
+  /// Cast this object to `PyListReverseIterator` if it is a `list_reverseiterator`.
   public static func asListReverseIterator(_ object: PyObject) -> PyListReverseIterator? {
     return Self.isListReverseIterator(object) ? (object as! PyListReverseIterator) : nil
-  }
-
-  /// Cast this object to `PyListReverseIterator` if it is a `list_reverseiterator` (but not its subclass).
-  public static func asExactlyListReverseIterator(_ object: PyObject) -> PyListReverseIterator? {
-    return Self.isExactlyListReverseIterator(object) ? (object as! PyListReverseIterator) : nil
   }
 
   // MARK: - Map
@@ -736,24 +576,16 @@ public enum PyCast {
 
   // MARK: - Method
 
-  /// Is this object an instance of `method` (or its subclass)?
+  // 'method' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `method`?
   public static func isMethod(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.method)
   }
 
-  /// Is this object an instance of `method` (but not its subclass)?
-  public static func isExactlyMethod(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.method)
-  }
-
-  /// Cast this object to `PyMethod` if it is a `method` (or its subclass).
+  /// Cast this object to `PyMethod` if it is a `method`.
   public static func asMethod(_ object: PyObject) -> PyMethod? {
     return Self.isMethod(object) ? (object as! PyMethod) : nil
-  }
-
-  /// Cast this object to `PyMethod` if it is a `method` (but not its subclass).
-  public static func asExactlyMethod(_ object: PyObject) -> PyMethod? {
-    return Self.isExactlyMethod(object) ? (object as! PyMethod) : nil
   }
 
   // MARK: - Module
@@ -802,24 +634,16 @@ public enum PyCast {
 
   // MARK: - None
 
-  /// Is this object an instance of `NoneType` (or its subclass)?
+  // 'NoneType' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `NoneType`?
   public static func isNone(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.none)
   }
 
-  /// Is this object an instance of `NoneType` (but not its subclass)?
-  public static func isExactlyNone(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.none)
-  }
-
-  /// Cast this object to `PyNone` if it is a `NoneType` (or its subclass).
+  /// Cast this object to `PyNone` if it is a `NoneType`.
   public static func asNone(_ object: PyObject) -> PyNone? {
     return Self.isNone(object) ? (object as! PyNone) : nil
-  }
-
-  /// Cast this object to `PyNone` if it is a `NoneType` (but not its subclass).
-  public static func asExactlyNone(_ object: PyObject) -> PyNone? {
-    return Self.isExactlyNone(object) ? (object as! PyNone) : nil
   }
 
   /// Is this object Swift `nil` or an instance of `NoneType`?
@@ -833,24 +657,16 @@ public enum PyCast {
 
   // MARK: - NotImplemented
 
-  /// Is this object an instance of `NotImplementedType` (or its subclass)?
+  // 'NotImplementedType' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `NotImplementedType`?
   public static func isNotImplemented(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.notImplemented)
   }
 
-  /// Is this object an instance of `NotImplementedType` (but not its subclass)?
-  public static func isExactlyNotImplemented(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.notImplemented)
-  }
-
-  /// Cast this object to `PyNotImplemented` if it is a `NotImplementedType` (or its subclass).
+  /// Cast this object to `PyNotImplemented` if it is a `NotImplementedType`.
   public static func asNotImplemented(_ object: PyObject) -> PyNotImplemented? {
     return Self.isNotImplemented(object) ? (object as! PyNotImplemented) : nil
-  }
-
-  /// Cast this object to `PyNotImplemented` if it is a `NotImplementedType` (but not its subclass).
-  public static func asExactlyNotImplemented(_ object: PyObject) -> PyNotImplemented? {
-    return Self.isExactlyNotImplemented(object) ? (object as! PyNotImplemented) : nil
   }
 
   // MARK: - Property
@@ -877,46 +693,30 @@ public enum PyCast {
 
   // MARK: - Range
 
-  /// Is this object an instance of `range` (or its subclass)?
+  // 'range' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `range`?
   public static func isRange(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.range)
   }
 
-  /// Is this object an instance of `range` (but not its subclass)?
-  public static func isExactlyRange(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.range)
-  }
-
-  /// Cast this object to `PyRange` if it is a `range` (or its subclass).
+  /// Cast this object to `PyRange` if it is a `range`.
   public static func asRange(_ object: PyObject) -> PyRange? {
     return Self.isRange(object) ? (object as! PyRange) : nil
   }
 
-  /// Cast this object to `PyRange` if it is a `range` (but not its subclass).
-  public static func asExactlyRange(_ object: PyObject) -> PyRange? {
-    return Self.isExactlyRange(object) ? (object as! PyRange) : nil
-  }
-
   // MARK: - RangeIterator
 
-  /// Is this object an instance of `range_iterator` (or its subclass)?
+  // 'range_iterator' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `range_iterator`?
   public static func isRangeIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.range_iterator)
   }
 
-  /// Is this object an instance of `range_iterator` (but not its subclass)?
-  public static func isExactlyRangeIterator(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.range_iterator)
-  }
-
-  /// Cast this object to `PyRangeIterator` if it is a `range_iterator` (or its subclass).
+  /// Cast this object to `PyRangeIterator` if it is a `range_iterator`.
   public static func asRangeIterator(_ object: PyObject) -> PyRangeIterator? {
     return Self.isRangeIterator(object) ? (object as! PyRangeIterator) : nil
-  }
-
-  /// Cast this object to `PyRangeIterator` if it is a `range_iterator` (but not its subclass).
-  public static func asExactlyRangeIterator(_ object: PyObject) -> PyRangeIterator? {
-    return Self.isExactlyRangeIterator(object) ? (object as! PyRangeIterator) : nil
   }
 
   // MARK: - Reversed
@@ -965,46 +765,30 @@ public enum PyCast {
 
   // MARK: - SetIterator
 
-  /// Is this object an instance of `set_iterator` (or its subclass)?
+  // 'set_iterator' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `set_iterator`?
   public static func isSetIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.set_iterator)
   }
 
-  /// Is this object an instance of `set_iterator` (but not its subclass)?
-  public static func isExactlySetIterator(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.set_iterator)
-  }
-
-  /// Cast this object to `PySetIterator` if it is a `set_iterator` (or its subclass).
+  /// Cast this object to `PySetIterator` if it is a `set_iterator`.
   public static func asSetIterator(_ object: PyObject) -> PySetIterator? {
     return Self.isSetIterator(object) ? (object as! PySetIterator) : nil
   }
 
-  /// Cast this object to `PySetIterator` if it is a `set_iterator` (but not its subclass).
-  public static func asExactlySetIterator(_ object: PyObject) -> PySetIterator? {
-    return Self.isExactlySetIterator(object) ? (object as! PySetIterator) : nil
-  }
-
   // MARK: - Slice
 
-  /// Is this object an instance of `slice` (or its subclass)?
+  // 'slice' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `slice`?
   public static func isSlice(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.slice)
   }
 
-  /// Is this object an instance of `slice` (but not its subclass)?
-  public static func isExactlySlice(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.slice)
-  }
-
-  /// Cast this object to `PySlice` if it is a `slice` (or its subclass).
+  /// Cast this object to `PySlice` if it is a `slice`.
   public static func asSlice(_ object: PyObject) -> PySlice? {
     return Self.isSlice(object) ? (object as! PySlice) : nil
-  }
-
-  /// Cast this object to `PySlice` if it is a `slice` (but not its subclass).
-  public static func asExactlySlice(_ object: PyObject) -> PySlice? {
-    return Self.isExactlySlice(object) ? (object as! PySlice) : nil
   }
 
   // MARK: - StaticMethod
@@ -1053,24 +837,16 @@ public enum PyCast {
 
   // MARK: - StringIterator
 
-  /// Is this object an instance of `str_iterator` (or its subclass)?
+  // 'str_iterator' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `str_iterator`?
   public static func isStringIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.str_iterator)
   }
 
-  /// Is this object an instance of `str_iterator` (but not its subclass)?
-  public static func isExactlyStringIterator(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.str_iterator)
-  }
-
-  /// Cast this object to `PyStringIterator` if it is a `str_iterator` (or its subclass).
+  /// Cast this object to `PyStringIterator` if it is a `str_iterator`.
   public static func asStringIterator(_ object: PyObject) -> PyStringIterator? {
     return Self.isStringIterator(object) ? (object as! PyStringIterator) : nil
-  }
-
-  /// Cast this object to `PyStringIterator` if it is a `str_iterator` (but not its subclass).
-  public static func asExactlyStringIterator(_ object: PyObject) -> PyStringIterator? {
-    return Self.isExactlyStringIterator(object) ? (object as! PyStringIterator) : nil
   }
 
   // MARK: - Super
@@ -1097,46 +873,30 @@ public enum PyCast {
 
   // MARK: - TextFile
 
-  /// Is this object an instance of `TextFile` (or its subclass)?
+  // 'TextFile' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `TextFile`?
   public static func isTextFile(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.textFile)
   }
 
-  /// Is this object an instance of `TextFile` (but not its subclass)?
-  public static func isExactlyTextFile(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.textFile)
-  }
-
-  /// Cast this object to `PyTextFile` if it is a `TextFile` (or its subclass).
+  /// Cast this object to `PyTextFile` if it is a `TextFile`.
   public static func asTextFile(_ object: PyObject) -> PyTextFile? {
     return Self.isTextFile(object) ? (object as! PyTextFile) : nil
   }
 
-  /// Cast this object to `PyTextFile` if it is a `TextFile` (but not its subclass).
-  public static func asExactlyTextFile(_ object: PyObject) -> PyTextFile? {
-    return Self.isExactlyTextFile(object) ? (object as! PyTextFile) : nil
-  }
-
   // MARK: - Traceback
 
-  /// Is this object an instance of `traceback` (or its subclass)?
+  // 'traceback' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `traceback`?
   public static func isTraceback(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.traceback)
   }
 
-  /// Is this object an instance of `traceback` (but not its subclass)?
-  public static func isExactlyTraceback(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.traceback)
-  }
-
-  /// Cast this object to `PyTraceback` if it is a `traceback` (or its subclass).
+  /// Cast this object to `PyTraceback` if it is a `traceback`.
   public static func asTraceback(_ object: PyObject) -> PyTraceback? {
     return Self.isTraceback(object) ? (object as! PyTraceback) : nil
-  }
-
-  /// Cast this object to `PyTraceback` if it is a `traceback` (but not its subclass).
-  public static func asExactlyTraceback(_ object: PyObject) -> PyTraceback? {
-    return Self.isExactlyTraceback(object) ? (object as! PyTraceback) : nil
   }
 
   // MARK: - Tuple
@@ -1163,24 +923,16 @@ public enum PyCast {
 
   // MARK: - TupleIterator
 
-  /// Is this object an instance of `tuple_iterator` (or its subclass)?
+  // 'tuple_iterator' does not allow subclassing, so we do not need 'exactly' checks
+
+  /// Is this object an instance of `tuple_iterator`?
   public static func isTupleIterator(_ object: PyObject) -> Bool {
     return self.isInstance(object, of: Py.types.tuple_iterator)
   }
 
-  /// Is this object an instance of `tuple_iterator` (but not its subclass)?
-  public static func isExactlyTupleIterator(_ object: PyObject) -> Bool {
-    return self.isExactlyInstance(object, of: Py.types.tuple_iterator)
-  }
-
-  /// Cast this object to `PyTupleIterator` if it is a `tuple_iterator` (or its subclass).
+  /// Cast this object to `PyTupleIterator` if it is a `tuple_iterator`.
   public static func asTupleIterator(_ object: PyObject) -> PyTupleIterator? {
     return Self.isTupleIterator(object) ? (object as! PyTupleIterator) : nil
-  }
-
-  /// Cast this object to `PyTupleIterator` if it is a `tuple_iterator` (but not its subclass).
-  public static func asExactlyTupleIterator(_ object: PyObject) -> PyTupleIterator? {
-    return Self.isExactlyTupleIterator(object) ? (object as! PyTupleIterator) : nil
   }
 
   // MARK: - Type
