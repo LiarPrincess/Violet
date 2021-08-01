@@ -1,6 +1,7 @@
 import BigInt
 import VioletCore
 
+// swiftlint:disable file_length
 // cSpell:ignore tupleobject
 
 // In CPython:
@@ -121,9 +122,27 @@ public final class PyTuple: PyObject, AbstractSequence {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    return self._repr(openBracket: "(",
-                      closeBracket: ")",
-                      appendCommaIfSingleElement: true)
+    if self._isEmpty {
+      return .value("()")
+    }
+
+    // While not mutable, it is still possible to end up with a cycle in a tuple
+    // through an object that stores itself within a tuple (and thus infinitely
+    // asks for the repr of itself).
+    if self.hasReprLock {
+      return .value("(...)")
+    }
+
+    return self.withReprLock {
+      switch self._joinElementsForRepr() {
+      case let .value(elements):
+        let commaIfNeeded = self._length == 1 ? "," : ""
+        let result = "(" + elements + commaIfNeeded + ")"
+        return .value(result)
+      case let .error(e):
+        return .error(e)
+      }
+    }
   }
 
   // MARK: - Attributes

@@ -107,9 +107,25 @@ public final class PyList: PyObject, AbstractSequence {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    return self._repr(openBracket: "[",
-                      closeBracket: "]",
-                      appendCommaIfSingleElement: false)
+    if self._isEmpty {
+      return .value("[]")
+    }
+
+    if self.hasReprLock {
+      return .value("[...]")
+    }
+
+    return self.withReprLock {
+      return self.withReprLock {
+        switch self._joinElementsForRepr() {
+        case let .value(elements):
+          let result = "[" + elements + "]"
+          return .value(result)
+        case let .error(e):
+          return .error(e)
+        }
+      }
+    }
   }
 
   // MARK: - Attributes
