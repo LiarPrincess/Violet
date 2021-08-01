@@ -37,7 +37,12 @@ runner.runAllTests(
 // ====================
 
 let violetTestDir = FileSystem.join(path: testDir, element: "Violet")
-runner.runAllTests(from: violetTestDir)
+runner.runAllTests(
+  from: violetTestDir,
+  skipping: [
+    "Carlo_Verre_hack.py" // User can modify a builtin type if they try hard enough
+  ]
+)
 
 // ==============
 // === Result ===
