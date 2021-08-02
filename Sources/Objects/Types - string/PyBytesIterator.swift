@@ -5,7 +5,7 @@ import VioletCore
 // In CPython:
 // Objects -> bytesobject.c
 
-// sourcery: pytype = bytes_iterator, default, hasGC
+// sourcery: pytype = bytes_iterator, isDefault, hasGC
 public final class PyBytesIterator: PyObject {
 
   // sourcery: pytypedoc

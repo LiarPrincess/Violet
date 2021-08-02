@@ -3,7 +3,7 @@ import VioletCore
 // In CPython:
 // Python -> builtinmodule.c
 
-// sourcery: pytype = filter, default, hasGC, baseType
+// sourcery: pytype = filter, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
 public final class PyFilter: PyObject {
 

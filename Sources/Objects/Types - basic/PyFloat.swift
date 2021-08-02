@@ -14,7 +14,7 @@ internal let DBL_MANT_DIG = Double.significandBitCount + 1 // 53
 internal let DBL_MIN_EXP = Double.leastNormalMagnitude.exponent + 1 // -1021
 internal let DBL_MAX_EXP = Double.greatestFiniteMagnitude.exponent + 1 // 1024
 
-// sourcery: pytype = float, default, baseType
+// sourcery: pytype = float, isDefault, isBaseType
 // sourcery: subclassInstancesHave__dict__
 /// This subtype of PyObject represents a Python floating point object.
 public final class PyFloat: PyObject {

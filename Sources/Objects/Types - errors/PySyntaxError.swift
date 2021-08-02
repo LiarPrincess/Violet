@@ -9,8 +9,8 @@ import VioletCore
 // https://docs.python.org/3.7/c-api/exceptions.html
 // https://www.python.org/dev/peps/pep-0415/#proposal
 
-// sourcery: pyerrortype = SyntaxError, default, baseType, hasGC
-// sourcery: baseExceptionSubclass, instancesHave__dict__
+// sourcery: pyerrortype = SyntaxError, isDefault, isBaseType, hasGC
+// sourcery: isBaseExceptionSubclass, instancesHave__dict__
 public class PySyntaxError: PyException {
 
   // sourcery: pytypedoc

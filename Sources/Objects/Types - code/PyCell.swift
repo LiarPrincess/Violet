@@ -3,7 +3,7 @@
 // In CPython:
 // Objects -> namespaceobject.c
 
-// sourcery: pytype = cell, default, hasGC
+// sourcery: pytype = cell, isDefault, hasGC
 /// `Cell` = source for `free` variable.
 ///
 /// Cells will be shared between multiple frames, so that child frame

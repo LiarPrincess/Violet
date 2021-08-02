@@ -5,7 +5,7 @@ import VioletCore
 // In CPython:
 // Objects -> enumobject.c
 
-// sourcery: pytype = reversed, default, hasGC, baseType
+// sourcery: pytype = reversed, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
 /// Return a reverse iterator over the values of the given sequence.
 public final class PyReversed: PyObject {

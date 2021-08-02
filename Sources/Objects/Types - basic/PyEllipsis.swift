@@ -6,7 +6,7 @@ import VioletCore
 // Objects -> sliceobject.c
 // https://docs.python.org/3.7/c-api/slice.html#ellipsis-object
 
-// sourcery: pytype = ellipsis, default
+// sourcery: pytype = ellipsis, isDefault
 /// The Python Ellipsis object. This object has no methods.
 /// Like Py_None it is a singleton object.
 public final class PyEllipsis: PyObject {

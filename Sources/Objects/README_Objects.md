@@ -141,7 +141,7 @@ Pros:
 
   For example this is how `int.__add__` method is implemented (`sourcery` annotations are used for code generation, `Py` represents python context):
   ```Swift
-  // sourcery: pytype = int, default, baseType, longSubclass
+  // sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
   public class PyInt: PyObject {
 
     public let value: BigInt
@@ -306,7 +306,7 @@ It works like this:
   - stores methods attached to Python `object` type (the ones used when filling `object` type `__dict__`)
 
   ```Swift
-  // sourcery: default, baseType
+  // sourcery: default, isBaseType
   /// Container for things attached to `object` type
   /// (root of `Python` type hierarchy).
   internal enum PyObjectType {
@@ -453,7 +453,7 @@ AttributeError: 'int' object has no attribute '__dict__'
 Now, since we dealt with all of the problems, let's look how we would wrap Swift function and make it available/callable in Python context. We will use `int.add` as an example:
 
 ```Swift
-// sourcery: pytype = int, default, baseType, longSubclass
+// sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
 public class PyInt: PyObject {
 
   public let value: BigInt
@@ -523,7 +523,7 @@ internal struct BinaryFunctionWrapper: FunctionWrapper {
 Now, since we unified all of the possible functions under the `FunctionWrapper` banner, we can finally create Python object representing it (instance of `PyBuiltinFunction` class):
 
 ```Swift
-// sourcery: pytype = builtinFunction, default, hasGC
+// sourcery: pytype = builtinFunction, isDefault, hasGC
 public class PyBuiltinFunction: PyObject {
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -608,7 +608,7 @@ Luckily properties are much simpler than methods, because Python property is jus
 For convenience we still have `PyProperty.wrap` methods:
 
 ```Swift
-// sourcery: pytype = property, default, hasGC, baseType
+// sourcery: pytype = property, isDefault, hasGC, isBaseType
 public class PyProperty: PyObject {
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -640,7 +640,7 @@ public class PyProperty: PyObject {
 If we wanted to use it to wrap `PyInt.asReal`:
 
 ```Swift
-// sourcery: pytype = int, default, baseType, longSubclass
+// sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
 public class PyInt: PyObject {
 
   // sourcery: pyproperty = real
@@ -847,17 +847,17 @@ public class PyObject {
   internal var flags: PyObjectFlags
 }
 
-// sourcery: pytype = int, default, baseType, longSubclass
+// sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
 public class PyInt: PyObject {
   public let value: BigInt
 }
 
-// sourcery: pytype = bool, default
+// sourcery: pytype = bool, isDefault
 public class PyBool: PyInt {
   // No new fields compared to 'PyInt'
 }
 
-// sourcery: pytype = str, default, baseType, unicodeSubclass
+// sourcery: pytype = str, isDefault, isBaseType, unicodeSubclass
 public class PyString: PyObject {
   internal let data: PyStringData
 }
@@ -974,7 +974,7 @@ We will use [Sourcery](https://github.com/krzysztofzablocki/Sourcery) for code g
 - mark every Swift class representing Python type with `pytype` annotation
 
   ```Swift
-  // sourcery: pytype = int, default, baseType, longSubclass
+  // sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
   public class PyInt: PyObject {
     // …
   }
@@ -983,7 +983,7 @@ We will use [Sourcery](https://github.com/krzysztofzablocki/Sourcery) for code g
 - mark every Swift method representing Python property getter with `pyproperty`, if this property also contains setter add `setter = <method-name>` annotation (`del` is not supported, because it is not used):
 
   ```Swift
-  // sourcery: pytype = type, default, hasGC, baseType, typeSubclass
+  // sourcery: pytype = type, isDefault, hasGC, isBaseType, typeSubclass
   public class PyType: PyObject {
 
     // sourcery: pyproperty = __name__, setter = setName
@@ -1000,7 +1000,7 @@ We will use [Sourcery](https://github.com/krzysztofzablocki/Sourcery) for code g
 - mark every Swift method representing Python method as either: `pymethod`, `pystaticmethod` or `pyclassmethod`:
 
   ```Swift
-  // sourcery: pytype = int, default, baseType, longSubclass
+  // sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
   public class PyInt: PyObject {
 
     // sourcery: pymethod = __add__
@@ -1022,7 +1022,7 @@ We will use [Sourcery](https://github.com/krzysztofzablocki/Sourcery) for code g
 Let us assume following `int` definition:
 
 ```Swift
-// sourcery: pytype = int, default, baseType, longSubclass
+// sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
 public class PyInt: PyObject {
 
   // sourcery: pytypedoc
@@ -1119,7 +1119,7 @@ Following files are generated:
 - [Generated/ExceptionSubclasses.swift](Generated/ExceptionSubclasses.swift) - generating code for Swift error subclasses, for example:
 
   ```Swift
-  // sourcery: pyerrortype = KeyboardInterrupt, default, baseType, hasGC, baseExceptionSubclass
+  // sourcery: pyerrortype = KeyboardInterrupt, isDefault, isBaseType, hasGC, isBaseExceptionSubclass
   public final class PyKeyboardInterrupt: PyBaseException {
 
     override internal class var doc: String {
@@ -1183,7 +1183,7 @@ internal struct PySequenceData {
   }
 }
 
-// sourcery: pytype = list, default, hasGC, baseType, listSubclass
+// sourcery: pytype = list, isDefault, hasGC, isBaseType, listSubclass
 /// This subtype of PyObject represents a Python list object.
 public class PyList: PyObject {
 
@@ -1206,7 +1206,7 @@ public class PyList: PyObject {
   }
 }
 
-// sourcery: pytype = tuple, default, hasGC, baseType, tupleSubclass
+// sourcery: pytype = tuple, isDefault, hasGC, isBaseType, tupleSubclass
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
 public class PyTuple: PyObject {

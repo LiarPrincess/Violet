@@ -8,7 +8,7 @@ import VioletCore
 // Objects -> sliceobject.c
 // https://docs.python.org/3.7/c-api/slice.html
 
-// sourcery: pytype = slice, default, hasGC
+// sourcery: pytype = slice, isDefault, hasGC
 /// The type object for slice objects.
 /// This is the same as slice in the Python layer.
 public final class PySlice: PyObject {

@@ -8,7 +8,7 @@ import VioletCore
 // Objects -> complexobject.c
 // https://docs.python.org/3.7/c-api/complex.html
 
-// sourcery: pytype = complex, default, baseType
+// sourcery: pytype = complex, isDefault, isBaseType
 // sourcery: subclassInstancesHave__dict__
 /// This subtype of PyObject represents a Python complex number object.
 public final class PyComplex: PyObject {

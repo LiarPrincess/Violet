@@ -59,7 +59,7 @@ public enum PyCast {{
         builtin_property = get_builtin_type_property_name(python_type)
         builtin_type = builtin_type_name + '.' + builtin_property
 
-        is_base_type = 'baseType' in t.sourcery_flags
+        is_base_type = 'isBaseType' in t.sourcery_flags
 
         print()
         print(f'  // MARK: - {swift_type_without_py}')

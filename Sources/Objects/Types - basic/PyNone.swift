@@ -4,7 +4,7 @@ import VioletCore
 // Objects -> object.c
 // https://docs.python.org/3.7/c-api/none.html
 
-// sourcery: pytype = NoneType, default
+// sourcery: pytype = NoneType, isDefault
 /// The Python None object, denoting lack of value.
 public final class PyNone: PyObject, HasCustomGetMethod {
 

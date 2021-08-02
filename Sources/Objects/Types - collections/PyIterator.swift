@@ -6,7 +6,7 @@ import VioletCore
 // In CPython:
 // Objects -> iterobject.c
 
-// sourcery: pytype = iterator, default, hasGC
+// sourcery: pytype = iterator, isDefault, hasGC
 public final class PyIterator: PyObject {
 
   // sourcery: pytypedoc

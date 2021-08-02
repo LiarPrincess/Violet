@@ -5,7 +5,7 @@ import VioletBytecode
 // In CPython:
 // Objects -> classobject.c
 
-// sourcery: pytype = method, default, hasGC
+// sourcery: pytype = method, isDefault, hasGC
 /// Function bound to an object.
 public final class PyMethod: PyObject {
 

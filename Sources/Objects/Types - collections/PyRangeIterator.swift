@@ -6,7 +6,7 @@ import VioletCore
 // In CPython:
 // Objects -> rangeobject.c
 
-// sourcery: pytype = range_iterator, default
+// sourcery: pytype = range_iterator, isDefault
 public final class PyRangeIterator: PyObject {
 
   // sourcery: pytypedoc

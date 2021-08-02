@@ -6,7 +6,7 @@ import VioletCore
 // In CPython:
 // Objects -> enumobject.c
 
-// sourcery: pytype = enumerate, default, hasGC, baseType
+// sourcery: pytype = enumerate, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
 /// Return an enumerate object. iterable must be a sequence, an iterator,
 /// or some other object which supports iteration.

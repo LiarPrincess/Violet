@@ -9,7 +9,7 @@ import Foundation
 // Python -> codecs.c
 // https://docs.python.org/3.7/library/io.html
 
-// sourcery: pytype = TextFile, default, hasGC, hasFinalize
+// sourcery: pytype = TextFile, isDefault, hasGC, hasFinalize
 /// We don't have `_io` module.
 /// Instead we have our own `TextFile` type based on `_io.TextIOWrapper`.
 ///

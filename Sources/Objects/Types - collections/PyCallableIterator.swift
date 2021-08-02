@@ -5,7 +5,7 @@ import VioletCore
 // In CPython:
 // Objects -> iterobject.c
 
-// sourcery: pytype = callable_iterator, default, hasGC
+// sourcery: pytype = callable_iterator, isDefault, hasGC
 public final class PyCallableIterator: PyObject {
 
   // sourcery: pytypedoc

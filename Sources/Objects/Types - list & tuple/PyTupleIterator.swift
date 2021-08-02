@@ -5,7 +5,7 @@ import VioletCore
 // In CPython:
 // Objects -> tupleobject.c
 
-// sourcery: pytype = tuple_iterator, default, hasGC
+// sourcery: pytype = tuple_iterator, isDefault, hasGC
 public final class PyTupleIterator: PyObject {
 
   // sourcery: pytypedoc

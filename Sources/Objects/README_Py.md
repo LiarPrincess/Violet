@@ -111,7 +111,7 @@ When creating Python object look for one of the following (in some cases it is p
 3. **static `wrap` method on type** - this option is available only for `builtinFunction`, `staticmethod`, `classmethod` and `property` types. You can use it to “wrap” Swift function and expose it as a Python object:
 
     ```Swift
-    // sourcery: pytype = int, default, baseType, longSubclass
+    // sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
     public class PyInt: PyObject {
       // sourcery: pymethod = __add__
       public func add(_ other: PyObject) -> PyResult<PyObject> {
@@ -209,7 +209,7 @@ So `int.__new__` from previous example:
 
 This is how the call site looks like:
 ```Swift
-// sourcery: pytype = int, default, baseType, longSubclass
+// sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
 public class PyInt: PyObject {
 
   private static let newArguments = ArgumentParser.createOrTrap(

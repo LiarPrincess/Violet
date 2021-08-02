@@ -5,7 +5,7 @@ import VioletCore
 // In CPython:
 // Objects -> dictobject.c
 
-// sourcery: pytype = dict_keyiterator, default, hasGC
+// sourcery: pytype = dict_keyiterator, isDefault, hasGC
 public final class PyDictKeyIterator: PyObject, AbstractDictViewIterator {
 
   // sourcery: pytypedoc

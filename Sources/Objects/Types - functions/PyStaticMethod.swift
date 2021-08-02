@@ -3,7 +3,7 @@
 // In CPython:
 // Objects -> funcobject.c
 
-// sourcery: pytype = staticmethod, default, baseType, hasGC
+// sourcery: pytype = staticmethod, isDefault, isBaseType, hasGC
 // sourcery: instancesHave__dict__
 public final class PyStaticMethod: PyObject {
 

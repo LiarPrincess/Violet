@@ -9,7 +9,7 @@ import VioletBytecode
 // Objects -> frameobject.c
 // https://docs.python.org/3.8/library/inspect.html#types-and-members <-- this!
 
-// sourcery: pytype = frame, default, hasGC
+// sourcery: pytype = frame, isDefault, hasGC
 /// Basic evaluation environment.
 ///
 /// - Important:

@@ -11,7 +11,7 @@ def print_test_case(t):
     flags = t.sourcery_flags
 
     # Can we create subclass?
-    if 'baseType' not in flags:
+    if 'isBaseType' not in flags:
         return
 
     type_name = t.python_type_name

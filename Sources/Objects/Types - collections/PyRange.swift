@@ -9,7 +9,7 @@ import VioletCore
 // Objects -> rangeobject.c
 // https://docs.python.org/3/library/stdtypes.html#range
 
-// sourcery: pytype = range, default
+// sourcery: pytype = range, isDefault
 /// The range type represents an immutable sequence of numbers
 /// and is commonly used for looping a specific number of times in for loops.
 public final class PyRange: PyObject {

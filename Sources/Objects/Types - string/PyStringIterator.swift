@@ -5,7 +5,7 @@ import VioletCore
 // In CPython:
 // Objects -> unicodeobject.c
 
-// sourcery: pytype = str_iterator, default, hasGC
+// sourcery: pytype = str_iterator, isDefault, hasGC
 public final class PyStringIterator: PyObject {
 
   // sourcery: pytypedoc

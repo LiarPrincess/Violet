@@ -6,7 +6,7 @@ import VioletBytecode
 // In CPython:
 // Objects -> funcobject.c
 
-// sourcery: pytype = function, default, hasGC
+// sourcery: pytype = function, isDefault, hasGC
 // sourcery: instancesHave__dict__
 public final class PyFunction: PyObject {
 

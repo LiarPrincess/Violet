@@ -8,7 +8,7 @@ import VioletCore
 // Objects -> setobject.c
 // https://docs.python.org/3.7/c-api/set.html
 
-// sourcery: pytype = frozenset, default, hasGC, baseType
+// sourcery: pytype = frozenset, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
 public final class PyFrozenSet: PyObject, AbstractSet {
 

@@ -54,8 +54,8 @@ if __name__ == '__main__':
         print(f'''\
 // MARK: - {python_type_name}
 
-// sourcery: pyerrortype = {python_type_name}, default, baseType, hasGC
-// sourcery: baseExceptionSubclass, instancesHave__dict__
+// sourcery: pyerrortype = {python_type_name}, isDefault, isBaseType, hasGC
+// sourcery: isBaseExceptionSubclass, instancesHave__dict__
 public {final}class {swift_class_name}: {swift_base_class_name} {{
 
   // sourcery: pytypedoc

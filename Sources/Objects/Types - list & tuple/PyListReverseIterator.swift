@@ -5,7 +5,7 @@ import VioletCore
 // In CPython:
 // Objects -> listobject.c
 
-// sourcery: pytype = list_reverseiterator, default, hasGC
+// sourcery: pytype = list_reverseiterator, isDefault, hasGC
 public final class PyListReverseIterator: PyObject {
 
   // sourcery: pytypedoc

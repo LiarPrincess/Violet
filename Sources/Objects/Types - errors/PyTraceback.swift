@@ -4,7 +4,7 @@ import VioletCore
 // Python -> traceback.c
 // https://docs.python.org/3/library/traceback.html
 
-// sourcery: pytype = traceback, default, hasGC
+// sourcery: pytype = traceback, isDefault, hasGC
 public final class PyTraceback: PyObject {
 
   // sourcery: pytypedoc

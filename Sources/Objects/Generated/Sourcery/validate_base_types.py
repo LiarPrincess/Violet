@@ -34,7 +34,7 @@ def check_base_types(types: List[TypeInfo]):
         types_by_swift_name[swift_name] = t
 
     for t in types:
-        is_base_type = 'baseType' in t.sourcery_flags
+        is_base_type = 'isBaseType' in t.sourcery_flags
         if not is_base_type:
             continue
 

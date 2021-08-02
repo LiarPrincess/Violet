@@ -10,7 +10,7 @@ import UnicodeData
 // https://docs.python.org/3/library/stdtypes.html
 // https://www.python.org/dev/peps/pep-0393/
 
-// sourcery: pytype = str, default, baseType, unicodeSubclass
+// sourcery: pytype = str, isDefault, isBaseType, isUnicodeSubclass
 // sourcery: subclassInstancesHave__dict__
 /// Textual data in Python is handled with str objects, or strings.
 /// Strings are immutable sequences of Unicode code points.

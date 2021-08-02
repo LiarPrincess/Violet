@@ -3,7 +3,7 @@
 // In CPython:
 // Objects -> moduleobject.c
 
-// sourcery: pytype = module, default, hasGC, baseType
+// sourcery: pytype = module, isDefault, hasGC, isBaseType
 // sourcery: instancesHave__dict__
 public final class PyModule: PyObject {
 

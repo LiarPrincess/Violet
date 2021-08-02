@@ -3,7 +3,7 @@
 // In CPython:
 // Objects -> funcobject.c
 
-// sourcery: pytype = classmethod, default, baseType, hasGC
+// sourcery: pytype = classmethod, isDefault, isBaseType, hasGC
 // sourcery: instancesHave__dict__
 public final class PyClassMethod: PyObject {
 

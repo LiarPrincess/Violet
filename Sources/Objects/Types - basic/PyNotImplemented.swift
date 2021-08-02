@@ -3,7 +3,7 @@ import VioletCore
 // In CPython:
 // Objects -> object.c
 
-// sourcery: pytype = NotImplementedType, default
+// sourcery: pytype = NotImplementedType, isDefault
 /// `NotImplemented` is an object that can be used to signal that an
 /// operation is not implemented for the given type combination.
 public final class PyNotImplemented: PyObject {

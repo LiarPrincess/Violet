@@ -8,7 +8,7 @@ import VioletCore
 // Objects -> listobject.c
 // https://docs.python.org/3.7/c-api/list.html
 
-// sourcery: pytype = list, default, hasGC, baseType, listSubclass
+// sourcery: pytype = list, isDefault, hasGC, isBaseType, isListSubclass
 // sourcery: subclassInstancesHave__dict__
 /// This subtype of PyObject represents a Python list object.
 public final class PyList: PyObject, AbstractSequence {

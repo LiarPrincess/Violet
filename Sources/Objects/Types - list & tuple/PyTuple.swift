@@ -8,7 +8,7 @@ import VioletCore
 // Objects -> tupleobject.c
 // https://docs.python.org/3.7/c-api/tuple.html
 
-// sourcery: pytype = tuple, default, hasGC, baseType, tupleSubclass
+// sourcery: pytype = tuple, isDefault, hasGC, isBaseType, isTupleSubclass
 // sourcery: subclassInstancesHave__dict__
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.

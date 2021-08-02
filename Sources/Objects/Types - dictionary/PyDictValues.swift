@@ -6,7 +6,7 @@ import VioletCore
 // In CPython:
 // Objects -> dictobject.c
 
-// sourcery: pytype = dict_values, default, hasGC
+// sourcery: pytype = dict_values, isDefault, hasGC
 public final class PyDictValues: PyObject, AbstractDictView {
 
   internal typealias OrderedDictionary = PyDict.OrderedDictionary

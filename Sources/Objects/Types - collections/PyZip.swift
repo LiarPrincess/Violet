@@ -3,7 +3,7 @@ import VioletCore
 // In CPython:
 // Python -> builtinmodule.c
 
-// sourcery: pytype = zip, default, hasGC, baseType
+// sourcery: pytype = zip, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
 public final class PyZip: PyObject {
 

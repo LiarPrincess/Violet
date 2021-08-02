@@ -7,7 +7,7 @@ import VioletCore
 // Objects -> typeobject.c
 // https://docs.python.org/3/c-api/typeobj.html
 
-// sourcery: pytype = type, default, hasGC, baseType, typeSubclass
+// sourcery: pytype = type, isDefault, hasGC, isBaseType, isTypeSubclass
 // sourcery: instancesHave__dict__
 public final class PyType: PyObject, HasCustomGetMethod {
 

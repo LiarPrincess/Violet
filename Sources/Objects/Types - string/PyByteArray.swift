@@ -8,7 +8,7 @@ import VioletCore
 // In CPython:
 // Objects -> bytesobject.c
 
-// sourcery: pytype = bytearray, default, baseType
+// sourcery: pytype = bytearray, isDefault, isBaseType
 // sourcery: subclassInstancesHave__dict__
 public final class PyByteArray: PyObject, AbstractBytes {
 

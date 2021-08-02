@@ -3,7 +3,7 @@ import VioletCore
 // In CPython:
 // Python -> builtinmodule.c
 
-// sourcery: pytype = map, default, hasGC, baseType
+// sourcery: pytype = map, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
 public final class PyMap: PyObject {
 

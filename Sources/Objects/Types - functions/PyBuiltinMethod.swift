@@ -3,7 +3,7 @@
 // In CPython:
 // Objects -> methodobject.c
 
-// sourcery: pytype = builtinMethod, default, hasGC
+// sourcery: pytype = builtinMethod, isDefault, hasGC
 /// This is about the type `builtin_function_or_method`,
 /// not Python methods in user-defined classes.
 public final class PyBuiltinMethod: PyObject, AbstractBuiltinFunction {

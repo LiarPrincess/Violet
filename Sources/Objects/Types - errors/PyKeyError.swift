@@ -6,8 +6,8 @@ import VioletCore
 // https://docs.python.org/3.7/c-api/exceptions.html
 // https://www.python.org/dev/peps/pep-0415/#proposal
 
-// sourcery: pyerrortype = KeyError, default, baseType, hasGC
-// sourcery: baseExceptionSubclass, instancesHave__dict__
+// sourcery: pyerrortype = KeyError, isDefault, isBaseType, hasGC
+// sourcery: isBaseExceptionSubclass, instancesHave__dict__
 public final class PyKeyError: PyLookupError {
 
   // sourcery: pytypedoc
