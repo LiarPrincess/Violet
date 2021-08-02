@@ -167,7 +167,7 @@ extension PyInstance {
     switch EqualCompare.compare(left: left, right: right) {
     case .value(let result):
       if PyCast.isNotImplemented(result) {
-        return .value(self.newBool(left === right)) // always false
+        return .value(self.newBool(false))
       }
       return .value(result)
 

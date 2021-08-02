@@ -67,8 +67,10 @@
 
 --allman false
 --enable braces
---enable emptyBraces
 --disable wrapMultilineStatementBraces
+
+# --emptybraces #Empty braces: "no-space" (default), "spaced" or "linebreak"
+--enable emptyBraces
 
 # =================
 # == Whitespaces ==
@@ -224,6 +226,7 @@
 --enable trailingClosures
 
 # '0 < x && x < 10' is better than ' x > 0 && x < 10'
+# --yodaswap # Swap yoda values: "always" (default) or "literals-only"
 --disable yodaConditions
 
 # ================

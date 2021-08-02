@@ -1,3 +1,5 @@
+// cSpell:ignore TPFLAGS STACKLESS
+
 private let isHeapTypeFlag = PyObject.Flags.custom0
 private let isBaseTypeFlag = PyObject.Flags.custom1
 private let hasGCFlag = PyObject.Flags.custom2

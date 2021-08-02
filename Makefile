@@ -37,9 +37,9 @@ elsa:
 
 gen:
 	@./Sources/Objects/Generated/run.sh
-	echo
+	@echo
 	@./Scripts/unimplemented_builtins/refresh.sh
-	echo
+	@echo
 	@./PyTests/generate_tests.sh
 
 unicode:

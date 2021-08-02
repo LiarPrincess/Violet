@@ -72,7 +72,7 @@ echo
 
 echo "=== Function wrappers ==="
 echo "Helper for storing and calling Swift functions (regardless of their signature)."
-echo "- FunctionWrapper - type that will store a reference to Swift funciton"
+echo "- FunctionWrapper - type that will store a reference to Swift function"
 python3 "$GENERATED/FunctionWrapper.py" > "$GENERATED/FunctionWrapper.swift"
 echo "- PyBuiltinFunction+Wrap - factory methods for 'builtinfunction'"
 python3 "$GENERATED/PyBuiltinFunction+Wrap.py" > "$GENERATED/PyBuiltinFunction+Wrap.swift"

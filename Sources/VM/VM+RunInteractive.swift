@@ -73,12 +73,8 @@ extension VM {
 
   private func sayHi() -> PyBaseException? {
     let hi = """
-    If a client requests it, we shall go anywhere.
-    Representing the Auto Memoir Doll service,
-    I am Violet Evergarden.
-
-    That said, please note that interactive mode is not a priority in Violet
-    development and some things may not be working (most notably arrow keys).
+    Please note that interactive mode is not a priority in Violet development
+    and some things may not be working (most notably arrow keys).
     Use 'exit()' or 'quit()' to exit.
 
     \(Py.sys.version)

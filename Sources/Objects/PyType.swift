@@ -1,7 +1,7 @@
 import VioletCore
 
 // swiftlint:disable file_length
-// cSpell:ignore typeobject TPFLAGS STACKLESS
+// cSpell:ignore typeobject
 
 // In CPython:
 // Objects -> typeobject.c
@@ -53,7 +53,7 @@ public final class PyType: PyObject, HasCustomGetMethod {
   /// See `PyStaticCall` documentation for more information.
   internal let staticMethods: StaticallyKnownNotOverriddenMethods
 
-  /// `Object.flags` that are only avaiable on `type` instances.
+  /// `Object.flags` that are only available on `type` instances.
   internal var typeFlags: TypeFlags {
     get { return TypeFlags(objectFlags: self.flags) }
     set { self.flags.setCustomFlags(from: newValue.objectFlags) }

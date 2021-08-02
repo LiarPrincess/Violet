@@ -14,8 +14,6 @@ import VioletCore
 /// and is commonly used for looping a specific number of times in for loops.
 public final class PyRange: PyObject {
 
-  private static let isStepImplicitFlag = PyObject.Flags.custom0
-
   // sourcery: pytypedoc
   internal static let doc = """
     range(stop) -> range object
@@ -40,6 +38,8 @@ public final class PyRange: PyObject {
     /// Step was deducted automatically.
     case implicit
   }
+
+  private static let isStepImplicitFlag = PyObject.Flags.custom0
 
   /// Remember how user created this range (`repr` depends on it).
   private var stepType: StepType {
