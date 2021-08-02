@@ -1,9 +1,9 @@
-from typing import List, NamedTuple
+from typing import List
 
 from Sourcery.entities import TypeInfo
 
 
-def check_final_keyword(types: List[TypeInfo]):
+def check_missing_final_keyword(types: List[TypeInfo]):
     missing_final: List[TypeInfo] = []
 
     for t in types:
@@ -31,16 +31,12 @@ def check_final_keyword(types: List[TypeInfo]):
         # Weird case (should not compile in Swift)
         assert False, f"'{t.swift_type_name}': {subclasses}"
 
-    if not missing_final:
-        return
+    if missing_final:
+        print('!!! Error !!!')
+        print('Following types are missing \'final\' keyword:')
 
-    print('''\
-!!! Error !!!
-Following types are missing 'final' keyword:\
-''')
+        for t in missing_final:
+            name = t.swift_type_name
+            print(f'- {name}')
 
-    for t in missing_final:
-        name = t.swift_type_name
-        print(f'- {name}')
-
-    print('!!! Error !!!')
+        print('!!! Error !!!')

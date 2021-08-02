@@ -2,8 +2,9 @@ import os.path
 from typing import List, Union
 
 from Sourcery.entities import TypeInfo, SwiftFieldInfo, SwiftFunctionInfo, PyPropertyInfo, PyFunctionInfo
+from Sourcery.validate_missing_final_keyword import check_missing_final_keyword
 from Sourcery.validate_overridden_pymethods import check_for_overridden_pymethods
-from Sourcery.validate_final_keyword import check_final_keyword
+from Sourcery.validate_base_types import check_base_types
 
 
 def get_types() -> List[TypeInfo]:
@@ -132,6 +133,7 @@ def get_types() -> List[TypeInfo]:
 
     # Validation
     check_for_overridden_pymethods(result)
-    check_final_keyword(result)
+    check_missing_final_keyword(result)
+    check_base_types(result)
 
     return result

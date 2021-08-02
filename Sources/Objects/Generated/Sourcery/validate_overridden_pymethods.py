@@ -62,23 +62,19 @@ def check_for_overridden_pymethods(types: List[TypeInfo]):
                     if base_method.swift_selector == selector:
                         overridden_pymethods.append(OverriddenPyMethod(t, method, base))
 
-    if not overridden_pymethods:
-        return
+    if overridden_pymethods:
+        print('!!! Error !!!')
+        print('Following methods were found to be both \'pymethod\' and Swift method overrides')
+        print('(function with \'override\' keyword):')
 
-    print('''\
-!!! Error !!!
-Following methods were found to be both 'pymethod' and Swift method overrides
-(function with 'override' keyword):\
-''')
+        for override in overridden_pymethods:
+            typ = override.typ
+            method = override.method
+            owner = override.method_owner
 
-    for override in overridden_pymethods:
-        typ = override.typ
-        method = override.method
-        owner = override.method_owner
+            typ_name = typ.swift_type_name
+            owner_name = owner.swift_type_name
+            selector = method.swift_selector
+            print(f'- {typ_name}.{selector} is override of similar method in {owner_name}')
 
-        typ_name = typ.swift_type_name
-        owner_name = owner.swift_type_name
-        selector = method.swift_selector
-        print(f'- {typ_name}.{selector} is override of similar method in {owner_name}')
-
-    print('!!! Error !!!')
+        print('!!! Error !!!')
