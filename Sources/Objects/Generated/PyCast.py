@@ -3,7 +3,7 @@ from Common.strings import generated_warning
 from Builtin_types import get_property_name_escaped as get_builtin_type_property_name
 
 
-def get_indefinite_article(word: str) -> str:
+def _get_indefinite_article(word: str) -> str:
     if not word:
         return False
 
@@ -45,60 +45,86 @@ public enum PyCast {{
 ''')
 
     for t in get_types():
-        swift_type_name = t.swift_type_name
-        swift_type_without_py = swift_type_name[2:]
+        swift_type = t.swift_type_name
+        swift_type_without_py = swift_type[2:]
 
         # We don't need to cast 'Object' -> 'Object'
-        if swift_type_name == 'PyObject':
+        if swift_type == 'PyObject':
             continue
 
         python_type = t.python_type_name
-        builtin_types = 'Py.errorTypes' if t.is_error else 'Py.types'
-        builtin_property = get_builtin_type_property_name(python_type)
+        python_type_article = _get_indefinite_article(python_type)
 
-        article = get_indefinite_article(python_type)
+        builtin_type_name = 'Py.errorTypes' if t.is_error else 'Py.types'
+        builtin_property = get_builtin_type_property_name(python_type)
+        builtin_type = builtin_type_name + '.' + builtin_property
+
+        is_base_type = 'baseType' in t.sourcery_flags
 
         print()
         print(f'  // MARK: - {swift_type_without_py}')
-        print()
 
-        is_base_type = 'baseType' in t.sourcery_flags
+        if not is_base_type:
+            print()
+            print(f"  // '{python_type}' does not allow subclassing, so we do not need 'exactly' methods.")
+
+        # =============
+        # === isInt ===
+        # =============
+
+        doc = f'/// Is this object an instance of `{python_type}`?'
         if is_base_type:
-            print(f'''\
-  /// Is this object an instance of `{python_type}` (or its subclass)?
-  public static func is{swift_type_without_py}(_ object: PyObject) -> Bool {{
-    return self.isInstance(object, of: {builtin_types}.{builtin_property})
-  }}
+            doc = f'/// Is this object an instance of `{python_type}` (or its subclass)?'
 
+        print(f'''
+  {doc}
+  public static func is{swift_type_without_py}(_ object: PyObject) -> Bool {{
+    return PyCast.isInstance(object, of: {builtin_type})
+  }}\
+''')
+
+        # ====================
+        # === isExactlyInt ===
+        # ====================
+
+        if is_base_type:
+            print(f'''
   /// Is this object an instance of `{python_type}` (but not its subclass)?
   public static func isExactly{swift_type_without_py}(_ object: PyObject) -> Bool {{
-    return self.isExactlyInstance(object, of: {builtin_types}.{builtin_property})
-  }}
-
-  /// Cast this object to `{swift_type_name}` if it is {article} `{python_type}` (or its subclass).
-  public static func as{swift_type_without_py}(_ object: PyObject) -> {swift_type_name}? {{
-    return Self.is{swift_type_without_py}(object) ? (object as! {swift_type_name}) : nil
-  }}
-
-  /// Cast this object to `{swift_type_name}` if it is {article} `{python_type}` (but not its subclass).
-  public static func asExactly{swift_type_without_py}(_ object: PyObject) -> {swift_type_name}? {{
-    return Self.isExactly{swift_type_without_py}(object) ? (object as! {swift_type_name}) : nil
+    return PyCast.isExactlyInstance(object, of: {builtin_type})
   }}\
 ''')
-        else:
-            print(f'''\
-  // '{python_type}' does not allow subclassing, so we do not need 'exactly' checks
 
-  /// Is this object an instance of `{python_type}`?
-  public static func is{swift_type_without_py}(_ object: PyObject) -> Bool {{
-    return self.isInstance(object, of: {builtin_types}.{builtin_property})
-  }}
+        # =============
+        # === asInt ===
+        # =============
 
-  /// Cast this object to `{swift_type_name}` if it is {article} `{python_type}`.
-  public static func as{swift_type_without_py}(_ object: PyObject) -> {swift_type_name}? {{
-    return Self.is{swift_type_without_py}(object) ? (object as! {swift_type_name}) : nil
+        doc = f'/// Cast this object to `{swift_type}` if it is {python_type_article} `{python_type}`.'
+        if is_base_type:
+            doc = f'/// Cast this object to `{swift_type}` if it is {python_type_article} `{python_type}` (or its subclass).'
+
+        print(f'''
+  {doc}
+  public static func as{swift_type_without_py}(_ object: PyObject) -> {swift_type}? {{
+    return PyCast.is{swift_type_without_py}(object) ? (object as! {swift_type}) : nil
   }}\
 ''')
+
+        # ====================
+        # === asExactlyInt ===
+        # ====================
+
+        if is_base_type:
+            print(f'''
+  /// Cast this object to `{swift_type}` if it is {python_type_article} `{python_type}` (but not its subclass).
+  public static func asExactly{swift_type_without_py}(_ object: PyObject) -> {swift_type}? {{
+    return PyCast.isExactly{swift_type_without_py}(object) ? (object as! {swift_type}) : nil
+  }}\
+''')
+
+        # ===============
+        # === Special ===
+        # ===============
 
         is_none = t.python_type_name == 'NoneType'
         if is_none:
@@ -113,4 +139,4 @@ public enum PyCast {{
   }}\
 ''')
 
-    print('}')
+    print('}')  # end 'PyCast'
