@@ -109,7 +109,7 @@ extension PyType {
         return .typeError("bases must be types")
       }
 
-      guard base.isBaseType else {
+      guard base.typeFlags.isBaseType else {
         let baseName = base.getNameString()
         return .typeError("type '\(baseName)' is not an acceptable base type")
       }
@@ -132,7 +132,7 @@ extension PyType {
       bases = [base]
     } else {
       // Search the bases for the proper metatype to deal with this
-      switch PyType.calculateMetaclass(metatype: metatype, bases: bases) {
+      switch Self.calculateMetaclass(metatype: metatype, bases: bases) {
       case let .value(t): metatype = t
       case let .error(e): return .error(e)
       }
@@ -140,7 +140,7 @@ extension PyType {
       // Calculate best base using bases memory layout (layout conflict -> error).
       // We will call this base 'solid' - our new type will have the same memory
       // layout (+- '__dict__' because it does not matter).
-      switch PyType.getSolidBase(bases: bases) {
+      switch Self.getSolidBase(bases: bases) {
       case let .value(r): base = r
       case let .error(e): return .error(e)
       }
@@ -174,16 +174,23 @@ extension PyType {
     // Flags have to be set ASAP!
     // Setter methods will check 'heapType' (because it should not be possible
     // to modify builtin types, but it is 'ok' for heap types).
-    type.flags.set(Self.defaultFlag)
-    type.flags.set(Self.heapTypeFlag)
-    type.flags.set(Self.baseTypeFlag)
-    type.flags.set(Self.hasFinalizeFlag)
-    type.flags.set(Self.hasGCFlag, to: base.flags.isSet(Self.hasGCFlag))
+    type.typeFlags.isDefault = true
+    type.typeFlags.isHeapType = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.hasFinalize = true
+    type.typeFlags.hasGC = base.typeFlags.hasGC
 
-    let instancesHave__dict__ = base.flags.isSet(Self.instancesHave__dict__Flag)
-      || base.flags.isSet(Self.subclassInstancesHave__dict__Flag)
+    type.typeFlags.isLongSubclass = base.typeFlags.isLongSubclass
+    type.typeFlags.isListSubclass = base.typeFlags.isListSubclass
+    type.typeFlags.isTupleSubclass = base.typeFlags.isTupleSubclass
+    type.typeFlags.isBytesSubclass = base.typeFlags.isBytesSubclass
+    type.typeFlags.isUnicodeSubclass = base.typeFlags.isUnicodeSubclass
+    type.typeFlags.isDictSubclass = base.typeFlags.isDictSubclass
+    type.typeFlags.isBaseExceptionSubclass = base.typeFlags.isBaseExceptionSubclass
+    type.typeFlags.isTypeSubclass = base.typeFlags.isTypeSubclass
 
-    type.flags.set(Self.instancesHave__dict__Flag, to: instancesHave__dict__)
+    type.typeFlags.instancesHave__dict__ = base.typeFlags.instancesHave__dict__
+      || base.typeFlags.subclassInstancesHave__dict__
 
     // Initialize '__dict__' from passed-in dict
     // Also: we have to COPY it! Swift COW will take care of this.

@@ -25,88 +25,6 @@ public final class PyType: PyObject, HasCustomGetMethod {
     }
   }
 
-  // MARK: - Flags
-
-  /// Set if the type object is dynamically allocated
-  /// (for example by `class` statement).
-  internal static let heapTypeFlag = Flags.custom0
-  /// Set if the type allows sub-classing.
-  internal static let baseTypeFlag = Flags.custom1
-  /// Objects support garbage collection.
-  ///
-  /// This flag was taken from CPython and is not used in Violet.
-  internal static let hasGCFlag = Flags.custom2
-  /// Type is abstract and cannot be instantiated
-  ///
-  /// This flag was taken from CPython and is not used in Violet..
-  internal static let isAbstractFlag = Flags.custom3
-  /// Type structure has tp_finalize member (3.4)
-  ///
-  /// This flag was taken from CPython and is not used in Violet.
-  internal static let hasFinalizeFlag = Flags.custom4
-
-  /// ```c
-  /// #define Py_TPFLAGS_DEFAULT  ( \
-  ///     Py_TPFLAGS_HAVE_STACKLESS_EXTENSION | \
-  ///     Py_TPFLAGS_HAVE_VERSION_TAG)
-  /// ```
-  internal static let defaultFlag = Flags.custom5
-
-  /// This type is a `int` subclass.
-  ///
-  /// This flag was taken from CPython and is not used in Violet.
-  internal static let longSubclassFlag = Flags.custom8
-  /// This type is a `list` subclass.
-  ///
-  /// This flag was taken from CPython and is not used in Violet.
-  internal static let listSubclassFlag = Flags.custom9
-  /// This type is a `tuple` subclass.
-  ///
-  /// This flag was taken from CPython and is not used in Violet.
-  internal static let tupleSubclassFlag = Flags.custom10
-  /// This type is a `bytes` subclass.
-  ///
-  /// This flag was taken from CPython and is not used in Violet.
-  internal static let bytesSubclassFlag = Flags.custom11
-  /// This type is a `str` subclass.
-  ///
-  /// This flag was taken from CPython and is not used in Violet.
-  internal static let unicodeSubclassFlag = Flags.custom12
-  /// This type is a `dict` subclass.
-  ///
-  /// This flag was taken from CPython and is not used in Violet.
-  internal static let dictSubclassFlag = Flags.custom13
-  /// This type is a `baseException` subclass.
-  ///
-  /// This flag was taken from CPython and is not used in Violet.
-  internal static let baseExceptionSubclassFlag = Flags.custom14
-  /// This type is a `type` subclass.
-  ///
-  /// This flag was taken from CPython and is not used in Violet.
-  internal static let typeSubclassFlag = Flags.custom15
-
-  /// (VIOLET ONLY) Flag used to denote that instances of this type have access
-  /// to `__dict__`.
-  internal static let instancesHave__dict__Flag = Flags.custom20
-  /// (VIOLET ONLY) Flag used to denote that instances of subclass of this type
-  /// have access to `__dict__` (yeah… I know that sounds complicated).
-  ///
-  /// Normally most builtin types (like `int`, `float` etc.) do not have `__dict__`:
-  /// ``` py
-  /// >>> (1).__dict__
-  /// Traceback (most recent call last):
-  ///   File "<stdin>", line 1, in <module>
-  /// AttributeError: 'int' object has no attribute '__dict__'
-  /// ```
-  ///
-  /// But if we subclass them, then the `__dict__` becomes available:
-  /// ```py
-  /// >>> class MyInt(int): pass
-  /// >>> MyInt().__dict__
-  /// { }
-  /// ```
-  internal static let subclassInstancesHave__dict__Flag = Flags.custom21
-
   // MARK: - Properties & init
 
   // sourcery: pytypedoc
@@ -135,12 +53,10 @@ public final class PyType: PyObject, HasCustomGetMethod {
   /// See `PyStaticCall` documentation for more information.
   internal let staticMethods: StaticallyKnownNotOverriddenMethods
 
-  internal var isHeapType: Bool {
-    return self.flags.isSet(Self.heapTypeFlag)
-  }
-
-  internal var isBaseType: Bool {
-    return self.flags.isSet(Self.baseTypeFlag)
+  /// `Object.flags` that are only avaiable on `type` instances.
+  internal var typeFlags: TypeFlags {
+    get { return TypeFlags(objectFlags: self.flags) }
+    set { self.flags.setCustomFlags(from: newValue.objectFlags) }
   }
 
   override public var description: String {
@@ -265,7 +181,7 @@ public final class PyType: PyObject, HasCustomGetMethod {
   }
 
   internal func getNameString() -> String {
-    if self.isHeapType {
+    if self.typeFlags.isHeapType {
       return self.name
     }
 
@@ -302,7 +218,7 @@ public final class PyType: PyObject, HasCustomGetMethod {
   }
 
   internal func getQualnameString() -> String {
-    if self.isHeapType {
+    if self.typeFlags.isHeapType {
       return self.qualname
     }
 
@@ -417,7 +333,7 @@ public final class PyType: PyObject, HasCustomGetMethod {
   }
 
   private func getModuleImpl() -> GetModuleImplResult {
-    if self.isHeapType {
+    if self.typeFlags.isHeapType {
       guard let object = self.__dict__.get(id: .__module__) else {
         let e = Py.newAttributeError(msg: "__module__")
         return .error(e)
@@ -678,7 +594,7 @@ public final class PyType: PyObject, HasCustomGetMethod {
   }
 
   private func preventSetAttributeOnBuiltin() -> PyBaseException? {
-    if !self.isHeapType {
+    if !self.typeFlags.isHeapType {
       let msg = "can't set attributes of built-in/extension type '\(self.name)'"
       return Py.newTypeError(msg: msg)
     }
@@ -886,7 +802,7 @@ public final class PyType: PyObject, HasCustomGetMethod {
                                         value: PyObject?) -> PyResult<PyObject> {
     let nameString = name.value.value
 
-    guard self.isHeapType else {
+    guard self.typeFlags.isHeapType else {
       return .typeError("can't set \(self.name).\(nameString)")
     }
 

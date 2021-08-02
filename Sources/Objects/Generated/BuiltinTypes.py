@@ -79,7 +79,7 @@ import VioletCore
     // Example why this is needed:
     // When filling 'type' type we will need to access its '__dict__'.
     // If the 'has__dict__' flag is not set then we don't have a '__dict__'!
-    self.type.flags.set(PyType.instancesHave__dict__Flag)
+    self.type.typeFlags.instancesHave__dict__ = true
 
     // And now we can fill type.
     self.object.setType(to: self.type)

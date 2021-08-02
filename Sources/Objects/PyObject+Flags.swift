@@ -11,6 +11,14 @@ extension PyObject {
 
     private var rawValue: UInt32
 
+    public init() {
+      self.rawValue = 0
+    }
+
+    private init(rawValue: UInt32) {
+      self.rawValue = rawValue
+    }
+
     // MARK: - Present on every object
 
     /// This flag is used to control infinite recursion
@@ -33,14 +41,31 @@ extension PyObject {
     /// This flag is automatically copied from `self.type`.
     public static let has__dict__ = Flags(rawValue: 1 << 1)
 
-    // *** Reserved for future use ***
+    // === Reserved for future use ===
     // Not assigned (for now), but we expect garbage collection to use some of them.
-//    public static let reserved2 = Flags(rawValue: 1 << 2)
-//    public static let reserved3 = Flags(rawValue: 1 << 3)
-//    public static let reserved4 = Flags(rawValue: 1 << 4)
-//    public static let reserved5 = Flags(rawValue: 1 << 5)
-//    public static let reserved6 = Flags(rawValue: 1 << 6)
-//    public static let reserved7 = Flags(rawValue: 1 << 7)
+    private static let reserved2 = Flags(rawValue: 1 << 2)
+    private static let reserved3 = Flags(rawValue: 1 << 3)
+    private static let reserved4 = Flags(rawValue: 1 << 4)
+    private static let reserved5 = Flags(rawValue: 1 << 5)
+    private static let reserved6 = Flags(rawValue: 1 << 6)
+    private static let reserved7 = Flags(rawValue: 1 << 7)
+
+    /// Mask that contains all of the flags that are present on every object
+    /// (regardless of object type).
+    ///
+    /// It includes: `reprLock`, `has__dict__` etc.
+    public static var presentOnEveryObjectMask: Flags = {
+      var result = Flags()
+      result.set(Flags.reprLock)
+      result.set(Flags.has__dict__)
+      result.set(Flags.reserved2)
+      result.set(Flags.reserved3)
+      result.set(Flags.reserved4)
+      result.set(Flags.reserved5)
+      result.set(Flags.reserved6)
+      result.set(Flags.reserved7)
+      return result
+    }()
 
     // MARK: - Depends on object type
 
@@ -92,6 +117,13 @@ extension PyObject {
     public static let custom22 = Flags(rawValue: 1 << 30)
     /// Flag `23` that can be used based on object type.
     public static let custom23 = Flags(rawValue: 1 << 31)
+
+    /// Mask that contains all of the flags that can be used based on object type.
+    public static var customMask: Flags {
+      let everyObjectMask = Flags.presentOnEveryObjectMask.rawValue
+      let negative = ~everyObjectMask
+      return Flags(rawValue: negative)
+    }
 
     // MARK: - Description
 
@@ -147,18 +179,21 @@ extension PyObject {
       }
     }
 
+    /// Set all of the `custom` flags to match the ones on provided object.
+    internal mutating func setCustomFlags(from other: Flags) {
+      let toPreserveMask = Flags.presentOnEveryObjectMask.rawValue
+      let toPreserve = self.rawValue & toPreserveMask
+
+      let toCopyMask = Flags.customMask.rawValue
+      let toCopy = other.rawValue & toCopyMask
+
+      self.rawValue = toPreserve | toCopy
+    }
+
     /// Remove given flag.
     public mutating func unset(_ flag: Flags) {
       let flagNegated = ~flag.rawValue
       self.rawValue = self.rawValue & flagNegated
-    }
-
-    public init() {
-      self.rawValue = 0
-    }
-
-    private init(rawValue: UInt32) {
-      self.rawValue = rawValue
     }
   }
 }

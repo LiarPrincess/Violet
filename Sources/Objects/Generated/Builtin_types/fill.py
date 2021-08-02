@@ -41,7 +41,7 @@ def print_fill_function(t: TypeInfo):
 
     sourcery_flags = t.sourcery_flags
     for flag in sourcery_flags:
-        print(f'    type.flags.set(PyType.{flag}Flag)')
+        print(f'    type.typeFlags.{flag} = true')
 
     static_doc_property = t.swift_static_doc_property
     if static_doc_property:

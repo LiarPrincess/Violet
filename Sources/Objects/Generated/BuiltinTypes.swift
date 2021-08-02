@@ -104,7 +104,7 @@ public final class BuiltinTypes {
     // Example why this is needed:
     // When filling 'type' type we will need to access its '__dict__'.
     // If the 'has__dict__' flag is not set then we don't have a '__dict__'!
-    self.type.flags.set(PyType.instancesHave__dict__Flag)
+    self.type.typeFlags.instancesHave__dict__ = true
 
     // And now we can fill type.
     self.object.setType(to: self.type)
@@ -315,9 +315,9 @@ public final class BuiltinTypes {
 
   private func fillObject() {
     let type = self.object
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyObjectType.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyObjectType.getClass(zelf:), castSelf: Self.asObject))
@@ -358,7 +358,8 @@ public final class BuiltinTypes {
 
   private func fillBool() {
     let type = self.bool
-    type.flags.set(PyType.defaultFlag)
+    type.typeFlags.isDefault = true
+    type.typeFlags.isLongSubclass = true
     type.setBuiltinTypeDoc(PyBool.docBool)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBool.getClassBool, castSelf: Self.asBool))
@@ -395,8 +396,8 @@ public final class BuiltinTypes {
 
   private func fillBuiltinFunction() {
     let type = self.builtinFunction
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(nil)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBuiltinFunction.getClass, castSelf: Self.asBuiltinFunction))
@@ -439,8 +440,8 @@ public final class BuiltinTypes {
 
   private func fillBuiltinMethod() {
     let type = self.builtinMethod
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(nil)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBuiltinMethod.getClass, castSelf: Self.asBuiltinMethod))
@@ -483,9 +484,9 @@ public final class BuiltinTypes {
 
   private func fillByteArray() {
     let type = self.bytearray
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyByteArray.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyByteArray.getClass, castSelf: Self.asByteArray))
@@ -579,8 +580,8 @@ public final class BuiltinTypes {
 
   private func fillByteArrayIterator() {
     let type = self.bytearray_iterator
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyByteArrayIterator.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyByteArrayIterator.getClass, castSelf: Self.asByteArrayIterator))
@@ -613,10 +614,10 @@ public final class BuiltinTypes {
 
   private func fillBytes() {
     let type = self.bytes
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.bytesSubclassFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isBytesSubclass = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyBytes.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBytes.getClass, castSelf: Self.asBytes))
@@ -697,8 +698,8 @@ public final class BuiltinTypes {
 
   private func fillBytesIterator() {
     let type = self.bytes_iterator
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyBytesIterator.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyBytesIterator.getClass, castSelf: Self.asBytesIterator))
@@ -731,8 +732,8 @@ public final class BuiltinTypes {
 
   private func fillCallableIterator() {
     let type = self.callable_iterator
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyCallableIterator.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyCallableIterator.getClass, castSelf: Self.asCallableIterator))
@@ -762,8 +763,8 @@ public final class BuiltinTypes {
 
   private func fillCell() {
     let type = self.cell
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(nil)
 
     self.insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyCell.isEqual(_:), castSelf: Self.asCell))
@@ -796,10 +797,10 @@ public final class BuiltinTypes {
 
   private func fillClassMethod() {
     let type = self.classmethod
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.instancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.instancesHave__dict__ = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyClassMethod.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyClassMethod.getClass, castSelf: Self.asClassMethod))
@@ -833,7 +834,7 @@ public final class BuiltinTypes {
 
   private func fillCode() {
     let type = self.code
-    type.flags.set(PyType.defaultFlag)
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyCode.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyCode.getClass, castSelf: Self.asCode))
@@ -875,9 +876,9 @@ public final class BuiltinTypes {
 
   private func fillComplex() {
     let type = self.complex
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyComplex.doc)
 
     self.insert(type: type, name: "real", value: PyProperty.wrap(doc: nil, get: PyComplex.asReal, castSelf: Self.asComplex))
@@ -942,11 +943,11 @@ public final class BuiltinTypes {
 
   private func fillDict() {
     let type = self.dict
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.dictSubclassFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.isDictSubclass = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyDict.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDict.getClass, castSelf: Self.asDict))
@@ -1003,8 +1004,8 @@ public final class BuiltinTypes {
 
   private func fillDictItemIterator() {
     let type = self.dict_itemiterator
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyDictItemIterator.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDictItemIterator.getClass, castSelf: Self.asDictItemIterator))
@@ -1037,8 +1038,8 @@ public final class BuiltinTypes {
 
   private func fillDictItems() {
     let type = self.dict_items
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyDictItems.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDictItems.getClass, castSelf: Self.asDictItems))
@@ -1079,8 +1080,8 @@ public final class BuiltinTypes {
 
   private func fillDictKeyIterator() {
     let type = self.dict_keyiterator
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyDictKeyIterator.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDictKeyIterator.getClass, castSelf: Self.asDictKeyIterator))
@@ -1113,8 +1114,8 @@ public final class BuiltinTypes {
 
   private func fillDictKeys() {
     let type = self.dict_keys
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyDictKeys.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDictKeys.getClass, castSelf: Self.asDictKeys))
@@ -1155,8 +1156,8 @@ public final class BuiltinTypes {
 
   private func fillDictValueIterator() {
     let type = self.dict_valueiterator
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyDictValueIterator.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDictValueIterator.getClass, castSelf: Self.asDictValueIterator))
@@ -1189,8 +1190,8 @@ public final class BuiltinTypes {
 
   private func fillDictValues() {
     let type = self.dict_values
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyDictValues.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyDictValues.getClass, castSelf: Self.asDictValues))
@@ -1221,7 +1222,7 @@ public final class BuiltinTypes {
 
   private func fillEllipsis() {
     let type = self.ellipsis
-    type.flags.set(PyType.defaultFlag)
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyEllipsis.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyEllipsis.getClass, castSelf: Self.asEllipsis))
@@ -1253,10 +1254,10 @@ public final class BuiltinTypes {
 
   private func fillEnumerate() {
     let type = self.enumerate
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyEnumerate.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyEnumerate.getClass, castSelf: Self.asEnumerate))
@@ -1288,10 +1289,10 @@ public final class BuiltinTypes {
 
   private func fillFilter() {
     let type = self.filter
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyFilter.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyFilter.getClass, castSelf: Self.asFilter))
@@ -1323,9 +1324,9 @@ public final class BuiltinTypes {
 
   private func fillFloat() {
     let type = self.float
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyFloat.doc)
 
     self.insert(type: type, name: "real", value: PyProperty.wrap(doc: nil, get: PyFloat.asReal, castSelf: Self.asFloat))
@@ -1396,8 +1397,8 @@ public final class BuiltinTypes {
 
   private func fillFrame() {
     let type = self.frame
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyFrame.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyFrame.getClass, castSelf: Self.asFrame))
@@ -1435,10 +1436,10 @@ public final class BuiltinTypes {
 
   private func fillFrozenSet() {
     let type = self.frozenset
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyFrozenSet.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyFrozenSet.getClass, castSelf: Self.asFrozenSet))
@@ -1495,9 +1496,9 @@ public final class BuiltinTypes {
 
   private func fillFunction() {
     let type = self.function
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.instancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.instancesHave__dict__ = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyFunction.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyFunction.getClass, castSelf: Self.asFunction))
@@ -1538,10 +1539,10 @@ public final class BuiltinTypes {
 
   private func fillInt() {
     let type = self.int
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.longSubclassFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.isLongSubclass = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyInt.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyInt.getClass, castSelf: Self.asInt))
@@ -1624,8 +1625,8 @@ public final class BuiltinTypes {
 
   private func fillIterator() {
     let type = self.iterator
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyIterator.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyIterator.getClass, castSelf: Self.asIterator))
@@ -1656,11 +1657,11 @@ public final class BuiltinTypes {
 
   private func fillList() {
     let type = self.list
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.listSubclassFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.isListSubclass = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyList.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyList.getClass, castSelf: Self.asList))
@@ -1722,8 +1723,8 @@ public final class BuiltinTypes {
 
   private func fillListIterator() {
     let type = self.list_iterator
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyListIterator.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyListIterator.getClass, castSelf: Self.asListIterator))
@@ -1756,8 +1757,8 @@ public final class BuiltinTypes {
 
   private func fillListReverseIterator() {
     let type = self.list_reverseiterator
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyListReverseIterator.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyListReverseIterator.getClass, castSelf: Self.asListReverseIterator))
@@ -1790,10 +1791,10 @@ public final class BuiltinTypes {
 
   private func fillMap() {
     let type = self.map
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyMap.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyMap.getClass, castSelf: Self.asMap))
@@ -1825,8 +1826,8 @@ public final class BuiltinTypes {
 
   private func fillMethod() {
     let type = self.method
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyMethod.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyMethod.getClass, castSelf: Self.asMethod))
@@ -1869,10 +1870,10 @@ public final class BuiltinTypes {
 
   private func fillModule() {
     let type = self.module
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.instancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.instancesHave__dict__ = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyModule.doc)
 
     self.insert(type: type, name: "__dict__", value: PyProperty.wrap(doc: nil, get: PyModule.getDict, castSelf: Self.asModule))
@@ -1908,10 +1909,10 @@ public final class BuiltinTypes {
 
   private func fillNamespace() {
     let type = self.simpleNamespace
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.instancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.instancesHave__dict__ = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyNamespace.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyNamespace.getClass, castSelf: Self.asNamespace))
@@ -1952,7 +1953,7 @@ public final class BuiltinTypes {
 
   private func fillNone() {
     let type = self.none
-    type.flags.set(PyType.defaultFlag)
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyNone.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyNone.getClass, castSelf: Self.asNone))
@@ -1984,7 +1985,7 @@ public final class BuiltinTypes {
 
   private func fillNotImplemented() {
     let type = self.notImplemented
-    type.flags.set(PyType.defaultFlag)
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyNotImplemented.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyNotImplemented.getClass, castSelf: Self.asNotImplemented))
@@ -2014,10 +2015,10 @@ public final class BuiltinTypes {
 
   private func fillProperty() {
     let type = self.property
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyProperty.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyProperty.getClass, castSelf: Self.asProperty))
@@ -2058,7 +2059,7 @@ public final class BuiltinTypes {
 
   private func fillRange() {
     let type = self.range
-    type.flags.set(PyType.defaultFlag)
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyRange.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyRange.getClass, castSelf: Self.asRange))
@@ -2108,7 +2109,7 @@ public final class BuiltinTypes {
 
   private func fillRangeIterator() {
     let type = self.range_iterator
-    type.flags.set(PyType.defaultFlag)
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyRangeIterator.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyRangeIterator.getClass, castSelf: Self.asRangeIterator))
@@ -2141,10 +2142,10 @@ public final class BuiltinTypes {
 
   private func fillReversed() {
     let type = self.reversed
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyReversed.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyReversed.getClass, castSelf: Self.asReversed))
@@ -2177,10 +2178,10 @@ public final class BuiltinTypes {
 
   private func fillSet() {
     let type = self.set
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PySet.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySet.getClass, castSelf: Self.asSet))
@@ -2244,8 +2245,8 @@ public final class BuiltinTypes {
 
   private func fillSetIterator() {
     let type = self.set_iterator
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PySetIterator.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySetIterator.getClass, castSelf: Self.asSetIterator))
@@ -2278,8 +2279,8 @@ public final class BuiltinTypes {
 
   private func fillSlice() {
     let type = self.slice
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PySlice.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySlice.getClass, castSelf: Self.asSlice))
@@ -2321,10 +2322,10 @@ public final class BuiltinTypes {
 
   private func fillStaticMethod() {
     let type = self.staticmethod
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.instancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.instancesHave__dict__ = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyStaticMethod.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyStaticMethod.getClass, castSelf: Self.asStaticMethod))
@@ -2358,10 +2359,10 @@ public final class BuiltinTypes {
 
   private func fillString() {
     let type = self.str
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
-    type.flags.set(PyType.unicodeSubclassFlag)
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.isUnicodeSubclass = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyString.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyString.getClass, castSelf: Self.asString))
@@ -2447,8 +2448,8 @@ public final class BuiltinTypes {
 
   private func fillStringIterator() {
     let type = self.str_iterator
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyStringIterator.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyStringIterator.getClass, castSelf: Self.asStringIterator))
@@ -2481,10 +2482,10 @@ public final class BuiltinTypes {
 
   private func fillSuper() {
     let type = self.super
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PySuper.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PySuper.getClass, castSelf: Self.asSuper))
@@ -2520,9 +2521,9 @@ public final class BuiltinTypes {
 
   private func fillTextFile() {
     let type = self.textFile
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasFinalizeFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasFinalize = true
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyTextFile.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyTextFile.getClass, castSelf: Self.asTextFile))
@@ -2561,8 +2562,8 @@ public final class BuiltinTypes {
 
   private func fillTraceback() {
     let type = self.traceback
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyTraceback.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyTraceback.getClass, castSelf: Self.asTraceback))
@@ -2597,11 +2598,11 @@ public final class BuiltinTypes {
 
   private func fillTuple() {
     let type = self.tuple
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
-    type.flags.set(PyType.tupleSubclassFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.isTupleSubclass = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyTuple.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyTuple.getClass, castSelf: Self.asTuple))
@@ -2648,8 +2649,8 @@ public final class BuiltinTypes {
 
   private func fillTupleIterator() {
     let type = self.tuple_iterator
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isDefault = true
     type.setBuiltinTypeDoc(PyTupleIterator.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyTupleIterator.getClass, castSelf: Self.asTupleIterator))
@@ -2682,11 +2683,11 @@ public final class BuiltinTypes {
 
   private func fillType() {
     let type = self.type
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.instancesHave__dict__Flag)
-    type.flags.set(PyType.typeSubclassFlag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.instancesHave__dict__ = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.isTypeSubclass = true
     type.setBuiltinTypeDoc(PyType.doc)
 
     self.insert(type: type, name: "__name__", value: PyProperty.wrap(doc: nil, get: PyType.getName, set: PyType.setName, castSelf: Self.asType))
@@ -2734,10 +2735,10 @@ public final class BuiltinTypes {
 
   private func fillZip() {
     let type = self.zip
-    type.flags.set(PyType.baseTypeFlag)
-    type.flags.set(PyType.defaultFlag)
-    type.flags.set(PyType.hasGCFlag)
-    type.flags.set(PyType.subclassInstancesHave__dict__Flag)
+    type.typeFlags.hasGC = true
+    type.typeFlags.isBaseType = true
+    type.typeFlags.isDefault = true
+    type.typeFlags.subclassInstancesHave__dict__ = true
     type.setBuiltinTypeDoc(PyZip.doc)
 
     self.insert(type: type, name: "__class__", value: PyProperty.wrap(doc: nil, get: PyZip.getClass, castSelf: Self.asZip))

@@ -143,9 +143,9 @@ public class PyObject: CustomStringConvertible {
   }
 
   private final func copyFlagsFromType() {
-    let typeFlags = self.type.flags
+    let typeFlags = self.type.typeFlags
 
-    let has__dict__ = typeFlags.isSet(PyType.instancesHave__dict__Flag)
+    let has__dict__ = typeFlags.instancesHave__dict__
     self.flags.set(.has__dict__, to: has__dict__)
   }
 
