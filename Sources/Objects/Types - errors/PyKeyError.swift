@@ -14,7 +14,7 @@ public final class PyKeyError: PyLookupError {
   internal static let keyErrorDoc = "Mapping key not found."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.keyError
   }
 
@@ -65,7 +65,7 @@ public final class PyKeyError: PyLookupError {
                                      args: [PyObject],
                                      kwargs: PyDict?) -> PyResult<PyKeyError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newKeyError(args: argsTuple, type: type)
+    let result = PyMemory.newKeyError(type: type, args: argsTuple)
     return .value(result)
   }
 

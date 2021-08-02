@@ -14,11 +14,6 @@ public class PyImportError: PyException {
   internal static let importErrorDoc =
     "Import can't find module, or can't find name in module."
 
-  /// Type to set in `init`.
-  override internal class var pythonType: PyType {
-    return Py.errorTypes.importError
-  }
-
   // MARK: - Properties
 
   private var msg: PyObject?
@@ -27,26 +22,32 @@ public class PyImportError: PyException {
 
   // MARK: - Init
 
+  /// Type to set in `init`.
+  override internal class var pythonTypeToSetInInit: PyType {
+    return Py.errorTypes.importError
+  }
+
   internal convenience init(msg: String?,
                             moduleName: String?,
                             modulePath: String?,
                             traceback: PyTraceback? = nil,
                             cause: PyBaseException? = nil,
                             context: PyBaseException? = nil,
-                            suppressContext: Bool = false,
-                            type: PyType? = nil) {
+                            suppressContext: Bool = false) {
     // Only 'msg' goes to args
     var argsElements = [PyObject]()
     if let m = msg {
       argsElements.append(Py.newString(m))
     }
 
-    self.init(args: Py.newTuple(elements: argsElements),
+    let args = Py.newTuple(elements: argsElements)
+    let type = Self.pythonTypeToSetInInit
+    self.init(type: type,
+              args: args,
               traceback: traceback,
               cause: cause,
               context: context,
-              suppressContext: suppressContext,
-              type: type)
+              suppressContext: suppressContext)
 
     // 'self.msg' should be filled from args
     if msg != nil {
@@ -57,19 +58,19 @@ public class PyImportError: PyException {
     self.modulePath = modulePath.map(Py.newString(_:))
   }
 
-  /// Important: You have to manually fill `name` and `path` later!
-  override internal init(args: PyTuple,
+  /// Important: You have to manually fill `moduleName` and `modulePath` later!
+  override internal init(type: PyType,
+                         args: PyTuple,
                          traceback: PyTraceback? = nil,
                          cause: PyBaseException? = nil,
                          context: PyBaseException? = nil,
-                         suppressContext: Bool = false,
-                         type: PyType? = nil) {
-    super.init(args: args,
+                         suppressContext: Bool = false) {
+    super.init(type: type,
+               args: args,
                traceback: traceback,
                cause: cause,
                context: context,
-               suppressContext: suppressContext,
-               type: type)
+               suppressContext: suppressContext)
 
     self.fillMsgFromArgs(args: args.elements)
   }
@@ -153,7 +154,7 @@ public class PyImportError: PyException {
                                         args: [PyObject],
                                         kwargs: PyDict?) -> PyResult<PyImportError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newImportError(args: argsTuple, type: type)
+    let result = PyMemory.newImportError(type: type, args: argsTuple)
     return .value(result)
   }
 

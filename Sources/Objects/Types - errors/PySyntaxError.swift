@@ -16,11 +16,6 @@ public class PySyntaxError: PyException {
   // sourcery: pytypedoc
   internal static let syntaxErrorDoc = "Invalid syntax."
 
-  /// Type to set in `init`.
-  override internal class var pythonType: PyType {
-    return Py.errorTypes.syntaxError
-  }
-
   // MARK: - Properties
 
   private var msg: PyObject?
@@ -31,6 +26,11 @@ public class PySyntaxError: PyException {
   private var printFileAndLine: PyObject?
 
   // MARK: - Init
+
+  /// Type to set in `init`.
+  override internal class var pythonTypeToSetInInit: PyType {
+    return Py.errorTypes.syntaxError
+  }
 
   // Wow, this is a lot of arguments!
   // But who cares?
@@ -45,14 +45,12 @@ public class PySyntaxError: PyException {
                             traceback: PyTraceback? = nil,
                             cause: PyBaseException? = nil,
                             context: PyBaseException? = nil,
-                            suppressContext: Bool = false,
-                            type: PyType? = nil) {
+                            suppressContext: Bool = false) {
     let msg = msg.map(Py.newString(_:))
     let filename = filename.map(Py.newString(_:))
     let lineno = lineno.map(Py.newInt(_:))
     let offset = offset.map(Py.newInt(_:))
     let text = text.map(Py.newString(_:))
-    let printFileAndLine = printFileAndLine
 
     self.init(msg: msg,
               filename: filename,
@@ -63,8 +61,7 @@ public class PySyntaxError: PyException {
               traceback: traceback,
               cause: cause,
               context: context,
-              suppressContext: suppressContext,
-              type: type)
+              suppressContext: suppressContext)
   }
 
   internal convenience init(msg: PyString?,
@@ -76,20 +73,21 @@ public class PySyntaxError: PyException {
                             traceback: PyTraceback? = nil,
                             cause: PyBaseException? = nil,
                             context: PyBaseException? = nil,
-                            suppressContext: Bool = false,
-                            type: PyType? = nil) {
+                            suppressContext: Bool = false) {
     // Only 'msg' goes to args
     var argsElements = [PyObject]()
     if let m = msg {
       argsElements.append(m)
     }
 
-    self.init(args: Py.newTuple(elements: argsElements),
+    let args = Py.newTuple(elements: argsElements)
+    let type = Self.pythonTypeToSetInInit
+    self.init(type: type,
+              args: args,
               traceback: traceback,
               cause: cause,
               context: context,
-              suppressContext: suppressContext,
-              type: type)
+              suppressContext: suppressContext)
 
     // 'self.msg' should be filled from args
     if msg != nil {
@@ -105,18 +103,18 @@ public class PySyntaxError: PyException {
 
   /// Important: You have to manually fill `filename`, `lineno`, `offset`,
   /// `text` and `print_file_and_line` later!
-  override internal init(args: PyTuple,
+  override internal init(type: PyType,
+                         args: PyTuple,
                          traceback: PyTraceback? = nil,
                          cause: PyBaseException? = nil,
                          context: PyBaseException? = nil,
-                         suppressContext: Bool = false,
-                         type: PyType? = nil) {
-    super.init(args: args,
+                         suppressContext: Bool = false) {
+    super.init(type: type,
+               args: args,
                traceback: traceback,
                cause: cause,
                context: context,
-               suppressContext: suppressContext,
-               type: type)
+               suppressContext: suppressContext)
 
     self.fillMsgFromArgs(args: args.elements)
   }
@@ -261,7 +259,7 @@ public class PySyntaxError: PyException {
                                         args: [PyObject],
                                         kwargs: PyDict?) -> PyResult<PySyntaxError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newSyntaxError(args: argsTuple, type: type)
+    let result = PyMemory.newSyntaxError(type: type, args: argsTuple)
     return .value(result)
   }
 

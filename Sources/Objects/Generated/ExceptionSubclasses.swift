@@ -24,7 +24,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
   internal static let keyboardInterruptDoc = "Program interrupted by user."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.keyboardInterrupt
   }
 
@@ -45,7 +45,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
     kwargs: PyDict?
   ) -> PyResult<PyKeyboardInterrupt> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newKeyboardInterrupt(args: argsTuple, type: type)
+    let result = PyMemory.newKeyboardInterrupt(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -68,7 +68,7 @@ public final class PyGeneratorExit: PyBaseException {
   internal static let generatorExitDoc = "Request that a generator exit."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.generatorExit
   }
 
@@ -89,7 +89,7 @@ public final class PyGeneratorExit: PyBaseException {
     kwargs: PyDict?
   ) -> PyResult<PyGeneratorExit> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newGeneratorExit(args: argsTuple, type: type)
+    let result = PyMemory.newGeneratorExit(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -112,7 +112,7 @@ public class PyException: PyBaseException {
   internal static let exceptionDoc = "Common base class for all non-exit exceptions."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.exception
   }
 
@@ -133,7 +133,7 @@ public class PyException: PyBaseException {
     kwargs: PyDict?
   ) -> PyResult<PyException> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newException(args: argsTuple, type: type)
+    let result = PyMemory.newException(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -156,7 +156,7 @@ public final class PyStopAsyncIteration: PyException {
   internal static let stopAsyncIterationDoc = "Signal the end from iterator.__anext__()."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.stopAsyncIteration
   }
 
@@ -177,7 +177,7 @@ public final class PyStopAsyncIteration: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyStopAsyncIteration> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newStopAsyncIteration(args: argsTuple, type: type)
+    let result = PyMemory.newStopAsyncIteration(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -200,7 +200,7 @@ public class PyArithmeticError: PyException {
   internal static let arithmeticErrorDoc = "Base class for arithmetic errors."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.arithmeticError
   }
 
@@ -221,7 +221,7 @@ public class PyArithmeticError: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyArithmeticError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newArithmeticError(args: argsTuple, type: type)
+    let result = PyMemory.newArithmeticError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -244,7 +244,7 @@ public final class PyFloatingPointError: PyArithmeticError {
   internal static let floatingPointErrorDoc = "Floating point operation failed."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.floatingPointError
   }
 
@@ -265,7 +265,7 @@ public final class PyFloatingPointError: PyArithmeticError {
     kwargs: PyDict?
   ) -> PyResult<PyFloatingPointError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newFloatingPointError(args: argsTuple, type: type)
+    let result = PyMemory.newFloatingPointError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -288,7 +288,7 @@ public final class PyOverflowError: PyArithmeticError {
   internal static let overflowErrorDoc = "Result too large to be represented."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.overflowError
   }
 
@@ -309,7 +309,7 @@ public final class PyOverflowError: PyArithmeticError {
     kwargs: PyDict?
   ) -> PyResult<PyOverflowError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newOverflowError(args: argsTuple, type: type)
+    let result = PyMemory.newOverflowError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -332,7 +332,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
   internal static let zeroDivisionErrorDoc = "Second argument to a division or modulo operation was zero."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.zeroDivisionError
   }
 
@@ -353,7 +353,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
     kwargs: PyDict?
   ) -> PyResult<PyZeroDivisionError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newZeroDivisionError(args: argsTuple, type: type)
+    let result = PyMemory.newZeroDivisionError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -376,7 +376,7 @@ public final class PyAssertionError: PyException {
   internal static let assertionErrorDoc = "Assertion failed."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.assertionError
   }
 
@@ -397,7 +397,7 @@ public final class PyAssertionError: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyAssertionError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newAssertionError(args: argsTuple, type: type)
+    let result = PyMemory.newAssertionError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -420,7 +420,7 @@ public final class PyAttributeError: PyException {
   internal static let attributeErrorDoc = "Attribute not found."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.attributeError
   }
 
@@ -441,7 +441,7 @@ public final class PyAttributeError: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyAttributeError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newAttributeError(args: argsTuple, type: type)
+    let result = PyMemory.newAttributeError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -464,7 +464,7 @@ public final class PyBufferError: PyException {
   internal static let bufferErrorDoc = "Buffer error."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.bufferError
   }
 
@@ -485,7 +485,7 @@ public final class PyBufferError: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyBufferError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newBufferError(args: argsTuple, type: type)
+    let result = PyMemory.newBufferError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -508,7 +508,7 @@ public final class PyEOFError: PyException {
   internal static let eOFErrorDoc = "Read beyond end of file."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.eofError
   }
 
@@ -529,7 +529,7 @@ public final class PyEOFError: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyEOFError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newEOFError(args: argsTuple, type: type)
+    let result = PyMemory.newEOFError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -552,7 +552,7 @@ public final class PyModuleNotFoundError: PyImportError {
   internal static let moduleNotFoundErrorDoc = "Module not found."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.moduleNotFoundError
   }
 
@@ -573,7 +573,7 @@ public final class PyModuleNotFoundError: PyImportError {
     kwargs: PyDict?
   ) -> PyResult<PyModuleNotFoundError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newModuleNotFoundError(args: argsTuple, type: type)
+    let result = PyMemory.newModuleNotFoundError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -596,7 +596,7 @@ public class PyLookupError: PyException {
   internal static let lookupErrorDoc = "Base class for lookup errors."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.lookupError
   }
 
@@ -617,7 +617,7 @@ public class PyLookupError: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyLookupError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newLookupError(args: argsTuple, type: type)
+    let result = PyMemory.newLookupError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -640,7 +640,7 @@ public final class PyIndexError: PyLookupError {
   internal static let indexErrorDoc = "Sequence index out of range."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.indexError
   }
 
@@ -661,7 +661,7 @@ public final class PyIndexError: PyLookupError {
     kwargs: PyDict?
   ) -> PyResult<PyIndexError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newIndexError(args: argsTuple, type: type)
+    let result = PyMemory.newIndexError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -684,7 +684,7 @@ public final class PyMemoryError: PyException {
   internal static let memoryErrorDoc = "Out of memory."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.memoryError
   }
 
@@ -705,7 +705,7 @@ public final class PyMemoryError: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyMemoryError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newMemoryError(args: argsTuple, type: type)
+    let result = PyMemory.newMemoryError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -728,7 +728,7 @@ public class PyNameError: PyException {
   internal static let nameErrorDoc = "Name not found globally."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.nameError
   }
 
@@ -749,7 +749,7 @@ public class PyNameError: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyNameError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newNameError(args: argsTuple, type: type)
+    let result = PyMemory.newNameError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -772,7 +772,7 @@ public final class PyUnboundLocalError: PyNameError {
   internal static let unboundLocalErrorDoc = "Local name referenced but not bound to a value."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.unboundLocalError
   }
 
@@ -793,7 +793,7 @@ public final class PyUnboundLocalError: PyNameError {
     kwargs: PyDict?
   ) -> PyResult<PyUnboundLocalError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newUnboundLocalError(args: argsTuple, type: type)
+    let result = PyMemory.newUnboundLocalError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -816,7 +816,7 @@ public class PyOSError: PyException {
   internal static let oSErrorDoc = "Base class for I/O related errors."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.osError
   }
 
@@ -837,7 +837,7 @@ public class PyOSError: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyOSError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newOSError(args: argsTuple, type: type)
+    let result = PyMemory.newOSError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -860,7 +860,7 @@ public final class PyBlockingIOError: PyOSError {
   internal static let blockingIOErrorDoc = "I/O operation would block."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.blockingIOError
   }
 
@@ -881,7 +881,7 @@ public final class PyBlockingIOError: PyOSError {
     kwargs: PyDict?
   ) -> PyResult<PyBlockingIOError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newBlockingIOError(args: argsTuple, type: type)
+    let result = PyMemory.newBlockingIOError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -904,7 +904,7 @@ public final class PyChildProcessError: PyOSError {
   internal static let childProcessErrorDoc = "Child process error."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.childProcessError
   }
 
@@ -925,7 +925,7 @@ public final class PyChildProcessError: PyOSError {
     kwargs: PyDict?
   ) -> PyResult<PyChildProcessError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newChildProcessError(args: argsTuple, type: type)
+    let result = PyMemory.newChildProcessError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -948,7 +948,7 @@ public class PyConnectionError: PyOSError {
   internal static let connectionErrorDoc = "Connection error."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.connectionError
   }
 
@@ -969,7 +969,7 @@ public class PyConnectionError: PyOSError {
     kwargs: PyDict?
   ) -> PyResult<PyConnectionError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newConnectionError(args: argsTuple, type: type)
+    let result = PyMemory.newConnectionError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -992,7 +992,7 @@ public final class PyBrokenPipeError: PyConnectionError {
   internal static let brokenPipeErrorDoc = "Broken pipe."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.brokenPipeError
   }
 
@@ -1013,7 +1013,7 @@ public final class PyBrokenPipeError: PyConnectionError {
     kwargs: PyDict?
   ) -> PyResult<PyBrokenPipeError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newBrokenPipeError(args: argsTuple, type: type)
+    let result = PyMemory.newBrokenPipeError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1036,7 +1036,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
   internal static let connectionAbortedErrorDoc = "Connection aborted."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.connectionAbortedError
   }
 
@@ -1057,7 +1057,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
     kwargs: PyDict?
   ) -> PyResult<PyConnectionAbortedError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newConnectionAbortedError(args: argsTuple, type: type)
+    let result = PyMemory.newConnectionAbortedError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1080,7 +1080,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
   internal static let connectionRefusedErrorDoc = "Connection refused."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.connectionRefusedError
   }
 
@@ -1101,7 +1101,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
     kwargs: PyDict?
   ) -> PyResult<PyConnectionRefusedError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newConnectionRefusedError(args: argsTuple, type: type)
+    let result = PyMemory.newConnectionRefusedError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1124,7 +1124,7 @@ public final class PyConnectionResetError: PyConnectionError {
   internal static let connectionResetErrorDoc = "Connection reset."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.connectionResetError
   }
 
@@ -1145,7 +1145,7 @@ public final class PyConnectionResetError: PyConnectionError {
     kwargs: PyDict?
   ) -> PyResult<PyConnectionResetError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newConnectionResetError(args: argsTuple, type: type)
+    let result = PyMemory.newConnectionResetError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1168,7 +1168,7 @@ public final class PyFileExistsError: PyOSError {
   internal static let fileExistsErrorDoc = "File already exists."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.fileExistsError
   }
 
@@ -1189,7 +1189,7 @@ public final class PyFileExistsError: PyOSError {
     kwargs: PyDict?
   ) -> PyResult<PyFileExistsError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newFileExistsError(args: argsTuple, type: type)
+    let result = PyMemory.newFileExistsError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1212,7 +1212,7 @@ public final class PyFileNotFoundError: PyOSError {
   internal static let fileNotFoundErrorDoc = "File not found."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.fileNotFoundError
   }
 
@@ -1233,7 +1233,7 @@ public final class PyFileNotFoundError: PyOSError {
     kwargs: PyDict?
   ) -> PyResult<PyFileNotFoundError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newFileNotFoundError(args: argsTuple, type: type)
+    let result = PyMemory.newFileNotFoundError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1256,7 +1256,7 @@ public final class PyInterruptedError: PyOSError {
   internal static let interruptedErrorDoc = "Interrupted by signal."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.interruptedError
   }
 
@@ -1277,7 +1277,7 @@ public final class PyInterruptedError: PyOSError {
     kwargs: PyDict?
   ) -> PyResult<PyInterruptedError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newInterruptedError(args: argsTuple, type: type)
+    let result = PyMemory.newInterruptedError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1300,7 +1300,7 @@ public final class PyIsADirectoryError: PyOSError {
   internal static let isADirectoryErrorDoc = "Operation doesn't work on directories."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.isADirectoryError
   }
 
@@ -1321,7 +1321,7 @@ public final class PyIsADirectoryError: PyOSError {
     kwargs: PyDict?
   ) -> PyResult<PyIsADirectoryError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newIsADirectoryError(args: argsTuple, type: type)
+    let result = PyMemory.newIsADirectoryError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1344,7 +1344,7 @@ public final class PyNotADirectoryError: PyOSError {
   internal static let notADirectoryErrorDoc = "Operation only works on directories."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.notADirectoryError
   }
 
@@ -1365,7 +1365,7 @@ public final class PyNotADirectoryError: PyOSError {
     kwargs: PyDict?
   ) -> PyResult<PyNotADirectoryError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newNotADirectoryError(args: argsTuple, type: type)
+    let result = PyMemory.newNotADirectoryError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1388,7 +1388,7 @@ public final class PyPermissionError: PyOSError {
   internal static let permissionErrorDoc = "Not enough permissions."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.permissionError
   }
 
@@ -1409,7 +1409,7 @@ public final class PyPermissionError: PyOSError {
     kwargs: PyDict?
   ) -> PyResult<PyPermissionError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newPermissionError(args: argsTuple, type: type)
+    let result = PyMemory.newPermissionError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1432,7 +1432,7 @@ public final class PyProcessLookupError: PyOSError {
   internal static let processLookupErrorDoc = "Process not found."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.processLookupError
   }
 
@@ -1453,7 +1453,7 @@ public final class PyProcessLookupError: PyOSError {
     kwargs: PyDict?
   ) -> PyResult<PyProcessLookupError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newProcessLookupError(args: argsTuple, type: type)
+    let result = PyMemory.newProcessLookupError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1476,7 +1476,7 @@ public final class PyTimeoutError: PyOSError {
   internal static let timeoutErrorDoc = "Timeout expired."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.timeoutError
   }
 
@@ -1497,7 +1497,7 @@ public final class PyTimeoutError: PyOSError {
     kwargs: PyDict?
   ) -> PyResult<PyTimeoutError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newTimeoutError(args: argsTuple, type: type)
+    let result = PyMemory.newTimeoutError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1520,7 +1520,7 @@ public final class PyReferenceError: PyException {
   internal static let referenceErrorDoc = "Weak ref proxy used after referent went away."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.referenceError
   }
 
@@ -1541,7 +1541,7 @@ public final class PyReferenceError: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyReferenceError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newReferenceError(args: argsTuple, type: type)
+    let result = PyMemory.newReferenceError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1564,7 +1564,7 @@ public class PyRuntimeError: PyException {
   internal static let runtimeErrorDoc = "Unspecified run-time error."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.runtimeError
   }
 
@@ -1585,7 +1585,7 @@ public class PyRuntimeError: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyRuntimeError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newRuntimeError(args: argsTuple, type: type)
+    let result = PyMemory.newRuntimeError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1608,7 +1608,7 @@ public final class PyNotImplementedError: PyRuntimeError {
   internal static let notImplementedErrorDoc = "Method or function hasn't been implemented yet."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.notImplementedError
   }
 
@@ -1629,7 +1629,7 @@ public final class PyNotImplementedError: PyRuntimeError {
     kwargs: PyDict?
   ) -> PyResult<PyNotImplementedError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newNotImplementedError(args: argsTuple, type: type)
+    let result = PyMemory.newNotImplementedError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1652,7 +1652,7 @@ public final class PyRecursionError: PyRuntimeError {
   internal static let recursionErrorDoc = "Recursion limit exceeded."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.recursionError
   }
 
@@ -1673,7 +1673,7 @@ public final class PyRecursionError: PyRuntimeError {
     kwargs: PyDict?
   ) -> PyResult<PyRecursionError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newRecursionError(args: argsTuple, type: type)
+    let result = PyMemory.newRecursionError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1696,7 +1696,7 @@ public class PyIndentationError: PySyntaxError {
   internal static let indentationErrorDoc = "Improper indentation."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.indentationError
   }
 
@@ -1717,7 +1717,7 @@ public class PyIndentationError: PySyntaxError {
     kwargs: PyDict?
   ) -> PyResult<PyIndentationError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newIndentationError(args: argsTuple, type: type)
+    let result = PyMemory.newIndentationError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1740,7 +1740,7 @@ public final class PyTabError: PyIndentationError {
   internal static let tabErrorDoc = "Improper mixture of spaces and tabs."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.tabError
   }
 
@@ -1761,7 +1761,7 @@ public final class PyTabError: PyIndentationError {
     kwargs: PyDict?
   ) -> PyResult<PyTabError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newTabError(args: argsTuple, type: type)
+    let result = PyMemory.newTabError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1787,7 +1787,7 @@ public final class PySystemError: PyException {
 "the Python version, and the hardware/OS platform and version."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.systemError
   }
 
@@ -1808,7 +1808,7 @@ public final class PySystemError: PyException {
     kwargs: PyDict?
   ) -> PyResult<PySystemError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newSystemError(args: argsTuple, type: type)
+    let result = PyMemory.newSystemError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1831,7 +1831,7 @@ public final class PyTypeError: PyException {
   internal static let typeErrorDoc = "Inappropriate argument type."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.typeError
   }
 
@@ -1852,7 +1852,7 @@ public final class PyTypeError: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyTypeError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newTypeError(args: argsTuple, type: type)
+    let result = PyMemory.newTypeError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1875,7 +1875,7 @@ public class PyValueError: PyException {
   internal static let valueErrorDoc = "Inappropriate argument value (of correct type)."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.valueError
   }
 
@@ -1896,7 +1896,7 @@ public class PyValueError: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyValueError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newValueError(args: argsTuple, type: type)
+    let result = PyMemory.newValueError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1919,7 +1919,7 @@ public class PyUnicodeError: PyValueError {
   internal static let unicodeErrorDoc = "Unicode related error."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.unicodeError
   }
 
@@ -1940,7 +1940,7 @@ public class PyUnicodeError: PyValueError {
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newUnicodeError(args: argsTuple, type: type)
+    let result = PyMemory.newUnicodeError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -1963,7 +1963,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
   internal static let unicodeDecodeErrorDoc = "Unicode decoding error."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.unicodeDecodeError
   }
 
@@ -1984,7 +1984,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeDecodeError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newUnicodeDecodeError(args: argsTuple, type: type)
+    let result = PyMemory.newUnicodeDecodeError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -2007,7 +2007,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
   internal static let unicodeEncodeErrorDoc = "Unicode encoding error."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.unicodeEncodeError
   }
 
@@ -2028,7 +2028,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeEncodeError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newUnicodeEncodeError(args: argsTuple, type: type)
+    let result = PyMemory.newUnicodeEncodeError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -2051,7 +2051,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
   internal static let unicodeTranslateErrorDoc = "Unicode translation error."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.unicodeTranslateError
   }
 
@@ -2072,7 +2072,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeTranslateError> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newUnicodeTranslateError(args: argsTuple, type: type)
+    let result = PyMemory.newUnicodeTranslateError(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -2095,7 +2095,7 @@ public class PyWarning: PyException {
   internal static let warningDoc = "Base class for warning categories."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.warning
   }
 
@@ -2116,7 +2116,7 @@ public class PyWarning: PyException {
     kwargs: PyDict?
   ) -> PyResult<PyWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newWarning(args: argsTuple, type: type)
+    let result = PyMemory.newWarning(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -2139,7 +2139,7 @@ public final class PyDeprecationWarning: PyWarning {
   internal static let deprecationWarningDoc = "Base class for warnings about deprecated features."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.deprecationWarning
   }
 
@@ -2160,7 +2160,7 @@ public final class PyDeprecationWarning: PyWarning {
     kwargs: PyDict?
   ) -> PyResult<PyDeprecationWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newDeprecationWarning(args: argsTuple, type: type)
+    let result = PyMemory.newDeprecationWarning(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -2184,7 +2184,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
 "in the future."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.pendingDeprecationWarning
   }
 
@@ -2205,7 +2205,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
     kwargs: PyDict?
   ) -> PyResult<PyPendingDeprecationWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newPendingDeprecationWarning(args: argsTuple, type: type)
+    let result = PyMemory.newPendingDeprecationWarning(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -2228,7 +2228,7 @@ public final class PyRuntimeWarning: PyWarning {
   internal static let runtimeWarningDoc = "Base class for warnings about dubious runtime behavior."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.runtimeWarning
   }
 
@@ -2249,7 +2249,7 @@ public final class PyRuntimeWarning: PyWarning {
     kwargs: PyDict?
   ) -> PyResult<PyRuntimeWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newRuntimeWarning(args: argsTuple, type: type)
+    let result = PyMemory.newRuntimeWarning(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -2272,7 +2272,7 @@ public final class PySyntaxWarning: PyWarning {
   internal static let syntaxWarningDoc = "Base class for warnings about dubious syntax."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.syntaxWarning
   }
 
@@ -2293,7 +2293,7 @@ public final class PySyntaxWarning: PyWarning {
     kwargs: PyDict?
   ) -> PyResult<PySyntaxWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newSyntaxWarning(args: argsTuple, type: type)
+    let result = PyMemory.newSyntaxWarning(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -2316,7 +2316,7 @@ public final class PyUserWarning: PyWarning {
   internal static let userWarningDoc = "Base class for warnings generated by user code."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.userWarning
   }
 
@@ -2337,7 +2337,7 @@ public final class PyUserWarning: PyWarning {
     kwargs: PyDict?
   ) -> PyResult<PyUserWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newUserWarning(args: argsTuple, type: type)
+    let result = PyMemory.newUserWarning(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -2361,7 +2361,7 @@ public final class PyFutureWarning: PyWarning {
 "in the future."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.futureWarning
   }
 
@@ -2382,7 +2382,7 @@ public final class PyFutureWarning: PyWarning {
     kwargs: PyDict?
   ) -> PyResult<PyFutureWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newFutureWarning(args: argsTuple, type: type)
+    let result = PyMemory.newFutureWarning(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -2405,7 +2405,7 @@ public final class PyImportWarning: PyWarning {
   internal static let importWarningDoc = "Base class for warnings about probable mistakes in module imports"
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.importWarning
   }
 
@@ -2426,7 +2426,7 @@ public final class PyImportWarning: PyWarning {
     kwargs: PyDict?
   ) -> PyResult<PyImportWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newImportWarning(args: argsTuple, type: type)
+    let result = PyMemory.newImportWarning(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -2450,7 +2450,7 @@ public final class PyUnicodeWarning: PyWarning {
 "related to conversion problems."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.unicodeWarning
   }
 
@@ -2471,7 +2471,7 @@ public final class PyUnicodeWarning: PyWarning {
     kwargs: PyDict?
   ) -> PyResult<PyUnicodeWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newUnicodeWarning(args: argsTuple, type: type)
+    let result = PyMemory.newUnicodeWarning(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -2495,7 +2495,7 @@ public final class PyBytesWarning: PyWarning {
 "related to conversion from str or comparing to str."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.bytesWarning
   }
 
@@ -2516,7 +2516,7 @@ public final class PyBytesWarning: PyWarning {
     kwargs: PyDict?
   ) -> PyResult<PyBytesWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newBytesWarning(args: argsTuple, type: type)
+    let result = PyMemory.newBytesWarning(type: type, args: argsTuple)
     return .value(result)
   }
 
@@ -2539,7 +2539,7 @@ public final class PyResourceWarning: PyWarning {
   internal static let resourceWarningDoc = "Base class for warnings about resource usage."
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {
+  override internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.resourceWarning
   }
 
@@ -2560,7 +2560,7 @@ public final class PyResourceWarning: PyWarning {
     kwargs: PyDict?
   ) -> PyResult<PyResourceWarning> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newResourceWarning(args: argsTuple, type: type)
+    let result = PyMemory.newResourceWarning(type: type, args: argsTuple)
     return .value(result)
   }
 

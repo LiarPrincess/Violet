@@ -13,16 +13,16 @@ public final class PySystemExit: PyBaseException {
   // sourcery: pytypedoc
   internal static let systemExitDoc = "Request to exit from the interpreter."
 
-  /// Type to set in `init`.
-  override internal class var pythonType: PyType {
-    return Py.errorTypes.systemExit
-  }
-
   // MARK: - Properties
 
   private var code: PyObject?
 
   // MARK: - Init
+
+  /// Type to set in `init`.
+  override internal class var pythonTypeToSetInInit: PyType {
+    return Py.errorTypes.systemExit
+  }
 
   internal convenience init(code: PyObject?,
                             traceback: PyTraceback? = nil,
@@ -35,21 +35,23 @@ public final class PySystemExit: PyBaseException {
       argsElements.append(c)
     }
 
-    self.init(args: Py.newTuple(elements: argsElements),
+    let args = Py.newTuple(elements: argsElements)
+    let type = Self.pythonTypeToSetInInit
+    self.init(type: type,
+              args: args,
               traceback: traceback,
               cause: cause,
               context: context,
-              suppressContext: suppressContext,
-              type: type)
+              suppressContext: suppressContext)
   }
 
-  override internal init(args: PyTuple,
+  override internal init(type: PyType,
+                         args: PyTuple,
                          traceback: PyTraceback? = nil,
                          cause: PyBaseException? = nil,
                          context: PyBaseException? = nil,
-                         suppressContext: Bool = false,
-                         type: PyType? = nil) {
-    switch args.elements.count {
+                         suppressContext: Bool = false) {
+    switch args.count {
     case 0:
       self.code = nil
     case 1:
@@ -58,12 +60,12 @@ public final class PySystemExit: PyBaseException {
       self.code = args
     }
 
-    super.init(args: args,
+    super.init(type: type,
+               args: args,
                traceback: traceback,
                cause: cause,
                context: context,
-               suppressContext: suppressContext,
-               type: type)
+               suppressContext: suppressContext)
   }
 
   // MARK: - Class
@@ -99,7 +101,7 @@ public final class PySystemExit: PyBaseException {
                                        args: [PyObject],
                                        kwargs: PyDict?) -> PyResult<PySystemExit> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newSystemExit(args: argsTuple, type: type)
+    let result = PyMemory.newSystemExit(type: type, args: argsTuple)
     return .value(result)
   }
 

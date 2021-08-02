@@ -1038,16 +1038,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyArithmeticError {
     return PyArithmeticError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1057,16 +1055,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyArithmeticError {
     return PyArithmeticError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `ArithmeticError` type.
+  internal static func newArithmeticError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyArithmeticError {
+    return PyArithmeticError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1078,16 +1093,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyAssertionError {
     return PyAssertionError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1097,16 +1110,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyAssertionError {
     return PyAssertionError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `AssertionError` type.
+  internal static func newAssertionError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyAssertionError {
+    return PyAssertionError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1118,16 +1148,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyAttributeError {
     return PyAttributeError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1137,16 +1165,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyAttributeError {
     return PyAttributeError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `AttributeError` type.
+  internal static func newAttributeError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyAttributeError {
+    return PyAttributeError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1158,16 +1203,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyBaseException {
     return PyBaseException(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1177,16 +1220,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyBaseException {
     return PyBaseException(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `BaseException` type.
+  internal static func newBaseException(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyBaseException {
+    return PyBaseException(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1198,16 +1258,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyBlockingIOError {
     return PyBlockingIOError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1217,16 +1275,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyBlockingIOError {
     return PyBlockingIOError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `BlockingIOError` type.
+  internal static func newBlockingIOError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyBlockingIOError {
+    return PyBlockingIOError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1238,16 +1313,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyBrokenPipeError {
     return PyBrokenPipeError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1257,16 +1330,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyBrokenPipeError {
     return PyBrokenPipeError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `BrokenPipeError` type.
+  internal static func newBrokenPipeError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyBrokenPipeError {
+    return PyBrokenPipeError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1278,16 +1368,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyBufferError {
     return PyBufferError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1297,16 +1385,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyBufferError {
     return PyBufferError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `BufferError` type.
+  internal static func newBufferError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyBufferError {
+    return PyBufferError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1318,16 +1423,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyBytesWarning {
     return PyBytesWarning(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1337,16 +1440,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyBytesWarning {
     return PyBytesWarning(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `BytesWarning` type.
+  internal static func newBytesWarning(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyBytesWarning {
+    return PyBytesWarning(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1358,16 +1478,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyChildProcessError {
     return PyChildProcessError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1377,16 +1495,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyChildProcessError {
     return PyChildProcessError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `ChildProcessError` type.
+  internal static func newChildProcessError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyChildProcessError {
+    return PyChildProcessError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1398,16 +1533,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyConnectionAbortedError {
     return PyConnectionAbortedError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1417,16 +1550,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyConnectionAbortedError {
     return PyConnectionAbortedError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `ConnectionAbortedError` type.
+  internal static func newConnectionAbortedError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyConnectionAbortedError {
+    return PyConnectionAbortedError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1438,16 +1588,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyConnectionError {
     return PyConnectionError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1457,16 +1605,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyConnectionError {
     return PyConnectionError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `ConnectionError` type.
+  internal static func newConnectionError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyConnectionError {
+    return PyConnectionError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1478,16 +1643,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyConnectionRefusedError {
     return PyConnectionRefusedError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1497,16 +1660,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyConnectionRefusedError {
     return PyConnectionRefusedError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `ConnectionRefusedError` type.
+  internal static func newConnectionRefusedError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyConnectionRefusedError {
+    return PyConnectionRefusedError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1518,16 +1698,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyConnectionResetError {
     return PyConnectionResetError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1537,16 +1715,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyConnectionResetError {
     return PyConnectionResetError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `ConnectionResetError` type.
+  internal static func newConnectionResetError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyConnectionResetError {
+    return PyConnectionResetError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1558,16 +1753,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyDeprecationWarning {
     return PyDeprecationWarning(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1577,16 +1770,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyDeprecationWarning {
     return PyDeprecationWarning(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `DeprecationWarning` type.
+  internal static func newDeprecationWarning(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyDeprecationWarning {
+    return PyDeprecationWarning(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1598,16 +1808,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyEOFError {
     return PyEOFError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1617,16 +1825,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyEOFError {
     return PyEOFError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `EOFError` type.
+  internal static func newEOFError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyEOFError {
+    return PyEOFError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1638,16 +1863,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyException {
     return PyException(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1657,16 +1880,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyException {
     return PyException(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `Exception` type.
+  internal static func newException(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyException {
+    return PyException(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1678,16 +1918,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyFileExistsError {
     return PyFileExistsError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1697,16 +1935,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyFileExistsError {
     return PyFileExistsError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `FileExistsError` type.
+  internal static func newFileExistsError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyFileExistsError {
+    return PyFileExistsError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1718,16 +1973,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyFileNotFoundError {
     return PyFileNotFoundError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1737,16 +1990,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyFileNotFoundError {
     return PyFileNotFoundError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `FileNotFoundError` type.
+  internal static func newFileNotFoundError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyFileNotFoundError {
+    return PyFileNotFoundError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1758,16 +2028,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyFloatingPointError {
     return PyFloatingPointError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1777,16 +2045,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyFloatingPointError {
     return PyFloatingPointError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `FloatingPointError` type.
+  internal static func newFloatingPointError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyFloatingPointError {
+    return PyFloatingPointError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1798,16 +2083,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyFutureWarning {
     return PyFutureWarning(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1817,16 +2100,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyFutureWarning {
     return PyFutureWarning(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `FutureWarning` type.
+  internal static func newFutureWarning(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyFutureWarning {
+    return PyFutureWarning(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1838,16 +2138,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyGeneratorExit {
     return PyGeneratorExit(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1857,16 +2155,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyGeneratorExit {
     return PyGeneratorExit(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `GeneratorExit` type.
+  internal static func newGeneratorExit(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyGeneratorExit {
+    return PyGeneratorExit(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1880,8 +2195,7 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyImportError {
     return PyImportError(
       msg: msg,
@@ -1890,27 +2204,26 @@ internal enum PyMemory {
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
   /// Allocate a new instance of `ImportError` type.
   internal static func newImportError(
+    type: PyType,
     args: PyTuple,
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyImportError {
     return PyImportError(
+      type: type,
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1922,16 +2235,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyImportWarning {
     return PyImportWarning(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1941,16 +2252,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyImportWarning {
     return PyImportWarning(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `ImportWarning` type.
+  internal static func newImportWarning(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyImportWarning {
+    return PyImportWarning(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -1967,8 +2295,7 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyIndentationError {
     return PyIndentationError(
       msg: msg,
@@ -1980,8 +2307,7 @@ internal enum PyMemory {
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -1996,8 +2322,7 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyIndentationError {
     return PyIndentationError(
       msg: msg,
@@ -2009,27 +2334,26 @@ internal enum PyMemory {
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
   /// Allocate a new instance of `IndentationError` type.
   internal static func newIndentationError(
+    type: PyType,
     args: PyTuple,
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyIndentationError {
     return PyIndentationError(
+      type: type,
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2041,16 +2365,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyIndexError {
     return PyIndexError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2060,16 +2382,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyIndexError {
     return PyIndexError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `IndexError` type.
+  internal static func newIndexError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyIndexError {
+    return PyIndexError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2081,16 +2420,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyInterruptedError {
     return PyInterruptedError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2100,16 +2437,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyInterruptedError {
     return PyInterruptedError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `InterruptedError` type.
+  internal static func newInterruptedError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyInterruptedError {
+    return PyInterruptedError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2121,16 +2475,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyIsADirectoryError {
     return PyIsADirectoryError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2140,16 +2492,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyIsADirectoryError {
     return PyIsADirectoryError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `IsADirectoryError` type.
+  internal static func newIsADirectoryError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyIsADirectoryError {
+    return PyIsADirectoryError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2161,16 +2530,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyKeyError {
     return PyKeyError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2180,16 +2547,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyKeyError {
     return PyKeyError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `KeyError` type.
+  internal static func newKeyError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyKeyError {
+    return PyKeyError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2201,16 +2585,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyKeyboardInterrupt {
     return PyKeyboardInterrupt(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2220,16 +2602,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyKeyboardInterrupt {
     return PyKeyboardInterrupt(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `KeyboardInterrupt` type.
+  internal static func newKeyboardInterrupt(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyKeyboardInterrupt {
+    return PyKeyboardInterrupt(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2241,16 +2640,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyLookupError {
     return PyLookupError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2260,16 +2657,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyLookupError {
     return PyLookupError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `LookupError` type.
+  internal static func newLookupError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyLookupError {
+    return PyLookupError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2281,16 +2695,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyMemoryError {
     return PyMemoryError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2300,16 +2712,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyMemoryError {
     return PyMemoryError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `MemoryError` type.
+  internal static func newMemoryError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyMemoryError {
+    return PyMemoryError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2323,8 +2752,7 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyModuleNotFoundError {
     return PyModuleNotFoundError(
       msg: msg,
@@ -2333,27 +2761,26 @@ internal enum PyMemory {
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
   /// Allocate a new instance of `ModuleNotFoundError` type.
   internal static func newModuleNotFoundError(
+    type: PyType,
     args: PyTuple,
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyModuleNotFoundError {
     return PyModuleNotFoundError(
+      type: type,
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2365,16 +2792,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyNameError {
     return PyNameError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2384,16 +2809,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyNameError {
     return PyNameError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `NameError` type.
+  internal static func newNameError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyNameError {
+    return PyNameError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2405,16 +2847,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyNotADirectoryError {
     return PyNotADirectoryError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2424,16 +2864,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyNotADirectoryError {
     return PyNotADirectoryError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `NotADirectoryError` type.
+  internal static func newNotADirectoryError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyNotADirectoryError {
+    return PyNotADirectoryError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2445,16 +2902,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyNotImplementedError {
     return PyNotImplementedError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2464,16 +2919,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyNotImplementedError {
     return PyNotImplementedError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `NotImplementedError` type.
+  internal static func newNotImplementedError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyNotImplementedError {
+    return PyNotImplementedError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2485,16 +2957,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyOSError {
     return PyOSError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2504,16 +2974,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyOSError {
     return PyOSError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `OSError` type.
+  internal static func newOSError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyOSError {
+    return PyOSError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2525,16 +3012,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyOverflowError {
     return PyOverflowError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2544,16 +3029,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyOverflowError {
     return PyOverflowError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `OverflowError` type.
+  internal static func newOverflowError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyOverflowError {
+    return PyOverflowError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2565,16 +3067,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyPendingDeprecationWarning {
     return PyPendingDeprecationWarning(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2584,16 +3084,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyPendingDeprecationWarning {
     return PyPendingDeprecationWarning(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `PendingDeprecationWarning` type.
+  internal static func newPendingDeprecationWarning(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyPendingDeprecationWarning {
+    return PyPendingDeprecationWarning(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2605,16 +3122,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyPermissionError {
     return PyPermissionError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2624,16 +3139,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyPermissionError {
     return PyPermissionError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `PermissionError` type.
+  internal static func newPermissionError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyPermissionError {
+    return PyPermissionError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2645,16 +3177,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyProcessLookupError {
     return PyProcessLookupError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2664,16 +3194,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyProcessLookupError {
     return PyProcessLookupError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `ProcessLookupError` type.
+  internal static func newProcessLookupError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyProcessLookupError {
+    return PyProcessLookupError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2685,16 +3232,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyRecursionError {
     return PyRecursionError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2704,16 +3249,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyRecursionError {
     return PyRecursionError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `RecursionError` type.
+  internal static func newRecursionError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyRecursionError {
+    return PyRecursionError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2725,16 +3287,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyReferenceError {
     return PyReferenceError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2744,16 +3304,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyReferenceError {
     return PyReferenceError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `ReferenceError` type.
+  internal static func newReferenceError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyReferenceError {
+    return PyReferenceError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2765,16 +3342,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyResourceWarning {
     return PyResourceWarning(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2784,16 +3359,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyResourceWarning {
     return PyResourceWarning(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `ResourceWarning` type.
+  internal static func newResourceWarning(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyResourceWarning {
+    return PyResourceWarning(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2805,16 +3397,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyRuntimeError {
     return PyRuntimeError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2824,16 +3414,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyRuntimeError {
     return PyRuntimeError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `RuntimeError` type.
+  internal static func newRuntimeError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyRuntimeError {
+    return PyRuntimeError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2845,16 +3452,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyRuntimeWarning {
     return PyRuntimeWarning(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2864,16 +3469,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyRuntimeWarning {
     return PyRuntimeWarning(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `RuntimeWarning` type.
+  internal static func newRuntimeWarning(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyRuntimeWarning {
+    return PyRuntimeWarning(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2885,16 +3507,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyStopAsyncIteration {
     return PyStopAsyncIteration(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2904,16 +3524,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyStopAsyncIteration {
     return PyStopAsyncIteration(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `StopAsyncIteration` type.
+  internal static func newStopAsyncIteration(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyStopAsyncIteration {
+    return PyStopAsyncIteration(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -2940,20 +3577,20 @@ internal enum PyMemory {
 
   /// Allocate a new instance of `StopIteration` type.
   internal static func newStopIteration(
+    type: PyType,
     args: PyTuple,
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyStopIteration {
     return PyStopIteration(
+      type: type,
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2970,8 +3607,7 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PySyntaxError {
     return PySyntaxError(
       msg: msg,
@@ -2983,8 +3619,7 @@ internal enum PyMemory {
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -2999,8 +3634,7 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PySyntaxError {
     return PySyntaxError(
       msg: msg,
@@ -3012,27 +3646,26 @@ internal enum PyMemory {
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
   /// Allocate a new instance of `SyntaxError` type.
   internal static func newSyntaxError(
+    type: PyType,
     args: PyTuple,
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PySyntaxError {
     return PySyntaxError(
+      type: type,
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3044,16 +3677,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PySyntaxWarning {
     return PySyntaxWarning(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3063,16 +3694,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PySyntaxWarning {
     return PySyntaxWarning(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `SyntaxWarning` type.
+  internal static func newSyntaxWarning(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PySyntaxWarning {
+    return PySyntaxWarning(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -3084,16 +3732,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PySystemError {
     return PySystemError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3103,16 +3749,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PySystemError {
     return PySystemError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `SystemError` type.
+  internal static func newSystemError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PySystemError {
+    return PySystemError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -3139,20 +3802,20 @@ internal enum PyMemory {
 
   /// Allocate a new instance of `SystemExit` type.
   internal static func newSystemExit(
+    type: PyType,
     args: PyTuple,
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PySystemExit {
     return PySystemExit(
+      type: type,
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3169,8 +3832,7 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyTabError {
     return PyTabError(
       msg: msg,
@@ -3182,8 +3844,7 @@ internal enum PyMemory {
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3198,8 +3859,7 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyTabError {
     return PyTabError(
       msg: msg,
@@ -3211,27 +3871,26 @@ internal enum PyMemory {
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
   /// Allocate a new instance of `TabError` type.
   internal static func newTabError(
+    type: PyType,
     args: PyTuple,
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyTabError {
     return PyTabError(
+      type: type,
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3243,16 +3902,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyTimeoutError {
     return PyTimeoutError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3262,16 +3919,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyTimeoutError {
     return PyTimeoutError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `TimeoutError` type.
+  internal static func newTimeoutError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyTimeoutError {
+    return PyTimeoutError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -3283,16 +3957,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyTypeError {
     return PyTypeError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3302,16 +3974,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyTypeError {
     return PyTypeError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `TypeError` type.
+  internal static func newTypeError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyTypeError {
+    return PyTypeError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -3323,16 +4012,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyUnboundLocalError {
     return PyUnboundLocalError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3342,16 +4029,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyUnboundLocalError {
     return PyUnboundLocalError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `UnboundLocalError` type.
+  internal static func newUnboundLocalError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyUnboundLocalError {
+    return PyUnboundLocalError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -3363,16 +4067,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyUnicodeDecodeError {
     return PyUnicodeDecodeError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3382,16 +4084,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyUnicodeDecodeError {
     return PyUnicodeDecodeError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `UnicodeDecodeError` type.
+  internal static func newUnicodeDecodeError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyUnicodeDecodeError {
+    return PyUnicodeDecodeError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -3403,16 +4122,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyUnicodeEncodeError {
     return PyUnicodeEncodeError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3422,16 +4139,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyUnicodeEncodeError {
     return PyUnicodeEncodeError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `UnicodeEncodeError` type.
+  internal static func newUnicodeEncodeError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyUnicodeEncodeError {
+    return PyUnicodeEncodeError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -3443,16 +4177,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyUnicodeError {
     return PyUnicodeError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3462,16 +4194,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyUnicodeError {
     return PyUnicodeError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `UnicodeError` type.
+  internal static func newUnicodeError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyUnicodeError {
+    return PyUnicodeError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -3483,16 +4232,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyUnicodeTranslateError {
     return PyUnicodeTranslateError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3502,16 +4249,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyUnicodeTranslateError {
     return PyUnicodeTranslateError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `UnicodeTranslateError` type.
+  internal static func newUnicodeTranslateError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyUnicodeTranslateError {
+    return PyUnicodeTranslateError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -3523,16 +4287,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyUnicodeWarning {
     return PyUnicodeWarning(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3542,16 +4304,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyUnicodeWarning {
     return PyUnicodeWarning(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `UnicodeWarning` type.
+  internal static func newUnicodeWarning(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyUnicodeWarning {
+    return PyUnicodeWarning(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -3563,16 +4342,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyUserWarning {
     return PyUserWarning(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3582,16 +4359,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyUserWarning {
     return PyUserWarning(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `UserWarning` type.
+  internal static func newUserWarning(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyUserWarning {
+    return PyUserWarning(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -3603,16 +4397,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyValueError {
     return PyValueError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3622,16 +4414,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyValueError {
     return PyValueError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `ValueError` type.
+  internal static func newValueError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyValueError {
+    return PyValueError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -3643,16 +4452,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyWarning {
     return PyWarning(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3662,16 +4469,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyWarning {
     return PyWarning(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `Warning` type.
+  internal static func newWarning(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyWarning {
+    return PyWarning(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 
@@ -3683,16 +4507,14 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyZeroDivisionError {
     return PyZeroDivisionError(
       msg: msg,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
     )
   }
 
@@ -3702,16 +4524,33 @@ internal enum PyMemory {
     traceback: PyTraceback? = nil,
     cause: PyBaseException? = nil,
     context: PyBaseException? = nil,
-    suppressContext: Bool = false,
-    type: PyType? = nil
+    suppressContext: Bool = false
   ) -> PyZeroDivisionError {
     return PyZeroDivisionError(
       args: args,
       traceback: traceback,
       cause: cause,
       context: context,
-      suppressContext: suppressContext,
-      type: type
+      suppressContext: suppressContext
+    )
+  }
+
+  /// Allocate a new instance of `ZeroDivisionError` type.
+  internal static func newZeroDivisionError(
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback? = nil,
+    cause: PyBaseException? = nil,
+    context: PyBaseException? = nil,
+    suppressContext: Bool = false
+  ) -> PyZeroDivisionError {
+    return PyZeroDivisionError(
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
     )
   }
 

@@ -38,12 +38,14 @@ public class PyBaseException: PyObject {
     return "\(typeName)(\(msg))"
   }
 
+  // MARK: - Init
+
   /// Type to set in `init`.
   /// Override this property in every exception class!
   ///
   /// This is a terrible HACK!.
   /// Our goal is to set proper `type` in each PyObject and to do this we can:
-  /// 1. Have 2 inits in each exception:
+  /// 1. Have 2 inits in EACH exception:
   ///    - convenience, so it can be used in 'normal' code
   ///    - with `type: PyType` arg, so it can be used in derived classes to set type
   ///    But this is a lot of boilerplate.
@@ -54,38 +56,51 @@ public class PyBaseException: PyObject {
   /// 3. Use the same `init` in every exception and inject proper type to assign.
   ///
   /// We went with 3 using `class` property.
-  internal class var pythonType: PyType {
+  internal class var pythonTypeToSetInInit: PyType {
     return Py.errorTypes.baseException
   }
-
-  // MARK: - Init
 
   internal convenience init(msg: String,
                             traceback: PyTraceback? = nil,
                             cause: PyBaseException? = nil,
                             context: PyBaseException? = nil,
-                            suppressContext: Bool = false,
-                            type: PyType? = nil) {
+                            suppressContext: Bool = false) {
     let args = Py.newTuple(Py.newString(msg))
     self.init(args: args,
               traceback: traceback,
               cause: cause,
               context: context,
-              suppressContext: suppressContext,
-              type: type)
+              suppressContext: suppressContext)
   }
 
-  internal init(args: PyTuple,
+  internal convenience init(args: PyTuple,
+                            traceback: PyTraceback? = nil,
+                            cause: PyBaseException? = nil,
+                            context: PyBaseException? = nil,
+                            suppressContext: Bool = false) {
+    let type = Self.pythonTypeToSetInInit
+    self.init(type: type,
+              args: args,
+              traceback: traceback,
+              cause: cause,
+              context: context,
+              suppressContext: suppressContext)
+  }
+
+  /// Main `init` used to set all of the fields.
+  ///
+  /// Eventually it should be called by every subtype.
+  internal init(type: PyType,
+                args: PyTuple,
                 traceback: PyTraceback? = nil,
                 cause: PyBaseException? = nil,
                 context: PyBaseException? = nil,
-                suppressContext: Bool = false,
-                type: PyType? = nil) {
+                suppressContext: Bool = false) {
     self.args = args
     self.traceback = traceback
     self.cause = cause
     self.context = context
-    super.init(type: type ?? Self.pythonType)
+    super.init(type: type)
     self.suppressContext = suppressContext
   }
 
@@ -462,7 +477,7 @@ public class PyBaseException: PyObject {
     kwargs: PyDict?
   ) -> PyResult<PyBaseException> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newBaseException(args: argsTuple, type: type)
+    let result = PyMemory.newBaseException(type: type, args: argsTuple)
     return .value(result)
   }
 

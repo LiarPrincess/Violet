@@ -62,7 +62,7 @@ public {final}class {swift_class_name}: {swift_base_class_name} {{
   internal static let {python_type_name_camel_case}Doc = "{doc}"
 
   /// Type to set in `init`.
-  override internal class var pythonType: PyType {{
+  override internal class var pythonTypeToSetInInit: PyType {{
     return Py.errorTypes.{builtins_type_variable}
   }}
 
@@ -83,7 +83,7 @@ public {final}class {swift_class_name}: {swift_base_class_name} {{
     kwargs: PyDict?
   ) -> PyResult<{swift_class_name}> {{
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.{py_memory_function_name}(args: argsTuple, type: type)
+    let result = PyMemory.{py_memory_function_name}(type: type, args: argsTuple)
     return .value(result)
   }}
 

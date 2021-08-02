@@ -13,16 +13,16 @@ public final class PyStopIteration: PyException {
   // sourcery: pytypedoc
   internal static let stopIterationDoc = "Signal the end from iterator.__next__()."
 
-  /// Type to set in `init`.
-  override internal class var pythonType: PyType {
-    return Py.errorTypes.stopIteration
-  }
-
   // MARK: - Properties
 
   private var value: PyObject
 
   // MARK: - Init
+
+  /// Type to set in `init`.
+  override internal class var pythonTypeToSetInInit: PyType {
+    return Py.errorTypes.stopIteration
+  }
 
   internal convenience init(value: PyObject?,
                             traceback: PyTraceback? = nil,
@@ -31,27 +31,28 @@ public final class PyStopIteration: PyException {
                             suppressContext: Bool = false,
                             type: PyType? = nil) {
     let args = Py.newTuple(value ?? Py.none)
-    self.init(args: args,
+    let type = Self.pythonTypeToSetInInit
+    self.init(type: type,
+              args: args,
               traceback: traceback,
               cause: cause,
               context: context,
-              suppressContext: suppressContext,
-              type: type)
+              suppressContext: suppressContext)
   }
 
-  override internal init(args: PyTuple,
+  override internal init(type: PyType,
+                         args: PyTuple,
                          traceback: PyTraceback? = nil,
                          cause: PyBaseException? = nil,
                          context: PyBaseException? = nil,
-                         suppressContext: Bool = false,
-                         type: PyType? = nil) {
+                         suppressContext: Bool = false) {
     self.value = Self.extractValue(args: args.elements)
-    super.init(args: args,
+    super.init(type: type,
+               args: args,
                traceback: traceback,
                cause: cause,
                context: context,
-               suppressContext: suppressContext,
-               type: type)
+               suppressContext: suppressContext)
   }
 
   private static func extractValue(args: [PyObject]) -> PyObject {
@@ -91,7 +92,7 @@ public final class PyStopIteration: PyException {
                                           args: [PyObject],
                                           kwargs: PyDict?) -> PyResult<PyStopIteration> {
     let argsTuple = Py.newTuple(elements: args)
-    let result = PyMemory.newStopIteration(args: argsTuple, type: type)
+    let result = PyMemory.newStopIteration(type: type, args: argsTuple)
     return .value(result)
   }
 
