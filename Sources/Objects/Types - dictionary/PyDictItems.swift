@@ -17,10 +17,6 @@ public final class PyDictItems: PyObject, AbstractDictView {
 
   internal let dict: PyDict
 
-  override public var description: String {
-    return "PyDictItems(count: \(self._elements.count))"
-  }
-
   // MARK: - Init
 
   internal init(dict: PyDict) {

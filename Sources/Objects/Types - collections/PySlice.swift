@@ -26,13 +26,6 @@ public final class PySlice: PyObject {
   internal var stop: PyObject
   internal var step: PyObject
 
-  override public var description: String {
-    let start = "start: \(self.start)"
-    let stop = "stop: \(self.stop)"
-    let step = "step: \(self.step)"
-    return "PySlice(\(start), \(stop), \(step))"
-  }
-
   // MARK: - Init
 
   internal init(start: PyObject, stop: PyObject, step: PyObject) {

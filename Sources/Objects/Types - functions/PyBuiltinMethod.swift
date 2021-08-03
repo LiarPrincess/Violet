@@ -17,10 +17,6 @@ public final class PyBuiltinMethod: PyObject, AbstractBuiltinFunction {
   /// The `__doc__` attribute, or `nil`.
   internal let doc: String?
 
-  override public var description: String {
-    return "PyBuiltinMethod(name: \(self.name), object: \(self.object))"
-  }
-
   // MARK: - Init
 
   internal init(fn: FunctionWrapper,

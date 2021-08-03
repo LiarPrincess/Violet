@@ -74,10 +74,6 @@ public final class PyDict: PyObject {
 
   internal var elements: OrderedDictionary
 
-  override public var description: String {
-    return "PyDict(count: \(self.elements.count))"
-  }
-
   // MARK: - Init
 
   internal init(elements: PyDict.OrderedDictionary) {

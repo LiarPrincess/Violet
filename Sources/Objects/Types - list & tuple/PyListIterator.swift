@@ -22,11 +22,6 @@ public final class PyListIterator: PyObject {
     super.init(type: Py.types.list_iterator)
   }
 
-  override public var description: String {
-    let count = self.list.count
-    return "PyListIterator(count: \(count), index: \(self.index))"
-  }
-
   // MARK: - Class
 
   // sourcery: pyproperty = __class__

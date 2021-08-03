@@ -22,10 +22,6 @@ public final class PyCallableIterator: PyObject {
     super.init(type: Py.types.callable_iterator)
   }
 
-  override public var description: String {
-    return "PyCallableIterator()"
-  }
-
   // MARK: - Class
 
   // sourcery: pyproperty = __class__

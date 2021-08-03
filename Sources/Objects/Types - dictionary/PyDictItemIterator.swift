@@ -15,10 +15,6 @@ public final class PyDictItemIterator: PyObject, AbstractDictViewIterator {
   internal var index: Int
   internal let initialCount: Int
 
-  override public var description: String {
-    return "PyDictItemIterator(count: \(self.dict.elements.count))"
-  }
-
   // MARK: - Init
 
   internal init(dict: PyDict) {

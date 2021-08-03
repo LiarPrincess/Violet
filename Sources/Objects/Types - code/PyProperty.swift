@@ -67,15 +67,6 @@ public final class PyProperty: PyObject {
 
   internal private(set) var doc: PyObject?
 
-  override public var description: String {
-    var properties = [String]()
-    if let o = self.get { properties.append("get: \(o)") }
-    if let o = self.set { properties.append("set: \(o)") }
-    if let o = self.del { properties.append("del: \(o)") }
-    let p = properties.joined(separator: ", ")
-    return "PyProperty(\(p))"
-  }
-
   internal convenience init(get: PyObject?, set: PyObject?, del: PyObject?) {
     let type = Py.types.property
     self.init(type: type, get: get, set: set, del: del)

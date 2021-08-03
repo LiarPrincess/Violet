@@ -21,12 +21,6 @@ public final class PyMethod: PyObject {
   /// The instance it is bound to
   internal let object: PyObject
 
-  override public var description: String {
-    let name = self.function.name
-    let qualname = self.function.qualname
-    return "PyMethod(name: \(name), qualname: \(qualname), object: \(self.object))"
-  }
-
   // MARK: - Init
 
   internal init(fn: PyFunction, object: PyObject) {

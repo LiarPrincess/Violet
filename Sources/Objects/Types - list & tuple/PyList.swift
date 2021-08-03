@@ -34,10 +34,6 @@ public final class PyList: PyObject, AbstractSequence {
     return self.elements.count
   }
 
-  override public var description: String {
-    return "PyList(count: \(self.count))"
-  }
-
   // MARK: - Init
 
   internal convenience init(elements: [PyObject]) {

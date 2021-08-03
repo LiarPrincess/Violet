@@ -14,10 +14,6 @@ public final class PyTupleIterator: PyObject {
   internal let tuple: PyTuple
   internal private(set) var index: Int
 
-  override public var description: String {
-    return "PyTupleIterator()"
-  }
-
   // MARK: - Init
 
   internal init(tuple: PyTuple) {

@@ -31,13 +31,6 @@ public class PyBaseException: PyObject {
     set { self.flags.set(Self.suppressContextFlag, to: newValue) }
   }
 
-  override public var description: String {
-    let type = Swift.type(of: self)
-    let typeName = String(describing: type)
-    let msg = self.message.map { "msg: \($0)" } ?? ""
-    return "\(typeName)(\(msg))"
-  }
-
   // MARK: - Init
 
   /// Type to set in `init`.

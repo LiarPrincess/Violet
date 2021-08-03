@@ -16,10 +16,6 @@ public final class PyNamespace: PyObject {
     SimpleNamespace(**kwargs)
     """
 
-  override public var description: String {
-    return "PyNamespace()"
-  }
-
   // MARK: - Init
 
   internal convenience init(dict: PyDict) {

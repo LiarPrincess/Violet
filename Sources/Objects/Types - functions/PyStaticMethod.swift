@@ -28,11 +28,6 @@ public final class PyStaticMethod: PyObject {
     For a more advanced concept, see the classmethod builtin.
     """
 
-  override public var description: String {
-    let c = self.callable.map(String.init) ?? "nil"
-    return "PyStaticMethod(callable: \(c))"
-  }
-
   private var callable: PyObject?
 
   internal convenience init(callable: PyObject) {

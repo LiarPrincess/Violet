@@ -46,12 +46,6 @@ public final class PyFunction: PyObject {
   internal private(set) var closure: PyTuple?
   internal private(set) var annotations: PyDict?
 
-  override public var description: String {
-    let name = self.name.value
-    let qualname = self.qualname.value
-    return "PyFunction(name: '\(name)', qualname: '\(qualname)')"
-  }
-
   // MARK: - Init
 
   internal init(qualname: PyString?,

@@ -48,11 +48,6 @@ public final class PyTextFile: PyObject {
     set { self.flags.set(Self.closeOnDeallocFlag, to: newValue) }
   }
 
-  override public var description: String {
-    let name = self.name ?? "?"
-    return "PyTextFile(name: \(name), fd: \(self.fd.raw), mode: \(self.mode)"
-  }
-
   // MARK: - Init
 
   internal convenience init(fd: FileDescriptorType,

@@ -66,17 +66,6 @@ public final class PyString: PyObject, AbstractString {
     return self.cachedCount
   }
 
-  override public var description: String {
-    let shortCount = 50
-
-    var short = self.value.prefix(shortCount)
-    if self.value.count > shortCount {
-      short += "..."
-    }
-
-    return "PyString('\(short)')"
-  }
-
   // MARK: - Init
 
   internal convenience init(value: String) {

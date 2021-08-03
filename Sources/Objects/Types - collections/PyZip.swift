@@ -19,10 +19,6 @@ public final class PyZip: PyObject {
 
   internal let iterators: [PyObject]
 
-  override public var description: String {
-    return "PyZip(iterator count: \(self.iterators.count))"
-  }
-
   // MARK: - Init
 
   internal convenience init(iterators: [PyObject]) {

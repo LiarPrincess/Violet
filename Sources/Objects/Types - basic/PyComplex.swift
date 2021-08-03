@@ -26,10 +26,6 @@ public final class PyComplex: PyObject {
   internal let real: Double
   internal let imag: Double
 
-  override public var description: String {
-    return "PyComplex(real: \(self.real), imag: \(self.imag))"
-  }
-
   // MARK: - Init
 
   internal init(real: Double, imag: Double) {

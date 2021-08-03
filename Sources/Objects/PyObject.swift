@@ -101,11 +101,7 @@ public class PyObject: CustomStringConvertible {
   /// It can also be used to store `Bool` properties (via `custom` flags).
   public var flags = Flags()
 
-  // MARK: - Other properties
-
-  public var description: String {
-    return "PyObject(type: \(self.typeName))"
-  }
+  // MARK: - Ptr
 
   /// Object address.
   ///
@@ -136,7 +132,7 @@ public class PyObject: CustomStringConvertible {
   /// NEVER EVER use this function!
   ///
   /// This is a reserved for `objectType` and `typeType` to create mutual recursion.
-  internal func setType(to type: PyType) {
+  internal final func setType(to type: PyType) {
     assert(self._type == nil, "Type is already assigned!")
     self._type = type
     self.copyFlagsFromType()
@@ -165,6 +161,68 @@ public class PyObject: CustomStringConvertible {
     let result = body()
     self.flags.unset(.reprLock)
     return result
+  }
+
+  // MARK: - Description
+
+  public var description: String {
+    let swiftType = String(describing: Swift.type(of: self))
+    var result = "\(swiftType)(type: \(self.typeName), flags: \(self.flags)"
+
+    let hasDescriptionLock = self.flags.isSet(.descriptionLock)
+    if hasDescriptionLock {
+      result.append(", RECURSIVE ENTRY)")
+      return result
+    }
+
+    self.flags.set(.descriptionLock)
+    defer { self.flags.unset(.descriptionLock) }
+
+    let mirror = Mirror(reflecting: self)
+    self.appendProperties(from: mirror, to: &result)
+
+    result.append(")")
+    return result
+  }
+
+  private func appendProperties(from mirror: Mirror,
+                                to string: inout String,
+                                propertyIndex: Int = 0) {
+    var index = propertyIndex
+    for child in mirror.children {
+      let label = child.label ?? "property\(index)"
+
+      let value = child.value
+      var valueString = String(describing: value)
+
+      // If the value is 'Optional' then want to print as if it was not.
+      if valueString.starts(with: "Optional(") {
+        // Remove 'Optional(' prefix and ')' suffix.
+        let startIndex = valueString.index(valueString.startIndex, offsetBy: 9)
+        let endIndex = valueString.index(valueString.endIndex, offsetBy: -1)
+        let nonOptionalValue = valueString[startIndex..<endIndex]
+        valueString = String(nonOptionalValue)
+      }
+
+      // If value is 'String' then add quotes.
+      // This will not work on optional string, but whatever.
+      if value is String {
+        valueString = "'" + valueString + "'"
+      }
+
+      string.append(", \(label): \(valueString)")
+      index += 1
+    }
+
+    if let superclassMirror = mirror.superclassMirror {
+      // We already handled 'PyObject' by printing 'type: XXX'
+      let isObject = superclassMirror.subjectType == PyObject.self
+      if !isObject {
+        self.appendProperties(from: superclassMirror,
+                              to: &string,
+                              propertyIndex: index)
+      }
+    }
   }
 
   // MARK: - GC

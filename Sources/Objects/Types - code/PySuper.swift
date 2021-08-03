@@ -37,18 +37,6 @@ public final class PySuper: PyObject, HasCustomGetMethod {
   internal var object: PyObject?
   internal var objectType: PyType?
 
-  override public var description: String {
-    func describe(value: PyObject?) -> String {
-      guard let v = value else { return "nil" }
-      return String(describing: v)
-    }
-
-    let thisClass = describe(value: self.thisClass)
-    let object = describe(value: self.object)
-    let objectType = describe(value: self.objectType)
-    return "PySuper(thisClass: \(thisClass), object: \(object), objectType: \(objectType))"
-  }
-
   internal convenience init(requestedType: PyType?,
                             object: PyObject?,
                             objectType: PyType?) {

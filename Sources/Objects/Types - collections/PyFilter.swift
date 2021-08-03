@@ -18,10 +18,6 @@ public final class PyFilter: PyObject {
   internal let fn: PyObject
   internal let iterator: PyObject
 
-  override public var description: String {
-    return "PyFilter()"
-  }
-
   // MARK: - Init
 
   internal convenience init(fn: PyObject, iterator: PyObject) {

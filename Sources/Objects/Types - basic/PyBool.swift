@@ -40,10 +40,6 @@ public final class PyBool: PyInt {
     return self.value.isTrue
   }
 
-  override public var description: String {
-    return "PyBool(\(self.isTrue))"
-  }
-
   // MARK: - Init
 
   internal init(value: Bool) {

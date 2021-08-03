@@ -18,10 +18,6 @@ public final class PyMap: PyObject {
   internal let fn: PyObject
   internal let iterators: [PyObject]
 
-  override public var description: String {
-    return "PyMap(iterator count: \(self.iterators.count))"
-  }
-
   // MARK: - Init
 
   internal convenience init(fn: PyObject, iterators: [PyObject]) {

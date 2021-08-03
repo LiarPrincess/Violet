@@ -34,10 +34,6 @@ public final class PyByteArray: PyObject, AbstractBytes {
     return self.elements.isEmpty
   }
 
-  override public var description: String {
-    return "PyByteArray(count: \(self.count))"
-  }
-
   // MARK: - Init
 
   internal convenience init(elements: Data) {

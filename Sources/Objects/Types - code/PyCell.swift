@@ -13,11 +13,6 @@ public final class PyCell: PyObject {
   // This has to be public for performance
   public var content: PyObject?
 
-  override public var description: String {
-    let c = self.content.map(String.init(describing:)) ?? "nil"
-    return "PyCell(content: \(c))"
-  }
-
   internal init(content: PyObject?) {
     self.content = content
     super.init(type: Py.types.cell)

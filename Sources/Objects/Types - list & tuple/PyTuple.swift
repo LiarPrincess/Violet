@@ -32,10 +32,6 @@ public final class PyTuple: PyObject, AbstractSequence {
     return self.elements.count
   }
 
-  override public var description: String {
-    return "PyTuple(count: \(self.count))"
-  }
-
   // MARK: - Init
 
   internal convenience init(elements: [PyObject]) {

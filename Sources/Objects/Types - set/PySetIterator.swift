@@ -15,10 +15,6 @@ public final class PySetIterator: PyObject {
   private var index: Int
   private var initialCount: Int
 
-  override public var description: String {
-    return "PySetIterator(set: \(self.set), index: \(self.index))"
-  }
-
   // MARK: - Init
 
   internal convenience init(set: PySet) {

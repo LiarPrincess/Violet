@@ -36,14 +36,19 @@ extension PyObject {
     public static let reprLock = Flags(rawValue: 1 << 0)
 
     /// (VIOLET ONLY!)
+    /// This flag is used to control infinite recursion in `description`.
+    ///
+    /// It is used when container objects recursively contain themselves.
+    public static let descriptionLock = Flags(rawValue: 1 << 1)
+
+    /// (VIOLET ONLY!)
     /// Flag denoting that this object has access to `__dict__`.
     ///
     /// This flag is automatically copied from `self.type`.
-    public static let has__dict__ = Flags(rawValue: 1 << 1)
+    public static let has__dict__ = Flags(rawValue: 1 << 2)
 
     // === Reserved for future use ===
     // Not assigned (for now), but we expect garbage collection to use some of them.
-    private static let reserved2 = Flags(rawValue: 1 << 2)
     private static let reserved3 = Flags(rawValue: 1 << 3)
     private static let reserved4 = Flags(rawValue: 1 << 4)
     private static let reserved5 = Flags(rawValue: 1 << 5)
@@ -57,8 +62,8 @@ extension PyObject {
     public static var presentOnEveryObjectMask: Flags = {
       var result = Flags()
       result.set(Flags.reprLock)
+      result.set(Flags.descriptionLock)
       result.set(Flags.has__dict__)
-      result.set(Flags.reserved2)
       result.set(Flags.reserved3)
       result.set(Flags.reserved4)
       result.set(Flags.reserved5)
@@ -128,34 +133,53 @@ extension PyObject {
     // MARK: - Description
 
     public var description: String {
-      var result = ""
+      var result = "["
+      var isFirst = true
+
       func append(_ s: String) {
-        if !result.isEmpty {
+        if !isFirst {
           result += ", "
         }
 
         result.append(s)
+        isFirst = false
       }
 
-      if self.isSet(.reprLock) {
-        append("reprLock")
-      }
+      if self.isSet(.reprLock) { append("reprLock") }
+      if self.isSet(.descriptionLock) { append("descriptionLock") }
+      if self.isSet(.has__dict__) { append("has__dict__") }
+      if self.isSet(.reserved3) { append("reserved3") }
+      if self.isSet(.reserved4) { append("reserved4") }
+      if self.isSet(.reserved5) { append("reserved5") }
+      if self.isSet(.reserved6) { append("reserved6") }
+      if self.isSet(.reserved7) { append("reserved7") }
+      if self.isSet(.custom0) { append("custom0") }
+      if self.isSet(.custom1) { append("custom1") }
+      if self.isSet(.custom2) { append("custom2") }
+      if self.isSet(.custom3) { append("custom3") }
+      if self.isSet(.custom4) { append("custom4") }
+      if self.isSet(.custom5) { append("custom5") }
+      if self.isSet(.custom6) { append("custom6") }
+      if self.isSet(.custom7) { append("custom7") }
+      if self.isSet(.custom8) { append("custom8") }
+      if self.isSet(.custom9) { append("custom9") }
+      if self.isSet(.custom10) { append("custom10") }
+      if self.isSet(.custom11) { append("custom11") }
+      if self.isSet(.custom12) { append("custom12") }
+      if self.isSet(.custom13) { append("custom13") }
+      if self.isSet(.custom14) { append("custom14") }
+      if self.isSet(.custom15) { append("custom15") }
+      if self.isSet(.custom16) { append("custom16") }
+      if self.isSet(.custom17) { append("custom17") }
+      if self.isSet(.custom18) { append("custom18") }
+      if self.isSet(.custom19) { append("custom19") }
+      if self.isSet(.custom20) { append("custom20") }
+      if self.isSet(.custom21) { append("custom21") }
+      if self.isSet(.custom22) { append("custom22") }
+      if self.isSet(.custom23) { append("custom23") }
 
-      if self.isSet(.has__dict__) {
-        append("has__dict__")
-      }
-
-      let customStart = Self.custom0.rawValue
-      let customEnd = Self.custom23.rawValue
-      for rawValue in customStart...customEnd {
-        let flag = Flags(rawValue: rawValue)
-        if self.isSet(flag) {
-          let index = rawValue - customStart
-          append("custom\(index)")
-        }
-      }
-
-      return "PyObject.Flags(\(result))"
+      result.append("]")
+      return result
     }
 
     // MARK: - Methods

@@ -29,10 +29,6 @@ public final class PyFrozenSet: PyObject, AbstractSet {
 
   internal let elements: OrderedSet
 
-  override public var description: String {
-    return "PyFrozenSet(count: \(self.elements.count))"
-  }
-
   // MARK: - Init
 
   internal convenience init(elements: PyFrozenSet.OrderedSet) {

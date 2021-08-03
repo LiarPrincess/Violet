@@ -11,10 +11,6 @@ public final class PyNotImplemented: PyObject {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  override public var description: String {
-    return "PyNotImplemented()"
-  }
-
   // MARK: - Init
 
   override internal init() {

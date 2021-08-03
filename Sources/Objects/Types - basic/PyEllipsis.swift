@@ -14,10 +14,6 @@ public final class PyEllipsis: PyObject {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  override public var description: String {
-    return "PyEllipsis()"
-  }
-
   // MARK: - Init
 
   override internal init() {

@@ -29,10 +29,6 @@ public final class PySet: PyObject, AbstractSet {
 
   internal var elements: OrderedSet
 
-  override public var description: String {
-    return "PySet(count: \(self.elements.count))"
-  }
-
   // MARK: - Init
 
   internal convenience init(elements: PySet.OrderedSet) {

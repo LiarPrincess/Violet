@@ -16,15 +16,6 @@ public final class PyModule: PyObject {
     The name must be a string; the optional doc argument can have any type.
     """
 
-  override public var description: String {
-    switch self.getName() {
-    case .value(let name):
-      return "PyModule(name: \(name))"
-    case .error:
-      return "PyModule(name: ?)"
-    }
-  }
-
   // MARK: - Init
 
   internal convenience init(name: PyObject, doc: PyObject?, dict: PyDict? = nil) {

@@ -11,10 +11,6 @@ public final class PyNone: PyObject, HasCustomGetMethod {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  override public var description: String {
-    return "PyNone()"
-  }
-
   // MARK: - Init
 
   override internal init() {

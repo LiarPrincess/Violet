@@ -22,10 +22,6 @@ public final class PyByteArrayIterator: PyObject {
     super.init(type: Py.types.bytearray_iterator)
   }
 
-  override public var description: String {
-    return "PyByteArrayIterator(bytes: \(self.bytes), index: \(self.index))"
-  }
-
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
