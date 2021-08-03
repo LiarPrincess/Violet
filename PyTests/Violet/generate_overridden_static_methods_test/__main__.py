@@ -8,10 +8,9 @@ static_method_names = set(static_method_names)
 
 
 def print_test_case(t):
-    flags = t.sourcery_flags
-
     # Can we create subclass?
-    if 'isBaseType' not in flags:
+    is_base_type = t.sourcery_flags.is_base_type
+    if not is_base_type:
         return
 
     type_name = t.python_type_name

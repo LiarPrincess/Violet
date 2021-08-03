@@ -22,7 +22,7 @@ class TypeInfo:
 
         # To be filled later
         self.swift_static_doc_property: Union[str, None] = None
-        self.sourcery_flags: List[str] = []
+        self.sourcery_flags: SourceryFlags = SourceryFlags()
 
         # Properties, methods - to be filled later
         self.swift_fields: List[SwiftFieldInfo] = []
@@ -32,6 +32,24 @@ class TypeInfo:
         self.python_methods: List[PyFunctionInfo] = []
         self.python_static_functions: List[PyFunctionInfo] = []
         self.python_class_functions: List[PyFunctionInfo] = []
+
+
+class SourceryFlags:
+    def __init__(self):
+        self.values = []
+
+    @property
+    def is_base_type(self) -> bool:
+        return 'isBaseType' in self.values
+
+    def __iter__(self):
+        return iter(self.values)
+
+    def append(self, flag: str):
+        self.values.append(flag)
+
+    def sort(self):
+        self.values.sort()
 
 
 class SwiftFieldInfo:
