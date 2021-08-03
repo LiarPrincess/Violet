@@ -1,32 +1,46 @@
 // cSpell:ignore TPFLAGS STACKLESS
 
-private let isHeapTypeFlag = PyObject.Flags.custom0
-private let isBaseTypeFlag = PyObject.Flags.custom1
-private let hasGCFlag = PyObject.Flags.custom2
-private let isAbstractFlag = PyObject.Flags.custom3
-private let hasFinalizeFlag = PyObject.Flags.custom4
-private let isDefaultFlag = PyObject.Flags.custom5
-
-private let isLongSubclassFlag = PyObject.Flags.custom8
-private let isListSubclassFlag = PyObject.Flags.custom9
-private let isTupleSubclassFlag = PyObject.Flags.custom10
-private let isBytesSubclassFlag = PyObject.Flags.custom11
-private let isUnicodeSubclassFlag = PyObject.Flags.custom12
-private let isDictSubclassFlag = PyObject.Flags.custom13
-private let isBaseExceptionSubclassFlag = PyObject.Flags.custom14
-private let isTypeSubclassFlag = PyObject.Flags.custom15
-
-private let instancesHave__dict__Flag = PyObject.Flags.custom20
-private let subclassInstancesHave__dict__Flag = PyObject.Flags.custom21
-
 extension PyType {
 
-  internal struct TypeFlags: CustomStringConvertible {
+  internal struct TypeFlags: CustomStringConvertible, ExpressibleByArrayLiteral {
 
-    internal var objectFlags: PyObject.Flags
+    internal static let isHeapTypeFlag = TypeFlags(objectFlags: .custom0)
+    internal static let isBaseTypeFlag = TypeFlags(objectFlags: .custom1)
+    internal static let hasGCFlag = TypeFlags(objectFlags: .custom2)
+    internal static let isAbstractFlag = TypeFlags(objectFlags: .custom3)
+    internal static let hasFinalizeFlag = TypeFlags(objectFlags: .custom4)
+    internal static let isDefaultFlag = TypeFlags(objectFlags: .custom5)
+
+    internal static let isLongSubclassFlag = TypeFlags(objectFlags: .custom8)
+    internal static let isListSubclassFlag = TypeFlags(objectFlags: .custom9)
+    internal static let isTupleSubclassFlag = TypeFlags(objectFlags: .custom10)
+    internal static let isBytesSubclassFlag = TypeFlags(objectFlags: .custom11)
+    internal static let isUnicodeSubclassFlag = TypeFlags(objectFlags: .custom12)
+    internal static let isDictSubclassFlag = TypeFlags(objectFlags: .custom13)
+    internal static let isBaseExceptionSubclassFlag = TypeFlags(objectFlags: .custom14)
+    internal static let isTypeSubclassFlag = TypeFlags(objectFlags: .custom15)
+
+    internal static let instancesHave__dict__Flag = TypeFlags(objectFlags: .custom20)
+    internal static let subclassInstancesHave__dict__Flag = TypeFlags(objectFlags: .custom21)
+
+    internal private(set) var objectFlags: PyObject.Flags
+
+    // MARK: - Init
+
+    internal init() {
+      self.objectFlags = PyObject.Flags()
+    }
 
     internal init(objectFlags: PyObject.Flags) {
       self.objectFlags = objectFlags
+    }
+
+    internal init(arrayLiteral elements: PyType.TypeFlags...) {
+      self = TypeFlags()
+
+      for flag in elements {
+        self.set(flag, to: true)
+      }
     }
 
     // MARK: - Description
@@ -35,8 +49,8 @@ extension PyType {
       var result = "["
       var isFirst = true
 
-      func appendIfSet(_ flag: PyObject.Flags, name: String) {
-        guard self.objectFlags.isSet(flag) else {
+      func appendIfSet(_ flag: TypeFlags, name: String) {
+        guard self.objectFlags.isSet(flag.objectFlags) else {
           return
         }
 
@@ -48,22 +62,23 @@ extension PyType {
         isFirst = false
       }
 
-      appendIfSet(isHeapTypeFlag, name: "isHeapType")
-      appendIfSet(isBaseTypeFlag, name: "isBaseType")
-      appendIfSet(hasGCFlag, name: "hasGC")
-      appendIfSet(isAbstractFlag, name: "isAbstract")
-      appendIfSet(hasFinalizeFlag, name: "hasFinalize")
-      appendIfSet(isDefaultFlag, name: "isDefault")
-      appendIfSet(isLongSubclassFlag, name: "isLongSubclass")
-      appendIfSet(isListSubclassFlag, name: "isListSubclass")
-      appendIfSet(isTupleSubclassFlag, name: "isTupleSubclass")
-      appendIfSet(isBytesSubclassFlag, name: "isBytesSubclass")
-      appendIfSet(isUnicodeSubclassFlag, name: "isUnicodeSubclass")
-      appendIfSet(isDictSubclassFlag, name: "isDictSubclass")
-      appendIfSet(isBaseExceptionSubclassFlag, name: "isBaseExceptionSubclass")
-      appendIfSet(isTypeSubclassFlag, name: "isTypeSubclass")
-      appendIfSet(instancesHave__dict__Flag, name: "instancesHave__dict__")
-      appendIfSet(subclassInstancesHave__dict__Flag, name: "subclassInstancesHave__dict__")
+      appendIfSet(Self.isHeapTypeFlag, name: "isHeapType")
+      appendIfSet(Self.isBaseTypeFlag, name: "isBaseType")
+      appendIfSet(Self.hasGCFlag, name: "hasGC")
+      appendIfSet(Self.isAbstractFlag, name: "isAbstract")
+      appendIfSet(Self.hasFinalizeFlag, name: "hasFinalize")
+      appendIfSet(Self.isDefaultFlag, name: "isDefault")
+      appendIfSet(Self.isLongSubclassFlag, name: "isLongSubclass")
+      appendIfSet(Self.isListSubclassFlag, name: "isListSubclass")
+      appendIfSet(Self.isTupleSubclassFlag, name: "isTupleSubclass")
+      appendIfSet(Self.isBytesSubclassFlag, name: "isBytesSubclass")
+      appendIfSet(Self.isUnicodeSubclassFlag, name: "isUnicodeSubclass")
+      appendIfSet(Self.isDictSubclassFlag, name: "isDictSubclass")
+      appendIfSet(Self.isBaseExceptionSubclassFlag, name: "isBaseExceptionSubclass")
+      appendIfSet(Self.isTypeSubclassFlag, name: "isTypeSubclass")
+      appendIfSet(Self.instancesHave__dict__Flag, name: "instancesHave__dict__")
+      appendIfSet(Self.subclassInstancesHave__dict__Flag,
+                  name: "subclassInstancesHave__dict__")
 
       result.append("]")
       return result
@@ -74,38 +89,38 @@ extension PyType {
     /// Set if the type object is dynamically allocated
     /// (for example by `class` statement).
     internal var isHeapType: Bool {
-      get { return self.objectFlags.isSet(isHeapTypeFlag) }
-      set { self.objectFlags.set(isHeapTypeFlag, to: newValue) }
+      get { return self.isSet(Self.isHeapTypeFlag) }
+      set { self.set(Self.isHeapTypeFlag, to: newValue) }
     }
 
     /// Set if the type allows sub-classing.
     internal var isBaseType: Bool {
-      get { return self.objectFlags.isSet(isBaseTypeFlag) }
-      set { self.objectFlags.set(isBaseTypeFlag, to: newValue) }
+      get { return self.isSet(Self.isBaseTypeFlag) }
+      set { self.set(Self.isBaseTypeFlag, to: newValue) }
     }
 
     /// Objects support garbage collection.
     ///
     /// This flag was taken from CPython and is not used in Violet.
     internal var hasGC: Bool {
-      get { return self.objectFlags.isSet(hasGCFlag) }
-      set { self.objectFlags.set(hasGCFlag, to: newValue) }
+      get { return self.isSet(Self.hasGCFlag) }
+      set { self.set(Self.hasGCFlag, to: newValue) }
     }
 
     /// Type is abstract and cannot be instantiated
     ///
     /// This flag was taken from CPython and is not used in Violet..
     internal var isAbstract: Bool {
-      get { return self.objectFlags.isSet(isAbstractFlag) }
-      set { self.objectFlags.set(isAbstractFlag, to: newValue) }
+      get { return self.isSet(Self.isAbstractFlag) }
+      set { self.set(Self.isAbstractFlag, to: newValue) }
     }
 
     /// Type structure has `tp_finalize` member (3.4)
     ///
     /// This flag was taken from CPython and is not used in Violet.
     internal var hasFinalize: Bool {
-      get { return self.objectFlags.isSet(hasFinalizeFlag) }
-      set { self.objectFlags.set(hasFinalizeFlag, to: newValue) }
+      get { return self.isSet(Self.hasFinalizeFlag) }
+      set { self.set(Self.hasFinalizeFlag, to: newValue) }
     }
 
     /// ```c
@@ -116,8 +131,8 @@ extension PyType {
     ///
     /// This flag was taken from CPython and is not used in Violet.
     internal var isDefault: Bool {
-      get { return self.objectFlags.isSet(isDefaultFlag) }
-      set { self.objectFlags.set(isDefaultFlag, to: newValue) }
+      get { return self.isSet(Self.isDefaultFlag) }
+      set { self.set(Self.isDefaultFlag, to: newValue) }
     }
 
       // MARK: - Is XXX
@@ -126,64 +141,64 @@ extension PyType {
     ///
     /// It is used for fast path in `PyCast`.
     internal var isLongSubclass: Bool {
-      get { return self.objectFlags.isSet(isLongSubclassFlag) }
-      set { self.objectFlags.set(isLongSubclassFlag, to: newValue) }
+      get { return self.isSet(Self.isLongSubclassFlag) }
+      set { self.set(Self.isLongSubclassFlag, to: newValue) }
     }
 
     /// This type is a `list` subclass.
     ///
     /// It is used for fast path in `PyCast`.
     internal var isListSubclass: Bool {
-      get { return self.objectFlags.isSet(isListSubclassFlag) }
-      set { self.objectFlags.set(isListSubclassFlag, to: newValue) }
+      get { return self.isSet(Self.isListSubclassFlag) }
+      set { self.set(Self.isListSubclassFlag, to: newValue) }
     }
 
     /// This type is a `tuple` subclass.
     ///
     /// It is used for fast path in `PyCast`.
     internal var isTupleSubclass: Bool {
-      get { return self.objectFlags.isSet(isTupleSubclassFlag) }
-      set { self.objectFlags.set(isTupleSubclassFlag, to: newValue) }
+      get { return self.isSet(Self.isTupleSubclassFlag) }
+      set { self.set(Self.isTupleSubclassFlag, to: newValue) }
     }
 
     /// This type is a `bytes` subclass.
     ///
     /// It is used for fast path in `PyCast`.
     internal var isBytesSubclass: Bool {
-      get { return self.objectFlags.isSet(isBytesSubclassFlag) }
-      set { self.objectFlags.set(isBytesSubclassFlag, to: newValue) }
+      get { return self.isSet(Self.isBytesSubclassFlag) }
+      set { self.set(Self.isBytesSubclassFlag, to: newValue) }
     }
 
     /// This type is a `str` subclass.
     ///
     /// It is used for fast path in `PyCast`.
     internal var isUnicodeSubclass: Bool {
-      get { return self.objectFlags.isSet(isUnicodeSubclassFlag) }
-      set { self.objectFlags.set(isUnicodeSubclassFlag, to: newValue) }
+      get { return self.isSet(Self.isUnicodeSubclassFlag) }
+      set { self.set(Self.isUnicodeSubclassFlag, to: newValue) }
     }
 
     /// This type is a `dict` subclass.
     ///
     /// It is used for fast path in `PyCast`.
     internal var isDictSubclass: Bool {
-      get { return self.objectFlags.isSet(isDictSubclassFlag) }
-      set { self.objectFlags.set(isDictSubclassFlag, to: newValue) }
+      get { return self.isSet(Self.isDictSubclassFlag) }
+      set { self.set(Self.isDictSubclassFlag, to: newValue) }
     }
 
     /// This type is a `baseException` subclass.
     ///
     /// It is used for fast path in `PyCast`.
     internal var isBaseExceptionSubclass: Bool {
-      get { return self.objectFlags.isSet(isBaseExceptionSubclassFlag) }
-      set { self.objectFlags.set(isBaseExceptionSubclassFlag, to: newValue) }
+      get { return self.isSet(Self.isBaseExceptionSubclassFlag) }
+      set { self.set(Self.isBaseExceptionSubclassFlag, to: newValue) }
     }
 
     /// This type is a `type` subclass.
     ///
     /// It is used for fast path in `PyCast`.
     internal var isTypeSubclass: Bool {
-      get { return self.objectFlags.isSet(isTypeSubclassFlag) }
-      set { self.objectFlags.set(isTypeSubclassFlag, to: newValue) }
+      get { return self.isSet(Self.isTypeSubclassFlag) }
+      set { self.set(Self.isTypeSubclassFlag, to: newValue) }
     }
 
     // MARK: - Violet
@@ -191,8 +206,8 @@ extension PyType {
     /// (VIOLET ONLY) Flag used to denote that instances of this type have access
     /// to `__dict__`.
     internal var instancesHave__dict__: Bool {
-      get { return self.objectFlags.isSet(instancesHave__dict__Flag) }
-      set { self.objectFlags.set(instancesHave__dict__Flag, to: newValue) }
+      get { return self.isSet(Self.instancesHave__dict__Flag) }
+      set { self.set(Self.instancesHave__dict__Flag, to: newValue) }
     }
 
     /// (VIOLET ONLY) Flag used to denote that instances of subclass of this type
@@ -213,8 +228,22 @@ extension PyType {
     /// { }
     /// ```
     internal var subclassInstancesHave__dict__: Bool {
-      get { return self.objectFlags.isSet(subclassInstancesHave__dict__Flag) }
-      set { self.objectFlags.set(subclassInstancesHave__dict__Flag, to: newValue) }
+      get { return self.isSet(Self.subclassInstancesHave__dict__Flag) }
+      set { self.set(Self.subclassInstancesHave__dict__Flag, to: newValue) }
+    }
+
+    // MARK: - Methods
+
+    /// Is given flag set?
+    private func isSet(_ flag: TypeFlags) -> Bool {
+      let objectFlags = flag.objectFlags
+      return self.objectFlags.isSet(objectFlags)
+    }
+
+    /// Append/remove given flag.
+    public mutating func set(_ flag: TypeFlags, to value: Bool) {
+      let objectFlags = flag.objectFlags
+      self.objectFlags.set(objectFlags, to: value)
     }
   }
 }

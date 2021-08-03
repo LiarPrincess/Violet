@@ -1,6 +1,8 @@
 from Sourcery import TypeInfo, PyFunctionInfo
-from Builtin_types.property import get_property_name
-from Builtin_types.cast import (get_castSelf_function_name, get_castSelfOptional_function_name)
+from Builtin_types import (
+    get_property_name,
+    get_castSelf_function_name, get_castSelfOptional_function_name
+)
 
 
 def print_fill_helpers():
@@ -38,10 +40,6 @@ def print_fill_function(t: TypeInfo):
     function_name = get_fill_function_name(t)
     print(f'  private func {function_name}() {{')
     print(f'    let type = self.{get_property_name(t.python_type_name)}')
-
-    sourcery_flags = t.sourcery_flags
-    for flag in sourcery_flags:
-        print(f'    type.typeFlags.{flag} = true')
 
     static_doc_property = t.swift_static_doc_property
     if static_doc_property:

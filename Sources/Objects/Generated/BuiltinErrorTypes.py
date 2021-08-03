@@ -1,10 +1,8 @@
 from Exception_hierarchy import data
 from Sourcery import get_types
-from TypeMemoryLayout import get_layout_name
-from StaticMethodsForBuiltinTypes import get_property_name as get_static_methods_property_name
-from Common.strings import generated_warning, where_to_find_errors_in_cpython
+from Common.strings import (generated_warning, where_to_find_errors_in_cpython)
 from Builtin_types import (
-    get_property_name_escaped, print_property,
+    get_property_name_escaped, print_property, print_set_property,
     print_type_mark,
     get_fill_function_name, print_fill_function, print_fill_helpers,
     print_castSelf_functions
@@ -45,14 +43,6 @@ import VioletCore
     # Errors in 'data' are in the correct order (parent is before its subclasses).
     types = list(map(get_type, data))
 
-    def get_base_type(t):
-        swift_base_type_name = t.swift_base_type_name
-        for other in all_types:
-            if other.swift_type_name == swift_base_type_name:
-                return other
-
-        assert False, f"Unable to find base type of: '{t.swift_type}'"
-
     # ==================
     # === Properties ===
     # ==================
@@ -74,21 +64,13 @@ import VioletCore
 
     print('  /// Init that will only initialize properties.')
     print('  internal init() {')
-    print('    let types = Py.types')
 
-    for t in types:
-        python_type_name = t.python_type_name
+    for index, t in enumerate(types):
+        if index != 0:
+            print()
 
-        if python_type_name == 'BaseException':
-            base_property = 'types.object'
-        else:
-            base_type = get_base_type(t)
-            base_property = 'self.' + get_property_name_escaped(base_type.python_type_name)
+        print_set_property(t, types)
 
-        layout = get_layout_name(t)
-        property_name = get_property_name_escaped(python_type_name)
-        static_methods = get_static_methods_property_name(t.swift_type_name)
-        print(f'    self.{property_name} = PyType.initBuiltinType(name: "{python_type_name}", type: types.type, base: {base_property}, staticMethods: StaticMethodsForBuiltinTypes.{static_methods}, layout: .{layout})')
     print('  }')
     print()
 

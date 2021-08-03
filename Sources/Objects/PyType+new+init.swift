@@ -156,6 +156,26 @@ extension PyType {
     // Create type object
     let name = args.name.value
     let layout = base.layout
+
+    var typeFlags = TypeFlags()
+    typeFlags.isDefault = true
+    typeFlags.isHeapType = true
+    typeFlags.isBaseType = true
+    typeFlags.hasFinalize = true
+    typeFlags.hasGC = base.typeFlags.hasGC
+
+    typeFlags.isLongSubclass = base.typeFlags.isLongSubclass
+    typeFlags.isListSubclass = base.typeFlags.isListSubclass
+    typeFlags.isTupleSubclass = base.typeFlags.isTupleSubclass
+    typeFlags.isBytesSubclass = base.typeFlags.isBytesSubclass
+    typeFlags.isUnicodeSubclass = base.typeFlags.isUnicodeSubclass
+    typeFlags.isDictSubclass = base.typeFlags.isDictSubclass
+    typeFlags.isBaseExceptionSubclass = base.typeFlags.isBaseExceptionSubclass
+    typeFlags.isTypeSubclass = base.typeFlags.isTypeSubclass
+
+    typeFlags.instancesHave__dict__ = base.typeFlags.instancesHave__dict__
+      || base.typeFlags.subclassInstancesHave__dict__
+
     let staticMethods = StaticallyKnownNotOverriddenMethods(
       mroWithoutCurrentlyCreatedType: mro,
       dictForCurrentlyCreatedType: args.dict
@@ -167,30 +187,10 @@ extension PyType {
       metatype: metatype,
       base: base,
       mro: mro,
+      typeFlags: typeFlags,
       staticMethods: staticMethods,
       layout: layout
     )
-
-    // Flags have to be set ASAP!
-    // Setter methods will check 'heapType' (because it should not be possible
-    // to modify builtin types, but it is 'ok' for heap types).
-    type.typeFlags.isDefault = true
-    type.typeFlags.isHeapType = true
-    type.typeFlags.isBaseType = true
-    type.typeFlags.hasFinalize = true
-    type.typeFlags.hasGC = base.typeFlags.hasGC
-
-    type.typeFlags.isLongSubclass = base.typeFlags.isLongSubclass
-    type.typeFlags.isListSubclass = base.typeFlags.isListSubclass
-    type.typeFlags.isTupleSubclass = base.typeFlags.isTupleSubclass
-    type.typeFlags.isBytesSubclass = base.typeFlags.isBytesSubclass
-    type.typeFlags.isUnicodeSubclass = base.typeFlags.isUnicodeSubclass
-    type.typeFlags.isDictSubclass = base.typeFlags.isDictSubclass
-    type.typeFlags.isBaseExceptionSubclass = base.typeFlags.isBaseExceptionSubclass
-    type.typeFlags.isTypeSubclass = base.typeFlags.isTypeSubclass
-
-    type.typeFlags.instancesHave__dict__ = base.typeFlags.instancesHave__dict__
-      || base.typeFlags.subclassInstancesHave__dict__
 
     // Initialize '__dict__' from passed-in dict
     // Also: we have to COPY it! Swift COW will take care of this.

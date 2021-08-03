@@ -1,9 +1,7 @@
 from Sourcery import get_types
 from Common.strings import generated_warning
-from TypeMemoryLayout import get_layout_name
-from StaticMethodsForBuiltinTypes import get_property_name as get_static_methods_property_name
 from Builtin_types import (
-    get_property_name_escaped, print_property,
+    get_property_name_escaped, print_property, print_set_property,
     print_type_mark,
     get_fill_function_name, print_fill_function, print_fill_helpers,
     print_castSelf_functions
@@ -62,26 +60,37 @@ import VioletCore
     print('  // MARK: - Stage 1 - init')
     print()
 
+    # We have to do some work to init types in the correct order.
+    # 'object' and 'type' first, 'bool' last (because it depends on 'int')
+    object_type = None
+    type_type = None
+    bool_type = None
+    for t in types:
+        if t.python_type_name == 'object':
+            object_type = t
+        if t.python_type_name == 'type':
+            type_type = t
+        if t.python_type_name == 'bool':
+            bool_type = t
+
     print('''\
   /// Init that will only initialize properties.
   /// (see comment at the top of this file)
   internal init() {
-    // Requirements (for 'self.object' and 'self.type'):
+    // Requirements for 'self.object' and 'self.type':
     // 1. 'type' inherits from 'object'
     // 2. both 'type' and 'object' are instances of 'type'
-    self.object = PyType.initObjectType()
-    self.type = PyType.initTypeType(objectType: self.object)
+    // To do this we will skip setting the 'type' property and fill it later.\
+''')
 
-    // 'has__dict__' flag is copied from type to instance, and because
-    // 'self.type' has not yet been filled it is not set! This means that
-    // all of the instances initialized in this method will not get it.
-    //
-    // Example why this is needed:
-    // When filling 'type' type we will need to access its '__dict__'.
-    // If the 'has__dict__' flag is not set then we don't have a '__dict__'!
-    self.type.typeFlags.instancesHave__dict__ = true
+    print_set_property(object_type, types)
+    print()
+    print_set_property(type_type, types)
+    print()
 
-    // And now we can fill type.
+    print('''\
+    // And now we can set type on 'object' and 'type' types
+    // (to create circular references).
     self.object.setType(to: self.type)
     self.type.setType(to: self.type)
 
@@ -90,22 +99,12 @@ import VioletCore
 
     for t in types:
         python_type_name = t.python_type_name
+        if python_type_name not in ('object', 'type', 'bool'):
+            print_set_property(t, types)
+            print()
 
-        # 'self.object' and 'self.type' are already initialized
-        if python_type_name == 'object' or python_type_name == 'type':
-            continue
-
-        # 'self.bool' has to be last because it uses 'self.int' as base!
-        if python_type_name == 'bool':
-            continue
-
-        layout = get_layout_name(t)
-        property_name_escaped = get_property_name_escaped(python_type_name)
-        static_methods = get_static_methods_property_name(t.swift_type_name)
-        print(f'    self.{property_name_escaped} = PyType.initBuiltinType(name: "{python_type_name}", type: self.type, base: self.object, staticMethods: StaticMethodsForBuiltinTypes.{static_methods}, layout: .{layout})')
-
-    # And now add 'bool'
-    print('    self.bool = PyType.initBuiltinType(name: "bool", type: self.type, base: self.int, staticMethods: StaticMethodsForBuiltinTypes.bool, layout: .PyBool)')
+    print("    // And now we can set 'bool' (because we have 'self.int').")
+    print_set_property(bool_type, types)
     print('  }')
     print()
 

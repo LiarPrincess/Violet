@@ -88,6 +88,7 @@ public final class PyType: PyObject, CustomReflectable, HasCustomGetMethod {
                             metatype: PyType,
                             base: PyType,
                             mro: MRO,
+                            typeFlags: PyType.TypeFlags,
                             staticMethods: PyType.StaticallyKnownNotOverriddenMethods,
                             layout: PyType.MemoryLayout) {
     assert(mro.baseClasses.contains { $0 === base })
@@ -96,6 +97,7 @@ public final class PyType: PyObject, CustomReflectable, HasCustomGetMethod {
               qualname: qualname,
               base: base,
               mro: mro,
+              typeFlags: typeFlags,
               staticMethods: staticMethods,
               layout: layout)
 
@@ -110,6 +112,7 @@ public final class PyType: PyObject, CustomReflectable, HasCustomGetMethod {
                 qualname: String,
                 base: PyType?,
                 mro: MRO?,
+                typeFlags: PyType.TypeFlags,
                 staticMethods: PyType.StaticallyKnownNotOverriddenMethods,
                 layout: PyType.MemoryLayout) {
     self.name = name
@@ -122,6 +125,7 @@ public final class PyType: PyObject, CustomReflectable, HasCustomGetMethod {
 
     // Special init() without 'type' argument, just for `PyType` and `BaseType`.
     super.init()
+    self.flags.setCustomFlags(from: typeFlags.objectFlags)
 
     // Proper mro (with self at 1st place)
     if let mro = mro {
@@ -135,56 +139,50 @@ public final class PyType: PyObject, CustomReflectable, HasCustomGetMethod {
     }
   }
 
-  /// NEVER EVER use this function! It is a reserved for `object` type.
+  // MARK: - Init builtin types
+
+  /// NEVER EVER use this function! It is a reserved for `object` and `type` types.
   ///
   /// - Warning:
   /// It will not set `self.type` property!
-  internal static func initObjectType() -> PyType {
-    let name = "object"
-    let staticMethods = StaticMethodsForBuiltinTypes.object
-    let layout = MemoryLayout.PyObject
-
+  internal static func initBuiltinTypeWithoutTypeFilled(
+    name: String,
+    base: PyType?,
+    typeFlags: PyType.TypeFlags,
+    staticMethods: PyType.StaticallyKnownNotOverriddenMethods,
+    layout: PyType.MemoryLayout
+  ) -> PyType {
+    let mro = base.map(MRO.linearizeForBuiltinType(baseClass:))
     return PyMemory.newType(name: name,
                             qualname: name,
-                            base: nil,
-                            mro: nil,
-                            staticMethods: staticMethods,
-                            layout: layout)
-  }
-
-  /// NEVER EVER use this function! It is a reserved for `type` type.
-  ///
-  /// - Warning:
-  /// It will not set `self.type` property!
-  internal static func initTypeType(objectType: PyType) -> PyType {
-    let name = "type"
-    let mro = MRO.linearizeForBuiltinType(baseClass: objectType)
-    let staticMethods = StaticMethodsForBuiltinTypes.type
-    let layout = MemoryLayout.PyType
-
-    return PyMemory.newType(name: name,
-                            qualname: name,
-                            base: objectType,
+                            base: base,
                             mro: mro,
+                            typeFlags: typeFlags,
                             staticMethods: staticMethods,
                             layout: layout)
   }
+
+  // swiftlint:disable function_parameter_count
 
   /// NEVER EVER use this function! It is a reserved for builtin types
-  /// (except for `objectType` and `typeType` they have their own inits).
+  /// (except for `object` and `type` types, they have their own init).
   internal static func initBuiltinType(
     name: String,
     type: PyType,
     base: PyType,
-    staticMethods: StaticallyKnownNotOverriddenMethods,
-    layout: MemoryLayout
+    typeFlags: PyType.TypeFlags,
+    staticMethods: PyType.StaticallyKnownNotOverriddenMethods,
+    layout: PyType.MemoryLayout
   ) -> PyType {
+    // swiftlint:enable function_parameter_count
+
     let mro = MRO.linearizeForBuiltinType(baseClass: base)
     return PyMemory.newType(name: name,
                             qualname: name,
                             metatype: type,
                             base: base,
                             mro: mro,
+                            typeFlags: typeFlags,
                             staticMethods: staticMethods,
                             layout: layout)
   }
