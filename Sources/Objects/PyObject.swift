@@ -206,8 +206,16 @@ public class PyObject: CustomStringConvertible {
 
       // If value is 'String' then add quotes.
       // This will not work on optional string, but whatever.
-      if value is String {
-        valueString = "'" + valueString + "'"
+      if let string = value as? String {
+        let shortCount = 50
+
+        var short = String(string.prefix(shortCount))
+        if string.count > shortCount {
+          short.append("...")
+        }
+
+        short = short.replacingOccurrences(of: "\n", with: "\\n")
+        valueString = "\"" + short + "\""
       }
 
       string.append(", \(label): \(valueString)")

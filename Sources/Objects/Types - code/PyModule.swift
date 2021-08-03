@@ -5,7 +5,7 @@
 
 // sourcery: pytype = module, isDefault, hasGC, isBaseType
 // sourcery: instancesHave__dict__
-public final class PyModule: PyObject {
+public final class PyModule: PyObject, CustomReflectable {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -15,6 +15,28 @@ public final class PyModule: PyObject {
     Create a module object.
     The name must be a string; the optional doc argument can have any type.
     """
+
+  // MARK: - Mirror
+
+  // We use mirrors to create description.
+  public var customMirror: Mirror {
+    let name = self.__dict__.get(id: .__name__)
+    let doc = self.__dict__.get(id: .__doc__)
+    let package = self.__dict__.get(id: .__package__)
+    let loader = self.__dict__.get(id: .__loader__)
+    let spec = self.__dict__.get(id: .__spec__)
+
+    return Mirror(
+      self,
+      children: [
+        "name": name as Any,
+        "doc": doc as Any,
+        "package": package as Any,
+        "loader": loader as Any,
+        "spec": spec as Any
+      ]
+    )
+  }
 
   // MARK: - Init
 

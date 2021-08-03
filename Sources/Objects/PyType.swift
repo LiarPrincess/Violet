@@ -9,7 +9,7 @@ import VioletCore
 
 // sourcery: pytype = type, isDefault, hasGC, isBaseType, isTypeSubclass
 // sourcery: instancesHave__dict__
-public final class PyType: PyObject, HasCustomGetMethod {
+public final class PyType: PyObject, CustomReflectable, HasCustomGetMethod {
 
   // MARK: - Weak ref
 
@@ -59,8 +59,25 @@ public final class PyType: PyObject, HasCustomGetMethod {
     set { self.flags.setCustomFlags(from: newValue.objectFlags) }
   }
 
-  override public var description: String {
-    return "PyType(name: \(self.name), qualname: \(self.qualname))"
+  // MARK: - Mirror
+
+  // We use mirrors to create description.
+  public var customMirror: Mirror {
+    let base = self.base?.name ?? "nil"
+    let bases = self.bases.map { $0.name }
+    let mro = self.mro.map { $0.name }
+
+    return Mirror(
+      self,
+      children: [
+        "name": self.name,
+        "qualname": self.qualname,
+        "typeFlags": self.typeFlags,
+        "base": base,
+        "bases": bases,
+        "mro": mro
+      ]
+    )
   }
 
   // MARK: - Init
