@@ -35,33 +35,35 @@ extension PyType {
       var result = "["
       var isFirst = true
 
-      func append(_ s: String) {
+      func appendIfSet(_ flag: PyObject.Flags, name: String) {
+        guard self.objectFlags.isSet(flag) else {
+          return
+        }
+
         if !isFirst {
           result += ", "
         }
 
-        result.append(s)
+        result.append(name)
         isFirst = false
       }
 
-      if self.isHeapType { append("isHeapType") }
-      if self.isBaseType { append("isBaseType") }
-      if self.hasGC { append("hasGC") }
-      if self.isAbstract { append("isAbstract") }
-      if self.hasFinalize { append("hasFinalize") }
-      if self.isDefault { append("isDefault") }
-
-      if self.isLongSubclass { append("isLongSubclass") }
-      if self.isListSubclass { append("isListSubclass") }
-      if self.isTupleSubclass { append("isTupleSubclass") }
-      if self.isBytesSubclass { append("isBytesSubclass") }
-      if self.isUnicodeSubclass { append("isUnicodeSubclass") }
-      if self.isDictSubclass { append("isDictSubclass") }
-      if self.isBaseExceptionSubclass { append("isBaseExceptionSubclass") }
-      if self.isTypeSubclass { append("isTypeSubclass") }
-
-      if self.instancesHave__dict__ { append("instancesHave__dict__") }
-      if self.subclassInstancesHave__dict__ { append("subclassInstancesHave__dict__") }
+      appendIfSet(isHeapTypeFlag, name: "isHeapType")
+      appendIfSet(isBaseTypeFlag, name: "isBaseType")
+      appendIfSet(hasGCFlag, name: "hasGC")
+      appendIfSet(isAbstractFlag, name: "isAbstract")
+      appendIfSet(hasFinalizeFlag, name: "hasFinalize")
+      appendIfSet(isDefaultFlag, name: "isDefault")
+      appendIfSet(isLongSubclassFlag, name: "isLongSubclass")
+      appendIfSet(isListSubclassFlag, name: "isListSubclass")
+      appendIfSet(isTupleSubclassFlag, name: "isTupleSubclass")
+      appendIfSet(isBytesSubclassFlag, name: "isBytesSubclass")
+      appendIfSet(isUnicodeSubclassFlag, name: "isUnicodeSubclass")
+      appendIfSet(isDictSubclassFlag, name: "isDictSubclass")
+      appendIfSet(isBaseExceptionSubclassFlag, name: "isBaseExceptionSubclass")
+      appendIfSet(isTypeSubclassFlag, name: "isTypeSubclass")
+      appendIfSet(instancesHave__dict__Flag, name: "instancesHave__dict__")
+      appendIfSet(subclassInstancesHave__dict__Flag, name: "subclassInstancesHave__dict__")
 
       result.append("]")
       return result

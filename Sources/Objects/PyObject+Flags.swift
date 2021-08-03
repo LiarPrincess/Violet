@@ -136,47 +136,53 @@ extension PyObject {
       var result = "["
       var isFirst = true
 
-      func append(_ s: String) {
+      func appendIfSet(_ flag: Flags, name: String) {
+        guard self.isSet(flag) else {
+          return
+        }
+
         if !isFirst {
           result += ", "
         }
 
-        result.append(s)
+        result.append(name)
         isFirst = false
       }
 
-      if self.isSet(.reprLock) { append("reprLock") }
-      if self.isSet(.descriptionLock) { append("descriptionLock") }
-      if self.isSet(.has__dict__) { append("has__dict__") }
-      if self.isSet(.reserved3) { append("reserved3") }
-      if self.isSet(.reserved4) { append("reserved4") }
-      if self.isSet(.reserved5) { append("reserved5") }
-      if self.isSet(.reserved6) { append("reserved6") }
-      if self.isSet(.reserved7) { append("reserved7") }
-      if self.isSet(.custom0) { append("custom0") }
-      if self.isSet(.custom1) { append("custom1") }
-      if self.isSet(.custom2) { append("custom2") }
-      if self.isSet(.custom3) { append("custom3") }
-      if self.isSet(.custom4) { append("custom4") }
-      if self.isSet(.custom5) { append("custom5") }
-      if self.isSet(.custom6) { append("custom6") }
-      if self.isSet(.custom7) { append("custom7") }
-      if self.isSet(.custom8) { append("custom8") }
-      if self.isSet(.custom9) { append("custom9") }
-      if self.isSet(.custom10) { append("custom10") }
-      if self.isSet(.custom11) { append("custom11") }
-      if self.isSet(.custom12) { append("custom12") }
-      if self.isSet(.custom13) { append("custom13") }
-      if self.isSet(.custom14) { append("custom14") }
-      if self.isSet(.custom15) { append("custom15") }
-      if self.isSet(.custom16) { append("custom16") }
-      if self.isSet(.custom17) { append("custom17") }
-      if self.isSet(.custom18) { append("custom18") }
-      if self.isSet(.custom19) { append("custom19") }
-      if self.isSet(.custom20) { append("custom20") }
-      if self.isSet(.custom21) { append("custom21") }
-      if self.isSet(.custom22) { append("custom22") }
-      if self.isSet(.custom23) { append("custom23") }
+      // We want to list all of the flags by hand, so that if we rename some
+      // flag (for example 'reserved3' -> 'XXX') we will get an compilation error.
+      appendIfSet(.reprLock, name: "reprLock")
+      appendIfSet(.descriptionLock, name: "descriptionLock")
+      appendIfSet(.has__dict__, name: "has__dict__")
+      appendIfSet(.reserved3, name: "reserved3")
+      appendIfSet(.reserved4, name: "reserved4")
+      appendIfSet(.reserved5, name: "reserved5")
+      appendIfSet(.reserved6, name: "reserved6")
+      appendIfSet(.reserved7, name: "reserved7")
+      appendIfSet(.custom0, name: "custom0")
+      appendIfSet(.custom1, name: "custom1")
+      appendIfSet(.custom2, name: "custom2")
+      appendIfSet(.custom3, name: "custom3")
+      appendIfSet(.custom4, name: "custom4")
+      appendIfSet(.custom5, name: "custom5")
+      appendIfSet(.custom6, name: "custom6")
+      appendIfSet(.custom7, name: "custom7")
+      appendIfSet(.custom8, name: "custom8")
+      appendIfSet(.custom9, name: "custom9")
+      appendIfSet(.custom10, name: "custom10")
+      appendIfSet(.custom11, name: "custom11")
+      appendIfSet(.custom12, name: "custom12")
+      appendIfSet(.custom13, name: "custom13")
+      appendIfSet(.custom14, name: "custom14")
+      appendIfSet(.custom15, name: "custom15")
+      appendIfSet(.custom16, name: "custom16")
+      appendIfSet(.custom17, name: "custom17")
+      appendIfSet(.custom18, name: "custom18")
+      appendIfSet(.custom19, name: "custom19")
+      appendIfSet(.custom20, name: "custom20")
+      appendIfSet(.custom21, name: "custom21")
+      appendIfSet(.custom22, name: "custom22")
+      appendIfSet(.custom23, name: "custom23")
 
       result.append("]")
       return result
