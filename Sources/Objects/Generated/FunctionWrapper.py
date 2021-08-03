@@ -52,7 +52,7 @@ if __name__ == '__main__':
 // As for the names go to: https://en.wikipedia.org/wiki/Arity
 
 /// Represents Swift function callable from Python context.
-internal struct FunctionWrapper {{
+internal struct FunctionWrapper: CustomStringConvertible {{
 ''')
 
     # ============
@@ -131,6 +131,31 @@ internal struct FunctionWrapper {{
 
     for fn in positional_functions:
         print(f'    case let .{fn.enum_case_name}(w): return w.call(args: args, kwargs: kwargs)')
+
+    print('    }')
+    print('  }')
+    print()
+
+    # ===================
+    # === Description ===
+    # ===================
+
+    print_mark('Description')
+    print('  internal var description: String {')
+    print('    let name = self.name')
+    print('    let fn = self.describeKind()')
+    print('    return "FunctionWrapper(name: \(name), fn: \(fn))"')
+    print('  }')
+    print()
+
+    print('  private func describeKind() -> String {')
+    print('    switch self.kind {')
+
+    for fn in hand_written_functions:
+        print(f'    case .{fn.enum_case_name}: return "{fn.swift_description}"')
+
+    for fn in positional_functions:
+        print(f'    case .{fn.enum_case_name}: return "{fn.human_readable_signature}"')
 
     print('    }')
     print('  }')

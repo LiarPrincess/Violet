@@ -39,19 +39,19 @@
 // As for the names go to: https://en.wikipedia.org/wiki/Arity
 
 /// Represents Swift function callable from Python context.
-internal struct FunctionWrapper {
+internal struct FunctionWrapper: CustomStringConvertible {
 
   // MARK: - Kind
 
   // Each kind holds a 'struct' with similar name in its payload.
   internal enum Kind {
   /// Python `__new__` function.
-  case new(New)
+  case __new__(NewWrapper)
   /// Python `__init__` function.
-  case `init`(Init)
+  case __init__(InitWrapper)
   /// Function with `*args` and `**kwargs`.
   case argsKwargsAsMethod(ArgsKwargsAsMethod)
-  /// Function with `*args` and `**kwargs.
+  /// Function with `*args` and `**kwargs`.
   case argsKwargsAsStaticFunction(ArgsKwargsAsStaticFunction)
   /// `() -> PyFunctionResultConvertible`
   case void_to_Result(Void_to_Result)
@@ -234,8 +234,8 @@ internal struct FunctionWrapper {
   internal var name: String {
     // Just delegate to specific wrapper.
     switch self.kind {
-    case let .new(w): return w.fnName
-    case let .`init`(w): return w.fnName
+    case let .__new__(w): return w.fnName
+    case let .__init__(w): return w.fnName
     case let .argsKwargsAsMethod(w): return w.fnName
     case let .argsKwargsAsStaticFunction(w): return w.fnName
     case let .void_to_Result(w): return w.fnName
@@ -327,8 +327,8 @@ internal struct FunctionWrapper {
   internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     // Just delegate to specific wrapper.
     switch self.kind {
-    case let .new(w): return w.call(args: args, kwargs: kwargs)
-    case let .`init`(w): return w.call(args: args, kwargs: kwargs)
+    case let .__new__(w): return w.call(args: args, kwargs: kwargs)
+    case let .__init__(w): return w.call(args: args, kwargs: kwargs)
     case let .argsKwargsAsMethod(w): return w.call(args: args, kwargs: kwargs)
     case let .argsKwargsAsStaticFunction(w): return w.call(args: args, kwargs: kwargs)
     case let .void_to_Result(w): return w.call(args: args, kwargs: kwargs)
@@ -411,6 +411,103 @@ internal struct FunctionWrapper {
     case let .type_Object_ObjectOpt_ObjectOpt_to_Void(w): return w.call(args: args, kwargs: kwargs)
     case let .type_ObjectOpt_ObjectOpt_ObjectOpt_to_Result(w): return w.call(args: args, kwargs: kwargs)
     case let .type_ObjectOpt_ObjectOpt_ObjectOpt_to_Void(w): return w.call(args: args, kwargs: kwargs)
+    }
+  }
+
+  // MARK: - Description
+
+  internal var description: String {
+    let name = self.name
+    let fn = self.describeKind()
+    return "FunctionWrapper(name: \(name), fn: \(fn))"
+  }
+
+  private func describeKind() -> String {
+    switch self.kind {
+    case .__new__: return "(PyType, *args, **kwargs) -> PyObject"
+    case .__init__: return "(Zelf, *args, **kwargs) -> PyNone"
+    case .argsKwargsAsMethod: return "(*args, **kwargs) -> PyFunctionResultConvertible"
+    case .argsKwargsAsStaticFunction: return "(*args, **kwargs) -> PyFunctionResultConvertible"
+    case .void_to_Result: return "() -> PyFunctionResultConvertible"
+    case .void_to_Void: return "() -> Void"
+    case .self_to_Result: return "(Zelf) -> PyFunctionResultConvertible"
+    case .self_to_Void: return "(Zelf) -> Void"
+    case .object_to_Result: return "(PyObject) -> PyFunctionResultConvertible"
+    case .object_to_Void: return "(PyObject) -> Void"
+    case .objectOpt_to_Result: return "(PyObject?) -> PyFunctionResultConvertible"
+    case .objectOpt_to_Void: return "(PyObject?) -> Void"
+    case .type_to_Result: return "(PyType) -> PyFunctionResultConvertible"
+    case .type_to_Void: return "(PyType) -> Void"
+    case .self_Object_to_Result: return "(Zelf, PyObject) -> PyFunctionResultConvertible"
+    case .self_Object_to_Void: return "(Zelf, PyObject) -> Void"
+    case .self_ObjectOpt_to_Result: return "(Zelf, PyObject?) -> PyFunctionResultConvertible"
+    case .self_ObjectOpt_to_Void: return "(Zelf, PyObject?) -> Void"
+    case .objectOpt_ObjectOpt_to_Result: return "(PyObject?, PyObject?) -> PyFunctionResultConvertible"
+    case .objectOpt_ObjectOpt_to_Void: return "(PyObject?, PyObject?) -> Void"
+    case .self_then_Object_to_Result: return "(Zelf) -> (PyObject) -> PyFunctionResultConvertible"
+    case .self_then_Object_to_Void: return "(Zelf) -> (PyObject) -> Void"
+    case .self_then_ObjectOpt_to_Result: return "(Zelf) -> (PyObject?) -> PyFunctionResultConvertible"
+    case .self_then_ObjectOpt_to_Void: return "(Zelf) -> (PyObject?) -> Void"
+    case .self_then_Void_to_Result: return "(Zelf) -> () -> PyFunctionResultConvertible"
+    case .self_then_Void_to_Void: return "(Zelf) -> () -> Void"
+    case .object_Object_to_Result: return "(PyObject, PyObject) -> PyFunctionResultConvertible"
+    case .object_Object_to_Void: return "(PyObject, PyObject) -> Void"
+    case .object_ObjectOpt_to_Result: return "(PyObject, PyObject?) -> PyFunctionResultConvertible"
+    case .object_ObjectOpt_to_Void: return "(PyObject, PyObject?) -> Void"
+    case .object_then_Object_to_Result: return "(PyObject) -> (PyObject) -> PyFunctionResultConvertible"
+    case .object_then_Object_to_Void: return "(PyObject) -> (PyObject) -> Void"
+    case .object_then_ObjectOpt_to_Result: return "(PyObject) -> (PyObject?) -> PyFunctionResultConvertible"
+    case .object_then_ObjectOpt_to_Void: return "(PyObject) -> (PyObject?) -> Void"
+    case .type_Object_to_Result: return "(PyType, PyObject) -> PyFunctionResultConvertible"
+    case .type_Object_to_Void: return "(PyType, PyObject) -> Void"
+    case .type_ObjectOpt_to_Result: return "(PyType, PyObject?) -> PyFunctionResultConvertible"
+    case .type_ObjectOpt_to_Void: return "(PyType, PyObject?) -> Void"
+    case .self_then_Object_Object_to_Result: return "(Zelf) -> (PyObject, PyObject) -> PyFunctionResultConvertible"
+    case .self_then_Object_Object_to_Void: return "(Zelf) -> (PyObject, PyObject) -> Void"
+    case .self_then_Object_ObjectOpt_to_Result: return "(Zelf) -> (PyObject, PyObject?) -> PyFunctionResultConvertible"
+    case .self_then_Object_ObjectOpt_to_Void: return "(Zelf) -> (PyObject, PyObject?) -> Void"
+    case .self_then_ObjectOpt_ObjectOpt_to_Result: return "(Zelf) -> (PyObject?, PyObject?) -> PyFunctionResultConvertible"
+    case .self_then_ObjectOpt_ObjectOpt_to_Void: return "(Zelf) -> (PyObject?, PyObject?) -> Void"
+    case .object_Object_Object_to_Result: return "(PyObject, PyObject, PyObject) -> PyFunctionResultConvertible"
+    case .object_Object_Object_to_Void: return "(PyObject, PyObject, PyObject) -> Void"
+    case .object_Object_ObjectOpt_to_Result: return "(PyObject, PyObject, PyObject?) -> PyFunctionResultConvertible"
+    case .object_Object_ObjectOpt_to_Void: return "(PyObject, PyObject, PyObject?) -> Void"
+    case .object_ObjectOpt_ObjectOpt_to_Result: return "(PyObject, PyObject?, PyObject?) -> PyFunctionResultConvertible"
+    case .object_ObjectOpt_ObjectOpt_to_Void: return "(PyObject, PyObject?, PyObject?) -> Void"
+    case .objectOpt_ObjectOpt_ObjectOpt_to_Result: return "(PyObject?, PyObject?, PyObject?) -> PyFunctionResultConvertible"
+    case .objectOpt_ObjectOpt_ObjectOpt_to_Void: return "(PyObject?, PyObject?, PyObject?) -> Void"
+    case .type_Object_Object_to_Result: return "(PyType, PyObject, PyObject) -> PyFunctionResultConvertible"
+    case .type_Object_Object_to_Void: return "(PyType, PyObject, PyObject) -> Void"
+    case .type_Object_ObjectOpt_to_Result: return "(PyType, PyObject, PyObject?) -> PyFunctionResultConvertible"
+    case .type_Object_ObjectOpt_to_Void: return "(PyType, PyObject, PyObject?) -> Void"
+    case .type_ObjectOpt_ObjectOpt_to_Result: return "(PyType, PyObject?, PyObject?) -> PyFunctionResultConvertible"
+    case .type_ObjectOpt_ObjectOpt_to_Void: return "(PyType, PyObject?, PyObject?) -> Void"
+    case .self_then_Object_Object_Object_to_Result: return "(Zelf) -> (PyObject, PyObject, PyObject) -> PyFunctionResultConvertible"
+    case .self_then_Object_Object_Object_to_Void: return "(Zelf) -> (PyObject, PyObject, PyObject) -> Void"
+    case .self_then_Object_Object_ObjectOpt_to_Result: return "(Zelf) -> (PyObject, PyObject, PyObject?) -> PyFunctionResultConvertible"
+    case .self_then_Object_Object_ObjectOpt_to_Void: return "(Zelf) -> (PyObject, PyObject, PyObject?) -> Void"
+    case .self_then_Object_ObjectOpt_ObjectOpt_to_Result: return "(Zelf) -> (PyObject, PyObject?, PyObject?) -> PyFunctionResultConvertible"
+    case .self_then_Object_ObjectOpt_ObjectOpt_to_Void: return "(Zelf) -> (PyObject, PyObject?, PyObject?) -> Void"
+    case .self_then_ObjectOpt_ObjectOpt_ObjectOpt_to_Result: return "(Zelf) -> (PyObject?, PyObject?, PyObject?) -> PyFunctionResultConvertible"
+    case .self_then_ObjectOpt_ObjectOpt_ObjectOpt_to_Void: return "(Zelf) -> (PyObject?, PyObject?, PyObject?) -> Void"
+    case .object_Object_Object_Object_to_Result: return "(PyObject, PyObject, PyObject, PyObject) -> PyFunctionResultConvertible"
+    case .object_Object_Object_Object_to_Void: return "(PyObject, PyObject, PyObject, PyObject) -> Void"
+    case .object_Object_Object_ObjectOpt_to_Result: return "(PyObject, PyObject, PyObject, PyObject?) -> PyFunctionResultConvertible"
+    case .object_Object_Object_ObjectOpt_to_Void: return "(PyObject, PyObject, PyObject, PyObject?) -> Void"
+    case .object_Object_ObjectOpt_ObjectOpt_to_Result: return "(PyObject, PyObject, PyObject?, PyObject?) -> PyFunctionResultConvertible"
+    case .object_Object_ObjectOpt_ObjectOpt_to_Void: return "(PyObject, PyObject, PyObject?, PyObject?) -> Void"
+    case .object_ObjectOpt_ObjectOpt_ObjectOpt_to_Result: return "(PyObject, PyObject?, PyObject?, PyObject?) -> PyFunctionResultConvertible"
+    case .object_ObjectOpt_ObjectOpt_ObjectOpt_to_Void: return "(PyObject, PyObject?, PyObject?, PyObject?) -> Void"
+    case .objectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Result: return "(PyObject?, PyObject?, PyObject?, PyObject?) -> PyFunctionResultConvertible"
+    case .objectOpt_ObjectOpt_ObjectOpt_ObjectOpt_to_Void: return "(PyObject?, PyObject?, PyObject?, PyObject?) -> Void"
+    case .type_Object_Object_Object_to_Result: return "(PyType, PyObject, PyObject, PyObject) -> PyFunctionResultConvertible"
+    case .type_Object_Object_Object_to_Void: return "(PyType, PyObject, PyObject, PyObject) -> Void"
+    case .type_Object_Object_ObjectOpt_to_Result: return "(PyType, PyObject, PyObject, PyObject?) -> PyFunctionResultConvertible"
+    case .type_Object_Object_ObjectOpt_to_Void: return "(PyType, PyObject, PyObject, PyObject?) -> Void"
+    case .type_Object_ObjectOpt_ObjectOpt_to_Result: return "(PyType, PyObject, PyObject?, PyObject?) -> PyFunctionResultConvertible"
+    case .type_Object_ObjectOpt_ObjectOpt_to_Void: return "(PyType, PyObject, PyObject?, PyObject?) -> Void"
+    case .type_ObjectOpt_ObjectOpt_ObjectOpt_to_Result: return "(PyType, PyObject?, PyObject?, PyObject?) -> PyFunctionResultConvertible"
+    case .type_ObjectOpt_ObjectOpt_ObjectOpt_to_Void: return "(PyType, PyObject?, PyObject?, PyObject?) -> Void"
     }
   }
 

@@ -8,7 +8,7 @@ extension FunctionWrapper {
   internal typealias NewFn<Zelf: PyObject> =
     (PyType, [PyObject], PyDict?) -> PyResult<Zelf>
 
-  internal struct New {
+  internal struct NewWrapper {
     private let type: PyType
     private let fn: NewFn<PyObject>
 
@@ -51,8 +51,8 @@ extension FunctionWrapper {
   }
 
   internal init<Zelf>(type: PyType, newFn: @escaping NewFn<Zelf>) {
-    let wrapper = New(type: type, fn: newFn)
-    self.kind = .new(wrapper)
+    let wrapper = NewWrapper(type: type, fn: newFn)
+    self.kind = .__new__(wrapper)
   }
 
   // MARK: - Init
@@ -65,7 +65,7 @@ extension FunctionWrapper {
   internal typealias InitAsStaticFunctionFn<Zelf: PyObject> =
     (Zelf, [PyObject], PyDict?) -> PyResult<PyNone>
 
-  internal struct Init {
+  internal struct InitWrapper {
     internal let fnName: String
     private let fn: InitAsStaticFunctionFn<PyObject>
 
@@ -136,15 +136,15 @@ extension FunctionWrapper {
   internal init<Zelf>(type: PyType,
                       initFn: @escaping InitAsMethodFn<Zelf>,
                       castSelf: @escaping CastSelfOptional<Zelf>) {
-    let wrapper = Init(type: type, fn: initFn, castSelf: castSelf)
-    self.kind = .`init`(wrapper)
+    let wrapper = InitWrapper(type: type, fn: initFn, castSelf: castSelf)
+    self.kind = .__init__(wrapper)
   }
 
   internal init<Zelf>(type: PyType,
                       initFn: @escaping InitAsStaticFunctionFn<Zelf>,
                       castSelf: @escaping CastSelfOptional<Zelf>) {
-    let wrapper = Init(type: type, fn: initFn, castSelf: castSelf)
-    self.kind = .`init`(wrapper)
+    let wrapper = InitWrapper(type: type, fn: initFn, castSelf: castSelf)
+    self.kind = .__init__(wrapper)
   }
 
   // MARK: - Args kwargs method
