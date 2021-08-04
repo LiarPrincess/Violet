@@ -52,7 +52,16 @@ public final class PyCode: PyObject, CustomReflectable {
   public let filename: PyString
 
   /// Various flags used during the compilation process.
-  public let codeFlags: CodeObject.Flags
+  public private(set) var codeFlags: CodeObject.Flags {
+    get {
+      let custom = self.flags.customUInt16
+      return CodeObject.Flags(rawValue: custom)
+    }
+    set {
+      let raw = newValue.rawValue
+      self.flags.customUInt16 = raw
+    }
+  }
 
   // MARK: - Instructions
 
@@ -200,7 +209,6 @@ public final class PyCode: PyObject, CustomReflectable {
     self.name = Py.intern(string: code.name)
     self.qualifiedName = Py.intern(string: code.qualifiedName)
     self.filename = Py.intern(string: code.filename)
-    self.codeFlags = code.flags
 
     self.instructions = code.instructions
     self.firstLine = code.firstLine
@@ -220,6 +228,8 @@ public final class PyCode: PyObject, CustomReflectable {
     self.kwOnlyArgCount = code.kwOnlyArgCount
 
     super.init(type: Py.types.code)
+
+    self.codeFlags = code.flags
   }
 
   private static func countArguments(code: CodeObject) -> Int {

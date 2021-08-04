@@ -7,15 +7,18 @@ extension PyObject {
   /// (so basically, you can use `Flags` to store `Bool` properties).
   ///
   /// Btw. it does not implement 'OptionSet', its interface is a bit awkward.
-  public struct Flags: CustomStringConvertible {
+  public struct Flags: Equatable, CustomStringConvertible {
 
-    private var rawValue: UInt32
+    // swiftlint:disable:next nesting
+    private typealias Storage = UInt32
+
+    private var rawValue: Storage
 
     public init() {
       self.rawValue = 0
     }
 
-    private init(rawValue: UInt32) {
+    private init(rawValue: Storage) {
       self.rawValue = rawValue
     }
 
@@ -59,75 +62,100 @@ extension PyObject {
     /// (regardless of object type).
     ///
     /// It includes: `reprLock`, `has__dict__` etc.
-    public static var presentOnEveryObjectMask: Flags = {
-      var result = Flags()
-      result.set(Flags.reprLock)
-      result.set(Flags.descriptionLock)
-      result.set(Flags.has__dict__)
-      result.set(Flags.reserved3)
-      result.set(Flags.reserved4)
-      result.set(Flags.reserved5)
-      result.set(Flags.reserved6)
-      result.set(Flags.reserved7)
-      return result
-    }()
+    private static var presentOnEveryObjectMask: Storage = 0b1111_1111
 
-    // MARK: - Depends on object type
+    // MARK: - Custom
+
+    private static let customStart: Storage = 8
+
+    // Use following code to generate:
+    //
+    // for i in range(0, 24):
+    //   print(f'/// Flag `{i}` that can be used based on object type.')
+    //   print(f'public static let custom{i} = Flags(rawValue: 1 << (Self.customStart + {i}))')
 
     /// Flag `0` that can be used based on object type.
-    public static let custom0 = Flags(rawValue: 1 << 8)
+    public static let custom0 = Flags(rawValue: 1 << (Self.customStart + 0))
     /// Flag `1` that can be used based on object type.
-    public static let custom1 = Flags(rawValue: 1 << 9)
+    public static let custom1 = Flags(rawValue: 1 << (Self.customStart + 1))
     /// Flag `2` that can be used based on object type.
-    public static let custom2 = Flags(rawValue: 1 << 10)
+    public static let custom2 = Flags(rawValue: 1 << (Self.customStart + 2))
     /// Flag `3` that can be used based on object type.
-    public static let custom3 = Flags(rawValue: 1 << 11)
+    public static let custom3 = Flags(rawValue: 1 << (Self.customStart + 3))
     /// Flag `4` that can be used based on object type.
-    public static let custom4 = Flags(rawValue: 1 << 12)
+    public static let custom4 = Flags(rawValue: 1 << (Self.customStart + 4))
     /// Flag `5` that can be used based on object type.
-    public static let custom5 = Flags(rawValue: 1 << 13)
+    public static let custom5 = Flags(rawValue: 1 << (Self.customStart + 5))
     /// Flag `6` that can be used based on object type.
-    public static let custom6 = Flags(rawValue: 1 << 14)
+    public static let custom6 = Flags(rawValue: 1 << (Self.customStart + 6))
     /// Flag `7` that can be used based on object type.
-    public static let custom7 = Flags(rawValue: 1 << 15)
+    public static let custom7 = Flags(rawValue: 1 << (Self.customStart + 7))
     /// Flag `8` that can be used based on object type.
-    public static let custom8 = Flags(rawValue: 1 << 16)
+    public static let custom8 = Flags(rawValue: 1 << (Self.customStart + 8))
     /// Flag `9` that can be used based on object type.
-    public static let custom9 = Flags(rawValue: 1 << 17)
+    public static let custom9 = Flags(rawValue: 1 << (Self.customStart + 9))
     /// Flag `10` that can be used based on object type.
-    public static let custom10 = Flags(rawValue: 1 << 18)
+    public static let custom10 = Flags(rawValue: 1 << (Self.customStart + 10))
     /// Flag `11` that can be used based on object type.
-    public static let custom11 = Flags(rawValue: 1 << 19)
+    public static let custom11 = Flags(rawValue: 1 << (Self.customStart + 11))
     /// Flag `12` that can be used based on object type.
-    public static let custom12 = Flags(rawValue: 1 << 20)
+    public static let custom12 = Flags(rawValue: 1 << (Self.customStart + 12))
     /// Flag `13` that can be used based on object type.
-    public static let custom13 = Flags(rawValue: 1 << 21)
+    public static let custom13 = Flags(rawValue: 1 << (Self.customStart + 13))
     /// Flag `14` that can be used based on object type.
-    public static let custom14 = Flags(rawValue: 1 << 22)
+    public static let custom14 = Flags(rawValue: 1 << (Self.customStart + 14))
     /// Flag `15` that can be used based on object type.
-    public static let custom15 = Flags(rawValue: 1 << 23)
+    public static let custom15 = Flags(rawValue: 1 << (Self.customStart + 15))
     /// Flag `16` that can be used based on object type.
-    public static let custom16 = Flags(rawValue: 1 << 24)
+    public static let custom16 = Flags(rawValue: 1 << (Self.customStart + 16))
     /// Flag `17` that can be used based on object type.
-    public static let custom17 = Flags(rawValue: 1 << 25)
+    public static let custom17 = Flags(rawValue: 1 << (Self.customStart + 17))
     /// Flag `18` that can be used based on object type.
-    public static let custom18 = Flags(rawValue: 1 << 26)
+    public static let custom18 = Flags(rawValue: 1 << (Self.customStart + 18))
     /// Flag `19` that can be used based on object type.
-    public static let custom19 = Flags(rawValue: 1 << 27)
+    public static let custom19 = Flags(rawValue: 1 << (Self.customStart + 19))
     /// Flag `20` that can be used based on object type.
-    public static let custom20 = Flags(rawValue: 1 << 28)
+    public static let custom20 = Flags(rawValue: 1 << (Self.customStart + 20))
     /// Flag `21` that can be used based on object type.
-    public static let custom21 = Flags(rawValue: 1 << 29)
+    public static let custom21 = Flags(rawValue: 1 << (Self.customStart + 21))
     /// Flag `22` that can be used based on object type.
-    public static let custom22 = Flags(rawValue: 1 << 30)
+    public static let custom22 = Flags(rawValue: 1 << (Self.customStart + 22))
     /// Flag `23` that can be used based on object type.
-    public static let custom23 = Flags(rawValue: 1 << 31)
+    public static let custom23 = Flags(rawValue: 1 << (Self.customStart + 23))
 
     /// Mask that contains all of the flags that can be used based on object type.
-    public static var customMask: Flags {
-      let everyObjectMask = Flags.presentOnEveryObjectMask.rawValue
-      let negative = ~everyObjectMask
-      return Flags(rawValue: negative)
+    private static var customMask: Storage {
+      let everyObjectMask = Flags.presentOnEveryObjectMask
+      return ~everyObjectMask
+    }
+
+    // MARK: - Custom UInt16
+
+    private static var customUInt16Mask: Storage {
+      let allOneUInt16 = UInt16.max
+      let allOneStorage = Storage(allOneUInt16)
+      return allOneStorage << Self.customStart
+    }
+
+    /// Custom flags are wide enough that we can store a whole `UInt16` inside.
+    ///
+    /// - Important:
+    /// `customUInt16` overlaps with `custom` flags from `0` to `15`!
+    internal var customUInt16: UInt16 {
+      get {
+        let valueShiftedHigh = self.rawValue & Self.customUInt16Mask
+        let valueStorage = valueShiftedHigh >> Self.customStart
+        return UInt16(valueStorage)
+      }
+      set {
+        let newValueStorage = Storage(newValue)
+        let toCopy = newValueStorage << Self.customStart
+
+        let toPreserveMask = ~Self.customUInt16Mask
+        let toPreserve = self.rawValue & toPreserveMask
+
+        self.rawValue = toPreserve | toCopy
+      }
     }
 
     // MARK: - Description
@@ -211,10 +239,10 @@ extension PyObject {
 
     /// Set all of the `custom` flags to match the ones on provided object.
     internal mutating func setCustomFlags(from other: Flags) {
-      let toPreserveMask = Flags.presentOnEveryObjectMask.rawValue
+      let toPreserveMask = Flags.presentOnEveryObjectMask
       let toPreserve = self.rawValue & toPreserveMask
 
-      let toCopyMask = Flags.customMask.rawValue
+      let toCopyMask = Flags.customMask
       let toCopy = other.rawValue & toCopyMask
 
       self.rawValue = toPreserve | toCopy
