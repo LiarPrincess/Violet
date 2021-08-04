@@ -14,18 +14,11 @@ public final class Builtins: PyModuleImplementation {
     Noteworthy: None is the `nil' object; Ellipsis represents `...' in slices.
     """
 
-  // sourcery: pyproperty = None
   public var none: PyNone { return Py.none }
-  // sourcery: pyproperty = Ellipsis
   public var ellipsis: PyEllipsis { return Py.ellipsis }
-  // sourcery: pyproperty = ...
-  internal var ellipsisDots: PyEllipsis { return Py.ellipsis }
-  // sourcery: pyproperty = NotImplemented
   public var notImplemented: PyNotImplemented { return Py.notImplemented }
 
-  // sourcery: pyproperty = True
   public var `true`: PyBool { return Py.true }
-  // sourcery: pyproperty = False
   public var `false`: PyBool { return Py.false }
 
   // MARK: - Dict

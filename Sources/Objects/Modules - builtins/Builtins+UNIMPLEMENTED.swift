@@ -19,7 +19,6 @@ extension Builtins {
     """
   }
 
-  // sourcery: pymethod = breakpoint
   /// breakpoint(*args, **kws)
   /// See [this](https://docs.python.org/3/library/functions.html#breakpoint)
   internal static func breakpoint() -> PyObject {
@@ -37,7 +36,6 @@ extension Builtins {
     """
   }
 
-  // sourcery: pymethod = vars
   /// vars([object])
   /// See [this](https://docs.python.org/3/library/functions.html#vars)
   internal static func vars() -> PyObject {
@@ -58,7 +56,6 @@ extension Builtins {
     """
   }
 
-  // sourcery: pymethod = input
   /// input([prompt])
   /// See [this](https://docs.python.org/3/library/functions.html#input)
   internal static func input() -> PyObject {
@@ -77,14 +74,12 @@ extension Builtins {
     """
   }
 
-  // sourcery: pymethod = format
   /// format(value[, format_spec])
   /// See [this](https://docs.python.org/3/library/functions.html#format)
   internal static func format(value: PyObject, format: PyObject?) -> PyObject {
     self.unimplemented(name: "format")
   }
 
-  // sourcery: pymethod = help
   /// help([object])
   /// See [this](https://docs.python.org/3/library/functions.html#help)
   internal static func help() -> PyObject {
