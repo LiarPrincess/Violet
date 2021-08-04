@@ -22,9 +22,9 @@ extension UnderscoreImp {
 
   /// static PyObject *
   /// _imp_is_builtin_impl(PyObject *module, PyObject *name)
-  public func isBuiltin(name nameRaw: PyObject) -> PyResult<PyInt> {
-    guard let name = PyCast.asString(nameRaw) else {
-      let msg = "is_builtin() argument must be str, not \(nameRaw.typeName)"
+  public func isBuiltin(name nameObject: PyObject) -> PyResult<PyInt> {
+    guard let name = PyCast.asString(nameObject) else {
+      let msg = "is_builtin() argument must be str, not \(nameObject.typeName)"
       return .typeError(msg)
     }
 

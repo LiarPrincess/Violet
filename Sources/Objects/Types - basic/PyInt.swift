@@ -616,7 +616,7 @@ public class PyInt: PyObject {
   private func divmodWithUncheckedZero(left: BigInt, right: BigInt) -> Divmod {
     assert(
       !right.isZero,
-      "div by 0 should be handled before calling 'BigInt.divmodRaw'"
+      "div by 0 should be handled before calling 'PyInt.divmodWithUncheckedZero'"
     )
 
     var (quotient, remainder) = left.quotientAndRemainder(dividingBy: right)

@@ -463,11 +463,11 @@ public final class PyFloat: PyObject {
       return .zeroDivisionError("float floor division by zero")
     }
 
-    let result = self.floordivRaw(left: left, right: right)
+    let result = self.floordivUncheckedZero(left: left, right: right)
     return .value(Py.newFloat(result))
   }
 
-  private func floordivRaw(left: Double, right: Double) -> Double {
+  private func floordivUncheckedZero(left: Double, right: Double) -> Double {
     return Foundation.floor(left / right)
   }
 
@@ -502,11 +502,11 @@ public final class PyFloat: PyObject {
       return .zeroDivisionError("float modulo by zero")
     }
 
-    let result = self.modRaw(left: left, right: right)
+    let result = self.modUncheckedZero(left: left, right: right)
     return .value(Py.newFloat(result))
   }
 
-  private func modRaw(left: Double, right: Double) -> Double {
+  private func modUncheckedZero(left: Double, right: Double) -> Double {
     return left.remainder(dividingBy: right)
   }
 
@@ -541,8 +541,8 @@ public final class PyFloat: PyObject {
       return .zeroDivisionError("float divmod() by zero")
     }
 
-    let div = self.floordivRaw(left: left, right: right)
-    let mod = self.modRaw(left: left, right: right)
+    let div = self.floordivUncheckedZero(left: left, right: right)
+    let mod = self.modUncheckedZero(left: left, right: right)
 
     let tuple0 = Py.newFloat(div)
     let tuple1 = Py.newFloat(mod)
