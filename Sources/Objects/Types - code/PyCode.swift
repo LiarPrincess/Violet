@@ -11,7 +11,7 @@ import VioletBytecode
 // https://tech.blog.aknin.name/2010/07/03/pythons-innards-code-objects/
 
 // sourcery: pytype = code, isDefault
-public final class PyCode: PyObject {
+public final class PyCode: PyObject, CustomReflectable {
 
   // MARK: - Basic properties
 
@@ -85,7 +85,7 @@ public final class PyCode: PyObject {
 
   /// Absolute jump targets.
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
-  public var labels: [CodeObject.Label]
+  public let labels: [CodeObject.Label]
 
   // MARK: - Names
 
@@ -116,7 +116,7 @@ public final class PyCode: PyObject {
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
   /// CPython: `co_varnames`.
-  public var variableNames: [MangledName]
+  public let variableNames: [MangledName]
 
   public var variableCount: Int {
     return self.variableNames.count
@@ -132,7 +132,7 @@ public final class PyCode: PyObject {
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
   /// CPython: `co_cellvars`.
-  public var cellVariableNames: [MangledName]
+  public let cellVariableNames: [MangledName]
 
   public var cellVariableCount: Int {
     return self.cellVariableNames.count
@@ -150,7 +150,7 @@ public final class PyCode: PyObject {
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
   /// CPython: `co_freevars`.
-  public var freeVariableNames: [MangledName]
+  public let freeVariableNames: [MangledName]
 
   public var freeVariableCount: Int {
     return self.freeVariableNames.count
@@ -161,11 +161,31 @@ public final class PyCode: PyObject {
   /// The number of positional arguments the code object expects to receive,
   /// including those with default values (but excluding `*args`).
   /// CPython: `co_argcount`.
-  public var argCount: Int
+  public let argCount: Int
 
   /// The number of keyword arguments the code object can receive.
   /// CPython: `co_kwonlyargcount`.
-  public var kwOnlyArgCount: Int
+  public let kwOnlyArgCount: Int
+
+  // MARK: - Mirror
+
+  // We use mirrors to create description.
+  public var customMirror: Mirror {
+    let name = self.name.value
+    let qualifiedName = self.qualifiedName.value
+    let filename = self.filename.value
+
+    return Mirror(
+      self,
+      children: [
+        "name": name,
+        "qualifiedName": qualifiedName,
+        "codeFlags": self.codeFlags,
+        "instructionCount": self.instructions.count,
+        "filename": filename
+      ]
+    )
+  }
 
   // MARK: - Init
 

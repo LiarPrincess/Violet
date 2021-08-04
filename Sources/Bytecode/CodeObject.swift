@@ -82,16 +82,20 @@ public final class CodeObject: Equatable {
     public static let iterableCoroutine = Flags(rawValue: 0x0100)
 
     public var description: String {
-      var flags = ""
+      var result = "["
+      var isFirst = true
 
       func appendIfSet(_ flag: Flags, name: String) {
-        if self.contains(flag) {
-          if flags.any {
-            flags += ", "
-          }
-
-          flags.append(name)
+        guard self.contains(flag) else {
+          return
         }
+
+        if !isFirst {
+          result += ", "
+        }
+
+        result.append(name)
+        isFirst = false
       }
 
       appendIfSet(.optimized, name: "optimized")
@@ -105,7 +109,8 @@ public final class CodeObject: Equatable {
       appendIfSet(.iterableCoroutine, name: "iterableCoroutine")
       appendIfSet(.asyncGenerator, name: "asyncGenerator")
 
-      return "FunctionFlags(\(flags))"
+      result.append("]")
+      return result
     }
 
     public init(rawValue: UInt16) {

@@ -41,7 +41,7 @@ class CodeObjectDescriptionTests: XCTestCase {
     QualifiedName: Disnep_Frozen
     Filename: 2013.py
     Kind: Module
-    Flags: FunctionFlags(generator)
+    Flags: [generator]
     Arg count: 2013
     Keyword only arg count: 102
     First line: 2
@@ -87,7 +87,7 @@ class CodeObjectDescriptionTests: XCTestCase {
     QualifiedName: Disnep_Frozen_2
     Filename: 2018.py
     Kind: Module
-    Flags: FunctionFlags(generator)
+    Flags: [generator]
     Arg count: 2018
     Keyword only arg count: 103
     First line: 1
