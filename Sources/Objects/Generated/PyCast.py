@@ -1,3 +1,4 @@
+from typing import Optional
 from Sourcery import get_types
 from Common.strings import generated_warning
 from Builtin_types import get_property_name_escaped as get_builtin_type_property_name
@@ -72,16 +73,41 @@ public enum PyCast {{
         # === isInt ===
         # =============
 
-        doc = f'/// Is this object an instance of `{python_type}`?'
+        print()
         if is_base_type:
-            doc = f'/// Is this object an instance of `{python_type}` (or its subclass)?'
+            print(f'  /// Is this object an instance of `{python_type}` (or its subclass)?')
+        else:
+            print(f'  /// Is this object an instance of `{python_type}`?')
 
-        print(f'''
-  {doc}
-  public static func is{swift_type_without_py}(_ object: PyObject) -> Bool {{
-    return PyCast.isInstance(object, of: {builtin_type})
-  }}\
-''')
+        print(f'  public static func is{swift_type_without_py}(_ object: PyObject) -> Bool {{')
+
+        # For some types we have a dedicated flag on type
+        flag_to_check_on_type: Optional[str] = None
+        if python_type == 'int':
+            flag_to_check_on_type = 'isLongSubclass'
+        elif python_type == 'list':
+            flag_to_check_on_type = 'isListSubclass'
+        elif python_type == 'tuple':
+            flag_to_check_on_type = 'isTupleSubclass'
+        elif python_type == 'bytes':
+            flag_to_check_on_type = 'isBytesSubclass'
+        elif python_type == 'str':
+            flag_to_check_on_type = 'isUnicodeSubclass'
+        elif python_type == 'dict':
+            flag_to_check_on_type = 'isDictSubclass'
+        elif python_type == 'baseException':
+            flag_to_check_on_type = 'isBaseExceptionSubclass'
+        elif python_type == 'type':
+            flag_to_check_on_type = 'isTypeSubclass'
+
+        if flag_to_check_on_type:
+            print(f"    // '{python_type}' checks are so common that we have a special flag for it.")
+            print(f'    let typeFlags = object.type.typeFlags')
+            print(f'    return typeFlags.{flag_to_check_on_type}')
+        else:
+            print(f'    return PyCast.isInstance(object, of: {builtin_type})')
+
+        print('  }')
 
         # ====================
         # === isExactlyInt ===

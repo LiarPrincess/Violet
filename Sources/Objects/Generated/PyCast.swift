@@ -112,7 +112,9 @@ public enum PyCast {
 
   /// Is this object an instance of `bytes` (or its subclass)?
   public static func isBytes(_ object: PyObject) -> Bool {
-    return PyCast.isInstance(object, of: Py.types.bytes)
+    // 'bytes' checks are so common that we have a special flag for it.
+    let typeFlags = object.type.typeFlags
+    return typeFlags.isBytesSubclass
   }
 
   /// Is this object an instance of `bytes` (but not its subclass)?
@@ -234,7 +236,9 @@ public enum PyCast {
 
   /// Is this object an instance of `dict` (or its subclass)?
   public static func isDict(_ object: PyObject) -> Bool {
-    return PyCast.isInstance(object, of: Py.types.dict)
+    // 'dict' checks are so common that we have a special flag for it.
+    let typeFlags = object.type.typeFlags
+    return typeFlags.isDictSubclass
   }
 
   /// Is this object an instance of `dict` (but not its subclass)?
@@ -470,7 +474,9 @@ public enum PyCast {
 
   /// Is this object an instance of `int` (or its subclass)?
   public static func isInt(_ object: PyObject) -> Bool {
-    return PyCast.isInstance(object, of: Py.types.int)
+    // 'int' checks are so common that we have a special flag for it.
+    let typeFlags = object.type.typeFlags
+    return typeFlags.isLongSubclass
   }
 
   /// Is this object an instance of `int` (but not its subclass)?
@@ -506,7 +512,9 @@ public enum PyCast {
 
   /// Is this object an instance of `list` (or its subclass)?
   public static func isList(_ object: PyObject) -> Bool {
-    return PyCast.isInstance(object, of: Py.types.list)
+    // 'list' checks are so common that we have a special flag for it.
+    let typeFlags = object.type.typeFlags
+    return typeFlags.isListSubclass
   }
 
   /// Is this object an instance of `list` (but not its subclass)?
@@ -817,7 +825,9 @@ public enum PyCast {
 
   /// Is this object an instance of `str` (or its subclass)?
   public static func isString(_ object: PyObject) -> Bool {
-    return PyCast.isInstance(object, of: Py.types.str)
+    // 'str' checks are so common that we have a special flag for it.
+    let typeFlags = object.type.typeFlags
+    return typeFlags.isUnicodeSubclass
   }
 
   /// Is this object an instance of `str` (but not its subclass)?
@@ -903,7 +913,9 @@ public enum PyCast {
 
   /// Is this object an instance of `tuple` (or its subclass)?
   public static func isTuple(_ object: PyObject) -> Bool {
-    return PyCast.isInstance(object, of: Py.types.tuple)
+    // 'tuple' checks are so common that we have a special flag for it.
+    let typeFlags = object.type.typeFlags
+    return typeFlags.isTupleSubclass
   }
 
   /// Is this object an instance of `tuple` (but not its subclass)?
@@ -939,7 +951,9 @@ public enum PyCast {
 
   /// Is this object an instance of `type` (or its subclass)?
   public static func isType(_ object: PyObject) -> Bool {
-    return PyCast.isInstance(object, of: Py.types.type)
+    // 'type' checks are so common that we have a special flag for it.
+    let typeFlags = object.type.typeFlags
+    return typeFlags.isTypeSubclass
   }
 
   /// Is this object an instance of `type` (but not its subclass)?

@@ -1,9 +1,8 @@
-from typing import Dict, List
+from typing import Dict
 
 from Sourcery import TypeInfo, PyFunctionInfo, get_types
 from Static_methods import STATIC_METHODS
 from Common.strings import generated_warning
-from Builtin_types import print_type_mark
 
 TYPE_NAME = 'StaticMethodsForBuiltinTypes'
 
@@ -32,7 +31,8 @@ static_method_names = set(static_method_names)
 
 def print_static_methods(t: TypeInfo):
     print()
-    print_type_mark(t)
+    print(f'  // MARK: - {t.swift_type_name.replace("Py", "")}')
+    print()
 
     python_methods_by_name: Dict[str, PyFunctionInfo] = {}
     for m in t.python_methods:
