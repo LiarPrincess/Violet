@@ -43,12 +43,12 @@ python3 "$GENERATED/BuiltinErrorTypes.py" > "$GENERATED/BuiltinErrorTypes.swift"
 echo
 
 echo "=== Type memory layout ==="
-echo "When creating new class we will check if all of the base classes have"
+echo "When creating a new class we will check if all of the base classes have"
 echo "the same layout."
 echo "So, for example we will allow this: 'class C(int, object): pass'"
 echo "But do not allow this: 'class C(int, str): pass'"
-echo "- TypeMemoryLayout.swift"
-python3 "$GENERATED/TypeMemoryLayout.py" > "$GENERATED/TypeMemoryLayout.swift"
+echo "- PyType+MemoryLayout.swift"
+python3 "$GENERATED/PyType+MemoryLayout.py" > "$GENERATED/PyType+MemoryLayout.swift"
 echo
 
 # ==============
@@ -58,7 +58,7 @@ echo
 # This stage does not really depend on type definitions.
 
 echo "=== Casting ==="
-echo "Sometimes we have to cast from 'PyObject' to specific Swift type."
+echo "Sometimes we have to cast from 'PyObject' to a specific Swift type."
 echo "This file generates casting methods."
 echo "- PyCast.swift"
 python3 "$GENERATED/PyCast.py" > "$GENERATED/PyCast.swift"

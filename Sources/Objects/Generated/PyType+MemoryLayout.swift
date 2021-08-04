@@ -1,8 +1,8 @@
-// =============================================================================
-// Automatically generated from: ./Sources/Objects/Generated/TypeMemoryLayout.py
+// ================================================================================
+// Automatically generated from: ./Sources/Objects/Generated/PyType+MemoryLayout.py
 // Use 'make gen' in repository root to regenerate.
 // DO NOT EDIT!
-// =============================================================================
+// ================================================================================
 
 // swiftlint:disable file_length
 

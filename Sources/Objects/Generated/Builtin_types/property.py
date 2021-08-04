@@ -1,7 +1,16 @@
 from typing import List
 from Sourcery import TypeInfo
-from TypeMemoryLayout import get_layout_name
+from Common.import_file import import_file
 from StaticMethodsForBuiltinTypes import get_property_name as get_static_methods_property_name
+
+
+def get_layout_name(t: TypeInfo):
+    """
+    'PyType+MemoryLayout' has name that does not conform to Python specification,
+    so we have to import it in a different way.
+    """
+    PyType_MemoryLayout = import_file('PyType+MemoryLayout.py')
+    return PyType_MemoryLayout.get_layout_name(t)
 
 
 def print_property(t: TypeInfo):
