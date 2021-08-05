@@ -3,12 +3,12 @@ import Foundation
 /// Walk the declarations -> filter -> format -> write to output.
 class Writer {
 
-  private let filter: DeclarationFilter
+  private let filter: Filter
   private let formatter: Formatter
   private let output: Output
   private var indent = ""
 
-  init(filter: DeclarationFilter, formatter: Formatter, output: Output) {
+  init(filter: Filter, formatter: Formatter, output: Output) {
     self.filter = filter
     self.formatter = formatter
     self.output = output

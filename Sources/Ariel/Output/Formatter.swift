@@ -1,7 +1,7 @@
 // swiftlint:disable file_length
 // swiftlint:disable pattern_matching_keywords
 
-/// Convert: Declaration -> String
+/// Convert: `Declaration` -> `String`
 struct Formatter {
 
   /// Formatter used to implement `description`.

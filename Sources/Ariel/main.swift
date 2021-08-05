@@ -8,7 +8,7 @@ private func writeModuleInterface(moduleDirectory: ListDir.Element) throws {
   var entries = try ListDirRec(path: moduleDirectory.absolutePath)
   entries.sort(by: \.relativePath)
 
-  let filter = DeclarationFilter(minAccessModifier: minAccessModifier)
+  let filter = Filter(minAccessModifier: minAccessModifier)
   let formatter = Formatter(maxInitializerLength: maxInitializerLength)
   let output: Output = ConsoleOutput()
   defer { output.flush() }
