@@ -4,6 +4,8 @@
 // DO NOT EDIT!
 // ===================================================================
 
+import VioletCore
+
 // swiftlint:disable force_cast
 // swiftlint:disable discouraged_optional_boolean
 // swiftlint:disable line_length
@@ -30,6 +32,22 @@ public enum PyCast {
     return object.type === type
   }
 
+  // We can force cast, because if the Swift type does not correspond to the Python
+  // type, then we are in deep trouble (this is one of the main invariants in Violet).
+  private static func forceCast<T>(_ object: PyObject) -> T {
+    #if DEBUG
+    guard let result = object as? T else {
+      let pythonType = object.typeName
+      let swiftType = String(describing: T.self)
+      trap("Python type (\(pythonType)) does not match Swift type (\(swiftType)).")
+    }
+
+    return result
+    #else
+    return object as! T
+    #endif
+  }
+
   // MARK: - Bool
 
   // 'bool' does not allow subclassing, so we do not need 'exactly' methods.
@@ -41,7 +59,7 @@ public enum PyCast {
 
   /// Cast this object to `PyBool` if it is a `bool`.
   public static func asBool(_ object: PyObject) -> PyBool? {
-    return PyCast.isBool(object) ? (object as! PyBool) : nil
+    return PyCast.isBool(object) ? forceCast(object) : nil
   }
 
   // MARK: - BuiltinFunction
@@ -55,7 +73,7 @@ public enum PyCast {
 
   /// Cast this object to `PyBuiltinFunction` if it is a `builtinFunction`.
   public static func asBuiltinFunction(_ object: PyObject) -> PyBuiltinFunction? {
-    return PyCast.isBuiltinFunction(object) ? (object as! PyBuiltinFunction) : nil
+    return PyCast.isBuiltinFunction(object) ? forceCast(object) : nil
   }
 
   // MARK: - BuiltinMethod
@@ -69,7 +87,7 @@ public enum PyCast {
 
   /// Cast this object to `PyBuiltinMethod` if it is a `builtinMethod`.
   public static func asBuiltinMethod(_ object: PyObject) -> PyBuiltinMethod? {
-    return PyCast.isBuiltinMethod(object) ? (object as! PyBuiltinMethod) : nil
+    return PyCast.isBuiltinMethod(object) ? forceCast(object) : nil
   }
 
   // MARK: - ByteArray
@@ -86,12 +104,12 @@ public enum PyCast {
 
   /// Cast this object to `PyByteArray` if it is a `bytearray` (or its subclass).
   public static func asByteArray(_ object: PyObject) -> PyByteArray? {
-    return PyCast.isByteArray(object) ? (object as! PyByteArray) : nil
+    return PyCast.isByteArray(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyByteArray` if it is a `bytearray` (but not its subclass).
   public static func asExactlyByteArray(_ object: PyObject) -> PyByteArray? {
-    return PyCast.isExactlyByteArray(object) ? (object as! PyByteArray) : nil
+    return PyCast.isExactlyByteArray(object) ? forceCast(object) : nil
   }
 
   // MARK: - ByteArrayIterator
@@ -105,7 +123,7 @@ public enum PyCast {
 
   /// Cast this object to `PyByteArrayIterator` if it is a `bytearray_iterator`.
   public static func asByteArrayIterator(_ object: PyObject) -> PyByteArrayIterator? {
-    return PyCast.isByteArrayIterator(object) ? (object as! PyByteArrayIterator) : nil
+    return PyCast.isByteArrayIterator(object) ? forceCast(object) : nil
   }
 
   // MARK: - Bytes
@@ -124,12 +142,12 @@ public enum PyCast {
 
   /// Cast this object to `PyBytes` if it is a `bytes` (or its subclass).
   public static func asBytes(_ object: PyObject) -> PyBytes? {
-    return PyCast.isBytes(object) ? (object as! PyBytes) : nil
+    return PyCast.isBytes(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyBytes` if it is a `bytes` (but not its subclass).
   public static func asExactlyBytes(_ object: PyObject) -> PyBytes? {
-    return PyCast.isExactlyBytes(object) ? (object as! PyBytes) : nil
+    return PyCast.isExactlyBytes(object) ? forceCast(object) : nil
   }
 
   // MARK: - BytesIterator
@@ -143,7 +161,7 @@ public enum PyCast {
 
   /// Cast this object to `PyBytesIterator` if it is a `bytes_iterator`.
   public static func asBytesIterator(_ object: PyObject) -> PyBytesIterator? {
-    return PyCast.isBytesIterator(object) ? (object as! PyBytesIterator) : nil
+    return PyCast.isBytesIterator(object) ? forceCast(object) : nil
   }
 
   // MARK: - CallableIterator
@@ -157,7 +175,7 @@ public enum PyCast {
 
   /// Cast this object to `PyCallableIterator` if it is a `callable_iterator`.
   public static func asCallableIterator(_ object: PyObject) -> PyCallableIterator? {
-    return PyCast.isCallableIterator(object) ? (object as! PyCallableIterator) : nil
+    return PyCast.isCallableIterator(object) ? forceCast(object) : nil
   }
 
   // MARK: - Cell
@@ -171,7 +189,7 @@ public enum PyCast {
 
   /// Cast this object to `PyCell` if it is a `cell`.
   public static func asCell(_ object: PyObject) -> PyCell? {
-    return PyCast.isCell(object) ? (object as! PyCell) : nil
+    return PyCast.isCell(object) ? forceCast(object) : nil
   }
 
   // MARK: - ClassMethod
@@ -188,12 +206,12 @@ public enum PyCast {
 
   /// Cast this object to `PyClassMethod` if it is a `classmethod` (or its subclass).
   public static func asClassMethod(_ object: PyObject) -> PyClassMethod? {
-    return PyCast.isClassMethod(object) ? (object as! PyClassMethod) : nil
+    return PyCast.isClassMethod(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyClassMethod` if it is a `classmethod` (but not its subclass).
   public static func asExactlyClassMethod(_ object: PyObject) -> PyClassMethod? {
-    return PyCast.isExactlyClassMethod(object) ? (object as! PyClassMethod) : nil
+    return PyCast.isExactlyClassMethod(object) ? forceCast(object) : nil
   }
 
   // MARK: - Code
@@ -207,7 +225,7 @@ public enum PyCast {
 
   /// Cast this object to `PyCode` if it is a `code`.
   public static func asCode(_ object: PyObject) -> PyCode? {
-    return PyCast.isCode(object) ? (object as! PyCode) : nil
+    return PyCast.isCode(object) ? forceCast(object) : nil
   }
 
   // MARK: - Complex
@@ -224,12 +242,12 @@ public enum PyCast {
 
   /// Cast this object to `PyComplex` if it is a `complex` (or its subclass).
   public static func asComplex(_ object: PyObject) -> PyComplex? {
-    return PyCast.isComplex(object) ? (object as! PyComplex) : nil
+    return PyCast.isComplex(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyComplex` if it is a `complex` (but not its subclass).
   public static func asExactlyComplex(_ object: PyObject) -> PyComplex? {
-    return PyCast.isExactlyComplex(object) ? (object as! PyComplex) : nil
+    return PyCast.isExactlyComplex(object) ? forceCast(object) : nil
   }
 
   // MARK: - Dict
@@ -248,12 +266,12 @@ public enum PyCast {
 
   /// Cast this object to `PyDict` if it is a `dict` (or its subclass).
   public static func asDict(_ object: PyObject) -> PyDict? {
-    return PyCast.isDict(object) ? (object as! PyDict) : nil
+    return PyCast.isDict(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyDict` if it is a `dict` (but not its subclass).
   public static func asExactlyDict(_ object: PyObject) -> PyDict? {
-    return PyCast.isExactlyDict(object) ? (object as! PyDict) : nil
+    return PyCast.isExactlyDict(object) ? forceCast(object) : nil
   }
 
   // MARK: - DictItemIterator
@@ -267,7 +285,7 @@ public enum PyCast {
 
   /// Cast this object to `PyDictItemIterator` if it is a `dict_itemiterator`.
   public static func asDictItemIterator(_ object: PyObject) -> PyDictItemIterator? {
-    return PyCast.isDictItemIterator(object) ? (object as! PyDictItemIterator) : nil
+    return PyCast.isDictItemIterator(object) ? forceCast(object) : nil
   }
 
   // MARK: - DictItems
@@ -281,7 +299,7 @@ public enum PyCast {
 
   /// Cast this object to `PyDictItems` if it is a `dict_items`.
   public static func asDictItems(_ object: PyObject) -> PyDictItems? {
-    return PyCast.isDictItems(object) ? (object as! PyDictItems) : nil
+    return PyCast.isDictItems(object) ? forceCast(object) : nil
   }
 
   // MARK: - DictKeyIterator
@@ -295,7 +313,7 @@ public enum PyCast {
 
   /// Cast this object to `PyDictKeyIterator` if it is a `dict_keyiterator`.
   public static func asDictKeyIterator(_ object: PyObject) -> PyDictKeyIterator? {
-    return PyCast.isDictKeyIterator(object) ? (object as! PyDictKeyIterator) : nil
+    return PyCast.isDictKeyIterator(object) ? forceCast(object) : nil
   }
 
   // MARK: - DictKeys
@@ -309,7 +327,7 @@ public enum PyCast {
 
   /// Cast this object to `PyDictKeys` if it is a `dict_keys`.
   public static func asDictKeys(_ object: PyObject) -> PyDictKeys? {
-    return PyCast.isDictKeys(object) ? (object as! PyDictKeys) : nil
+    return PyCast.isDictKeys(object) ? forceCast(object) : nil
   }
 
   // MARK: - DictValueIterator
@@ -323,7 +341,7 @@ public enum PyCast {
 
   /// Cast this object to `PyDictValueIterator` if it is a `dict_valueiterator`.
   public static func asDictValueIterator(_ object: PyObject) -> PyDictValueIterator? {
-    return PyCast.isDictValueIterator(object) ? (object as! PyDictValueIterator) : nil
+    return PyCast.isDictValueIterator(object) ? forceCast(object) : nil
   }
 
   // MARK: - DictValues
@@ -337,7 +355,7 @@ public enum PyCast {
 
   /// Cast this object to `PyDictValues` if it is a `dict_values`.
   public static func asDictValues(_ object: PyObject) -> PyDictValues? {
-    return PyCast.isDictValues(object) ? (object as! PyDictValues) : nil
+    return PyCast.isDictValues(object) ? forceCast(object) : nil
   }
 
   // MARK: - Ellipsis
@@ -351,7 +369,7 @@ public enum PyCast {
 
   /// Cast this object to `PyEllipsis` if it is an `ellipsis`.
   public static func asEllipsis(_ object: PyObject) -> PyEllipsis? {
-    return PyCast.isEllipsis(object) ? (object as! PyEllipsis) : nil
+    return PyCast.isEllipsis(object) ? forceCast(object) : nil
   }
 
   // MARK: - Enumerate
@@ -368,12 +386,12 @@ public enum PyCast {
 
   /// Cast this object to `PyEnumerate` if it is an `enumerate` (or its subclass).
   public static func asEnumerate(_ object: PyObject) -> PyEnumerate? {
-    return PyCast.isEnumerate(object) ? (object as! PyEnumerate) : nil
+    return PyCast.isEnumerate(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyEnumerate` if it is an `enumerate` (but not its subclass).
   public static func asExactlyEnumerate(_ object: PyObject) -> PyEnumerate? {
-    return PyCast.isExactlyEnumerate(object) ? (object as! PyEnumerate) : nil
+    return PyCast.isExactlyEnumerate(object) ? forceCast(object) : nil
   }
 
   // MARK: - Filter
@@ -390,12 +408,12 @@ public enum PyCast {
 
   /// Cast this object to `PyFilter` if it is a `filter` (or its subclass).
   public static func asFilter(_ object: PyObject) -> PyFilter? {
-    return PyCast.isFilter(object) ? (object as! PyFilter) : nil
+    return PyCast.isFilter(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyFilter` if it is a `filter` (but not its subclass).
   public static func asExactlyFilter(_ object: PyObject) -> PyFilter? {
-    return PyCast.isExactlyFilter(object) ? (object as! PyFilter) : nil
+    return PyCast.isExactlyFilter(object) ? forceCast(object) : nil
   }
 
   // MARK: - Float
@@ -412,12 +430,12 @@ public enum PyCast {
 
   /// Cast this object to `PyFloat` if it is a `float` (or its subclass).
   public static func asFloat(_ object: PyObject) -> PyFloat? {
-    return PyCast.isFloat(object) ? (object as! PyFloat) : nil
+    return PyCast.isFloat(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyFloat` if it is a `float` (but not its subclass).
   public static func asExactlyFloat(_ object: PyObject) -> PyFloat? {
-    return PyCast.isExactlyFloat(object) ? (object as! PyFloat) : nil
+    return PyCast.isExactlyFloat(object) ? forceCast(object) : nil
   }
 
   // MARK: - Frame
@@ -431,7 +449,7 @@ public enum PyCast {
 
   /// Cast this object to `PyFrame` if it is a `frame`.
   public static func asFrame(_ object: PyObject) -> PyFrame? {
-    return PyCast.isFrame(object) ? (object as! PyFrame) : nil
+    return PyCast.isFrame(object) ? forceCast(object) : nil
   }
 
   // MARK: - FrozenSet
@@ -448,12 +466,12 @@ public enum PyCast {
 
   /// Cast this object to `PyFrozenSet` if it is a `frozenset` (or its subclass).
   public static func asFrozenSet(_ object: PyObject) -> PyFrozenSet? {
-    return PyCast.isFrozenSet(object) ? (object as! PyFrozenSet) : nil
+    return PyCast.isFrozenSet(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyFrozenSet` if it is a `frozenset` (but not its subclass).
   public static func asExactlyFrozenSet(_ object: PyObject) -> PyFrozenSet? {
-    return PyCast.isExactlyFrozenSet(object) ? (object as! PyFrozenSet) : nil
+    return PyCast.isExactlyFrozenSet(object) ? forceCast(object) : nil
   }
 
   // MARK: - Function
@@ -467,7 +485,7 @@ public enum PyCast {
 
   /// Cast this object to `PyFunction` if it is a `function`.
   public static func asFunction(_ object: PyObject) -> PyFunction? {
-    return PyCast.isFunction(object) ? (object as! PyFunction) : nil
+    return PyCast.isFunction(object) ? forceCast(object) : nil
   }
 
   // MARK: - Int
@@ -486,12 +504,12 @@ public enum PyCast {
 
   /// Cast this object to `PyInt` if it is an `int` (or its subclass).
   public static func asInt(_ object: PyObject) -> PyInt? {
-    return PyCast.isInt(object) ? (object as! PyInt) : nil
+    return PyCast.isInt(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyInt` if it is an `int` (but not its subclass).
   public static func asExactlyInt(_ object: PyObject) -> PyInt? {
-    return PyCast.isExactlyInt(object) ? (object as! PyInt) : nil
+    return PyCast.isExactlyInt(object) ? forceCast(object) : nil
   }
 
   // MARK: - Iterator
@@ -505,7 +523,7 @@ public enum PyCast {
 
   /// Cast this object to `PyIterator` if it is an `iterator`.
   public static func asIterator(_ object: PyObject) -> PyIterator? {
-    return PyCast.isIterator(object) ? (object as! PyIterator) : nil
+    return PyCast.isIterator(object) ? forceCast(object) : nil
   }
 
   // MARK: - List
@@ -524,12 +542,12 @@ public enum PyCast {
 
   /// Cast this object to `PyList` if it is a `list` (or its subclass).
   public static func asList(_ object: PyObject) -> PyList? {
-    return PyCast.isList(object) ? (object as! PyList) : nil
+    return PyCast.isList(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyList` if it is a `list` (but not its subclass).
   public static func asExactlyList(_ object: PyObject) -> PyList? {
-    return PyCast.isExactlyList(object) ? (object as! PyList) : nil
+    return PyCast.isExactlyList(object) ? forceCast(object) : nil
   }
 
   // MARK: - ListIterator
@@ -543,7 +561,7 @@ public enum PyCast {
 
   /// Cast this object to `PyListIterator` if it is a `list_iterator`.
   public static func asListIterator(_ object: PyObject) -> PyListIterator? {
-    return PyCast.isListIterator(object) ? (object as! PyListIterator) : nil
+    return PyCast.isListIterator(object) ? forceCast(object) : nil
   }
 
   // MARK: - ListReverseIterator
@@ -557,7 +575,7 @@ public enum PyCast {
 
   /// Cast this object to `PyListReverseIterator` if it is a `list_reverseiterator`.
   public static func asListReverseIterator(_ object: PyObject) -> PyListReverseIterator? {
-    return PyCast.isListReverseIterator(object) ? (object as! PyListReverseIterator) : nil
+    return PyCast.isListReverseIterator(object) ? forceCast(object) : nil
   }
 
   // MARK: - Map
@@ -574,12 +592,12 @@ public enum PyCast {
 
   /// Cast this object to `PyMap` if it is a `map` (or its subclass).
   public static func asMap(_ object: PyObject) -> PyMap? {
-    return PyCast.isMap(object) ? (object as! PyMap) : nil
+    return PyCast.isMap(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyMap` if it is a `map` (but not its subclass).
   public static func asExactlyMap(_ object: PyObject) -> PyMap? {
-    return PyCast.isExactlyMap(object) ? (object as! PyMap) : nil
+    return PyCast.isExactlyMap(object) ? forceCast(object) : nil
   }
 
   // MARK: - Method
@@ -593,7 +611,7 @@ public enum PyCast {
 
   /// Cast this object to `PyMethod` if it is a `method`.
   public static func asMethod(_ object: PyObject) -> PyMethod? {
-    return PyCast.isMethod(object) ? (object as! PyMethod) : nil
+    return PyCast.isMethod(object) ? forceCast(object) : nil
   }
 
   // MARK: - Module
@@ -610,12 +628,12 @@ public enum PyCast {
 
   /// Cast this object to `PyModule` if it is a `module` (or its subclass).
   public static func asModule(_ object: PyObject) -> PyModule? {
-    return PyCast.isModule(object) ? (object as! PyModule) : nil
+    return PyCast.isModule(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyModule` if it is a `module` (but not its subclass).
   public static func asExactlyModule(_ object: PyObject) -> PyModule? {
-    return PyCast.isExactlyModule(object) ? (object as! PyModule) : nil
+    return PyCast.isExactlyModule(object) ? forceCast(object) : nil
   }
 
   // MARK: - Namespace
@@ -632,12 +650,12 @@ public enum PyCast {
 
   /// Cast this object to `PyNamespace` if it is a `SimpleNamespace` (or its subclass).
   public static func asNamespace(_ object: PyObject) -> PyNamespace? {
-    return PyCast.isNamespace(object) ? (object as! PyNamespace) : nil
+    return PyCast.isNamespace(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyNamespace` if it is a `SimpleNamespace` (but not its subclass).
   public static func asExactlyNamespace(_ object: PyObject) -> PyNamespace? {
-    return PyCast.isExactlyNamespace(object) ? (object as! PyNamespace) : nil
+    return PyCast.isExactlyNamespace(object) ? forceCast(object) : nil
   }
 
   // MARK: - None
@@ -651,7 +669,7 @@ public enum PyCast {
 
   /// Cast this object to `PyNone` if it is a `NoneType`.
   public static func asNone(_ object: PyObject) -> PyNone? {
-    return PyCast.isNone(object) ? (object as! PyNone) : nil
+    return PyCast.isNone(object) ? forceCast(object) : nil
   }
 
   /// Is this object Swift `nil` or an instance of `NoneType`?
@@ -674,7 +692,7 @@ public enum PyCast {
 
   /// Cast this object to `PyNotImplemented` if it is a `NotImplementedType`.
   public static func asNotImplemented(_ object: PyObject) -> PyNotImplemented? {
-    return PyCast.isNotImplemented(object) ? (object as! PyNotImplemented) : nil
+    return PyCast.isNotImplemented(object) ? forceCast(object) : nil
   }
 
   // MARK: - Property
@@ -691,12 +709,12 @@ public enum PyCast {
 
   /// Cast this object to `PyProperty` if it is a `property` (or its subclass).
   public static func asProperty(_ object: PyObject) -> PyProperty? {
-    return PyCast.isProperty(object) ? (object as! PyProperty) : nil
+    return PyCast.isProperty(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyProperty` if it is a `property` (but not its subclass).
   public static func asExactlyProperty(_ object: PyObject) -> PyProperty? {
-    return PyCast.isExactlyProperty(object) ? (object as! PyProperty) : nil
+    return PyCast.isExactlyProperty(object) ? forceCast(object) : nil
   }
 
   // MARK: - Range
@@ -710,7 +728,7 @@ public enum PyCast {
 
   /// Cast this object to `PyRange` if it is a `range`.
   public static func asRange(_ object: PyObject) -> PyRange? {
-    return PyCast.isRange(object) ? (object as! PyRange) : nil
+    return PyCast.isRange(object) ? forceCast(object) : nil
   }
 
   // MARK: - RangeIterator
@@ -724,7 +742,7 @@ public enum PyCast {
 
   /// Cast this object to `PyRangeIterator` if it is a `range_iterator`.
   public static func asRangeIterator(_ object: PyObject) -> PyRangeIterator? {
-    return PyCast.isRangeIterator(object) ? (object as! PyRangeIterator) : nil
+    return PyCast.isRangeIterator(object) ? forceCast(object) : nil
   }
 
   // MARK: - Reversed
@@ -741,12 +759,12 @@ public enum PyCast {
 
   /// Cast this object to `PyReversed` if it is a `reversed` (or its subclass).
   public static func asReversed(_ object: PyObject) -> PyReversed? {
-    return PyCast.isReversed(object) ? (object as! PyReversed) : nil
+    return PyCast.isReversed(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyReversed` if it is a `reversed` (but not its subclass).
   public static func asExactlyReversed(_ object: PyObject) -> PyReversed? {
-    return PyCast.isExactlyReversed(object) ? (object as! PyReversed) : nil
+    return PyCast.isExactlyReversed(object) ? forceCast(object) : nil
   }
 
   // MARK: - Set
@@ -763,12 +781,12 @@ public enum PyCast {
 
   /// Cast this object to `PySet` if it is a `set` (or its subclass).
   public static func asSet(_ object: PyObject) -> PySet? {
-    return PyCast.isSet(object) ? (object as! PySet) : nil
+    return PyCast.isSet(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PySet` if it is a `set` (but not its subclass).
   public static func asExactlySet(_ object: PyObject) -> PySet? {
-    return PyCast.isExactlySet(object) ? (object as! PySet) : nil
+    return PyCast.isExactlySet(object) ? forceCast(object) : nil
   }
 
   // MARK: - SetIterator
@@ -782,7 +800,7 @@ public enum PyCast {
 
   /// Cast this object to `PySetIterator` if it is a `set_iterator`.
   public static func asSetIterator(_ object: PyObject) -> PySetIterator? {
-    return PyCast.isSetIterator(object) ? (object as! PySetIterator) : nil
+    return PyCast.isSetIterator(object) ? forceCast(object) : nil
   }
 
   // MARK: - Slice
@@ -796,7 +814,7 @@ public enum PyCast {
 
   /// Cast this object to `PySlice` if it is a `slice`.
   public static func asSlice(_ object: PyObject) -> PySlice? {
-    return PyCast.isSlice(object) ? (object as! PySlice) : nil
+    return PyCast.isSlice(object) ? forceCast(object) : nil
   }
 
   // MARK: - StaticMethod
@@ -813,12 +831,12 @@ public enum PyCast {
 
   /// Cast this object to `PyStaticMethod` if it is a `staticmethod` (or its subclass).
   public static func asStaticMethod(_ object: PyObject) -> PyStaticMethod? {
-    return PyCast.isStaticMethod(object) ? (object as! PyStaticMethod) : nil
+    return PyCast.isStaticMethod(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyStaticMethod` if it is a `staticmethod` (but not its subclass).
   public static func asExactlyStaticMethod(_ object: PyObject) -> PyStaticMethod? {
-    return PyCast.isExactlyStaticMethod(object) ? (object as! PyStaticMethod) : nil
+    return PyCast.isExactlyStaticMethod(object) ? forceCast(object) : nil
   }
 
   // MARK: - String
@@ -837,12 +855,12 @@ public enum PyCast {
 
   /// Cast this object to `PyString` if it is a `str` (or its subclass).
   public static func asString(_ object: PyObject) -> PyString? {
-    return PyCast.isString(object) ? (object as! PyString) : nil
+    return PyCast.isString(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyString` if it is a `str` (but not its subclass).
   public static func asExactlyString(_ object: PyObject) -> PyString? {
-    return PyCast.isExactlyString(object) ? (object as! PyString) : nil
+    return PyCast.isExactlyString(object) ? forceCast(object) : nil
   }
 
   // MARK: - StringIterator
@@ -856,7 +874,7 @@ public enum PyCast {
 
   /// Cast this object to `PyStringIterator` if it is a `str_iterator`.
   public static func asStringIterator(_ object: PyObject) -> PyStringIterator? {
-    return PyCast.isStringIterator(object) ? (object as! PyStringIterator) : nil
+    return PyCast.isStringIterator(object) ? forceCast(object) : nil
   }
 
   // MARK: - Super
@@ -873,12 +891,12 @@ public enum PyCast {
 
   /// Cast this object to `PySuper` if it is a `super` (or its subclass).
   public static func asSuper(_ object: PyObject) -> PySuper? {
-    return PyCast.isSuper(object) ? (object as! PySuper) : nil
+    return PyCast.isSuper(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PySuper` if it is a `super` (but not its subclass).
   public static func asExactlySuper(_ object: PyObject) -> PySuper? {
-    return PyCast.isExactlySuper(object) ? (object as! PySuper) : nil
+    return PyCast.isExactlySuper(object) ? forceCast(object) : nil
   }
 
   // MARK: - TextFile
@@ -892,7 +910,7 @@ public enum PyCast {
 
   /// Cast this object to `PyTextFile` if it is a `TextFile`.
   public static func asTextFile(_ object: PyObject) -> PyTextFile? {
-    return PyCast.isTextFile(object) ? (object as! PyTextFile) : nil
+    return PyCast.isTextFile(object) ? forceCast(object) : nil
   }
 
   // MARK: - Traceback
@@ -906,7 +924,7 @@ public enum PyCast {
 
   /// Cast this object to `PyTraceback` if it is a `traceback`.
   public static func asTraceback(_ object: PyObject) -> PyTraceback? {
-    return PyCast.isTraceback(object) ? (object as! PyTraceback) : nil
+    return PyCast.isTraceback(object) ? forceCast(object) : nil
   }
 
   // MARK: - Tuple
@@ -925,12 +943,12 @@ public enum PyCast {
 
   /// Cast this object to `PyTuple` if it is a `tuple` (or its subclass).
   public static func asTuple(_ object: PyObject) -> PyTuple? {
-    return PyCast.isTuple(object) ? (object as! PyTuple) : nil
+    return PyCast.isTuple(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyTuple` if it is a `tuple` (but not its subclass).
   public static func asExactlyTuple(_ object: PyObject) -> PyTuple? {
-    return PyCast.isExactlyTuple(object) ? (object as! PyTuple) : nil
+    return PyCast.isExactlyTuple(object) ? forceCast(object) : nil
   }
 
   // MARK: - TupleIterator
@@ -944,7 +962,7 @@ public enum PyCast {
 
   /// Cast this object to `PyTupleIterator` if it is a `tuple_iterator`.
   public static func asTupleIterator(_ object: PyObject) -> PyTupleIterator? {
-    return PyCast.isTupleIterator(object) ? (object as! PyTupleIterator) : nil
+    return PyCast.isTupleIterator(object) ? forceCast(object) : nil
   }
 
   // MARK: - Type
@@ -963,12 +981,12 @@ public enum PyCast {
 
   /// Cast this object to `PyType` if it is a `type` (or its subclass).
   public static func asType(_ object: PyObject) -> PyType? {
-    return PyCast.isType(object) ? (object as! PyType) : nil
+    return PyCast.isType(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyType` if it is a `type` (but not its subclass).
   public static func asExactlyType(_ object: PyObject) -> PyType? {
-    return PyCast.isExactlyType(object) ? (object as! PyType) : nil
+    return PyCast.isExactlyType(object) ? forceCast(object) : nil
   }
 
   // MARK: - Zip
@@ -985,12 +1003,12 @@ public enum PyCast {
 
   /// Cast this object to `PyZip` if it is a `zip` (or its subclass).
   public static func asZip(_ object: PyObject) -> PyZip? {
-    return PyCast.isZip(object) ? (object as! PyZip) : nil
+    return PyCast.isZip(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyZip` if it is a `zip` (but not its subclass).
   public static func asExactlyZip(_ object: PyObject) -> PyZip? {
-    return PyCast.isExactlyZip(object) ? (object as! PyZip) : nil
+    return PyCast.isExactlyZip(object) ? forceCast(object) : nil
   }
 
   // MARK: - ArithmeticError
@@ -1007,12 +1025,12 @@ public enum PyCast {
 
   /// Cast this object to `PyArithmeticError` if it is an `ArithmeticError` (or its subclass).
   public static func asArithmeticError(_ object: PyObject) -> PyArithmeticError? {
-    return PyCast.isArithmeticError(object) ? (object as! PyArithmeticError) : nil
+    return PyCast.isArithmeticError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyArithmeticError` if it is an `ArithmeticError` (but not its subclass).
   public static func asExactlyArithmeticError(_ object: PyObject) -> PyArithmeticError? {
-    return PyCast.isExactlyArithmeticError(object) ? (object as! PyArithmeticError) : nil
+    return PyCast.isExactlyArithmeticError(object) ? forceCast(object) : nil
   }
 
   // MARK: - AssertionError
@@ -1029,12 +1047,12 @@ public enum PyCast {
 
   /// Cast this object to `PyAssertionError` if it is an `AssertionError` (or its subclass).
   public static func asAssertionError(_ object: PyObject) -> PyAssertionError? {
-    return PyCast.isAssertionError(object) ? (object as! PyAssertionError) : nil
+    return PyCast.isAssertionError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyAssertionError` if it is an `AssertionError` (but not its subclass).
   public static func asExactlyAssertionError(_ object: PyObject) -> PyAssertionError? {
-    return PyCast.isExactlyAssertionError(object) ? (object as! PyAssertionError) : nil
+    return PyCast.isExactlyAssertionError(object) ? forceCast(object) : nil
   }
 
   // MARK: - AttributeError
@@ -1051,12 +1069,12 @@ public enum PyCast {
 
   /// Cast this object to `PyAttributeError` if it is an `AttributeError` (or its subclass).
   public static func asAttributeError(_ object: PyObject) -> PyAttributeError? {
-    return PyCast.isAttributeError(object) ? (object as! PyAttributeError) : nil
+    return PyCast.isAttributeError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyAttributeError` if it is an `AttributeError` (but not its subclass).
   public static func asExactlyAttributeError(_ object: PyObject) -> PyAttributeError? {
-    return PyCast.isExactlyAttributeError(object) ? (object as! PyAttributeError) : nil
+    return PyCast.isExactlyAttributeError(object) ? forceCast(object) : nil
   }
 
   // MARK: - BaseException
@@ -1073,12 +1091,12 @@ public enum PyCast {
 
   /// Cast this object to `PyBaseException` if it is a `BaseException` (or its subclass).
   public static func asBaseException(_ object: PyObject) -> PyBaseException? {
-    return PyCast.isBaseException(object) ? (object as! PyBaseException) : nil
+    return PyCast.isBaseException(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyBaseException` if it is a `BaseException` (but not its subclass).
   public static func asExactlyBaseException(_ object: PyObject) -> PyBaseException? {
-    return PyCast.isExactlyBaseException(object) ? (object as! PyBaseException) : nil
+    return PyCast.isExactlyBaseException(object) ? forceCast(object) : nil
   }
 
   // MARK: - BlockingIOError
@@ -1095,12 +1113,12 @@ public enum PyCast {
 
   /// Cast this object to `PyBlockingIOError` if it is a `BlockingIOError` (or its subclass).
   public static func asBlockingIOError(_ object: PyObject) -> PyBlockingIOError? {
-    return PyCast.isBlockingIOError(object) ? (object as! PyBlockingIOError) : nil
+    return PyCast.isBlockingIOError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyBlockingIOError` if it is a `BlockingIOError` (but not its subclass).
   public static func asExactlyBlockingIOError(_ object: PyObject) -> PyBlockingIOError? {
-    return PyCast.isExactlyBlockingIOError(object) ? (object as! PyBlockingIOError) : nil
+    return PyCast.isExactlyBlockingIOError(object) ? forceCast(object) : nil
   }
 
   // MARK: - BrokenPipeError
@@ -1117,12 +1135,12 @@ public enum PyCast {
 
   /// Cast this object to `PyBrokenPipeError` if it is a `BrokenPipeError` (or its subclass).
   public static func asBrokenPipeError(_ object: PyObject) -> PyBrokenPipeError? {
-    return PyCast.isBrokenPipeError(object) ? (object as! PyBrokenPipeError) : nil
+    return PyCast.isBrokenPipeError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyBrokenPipeError` if it is a `BrokenPipeError` (but not its subclass).
   public static func asExactlyBrokenPipeError(_ object: PyObject) -> PyBrokenPipeError? {
-    return PyCast.isExactlyBrokenPipeError(object) ? (object as! PyBrokenPipeError) : nil
+    return PyCast.isExactlyBrokenPipeError(object) ? forceCast(object) : nil
   }
 
   // MARK: - BufferError
@@ -1139,12 +1157,12 @@ public enum PyCast {
 
   /// Cast this object to `PyBufferError` if it is a `BufferError` (or its subclass).
   public static func asBufferError(_ object: PyObject) -> PyBufferError? {
-    return PyCast.isBufferError(object) ? (object as! PyBufferError) : nil
+    return PyCast.isBufferError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyBufferError` if it is a `BufferError` (but not its subclass).
   public static func asExactlyBufferError(_ object: PyObject) -> PyBufferError? {
-    return PyCast.isExactlyBufferError(object) ? (object as! PyBufferError) : nil
+    return PyCast.isExactlyBufferError(object) ? forceCast(object) : nil
   }
 
   // MARK: - BytesWarning
@@ -1161,12 +1179,12 @@ public enum PyCast {
 
   /// Cast this object to `PyBytesWarning` if it is a `BytesWarning` (or its subclass).
   public static func asBytesWarning(_ object: PyObject) -> PyBytesWarning? {
-    return PyCast.isBytesWarning(object) ? (object as! PyBytesWarning) : nil
+    return PyCast.isBytesWarning(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyBytesWarning` if it is a `BytesWarning` (but not its subclass).
   public static func asExactlyBytesWarning(_ object: PyObject) -> PyBytesWarning? {
-    return PyCast.isExactlyBytesWarning(object) ? (object as! PyBytesWarning) : nil
+    return PyCast.isExactlyBytesWarning(object) ? forceCast(object) : nil
   }
 
   // MARK: - ChildProcessError
@@ -1183,12 +1201,12 @@ public enum PyCast {
 
   /// Cast this object to `PyChildProcessError` if it is a `ChildProcessError` (or its subclass).
   public static func asChildProcessError(_ object: PyObject) -> PyChildProcessError? {
-    return PyCast.isChildProcessError(object) ? (object as! PyChildProcessError) : nil
+    return PyCast.isChildProcessError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyChildProcessError` if it is a `ChildProcessError` (but not its subclass).
   public static func asExactlyChildProcessError(_ object: PyObject) -> PyChildProcessError? {
-    return PyCast.isExactlyChildProcessError(object) ? (object as! PyChildProcessError) : nil
+    return PyCast.isExactlyChildProcessError(object) ? forceCast(object) : nil
   }
 
   // MARK: - ConnectionAbortedError
@@ -1205,12 +1223,12 @@ public enum PyCast {
 
   /// Cast this object to `PyConnectionAbortedError` if it is a `ConnectionAbortedError` (or its subclass).
   public static func asConnectionAbortedError(_ object: PyObject) -> PyConnectionAbortedError? {
-    return PyCast.isConnectionAbortedError(object) ? (object as! PyConnectionAbortedError) : nil
+    return PyCast.isConnectionAbortedError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyConnectionAbortedError` if it is a `ConnectionAbortedError` (but not its subclass).
   public static func asExactlyConnectionAbortedError(_ object: PyObject) -> PyConnectionAbortedError? {
-    return PyCast.isExactlyConnectionAbortedError(object) ? (object as! PyConnectionAbortedError) : nil
+    return PyCast.isExactlyConnectionAbortedError(object) ? forceCast(object) : nil
   }
 
   // MARK: - ConnectionError
@@ -1227,12 +1245,12 @@ public enum PyCast {
 
   /// Cast this object to `PyConnectionError` if it is a `ConnectionError` (or its subclass).
   public static func asConnectionError(_ object: PyObject) -> PyConnectionError? {
-    return PyCast.isConnectionError(object) ? (object as! PyConnectionError) : nil
+    return PyCast.isConnectionError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyConnectionError` if it is a `ConnectionError` (but not its subclass).
   public static func asExactlyConnectionError(_ object: PyObject) -> PyConnectionError? {
-    return PyCast.isExactlyConnectionError(object) ? (object as! PyConnectionError) : nil
+    return PyCast.isExactlyConnectionError(object) ? forceCast(object) : nil
   }
 
   // MARK: - ConnectionRefusedError
@@ -1249,12 +1267,12 @@ public enum PyCast {
 
   /// Cast this object to `PyConnectionRefusedError` if it is a `ConnectionRefusedError` (or its subclass).
   public static func asConnectionRefusedError(_ object: PyObject) -> PyConnectionRefusedError? {
-    return PyCast.isConnectionRefusedError(object) ? (object as! PyConnectionRefusedError) : nil
+    return PyCast.isConnectionRefusedError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyConnectionRefusedError` if it is a `ConnectionRefusedError` (but not its subclass).
   public static func asExactlyConnectionRefusedError(_ object: PyObject) -> PyConnectionRefusedError? {
-    return PyCast.isExactlyConnectionRefusedError(object) ? (object as! PyConnectionRefusedError) : nil
+    return PyCast.isExactlyConnectionRefusedError(object) ? forceCast(object) : nil
   }
 
   // MARK: - ConnectionResetError
@@ -1271,12 +1289,12 @@ public enum PyCast {
 
   /// Cast this object to `PyConnectionResetError` if it is a `ConnectionResetError` (or its subclass).
   public static func asConnectionResetError(_ object: PyObject) -> PyConnectionResetError? {
-    return PyCast.isConnectionResetError(object) ? (object as! PyConnectionResetError) : nil
+    return PyCast.isConnectionResetError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyConnectionResetError` if it is a `ConnectionResetError` (but not its subclass).
   public static func asExactlyConnectionResetError(_ object: PyObject) -> PyConnectionResetError? {
-    return PyCast.isExactlyConnectionResetError(object) ? (object as! PyConnectionResetError) : nil
+    return PyCast.isExactlyConnectionResetError(object) ? forceCast(object) : nil
   }
 
   // MARK: - DeprecationWarning
@@ -1293,12 +1311,12 @@ public enum PyCast {
 
   /// Cast this object to `PyDeprecationWarning` if it is a `DeprecationWarning` (or its subclass).
   public static func asDeprecationWarning(_ object: PyObject) -> PyDeprecationWarning? {
-    return PyCast.isDeprecationWarning(object) ? (object as! PyDeprecationWarning) : nil
+    return PyCast.isDeprecationWarning(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyDeprecationWarning` if it is a `DeprecationWarning` (but not its subclass).
   public static func asExactlyDeprecationWarning(_ object: PyObject) -> PyDeprecationWarning? {
-    return PyCast.isExactlyDeprecationWarning(object) ? (object as! PyDeprecationWarning) : nil
+    return PyCast.isExactlyDeprecationWarning(object) ? forceCast(object) : nil
   }
 
   // MARK: - EOFError
@@ -1315,12 +1333,12 @@ public enum PyCast {
 
   /// Cast this object to `PyEOFError` if it is an `EOFError` (or its subclass).
   public static func asEOFError(_ object: PyObject) -> PyEOFError? {
-    return PyCast.isEOFError(object) ? (object as! PyEOFError) : nil
+    return PyCast.isEOFError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyEOFError` if it is an `EOFError` (but not its subclass).
   public static func asExactlyEOFError(_ object: PyObject) -> PyEOFError? {
-    return PyCast.isExactlyEOFError(object) ? (object as! PyEOFError) : nil
+    return PyCast.isExactlyEOFError(object) ? forceCast(object) : nil
   }
 
   // MARK: - Exception
@@ -1337,12 +1355,12 @@ public enum PyCast {
 
   /// Cast this object to `PyException` if it is an `Exception` (or its subclass).
   public static func asException(_ object: PyObject) -> PyException? {
-    return PyCast.isException(object) ? (object as! PyException) : nil
+    return PyCast.isException(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyException` if it is an `Exception` (but not its subclass).
   public static func asExactlyException(_ object: PyObject) -> PyException? {
-    return PyCast.isExactlyException(object) ? (object as! PyException) : nil
+    return PyCast.isExactlyException(object) ? forceCast(object) : nil
   }
 
   // MARK: - FileExistsError
@@ -1359,12 +1377,12 @@ public enum PyCast {
 
   /// Cast this object to `PyFileExistsError` if it is a `FileExistsError` (or its subclass).
   public static func asFileExistsError(_ object: PyObject) -> PyFileExistsError? {
-    return PyCast.isFileExistsError(object) ? (object as! PyFileExistsError) : nil
+    return PyCast.isFileExistsError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyFileExistsError` if it is a `FileExistsError` (but not its subclass).
   public static func asExactlyFileExistsError(_ object: PyObject) -> PyFileExistsError? {
-    return PyCast.isExactlyFileExistsError(object) ? (object as! PyFileExistsError) : nil
+    return PyCast.isExactlyFileExistsError(object) ? forceCast(object) : nil
   }
 
   // MARK: - FileNotFoundError
@@ -1381,12 +1399,12 @@ public enum PyCast {
 
   /// Cast this object to `PyFileNotFoundError` if it is a `FileNotFoundError` (or its subclass).
   public static func asFileNotFoundError(_ object: PyObject) -> PyFileNotFoundError? {
-    return PyCast.isFileNotFoundError(object) ? (object as! PyFileNotFoundError) : nil
+    return PyCast.isFileNotFoundError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyFileNotFoundError` if it is a `FileNotFoundError` (but not its subclass).
   public static func asExactlyFileNotFoundError(_ object: PyObject) -> PyFileNotFoundError? {
-    return PyCast.isExactlyFileNotFoundError(object) ? (object as! PyFileNotFoundError) : nil
+    return PyCast.isExactlyFileNotFoundError(object) ? forceCast(object) : nil
   }
 
   // MARK: - FloatingPointError
@@ -1403,12 +1421,12 @@ public enum PyCast {
 
   /// Cast this object to `PyFloatingPointError` if it is a `FloatingPointError` (or its subclass).
   public static func asFloatingPointError(_ object: PyObject) -> PyFloatingPointError? {
-    return PyCast.isFloatingPointError(object) ? (object as! PyFloatingPointError) : nil
+    return PyCast.isFloatingPointError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyFloatingPointError` if it is a `FloatingPointError` (but not its subclass).
   public static func asExactlyFloatingPointError(_ object: PyObject) -> PyFloatingPointError? {
-    return PyCast.isExactlyFloatingPointError(object) ? (object as! PyFloatingPointError) : nil
+    return PyCast.isExactlyFloatingPointError(object) ? forceCast(object) : nil
   }
 
   // MARK: - FutureWarning
@@ -1425,12 +1443,12 @@ public enum PyCast {
 
   /// Cast this object to `PyFutureWarning` if it is a `FutureWarning` (or its subclass).
   public static func asFutureWarning(_ object: PyObject) -> PyFutureWarning? {
-    return PyCast.isFutureWarning(object) ? (object as! PyFutureWarning) : nil
+    return PyCast.isFutureWarning(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyFutureWarning` if it is a `FutureWarning` (but not its subclass).
   public static func asExactlyFutureWarning(_ object: PyObject) -> PyFutureWarning? {
-    return PyCast.isExactlyFutureWarning(object) ? (object as! PyFutureWarning) : nil
+    return PyCast.isExactlyFutureWarning(object) ? forceCast(object) : nil
   }
 
   // MARK: - GeneratorExit
@@ -1447,12 +1465,12 @@ public enum PyCast {
 
   /// Cast this object to `PyGeneratorExit` if it is a `GeneratorExit` (or its subclass).
   public static func asGeneratorExit(_ object: PyObject) -> PyGeneratorExit? {
-    return PyCast.isGeneratorExit(object) ? (object as! PyGeneratorExit) : nil
+    return PyCast.isGeneratorExit(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyGeneratorExit` if it is a `GeneratorExit` (but not its subclass).
   public static func asExactlyGeneratorExit(_ object: PyObject) -> PyGeneratorExit? {
-    return PyCast.isExactlyGeneratorExit(object) ? (object as! PyGeneratorExit) : nil
+    return PyCast.isExactlyGeneratorExit(object) ? forceCast(object) : nil
   }
 
   // MARK: - ImportError
@@ -1469,12 +1487,12 @@ public enum PyCast {
 
   /// Cast this object to `PyImportError` if it is an `ImportError` (or its subclass).
   public static func asImportError(_ object: PyObject) -> PyImportError? {
-    return PyCast.isImportError(object) ? (object as! PyImportError) : nil
+    return PyCast.isImportError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyImportError` if it is an `ImportError` (but not its subclass).
   public static func asExactlyImportError(_ object: PyObject) -> PyImportError? {
-    return PyCast.isExactlyImportError(object) ? (object as! PyImportError) : nil
+    return PyCast.isExactlyImportError(object) ? forceCast(object) : nil
   }
 
   // MARK: - ImportWarning
@@ -1491,12 +1509,12 @@ public enum PyCast {
 
   /// Cast this object to `PyImportWarning` if it is an `ImportWarning` (or its subclass).
   public static func asImportWarning(_ object: PyObject) -> PyImportWarning? {
-    return PyCast.isImportWarning(object) ? (object as! PyImportWarning) : nil
+    return PyCast.isImportWarning(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyImportWarning` if it is an `ImportWarning` (but not its subclass).
   public static func asExactlyImportWarning(_ object: PyObject) -> PyImportWarning? {
-    return PyCast.isExactlyImportWarning(object) ? (object as! PyImportWarning) : nil
+    return PyCast.isExactlyImportWarning(object) ? forceCast(object) : nil
   }
 
   // MARK: - IndentationError
@@ -1513,12 +1531,12 @@ public enum PyCast {
 
   /// Cast this object to `PyIndentationError` if it is an `IndentationError` (or its subclass).
   public static func asIndentationError(_ object: PyObject) -> PyIndentationError? {
-    return PyCast.isIndentationError(object) ? (object as! PyIndentationError) : nil
+    return PyCast.isIndentationError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyIndentationError` if it is an `IndentationError` (but not its subclass).
   public static func asExactlyIndentationError(_ object: PyObject) -> PyIndentationError? {
-    return PyCast.isExactlyIndentationError(object) ? (object as! PyIndentationError) : nil
+    return PyCast.isExactlyIndentationError(object) ? forceCast(object) : nil
   }
 
   // MARK: - IndexError
@@ -1535,12 +1553,12 @@ public enum PyCast {
 
   /// Cast this object to `PyIndexError` if it is an `IndexError` (or its subclass).
   public static func asIndexError(_ object: PyObject) -> PyIndexError? {
-    return PyCast.isIndexError(object) ? (object as! PyIndexError) : nil
+    return PyCast.isIndexError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyIndexError` if it is an `IndexError` (but not its subclass).
   public static func asExactlyIndexError(_ object: PyObject) -> PyIndexError? {
-    return PyCast.isExactlyIndexError(object) ? (object as! PyIndexError) : nil
+    return PyCast.isExactlyIndexError(object) ? forceCast(object) : nil
   }
 
   // MARK: - InterruptedError
@@ -1557,12 +1575,12 @@ public enum PyCast {
 
   /// Cast this object to `PyInterruptedError` if it is an `InterruptedError` (or its subclass).
   public static func asInterruptedError(_ object: PyObject) -> PyInterruptedError? {
-    return PyCast.isInterruptedError(object) ? (object as! PyInterruptedError) : nil
+    return PyCast.isInterruptedError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyInterruptedError` if it is an `InterruptedError` (but not its subclass).
   public static func asExactlyInterruptedError(_ object: PyObject) -> PyInterruptedError? {
-    return PyCast.isExactlyInterruptedError(object) ? (object as! PyInterruptedError) : nil
+    return PyCast.isExactlyInterruptedError(object) ? forceCast(object) : nil
   }
 
   // MARK: - IsADirectoryError
@@ -1579,12 +1597,12 @@ public enum PyCast {
 
   /// Cast this object to `PyIsADirectoryError` if it is an `IsADirectoryError` (or its subclass).
   public static func asIsADirectoryError(_ object: PyObject) -> PyIsADirectoryError? {
-    return PyCast.isIsADirectoryError(object) ? (object as! PyIsADirectoryError) : nil
+    return PyCast.isIsADirectoryError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyIsADirectoryError` if it is an `IsADirectoryError` (but not its subclass).
   public static func asExactlyIsADirectoryError(_ object: PyObject) -> PyIsADirectoryError? {
-    return PyCast.isExactlyIsADirectoryError(object) ? (object as! PyIsADirectoryError) : nil
+    return PyCast.isExactlyIsADirectoryError(object) ? forceCast(object) : nil
   }
 
   // MARK: - KeyError
@@ -1601,12 +1619,12 @@ public enum PyCast {
 
   /// Cast this object to `PyKeyError` if it is a `KeyError` (or its subclass).
   public static func asKeyError(_ object: PyObject) -> PyKeyError? {
-    return PyCast.isKeyError(object) ? (object as! PyKeyError) : nil
+    return PyCast.isKeyError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyKeyError` if it is a `KeyError` (but not its subclass).
   public static func asExactlyKeyError(_ object: PyObject) -> PyKeyError? {
-    return PyCast.isExactlyKeyError(object) ? (object as! PyKeyError) : nil
+    return PyCast.isExactlyKeyError(object) ? forceCast(object) : nil
   }
 
   // MARK: - KeyboardInterrupt
@@ -1623,12 +1641,12 @@ public enum PyCast {
 
   /// Cast this object to `PyKeyboardInterrupt` if it is a `KeyboardInterrupt` (or its subclass).
   public static func asKeyboardInterrupt(_ object: PyObject) -> PyKeyboardInterrupt? {
-    return PyCast.isKeyboardInterrupt(object) ? (object as! PyKeyboardInterrupt) : nil
+    return PyCast.isKeyboardInterrupt(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyKeyboardInterrupt` if it is a `KeyboardInterrupt` (but not its subclass).
   public static func asExactlyKeyboardInterrupt(_ object: PyObject) -> PyKeyboardInterrupt? {
-    return PyCast.isExactlyKeyboardInterrupt(object) ? (object as! PyKeyboardInterrupt) : nil
+    return PyCast.isExactlyKeyboardInterrupt(object) ? forceCast(object) : nil
   }
 
   // MARK: - LookupError
@@ -1645,12 +1663,12 @@ public enum PyCast {
 
   /// Cast this object to `PyLookupError` if it is a `LookupError` (or its subclass).
   public static func asLookupError(_ object: PyObject) -> PyLookupError? {
-    return PyCast.isLookupError(object) ? (object as! PyLookupError) : nil
+    return PyCast.isLookupError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyLookupError` if it is a `LookupError` (but not its subclass).
   public static func asExactlyLookupError(_ object: PyObject) -> PyLookupError? {
-    return PyCast.isExactlyLookupError(object) ? (object as! PyLookupError) : nil
+    return PyCast.isExactlyLookupError(object) ? forceCast(object) : nil
   }
 
   // MARK: - MemoryError
@@ -1667,12 +1685,12 @@ public enum PyCast {
 
   /// Cast this object to `PyMemoryError` if it is a `MemoryError` (or its subclass).
   public static func asMemoryError(_ object: PyObject) -> PyMemoryError? {
-    return PyCast.isMemoryError(object) ? (object as! PyMemoryError) : nil
+    return PyCast.isMemoryError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyMemoryError` if it is a `MemoryError` (but not its subclass).
   public static func asExactlyMemoryError(_ object: PyObject) -> PyMemoryError? {
-    return PyCast.isExactlyMemoryError(object) ? (object as! PyMemoryError) : nil
+    return PyCast.isExactlyMemoryError(object) ? forceCast(object) : nil
   }
 
   // MARK: - ModuleNotFoundError
@@ -1689,12 +1707,12 @@ public enum PyCast {
 
   /// Cast this object to `PyModuleNotFoundError` if it is a `ModuleNotFoundError` (or its subclass).
   public static func asModuleNotFoundError(_ object: PyObject) -> PyModuleNotFoundError? {
-    return PyCast.isModuleNotFoundError(object) ? (object as! PyModuleNotFoundError) : nil
+    return PyCast.isModuleNotFoundError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyModuleNotFoundError` if it is a `ModuleNotFoundError` (but not its subclass).
   public static func asExactlyModuleNotFoundError(_ object: PyObject) -> PyModuleNotFoundError? {
-    return PyCast.isExactlyModuleNotFoundError(object) ? (object as! PyModuleNotFoundError) : nil
+    return PyCast.isExactlyModuleNotFoundError(object) ? forceCast(object) : nil
   }
 
   // MARK: - NameError
@@ -1711,12 +1729,12 @@ public enum PyCast {
 
   /// Cast this object to `PyNameError` if it is a `NameError` (or its subclass).
   public static func asNameError(_ object: PyObject) -> PyNameError? {
-    return PyCast.isNameError(object) ? (object as! PyNameError) : nil
+    return PyCast.isNameError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyNameError` if it is a `NameError` (but not its subclass).
   public static func asExactlyNameError(_ object: PyObject) -> PyNameError? {
-    return PyCast.isExactlyNameError(object) ? (object as! PyNameError) : nil
+    return PyCast.isExactlyNameError(object) ? forceCast(object) : nil
   }
 
   // MARK: - NotADirectoryError
@@ -1733,12 +1751,12 @@ public enum PyCast {
 
   /// Cast this object to `PyNotADirectoryError` if it is a `NotADirectoryError` (or its subclass).
   public static func asNotADirectoryError(_ object: PyObject) -> PyNotADirectoryError? {
-    return PyCast.isNotADirectoryError(object) ? (object as! PyNotADirectoryError) : nil
+    return PyCast.isNotADirectoryError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyNotADirectoryError` if it is a `NotADirectoryError` (but not its subclass).
   public static func asExactlyNotADirectoryError(_ object: PyObject) -> PyNotADirectoryError? {
-    return PyCast.isExactlyNotADirectoryError(object) ? (object as! PyNotADirectoryError) : nil
+    return PyCast.isExactlyNotADirectoryError(object) ? forceCast(object) : nil
   }
 
   // MARK: - NotImplementedError
@@ -1755,12 +1773,12 @@ public enum PyCast {
 
   /// Cast this object to `PyNotImplementedError` if it is a `NotImplementedError` (or its subclass).
   public static func asNotImplementedError(_ object: PyObject) -> PyNotImplementedError? {
-    return PyCast.isNotImplementedError(object) ? (object as! PyNotImplementedError) : nil
+    return PyCast.isNotImplementedError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyNotImplementedError` if it is a `NotImplementedError` (but not its subclass).
   public static func asExactlyNotImplementedError(_ object: PyObject) -> PyNotImplementedError? {
-    return PyCast.isExactlyNotImplementedError(object) ? (object as! PyNotImplementedError) : nil
+    return PyCast.isExactlyNotImplementedError(object) ? forceCast(object) : nil
   }
 
   // MARK: - OSError
@@ -1777,12 +1795,12 @@ public enum PyCast {
 
   /// Cast this object to `PyOSError` if it is an `OSError` (or its subclass).
   public static func asOSError(_ object: PyObject) -> PyOSError? {
-    return PyCast.isOSError(object) ? (object as! PyOSError) : nil
+    return PyCast.isOSError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyOSError` if it is an `OSError` (but not its subclass).
   public static func asExactlyOSError(_ object: PyObject) -> PyOSError? {
-    return PyCast.isExactlyOSError(object) ? (object as! PyOSError) : nil
+    return PyCast.isExactlyOSError(object) ? forceCast(object) : nil
   }
 
   // MARK: - OverflowError
@@ -1799,12 +1817,12 @@ public enum PyCast {
 
   /// Cast this object to `PyOverflowError` if it is an `OverflowError` (or its subclass).
   public static func asOverflowError(_ object: PyObject) -> PyOverflowError? {
-    return PyCast.isOverflowError(object) ? (object as! PyOverflowError) : nil
+    return PyCast.isOverflowError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyOverflowError` if it is an `OverflowError` (but not its subclass).
   public static func asExactlyOverflowError(_ object: PyObject) -> PyOverflowError? {
-    return PyCast.isExactlyOverflowError(object) ? (object as! PyOverflowError) : nil
+    return PyCast.isExactlyOverflowError(object) ? forceCast(object) : nil
   }
 
   // MARK: - PendingDeprecationWarning
@@ -1821,12 +1839,12 @@ public enum PyCast {
 
   /// Cast this object to `PyPendingDeprecationWarning` if it is a `PendingDeprecationWarning` (or its subclass).
   public static func asPendingDeprecationWarning(_ object: PyObject) -> PyPendingDeprecationWarning? {
-    return PyCast.isPendingDeprecationWarning(object) ? (object as! PyPendingDeprecationWarning) : nil
+    return PyCast.isPendingDeprecationWarning(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyPendingDeprecationWarning` if it is a `PendingDeprecationWarning` (but not its subclass).
   public static func asExactlyPendingDeprecationWarning(_ object: PyObject) -> PyPendingDeprecationWarning? {
-    return PyCast.isExactlyPendingDeprecationWarning(object) ? (object as! PyPendingDeprecationWarning) : nil
+    return PyCast.isExactlyPendingDeprecationWarning(object) ? forceCast(object) : nil
   }
 
   // MARK: - PermissionError
@@ -1843,12 +1861,12 @@ public enum PyCast {
 
   /// Cast this object to `PyPermissionError` if it is a `PermissionError` (or its subclass).
   public static func asPermissionError(_ object: PyObject) -> PyPermissionError? {
-    return PyCast.isPermissionError(object) ? (object as! PyPermissionError) : nil
+    return PyCast.isPermissionError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyPermissionError` if it is a `PermissionError` (but not its subclass).
   public static func asExactlyPermissionError(_ object: PyObject) -> PyPermissionError? {
-    return PyCast.isExactlyPermissionError(object) ? (object as! PyPermissionError) : nil
+    return PyCast.isExactlyPermissionError(object) ? forceCast(object) : nil
   }
 
   // MARK: - ProcessLookupError
@@ -1865,12 +1883,12 @@ public enum PyCast {
 
   /// Cast this object to `PyProcessLookupError` if it is a `ProcessLookupError` (or its subclass).
   public static func asProcessLookupError(_ object: PyObject) -> PyProcessLookupError? {
-    return PyCast.isProcessLookupError(object) ? (object as! PyProcessLookupError) : nil
+    return PyCast.isProcessLookupError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyProcessLookupError` if it is a `ProcessLookupError` (but not its subclass).
   public static func asExactlyProcessLookupError(_ object: PyObject) -> PyProcessLookupError? {
-    return PyCast.isExactlyProcessLookupError(object) ? (object as! PyProcessLookupError) : nil
+    return PyCast.isExactlyProcessLookupError(object) ? forceCast(object) : nil
   }
 
   // MARK: - RecursionError
@@ -1887,12 +1905,12 @@ public enum PyCast {
 
   /// Cast this object to `PyRecursionError` if it is a `RecursionError` (or its subclass).
   public static func asRecursionError(_ object: PyObject) -> PyRecursionError? {
-    return PyCast.isRecursionError(object) ? (object as! PyRecursionError) : nil
+    return PyCast.isRecursionError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyRecursionError` if it is a `RecursionError` (but not its subclass).
   public static func asExactlyRecursionError(_ object: PyObject) -> PyRecursionError? {
-    return PyCast.isExactlyRecursionError(object) ? (object as! PyRecursionError) : nil
+    return PyCast.isExactlyRecursionError(object) ? forceCast(object) : nil
   }
 
   // MARK: - ReferenceError
@@ -1909,12 +1927,12 @@ public enum PyCast {
 
   /// Cast this object to `PyReferenceError` if it is a `ReferenceError` (or its subclass).
   public static func asReferenceError(_ object: PyObject) -> PyReferenceError? {
-    return PyCast.isReferenceError(object) ? (object as! PyReferenceError) : nil
+    return PyCast.isReferenceError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyReferenceError` if it is a `ReferenceError` (but not its subclass).
   public static func asExactlyReferenceError(_ object: PyObject) -> PyReferenceError? {
-    return PyCast.isExactlyReferenceError(object) ? (object as! PyReferenceError) : nil
+    return PyCast.isExactlyReferenceError(object) ? forceCast(object) : nil
   }
 
   // MARK: - ResourceWarning
@@ -1931,12 +1949,12 @@ public enum PyCast {
 
   /// Cast this object to `PyResourceWarning` if it is a `ResourceWarning` (or its subclass).
   public static func asResourceWarning(_ object: PyObject) -> PyResourceWarning? {
-    return PyCast.isResourceWarning(object) ? (object as! PyResourceWarning) : nil
+    return PyCast.isResourceWarning(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyResourceWarning` if it is a `ResourceWarning` (but not its subclass).
   public static func asExactlyResourceWarning(_ object: PyObject) -> PyResourceWarning? {
-    return PyCast.isExactlyResourceWarning(object) ? (object as! PyResourceWarning) : nil
+    return PyCast.isExactlyResourceWarning(object) ? forceCast(object) : nil
   }
 
   // MARK: - RuntimeError
@@ -1953,12 +1971,12 @@ public enum PyCast {
 
   /// Cast this object to `PyRuntimeError` if it is a `RuntimeError` (or its subclass).
   public static func asRuntimeError(_ object: PyObject) -> PyRuntimeError? {
-    return PyCast.isRuntimeError(object) ? (object as! PyRuntimeError) : nil
+    return PyCast.isRuntimeError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyRuntimeError` if it is a `RuntimeError` (but not its subclass).
   public static func asExactlyRuntimeError(_ object: PyObject) -> PyRuntimeError? {
-    return PyCast.isExactlyRuntimeError(object) ? (object as! PyRuntimeError) : nil
+    return PyCast.isExactlyRuntimeError(object) ? forceCast(object) : nil
   }
 
   // MARK: - RuntimeWarning
@@ -1975,12 +1993,12 @@ public enum PyCast {
 
   /// Cast this object to `PyRuntimeWarning` if it is a `RuntimeWarning` (or its subclass).
   public static func asRuntimeWarning(_ object: PyObject) -> PyRuntimeWarning? {
-    return PyCast.isRuntimeWarning(object) ? (object as! PyRuntimeWarning) : nil
+    return PyCast.isRuntimeWarning(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyRuntimeWarning` if it is a `RuntimeWarning` (but not its subclass).
   public static func asExactlyRuntimeWarning(_ object: PyObject) -> PyRuntimeWarning? {
-    return PyCast.isExactlyRuntimeWarning(object) ? (object as! PyRuntimeWarning) : nil
+    return PyCast.isExactlyRuntimeWarning(object) ? forceCast(object) : nil
   }
 
   // MARK: - StopAsyncIteration
@@ -1997,12 +2015,12 @@ public enum PyCast {
 
   /// Cast this object to `PyStopAsyncIteration` if it is a `StopAsyncIteration` (or its subclass).
   public static func asStopAsyncIteration(_ object: PyObject) -> PyStopAsyncIteration? {
-    return PyCast.isStopAsyncIteration(object) ? (object as! PyStopAsyncIteration) : nil
+    return PyCast.isStopAsyncIteration(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyStopAsyncIteration` if it is a `StopAsyncIteration` (but not its subclass).
   public static func asExactlyStopAsyncIteration(_ object: PyObject) -> PyStopAsyncIteration? {
-    return PyCast.isExactlyStopAsyncIteration(object) ? (object as! PyStopAsyncIteration) : nil
+    return PyCast.isExactlyStopAsyncIteration(object) ? forceCast(object) : nil
   }
 
   // MARK: - StopIteration
@@ -2019,12 +2037,12 @@ public enum PyCast {
 
   /// Cast this object to `PyStopIteration` if it is a `StopIteration` (or its subclass).
   public static func asStopIteration(_ object: PyObject) -> PyStopIteration? {
-    return PyCast.isStopIteration(object) ? (object as! PyStopIteration) : nil
+    return PyCast.isStopIteration(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyStopIteration` if it is a `StopIteration` (but not its subclass).
   public static func asExactlyStopIteration(_ object: PyObject) -> PyStopIteration? {
-    return PyCast.isExactlyStopIteration(object) ? (object as! PyStopIteration) : nil
+    return PyCast.isExactlyStopIteration(object) ? forceCast(object) : nil
   }
 
   // MARK: - SyntaxError
@@ -2041,12 +2059,12 @@ public enum PyCast {
 
   /// Cast this object to `PySyntaxError` if it is a `SyntaxError` (or its subclass).
   public static func asSyntaxError(_ object: PyObject) -> PySyntaxError? {
-    return PyCast.isSyntaxError(object) ? (object as! PySyntaxError) : nil
+    return PyCast.isSyntaxError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PySyntaxError` if it is a `SyntaxError` (but not its subclass).
   public static func asExactlySyntaxError(_ object: PyObject) -> PySyntaxError? {
-    return PyCast.isExactlySyntaxError(object) ? (object as! PySyntaxError) : nil
+    return PyCast.isExactlySyntaxError(object) ? forceCast(object) : nil
   }
 
   // MARK: - SyntaxWarning
@@ -2063,12 +2081,12 @@ public enum PyCast {
 
   /// Cast this object to `PySyntaxWarning` if it is a `SyntaxWarning` (or its subclass).
   public static func asSyntaxWarning(_ object: PyObject) -> PySyntaxWarning? {
-    return PyCast.isSyntaxWarning(object) ? (object as! PySyntaxWarning) : nil
+    return PyCast.isSyntaxWarning(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PySyntaxWarning` if it is a `SyntaxWarning` (but not its subclass).
   public static func asExactlySyntaxWarning(_ object: PyObject) -> PySyntaxWarning? {
-    return PyCast.isExactlySyntaxWarning(object) ? (object as! PySyntaxWarning) : nil
+    return PyCast.isExactlySyntaxWarning(object) ? forceCast(object) : nil
   }
 
   // MARK: - SystemError
@@ -2085,12 +2103,12 @@ public enum PyCast {
 
   /// Cast this object to `PySystemError` if it is a `SystemError` (or its subclass).
   public static func asSystemError(_ object: PyObject) -> PySystemError? {
-    return PyCast.isSystemError(object) ? (object as! PySystemError) : nil
+    return PyCast.isSystemError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PySystemError` if it is a `SystemError` (but not its subclass).
   public static func asExactlySystemError(_ object: PyObject) -> PySystemError? {
-    return PyCast.isExactlySystemError(object) ? (object as! PySystemError) : nil
+    return PyCast.isExactlySystemError(object) ? forceCast(object) : nil
   }
 
   // MARK: - SystemExit
@@ -2107,12 +2125,12 @@ public enum PyCast {
 
   /// Cast this object to `PySystemExit` if it is a `SystemExit` (or its subclass).
   public static func asSystemExit(_ object: PyObject) -> PySystemExit? {
-    return PyCast.isSystemExit(object) ? (object as! PySystemExit) : nil
+    return PyCast.isSystemExit(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PySystemExit` if it is a `SystemExit` (but not its subclass).
   public static func asExactlySystemExit(_ object: PyObject) -> PySystemExit? {
-    return PyCast.isExactlySystemExit(object) ? (object as! PySystemExit) : nil
+    return PyCast.isExactlySystemExit(object) ? forceCast(object) : nil
   }
 
   // MARK: - TabError
@@ -2129,12 +2147,12 @@ public enum PyCast {
 
   /// Cast this object to `PyTabError` if it is a `TabError` (or its subclass).
   public static func asTabError(_ object: PyObject) -> PyTabError? {
-    return PyCast.isTabError(object) ? (object as! PyTabError) : nil
+    return PyCast.isTabError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyTabError` if it is a `TabError` (but not its subclass).
   public static func asExactlyTabError(_ object: PyObject) -> PyTabError? {
-    return PyCast.isExactlyTabError(object) ? (object as! PyTabError) : nil
+    return PyCast.isExactlyTabError(object) ? forceCast(object) : nil
   }
 
   // MARK: - TimeoutError
@@ -2151,12 +2169,12 @@ public enum PyCast {
 
   /// Cast this object to `PyTimeoutError` if it is a `TimeoutError` (or its subclass).
   public static func asTimeoutError(_ object: PyObject) -> PyTimeoutError? {
-    return PyCast.isTimeoutError(object) ? (object as! PyTimeoutError) : nil
+    return PyCast.isTimeoutError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyTimeoutError` if it is a `TimeoutError` (but not its subclass).
   public static func asExactlyTimeoutError(_ object: PyObject) -> PyTimeoutError? {
-    return PyCast.isExactlyTimeoutError(object) ? (object as! PyTimeoutError) : nil
+    return PyCast.isExactlyTimeoutError(object) ? forceCast(object) : nil
   }
 
   // MARK: - TypeError
@@ -2173,12 +2191,12 @@ public enum PyCast {
 
   /// Cast this object to `PyTypeError` if it is a `TypeError` (or its subclass).
   public static func asTypeError(_ object: PyObject) -> PyTypeError? {
-    return PyCast.isTypeError(object) ? (object as! PyTypeError) : nil
+    return PyCast.isTypeError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyTypeError` if it is a `TypeError` (but not its subclass).
   public static func asExactlyTypeError(_ object: PyObject) -> PyTypeError? {
-    return PyCast.isExactlyTypeError(object) ? (object as! PyTypeError) : nil
+    return PyCast.isExactlyTypeError(object) ? forceCast(object) : nil
   }
 
   // MARK: - UnboundLocalError
@@ -2195,12 +2213,12 @@ public enum PyCast {
 
   /// Cast this object to `PyUnboundLocalError` if it is an `UnboundLocalError` (or its subclass).
   public static func asUnboundLocalError(_ object: PyObject) -> PyUnboundLocalError? {
-    return PyCast.isUnboundLocalError(object) ? (object as! PyUnboundLocalError) : nil
+    return PyCast.isUnboundLocalError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyUnboundLocalError` if it is an `UnboundLocalError` (but not its subclass).
   public static func asExactlyUnboundLocalError(_ object: PyObject) -> PyUnboundLocalError? {
-    return PyCast.isExactlyUnboundLocalError(object) ? (object as! PyUnboundLocalError) : nil
+    return PyCast.isExactlyUnboundLocalError(object) ? forceCast(object) : nil
   }
 
   // MARK: - UnicodeDecodeError
@@ -2217,12 +2235,12 @@ public enum PyCast {
 
   /// Cast this object to `PyUnicodeDecodeError` if it is an `UnicodeDecodeError` (or its subclass).
   public static func asUnicodeDecodeError(_ object: PyObject) -> PyUnicodeDecodeError? {
-    return PyCast.isUnicodeDecodeError(object) ? (object as! PyUnicodeDecodeError) : nil
+    return PyCast.isUnicodeDecodeError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyUnicodeDecodeError` if it is an `UnicodeDecodeError` (but not its subclass).
   public static func asExactlyUnicodeDecodeError(_ object: PyObject) -> PyUnicodeDecodeError? {
-    return PyCast.isExactlyUnicodeDecodeError(object) ? (object as! PyUnicodeDecodeError) : nil
+    return PyCast.isExactlyUnicodeDecodeError(object) ? forceCast(object) : nil
   }
 
   // MARK: - UnicodeEncodeError
@@ -2239,12 +2257,12 @@ public enum PyCast {
 
   /// Cast this object to `PyUnicodeEncodeError` if it is an `UnicodeEncodeError` (or its subclass).
   public static func asUnicodeEncodeError(_ object: PyObject) -> PyUnicodeEncodeError? {
-    return PyCast.isUnicodeEncodeError(object) ? (object as! PyUnicodeEncodeError) : nil
+    return PyCast.isUnicodeEncodeError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyUnicodeEncodeError` if it is an `UnicodeEncodeError` (but not its subclass).
   public static func asExactlyUnicodeEncodeError(_ object: PyObject) -> PyUnicodeEncodeError? {
-    return PyCast.isExactlyUnicodeEncodeError(object) ? (object as! PyUnicodeEncodeError) : nil
+    return PyCast.isExactlyUnicodeEncodeError(object) ? forceCast(object) : nil
   }
 
   // MARK: - UnicodeError
@@ -2261,12 +2279,12 @@ public enum PyCast {
 
   /// Cast this object to `PyUnicodeError` if it is an `UnicodeError` (or its subclass).
   public static func asUnicodeError(_ object: PyObject) -> PyUnicodeError? {
-    return PyCast.isUnicodeError(object) ? (object as! PyUnicodeError) : nil
+    return PyCast.isUnicodeError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyUnicodeError` if it is an `UnicodeError` (but not its subclass).
   public static func asExactlyUnicodeError(_ object: PyObject) -> PyUnicodeError? {
-    return PyCast.isExactlyUnicodeError(object) ? (object as! PyUnicodeError) : nil
+    return PyCast.isExactlyUnicodeError(object) ? forceCast(object) : nil
   }
 
   // MARK: - UnicodeTranslateError
@@ -2283,12 +2301,12 @@ public enum PyCast {
 
   /// Cast this object to `PyUnicodeTranslateError` if it is an `UnicodeTranslateError` (or its subclass).
   public static func asUnicodeTranslateError(_ object: PyObject) -> PyUnicodeTranslateError? {
-    return PyCast.isUnicodeTranslateError(object) ? (object as! PyUnicodeTranslateError) : nil
+    return PyCast.isUnicodeTranslateError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyUnicodeTranslateError` if it is an `UnicodeTranslateError` (but not its subclass).
   public static func asExactlyUnicodeTranslateError(_ object: PyObject) -> PyUnicodeTranslateError? {
-    return PyCast.isExactlyUnicodeTranslateError(object) ? (object as! PyUnicodeTranslateError) : nil
+    return PyCast.isExactlyUnicodeTranslateError(object) ? forceCast(object) : nil
   }
 
   // MARK: - UnicodeWarning
@@ -2305,12 +2323,12 @@ public enum PyCast {
 
   /// Cast this object to `PyUnicodeWarning` if it is an `UnicodeWarning` (or its subclass).
   public static func asUnicodeWarning(_ object: PyObject) -> PyUnicodeWarning? {
-    return PyCast.isUnicodeWarning(object) ? (object as! PyUnicodeWarning) : nil
+    return PyCast.isUnicodeWarning(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyUnicodeWarning` if it is an `UnicodeWarning` (but not its subclass).
   public static func asExactlyUnicodeWarning(_ object: PyObject) -> PyUnicodeWarning? {
-    return PyCast.isExactlyUnicodeWarning(object) ? (object as! PyUnicodeWarning) : nil
+    return PyCast.isExactlyUnicodeWarning(object) ? forceCast(object) : nil
   }
 
   // MARK: - UserWarning
@@ -2327,12 +2345,12 @@ public enum PyCast {
 
   /// Cast this object to `PyUserWarning` if it is an `UserWarning` (or its subclass).
   public static func asUserWarning(_ object: PyObject) -> PyUserWarning? {
-    return PyCast.isUserWarning(object) ? (object as! PyUserWarning) : nil
+    return PyCast.isUserWarning(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyUserWarning` if it is an `UserWarning` (but not its subclass).
   public static func asExactlyUserWarning(_ object: PyObject) -> PyUserWarning? {
-    return PyCast.isExactlyUserWarning(object) ? (object as! PyUserWarning) : nil
+    return PyCast.isExactlyUserWarning(object) ? forceCast(object) : nil
   }
 
   // MARK: - ValueError
@@ -2349,12 +2367,12 @@ public enum PyCast {
 
   /// Cast this object to `PyValueError` if it is a `ValueError` (or its subclass).
   public static func asValueError(_ object: PyObject) -> PyValueError? {
-    return PyCast.isValueError(object) ? (object as! PyValueError) : nil
+    return PyCast.isValueError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyValueError` if it is a `ValueError` (but not its subclass).
   public static func asExactlyValueError(_ object: PyObject) -> PyValueError? {
-    return PyCast.isExactlyValueError(object) ? (object as! PyValueError) : nil
+    return PyCast.isExactlyValueError(object) ? forceCast(object) : nil
   }
 
   // MARK: - Warning
@@ -2371,12 +2389,12 @@ public enum PyCast {
 
   /// Cast this object to `PyWarning` if it is a `Warning` (or its subclass).
   public static func asWarning(_ object: PyObject) -> PyWarning? {
-    return PyCast.isWarning(object) ? (object as! PyWarning) : nil
+    return PyCast.isWarning(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyWarning` if it is a `Warning` (but not its subclass).
   public static func asExactlyWarning(_ object: PyObject) -> PyWarning? {
-    return PyCast.isExactlyWarning(object) ? (object as! PyWarning) : nil
+    return PyCast.isExactlyWarning(object) ? forceCast(object) : nil
   }
 
   // MARK: - ZeroDivisionError
@@ -2393,11 +2411,11 @@ public enum PyCast {
 
   /// Cast this object to `PyZeroDivisionError` if it is a `ZeroDivisionError` (or its subclass).
   public static func asZeroDivisionError(_ object: PyObject) -> PyZeroDivisionError? {
-    return PyCast.isZeroDivisionError(object) ? (object as! PyZeroDivisionError) : nil
+    return PyCast.isZeroDivisionError(object) ? forceCast(object) : nil
   }
 
   /// Cast this object to `PyZeroDivisionError` if it is a `ZeroDivisionError` (but not its subclass).
   public static func asExactlyZeroDivisionError(_ object: PyObject) -> PyZeroDivisionError? {
-    return PyCast.isExactlyZeroDivisionError(object) ? (object as! PyZeroDivisionError) : nil
+    return PyCast.isExactlyZeroDivisionError(object) ? forceCast(object) : nil
   }
 }

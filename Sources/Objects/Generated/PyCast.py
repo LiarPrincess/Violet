@@ -18,6 +18,8 @@ if __name__ == '__main__':
     print(f'''\
 {generated_warning(__file__)}
 
+import VioletCore
+
 // swiftlint:disable force_cast
 // swiftlint:disable discouraged_optional_boolean
 // swiftlint:disable line_length
@@ -42,6 +44,22 @@ public enum PyCast {{
 
   private static func isExactlyInstance(_ object: PyObject, of type: PyType) -> Bool {{
     return object.type === type
+  }}
+
+  // We can force cast, because if the Swift type does not correspond to the Python
+  // type, then we are in deep trouble (this is one of the main invariants in Violet).
+  private static func forceCast<T>(_ object: PyObject) -> T {{
+    #if DEBUG
+    guard let result = object as? T else {{
+      let pythonType = object.typeName
+      let swiftType = String(describing: T.self)
+      trap("Python type (\(pythonType)) does not match Swift type (\(swiftType)).")
+    }}
+
+    return result
+    #else
+    return object as! T
+    #endif
   }}\
 ''')
 
@@ -132,7 +150,7 @@ public enum PyCast {{
         print(f'''
   {doc}
   public static func as{swift_type_without_py}(_ object: PyObject) -> {swift_type}? {{
-    return PyCast.is{swift_type_without_py}(object) ? (object as! {swift_type}) : nil
+    return PyCast.is{swift_type_without_py}(object) ? forceCast(object) : nil
   }}\
 ''')
 
@@ -144,7 +162,7 @@ public enum PyCast {{
             print(f'''
   /// Cast this object to `{swift_type}` if it is {python_type_article} `{python_type}` (but not its subclass).
   public static func asExactly{swift_type_without_py}(_ object: PyObject) -> {swift_type}? {{
-    return PyCast.isExactly{swift_type_without_py}(object) ? (object as! {swift_type}) : nil
+    return PyCast.isExactly{swift_type_without_py}(object) ? forceCast(object) : nil
   }}\
 ''')
 
