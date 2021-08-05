@@ -24,7 +24,7 @@ import VioletBytecode
 /// Our cache usage will suck (3 arrays stored on heap), but… oh well….
 /// This allows us to have typed `cellsAndFreeVariables`
 /// (`[PyCell]` instead of `[PyObject]`).
-public final class PyFrame: PyObject {
+public final class PyFrame: PyObject, CustomReflectable {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
@@ -119,6 +119,22 @@ public final class PyFrame: PyObject {
     }
 
     return self.code.getLine(instructionIndex: index)
+  }
+
+  // MARK: - Mirror
+
+  // We use mirrors to create description.
+  public var customMirror: Mirror {
+    return Mirror(
+      self,
+      children: [
+        "code": self.code,
+        "currentInstructionIndex": self.currentInstructionIndex as Any,
+        "nextInstructionIndex": self.nextInstructionIndex,
+        "currentInstructionLine": self.currentInstructionLine,
+        "parent": self.parent as Any
+      ]
+    )
   }
 
   // MARK: - Init
