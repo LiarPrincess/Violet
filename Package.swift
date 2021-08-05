@@ -20,12 +20,16 @@ let package = Package(
     .executable(name: "Elsa", targets: ["Elsa"]),
     // Pretty printer based on Philip Wadler idea:
     // https://homepages.inf.ed.ac.uk/wadler/papers/prettier/prettier.pdf
-    .library(name: "Rapunzel", targets: ["Rapunzel"])
+    .library(name: "Rapunzel", targets: ["Rapunzel"]),
+    // Tool to dump module interface (all of the 'public' and 'open' declarations)
+    .executable(name: "Ariel", targets: ["Ariel"])
   ],
   dependencies: [
     // We try to avoid adding new dependencies because… oh so many reasons!
     // Tbh. I’m still not sure if we can trust this ‘apple’ person…
-    .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.0.1"))
+    .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.0.1")),
+    // 0.50300.0 -> swift-5.3-RELEASE	-> Xcode 12.0
+    .package(url: "https://github.com/apple/swift-syntax.git", .exact("0.50300.0"))
   ],
   targets: [
 
@@ -94,6 +98,10 @@ let package = Package(
     // Pretty printer based on Philip Wadler idea:
     // https://homepages.inf.ed.ac.uk/wadler/papers/prettier/prettier.pdf
     .target(name: "Rapunzel", dependencies: []),
-    .testTarget(name: "RapunzelTests", dependencies: ["Rapunzel"])
+    .testTarget(name: "RapunzelTests", dependencies: ["Rapunzel"]),
+
+    // Tool to dump module interface (all of the 'public' and 'open' declarations)
+    .target(name: "Ariel", dependencies: [ "SwiftSyntax"]),
+    .testTarget(name: "ArielTests", dependencies: ["Ariel"])
   ]
 )
