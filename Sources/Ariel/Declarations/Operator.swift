@@ -10,17 +10,12 @@ class Operator: Declaration {
 
   let id: SyntaxIdentifier
   let name: String
-  let accessModifiers: AccessModifiers?
+  let accessModifiers: GetSetAccessModifiers?
   let modifiers: [Modifier]
   let kind: Kind
   let operatorPrecedenceAndTypes: [String]
 
   let attributes: [Attribute]
-
-  var description: String {
-    let formatter = Formatter.forDescription
-    return formatter.format(self)
-  }
 
   init(_ node: OperatorDeclSyntax) {
     self.id = node.id

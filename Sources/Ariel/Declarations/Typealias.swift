@@ -4,18 +4,13 @@ class Typealias: Declaration {
 
   let id: SyntaxIdentifier
   let name: String
-  let accessModifiers: AccessModifiers?
+  let accessModifiers: GetSetAccessModifiers?
   let modifiers: [Modifier]
   let initializer: TypeInitializer?
 
   let attributes: [Attribute]
   let genericParameters: [GenericParameter]
   let genericRequirements: [GenericRequirement]
-
-  var description: String {
-    let formatter = Formatter.forDescription
-    return formatter.format(self)
-  }
 
   init(_ node: TypealiasDeclSyntax) {
     self.id = node.id

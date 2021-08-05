@@ -1,7 +1,7 @@
 import SwiftSyntax
 import Foundation
 
-private let minAccessModifier = AccessModifiers.Value.public
+private let minAccessModifier = AccessModifier.public
 private let maxInitializerLength = 100
 
 private func writeModuleInterface(moduleDirectory: ListDir.Element) throws {

@@ -1,18 +1,20 @@
 import SwiftSyntax
 
-private let defaultAccessModifier = AccessModifiers.Value.internal
+private let defaultAccessModifier = AccessModifier.internal
 
 class DeclarationFilter {
 
-  private let minAccessModifier: AccessModifiers.Value
+  private let minAccessModifier: AccessModifier
   private var implementation: Implementation?
 
-  init(minAccessModifier: AccessModifiers.Value) {
+  init(minAccessModifier: AccessModifier) {
     self.minAccessModifier = minAccessModifier
   }
 
   func walk(scope: DeclarationScope) {
-    let implementation = Implementation(minAccessModifier: self.minAccessModifier)
+    let implementation = Implementation(
+      minAccessModifier: self.minAccessModifier
+    )
 
     for declaration in scope.all {
       implementation.visit(declaration)
@@ -30,12 +32,14 @@ class DeclarationFilter {
   }
 }
 
+// We don't want to have all of the `DeclarationVisitor` methods visible outside
+// of `Implementation`.
 private class Implementation: DeclarationVisitor {
 
-  private let minAccessModifier: AccessModifiers.Value
+  private let minAccessModifier: AccessModifier
   private var nodeAcceptanceStatus = [SyntaxIdentifier: Bool]()
 
-  init(minAccessModifier: AccessModifiers.Value) {
+  init(minAccessModifier: AccessModifier) {
     self.minAccessModifier = minAccessModifier
   }
 
@@ -78,7 +82,7 @@ private class Implementation: DeclarationVisitor {
   }
 
   private func isAccepted(declaration: Declaration) -> Bool {
-    func toNumber(_ value: AccessModifiers.Value) -> Int {
+    func toNumber(_ value: AccessModifier) -> Int {
       switch value {
       case .private: return 0
       case .fileprivate: return 1

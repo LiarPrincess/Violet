@@ -1,21 +1,24 @@
 import SwiftSyntax
 
-struct AccessModifiers {
+// MARK: - Access modifiers
 
-  enum Value: String {
-    case `private`
-    case `fileprivate`
-    case `internal`
-    case `public`
-    case open
-  }
+enum AccessModifier: String {
+  case `private`
+  case `fileprivate`
+  case `internal`
+  case `public`
+  case open
+}
 
+struct GetSetAccessModifiers {
   // It is possible to have 'set' without 'get'!
   //   private(set) let elsa: String
   // means that 'get' is internal
-  let get: Value?
-  let set: Value?
+  let get: AccessModifier?
+  let set: AccessModifier?
 }
+
+// MARK: - Non access modifiers
 
 /// Modifier that is not an access modifier
 ///
@@ -43,9 +46,13 @@ enum Modifier: String {
 
 enum ParseModifiers {
 
+  // MARK: - Parse single
+
   enum SingleResult {
-    case accessModifier(AccessModifiers.Value)
-    case accessModifierWithSet(AccessModifiers.Value)
+    /// set
+    case accessModifier(AccessModifier)
+    /// private(set)
+    case setAccessModifier(AccessModifier)
     case operatorKind(Operator.Kind)
     case modifier(Modifier)
   }
@@ -55,13 +62,13 @@ enum ParseModifiers {
     // detailText = 'set' inside 'private(set)'
     let detailText = node.detail?.text.trimmed
 
-    if let value = AccessModifiers.Value(rawValue: text) {
+    if let value = AccessModifier(rawValue: text) {
       switch detailText {
       case .none:
         return .accessModifier(value)
       case .some(let detailText):
         assert(detailText == "set")
-        return .accessModifierWithSet(value)
+        return .setAccessModifier(value)
       }
     }
 
@@ -88,8 +95,10 @@ enum ParseModifiers {
     fatalError("Unknown modifier: '\(text)'!")
   }
 
+  // MARK: - Parse list
+
   struct ListResult {
-    fileprivate(set) var access: AccessModifiers?
+    fileprivate(set) var access: GetSetAccessModifiers?
     fileprivate(set) var operatorKind: Operator.Kind?
     fileprivate(set) var values = [Modifier]()
   }
@@ -108,10 +117,10 @@ enum ParseModifiers {
       switch Self.single(modifier) {
       case let .accessModifier(value):
         assert(oldAccessGet == nil)
-        result.access = AccessModifiers(get: value, set: oldAccessSet)
-      case let .accessModifierWithSet(value):
+        result.access = GetSetAccessModifiers(get: value, set: oldAccessSet)
+      case let .setAccessModifier(value):
         assert(oldAccessSet == nil)
-        result.access = AccessModifiers(get: oldAccessGet, set: value)
+        result.access = GetSetAccessModifiers(get: oldAccessGet, set: value)
       case let .operatorKind(value):
         assert(result.operatorKind == nil)
         result.operatorKind = value

@@ -5,18 +5,13 @@ class Variable: Declaration {
   let id: SyntaxIdentifier
   let name: String
   let keyword: String
-  let accessModifiers: AccessModifiers?
+  let accessModifiers: GetSetAccessModifiers?
   let modifiers: [Modifier]
   let typeAnnotation: TypeAnnotation?
   let initializer: VariableInitializer?
   let accessors: [Accessor]
 
   let attributes: [Attribute]
-
-  var description: String {
-    let formatter = Formatter.forDescription
-    return formatter.format(self)
-  }
 
   init(_ node: VariableDeclSyntax, binding: PatternBindingSyntax) {
     self.id = binding.id

@@ -4,7 +4,7 @@ class Enumeration: DeclarationWithScope {
 
   let id: SyntaxIdentifier
   let name: String
-  let accessModifiers: AccessModifiers?
+  let accessModifiers: GetSetAccessModifiers?
   let modifiers: [Modifier]
   let inheritance: [InheritedType]
 
@@ -13,11 +13,6 @@ class Enumeration: DeclarationWithScope {
   let genericRequirements: [GenericRequirement]
 
   let childScope = DeclarationScope()
-
-  var description: String {
-    let formatter = Formatter.forDescription
-    return formatter.format(self)
-  }
 
   init(_ node: EnumDeclSyntax) {
     self.id = node.id

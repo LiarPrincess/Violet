@@ -1,5 +1,6 @@
 import SwiftSyntax
 
+/// Value for `associatedtype` or `typealias`.
 struct TypeInitializer {
 
   let value: String
@@ -9,6 +10,7 @@ struct TypeInitializer {
   }
 }
 
+/// Value for variable or parameter.
 struct VariableInitializer {
 
   let value: String

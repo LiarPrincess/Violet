@@ -9,6 +9,8 @@ class ASTVisitor: SyntaxVisitor {
   /// All of the visited declarations by their `id`
   private var declarationsById = [SyntaxIdentifier: Declaration]()
 
+  // MARK: - Handle
+
   private func handle(_ declaration: Declaration) -> SyntaxVisitorContinueKind {
     self.declarationsById[declaration.id] = declaration
 

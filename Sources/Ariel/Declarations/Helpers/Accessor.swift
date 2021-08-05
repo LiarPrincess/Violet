@@ -35,6 +35,8 @@ struct Accessor {
     fatalError("Unknown variable accessor shape")
   }
 
+  // MARK: - var description: String { return "" }
+
   private static func parseCodeBlockItemListInBraces(children: [Syntax]) -> Accessor? {
     guard children.count == 3 else {
       return nil
@@ -52,6 +54,8 @@ struct Accessor {
 
     return Accessor(kind: .get, modifier: nil, attributes: [])
   }
+
+  // MARK: - var description: String { get }
 
   // swiftlint:disable:next discouraged_optional_collection
   private static func parseAccessorDeclsInBraces(children: [Syntax]) -> [Accessor]? {
@@ -98,16 +102,18 @@ struct Accessor {
     case .modifier(.nonmutating):
       return .nonmutating
     case .accessModifier,
-         .accessModifierWithSet,
+         .setAccessModifier,
          .operatorKind,
          .modifier:
-      fatalError("Invalid accesor modifier: '\(node)'")
+      fatalError("Invalid accessor modifier: '\(node)'")
     }
   }
 
   private static func parseAttributes(_ list: AttributeListSyntax?) -> [Attribute] {
-    list?.map(Attribute.init) ?? []
+    return list?.map(Attribute.init) ?? []
   }
+
+  // MARK: - Helpers
 
   private static func isSurroundedByBraces(_ children: [Syntax]) -> Bool {
     assert(children.hasAny)

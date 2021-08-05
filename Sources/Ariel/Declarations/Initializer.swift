@@ -3,7 +3,7 @@ import SwiftSyntax
 class Initializer: Declaration {
 
   let id: SyntaxIdentifier
-  let accessModifiers: AccessModifiers?
+  let accessModifiers: GetSetAccessModifiers?
   let modifiers: [Modifier]
   let isOptional: Bool
   let parameters: [Parameter]
@@ -12,11 +12,6 @@ class Initializer: Declaration {
   let attributes: [Attribute]
   let genericParameters: [GenericParameter]
   let genericRequirements: [GenericRequirement]
-
-  var description: String {
-    let formatter = Formatter.forDescription
-    return formatter.format(self)
-  }
 
   init(_ node: InitializerDeclSyntax) {
     self.id = node.id

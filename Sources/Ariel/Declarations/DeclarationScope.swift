@@ -34,7 +34,7 @@ class DeclarationScope {
   }
 
   func append(_ node: Declaration) {
-    class Appender: DeclarationVisitor {
+    class Visitor: DeclarationVisitor {
       let scope: DeclarationScope
 
       init(scope: DeclarationScope) {
@@ -55,8 +55,8 @@ class DeclarationScope {
       func visit(_ node: AssociatedType) { self.scope.append(node) }
     }
 
-    let appender = Appender(scope: self)
-    appender.visit(node)
+    let visitor = Visitor(scope: self)
+    visitor.visit(node)
   }
 
   func append(_ node: Enumeration) { self.enumerations.append(node) }

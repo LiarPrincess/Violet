@@ -1,5 +1,6 @@
 import SwiftSyntax
 
+/// Something like `<T: CustomStringConvertible>`.
 struct GenericParameter {
 
   let name: String
@@ -12,6 +13,7 @@ struct GenericParameter {
   }
 }
 
+/// Something like `where T: CustomStringConvertible`.
 struct GenericRequirement {
 
   enum Kind {

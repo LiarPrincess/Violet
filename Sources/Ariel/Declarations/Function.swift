@@ -4,7 +4,7 @@ class Function: Declaration {
 
   let id: SyntaxIdentifier
   let name: String
-  let accessModifiers: AccessModifiers?
+  let accessModifiers: GetSetAccessModifiers?
   let modifiers: [Modifier]
   let parameters: [Parameter]
   let output: Type?
@@ -13,11 +13,6 @@ class Function: Declaration {
   let attributes: [Attribute]
   let genericParameters: [GenericParameter]
   let genericRequirements: [GenericRequirement]
-
-  var description: String {
-    let formatter = Formatter.forDescription
-    return formatter.format(self)
-  }
 
   init(_ node: FunctionDeclSyntax) {
     self.id = node.id

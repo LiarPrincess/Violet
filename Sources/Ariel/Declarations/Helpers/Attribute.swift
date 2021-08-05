@@ -1,12 +1,17 @@
 import SwiftSyntax
 
+/// Attribute is the `@` thingy above declaration.
+///
+/// For example:
+/// - `@discardableResult`
+/// - `@available(*, deprecated)`
 struct Attribute {
 
   let name: String
 
   init(_ node: Syntax) {
     let children = Array(node.children)
-    assert(children.count >= 2)
+    assert(children.count >= 2) // '@' and then something
 
     let first = children[0]
     assert(first.isToken(withText: "@"))

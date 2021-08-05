@@ -4,6 +4,7 @@
 /// Convert: Declaration -> String
 struct Formatter {
 
+  /// Formatter used to implement `description`.
   static let forDescription = Formatter(
     newLineAfterAttribute: false,
     maxInitializerLength: 50
@@ -22,7 +23,7 @@ struct Formatter {
 
   func format(_ node: Declaration) -> String {
     // This is a small hack, but what we want to do is to call a proper method
-    // on 'self'. For this we will introduct auxiliary 'DeclarationVisitor' type.
+    // on 'self'. For this we will introduce auxiliary 'DeclarationVisitor' type.
 
     class Visitor: DeclarationVisitor {
       var result = ""
@@ -311,14 +312,14 @@ struct Formatter {
   // MARK: - Helper - Modifiers
 
   /// For example: `|private |`
-  private func formatWithSpaceAfter(_ accessModifier: AccessModifiers?) -> String {
+  private func formatWithSpaceAfter(_ modifiers: GetSetAccessModifiers?) -> String {
     var result = ""
 
-    if let get = accessModifier?.get {
+    if let get = modifiers?.get {
       result += get.rawValue + " "
     }
 
-    if let set = accessModifier?.set {
+    if let set = modifiers?.set {
       result += set.rawValue + "(set) "
     }
 

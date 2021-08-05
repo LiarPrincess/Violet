@@ -1,6 +1,6 @@
 import Foundation
 
-/// Walk the declarations, format and write to output
+/// Walk the declarations -> filter -> format -> write to output.
 class Writer {
 
   private let filter: DeclarationFilter

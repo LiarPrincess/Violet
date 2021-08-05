@@ -1,16 +1,27 @@
 import SwiftSyntax
 
+// MARK: - Declaration
+
 protocol Declaration: AnyObject, CustomStringConvertible {
   var id: SyntaxIdentifier { get }
-  var accessModifiers: AccessModifiers? { get }
+  var accessModifiers: GetSetAccessModifiers? { get }
 
   func accept(visitor: DeclarationVisitor)
 }
 
-/// `Declaration` that can contain nested `Declarations`
+extension Declaration {
+  var description: String {
+    let formatter = Formatter.forDescription
+    return formatter.format(self)
+  }
+}
+
+/// `Declaration` that contains nested `Declarations`
 protocol DeclarationWithScope: Declaration {
   var childScope: DeclarationScope { get }
 }
+
+// MARK: - Visitor
 
 protocol DeclarationVisitor: AnyObject {
   func visit(_ node: Enumeration)

@@ -4,18 +4,13 @@ class AssociatedType: Declaration {
 
   let id: SyntaxIdentifier
   let name: String
-  let accessModifiers: AccessModifiers?
+  let accessModifiers: GetSetAccessModifiers?
   let modifiers: [Modifier]
   let inheritance: [InheritedType]
   let initializer: TypeInitializer?
 
   let attributes: [Attribute]
   let genericRequirements: [GenericRequirement]
-
-  var description: String {
-    let formatter = Formatter.forDescription
-    return formatter.format(self)
-  }
 
   init(_ node: AssociatedtypeDeclSyntax) {
     self.id = node.id

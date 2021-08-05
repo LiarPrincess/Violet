@@ -1,5 +1,6 @@
 import SwiftSyntax
 
+/// Parameter for function or `init`.
 struct Parameter: CustomStringConvertible {
 
   let firstName: String?
