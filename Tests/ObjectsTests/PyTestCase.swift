@@ -3,16 +3,16 @@ import Foundation
 import VioletObjects
 
 /// Test case that uses `Py`.
-class PyTestCase: XCTestCase, PyDelegate, PyFileSystem {
+class PyTestCase: XCTestCase {
 
   var config: PyConfig = {
     var result = PyConfig(
       arguments: Arguments(),
       environment: Environment(),
       executablePath: "executable_path",
-      standardInput: PyFakeFileDescriptor(fd: 1),
-      standardOutput: PyFakeFileDescriptor(fd: 2),
-      standardError: PyFakeFileDescriptor(fd: 3)
+      standardInput: FakeReadFileDescriptor(fd: 1),
+      standardOutput: FakeWriteFileDescriptor(fd: 2),
+      standardError: FakeWriteFileDescriptor(fd: 3)
     )
 
     // Avoid file system access:
@@ -22,20 +22,18 @@ class PyTestCase: XCTestCase, PyDelegate, PyFileSystem {
     return result
   }()
 
-  private var isInsideInitialize = false
+  // swiftlint:disable:next weak_delegate
+  var delegate = FakeDelegate()
+  var fileSystem = FakeFileSystem()
 
   // MARK: - Set up
 
   override func setUp() {
     super.setUp()
 
-    self.isInsideInitialize = true
-    Py.initialize(
-      config: self.config,
-      delegate: self,
-      fileSystem: self
-    )
-    self.isInsideInitialize = false
+    Py.initialize(config: self.config,
+                  delegate: self.delegate,
+                  fileSystem: self.fileSystem)
   }
 
   // MARK: - Tear down
@@ -43,79 +41,5 @@ class PyTestCase: XCTestCase, PyDelegate, PyFileSystem {
   override func tearDown() {
     super.tearDown()
     Py.destroy()
-  }
-
-  // MARK: - PyDelegate
-
-  var frame: PyFrame? {
-    unreachable()
-  }
-
-  var currentlyHandledException: PyBaseException? {
-    unreachable()
-  }
-
-  // swiftlint:disable:next function_parameter_count
-  func eval(name: PyString?,
-            qualname: PyString?,
-            code: PyCode,
-
-            args: [PyObject],
-            kwargs: PyDict?,
-            defaults: [PyObject],
-            kwDefaults: PyDict?,
-
-            globals: PyDict,
-            locals: PyDict,
-            closure: PyTuple?) -> PyResult<PyObject> {
-    unreachable()
-  }
-
-  // MARK: - PyFileSystem
-
-  var currentWorkingDirectory = "cwd"
-
-  func open(fd: Int32, mode: FileMode) -> PyResult<FileDescriptorType> {
-    unreachable()
-  }
-
-  func open(path: String, mode: FileMode) -> PyResult<FileDescriptorType> {
-    unreachable()
-  }
-
-  func stat(fd: Int32) -> PyFileSystem_StatResult {
-    unreachable()
-  }
-
-  func stat(path: String) -> PyFileSystem_StatResult {
-    unreachable()
-  }
-
-  func listdir(fd: Int32) -> PyFileSystem_ListdirResult {
-    unreachable()
-  }
-
-  func listdir(path: String) -> PyFileSystem_ListdirResult {
-    unreachable()
-  }
-
-  func read(fd: Int32) -> PyResult<Data> {
-    unreachable()
-  }
-
-  func read(path: String) -> PyResult<Data> {
-    unreachable()
-  }
-
-  func basename(path: String) -> String {
-    unreachable()
-  }
-
-  func dirname(path: String) -> PyFileSystem_DirnameResult {
-    unreachable()
-  }
-
-  func join(paths: String...) -> String {
-    unreachable()
   }
 }

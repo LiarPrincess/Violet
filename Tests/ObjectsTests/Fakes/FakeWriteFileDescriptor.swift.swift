@@ -1,7 +1,8 @@
 import Foundation
+import VioletCore
 import VioletObjects
 
-class PyFakeFileDescriptor: FileDescriptorType {
+class FakeWriteFileDescriptor: FileDescriptorType {
 
   let raw: Int32
 
@@ -10,38 +11,38 @@ class PyFakeFileDescriptor: FileDescriptorType {
   }
 
   func readLine() -> PyResult<Data> {
-    unreachable()
+    shouldNotBeCalled()
   }
 
   func readToEnd() -> PyResult<Data> {
-    unreachable()
+    shouldNotBeCalled()
   }
 
   func read(upToCount count: Int) -> PyResult<Data> {
-    unreachable()
+    shouldNotBeCalled()
   }
 
   func write<T>(contentsOf data: T) -> PyResult<PyNone> where T: DataProtocol {
-    unreachable()
+    shouldNotBeCalled()
   }
 
   func flush() -> PyResult<PyNone> {
-    unreachable()
+    shouldNotBeCalled()
   }
 
   func offset() -> PyResult<UInt64> {
-    unreachable()
+    shouldNotBeCalled()
   }
 
   func seekToEnd() -> PyResult<UInt64> {
-    unreachable()
+    shouldNotBeCalled()
   }
 
   func seek(toOffset offset: UInt64) -> PyResult<PyNone> {
-    unreachable()
+    shouldNotBeCalled()
   }
 
   func close() -> PyResult<PyNone> {
-    unreachable()
+    shouldNotBeCalled()
   }
 }
