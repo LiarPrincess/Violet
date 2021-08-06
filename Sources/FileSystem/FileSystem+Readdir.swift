@@ -108,8 +108,7 @@ extension FileSystem {
       let length = Int(entry.d_namlen)
       let name = withUnsafePointer(to: &entry.d_name) { ptr -> String in
         let namePtr = UnsafeRawPointer(ptr).assumingMemoryBound(to: CChar.self)
-        return self.fileManager.string(withFileSystemRepresentation: namePtr,
-                                       length: length)
+        return self.string(withFileSystemRepresentation: namePtr, length: length)
       }
 
       if name != "." && name != ".." {
@@ -149,7 +148,6 @@ public struct ReaddirRec: Collection {
 
   public struct Element {
     public let name: String
-    public let absolutePath: Path
     /// Path relative to the `path` given as an argument.
     public let relativePath: Path
     public let stat: Stat
@@ -216,26 +214,16 @@ extension FileSystem {
         case .error(errno: let e): return .unableToStat(entryPath, errno: e)
         }
 
-        let isDirectory = stat.type == .directory
-
-        // We know if 'entry' is directory or not because we have stat,
-        // 'listdir' does not have this information.
-        let absolutePath = Path(string: entryPath.string,
-                                isDirectory: isDirectory)
-
-        let relativePath = self.getRelativePath(dir: path,
-                                                entry: entryPath,
-                                                isDirectory: isDirectory)
-
+        let relativePath = self.getRelativePath(dir: path, entry: entryPath)
         let element = ReaddirRec.Element(name: entry,
-                                         absolutePath: absolutePath,
                                          relativePath: relativePath,
                                          stat: stat)
 
         elements.append(element)
 
-        if isDirectory {
-          directoriesToScan.append(entryPath)
+        switch stat.type {
+        case .directory: directoriesToScan.append(entryPath)
+        default: break
         }
       }
     }
@@ -258,17 +246,15 @@ extension FileSystem {
     }
   }
 
-  private func getRelativePath(dir: Path,
-                               entry: Path,
-                               isDirectory: Bool) -> Path {
+  private func getRelativePath(dir: Path, entry: Path) -> Path {
     let dirString = dir.string
     let entryString = entry.string
 
-    var relativePathString = entryString.replacingOccurrences(of: dirString, with: "")
-    if relativePathString.hasPrefix("/") {
-      relativePathString = String(relativePathString.dropFirst())
+    var relativeString = entryString.replacingOccurrences(of: dirString, with: "")
+    if relativeString.hasPrefix("/") {
+      relativeString = String(relativeString.dropFirst())
     }
 
-    return Path(string: relativePathString, isDirectory: isDirectory)
+    return Path(string: relativeString)
   }
 }

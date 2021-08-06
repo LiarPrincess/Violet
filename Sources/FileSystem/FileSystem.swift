@@ -34,7 +34,7 @@ public struct FileSystem {
   /// directory containing provided `marker`.
   public func getRepositoryRoot(startingFrom: String = #file,
                                 marker: String = "Sources") -> RepositoryRootResult {
-    let filePath = Path(string: startingFrom, isDirectory: false)
+    let filePath = Path(string: startingFrom)
     var childPath = filePath
 
     while true {
@@ -115,10 +115,18 @@ public struct FileSystem {
     }
   }
 
+  /// Important: memory will be deallocated after `body` finishes!
+  ///
+  /// If you want to use it later then use one of the
+  /// `self.string(withFileSystemRepresentation:)` methods.
+  /// Do not use `String(cString)`!
   internal func withFileSystemRepresentation<ResultType>(
     path: NonEmptyPath,
     body: (UnsafePointer<Int8>) -> ResultType
   ) -> ResultType {
+    // This will copy the path, which is what we want since most of the methods
+    // we are using may modify the argument.
+    // (yes, even https://linux.die.net/man/3/basename is allowed to do this)
     let fsRep = self.fileManager.fileSystemRepresentation(withPath: path.string)
     let result = body(fsRep)
     fsRep.deallocate()
@@ -133,6 +141,18 @@ public struct FileSystem {
       let fsRepMut = UnsafeMutablePointer(mutating: fsRep)
       return body(fsRepMut)
     }
+  }
+
+  internal func string(withFileSystemRepresentation str: UnsafePointer<Int8>,
+                       length len: Int) -> String {
+    return self.fileManager.string(withFileSystemRepresentation: str, length: len)
+  }
+
+  internal func string(
+    nullTerminatedWithFileSystemRepresentation str: UnsafePointer<Int8>
+  ) -> String {
+    let len = Foundation.strlen(str)
+    return self.string(withFileSystemRepresentation: str, length: len)
   }
 
   internal func isPathSeparator(char: Character) -> Bool {

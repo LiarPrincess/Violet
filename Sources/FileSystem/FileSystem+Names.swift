@@ -7,8 +7,6 @@ extension FileSystem {
   // MARK: - Basename
 
   /// Returns the last part of a path.
-  ///
-  /// https://linux.die.net/man/3/basename
   public func basename(path: Path) -> String {
     guard let nonEmpty = NonEmptyPath(from: path) else {
       // $ basename ""
@@ -17,12 +15,13 @@ extension FileSystem {
 
     // 'Foundation.basename' returns 'UnsafeMutablePointer<Int8>!',
     // so it is safe to unwrap.
-    let cString = self.withMutableFileSystemRepresentation(
+    // https://linux.die.net/man/3/basename
+    let ptr = self.withMutableFileSystemRepresentation(
       path: nonEmpty,
       body: Foundation.basename
     )!
 
-    return String(cString: cString)
+    return self.string(nullTerminatedWithFileSystemRepresentation: ptr)
   }
 
   // MARK: - Extname
@@ -56,25 +55,24 @@ extension FileSystem {
   }
 
   /// Returns the directories of a path.
-  ///
-  /// https://linux.die.net/man/3/dirname
   public func dirname(path: Path) -> DirnameResult {
     guard let nonEmpty = NonEmptyPath(from: path) else {
       // $ dirname ""
-      let resultPath = Path(string: ".", isDirectory: true)
+      let resultPath = Path(string: ".")
       return DirnameResult(path: resultPath, isTop: true)
     }
 
     // 'Foundation.dirname' returns 'UnsafeMutablePointer<Int8>!',
     // so it is safe to unwrap.
-    let cString = self.withMutableFileSystemRepresentation(
+    // https://linux.die.net/man/1/dirname
+    let ptr = self.withMutableFileSystemRepresentation(
       path: nonEmpty,
       body: Foundation.dirname
     )!
 
-    let string = String(cString: cString)
+    let string = self.string(nullTerminatedWithFileSystemRepresentation: ptr)
     let isTop = string == "." || string == "/"
-    let resultPath = Path(string: string, isDirectory: true)
+    let resultPath = Path(string: string)
     return DirnameResult(path: resultPath, isTop: isTop)
   }
 }
