@@ -1,0 +1,274 @@
+import Foundation
+import VioletCore
+
+// This code was based on:
+// https://github.com/apple/swift-corelibs-foundation/blob/master/Sources/
+// Foundation/FileManager.swift
+
+// MARK: - Readdir
+
+public struct Readdir: Collection {
+
+  public typealias Element = String
+  public typealias Index = Int
+
+  internal var elements = [Element]()
+
+  public var startIndex: Index {
+    self.elements.startIndex
+  }
+
+  public var endIndex: Index {
+    return self.elements.endIndex
+  }
+
+  public subscript(index: Index) -> Element {
+    return self.elements[index]
+  }
+
+  public func index(after index: Index) -> Index {
+    return self.elements.index(after: index)
+  }
+
+  public mutating func sort<T: Comparable>(by key: KeyPath<Element, T>) {
+    self.elements.sort { lhs, rhs in
+      let lhsValue = lhs[keyPath: key]
+      let rhsValue = rhs[keyPath: key]
+      return lhsValue < rhsValue
+    }
+  }
+}
+
+extension FileSystem {
+
+  public enum ReaddirResult {
+    case value(Readdir)
+    case enoent
+    case error(errno: Int32)
+
+    fileprivate init(err: Int32) {
+      switch err {
+      case ENOENT: self = .enoent
+      default: self = .error(errno: err)
+      }
+    }
+  }
+
+  // MARK: - Readdir
+
+  /// `readdir()` returns a list containing the entries in the directory given by `fd`.
+  /// The list is in arbitrary order.
+  public func readdir(fd: Int32) -> ReaddirResult {
+    /// https://linux.die.net/man/3/fdopendir
+    guard let dir = Foundation.fdopendir(fd) else {
+      let err = errno
+      errno = 0
+      return ReaddirResult(err: err)
+    }
+
+    return self.readdirAndClose(dir: dir)
+  }
+
+  /// `readdir()` returns a list containing the entries in the directory given by `path`.
+  /// The list is in arbitrary order.
+  public func readdir(path: Path) -> ReaddirResult {
+    guard let nonEmpty = NonEmptyPath(from: path) else {
+      return .enoent
+    }
+
+    return self.withFileSystemRepresentation(path: nonEmpty) { fsRep in
+      // https://linux.die.net/man/3/opendir
+      guard let dir = opendir(fsRep) else {
+        let err = errno
+        errno = 0
+        return ReaddirResult(err: err)
+      }
+
+      return self.readdirAndClose(dir: dir)
+    }
+  }
+
+  private func readdirAndClose(dir: UnsafeMutablePointer<DIR>) -> ReaddirResult {
+    var result = [String]()
+
+    var entry = dirent()
+    var nilOnEnd: UnsafeMutablePointer<dirent>?
+
+    // https://linux.die.net/man/3/readdir_r
+    while true {
+      let err = Foundation.readdir_r(dir, &entry, &nilOnEnd)
+      guard err == 0 else {
+        return ReaddirResult(err: err)
+      }
+
+      if nilOnEnd == nil {
+        break
+      }
+
+      let length = Int(entry.d_namlen)
+      let name = withUnsafePointer(to: &entry.d_name) { ptr -> String in
+        let namePtr = UnsafeRawPointer(ptr).assumingMemoryBound(to: CChar.self)
+        return self.fileManager.string(withFileSystemRepresentation: namePtr,
+                                       length: length)
+      }
+
+      if name != "." && name != ".." {
+        result.append(name)
+      }
+    }
+
+    // https://linux.die.net/man/3/closedir
+    switch Foundation.closedir(dir) {
+    case 0:
+      return .value(Readdir(elements: result))
+    case let err:
+      // Should not happen, the only possible thing is:
+      // EBADF - Invalid directory stream descriptor dirp.
+      return ReaddirResult(err: err)
+    }
+  }
+
+  /// `listdir()` returns a list containing the entries in the directory given by `path`.
+  /// The list is in arbitrary order.
+  public func readdirOrTrap(path: Path) -> Readdir {
+    switch self.readdir(path: path) {
+    case .value(let r):
+      return r
+    case .enoent:
+      trap("Unable to readdir: No such file or directory: \(path)")
+    case .error(let err):
+      let msg = String(errno: err) ?? "Unknown error"
+      trap("Unable to readdir: \(msg): \(path)")
+    }
+  }
+}
+
+// MARK: - Readdir rec
+
+public struct ReaddirRec: Collection {
+
+  public struct Element {
+    public let name: String
+    public let absolutePath: Path
+    /// Path relative to the `path` given as an argument.
+    public let relativePath: Path
+    public let stat: Stat
+  }
+
+  public typealias Index = Int
+
+  internal var elements = [Element]()
+
+  public var startIndex: Index {
+    self.elements.startIndex
+  }
+
+  public var endIndex: Index {
+    return self.elements.endIndex
+  }
+
+  public subscript(index: Index) -> Element {
+    return self.elements[index]
+  }
+
+  public func index(after index: Index) -> Index {
+    return self.elements.index(after: index)
+  }
+
+  public mutating func sort<T: Comparable>(by key: KeyPath<Element, T>) {
+    self.elements.sort { lhs, rhs in
+      let lhsValue = lhs[keyPath: key]
+      let rhsValue = rhs[keyPath: key]
+      return lhsValue < rhsValue
+    }
+  }
+}
+
+extension FileSystem {
+
+  public enum ReaddirRecResult {
+    case value(ReaddirRec)
+    case unableToStat(Path, errno: Int32)
+    case unableToListContents(Path, errno: Int32)
+  }
+
+  /// Same as `readdir` but it will go into directories and list their items.
+  /// The list is in arbitrary order.
+  public func readdirRec(path: Path) -> ReaddirRecResult {
+    var directoriesToScan = [path]
+    var elements = [ReaddirRec.Element]()
+
+    while let dirPath = directoriesToScan.popLast() {
+      let dirContent: Readdir
+      switch self.readdir(path: dirPath) {
+      case .value(let r): dirContent = r
+      case .enoent: continue // Entry was removed after previous 'readdir'
+      case .error(errno: let e): return .unableToListContents(dirPath, errno: e)
+      }
+
+      for entry in dirContent {
+        let entryPath = self.join(path: dirPath, element: entry)
+
+        let stat: Stat
+        switch self.stat(path: entryPath) {
+        case .value(let s): stat = s
+        case .enoent: continue // Entry was removed after 'readdir'
+        case .error(errno: let e): return .unableToStat(entryPath, errno: e)
+        }
+
+        let isDirectory = stat.type == .directory
+
+        // We know if 'entry' is directory or not because we have stat,
+        // 'listdir' does not have this information.
+        let absolutePath = Path(string: entryPath.string,
+                                isDirectory: isDirectory)
+
+        let relativePath = self.getRelativePath(dir: path,
+                                                entry: entryPath,
+                                                isDirectory: isDirectory)
+
+        let element = ReaddirRec.Element(name: entry,
+                                         absolutePath: absolutePath,
+                                         relativePath: relativePath,
+                                         stat: stat)
+
+        elements.append(element)
+
+        if isDirectory {
+          directoriesToScan.append(entryPath)
+        }
+      }
+    }
+
+    return .value(ReaddirRec(elements: elements))
+  }
+
+  /// Same as `readdir` but it will go into directories and list their items.
+  /// The list is in arbitrary order.
+  public func readdirRecOrTrap(path: Path) -> ReaddirRec {
+    switch self.readdirRec(path: path) {
+    case let .value(r):
+      return r
+    case let .unableToStat(path, errno: e):
+      let msg = String(errno: e) ?? "Unable to stat"
+      trap("\(msg): \(path)")
+    case let .unableToListContents(path, errno: e):
+      let msg = String(errno: e) ?? "Unable to list contents of"
+      trap("\(msg): \(path)")
+    }
+  }
+
+  private func getRelativePath(dir: Path,
+                               entry: Path,
+                               isDirectory: Bool) -> Path {
+    let dirString = dir.string
+    let entryString = entry.string
+
+    var relativePathString = entryString.replacingOccurrences(of: dirString, with: "")
+    if relativePathString.hasPrefix("/") {
+      relativePathString = String(relativePathString.dropFirst())
+    }
+
+    return Path(string: relativePathString, isDirectory: isDirectory)
+  }
+}

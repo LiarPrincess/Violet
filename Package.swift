@@ -62,6 +62,13 @@ let package = Package(
     .target(name: "UnicodeData", dependencies: []),
     .testTarget(name: "UnicodeDataTests", dependencies: ["UnicodeData"]),
 
+    // Helper module for working with file system (duh…).
+    //
+    // Please note that this module was written 'on by-need basis'
+    // and may not conform to the quality standards of other Violet modules.
+    .target(name: "FileSystem", dependencies: ["VioletCore"]),
+    .testTarget(name: "FileSystemTests", dependencies: ["FileSystem"]),
+
     // String -> Tokens
     .target(name: "VioletLexer", dependencies: ["VioletCore", "BigInt"], path: "Sources/Lexer"),
     .testTarget(name: "VioletLexerTests", dependencies: ["VioletLexer"], path: "Tests/LexerTests"),
@@ -101,7 +108,7 @@ let package = Package(
     .testTarget(name: "RapunzelTests", dependencies: ["Rapunzel"]),
 
     // Tool to dump module interface (all of the 'public' and 'open' declarations)
-    .target(name: "Ariel", dependencies: [ "SwiftSyntax"]),
+    .target(name: "Ariel", dependencies: ["SwiftSyntax", "FileSystem"]),
     .testTarget(name: "ArielTests", dependencies: ["Ariel"])
   ]
 )
