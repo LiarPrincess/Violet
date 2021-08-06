@@ -97,7 +97,7 @@ let package = Package(
     .target(name: "Violet", dependencies: ["VioletVM"]),
 
     // Target for running tests written in Python (from 'PyTest' directory)
-    .target(name: "PyTests", dependencies: ["VioletVM"]),
+    .target(name: "PyTests", dependencies: ["VioletVM", "FileSystem"]),
 
     // Code generation tool used for AST and bytecode
     .target(name: "Elsa"),

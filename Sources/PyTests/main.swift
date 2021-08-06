@@ -1,14 +1,17 @@
 import Foundation
+import FileSystem
 import VioletCore
 import VioletObjects
 
 // swiftlint:disable let_var_whitespace
 
-let rootDir = FileSystem.getRepositoryRoot()
-let testDir = FileSystem.join(path: rootDir, element: "PyTests")
+let fileSystem = FileSystem.default
+
+let rootDir = fileSystem.getRepositoryRootOrTrap()
+let testDir = fileSystem.join(path: rootDir, element: "PyTests")
 
 // If we call 'open' we want to start at repository root.
-FileSystem.setCurrentWorkingDirectoryOrTrap(path: rootDir)
+fileSystem.setCurrentWorkingDirectoryOrTrap(path: rootDir)
 
 let arguments = Arguments()
 let environment = Environment()
@@ -23,7 +26,7 @@ var runner = TestRunner(
 // === RustPython tests ===
 // ========================
 
-let rustTestDir = FileSystem.join(path: testDir, element: "RustPython")
+let rustTestDir = fileSystem.join(path: testDir, element: "RustPython")
 runner.runAllTests(
   from: rustTestDir,
   skipping: [
@@ -36,7 +39,7 @@ runner.runAllTests(
 // === Violet tests ===
 // ====================
 
-let violetTestDir = FileSystem.join(path: testDir, element: "Violet")
+let violetTestDir = fileSystem.join(path: testDir, element: "Violet")
 runner.runAllTests(
   from: violetTestDir,
   skipping: [

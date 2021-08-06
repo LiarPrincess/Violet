@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 import VioletCore
 import VioletObjects
 import VioletVM
@@ -46,16 +47,17 @@ struct TestRunner {
   // MARK: - Run all tests
 
   mutating func runAllTests(from dir: Path, skipping: [String] = []) {
-    var entries = FileSystem.readdirOrTrap(path: dir)
-    entries.sort(by: \.name)
+    var entries = fileSystem.readdirOrTrap(path: dir)
+    entries.sort()
 
-    for entry in entries {
-      let stat = FileSystem.statOrTrap(path: entry.path)
-      guard stat.mode == .regularFile else {
+    for filename in entries {
+      let path = fileSystem.join(path: dir, element: filename)
+      let stat = fileSystem.statOrTrap(path: path)
+
+      guard stat.type == .regularFile else {
         continue
       }
 
-      let filename = entry.name
       guard filename.hasSuffix(".py") else {
         continue
       }
@@ -64,10 +66,9 @@ struct TestRunner {
         continue
       }
 
-      let dirname = FileSystem.dirname(path: dir)
-      let testName = "\(dirname) - \(filename)"
-
-      self.runTest(name: testName, path: entry.path)
+      let dirName = fileSystem.basename(path: dir)
+      let testName = "\(dirName) - \(filename)"
+      self.runTest(name: testName, path: path)
     }
   }
 

@@ -30,12 +30,8 @@ public struct Readdir: Collection {
     return self.elements.index(after: index)
   }
 
-  public mutating func sort<T: Comparable>(by key: KeyPath<Element, T>) {
-    self.elements.sort { lhs, rhs in
-      let lhsValue = lhs[keyPath: key]
-      let rhsValue = rhs[keyPath: key]
-      return lhsValue < rhsValue
-    }
+  public mutating func sort() {
+    self.elements.sort { $0 < $1 }
   }
 }
 

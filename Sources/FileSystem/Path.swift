@@ -2,7 +2,11 @@ import Foundation
 
 public struct Path: Equatable, Comparable, CustomStringConvertible {
 
-  internal let string: String
+  /// Most of the time you don't need this!
+  /// Just use relevant method from `FileSystem`.
+  ///
+  /// But if you really need it, then it is here.
+  public let string: String
 
   public var description: String {
     return self.string
