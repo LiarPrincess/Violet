@@ -27,7 +27,7 @@ class ASTVisitor: SyntaxVisitor {
 
   private func handlePost(_ id: SyntaxIdentifier) {
     guard let declaration = self.declarationsById[id] else {
-      fatalError("Visiting unknown declaration")
+      trap("Visiting unknown declaration")
     }
 
     if let scopedDeclaration = declaration as? DeclarationWithScope {

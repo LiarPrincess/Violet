@@ -34,6 +34,6 @@ struct Attribute {
       return
     }
 
-    fatalError("Unknown attribute shape!")
+    trap("Unknown attribute shape!")
   }
 }

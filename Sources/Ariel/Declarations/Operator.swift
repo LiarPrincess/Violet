@@ -26,7 +26,7 @@ class Operator: Declaration {
     self.modifiers = modifiers.values
 
     guard let kind = modifiers.operatorKind else {
-      fatalError("Operator without 'prefix/infix/postfix' modifier")
+      trap("Operator without 'prefix/infix/postfix' modifier")
     }
     self.kind = kind
 

@@ -88,11 +88,11 @@ enum ParseModifiers {
         assert(value == .unowned)
         return .modifier(.unownedUnsafe)
       case .some(let detailText):
-        fatalError("Unknown '\(text)' modifier detail: '\(detailText)'")
+        trap("Unknown '\(text)' modifier detail: '\(detailText)'")
       }
     }
 
-    fatalError("Unknown modifier: '\(text)'!")
+    trap("Unknown modifier: '\(text)'!")
   }
 
   // MARK: - Parse list

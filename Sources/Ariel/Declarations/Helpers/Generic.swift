@@ -42,6 +42,6 @@ struct GenericRequirement {
       return
     }
 
-    fatalError("Unknown generic requirement shape!")
+    trap("Unknown generic requirement shape!")
   }
 }

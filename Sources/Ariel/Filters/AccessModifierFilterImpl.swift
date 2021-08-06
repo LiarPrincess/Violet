@@ -84,7 +84,7 @@ class AccessModifierFilterImpl: FilterImpl {
 
   func isAccepted(declaration: Declaration) -> Bool {
     guard let result = self.nodeAcceptanceStatus[declaration.id] else {
-      fatalError("Node is missing from 'self.nodeAcceptanceStatus'")
+      trap("Node is missing from 'self.nodeAcceptanceStatus'")
     }
 
     return result

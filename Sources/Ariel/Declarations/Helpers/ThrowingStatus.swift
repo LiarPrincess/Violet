@@ -14,7 +14,7 @@ enum ThrowingStatus {
     case "rethrows":
       self = .rethrows
     default:
-      fatalError("Unknown throwing status: '\(text)'")
+      trap("Unknown throwing status: '\(text)'")
     }
   }
 }

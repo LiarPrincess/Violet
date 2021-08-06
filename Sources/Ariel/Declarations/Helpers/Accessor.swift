@@ -32,7 +32,7 @@ struct Accessor {
       return accessors
     }
 
-    fatalError("Unknown variable accessor shape")
+    trap("Unknown variable accessor shape")
   }
 
   // MARK: - var description: String { return "" }
@@ -77,7 +77,7 @@ struct Accessor {
       let kindString = node.accessorKind.text.trimmed
 
       guard let kind = Accessor.Kind(rawValue: kindString) else {
-        fatalError("Unknown accessor kind: '\(kindString)'")
+        trap("Unknown accessor kind: '\(kindString)'")
       }
 
       assert(!result.contains { $0.kind == kind })
@@ -105,7 +105,7 @@ struct Accessor {
          .setAccessModifier,
          .operatorKind,
          .modifier:
-      fatalError("Invalid accessor modifier: '\(node)'")
+      trap("Invalid accessor modifier: '\(node)'")
     }
   }
 
