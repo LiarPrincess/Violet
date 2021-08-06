@@ -1,36 +1,51 @@
 extension FileSystem {
 
+  public func join(path: Path, element: Path) -> Path {
+    return self.join(path: path, element: element.string)
+  }
+
   public func join(path: Path, element: String) -> Path {
-    return self.join(path: path, elements: [element])
+    var copy = path
+    self.join(path: &copy, element: element)
+    return copy
   }
 
   public func join(path: Path, elements: String...) -> Path {
-    let array = Array(elements)
-    return self.join(path: path, elements: array)
+    var copy = path
+
+    for e in elements {
+      self.join(path: &copy, element: e)
+    }
+
+    return copy
   }
 
   public func join(path: Path, elements: [String]) -> Path {
-    var result = path.string
+    var copy = path
 
-    for component in elements {
-      if component.isEmpty {
-        continue
-      }
-
-      // Is result empty?
-      guard let last = result.last else {
-        result = component
-        continue
-      }
-
-      if !self.isPathSeparator(char: last) {
-        // We will do this even if 'component' (or 'result') is empty.
-        result.append(pathSeparators[0])
-      }
-
-      result.append(component)
+    for e in elements {
+      self.join(path: &copy, element: e)
     }
 
-    return Path(string: result)
+    return copy
+  }
+
+  private func join(path: inout Path, element: String) {
+    if element.isEmpty {
+      return
+    }
+
+    // Is 'path' empty?
+    guard let last = path.string.last else {
+      path = Path(string: element)
+      return
+    }
+
+    if !self.isPathSeparator(char: last) {
+      // We will do this even if 'component' (or 'result') is empty.
+      path.string.append(pathSeparators[0])
+    }
+
+    path.string.append(element)
   }
 }

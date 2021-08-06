@@ -1,11 +1,14 @@
 import SwiftSyntax
 import Foundation
+import FileSystem
 
 private let minAccessModifier = AccessModifier.public
 private let maxInitializerLength = 100
 
-private func writeModuleInterface(moduleDirectory: ListDir.Element) throws {
-  var entries = try ListDirRec(path: moduleDirectory.absolutePath)
+private let fileSystem = FileSystem.default
+
+private func writeModuleInterface(moduleDirectory: Path) throws {
+  var entries = fileSystem.readdirRecOrTrap(path: moduleDirectory)
   entries.sort(by: \.relativePath)
 
   let filter = Filter(minAccessModifier: minAccessModifier)
@@ -16,13 +19,19 @@ private func writeModuleInterface(moduleDirectory: ListDir.Element) throws {
   let writer = Writer(filter: filter, formatter: formatter, output: output)
 
   for entry in entries {
-    guard entry.stat.isFile && entry.name.hasSuffix(".swift") else {
+    let filename = entry.name
+    let relativePath = entry.relativePath
+
+    let isFile = entry.stat.type == .regularFile
+    let isSwiftFile = isFile && filename.hasSuffix(".swift")
+    guard isSwiftFile else {
       continue
     }
 
-    print("Processing:", entry.relativePath)
+    print("Processing:", relativePath)
 
-    let fileUrl = URL(fileURLWithPath: entry.absolutePath, isDirectory: false)
+    let path = fileSystem.join(path: moduleDirectory, element: relativePath)
+    let fileUrl = URL(path: path, isDirectory: false)
     let fileContent = try String(contentsOf: fileUrl)
     let ast = try SyntaxParser.parse(source: fileContent)
 
@@ -30,21 +39,22 @@ private func writeModuleInterface(moduleDirectory: ListDir.Element) throws {
     astVisitor.walk(ast)
 
     let topLevelScope = astVisitor.topLevelScope
-    writer.write(file: entry, topLevelScope: topLevelScope)
+    writer.write(filename: filename, topLevelScope: topLevelScope)
   }
 }
 
-let sourcesDirPath = "..."
-let sourcesDirContent = try ListDir(path: sourcesDirPath)
+let sourcesDirPath = Path(string: "/Users/michal/Documents/Xcode/Violet/Sources")
+let sourcesDirContent = fileSystem.readdirOrTrap(path: sourcesDirPath)
 
-for entry in sourcesDirContent {
-  if entry.name == ".DS_Store" {
+for filename in sourcesDirContent {
+  if filename == ".DS_Store" {
     continue
   }
 
-  let stat = Stat(existingFilePath: entry.absolutePath)
-  if stat.isDirectory {
-    try writeModuleInterface(moduleDirectory: entry)
+  let path = fileSystem.join(path: sourcesDirPath, element: filename)
+  let stat = fileSystem.statOrTrap(path: path)
+  if stat.type == .directory {
+    try writeModuleInterface(moduleDirectory: path)
   }
 }
 

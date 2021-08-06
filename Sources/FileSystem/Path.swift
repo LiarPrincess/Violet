@@ -6,7 +6,7 @@ public struct Path: Equatable, Comparable, CustomStringConvertible {
   /// Just use relevant method from `FileSystem`.
   ///
   /// But if you really need it, then it is here.
-  public let string: String
+  public internal(set) var string: String
 
   public var description: String {
     return self.string
@@ -28,5 +28,16 @@ public struct Path: Equatable, Comparable, CustomStringConvertible {
 
   public static func < (lhs: Path, rhs: Path) -> Bool {
     return lhs.string < rhs.string
+  }
+}
+
+extension URL {
+
+  public init(path: Path) {
+    self = URL(fileURLWithPath: path.string)
+  }
+
+  public init(path: Path, isDirectory: Bool) {
+    self = URL(fileURLWithPath: path.string, isDirectory: isDirectory)
   }
 }

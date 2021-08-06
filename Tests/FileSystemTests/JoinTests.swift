@@ -31,10 +31,19 @@ class JoinTests: FileSystemTest {
                    line: line)
 
     if rest.count == 1 {
-      let singleResult = self.fileSystem.join(path: left, element: paths[1])
-      XCTAssertEqual(singleResult,
+      let other = paths[1]
+      let singleString = self.fileSystem.join(path: left, element: paths[1])
+      XCTAssertEqual(singleString,
                      expectedPath,
-                     "fileSystem.join(path:element:)",
+                     "fileSystem.join(path:element:) - string",
+                     file: file,
+                     line: line)
+
+      let otherPath = Path(string: other)
+      let singlePath = self.fileSystem.join(path: left, element: otherPath)
+      XCTAssertEqual(singlePath,
+                     expectedPath,
+                     "fileSystem.join(path:element:) - path",
                      file: file,
                      line: line)
     }
