@@ -1,6 +1,6 @@
 import VioletCore
 
-public class DirResult: PyFunctionResultConvertible {
+internal class DirResult: PyFunctionResultConvertible {
 
   private var elements = [PyObject]()
   private var cachedResult: PyFunctionResult?
@@ -32,7 +32,7 @@ public class DirResult: PyFunctionResultConvertible {
     self.append(contentsOf: newElements.elements)
   }
 
-  // MARK: - Append object
+  // MARK: - Append keys/elements
 
   internal func append(keysFrom object: PyObject) -> PyBaseException? {
     switch Py.callMethod(object: object, selector: .keys) {

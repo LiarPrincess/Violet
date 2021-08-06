@@ -119,7 +119,6 @@ extension PyType {
     /// - `name: PyString`
     /// - `qualifiedName: PyString`
     /// - `filename: PyString`
-    /// - `codeFlags: CodeObject.Flags`
     /// - `instructions: [Instruction]`
     /// - `firstLine: SourceLine`
     /// - `instructionLines: [SourceLine]`

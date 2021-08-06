@@ -133,7 +133,7 @@ class PyObjectFlagsTests: XCTestCase {
 
     for f in allFlags {
       let isSet = flags.isSet(f)
-      let expectedIsSet = self.isCutomUInt16Flag(f)
+      let expectedIsSet = self.isCustomUInt16Flag(f)
       XCTAssertEqual(isSet, expectedIsSet)
     }
   }
@@ -150,12 +150,12 @@ class PyObjectFlagsTests: XCTestCase {
 
     for f in allFlags {
       let isSet = flags.isSet(f)
-      let expectedIsSet = self.isCutomUInt16Flag(f)
+      let expectedIsSet = self.isCustomUInt16Flag(f)
       XCTAssertEqual(isSet, expectedIsSet)
     }
   }
 
-  private func isCutomUInt16Flag(_ f: Flags) -> Bool {
+  private func isCustomUInt16Flag(_ f: Flags) -> Bool {
     return customUInt16Flags.contains(f)
   }
 

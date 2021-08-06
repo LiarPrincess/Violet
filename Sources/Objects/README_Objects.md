@@ -219,7 +219,7 @@ Related resources:
 - [WWDC 2020: Safely manage pointers in Swift](https://developer.apple.com/videos/play/wwdc2020/10167)
 - [Swift forum: “Guarantee (in-memory) tuple layout…or don’t” thread by Jordan Rose](https://forums.swift.org/t/guarantee-in-memory-tuple-layout-or-dont/40122)
 - [Swift docs: TypeSafeMemory.rst](https://github.com/atrick/swift/blob/type-safe-mem-docs/docs/TypeSafeMemory.rst)
-- [Swift volution: UnsafeRawPointer API](https://github.com/apple/swift-evolution/blob/master/proposals/0107-unsaferawpointer.md)
+- [Swift evolution: UnsafeRawPointer API](https://github.com/apple/swift-evolution/blob/master/proposals/0107-unsaferawpointer.md)
 - [cppreference.com: Compatible types](https://en.cppreference.com/w/c/language/type)
 
 ## Problems (and solutions)
