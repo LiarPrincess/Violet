@@ -9,7 +9,7 @@ import VioletCore
 
 public struct Readdir: Collection {
 
-  public typealias Element = String
+  public typealias Element = Filename
   public typealias Index = Int
 
   internal var elements = [Element]()
@@ -85,7 +85,7 @@ extension FileSystem {
   }
 
   private func readdirAndClose(dir: UnsafeMutablePointer<DIR>) -> ReaddirResult {
-    var result = [String]()
+    var result = [Filename]()
 
     var entry = dirent()
     var nilOnEnd: UnsafeMutablePointer<dirent>?
@@ -108,7 +108,8 @@ extension FileSystem {
       }
 
       if name != "." && name != ".." {
-        result.append(name)
+        let filename = Filename(string: name)
+        result.append(filename)
       }
     }
 
@@ -143,7 +144,7 @@ extension FileSystem {
 public struct ReaddirRec: Collection {
 
   public struct Element {
-    public let name: String
+    public let name: Filename
     /// Path relative to the `path` given as an argument.
     public let relativePath: Path
     public let stat: Stat

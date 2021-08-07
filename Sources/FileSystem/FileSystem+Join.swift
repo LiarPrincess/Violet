@@ -4,6 +4,10 @@ extension FileSystem {
     return self.join(path: path, element: element.string)
   }
 
+  public func join(path: Path, element: Filename) -> Path {
+    return self.join(path: path, element: element.string)
+  }
+
   public func join(path: Path, element: String) -> Path {
     var copy = path
     self.join(path: &copy, element: element)

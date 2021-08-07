@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 
 /// Walk the declarations -> filter -> format -> write to output.
 class Writer {
@@ -14,7 +15,7 @@ class Writer {
     self.output = output
   }
 
-  func write(filename: String, topLevelScope: DeclarationScope) {
+  func write(filename: Filename, topLevelScope: DeclarationScope) {
     assert(self.indent.isEmpty, "Indent from previous file?")
 
     self.filter.walk(scope: topLevelScope)
@@ -27,9 +28,10 @@ class Writer {
       return
     }
 
-    let separator = String(repeating: "=", count: filename.count + 4 + 4)
+    let filenameString = String(describing: filename)
+    let separator = String(repeating: "=", count: filenameString.count + 4 + 4)
     self.print(separator)
-    self.print("=== \(filename) ===")
+    self.print("=== \(filenameString) ===")
     self.print(separator)
     self.print()
 

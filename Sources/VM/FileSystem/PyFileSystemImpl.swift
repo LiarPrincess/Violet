@@ -2,6 +2,8 @@ import Foundation
 import FileSystem
 import VioletObjects
 
+// cSpell:ignore fileio nameobj
+
 internal class PyFileSystemImpl: PyFileSystem {
 
   private let bundle: Bundle
@@ -120,8 +122,8 @@ internal class PyFileSystemImpl: PyFileSystem {
                                    path: String?) -> PyFileSystem_ListdirResult {
     switch result {
     case let .value(readdir):
-      let array = Array(readdir)
-      return .entries(array)
+      let result = readdir.map { $0.string }
+      return .entries(result)
 
     case .enoent:
       return .enoent
@@ -141,7 +143,8 @@ internal class PyFileSystemImpl: PyFileSystem {
 
   internal func basename(path: String) -> String {
     let p = Path(string: path)
-    return self.fileSystem.basename(path: p)
+    let result = self.fileSystem.basename(path: p)
+    return result.string
   }
 
   // MARK: - Dirname

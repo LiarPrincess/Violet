@@ -58,11 +58,13 @@ struct TestRunner {
         continue
       }
 
-      guard filename.hasSuffix(".py") else {
+      let ext = fileSystem.extname(filename: filename)
+      guard ext == ".py" else {
         continue
       }
 
-      if skipping.contains(filename) {
+      let isSkipped = skipping.contains { $0 == filename }
+      if isSkipped {
         continue
       }
 

@@ -27,8 +27,9 @@ class NameTests: FileSystemTest {
     let p = Path(string: path)
     let result = self.fileSystem.basename(path: p)
 
+    let expectedFilename = Filename(string: expected)
     XCTAssertEqual(result,
-                   expected,
+                   expectedFilename,
                    file: file,
                    line: line)
   }
@@ -76,6 +77,7 @@ class NameTests: FileSystemTest {
 
   func test_extname() {
     self.assertExtname(path: "elsa.letitgo", expected: ".letitgo")
+    self.assertExtname(path: "frozen/elsa.letitgo", expected: ".letitgo")
     self.assertExtname(path: "frozen", expected: "")
     self.assertExtname(path: "", expected: "")
   }
@@ -89,7 +91,20 @@ class NameTests: FileSystemTest {
 
     XCTAssertEqual(result,
                    expected,
+                   "Path",
                    file: file,
                    line: line)
+
+    let isNested = path.contains("/")
+    if !isNested {
+      let filename = Filename(string: path)
+      let filenameResult = self.fileSystem.extname(filename: filename)
+
+      XCTAssertEqual(filenameResult,
+                     expected,
+                     "Path",
+                     file: file,
+                     line: line)
+    }
   }
 }

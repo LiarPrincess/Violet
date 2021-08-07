@@ -43,7 +43,8 @@ public struct FileSystem {
 
       switch self.readdir(path: path) {
       case let .value(entries):
-        if entries.contains(marker) {
+        let hasMarker = entries.contains { $0.string == marker }
+        if hasMarker {
           return .value(path)
         }
       case .enoent:

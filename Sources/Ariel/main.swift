@@ -7,6 +7,12 @@ private let maxInitializerLength = 100
 
 private let fileSystem = FileSystem.default
 
+private func isSwiftFile(entry: ReaddirRec.Element) -> Bool {
+  let type = entry.stat.type
+  let ext = fileSystem.extname(filename: entry.name)
+  return type == .regularFile && ext == ".swift"
+}
+
 private func writeModuleInterface(moduleDirectory: Path) throws {
   var entries = fileSystem.readdirRecOrTrap(path: moduleDirectory)
   entries.sort(by: \.relativePath)
@@ -19,15 +25,11 @@ private func writeModuleInterface(moduleDirectory: Path) throws {
   let writer = Writer(filter: filter, formatter: formatter, output: output)
 
   for entry in entries {
-    let filename = entry.name
-    let relativePath = entry.relativePath
-
-    let isFile = entry.stat.type == .regularFile
-    let isSwiftFile = isFile && filename.hasSuffix(".swift")
-    guard isSwiftFile else {
+    guard isSwiftFile(entry: entry) else {
       continue
     }
 
+    let relativePath = entry.relativePath
     print("Processing:", relativePath)
 
     let path = fileSystem.join(path: moduleDirectory, element: relativePath)
@@ -39,7 +41,7 @@ private func writeModuleInterface(moduleDirectory: Path) throws {
     astVisitor.walk(ast)
 
     let topLevelScope = astVisitor.topLevelScope
-    writer.write(filename: filename, topLevelScope: topLevelScope)
+    writer.write(filename: entry.name, topLevelScope: topLevelScope)
   }
 }
 

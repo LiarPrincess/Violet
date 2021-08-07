@@ -26,6 +26,14 @@ public struct Path: Equatable, Comparable, CustomStringConvertible {
     return lhs.string == rhs.string
   }
 
+  public static func == (lhs: Path, rhs: String) -> Bool {
+    return lhs.string == rhs
+  }
+
+  public static func == (lhs: String, rhs: Path) -> Bool {
+    return lhs == rhs.string
+  }
+
   public static func < (lhs: Path, rhs: Path) -> Bool {
     return lhs.string < rhs.string
   }

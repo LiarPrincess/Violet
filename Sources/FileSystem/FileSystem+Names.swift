@@ -7,10 +7,10 @@ extension FileSystem {
   // MARK: - Basename
 
   /// Returns the last part of a path.
-  public func basename(path: Path) -> String {
+  public func basename(path: Path) -> Filename {
     guard let nonEmpty = NonEmptyPath(from: path) else {
       // $ basename ""
-      return ""
+      return Filename(string: "")
     }
 
     // 'Foundation.basename' returns 'UnsafeMutablePointer<Int8>!',
@@ -21,21 +21,28 @@ extension FileSystem {
       body: Foundation.basename
     )!
 
-    return self.string(nullTerminatedWithFileSystemRepresentation: ptr)
+    let string = self.string(nullTerminatedWithFileSystemRepresentation: ptr)
+    return Filename(string: string)
   }
 
   // MARK: - Extname
 
   /// Returns the file extension of a path.
-  public func extname(path: Path) -> String {
-    let basename = self.basename(path: path)
+  public func extname(filename: Filename) -> String {
+    let s = filename.string
 
-    if let dotIndex = basename.lastIndex(of: ".") {
-      let substring = basename[dotIndex...]
+    if let dotIndex = s.lastIndex(of: ".") {
+      let substring = s[dotIndex...]
       return String(substring)
     }
 
     return ""
+  }
+
+  /// Returns the file extension of a path.
+  public func extname(path: Path) -> String {
+    let basename = self.basename(path: path)
+    return self.extname(filename: basename)
   }
 
   // MARK: - Dirname
