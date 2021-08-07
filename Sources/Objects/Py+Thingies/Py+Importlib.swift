@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 import VioletCore
 
 // swiftlint:disable file_length
@@ -205,7 +206,7 @@ extension PyInstance {
       let modulePath = Py.fileSystem.join(paths: path.value, spec.filename)
       triedPaths.append(path.value)
 
-      let stat: PyFileSystem_Stat
+      let stat: Stat
       switch self.fileSystem.stat(path: modulePath) {
       case .value(let s): stat = s
       case .enoent: continue // No such file - just try next 'path'
@@ -217,8 +218,10 @@ extension PyInstance {
 
       // Currently our 'importlib' is just a single file,
       // there is no need to support full module with '__init__' etc.
-      if stat.isRegularFile {
-        return .value(modulePath)
+      switch stat.type {
+      case .regularFile: return .value(modulePath)
+      case .directory: trap("Ooo… 'importlib' is now a directory?")
+      default: trap("Unsupported 'importlib' type '\(stat.type)'.")
       }
     }
 

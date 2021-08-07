@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 import VioletCore
 
 // swiftlint:disable type_name
@@ -8,35 +9,11 @@ import VioletCore
 
 public enum PyFileSystem_StatResult {
   /// Valid result
-  case value(PyFileSystem_Stat)
+  case value(Stat)
   /// No such file or directory
   case enoent
   /// Ooops…
   case error(PyOSError)
-}
-
-/// Basically a `stat`, but with only the stuff we need.
-public struct PyFileSystem_Stat {
-
-  /// File type & permissions.
-  ///
-  /// https://www.gnu.org/software/libc/manual/html_node/Testing-File-Type.html
-  public let st_mode: mode_t
-  /// Modification time.
-  public let st_mtimespec: timespec
-
-  public var isRegularFile: Bool {
-    return (self.st_mode & S_IFMT) == S_IFREG
-  }
-
-  public var isDirectory: Bool {
-    return (self.st_mode & S_IFMT) == S_IFDIR
-  }
-
-  public init(st_mode: mode_t, st_mtime: timespec) {
-    self.st_mode = st_mode
-    self.st_mtimespec = st_mtime
-  }
 }
 
 // MARK: - Listdir

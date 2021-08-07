@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 import VioletCore
 import VioletObjects
 
@@ -72,8 +73,7 @@ extension VM {
   }
 
   private func getScriptLocation(path: String) -> PyResult<ScriptLocation> {
-    let stat: PyFileSystem_Stat
-
+    let stat: Stat
     switch self.fileSystem.stat(path: path) {
     case .value(let s):
       stat = s
@@ -83,30 +83,32 @@ extension VM {
       return .error(e)
     }
 
-    // If it is 'regular file' then return it,
-    // otherwise try '__main_._py' inside this dir.
-
-    if stat.isRegularFile {
+    switch stat.type {
+    case .regularFile:
       let dir = self.fileSystem.dirname(path: path)
-      return .value(ScriptLocation(__main__: path, directory: dir.path))
-    }
-
-    guard stat.isDirectory else {
+      let location = ScriptLocation(__main__: path, directory: dir.path)
+      return .value(location)
+    case .directory:
+      return self.try__main__(inside: path)
+    default:
       let msg = "'\(path)' is neither file nor directory (mode: \(stat.st_mode))"
       return .error(Py.newOSError(msg: msg))
     }
+  }
 
-    let dir = path
+  private func try__main__(inside dir: String) -> PyResult<ScriptLocation> {
     let main = self.fileSystem.join(paths: dir, "__main__.py")
 
     switch self.fileSystem.stat(path: main) {
-    case .value(let s):
-      if s.isRegularFile {
-        return .value(ScriptLocation(__main__: main, directory: dir))
+    case .value(let mainStat):
+      switch mainStat.type {
+      case .regularFile:
+        let location = ScriptLocation(__main__: main, directory: dir)
+        return .value(location)
+      default:
+        let msg = "'\(main)' is not a file (mode: \(mainStat.st_mode))"
+        return .error(Py.newOSError(msg: msg))
       }
-
-      let msg = "'\(main)' is not a file (mode: \(s.st_mode))"
-      return .error(Py.newOSError(msg: msg))
 
     case .enoent:
       return .error(Py.newFileNotFoundError(path: main))

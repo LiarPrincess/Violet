@@ -174,8 +174,8 @@ extension Sys {
 
   private func isFile(path: String) -> Bool {
     switch Py.fileSystem.stat(path: path) {
-    case .value(let s):
-      return s.isRegularFile
+    case .value(let stat):
+      return stat.type == .regularFile
     case .enoent,
          .error:
       return false

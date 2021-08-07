@@ -42,7 +42,12 @@ public struct Stat {
     }
   }
 
-  fileprivate init(stat: Foundation.stat) {
+  public init(st_mode: mode_t, st_mtimespec: timespec) {
+    self.st_mode = st_mode
+    self.st_mtimespec = st_mtimespec
+  }
+
+  public init(stat: Foundation.stat) {
     self.st_mode = stat.st_mode
     self.st_mtimespec = stat.st_mtimespec
   }

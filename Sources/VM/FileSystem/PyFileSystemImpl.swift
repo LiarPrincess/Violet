@@ -40,8 +40,6 @@ internal class PyFileSystemImpl: PyFileSystem {
   /// _io_FileIO___init___impl(fileio *self, PyObject *nameobj, … )
   internal func open(path: String, mode: FileMode) -> PyResult<FileDescriptorType> {
     var flags: Int32 = 0
-    let createMode: Int = 0o666
-
     switch mode {
     case .read: flags |= O_RDONLY
     case .write: flags |= O_WRONLY | O_CREAT | O_TRUNC
@@ -50,6 +48,7 @@ internal class PyFileSystemImpl: PyFileSystem {
     case .update: flags |= O_RDWR
     }
 
+    let createMode: Int = 0o666
     if let fd = FileDescriptor(path: path,
                                flags: flags,
                                createMode: createMode) {
@@ -83,12 +82,7 @@ internal class PyFileSystemImpl: PyFileSystem {
   private func handleStatResult(result: FileSystem.StatResult,
                                 path: String?) -> PyFileSystem_StatResult {
     switch result {
-    case let .value(s):
-      let stat = PyFileSystem_Stat(
-        st_mode: s.st_mode,
-        st_mtime: s.st_mtimespec
-      )
-
+    case let .value(stat):
       return .value(stat)
 
     case .enoent:

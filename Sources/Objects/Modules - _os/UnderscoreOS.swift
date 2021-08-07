@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 
 // cSpell:ignore posixmodule fileio nameobj
 
@@ -103,7 +104,7 @@ public final class UnderscoreOS: PyModuleImplementation {
     }
   }
 
-  private func createStat(from stat: PyFileSystem_Stat) -> PyResult<PyNamespace> {
+  private func createStat(from stat: Stat) -> PyResult<PyNamespace> {
     let dict = Py.newDict()
 
     let modeKey = Py.intern(string: "st_mode")
