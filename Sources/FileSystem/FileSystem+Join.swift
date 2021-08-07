@@ -1,20 +1,12 @@
 extension FileSystem {
 
-  public func join(path: Path, element: Path) -> Path {
-    return self.join(path: path, element: element.string)
-  }
-
-  public func join(path: Path, element: Filename) -> Path {
-    return self.join(path: path, element: element.string)
-  }
-
-  public func join(path: Path, element: String) -> Path {
+  public func join(path: Path, element: PathPartConvertible) -> Path {
     var copy = path
     self.join(path: &copy, element: element)
     return copy
   }
 
-  public func join(path: Path, elements: String...) -> Path {
+  public func join(path: Path, elements: PathPartConvertible...) -> Path {
     var copy = path
 
     for e in elements {
@@ -27,7 +19,7 @@ extension FileSystem {
   public func join<S: Sequence>(
     path: Path,
     elements: S
-  ) -> Path where S.Element == String {
+  ) -> Path where S.Element: PathPartConvertible {
     var copy = path
 
     for e in elements {
@@ -37,14 +29,16 @@ extension FileSystem {
     return copy
   }
 
-  private func join(path: inout Path, element: String) {
-    if element.isEmpty {
+  private func join(path: inout Path, element: PathPartConvertible) {
+    let part = element.pathPart
+
+    if part.isEmpty {
       return
     }
 
     // Is 'path' empty?
     guard let last = path.string.last else {
-      path = Path(string: element)
+      path = Path(string: part)
       return
     }
 
@@ -53,6 +47,6 @@ extension FileSystem {
       path.string.append(pathSeparators[0])
     }
 
-    path.string.append(element)
+    path.string.append(part)
   }
 }

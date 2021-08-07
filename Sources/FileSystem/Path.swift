@@ -1,6 +1,7 @@
 import Foundation
 
-public struct Path: Equatable, Comparable, CustomStringConvertible {
+public struct Path: Equatable, Comparable,
+                    CustomStringConvertible, PathPartConvertible {
 
   /// Most of the time you don't need this!
   /// Just use relevant method from `FileSystem`.
@@ -9,6 +10,10 @@ public struct Path: Equatable, Comparable, CustomStringConvertible {
   public internal(set) var string: String
 
   public var description: String {
+    return self.string
+  }
+
+  public var pathPart: String {
     return self.string
   }
 

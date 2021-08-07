@@ -3,7 +3,8 @@
 /// Some functions (like `readdir`) return a list of entries. If we just used
 /// `String` then the user would not know whether those entries represent
 /// full paths of just names. We will solve this on type level.
-public struct Filename: Equatable, Comparable, CustomStringConvertible {
+public struct Filename: Equatable, Comparable,
+                        CustomStringConvertible, PathPartConvertible {
 
   /// Most of the time you don't need this!
   /// Just use relevant method from `FileSystem`.
@@ -12,6 +13,10 @@ public struct Filename: Equatable, Comparable, CustomStringConvertible {
   public internal(set) var string: String
 
   public var description: String {
+    return self.string
+  }
+
+  public var pathPart: String {
     return self.string
   }
 
