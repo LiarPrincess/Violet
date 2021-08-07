@@ -90,7 +90,7 @@ let package = Package(
     .testTarget(name: "VioletObjectsTests", dependencies: ["VioletObjects"], path: "Tests/ObjectsTests"),
 
     // Bytecode interpretation (+ remaining part of the Python runtime)
-    .target(name: "VioletVM", dependencies: ["VioletObjects"], path: "Sources/VM"),
+    .target(name: "VioletVM", dependencies: ["VioletObjects", "FileSystem"], path: "Sources/VM"),
     .testTarget(name: "VioletVMTests", dependencies: ["VioletVM"], path: "Tests/VMTests"),
 
     // Main executable

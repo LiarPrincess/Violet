@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 import VioletObjects
 
 // swiftlint:disable file_length

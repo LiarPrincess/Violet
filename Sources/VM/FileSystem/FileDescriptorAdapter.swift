@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 import VioletObjects
 
 /// Adapter between `FileDescriptor` and `FileDescriptorType`.

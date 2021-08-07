@@ -3,7 +3,7 @@ import Foundation
 public protocol FileDescriptorType {
 
   /// Raw descriptor value.
-  /// It should be set to `-1` when file is closed.
+  /// It should be set to `-1` when the file is closed.
   var raw: Int32 { get }
 
   func readLine() -> PyResult<Data>
