@@ -8,7 +8,7 @@ public final class VM: PyDelegate {
   ///
   /// Current frame is last.
   internal var frames = [PyFrame]()
-  internal let fileSystem = FileSystemImpl(bundle: .main, fileManager: .default)
+  internal let fileSystem = PyFileSystemImpl(bundle: .main, fileSystem: .default)
 
   internal let arguments: Arguments
 

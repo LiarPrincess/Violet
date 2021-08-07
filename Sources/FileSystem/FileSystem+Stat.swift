@@ -57,11 +57,25 @@ extension FileSystem {
     case enoent
     case error(errno: Int32)
 
-    fileprivate init(stat: stat, err: Int32) {
+    fileprivate init(stat: stat, returnValue: Int32) {
+      // On success, zero is returned.
+      // On error, -1 is returned, and errno is set appropriately.
+
+      if returnValue == 0 {
+        self = .value(Stat(stat: stat))
+        return
+      }
+
+      assert(returnValue == -1)
+
+      let err = errno
+      errno = 0
+
       switch err {
-      case 0: self = .value(Stat(stat: stat))
-      case ENOENT: self = .enoent
-      default: self = .error(errno: err)
+      case ENOENT:
+        self = .enoent
+      default:
+        self = .error(errno: err)
       }
     }
   }
@@ -69,8 +83,8 @@ extension FileSystem {
   public func stat(fd: Int32) -> StatResult {
     // https://linux.die.net/man/2/fstat
     var data = Foundation.stat()
-    let err = Foundation.fstat(fd, &data)
-    return StatResult(stat: data, err: err)
+    let returnValue = Foundation.fstat(fd, &data)
+    return StatResult(stat: data, returnValue: returnValue)
    }
 
   /// https://man7.org/linux/man-pages/man2/stat.2.html
@@ -81,12 +95,12 @@ extension FileSystem {
     }
 
     var data = Foundation.stat()
-    let err = self.withFileSystemRepresentation(path: nonEmpty) {
+    let returnValue = self.withFileSystemRepresentation(path: nonEmpty) {
       // https://linux.die.net/man/2/lstat
       return Foundation.lstat($0, &data)
     }
 
-    return StatResult(stat: data, err: err)
+    return StatResult(stat: data, returnValue: returnValue)
   }
 
   public func statOrTrap(path: Path) -> Stat {

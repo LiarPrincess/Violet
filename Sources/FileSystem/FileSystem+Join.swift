@@ -20,7 +20,10 @@ extension FileSystem {
     return copy
   }
 
-  public func join(path: Path, elements: [String]) -> Path {
+  public func join<S: Sequence>(
+    path: Path,
+    elements: S
+  ) -> Path where S.Element == String {
     var copy = path
 
     for e in elements {

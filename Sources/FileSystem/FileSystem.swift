@@ -82,7 +82,7 @@ public struct FileSystem {
 
   // MARK: - CWD
 
-  public var currentDirectoryPath: String {
+  public var currentWorkingDirectory: String {
     return self.fileManager.currentDirectoryPath
   }
 
