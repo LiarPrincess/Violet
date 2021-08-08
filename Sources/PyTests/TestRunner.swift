@@ -84,7 +84,7 @@ struct TestRunner {
 
     var arguments = self.defaultArguments
     let environment = self.defaultEnvironment
-    arguments.script = path.string
+    arguments.script = path
 
     let vm = VM(arguments: arguments, environment: environment)
     switch vm.run() {

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Path: Equatable, Comparable,
+public struct Path: Equatable, Comparable, Hashable,
                     CustomStringConvertible, PathPartConvertible {
 
   /// Most of the time you don't need this!

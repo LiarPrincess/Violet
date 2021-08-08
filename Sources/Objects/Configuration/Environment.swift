@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 import VioletCompiler
 
 // Descriptions taken from: https://docs.python.org/3.7/using/cmdline.html
@@ -24,7 +25,7 @@ public struct Environment {
   /// Change the location of the standard Python libraries.
   /// By default (when `violetHome` is empty), Violet will traverse from
   /// `currentWorkingDirectory` to file system root looking for `lib` directory.
-  public var violetHome: String?
+  public var violetHome: Path?
 
   /// VIOLETPATH
   ///
@@ -110,10 +111,16 @@ public struct Environment {
   }
 }
 
-private func splitPath(_ path: String) -> [String] {
-  return path
-    .split(separator: Environment.pathSeparator)
-    .map { String($0) }
+private func splitPath(_ path: String) -> [Path] {
+  var result = [Path]()
+
+  let values = path.split(separator: Environment.pathSeparator)
+  for substring in values {
+    let string = String(substring)
+    result.append(Path(string: string))
+  }
+
+  return result
 }
 
 private func parseWarnings(_ value: String) -> [WarningOption] {

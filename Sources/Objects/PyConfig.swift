@@ -1,3 +1,5 @@
+import FileSystem
+
 public struct PyConfig {
 
   /// First part of 128 bit `SipHash` key.
@@ -19,7 +21,7 @@ public struct PyConfig {
   /// interpreter.
   ///
   /// Used for `sys.executable` and `sys.path`.
-  public var executablePath: String
+  public var executablePath: Path
 
   /// Default stream to read from.
   public var standardInput: FileDescriptorType
@@ -34,14 +36,14 @@ public struct PyConfig {
     ///
     /// If `nil`: it will use default `Python` logic to obtain value.
     /// Example usage: avoid file system access in unit tests.
-    public var path: [String]?
+    public var path: [Path]?
     // swiftlint:disable:previous discouraged_optional_collection
 
     /// Value to use as initial `sys.prefix`.
     ///
     /// If `nil` it will use default `Python` logic to obtain value.
     /// Example usage: avoid file system access in unit tests.
-    public var prefix: String?
+    public var prefix: Path?
   }
 
   /// Values used when initializing `sys`.
@@ -53,7 +55,7 @@ public struct PyConfig {
   public init(
     arguments: Arguments,
     environment: Environment,
-    executablePath: String,
+    executablePath: Path,
     standardInput: FileDescriptorType,
     standardOutput: FileDescriptorType,
     standardError: FileDescriptorType

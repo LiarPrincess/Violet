@@ -1,5 +1,6 @@
 import Foundation
 import BigInt
+import FileSystem
 import VioletCore
 import VioletLexer
 import VioletParser
@@ -193,9 +194,17 @@ extension PyInstance {
 
   // MARK: - File not found
 
+  public func newFileNotFoundError(path: Path) -> PyFileNotFoundError {
+    return self.newFileNotFoundError(path: path.string)
+  }
+
   public func newFileNotFoundError(path: String?) -> PyFileNotFoundError {
     let filename = path.map(self.fileSystem.basename(path:))
     return self.newFileNotFoundError(filename: filename)
+  }
+
+  public func newFileNotFoundError(filename: Filename) -> PyFileNotFoundError {
+    return self.newFileNotFoundError(filename: filename.string)
   }
 
   public func newFileNotFoundError(filename: String?) -> PyFileNotFoundError {

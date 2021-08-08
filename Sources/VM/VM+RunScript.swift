@@ -14,7 +14,7 @@ extension VM {
 
   /// int
   /// PyRun_SimpleFileExFlags(FILE *fp, const char *filename, int closeit, ...)
-  internal func run(scriptPath: String) -> PyResult<PyObject> {
+  internal func run(scriptPath: Path) -> PyResult<PyObject> {
     // From 'https://docs.python.org/3.7/using/cmdline.html':
     // Execute the Python code contained in script, which must be a filesystem path
     // (absolute or relative) referring to either a Python file, a directory
@@ -35,7 +35,7 @@ extension VM {
     }
 
     let code: PyCode
-    let compileResult = Py.compile(path: script.__main__, mode: .fileInput)
+    let compileResult = Py.compile(path: script.__main__.string, mode: .fileInput)
     switch compileResult.asResult() {
     case let .value(c): code = c
     case let .error(e): return .error(e)
@@ -67,12 +67,12 @@ extension VM {
 
   private struct ScriptLocation {
     /// File to execute.
-    fileprivate let __main__: String
+    fileprivate let __main__: Path
     /// Directory to add to `sys.path`.
-    fileprivate let directory: String
+    fileprivate let directory: Path
   }
 
-  private func getScriptLocation(path: String) -> PyResult<ScriptLocation> {
+  private func getScriptLocation(path: Path) -> PyResult<ScriptLocation> {
     let stat: Stat
     switch self.fileSystem.stat(path: path) {
     case .value(let s):
@@ -86,7 +86,7 @@ extension VM {
     switch stat.type {
     case .regularFile:
       let dir = self.fileSystem.dirname(path: path)
-      let location = ScriptLocation(__main__: path, directory: dir.path.string)
+      let location = ScriptLocation(__main__: path, directory: dir.path)
       return .value(location)
     case .directory:
       return self.try__main__(inside: path)
@@ -96,17 +96,17 @@ extension VM {
     }
   }
 
-  private func try__main__(inside dir: String) -> PyResult<ScriptLocation> {
-    let main = self.fileSystem.join(paths: dir, "__main__.py")
+  private func try__main__(inside dir: Path) -> PyResult<ScriptLocation> {
+    let main = self.fileSystem.join(path: dir, elements: "__main__.py")
 
     switch self.fileSystem.stat(path: main) {
-    case .value(let mainStat):
-      switch mainStat.type {
+    case .value(let stat):
+      switch stat.type {
       case .regularFile:
         let location = ScriptLocation(__main__: main, directory: dir)
         return .value(location)
       default:
-        let msg = "'\(main)' is not a file (mode: \(mainStat.st_mode))"
+        let msg = "'\(main)' is not a file (mode: \(stat.st_mode))"
         return .error(Py.newOSError(msg: msg))
       }
 

@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 import VioletCore
 import VioletObjects
 
@@ -228,7 +229,7 @@ extension VM {
   // MARK: - Helpers - set argv0
 
   /// Set given value as `sys.argv[0]`.
-  internal func setArgv0(value: String) -> PyBaseException? {
+  internal func setArgv0(value: Path) -> PyBaseException? {
     switch Py.sys.setArgv0(value: value) {
     case .value:
       return nil
@@ -240,7 +241,7 @@ extension VM {
   // MARK: - Helpers - prepend path
 
   /// Prepend given value to `sys.path`.
-  internal func prependPath(value: String) -> PyBaseException? {
+  internal func prependPath(value: Path) -> PyBaseException? {
     return Py.sys.prependPath(value: value)
   }
 

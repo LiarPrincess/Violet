@@ -1,4 +1,5 @@
 import ArgumentParser
+import FileSystem
 import VioletCore
 import VioletCompiler
 
@@ -115,7 +116,7 @@ public struct Arguments {
   /// which must be a filesystem path (absolute or relative)
   /// referring to either a Python file,
   /// or a directory containing a `__main__.py` file.
-  public var script: String?
+  public var script: Path?
 
   /// Arguments just as entered in command line (used for `sys.argv`).
   public var raw: [String] = []
@@ -162,14 +163,14 @@ public struct Arguments {
     // 'Command' should end with '\n'
     self.command = binding.command.map { $0 + "\n" }
     self.module = binding.module
-    self.script = binding.script
+    self.script = binding.script.map(Path.init(string:))
   }
 
   private mutating func appendWarning(flag: Bool, warning: WarningOption) {
     if flag {
       self.warnings.append(warning)
     }
-   }
+  }
 
   private func getOptimization(binding: ArgumentBinding) -> Compiler.OptimizationLevel {
     if binding.optimize2 {

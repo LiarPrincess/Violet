@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 import VioletCore
 
 // In CPython:
@@ -77,7 +78,7 @@ extension Sys {
   }
 
   /// Prepend given value to `sys.path`.
-  public func prependPath(value: String) -> PyBaseException? {
+  public func prependPath(value: Path) -> PyBaseException? {
     let path = self.getPath()
 
     switch path {
@@ -110,29 +111,33 @@ extension Sys {
       return self.asList(values: fromConfig)
     }
 
-    var result = [String]()
+    var result = [Path]()
 
     // Run-time value of $VIOLETPATH goes first
     let envPaths = Py.config.environment.violetPath
     result.append(contentsOf: envPaths)
 
+    let prefixPath = Path(string: prefix.value)
+
     // Next goes merge of compile-time $VIOLETPATH with dynamically located prefix.
     for suffix in Configure.pythonPath {
-      let path = Py.fileSystem.join(paths: prefix.value, suffix)
+      let path = Py.fileSystem.join(path: prefixPath, element: suffix)
       result.append(path)
     }
 
     // Violet special: add 'prefix' and 'prefix/Lib'
     // This will add 'Lib' directory from our repository root.
-    result.append(prefix.value)
-    result.append(Py.fileSystem.join(paths: prefix.value, lib))
+    result.append(prefixPath)
+
+    let libPath = Py.fileSystem.join(path: prefixPath, elements: lib)
+    result.append(libPath)
 
     result.removeDuplicates()
 
     return self.asList(values: result)
   }
 
-  private func asList(values: [String]) -> PyList {
+  private func asList(values: [Path]) -> PyList {
     let elements = values.map(Py.newString(_:))
     return Py.newList(elements: elements)
   }
@@ -156,8 +161,8 @@ extension Sys {
 
     while true {
       let dir = Py.fileSystem.dirname(path: path)
-      let dirPath = dir.path.string
-      let landmarkFile = Py.fileSystem.join(paths: dirPath, lib, landmark)
+      let dirPath = dir.path
+      let landmarkFile = Py.fileSystem.join(path: dirPath, elements: lib, landmark)
 
       if self.isFile(path: landmarkFile) {
         return Py.newString(dir.path)
@@ -173,7 +178,7 @@ extension Sys {
     return Py.newString(Configure.prefix)
   }
 
-  private func isFile(path: String) -> Bool {
+  private func isFile(path: Path) -> Bool {
     switch Py.fileSystem.stat(path: path) {
     case .value(let stat):
       return stat.type == .regularFile

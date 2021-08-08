@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 
 /// In CPython some values are configured in 'repo_root/configure' script.
 /// We don't have that, and it would be weird to just hard-code on by-need basis.
@@ -6,17 +7,17 @@ import Foundation
 /// So… we will move them to separate file.
 internal enum Configure {
 
-  internal static var pythonPath: [String] {
+  internal static var pythonPath: [Path] {
     return []
   }
 
-  internal static var prefix: String {
+  internal static var prefix: Path {
     let executable = Py.config.executablePath
     let dirname = Py.fileSystem.dirname(path: executable)
-    return dirname.path.string
+    return dirname.path
   }
 
-  internal static var execPrefix: String {
+  internal static var execPrefix: Path {
     return Configure.prefix
   }
 

@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 import VioletObjects
 
 // swiftlint:disable:next type_name
@@ -49,7 +50,7 @@ public final class VM: PyDelegate {
     let config = PyConfig(
       arguments: arguments,
       environment: environment,
-      executablePath: executablePath,
+      executablePath: Path(string: executablePath),
       standardInput: FileDescriptorAdapter(fd: .standardInput, path: "stdin"),
       standardOutput: FileDescriptorAdapter(fd: .standardOutput, path: "stdin"),
       standardError: FileDescriptorAdapter(fd: .standardError, path: "stderr")

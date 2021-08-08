@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 import VioletCore
 import VioletObjects
 
@@ -18,12 +19,14 @@ extension VM {
     // - sys.argv[0] is an empty string ("")
     // - current directory will be added to the start of sys.path.
 
-    if let e = self.setArgv0(value: "") {
+    let emptyPath = Path(string: "")
+    if let e = self.setArgv0(value: emptyPath) {
       return .error(e)
     }
 
     let cwd = self.fileSystem.currentWorkingDirectory
-    if let e = self.prependPath(value: cwd) {
+    let cwdPath = Path(string: cwd)
+    if let e = self.prependPath(value: cwdPath) {
       return .error(e)
     }
 

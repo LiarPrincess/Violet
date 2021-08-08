@@ -3,7 +3,7 @@
 /// Some functions (like `readdir`) return a list of entries. If we just used
 /// `String` then the user would not know whether those entries represent
 /// full paths of just names. We will solve this on type level.
-public struct Filename: Equatable, Comparable,
+public struct Filename: Equatable, Comparable, Hashable,
                         CustomStringConvertible, PathPartConvertible {
 
   /// Most of the time you don't need this!

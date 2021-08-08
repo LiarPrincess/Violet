@@ -1,5 +1,6 @@
 import Foundation
 import BigInt
+import FileSystem
 import VioletCore
 import VioletBytecode
 
@@ -102,6 +103,11 @@ extension PyInstance {
 
   public func newString(_ value: CustomStringConvertible) -> PyString {
     let string = String(describing: value)
+    return self.newString(string)
+  }
+
+  public func newString(_ value: Path) -> PyString {
+    let string = value.string
     return self.newString(string)
   }
 

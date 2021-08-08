@@ -1,3 +1,4 @@
+import FileSystem
 import VioletCore
 
 // In CPython:
@@ -66,6 +67,10 @@ extension Sys {
     }
 
     return .value(result)
+  }
+
+  public func setArgv0(value: Path) -> PyResult<PyNone> {
+    return self.setArgv0(value: value.string)
   }
 
   public func setArgv0(value: String) -> PyResult<PyNone> {
