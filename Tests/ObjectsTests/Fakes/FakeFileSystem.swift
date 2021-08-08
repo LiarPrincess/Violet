@@ -5,13 +5,13 @@ import VioletObjects
 
 class FakeFileSystem: PyFileSystem {
 
-  var currentWorkingDirectory = "cwd"
+  var currentWorkingDirectory = Path(string: "cwd")
 
   func open(fd: Int32, mode: FileMode) -> PyResult<FileDescriptorType> {
     shouldNotBeCalled()
   }
 
-  func open(path: String, mode: FileMode) -> PyResult<FileDescriptorType> {
+  func open(path: Path, mode: FileMode) -> PyResult<FileDescriptorType> {
     shouldNotBeCalled()
   }
 
@@ -19,7 +19,7 @@ class FakeFileSystem: PyFileSystem {
     shouldNotBeCalled()
   }
 
-  func stat(path: String) -> PyFileSystem_StatResult {
+  func stat(path: Path) -> PyFileSystem_StatResult {
     shouldNotBeCalled()
   }
 
@@ -27,7 +27,7 @@ class FakeFileSystem: PyFileSystem {
     shouldNotBeCalled()
   }
 
-  func readdir(path: String) -> PyFileSystem_ReaddirResult {
+  func readdir(path: Path) -> PyFileSystem_ReaddirResult {
     shouldNotBeCalled()
   }
 
@@ -35,19 +35,27 @@ class FakeFileSystem: PyFileSystem {
     shouldNotBeCalled()
   }
 
-  func read(path: String) -> PyResult<Data> {
+  func read(path: Path) -> PyResult<Data> {
     shouldNotBeCalled()
   }
 
-  func basename(path: String) -> String {
+  func basename(path: Path) -> Filename {
     shouldNotBeCalled()
   }
 
-  func dirname(path: String) -> FileSystem.DirnameResult {
+  func dirname(path: Path) -> FileSystem.DirnameResult {
     shouldNotBeCalled()
   }
 
-  func join(paths: String...) -> String {
+  func join(path: Path, element: PathPartConvertible) -> Path {
+    shouldNotBeCalled()
+  }
+
+  func join<T: PathPartConvertible>(path: Path, elements: T...) -> Path {
+    shouldNotBeCalled()
+  }
+
+  func join<T: PathPartConvertible>(path: Path, elements: [T]) -> Path {
     shouldNotBeCalled()
   }
 }

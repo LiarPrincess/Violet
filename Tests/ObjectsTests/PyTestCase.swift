@@ -1,5 +1,6 @@
 import XCTest
 import Foundation
+import FileSystem
 import VioletObjects
 
 /// Test case that uses `Py`.
@@ -9,15 +10,18 @@ class PyTestCase: XCTestCase {
     var result = PyConfig(
       arguments: Arguments(),
       environment: Environment(),
-      executablePath: "executable_path",
+      executablePath: Path(string: "executable_path"),
       standardInput: FakeReadFileDescriptor(fd: 1),
       standardOutput: FakeWriteFileDescriptor(fd: 2),
       standardError: FakeWriteFileDescriptor(fd: 3)
     )
 
     // Avoid file system access:
-    result.sys.prefix = "prefix"
-    result.sys.path = ["path_entry_0", "path_entry_1"]
+    result.sys.prefix = Path(string: "prefix")
+    result.sys.path = [
+      Path(string: "path_entry_0"),
+      Path(string: "path_entry_1")
+    ]
 
     return result
   }()

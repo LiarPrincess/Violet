@@ -1,5 +1,6 @@
 import XCTest
 import Foundation
+import FileSystem
 @testable import VioletObjects
 
 // Song reference: https://youtu.be/40kfRj_ZUHY?t=36
@@ -13,7 +14,7 @@ class EnvironmentTests: XCTestCase {
     ])
 
     var expected = Environment()
-    expected.violetHome = "All those days, chasing down a daydream"
+    expected.violetHome = Path(string: "All those days, chasing down a daydream")
     self.assertEqual(env, expected)
   }
 
@@ -24,7 +25,7 @@ class EnvironmentTests: XCTestCase {
     ])
 
     var expected = Environment()
-    expected.violetHome = "All those years"
+    expected.violetHome = Path(string: "All those years")
     self.assertEqual(env, expected)
   }
 
@@ -37,7 +38,7 @@ class EnvironmentTests: XCTestCase {
     let env = Environment(from: dict)
 
     var expected = Environment()
-    expected.violetHome = "All that time"
+    expected.violetHome = Path(string: "All that time")
     self.assertEqual(env, expected)
   }
 
@@ -49,7 +50,7 @@ class EnvironmentTests: XCTestCase {
     ])
 
     var expected = Environment()
-    expected.violetPath = ["Things the way they were"]
+    expected.violetPath = [Path(string: "Things the way they were")]
     self.assertEqual(env, expected)
   }
 
@@ -59,7 +60,10 @@ class EnvironmentTests: XCTestCase {
     ])
 
     var expected = Environment()
-    expected.violetPath = ["Now she's here", "shining in the starlight"]
+    expected.violetPath = [
+      Path(string: "Now she's here"),
+      Path(string: "shining in the starlight")
+    ]
     self.assertEqual(env, expected)
   }
 
@@ -69,7 +73,10 @@ class EnvironmentTests: XCTestCase {
     ])
 
     var expected = Environment()
-    expected.violetPath = ["Now she's here", "suddenly I know"]
+    expected.violetPath = [
+      Path(string: "Now she's here"),
+      Path(string: "suddenly I know")
+    ]
     self.assertEqual(env, expected)
   }
 
