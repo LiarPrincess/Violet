@@ -62,50 +62,40 @@ extension FileSystem {
     case enoent
     case error(errno: Int32)
 
-    fileprivate init(stat: stat, returnValue: Int32) {
-      // On success, zero is returned.
-      // On error, -1 is returned, and errno is set appropriately.
-
-      if returnValue == 0 {
-        self = .value(Stat(stat: stat))
-        return
-      }
-
-      assert(returnValue == -1)
-
-      let err = errno
-      errno = 0
-
-      switch err {
-      case ENOENT:
-        self = .enoent
-      default:
-        self = .error(errno: err)
+    fileprivate init(result: LibC.StatResult, data: stat) {
+      switch result {
+      case .ok:
+        let s = Stat(stat: data)
+        self = .value(s)
+      case .errno(let err):
+        switch err {
+        case ENOENT:
+          self = .enoent
+        default:
+          self = .error(errno: err)
+        }
       }
     }
   }
 
   public func stat(fd: Int32) -> StatResult {
-    // https://linux.die.net/man/2/fstat
-    var data = Foundation.stat()
-    let returnValue = Foundation.fstat(fd, &data)
-    return StatResult(stat: data, returnValue: returnValue)
-   }
+    var data = LibC.createStat()
+    let result = LibC.fstat(fd: fd, buf: &data)
+    return StatResult(result: result, data: data)
+  }
 
-  /// https://man7.org/linux/man-pages/man2/stat.2.html
   public func stat(path: Path) -> StatResult {
     guard let nonEmpty = NonEmptyPath(from: path) else {
       // $ stat ""
       return .enoent
     }
 
-    var data = Foundation.stat()
-    let returnValue = self.withFileSystemRepresentation(path: nonEmpty) {
-      // https://linux.die.net/man/2/lstat
-      return Foundation.lstat($0, &data)
+    var data = LibC.createStat()
+    let result = self.withFileSystemRepresentation(path: nonEmpty) {
+      return LibC.lstat(path: $0, buf: &data)
     }
 
-    return StatResult(stat: data, returnValue: returnValue)
+    return StatResult(result: result, data: data)
   }
 
   public func statOrTrap(path: Path) -> Stat {

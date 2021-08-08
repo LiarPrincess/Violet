@@ -56,14 +56,8 @@ extension FileSystem {
   /// `readdir()` returns a list containing the entries in the directory given by `fd`.
   /// The list is in arbitrary order.
   public func readdir(fd: Int32) -> ReaddirResult {
-    /// https://linux.die.net/man/3/fdopendir
-    guard let dir = Foundation.fdopendir(fd) else {
-      let err = errno
-      errno = 0
-      return ReaddirResult(err: err)
-    }
-
-    return self.readdirAndClose(dir: dir)
+    let opendir = LibC.fdopendir(fd: fd)
+    return self.readdirAndClose(opendirResult: opendir)
   }
 
   /// `readdir()` returns a list containing the entries in the directory given by `path`.
@@ -74,54 +68,61 @@ extension FileSystem {
     }
 
     return self.withFileSystemRepresentation(path: nonEmpty) { fsRep in
-      // https://linux.die.net/man/3/opendir
-      guard let dir = opendir(fsRep) else {
-        let err = errno
-        errno = 0
-        return ReaddirResult(err: err)
-      }
-
-      return self.readdirAndClose(dir: dir)
+      let opendir = LibC.opendir(name: fsRep)
+      return self.readdirAndClose(opendirResult: opendir)
     }
   }
 
-  private func readdirAndClose(dir: UnsafeMutablePointer<DIR>) -> ReaddirResult {
+  private func readdirAndClose(
+    opendirResult: LibC.OpendirResult
+  ) -> ReaddirResult {
+    switch opendirResult {
+    case let .value(dirp):
+      return self.readdirAndClose(dirp: dirp)
+    case let .errno(err):
+      return ReaddirResult(err: err)
+    }
+  }
+
+  private func readdirAndClose(dirp: UnsafeMutablePointer<DIR>) -> ReaddirResult {
     var result = [Filename]()
 
-    var entry = dirent()
+    var entry = LibC.createDirent()
     var nilOnEnd: UnsafeMutablePointer<dirent>?
 
-    // https://linux.die.net/man/3/readdir_r
-    while true {
-      let err = Foundation.readdir_r(dir, &entry, &nilOnEnd)
-      guard err == 0 else {
+    var hasNextEntry = true
+    while hasNextEntry {
+      switch LibC.readdir_r(dirp: dirp, entry: &entry, result: &nilOnEnd) {
+      case .entryWasUpdated:
+        let name = self.getName(entry: &entry)
+
+        if name != "." && name != ".." {
+          let filename = Filename(string: name)
+          result.append(filename)
+        }
+
+      case .noMoreEntries:
+        hasNextEntry = false
+      case .errno(let err):
         return ReaddirResult(err: err)
-      }
-
-      if nilOnEnd == nil {
-        break
-      }
-
-      let length = Int(entry.d_namlen)
-      let name = withUnsafePointer(to: &entry.d_name) { ptr -> String in
-        let namePtr = UnsafeRawPointer(ptr).assumingMemoryBound(to: CChar.self)
-        return self.string(withFileSystemRepresentation: namePtr, length: length)
-      }
-
-      if name != "." && name != ".." {
-        let filename = Filename(string: name)
-        result.append(filename)
       }
     }
 
-    // https://linux.die.net/man/3/closedir
-    switch Foundation.closedir(dir) {
-    case 0:
+    switch LibC.closedir(dirp: dirp) {
+    case .ok:
       return .value(Readdir(entries: result))
-    case let err:
+    case .errno(let err):
       // Should not happen, the only possible thing is:
       // EBADF - Invalid directory stream descriptor dirp.
       return ReaddirResult(err: err)
+    }
+  }
+
+  private func getName(entry: inout dirent) -> String {
+    let length = Int(entry.d_namlen)
+    return withUnsafePointer(to: &entry.d_name) { ptr in
+      let namePtr = UnsafeRawPointer(ptr).assumingMemoryBound(to: CChar.self)
+      return self.string(withFileSystemRepresentation: namePtr, length: length)
     }
   }
 

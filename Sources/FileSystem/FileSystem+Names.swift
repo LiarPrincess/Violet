@@ -1,7 +1,5 @@
 import Foundation
 
-// swiftlint:disable force_unwrapping
-
 extension FileSystem {
 
   // MARK: - Basename
@@ -13,13 +11,10 @@ extension FileSystem {
       return Filename(string: "")
     }
 
-    // 'Foundation.basename' returns 'UnsafeMutablePointer<Int8>!',
-    // so it is safe to unwrap.
-    // https://linux.die.net/man/3/basename
     let ptr = self.withMutableFileSystemRepresentation(
       path: nonEmpty,
-      body: Foundation.basename
-    )!
+      body: LibC.basename(path:)
+    )
 
     let string = self.string(nullTerminatedWithFileSystemRepresentation: ptr)
     return Filename(string: string)
@@ -69,13 +64,10 @@ extension FileSystem {
       return DirnameResult(path: resultPath, isTop: true)
     }
 
-    // 'Foundation.dirname' returns 'UnsafeMutablePointer<Int8>!',
-    // so it is safe to unwrap.
-    // https://linux.die.net/man/1/dirname
     let ptr = self.withMutableFileSystemRepresentation(
       path: nonEmpty,
-      body: Foundation.dirname
-    )!
+      body: LibC.dirname(path:)
+    )
 
     let string = self.string(nullTerminatedWithFileSystemRepresentation: ptr)
     let isTop = string == "." || string == "/"

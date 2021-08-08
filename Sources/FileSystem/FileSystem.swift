@@ -153,7 +153,7 @@ public struct FileSystem {
   internal func string(
     nullTerminatedWithFileSystemRepresentation str: UnsafePointer<Int8>
   ) -> String {
-    let len = Foundation.strlen(str)
+    let len = LibC.strlen(str: str)
     return self.string(withFileSystemRepresentation: str, length: len)
   }
 
