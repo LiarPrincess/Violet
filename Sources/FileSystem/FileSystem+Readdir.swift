@@ -9,29 +9,30 @@ import VioletCore
 
 public struct Readdir: Collection {
 
-  public typealias Element = Filename
-  public typealias Index = Int
+  private var entries: [Filename]
 
-  internal var elements = [Element]()
-
-  public var startIndex: Index {
-    self.elements.startIndex
+  public var startIndex: Int {
+    self.entries.startIndex
   }
 
-  public var endIndex: Index {
-    return self.elements.endIndex
+  public var endIndex: Int {
+    return self.entries.endIndex
   }
 
-  public subscript(index: Index) -> Element {
-    return self.elements[index]
+  public init(entries: [Filename]) {
+    self.entries = entries
   }
 
-  public func index(after index: Index) -> Index {
-    return self.elements.index(after: index)
+  public subscript(index: Int) -> Filename {
+    return self.entries[index]
+  }
+
+  public func index(after index: Int) -> Int {
+    return self.entries.index(after: index)
   }
 
   public mutating func sort() {
-    self.elements.sort { $0 < $1 }
+    self.entries.sort { $0 < $1 }
   }
 }
 
@@ -116,7 +117,7 @@ extension FileSystem {
     // https://linux.die.net/man/3/closedir
     switch Foundation.closedir(dir) {
     case 0:
-      return .value(Readdir(elements: result))
+      return .value(Readdir(entries: result))
     case let err:
       // Should not happen, the only possible thing is:
       // EBADF - Invalid directory stream descriptor dirp.
@@ -124,7 +125,7 @@ extension FileSystem {
     }
   }
 
-  /// `listdir()` returns a list containing the entries in the directory given by `path`.
+  /// `readdir()` returns a list containing the entries in the directory given by `path`.
   /// The list is in arbitrary order.
   public func readdirOrTrap(path: Path) -> Readdir {
     switch self.readdir(path: path) {
@@ -143,35 +144,37 @@ extension FileSystem {
 
 public struct ReaddirRec: Collection {
 
-  public struct Element {
+  public struct Entry {
     public let name: Filename
     /// Path relative to the `path` given as an argument.
     public let relativePath: Path
     public let stat: Stat
   }
 
-  public typealias Index = Int
+  internal var entries = [Entry]()
 
-  internal var elements = [Element]()
-
-  public var startIndex: Index {
-    self.elements.startIndex
+  public var startIndex: Int {
+    return self.entries.startIndex
   }
 
-  public var endIndex: Index {
-    return self.elements.endIndex
+  public var endIndex: Int {
+    return self.entries.endIndex
   }
 
-  public subscript(index: Index) -> Element {
-    return self.elements[index]
+  public init(entries: [Entry]) {
+    self.entries = entries
   }
 
-  public func index(after index: Index) -> Index {
-    return self.elements.index(after: index)
+  public subscript(index: Int) -> Entry {
+    return self.entries[index]
   }
 
-  public mutating func sort<T: Comparable>(by key: KeyPath<Element, T>) {
-    self.elements.sort { lhs, rhs in
+  public func index(after index: Int) -> Int {
+    return self.entries.index(after: index)
+  }
+
+  public mutating func sort<T: Comparable>(by key: KeyPath<Entry, T>) {
+    self.entries.sort { lhs, rhs in
       let lhsValue = lhs[keyPath: key]
       let rhsValue = rhs[keyPath: key]
       return lhsValue < rhsValue
@@ -191,7 +194,7 @@ extension FileSystem {
   /// The list is in arbitrary order.
   public func readdirRec(path: Path) -> ReaddirRecResult {
     var directoriesToScan = [path]
-    var elements = [ReaddirRec.Element]()
+    var result = [ReaddirRec.Element]()
 
     while let dirPath = directoriesToScan.popLast() {
       let dirContent: Readdir
@@ -216,7 +219,7 @@ extension FileSystem {
                                          relativePath: relativePath,
                                          stat: stat)
 
-        elements.append(element)
+        result.append(element)
 
         switch stat.type {
         case .directory: directoriesToScan.append(entryPath)
@@ -225,7 +228,7 @@ extension FileSystem {
       }
     }
 
-    return .value(ReaddirRec(elements: elements))
+    return .value(ReaddirRec(entries: result))
   }
 
   /// Same as `readdir` but it will go into directories and list their items.

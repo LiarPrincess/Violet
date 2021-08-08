@@ -31,7 +31,7 @@ let config = PyConfig(
 // - evaluating code objects - for example when we call `myObject + 1` where `myObject` is an instance of a class with custom `__add__` magic method
 let delegate: PyDelegate = …
 
-// 'PyFileSystem' is responsible for: opening files, stat, listdir etc.
+// 'PyFileSystem' is responsible for: opening files, stat, readdir etc.
 let fileSystem: PyFileSystem = …
 
 Py.initialize(

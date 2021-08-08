@@ -1,11 +1,15 @@
 extension FileSystem {
 
+  /// Joins all given `path` segments together using the platform-specific
+  /// separator as a delimiter.
   public func join(path: Path, element: PathPartConvertible) -> Path {
     var copy = path
     self.join(path: &copy, element: element)
     return copy
   }
 
+  /// Joins all given `path` segments together using the platform-specific
+  /// separator as a delimiter.
   public func join(path: Path, elements: PathPartConvertible...) -> Path {
     var copy = path
 
@@ -16,6 +20,8 @@ extension FileSystem {
     return copy
   }
 
+  /// Joins all given `path` segments together using the platform-specific
+  /// separator as a delimiter.
   public func join<S: Sequence>(
     path: Path,
     elements: S

@@ -86,11 +86,11 @@ let package = Package(
     .testTarget(name: "VioletBytecodeTests", dependencies: ["VioletBytecode"], path: "Tests/BytecodeTests"),
 
     // Python objects (+ part of runtime)
-    .target(name: "VioletObjects", dependencies: ["VioletCompiler", "ArgumentParser", "UnicodeData"], path: "Sources/Objects"),
+    .target(name: "VioletObjects", dependencies: ["VioletCompiler", "ArgumentParser", "UnicodeData", "FileSystem"], path: "Sources/Objects"),
     .testTarget(name: "VioletObjectsTests", dependencies: ["VioletObjects"], path: "Tests/ObjectsTests"),
 
     // Bytecode interpretation (+ remaining part of the Python runtime)
-    .target(name: "VioletVM", dependencies: ["VioletObjects", "FileSystem"], path: "Sources/VM"),
+    .target(name: "VioletVM", dependencies: ["VioletObjects"], path: "Sources/VM"),
     .testTarget(name: "VioletVMTests", dependencies: ["VioletVM"], path: "Tests/VMTests"),
 
     // Main executable

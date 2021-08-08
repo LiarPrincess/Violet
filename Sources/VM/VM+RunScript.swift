@@ -86,7 +86,7 @@ extension VM {
     switch stat.type {
     case .regularFile:
       let dir = self.fileSystem.dirname(path: path)
-      let location = ScriptLocation(__main__: path, directory: dir.path)
+      let location = ScriptLocation(__main__: path, directory: dir.path.string)
       return .value(location)
     case .directory:
       return self.try__main__(inside: path)

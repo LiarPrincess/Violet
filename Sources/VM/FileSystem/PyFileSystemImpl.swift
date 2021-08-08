@@ -99,25 +99,24 @@ internal class PyFileSystemImpl: PyFileSystem {
     }
   }
 
-  // MARK: - List dir
+  // MARK: - Read dir
 
-  internal func listdir(fd: Int32) -> PyFileSystem_ListdirResult {
+  internal func readdir(fd: Int32) -> PyFileSystem_ReaddirResult {
     let result = self.fileSystem.readdir(fd: fd)
     return self.handleReaddirResult(result: result, path: nil)
   }
 
-  internal func listdir(path: String) -> PyFileSystem_ListdirResult {
+  internal func readdir(path: String) -> PyFileSystem_ReaddirResult {
     let p = Path(string: path)
     let result = self.fileSystem.readdir(path: p)
     return self.handleReaddirResult(result: result, path: path)
   }
 
   private func handleReaddirResult(result: FileSystem.ReaddirResult,
-                                   path: String?) -> PyFileSystem_ListdirResult {
+                                   path: String?) -> PyFileSystem_ReaddirResult {
     switch result {
     case let .value(readdir):
-      let result = readdir.map { $0.string }
-      return .entries(result)
+      return .entries(readdir)
 
     case .enoent:
       return .enoent
@@ -143,12 +142,9 @@ internal class PyFileSystemImpl: PyFileSystem {
 
   // MARK: - Dirname
 
-  internal func dirname(path: String) -> PyFileSystem_DirnameResult {
+  internal func dirname(path: String) -> FileSystem.DirnameResult {
     let p = Path(string: path)
-    let result = self.fileSystem.dirname(path: p)
-
-    return PyFileSystem_DirnameResult(path: result.path.string,
-                                      isTop: result.isTop)
+    return self.fileSystem.dirname(path: p)
   }
 
   // MARK: - Join

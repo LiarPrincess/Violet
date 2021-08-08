@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 import VioletCore
 import VioletObjects
 
@@ -22,11 +23,11 @@ class FakeFileSystem: PyFileSystem {
     shouldNotBeCalled()
   }
 
-  func listdir(fd: Int32) -> PyFileSystem_ListdirResult {
+  func readdir(fd: Int32) -> PyFileSystem_ReaddirResult {
     shouldNotBeCalled()
   }
 
-  func listdir(path: String) -> PyFileSystem_ListdirResult {
+  func readdir(path: String) -> PyFileSystem_ReaddirResult {
     shouldNotBeCalled()
   }
 
@@ -42,7 +43,7 @@ class FakeFileSystem: PyFileSystem {
     shouldNotBeCalled()
   }
 
-  func dirname(path: String) -> PyFileSystem_DirnameResult {
+  func dirname(path: String) -> FileSystem.DirnameResult {
     shouldNotBeCalled()
   }
 

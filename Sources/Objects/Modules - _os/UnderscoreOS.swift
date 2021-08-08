@@ -137,12 +137,12 @@ public final class UnderscoreOS: PyModuleImplementation {
   public func listdir(path: PyObject? = nil) -> PyResult<PyObject> {
     switch self.parseListdirPath(path: path) {
     case let .descriptor(fd):
-      let result = Py.fileSystem.listdir(fd: fd)
-      return self.handleListdirResult(result: result, path: nil)
+      let result = Py.fileSystem.readdir(fd: fd)
+      return self.handleReaddirResult(result: result, path: nil)
 
     case let .path(path):
-      let result = Py.fileSystem.listdir(path: path)
-      return self.handleListdirResult(result: result, path: path)
+      let result = Py.fileSystem.readdir(path: path)
+      return self.handleReaddirResult(result: result, path: path)
 
     case let .error(e):
       return .error(e)
@@ -157,7 +157,7 @@ public final class UnderscoreOS: PyModuleImplementation {
     return self.parsePathOrDescriptor(object: path)
   }
 
-  private func handleListdirResult(result: PyFileSystem_ListdirResult,
+  private func handleReaddirResult(result: PyFileSystem_ReaddirResult,
                                    path: String?) -> PyResult<PyObject> {
     switch result {
     case .entries(let entries):

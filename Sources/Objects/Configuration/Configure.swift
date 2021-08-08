@@ -13,7 +13,7 @@ internal enum Configure {
   internal static var prefix: String {
     let executable = Py.config.executablePath
     let dirname = Py.fileSystem.dirname(path: executable)
-    return dirname.path
+    return dirname.path.string
   }
 
   internal static var execPrefix: String {

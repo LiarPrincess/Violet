@@ -156,7 +156,8 @@ extension Sys {
 
     while true {
       let dir = Py.fileSystem.dirname(path: path)
-      let landmarkFile = Py.fileSystem.join(paths: dir.path, lib, landmark)
+      let dirPath = dir.path.string
+      let landmarkFile = Py.fileSystem.join(paths: dirPath, lib, landmark)
 
       if self.isFile(path: landmarkFile) {
         return Py.newString(dir.path)
@@ -165,7 +166,7 @@ extension Sys {
       if dir.isTop {
         break // We cannot go more 'up'
       } else {
-        path = dir.path // Try parent directory
+        path = dirPath // Try parent directory
       }
     }
 

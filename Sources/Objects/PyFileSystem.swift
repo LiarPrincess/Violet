@@ -16,31 +16,15 @@ public enum PyFileSystem_StatResult {
   case error(PyOSError)
 }
 
-// MARK: - Listdir
+// MARK: - Readdir
 
-public enum PyFileSystem_ListdirResult {
+public enum PyFileSystem_ReaddirResult {
   /// List containing names of the entries
-  case entries([String])
+  case entries(Readdir)
   /// No such file or directory
   case enoent
   /// Ooops…
   case error(PyOSError)
-}
-
-// MARK: - Dirname
-
-public struct PyFileSystem_DirnameResult {
-
-  public let path: String
-  /// Is file system (or local) root.
-  ///
-  /// Calling `dirname` again will return the same result.
-  public let isTop: Bool
-
-  public init(path: String, isTop: Bool) {
-    self.path = path
-    self.isTop = isTop
-  }
 }
 
 // MARK: - PyFileSystem
@@ -86,12 +70,12 @@ public protocol PyFileSystem: AnyObject {
   /// Always chase the link.
   func stat(path: String) -> PyFileSystem_StatResult
 
-  // MARK: - List dir
+  // MARK: - Read dir
 
   /// List containing the names of the entries in the directory given by `fd`.
-  func listdir(fd: Int32) -> PyFileSystem_ListdirResult
+  func readdir(fd: Int32) -> PyFileSystem_ReaddirResult
   /// List containing the names of the entries in the directory given by `path`.
-  func listdir(path: String) -> PyFileSystem_ListdirResult
+  func readdir(path: String) -> PyFileSystem_ReaddirResult
 
   // MARK: - Read
 
@@ -115,7 +99,7 @@ public protocol PyFileSystem: AnyObject {
   /// Returns: 'quux.html'
   /// ```
   ///
-  /// This doc was sponsored (aka. shamelessly stolen) by Node.
+  /// This doc was sponsored by Node (aka. shamelessly stolen).
   func basename(path: String) -> String
 
   // MARK: - Dirname
@@ -129,8 +113,8 @@ public protocol PyFileSystem: AnyObject {
   /// Returns: '/foo/bar/baz/asdf'
   /// ```
   ///
-  /// This doc was sponsored (aka. shamelessly stolen) by Node.
-  func dirname(path: String) -> PyFileSystem_DirnameResult
+  /// This doc was sponsored by Node (aka. shamelessly stolen).
+  func dirname(path: String) -> FileSystem.DirnameResult
 
   // MARK: - Join
 
@@ -145,7 +129,7 @@ public protocol PyFileSystem: AnyObject {
   /// Returns: '/foo/bar/baz/asdf'
   /// ```
   ///
-  /// This doc was sponsored (aka. shamelessly stolen) by Node.
+  /// This doc was sponsored by Node (aka. shamelessly stolen).
   func join(paths: String...) -> String
 }
 
