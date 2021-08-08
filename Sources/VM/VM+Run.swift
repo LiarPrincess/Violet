@@ -103,9 +103,9 @@ extension VM {
   private func initImportlibIfNeeded() -> PyBaseException? {
     // This is probably the first time you see our error handling approach.
     // So… we are using 'enums' instead of Swift 'throw'.
-    // There is a long comment about this in 'README' for 'Objects' module.
+    // There is a long comment about this in documentation for 'Objects' module.
     //
-    // Both 'initImportlibIfNeeded' and 'initImportlibExternalIfNeeded'
+    // Btw. both 'initImportlibIfNeeded' and 'initImportlibExternalIfNeeded'
     // are idempotent, so we can call them as many times as we want.
     // Unless you do something like 'sys.modules['importlib'] = "let it go"',
     // in such case we will reinitialize the whole thing.
@@ -248,38 +248,30 @@ extension VM {
   // MARK: - Helpers - add __main__
 
   /// Type of the `__loader__` to set on `__main__`module.
-  internal enum MainLoader {
+  internal struct MainLoader {
+
     /// Will use `Importlib.BuiltinImporter` as `__loader__`.
     /// Use this it you have input from `<stdin>` (repl etc.).
-    case builtinImporter
+    internal static let builtinImporter = MainLoader(name: "BuiltinImporter",
+                                                     module: "importlib")
     /// Will use `ImportlibExternal.SourceFileLoader` as `__loader__`.
     /// Use this if the code comes from `.py` file.
-    case sourceFileLoader
+    internal static let sourceFileLoader = MainLoader(name: "SourceFileLoader",
+                                                      module: "importlib_external")
     /// Will use `ImportlibExternal.SourcelessFileLoader` as `__loader__`.
     /// Use this if the code comes from Violet equivalent of `.pyc` file.
-    case sourcelessFileLoader
+    internal static let sourcelessFileLoader = MainLoader(name: "SourcelessFileLoader",
+                                                          module: "importlib_external")
 
     /// Attribute on `self.module` that contains this loader.
-    fileprivate var name: String {
-      switch self {
-      case .builtinImporter:
-        return "BuiltinImporter"
-      case .sourceFileLoader:
-        return "SourceFileLoader"
-      case .sourcelessFileLoader:
-        return "SourcelessFileLoader"
-      }
-    }
-
+    fileprivate let name: String
     /// Name of the module that contains this loader.
-    fileprivate var module: String {
-      switch self {
-      case .builtinImporter:
-        return "importlib"
-      case .sourceFileLoader,
-           .sourcelessFileLoader:
-        return "importlib_external"
-      }
+    fileprivate let module: String
+
+    // We don't want 'init' to be visible outside of this type.
+    private init(name: String, module: String) {
+      self.name = name
+      self.module = module
     }
   }
 
