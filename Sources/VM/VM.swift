@@ -9,7 +9,8 @@ public final class VM: PyDelegate {
   ///
   /// Current frame is last.
   internal var frames = [PyFrame]()
-  internal let fileSystem = PyFileSystemImpl(bundle: .main, fileSystem: .default)
+  internal let bundle = Bundle.main
+  internal let fileSystem = PyFileSystemImpl(fileSystem: .default)
 
   internal let arguments: Arguments
 
@@ -30,12 +31,12 @@ public final class VM: PyDelegate {
   /// 1. We were handling `e1`
   /// 2. During that `e2` was raised
   /// In such case `currentlyHandledException` is set to `e2`, but you can
-  /// get to `e1` by using `e2.__context__` (`e2.getContext()` in Swift).
+  /// get to `e1` by using `e2.__context__` (`Py.getContext(exception:)` in Swift).
   ///
   /// Tip 1. If `currentlyHandledException` is `nil` then we are currently
   /// not handling any exceptions
-  /// Tip 2. To get to the first raised exception follow `getContext()` path
-  /// until you get to the exception which has `getContext()` set to `nil`.
+  /// Tip 2. To get to the first raised exception follow context path
+  /// until you get to the exception which has context set to `nil`.
   ///
   /// Required by `PyDelegate`.
   public var currentlyHandledException: PyBaseException?
@@ -43,7 +44,7 @@ public final class VM: PyDelegate {
   public init(arguments: Arguments, environment: Environment) {
     self.arguments = arguments
 
-    let executablePath = self.fileSystem.executablePath ??
+    let executablePath = self.bundle.executablePath ??
         arguments.raw.first ??
         Py.sys.implementation.name
 

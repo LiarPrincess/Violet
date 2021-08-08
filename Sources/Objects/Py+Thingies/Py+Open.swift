@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 import VioletCore
 
 // swiftlint:disable function_parameter_count
@@ -80,7 +81,7 @@ extension PyInstance {
     case .text:
       switch self.openFileDescriptor(source: source, mode: mode) {
       case let .value(fd):
-        let result = PyMemory.newTextFile(name: fd.path,
+        let result = PyMemory.newTextFile(name: fd.path?.string,
                                           fd: fd.value,
                                           mode: mode,
                                           encoding: encoding,
@@ -95,7 +96,7 @@ extension PyInstance {
   }
 
   private struct OpenedFileDescriptor {
-    let path: String?
+    let path: Path?
     let value: FileDescriptorType
   }
 
@@ -103,22 +104,26 @@ extension PyInstance {
     source: Source,
     mode: FileMode
   ) -> PyResult<OpenedFileDescriptor> {
+    func _open(string: String) -> PyResult<OpenedFileDescriptor> {
+      let path = Path(string: string)
+      let fd = self.fileSystem.open(path: path, mode: mode)
+      return fd.map { OpenedFileDescriptor(path: path, value: $0) }
+    }
+
     switch source {
     case let .fileDescriptor(fdInt):
       let fd = self.fileSystem.open(fd: fdInt, mode: mode)
       return fd.map { OpenedFileDescriptor(path: nil, value: $0) }
 
-    case let .string(path):
-      let fd = self.fileSystem.open(path: path, mode: mode)
-      return fd.map { OpenedFileDescriptor(path: path, value: $0) }
+    case let .string(string):
+      return _open(string: string)
 
     case let .bytes(data):
-      guard let path = Py.getString(data: data) else {
+      guard let string = Py.getString(data: data) else {
         return .valueError("bytes cannot interpreted as path")
       }
 
-      let fd = self.fileSystem.open(path: path, mode: mode)
-      return fd.map { OpenedFileDescriptor(path: path, value: $0) }
+      return _open(string: string)
     }
   }
 

@@ -50,14 +50,14 @@ public protocol PyFileSystem: AnyObject {
   /// - resulting full path: /tmp/reports/info.txt
   ///
   /// (Docs taken from `Foundation.FileManager.currentDirectoryPath`.)
-  var currentWorkingDirectory: String { get }
+  var currentWorkingDirectory: Path { get }
 
   // MARK: - Open
 
   /// Open file with given `fd`.
   func open(fd: Int32, mode: FileMode) -> PyResult<FileDescriptorType>
   /// Open file at given `path`.
-  func open(path: String, mode: FileMode) -> PyResult<FileDescriptorType>
+  func open(path: Path, mode: FileMode) -> PyResult<FileDescriptorType>
 
   // MARK: - Stat
 
@@ -68,14 +68,14 @@ public protocol PyFileSystem: AnyObject {
   /// Information about given file/dir.
   ///
   /// Always chase the link.
-  func stat(path: String) -> PyFileSystem_StatResult
+  func stat(path: Path) -> PyFileSystem_StatResult
 
   // MARK: - Read dir
 
   /// List containing the names of the entries in the directory given by `fd`.
   func readdir(fd: Int32) -> PyFileSystem_ReaddirResult
   /// List containing the names of the entries in the directory given by `path`.
-  func readdir(path: String) -> PyFileSystem_ReaddirResult
+  func readdir(path: Path) -> PyFileSystem_ReaddirResult
 
   // MARK: - Read
 
@@ -86,7 +86,7 @@ public protocol PyFileSystem: AnyObject {
   /// Read the whole file.
   ///
   /// Default implementation available.
-  func read(path: String) -> PyResult<Data>
+  func read(path: Path) -> PyResult<Data>
 
   // MARK: - Basename
 
@@ -100,7 +100,7 @@ public protocol PyFileSystem: AnyObject {
   /// ```
   ///
   /// This doc was sponsored by Node (aka. shamelessly stolen).
-  func basename(path: String) -> String
+  func basename(path: Path) -> Filename
 
   // MARK: - Dirname
 
@@ -114,7 +114,7 @@ public protocol PyFileSystem: AnyObject {
   /// ```
   ///
   /// This doc was sponsored by Node (aka. shamelessly stolen).
-  func dirname(path: String) -> FileSystem.DirnameResult
+  func dirname(path: Path) -> FileSystem.DirnameResult
 
   // MARK: - Join
 
@@ -130,7 +130,33 @@ public protocol PyFileSystem: AnyObject {
   /// ```
   ///
   /// This doc was sponsored by Node (aka. shamelessly stolen).
-  func join(paths: String...) -> String
+  func join(path: Path, element: PathPartConvertible) -> Path
+  /// Joins all given `path` segments together using the platform-specific
+  /// separator as a delimiter.
+  ///
+  /// Zero-length path segments are ignored.
+  ///
+  /// Example:
+  /// ```
+  /// join('/foo', 'bar', 'baz/asdf');
+  /// Returns: '/foo/bar/baz/asdf'
+  /// ```
+  ///
+  /// This doc was sponsored by Node (aka. shamelessly stolen).
+  func join<T: PathPartConvertible>(path: Path, elements: T...) -> Path
+  /// Joins all given `path` segments together using the platform-specific
+  /// separator as a delimiter.
+  ///
+  /// Zero-length path segments are ignored.
+  ///
+  /// Example:
+  /// ```
+  /// join('/foo', 'bar', 'baz/asdf');
+  /// Returns: '/foo/bar/baz/asdf'
+  /// ```
+  ///
+  /// This doc was sponsored by Node (aka. shamelessly stolen).
+  func join<T: PathPartConvertible>(path: Path, elements: [T]) -> Path
 }
 
 // MARK: - Default implementations
@@ -138,18 +164,24 @@ public protocol PyFileSystem: AnyObject {
 extension PyFileSystem {
 
   public func read(fd: Int32) -> PyResult<Data> {
-    let fd = self.open(fd: fd, mode: .read)
-    return fd.flatMap(self.readToEnd(fd:))
+    switch self.open(fd: fd, mode: .read) {
+    case let .value(fd):
+      return self.readToEnd(fd: fd)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
-  public func read(path: String) -> PyResult<Data> {
-    let fd = self.open(path: path, mode: .read)
-    return fd.flatMap(self.readToEnd(fd:))
+  public func read(path: Path) -> PyResult<Data> {
+    switch self.open(path: path, mode: .read) {
+    case let .value(fd):
+      return self.readToEnd(fd: fd)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   private func readToEnd(fd: FileDescriptorType) -> PyResult<Data> {
     return fd.readToEnd()
   }
-
-  public var topDirname: String { return "." }
 }

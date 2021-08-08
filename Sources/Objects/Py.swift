@@ -1,5 +1,6 @@
 import Foundation
 import BigInt
+import FileSystem
 import VioletCore
 
 // swiftlint:disable file_length
@@ -391,6 +392,10 @@ public final class PyInstance {
   /// If it is already in cache then it will return interned value.
   public func intern(scalar: UnicodeScalar) -> PyString {
     return self.intern(string: String(scalar))
+  }
+
+  public func intern(path: Path) -> PyString {
+    self.intern(string: path.string)
   }
 
   /// Cache given string and return it.

@@ -1,5 +1,6 @@
 import Foundation
 import BigInt
+import FileSystem
 import UnicodeData
 import VioletCore
 
@@ -183,7 +184,8 @@ extension PyInstance {
       return e
     }
 
-    switch self.getLine(filename: filename, lineno: lineno) {
+    let filenamePath = Path(string: filename)
+    switch self.getLine(path: filenamePath, lineno: lineno) {
     case .value(let code):
       let line = "    \(code)\n"
       return self.write(file: file, string: line)
@@ -202,9 +204,9 @@ extension PyInstance {
 
   /// int
   /// _Py_DisplaySourceLine(PyObject *f, PyObject *filename, int lineno, int indent)
-  private func getLine(filename: String, lineno: BigInt) -> GetLineResult {
+  private func getLine(path: Path, lineno: BigInt) -> GetLineResult {
     let source: String
-    switch self.readSourceFileForTraceback(filename: filename) {
+    switch self.readSourceFileForTraceback(path: path) {
     case .value(let s):
       source = s
     case .notFound:
@@ -232,14 +234,14 @@ extension PyInstance {
     case error(PyBaseException)
   }
 
-  private func readSourceFileForTraceback(filename: String) -> SourceFile {
-    switch self.readSourceFile(path: filename) {
+  private func readSourceFileForTraceback(path: Path) -> SourceFile {
+    switch self.readSourceFile(path: path) {
     case .value(let s): return .value(s)
     case .decodingError(let e): return .decodingError(e)
     case .readError: break // File may not exit, try 'sys.path'
     }
 
-    let basename = Py.fileSystem.basename(path: filename)
+    let basename = Py.fileSystem.basename(path: path)
 
     let sysPath: PyList
     switch Py.sys.getPath() {
@@ -258,9 +260,10 @@ extension PyInstance {
         return .goToNextElement
       }
 
-      let path = Py.fileSystem.join(paths: dir.value, basename)
+      let dirPath = Path(string: dir.value)
+      let filePath = Py.fileSystem.join(path: dirPath, element: basename)
 
-      switch self.readSourceFile(path: path) {
+      switch self.readSourceFile(path: filePath) {
       case .value(let s): return .finish(.value(s))
       case .decodingError(let e): return .finish(.decodingError(e))
       case .readError: return .goToNextElement // File may not exit, ignore

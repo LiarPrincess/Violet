@@ -83,8 +83,9 @@ public struct FileSystem {
 
   // MARK: - CWD
 
-  public var currentWorkingDirectory: String {
-    return self.fileManager.currentDirectoryPath
+  public var currentWorkingDirectory: Path {
+    let cwd = self.fileManager.currentDirectoryPath
+    return Path(string: cwd)
   }
 
   public func setCurrentWorkingDirectoryOrTrap(path: Path) {

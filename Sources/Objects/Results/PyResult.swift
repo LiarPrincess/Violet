@@ -1,4 +1,5 @@
 import Foundation
+import FileSystem
 import VioletCore
 
 /// Result of a `Python` operation.
@@ -136,8 +137,22 @@ extension PyResult {
     return PyResult.error(Py.newAssertionError(msg: msg))
   }
 
-  public static func importError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(Py.newImportError(msg: msg))
+  public static func importError(_ msg: String,
+                                 moduleName: String?,
+                                 modulePath: Path?) -> PyResult<Wrapped> {
+    let error = Py.newImportError(msg: msg,
+                                  moduleName: moduleName,
+                                  modulePath: modulePath)
+    return PyResult.error(error)
+  }
+
+  public static func importError(_ msg: String,
+                                 moduleName: String? = nil,
+                                 modulePath: String? = nil) -> PyResult<Wrapped> {
+    let error = Py.newImportError(msg: msg,
+                                  moduleName: moduleName,
+                                  modulePath: modulePath)
+    return PyResult.error(error)
   }
 
   public static func eofError(_ msg: String) -> PyResult<Wrapped> {

@@ -25,8 +25,7 @@ extension VM {
     }
 
     let cwd = self.fileSystem.currentWorkingDirectory
-    let cwdPath = Path(string: cwd)
-    if let e = self.prependPath(value: cwdPath) {
+    if let e = self.prependPath(value: cwd) {
       return .error(e)
     }
 

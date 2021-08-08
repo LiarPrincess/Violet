@@ -28,9 +28,9 @@ private struct ModuleSpecWithPath {
   fileprivate var name: String { return self.spec.name }
   fileprivate var nameObject: PyString { return self.spec.nameObject }
   fileprivate var filename: String { return self.spec.filename }
-  fileprivate let path: String
+  fileprivate let path: Path
 
-  fileprivate init(spec: ModuleSpec, path: String) {
+  fileprivate init(spec: ModuleSpec, path: Path) {
     self.spec = spec
     self.path = path
   }
@@ -38,7 +38,7 @@ private struct ModuleSpecWithPath {
 
 /// Just like `PyResult`, but it will force `error` to always be `PyImportError`.
 ///
-/// (Just for additional type-safety, so that we don't return any other error type)
+/// (For additional type-safety, so that we don't return any other error type)
 private enum ImportlibResult<Wrapped> {
   case value(Wrapped)
   case error(PyImportError)
@@ -127,7 +127,7 @@ extension PyInstance {
     case .error(let e): return .error(e)
     }
 
-    let path: String
+    let path: Path
     switch self.findModuleOnDisc(spec: spec) {
     case let .value(p): path = p
     case let .error(e): return .error(e)
@@ -185,7 +185,7 @@ extension PyInstance {
 
   // MARK: - Find on disc
 
-  private func findModuleOnDisc(spec: ModuleSpec) -> ImportlibResult<String> {
+  private func findModuleOnDisc(spec: ModuleSpec) -> ImportlibResult<Path> {
     let moduleSearchPaths: PyList
     switch Py.sys.getPath() {
     case let .value(l): moduleSearchPaths = l
@@ -195,23 +195,24 @@ extension PyInstance {
       return .error(e)
     }
 
-    var triedPaths = [String]()
+    var triedPaths = [Path]()
     for object in moduleSearchPaths.elements {
       // If this is not 'str' then ignore
-      guard let path = PyCast.asString(object) else {
+      guard let dirPyString = PyCast.asString(object) else {
         continue
       }
 
-      // Try 'path/filename'
-      let modulePath = Py.fileSystem.join(paths: path.value, spec.filename)
-      triedPaths.append(path.value)
+      // Try 'dir/filename'
+      let dir = Path(string: dirPyString.value)
+      let modulePath = Py.fileSystem.join(path: dir, element: spec.filename)
+      triedPaths.append(dir)
 
       let stat: Stat
       switch self.fileSystem.stat(path: modulePath) {
       case .value(let s): stat = s
       case .enoent: continue // No such file - just try next 'path'
       case .error(let e):
-        let msg = "\(spec.name) spec error for '\(path.value)'"
+        let msg = "\(spec.name) spec error for '\(dir)'"
         let e = self.newImportError(msg: msg, spec: spec, cause: e)
         return .error(e)
       }
@@ -225,9 +226,9 @@ extension PyInstance {
       }
     }
 
-    let paths = triedPaths.joined(separator: ", ")
+    let paths = triedPaths.lazy.map { $0.string }.joined(separator: ", ")
     let msg = "'\(spec.name)' not found, tried: \(paths)."
-    return .error(self.newImportError(msg: msg, moduleName: spec.name))
+    return .error(self.newImportError(msg: msg, spec: spec))
   }
 
   // MARK: - Create module
@@ -303,9 +304,14 @@ extension PyInstance {
 
   private func newImportError(msg: String,
                               spec: ModuleSpec,
-                              cause: PyBaseException) -> PyImportError {
-    let result = Py.newImportError(msg: msg, moduleName: spec.name)
-    result.setCause(cause)
+                              cause: PyBaseException? = nil) -> PyImportError {
+    let result = Py.newImportError(msg: msg,
+                                   moduleName: spec.name)
+
+    if let cause = cause {
+      result.setCause(cause)
+    }
+
     return result
   }
 

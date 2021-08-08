@@ -6,23 +6,15 @@ import VioletObjects
 
 internal class PyFileSystemImpl: PyFileSystem {
 
-  private let bundle: Bundle
   private let fileSystem: FileSystem
 
-  internal init(bundle: Bundle, fileSystem: FileSystem) {
-    self.bundle = bundle
+  internal init(fileSystem: FileSystem) {
     self.fileSystem = fileSystem
-  }
-
-  // MARK: - Executable
-
-  internal var executablePath: String? {
-    return self.bundle.executablePath
   }
 
   // MARK: - Cwd
 
-  internal var currentWorkingDirectory: String {
+  internal var currentWorkingDirectory: Path {
     return self.fileSystem.currentWorkingDirectory
   }
 
@@ -38,7 +30,7 @@ internal class PyFileSystemImpl: PyFileSystem {
 
   /// static int
   /// _io_FileIO___init___impl(fileio *self, PyObject *nameobj, … )
-  internal func open(path: String, mode: FileMode) -> PyResult<FileDescriptorType> {
+  internal func open(path: Path, mode: FileMode) -> PyResult<FileDescriptorType> {
     var flags: Int32 = 0
     switch mode {
     case .read: flags |= O_RDONLY
@@ -49,10 +41,10 @@ internal class PyFileSystemImpl: PyFileSystem {
     }
 
     let createMode: Int = 0o666
-    if let fd = FileDescriptor(path: path,
+    if let fd = FileDescriptor(path: path.string,
                                flags: flags,
                                createMode: createMode) {
-      let adapter = FileDescriptorAdapter(fd: fd, path: path)
+      let adapter = FileDescriptorAdapter(fd: fd, path: path.string)
       return .value(adapter)
     }
 
@@ -73,14 +65,13 @@ internal class PyFileSystemImpl: PyFileSystem {
     return self.handleStatResult(result: result, path: nil)
   }
 
-  internal func stat(path: String) -> PyFileSystem_StatResult {
-    let p = Path(string: path)
-    let result = self.fileSystem.stat(path: p)
+  internal func stat(path: Path) -> PyFileSystem_StatResult {
+    let result = self.fileSystem.stat(path: path)
     return self.handleStatResult(result: result, path: path)
   }
 
   private func handleStatResult(result: FileSystem.StatResult,
-                                path: String?) -> PyFileSystem_StatResult {
+                                path: Path?) -> PyFileSystem_StatResult {
     switch result {
     case let .value(stat):
       return .value(stat)
@@ -106,14 +97,13 @@ internal class PyFileSystemImpl: PyFileSystem {
     return self.handleReaddirResult(result: result, path: nil)
   }
 
-  internal func readdir(path: String) -> PyFileSystem_ReaddirResult {
-    let p = Path(string: path)
-    let result = self.fileSystem.readdir(path: p)
+  internal func readdir(path: Path) -> PyFileSystem_ReaddirResult {
+    let result = self.fileSystem.readdir(path: path)
     return self.handleReaddirResult(result: result, path: path)
   }
 
   private func handleReaddirResult(result: FileSystem.ReaddirResult,
-                                   path: String?) -> PyFileSystem_ReaddirResult {
+                                   path: Path?) -> PyFileSystem_ReaddirResult {
     switch result {
     case let .value(readdir):
       return .entries(readdir)
@@ -134,29 +124,27 @@ internal class PyFileSystemImpl: PyFileSystem {
 
   // MARK: - Basename
 
-  internal func basename(path: String) -> String {
-    let p = Path(string: path)
-    let result = self.fileSystem.basename(path: p)
-    return result.string
+  internal func basename(path: Path) -> Filename {
+    return self.fileSystem.basename(path: path)
   }
 
   // MARK: - Dirname
 
-  internal func dirname(path: String) -> FileSystem.DirnameResult {
-    let p = Path(string: path)
-    return self.fileSystem.dirname(path: p)
+  internal func dirname(path: Path) -> FileSystem.DirnameResult {
+    return self.fileSystem.dirname(path: path)
   }
 
   // MARK: - Join
 
-  internal func join(paths: String...) -> String {
-    guard let first = paths.first else {
-      return ""
-    }
+  internal func join(path: Path, element: PathPartConvertible) -> Path {
+    return self.fileSystem.join(path: path, element: element)
+  }
 
-    let firstPath = Path(string: first)
-    let rest = paths.dropFirst()
-    let result = self.fileSystem.join(path: firstPath, elements: rest)
-    return result.string
+  internal func join<T: PathPartConvertible>(path: Path, elements: T...) -> Path {
+    return self.fileSystem.join(path: path, elements: elements)
+  }
+
+  internal func join<T: PathPartConvertible>(path: Path, elements: [T]) -> Path {
+    return self.fileSystem.join(path: path, elements: elements)
   }
 }

@@ -1,5 +1,6 @@
 import Foundation
 import BigInt
+import FileSystem
 import VioletCore
 import VioletLexer
 import VioletParser
@@ -58,7 +59,7 @@ extension PyInstance {
   }
 
   /// Compile object at a given `path`.
-  public func compile(path: String,
+  public func compile(path: Path,
                       mode: Parser.Mode,
                       optimize: Compiler.OptimizationLevel? = nil) -> CompileResult {
     let source: String
@@ -72,7 +73,7 @@ extension PyInstance {
 
     let filename = self.fileSystem.basename(path: path)
     return self.compile(source: source,
-                        filename: filename,
+                        filename: filename.string,
                         mode: mode,
                         optimize: optimize)
   }
@@ -85,7 +86,7 @@ extension PyInstance {
     case decodingError(PyBaseException)
   }
 
-  internal func readSourceFile(path: String) -> ReadSourceFileResult {
+  internal func readSourceFile(path: Path) -> ReadSourceFileResult {
     let data: Data
     switch self.fileSystem.read(path: path) {
     case let .value(d): data = d

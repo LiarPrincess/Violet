@@ -35,7 +35,7 @@ extension VM {
     }
 
     let code: PyCode
-    let compileResult = Py.compile(path: script.__main__.string, mode: .fileInput)
+    let compileResult = Py.compile(path: script.__main__, mode: .fileInput)
     switch compileResult.asResult() {
     case let .value(c): code = c
     case let .error(e): return .error(e)

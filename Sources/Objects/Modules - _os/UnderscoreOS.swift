@@ -48,7 +48,7 @@ public final class UnderscoreOS: PyModuleImplementation {
 
     // 'cwd' tend not to change during the program runtime, so we can cache it.
     // If we ever get different value from fileSystem we will re-intern it.
-    return Py.intern(string: value)
+    return Py.intern(path: value)
   }
 
   // MARK: - FSPath
@@ -91,7 +91,7 @@ public final class UnderscoreOS: PyModuleImplementation {
   }
 
   private func createStat(from stat: PyFileSystem_StatResult,
-                          path: String? = nil) -> PyResult<PyObject> {
+                          path: Path? = nil) -> PyResult<PyObject> {
     switch stat {
     case .value(let stat):
       let result = self.createStat(from: stat)
@@ -151,14 +151,14 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   private func parseListdirPath(path: PyObject?) -> ParsePathOrDescriptorResult {
     guard let path = path else {
-      return .path(".")
+      return .path(Path(string: "."))
     }
 
     return self.parsePathOrDescriptor(object: path)
   }
 
   private func handleReaddirResult(result: PyFileSystem_ReaddirResult,
-                                   path: String?) -> PyResult<PyObject> {
+                                   path: Path?) -> PyResult<PyObject> {
     switch result {
     case .entries(let entries):
       let elements = entries.map(Py.newString(_:))
@@ -210,7 +210,7 @@ public final class UnderscoreOS: PyModuleImplementation {
 
   private enum ParsePathOrDescriptorResult {
     case descriptor(Int32)
-    case path(String)
+    case path(Path)
     case error(PyBaseException)
   }
 
@@ -228,9 +228,9 @@ public final class UnderscoreOS: PyModuleImplementation {
 
     switch Py.getString(object: object) {
     case .string(_, let path):
-      return .path(path)
+      return .path(Path(string: path))
     case .bytes(_, let path):
-      return .path(path)
+      return .path(Path(string: path))
     case .byteDecodingError:
       let msg = "cannot decode byte path as string"
       return .error(Py.newValueError(msg: msg))

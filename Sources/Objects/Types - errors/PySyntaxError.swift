@@ -1,4 +1,5 @@
 import BigInt
+import FileSystem
 import VioletCore
 
 // swiftlint:disable file_length
@@ -145,13 +146,14 @@ public class PySyntaxError: PyException {
   internal static func str(syntaxError: PySyntaxError) -> PyResult<String> {
     // Why this is static? See comment in 'PyBaseException.str'.
 
-    let filenameOrNil: String? = {
-      let filenamePyString = syntaxError.filename.flatMap(PyCast.asString(_:))
-      guard let path = filenamePyString, !path.isEmpty else {
+    let filenameOrNil: Filename? = {
+      let pyStringOrNil = syntaxError.filename.flatMap(PyCast.asString(_:))
+      guard let pyString = pyStringOrNil, !pyString.isEmpty else {
         return nil
       }
 
-      return Py.fileSystem.basename(path: path.value)
+      let path = Path(string: pyString.value)
+      return Py.fileSystem.basename(path: path)
     }()
 
     let linenoOrNil: BigInt? = {

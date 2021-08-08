@@ -132,6 +132,13 @@ extension PyInstance {
   /// Base class for I/O related errors.
   ///
   /// https://docs.python.org/3/library/exceptions.html#OSError
+  public func newOSError(errno: Int32, filename: Filename) -> PyOSError {
+    return self.createOSError(errno: errno, filename: filename.string)
+  }
+
+  /// Base class for I/O related errors.
+  ///
+  /// https://docs.python.org/3/library/exceptions.html#OSError
   public func newOSError(errno: Int32, filename: String) -> PyOSError {
     return self.createOSError(errno: errno, filename: filename)
   }
@@ -139,9 +146,17 @@ extension PyInstance {
   /// Base class for I/O related errors.
   ///
   /// https://docs.python.org/3/library/exceptions.html#OSError
-  public func newOSError(errno: Int32, path: String) -> PyOSError {
+  public func newOSError(errno: Int32, path: Path) -> PyOSError {
     let filename = self.fileSystem.basename(path: path)
-    return self.createOSError(errno: errno, filename: filename)
+    return self.newOSError(errno: errno, filename: filename)
+  }
+
+  /// Base class for I/O related errors.
+  ///
+  /// https://docs.python.org/3/library/exceptions.html#OSError
+  public func newOSError(errno: Int32, path: String) -> PyOSError {
+    let p = Path(string: path)
+    return self.newOSError(errno: errno, path: p)
   }
 
   /// void
@@ -194,17 +209,18 @@ extension PyInstance {
 
   // MARK: - File not found
 
-  public func newFileNotFoundError(path: Path) -> PyFileNotFoundError {
-    return self.newFileNotFoundError(path: path.string)
+  public func newFileNotFoundError(path: Path?) -> PyFileNotFoundError {
+    let basename = path.map(self.fileSystem.basename(path:))
+    return self.newFileNotFoundError(filename: basename)
   }
 
   public func newFileNotFoundError(path: String?) -> PyFileNotFoundError {
-    let filename = path.map(self.fileSystem.basename(path:))
-    return self.newFileNotFoundError(filename: filename)
+    let p = path.map(Path.init(string:))
+    return self.newFileNotFoundError(path: p)
   }
 
-  public func newFileNotFoundError(filename: Filename) -> PyFileNotFoundError {
-    return self.newFileNotFoundError(filename: filename.string)
+  public func newFileNotFoundError(filename: Filename?) -> PyFileNotFoundError {
+    return self.newFileNotFoundError(filename: filename?.string)
   }
 
   public func newFileNotFoundError(filename: String?) -> PyFileNotFoundError {
@@ -339,6 +355,15 @@ extension PyInstance {
   }
 
   // MARK: - Import error
+
+  /// Import failed.
+  public func newImportError(msg: String,
+                             moduleName: String?,
+                             modulePath: Path?) -> PyImportError {
+    return self.newImportError(msg: msg,
+                               moduleName: moduleName,
+                               modulePath: modulePath?.string)
+  }
 
   /// Import failed.
   public func newImportError(msg: String,
