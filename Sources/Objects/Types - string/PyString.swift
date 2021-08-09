@@ -1,6 +1,6 @@
 import BigInt
-import VioletCore
 import UnicodeData
+import VioletCore
 
 // swiftlint:disable file_length
 // cSpell:ignore unicodeobject

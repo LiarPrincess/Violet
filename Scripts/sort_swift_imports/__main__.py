@@ -1,12 +1,15 @@
 import os
 
 # Imports in the correct order
-sorted_imports = [
+SORTED_IMPORTS = [
     'import XCTest',
     'import Foundation',
     'import ArgumentParser',
+    'import SwiftSyntax',
 
     'import BigInt',
+    'import FileSystem',
+    'import UnicodeData',
     'import VioletCore',
     'import VioletLexer',
     'import VioletParser',
@@ -16,6 +19,8 @@ sorted_imports = [
     'import VioletVM',
 
     '@testable import BigInt',
+    '@testable import FileSystem',
+    '@testable import UnicodeData',
     '@testable import VioletCore',
     '@testable import VioletLexer',
     '@testable import VioletParser',
@@ -26,6 +31,9 @@ sorted_imports = [
 
     'import Rapunzel',
     '@testable import Rapunzel',
+
+    'import Ariel',
+    '@testable import Ariel',
 ]
 
 
@@ -91,7 +99,7 @@ def read_import_lines(f):
 def get_import_line_index(line: str):
     line_strip = line.strip()
 
-    for index, candidate in enumerate(sorted_imports):
+    for index, candidate in enumerate(SORTED_IMPORTS):
         if candidate == line_strip:
             return index
 
@@ -99,7 +107,7 @@ def get_import_line_index(line: str):
 
 
 def sort_import_lines(file, lines):
-    result = [None] * len(sorted_imports)
+    result = [None] * len(SORTED_IMPORTS)
     for line in lines:
         index = get_import_line_index(line)
 
