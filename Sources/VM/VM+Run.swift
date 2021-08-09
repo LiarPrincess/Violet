@@ -39,7 +39,10 @@ extension VM {
   /// pymain_run_python(_PyMain *pymain)
   public func run() -> RunResult {
     if self.arguments.help {
-      return self.writeToStdoutAndFinish(msg: Arguments.helpMessage)
+      // (Help!) I need somebody
+      // (Help!) Not just anybody
+      let helpMsg = Arguments.helpMessage()
+      return self.writeToStdoutAndFinish(msg: helpMsg)
     }
 
     if self.arguments.version {

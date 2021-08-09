@@ -369,7 +369,7 @@ class ArgumentsTests: XCTestCase {
 
   // swiftlint:disable:next function_body_length
   func test_usage() {
-    let result = Arguments.helpMessage
+    let result = Arguments.helpMessage(columns: 80)
     XCTAssertEqualStrings(result, """
 OVERVIEW: Violet - Python VM written in Swift
 

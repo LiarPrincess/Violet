@@ -195,42 +195,16 @@ public struct Arguments {
   // MARK: - Usage
 
   /// Message printed after providing help flag (`-h -help --help`).
-  public static var helpMessage: String {
-    do {
-      var binding = ArgumentBinding()
-      _ = try binding.run()
+  public static func helpMessage(columns: Int? = nil) -> String {
+    var result = ArgumentBinding.helpMessage(columns: columns)
 
-      let msg = "By default 'apple/swift-argument-parser' should " +
-        "throw 'CleanExit.helpRequest' if we don't override 'run()' " +
-        "but somehow that did not happen."
+    // 'ArgumentParser' has tendency to add ' ' before new line.
+    // (Which is ugly and messes unit tests for people who have
+    // automatic whitespace trimming turned on.)
+    result = result.replacingOccurrences(of: " \n", with: "\n")
 
-      trap(msg)
-    } catch {
-      assert(Self.isCleanExit_helpRequest(error: error))
-
-      var result = ArgumentBinding.fullMessage(for: error)
-
-      // 'ArgumentParser' has tendency to add ' ' before new line.
-      // (Which is ugly and messes unit tests for people who have
-      // automatic whitespace trimming turned on.)
-      result = result.replacingOccurrences(of: " \n", with: "\n")
-
-      // 'ArgumentParser' adds new line at the end. (Again, kind of ugly.)
-      result = result.trimmingCharacters(in: .newlines)
-      return result
-    }
-  }
-
-  private static func isCleanExit_helpRequest(error: Error) -> Bool {
-    guard let cleanExit = error as? CleanExit else {
-      return false
-    }
-
-    switch cleanExit {
-    case .helpRequest:
-      return true
-    default:
-      return false
-    }
+    // 'ArgumentParser' adds new line at the end. (Again, kind of ugly.)
+    result = result.trimmingCharacters(in: .newlines)
+    return result
   }
 }
