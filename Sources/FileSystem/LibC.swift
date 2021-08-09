@@ -116,6 +116,29 @@ internal enum LibC {
     return OpendirResult(returnValue: returnValue)
   }
 
+  // MARK: - mkdir
+
+  internal enum MkdirResult {
+    case ok
+    case errno(Int32)
+  }
+
+  /// https://linux.die.net/man/2/mkdir
+  internal static func mkdir(path: UnsafePointer<Int8>!,
+                             mode: mode_t) -> MkdirResult {
+    // mkdir() returns zero on success, or -1 if an error occurred
+    // (in which case, errno is set appropriately).
+
+    let returnValue = Foundation.mkdir(path, mode)
+    if returnValue == 0 {
+      return .ok
+    }
+
+    let err = Foundation.errno
+    Foundation.errno = 0
+    return .errno(err)
+  }
+
   // MARK: - readdir_r
 
   internal static func createDirent() -> dirent {

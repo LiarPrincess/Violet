@@ -17,8 +17,8 @@ public struct Path: Equatable, Comparable, Hashable,
     return self.string
   }
 
-  public init(string: String) {
-    self.string = string
+  public init<S: StringProtocol>(string: S) {
+    self.string = String(string)
   }
 
   public init(url: URL) {

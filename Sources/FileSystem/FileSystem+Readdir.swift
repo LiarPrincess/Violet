@@ -1,10 +1,6 @@
 import Foundation
 import VioletCore
 
-// This code was based on:
-// https://github.com/apple/swift-corelibs-foundation/blob/master/Sources/
-// Foundation/FileManager.swift
-
 // MARK: - Readdir
 
 public struct Readdir: Collection {

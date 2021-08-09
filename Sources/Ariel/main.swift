@@ -2,12 +2,13 @@ import SwiftSyntax
 import Foundation
 import FileSystem
 
+private let arguments = Arguments.parseOrExit()
+
 // 'internal', so it is available in the whole module.
 internal let fileSystem = FileSystem.default
 
-private let arguments = Arguments.parseOrExit()
-
-private func printVerbose(_ msg: String) {
+// 'internal', so it is available in the whole module.
+internal func printVerbose(_ msg: String) {
   if arguments.verbose {
     print(msg)
   }
@@ -45,6 +46,8 @@ private let input: Input = {
 
 // MARK: - Output
 
+private let outputEncoding = String.Encoding.utf8
+
 private let output: Output = {
   guard let outputPathArg = arguments.outputPath else {
     printVerbose("No output path specified, using stdout.")
@@ -58,17 +61,17 @@ private let output: Output = {
 
   if isFile {
     printVerbose("Output file specified: \(outputPath)")
-    return FileOutput(path: outputPath)
+    return FileOutput(path: outputPath, encoding: outputEncoding)
   }
 
   printVerbose("Output directory specified: \(outputPath)")
   let inputName = fileSystem.basenameWithoutExtension(path: input.path)
   let outputName = fileSystem.addExt(filename: inputName, ext: ".txt")
   let path = fileSystem.join(path: outputPath, element: outputName)
-  return FileOutput(path: path)
+  return FileOutput(path: path, encoding: outputEncoding)
 }()
 
-defer { output.flush() }
+defer { output.close() }
 
 // MARK: - Main
 

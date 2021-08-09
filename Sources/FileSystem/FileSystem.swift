@@ -107,13 +107,18 @@ public struct FileSystem {
     internal let string: String
 
     internal init?(from path: Path) {
-      let string = path.string
+      switch NonEmptyPath(from: path.string) {
+      case .some(let p): self = p
+      case .none: return nil
+      }
+    }
 
+    internal init?<S: StringProtocol>(from string: S) {
       if string.isEmpty {
         return nil
       }
 
-      self.string = string
+      self.string = String(string)
     }
   }
 

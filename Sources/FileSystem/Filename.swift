@@ -20,11 +20,7 @@ public struct Filename: Equatable, Comparable, Hashable,
     return self.string
   }
 
-  public init(string: String) {
-    self.string = string
-  }
-
-  public init(string: Substring) {
+  public init<S: StringProtocol>(string: S) {
     self.string = String(string)
   }
 

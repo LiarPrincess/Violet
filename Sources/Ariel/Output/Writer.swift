@@ -6,7 +6,7 @@ class Writer {
 
   private let filter: Filter
   private let formatter: Formatter
-  private let output: Output
+  private var output: Output
   private var indent = ""
 
   init(filter: Filter, formatter: Formatter, output: Output) {
@@ -82,11 +82,11 @@ class Writer {
   }
 
   private func print(_ string: String = "") {
-    self.output.write(string)
+    self.output.write(string + "\n")
   }
 
   private func printIndented(_ string: String) {
     let fixedString = string.replacingOccurrences(of: "\n", with: "\n" + self.indent)
-    self.output.write(self.indent + fixedString)
+    self.output.write(self.indent + fixedString + "\n")
   }
 }
