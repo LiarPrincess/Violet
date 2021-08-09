@@ -9,7 +9,7 @@ import VioletCore
 
 public struct Stat {
 
-  public enum EntryType: Equatable {
+  public enum EntryType: Equatable, CustomStringConvertible {
     case directory
     case regularFile
     case symbolicLink
@@ -21,6 +21,19 @@ public struct Stat {
     /// FIFO or pipe
     case fifo
     case unknown
+
+    public var description: String {
+      switch self {
+      case .directory: return "Directory"
+      case .regularFile: return "Regular file"
+      case .symbolicLink: return "Symbolic link"
+      case .socket: return "Socket"
+      case .characterSpecial: return "Character special file"
+      case .blockSpecial: return "Block special file"
+      case .fifo: return "FIFO"
+      case .unknown: return "unknown"
+      }
+    }
   }
 
   /// File type and mode.

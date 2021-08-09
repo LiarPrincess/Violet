@@ -72,7 +72,7 @@ defer { output.flush() }
 
 // MARK: - Main
 
-func writeDeclarations(printedPath: String, swiftFilePath: Path) throws {
+private func writeDeclarations(printedPath: String, swiftFilePath: Path) throws {
   printVerbose("Processing: \(printedPath)")
 
   let fileContent = try String(contentsOfFile: swiftFilePath.string)

@@ -1,4 +1,5 @@
 import Foundation
+import VioletCore
 
 extension FileSystem {
 
@@ -20,24 +21,83 @@ extension FileSystem {
     return Filename(string: string)
   }
 
+  public func basenameWithoutExtension(filename: Filename) -> Filename {
+    switch self.splitNameAndExt(filename: filename) {
+    case .split(name: let name , ext: _):
+      return Filename(string: name)
+    case .noExt:
+      return filename
+    }
+  }
+
+  public func basenameWithoutExtension(path: Path) -> Filename {
+    let basename = self.basename(path: path)
+    return self.basenameWithoutExtension(filename: basename)
+  }
+
   // MARK: - Extname
 
   /// Returns the file extension of a path.
   public func extname(filename: Filename) -> String {
-    let s = filename.string
-
-    if let dotIndex = s.lastIndex(of: ".") {
-      let substring = s[dotIndex...]
-      return String(substring)
+    switch self.splitNameAndExt(filename: filename) {
+    case .split(name: _, ext: let ext):
+      return String(ext)
+    case .noExt:
+      return ""
     }
-
-    return ""
   }
 
   /// Returns the file extension of a path.
   public func extname(path: Path) -> String {
     let basename = self.basename(path: path)
     return self.extname(filename: basename)
+  }
+
+  private enum NameAndExt {
+    case split(name: Substring, ext: Substring)
+    case noExt
+  }
+
+  private func splitNameAndExt(filename: Filename) -> NameAndExt {
+    let s = filename.string
+
+    if s == "." || s == ".." {
+      return .noExt
+    }
+
+    // We will fail on something like '.tar.gz'.
+    if let dotIndex = s.lastIndex(of: ".") {
+      let name = s[..<dotIndex]
+      let ext = s[dotIndex...]
+      return .split(name: name, ext: ext)
+    }
+
+    return .noExt
+  }
+
+  // MARK: - Add ext
+
+  /// Add extension.
+  public func addExt(filename: Filename, ext: String) -> Filename {
+    let result = self.addExt(string: filename.string, ext: ext)
+    return Filename(string: result)
+  }
+
+  /// Add extension.
+  public func addExt(path: Path, ext: String) -> Path {
+    let result = self.addExt(string: path.string, ext: ext)
+    return Path(string: result)
+  }
+
+  private func addExt(string: String, ext: String) -> String {
+    // We will allow adding extension to '.' and '..'
+    // (even if it does not make sense).
+    switch ext.hasPrefix(".") {
+    case true:
+      return string + ext
+    case false:
+      return string + "." + ext
+    }
   }
 
   // MARK: - Dirname

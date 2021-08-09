@@ -24,6 +24,10 @@ public struct Filename: Equatable, Comparable, Hashable,
     self.string = string
   }
 
+  public init(string: Substring) {
+    self.string = String(string)
+  }
+
   // We want to implement this manually to be able to put breakpoint inside.
   public static func == (lhs: Filename, rhs: Filename) -> Bool {
     return lhs.string == rhs.string
