@@ -27,7 +27,7 @@ let package = Package(
   dependencies: [
     // We try to avoid adding new dependencies because… oh so many reasons!
     // Tbh. I’m still not sure if we can trust this ‘apple’ person…
-    .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.0.1")),
+    .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.4.0")),
     // 0.50300.0 -> swift-5.3-RELEASE	-> Xcode 12.0
     .package(url: "https://github.com/apple/swift-syntax.git", .exact("0.50300.0"))
   ],

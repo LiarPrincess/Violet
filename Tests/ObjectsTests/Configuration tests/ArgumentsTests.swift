@@ -1,5 +1,6 @@
 import XCTest
 import Foundation
+import FileSystem
 import VioletCompiler
 @testable import VioletObjects
 
@@ -15,8 +16,14 @@ private func XCTAssertEqual(_ lhs: Arguments,
   XCTAssertEqual(lhs.quiet, rhs.quiet, "quiet", file: file, line: line)
   XCTAssertEqual(lhs.isolated, rhs.isolated, "isolated", file: file, line: line)
   XCTAssertEqual(lhs.optimize, rhs.optimize, "optimization", file: file, line: line)
+
   XCTAssertEqual(lhs.warnings, rhs.warnings, "warnings", file: file, line: line)
-  XCTAssertEqual(lhs.bytesWarning, rhs.bytesWarning, "bytesWarning", file: file, line: line)
+  XCTAssertEqual(lhs.bytesWarning,
+                 rhs.bytesWarning,
+                 "bytesWarning",
+                 file: file,
+                 line: line)
+
   XCTAssertEqual(lhs.command, rhs.command, "command", file: file, line: line)
   XCTAssertEqual(lhs.module, rhs.module, "module", file: file, line: line)
   XCTAssertEqual(lhs.script, rhs.script, "script", file: file, line: line)
@@ -31,6 +38,34 @@ private func XCTAssertEqual(_ lhs: Arguments,
                  "ignoreEnvironment",
                  file: file,
                  line: line)
+}
+
+private func XCTAssertEqualStrings(_ lhs: String,
+                                   _ rhs: String,
+                                   file: StaticString = #file,
+                                   line: UInt = #line) {
+  func splitLines(_ s: String) -> [Substring] {
+    return s.split(separator: "\n",
+                   maxSplits: .max,
+                   omittingEmptySubsequences: false)
+  }
+
+  let lhsLines = splitLines(lhs)
+  let rhsLines = splitLines(rhs)
+
+  XCTAssertEqual(lhsLines.count,
+                 rhsLines.count,
+                 "Line count",
+                 file: file,
+                 line: line)
+
+  for (index, (l, r)) in zip(lhsLines, rhsLines).enumerated() {
+    XCTAssertEqual(l,
+                   r,
+                   "Line \(index)",
+                   file: file,
+                   line: line)
+  }
 }
 
 class ArgumentsTests: XCTestCase {
@@ -280,7 +315,7 @@ class ArgumentsTests: XCTestCase {
 
     if let parsed = self.parse(cmd) {
       var expected = Arguments()
-      expected.script = file
+      expected.script = Path(string: file)
       XCTAssertEqual(parsed, expected)
     }
   }
@@ -296,7 +331,7 @@ class ArgumentsTests: XCTestCase {
       expected.quiet = true
       expected.bytesWarning = .warning
       expected.optimize = .O
-      expected.script = file
+      expected.script = Path(string: file)
       XCTAssertEqual(parsed, expected)
     }
   }
@@ -334,21 +369,22 @@ class ArgumentsTests: XCTestCase {
 
   // swiftlint:disable:next function_body_length
   func test_usage() {
-    XCTAssertEqual(Arguments.helpMessage, """
+    let result = Arguments.helpMessage
+    XCTAssertEqualStrings(result, """
 OVERVIEW: Violet - Python VM written in Swift
 
 If a client requests it, we shall go anywhere.
 Representing the Auto Memoir Doll service,
 I am Violet Evergarden.
 
-USAGE: Violet <options>
+USAGE: Violet [<options>] [<script>]
 
 ARGUMENTS:
   <script>                execute the code contained in script (terminates
                           option list)
 
 OPTIONS:
-  -help, -h, --help       print this help message and exit (also --help)
+  -h, --help, -help       print this help message and exit (also --help)
   -V, --version           print the Python version number and exit (also
                           --version)
   -d                      debug output messages; also PYTHONDEBUG=x
@@ -371,17 +407,17 @@ OPTIONS:
                           also PYTHONOPTIMIZE=x
   -OO                     do -O changes and also discard docstrings (overrides
                           '-O' if it is also set)
-  -Wd, -Wdefault          warning control; warn once per call location; also
+  -Wdefault, -Wd          warning control; warn once per call location; also
                           PYTHONWARNINGS=arg
-  -We, -Werror            warning control; convert to exceptions; also
+  -Werror, -We            warning control; convert to exceptions; also
                           PYTHONWARNINGS=arg
-  -Wa, -Walways           warning control; warn every time; also
+  -Walways, -Wa           warning control; warn every time; also
                           PYTHONWARNINGS=arg
-  -Wm, -Wmodule           warning control; warn once per calling module; also
+  -Wmodule, -Wm           warning control; warn once per calling module; also
                           PYTHONWARNINGS=arg
-  -Wo, -Wonce             warning control; warn once per Python process; also
+  -Wonce, -Wo             warning control; warn once per Python process; also
                           PYTHONWARNINGS=arg
-  -Wi, -Wignore           warning control; never warn; also PYTHONWARNINGS=arg
+  -Wignore, -Wi           warning control; never warn; also PYTHONWARNINGS=arg
   -b                      issue warning about str(bytes_instance),
                           str(bytearray_instance) and comparing bytes/bytearray
                           with str.

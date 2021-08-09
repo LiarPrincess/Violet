@@ -197,7 +197,7 @@ public struct Arguments {
   /// Message printed after providing help flag (`-h -help --help`).
   public static var helpMessage: String {
     do {
-      let binding = ArgumentBinding()
+      var binding = ArgumentBinding()
       _ = try binding.run()
 
       let msg = "By default 'apple/swift-argument-parser' should " +

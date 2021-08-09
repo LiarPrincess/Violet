@@ -25,7 +25,9 @@ internal struct ArgumentBinding: ParsableCommand {
     commandName: Configure.implementation.name,
     abstract: Configure.implementation.abstract,
     discussion: Configure.implementation.discussion,
-    helpNames: []
+    // version: XYZ // Nope! This would add an additional '--version' flag.
+    //              // We will handle this on our own.
+    helpNames: []   // The same goes for 'help', where we have to add '-help'.
   )
 
   // MARK: - Flags
@@ -42,7 +44,7 @@ internal struct ArgumentBinding: ParsableCommand {
     ],
     help: "print this help message and exit (also --help)"
   )
-  internal var help: Bool
+  internal var help = false
 
   /// `-V --version`
   ///
@@ -58,7 +60,7 @@ internal struct ArgumentBinding: ParsableCommand {
     ],
     help: "print the Python version number and exit (also --version)"
   )
-  internal var version: Bool
+  internal var version = false
 
   /// `-d`
   ///
@@ -67,7 +69,7 @@ internal struct ArgumentBinding: ParsableCommand {
     name: NameSpecification.short,
     help: "debug output messages; also PYTHONDEBUG=x"
   )
-  internal var debug: Bool
+  internal var debug = false
 
   /// `-q`
   ///
@@ -76,7 +78,7 @@ internal struct ArgumentBinding: ParsableCommand {
     name: NameSpecification.short,
     help: "don't print version and copyright messages on interactive startup"
   )
-  internal var quiet: Bool
+  internal var quiet = false
 
   /// `-i`
   ///
@@ -90,7 +92,7 @@ internal struct ArgumentBinding: ParsableCommand {
       "if stdin does not appear to be a terminal; also PYTHONINSPECT=x"
     )
   )
-  internal var inspectInteractively: Bool
+  internal var inspectInteractively = false
 
   /// `-E`
   ///
@@ -100,7 +102,7 @@ internal struct ArgumentBinding: ParsableCommand {
      name: NameSpecification.customShort("E"),
      help: "ignore PYTHON* environment variables (such as PYTHONPATH)"
    )
-  internal var ignoreEnvironment: Bool
+  internal var ignoreEnvironment = false
 
   /// `-I`
   ///
@@ -112,7 +114,7 @@ internal struct ArgumentBinding: ParsableCommand {
     name: NameSpecification.customShort("I"),
     help: "isolate Violet from the user's environment (implies -E)"
   )
-  internal var isolated: Bool
+  internal var isolated = false
 
   /// `-v`
   @Flag(
@@ -134,14 +136,14 @@ internal struct ArgumentBinding: ParsableCommand {
     name: NameSpecification.customShort("O"),
     help: "remove assert and __debug__-dependent statements; also PYTHONOPTIMIZE=x"
   )
-  internal var optimize1: Bool // Do not use 'Int'. '-O and -OO' are separate options
+  internal var optimize1 = false // Do not use 'Int'. '-O and -OO' are separate options
 
   /// `-OO`
   @Flag(
     name: NameSpecification.customLong("OO", withSingleDash: true),
     help: "do -O changes and also discard docstrings (overrides '-O' if it is also set)"
   )
-  internal var optimize2: Bool // Do not use 'Int'. '-O and -OO' are separate options
+  internal var optimize2 = false // Do not use 'Int'. '-O and -OO' are separate options
 
   // MARK: - Warnings
 
@@ -153,7 +155,7 @@ internal struct ArgumentBinding: ParsableCommand {
     ],
     help: "warning control; warn once per call location; also PYTHONWARNINGS=arg"
   )
-  internal var wDefault: Bool
+  internal var wDefault = false
 
   /// Warning control.
   @Flag(
@@ -163,7 +165,7 @@ internal struct ArgumentBinding: ParsableCommand {
     ],
     help: "warning control; convert to exceptions; also PYTHONWARNINGS=arg"
   )
-  internal var wError: Bool
+  internal var wError = false
 
   /// Warning control.
   @Flag(
@@ -173,7 +175,7 @@ internal struct ArgumentBinding: ParsableCommand {
     ],
     help: "warning control; warn every time; also PYTHONWARNINGS=arg"
   )
-  internal var wAlways: Bool
+  internal var wAlways = false
 
   /// Warning control.
   @Flag(
@@ -183,7 +185,7 @@ internal struct ArgumentBinding: ParsableCommand {
     ],
     help: "warning control; warn once per calling module; also PYTHONWARNINGS=arg"
   )
-  internal var wModule: Bool
+  internal var wModule = false
 
   /// Warning control.
   @Flag(
@@ -193,7 +195,7 @@ internal struct ArgumentBinding: ParsableCommand {
     ],
     help: "warning control; warn once per Python process; also PYTHONWARNINGS=arg"
   )
-  internal var wOnce: Bool
+  internal var wOnce = false
 
   /// Warning control.
   @Flag(
@@ -203,7 +205,7 @@ internal struct ArgumentBinding: ParsableCommand {
     ],
     help: "warning control; never warn; also PYTHONWARNINGS=arg"
   )
-  internal var wIgnore: Bool
+  internal var wIgnore = false
 
   // MARK: - Bytes warning
 
