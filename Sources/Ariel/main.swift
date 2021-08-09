@@ -2,62 +2,113 @@ import SwiftSyntax
 import Foundation
 import FileSystem
 
-private let minAccessModifier = AccessModifier.public
-private let maxInitializerLength = 100
+// 'internal', so it is available in the whole module.
+internal let fileSystem = FileSystem.default
 
-private let fileSystem = FileSystem.default
+private let arguments = Arguments.parseOrExit()
 
-private func isSwiftFile(entry: ReaddirRec.Element) -> Bool {
-  let type = entry.stat.type
-  let ext = fileSystem.extname(filename: entry.name)
-  return type == .regularFile && ext == ".swift"
+private func printVerbose(_ msg: String) {
+  if arguments.verbose {
+    print(msg)
+  }
 }
 
-private func writeModuleInterface(moduleDirectory: Path) throws {
-  var entries = fileSystem.readdirRecOrTrap(path: moduleDirectory)
+// MARK: - Input
+
+private struct Input {
+
+  fileprivate enum Kind {
+    case singleFile
+    case directory
+  }
+
+  fileprivate let kind: Kind
+  fileprivate let path: Path
+}
+
+private let input: Input = {
+  let path = Path(string: arguments.inputPath)
+  let stat = fileSystem.statOrTrap(path: path)
+
+  switch stat.type {
+  case .regularFile:
+    printVerbose("Input: single file: \(path)")
+    return Input(kind: .singleFile, path: path)
+  case .directory:
+    printVerbose("Input: directory: \(path)")
+    return Input(kind: .directory, path: path)
+  default:
+    print("Input path should be a file or a directory, not a \(stat.type).")
+    exit(1)
+  }
+}()
+
+// MARK: - Output
+
+private let output: Output = {
+  guard let outputPathArg = arguments.outputPath else {
+    printVerbose("No output path specified, using stdout.")
+    return ConsoleOutput()
+  }
+
+  let outputPath = Path(string: outputPathArg)
+
+  let ext = fileSystem.extname(path: outputPath)
+  let isFile = !ext.isEmpty
+
+  if isFile {
+    printVerbose("Output file specified: \(outputPath)")
+    return FileOutput(path: outputPath)
+  }
+
+  printVerbose("Output directory specified: \(outputPath)")
+  let inputName = fileSystem.basenameWithoutExtension(path: input.path)
+  let outputName = fileSystem.addExt(filename: inputName, ext: ".txt")
+  let path = fileSystem.join(path: outputPath, element: outputName)
+  return FileOutput(path: path)
+}()
+
+defer { output.flush() }
+
+// MARK: - Main
+
+func writeDeclarations(printedPath: String, swiftFilePath: Path) throws {
+  printVerbose("Processing: \(printedPath)")
+
+  let fileContent = try String(contentsOfFile: swiftFilePath.string)
+  let ast = try SyntaxParser.parse(source: fileContent)
+
+  let astVisitor = ASTVisitor()
+  astVisitor.walk(ast)
+
+  let topLevelScope = astVisitor.topLevelScope
+  writer.write(printedPath: printedPath, topLevelScope: topLevelScope)
+}
+
+let filter = Filter(minAccessModifier: arguments.minAccessLevel)
+let formatter = Formatter(maxInitializerLength: 100)
+let writer = Writer(filter: filter, formatter: formatter, output: output)
+
+switch input.kind {
+case .singleFile:
+  let p = input.path
+  try writeDeclarations(printedPath: p.string, swiftFilePath: p)
+
+case .directory:
+  let dir = input.path
+
+  var entries = fileSystem.readdirRecOrTrap(path: dir)
   entries.sort(by: \.relativePath)
 
-  let filter = Filter(minAccessModifier: minAccessModifier)
-  let formatter = Formatter(maxInitializerLength: maxInitializerLength)
-  let output: Output = ConsoleOutput()
-  defer { output.flush() }
-
-  let writer = Writer(filter: filter, formatter: formatter, output: output)
-
   for entry in entries {
-    guard isSwiftFile(entry: entry) else {
-      continue
+    let type = entry.stat.type
+    let ext = fileSystem.extname(filename: entry.name)
+    let isSwiftFile = type == .regularFile && ext == ".swift"
+
+    if isSwiftFile {
+      let relativePath = entry.relativePath
+      let path = fileSystem.join(path: dir, element: relativePath)
+      try writeDeclarations(printedPath: relativePath.string, swiftFilePath: path)
     }
-
-    let relativePath = entry.relativePath
-    print("Processing:", relativePath)
-
-    let path = fileSystem.join(path: moduleDirectory, element: relativePath)
-    let fileUrl = URL(path: path, isDirectory: false)
-    let fileContent = try String(contentsOf: fileUrl)
-    let ast = try SyntaxParser.parse(source: fileContent)
-
-    let astVisitor = ASTVisitor()
-    astVisitor.walk(ast)
-
-    let topLevelScope = astVisitor.topLevelScope
-    writer.write(filename: entry.name, topLevelScope: topLevelScope)
   }
 }
-
-let sourcesDirPath = Path(string: "/Users/michal/Documents/Xcode/Violet/Sources")
-let sourcesDirContent = fileSystem.readdirOrTrap(path: sourcesDirPath)
-
-for filename in sourcesDirContent {
-  if filename == ".DS_Store" {
-    continue
-  }
-
-  let path = fileSystem.join(path: sourcesDirPath, element: filename)
-  let stat = fileSystem.statOrTrap(path: path)
-  if stat.type == .directory {
-    try writeModuleInterface(moduleDirectory: path)
-  }
-}
-
-print("Finished")

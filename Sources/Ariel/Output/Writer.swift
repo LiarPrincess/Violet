@@ -15,7 +15,7 @@ class Writer {
     self.output = output
   }
 
-  func write(filename: Filename, topLevelScope: DeclarationScope) {
+  func write(printedPath: String, topLevelScope: DeclarationScope) {
     assert(self.indent.isEmpty, "Indent from previous file?")
 
     self.filter.walk(scope: topLevelScope)
@@ -28,10 +28,9 @@ class Writer {
       return
     }
 
-    let filenameString = String(describing: filename)
-    let separator = String(repeating: "=", count: filenameString.count + 4 + 4)
+    let separator = String(repeating: "=", count: printedPath.count + 4 + 4)
     self.print(separator)
-    self.print("=== \(filenameString) ===")
+    self.print("=== \(printedPath) ===")
     self.print(separator)
     self.print()
 

@@ -3,13 +3,15 @@ import SwiftSyntax
 class Filter {
 
   // Instead of using one giant filter, we will use a few smaller ones.
-  fileprivate let implementations: [FilterImpl]
+  private let implementations: [FilterImpl]
 
-  init(minAccessModifier: AccessModifier) {
+  init(minAccessModifier: AccessModifier?) {
     var implementations = [FilterImpl]()
 
-    let filter0 = AccessModifierFilterImpl(minAccessModifier: minAccessModifier)
-    implementations.append(filter0)
+    if let am = minAccessModifier {
+      let filter = AccessModifierFilterImpl(minAccessModifier: am)
+      implementations.append(filter)
+    }
 
     self.implementations = implementations
   }

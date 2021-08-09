@@ -108,7 +108,7 @@ let package = Package(
     .testTarget(name: "RapunzelTests", dependencies: ["Rapunzel"]),
 
     // Tool to dump module interface (all of the 'public' and 'open' declarations)
-    .target(name: "Ariel", dependencies: ["SwiftSyntax", "FileSystem"]),
+    .target(name: "Ariel", dependencies: ["SwiftSyntax", "ArgumentParser", "FileSystem"]),
     .testTarget(name: "ArielTests", dependencies: ["Ariel"])
   ]
 )
