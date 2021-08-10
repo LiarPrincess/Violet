@@ -43,6 +43,28 @@ internal enum LibC {
     return Foundation.dirname(path)!
   }
 
+  // MARK: - creat
+
+  internal enum CreatResult {
+    case value(Int32)
+    case errno(Int32)
+  }
+
+  /// https://linux.die.net/man/2/creat
+  internal static func creat(path: UnsafePointer<Int8>!,
+                             mode: mode_t) -> CreatResult {
+    // open() and creat() return the new file descriptor,
+    // or -1 if an error occurred (in which case, errno is set appropriately).
+    switch Foundation.creat(path, mode) {
+    case -1:
+      let err = Foundation.errno
+      Foundation.errno = 0
+      return .value(err)
+    case let fd:
+      return .value(fd)
+    }
+  }
+
   // MARK: - stat
 
   internal static func createStat() -> stat {

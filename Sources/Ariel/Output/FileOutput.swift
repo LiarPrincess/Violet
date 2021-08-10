@@ -2,49 +2,70 @@ import FileSystem
 import Foundation
 import VioletCore
 
+private func createFileHandle(path: Path) -> FileHandle {
+  // First we have to make sure that the fill path exists
+  let dir = fileSystem.dirname(path: path)
+  switch fileSystem.mkdirp(path: dir.path) {
+  case .ok:
+    printVerbose("Created '\(dir)'")
+  case .eexist:
+    break
+  case let .parentRemovedAfterCreation(p):
+    printErrorAndExit("Parent was removed after creating: \(p)")
+  case let .error(p, errno: err):
+    let msg = String(errno: err) ?? "Unable to mkdirp"
+    printErrorAndExit("\(msg): \(p)")
+  }
+
+  // 'forWritingAtPath' will fail if the file does not exists
+  if let fh = FileHandle(forWritingAtPath: path.string) {
+    return fh
+  }
+
+  // Try to create this file
+  switch fileSystem.creat(path: path) {
+  case .fd(let fd):
+    return FileHandle(fileDescriptor: fd)
+  case .emptyPath:
+    printErrorAndExit("Unable to open a file with empty path!")
+  case .eexist:
+    // File exists?
+    printErrorAndExit("Unable to open '\(path)' for writing.")
+  case .error(errno: let err):
+    let msg = String(errno: err) ?? "Unable to stat"
+    printErrorAndExit("\(msg): \(path)")
+  }
+}
+
 class FileOutput: Output {
 
-  private let path: Path
+  private let name: String
+  private let fileHandle: FileHandle
   private let encoding: String.Encoding
-  private var fileHandle: FileHandle?
 
   init(path: Path, encoding: String.Encoding) {
-    self.path = path
+    self.name = path.string
+    self.fileHandle = createFileHandle(path: path)
     self.encoding = encoding
   }
 
   func write(_ string: String) {
     guard let data = string.data(using: self.encoding) else {
-      trap("Unable to encode '\(string)' using \(self.encoding).")
+      printErrorAndExit("Unable to encode '\(string)' using \(self.encoding).")
     }
 
-    let fileHandle = self.getFileHandle()
-    fileHandle.write(data)
-  }
-
-  private func getFileHandle() -> FileHandle {
-    if let fh = self.fileHandle {
-      return fh
-    }
-
-    let dir = fileSystem.dirname(path: self.path)
-    switch fileSystem.mkdirpOrTrap(path: dir.path) {
-    case .ok:
-      printVerbose("Created '\(dir)'")
-    case .eexist:
-      break
-    }
-
-    let path = self.path.string
-    if let fh = FileHandle(forWritingAtPath: path) {
-      self.fileHandle = fh
-      return fh
-    }
-
-    trap("Unable to open '\(path)' for writing.")
+    self.fileHandle.write(data)
   }
 
   func close() {
-    self.fileHandle?.closeFile()
+    if #available(OSX 10.15, *) {
+      do {
+        try self.fileHandle.close()
+      } catch {
+        printErrorAndExit("Unable to close '\(name)': \(error)")
+      }
+    } else {
+      self.fileHandle.closeFile()
+    }
   }
 }

@@ -6,6 +6,7 @@ extension FileSystem {
   // MARK: - Mkdir
 
   public enum MkdirResult {
+    case emptyPath
     case ok
     /// Parent directory does not exist.
     case enoent
@@ -32,7 +33,7 @@ extension FileSystem {
     // We could make some fancy wrapper for 'mode',
     // but you are going to use '0o666' anyway.
     guard let nonEmpty = NonEmptyPath(from: string) else {
-      return .ok
+      return .emptyPath
     }
 
     let modeToUse = mode ?? (S_IRWXU | S_IRWXG | S_IRWXO)
@@ -80,6 +81,7 @@ extension FileSystem {
 
       let subPath = s[..<index]
       switch self.mkdir(string: subPath, mode: mode) {
+      case .emptyPath: break // 'path' starts with '/'
       case .ok: lastMkdirResult = .ok // Directory created
       case .enoent: return .parentRemovedAfterCreation(Path(string: subPath))
       case .eexist: lastMkdirResult = .eexist // Already exists

@@ -1,6 +1,7 @@
 import SwiftSyntax
 import Foundation
 import FileSystem
+import VioletCore
 
 private let arguments = Arguments.parseOrExit()
 
@@ -29,7 +30,17 @@ private struct Input {
 
 private let input: Input = {
   let path = Path(string: arguments.inputPath)
-  let stat = fileSystem.statOrTrap(path: path)
+
+  let stat: Stat
+  switch fileSystem.stat(path: path) {
+  case .value(let s):
+    stat = s
+  case .enoent:
+    printErrorAndExit("No such file or directory: \(path)")
+  case .error(errno: let err):
+    let msg = String(errno: err) ?? "Unknown error"
+    printErrorAndExit("\(msg): \(path)")
+  }
 
   switch stat.type {
   case .regularFile:
@@ -100,7 +111,18 @@ case .singleFile:
 case .directory:
   let dir = input.path
 
-  var entries = fileSystem.readdirRecOrTrap(path: dir)
+  var entries: ReaddirRec
+  switch fileSystem.readdirRec(path: dir) {
+  case let .value(e):
+    entries = e
+  case let .unableToStat(path, errno: e):
+    let msg = String(errno: e) ?? "Unable to stat"
+    printErrorAndExit("\(msg): \(path)")
+  case let .unableToListContents(path, errno: e):
+    let msg = String(errno: e) ?? "Unable to list contents of"
+    printErrorAndExit("\(msg): \(path)")
+  }
+
   entries.sort(by: \.relativePath)
 
   for entry in entries {
