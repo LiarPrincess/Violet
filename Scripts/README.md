@@ -15,6 +15,7 @@ Other:
 - **bigint_generate_minRequiredWidth_tests** - will use Python `int.bit_length` method to generate test cases for our `BigInt.minRequiredWidth`.
 - **bigint_generate_node_tests** - will use [Node.js](https://nodejs.org/en/) to generate tests for our `BigInt`.
 
+- **ariel_output** - output files from running `Ariel` on the whole `Violet` database.
 - **compiler_dump_test** - helper for creating unit tests for compiler.
 - **float_from_hex** - helper for our implementation of `float.fromhex`.
 - **module_generate_empty_definition** - generates Swift code for module functions using module html documentation from Python website.

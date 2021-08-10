@@ -30,20 +30,23 @@ clean:
 # -- Code generation --
 # ---------------------
 
-.PHONY: elsa gen unicode
+.PHONY: elsa ariel gen unicode
 
 elsa:
 	swift run Elsa
 
+ariel:
+	./Scripts/ariel_output/create_files.sh
+
 gen:
-	@./Sources/Objects/Generated/run.sh
+	./Sources/Objects/Generated/run.sh
 	@echo
-	@./Scripts/unimplemented_builtins/refresh.sh
+	./Scripts/unimplemented_builtins/refresh.sh
 	@echo
-	@./PyTests/generate_tests.sh
+	./PyTests/generate_tests.sh
 
 unicode:
-	@./Scripts/unicode/main.sh
+	./Scripts/unicode/main.sh
 
 # -----------------
 # -- Lint/format --
