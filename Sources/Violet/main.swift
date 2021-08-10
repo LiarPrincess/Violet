@@ -11,7 +11,7 @@ switch vm.run() {
 case .done:
   // It worked! Yay!
   // https://youtu.be/kHx5hCVN26E?t=117
-  exit(0)
+  exit(EXIT_SUCCESS)
 
 case .systemExit(let object):
   // It worked! It raised! This one got it all!
@@ -20,12 +20,12 @@ case .systemExit(let object):
   // CPython: handle_system_exit(void)
 
   if PyCast.isNone(object) {
-    exit(0)
+    exit(EXIT_SUCCESS)
   }
 
   if let pyInt = PyCast.asInt(object) {
     guard let status = Int32(exactly: pyInt.value) else {
-      exit(1) // Python does not define what to do
+      exit(EXIT_FAILURE) // Python does not define what to do
     }
 
     exit(status)
@@ -42,7 +42,7 @@ case .systemExit(let object):
   }
 
   // Error is an error, even if we did print message
-  exit(1)
+  exit(EXIT_FAILURE)
 
 case .error(let error):
   // CPython: PyErr_PrintEx(int set_sys_last_vars)
@@ -52,15 +52,15 @@ case .error(let error):
     // Everything is 'ok' (at least in 'excepthook', the whole 'VM.run' just
     // raised, but yeah… 'excepthook' is fine).
     // Anyway… let's ignore whatever nonsense this function returned…
-    exit(1)
+    exit(EXIT_FAILURE)
   }
 
   // We will be printing to 'stderr' (probably)
   let stderr: PyTextFile
   switch Py.sys.getStderrOrNone() {
-  case .none: exit(1) // User requested no printing
+  case .none: exit(EXIT_FAILURE) // User requested no printing
   case .value(let f): stderr = f
-  case .error: exit(1) // Ignore error, it's not like we can do anything
+  case .error: exit(EXIT_FAILURE) // Ignore error, it's not like we can do anything
   }
 
   func write(string: String) {
@@ -91,5 +91,5 @@ case .error(let error):
   }
 
   // Regardless of whether we did print something or not, it is still an error
-  exit(1)
+  exit(EXIT_FAILURE)
 }
