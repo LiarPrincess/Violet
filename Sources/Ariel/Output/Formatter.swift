@@ -449,7 +449,7 @@ struct Formatter {
 
     var value = node.value
     if let maxCount = maxInitializerLength, value.count > maxCount {
-      value = String(value.prefix(maxCount)) + " (...)"
+      value = String(value.prefix(maxCount)) + " (…)"
     }
 
     return " = " + value

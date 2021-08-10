@@ -4,10 +4,10 @@ import VioletCore
 
 class FileOutput: Output {
 
-  static let stdout: FileOutput = FileOutput(name: "<stdout>",
-                                             fileHandle: .standardOutput,
-                                             encoding: .utf8,
-                                             closeFileHandleAfter: false)
+  static let stdout = FileOutput(name: "<stdout>",
+                                 fileHandle: .standardOutput,
+                                 encoding: .utf8,
+                                 closeFileHandleAfter: false)
 
   private let name: String
   private let fileHandle: FileHandle

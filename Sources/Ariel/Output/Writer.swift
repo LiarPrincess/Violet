@@ -8,6 +8,8 @@ class Writer {
   private let formatter: Formatter
   private var output: Output
   private var indent = ""
+  /// Avoid printing multiple empty lines in a row. It is ugly.
+  private var wasLastPrintedLineEmpty = false
 
   init(filter: Filter, formatter: Formatter, output: Output) {
     self.filter = filter
@@ -31,6 +33,7 @@ class Writer {
     self.print()
 
     self.write(declarations: declarations)
+    self.print()
   }
 
   private func isAnyAccepted(declarations: [Declaration]) -> Bool {
@@ -49,27 +52,38 @@ class Writer {
       self.printIndented(string)
 
       if let withChildren = d as? DeclarationWithScope {
-        let indentBefore = self.indent
-        self.indent = indentBefore + "  "
-        self.write(declarations: withChildren.children)
-        self.indent = indentBefore
+        let children = withChildren.children
 
-        if self.isAnyAccepted(declarations: withChildren.children) {
-          self.print()
+        if self.isAnyAccepted(declarations: children) {
+          let indentBefore = self.indent
+          self.indent = indentBefore + "  "
+          self.write(declarations: children)
+          self.indent = indentBefore
         }
       }
     }
-
-    print()
   }
 
   private func print(_ string: String = "") {
-    self.output.write(string + "\n")
+    let isEmpty = string.isEmpty
+    defer { self.wasLastPrintedLineEmpty = isEmpty }
+
+    let hasMultipleEmptyInARow = self.wasLastPrintedLineEmpty && isEmpty
+    if !hasMultipleEmptyInARow {
+      self.output.write(string + "\n")
+    }
   }
 
   private func printIndented(_ string: String) {
     let indent = self.indent
-    let fixedString = string.replacingOccurrences(of: "\n", with: "\n" + indent)
-    self.output.write(indent + fixedString + "\n")
+
+    let isEmpty = indent.isEmpty && string.isEmpty
+    defer { self.wasLastPrintedLineEmpty = isEmpty }
+
+    let hasMultipleEmptyInARow = self.wasLastPrintedLineEmpty && isEmpty
+    if !hasMultipleEmptyInARow {
+      let fixedString = string.replacingOccurrences(of: "\n", with: "\n" + indent)
+      self.output.write(indent + fixedString + "\n")
+    }
   }
 }
