@@ -11,7 +11,7 @@ class Extension: DeclarationWithScope {
   let attributes: [Attribute]
   let genericRequirements: [GenericRequirement]
 
-  let childScope = DeclarationScope()
+  var children = [Declaration]()
 
   init(_ node: ExtensionDeclSyntax) {
     self.id = node.id

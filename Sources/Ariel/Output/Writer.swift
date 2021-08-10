@@ -15,16 +15,12 @@ class Writer {
     self.output = output
   }
 
-  func write(printedPath: String, topLevelScope: DeclarationScope) {
+  func write(printedPath: String, declarations: [Declaration]) {
     assert(self.indent.isEmpty, "Indent from previous file?")
 
-    self.filter.walk(scope: topLevelScope)
+    self.filter.walk(nodes: declarations)
 
-    let isAnyDeclarationAccepted = topLevelScope.all.contains {
-      self.filter.isAccepted(declaration: $0)
-    }
-
-    guard isAnyDeclarationAccepted else {
+    guard self.isAnyAccepted(declarations: declarations) else {
       return
     }
 
@@ -34,51 +30,37 @@ class Writer {
     self.print(separator)
     self.print()
 
-    self.write(scope: topLevelScope)
+    self.write(declarations: declarations)
   }
 
-  private func write(scope: DeclarationScope) {
-    func _write(_ declarations: [Declaration]) {
-      if declarations.hasAny {
-        for node in declarations {
-          self.write(declaration: node)
-        }
+  private func isAnyAccepted(declarations: [Declaration]) -> Bool {
+    return declarations.any
+      && declarations.contains(where: self.filter.isAccepted(_:))
+  }
 
-        self.print()
+  private func write(declarations: [Declaration]) {
+    for d in declarations {
+      let isAccepted = self.filter.isAccepted(d)
+      guard isAccepted else {
+        continue
+      }
+
+      let string = self.formatter.format(d)
+      self.printIndented(string)
+
+      if let withChildren = d as? DeclarationWithScope {
+        let indentBefore = self.indent
+        self.indent = indentBefore + "  "
+        self.write(declarations: withChildren.children)
+        self.indent = indentBefore
+
+        if self.isAnyAccepted(declarations: withChildren.children) {
+          self.print()
+        }
       }
     }
 
-    _write(scope.variables)
-
-    _write(scope.typealiases)
-    _write(scope.enumerations)
-    _write(scope.structures)
-    _write(scope.classes)
-    _write(scope.protocols)
-    _write(scope.extensions)
-    _write(scope.associatedTypes)
-
-    _write(scope.initializers)
-    _write(scope.subscripts)
-    _write(scope.functions)
-    _write(scope.operators)
-  }
-
-  private func write(declaration: Declaration) {
-    let isAccepted = self.filter.isAccepted(declaration: declaration)
-    guard isAccepted else {
-      return
-    }
-
-    let string = self.formatter.format(declaration)
-    self.printIndented(string)
-
-    if let scopedDeclaration = declaration as? DeclarationWithScope {
-      let indentBefore = self.indent
-      self.indent = indentBefore + "  "
-      self.write(scope: scopedDeclaration.childScope)
-      self.indent = indentBefore
-    }
+    print()
   }
 
   private func print(_ string: String = "") {
@@ -86,7 +68,8 @@ class Writer {
   }
 
   private func printIndented(_ string: String) {
-    let fixedString = string.replacingOccurrences(of: "\n", with: "\n" + self.indent)
-    self.output.write(self.indent + fixedString + "\n")
+    let indent = self.indent
+    let fixedString = string.replacingOccurrences(of: "\n", with: "\n" + indent)
+    self.output.write(indent + fixedString + "\n")
   }
 }

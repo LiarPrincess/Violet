@@ -11,7 +11,7 @@ class Protocol: DeclarationWithScope {
   let attributes: [Attribute]
   let genericRequirements: [GenericRequirement]
 
-  let childScope = DeclarationScope()
+  var children = [Declaration]()
 
   init(_ node: ProtocolDeclSyntax) {
     self.id = node.id

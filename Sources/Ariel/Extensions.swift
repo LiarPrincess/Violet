@@ -8,14 +8,6 @@ extension String {
   }
 }
 
-extension Collection {
-
-  /// Does the collection has any element?
-  var hasAny: Bool {
-    !self.isEmpty
-  }
-}
-
 extension Syntax {
 
   func isToken(withText expectedText: String) -> Bool {

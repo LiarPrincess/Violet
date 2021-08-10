@@ -1,8 +1,9 @@
+import ArgumentParser
 import SwiftSyntax
 
 // MARK: - Access modifiers
 
-enum AccessModifier: String {
+enum AccessModifier: String, RawRepresentable, ExpressibleByArgument {
   case `private`
   case `fileprivate`
   case `internal`

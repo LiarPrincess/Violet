@@ -12,7 +12,7 @@ class Enumeration: DeclarationWithScope {
   let genericParameters: [GenericParameter]
   let genericRequirements: [GenericRequirement]
 
-  let childScope = DeclarationScope()
+  var children = [Declaration]()
 
   init(_ node: EnumDeclSyntax) {
     self.id = node.id

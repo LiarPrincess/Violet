@@ -12,7 +12,7 @@ class Class: DeclarationWithScope {
   let genericParameters: [GenericParameter]
   let genericRequirements: [GenericRequirement]
 
-  let childScope = DeclarationScope()
+  var children = [Declaration]()
 
   init(_ node: ClassDeclSyntax) {
     self.id = node.id

@@ -12,7 +12,7 @@ class Structure: DeclarationWithScope {
   let genericParameters: [GenericParameter]
   let genericRequirements: [GenericRequirement]
 
-  let childScope = DeclarationScope()
+  var children = [Declaration]()
 
   init(_ node: StructDeclSyntax) {
     self.id = node.id

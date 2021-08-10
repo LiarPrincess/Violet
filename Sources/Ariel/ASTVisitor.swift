@@ -3,22 +3,25 @@ import SwiftSyntax
 class ASTVisitor: SyntaxVisitor {
 
   /// Result of the whole thing
-  private(set) var topLevelScope = DeclarationScope()
+  private(set) var topLevelDeclarations = [Declaration]()
   /// For nested declarations, so we can properly determine parent
-  private var scopeStack = [DeclarationScope]()
+  private var scopeStack = [DeclarationWithScope]()
   /// All of the visited declarations by their `id`
   private var declarationsById = [SyntaxIdentifier: Declaration]()
 
   // MARK: - Handle
 
-  private func handle(_ declaration: Declaration) -> SyntaxVisitorContinueKind {
-    self.declarationsById[declaration.id] = declaration
+  private func handle(_ node: Declaration) -> SyntaxVisitorContinueKind {
+    self.declarationsById[node.id] = node
 
-    let scope = self.scopeStack.last ?? self.topLevelScope
-    scope.append(declaration)
+    if let last = self.scopeStack.last {
+      last.children.append(node)
+    } else {
+      self.topLevelDeclarations.append(node)
+    }
 
-    if let scopedDeclaration = declaration as? DeclarationWithScope {
-      self.scopeStack.append(scopedDeclaration.childScope)
+    if let withChildren = node as? DeclarationWithScope {
+      self.scopeStack.append(withChildren)
       return .visitChildren
     }
 
@@ -30,9 +33,9 @@ class ASTVisitor: SyntaxVisitor {
       trap("Visiting unknown declaration")
     }
 
-    if let scopedDeclaration = declaration as? DeclarationWithScope {
-      let scope = self.scopeStack.popLast()
-      assert(scope === scopedDeclaration.childScope)
+    if let withChildren = declaration as? DeclarationWithScope {
+      let popResult = self.scopeStack.popLast()
+      assert(popResult === withChildren)
     }
   }
 

@@ -18,48 +18,47 @@ class Filter {
 
   // MARK: - Walk
 
-  func walk(scope: DeclarationScope) {
+  func walk(nodes: [Declaration]) {
     for impl in self.implementations {
       impl.onWalkStart()
     }
 
-    self.visit(scope: scope)
+    self.visit(nodes)
 
     for impl in self.implementations {
       impl.onWalkEnd()
     }
   }
 
-  private func visit(scope: DeclarationScope) {
-    for declaration in scope.all {
-      self.visit(declaration: declaration)
+  private func visit(_ nodes: [Declaration]) {
+    for node in nodes {
+      self.visit(node)
     }
   }
 
-  private func visit(declaration: Declaration) {
+  private func visit(_ node: Declaration) {
     for impl in self.implementations {
-      impl.visit(declaration)
+      impl.visit(node)
     }
 
-    if let scopedDeclaration = declaration as? DeclarationWithScope {
+    if let withChildren = node as? DeclarationWithScope {
       for impl in self.implementations {
-        impl.onScopedDeclarationEnter(declaration: scopedDeclaration)
+        impl.onScopedDeclarationEnter(withChildren)
       }
 
-      let childScope = scopedDeclaration.childScope
-      self.visit(scope: childScope)
+      self.visit(withChildren.children)
 
       for impl in self.implementations {
-        impl.onScopedDeclarationExit(declaration: scopedDeclaration)
+        impl.onScopedDeclarationExit(withChildren)
       }
     }
   }
 
   // MARK: - Is accepted
 
-  func isAccepted(declaration: Declaration) -> Bool {
+  func isAccepted(_ node: Declaration) -> Bool {
     for impl in self.implementations {
-      let isAccepted = impl.isAccepted(declaration: declaration)
+      let isAccepted = impl.isAccepted(node)
       if !isAccepted {
         return false
       }

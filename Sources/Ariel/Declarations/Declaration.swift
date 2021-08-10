@@ -18,7 +18,7 @@ extension Declaration {
 
 /// `Declaration` that contains nested `Declarations`
 protocol DeclarationWithScope: Declaration {
-  var childScope: DeclarationScope { get }
+  var children: [Declaration] { get set }
 }
 
 // MARK: - Visitor

@@ -60,21 +60,21 @@ class AccessModifierFilterImpl: FilterImpl {
 
   // MARK: - Scoped declaration
 
-  func onScopedDeclarationExit(declaration: DeclarationWithScope) {
-    self.ifChildIsAcceptedThenSoDoWe(declaration: declaration)
+  func onScopedDeclarationExit(_ node: DeclarationWithScope) {
+    self.ifChildIsAcceptedThenSoDoWe(node)
   }
 
-  private func ifChildIsAcceptedThenSoDoWe(declaration: DeclarationWithScope) {
-    let isAccepted = self.isAccepted(declaration: declaration)
+  private func ifChildIsAcceptedThenSoDoWe(_ node: DeclarationWithScope) {
+    let isAccepted = self.isAccepted(node)
     if isAccepted {
       // Already accepted, nothing to do.
       return
     }
 
-    for child in declaration.childScope.all {
-      let isChildAccepted = self.isAccepted(declaration: child)
+    for child in node.children {
+      let isChildAccepted = self.isAccepted(child)
       if isChildAccepted {
-        self.nodeAcceptanceStatus[declaration.id] = true
+        self.nodeAcceptanceStatus[node.id] = true
         return
       }
     }
@@ -82,8 +82,8 @@ class AccessModifierFilterImpl: FilterImpl {
 
   // MARK: - Is accepted
 
-  func isAccepted(declaration: Declaration) -> Bool {
-    guard let result = self.nodeAcceptanceStatus[declaration.id] else {
+  func isAccepted(_ node: Declaration) -> Bool {
+    guard let result = self.nodeAcceptanceStatus[node.id] else {
       trap("Node is missing from 'self.nodeAcceptanceStatus'")
     }
 

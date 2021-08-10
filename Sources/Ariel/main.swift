@@ -95,8 +95,8 @@ private func writeDeclarations(printedPath: String, swiftFilePath: Path) throws 
   let astVisitor = ASTVisitor()
   astVisitor.walk(ast)
 
-  let topLevelScope = astVisitor.topLevelScope
-  writer.write(printedPath: printedPath, topLevelScope: topLevelScope)
+  let topLevel = astVisitor.topLevelDeclarations
+  writer.write(printedPath: printedPath, declarations: topLevel)
 }
 
 let filter = Filter(minAccessModifier: arguments.minAccessLevel)

@@ -49,7 +49,7 @@ struct Formatter {
 
     let visitor = Visitor(formatter: self)
     visitor.visit(node)
-    assert(visitor.result.hasAny)
+    assert(visitor.result.any)
     return visitor.result
   }
 
@@ -260,7 +260,7 @@ struct Formatter {
     result += " operator "
     result += node.name
 
-    if node.operatorPrecedenceAndTypes.hasAny {
+    if node.operatorPrecedenceAndTypes.any {
       result += ": "
       result += self.join(node.operatorPrecedenceAndTypes, separator: ", ")
     }

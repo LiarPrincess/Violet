@@ -3,16 +3,16 @@ protocol FilterImpl: DeclarationVisitor {
   func onWalkStart()
   func onWalkEnd()
 
-  func onScopedDeclarationEnter(declaration: DeclarationWithScope)
-  func onScopedDeclarationExit(declaration: DeclarationWithScope)
+  func onScopedDeclarationEnter(_ node: DeclarationWithScope)
+  func onScopedDeclarationExit(_ node: DeclarationWithScope)
 
-  func isAccepted(declaration: Declaration) -> Bool
+  func isAccepted(_ node: Declaration) -> Bool
 }
 
 extension FilterImpl {
   func onWalkStart() {}
   func onWalkEnd() {}
 
-  func onScopedDeclarationEnter(declaration: DeclarationWithScope) {}
-  func onScopedDeclarationExit(declaration: DeclarationWithScope) {}
+  func onScopedDeclarationEnter(_ node: DeclarationWithScope) {}
+  func onScopedDeclarationExit(_ node: DeclarationWithScope) {}
 }
