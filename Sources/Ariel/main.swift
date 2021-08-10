@@ -62,7 +62,7 @@ private let outputEncoding = String.Encoding.utf8
 private let output: Output = {
   guard let outputPathArg = arguments.outputPath else {
     printVerbose("No output path specified, using stdout.")
-    return ConsoleOutput()
+    return FileOutput.stdout
   }
 
   let outputPath = Path(string: outputPathArg)
