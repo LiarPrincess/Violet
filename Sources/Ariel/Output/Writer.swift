@@ -42,25 +42,45 @@ class Writer {
   }
 
   private func write(declarations: [Declaration]) {
-    for d in declarations {
-      let isAccepted = self.filter.isAccepted(d)
-      guard isAccepted else {
-        continue
-      }
+    for declaration in declarations {
+      self.write(declaration: declaration)
+    }
+  }
 
-      let string = self.formatter.format(d)
+  private func write(declaration: Declaration) {
+    let isAccepted = self.filter.isAccepted(declaration)
+    guard isAccepted else {
+      return
+    }
+
+    let string = self.formatter.format(declaration)
+
+    guard let withChildren = declaration as? DeclarationWithScope else {
       self.printIndented(string)
+      return
+    }
 
-      if let withChildren = d as? DeclarationWithScope {
-        let children = withChildren.children
+    let children = withChildren.children
+    guard self.isAnyAccepted(declarations: children) else {
+      self.printIndented(string + " {}")
+      return
+    }
 
-        if self.isAnyAccepted(declarations: children) {
-          let indentBefore = self.indent
-          self.indent = indentBefore + "  "
-          self.write(declarations: children)
-          self.indent = indentBefore
-        }
-      }
+    // 1. Start '{' block
+    self.printIndented(string + " {")
+
+    // 2. Print children
+    let indentBefore = self.indent
+    self.indent = indentBefore + "  "
+    self.write(declarations: children)
+    self.indent = indentBefore
+
+    // 3. End '}' block
+    self.printIndented("}")
+
+    let isTopLevel = self.indent.isEmpty
+    if isTopLevel {
+      self.print()
     }
   }
 

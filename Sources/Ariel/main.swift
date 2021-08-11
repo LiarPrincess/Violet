@@ -77,7 +77,7 @@ private let output: Output = {
 
   printVerbose("Output directory specified: \(outputPath)")
   let inputName = fileSystem.basenameWithoutExtension(path: input.path)
-  let outputName = fileSystem.addExt(filename: inputName, ext: ".txt")
+  let outputName = fileSystem.addExt(filename: inputName, ext: ".swift")
   let path = fileSystem.join(path: outputPath, element: outputName)
   return FileOutput(path: path, encoding: outputEncoding)
 }()
@@ -99,8 +99,10 @@ private func writeDeclarations(printedPath: String, swiftFilePath: Path) throws 
   writer.write(printedPath: printedPath, declarations: topLevel)
 }
 
+let formatter = Formatter(newLineAfterAttribute: true,
+                          maxInitializerLength: 100)
+
 let filter = Filter(minAccessModifier: arguments.minAccessLevel)
-let formatter = Formatter(maxInitializerLength: 100)
 let writer = Writer(filter: filter, formatter: formatter, output: output)
 
 switch input.kind {

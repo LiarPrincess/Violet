@@ -13,8 +13,7 @@ struct Formatter {
   private let newLineAfterAttribute: Bool
   private let maxInitializerLength: Int?
 
-  init(newLineAfterAttribute: Bool = true,
-       maxInitializerLength: Int? = nil) {
+  init(newLineAfterAttribute: Bool, maxInitializerLength: Int?) {
     self.newLineAfterAttribute = newLineAfterAttribute
     self.maxInitializerLength = maxInitializerLength
   }
