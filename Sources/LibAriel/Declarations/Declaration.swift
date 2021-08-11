@@ -2,7 +2,7 @@ import SwiftSyntax
 
 // MARK: - Declaration
 
-protocol Declaration: AnyObject, CustomStringConvertible {
+public protocol Declaration: AnyObject, CustomStringConvertible {
   var id: SyntaxIdentifier { get }
   var accessModifiers: GetSetAccessModifiers? { get }
 
@@ -10,20 +10,20 @@ protocol Declaration: AnyObject, CustomStringConvertible {
 }
 
 extension Declaration {
-  var description: String {
+  public var description: String {
     let formatter = Formatter.forDescription
     return formatter.format(self)
   }
 }
 
 /// `Declaration` that contains nested `Declarations`
-protocol DeclarationWithScope: Declaration {
+internal protocol DeclarationWithScope: Declaration {
   var children: [Declaration] { get set }
 }
 
 // MARK: - Visitor
 
-protocol DeclarationVisitor: AnyObject {
+public protocol DeclarationVisitor: AnyObject {
   func visit(_ node: Enumeration)
   func visit(_ node: Structure)
   func visit(_ node: Class)
@@ -39,7 +39,7 @@ protocol DeclarationVisitor: AnyObject {
 }
 
 extension DeclarationVisitor {
-  func visit(_ node: Declaration) {
+  public func visit(_ node: Declaration) {
     node.accept(visitor: self)
   }
 }

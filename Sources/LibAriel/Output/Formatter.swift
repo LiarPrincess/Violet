@@ -2,10 +2,10 @@
 // swiftlint:disable pattern_matching_keywords
 
 /// Convert: `Declaration` -> `String`
-struct Formatter {
+public struct Formatter {
 
   /// Formatter used to implement `description`.
-  static let forDescription = Formatter(
+  public static let forDescription = Formatter(
     newLineAfterAttribute: false,
     maxInitializerLength: 50
   )
@@ -13,14 +13,15 @@ struct Formatter {
   private let newLineAfterAttribute: Bool
   private let maxInitializerLength: Int?
 
-  init(newLineAfterAttribute: Bool, maxInitializerLength: Int?) {
+  public init(newLineAfterAttribute: Bool,
+              maxInitializerLength: Int?) {
     self.newLineAfterAttribute = newLineAfterAttribute
     self.maxInitializerLength = maxInitializerLength
   }
 
   // MARK: - Declaration
 
-  func format(_ node: Declaration) -> String {
+  public func format(_ node: Declaration) -> String {
     // This is a small hack, but what we want to do is to call a proper method
     // on 'self'. For this we will introduce auxiliary 'DeclarationVisitor' type.
 
@@ -56,7 +57,7 @@ struct Formatter {
 
   /// @available(macOS 10.15, *)
   /// private indirect enum Elsa<T>: Princess where T: Ice
-  func format(_ node: Enumeration) -> String {
+  public func format(_ node: Enumeration) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
     result += self.formatWithSpaceAfter(node.accessModifiers)
@@ -73,7 +74,7 @@ struct Formatter {
 
   /// @available(macOS 10.15, *)
   /// private struct Elsa<T>: Princess where T: Ice
-  func format(_ node: Structure) -> String {
+  public func format(_ node: Structure) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
     result += self.formatWithSpaceAfter(node.accessModifiers)
@@ -90,7 +91,7 @@ struct Formatter {
 
   /// @available(macOS 10.15, *)
   /// private final class Elsa<T>: Princess where T: Ice
-  func format(_ node: Class) -> String {
+  public func format(_ node: Class) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
     result += self.formatWithSpaceAfter(node.accessModifiers)
@@ -107,7 +108,7 @@ struct Formatter {
 
   /// @available(macOS 10.15, *)
   /// private protocol Elsa: Princess where Element == Ice
-  func format(_ node: Protocol) -> String {
+  public func format(_ node: Protocol) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
     result += self.formatWithSpaceAfter(node.accessModifiers)
@@ -123,7 +124,7 @@ struct Formatter {
 
   /// @available(macOS 10.15, *)
   /// associatedtype elsa: Princess
-  func format(_ node: AssociatedType) -> String {
+  public func format(_ node: AssociatedType) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
     result += self.formatWithSpaceAfter(node.accessModifiers)
@@ -140,7 +141,7 @@ struct Formatter {
 
   /// @available(macOS 10.15, *)
   /// private typealias Elsa<T> = Princess where T: Ice
-  func format(_ node: Typealias) -> String {
+  public func format(_ node: Typealias) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
     result += self.formatWithSpaceAfter(node.accessModifiers)
@@ -157,7 +158,7 @@ struct Formatter {
 
   /// @available(macOS 10.15, *)
   /// private extension Elsa: Princess where T: Ice
-  func format(_ node: Extension) -> String {
+  public func format(_ node: Extension) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
     result += self.formatWithSpaceAfter(node.accessModifiers)
@@ -173,7 +174,7 @@ struct Formatter {
 
   /// @available(macOS 10.15, *)
   /// private let elsa: Princess = Princess()
-  func format(_ node: Variable) -> String {
+  public func format(_ node: Variable) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
     result += self.formatWithSpaceAfter(node.accessModifiers)
@@ -190,7 +191,7 @@ struct Formatter {
 
   /// @available(macOS 10.15, *)
   /// private init?<T>(arg: T) throws where T: Ice
-  func format(_ node: Initializer) -> String {
+  public func format(_ node: Initializer) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
     result += self.formatWithSpaceAfter(node.accessModifiers)
@@ -212,7 +213,7 @@ struct Formatter {
 
   /// @available(macOS 10.15, *)
   /// private func elsa<T>(arg: T) throws -> Princess where T: Ice
-  func format(_ node: Function) -> String {
+  public func format(_ node: Function) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
     result += self.formatWithSpaceAfter(node.accessModifiers)
@@ -231,7 +232,7 @@ struct Formatter {
 
   /// @available(macOS 10.15, *)
   /// private subscript<T>(arg: T) -> Elsa where T: Ice
-  func format(_ node: Subscript) -> String {
+  public func format(_ node: Subscript) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
     result += self.formatWithSpaceAfter(node.accessModifiers)
@@ -249,7 +250,7 @@ struct Formatter {
 
   /// @available(macOS 10.15, *)
   /// infix operator <+>: MultiplicationPrecedence
-  func format(_ node: Operator) -> String {
+  public func format(_ node: Operator) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
     result += self.formatWithSpaceAfter(node.accessModifiers)
@@ -269,7 +270,7 @@ struct Formatter {
 
   // MARK: - Parameter
 
-  func format(_ node: Parameter) -> String {
+  public func format(_ node: Parameter) -> String {
     var result = ""
 
     switch (node.firstName, node.secondName) {

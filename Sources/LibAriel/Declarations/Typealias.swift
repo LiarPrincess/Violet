@@ -1,18 +1,18 @@
 import SwiftSyntax
 
-class Typealias: Declaration {
+public class Typealias: Declaration {
 
-  let id: SyntaxIdentifier
-  let name: String
-  let accessModifiers: GetSetAccessModifiers?
-  let modifiers: [Modifier]
-  let initializer: TypeInitializer?
+  public let id: SyntaxIdentifier
+  public let name: String
+  public let accessModifiers: GetSetAccessModifiers?
+  public let modifiers: [Modifier]
+  public let initializer: TypeInitializer?
 
-  let attributes: [Attribute]
-  let genericParameters: [GenericParameter]
-  let genericRequirements: [GenericRequirement]
+  public let attributes: [Attribute]
+  public let genericParameters: [GenericParameter]
+  public let genericRequirements: [GenericRequirement]
 
-  init(_ node: TypealiasDeclSyntax) {
+  internal  init(_ node: TypealiasDeclSyntax) {
     self.id = node.id
     self.name = node.identifier.text.trimmed
     self.initializer = node.initializer.map(TypeInitializer.init)
@@ -30,7 +30,7 @@ class Typealias: Declaration {
     self.genericRequirements = requirementList?.map(GenericRequirement.init) ?? []
   }
 
-  func accept(visitor: DeclarationVisitor) {
+  public func accept(visitor: DeclarationVisitor) {
     visitor.visit(self)
   }
 }

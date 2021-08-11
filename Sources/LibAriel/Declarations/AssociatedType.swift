@@ -1,18 +1,18 @@
 import SwiftSyntax
 
-class AssociatedType: Declaration {
+public class AssociatedType: Declaration {
 
-  let id: SyntaxIdentifier
-  let name: String
-  let accessModifiers: GetSetAccessModifiers?
-  let modifiers: [Modifier]
-  let inheritance: [InheritedType]
-  let initializer: TypeInitializer?
+  public let id: SyntaxIdentifier
+  public let name: String
+  public let accessModifiers: GetSetAccessModifiers?
+  public let modifiers: [Modifier]
+  public let inheritance: [InheritedType]
+  public let initializer: TypeInitializer?
 
-  let attributes: [Attribute]
-  let genericRequirements: [GenericRequirement]
+  public let attributes: [Attribute]
+  public let genericRequirements: [GenericRequirement]
 
-  init(_ node: AssociatedtypeDeclSyntax) {
+  internal init(_ node: AssociatedtypeDeclSyntax) {
     self.id = node.id
     self.name = node.identifier.text.trimmed
     self.initializer = node.initializer.map(TypeInitializer.init)
@@ -30,7 +30,7 @@ class AssociatedType: Declaration {
     self.genericRequirements = requirementList?.map(GenericRequirement.init) ?? []
   }
 
-  func accept(visitor: DeclarationVisitor) {
+  public func accept(visitor: DeclarationVisitor) {
     visitor.visit(self)
   }
 }

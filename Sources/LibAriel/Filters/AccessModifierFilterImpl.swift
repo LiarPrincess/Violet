@@ -2,35 +2,35 @@ import SwiftSyntax
 
 private let defaultAccessModifier = AccessModifier.internal
 
-class AccessModifierFilterImpl: FilterImpl {
+internal class AccessModifierFilterImpl: FilterImpl {
 
   private let minAccessModifier: AccessModifier
   private var nodeAcceptanceStatus = [SyntaxIdentifier: Bool]()
 
-  init(minAccessModifier: AccessModifier) {
+  internal init(minAccessModifier: AccessModifier) {
     self.minAccessModifier = minAccessModifier
   }
 
   // MARK: - Walk
 
-  func onWalkStart() {
+  internal func onWalkStart() {
     self.nodeAcceptanceStatus.removeAll()
   }
 
   // MARK: - Visit
 
-  func visit(_ node: Enumeration) { self.visitCommon(node) }
-  func visit(_ node: Structure) { self.visitCommon(node) }
-  func visit(_ node: Class) { self.visitCommon(node) }
-  func visit(_ node: Protocol) { self.visitCommon(node) }
-  func visit(_ node: Typealias) { self.visitCommon(node) }
-  func visit(_ node: Extension) { self.visitCommon(node) }
-  func visit(_ node: Variable) { self.visitCommon(node) }
-  func visit(_ node: Initializer) { self.visitCommon(node) }
-  func visit(_ node: Function) { self.visitCommon(node) }
-  func visit(_ node: Subscript) { self.visitCommon(node) }
-  func visit(_ node: Operator) { self.visitCommon(node) }
-  func visit(_ node: AssociatedType) { self.visitCommon(node) }
+  internal func visit(_ node: Enumeration) { self.visitCommon(node) }
+  internal func visit(_ node: Structure) { self.visitCommon(node) }
+  internal func visit(_ node: Class) { self.visitCommon(node) }
+  internal func visit(_ node: Protocol) { self.visitCommon(node) }
+  internal func visit(_ node: Typealias) { self.visitCommon(node) }
+  internal func visit(_ node: Extension) { self.visitCommon(node) }
+  internal func visit(_ node: Variable) { self.visitCommon(node) }
+  internal func visit(_ node: Initializer) { self.visitCommon(node) }
+  internal func visit(_ node: Function) { self.visitCommon(node) }
+  internal func visit(_ node: Subscript) { self.visitCommon(node) }
+  internal func visit(_ node: Operator) { self.visitCommon(node) }
+  internal func visit(_ node: AssociatedType) { self.visitCommon(node) }
 
   private func visitCommon(_ node: Declaration) {
     func toNumber(_ value: AccessModifier) -> Int {
@@ -60,7 +60,7 @@ class AccessModifierFilterImpl: FilterImpl {
 
   // MARK: - Scoped declaration
 
-  func onScopedDeclarationExit(_ node: DeclarationWithScope) {
+  internal func onScopedDeclarationExit(_ node: DeclarationWithScope) {
     self.ifChildIsAcceptedThenSoDoWe(node)
   }
 
@@ -82,7 +82,7 @@ class AccessModifierFilterImpl: FilterImpl {
 
   // MARK: - Is accepted
 
-  func isAccepted(_ node: Declaration) -> Bool {
+  internal func isAccepted(_ node: Declaration) -> Bool {
     guard let result = self.nodeAcceptanceStatus[node.id] else {
       trap("Node is missing from 'self.nodeAcceptanceStatus'")
     }

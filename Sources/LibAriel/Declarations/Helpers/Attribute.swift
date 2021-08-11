@@ -5,11 +5,11 @@ import SwiftSyntax
 /// For example:
 /// - `@discardableResult`
 /// - `@available(*, deprecated)`
-struct Attribute {
+public struct Attribute {
 
-  let name: String
+  public let name: String
 
-  init(_ node: Syntax) {
+  internal init(_ node: Syntax) {
     let children = Array(node.children)
     assert(children.count >= 2) // '@' and then something
 

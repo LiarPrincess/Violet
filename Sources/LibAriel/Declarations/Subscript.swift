@@ -1,19 +1,19 @@
 import SwiftSyntax
 
-class Subscript: Declaration {
+public class Subscript: Declaration {
 
-  let id: SyntaxIdentifier
-  let accessModifiers: GetSetAccessModifiers?
-  let modifiers: [Modifier]
-  let indices: [Parameter]
-  let result: Type
-  let accessors: [Accessor]
+  public let id: SyntaxIdentifier
+  public let accessModifiers: GetSetAccessModifiers?
+  public let modifiers: [Modifier]
+  public let indices: [Parameter]
+  public let result: Type
+  public let accessors: [Accessor]
 
-  let attributes: [Attribute]
-  let genericParameters: [GenericParameter]
-  let genericRequirements: [GenericRequirement]
+  public let attributes: [Attribute]
+  public let genericParameters: [GenericParameter]
+  public let genericRequirements: [GenericRequirement]
 
-  init(_ node: SubscriptDeclSyntax) {
+  internal init(_ node: SubscriptDeclSyntax) {
     self.id = node.id
 
     let modifiers = ParseModifiers.list(node.modifiers)
@@ -33,7 +33,7 @@ class Subscript: Declaration {
     self.genericRequirements = requirementList?.map(GenericRequirement.init) ?? []
   }
 
-  func accept(visitor: DeclarationVisitor) {
+  public func accept(visitor: DeclarationVisitor) {
     visitor.visit(self)
   }
 }

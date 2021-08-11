@@ -2,9 +2,9 @@ import ArgumentParser
 
 // swiftlint:disable let_var_whitespace
 
-struct Arguments: ParsableCommand {
+public struct Arguments: ParsableCommand {
 
-  static var configuration = CommandConfiguration(
+  public static var configuration = CommandConfiguration(
     abstract: "Tool to dump module interface " +
       "(all of the 'public' and 'open' declarations).",
     version: "1.0.0"
@@ -19,7 +19,7 @@ struct Arguments: ParsableCommand {
       shouldDisplay: true
     )
   )
-  var verbose = false
+  public var verbose = false
 
   // MARK: - Min access level
 
@@ -33,7 +33,7 @@ struct Arguments: ParsableCommand {
       shouldDisplay: true
     )
   )
-  var minAccessLevel = AccessModifier.public
+  public var minAccessLevel = AccessModifier.public
 
   // MARK: - Output path
 
@@ -48,7 +48,7 @@ struct Arguments: ParsableCommand {
       shouldDisplay: true
     )
   )
-  var outputPath: String?
+  public var outputPath: String?
 
   // MARK: - Input path
 
@@ -58,5 +58,9 @@ struct Arguments: ParsableCommand {
       shouldDisplay: true
     )
   )
-  var inputPath: String
+  public var inputPath: String
+
+  // MARK: - Init
+
+  public init() {}
 }

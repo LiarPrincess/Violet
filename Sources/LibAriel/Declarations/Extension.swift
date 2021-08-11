@@ -1,19 +1,19 @@
 import SwiftSyntax
 
-class Extension: DeclarationWithScope {
+public class Extension: DeclarationWithScope {
 
-  let id: SyntaxIdentifier
-  let extendedType: String
-  let accessModifiers: GetSetAccessModifiers?
-  let modifiers: [Modifier]
-  let inheritance: [InheritedType]
+  public let id: SyntaxIdentifier
+  public let extendedType: String
+  public let accessModifiers: GetSetAccessModifiers?
+  public let modifiers: [Modifier]
+  public let inheritance: [InheritedType]
 
-  let attributes: [Attribute]
-  let genericRequirements: [GenericRequirement]
+  public let attributes: [Attribute]
+  public let genericRequirements: [GenericRequirement]
 
-  var children = [Declaration]()
+  public internal(set) var children = [Declaration]()
 
-  init(_ node: ExtensionDeclSyntax) {
+  internal init(_ node: ExtensionDeclSyntax) {
     self.id = node.id
     self.extendedType = node.extendedType.description.trimmed
 
@@ -30,7 +30,7 @@ class Extension: DeclarationWithScope {
     self.genericRequirements = requirementList?.map(GenericRequirement.init) ?? []
   }
 
-  func accept(visitor: DeclarationVisitor) {
+  public func accept(visitor: DeclarationVisitor) {
     visitor.visit(self)
   }
 }

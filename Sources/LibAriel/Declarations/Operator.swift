@@ -1,23 +1,23 @@
 import SwiftSyntax
 
-class Operator: Declaration {
+public class Operator: Declaration {
 
-  enum Kind: String {
+  public enum Kind: String {
     case prefix
     case infix
     case postfix
   }
 
-  let id: SyntaxIdentifier
-  let name: String
-  let accessModifiers: GetSetAccessModifiers?
-  let modifiers: [Modifier]
-  let kind: Kind
-  let operatorPrecedenceAndTypes: [String]
+  public let id: SyntaxIdentifier
+  public let name: String
+  public let accessModifiers: GetSetAccessModifiers?
+  public let modifiers: [Modifier]
+  public let kind: Kind
+  public let operatorPrecedenceAndTypes: [String]
 
-  let attributes: [Attribute]
+  public let attributes: [Attribute]
 
-  init(_ node: OperatorDeclSyntax) {
+  internal init(_ node: OperatorDeclSyntax) {
     self.id = node.id
     self.name = node.identifier.text.trimmed
 
@@ -36,7 +36,7 @@ class Operator: Declaration {
     self.attributes = node.attributes?.map(Attribute.init) ?? []
   }
 
-  func accept(visitor: DeclarationVisitor) {
+  public func accept(visitor: DeclarationVisitor) {
     visitor.visit(self)
   }
 }

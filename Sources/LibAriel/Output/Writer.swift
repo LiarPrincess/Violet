@@ -2,7 +2,7 @@ import Foundation
 import FileSystem
 
 /// Walk the declarations -> filter -> format -> write to output.
-class Writer {
+public class Writer {
 
   private let filter: Filter
   private let formatter: Formatter
@@ -11,13 +11,13 @@ class Writer {
   /// Avoid printing multiple empty lines in a row. It is ugly.
   private var wasLastPrintedLineEmpty = false
 
-  init(filter: Filter, formatter: Formatter, output: Output) {
+  public init(filter: Filter, formatter: Formatter, output: Output) {
     self.filter = filter
     self.formatter = formatter
     self.output = output
   }
 
-  func write(printedPath: String, declarations: [Declaration]) {
+  public func write(printedPath: String, declarations: [Declaration]) {
     assert(self.indent.isEmpty, "Indent from previous file?")
 
     self.filter.walk(nodes: declarations)

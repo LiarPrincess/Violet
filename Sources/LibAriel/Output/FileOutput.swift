@@ -2,29 +2,29 @@ import FileSystem
 import Foundation
 import VioletCore
 
-class FileOutput: Output {
+public class FileOutput: Output {
 
-  static let stdout = FileOutput(name: "<stdout>",
-                                 fileHandle: .standardOutput,
-                                 encoding: .utf8,
-                                 closeFileHandleAfter: false)
+  public static let stdout = FileOutput(name: "<stdout>",
+                                        fileHandle: .standardOutput,
+                                        encoding: .utf8,
+                                        closeFileHandleAfter: false)
 
   private let name: String
   private let fileHandle: FileHandle
   private let encoding: String.Encoding
   private let closeFileHandleAfter: Bool
 
-  init(name: String,
-       fileHandle: FileHandle,
-       encoding: String.Encoding,
-       closeFileHandleAfter: Bool) {
+  public init(name: String,
+              fileHandle: FileHandle,
+              encoding: String.Encoding,
+              closeFileHandleAfter: Bool) {
     self.name = name
     self.fileHandle = fileHandle
     self.encoding = encoding
     self.closeFileHandleAfter = closeFileHandleAfter
   }
 
-  init(path: Path, encoding: String.Encoding) {
+  public init(path: Path, encoding: String.Encoding) {
     self.name = path.string
     self.fileHandle = createFileHandle(path: path)
     self.encoding = encoding
@@ -32,7 +32,7 @@ class FileOutput: Output {
     self.closeFileHandleAfter = true
   }
 
-  func write(_ string: String) {
+  public func write(_ string: String) {
     guard let data = string.data(using: self.encoding) else {
       printErrorAndExit("Unable to encode '\(string)' using \(self.encoding).")
     }
@@ -40,7 +40,7 @@ class FileOutput: Output {
     self.fileHandle.write(data)
   }
 
-  func close() {
+  public func close() {
     guard self.closeFileHandleAfter else {
       return
     }
@@ -61,9 +61,8 @@ private func createFileHandle(path: Path) -> FileHandle {
   // First we have to make sure that the fill path exists
   let dir = fileSystem.dirname(path: path)
   switch fileSystem.mkdirp(path: dir.path) {
-  case .ok:
-    printVerbose("Created '\(dir)'")
-  case .eexist:
+  case .ok,
+       .eexist:
     break
   case let .parentRemovedAfterCreation(p):
     printErrorAndExit("Parent was removed after creating: \(p)")

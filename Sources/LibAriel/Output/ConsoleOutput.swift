@@ -1,8 +1,8 @@
-struct ConsoleOutput: Output {
+public struct ConsoleOutput: Output {
 
-  func write(_ string: String) {
+  public func write(_ string: String) {
     print(string, terminator: "")
   }
 
-  func close() {}
+  public func close() {}
 }

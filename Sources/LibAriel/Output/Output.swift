@@ -1,5 +1,5 @@
 import Foundation
 
-protocol Output: TextOutputStream {
+public protocol Output: TextOutputStream {
   func close()
 }

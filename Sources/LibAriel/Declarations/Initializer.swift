@@ -1,19 +1,19 @@
 import SwiftSyntax
 
-class Initializer: Declaration {
+public class Initializer: Declaration {
 
-  let id: SyntaxIdentifier
-  let accessModifiers: GetSetAccessModifiers?
-  let modifiers: [Modifier]
-  let isOptional: Bool
-  let parameters: [Parameter]
-  let `throws`: ThrowingStatus?
+  public let id: SyntaxIdentifier
+  public let accessModifiers: GetSetAccessModifiers?
+  public let modifiers: [Modifier]
+  public let isOptional: Bool
+  public let parameters: [Parameter]
+  public let `throws`: ThrowingStatus?
 
-  let attributes: [Attribute]
-  let genericParameters: [GenericParameter]
-  let genericRequirements: [GenericRequirement]
+  public let attributes: [Attribute]
+  public let genericParameters: [GenericParameter]
+  public let genericRequirements: [GenericRequirement]
 
-  init(_ node: InitializerDeclSyntax) {
+  internal init(_ node: InitializerDeclSyntax) {
     self.id = node.id
 
     let modifiers = ParseModifiers.list(node.modifiers)
@@ -33,7 +33,7 @@ class Initializer: Declaration {
     self.genericRequirements = requirementList?.map(GenericRequirement.init) ?? []
   }
 
-  func accept(visitor: DeclarationVisitor) {
+  public func accept(visitor: DeclarationVisitor) {
     visitor.visit(self)
   }
 }

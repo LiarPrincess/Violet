@@ -1,20 +1,20 @@
 import SwiftSyntax
 
-class Structure: DeclarationWithScope {
+public class Structure: DeclarationWithScope {
 
-  let id: SyntaxIdentifier
-  let name: String
-  let accessModifiers: GetSetAccessModifiers?
-  let modifiers: [Modifier]
-  let inheritance: [InheritedType]
+  public let id: SyntaxIdentifier
+  public let name: String
+  public let accessModifiers: GetSetAccessModifiers?
+  public let modifiers: [Modifier]
+  public let inheritance: [InheritedType]
 
-  let attributes: [Attribute]
-  let genericParameters: [GenericParameter]
-  let genericRequirements: [GenericRequirement]
+  public let attributes: [Attribute]
+  public let genericParameters: [GenericParameter]
+  public let genericRequirements: [GenericRequirement]
 
-  var children = [Declaration]()
+  public internal(set) var children = [Declaration]()
 
-  init(_ node: StructDeclSyntax) {
+  internal init(_ node: StructDeclSyntax) {
     self.id = node.id
     self.name = node.identifier.text.trimmed
 
@@ -34,7 +34,7 @@ class Structure: DeclarationWithScope {
     self.genericRequirements = requirementList?.map(GenericRequirement.init) ?? []
   }
 
-  func accept(visitor: DeclarationVisitor) {
+  public func accept(visitor: DeclarationVisitor) {
     visitor.visit(self)
   }
 }

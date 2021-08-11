@@ -3,7 +3,7 @@ import SwiftSyntax
 
 // MARK: - Access modifiers
 
-enum AccessModifier: String, RawRepresentable, ExpressibleByArgument {
+public enum AccessModifier: String, RawRepresentable, ExpressibleByArgument {
   case `private`
   case `fileprivate`
   case `internal`
@@ -11,12 +11,12 @@ enum AccessModifier: String, RawRepresentable, ExpressibleByArgument {
   case open
 }
 
-struct GetSetAccessModifiers {
+public struct GetSetAccessModifiers {
   // It is possible to have 'set' without 'get'!
   //   private(set) let elsa: String
   // means that 'get' is internal
-  let get: AccessModifier?
-  let set: AccessModifier?
+  public let get: AccessModifier?
+  public let set: AccessModifier?
 }
 
 // MARK: - Non access modifiers
@@ -24,7 +24,7 @@ struct GetSetAccessModifiers {
 /// Modifier that is not an access modifier
 ///
 /// https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID381
-enum Modifier: String {
+public enum Modifier: String {
   case `class`
   case convenience
   case dynamic
@@ -45,11 +45,11 @@ enum Modifier: String {
   case weak
 }
 
-enum ParseModifiers {
+internal enum ParseModifiers {
 
   // MARK: - Parse single
 
-  enum SingleResult {
+  internal enum SingleResult {
     /// set
     case accessModifier(AccessModifier)
     /// private(set)
@@ -58,7 +58,7 @@ enum ParseModifiers {
     case modifier(Modifier)
   }
 
-  static func single(_ node: DeclModifierSyntax) -> SingleResult {
+  internal static func single(_ node: DeclModifierSyntax) -> SingleResult {
     let text = node.name.text.trimmed
     // detailText = 'set' inside 'private(set)'
     let detailText = node.detail?.text.trimmed
@@ -98,13 +98,13 @@ enum ParseModifiers {
 
   // MARK: - Parse list
 
-  struct ListResult {
-    fileprivate(set) var access: GetSetAccessModifiers?
-    fileprivate(set) var operatorKind: Operator.Kind?
-    fileprivate(set) var values = [Modifier]()
+  internal struct ListResult {
+    internal fileprivate(set) var access: GetSetAccessModifiers?
+    internal fileprivate(set) var operatorKind: Operator.Kind?
+    internal fileprivate(set) var values = [Modifier]()
   }
 
-  static func list(_ node: ModifierListSyntax?) -> ListResult {
+  internal static func list(_ node: ModifierListSyntax?) -> ListResult {
     var result = ListResult()
 
     guard let node = node else {

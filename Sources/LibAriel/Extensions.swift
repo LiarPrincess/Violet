@@ -3,14 +3,14 @@ import SwiftSyntax
 extension String {
 
   /// Python calls this 'strip' they are wrong
-  var trimmed: String {
+  internal var trimmed: String {
     self.trimmingCharacters(in: .whitespacesAndNewlines)
   }
 }
 
 extension Syntax {
 
-  func isToken(withText expectedText: String) -> Bool {
+  internal func isToken(withText expectedText: String) -> Bool {
     guard let token = TokenSyntax(self) else {
       return false
     }

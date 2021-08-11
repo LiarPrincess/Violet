@@ -1,5 +1,5 @@
 /// Instead of using one giant filter, we will use a few smaller ones.
-protocol FilterImpl: DeclarationVisitor {
+internal protocol FilterImpl: DeclarationVisitor {
   func onWalkStart()
   func onWalkEnd()
 
@@ -10,9 +10,9 @@ protocol FilterImpl: DeclarationVisitor {
 }
 
 extension FilterImpl {
-  func onWalkStart() {}
-  func onWalkEnd() {}
+  internal func onWalkStart() {}
+  internal func onWalkEnd() {}
 
-  func onScopedDeclarationEnter(_ node: DeclarationWithScope) {}
-  func onScopedDeclarationExit(_ node: DeclarationWithScope) {}
+  internal func onScopedDeclarationEnter(_ node: DeclarationWithScope) {}
+  internal func onScopedDeclarationExit(_ node: DeclarationWithScope) {}
 }

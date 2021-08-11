@@ -1,23 +1,23 @@
 import SwiftSyntax
 
-struct Accessor {
+public struct Accessor {
 
-  enum Kind: String {
+  public enum Kind: String {
     case get
     case set
     case _read
     case _modify
   }
 
-  enum Modifier: String {
+  public enum Modifier: String {
     case nonmutating
   }
 
-  let kind: Kind
-  let modifier: Modifier?
-  let attributes: [Attribute]
+  public let kind: Kind
+  public let modifier: Modifier?
+  public let attributes: [Attribute]
 
-  static func initMany(_ node: Syntax) -> [Accessor] {
+  internal static func initMany(_ node: Syntax) -> [Accessor] {
     let children = Array(node.children)
 
     // Something like:

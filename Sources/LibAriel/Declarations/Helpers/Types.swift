@@ -1,28 +1,28 @@
 import SwiftSyntax
 
-struct Type {
+public struct Type {
 
-  let name: String
+  public let name: String
 
-  init(_ node: TypeSyntax) {
+  internal init(_ node: TypeSyntax) {
     self.name = node.description.trimmed
   }
 }
 
-struct InheritedType {
+public struct InheritedType {
 
-  let typeName: String
+  public let typeName: String
 
-  init(_ node: InheritedTypeSyntax) {
+  internal init(_ node: InheritedTypeSyntax) {
     self.typeName = node.typeName.description.trimmed
   }
 }
 
-struct TypeAnnotation {
+public struct TypeAnnotation {
 
-  let typeName: String
+  public let typeName: String
 
-  init(_ node: TypeAnnotationSyntax) {
+  internal init(_ node: TypeAnnotationSyntax) {
     self.typeName = node.type.description.trimmed
   }
 }

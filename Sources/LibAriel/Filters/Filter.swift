@@ -1,11 +1,11 @@
 import SwiftSyntax
 
-class Filter {
+public class Filter {
 
   // Instead of using one giant filter, we will use a few smaller ones.
   private let implementations: [FilterImpl]
 
-  init(minAccessModifier: AccessModifier?) {
+  public init(minAccessModifier: AccessModifier?) {
     var implementations = [FilterImpl]()
 
     if let am = minAccessModifier {
@@ -18,7 +18,7 @@ class Filter {
 
   // MARK: - Walk
 
-  func walk(nodes: [Declaration]) {
+  public func walk(nodes: [Declaration]) {
     for impl in self.implementations {
       impl.onWalkStart()
     }
@@ -56,7 +56,7 @@ class Filter {
 
   // MARK: - Is accepted
 
-  func isAccepted(_ node: Declaration) -> Bool {
+  public func isAccepted(_ node: Declaration) -> Bool {
     for impl in self.implementations {
       let isAccepted = impl.isAccepted(node)
       if !isAccepted {

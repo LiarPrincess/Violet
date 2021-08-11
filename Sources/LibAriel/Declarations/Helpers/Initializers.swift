@@ -1,21 +1,21 @@
 import SwiftSyntax
 
 /// Value for `associatedtype` or `typealias`.
-struct TypeInitializer {
+public struct TypeInitializer {
 
-  let value: String
+  public let value: String
 
-  init(_ node: TypeInitializerClauseSyntax) {
+  internal init(_ node: TypeInitializerClauseSyntax) {
     self.value = node.value.description.trimmed
   }
 }
 
 /// Value for variable or parameter.
-struct VariableInitializer {
+public struct VariableInitializer {
 
-  let value: String
+  public let value: String
 
-  init(_ node: InitializerClauseSyntax) {
+  internal init(_ node: InitializerClauseSyntax) {
     self.value = node.value.description.trimmed
   }
 }

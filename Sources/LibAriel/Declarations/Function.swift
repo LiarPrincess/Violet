@@ -1,20 +1,20 @@
 import SwiftSyntax
 
-class Function: Declaration {
+public class Function: Declaration {
 
-  let id: SyntaxIdentifier
-  let name: String
-  let accessModifiers: GetSetAccessModifiers?
-  let modifiers: [Modifier]
-  let parameters: [Parameter]
-  let output: Type?
-  let `throws`: ThrowingStatus?
+  public let id: SyntaxIdentifier
+  public let name: String
+  public let accessModifiers: GetSetAccessModifiers?
+  public let modifiers: [Modifier]
+  public let parameters: [Parameter]
+  public let output: Type?
+  public let `throws`: ThrowingStatus?
 
-  let attributes: [Attribute]
-  let genericParameters: [GenericParameter]
-  let genericRequirements: [GenericRequirement]
+  public let attributes: [Attribute]
+  public let genericParameters: [GenericParameter]
+  public let genericRequirements: [GenericRequirement]
 
-  init(_ node: FunctionDeclSyntax) {
+  internal init(_ node: FunctionDeclSyntax) {
     self.id = node.id
     self.name = node.identifier.text.trimmed
 
@@ -36,7 +36,7 @@ class Function: Declaration {
     self.genericRequirements = requirementList?.map(GenericRequirement.init) ?? []
   }
 
-  func accept(visitor: DeclarationVisitor) {
+  public func accept(visitor: DeclarationVisitor) {
     visitor.visit(self)
   }
 }

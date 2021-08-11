@@ -1,12 +1,12 @@
 import SwiftSyntax
 
 /// Something like `<T: CustomStringConvertible>`.
-struct GenericParameter {
+public struct GenericParameter {
 
-  let name: String
-  let inheritedType: Type?
+  public let name: String
+  public let inheritedType: Type?
 
-  init(_ node: GenericParameterSyntax) {
+  internal init(_ node: GenericParameterSyntax) {
     self.name = node.name.text.trimmed
     self.inheritedType = node.inheritedType.map(Type.init)
     assert(node.attributes == nil)
@@ -14,18 +14,18 @@ struct GenericParameter {
 }
 
 /// Something like `where T: CustomStringConvertible`.
-struct GenericRequirement {
+public struct GenericRequirement {
 
-  enum Kind {
+  public enum Kind {
     case conformance
     case sameType
   }
 
-  let kind: Kind
-  let leftType: Type
-  let rightType: Type
+  public let kind: Kind
+  public let leftType: Type
+  public let rightType: Type
 
-  init(_ node: GenericRequirementSyntax) {
+  internal init(_ node: GenericRequirementSyntax) {
     let body = node.body
 
     if let node = ConformanceRequirementSyntax(body) {

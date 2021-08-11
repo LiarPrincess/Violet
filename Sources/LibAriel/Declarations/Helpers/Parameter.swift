@@ -1,20 +1,20 @@
 import SwiftSyntax
 
 /// Parameter for function or `init`.
-struct Parameter: CustomStringConvertible {
+public struct Parameter: CustomStringConvertible {
 
-  let firstName: String?
-  let secondName: String?
-  let type: Type?
-  let isVariadic: Bool
-  let defaultValue: VariableInitializer?
+  public let firstName: String?
+  public let secondName: String?
+  public let type: Type?
+  public let isVariadic: Bool
+  public let defaultValue: VariableInitializer?
 
-  var description: String {
+  public var description: String {
     let formatter = Formatter.forDescription
     return formatter.format(self)
   }
 
-  init(_ node: FunctionParameterSyntax) {
+  internal init(_ node: FunctionParameterSyntax) {
     self.firstName = node.firstName?.text.trimmed
     self.secondName = node.secondName?.text.trimmed
     self.type = node.type.map(Type.init)

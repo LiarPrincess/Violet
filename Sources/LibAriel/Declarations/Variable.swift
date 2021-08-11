@@ -1,19 +1,19 @@
 import SwiftSyntax
 
-class Variable: Declaration {
+public class Variable: Declaration {
 
-  let id: SyntaxIdentifier
-  let name: String
-  let keyword: String
-  let accessModifiers: GetSetAccessModifiers?
-  let modifiers: [Modifier]
-  let typeAnnotation: TypeAnnotation?
-  let initializer: VariableInitializer?
-  let accessors: [Accessor]
+  public let id: SyntaxIdentifier
+  public let name: String
+  public let keyword: String
+  public let accessModifiers: GetSetAccessModifiers?
+  public let modifiers: [Modifier]
+  public let typeAnnotation: TypeAnnotation?
+  public let initializer: VariableInitializer?
+  public let accessors: [Accessor]
 
-  let attributes: [Attribute]
+  public let attributes: [Attribute]
 
-  init(_ node: VariableDeclSyntax, binding: PatternBindingSyntax) {
+  internal init(_ node: VariableDeclSyntax, binding: PatternBindingSyntax) {
     self.id = binding.id
     self.name = binding.pattern.description.trimmed
     self.keyword = node.letOrVarKeyword.text.trimmed
@@ -29,7 +29,7 @@ class Variable: Declaration {
     self.attributes = node.attributes?.map(Attribute.init) ?? []
   }
 
-  func accept(visitor: DeclarationVisitor) {
+  public func accept(visitor: DeclarationVisitor) {
     visitor.visit(self)
   }
 }

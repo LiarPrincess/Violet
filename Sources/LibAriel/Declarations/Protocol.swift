@@ -1,19 +1,19 @@
 import SwiftSyntax
 
-class Protocol: DeclarationWithScope {
+public class Protocol: DeclarationWithScope {
 
-  let id: SyntaxIdentifier
-  let name: String
-  let accessModifiers: GetSetAccessModifiers?
-  let modifiers: [Modifier]
-  let inheritance: [InheritedType]
+  public let id: SyntaxIdentifier
+  public let name: String
+  public let accessModifiers: GetSetAccessModifiers?
+  public let modifiers: [Modifier]
+  public let inheritance: [InheritedType]
 
-  let attributes: [Attribute]
-  let genericRequirements: [GenericRequirement]
+  public let attributes: [Attribute]
+  public let genericRequirements: [GenericRequirement]
 
-  var children = [Declaration]()
+  public internal(set) var children = [Declaration]()
 
-  init(_ node: ProtocolDeclSyntax) {
+  internal init(_ node: ProtocolDeclSyntax) {
     self.id = node.id
     self.name = node.identifier.text.trimmed
 
@@ -30,7 +30,7 @@ class Protocol: DeclarationWithScope {
     self.genericRequirements = requirementList?.map(GenericRequirement.init) ?? []
   }
 
-  func accept(visitor: DeclarationVisitor) {
+  public func accept(visitor: DeclarationVisitor) {
     visitor.visit(self)
   }
 }

@@ -1,15 +1,11 @@
 import SwiftSyntax
 import Foundation
 import FileSystem
-import VioletCore
+import LibAriel
 
-private let arguments = Arguments.parseOrExit()
+let arguments = Arguments.parseOrExit()
 
-// 'internal', so it is available in the whole module.
-internal let fileSystem = FileSystem.default
-
-// 'internal', so it is available in the whole module.
-internal func printVerbose(_ msg: String) {
+func printVerbose(_ msg: String) {
   if arguments.verbose {
     print(msg)
   }
@@ -17,18 +13,18 @@ internal func printVerbose(_ msg: String) {
 
 // MARK: - Input
 
-private struct Input {
+struct Input {
 
-  fileprivate enum Kind {
+  enum Kind {
     case singleFile
     case directory
   }
 
-  fileprivate let kind: Kind
-  fileprivate let path: Path
+  let kind: Kind
+  let path: Path
 }
 
-private let input: Input = {
+let input: Input = {
   let path = Path(string: arguments.inputPath)
 
   let stat: Stat
@@ -57,9 +53,9 @@ private let input: Input = {
 
 // MARK: - Output
 
-private let outputEncoding = String.Encoding.utf8
+let outputEncoding = String.Encoding.utf8
 
-private let output: Output = {
+let output: Output = {
   guard let outputPathArg = arguments.outputPath else {
     printVerbose("No output path specified, using stdout.")
     return FileOutput.stdout
@@ -86,7 +82,7 @@ defer { output.close() }
 
 // MARK: - Main
 
-private func writeDeclarations(printedPath: String, swiftFilePath: Path) throws {
+func writeDeclarations(printedPath: String, swiftFilePath: Path) throws {
   printVerbose("Processing: \(printedPath)")
 
   let fileContent = try String(contentsOfFile: swiftFilePath.string)
