@@ -448,10 +448,76 @@ struct Formatter {
 
     var value = node.value
     if let maxCount = maxInitializerLength, value.count > maxCount {
-      value = String(value.prefix(maxCount)) + " (…)"
+      let prefix = String(value.prefix(maxCount))
+
+      // We have to close any unclosed " and """.
+      // Otherwise suntax highlighters would go crazy.
+      var braces = ""
+      let unclosedBraces = self.hasUnclosedBraces(string: prefix)
+      if unclosedBraces.hasUnclosedTripleBraces {
+        braces = "\"\"\""
+      } else if unclosedBraces.hasUnclosedSingleBraces {
+        braces = "\""
+      }
+
+      value = prefix + " <and so on…>" + braces
     }
 
     return " = " + value
+  }
+
+  private struct UnclosedBraces {
+    fileprivate var hasUnclosedSingleBraces = false
+    fileprivate var hasUnclosedTripleBraces = false
+  }
+
+  private func hasUnclosedBraces(string: String) -> UnclosedBraces {
+    var result = UnclosedBraces()
+
+    var index = string.startIndex
+    while index != string.endIndex {
+      let ch = string[index]
+      guard ch == "\"" else {
+        string.formIndex(after: &index)
+        continue
+      }
+
+      // Is it escaped?
+      let isEscaped: Bool = {
+        let isInsideString = result.hasUnclosedSingleBraces || result.hasUnclosedTripleBraces
+        guard isInsideString else { return false }
+
+        if index == string.startIndex { return false }
+
+        let indexBefore = string.index(before: index)
+        let chBefore = string[indexBefore]
+        return chBefore == "\\"
+      }()
+
+      if isEscaped {
+        string.formIndex(after: &index)
+        continue
+      }
+
+      // Deal with a """
+      if let index2 = string.index(index, offsetBy: 2, limitedBy: string.endIndex) {
+        let index1 = string.index(after: index)
+        let ch1After = string[index1]
+        let ch2After = string[index2]
+        if ch1After == "\"" && ch2After == "\"" {
+          result.hasUnclosedTripleBraces.toggle()
+          index = index2
+          string.formIndex(after: &index)
+          continue
+        }
+      }
+
+      // This is a "
+      result.hasUnclosedSingleBraces.toggle()
+      string.formIndex(after: &index)
+    }
+
+    return result
   }
 
   // MARK: - Helper - Accessor
