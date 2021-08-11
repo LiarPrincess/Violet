@@ -19,22 +19,6 @@ private let growthRate = 3
 /// slot (NULL key) in the table.
 private let perturbShift = 5
 
-// MARK: - Hashable
-
-public protocol PyHashable {
-
-  /// The hash value.
-  ///
-  /// - Warning:
-  /// Value should be either immutable or mutation should not change hash.
-  var hash: Int { get }
-
-  /// Returns a boolean value indicating whether two values are equal.
-  func isEqual(to other: Self) -> PyResult<Bool>
-}
-
-// MARK: - OrderedDictionary
-
 /// A generic collection to store key-value pairs in exactly the same order
 /// as they were inserted.
 public struct OrderedDictionary<Key: PyHashable, Value> {
