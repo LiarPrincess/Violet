@@ -270,7 +270,7 @@ public struct Formatter {
 
   // MARK: - Parameter
 
-  public func format(_ node: Parameter) -> String {
+  internal func format(_ node: Parameter) -> String {
     var result = ""
 
     switch (node.firstName, node.secondName) {
@@ -453,6 +453,7 @@ public struct Formatter {
 
       // We have to close any unclosed " and """.
       // Otherwise suntax highlighters would go crazy.
+      // Btw. we do not support #""" syntax and if we end with " then it may fail.
       var braces = ""
       let unclosedBraces = self.hasUnclosedBraces(string: prefix)
       if unclosedBraces.hasUnclosedTripleBraces {

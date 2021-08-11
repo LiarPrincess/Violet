@@ -107,8 +107,10 @@ let package = Package(
     .target(name: "Rapunzel", dependencies: []),
     .testTarget(name: "RapunzelTests", dependencies: ["Rapunzel"]),
 
-    // Tool to dump module interface (all of the 'public' and 'open' declarations)
-    .target(name: "Ariel", dependencies: ["SwiftSyntax", "ArgumentParser", "FileSystem"]),
-    .testTarget(name: "ArielTests", dependencies: ["Ariel"])
+    // Tool to dump module interface (all of the 'public' and 'open' declarations).
+    // We need a separate 'LibAriel' to be able to write unit tests.
+    .target(name: "LibAriel", dependencies: ["SwiftSyntax", "ArgumentParser", "FileSystem"]),
+    .target(name: "Ariel", dependencies: ["LibAriel"]),
+    .testTarget(name: "ArielTests", dependencies: ["LibAriel"])
   ]
 )

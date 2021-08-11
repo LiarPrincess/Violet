@@ -1,5 +1,8 @@
 import SwiftSyntax
 
+// swiftlint:disable:next type_name
+internal typealias ProtocolAliasBecauseOtherwiseItFailsToCompileTests = Protocol
+
 public class Protocol: DeclarationWithScope {
 
   public let id: SyntaxIdentifier
