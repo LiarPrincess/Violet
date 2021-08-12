@@ -10,7 +10,7 @@ public class Operator: Declaration {
 
   public let id: SyntaxIdentifier
   public let name: String
-  public let accessModifiers: GetSetAccessModifiers?
+  public let accessModifier: AccessModifier?
   public let modifiers: [Modifier]
   public let kind: Kind
   public let operatorPrecedenceAndTypes: [String]
@@ -22,7 +22,8 @@ public class Operator: Declaration {
     self.name = node.identifier.text.trimmed
 
     let modifiers = ParseModifiers.list(node.modifiers)
-    self.accessModifiers = modifiers.access
+    assert(modifiers.access?.set == nil)
+    self.accessModifier = modifiers.access?.get
     self.modifiers = modifiers.values
 
     guard let kind = modifiers.operatorKind else {

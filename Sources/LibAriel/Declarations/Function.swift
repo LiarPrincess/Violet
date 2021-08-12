@@ -4,7 +4,7 @@ public class Function: Declaration {
 
   public let id: SyntaxIdentifier
   public let name: String
-  public let accessModifiers: GetSetAccessModifiers?
+  public let accessModifier: AccessModifier?
   public let modifiers: [Modifier]
   public let parameters: [Parameter]
   public let output: Type?
@@ -19,7 +19,8 @@ public class Function: Declaration {
     self.name = node.identifier.text.trimmed
 
     let modifiers = ParseModifiers.list(node.modifiers)
-    self.accessModifiers = modifiers.access
+    assert(modifiers.access?.set == nil)
+    self.accessModifier = modifiers.access?.get
     self.modifiers = modifiers.values
 
     let signature = node.signature

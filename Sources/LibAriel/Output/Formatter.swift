@@ -60,7 +60,7 @@ public struct Formatter {
   public func format(_ node: Enumeration) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
-    result += self.formatWithSpaceAfter(node.accessModifiers)
+    result += self.formatWithSpaceAfter(node.accessModifier)
     result += self.formatWithSpaceAfter(node.modifiers)
     result += "enum "
     result += node.name
@@ -77,7 +77,7 @@ public struct Formatter {
   public func format(_ node: Structure) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
-    result += self.formatWithSpaceAfter(node.accessModifiers)
+    result += self.formatWithSpaceAfter(node.accessModifier)
     result += self.formatWithSpaceAfter(node.modifiers)
     result += "struct "
     result += node.name
@@ -94,7 +94,7 @@ public struct Formatter {
   public func format(_ node: Class) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
-    result += self.formatWithSpaceAfter(node.accessModifiers)
+    result += self.formatWithSpaceAfter(node.accessModifier)
     result += self.formatWithSpaceAfter(node.modifiers)
     result += "class "
     result += node.name
@@ -111,7 +111,7 @@ public struct Formatter {
   public func format(_ node: Protocol) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
-    result += self.formatWithSpaceAfter(node.accessModifiers)
+    result += self.formatWithSpaceAfter(node.accessModifier)
     result += self.formatWithSpaceAfter(node.modifiers)
     result += "protocol "
     result += node.name
@@ -127,7 +127,7 @@ public struct Formatter {
   public func format(_ node: AssociatedType) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
-    result += self.formatWithSpaceAfter(node.accessModifiers)
+    result += self.formatWithSpaceAfter(node.accessModifier)
     result += self.formatWithSpaceAfter(node.modifiers)
     result += "associatedtype "
     result += node.name
@@ -144,7 +144,7 @@ public struct Formatter {
   public func format(_ node: Typealias) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
-    result += self.formatWithSpaceAfter(node.accessModifiers)
+    result += self.formatWithSpaceAfter(node.accessModifier)
     result += self.formatWithSpaceAfter(node.modifiers)
     result += "typealias "
     result += node.name
@@ -161,7 +161,7 @@ public struct Formatter {
   public func format(_ node: Extension) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
-    result += self.formatWithSpaceAfter(node.accessModifiers)
+    result += self.formatWithSpaceAfter(node.accessModifier)
     result += self.formatWithSpaceAfter(node.modifiers)
     result += "extension "
     result += node.extendedType
@@ -194,7 +194,7 @@ public struct Formatter {
   public func format(_ node: Initializer) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
-    result += self.formatWithSpaceAfter(node.accessModifiers)
+    result += self.formatWithSpaceAfter(node.accessModifier)
     result += self.formatWithSpaceAfter(node.modifiers)
     result += "init"
 
@@ -216,7 +216,7 @@ public struct Formatter {
   public func format(_ node: Function) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
-    result += self.formatWithSpaceAfter(node.accessModifiers)
+    result += self.formatWithSpaceAfter(node.accessModifier)
     result += self.formatWithSpaceAfter(node.modifiers)
     result += "func "
     result += node.name
@@ -253,7 +253,7 @@ public struct Formatter {
   public func format(_ node: Operator) -> String {
     var result = ""
     result += self.formatWithNewLineAfterEach(node.attributes)
-    result += self.formatWithSpaceAfter(node.accessModifiers)
+    result += self.formatWithSpaceAfter(node.accessModifier)
     result += self.formatWithSpaceAfter(node.modifiers)
 
     result += node.kind.rawValue
@@ -310,6 +310,15 @@ public struct Formatter {
   }
 
   // MARK: - Helper - Modifiers
+
+  /// For example: `|private |`
+  private func formatWithSpaceAfter(_ modifier: AccessModifier?) -> String {
+    if let m = modifier {
+      return m.rawValue + " "
+    }
+
+    return ""
+  }
 
   /// For example: `|private |`
   private func formatWithSpaceAfter(_ modifiers: GetSetAccessModifiers?) -> String {

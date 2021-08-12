@@ -19,20 +19,72 @@ internal class AccessModifierFilterImpl: FilterImpl {
 
   // MARK: - Visit
 
-  internal func visit(_ node: Enumeration) { self.visitCommon(node) }
-  internal func visit(_ node: Structure) { self.visitCommon(node) }
-  internal func visit(_ node: Class) { self.visitCommon(node) }
-  internal func visit(_ node: Protocol) { self.visitCommon(node) }
-  internal func visit(_ node: Typealias) { self.visitCommon(node) }
-  internal func visit(_ node: Extension) { self.visitCommon(node) }
-  internal func visit(_ node: Variable) { self.visitCommon(node) }
-  internal func visit(_ node: Initializer) { self.visitCommon(node) }
-  internal func visit(_ node: Function) { self.visitCommon(node) }
-  internal func visit(_ node: Subscript) { self.visitCommon(node) }
-  internal func visit(_ node: Operator) { self.visitCommon(node) }
-  internal func visit(_ node: AssociatedType) { self.visitCommon(node) }
+  internal func visit(_ node: Enumeration) {
+    self.visit(id: node.id, accessModifier: node.accessModifier)
+  }
 
-  private func visitCommon(_ node: Declaration) {
+  internal func visit(_ node: Structure) {
+    self.visit(id: node.id, accessModifier: node.accessModifier)
+  }
+
+  internal func visit(_ node: Class) {
+    self.visit(id: node.id, accessModifier: node.accessModifier)
+  }
+
+  internal func visit(_ node: Protocol) {
+    self.visit(id: node.id, accessModifier: node.accessModifier)
+  }
+
+  internal func visit(_ node: Typealias) {
+    self.visit(id: node.id, accessModifier: node.accessModifier)
+  }
+
+  internal func visit(_ node: Extension) {
+    self.visit(id: node.id, accessModifier: node.accessModifier)
+  }
+
+  internal func visit(_ node: Variable) {
+    self.visit(id: node.id, accessModifiers: node.accessModifiers)
+  }
+
+  internal func visit(_ node: Initializer) {
+    self.visit(id: node.id, accessModifier: node.accessModifier)
+  }
+
+  internal func visit(_ node: Function) {
+    self.visit(id: node.id, accessModifier: node.accessModifier)
+  }
+
+  internal func visit(_ node: Subscript) {
+    self.visit(id: node.id, accessModifiers: node.accessModifiers)
+  }
+
+  internal func visit(_ node: Operator) {
+    self.visit(id: node.id, accessModifier: node.accessModifier)
+  }
+
+  internal func visit(_ node: AssociatedType) {
+    self.visit(id: node.id, accessModifier: node.accessModifier)
+  }
+
+  private func visit(id: SyntaxIdentifier, accessModifier: AccessModifier?) {
+    let modifier = accessModifier ?? defaultAccessModifier
+
+    assert(self.nodeAcceptanceStatus[id] == nil)
+    let isAccepted = self.isAccepted(modifier)
+    self.nodeAcceptanceStatus[id] = isAccepted
+  }
+
+  private func visit(id: SyntaxIdentifier, accessModifiers: GetSetAccessModifiers?) {
+    let get = accessModifiers?.get ?? defaultAccessModifier
+    let set = accessModifiers?.set ?? accessModifiers?.get ?? defaultAccessModifier
+
+    assert(self.nodeAcceptanceStatus[id] == nil)
+    let isAccepted = self.isAccepted(get) || self.isAccepted(set)
+    self.nodeAcceptanceStatus[id] = isAccepted
+  }
+
+  private func isAccepted(_ accessModifier: AccessModifier) -> Bool {
     func toNumber(_ value: AccessModifier) -> Int {
       switch value {
       case .private: return 0
@@ -43,19 +95,9 @@ internal class AccessModifierFilterImpl: FilterImpl {
       }
     }
 
-    let accessModifiers = node.accessModifiers
-    let get = accessModifiers?.get ?? defaultAccessModifier
-    let set = accessModifiers?.set ?? accessModifiers?.get ?? defaultAccessModifier
-
-    let getNum = toNumber(get)
-    let setNum = toNumber(set)
-
+    let num = toNumber(accessModifier)
     let min = toNumber(self.minAccessModifier)
-    let isAccepted = getNum >= min || setNum >= min
-
-    let id = node.id
-    assert(self.nodeAcceptanceStatus[id] == nil)
-    self.nodeAcceptanceStatus[id] = isAccepted
+    return num >= min
   }
 
   // MARK: - Scoped declaration

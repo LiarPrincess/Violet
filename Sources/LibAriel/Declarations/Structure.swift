@@ -4,7 +4,7 @@ public class Structure: DeclarationWithScope {
 
   public let id: SyntaxIdentifier
   public let name: String
-  public let accessModifiers: GetSetAccessModifiers?
+  public let accessModifier: AccessModifier?
   public let modifiers: [Modifier]
   public let inheritance: [InheritedType]
 
@@ -19,7 +19,8 @@ public class Structure: DeclarationWithScope {
     self.name = node.identifier.text.trimmed
 
     let modifiers = ParseModifiers.list(node.modifiers)
-    self.accessModifiers = modifiers.access
+    assert(modifiers.access?.set == nil)
+    self.accessModifier = modifiers.access?.get
     self.modifiers = modifiers.values
 
     let inheritedTypes = node.inheritanceClause?.inheritedTypeCollection

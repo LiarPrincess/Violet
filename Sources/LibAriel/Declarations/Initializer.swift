@@ -3,7 +3,7 @@ import SwiftSyntax
 public class Initializer: Declaration {
 
   public let id: SyntaxIdentifier
-  public let accessModifiers: GetSetAccessModifiers?
+  public let accessModifier: AccessModifier?
   public let modifiers: [Modifier]
   public let isOptional: Bool
   public let parameters: [Parameter]
@@ -17,7 +17,8 @@ public class Initializer: Declaration {
     self.id = node.id
 
     let modifiers = ParseModifiers.list(node.modifiers)
-    self.accessModifiers = modifiers.access
+    assert(modifiers.access?.set == nil)
+    self.accessModifier = modifiers.access?.get
     self.modifiers = modifiers.values
 
     self.isOptional = node.optionalMark != nil

@@ -4,7 +4,7 @@ public class AssociatedType: Declaration {
 
   public let id: SyntaxIdentifier
   public let name: String
-  public let accessModifiers: GetSetAccessModifiers?
+  public let accessModifier: AccessModifier?
   public let modifiers: [Modifier]
   public let inheritance: [InheritedType]
   public let initializer: TypeInitializer?
@@ -18,7 +18,8 @@ public class AssociatedType: Declaration {
     self.initializer = node.initializer.map(TypeInitializer.init)
 
     let modifiers = ParseModifiers.list(node.modifiers)
-    self.accessModifiers = modifiers.access
+    assert(modifiers.access?.set == nil)
+    self.accessModifier = modifiers.access?.get
     self.modifiers = modifiers.values
 
     let inheritedTypes = node.inheritanceClause?.inheritedTypeCollection

@@ -4,7 +4,7 @@ public class Typealias: Declaration {
 
   public let id: SyntaxIdentifier
   public let name: String
-  public let accessModifiers: GetSetAccessModifiers?
+  public let accessModifier: AccessModifier?
   public let modifiers: [Modifier]
   public let initializer: TypeInitializer?
 
@@ -12,13 +12,14 @@ public class Typealias: Declaration {
   public let genericParameters: [GenericParameter]
   public let genericRequirements: [GenericRequirement]
 
-  internal  init(_ node: TypealiasDeclSyntax) {
+  internal init(_ node: TypealiasDeclSyntax) {
     self.id = node.id
     self.name = node.identifier.text.trimmed
     self.initializer = node.initializer.map(TypeInitializer.init)
 
     let modifiers = ParseModifiers.list(node.modifiers)
-    self.accessModifiers = modifiers.access
+    assert(modifiers.access?.set == nil)
+    self.accessModifier = modifiers.access?.get
     self.modifiers = modifiers.values
 
     self.attributes = node.attributes?.map(Attribute.init) ?? []

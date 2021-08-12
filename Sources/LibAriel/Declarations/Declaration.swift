@@ -4,7 +4,6 @@ import SwiftSyntax
 
 public protocol Declaration: AnyObject, CustomStringConvertible {
   var id: SyntaxIdentifier { get }
-  var accessModifiers: GetSetAccessModifiers? { get }
 
   func accept(visitor: DeclarationVisitor)
 }
