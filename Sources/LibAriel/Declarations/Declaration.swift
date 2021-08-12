@@ -2,13 +2,16 @@ import SwiftSyntax
 
 // MARK: - Declaration
 
+public typealias DeclarationId = AnyHashable
+
 public protocol Declaration: AnyObject, CustomStringConvertible {
-  var id: SyntaxIdentifier { get }
+  var id: DeclarationId { get }
 
   func accept(visitor: DeclarationVisitor)
 }
 
 extension Declaration {
+
   public var description: String {
     let formatter = Formatter.forDescription
     return formatter.format(self)

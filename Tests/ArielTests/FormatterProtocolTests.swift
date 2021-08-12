@@ -4,25 +4,46 @@ import XCTest
 class FormatterProtocolTests: XCTestCase {
 
   func test_simple() {
-    guard let declaration = Parser.protocol(source: "protocol Elsa {}") else {
-      return
-    }
+    let declaration = Protocol(
+      id: .dummyId,
+      name: "Elsa",
+      accessModifier: nil,
+      modifiers: [],
+      inheritance: [],
+      attributes: [],
+      genericRequirements: []
+    )
 
-    let formatter = Formatter(newLineAfterAttribute: true,
-                              maxInitializerLength: nil)
+    let formatter = Formatter(
+      newLineAfterAttribute: true,
+      maxInitializerLength: nil
+    )
 
     let result = formatter.format(declaration)
     XCTAssertEqual(result, "protocol Elsa")
   }
 
   func test_full() {
-    guard let declaration = Parser.protocol(source: """
-@available(macOS 10.15, *)
-public protocol Elsa: Princess where Element == Ice {}
-""") else { return }
+    let declaration = Protocol(
+      id: .dummyId,
+      name: "Elsa",
+      accessModifier: .public,
+      modifiers: [],
+      inheritance: [InheritedType(typeName: "Princess")],
+      attributes: [Attribute(name: "available")],
+      genericRequirements: [
+        GenericRequirement(
+          kind: .sameType,
+          leftType: Type(name: "Element"),
+          rightType: Type(name: "Ice")
+        )
+      ]
+    )
 
-    let formatter = Formatter(newLineAfterAttribute: true,
-                              maxInitializerLength: nil)
+    let formatter = Formatter(
+      newLineAfterAttribute: true,
+      maxInitializerLength: nil
+    )
 
     let result = formatter.format(declaration)
     XCTAssertEqual(result, """

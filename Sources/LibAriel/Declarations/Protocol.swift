@@ -1,11 +1,8 @@
 import SwiftSyntax
 
-// swiftlint:disable:next type_name
-internal typealias ProtocolAliasBecauseOtherwiseItFailsToCompileTests = Protocol
-
 public class Protocol: DeclarationWithScope {
 
-  public let id: SyntaxIdentifier
+  public let id: DeclarationId
   public let name: String
   public let accessModifier: AccessModifier?
   public let modifiers: [Modifier]
@@ -14,10 +11,27 @@ public class Protocol: DeclarationWithScope {
   public let attributes: [Attribute]
   public let genericRequirements: [GenericRequirement]
 
-  public internal(set) var children = [Declaration]()
+  public var children = [Declaration]()
+
+  public init(id: DeclarationId,
+              name: String,
+              accessModifier: AccessModifier?,
+              modifiers: [Modifier],
+              inheritance: [InheritedType],
+              attributes: [Attribute],
+              genericRequirements: [GenericRequirement]
+  ) {
+    self.id = id
+    self.name = name
+    self.accessModifier = accessModifier
+    self.modifiers = modifiers
+    self.inheritance = inheritance
+    self.attributes = attributes
+    self.genericRequirements = genericRequirements
+  }
 
   internal init(_ node: ProtocolDeclSyntax) {
-    self.id = node.id
+    self.id = DeclarationId(node.id)
     self.name = node.identifier.text.trimmed
 
     let modifiers = ParseModifiers.list(node.modifiers)

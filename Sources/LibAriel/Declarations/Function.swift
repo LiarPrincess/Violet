@@ -2,7 +2,7 @@ import SwiftSyntax
 
 public class Function: Declaration {
 
-  public let id: SyntaxIdentifier
+  public let id: DeclarationId
   public let name: String
   public let accessModifier: AccessModifier?
   public let modifiers: [Modifier]
@@ -14,8 +14,31 @@ public class Function: Declaration {
   public let genericParameters: [GenericParameter]
   public let genericRequirements: [GenericRequirement]
 
+  public init(id: DeclarationId,
+              name: String,
+              accessModifier: AccessModifier?,
+              modifiers: [Modifier],
+              parameters: [Parameter],
+              output: Type?,
+              throws: ThrowingStatus?,
+              attributes: [Attribute],
+              genericParameters: [GenericParameter],
+              genericRequirements: [GenericRequirement]
+  ) {
+    self.id = id
+    self.name = name
+    self.accessModifier = accessModifier
+    self.modifiers = modifiers
+    self.parameters = parameters
+    self.output = output
+    self.throws = `throws`
+    self.attributes = attributes
+    self.genericParameters = genericParameters
+    self.genericRequirements = genericRequirements
+  }
+
   internal init(_ node: FunctionDeclSyntax) {
-    self.id = node.id
+    self.id = DeclarationId(node.id)
     self.name = node.identifier.text.trimmed
 
     let modifiers = ParseModifiers.list(node.modifiers)

@@ -2,7 +2,7 @@ import SwiftSyntax
 
 public class Variable: Declaration {
 
-  public let id: SyntaxIdentifier
+  public let id: DeclarationId
   public let name: String
   public let keyword: String
   public let accessModifiers: GetSetAccessModifiers?
@@ -12,6 +12,27 @@ public class Variable: Declaration {
   public let accessors: [Accessor]
 
   public let attributes: [Attribute]
+
+  public init(id: DeclarationId,
+              name: String,
+              keyword: String,
+              accessModifiers: GetSetAccessModifiers?,
+              modifiers: [Modifier],
+              typeAnnotation: TypeAnnotation?,
+              initializer: VariableInitializer?,
+              accessors: [Accessor],
+              attributes: [Attribute]
+  ) {
+    self.id = id
+    self.name = name
+    self.keyword = keyword
+    self.accessModifiers = accessModifiers
+    self.modifiers = modifiers
+    self.typeAnnotation = typeAnnotation
+    self.initializer = initializer
+    self.accessors = accessors
+    self.attributes = attributes
+  }
 
   internal init(_ node: VariableDeclSyntax, binding: PatternBindingSyntax) {
     self.id = binding.id

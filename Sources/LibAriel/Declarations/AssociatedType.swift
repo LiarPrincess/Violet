@@ -2,7 +2,7 @@ import SwiftSyntax
 
 public class AssociatedType: Declaration {
 
-  public let id: SyntaxIdentifier
+  public let id: DeclarationId
   public let name: String
   public let accessModifier: AccessModifier?
   public let modifiers: [Modifier]
@@ -12,8 +12,27 @@ public class AssociatedType: Declaration {
   public let attributes: [Attribute]
   public let genericRequirements: [GenericRequirement]
 
+  public init(id: DeclarationId,
+              name: String,
+              accessModifier: AccessModifier?,
+              modifiers: [Modifier],
+              inheritance: [InheritedType],
+              initializer: TypeInitializer?,
+              attributes: [Attribute],
+              genericRequirements: [GenericRequirement]
+  ) {
+    self.id = id
+    self.name = name
+    self.accessModifier = accessModifier
+    self.modifiers = modifiers
+    self.inheritance = inheritance
+    self.initializer = initializer
+    self.attributes = attributes
+    self.genericRequirements = genericRequirements
+  }
+
   internal init(_ node: AssociatedtypeDeclSyntax) {
-    self.id = node.id
+    self.id = DeclarationId(node.id)
     self.name = node.identifier.text.trimmed
     self.initializer = node.initializer.map(TypeInitializer.init)
 

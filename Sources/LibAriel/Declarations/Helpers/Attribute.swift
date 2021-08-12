@@ -9,6 +9,10 @@ public struct Attribute {
 
   public let name: String
 
+  public init(name: String) {
+    self.name = name
+  }
+
   internal init(_ node: Syntax) {
     let children = Array(node.children)
     assert(children.count >= 2) // '@' and then something

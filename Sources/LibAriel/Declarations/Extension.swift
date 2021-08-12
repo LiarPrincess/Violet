@@ -2,7 +2,7 @@ import SwiftSyntax
 
 public class Extension: DeclarationWithScope {
 
-  public let id: SyntaxIdentifier
+  public let id: DeclarationId
   public let extendedType: String
   public let accessModifier: AccessModifier?
   public let modifiers: [Modifier]
@@ -11,10 +11,27 @@ public class Extension: DeclarationWithScope {
   public let attributes: [Attribute]
   public let genericRequirements: [GenericRequirement]
 
-  public internal(set) var children = [Declaration]()
+  public var children = [Declaration]()
+
+  public init(id: DeclarationId,
+              extendedType: String,
+              accessModifier: AccessModifier?,
+              modifiers: [Modifier],
+              inheritance: [InheritedType],
+              attributes: [Attribute],
+              genericRequirements: [GenericRequirement]
+  ) {
+    self.id = id
+    self.extendedType = extendedType
+    self.accessModifier = accessModifier
+    self.modifiers = modifiers
+    self.inheritance = inheritance
+    self.attributes = attributes
+    self.genericRequirements = genericRequirements
+  }
 
   internal init(_ node: ExtensionDeclSyntax) {
-    self.id = node.id
+    self.id = DeclarationId(node.id)
     self.extendedType = node.extendedType.description.trimmed
 
     let modifiers = ParseModifiers.list(node.modifiers)

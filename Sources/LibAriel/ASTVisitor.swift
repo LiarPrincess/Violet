@@ -9,7 +9,7 @@ public class ASTVisitor: SyntaxVisitor {
   /// For nested declarations, so we can properly determine parent
   private var scopeStack = [DeclarationWithScope]()
   /// All of the visited declarations by their `id`
-  private var declarationsById = [SyntaxIdentifier: Declaration]()
+  private var declarationsById = [DeclarationId: Declaration]()
 
   // MARK: - Handle
 

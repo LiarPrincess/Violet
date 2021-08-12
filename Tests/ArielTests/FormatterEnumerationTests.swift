@@ -4,46 +4,58 @@ import XCTest
 class FormatterEnumerationTests: XCTestCase {
 
   func test_simple() {
-    guard let declaration = Parser.enumeration(source: """
-enum Elsa: Princess {
-  case letItGo
-}
-""") else { return }
+    let declaration = Enumeration(
+      id: .dummyId,
+      name: "Elsa",
+      accessModifier: nil,
+      modifiers: [],
+      inheritance: [],
+      attributes: [],
+      genericParameters: [],
+      genericRequirements: []
+    )
 
-    let formatter = Formatter(newLineAfterAttribute: true,
-                              maxInitializerLength: nil)
-
-    let result = formatter.format(declaration)
-    XCTAssertEqual(result, "enum Elsa: Princess")
-  }
-
-  func test_simple_noCases() {
-    guard let declaration = Parser.enumeration(source: "enum Elsa {}") else {
-      return
-    }
-
-    let formatter = Formatter(newLineAfterAttribute: true,
-                              maxInitializerLength: nil)
+    let formatter = Formatter(
+      newLineAfterAttribute: true,
+      maxInitializerLength: nil
+    )
 
     let result = formatter.format(declaration)
     XCTAssertEqual(result, "enum Elsa")
   }
 
   func test_full() {
-    guard let declaration = Parser.enumeration(source: """
-@available(macOS 10.15, *)
-public indirect enum Elsa<T>: Princess where T: Ice {
-  case letItGo
-}
-""") else { return }
+    let declaration = Enumeration(
+      id: .dummyId,
+      name: "Elsa",
+      accessModifier: .public,
+      modifiers: [.indirect],
+      inheritance: [InheritedType(typeName: "Princess")],
+      attributes: [Attribute(name: "available")],
+      genericParameters: [
+        GenericParameter(
+          name: "Power",
+          inheritedType: Type(name: "MagicPower")
+        )
+      ],
+      genericRequirements: [
+        GenericRequirement(
+          kind: .sameType,
+          leftType: Type(name: "Power.Kind"),
+          rightType: Type(name: "Ice")
+        )
+      ]
+    )
 
-    let formatter = Formatter(newLineAfterAttribute: true,
-                              maxInitializerLength: nil)
+    let formatter = Formatter(
+      newLineAfterAttribute: true,
+      maxInitializerLength: nil
+    )
 
     let result = formatter.format(declaration)
     XCTAssertEqual(result, """
 @available
-public indirect enum Elsa<T>: Princess where T: Ice
+public indirect enum Elsa<Power: MagicPower>: Princess where Power.Kind == Ice
 """)
   }
 }

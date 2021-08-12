@@ -6,6 +6,11 @@ public struct GenericParameter {
   public let name: String
   public let inheritedType: Type?
 
+  public init(name: String, inheritedType: Type?) {
+    self.name = name
+    self.inheritedType = inheritedType
+  }
+
   internal init(_ node: GenericParameterSyntax) {
     self.name = node.name.text.trimmed
     self.inheritedType = node.inheritedType.map(Type.init)
@@ -24,6 +29,12 @@ public struct GenericRequirement {
   public let kind: Kind
   public let leftType: Type
   public let rightType: Type
+
+  public init(kind: GenericRequirement.Kind, leftType: Type, rightType: Type) {
+    self.kind = kind
+    self.leftType = leftType
+    self.rightType = rightType
+  }
 
   internal init(_ node: GenericRequirementSyntax) {
     let body = node.body

@@ -4,12 +4,21 @@ import XCTest
 class FormatterTypealiasTests: XCTestCase {
 
   func test_simple() {
-    guard let declaration = Parser.typealias(source: """
-typealias Elsa = Princess
-""") else { return }
+    let declaration = Typealias(
+      id: .dummyId,
+      name: "Elsa",
+      accessModifier: nil,
+      modifiers: [],
+      initializer: TypeInitializer(value: "Princess"),
+      attributes: [],
+      genericParameters: [],
+      genericRequirements: []
+    )
 
-    let formatter = Formatter(newLineAfterAttribute: true,
-                              maxInitializerLength: nil)
+    let formatter = Formatter(
+      newLineAfterAttribute: true,
+      maxInitializerLength: nil
+    )
 
     let result = formatter.format(declaration)
     XCTAssertEqual(result, """
@@ -18,18 +27,37 @@ typealias Elsa = Princess
   }
 
   func test_full() {
-    guard let declaration = Parser.typealias(source: """
-@available(macOS 10.15, *)
-private typealias Elsa<T> = Princess where T: Ice
-""") else { return }
+    let declaration = Typealias(
+      id: .dummyId,
+      name: "Elsa",
+      accessModifier: .public,
+      modifiers: [],
+      initializer: TypeInitializer(value: "Princess"),
+      attributes: [Attribute(name: "available")],
+      genericParameters: [
+        GenericParameter(
+          name: "Power",
+          inheritedType: Type(name: "MagicPower")
+        )
+      ],
+      genericRequirements: [
+        GenericRequirement(
+          kind: .sameType,
+          leftType: Type(name: "Power.Type"),
+          rightType: Type(name: "Ice")
+        )
+      ]
+    )
 
-    let formatter = Formatter(newLineAfterAttribute: true,
-                              maxInitializerLength: nil)
+    let formatter = Formatter(
+      newLineAfterAttribute: true,
+      maxInitializerLength: nil
+    )
 
     let result = formatter.format(declaration)
     XCTAssertEqual(result, """
 @available
-private typealias Elsa<T> = Princess where T: Ice
+public typealias Elsa<Power: MagicPower> = Princess where Power.Type == Ice
 """)
   }
 }

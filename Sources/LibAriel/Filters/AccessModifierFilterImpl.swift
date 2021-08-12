@@ -5,7 +5,7 @@ private let defaultAccessModifier = AccessModifier.internal
 internal class AccessModifierFilterImpl: FilterImpl {
 
   private let minAccessModifier: AccessModifier
-  private var nodeAcceptanceStatus = [SyntaxIdentifier: Bool]()
+  private var nodeAcceptanceStatus = [DeclarationId: Bool]()
 
   internal init(minAccessModifier: AccessModifier) {
     self.minAccessModifier = minAccessModifier
@@ -67,7 +67,7 @@ internal class AccessModifierFilterImpl: FilterImpl {
     self.visit(id: node.id, accessModifier: node.accessModifier)
   }
 
-  private func visit(id: SyntaxIdentifier, accessModifier: AccessModifier?) {
+  private func visit(id: DeclarationId, accessModifier: AccessModifier?) {
     let modifier = accessModifier ?? defaultAccessModifier
 
     assert(self.nodeAcceptanceStatus[id] == nil)
@@ -75,7 +75,7 @@ internal class AccessModifierFilterImpl: FilterImpl {
     self.nodeAcceptanceStatus[id] = isAccepted
   }
 
-  private func visit(id: SyntaxIdentifier, accessModifiers: GetSetAccessModifiers?) {
+  private func visit(id: DeclarationId, accessModifiers: GetSetAccessModifiers?) {
     let get = accessModifiers?.get ?? defaultAccessModifier
     let set = accessModifiers?.set ?? accessModifiers?.get ?? defaultAccessModifier
 

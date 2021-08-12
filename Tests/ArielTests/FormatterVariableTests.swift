@@ -4,45 +4,81 @@ import XCTest
 class FormatterVariableTests: XCTestCase {
 
   func test_simple() {
-    guard let declaration = Parser.variable(source: "let elsa = 1") else {
-      return
-    }
+    let declaration = Variable(
+      id: .dummyId,
+      name: "elsa",
+      keyword: "let",
+      accessModifiers: nil,
+      modifiers: [],
+      typeAnnotation: nil,
+      initializer: VariableInitializer(value: "1"),
+      accessors: [],
+      attributes: []
+    )
 
-    let formatter = Formatter(newLineAfterAttribute: true,
-                              maxInitializerLength: nil)
+    let formatter = Formatter(
+      newLineAfterAttribute: true,
+      maxInitializerLength: nil
+    )
 
     let result = formatter.format(declaration)
     XCTAssertEqual(result, "let elsa = 1")
   }
 
   func test_full() {
-    guard let declaration = Parser.variable(source: """
-@available(macOS 10.15, *)
-private let elsa: Princess = Princess()
-""") else { return }
+    let declaration = Variable(
+      id: .dummyId,
+      name: "elsa",
+      keyword: "let",
+      accessModifiers: GetSetAccessModifiers(get: .public, set: .internal),
+      modifiers: [.final, .class],
+      typeAnnotation: TypeAnnotation(typeName: "Princess"),
+      initializer: VariableInitializer(value: "Princess()"),
+      accessors: [
+        Accessor(kind: .get, modifier: nil, attributes: []),
+        Accessor(kind: ._read, modifier: nil, attributes: []),
+        Accessor(kind: .set, modifier: nil, attributes: []),
+        Accessor(kind: ._modify, modifier: nil, attributes: [])
+      ],
+      attributes: [Attribute(name: "available")]
+    )
 
-    let formatter = Formatter(newLineAfterAttribute: true,
-                              maxInitializerLength: nil)
+    let formatter = Formatter(
+      newLineAfterAttribute: true,
+      maxInitializerLength: nil
+    )
 
     let result = formatter.format(declaration)
     XCTAssertEqual(result, """
 @available
-private let elsa: Princess = Princess()
+public internal(set) final class let elsa: Princess = Princess() { get ; _read ; set ; _modify }
 """)
   }
 
   // MARK: - Init
 
   func test_longInitializer() {
-    guard let declaration = Parser.variable(source: """
-let elsa: Princess = {
-  let power = "Ice"
-  return Princess(power: power)
-}()
-""") else { return }
+    let declaration = Variable(
+      id: .dummyId,
+      name: "elsa",
+      keyword: "let",
+      accessModifiers: nil,
+      modifiers: [],
+      typeAnnotation: TypeAnnotation(typeName: "Princess"),
+      initializer: VariableInitializer(value: """
+        {
+          let power = "Ice"
+          return Princess(power: power)
+        }()
+        """),
+      accessors: [],
+      attributes: []
+    )
 
-    let formatter = Formatter(newLineAfterAttribute: true,
-                              maxInitializerLength: 10)
+    let formatter = Formatter(
+      newLineAfterAttribute: true,
+      maxInitializerLength: 10
+    )
 
     let result = formatter.format(declaration)
     XCTAssertEqual(result, """
@@ -52,12 +88,22 @@ let elsa: Princess = {
   }
 
   func test_longInitializer_unclosedSingleQuote_isClosed() {
-    guard let declaration = Parser.variable(source: """
-let elsa: Princess = "Let it go! Let it go!"
-""") else { return }
+    let declaration = Variable(
+      id: .dummyId,
+      name: "elsa",
+      keyword: "let",
+      accessModifiers: nil,
+      modifiers: [],
+      typeAnnotation: TypeAnnotation(typeName: "Princess"),
+      initializer: VariableInitializer(value: "\"Let it go! Let it go!\""),
+      accessors: [],
+      attributes: []
+    )
 
-    let formatter = Formatter(newLineAfterAttribute: true,
-                              maxInitializerLength: 10)
+    let formatter = Formatter(
+      newLineAfterAttribute: true,
+      maxInitializerLength: 10
+    )
 
     let result = formatter.format(declaration)
     XCTAssertEqual(result, """
@@ -66,12 +112,22 @@ let elsa: Princess = "Let it go <and so on…>"
   }
 
   func test_longInitializer_unclosedTripleQuote_isClosed() {
-    guard let declaration = Parser.variable(source: #"""
-let elsa: Princess = """Let it go! Let it go!"""
-"""#) else { return }
+    let declaration = Variable(
+      id: .dummyId,
+      name: "elsa",
+      keyword: "let",
+      accessModifiers: nil,
+      modifiers: [],
+      typeAnnotation: TypeAnnotation(typeName: "Princess"),
+      initializer: VariableInitializer(value: "\"\"\"Let it go! Let it go!\"\"\""),
+      accessors: [],
+      attributes: []
+    )
 
-    let formatter = Formatter(newLineAfterAttribute: true,
-                              maxInitializerLength: 10)
+    let formatter = Formatter(
+      newLineAfterAttribute: true,
+      maxInitializerLength: 10
+    )
 
     let result = formatter.format(declaration)
     XCTAssertEqual(result, #"""

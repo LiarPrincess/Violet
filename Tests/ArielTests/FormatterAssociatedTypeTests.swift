@@ -4,32 +4,53 @@ import XCTest
 class FormatterAssociatedTypeTests: XCTestCase {
 
   func test_simple() {
-    guard let declaration = Parser.associatedtype(source: """
-associatedtype elsa: Princess
-""") else { return }
+    let declaration = AssociatedType(
+      id: .dummyId,
+      name: "Elsa",
+      accessModifier: nil,
+      modifiers: [],
+      inheritance: [],
+      initializer: nil,
+      attributes: [],
+      genericRequirements: []
+    )
 
-    let formatter = Formatter(newLineAfterAttribute: true,
-                              maxInitializerLength: nil)
+    let formatter = Formatter(
+      newLineAfterAttribute: true,
+      maxInitializerLength: nil
+    )
 
     let result = formatter.format(declaration)
-    XCTAssertEqual(result, """
-associatedtype elsa: Princess
-""")
+    XCTAssertEqual(result, "associatedtype Elsa")
   }
 
   func test_full() {
-    guard let declaration = Parser.associatedtype(source: """
-@available(macOS 10.15, *)
-associatedtype elsa: Princess
-""") else { return }
+    let declaration = AssociatedType(
+      id: .dummyId,
+      name: "Elsa",
+      accessModifier: .public,
+      modifiers: [],
+      inheritance: [InheritedType(typeName: "Princess")],
+      initializer: TypeInitializer(value: "Princess"),
+      attributes: [Attribute(name: "available")],
+      genericRequirements: [
+        GenericRequirement(
+          kind: .sameType,
+          leftType: Type(name: "Power"),
+          rightType: Type(name: "Ice")
+        )
+      ]
+    )
 
-    let formatter = Formatter(newLineAfterAttribute: true,
-                              maxInitializerLength: nil)
+    let formatter = Formatter(
+      newLineAfterAttribute: true,
+      maxInitializerLength: nil
+    )
 
     let result = formatter.format(declaration)
     XCTAssertEqual(result, """
 @available
-associatedtype elsa: Princess
+public associatedtype Elsa: Princess = Princess where Power == Ice
 """)
   }
 }

@@ -14,6 +14,19 @@ public struct Parameter: CustomStringConvertible {
     return formatter.format(self)
   }
 
+  public init(firstName: String?,
+              secondName: String?,
+              type: Type?,
+              isVariadic: Bool,
+              defaultValue: VariableInitializer?
+  ) {
+    self.firstName = firstName
+    self.secondName = secondName
+    self.type = type
+    self.isVariadic = isVariadic
+    self.defaultValue = defaultValue
+  }
+
   internal init(_ node: FunctionParameterSyntax) {
     self.firstName = node.firstName?.text.trimmed
     self.secondName = node.secondName?.text.trimmed

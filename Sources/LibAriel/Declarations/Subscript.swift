@@ -2,7 +2,7 @@ import SwiftSyntax
 
 public class Subscript: Declaration {
 
-  public let id: SyntaxIdentifier
+  public let id: DeclarationId
   public let accessModifiers: GetSetAccessModifiers?
   public let modifiers: [Modifier]
   public let indices: [Parameter]
@@ -13,8 +13,28 @@ public class Subscript: Declaration {
   public let genericParameters: [GenericParameter]
   public let genericRequirements: [GenericRequirement]
 
+  public init(id: DeclarationId,
+              accessModifiers: GetSetAccessModifiers?,
+              modifiers: [Modifier],
+              indices: [Parameter],
+              result: Type,
+              accessors: [Accessor],
+              attributes: [Attribute],
+              genericParameters: [GenericParameter],
+              genericRequirements: [GenericRequirement]) {
+    self.id = id
+    self.accessModifiers = accessModifiers
+    self.modifiers = modifiers
+    self.indices = indices
+    self.result = result
+    self.accessors = accessors
+    self.attributes = attributes
+    self.genericParameters = genericParameters
+    self.genericRequirements = genericRequirements
+  }
+
   internal init(_ node: SubscriptDeclSyntax) {
-    self.id = node.id
+    self.id = DeclarationId(node.id)
 
     let modifiers = ParseModifiers.list(node.modifiers)
     self.accessModifiers = modifiers.access

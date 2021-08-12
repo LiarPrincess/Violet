@@ -17,6 +17,14 @@ public struct Accessor {
   public let modifier: Modifier?
   public let attributes: [Attribute]
 
+  public init(kind: Kind, modifier: Modifier?, attributes: [Attribute]) {
+    self.kind = kind
+    self.modifier = modifier
+    self.attributes = attributes
+  }
+
+  // MARK: - Init many
+
   internal static func initMany(_ node: Syntax) -> [Accessor] {
     let children = Array(node.children)
 
