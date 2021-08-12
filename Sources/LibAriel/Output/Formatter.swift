@@ -548,7 +548,7 @@ public struct Formatter {
         result += modifier.rawValue + " "
       }
 
-      result += accessor.kind.rawValue + " "
+      result += accessor.kind.rawValue
 
       let isLast = index == accessors.count - 1
       if !isLast {
@@ -556,7 +556,7 @@ public struct Formatter {
       }
     }
 
-    result += "}"
+    result += " }"
     return result
   }
 

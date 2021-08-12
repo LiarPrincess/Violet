@@ -51,7 +51,7 @@ class FormatterVariableTests: XCTestCase {
     let result = formatter.format(declaration)
     XCTAssertEqual(result, """
 @available
-public internal(set) final class let elsa: Princess = Princess() { get ; _read ; set ; _modify }
+public internal(set) final class let elsa: Princess = Princess() { get; _read; set; _modify }
 """)
   }
 

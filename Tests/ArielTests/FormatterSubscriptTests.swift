@@ -92,7 +92,7 @@ subscript(arg: Int) -> String { get }
     let result = formatter.format(declaration)
     XCTAssertEqual(result, """
 @available
-public internal(set) final subscript<S: Singer>(singer: S, loud: Bool) -> String { get ; _read ; set ; _modify } where S: Princess
+public internal(set) final subscript<S: Singer>(singer: S, loud: Bool) -> String { get; _read; set; _modify } where S: Princess
 """)
   }
 }
