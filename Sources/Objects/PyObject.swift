@@ -41,7 +41,7 @@ public class PyObject: CustomStringConvertible {
   // MARK: - __dict__ field
 
   // Note 3x '_' prefix!
-  private var ___dict__: PyDict?
+  internal var ___dict__: PyDict?
 
   /// Internal dictionary of attributes for the specific instance.
   ///

@@ -224,12 +224,12 @@ extension PyObject {
     }
 
     /// Append given flag.
-    public mutating func set(_ flag: Flags) {
+    internal mutating func set(_ flag: Flags) {
       self.rawValue = self.rawValue | flag.rawValue
     }
 
     /// Append/remove given flag.
-    public mutating func set(_ flag: Flags, to value: Bool) {
+    internal mutating func set(_ flag: Flags, to value: Bool) {
       if value {
         self.set(flag)
       } else {
@@ -249,7 +249,7 @@ extension PyObject {
     }
 
     /// Remove given flag.
-    public mutating func unset(_ flag: Flags) {
+    internal mutating func unset(_ flag: Flags) {
       let flagNegated = ~flag.rawValue
       self.rawValue = self.rawValue & flagNegated
     }

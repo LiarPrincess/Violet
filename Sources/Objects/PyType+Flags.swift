@@ -241,7 +241,7 @@ extension PyType {
     }
 
     /// Append/remove given flag.
-    public mutating func set(_ flag: TypeFlags, to value: Bool) {
+    internal mutating func set(_ flag: TypeFlags, to value: Bool) {
       let objectFlags = flag.objectFlags
       self.objectFlags.set(objectFlags, to: value)
     }
