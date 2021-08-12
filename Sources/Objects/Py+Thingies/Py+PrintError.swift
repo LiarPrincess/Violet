@@ -128,7 +128,7 @@ extension PyInstance {
   private func printFileAndLine(error: PyBaseException,
                                 file: PyTextFile) -> PyBaseException? {
     let print_file_and_line = self.intern(string: "print_file_and_line")
-    switch self.hasattr(object: error, name: print_file_and_line) {
+    switch self.hasAttribute(object: error, name: print_file_and_line) {
     case .value(true): break
     case .value(false): return nil // Do nothing
     case .error(let e): return e // Ooops…
@@ -155,7 +155,7 @@ extension PyInstance {
     let key = self.intern(string: name)
 
     let object: PyObject
-    switch self.getattr(object: error, name: key) {
+    switch self.getAttribute(object: error, name: key) {
     case let .value(o): object = o
     case let .error(e): return .error(e)
     }

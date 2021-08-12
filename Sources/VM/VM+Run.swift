@@ -138,7 +138,7 @@ extension VM {
     }
 
     let code = Py.intern(string: "code")
-    switch Py.getattr(object: error, name: code) {
+    switch Py.getAttribute(object: error, name: code) {
     case let .value(object):
       return .systemExit(object)
     case let .error(e):
@@ -383,6 +383,6 @@ extension VM {
     }
 
     let attribute = type.name
-    return Py.getattr(object: module, name: attribute)
+    return Py.getAttribute(object: module, name: attribute)
   }
 }

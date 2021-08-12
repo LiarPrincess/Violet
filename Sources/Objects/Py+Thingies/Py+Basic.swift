@@ -306,7 +306,7 @@ extension PyInstance {
       return result
     }
 
-    switch self.getattr(object: object, name: .__isabstractmethod__) {
+    switch self.getAttribute(object: object, name: .__isabstractmethod__) {
     case let .value(o):
       return self.isTrueBool(object: o)
     case let .error(e):

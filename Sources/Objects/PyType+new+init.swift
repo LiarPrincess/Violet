@@ -591,7 +591,7 @@ extension PyType {
     }
 
     let __init_subclass__: PyObject
-    switch Py.getattr(object: superInstance, name: .__init_subclass__) {
+    switch Py.getAttribute(object: superInstance, name: .__init_subclass__) {
     case let .value(i):
       __init_subclass__ = i
     case let .error(e):

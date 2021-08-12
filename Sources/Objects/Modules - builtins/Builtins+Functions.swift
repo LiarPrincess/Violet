@@ -105,9 +105,9 @@ extension Builtins {
   internal static func getattr(object: PyObject,
                                name: PyObject,
                                default: PyObject? = nil) -> PyResult<PyObject> {
-    return Py.getattr(object: object,
-                      name: name,
-                      default: `default`)
+    return Py.getAttribute(object: object,
+                           name: name,
+                           default: `default`)
   }
 
   internal static var hasattrDoc: String {
@@ -122,7 +122,7 @@ extension Builtins {
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
   internal static func hasattr(object: PyObject,
                                name: PyObject) -> PyResult<Bool> {
-    return Py.hasattr(object: object, name: name)
+    return Py.hasAttribute(object: object, name: name)
   }
 
   internal static var setattrDoc: String {
@@ -138,7 +138,7 @@ extension Builtins {
   internal static func setattr(object: PyObject,
                                name: PyObject,
                                value: PyObject) -> PyResult<PyNone> {
-    return Py.setattr(object: object, name: name, value: value)
+    return Py.setAttribute(object: object, name: name, value: value)
   }
 
   internal static var delattrDoc: String {
@@ -153,7 +153,7 @@ extension Builtins {
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
   internal static func delattr(object: PyObject,
                                name: PyObject) -> PyResult<PyNone> {
-    return Py.delattr(object: object, name: name)
+    return Py.delAttribute(object: object, name: name)
   }
 }
 

@@ -188,7 +188,7 @@ extension PySuper {
       return .value(objectType)
     }
 
-    switch Py.getattr(object: objectType, name: .__class__) {
+    switch Py.getAttribute(object: objectType, name: .__class__) {
     case .value(let classObject):
       if let classType = PyCast.asType(classObject), classType.isSubtype(of: type) {
         return .value(classType)

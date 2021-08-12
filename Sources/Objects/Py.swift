@@ -10,7 +10,7 @@ import VioletCore
 ///
 /// You can use it to interact with `Python` objects.
 /// For example: to call `getattr` function on `elsa` object you call
-/// `Py.getattr(object: elsa, name: "let_it_go")`.
+/// `Py.getAttribute(object: elsa, name: "let_it_go")`.
 ///
 /// # Global variable
 /// `Py` is a global variable .
@@ -44,7 +44,7 @@ import VioletCore
 /// There is an interesting alternative of making `Py` static:
 /// ```Swift
 /// public enum Py {
-///   public static func getattr() { thingies… }
+///   public static func getAttribute() { thingies… }
 /// ).
 /// ```
 ///

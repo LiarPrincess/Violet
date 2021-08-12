@@ -96,7 +96,7 @@ extension Eval {
         return .goToNextElement
       }
 
-      switch Py.getattr(object: module, name: name) {
+      switch Py.getAttribute(object: module, name: name) {
       case let .value(value):
         switch self.locals.set(key: name, to: value) {
         case .ok: return .goToNextElement
@@ -165,7 +165,7 @@ extension Eval {
   }
 
   private func getAttribute(module: PyObject, name: IdString) -> GetAttribute {
-    switch Py.getattr(object: module, name: name) {
+    switch Py.getAttribute(object: module, name: name) {
     case let .value(o):
       if PyCast.isNone(o) {
         return .notFound
@@ -202,7 +202,7 @@ extension Eval {
     let name = self.getName(index: nameIndex)
     let module = self.stack.top // Leave it at top
 
-    switch Py.getattr(object: module, name: name) {
+    switch Py.getAttribute(object: module, name: name) {
     case .value(let o):
       self.stack.push(o)
       return .ok
@@ -278,7 +278,7 @@ extension Eval {
 
   private func getString(module: PyObject, name: IdString) -> GetString {
     let object: PyObject
-    switch Py.getattr(object: module, name: .__name__) {
+    switch Py.getAttribute(object: module, name: .__name__) {
     case let .value(o): object = o
     case let .error(e): return .error(e)
     }

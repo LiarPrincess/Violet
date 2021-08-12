@@ -171,7 +171,7 @@ extension PyInstance {
   }
 
   private func get__prepare__(metatype: PyObject) -> GetPrepareResult {
-    switch self.getattr(object: metatype, name: .__prepare__) {
+    switch self.getAttribute(object: metatype, name: .__prepare__) {
     case let .value(o):
       return .value(o)
 
