@@ -23,7 +23,7 @@ extension FileSystem {
 
   public func basenameWithoutExtension(filename: Filename) -> Filename {
     switch self.splitNameAndExt(filename: filename) {
-    case .split(name: let name , ext: _):
+    case .split(name: let name, ext: _):
       return Filename(string: name)
     case .noExt:
       return filename

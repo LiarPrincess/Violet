@@ -76,7 +76,7 @@ extension PyInstance {
       return self.iter(object: object)
     }
 
-    guard self.callable(object: object) else {
+    guard self.isCallable(object: object) else {
       return .typeError("iter(v, w): v must be callable")
     }
 

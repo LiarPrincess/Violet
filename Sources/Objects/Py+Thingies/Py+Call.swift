@@ -95,7 +95,7 @@ extension PyInstance {
 
   /// callable(object)
   /// See [this](https://docs.python.org/3/library/functions.html#callable)
-  public func callable(object: PyObject) -> Bool {
+  public func isCallable(object: PyObject) -> Bool {
     let lookup = object.type.mroLookup(name: .__call__)
     return lookup != nil
   }

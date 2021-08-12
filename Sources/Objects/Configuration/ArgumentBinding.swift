@@ -27,7 +27,7 @@ internal struct ArgumentBinding: ParsableCommand {
     discussion: Configure.implementation.discussion,
     // version: XYZ // Nope! This would add an additional '--version' flag.
     //              // We will handle this on our own.
-    helpNames: []   // The same goes for 'help', where we have to add '-help'.
+    helpNames: [] // The same goes for 'help', where we have to add '-help'.
   )
 
   // MARK: - Flags

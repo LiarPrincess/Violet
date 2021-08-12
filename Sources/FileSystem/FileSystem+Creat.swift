@@ -6,7 +6,7 @@ extension FileSystem {
   public enum CreatResult {
     case emptyPath
     /// File descriptor.
-    case fd (Int32)
+    case fd(Int32)
     /// Path already exists.
     case eexist
     case error(errno: Int32)

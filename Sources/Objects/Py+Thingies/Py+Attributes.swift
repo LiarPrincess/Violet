@@ -323,7 +323,7 @@ extension PyInstance {
   /// Look for a name through the MRO.
   ///
   /// _PyObject_LookupSpecial(PyObject *self, _Py_Identifier *attrid)
-  public func getFromType(object: PyObject, name: IdString) -> LookupResult {
+  public func mroLookup(object: PyObject, name: IdString) -> LookupResult {
     let type = object.type
     guard let lookup = type.mroLookup(name: name) else {
       return .notFound

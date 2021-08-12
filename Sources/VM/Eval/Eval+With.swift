@@ -19,14 +19,14 @@ extension Eval {
     let manager = self.stack.top
 
     let __enter__: PyObject
-    switch Py.getFromType(object: manager, name: .__enter__) {
+    switch Py.mroLookup(object: manager, name: .__enter__) {
     case .value(let o): __enter__ = o
     case .notFound: return self.notFound(manager: manager, attribute: "__enter__")
     case .error(let e): return .exception(e)
     }
 
     let __exit__: PyObject
-    switch Py.getFromType(object: manager, name: .__exit__) {
+    switch Py.mroLookup(object: manager, name: .__exit__) {
     case .value(let o): __exit__ = o
     case .notFound: return self.notFound(manager: manager, attribute: "__exit__")
     case .error(let e): return .exception(e)
