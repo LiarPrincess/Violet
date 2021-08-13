@@ -11,7 +11,7 @@ import VioletCompiler
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-private let sourceFileEncoding = PyString.Encoding.default
+private let sourceFileEncoding = PyString.Encoding.utf8
 
 extension PyInstance {
 

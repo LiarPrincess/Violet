@@ -10,11 +10,9 @@ extension PyString {
     /// Ignore the malformed data and continue without further notice.
     case ignore
 
-    public static let `default` = ErrorHandling.strict
-
     internal static func from(object: PyObject?) -> PyResult<ErrorHandling> {
       guard let object = object else {
-        return .value(.default)
+        return .value(.strict)
       }
 
       guard let string = PyCast.asString(object) else {

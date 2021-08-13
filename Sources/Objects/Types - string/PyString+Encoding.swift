@@ -24,8 +24,6 @@ extension PyString {
     /// utf_32_le, UTF-32LE; all languages
     case utf32LittleEndian
 
-    public static let `default` = Unimplemented.locale.getpreferredencoding
-
     private var inSwift: String.Encoding {
       switch self {
       case .ascii: return .ascii
@@ -106,7 +104,8 @@ extension PyString {
 
     internal static func from(object: PyObject?) -> PyResult<Encoding> {
       guard let object = object else {
-        return .value(.default)
+        let encoding = Unimplemented.locale.getpreferredencoding
+        return .value(encoding)
       }
 
       guard let string = PyCast.asString(object) else {
