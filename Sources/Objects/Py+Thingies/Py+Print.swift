@@ -20,10 +20,30 @@ extension PyInstance {
   /// Swift function has different parameter order!
   ///
   /// - Parameters:
+  ///   - arg: Object to print
+  public func print(arg: PyObject,
+                    file: PyObject?,
+                    separator: PyObject? = nil,
+                    end: PyObject? = nil,
+                    flush: PyObject? = nil) -> PyResult<PyNone> {
+    return self.print(args: [arg],
+                      file: file,
+                      separator: separator,
+                      end: end,
+                      flush: flush)
+  }
+
+  /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
+  /// See [this](https://docs.python.org/3/library/functions.html#print)
+  ///
+  /// - Warning:
+  /// Swift function has different parameter order!
+  ///
+  /// - Parameters:
   ///   - args: Objects to print
   public func print(args: [PyObject],
                     file: PyObject?,
-                    sep: PyObject? = nil,
+                    separator: PyObject? = nil,
                     end: PyObject? = nil,
                     flush: PyObject? = nil) -> PyResult<PyNone> {
     let textFile: PyTextFile
@@ -32,9 +52,9 @@ extension PyInstance {
     case let .error(e): return .error(e)
     }
 
-    let separator: PyString?
-    switch self.getSeparator(argName: "sep", object: sep) {
-    case let .value(s): separator = s
+    let sep: PyString?
+    switch self.getSeparator(argName: "sep", object: separator) {
+    case let .value(s): sep = s
     case let .error(e): return .error(e)
     }
 
@@ -45,7 +65,7 @@ extension PyInstance {
     }
 
     return self.print(args: args,
-                      sep: separator,
+                      separator: sep,
                       end: ending,
                       file: textFile,
                       flush: flush)
@@ -61,7 +81,7 @@ extension PyInstance {
   ///   - args: Objects to print
   public func print(args: [PyObject],
                     stream: Sys.OutputStream?,
-                    sep: PyString? = nil,
+                    separator: PyString? = nil,
                     end: PyString? = nil,
                     flush: PyObject? = nil) -> PyResult<PyNone> {
     let stream = stream ?? defaultStream
@@ -69,7 +89,7 @@ extension PyInstance {
     switch stream.getFile() {
     case let .value(file):
       return self.print(args: args,
-                        sep: sep,
+                        separator: separator,
                         end: end,
                         file: file,
                         flush: flush)
@@ -79,13 +99,13 @@ extension PyInstance {
   }
 
   private func print(args: [PyObject],
-                     sep: PyString?,
+                     separator: PyString?,
                      end: PyString?,
                      file: PyTextFile,
                      flush: PyObject?) -> PyResult<PyNone> {
     for (index, object) in args.enumerated() {
       if index > 0 {
-        let separator = sep?.value ?? " "
+        let separator = separator?.value ?? " "
         switch file.write(string: separator) {
         case .value: break
         case .error(let e): return .error(e)

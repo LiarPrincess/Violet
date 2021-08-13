@@ -82,7 +82,7 @@ extension Sys {
     }
 
     // We are using 'print', so '\n' will be added automatically.
-    switch Py.print(args: [value], file: stdout) {
+    switch Py.print(arg: value, file: stdout) {
     case .value: break
     case .error(let e): return .error(e)
     }

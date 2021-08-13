@@ -186,7 +186,7 @@ extension VM {
   internal func writeToStdout(object: PyObject) -> WriteToStreamResult {
     switch Py.sys.getStdoutOrNone() {
     case .value(let file):
-      switch Py.print(args: [object], file: file) {
+      switch file.write(object: object) {
       case .value:
         return .ok
       case .error(let e):

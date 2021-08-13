@@ -403,11 +403,15 @@ extension Builtins {
       assert(binding.requiredCount == 0, "Invalid required argument count.")
       assert(binding.optionalCount == 4, "Invalid optional argument count.")
 
-      let sep = binding.optional(at: 0)
+      let separator = binding.optional(at: 0)
       let end = binding.optional(at: 1)
       let file = binding.optional(at: 2)
       let flush = binding.optional(at: 3)
-      return Py.print(args: args, file: file, sep: sep, end: end, flush: flush)
+      return Py.print(args: args,
+                      file: file,
+                      separator: separator,
+                      end: end,
+                      flush: flush)
 
     case let .error(e):
       return .error(e)

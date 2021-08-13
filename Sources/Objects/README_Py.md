@@ -52,7 +52,7 @@ Once we initialized `Py` we can use it to create and interact with Python object
 ```Swift
 let two = Py.newInt(2)
 let result = Py.add(two, two) // 4 (hopefully)
-Py.print(args: [result])
+Py.print(arg: result)
 ```
 
 ## Cleanup
