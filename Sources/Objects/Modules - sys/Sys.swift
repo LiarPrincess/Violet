@@ -87,7 +87,7 @@ public final class Sys: PyModuleImplementation {
   public let __dict__ = Py.newDict()
 
   /// Initial value for `sys.flags`.
-  public let flags = SysFlags(
+  public let flags = Flags(
     arguments: Py.config.arguments,
     environment: Py.config.environment
   )
