@@ -38,7 +38,7 @@ internal protocol AbstractString: PyObject {
   /// `Builder.Result` is abstract and we will never touch it.
   associatedtype Builder: StringBuilderType where Builder.Elements == Elements
 
-  /// Swift type representing this type (not exactly `Self`).
+  /// Swift type representing this type (not exactly `Self`, unless you are `final`).
   associatedtype SwiftType: PyObject
   /// Swift type representing element type:
   /// - `str` for `str`
@@ -189,5 +189,8 @@ extension AbstractString {
   ///
   /// If we ever solve this, then remove this method, so that every function
   /// that uses it fails to compile.
+  ///
+  /// Btw. In reality it is no that bad. All of the `String` indices we are using
+  /// are trivially scalar-aligned, which makes them a bit faster.
   internal func _wouldBeBetterWithRandomAccessCollection() {}
 }

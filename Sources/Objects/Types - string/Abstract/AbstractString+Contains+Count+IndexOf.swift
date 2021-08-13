@@ -84,7 +84,7 @@ extension AbstractString {
       if fromIndex.starts(with: value) {
         result += 1
 
-        // We know that 'element.count' != 0, because we checked 'element.isEmpty'
+        // We know that 'element.count' != 0, because we checked 'value.isEmpty'
         index = string.index(index, offsetBy: value.count)
       } else {
         string.formIndex(after: &index)

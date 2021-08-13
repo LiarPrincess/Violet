@@ -20,8 +20,7 @@ extension AbstractString {
     separator: PyObject
   ) -> AbstractString_PartitionResult<Elements> {
     return self._template(separator: separator,
-                          findSeparator: self._findImpl(value:),
-                          isReverse: false)
+                          findSeparator: self._findImpl(value:))
   }
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
@@ -29,14 +28,12 @@ extension AbstractString {
     separator: PyObject
   ) -> AbstractString_PartitionResult<Elements> {
     return self._template(separator: separator,
-                          findSeparator: self._rfindImpl(value:),
-                          isReverse: true)
+                          findSeparator: self._rfindImpl(value:))
   }
 
   private func _template(
     separator separatorObject: PyObject,
-    findSeparator: (Elements) -> AbstractString_FindResult<Elements>,
-    isReverse: Bool
+    findSeparator: (Elements) -> AbstractString_FindResult<Elements>
   ) -> AbstractString_PartitionResult<Elements> {
     guard let separator = Self._getElements(object: separatorObject) else {
       let t = Self._pythonTypeName

@@ -1,6 +1,6 @@
 // swiftlint:disable file_length
 
-/// Unlimited, signed integer.
+/// `Int` but bigger. Much bigger…
 public struct BigInt: SignedInteger,
                       Comparable, Hashable, Strideable,
                       CustomStringConvertible, CustomDebugStringConvertible {
