@@ -17,14 +17,31 @@ extension Instruction {
   /// Maximum argument for an instruction with 3x `extendedArg` before it.
   public static let maxExtendedArgument3 = 0xffff_ffff
 
-  // MARK: - Extend
+  // MARK: - Extend arg
+
+  /// Each `extendedArg` is responsible for `8` bits inside result.
+  internal static let extendedArgBitWidth = UInt8.bitWidth
+
+  /// Max value stored inside `extendedArg` (`0xff`).
+  /// Can be used as mask.
+  internal static let extendedArgAllOne = UInt8.max
 
   /// Handle `extendedArg` instruction.
   ///
   /// - Parameter base: Current value (before extension)
   /// - Parameter base: Value used to extend `base`
   public static func extend(base: Int, arg: UInt8) -> Int {
-    return base << 8 | Int(arg)
+    return (base << Instruction.extendedArgBitWidth) | Int(arg)
+  }
+
+  /// static int
+  /// instrsize(unsigned int oparg)
+  internal static func minExtendedArgCountNeeded(toEncode extendedArg: Int) -> Int {
+    return
+      extendedArg <= 0xff ? 1 :
+      extendedArg <= 0xffff ? 2 :
+      extendedArg <= 0xffffff ? 3 :
+      4
   }
 
   // MARK: - Function flags
