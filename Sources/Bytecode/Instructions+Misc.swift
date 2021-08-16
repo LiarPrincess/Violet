@@ -19,19 +19,12 @@ extension Instruction {
 
   // MARK: - Extend arg
 
-  /// Each `extendedArg` is responsible for `8` bits inside result.
-  internal static let extendedArgBitWidth = UInt8.bitWidth
-
-  /// Max value stored inside `extendedArg` (`0xff`).
-  /// Can be used as mask.
-  internal static let extendedArgAllOne = UInt8.max
-
   /// Handle `extendedArg` instruction.
   ///
   /// - Parameter base: Current value (before extension)
   /// - Parameter base: Value used to extend `base`
   public static func extend(base: Int, arg: UInt8) -> Int {
-    return (base << Instruction.extendedArgBitWidth) | Int(arg)
+    return (base << UInt8.bitWidth) | Int(arg)
   }
 
   /// static int

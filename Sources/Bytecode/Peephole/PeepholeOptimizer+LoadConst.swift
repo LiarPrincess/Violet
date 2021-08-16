@@ -10,40 +10,61 @@ extension PeepholeOptimizer {
                                   arg: UInt8,
                                   next: InstructionInfo?) {
     let constantIndex = loadConst.getArg(instructionArg: arg)
-    self.loadTrueConst_thenPopJumpIfFalse(result: &result,
-                                          loadConst: loadConst,
-                                          constantIndex: constantIndex,
-                                          next: next)
+    self.loadConst_thenPopJumpIf(result: &result,
+                                 loadConst: loadConst,
+                                 constantIndex: constantIndex,
+                                 next: next)
   }
 
   /// Skip over `LOAD_CONST trueconst`; `POP_JUMP_IF_FALSE xx`.
   /// This improves "while 1" performance.
-  private func loadTrueConst_thenPopJumpIfFalse(result: inout [Instruction],
-                                                loadConst: InstructionInfo,
-                                                constantIndex: Int,
-                                                next: InstructionInfo?) {
-    guard let popJumpIfFalse = next else {
+  private func loadConst_thenPopJumpIf(result: inout [Instruction],
+                                       loadConst: InstructionInfo,
+                                       constantIndex: Int,
+                                       next: InstructionInfo?) {
+    guard let popJumpIf = next else {
       return
     }
 
-    guard case .popJumpIfFalse = popJumpIfFalse.value else {
-      return
+    // Check if we are popJumpIfTrue/popJumpIfFalse
+    var jumpConditionIsTrue: Bool
+    switch popJumpIf.value {
+    case .popJumpIfTrue: jumpConditionIsTrue = true
+    case .popJumpIfFalse: jumpConditionIsTrue = false
+    default: return
     }
 
     // Is the 'popJumpIfFalse' jump target?
     // If so, then we can't set it to 'nop', because later it would get removed.
-    if self.hasJumpTargetBetween(loadConst, popJumpIfFalse) {
+    if self.hasJumpTargetBetween(loadConst, popJumpIf) {
       return
     }
 
     let constant = self.constants[constantIndex]
+    let isConstantTrue = self.isTrue(constant: constant)
+    let isConstantFalse = !isConstantTrue
 
-    if self.isTrue(constant: constant) {
-      // Set both 'instruction' and 'next' to 'nop'.
+    let constantWillNotJump = jumpConditionIsTrue ?
+      isConstantFalse :
+      isConstantTrue
+
+    if constantWillNotJump {
+      // If we never jump -> set both 'loadConst' and 'popJumpIf' to 'nop'.
       self.fillNop(result: &result,
                    startIndex: loadConst.startIndex,
-                   endIndex: popJumpIfFalse.nextInstructionIndex)
+                   endIndex: popJumpIf.nextInstructionIndex)
     }
+
+    // As for the 'else' branch in:
+    // if true: # <-- emits 'popJumpIfFalse'
+    //   (things)
+    // else:
+    //   (other things)
+    //
+    // If the jump target count for 'else' is 1 more than previous instruction
+    // (which means that there is only a single way of getting there - when 'if'
+    // expression is false) we could remove everything up to next jump target.
+    // But this a bit more complicated.
   }
 
   private func isTrue(constant: CodeObject.Constant) -> Bool {
@@ -76,8 +97,8 @@ extension PeepholeOptimizer {
       // True
       return true
 
-    case .tuple(let constants):
-      return !constants.isEmpty
+    case .tuple(let elements):
+      return !elements.isEmpty
     }
   }
 }

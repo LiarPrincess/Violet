@@ -259,9 +259,9 @@ public final class CodeObjectBuilder {
       )
     }
 
-    let ffMask = 0xff
+    let ffMask = Int(UInt8.max)
 
-    var shift = 24
+    var shift = 3 * UInt8.bitWidth
     var mask = ffMask << shift
     var value = UInt8((arg & mask) >> shift)
 
@@ -270,7 +270,7 @@ public final class CodeObjectBuilder {
       self.appendExtendedArg(value: value)
     }
 
-    shift = 16
+    shift = 2 * UInt8.bitWidth
     mask = ffMask << shift
     value = UInt8((arg & mask) >> shift)
 
@@ -279,7 +279,7 @@ public final class CodeObjectBuilder {
       self.appendExtendedArg(value: value)
     }
 
-    shift = 8
+    shift = UInt8.bitWidth
     mask = ffMask << shift
     value = UInt8((arg & mask) >> shift)
 

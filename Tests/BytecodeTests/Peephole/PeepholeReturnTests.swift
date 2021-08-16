@@ -35,7 +35,7 @@ class PeepholeReturnTests: XCTestCase {
     )
   }
 
-  // MARK: - Nops
+  // MARK: - Nop prefix
 
   func test_fewNops_returnNone_nothingAfter_removesNops() {
     let builder = createBuilder()

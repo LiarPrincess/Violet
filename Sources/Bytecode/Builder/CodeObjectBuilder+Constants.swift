@@ -110,6 +110,38 @@ extension CodeObjectBuilder {
     _ = self.appendNewConstant(.code(value))
   }
 
+  public func appendConstant(_ value: CodeObject.Constant) {
+    switch value {
+    case .true:
+      self.appendTrue()
+    case .false:
+      self.appendFalse()
+
+    case .none:
+      self.appendNone()
+    case .ellipsis:
+      self.appendEllipsis()
+
+    case let .integer(i):
+      self.appendInteger(i)
+    case let .float(d):
+      self.appendFloat(d)
+    case let .complex(real: r, imag: i):
+      self.appendComplex(real: r, imag: i)
+
+    case let .string(s):
+      self.appendString(s)
+    case let .bytes(b):
+      self.appendBytes(b)
+
+    case let .code(c):
+      self.appendCode(c)
+
+    case let .tuple(es):
+      self.appendTuple(es)
+    }
+  }
+
   // MARK: - Add
 
   /// Simply add new constant, without emitting any instruction.

@@ -1,4 +1,5 @@
 import XCTest
+import BigInt
 import VioletCore
 @testable import VioletBytecode
 
@@ -41,6 +42,13 @@ func XCTAssertNoInstructions(_ code: CodeObject,
 
 func XCTAssertInstructions(_ code: CodeObject,
                            _ expected: Instruction...,
+                           file: StaticString = #file,
+                           line: UInt = #line) {
+  XCTAssertInstructions(code, expected, file: file, line: line)
+}
+
+func XCTAssertInstructions(_ code: CodeObject,
+                           _ expected: [Instruction],
                            file: StaticString = #file,
                            line: UInt = #line) {
   let count = code.instructions.count
@@ -99,6 +107,63 @@ func XCTAssertInstructionLines(_ code: CodeObject,
 
 // MARK: - Constants
 
+let trueConstants: [CodeObject.Constant] = [
+  .true,
+  .ellipsis,
+  .integer(BigInt(5)),
+  .float(5.0),
+  .complex(real: 0.0, imag: 1.0),
+  .complex(real: 1.0, imag: 1.0),
+  .complex(real: 1.0, imag: 1.0),
+  .string("Elsa"),
+  .bytes(Data([69, 108, 115, 97])),
+  // .code(CodeObject),
+  .tuple([.true, .false])
+]
+
+let falseConstants: [CodeObject.Constant] = [
+  .false,
+  .none,
+  .integer(BigInt.zero),
+  .float(0.0),
+  .complex(real: 0.0, imag: 0.0),
+  .string(""),
+  .bytes(Data()),
+  .tuple([])
+]
+
+/// Add 255 constants, so that the next one will require `extendedArg`
+func add255IntegerConstants(builder: CodeObjectBuilder) {
+  for i in 0..<256 {
+    builder.appendInteger(BigInt(i))
+  }
+}
+
+func getInstructionsWith255IntegerConstants() -> [Instruction] {
+  var result = [Instruction]()
+  for i in 0..<256 {
+    result.append(.loadConst(index: UInt8(i)))
+  }
+
+  return result
+}
+/// Assert `code.labels[256]`
+func XCTAssertConstantAtIndex256(_ code: CodeObject,
+                                 _ expected: CodeObject.Constant,
+                                 file: StaticString = #file,
+                                 line: UInt = #line) {
+  let count = code.constants.count
+  let index = 256
+
+  XCTAssertGreaterThanOrEqual(count, index, "Constant count", file: file, line: line)
+  guard count >= index else {
+    return
+  }
+
+  let constant = code.constants[index]
+  XCTAssertEqual(constant, expected, file: file, line: line)
+}
+
 func XCTAssertNoConstants(_ code: CodeObject,
                           file: StaticString = #file,
                           line: UInt = #line) {
@@ -107,6 +172,13 @@ func XCTAssertNoConstants(_ code: CodeObject,
 
 func XCTAssertConstants(_ code: CodeObject,
                         _ expected: CodeObject.Constant...,
+                        file: StaticString = #file,
+                        line: UInt = #line) {
+  XCTAssertConstants(code, expected, file: file, line: line)
+}
+
+func XCTAssertConstants(_ code: CodeObject,
+                        _ expected: [CodeObject.Constant],
                         file: StaticString = #file,
                         line: UInt = #line) {
   let count = code.constants.count
@@ -149,7 +221,7 @@ func XCTAssertEqual(_ lhs: CodeObject.Constant,
   case let (.tuple(ls), .tuple(rs)):
     XCTAssertEqual(ls.count,
                    rs.count,
-                   "Count: \(ls.count) vs \(rs.count)",
+                   "Tuple count: \(ls.count) vs \(rs.count)",
                    file: file,
                    line: line)
 

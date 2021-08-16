@@ -145,26 +145,40 @@ extension PeepholeOptimizer {
   private func write(instruction: InstructionInfo,
                      at index: Int,
                      inside result: inout [Instruction]) -> Int {
+    // 1. extendedArg: 0xfa
+    // 2. extendedArg: 0xfb
+    // 3. extendedArg: 0xfc
+    // 4. instruction: 0xf0
+    //
+    // Gives us:
+    // |No.|Base    |Calculation         |Result    |
+    // |1. |       0|       0 << 8 | 0xfa|      0xfa|
+    // |2. |    0xfa|    0xfa << 8 | 0xfb|    0xfafb|
+    // |3. |  0xfafb|  0xfa fb<< 8 | 0xfc|  0xfafbfc| <- without instruction arg
+    // |4. |0xfafbfc|0xfafbfc << 8 | 0xf0|0xfafbfcf0|
+
     var index = index
 
     let extendedArg = instruction.extendedArgWithoutInstructionArg
     let extendedArgCount = instruction.extendedArgCount
-    let extendedArgBitWidth = Instruction.extendedArgBitWidth
+
+    let ffMask = Int(UInt8.max)
+    let extendedArgBitWidth = UInt8.bitWidth
 
     if extendedArgCount == 3 {
-      let arg = UInt8((extendedArg >> (3 * extendedArgBitWidth)) & 0xff)
+      let arg = UInt8((extendedArg >> (2 * extendedArgBitWidth)) & ffMask)
       result[index] = .extendedArg(arg)
       index += 1
     }
 
-    if extendedArg >= 2 {
-      let arg = UInt8((extendedArg >> (2 * extendedArgBitWidth)) & 0xff)
+    if extendedArgCount >= 2 {
+      let arg = UInt8((extendedArg >> extendedArgBitWidth) & ffMask)
       result[index] = .extendedArg(arg)
       index += 1
     }
 
     if extendedArgCount >= 1 {
-      let arg = UInt8((extendedArg >> (1 * extendedArgBitWidth)) & 0xff)
+      let arg = UInt8(extendedArg & ffMask)
       result[index] = .extendedArg(arg)
       index += 1
     }
@@ -199,26 +213,10 @@ extension PeepholeOptimizer {
     }
 
     internal func getArg(instructionArg: UInt8) -> Int {
-      // 1. extendedArg: 0xfa
-      // 2. extendedArg: 0xfb
-      // 3. extendedArg: 0xfc
-      // 4. instruction: 0xf0
-      //
-      // Gives us:
-      // | No. | Base     | Calculation          | Result     |
-      // | 1.  |        0 |        0 << 8 | 0xfa |       0xfa |
-      // | 2.  |     0xfa |     0xfa << 8 | 0xfb |     0xfafb |
-      // | 3.  |   0xfafb |   0xfa fb<< 8 | 0xfc |   0xfafbfc |
-      // | 4.  | 0xfafbfc | 0xfafbfc << 8 | 0xf0 | 0xfafbfcf0 |
-
-      #if DEBUG
-      let mask = Int(Instruction.extendedArgAllOne)
-      let currentInstructionArg = self.extendedArgWithoutInstructionArg & mask
-      assert(currentInstructionArg == 0)
-      #endif
-
-      let instructionArgInt = Int(instructionArg)
-      return self.extendedArgWithoutInstructionArg | instructionArgInt
+      return Instruction.extend(
+        base: self.extendedArgWithoutInstructionArg,
+        arg: instructionArg
+      )
     }
   }
 
