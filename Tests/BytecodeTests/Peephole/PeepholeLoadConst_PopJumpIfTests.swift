@@ -5,8 +5,7 @@ import VioletCore
 
 // swiftlint:disable file_length
 
-// swiftlint:disable:next type_name
-class PeepholeLoadConst_PopJumpIfTests: XCTestCase {
+class PeepholeLoadConstPopJumpIfTests: XCTestCase {
 
   // MARK: - PopJumpIfFalse - true
 

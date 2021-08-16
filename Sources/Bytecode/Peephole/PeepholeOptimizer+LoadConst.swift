@@ -64,7 +64,8 @@ extension PeepholeOptimizer {
     // If the jump target count for 'else' is 1 more than previous instruction
     // (which means that there is only a single way of getting there - when 'if'
     // expression is false) we could remove everything up to next jump target.
-    // But this a bit more complicated.
+    // But this a bit more complicated, because there may be no 'else' branch,
+    // in which case we would remove valid code.
   }
 
   private func isTrue(constant: CodeObject.Constant) -> Bool {

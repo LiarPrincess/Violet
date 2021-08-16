@@ -139,7 +139,7 @@ internal class PeepholeOptimizer {
                         startIndex: Int,
                         endIndex: Int?) {
     let endIndex = endIndex ?? self.instructions.count
-    assert(startIndex < endIndex)
+    assert(startIndex <= endIndex)
 
     for index in startIndex..<endIndex {
       result[index] = .nop
