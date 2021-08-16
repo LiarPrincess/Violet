@@ -47,12 +47,9 @@ func XCTAssertInstructions(_ code: CodeObject,
   let expectedCount = expected.count
 
   XCTAssertEqual(count, expectedCount, "Count", file: file, line: line)
-  guard count == expectedCount else {
-    return
-  }
 
-  for (i, e) in zip(code.instructions, expected) {
-    XCTAssertEqual(i, e, file: file, line: line)
+  for (index, (i, e)) in zip(code.instructions, expected).enumerated() {
+    XCTAssertEqual(i, e, "Intruction: \(index)", file: file, line: line)
   }
 }
 
@@ -102,6 +99,12 @@ func XCTAssertInstructionLines(_ code: CodeObject,
 
 // MARK: - Constants
 
+func XCTAssertNoConstants(_ code: CodeObject,
+                          file: StaticString = #file,
+                          line: UInt = #line) {
+  XCTAssertEqual(code.constants.count, 0, file: file, line: line)
+}
+
 func XCTAssertConstants(_ code: CodeObject,
                         _ expected: CodeObject.Constant...,
                         file: StaticString = #file,
@@ -110,12 +113,9 @@ func XCTAssertConstants(_ code: CodeObject,
   let expectedCount = expected.count
 
   XCTAssertEqual(count, expectedCount, "Count", file: file, line: line)
-  guard count == expectedCount else {
-    return
-  }
 
-  for (c, e) in zip(code.constants, expected) {
-    XCTAssertEqual(c, e, file: file, line: line)
+  for (index, (c, e)) in zip(code.constants, expected).enumerated() {
+    XCTAssertEqual(c, e, "Constant \(index)", file: file, line: line)
   }
 }
 
@@ -164,6 +164,12 @@ func XCTAssertEqual(_ lhs: CodeObject.Constant,
 }
 
 // MARK: - Labels
+
+func XCTAssertNoLabels(_ code: CodeObject,
+                       file: StaticString = #file,
+                       line: UInt = #line) {
+  XCTAssertEqual(code.labels.count, 0, file: file, line: line)
+}
 
 func XCTAssertLabelTargets(_ code: CodeObject,
                            _ expected: Int...,

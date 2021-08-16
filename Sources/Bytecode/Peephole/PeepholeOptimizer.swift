@@ -1,3 +1,5 @@
+import VioletCore
+
 // In CPython:
 // Python -> peephole.c
 
@@ -8,15 +10,18 @@
 internal class PeepholeOptimizer {
 
   internal let instructions: [Instruction]
+  internal let instructionLines: [SourceLine]
   internal let constants: [CodeObject.Constant]
   internal let labels: [CodeObject.Label]
 
   private lazy var jumpTargets = self.findJumpTargets()
 
   internal init(instructions: [Instruction],
+                instructionLines: [SourceLine],
                 constants: [CodeObject.Constant],
                 labels: [CodeObject.Label]) {
     self.instructions = instructions
+    self.instructionLines = instructionLines
     self.constants = constants
     self.labels = labels
   }
@@ -48,6 +53,7 @@ internal class PeepholeOptimizer {
   /// markblocks(_Py_CODEUNIT *code, Py_ssize_t len)
   internal func findJumpTargets() -> JumpTargets {
     var result = JumpTargets(instructionCount: self.instructions.count)
+    // TODO: Use 'for each labels'
 
     // 1st pass: mark jump targets with '1'.
     // (We need 2 passes, because jumps may go forward/backward.)

@@ -9,6 +9,7 @@ extension PeepholeOptimizer {
 
   internal struct RunResult {
     internal fileprivate(set) var instructions: [Instruction]
+    internal fileprivate(set) var instructionLines: [SourceLine]
     internal fileprivate(set) var labels: [CodeObject.Label]
   }
 
@@ -24,7 +25,9 @@ extension PeepholeOptimizer {
   ///                 PyObject *lnotab_obj)
   internal func run() -> RunResult {
     // We will start with no changes
-    var result = RunResult(instructions: self.instructions, labels: self.labels)
+    var result = RunResult(instructions: self.instructions,
+                           instructionLines: self.instructionLines,
+                           labels: self.labels)
 
     self.applyOptimizations(result: &result.instructions)
     // TODO: Fix lineno
@@ -72,6 +75,7 @@ extension PeepholeOptimizer {
     var next = self.readInstruction(instructions: result.instructions, index: 0)
     let indicesWithoutNop = self.findIndicesSkippingNop(instructions: result.instructions)
 
+    // TODO: Use 'for each labels'
     while let instruction = next {
       let nextIndex = instruction.nextInstructionIndex
       next = self.readInstruction(instructions: result.instructions, index: nextIndex)
@@ -110,7 +114,8 @@ extension PeepholeOptimizer {
                                      inside: &result.instructions)
     }
 
-    // TODO: Trim result.instructions
+    let toRemove = result.instructions.count - resultInsertIndex
+    result.instructions.removeLast(toRemove)
   }
 
   /// Imagine that we removed all `nop` from the bytecode.

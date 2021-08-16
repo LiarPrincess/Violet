@@ -65,17 +65,24 @@ public final class CodeObjectBuilder {
   public func finalize() -> CodeObject {
     self.assertAllLabelsAssigned()
 
+    let optimizer = PeepholeOptimizer(instructions: self.instructions,
+                                      instructionLines: self.instructionLines,
+                                      constants: self.constants,
+                                      labels: self.labels)
+
+    let optimizerResult = optimizer.run()
+
     return CodeObject(name: self.name,
                       qualifiedName: self.qualifiedName,
                       filename: self.filename,
                       kind: self.kind,
                       flags: self.flags,
                       firstLine: self.firstLine,
-                      instructions: self.instructions,
-                      instructionLines: self.instructionLines,
+                      instructions: optimizerResult.instructions,
+                      instructionLines: optimizerResult.instructionLines,
                       constants: self.constants,
                       names: self.names,
-                      labels: self.labels,
+                      labels: optimizerResult.labels,
                       variableNames: self.variableNames,
                       freeVariableNames: self.freeVariableNames,
                       cellVariableNames: self.cellVariableNames,
