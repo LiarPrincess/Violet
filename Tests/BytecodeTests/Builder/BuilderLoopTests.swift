@@ -11,16 +11,17 @@ class BuilderLoopTests: XCTestCase {
     let builder = createBuilder()
     let label = builder.createLabel()
     builder.appendSetupLoop(loopEnd: label) // 0
-    builder.appendNop() // 1
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 2
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
+    XCTAssertConstants(code, .true, .false)
     XCTAssertInstructions(code,
                           .setupLoop(loopEndLabelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   func test_appendSetupLoop_extended() {
@@ -29,17 +30,18 @@ class BuilderLoopTests: XCTestCase {
 
     let label = builder.createLabel()
     builder.appendSetupLoop(loopEnd: label) // 0 (extended Arg), 1
-    builder.appendNop() // 2
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 3
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelAtIndex256(code, instructionIndex: 3)
+    XCTAssertConstants(code, .true, .false)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .setupLoop(loopEndLabelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   // MARK: - GetIter
@@ -58,16 +60,17 @@ class BuilderLoopTests: XCTestCase {
     let builder = createBuilder()
     let label = builder.createLabel()
     builder.appendForIter(ifEmpty: label) // 0
-    builder.appendNop() // 1
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 2
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
+    XCTAssertConstants(code, .true, .false)
     XCTAssertInstructions(code,
                           .forIter(ifEmptyLabelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   func test_appendForIter_extended() {
@@ -76,17 +79,18 @@ class BuilderLoopTests: XCTestCase {
 
     let label = builder.createLabel()
     builder.appendForIter(ifEmpty: label) // 0 (extended Arg), 1
-    builder.appendNop() // 1
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 2
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelAtIndex256(code, instructionIndex: 3)
+    XCTAssertConstants(code, .true, .false)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .forIter(ifEmptyLabelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   // MARK: - GetYieldFromIter
@@ -115,16 +119,18 @@ class BuilderLoopTests: XCTestCase {
     let builder = createBuilder()
     let label = builder.createLabel()
     builder.appendContinue(loopStartLabel: label) // 0
-    builder.appendNop() // 1
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 2
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
+    // Jump to 2, does not make sense, but this is where we called 'setLabel'.
     XCTAssertLabelTargets(code, 2)
+    XCTAssertConstants(code, .true, .false)
     XCTAssertInstructions(code,
                           .continue(loopStartLabelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   func test_appendContinue_extended() {
@@ -133,16 +139,17 @@ class BuilderLoopTests: XCTestCase {
 
     let label = builder.createLabel()
     builder.appendContinue(loopStartLabel: label) // 0 (extended Arg), 1
-    builder.appendNop() // 1
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 2
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelAtIndex256(code, instructionIndex: 3)
+    XCTAssertConstants(code, .true, .false)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .continue(loopStartLabelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 }

@@ -230,12 +230,12 @@ class BuilderTests: XCTestCase {
 
     let builder = createBuilder()
     builder.setAppendLocation(location0)
-    builder.appendNop()
+    builder.appendTrue()
     builder.setAppendLocation(location1)
-    builder.appendNop()
+    builder.appendReturn()
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .nop, .nop)
+    XCTAssertInstructions(code, .loadConst(index: 0), .return)
     XCTAssertInstructionLines(code, location0, location1)
   }
 }

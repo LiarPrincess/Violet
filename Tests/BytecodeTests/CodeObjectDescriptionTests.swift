@@ -33,7 +33,8 @@ class CodeObjectDescriptionTests: XCTestCase {
       firstLine: SourceLine(2) // Oscars: 'Animated Feature Film' and 'Music'
     )
 
-    let code = builder.finalize()
+    // We do not need peephole optimizer when testing description.
+    let code = builder.finalize(usePeepholeOptimizer: false)
     let description = String(describing: code)
 
     XCTAssertEqual(description, """
@@ -79,7 +80,8 @@ class CodeObjectDescriptionTests: XCTestCase {
     builder.setAppendLocation(line(6))
     builder.appendJumpAbsolute(to: label) // Infinite loop, because why not?
 
-    let code = builder.finalize()
+    // We do not need peephole optimizer when testing description.
+    let code = builder.finalize(usePeepholeOptimizer: false)
     let description = String(describing: code)
 
     XCTAssertEqual(description, """

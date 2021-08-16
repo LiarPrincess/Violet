@@ -31,16 +31,16 @@ class BuilderTryTests: XCTestCase {
     let builder = createBuilder()
     let label = builder.createLabel()
     builder.appendSetupExcept(firstExcept: label) // 0
-    builder.appendNop() // 1
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 2
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
     XCTAssertInstructions(code,
                           .setupExcept(firstExceptLabelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   func test_appendSetupExcept_extended() {
@@ -49,17 +49,17 @@ class BuilderTryTests: XCTestCase {
 
     let label = builder.createLabel()
     builder.appendSetupExcept(firstExcept: label) // 0 (extended Arg), 1
-    builder.appendNop() // 2
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 3
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .setupExcept(firstExceptLabelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   // MARK: - SetupFinally
@@ -68,16 +68,16 @@ class BuilderTryTests: XCTestCase {
     let builder = createBuilder()
     let label = builder.createLabel()
     builder.appendSetupFinally(finallyStart: label) // 0
-    builder.appendNop() // 1
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 2
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
     XCTAssertInstructions(code,
                           .setupFinally(finallyStartLabelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   func test_appendSetupFinally_extended() {
@@ -86,17 +86,17 @@ class BuilderTryTests: XCTestCase {
 
     let label = builder.createLabel()
     builder.appendSetupFinally(finallyStart: label) // 0 (extended Arg), 1
-    builder.appendNop() // 2
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 3
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .setupFinally(finallyStartLabelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   // MARK: - RaiseVarargs

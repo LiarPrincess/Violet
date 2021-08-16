@@ -29,7 +29,8 @@ class CodeObjectFilledInstructionTests: XCTestCase {
     builder.appendDupTop()
     builder.appendDupTopTwo()
 
-    let code = builder.finalize()
+    // 'nop' will be removed if we use peephole optimizer.
+    let code = builder.finalize(usePeepholeOptimizer: false)
     XCTAssertFilledInstructions(code,
                                 .nop,
                                 .popTop,
@@ -192,6 +193,7 @@ class CodeObjectFilledInstructionTests: XCTestCase {
     let continueLabel = builder.createLabel()
     builder.appendContinue(loopStartLabel: continueLabel)
     builder.setLabel(continueLabel) // 6
+    builder.appendTrue() // just so that label has valid jump target
 
     let code = builder.finalize()
 
@@ -204,7 +206,8 @@ class CodeObjectFilledInstructionTests: XCTestCase {
                                 .getIter,
                                 .getYieldFromIter,
                                 .break,
-                                .continue(loopStartLabel: code.labels[2]))
+                                .continue(loopStartLabel: code.labels[2]),
+                                .loadConst(.true))
   }
 
   func test_collections() {
@@ -394,9 +397,9 @@ class CodeObjectFilledInstructionTests: XCTestCase {
     builder.appendCallFunction(argumentCount: 42)
     builder.appendCallFunctionKw(argumentCount: 42)
     builder.appendCallFunctionEx(hasKeywordArguments: false)
-    builder.appendReturn()
     builder.appendLoadMethod(name: ariel)
     builder.appendCallMethod(argumentCount: 42)
+    builder.appendReturn()
 
     let code = builder.finalize()
     XCTAssertFilledInstructions(code,
@@ -404,9 +407,9 @@ class CodeObjectFilledInstructionTests: XCTestCase {
                                 .callFunction(argumentCount: 42),
                                 .callFunctionKw(argumentCount: 42),
                                 .callFunctionEx(hasKeywordArguments: false),
-                                .return,
                                 .loadMethod(name: ariel),
-                                .callMethod(argumentCount: 42))
+                                .callMethod(argumentCount: 42),
+                                .return)
   }
 
   // MARK: - Class
@@ -519,6 +522,7 @@ class CodeObjectFilledInstructionTests: XCTestCase {
     let jumpIfFalseOrPopLabel = builder.createLabel()
     builder.appendJumpIfFalseOrPop(to: jumpIfFalseOrPopLabel) // 5
     builder.setLabel(jumpIfFalseOrPopLabel)
+    builder.appendTrue() // just so that label has valid jump target
 
     let code = builder.finalize()
 
@@ -530,7 +534,8 @@ class CodeObjectFilledInstructionTests: XCTestCase {
                                 .popJumpIfTrue(label: code.labels[1]),
                                 .popJumpIfFalse(label: code.labels[2]),
                                 .jumpIfTrueOrPop(label: code.labels[3]),
-                                .jumpIfFalseOrPop(label: code.labels[4]))
+                                .jumpIfFalseOrPop(label: code.labels[4]),
+                                .loadConst(.true))
   }
 
   // MARK: - String

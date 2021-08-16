@@ -11,7 +11,8 @@ class BuilderGeneralTests: XCTestCase {
     let builder = createBuilder()
     builder.appendNop()
 
-    let code = builder.finalize()
+    // 'nop' will be removed if we use peephole optimizer.
+    let code = builder.finalize(usePeepholeOptimizer: false)
     XCTAssertInstructions(code, .nop)
   }
 
@@ -114,7 +115,8 @@ class BuilderGeneralTests: XCTestCase {
       let builder = createBuilder()
       builder.appendExtendedArg(value: v)
 
-      let code = builder.finalize()
+      // trailing 'extendedArg' will be removed if we used peephole optimizer.
+      let code = builder.finalize(usePeepholeOptimizer: false)
       XCTAssertInstructions(code, .extendedArg(v))
     }
   }
@@ -127,7 +129,8 @@ class BuilderGeneralTests: XCTestCase {
       builder.appendExtendedArg(value: v)
     }
 
-    let code = builder.finalize()
+    // trailing 'extendedArg' will be removed if we used peephole optimizer.
+    let code = builder.finalize(usePeepholeOptimizer: false)
 
     for (index, v) in values.enumerated() {
       builder.appendExtendedArg(value: v)

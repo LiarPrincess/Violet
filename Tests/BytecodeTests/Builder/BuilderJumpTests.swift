@@ -11,16 +11,16 @@ class BuilderJumpTests: XCTestCase {
     let builder = createBuilder()
     let label = builder.createLabel()
     builder.appendJumpAbsolute(to: label) // 0
-    builder.appendNop() // 1
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 2
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
     XCTAssertInstructions(code,
                           .jumpAbsolute(labelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   func test_appendJumpAbsolute_extended() {
@@ -29,17 +29,17 @@ class BuilderJumpTests: XCTestCase {
 
     let label = builder.createLabel()
     builder.appendJumpAbsolute(to: label) // 0 (extended Arg), 1
-    builder.appendNop() // 2
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 3
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .jumpAbsolute(labelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   // MARK: - PopJumpIfTrue
@@ -48,16 +48,16 @@ class BuilderJumpTests: XCTestCase {
     let builder = createBuilder()
     let label = builder.createLabel()
     builder.appendPopJumpIfTrue(to: label) // 0
-    builder.appendNop() // 1
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 2
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
     XCTAssertInstructions(code,
                           .popJumpIfTrue(labelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   func test_appendPopJumpIfTrue_extended() {
@@ -66,17 +66,17 @@ class BuilderJumpTests: XCTestCase {
 
     let label = builder.createLabel()
     builder.appendPopJumpIfTrue(to: label) // 0 (extended Arg), 1
-    builder.appendNop() // 2
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 3
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .popJumpIfTrue(labelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   // MARK: - PopJumpIfFalse
@@ -85,16 +85,16 @@ class BuilderJumpTests: XCTestCase {
     let builder = createBuilder()
     let label = builder.createLabel()
     builder.appendPopJumpIfFalse(to: label) // 0
-    builder.appendNop() // 1
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 2
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
     XCTAssertInstructions(code,
                           .popJumpIfFalse(labelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   func test_appendPopJumpIfFalse_extended() {
@@ -103,17 +103,17 @@ class BuilderJumpTests: XCTestCase {
 
     let label = builder.createLabel()
     builder.appendPopJumpIfFalse(to: label) // 0 (extended Arg), 1
-    builder.appendNop() // 2
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 3
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .popJumpIfFalse(labelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   // MARK: - JumpIfTrueOrPop
@@ -122,16 +122,16 @@ class BuilderJumpTests: XCTestCase {
     let builder = createBuilder()
     let label = builder.createLabel()
     builder.appendJumpIfTrueOrPop(to: label) // 0
-    builder.appendNop() // 1
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 2
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
     XCTAssertInstructions(code,
                           .jumpIfTrueOrPop(labelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   func test_appendJumpIfTrueOrPop_extended() {
@@ -140,17 +140,17 @@ class BuilderJumpTests: XCTestCase {
 
     let label = builder.createLabel()
     builder.appendJumpIfTrueOrPop(to: label) // 0 (extended Arg), 1
-    builder.appendNop() // 2
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 3
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .jumpIfTrueOrPop(labelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   // MARK: - JumpIfFalseOrPop
@@ -159,16 +159,16 @@ class BuilderJumpTests: XCTestCase {
     let builder = createBuilder()
     let label = builder.createLabel()
     builder.appendJumpIfFalseOrPop(to: label) // 0
-    builder.appendNop() // 1
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 2
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
     XCTAssertInstructions(code,
                           .jumpIfFalseOrPop(labelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   func test_appendJumpIfFalseOrPop_extended() {
@@ -177,16 +177,16 @@ class BuilderJumpTests: XCTestCase {
 
     let label = builder.createLabel()
     builder.appendJumpIfFalseOrPop(to: label) // 0 (extended Arg), 1
-    builder.appendNop() // 2
+    builder.appendTrue() // 1
     builder.setLabel(label)
-    builder.appendNop() // 3
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelAtIndex256(code, instructionIndex: 3)
     XCTAssertInstructions(code,
                           .extendedArg(1),
                           .jumpIfFalseOrPop(labelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 }

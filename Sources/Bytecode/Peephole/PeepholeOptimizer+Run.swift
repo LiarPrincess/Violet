@@ -70,12 +70,19 @@ extension PeepholeOptimizer {
 
   // MARK: - Remove NOPs and fix jump targets
 
+  // swiftlint:disable:next function_body_length
   private func removeNopsAndFixJumpTargets(result: inout RunResult) {
-    var resultInsertIndex = 0
-    var next = self.readInstruction(instructions: result.instructions, index: 0)
-    let indicesWithoutNop = self.findIndicesSkippingNop(instructions: result.instructions)
+    // We can't just for-each on 'result.labels' and modify them to target new
+    // indices, because some of those labels are no longer used (and would be
+    // out of bounds).
+    // So, we have to painfully go through each instruction and check if it
+    // contain a label.
 
-    // TODO: Use 'for each labels'
+    var resultInsertIndex = 0
+    var maxJumpTarget = -1
+    let indicesWithoutNop = self.findIndicesSkippingNop(instructions: result.instructions)
+    var next = self.readInstruction(instructions: result.instructions, index: 0)
+
     while let instruction = next {
       let nextIndex = instruction.nextInstructionIndex
       next = self.readInstruction(instructions: result.instructions, index: nextIndex)
@@ -103,6 +110,8 @@ extension PeepholeOptimizer {
         let labelIndex = instruction.getArg(instructionArg: arg)
         let jumpTarget = self.getAbsoluteJumpTarget(labelIndex: labelIndex)
         let newTarget = indicesWithoutNop[jumpTarget]
+
+        maxJumpTarget = Swift.max(maxJumpTarget, jumpTarget)
         result.labels[labelIndex] = CodeObject.Label(instructionIndex: newTarget)
 
       default:
@@ -112,6 +121,18 @@ extension PeepholeOptimizer {
       resultInsertIndex = self.write(instruction: instruction,
                                      at: resultInsertIndex,
                                      inside: &result.instructions)
+    }
+
+    // If there is any label that jumps past 'resultInsertIndex' -> append 'nop',
+    // just so that we have such instruction
+    assert(
+      maxJumpTarget == -1 || maxJumpTarget < result.instructions.count,
+      "'PeepholeOptimizer' should not increase code size."
+    )
+
+    while resultInsertIndex < maxJumpTarget {
+      result.instructions[resultInsertIndex] = .nop
+      resultInsertIndex += 1
     }
 
     let toRemove = result.instructions.count - resultInsertIndex
@@ -229,9 +250,20 @@ extension PeepholeOptimizer {
     var index = startIndex
 
     var extendedArg = 0
-    while case let Instruction.extendedArg(arg) = instructions[index] {
-      extendedArg = Instruction.extend(base: extendedArg, arg: arg)
-      index += 1
+    while index < instructions.count {
+      if case let Instruction.extendedArg(arg) = instructions[index] {
+        extendedArg = Instruction.extend(base: extendedArg, arg: arg)
+        index += 1
+      } else {
+        break
+      }
+    }
+
+    // This is similar check to the one that started the function.
+    // It may fire if 'instructions' ended with 'extendedArg'.
+    // In such case: there is no last instruction.
+    guard index < instructions.count else {
+      return nil
     }
 
     let value = instructions[index]

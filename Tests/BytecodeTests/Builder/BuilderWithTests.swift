@@ -26,16 +26,16 @@ class BuilderWithTests: XCTestCase {
     let label = builder.createLabel()
 
     builder.appendSetupWith(afterBody: label)
-    builder.appendNop() // 0
-    builder.setLabel(label) // 1
-    builder.appendNop() // 2
+    builder.appendTrue() // 1
+    builder.setLabel(label)
+    builder.appendFalse() // 2
 
     let code = builder.finalize()
     XCTAssertLabelTargets(code, 2)
     XCTAssertInstructions(code,
                           .setupWith(afterBodyLabelIndex: 0),
-                          .nop,
-                          .nop)
+                          .loadConst(index: 0),
+                          .loadConst(index: 1))
   }
 
   // MARK: - Cleanup

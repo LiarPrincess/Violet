@@ -61,16 +61,35 @@ public final class CodeObjectBuilder {
 
   /// Create `CodeObject`.
   ///
-  /// Read as `finalize` if you like tea.
+  /// Read as `finalise` if you like tea.
   public func finalize() -> CodeObject {
+    return self.finalize(usePeepholeOptimizer: true)
+  }
+
+  /// Create `CodeObject`.
+  ///
+  /// Read as `finalise` if you like tea.
+  ///
+  /// `usePeepholeOptimizer = false` is for tests (and only for those that do
+  ///  require it, most of the time we do want optimizations).
+  internal func finalize(usePeepholeOptimizer: Bool) -> CodeObject {
     self.assertAllLabelsAssigned()
 
-    let optimizer = PeepholeOptimizer(instructions: self.instructions,
-                                      instructionLines: self.instructionLines,
-                                      constants: self.constants,
-                                      labels: self.labels)
+    var instructions = self.instructions
+    var instructionLines = self.instructionLines
+    var labels = self.labels
 
-    let optimizerResult = optimizer.run()
+    if usePeepholeOptimizer {
+      let optimizer = PeepholeOptimizer(instructions: self.instructions,
+                                        instructionLines: self.instructionLines,
+                                        constants: self.constants,
+                                        labels: self.labels)
+
+      let result = optimizer.run()
+      instructions = result.instructions
+      instructionLines = result.instructionLines
+      labels = result.labels
+    }
 
     return CodeObject(name: self.name,
                       qualifiedName: self.qualifiedName,
@@ -78,11 +97,11 @@ public final class CodeObjectBuilder {
                       kind: self.kind,
                       flags: self.flags,
                       firstLine: self.firstLine,
-                      instructions: optimizerResult.instructions,
-                      instructionLines: optimizerResult.instructionLines,
+                      instructions: instructions,
+                      instructionLines: instructionLines,
                       constants: self.constants,
                       names: self.names,
-                      labels: optimizerResult.labels,
+                      labels: labels,
                       variableNames: self.variableNames,
                       freeVariableNames: self.freeVariableNames,
                       cellVariableNames: self.cellVariableNames,
