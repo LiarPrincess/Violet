@@ -275,6 +275,8 @@ class PeepholeLoadConst_PopJumpIfTests: XCTestCase {
     )
   }
 
+  // MARK: - PopJumpIfTrue - true
+
   func test_loadConst_popJumpIfTrue_onTrueConstant_doesNothing() {
     // if false:
     //     return 5
