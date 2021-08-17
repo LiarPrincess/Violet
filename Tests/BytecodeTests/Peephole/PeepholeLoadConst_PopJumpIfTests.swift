@@ -27,8 +27,7 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
       builder.appendReturn()
 
       let code = builder.finalize()
-      // Label stays the same, we will not use it anyway.
-      XCTAssertLabelTargets(code, 4)
+      XCTAssertLabelTargets(code, .removedByPeepholeOptimizer)
       XCTAssertConstants(
         code,
         trueConstant,
@@ -65,8 +64,7 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     builder.appendReturn()
 
     let code = builder.finalize()
-    // Label stays the same, we will not use it anyway.
-    XCTAssertLabelTargets(code, 262)
+    XCTAssertLabelTargets(code, .removedByPeepholeOptimizer)
     XCTAssertConstantAtIndex256(code, .true)
 
     var instrucions = getInstructionsWith255IntegerConstants()
@@ -102,8 +100,7 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     builder.appendReturn()
 
     let code = builder.finalize()
-    // Label stays the same, we will not use it anyway.
-    XCTAssertLabelAtIndex256(code, instructionIndex: 5)
+    XCTAssertLabelAtIndex256(code, instructionIndex: .removedByPeepholeOptimizer)
     XCTAssertConstants(
       code,
       .true,
@@ -180,8 +177,7 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
       builder.appendReturn()
 
       let code = builder.finalize()
-      // Label stays the same, we will not use it anyway.
-      XCTAssertLabelTargets(code, 4)
+      XCTAssertLabelTargets(code, .removedByPeepholeOptimizer)
       XCTAssertConstants(
         code,
         falseConstant,
@@ -218,8 +214,7 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     builder.appendReturn()
 
     let code = builder.finalize()
-    // Label stays the same, we will not use it anyway.
-    XCTAssertLabelTargets(code, 262)
+    XCTAssertLabelTargets(code, .removedByPeepholeOptimizer)
     XCTAssertConstantAtIndex256(code, .false)
 
     var instrucions = getInstructionsWith255IntegerConstants()
@@ -255,8 +250,7 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     builder.appendReturn()
 
     let code = builder.finalize()
-    // Label stays the same, we will not use it anyway.
-    XCTAssertLabelAtIndex256(code, instructionIndex: 5)
+    XCTAssertLabelAtIndex256(code, instructionIndex: .removedByPeepholeOptimizer)
     XCTAssertConstants(
       code,
       .false,

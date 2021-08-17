@@ -211,8 +211,8 @@ class BuilderTests: XCTestCase {
     XCTAssertEqual(labelAfter.instructionIndex, 1)
     XCTAssertTrue(labelAfter.isAssigned)
 
-    // Code object
-    let code = builder.finalize()
+    // 'PeepholeOptimizer' may remove some jumps etc.
+    let code = builder.finalize(usePeepholeOptimizer: false)
 
     XCTAssertEqual(code.labels.count, 1)
     guard code.labels.count == 1 else { return }

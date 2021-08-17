@@ -162,8 +162,12 @@ public final class CodeObject: Equatable {
   /// Labels can only be used inside a `CodeObject` that contains it!
   public struct Label: Equatable, CustomStringConvertible {
 
-    /// Invalid Label
+    /// Label used when building `CodeObject`.
+    /// Later it should be replaced with correct value.
     public static let notAssigned = Label(instructionIndex: -1)
+    /// Label created when building `CodeObject`, later it was removed by
+    /// `PeepholeOptimizer` because the jump is no longer used.
+    public static let removedByPeepholeOptimizer = Label(instructionIndex: -2)
 
     /// Index in `CodeObject.instructions`.
     public internal(set) var instructionIndex: Int

@@ -25,15 +25,22 @@ extension PeepholeOptimizer {
   ///                 PyObject *lnotab_obj)
   internal func run() -> RunResult {
     // We will start with no changes
-    var result = RunResult(instructions: self.instructions,
-                           instructionLines: self.instructionLines,
-                           labels: self.labels)
+    var instructions = self.instructions
 
-    self.applyOptimizations(result: &result.instructions)
-    // TODO: Fix lineno
-    self.removeNopsAndFixJumpTargets(result: &result)
+    self.applyOptimizations(result: &instructions)
 
-    return result
+    // TODO: instructionLines
+    var instructionLines = self.instructionLines
+    var labels = [CodeObject.Label](repeating: .removedByPeepholeOptimizer,
+                                    count: self.labels.count)
+
+    self.removeNopsAndFixJumpTargets(instructions: &instructions,
+                                     instructionLines: &instructionLines,
+                                     labels: &labels)
+
+    return RunResult(instructions: instructions,
+                     instructionLines: instructionLines,
+                     labels: labels)
   }
 
   // MARK: - Apply optimizations
@@ -71,21 +78,28 @@ extension PeepholeOptimizer {
   // MARK: - Remove NOPs and fix jump targets
 
   // swiftlint:disable:next function_body_length
-  private func removeNopsAndFixJumpTargets(result: inout RunResult) {
+  private func removeNopsAndFixJumpTargets(
+    instructions: inout [Instruction],
+    instructionLines: inout [SourceLine],
+    labels: inout [CodeObject.Label]
+  ) {
+    assert(instructions.count == instructionLines.count)
+
     // We can't just for-each on 'result.labels' and modify them to target new
     // indices, because some of those labels are no longer used (and would be
     // out of bounds).
     // So, we have to painfully go through each instruction and check if it
     // contain a label.
 
-    var resultInsertIndex = 0
     var maxJumpTarget = -1
-    let indicesWithoutNop = self.findIndicesSkippingNop(instructions: result.instructions)
-    var next = self.readInstruction(instructions: result.instructions, index: 0)
+    var instructionInsertIndex = 0
+    var next = self.readInstruction(instructions: instructions, index: 0)
+
+    let indicesWithoutNop = self.findIndicesSkippingNop(instructions: instructions)
 
     while let instruction = next {
       let nextIndex = instruction.nextInstructionIndex
-      next = self.readInstruction(instructions: result.instructions, index: nextIndex)
+      next = self.readInstruction(instructions: instructions, index: nextIndex)
 
       switch instruction.value {
       case .nop:
@@ -112,32 +126,32 @@ extension PeepholeOptimizer {
         let target = label.instructionIndex
         let newTarget = indicesWithoutNop[target]
 
+        labels[labelIndex] = CodeObject.Label(instructionIndex: newTarget)
         maxJumpTarget = Swift.max(maxJumpTarget, newTarget)
-        result.labels[labelIndex] = CodeObject.Label(instructionIndex: newTarget)
 
       default:
         break
       }
 
-      resultInsertIndex = self.write(instruction: instruction,
-                                     atIndex: resultInsertIndex,
-                                     instructions: &result.instructions)
+      instructionInsertIndex = self.write(instruction: instruction,
+                                          atIndex: instructionInsertIndex,
+                                          instructions: &instructions)
     }
 
     // If there is any label that jumps past 'resultInsertIndex' -> append 'nop',
     // just so that we have such instruction
     assert(
-      maxJumpTarget == -1 || maxJumpTarget < result.instructions.count,
+      maxJumpTarget == -1 || maxJumpTarget < instructions.count,
       "'PeepholeOptimizer' should not increase code size."
     )
 
-    while resultInsertIndex < maxJumpTarget {
-      result.instructions[resultInsertIndex] = .nop
-      resultInsertIndex += 1
+    while instructionInsertIndex < maxJumpTarget {
+      instructions[instructionInsertIndex] = .nop
+      instructionInsertIndex += 1
     }
 
-    let toRemove = result.instructions.count - resultInsertIndex
-    result.instructions.removeLast(toRemove)
+    let toRemove = instructions.count - instructionInsertIndex
+    instructions.removeLast(toRemove)
   }
 
   /// Imagine that we removed all `nop` from the bytecode.
