@@ -28,7 +28,7 @@ internal class PeepholeOptimizer {
 
   // MARK: - Jump targets
 
-  /// After every jump target we will increment value.
+  /// For every jump target we will increment a running value.
   ///
   /// The end result looks something like:
   /// ```
@@ -42,71 +42,42 @@ internal class PeepholeOptimizer {
   /// ```
   internal struct JumpTargets {
 
-    fileprivate var data: [Int]
+    private var data: [Int]
 
     fileprivate init(instructionCount: Int) {
       self.data = [Int](repeating: 0, count: instructionCount)
+    }
+
+    fileprivate subscript(instructionIndex: Int) -> Int {
+      get { return self.data[instructionIndex] }
+      set { self.data[instructionIndex] = newValue }
     }
   }
 
   /// static unsigned int *
   /// markblocks(_Py_CODEUNIT *code, Py_ssize_t len)
   internal func findJumpTargets() -> JumpTargets {
+    // Our code is simpler than the one in CPython, because all of our jumps
+    // are absolute (and stored in a single array).
+
     var result = JumpTargets(instructionCount: self.instructions.count)
-    // TODO: Use 'for each labels'
 
-    // 1st pass: mark jump targets with '1'.
-    // (We need 2 passes, because jumps may go forward/backward.)
-    var extendedArg = 0
-    for instruction in self.instructions {
-      switch instruction {
-      case let .extendedArg(arg):
-        extendedArg = Instruction.extend(base: extendedArg, arg: arg)
+    // Mark jump targets with '1'.
+    for label in self.labels {
+      assert(label != CodeObject.Label.notAssigned)
 
-      case let .jumpAbsolute(labelIndex: arg),
-           // .jumpForward
-           let .jumpIfFalseOrPop(labelIndex: arg),
-           let .jumpIfTrueOrPop(labelIndex: arg),
-           let .popJumpIfFalse(labelIndex: arg),
-           let .popJumpIfTrue(labelIndex: arg),
-           let .forIter(ifEmptyLabelIndex: arg),
-           let .continue(loopStartLabelIndex: arg),
-           let .setupLoop(loopEndLabelIndex: arg),
-           let .setupExcept(firstExceptLabelIndex: arg),
-           let .setupFinally(finallyStartLabelIndex: arg),
-           let .setupWith(afterBodyLabelIndex: arg):
-        // TODO: .setupAsyncWith:
-        let labelIndex = Instruction.extend(base: extendedArg, arg: arg)
-        let jumpTarget = self.getAbsoluteJumpTarget(labelIndex: labelIndex)
-        result.data[jumpTarget] = 1
-        extendedArg = 0
-
-      default:
-        extendedArg = 0
-      }
+      let jumpTarget = label.instructionIndex
+      result[jumpTarget] = 1
     }
 
-    // 2nd pass: build block numbers.
+    // Build block numbers.
     var acc = 0
     for index in 0..<self.instructions.count {
-      acc += result.data[index]
-      result.data[index] = acc
+      acc += result[index]
+      result[index] = acc
     }
 
     return result
-  }
-
-  /// Get jump target starting from beginning of the instructions.
-  internal func getAbsoluteJumpTarget(labelIndex: Int) -> Int {
-    // In Violet all of the jumps are absolute.
-    // If that ever changes we would need to:
-    // let isAbsoluteJump = self.isAbsoluteJump(instruction: instruction)
-    // let relativeToAbsolute = isAbsoluteJump ? 0 : instructionIndex + 1
-    // return target + relativeToAbsolute
-
-    let label = self.labels[labelIndex]
-    let target = label.instructionIndex
-    return target
   }
 
   internal func hasJumpTargetBetween(_ instruction: InstructionInfo,
@@ -127,8 +98,8 @@ internal class PeepholeOptimizer {
       return false
     }
 
-    let block0 = self.jumpTargets.data[index0]
-    let block1 = self.jumpTargets.data[index1]
+    let block0 = self.jumpTargets[index0]
+    let block1 = self.jumpTargets[index1]
     return block0 != block1
   }
 
