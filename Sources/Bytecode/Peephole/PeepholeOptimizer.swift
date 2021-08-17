@@ -20,6 +20,7 @@ internal class PeepholeOptimizer {
                 instructionLines: [SourceLine],
                 constants: [CodeObject.Constant],
                 labels: [CodeObject.Label]) {
+    assert(instructions.count == instructionLines.count)
     self.instructions = instructions
     self.instructionLines = instructionLines
     self.constants = constants

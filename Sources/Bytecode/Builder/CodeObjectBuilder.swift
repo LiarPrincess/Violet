@@ -1,5 +1,7 @@
 import VioletCore
 
+// swiftlint:disable file_length
+
 /// Helper for adding new instructions to `CodeObject`.
 /// It will store reference to `codeObject`,
 /// it is acceptable to have multiple builders to a single `CodeObject`.
@@ -270,43 +272,83 @@ public final class CodeObjectBuilder {
   /// - Returns:
   /// Value that should be used in instruction.
   internal func appendExtendedArgIfNeeded(_ arg: Int) -> UInt8 {
+    let split = Self.splitExtendedArg(arg)
+
+    if let arg = split.extendedArg0 {
+      self.appendExtendedArg(value: arg)
+    }
+
+    if let arg = split.extendedArg1 {
+      self.appendExtendedArg(value: arg)
+    }
+
+    if let arg = split.extendedArg2 {
+      self.appendExtendedArg(value: arg)
+    }
+
+    return split.instructionArg
+  }
+
+  internal struct ExtendedArgSplit {
+    /// 1st extended arg to emit.
+    internal let extendedArg0: UInt8?
+    /// 2nd extended arg to emit.
+    internal let extendedArg1: UInt8?
+    /// 3rd extended arg to emit.
+    internal let extendedArg2: UInt8?
+    /// Arg to put inside of the instruction.
+    internal let instructionArg: UInt8
+
+    /// Number of instrucitons to emit.
+    internal var count: Int {
+      if self.extendedArg0 != nil { return 4 }
+      if self.extendedArg1 != nil { return 3 }
+      if self.extendedArg2 != nil { return 2 }
+      return 1
+    }
+  }
+
+  internal static func splitExtendedArg(_ arg: Int) -> ExtendedArgSplit {
     assert(arg >= 0)
     if arg > Instruction.maxExtendedArgument3 {
       trap(
         "Cannot create instruction with argument greater than " +
-        "'\(Instruction.maxExtendedArgument3)' (at \(self.appendLocation))."
+        "'\(Instruction.maxExtendedArgument3)'."
       )
     }
 
-    let ffMask = Int(UInt8.max)
+    // 1. extendedArg: 0xfa
+    // 2. extendedArg: 0xfb
+    // 3. extendedArg: 0xfc
+    // 4. instruction: 0xf0
+    //
+    // Gives us:
+    // |No.|Base    |Calculation         |Result    |
+    // |1. |       0|       0 << 8 | 0xfa|      0xfa|
+    // |2. |    0xfa|    0xfa << 8 | 0xfb|    0xfafb|
+    // |3. |  0xfafb|  0xfa fb<< 8 | 0xfc|  0xfafbfc|
+    // |4. |0xfafbfc|0xfafbfc << 8 | 0xf0|0xfafbfcf0|
 
-    var shift = 3 * UInt8.bitWidth
-    var mask = ffMask << shift
-    var value = UInt8((arg & mask) >> shift)
+    let ff = Int(UInt8.max)
+    let argWidth = UInt8.bitWidth
 
-    let emit1 = value > 0
-    if emit1 {
-      self.appendExtendedArg(value: value)
-    }
+    let arg0Int = (arg >> (3 * argWidth)) & ff
+    let hasArg0 = arg0Int != 0
+    let arg0 = hasArg0 ? UInt8(arg0Int) : nil
 
-    shift = 2 * UInt8.bitWidth
-    mask = ffMask << shift
-    value = UInt8((arg & mask) >> shift)
+    let arg1Int = (arg >> (2 * argWidth)) & ff
+    let hasArg1 = hasArg0 || arg1Int != 0
+    let arg1 = hasArg1 ? UInt8(arg1Int) : nil
 
-    let emit2 = emit1 || value > 0
-    if emit2 {
-      self.appendExtendedArg(value: value)
-    }
+    let arg2Int = (arg >> (1 * argWidth)) & ff
+    let hasArg2 = hasArg1 || arg2Int != 0
+    let arg2 = hasArg2 ? UInt8(arg2Int) : nil
 
-    shift = UInt8.bitWidth
-    mask = ffMask << shift
-    value = UInt8((arg & mask) >> shift)
+    let instructionArg = UInt8(arg & ff)
 
-    let emit3 = emit2 || value > 0
-    if emit3 {
-      self.appendExtendedArg(value: value)
-    }
-
-    return UInt8(arg & ffMask)
+    return ExtendedArgSplit(extendedArg0: arg0,
+                            extendedArg1: arg1,
+                            extendedArg2: arg2,
+                            instructionArg: instructionArg)
   }
 }

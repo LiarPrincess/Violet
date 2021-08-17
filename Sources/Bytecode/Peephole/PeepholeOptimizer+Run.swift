@@ -108,10 +108,11 @@ extension PeepholeOptimizer {
 
         // Fix jump targets (labels).
         let labelIndex = instruction.getArg(instructionArg: arg)
-        let jumpTarget = self.getAbsoluteJumpTarget(labelIndex: labelIndex)
-        let newTarget = indicesWithoutNop[jumpTarget]
+        let label = self.labels[labelIndex]
+        let target = label.instructionIndex
+        let newTarget = indicesWithoutNop[target]
 
-        maxJumpTarget = Swift.max(maxJumpTarget, jumpTarget)
+        maxJumpTarget = Swift.max(maxJumpTarget, newTarget)
         result.labels[labelIndex] = CodeObject.Label(instructionIndex: newTarget)
 
       default:
@@ -119,8 +120,8 @@ extension PeepholeOptimizer {
       }
 
       resultInsertIndex = self.write(instruction: instruction,
-                                     at: resultInsertIndex,
-                                     inside: &result.instructions)
+                                     atIndex: resultInsertIndex,
+                                     instructions: &result.instructions)
     }
 
     // If there is any label that jumps past 'resultInsertIndex' -> append 'nop',
@@ -164,47 +165,32 @@ extension PeepholeOptimizer {
   /// write_op_arg(_Py_CODEUNIT *codestr, unsigned char opcode,
   ///     unsigned int oparg, int ilen)
   private func write(instruction: InstructionInfo,
-                     at index: Int,
-                     inside result: inout [Instruction]) -> Int {
-    // 1. extendedArg: 0xfa
-    // 2. extendedArg: 0xfb
-    // 3. extendedArg: 0xfc
-    // 4. instruction: 0xf0
-    //
-    // Gives us:
-    // |No.|Base    |Calculation         |Result    |
-    // |1. |       0|       0 << 8 | 0xfa|      0xfa|
-    // |2. |    0xfa|    0xfa << 8 | 0xfb|    0xfafb|
-    // |3. |  0xfafb|  0xfa fb<< 8 | 0xfc|  0xfafbfc| <- without instruction arg
-    // |4. |0xfafbfc|0xfafbfc << 8 | 0xf0|0xfafbfcf0|
+                     atIndex index: Int,
+                     instructions: inout [Instruction]) -> Int {
+    // For 'split' we will use 'instructionArg = 0'.
+    // But later will emit 'instruction.value' ignoring 'split.instructionArg'.
+    let arg = instruction.getArg(instructionArg: 0)
+    let split = CodeObjectBuilder.splitExtendedArg(arg)
+    assert(split.count == instruction.instructionCount)
 
     var index = index
 
-    let extendedArg = instruction.extendedArgWithoutInstructionArg
-    let extendedArgCount = instruction.extendedArgCount
-
-    let ffMask = Int(UInt8.max)
-    let extendedArgBitWidth = UInt8.bitWidth
-
-    if extendedArgCount == 3 {
-      let arg = UInt8((extendedArg >> (2 * extendedArgBitWidth)) & ffMask)
-      result[index] = .extendedArg(arg)
+    if let arg = split.extendedArg0 {
+      instructions[index] = .extendedArg(arg)
       index += 1
     }
 
-    if extendedArgCount >= 2 {
-      let arg = UInt8((extendedArg >> extendedArgBitWidth) & ffMask)
-      result[index] = .extendedArg(arg)
+    if let arg = split.extendedArg1 {
+      instructions[index] = .extendedArg(arg)
       index += 1
     }
 
-    if extendedArgCount >= 1 {
-      let arg = UInt8(extendedArg & ffMask)
-      result[index] = .extendedArg(arg)
+    if let arg = split.extendedArg2 {
+      instructions[index] = .extendedArg(arg)
       index += 1
     }
 
-    result[index] = instruction.value
+    instructions[index] = instruction.value
     index += 1
 
     return index
@@ -224,13 +210,13 @@ extension PeepholeOptimizer {
     /// Number of `extendedArg` before `self.value`.
     internal let extendedArgCount: Int
 
-    /// Number of `Instruction` instances.
-    internal var size: Int {
+    /// Number of instructions (`extendedArgCount` + 1 for `self.value`).
+    internal var instructionCount: Int {
       return self.extendedArgCount + 1
     }
 
     internal var nextInstructionIndex: Int {
-      return self.startIndex + self.size
+      return self.startIndex + self.instructionCount
     }
 
     internal func getArg(instructionArg: UInt8) -> Int {
