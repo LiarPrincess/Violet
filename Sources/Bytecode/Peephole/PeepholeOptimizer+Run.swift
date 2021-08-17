@@ -24,22 +24,19 @@ extension PeepholeOptimizer {
   /// PyCode_Optimize(PyObject *code, PyObject* consts, PyObject *names,
   ///                 PyObject *lnotab_obj)
   internal func run() -> RunResult {
-    // We will start with no changes
     var instructions = self.instructions
+    var instructionLines = self.instructionLines
 
     self.applyOptimizations(result: &instructions)
 
-    let newInstructionIndices = self.rewriteInstructionsSkippingNop(instructions: &instructions)
-    let labels = self.retargetLabelsToNewIndices(newIndices: newInstructionIndices)
+    let newInstructionIndices = self.rewriteInstructionsSkippingNop(
+      instructions: &instructions,
+      instructionLines: &instructionLines
+    )
 
-    // TODO: instructionLines
-    var instructionLines = self.instructionLines
-    while instructionLines.count < instructions.count {
-      instructionLines.append(0)
-    }
-    while instructions.count < instructionLines.count {
-      _ = instructionLines.removeLast()
-    }
+    assert(instructions.count == instructionLines.count)
+
+    let labels = self.retargetLabels(newIndices: newInstructionIndices)
 
     self.addNopsToPreventOutOfBoundsJumps(labels: labels,
                                           instructions: &instructions,
@@ -105,8 +102,11 @@ extension PeepholeOptimizer {
   }
 
   private func rewriteInstructionsSkippingNop(
-    instructions: inout [Instruction]
+    instructions: inout [Instruction],
+    instructionLines: inout [SourceLine]
   ) -> InstructionIndicesSkippingNop {
+    assert(instructions.count == instructionLines.count)
+
     var newIndices = InstructionIndicesSkippingNop()
     newIndices.reserveCapacity(instructions.count)
 
@@ -120,20 +120,22 @@ extension PeepholeOptimizer {
       case .nop:
         nopCount += 1
       default:
+        let line = self.instructionLines[oldIndex]
         instructions[newIndex] = instruction
+        instructionLines[newIndex] = line
       }
     }
 
     instructions.removeLast(nopCount)
-    // instructionLines.removeLast(nopCount)
-    // assert(instructions.count == instructionLines.count)
+    instructionLines.removeLast(nopCount)
+    assert(instructions.count == instructionLines.count)
 
     return newIndices
   }
 
   // MARK: - Retarget labels
 
-  private func retargetLabelsToNewIndices(
+  private func retargetLabels(
     newIndices: InstructionIndicesSkippingNop
   ) -> [CodeObject.Label] {
     var result = [CodeObject.Label]()
@@ -159,8 +161,6 @@ extension PeepholeOptimizer {
     instructions: inout [Instruction],
     instructionLines: inout [SourceLine]
   ) {
-    assert(instructions.count == instructionLines.count)
-
     var maxJumpTarget = -1
 
     for label in labels {
@@ -194,13 +194,8 @@ extension PeepholeOptimizer {
     /// Number of `extendedArg` before `self.value`.
     internal let extendedArgCount: Int
 
-    /// Number of instructions (`extendedArgCount` + 1 for `self.value`).
-    internal var instructionCount: Int {
-      return self.extendedArgCount + 1
-    }
-
     internal var nextInstructionIndex: Int {
-      return self.startIndex + self.instructionCount
+      return self.startIndex + self.extendedArgCount + 1
     }
 
     internal func getArg(instructionArg: UInt8) -> Int {
