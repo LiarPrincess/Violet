@@ -27,7 +27,8 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
       builder.appendReturn()
 
       let code = builder.finalize()
-      XCTAssertLabelTargets(code, .removedByPeepholeOptimizer)
+      // Label should be re-targeted, but we will not use it anyway.
+      XCTAssertLabelTargets(code, 2)
       XCTAssertConstants(
         code,
         trueConstant,
@@ -64,7 +65,8 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     builder.appendReturn()
 
     let code = builder.finalize()
-    XCTAssertLabelTargets(code, .removedByPeepholeOptimizer)
+    // Label should be re-targeted, but we will not use it anyway.
+    XCTAssertLabelTargets(code, 259)
     XCTAssertConstantAtIndex256(code, .true)
 
     var instrucions = getInstructionsWith255IntegerConstants()
@@ -100,7 +102,8 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     builder.appendReturn()
 
     let code = builder.finalize()
-    XCTAssertLabelAtIndex256(code, instructionIndex: .removedByPeepholeOptimizer)
+    // Label should be re-targeted, but we will not use it anyway.
+    XCTAssertLabelAtIndex256(code, instructionIndex: 2)
     XCTAssertConstants(
       code,
       .true,
@@ -110,11 +113,11 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     XCTAssertInstructions(
       code,
       // No jump here
-      .loadConst(index: 1),
-      .return,
+      .loadConst(index: 1), // 0
+      .return, // 1
       // Other branch has to stay because we do not do any control flow analysis
-      .loadConst(index: 2),
-      .return
+      .loadConst(index: 2), // 2
+      .return // 3
     )
   }
 
@@ -177,7 +180,8 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
       builder.appendReturn()
 
       let code = builder.finalize()
-      XCTAssertLabelTargets(code, .removedByPeepholeOptimizer)
+      // Label should be re-targeted, but we will not use it anyway.
+      XCTAssertLabelTargets(code, 2)
       XCTAssertConstants(
         code,
         falseConstant,
@@ -187,11 +191,11 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
       XCTAssertInstructions(
         code,
         // No jump here
-        .loadConst(index: 1),
-        .return,
+        .loadConst(index: 1), // 0
+        .return, // 1
         // Other branch has to stay because we do not do any control flow analysis
-        .loadConst(index: 2),
-        .return
+        .loadConst(index: 2), // 2
+        .return // 3
       )
     }
   }
@@ -214,7 +218,8 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     builder.appendReturn()
 
     let code = builder.finalize()
-    XCTAssertLabelTargets(code, .removedByPeepholeOptimizer)
+    // Label should be re-targeted, but we will not use it anyway.
+    XCTAssertLabelTargets(code, 259)
     XCTAssertConstantAtIndex256(code, .false)
 
     var instrucions = getInstructionsWith255IntegerConstants()
@@ -250,7 +255,8 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     builder.appendReturn()
 
     let code = builder.finalize()
-    XCTAssertLabelAtIndex256(code, instructionIndex: .removedByPeepholeOptimizer)
+    // Label should be re-targeted, but we will not use it anyway.
+    XCTAssertLabelAtIndex256(code, instructionIndex: 2)
     XCTAssertConstants(
       code,
       .false,
@@ -260,11 +266,11 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     XCTAssertInstructions(
       code,
       // No jump here
-      .loadConst(index: 1),
-      .return,
+      .loadConst(index: 1), // 0
+      .return, // 1
       // Other branch has to stay because we do not do any control flow analysis
-      .loadConst(index: 2),
-      .return
+      .loadConst(index: 2), // 2
+      .return // 3
     )
   }
 

@@ -39,11 +39,6 @@ func XCTAssertNoLabels(_ code: CodeObject,
   XCTAssertEqual(code.labels.count, 0, file: file, line: line)
 }
 
-extension Int {
-  static let removedByPeepholeOptimizer =
-    CodeObject.Label.removedByPeepholeOptimizer.instructionIndex
-}
-
 func XCTAssertLabelTargets(_ code: CodeObject,
                            _ expected: Int...,
                            file: StaticString = #file,

@@ -29,14 +29,13 @@ extension PeepholeOptimizer {
 
     self.applyOptimizations(result: &instructions)
 
-    // TODO: instructionLines
-    var instructionLines = self.instructionLines
-    var labels = [CodeObject.Label](repeating: .removedByPeepholeOptimizer,
-                                    count: self.labels.count)
+    let indicesWithoutNop = self.findIndicesSkippingNop(instructions: instructions)
+    let labels = self.retargetLabelsToNewIndices(newIndices: indicesWithoutNop)
 
-    self.removeNopsAndFixJumpTargets(instructions: &instructions,
-                                     instructionLines: &instructionLines,
-                                     labels: &labels)
+    self.removeNopsAndFixJumpTargets(instructions: &instructions, labels: labels)
+
+    // TODO: instructionLines
+    let instructionLines = self.instructionLines
 
     return RunResult(instructions: instructions,
                      instructionLines: instructionLines,
@@ -75,71 +74,98 @@ extension PeepholeOptimizer {
     }
   }
 
+  // MARK: - Indices skipping nop
+
+  /// Imagine that we removed all `nop` from the bytecode.
+  /// This `struct` holds an index of every instruction in resulting bytecode.
+  private struct IndicesSkippingNop {
+
+    private var data = [Int]()
+
+    fileprivate subscript(instructionIndex: Int) -> Int {
+      return self.data[instructionIndex]
+    }
+
+    fileprivate mutating func append(instructionIndex: Int) {
+      assert(instructionIndex >= 0)
+      self.data.append(instructionIndex)
+    }
+
+    fileprivate mutating func reserveCapacity(_ minimumCapacity: Int) {
+      self.data.reserveCapacity(minimumCapacity)
+    }
+  }
+
+  /// Imagine that we removed all `nop` from the bytecode.
+  /// This `struct` holds an index of every instruciton in resulting bytecode.
+  private func findIndicesSkippingNop(
+    instructions: [Instruction]
+  ) -> IndicesSkippingNop {
+    var result = IndicesSkippingNop()
+    result.reserveCapacity(instructions.count)
+
+    var nopCount = 0
+    for index in instructions.indices {
+      let newIndex = index - nopCount
+      result.append(instructionIndex: newIndex)
+
+      let instruction = instructions[index]
+      if instruction == .nop {
+        nopCount += 1
+      }
+    }
+
+    return result
+  }
+
+  // MARK: - Retarget labels
+
+  private func retargetLabelsToNewIndices(
+    newIndices: IndicesSkippingNop
+  ) -> [CodeObject.Label] {
+    var result = [CodeObject.Label]()
+    result.reserveCapacity(self.labels.count)
+
+    for labelIndex in self.labels.indices {
+      let label = self.labels[labelIndex]
+      let target = label.instructionIndex
+      let newTarget = newIndices[target]
+
+      result.append(CodeObject.Label(instructionIndex: newTarget))
+    }
+
+    return result
+  }
+
   // MARK: - Remove NOPs and fix jump targets
 
-  // swiftlint:disable:next function_body_length
   private func removeNopsAndFixJumpTargets(
     instructions: inout [Instruction],
-    instructionLines: inout [SourceLine],
-    labels: inout [CodeObject.Label]
+    labels: [CodeObject.Label]
   ) {
-    assert(instructions.count == instructionLines.count)
-
-    // We can't just for-each on 'result.labels' and modify them to target new
-    // indices, because some of those labels are no longer used (and would be
-    // out of bounds).
-    // So, we have to painfully go through each instruction and check if it
-    // contain a label.
-
-    var maxJumpTarget = -1
     var instructionInsertIndex = 0
     var next = self.readInstruction(instructions: instructions, index: 0)
-
-    let indicesWithoutNop = self.findIndicesSkippingNop(instructions: instructions)
 
     while let instruction = next {
       let nextIndex = instruction.nextInstructionIndex
       next = self.readInstruction(instructions: instructions, index: nextIndex)
 
-      switch instruction.value {
-      case .nop:
-        // Remove 'nops'.
-        continue
-
-      case let .jumpAbsolute(labelIndex: arg),
-           // .jumpForward
-           let .jumpIfFalseOrPop(labelIndex: arg),
-           let .jumpIfTrueOrPop(labelIndex: arg),
-           let .popJumpIfFalse(labelIndex: arg),
-           let .popJumpIfTrue(labelIndex: arg),
-           let .forIter(ifEmptyLabelIndex: arg),
-           let .continue(loopStartLabelIndex: arg),
-           let .setupLoop(loopEndLabelIndex: arg),
-           let .setupExcept(firstExceptLabelIndex: arg),
-           let .setupFinally(finallyStartLabelIndex: arg),
-           let .setupWith(afterBodyLabelIndex: arg):
-        // TODO: .setupAsyncWith
-
-        // Fix jump targets (labels).
-        let labelIndex = instruction.getArg(instructionArg: arg)
-        let label = self.labels[labelIndex]
-        let target = label.instructionIndex
-        let newTarget = indicesWithoutNop[target]
-
-        labels[labelIndex] = CodeObject.Label(instructionIndex: newTarget)
-        maxJumpTarget = Swift.max(maxJumpTarget, newTarget)
-
-      default:
-        break
+      if instruction.value != .nop {
+        instructionInsertIndex = self.write(instruction: instruction,
+                                            atIndex: instructionInsertIndex,
+                                            instructions: &instructions)
       }
-
-      instructionInsertIndex = self.write(instruction: instruction,
-                                          atIndex: instructionInsertIndex,
-                                          instructions: &instructions)
     }
 
     // If there is any label that jumps past 'resultInsertIndex' -> append 'nop',
     // just so that we have such instruction
+    var maxJumpTarget = -1
+
+    for label in labels {
+      let target = label.instructionIndex
+      maxJumpTarget = Swift.max(maxJumpTarget, target)
+    }
+
     assert(
       maxJumpTarget == -1 || maxJumpTarget < instructions.count,
       "'PeepholeOptimizer' should not increase code size."
@@ -152,27 +178,8 @@ extension PeepholeOptimizer {
 
     let toRemove = instructions.count - instructionInsertIndex
     instructions.removeLast(toRemove)
-  }
-
-  /// Imagine that we removed all `nop` from the bytecode.
-  /// This `struct` holds an index of every instruciton in resulting bytecode.
-  private func findIndicesSkippingNop(
-    instructions: [Instruction]
-  ) -> [Int] {
-    var result = [Int](repeating: 0, count: instructions.count)
-
-    var nopCount = 0
-    for index in instructions.indices {
-      let indexWithoutNop = index - nopCount
-      result[index] = indexWithoutNop
-
-      let instruction = instructions[index]
-      if instruction == .nop {
-        nopCount += 1
-      }
-    }
-
-    return result
+    // instructionLines.removeLast(toRemove)
+    // assert(instructions.count == instructionLines.count)
   }
 
   /// static void
@@ -185,7 +192,11 @@ extension PeepholeOptimizer {
     // But later will emit 'instruction.value' ignoring 'split.instructionArg'.
     let arg = instruction.getArg(instructionArg: 0)
     let split = CodeObjectBuilder.splitExtendedArg(arg)
-    assert(split.count == instruction.instructionCount)
+
+    assert(
+      split.count <= instruction.instructionCount,
+      "'PeepholeOptimizer' should not increase code size."
+    )
 
     var index = index
 
