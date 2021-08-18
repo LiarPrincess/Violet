@@ -1,3 +1,5 @@
+// cSpell:ignore instrsize oparg
+
 extension Instruction {
 
   // MARK: - Constants

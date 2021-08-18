@@ -1,3 +1,5 @@
+// cSpell:ignore markblocks CODEUNIT ISBASICBLOCK
+
 /// Information about jumps.
 internal struct PeepholeJumpTable {
 

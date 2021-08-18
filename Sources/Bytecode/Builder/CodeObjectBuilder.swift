@@ -1,6 +1,7 @@
 import VioletCore
 
 // swiftlint:disable file_length
+// cSpell:ignore finalise
 
 /// Helper for adding new instructions to `CodeObject`.
 /// It will store reference to `codeObject`,
@@ -303,7 +304,7 @@ public final class CodeObjectBuilder {
     /// Arg to put inside of the instruction.
     internal let instructionArg: UInt8
 
-    /// Number of instrucitons to emit.
+    /// Number of instructions to emit.
     internal var count: Int {
       if self.extendedArg0 != nil { return 4 }
       if self.extendedArg1 != nil { return 3 }

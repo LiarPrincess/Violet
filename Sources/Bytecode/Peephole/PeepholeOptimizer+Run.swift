@@ -1,6 +1,6 @@
 import VioletCore
 
-// cSpell:ignore retargeted
+// cSpell:ignore retarget retargeted
 
 // In CPython:
 // Python -> peephole.c

@@ -29,7 +29,7 @@ func XCTAssertInstructions(_ code: CodeObject,
   XCTAssertEqual(count, expectedCount, "Count", file: file, line: line)
 
   for (index, (i, e)) in zip(code.instructions, expected).enumerated() {
-    XCTAssertEqual(i, e, "Intruction: \(index)", file: file, line: line)
+    XCTAssertEqual(i, e, "Instruction: \(index)", file: file, line: line)
   }
 }
 

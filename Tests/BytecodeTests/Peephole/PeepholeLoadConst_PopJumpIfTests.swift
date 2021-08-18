@@ -69,8 +69,8 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     XCTAssertLabelTargets(code, 259)
     XCTAssertConstantAtIndex256(code, .true)
 
-    var instrucions = getInstructionsWith255IntegerConstants()
-    instrucions.append(contentsOf: [
+    var instructions = getInstructionsWith255IntegerConstants()
+    instructions.append(contentsOf: [
       // No jump here
       .extendedArg(1), // 256
       .loadConst(index: 1), // 257
@@ -81,7 +81,7 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
       .return // 262
     ])
 
-    XCTAssertInstructions(code, instrucions)
+    XCTAssertInstructions(code, instructions)
   }
 
   func test_loadConst_popJumpIfFalse_extended_onTrueConstant_removesCheck() {
@@ -222,8 +222,8 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     XCTAssertLabelTargets(code, 259)
     XCTAssertConstantAtIndex256(code, .false)
 
-    var instrucions = getInstructionsWith255IntegerConstants()
-    instrucions.append(contentsOf: [
+    var instructions = getInstructionsWith255IntegerConstants()
+    instructions.append(contentsOf: [
       // No jump here
       .extendedArg(1), // 256
       .loadConst(index: 1), // 257
@@ -234,7 +234,7 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
       .return // 262
     ])
 
-    XCTAssertInstructions(code, instrucions)
+    XCTAssertInstructions(code, instructions)
   }
 
   func test_loadConst_popJumpIfTrue_extended_onFalseConstant_removesCheck() {
