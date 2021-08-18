@@ -16,12 +16,14 @@ extension PeepholeOptimizer {
                                    buildTuple: PeepholeInstruction,
                                    buildTupleArg: UInt8,
                                    next: PeepholeInstruction?) {
-    #warning("Tuple + ConsecutiveConstIndex")
     let elementCount = buildTuple.getArgument(instructionArg: buildTupleArg)
 
-//    self.buildTupleOfConstants(result: &result,
-//                               buildTuple: buildTuple,
-//                               elementCount: elementCount)
+    if self.mergeConstantTuple(result: &result,
+                               buildTuple: buildTuple,
+                               elementCount: elementCount) {
+      // We can't continue on this path because 'buildTuple' is now 'loadConst'
+      return
+    }
 
     self.buildTuple_thenUnpackSequence(result: &result,
                                        buildTuple: buildTuple,
@@ -30,53 +32,108 @@ extension PeepholeOptimizer {
   }
 
   // MARK: - Constant tuple
-/*
+
   /// `loadConst; loadConst; buildTuple 2` -> just use constant tuple.
-  private func buildTupleOfConstants(result: inout [Instruction],
-                                     buildTuple: PeepholeInstruction,
-                                     elementCount: Int) {
+  private func mergeConstantTuple(result: inout OptimizationResult,
+                                  buildTuple: PeepholeInstruction,
+                                  elementCount: Int) -> Bool {
     guard elementCount > 0 else {
-      return
+      return false
     }
 
-    var firstConstantIndex = -1
+    guard let constants = self.getPrecedingConstants(result: result,
+                                                     buildTuple: buildTuple,
+                                                     count: elementCount) else {
+      return false
+    }
+
+    let constantIndex = result.constants.count
+    let constantIndexSplit = CodeObjectBuilder.splitExtendedArg(constantIndex)
+
+    // Do we have enough space to emit the instruction?
+    let indexAfterTuple = buildTuple.nextInstructionIndex ?? result.instructions.count
+    let spaceHave = indexAfterTuple - constants.startIndexOfFirstLoadConst
+    guard constantIndexSplit.count <= spaceHave else {
+      return false
+    }
+
+    let tuple = CodeObject.Constant.tuple(constants.values)
+    result.constants.append(tuple)
+
+    // Reset everything to 'nop'.
+    result.instructions.setToNop(startIndex: constants.startIndexOfFirstLoadConst,
+                                 endIndex: indexAfterTuple)
+
+    // We need to emit a single 'loadConst' with 'constantIndex' as argument
+    var instructionIndex = constants.startIndexOfFirstLoadConst
+    let buildTupleLine = result.instructionLines[buildTuple.startIndex]
+
+    func append(instruction: Instruction) {
+      result.instructions[instructionIndex] = instruction
+      result.instructionLines[instructionIndex] = buildTupleLine
+      instructionIndex += 1
+    }
+
+    if let arg = constantIndexSplit.extendedArg0 {
+      append(instruction: .extendedArg(arg))
+    }
+
+    if let arg = constantIndexSplit.extendedArg1 {
+      append(instruction: .extendedArg(arg))
+    }
+
+    if let arg = constantIndexSplit.extendedArg2 {
+      append(instruction: .extendedArg(arg))
+    }
+
+    append(instruction: .loadConst(index: constantIndexSplit.instructionArg))
+    return true
+  }
+
+  private struct PrecedingConstants {
+    fileprivate let values: [CodeObject.Constant]
+    fileprivate let startIndexOfFirstLoadConst: Int
+  }
+
+  private func getPrecedingConstants(result: OptimizationResult,
+                                     buildTuple: PeepholeInstruction,
+                                     count: Int) -> PrecedingConstants? {
     var constants = [CodeObject.Constant]()
-    constants.reserveCapacity(elementCount)
+    var startIndexOfFirstLoadConst = -1
 
-    let indexBeforeBuildTuple = buildTuple.startIndex - 1
-    var previous = PeepholeInstruction(instructions: self.instructions,
-                                       unalignedIndex: indexBeforeBuildTuple)
+    var index: Int? = buildTuple.startIndex - 1
+    while constants.count != count {
+      guard let instruction = result.instructions.get(unalignedIndex: index) else {
+        return nil
+      }
 
-    while let instruction = previous, constants.count != elementCount {
-      let previousIndex = instruction.previousInstructionUnalignedIndex
-      previous = PeepholeInstruction(instructions: self.instructions,
-                                     unalignedIndex: previousIndex)
+      index = instruction.previousInstructionUnalignedIndex
 
       switch instruction.value {
+      case .nop:
+        // We do allow 'nop' between constants.
+        break
+
       case .loadConst(index: let arg):
-        let constantIndex = instruction.getArg(instructionArg: arg)
-        let constant = self.constants[constantIndex]
+        let constantIndex = instruction.getArgument(instructionArg: arg)
+        let constant = result.constants[constantIndex]
         constants.append(constant)
-        firstConstantIndex = instruction.startIndex
+        startIndexOfFirstLoadConst = instruction.startIndex
+
       default:
-        return
+        return nil
       }
     }
 
-    guard constants.count == elementCount else {
-      return
-    }
+    // Constants should be in 'tuple-order'.
+    constants.reverse()
 
-   #warning("Order of elements in tuple?")
-    let tupleConstant = CodeObject.Constant.tuple(constants)
-
-//    Py_ssize_t index = PyList_GET_SIZE(consts);
-//    if (PyList_Append(consts, newconst)) {
-//    return copy_op_arg(codestr, c_start, LOAD_CONST,
-//                           (unsigned int)index, opcode_end);
-    fatalError()
+    return PrecedingConstants(
+      values: constants,
+      startIndexOfFirstLoadConst: startIndexOfFirstLoadConst
+    )
   }
-*/
+
   // MARK: - Unpack sequence
 
   /// `buildTuple` and then `unpackSequence` -> why do we even build tuple?

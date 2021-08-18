@@ -38,8 +38,6 @@ internal struct PeepholeInstruction {
   /// `Unaligned` means that you don't have to be at the start of an instruction
   /// to use this method.
   internal init?(instructions: [Instruction], unalignedIndex index: Int) {
-    assert(instructions.indices.contains(index))
-
     var startIndex = index
     Self.goBackToFirstExtendedArg(instructions: instructions, index: &startIndex)
 
@@ -69,26 +67,6 @@ internal struct PeepholeInstruction {
   }
 
   // MARK: - Init
-
-  /// Read an instruction startng from provided `index`.
-  ///
-  /// This is the method that you want to use if you traverse bytecode in the
-  /// 'normal' order (from start to the end).
-  ///
-  /// This is `convenience` init for an index that was obtained from
-  /// `nextInstructionIndex`.
-  internal init?(instructions: [Instruction], startIndex: Int?) {
-    guard let index = startIndex else {
-      return nil
-    }
-
-    switch PeepholeInstruction(instructions: instructions, startIndex: index) {
-    case .some(let i):
-      self = i
-    case .none:
-      return nil
-    }
-  }
 
   /// Read an instruction starting from provided `index`.
   ///

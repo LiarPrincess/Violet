@@ -50,8 +50,11 @@ internal class OptimizationResult {
     /// This is the method that you want to use if you traverse bytecode in the
     /// 'normal' order (from start to the end).
     internal func get(startIndex: Int?) -> PeepholeInstruction? {
-      return PeepholeInstruction(instructions: self.values,
-                                 startIndex: startIndex)
+      guard let index = startIndex else {
+        return nil
+      }
+
+      return PeepholeInstruction(instructions: self.values, startIndex: index)
     }
 
     /// Read an instruction going back from provided `index` and collecting all of
@@ -59,9 +62,12 @@ internal class OptimizationResult {
     ///
     /// `Unaligned` means that you don't have to be at the start of an instruction
     /// to use this method.
-    internal func get(unalignedIndex: Int) -> PeepholeInstruction? {
-      return PeepholeInstruction(instructions: self.values,
-                                 unalignedIndex: unalignedIndex)
+    internal func get(unalignedIndex: Int?) -> PeepholeInstruction? {
+      guard let index = unalignedIndex else {
+        return nil
+      }
+
+      return PeepholeInstruction(instructions: self.values, unalignedIndex: index)
     }
 
     /// Sets the instructions `startIndex..<endIndex` to `nop`.
@@ -138,6 +144,10 @@ internal class OptimizationResult {
     // (for example 'True/False' are reused).
     internal subscript(index: Int) -> CodeObject.Constant {
       return self.values[index]
+    }
+
+    internal mutating func append(_ element: CodeObject.Constant) {
+      self.values.append(element)
     }
   }
 
