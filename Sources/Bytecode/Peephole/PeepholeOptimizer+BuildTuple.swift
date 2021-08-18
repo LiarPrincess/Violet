@@ -11,24 +11,29 @@ extension PeepholeOptimizer {
   /// Replace `BUILD_SEQN 2 UNPACK_SEQN 2` with `ROT2`.
   /// Replace `BUILD_SEQN 3 UNPACK_SEQN 3` with `ROT3 ROT2`.
   internal func optimizeBuildTuple(result: inout [Instruction],
-                                   buildTuple: InstructionInfo,
+                                   buildTuple: PeepholeInstruction,
                                    arg: UInt8,
-                                   next: InstructionInfo?) {
+                                   next: PeepholeInstruction?) {
     // TODO: Tuple + ConsecutiveConstIndex
     let elementCount = buildTuple.getArg(instructionArg: arg)
+
+//    self.buildTupleOfConstants(result: &result,
+//                               buildTuple: buildTuple,
+//                               elementCount: elementCount)
+
     self.buildTuple_thenUnpackSequence(result: &result,
                                        buildTuple: buildTuple,
                                        elementCount: elementCount,
                                        next: next)
   }
 
-  // MARK: - Build tuple, unpack sequence
+  // MARK: - Unpack sequence
 
   /// `buildTuple` and then `unpackSequence` -> why do we even build tuple?
   private func buildTuple_thenUnpackSequence(result: inout [Instruction],
-                                             buildTuple: InstructionInfo,
+                                             buildTuple: PeepholeInstruction,
                                              elementCount: Int,
-                                             next: InstructionInfo?) {
+                                             next: PeepholeInstruction?) {
     guard let unpackSequence = next else {
       return
     }

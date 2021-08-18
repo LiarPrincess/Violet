@@ -4,7 +4,8 @@
 extension PeepholeOptimizer {
 
   /// Remove unreachable ops after RETURN.
-  internal func optimizeReturn(result: inout [Instruction], ret: InstructionInfo) {
+  internal func optimizeReturn(result: inout [Instruction],
+                               ret: PeepholeInstruction) {
     let returnIndex = ret.startIndex
     var index = returnIndex + 1
 

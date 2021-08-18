@@ -51,11 +51,11 @@ extension PeepholeOptimizer {
 
   /// Modify `self.result` based on a single instruction.
   private func applyOptimizations(result: inout [Instruction]) {
-    var next = self.readInstruction(instructions: self.instructions, index: 0)
+    var next = PeepholeInstruction(instructions: self.instructions, startIndex: 0)
 
     while let instruction = next {
       let nextIndex = instruction.nextInstructionIndex
-      next = self.readInstruction(instructions: self.instructions, index: nextIndex)
+      next = PeepholeInstruction(instructions: self.instructions, startIndex: nextIndex)
 
       switch instruction.value {
       case let .loadConst(index: arg):
@@ -178,63 +178,5 @@ extension PeepholeOptimizer {
       instructions.append(.nop)
       instructionLines.append(line)
     }
-  }
-
-  // MARK: - Read instruction
-
-  internal struct InstructionInfo {
-    /// Index of the first `extendedArg` (of `self.value` index if this instruction
-    /// does not have an `extendedArgs`).
-    internal let startIndex: Int
-    /// An actual instruction (not `extendedArg`).
-    internal let value: Instruction
-    // We do not know the current instruction, so we will treat as if its 'arg' was 0.
-    // Use 'InstructionInfo.getArg(instructionArg:)' to get proper value.
-    fileprivate let extendedArgWithoutInstructionArg: Int
-    /// Number of `extendedArg` before `self.value`.
-    internal let extendedArgCount: Int
-
-    internal var nextInstructionIndex: Int {
-      return self.startIndex + self.extendedArgCount + 1
-    }
-
-    internal func getArg(instructionArg: UInt8) -> Int {
-      return Instruction.extend(
-        base: self.extendedArgWithoutInstructionArg,
-        arg: instructionArg
-      )
-    }
-  }
-
-  private func readInstruction(instructions: [Instruction],
-                               index startIndex: Int) -> InstructionInfo? {
-    guard startIndex < instructions.count else {
-      return nil
-    }
-
-    var index = startIndex
-
-    var extendedArg = 0
-    while index < instructions.count {
-      if case let Instruction.extendedArg(arg) = instructions[index] {
-        extendedArg = Instruction.extend(base: extendedArg, arg: arg)
-        index += 1
-      } else {
-        break
-      }
-    }
-
-    // This is similar check to the one that started the function.
-    // It may fire if 'instructions' ended with 'extendedArg'.
-    // In such case: there is no last instruction.
-    guard index < instructions.count else {
-      return nil
-    }
-
-    let value = instructions[index]
-    return InstructionInfo(startIndex: startIndex,
-                           value: value,
-                           extendedArgWithoutInstructionArg: extendedArg,
-                           extendedArgCount: index - startIndex)
   }
 }

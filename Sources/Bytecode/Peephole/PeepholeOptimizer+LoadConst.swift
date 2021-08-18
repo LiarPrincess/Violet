@@ -6,9 +6,9 @@
 extension PeepholeOptimizer {
 
   internal func optimizeLoadConst(result: inout [Instruction],
-                                  loadConst: InstructionInfo,
+                                  loadConst: PeepholeInstruction,
                                   arg: UInt8,
-                                  next: InstructionInfo?) {
+                                  next: PeepholeInstruction?) {
     let constantIndex = loadConst.getArg(instructionArg: arg)
     self.loadConst_thenPopJumpIf(result: &result,
                                  loadConst: loadConst,
@@ -19,9 +19,9 @@ extension PeepholeOptimizer {
   /// Skip over `LOAD_CONST trueconst`; `POP_JUMP_IF_FALSE xx`.
   /// This improves "while 1" performance.
   private func loadConst_thenPopJumpIf(result: inout [Instruction],
-                                       loadConst: InstructionInfo,
+                                       loadConst: PeepholeInstruction,
                                        constantIndex: Int,
-                                       next: InstructionInfo?) {
+                                       next: PeepholeInstruction?) {
     guard let popJumpIf = next else {
       return
     }
