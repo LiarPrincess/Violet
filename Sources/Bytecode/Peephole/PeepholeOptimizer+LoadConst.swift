@@ -36,11 +36,12 @@ extension PeepholeOptimizer {
 
     // Is the 'popJumpIfFalse' jump target?
     // If so, then we can't set it to 'nop', because later it would get removed.
-    if self.hasJumpTargetBetween(loadConst, and: popJumpIf) {
+    if self.oldJumpTable.hasJumpTargetBetween(loadConst, and: popJumpIf) {
       return
     }
 
-    let constant = self.constants[constantIndex]
+    #warning("TODO: OLD?")
+    let constant = self.oldConstants[constantIndex]
     let isConstantTrue = self.isTrue(constant: constant)
     let isConstantFalse = !isConstantTrue
 

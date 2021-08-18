@@ -24,8 +24,8 @@ extension PeepholeOptimizer {
   /// PyCode_Optimize(PyObject *code, PyObject* consts, PyObject *names,
   ///                 PyObject *lnotab_obj)
   internal func run() -> RunResult {
-    var instructions = self.instructions
-    var instructionLines = self.instructionLines
+    var instructions = self.oldInstructions
+    var instructionLines = self.oldInstructionLines
 
     self.applyOptimizations(result: &instructions)
 
@@ -53,8 +53,8 @@ extension PeepholeOptimizer {
   private func applyOptimizations(result: inout [Instruction]) {
     var index: Int? = 0
 
-    // We can't just use 'next' from the previous iteration,
-    // because some optimization could have changed what the 'next' is.
+    // We can't just 'instruction = next_from_the_previous_iteration'.
+    // Some optimization could have changed what the 'next' is.
     while let instruction = PeepholeInstruction(instructions: result, startIndex: index) {
       let nextIndex = instruction.nextInstructionIndex
       let next = PeepholeInstruction(instructions: result, startIndex: nextIndex)
@@ -123,7 +123,7 @@ extension PeepholeOptimizer {
       case .nop:
         nopCount += 1
       default:
-        let line = self.instructionLines[oldIndex]
+        let line = self.oldInstructionLines[oldIndex]
         instructions[newIndex] = instruction
         instructionLines[newIndex] = line
       }
@@ -142,10 +142,10 @@ extension PeepholeOptimizer {
     newIndices: InstructionIndicesSkippingNop
   ) -> [CodeObject.Label] {
     var result = [CodeObject.Label]()
-    result.reserveCapacity(self.labels.count)
+    result.reserveCapacity(self.oldLabels.count)
 
-    for labelIndex in self.labels.indices {
-      let label = self.labels[labelIndex]
+    for labelIndex in self.oldLabels.indices {
+      let label = self.oldLabels[labelIndex]
       let target = label.instructionIndex
       let newTarget = newIndices[target]
 

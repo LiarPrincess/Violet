@@ -9,7 +9,7 @@ extension PeepholeOptimizer {
     var index = ret.startIndex + 1
 
     while index < result.count {
-      if self.hasJumpTargetBetween(ret, and: index) {
+      if self.oldJumpTable.hasJumpTargetBetween(ret, and: index) {
         return
       }
 

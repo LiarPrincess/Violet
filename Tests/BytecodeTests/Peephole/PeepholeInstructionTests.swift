@@ -1,6 +1,4 @@
 import XCTest
-import BigInt
-import VioletCore
 @testable import VioletBytecode
 
 // swiftlint:disable file_length

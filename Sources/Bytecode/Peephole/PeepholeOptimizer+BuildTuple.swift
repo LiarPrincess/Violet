@@ -97,7 +97,7 @@ extension PeepholeOptimizer {
       return
     }
 
-    if self.hasJumpTargetBetween(buildTuple, and: unpackSequence) {
+    if self.oldJumpTable.hasJumpTargetBetween(buildTuple, and: unpackSequence) {
       return
     }
 
