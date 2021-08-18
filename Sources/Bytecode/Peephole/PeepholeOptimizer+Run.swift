@@ -38,9 +38,9 @@ extension PeepholeOptimizer {
 
     let labels = self.retargetLabels(newIndices: newInstructionIndices)
 
-    self.addNopsToPreventOutOfBoundsJumps(labels: labels,
-                                          instructions: &instructions,
-                                          instructionLines: &instructionLines)
+    self.addNopsToPreventOutOfBoundJumps(labels: labels,
+                                         instructions: &instructions,
+                                         instructionLines: &instructionLines)
 
     return RunResult(instructions: instructions,
                      instructionLines: instructionLines,
@@ -51,11 +51,14 @@ extension PeepholeOptimizer {
 
   /// Modify `self.result` based on a single instruction.
   private func applyOptimizations(result: inout [Instruction]) {
-    var next = PeepholeInstruction(instructions: self.instructions, startIndex: 0)
+    var index: Int? = 0
 
-    while let instruction = next {
+    // We can't just use 'next' from the previous iteration,
+    // because some optimization could have changed what the 'next' is.
+    while let instruction = PeepholeInstruction(instructions: result, startIndex: index) {
       let nextIndex = instruction.nextInstructionIndex
-      next = PeepholeInstruction(instructions: self.instructions, startIndex: nextIndex)
+      let next = PeepholeInstruction(instructions: result, startIndex: nextIndex)
+      defer { index = nextIndex }
 
       switch instruction.value {
       case let .loadConst(index: arg):
@@ -154,9 +157,9 @@ extension PeepholeOptimizer {
 
   // MARK: - Out of bound labels
 
-  /// If there is any label that jumps past 'instructions' -> append 'nop'.
+  /// If there is any label that jumps past `instructions` -> append `nop`.
   /// Just so that we have such instruction
-  private func addNopsToPreventOutOfBoundsJumps(
+  private func addNopsToPreventOutOfBoundJumps(
     labels: [CodeObject.Label],
     instructions: inout [Instruction],
     instructionLines: inout [SourceLine]

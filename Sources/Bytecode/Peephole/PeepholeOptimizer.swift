@@ -82,10 +82,16 @@ internal class PeepholeOptimizer {
   }
 
   internal func hasJumpTargetBetween(_ instruction: PeepholeInstruction,
-                                     _ next: PeepholeInstruction) -> Bool {
+                                     and next: PeepholeInstruction) -> Bool {
     let index0 = instruction.startIndex
     let index1 = next.startIndex
     return self.hasJumpTargetBetween(index0, and: index1)
+  }
+
+  internal func hasJumpTargetBetween(_ instruction: PeepholeInstruction,
+                                     and index: Int) -> Bool {
+    let instructionIndex = instruction.startIndex
+    return self.hasJumpTargetBetween(instructionIndex, and: index)
   }
 
   /// Opposite of:

@@ -2,30 +2,30 @@
 internal struct PeepholeInstruction {
 
   /// Index of the first `extendedArg` (of `self.value` index if this instruction
-  /// does not have an `extendedArgs`).
+  /// does not have any `extendedArgs`).
   internal let startIndex: Int
 
   /// An actual instruction (not `extendedArg`).
   internal let value: Instruction
 
-  // We do not know the current instruction, so we will treat as if its 'arg' was 0.
-  // Use 'PeepholeInstruction.getArg(instructionArg:)' to get proper value.
-  fileprivate let extendedArgWithoutInstructionArg: Int
+  /// We don't know the current instruction, so we don't have the full `arg` value.
+  /// Use `getArg(instructionArg:)` to get proper argument.
+  fileprivate let argWithoutInstructionArg: Int
 
   /// Number of `extendedArg` before `self.value`.
   internal let extendedArgCount: Int
 
-  internal var previousInstructionUnalignedIndex: Int {
-    return self.startIndex - 1
+  internal var previousInstructionUnalignedIndex: Int? {
+    return self.startIndex == 0 ? nil : self.startIndex - 1
   }
 
-  internal var nextInstructionIndex: Int {
-    return self.startIndex + self.extendedArgCount + 1
-  }
+  /// Index of the next instruction.
+  internal var nextInstructionIndex: Int?
 
-  internal func getArg(instructionArg: UInt8) -> Int {
+  /// Get the instruction argument accounting for `extendedArgs`.
+  internal func getArgument(instructionArg: UInt8) -> Int {
     return Instruction.extend(
-      base: self.extendedArgWithoutInstructionArg,
+      base: self.argWithoutInstructionArg,
       arg: instructionArg
     )
   }
@@ -38,12 +38,7 @@ internal struct PeepholeInstruction {
   /// `Unaligned` means that you don't have to be at the start of an instruction
   /// to use this method.
   internal init?(instructions: [Instruction], unalignedIndex index: Int) {
-    assert(index < instructions.count)
-
-    // This may happen if we used 'previousInstructionIndex'.
-    if index < 0 {
-      return nil
-    }
+    assert(instructions.indices.contains(index))
 
     var startIndex = index
     Self.goBackToFirstExtendedArg(instructions: instructions, index: &startIndex)
@@ -58,7 +53,7 @@ internal struct PeepholeInstruction {
 
   private static func goBackToFirstExtendedArg(instructions: [Instruction],
                                                index: inout Int) {
-    // 'index' is always 1 after 'extendedArgIndex'.
+    // 'extendedArgIndex' is always 1 before 'index'.
     var extendedArgIndex = index - 1
 
     while extendedArgIndex >= 0 {
@@ -79,11 +74,28 @@ internal struct PeepholeInstruction {
   ///
   /// This is the method that you want to use if you traverse bytecode in the
   /// 'normal' order (from start to the end).
-  internal init?(instructions: [Instruction], startIndex: Int) {
-    assert(startIndex >= 0)
+  ///
+  /// This is `convenience` init for an index that was obtained from
+  /// `nextInstructionIndex`.
+  internal init?(instructions: [Instruction], startIndex: Int?) {
+    guard let index = startIndex else {
+      return nil
+    }
 
-    // This may happen if we used 'nextInstructionIndex'.
-    guard startIndex < instructions.count else {
+    switch PeepholeInstruction(instructions: instructions, startIndex: index) {
+    case .some(let i):
+      self = i
+    case .none:
+      return nil
+    }
+  }
+
+  /// Read an instruction starting from provided `index`.
+  ///
+  /// This is the method that you want to use if you traverse bytecode in the
+  /// 'normal' order (from start to the end).
+  internal init?(instructions: [Instruction], startIndex: Int) {
+    guard instructions.indices.contains(startIndex) else {
       return nil
     }
 
@@ -102,13 +114,16 @@ internal struct PeepholeInstruction {
     // This is similar check to the one that started the function.
     // It may fire if 'instructions' ended with 'extendedArg'.
     // In such case: there is no last instruction.
-    guard index < instructions.count else {
+    guard instructions.indices.contains(index) else {
       return nil
     }
 
     self.startIndex = startIndex
     self.value = instructions[index]
-    self.extendedArgWithoutInstructionArg = extendedArg
+    self.argWithoutInstructionArg = extendedArg
     self.extendedArgCount = index - startIndex
+
+    let isLast = index + 1 == instructions.count
+    self.nextInstructionIndex = isLast ? nil : index + 1
   }
 }

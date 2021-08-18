@@ -9,7 +9,7 @@ extension PeepholeOptimizer {
                                   loadConst: PeepholeInstruction,
                                   arg: UInt8,
                                   next: PeepholeInstruction?) {
-    let constantIndex = loadConst.getArg(instructionArg: arg)
+    let constantIndex = loadConst.getArgument(instructionArg: arg)
     self.loadConst_thenPopJumpIf(result: &result,
                                  loadConst: loadConst,
                                  constantIndex: constantIndex,
@@ -36,7 +36,7 @@ extension PeepholeOptimizer {
 
     // Is the 'popJumpIfFalse' jump target?
     // If so, then we can't set it to 'nop', because later it would get removed.
-    if self.hasJumpTargetBetween(loadConst, popJumpIf) {
+    if self.hasJumpTargetBetween(loadConst, and: popJumpIf) {
       return
     }
 

@@ -31,7 +31,7 @@ private func XCTAssertExtendedArg(_ instruction: PeepholeInstruction,
                                   count: Int,
                                   file: StaticString = #file,
                                   line: UInt = #line) {
-  let arg = instruction.getArg(instructionArg: instructionArg)
+  let arg = instruction.getArgument(instructionArg: instructionArg)
   XCTAssertEqual(arg,
                  valueWithInstructionArg,
                  "Argument value",
@@ -46,8 +46,8 @@ private func XCTAssertExtendedArg(_ instruction: PeepholeInstruction,
 }
 
 private func XCTAssertIndices(_ instruction: PeepholeInstruction,
-                              previousIndex: Int,
-                              nextIndex: Int,
+                              previousIndex: Int?,
+                              nextIndex: Int?,
                               file: StaticString = #file,
                               line: UInt = #line) {
   XCTAssertEqual(instruction.previousInstructionUnalignedIndex,
@@ -65,7 +65,18 @@ private func XCTAssertIndices(_ instruction: PeepholeInstruction,
 
 class PeepholeInstructionTests: XCTestCase {
 
-  // MARK: - Init - start index
+  // MARK: - Init - start index - out of bound
+
+  func test_initStartIndex_indexBeforeStartIndex_returnsNil() {
+    let instructions: [Instruction] = [
+      .nop,
+      .loadConst(index: 0xf0),
+      .return
+    ]
+
+    let instruction = PeepholeInstruction(instructions: instructions, startIndex: -1)
+    XCTAssertNil(instruction)
+  }
 
   func test_initStartIndex_indexAfterEndIndex_returnsNil() {
     let instructions: [Instruction] = [
@@ -77,6 +88,8 @@ class PeepholeInstructionTests: XCTestCase {
     let instruction = PeepholeInstruction(instructions: instructions, startIndex: 10)
     XCTAssertNil(instruction)
   }
+
+  // MARK: - Init - start index
 
   func test_initStartIndex_first_works() {
     let instructions: [Instruction] = [
@@ -98,7 +111,7 @@ class PeepholeInstructionTests: XCTestCase {
                          valueWithInstructionArg: 0xf0,
                          count: 0)
     XCTAssertIndices(instruction,
-                     previousIndex: -1,
+                     previousIndex: nil,
                      nextIndex: 1)
   }
 
@@ -149,7 +162,7 @@ class PeepholeInstructionTests: XCTestCase {
                          count: 0)
     XCTAssertIndices(instruction,
                      previousIndex: 1,
-                     nextIndex: 3)
+                     nextIndex: nil)
   }
 
   // MARK: - Init - start index - extended
@@ -284,8 +297,33 @@ class PeepholeInstructionTests: XCTestCase {
                          valueWithInstructionArg: 0xf0,
                          count: 0)
     XCTAssertIndices(instruction,
-                     previousIndex: -1,
+                     previousIndex: nil,
                      nextIndex: 1)
+  }
+
+  func test_initUnalignedIndex_last_works() {
+    let instructions: [Instruction] = [
+      .return,
+      .extendedArg(0xfa),
+      .loadConst(index: 0xf0)
+    ]
+
+    guard let instruction = PeepholeInstruction(instructions: instructions,
+                                                unalignedIndex: 2) else {
+      XCTFail("Instruction was not created?")
+      return
+    }
+
+    XCTAssertInstruction(instruction,
+                         startIndex: 1,
+                         value: .loadConst(index: 0xf0))
+    XCTAssertExtendedArg(instruction,
+                         instructionArg: 0xf0,
+                         valueWithInstructionArg: 0xfaf0,
+                         count: 1)
+    XCTAssertIndices(instruction,
+                     previousIndex: 0,
+                     nextIndex: nil)
   }
 
   func test_initUnalignedIndex_2extendedArg_indexAtValue_works() {

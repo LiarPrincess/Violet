@@ -1,3 +1,5 @@
+import VioletCore
+
 // cSpell:ignore SEQN
 
 // In CPython:
@@ -14,8 +16,8 @@ extension PeepholeOptimizer {
                                    buildTuple: PeepholeInstruction,
                                    arg: UInt8,
                                    next: PeepholeInstruction?) {
-    // TODO: Tuple + ConsecutiveConstIndex
-    let elementCount = buildTuple.getArg(instructionArg: arg)
+    #warning("Tuple + ConsecutiveConstIndex")
+    let elementCount = buildTuple.getArgument(instructionArg: arg)
 
 //    self.buildTupleOfConstants(result: &result,
 //                               buildTuple: buildTuple,
@@ -27,6 +29,54 @@ extension PeepholeOptimizer {
                                        next: next)
   }
 
+  // MARK: - Constant tuple
+/*
+  /// `loadConst; loadConst; buildTuple 2` -> just use constant tuple.
+  private func buildTupleOfConstants(result: inout [Instruction],
+                                     buildTuple: PeepholeInstruction,
+                                     elementCount: Int) {
+    guard elementCount > 0 else {
+      return
+    }
+
+    var firstConstantIndex = -1
+    var constants = [CodeObject.Constant]()
+    constants.reserveCapacity(elementCount)
+
+    let indexBeforeBuildTuple = buildTuple.startIndex - 1
+    var previous = PeepholeInstruction(instructions: self.instructions,
+                                       unalignedIndex: indexBeforeBuildTuple)
+
+    while let instruction = previous, constants.count != elementCount {
+      let previousIndex = instruction.previousInstructionUnalignedIndex
+      previous = PeepholeInstruction(instructions: self.instructions,
+                                     unalignedIndex: previousIndex)
+
+      switch instruction.value {
+      case .loadConst(index: let arg):
+        let constantIndex = instruction.getArg(instructionArg: arg)
+        let constant = self.constants[constantIndex]
+        constants.append(constant)
+        firstConstantIndex = instruction.startIndex
+      default:
+        return
+      }
+    }
+
+    guard constants.count == elementCount else {
+      return
+    }
+
+   #warning("Order of elements in tuple?")
+    let tupleConstant = CodeObject.Constant.tuple(constants)
+
+//    Py_ssize_t index = PyList_GET_SIZE(consts);
+//    if (PyList_Append(consts, newconst)) {
+//    return copy_op_arg(codestr, c_start, LOAD_CONST,
+//                           (unsigned int)index, opcode_end);
+    fatalError()
+  }
+*/
   // MARK: - Unpack sequence
 
   /// `buildTuple` and then `unpackSequence` -> why do we even build tuple?
@@ -42,12 +92,12 @@ extension PeepholeOptimizer {
       return
     }
 
-    let unpackCount = unpackSequence.getArg(instructionArg: unpackArg)
+    let unpackCount = unpackSequence.getArgument(instructionArg: unpackArg)
     guard elementCount == unpackCount else {
       return
     }
 
-    if self.hasJumpTargetBetween(buildTuple, unpackSequence) {
+    if self.hasJumpTargetBetween(buildTuple, and: unpackSequence) {
       return
     }
 

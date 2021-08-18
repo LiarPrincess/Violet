@@ -6,11 +6,10 @@ extension PeepholeOptimizer {
   /// Remove unreachable ops after RETURN.
   internal func optimizeReturn(result: inout [Instruction],
                                ret: PeepholeInstruction) {
-    let returnIndex = ret.startIndex
-    var index = returnIndex + 1
+    var index = ret.startIndex + 1
 
-    while index < self.instructions.count {
-      if self.hasJumpTargetBetween(returnIndex, and: index) {
+    while index < result.count {
+      if self.hasJumpTargetBetween(ret, and: index) {
         return
       }
 
