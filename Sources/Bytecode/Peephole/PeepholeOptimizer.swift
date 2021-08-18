@@ -38,20 +38,6 @@ internal class PeepholeOptimizer {
     self.oldJumpTable = PeepholeJumpTable(instructions: instructions, labels: labels)
   }
 
-  // MARK: - Fill nop
-
-  /// Sets the instructions `startIndex..<endIndex` to `nop`.
-  internal func fillNop(result: inout [Instruction],
-                        startIndex: Int,
-                        endIndex: Int?) {
-    let endIndex = endIndex ?? self.instructions.count
-    assert(startIndex <= endIndex)
-
-    for index in startIndex..<endIndex {
-      result[index] = .nop
-    }
-  }
-
   // MARK: - Instruction predicates
 
   /// \#define UNCONDITIONAL_JUMP(op)  (op==JUMP_ABSOLUTE || op==JUMP_FORWARD)

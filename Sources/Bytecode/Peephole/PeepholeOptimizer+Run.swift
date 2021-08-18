@@ -8,9 +8,10 @@ import VioletCore
 extension PeepholeOptimizer {
 
   internal struct RunResult {
-    internal fileprivate(set) var instructions: [Instruction]
-    internal fileprivate(set) var instructionLines: [SourceLine]
-    internal fileprivate(set) var labels: [CodeObject.Label]
+    internal let instructions: [Instruction]
+    internal let instructionLines: [SourceLine]
+    internal let constants: [CodeObject.Constant]
+    internal let labels: [CodeObject.Label]
   }
 
   /// Optimizations are restricted to simple transformations occurring within a
@@ -24,53 +25,60 @@ extension PeepholeOptimizer {
   /// PyCode_Optimize(PyObject *code, PyObject* consts, PyObject *names,
   ///                 PyObject *lnotab_obj)
   internal func run() -> RunResult {
-    var instructions = self.oldInstructions
-    var instructionLines = self.oldInstructionLines
-
-    self.applyOptimizations(result: &instructions)
-
-    let newInstructionIndices = self.rewriteInstructionsSkippingNop(
-      instructions: &instructions,
-      instructionLines: &instructionLines
+    var result = OptimizationResult(
+      instructions: self.oldInstructions,
+      instructionLines: self.oldInstructionLines,
+      constants: self.oldConstants,
+      labels: self.oldLabels
     )
 
-    assert(instructions.count == instructionLines.count)
+    self.applyOptimizations(result: &result)
 
-    let labels = self.retargetLabels(newIndices: newInstructionIndices)
+    let newInstructionIndices = self.rewriteInstructionsSkippingNop(
+      instructions: &result.instructions,
+      instructionLines: &result.instructionLines
+    )
 
-    self.addNopsToPreventOutOfBoundJumps(labels: labels,
-                                         instructions: &instructions,
-                                         instructionLines: &instructionLines)
+    assert(result.instructions.count == result.instructionLines.count)
 
-    return RunResult(instructions: instructions,
-                     instructionLines: instructionLines,
-                     labels: labels)
+    self.retargetLabels(
+      labels: &result.labels,
+      to: newInstructionIndices
+    )
+
+    self.addNopsToPreventOutOfBoundJumps(
+      instructions: &result.instructions,
+      instructionLines: &result.instructionLines,
+      labels: result.labels
+    )
+
+    return result.asPeepholeOptimizerResult()
   }
 
   // MARK: - Apply optimizations
 
-  /// Modify `self.result` based on a single instruction.
-  private func applyOptimizations(result: inout [Instruction]) {
+  /// Modify `result` based on a single instruction.
+  private func applyOptimizations(result: inout OptimizationResult) {
     var index: Int? = 0
 
     // We can't just 'instruction = next_from_the_previous_iteration'.
     // Some optimization could have changed what the 'next' is.
-    while let instruction = PeepholeInstruction(instructions: result, startIndex: index) {
+    while let instruction = result.instructions.get(startIndex: index) {
       let nextIndex = instruction.nextInstructionIndex
-      let next = PeepholeInstruction(instructions: result, startIndex: nextIndex)
+      let next = result.instructions.get(startIndex: nextIndex)
       defer { index = nextIndex }
 
       switch instruction.value {
       case let .loadConst(index: arg):
         self.optimizeLoadConst(result: &result,
                                loadConst: instruction,
-                               arg: arg,
+                               loadConstArg: arg,
                                next: next)
 
       case let .buildTuple(elementCount: arg):
         self.optimizeBuildTuple(result: &result,
                                 buildTuple: instruction,
-                                arg: arg,
+                                buildTupleArg: arg,
                                 next: next)
 
       case .return:
@@ -105,8 +113,8 @@ extension PeepholeOptimizer {
   }
 
   private func rewriteInstructionsSkippingNop(
-    instructions: inout [Instruction],
-    instructionLines: inout [SourceLine]
+    instructions: inout OptimizationResult.Instructions,
+    instructionLines: inout OptimizationResult.InstructionLines
   ) -> InstructionIndicesSkippingNop {
     assert(instructions.count == instructionLines.count)
 
@@ -114,7 +122,7 @@ extension PeepholeOptimizer {
     newIndices.reserveCapacity(instructions.count)
 
     var nopCount = 0
-    for oldIndex in instructions.indices {
+    for oldIndex in 0..<instructions.count {
       let newIndex = oldIndex - nopCount
       newIndices.append(instructionIndex: newIndex)
 
@@ -139,20 +147,16 @@ extension PeepholeOptimizer {
   // MARK: - Retarget labels
 
   private func retargetLabels(
-    newIndices: InstructionIndicesSkippingNop
-  ) -> [CodeObject.Label] {
-    var result = [CodeObject.Label]()
-    result.reserveCapacity(self.oldLabels.count)
-
-    for labelIndex in self.oldLabels.indices {
-      let label = self.oldLabels[labelIndex]
+    labels: inout OptimizationResult.Labels,
+    to newIndices: InstructionIndicesSkippingNop
+  ) {
+    for labelIndex in 0..<labels.count {
+      let label = labels[labelIndex]
       let target = label.instructionIndex
       let newTarget = newIndices[target]
 
-      result.append(CodeObject.Label(instructionIndex: newTarget))
+      labels[labelIndex] = CodeObject.Label(instructionIndex: newTarget)
     }
-
-    return result
   }
 
   // MARK: - Out of bound labels
@@ -160,9 +164,9 @@ extension PeepholeOptimizer {
   /// If there is any label that jumps past `instructions` -> append `nop`.
   /// Just so that we have such instruction
   private func addNopsToPreventOutOfBoundJumps(
-    labels: [CodeObject.Label],
-    instructions: inout [Instruction],
-    instructionLines: inout [SourceLine]
+    instructions: inout OptimizationResult.Instructions,
+    instructionLines: inout OptimizationResult.InstructionLines,
+    labels: OptimizationResult.Labels
   ) {
     var maxJumpTarget = -1
 

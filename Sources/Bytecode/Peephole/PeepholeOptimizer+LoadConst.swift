@@ -5,11 +5,11 @@
 
 extension PeepholeOptimizer {
 
-  internal func optimizeLoadConst(result: inout [Instruction],
+  internal func optimizeLoadConst(result: inout OptimizationResult,
                                   loadConst: PeepholeInstruction,
-                                  arg: UInt8,
+                                  loadConstArg: UInt8,
                                   next: PeepholeInstruction?) {
-    let constantIndex = loadConst.getArgument(instructionArg: arg)
+    let constantIndex = loadConst.getArgument(instructionArg: loadConstArg)
     self.loadConst_thenPopJumpIf(result: &result,
                                  loadConst: loadConst,
                                  constantIndex: constantIndex,
@@ -18,7 +18,7 @@ extension PeepholeOptimizer {
 
   /// Skip over `LOAD_CONST trueconst`; `POP_JUMP_IF_FALSE xx`.
   /// This improves "while 1" performance.
-  private func loadConst_thenPopJumpIf(result: inout [Instruction],
+  private func loadConst_thenPopJumpIf(result: inout OptimizationResult,
                                        loadConst: PeepholeInstruction,
                                        constantIndex: Int,
                                        next: PeepholeInstruction?) {
@@ -40,8 +40,7 @@ extension PeepholeOptimizer {
       return
     }
 
-    #warning("TODO: OLD?")
-    let constant = self.oldConstants[constantIndex]
+    let constant = result.constants[constantIndex]
     let isConstantTrue = self.isTrue(constant: constant)
     let isConstantFalse = !isConstantTrue
 
@@ -51,9 +50,8 @@ extension PeepholeOptimizer {
 
     if constantWillNotJump {
       // If we never jump -> set both 'loadConst' and 'popJumpIf' to 'nop'.
-      self.fillNop(result: &result,
-                   startIndex: loadConst.startIndex,
-                   endIndex: popJumpIf.nextInstructionIndex)
+      result.instructions.setToNop(startIndex: loadConst.startIndex,
+                                   endIndex: popJumpIf.nextInstructionIndex)
     }
 
     // As for the 'else' branch in:

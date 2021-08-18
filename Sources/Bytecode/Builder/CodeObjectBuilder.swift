@@ -75,10 +75,13 @@ public final class CodeObjectBuilder {
   /// `usePeepholeOptimizer = false` is for tests (and only for those that do
   ///  require it, most of the time we do want optimizations).
   internal func finalize(usePeepholeOptimizer: Bool) -> CodeObject {
+    // swiftlint:disable:previous function_body_length
+
     self.assertAllLabelsAssigned()
 
     var instructions = self.instructions
     var instructionLines = self.instructionLines
+    var constants = self.constants
     var labels = self.labels
 
     if usePeepholeOptimizer {
@@ -90,6 +93,7 @@ public final class CodeObjectBuilder {
       let result = optimizer.run()
       instructions = result.instructions
       instructionLines = result.instructionLines
+      constants = result.constants
       labels = result.labels
     }
 
@@ -101,7 +105,7 @@ public final class CodeObjectBuilder {
                       firstLine: self.firstLine,
                       instructions: instructions,
                       instructionLines: instructionLines,
-                      constants: self.constants,
+                      constants: constants,
                       names: self.names,
                       labels: labels,
                       variableNames: self.variableNames,
@@ -113,7 +117,7 @@ public final class CodeObjectBuilder {
 
   private func assertAllLabelsAssigned() {
     let allAssigned = self.labels.allSatisfy { $0.isAssigned }
-    precondition(allAssigned, "One of the code object labels is not assigned!")
+    precondition(allAssigned, "One of the code object labels was not assigned!")
   }
 
   // MARK: - Append

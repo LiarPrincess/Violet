@@ -12,12 +12,12 @@ extension PeepholeOptimizer {
   /// Skip over `BUILD_SEQN 1 UNPACK_SEQN 1.`
   /// Replace `BUILD_SEQN 2 UNPACK_SEQN 2` with `ROT2`.
   /// Replace `BUILD_SEQN 3 UNPACK_SEQN 3` with `ROT3 ROT2`.
-  internal func optimizeBuildTuple(result: inout [Instruction],
+  internal func optimizeBuildTuple(result: inout OptimizationResult,
                                    buildTuple: PeepholeInstruction,
-                                   arg: UInt8,
+                                   buildTupleArg: UInt8,
                                    next: PeepholeInstruction?) {
     #warning("Tuple + ConsecutiveConstIndex")
-    let elementCount = buildTuple.getArgument(instructionArg: arg)
+    let elementCount = buildTuple.getArgument(instructionArg: buildTupleArg)
 
 //    self.buildTupleOfConstants(result: &result,
 //                               buildTuple: buildTuple,
@@ -80,7 +80,7 @@ extension PeepholeOptimizer {
   // MARK: - Unpack sequence
 
   /// `buildTuple` and then `unpackSequence` -> why do we even build tuple?
-  private func buildTuple_thenUnpackSequence(result: inout [Instruction],
+  private func buildTuple_thenUnpackSequence(result: inout OptimizationResult,
                                              buildTuple: PeepholeInstruction,
                                              elementCount: Int,
                                              next: PeepholeInstruction?) {
@@ -112,9 +112,8 @@ extension PeepholeOptimizer {
       // unpackSequence 1
       //
       // No effect, set 'instruction' and 'next' to 'nop'.
-      self.fillNop(result: &result,
-                   startIndex: buildTuple.startIndex,
-                   endIndex: indexAfterUnpack)
+      result.instructions.setToNop(startIndex: buildTuple.startIndex,
+                                   endIndex: indexAfterUnpack)
 
     case 2:
       // push item0
@@ -131,10 +130,9 @@ extension PeepholeOptimizer {
       //   [possible nops]
       // nop
       //   [possible nops]
-      result[buildTuple.startIndex] = .rotTwo
-      self.fillNop(result: &result,
-                   startIndex: buildTuple.startIndex + 1,
-                   endIndex: indexAfterUnpack)
+      result.instructions[buildTuple.startIndex] = .rotTwo
+      result.instructions.setToNop(startIndex: buildTuple.startIndex + 1,
+                                   endIndex: indexAfterUnpack)
 
     case 3:
       // push item0
@@ -152,11 +150,10 @@ extension PeepholeOptimizer {
       // rotThree
       // rotTwo
       // [possible nops]
-      result[buildTuple.startIndex] = .rotThree
-      result[buildTuple.startIndex + 1] = .rotTwo
-      self.fillNop(result: &result,
-                   startIndex: buildTuple.startIndex + 2,
-                   endIndex: indexAfterUnpack)
+      result.instructions[buildTuple.startIndex] = .rotThree
+      result.instructions[buildTuple.startIndex + 1] = .rotTwo
+      result.instructions.setToNop(startIndex: buildTuple.startIndex + 2,
+                                   endIndex: indexAfterUnpack)
 
     default:
       break

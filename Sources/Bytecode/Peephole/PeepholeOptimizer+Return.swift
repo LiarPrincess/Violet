@@ -4,16 +4,16 @@
 extension PeepholeOptimizer {
 
   /// Remove unreachable ops after RETURN.
-  internal func optimizeReturn(result: inout [Instruction],
+  internal func optimizeReturn(result: inout OptimizationResult,
                                ret: PeepholeInstruction) {
     var index = ret.startIndex + 1
 
-    while index < result.count {
+    while index < result.instructions.count {
       if self.oldJumpTable.hasJumpTargetBetween(ret, and: index) {
         return
       }
 
-      result[index] = .nop
+      result.instructions[index] = .nop
       index += 1
     }
   }
