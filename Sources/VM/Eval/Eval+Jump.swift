@@ -15,25 +15,25 @@ extension Eval {
 
   /// If TOS is true, sets the bytecode counter to target. TOS is popped.
   internal func popJumpIfTrue(labelIndex: Int) -> InstructionResult {
-    let top = self.stack.pop()
-
-    switch Py.isTrueBool(object: top) {
-    case let .value(isTrue):
-      self.popJumpIf(isTrue, to: labelIndex)
-      return .ok
-    case let .error(e):
-      return .exception(e)
-    }
+    self.popJumpIf(condition: true, labelIndex: labelIndex)
   }
 
   /// If TOS is false, sets the bytecode counter to target. TOS is popped.
   internal func popJumpIfFalse(labelIndex: Int) -> InstructionResult {
+    self.popJumpIf(condition: false, labelIndex: labelIndex)
+  }
+
+  private func popJumpIf(condition: Bool, labelIndex: Int) -> InstructionResult {
     let top = self.stack.pop()
 
     switch Py.isTrueBool(object: top) {
     case let .value(isTrue):
-      self.popJumpIf(!isTrue, to: labelIndex)
+      if isTrue == condition {
+        self.jumpTo(labelIndex: labelIndex)
+      }
+
       return .ok
+
     case let .error(e):
       return .exception(e)
     }
@@ -44,26 +44,28 @@ extension Eval {
   /// If TOS is true, sets the bytecode counter to target and leaves TOS on the stack.
   /// Otherwise (TOS is false), TOS is popped.
   internal func jumpIfTrueOrPop(labelIndex: Int) -> InstructionResult {
-    let top = self.stack.top
-
-    switch Py.isTrueBool(object: top) {
-    case let .value(isTrue):
-      self.jumpIfOrPop(isTrue, to: labelIndex)
-      return .ok
-    case let .error(e):
-      return .exception(e)
-    }
+    return self.jumpIfOrPop(condition: true, labelIndex: labelIndex)
   }
 
   /// If TOS is false, sets the bytecode counter to target and leaves TOS on the stack.
   /// Otherwise (TOS is true), TOS is popped.
   internal func jumpIfFalseOrPop(labelIndex: Int) -> InstructionResult {
+    return self.jumpIfOrPop(condition: false, labelIndex: labelIndex)
+  }
+
+  private func jumpIfOrPop(condition: Bool, labelIndex: Int) -> InstructionResult {
     let top = self.stack.top
 
     switch Py.isTrueBool(object: top) {
     case let .value(isTrue):
-      self.jumpIfOrPop(!isTrue, to: labelIndex)
+      if isTrue == condition {
+        self.jumpTo(labelIndex: labelIndex)
+      } else {
+        _ = self.stack.pop()
+      }
+
       return .ok
+
     case let .error(e):
       return .exception(e)
     }
@@ -78,19 +80,5 @@ extension Eval {
 
   internal func jumpTo(instructionIndex: Int) {
     self.frame.nextInstructionIndex = instructionIndex
-  }
-
-  private func popJumpIf(_ condition: Bool, to labelIndex: Int) {
-    if condition {
-      self.jumpTo(labelIndex: labelIndex)
-    }
-  }
-
-  private func jumpIfOrPop(_ condition: Bool, to labelIndex: Int) {
-    if condition {
-      self.jumpTo(labelIndex: labelIndex)
-    } else {
-      _ = self.stack.pop()
-    }
   }
 }
