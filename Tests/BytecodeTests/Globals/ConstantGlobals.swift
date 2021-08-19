@@ -32,8 +32,8 @@ let falseConstants: [CodeObject.Constant] = [
 
 // MARK: - Extended arg
 
-/// Add 255 constants, so that the next one will require `extendedArg`
-func add255IntegerConstants(builder: CodeObjectBuilder) {
+/// Add 256 constants, so that the next one will require `extendedArg`.
+func add256IntegerConstants(builder: CodeObjectBuilder) {
   for i in 0..<256 {
     builder.appendInteger(BigInt(i))
   }
@@ -47,7 +47,8 @@ func getInstructionsWith255IntegerConstants() -> [Instruction] {
 
   return result
 }
-/// Assert `code.labels[256]`
+
+/// Assert `code.constants[256]`.
 func XCTAssertConstantAtIndex256(_ code: CodeObject,
                                  _ expected: CodeObject.Constant,
                                  file: StaticString = #file,

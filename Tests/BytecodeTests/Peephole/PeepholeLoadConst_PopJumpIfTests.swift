@@ -9,7 +9,7 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
 
   // MARK: - PopJumpIfFalse - true
 
-  func test_loadConst_popJumpIfFalse_onTrueConstant_removesCheck() {
+  func test_popJumpIfFalse_onTrueConstant_removesCheck() {
     // if true:
     //     return 5
     // return None
@@ -47,13 +47,13 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     }
   }
 
-  func test_loadConst_extended_popJumpIfFalse_onTrueConstant_removesCheck() {
+  func test_popJumpIfFalse_onExtendedTrueConstant_removesCheck() {
     // if true:
     //     return 5
     // return None
 
     let builder = createBuilder()
-    add255IntegerConstants(builder: builder)
+    add256IntegerConstants(builder: builder)
     let label = builder.createLabel()
     builder.appendTrue()
     builder.appendPopJumpIfFalse(to: label)
@@ -84,13 +84,13 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     XCTAssertInstructions(code, instructions)
   }
 
-  func test_loadConst_popJumpIfFalse_extended_onTrueConstant_removesCheck() {
+  func test_popJumpIfFalse_extended_onTrueConstant_removesCheck() {
     // if true:
     //     return 5
     // return None
 
     let builder = createBuilder()
-    add255Labels(builder: builder)
+    add256Labels(builder: builder)
     let label = builder.createLabel()
     builder.appendTrue()
     builder.appendPopJumpIfFalse(to: label)
@@ -123,7 +123,7 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
 
   // MARK: - PopJumpIfFalse - false
 
-  func test_loadConst_popJumpIfFalse_onFalseConstant_doesNothing() {
+  func test_popJumpIfFalse_onFalseConstant_doesNothing() {
     // if false:
     //     return 5
     // return True
@@ -162,7 +162,7 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
 
   // MARK: - PopJumpIfTrue - false
 
-  func test_loadConst_popJumpIfTrue_onFalseConstant_removesCheck() {
+  func test_popJumpIfTrue_onFalseConstant_removesCheck() {
     // if not false:
     //     return 5
     // return True
@@ -200,13 +200,13 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     }
   }
 
-  func test_loadConst_extended_popJumpIfTrue_onFalseConstant_removesCheck() {
+  func test_popJumpIfTrue_onExtendedFalseConstant_removesCheck() {
     // if true:
     //     return 5
     // return None
 
     let builder = createBuilder()
-    add255IntegerConstants(builder: builder)
+    add256IntegerConstants(builder: builder)
     let label = builder.createLabel()
     builder.appendFalse()
     builder.appendPopJumpIfTrue(to: label)
@@ -237,13 +237,13 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
     XCTAssertInstructions(code, instructions)
   }
 
-  func test_loadConst_popJumpIfTrue_extended_onFalseConstant_removesCheck() {
+  func test_popJumpIfTrue_extended_onFalseConstant_removesCheck() {
     // if true:
     //     return 5
     // return None
 
     let builder = createBuilder()
-    add255Labels(builder: builder)
+    add256Labels(builder: builder)
     let label = builder.createLabel()
     builder.appendFalse()
     builder.appendPopJumpIfTrue(to: label)
@@ -276,7 +276,7 @@ class PeepholeLoadConstPopJumpIfTests: XCTestCase {
 
   // MARK: - PopJumpIfTrue - true
 
-  func test_loadConst_popJumpIfTrue_onTrueConstant_doesNothing() {
+  func test_popJumpIfTrue_onTrueConstant_doesNothing() {
     // if false:
     //     return 5
     // return False

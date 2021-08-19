@@ -5,7 +5,7 @@ import VioletCore
 
 class PeepholeLoadConstTests: XCTestCase {
 
-  func test_loadConst_return_noChanges() {
+  func test_loadConst_return_doesNothing() {
     let builder = createBuilder()
     builder.appendTrue()
     builder.appendReturn()
@@ -20,7 +20,7 @@ class PeepholeLoadConstTests: XCTestCase {
     )
   }
 
-  func test_fewNops_loadConst_removesNops() {
+  func test_removesNops() {
     let builder = createBuilder()
     builder.appendNop()
     builder.appendNop()

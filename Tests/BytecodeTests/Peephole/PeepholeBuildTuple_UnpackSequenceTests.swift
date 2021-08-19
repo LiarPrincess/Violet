@@ -7,7 +7,7 @@ class PeepholeBuildTupleUnpackSequenceTests: XCTestCase {
 
   // MARK: - Count 0, 1, 2, 3
 
-  func test_buildTuple_unpackSequence_count0_removesThem() {
+  func test_count0_justLoadsConstants() {
     let builder = createBuilder()
     builder.appendTrue()
     builder.appendFalse()
@@ -26,7 +26,7 @@ class PeepholeBuildTupleUnpackSequenceTests: XCTestCase {
     )
   }
 
-  func test_buildTuple_unpackSequence_count1_removesThem() {
+  func test_count1_justLoadsConstants() {
     let builder = createBuilder()
     builder.appendTrue()
     builder.appendFalse()
@@ -45,7 +45,7 @@ class PeepholeBuildTupleUnpackSequenceTests: XCTestCase {
     )
   }
 
-  func test_buildTuple_unpackSequence_count2_removesThem() {
+  func test_count2_justLoadsConstants() {
     let builder = createBuilder()
     builder.appendTrue()
     builder.appendFalse()
@@ -65,7 +65,7 @@ class PeepholeBuildTupleUnpackSequenceTests: XCTestCase {
     )
   }
 
-  func test_buildTuple_unpackSequence_count3_removesThem() {
+  func test_count3_justLoadsConstants() {
     let builder = createBuilder()
     builder.appendTrue()
     builder.appendFalse()
@@ -90,7 +90,7 @@ class PeepholeBuildTupleUnpackSequenceTests: XCTestCase {
 
   // MARK: - Count 4, 256
 
-  func test_buildTuple_unpackSequence_count4_doesNothing() {
+  func test_count4_doesNothing() {
     let builder = createBuilder()
     builder.appendTrue()
     builder.appendFalse()
@@ -115,7 +115,7 @@ class PeepholeBuildTupleUnpackSequenceTests: XCTestCase {
     )
   }
 
-  func test_buildTuple_unpackSequence_count256_bothExtended_doesNothing() {
+  func test_count256_doesNothing() {
     let builder = createBuilder()
     add255IntegerConstants(builder: builder)
     builder.appendTrue()
@@ -143,7 +143,7 @@ class PeepholeBuildTupleUnpackSequenceTests: XCTestCase {
 
   // MARK: - Unequal count
 
-  func test_buildTuple_unpackSequence_unequalCount_doesNothing_1() {
+  func test_tupleCount3_sequenceCount4_doesNothing() {
     let builder = createBuilder()
     builder.appendTrue()
     builder.appendFalse()
@@ -168,7 +168,7 @@ class PeepholeBuildTupleUnpackSequenceTests: XCTestCase {
     )
   }
 
-  func test_buildTuple_unpackSequence_unequalCount_doesNothing_2() {
+  func test_tupleCount4_sequenceCount3_doesNothing() {
     let builder = createBuilder()
     builder.appendTrue()
     builder.appendFalse()

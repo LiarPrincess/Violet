@@ -5,7 +5,7 @@ import VioletCore
 
 class PeepholeBuildTupleTests: XCTestCase {
 
-  func test_buildTuple_return_noChanges() {
+  func test_loadName_buildTuple_return_doesNothing() {
     let builder = createBuilder()
     builder.appendTrue()
     builder.appendFalse()
@@ -24,7 +24,7 @@ class PeepholeBuildTupleTests: XCTestCase {
     )
   }
 
-  func test_fewNops_loadConst_removesNops() {
+  func test_removesNops() {
     let builder = createBuilder()
     builder.appendNop()
     builder.appendTrue()

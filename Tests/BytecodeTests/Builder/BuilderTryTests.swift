@@ -45,7 +45,7 @@ class BuilderTryTests: XCTestCase {
 
   func test_appendSetupExcept_extended() {
     let builder = createBuilder()
-    add255Labels(builder: builder)
+    add256Labels(builder: builder)
 
     let label = builder.createLabel()
     builder.appendSetupExcept(firstExcept: label) // 0 (extended Arg), 1
@@ -82,7 +82,7 @@ class BuilderTryTests: XCTestCase {
 
   func test_appendSetupFinally_extended() {
     let builder = createBuilder()
-    add255Labels(builder: builder)
+    add256Labels(builder: builder)
 
     let label = builder.createLabel()
     builder.appendSetupFinally(finallyStart: label) // 0 (extended Arg), 1

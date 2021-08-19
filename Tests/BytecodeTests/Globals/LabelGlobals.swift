@@ -5,15 +5,15 @@ import VioletCore
 
 // MARK: - Extended arg
 
-/// Add 255 labels, so that the next one will require `extendedArg`
-func add255Labels(builder: CodeObjectBuilder) {
+/// Add 256 labels, so that the next one will require `extendedArg`.
+func add256Labels(builder: CodeObjectBuilder) {
   for _ in 0..<256 {
     let label = builder.createLabel()
     builder.setLabel(label)
   }
 }
 
-/// Assert `code.labels[256]`
+/// Assert `code.labels[256]`.
 func XCTAssertLabelAtIndex256(_ code: CodeObject,
                               instructionIndex: Int,
                               file: StaticString = #file,

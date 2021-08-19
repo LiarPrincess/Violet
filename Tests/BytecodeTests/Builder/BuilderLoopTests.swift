@@ -26,7 +26,7 @@ class BuilderLoopTests: XCTestCase {
 
   func test_appendSetupLoop_extended() {
     let builder = createBuilder()
-    add255Labels(builder: builder)
+    add256Labels(builder: builder)
 
     let label = builder.createLabel()
     builder.appendSetupLoop(loopEnd: label) // 0 (extended Arg), 1
@@ -75,7 +75,7 @@ class BuilderLoopTests: XCTestCase {
 
   func test_appendForIter_extended() {
     let builder = createBuilder()
-    add255Labels(builder: builder)
+    add256Labels(builder: builder)
 
     let label = builder.createLabel()
     builder.appendForIter(ifEmpty: label) // 0 (extended Arg), 1
@@ -135,7 +135,7 @@ class BuilderLoopTests: XCTestCase {
 
   func test_appendContinue_extended() {
     let builder = createBuilder()
-    add255Labels(builder: builder)
+    add256Labels(builder: builder)
 
     let label = builder.createLabel()
     builder.appendContinue(loopStartLabel: label) // 0 (extended Arg), 1

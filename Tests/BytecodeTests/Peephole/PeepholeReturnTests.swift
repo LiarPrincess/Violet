@@ -7,7 +7,7 @@ class PeepholeReturnTests: XCTestCase {
 
   // MARK: - Nothing after
 
-  func test_return_nothingAfter() {
+  func test_return_nothingAfter_doesNothing() {
     let builder = createBuilder()
     builder.appendReturn()
 
@@ -20,7 +20,7 @@ class PeepholeReturnTests: XCTestCase {
     )
   }
 
-  func test_returnNone_nothingAfter() {
+  func test_returnNone_nothingAfter_doesNothing() {
     let builder = createBuilder()
     builder.appendNone()
     builder.appendReturn()
@@ -37,7 +37,7 @@ class PeepholeReturnTests: XCTestCase {
 
   // MARK: - Nop prefix
 
-  func test_fewNops_returnNone_nothingAfter_removesNops() {
+  func test_removesNops() {
     let builder = createBuilder()
     builder.appendNop()
     builder.appendNop()

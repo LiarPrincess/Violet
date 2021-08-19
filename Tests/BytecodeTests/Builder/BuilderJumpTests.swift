@@ -25,7 +25,7 @@ class BuilderJumpTests: XCTestCase {
 
   func test_appendJumpAbsolute_extended() {
     let builder = createBuilder()
-    add255Labels(builder: builder)
+    add256Labels(builder: builder)
 
     let label = builder.createLabel()
     builder.appendJumpAbsolute(to: label) // 0 (extended Arg), 1
@@ -62,7 +62,7 @@ class BuilderJumpTests: XCTestCase {
 
   func test_appendPopJumpIfTrue_extended() {
     let builder = createBuilder()
-    add255Labels(builder: builder)
+    add256Labels(builder: builder)
 
     let label = builder.createLabel()
     builder.appendPopJumpIfTrue(to: label) // 0 (extended Arg), 1
@@ -99,7 +99,7 @@ class BuilderJumpTests: XCTestCase {
 
   func test_appendPopJumpIfFalse_extended() {
     let builder = createBuilder()
-    add255Labels(builder: builder)
+    add256Labels(builder: builder)
 
     let label = builder.createLabel()
     builder.appendPopJumpIfFalse(to: label) // 0 (extended Arg), 1
@@ -136,7 +136,7 @@ class BuilderJumpTests: XCTestCase {
 
   func test_appendJumpIfTrueOrPop_extended() {
     let builder = createBuilder()
-    add255Labels(builder: builder)
+    add256Labels(builder: builder)
 
     let label = builder.createLabel()
     builder.appendJumpIfTrueOrPop(to: label) // 0 (extended Arg), 1
@@ -173,7 +173,7 @@ class BuilderJumpTests: XCTestCase {
 
   func test_appendJumpIfFalseOrPop_extended() {
     let builder = createBuilder()
-    add255Labels(builder: builder)
+    add256Labels(builder: builder)
 
     let label = builder.createLabel()
     builder.appendJumpIfFalseOrPop(to: label) // 0 (extended Arg), 1
