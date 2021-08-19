@@ -17,10 +17,6 @@ internal struct PeepholeJumpTable {
   /// ```
   private var jumpTargetPartitions: [Int]
 
-  private var instructionCount: Int {
-    return self.jumpTargetPartitions.count
-  }
-
   /// static unsigned int *
   /// markblocks(_Py_CODEUNIT *code, Py_ssize_t len)
   internal init(instructions: [Instruction], labels: [CodeObject.Label]) {

@@ -59,27 +59,23 @@ extension PeepholeOptimizer {
 
   /// Modify `result` based on a single instruction.
   private func applyOptimizations(result: inout OptimizationResult) {
-    var index: Int? = 0
+    var instructionIndex: Int? = 0
 
     // We can't just 'instruction = next_from_the_previous_iteration'.
     // Some optimization could have changed what the 'next' is.
-    while let instruction = result.instructions.get(startIndex: index) {
-      let nextIndex = instruction.nextInstructionIndex
-      let next = result.instructions.get(startIndex: nextIndex)
-      defer { index = nextIndex }
+    while let instruction = result.instructions.get(startIndex: instructionIndex) {
+      instructionIndex = instruction.nextInstructionIndex
 
       switch instruction.value {
       case let .loadConst(index: arg):
         self.optimizeLoadConst(result: &result,
                                loadConst: instruction,
-                               loadConstArg: arg,
-                               next: next)
+                               arg: arg)
 
       case let .buildTuple(elementCount: arg):
         self.optimizeBuildTuple(result: &result,
                                 buildTuple: instruction,
-                                buildTupleArg: arg,
-                                next: next)
+                                arg: arg)
 
       case .return:
         self.optimizeReturn(result: &result, ret: instruction)
