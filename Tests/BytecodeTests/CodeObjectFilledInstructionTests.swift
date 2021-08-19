@@ -524,7 +524,8 @@ class CodeObjectFilledInstructionTests: XCTestCase {
     builder.setLabel(jumpIfFalseOrPopLabel)
     builder.appendTrue() // just so that label has valid jump target
 
-    let code = builder.finalize()
+    // 'PeepholeOptimizer' would optimize out jumps.
+    let code = builder.finalize(usePeepholeOptimizer: false)
 
     XCTAssertLabelTargets(code, 1, 2, 3, 4, 5)
     guard code.labels.count == 5 else { return }
