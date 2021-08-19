@@ -39,13 +39,11 @@ func add256IntegerConstants(builder: CodeObjectBuilder) {
   }
 }
 
-func getInstructionsWith255IntegerConstants() -> [Instruction] {
-  var result = [Instruction]()
-  for i in 0..<256 {
-    result.append(.loadConst(index: UInt8(i)))
+/// Add 65 536 constants, so that the next one will require double `extendedArg`.
+func add65536IntegerConstants(builder: CodeObjectBuilder, value: UInt8) {
+  for i in 0..<65_536 {
+    builder.appendInteger(BigInt(i))
   }
-
-  return result
 }
 
 /// Assert `code.constants[256]`.

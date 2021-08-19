@@ -16,19 +16,29 @@ func XCTAssertInstructions(_ code: CodeObject,
                            _ expected: Instruction...,
                            file: StaticString = #file,
                            line: UInt = #line) {
-  XCTAssertInstructions(code, expected, file: file, line: line)
-}
-
-func XCTAssertInstructions(_ code: CodeObject,
-                           _ expected: [Instruction],
-                           file: StaticString = #file,
-                           line: UInt = #line) {
   let count = code.instructions.count
   let expectedCount = expected.count
 
   XCTAssertEqual(count, expectedCount, "Count", file: file, line: line)
 
   for (index, (i, e)) in zip(code.instructions, expected).enumerated() {
+    XCTAssertEqual(i, e, "Instruction: \(index)", file: file, line: line)
+  }
+}
+
+func XCTAssertInstructionsEndWith(_ code: CodeObject,
+                                  _ expected: Instruction...,
+                                  file: StaticString = #file,
+                                  line: UInt = #line) {
+  let count = code.instructions.count
+  let startIndex = count - expected.count
+  guard startIndex >= 0 else {
+    XCTFail("Got only \(count) instructions", file: file, line: line)
+    return
+  }
+
+  let tail = code.instructions[startIndex...]
+  for (index, (i, e)) in zip(tail, expected).enumerated() {
     XCTAssertEqual(i, e, "Instruction: \(index)", file: file, line: line)
   }
 }

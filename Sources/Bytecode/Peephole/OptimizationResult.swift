@@ -28,6 +28,38 @@ internal class OptimizationResult {
     )
   }
 
+  /// Write `[extendedArg0, extendedArg1, extendedArg2, instruction]` starting
+  /// at `index`. This will modify both `self.instructions` and `self.instructionLines`.
+  internal func write(index: Int,
+                      extendedArg0: UInt8?,
+                      extendedArg1: UInt8?,
+                      extendedArg2: UInt8?,
+                      instruction: Instruction,
+                      line: SourceLine) {
+    var index = index
+
+    if let arg = extendedArg0 {
+      self.instructions.values[index] = .extendedArg(arg)
+      self.instructionLines[index] = line
+      index += 1
+    }
+
+    if let arg = extendedArg1 {
+      self.instructions.values[index] = .extendedArg(arg)
+      self.instructionLines[index] = line
+      index += 1
+    }
+
+    if let arg = extendedArg2 {
+      self.instructions.values[index] = .extendedArg(arg)
+      self.instructionLines[index] = line
+      index += 1
+    }
+
+    self.instructions.values[index] = instruction
+    self.instructionLines[index] = line
+  }
+
   // MARK: - Instructions
 
   /// Wrapper for `[Instruction]` so that we control the modifications

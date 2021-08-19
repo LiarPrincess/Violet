@@ -18,9 +18,9 @@ extension PeepholeOptimizer {
                                    next: PeepholeInstruction?) {
     let elementCount = buildTuple.getArgument(instructionArg: buildTupleArg)
 
-    if self.mergeConstantTuple(result: &result,
-                               buildTuple: buildTuple,
-                               elementCount: elementCount) {
+    if self.mergeTupleOfConstants(result: &result,
+                                  buildTuple: buildTuple,
+                                  elementCount: elementCount) {
       // We can't continue on this path because 'buildTuple' is now 'loadConst'
       return
     }
@@ -34,9 +34,9 @@ extension PeepholeOptimizer {
   // MARK: - Constant tuple
 
   /// `loadConst; loadConst; buildTuple 2` -> just use constant tuple.
-  private func mergeConstantTuple(result: inout OptimizationResult,
-                                  buildTuple: PeepholeInstruction,
-                                  elementCount: Int) -> Bool {
+  private func mergeTupleOfConstants(result: inout OptimizationResult,
+                                     buildTuple: PeepholeInstruction,
+                                     elementCount: Int) -> Bool {
     guard elementCount > 0 else {
       return false
     }
@@ -51,8 +51,18 @@ extension PeepholeOptimizer {
     let constantIndexSplit = CodeObjectBuilder.splitExtendedArg(constantIndex)
 
     // Do we have enough space to emit the instruction?
+    // We always have at least 2 slots (from 'loadConst' and 'buildTuple').
+    // But if already have 65 536 constants then we would have to emit
+    // 2 x 'extendedArg' before 'loadConst' which does not fit 2 in slots.
+    // For example:
+    // - builder.appendTrue() - 'True' will get constant slot '0'
+    // - add 65536 dummy constants to take slots
+    // - builder.appendTrue() -> loadConst(0)
+    // - buildTuple(1) -> loadConst(65537) would need 3 slots, but we have only 2
+
+    let startIndex = constants.startIndexOfFirstLoadConst
     let indexAfterTuple = buildTuple.nextInstructionIndex ?? result.instructions.count
-    let spaceHave = indexAfterTuple - constants.startIndexOfFirstLoadConst
+    let spaceHave = indexAfterTuple - startIndex
     guard constantIndexSplit.count <= spaceHave else {
       return false
     }
@@ -60,33 +70,20 @@ extension PeepholeOptimizer {
     let tuple = CodeObject.Constant.tuple(constants.values)
     result.constants.append(tuple)
 
-    // Reset everything to 'nop'.
-    result.instructions.setToNop(startIndex: constants.startIndexOfFirstLoadConst,
-                                 endIndex: indexAfterTuple)
-
     // We need to emit a single 'loadConst' with 'constantIndex' as argument
-    var instructionIndex = constants.startIndexOfFirstLoadConst
-    let buildTupleLine = result.instructionLines[buildTuple.startIndex]
+    let line = result.instructionLines[buildTuple.startIndex]
 
-    func append(instruction: Instruction) {
-      result.instructions[instructionIndex] = instruction
-      result.instructionLines[instructionIndex] = buildTupleLine
-      instructionIndex += 1
-    }
+    // Reset everything to 'nop'.
+    // This is needed because we may be replacing 20 'loadConst' with just 1.
+    result.instructions.setToNop(startIndex: startIndex, endIndex: indexAfterTuple)
 
-    if let arg = constantIndexSplit.extendedArg0 {
-      append(instruction: .extendedArg(arg))
-    }
+    result.write(index: startIndex,
+                 extendedArg0: constantIndexSplit.extendedArg0,
+                 extendedArg1: constantIndexSplit.extendedArg1,
+                 extendedArg2: constantIndexSplit.extendedArg2,
+                 instruction: .loadConst(index: constantIndexSplit.instructionArg),
+                 line: line)
 
-    if let arg = constantIndexSplit.extendedArg1 {
-      append(instruction: .extendedArg(arg))
-    }
-
-    if let arg = constantIndexSplit.extendedArg2 {
-      append(instruction: .extendedArg(arg))
-    }
-
-    append(instruction: .loadConst(index: constantIndexSplit.instructionArg))
     return true
   }
 
