@@ -15,6 +15,12 @@ internal struct PeepholeInstruction {
   /// Number of `extendedArg` before `self.value`.
   internal let extendedArgCount: Int
 
+  /// Number of instructions including `extendedArg`
+  /// (basically: `self.extendedArgCount + 1`).
+  internal var instructionCount: Int {
+    return self.extendedArgCount + 1
+  }
+
   internal var previousInstructionUnalignedIndex: Int? {
     return self.startIndex == 0 ? nil : self.startIndex - 1
   }
@@ -28,6 +34,45 @@ internal struct PeepholeInstruction {
       base: self.argWithoutInstructionArg,
       arg: instructionArg
     )
+  }
+
+  // MARK: - Instruction predicates
+
+  /// \#define CONDITIONAL_JUMP(op) (op==POP_JUMP_IF_FALSE || op==POP_JUMP_IF_TRUE \
+  ///    || op==JUMP_IF_FALSE_OR_POP || op==JUMP_IF_TRUE_OR_POP)
+  internal var isConditionalJump: Bool {
+    switch self.value {
+    case .popJumpIfFalse,
+         .popJumpIfTrue,
+         .jumpIfFalseOrPop,
+         .jumpIfTrueOrPop:
+      return true
+    default:
+      return false
+    }
+  }
+
+  /// \#define UNCONDITIONAL_JUMP(op)  (op==JUMP_ABSOLUTE || op==JUMP_FORWARD)
+  internal var isUnconditionalJump: Bool {
+    switch self.value {
+    case .jumpAbsolute:
+      // We do not have jumpForward
+      return true
+    default:
+      return false
+    }
+  }
+
+  /// \#define JUMPS_ON_TRUE(op) (op==POP_JUMP_IF_TRUE || op==JUMP_IF_TRUE_OR_POP)
+  internal var isJumpOnTrue: Bool {
+    // We can omit the '(labelIndex: _)', but this is better.
+    switch self.value {
+    case .popJumpIfTrue,
+         .jumpIfTrueOrPop:
+      return true
+    default:
+      return false
+    }
   }
 
   // MARK: - Unaligned init

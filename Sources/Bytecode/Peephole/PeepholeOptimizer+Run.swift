@@ -61,8 +61,6 @@ extension PeepholeOptimizer {
   private func applyOptimizations(result: inout OptimizationResult) {
     var instructionIndex: Int? = 0
 
-    // We can't just 'instruction = next_from_the_previous_iteration'.
-    // Some optimization could have changed what the 'next' is.
     while let instruction = result.instructions.get(startIndex: instructionIndex) {
       instructionIndex = instruction.nextInstructionIndex
 
@@ -76,6 +74,14 @@ extension PeepholeOptimizer {
         self.optimizeBuildTuple(result: &result,
                                 buildTuple: instruction,
                                 arg: arg)
+
+      case let .jumpIfTrueOrPop(labelIndex: arg),
+           let .jumpIfFalseOrPop(labelIndex: arg):
+        if let index = self.optimizeJumpIfOrPop(result: &result,
+                                                jumpIfOrPop: instruction,
+                                                arg: arg) {
+          instructionIndex = index
+        }
 
       case .return:
         self.optimizeReturn(result: &result, ret: instruction)
@@ -151,7 +157,7 @@ extension PeepholeOptimizer {
       let target = label.instructionIndex
       let newTarget = newIndices[target]
 
-      labels[labelIndex] = CodeObject.Label(instructionIndex: newTarget)
+      labels.setNewTarget(index: labelIndex, instructionIndex: newTarget)
     }
   }
 

@@ -28,14 +28,17 @@ internal class OptimizationResult {
     )
   }
 
+  // swiftlint:disable function_parameter_count
+
   /// Write `[extendedArg0, extendedArg1, extendedArg2, instruction]` starting
   /// at `index`. This will modify both `self.instructions` and `self.instructionLines`.
-  internal func write(index: Int,
-                      extendedArg0: UInt8?,
-                      extendedArg1: UInt8?,
-                      extendedArg2: UInt8?,
-                      instruction: Instruction,
-                      line: SourceLine) {
+  internal mutating func write(index: Int,
+                               extendedArg0: UInt8?,
+                               extendedArg1: UInt8?,
+                               extendedArg2: UInt8?,
+                               instruction: Instruction,
+                               line: SourceLine) {
+    // swiftlint:enable function_parameter_count
     var index = index
 
     if let arg = extendedArg0 {
@@ -200,8 +203,18 @@ internal class OptimizationResult {
     }
 
     internal subscript(index: Int) -> CodeObject.Label {
-      get { return self.values[index] }
-      set { self.values[index] = newValue }
+      return self.values[index]
+    }
+
+    internal mutating func append(_ element: CodeObject.Label) {
+      self.values.append(element)
+    }
+
+    /// This method should be used only at the very end!
+    /// Normal code should just add new labels. It is possible that multiple
+    /// jumps use the same label (we do this in optimizer).
+    internal mutating func setNewTarget(index: Int, instructionIndex: Int) {
+      self.values[index].instructionIndex = instructionIndex
     }
   }
 }
