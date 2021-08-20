@@ -28,7 +28,10 @@ extension PeepholeOptimizer {
       return replacedInstructionIndex
     }
 
-    #warning("Other jump optimizations")
+    self.optimizeJumps(result: &result,
+                       instruction: jumpIfOrPop,
+                       arg: arg)
+
     return nil
   }
 

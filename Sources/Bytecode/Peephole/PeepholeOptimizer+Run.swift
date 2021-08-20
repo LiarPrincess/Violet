@@ -60,8 +60,11 @@ extension PeepholeOptimizer {
 
   // MARK: - Apply optimizations
 
+// swiftlint:disable function_body_length
+
   /// Modify `result` based on a single instruction.
   private func applyOptimizations(result: inout OptimizationResult) {
+    // swiftlint:enable function_body_length
     var instructionIndex: Int? = 0
 
     while let instruction = result.instructions.get(startIndex: instructionIndex) {
@@ -85,6 +88,21 @@ extension PeepholeOptimizer {
                                                 arg: arg) {
           instructionIndex = index
         }
+
+      case let .jumpAbsolute(labelIndex: arg),
+           // let .jumpforward,
+           let .popJumpIfFalse(labelIndex: arg),
+           let .popJumpIfTrue(labelIndex: arg),
+           let .setupLoop(loopEndLabelIndex: arg),
+           let .forIter(ifEmptyLabelIndex: arg),
+           let .continue(loopStartLabelIndex: arg),
+           let .setupExcept(firstExceptLabelIndex: arg),
+           let .setupFinally(finallyStartLabelIndex: arg),
+           let .setupWith(afterBodyLabelIndex: arg):
+           // let .setupAsyncWith:
+        self.optimizeJumps(result: &result,
+                           instruction: instruction,
+                           arg: arg)
 
       case .return:
         self.optimizeReturn(result: &result, ret: instruction)
