@@ -2,7 +2,7 @@ import VioletCore
 
 // MARK: - OptimizationResult
 
-internal class OptimizationResult {
+internal struct OptimizationResult {
 
   internal var instructions: Instructions
   internal var instructionLines: InstructionLines
@@ -19,13 +19,20 @@ internal class OptimizationResult {
     self.labels = Labels(values: labels)
   }
 
-  internal func asPeepholeOptimizerResult() -> PeepholeOptimizer.RunResult {
+  internal mutating func convertToPeepholeOptimizerResult() -> PeepholeOptimizer.RunResult {
     return PeepholeOptimizer.RunResult(
       instructions: self.instructions.values,
       instructionLines: self.instructionLines.values,
       constants: self.constants.values,
       labels: self.labels.values
     )
+  }
+
+  internal mutating func dropReferencesToAvoidCOW() {
+    self.instructions = Instructions(values: [])
+    self.instructionLines = InstructionLines(values: [])
+    self.constants = Constants(values: [])
+    self.labels = Labels(values: [])
   }
 
   // swiftlint:disable function_parameter_count
@@ -105,6 +112,13 @@ internal class OptimizationResult {
       return PeepholeInstruction(instructions: self.values, unalignedIndex: index)
     }
 
+    /// Set the whole space taken by instruciton to `nop.`
+    internal mutating func setToNop(instruction: PeepholeInstruction) {
+      let startIndex = instruction.startIndex
+      let endIndex = instruction.nextInstructionIndex ?? self.values.count
+      self.setToNop(startIndex: startIndex, endIndex: endIndex)
+    }
+
     /// Sets the instructions `startIndex..<endIndex` to `nop`.
     internal mutating func setToNop(startIndex: Int, endIndex: Int?) {
       let endIndex = endIndex ?? self.values.count
@@ -113,16 +127,6 @@ internal class OptimizationResult {
       for index in startIndex..<endIndex {
         self.values[index] = .nop
       }
-    }
-
-    internal mutating func append(_ element: Instruction) {
-      self.values.append(element)
-    }
-
-    /// This should be used at the very end (when we have applied all of the
-    /// optimizations) to trim the data.
-    internal mutating func removeLast(_ count: Int) {
-      self.values.removeLast(count)
     }
   }
 
@@ -145,16 +149,6 @@ internal class OptimizationResult {
     internal subscript(index: Int) -> SourceLine {
       get { return self.values[index] }
       set { self.values[index] = newValue }
-    }
-
-    internal mutating func append(_ element: SourceLine) {
-      self.values.append(element)
-    }
-
-    /// This should be used at the very end (when we have applied all of the
-    /// optimizations) to trim the data.
-    internal mutating func removeLast(_ count: Int) {
-      self.values.removeLast(count)
     }
   }
 
@@ -202,19 +196,15 @@ internal class OptimizationResult {
       return self.values.endIndex
     }
 
+    // We do not allow changing the labels!
+    // It is possible that multiple jumps are using the same label index
+    // (we do this in optimizer).
     internal subscript(index: Int) -> CodeObject.Label {
       return self.values[index]
     }
 
     internal mutating func append(_ element: CodeObject.Label) {
       self.values.append(element)
-    }
-
-    /// This method should be used only at the very end!
-    /// Normal code should just add new labels. It is possible that multiple
-    /// jumps use the same label (we do this in optimizer).
-    internal mutating func setNewTarget(index: Int, instructionIndex: Int) {
-      self.values[index].instructionIndex = instructionIndex
     }
   }
 }

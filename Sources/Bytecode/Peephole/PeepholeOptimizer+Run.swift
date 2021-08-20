@@ -8,10 +8,10 @@ import VioletCore
 extension PeepholeOptimizer {
 
   internal struct RunResult {
-    internal let instructions: [Instruction]
-    internal let instructionLines: [SourceLine]
-    internal let constants: [CodeObject.Constant]
-    internal let labels: [CodeObject.Label]
+    internal fileprivate(set) var instructions: [Instruction]
+    internal fileprivate(set) var instructionLines: [SourceLine]
+    internal fileprivate(set) var constants: [CodeObject.Constant]
+    internal fileprivate(set) var labels: [CodeObject.Label]
   }
 
   /// Optimizations are restricted to simple transformations occurring within a
@@ -25,14 +25,17 @@ extension PeepholeOptimizer {
   /// PyCode_Optimize(PyObject *code, PyObject* consts, PyObject *names,
   ///                 PyObject *lnotab_obj)
   internal func run() -> RunResult {
-    var result = OptimizationResult(
+    var optimizationResult = OptimizationResult(
       instructions: self.oldInstructions,
       instructionLines: self.oldInstructionLines,
       constants: self.oldConstants,
       labels: self.oldLabels
     )
 
-    self.applyOptimizations(result: &result)
+    self.applyOptimizations(result: &optimizationResult)
+
+    var result = optimizationResult.convertToPeepholeOptimizerResult()
+    optimizationResult.dropReferencesToAvoidCOW()
 
     let newInstructionIndices = self.rewriteInstructionsSkippingNop(
       instructions: &result.instructions,
@@ -52,7 +55,7 @@ extension PeepholeOptimizer {
       labels: result.labels
     )
 
-    return result.asPeepholeOptimizerResult()
+    return result
   }
 
   // MARK: - Apply optimizations
@@ -115,8 +118,8 @@ extension PeepholeOptimizer {
   }
 
   private func rewriteInstructionsSkippingNop(
-    instructions: inout OptimizationResult.Instructions,
-    instructionLines: inout OptimizationResult.InstructionLines
+    instructions: inout [Instruction],
+    instructionLines: inout [SourceLine]
   ) -> InstructionIndicesSkippingNop {
     assert(instructions.count == instructionLines.count)
 
@@ -149,7 +152,7 @@ extension PeepholeOptimizer {
   // MARK: - Retarget labels
 
   private func retargetLabels(
-    labels: inout OptimizationResult.Labels,
+    labels: inout [CodeObject.Label],
     to newIndices: InstructionIndicesSkippingNop
   ) {
     for labelIndex in 0..<labels.count {
@@ -157,7 +160,7 @@ extension PeepholeOptimizer {
       let target = label.instructionIndex
       let newTarget = newIndices[target]
 
-      labels.setNewTarget(index: labelIndex, instructionIndex: newTarget)
+      labels[labelIndex].instructionIndex = newTarget
     }
   }
 
@@ -166,9 +169,9 @@ extension PeepholeOptimizer {
   /// If there is any label that jumps past `instructions` -> append `nop`.
   /// Just so that we have such instruction
   private func addNopsToPreventOutOfBoundJumps(
-    instructions: inout OptimizationResult.Instructions,
-    instructionLines: inout OptimizationResult.InstructionLines,
-    labels: OptimizationResult.Labels
+    instructions: inout [Instruction],
+    instructionLines: inout [SourceLine],
+    labels: [CodeObject.Label]
   ) {
     var maxJumpTarget = -1
 
