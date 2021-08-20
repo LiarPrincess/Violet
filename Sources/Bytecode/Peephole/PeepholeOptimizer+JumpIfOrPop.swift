@@ -20,7 +20,7 @@ extension PeepholeOptimizer {
                                     jumpIfOrPop: PeepholeInstruction,
                                     arg: UInt8) -> Int? {
     let labelIndex = jumpIfOrPop.getArgument(instructionArg: arg)
-    if let replacedInstructionIndex = self.jumpIfOrPop_thenConditionalJump(
+    if let replacedInstructionIndex = self.simplifyJumpToConditionalJump(
       result: &result,
       jumpIfOrPop: jumpIfOrPop,
       labelIndex: labelIndex
@@ -32,14 +32,14 @@ extension PeepholeOptimizer {
     return nil
   }
 
-  private func jumpIfOrPop_thenConditionalJump(result: inout OptimizationResult,
-                                               jumpIfOrPop: PeepholeInstruction,
-                                               labelIndex: Int) -> Int? {
+  private func simplifyJumpToConditionalJump(result: inout OptimizationResult,
+                                             jumpIfOrPop: PeepholeInstruction,
+                                             labelIndex: Int) -> Int? {
     let label = result.labels[labelIndex]
     let targetIndex = label.instructionIndex
 
     guard let targetInstruction = result.instructions.get(startIndex: targetIndex),
-          let target = TargetJump(instruction: targetInstruction)else {
+          let target = TargetJump(instruction: targetInstruction) else {
       return nil
     }
 
@@ -159,26 +159,24 @@ extension PeepholeOptimizer {
       return nil
     }
 
-    // Reset everyting to nop
-    let oldStartIndex = oldInstruction.startIndex
-    result.instructions.setToNop(startIndex: oldStartIndex,
-                                 endIndex: oldInstruction.nextInstructionIndex)
-
-    let instructionArg = newLabelIndexSplit.instructionArg
-    let newInstructionWithArg = self.createInstruction(condition: newCondition,
-                                                       kind: newKind,
-                                                       argument: instructionArg)
+    let newInstructionArg = newLabelIndexSplit.instructionArg
+    let newInstruction = self.createInstruction(condition: newCondition,
+                                                kind: newKind,
+                                                argument: newInstructionArg)
 
     // Write the instrucion at the end of the 'nop' space.
-    // This is important because we may want to re-run new optimizations.
+    // This is important because we may want to re-run the optimizations on it.
+    let oldStartIndex = oldInstruction.startIndex
     let newStartIndex = oldStartIndex + oldInstructionCount - newInstructionCount
 
     let line = result.instructionLines[oldStartIndex]
+
+    result.instructions.setToNop(instruction: oldInstruction)
     result.write(index: newStartIndex,
                  extendedArg0: newLabelIndexSplit.extendedArg0,
                  extendedArg1: newLabelIndexSplit.extendedArg1,
                  extendedArg2: newLabelIndexSplit.extendedArg2,
-                 instruction: newInstructionWithArg,
+                 instruction: newInstruction,
                  line: line)
 
     return newStartIndex

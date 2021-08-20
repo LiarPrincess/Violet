@@ -477,15 +477,15 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
 
   func test_ifTrue_jumpIfTrueOrPop_notEnoughSpace_doesNothing() {
     let builder = createBuilder()
-    let label0 = builder.createLabel()
+    let smallLabel = builder.createLabel()
     add256Labels(builder: builder)
-    let label1 = builder.createLabel()
-    builder.appendJumpIfTrueOrPop(to: label0)
+    let bigLabel = builder.createLabel()
+    builder.appendJumpIfTrueOrPop(to: smallLabel)
     builder.appendLoadName("Snow White")
-    builder.setLabel(label0)
-    builder.appendJumpIfTrueOrPop(to: label1)
+    builder.setLabel(smallLabel)
+    builder.appendJumpIfTrueOrPop(to: bigLabel)
     builder.appendLoadName("Evil Queen")
-    builder.setLabel(label1)
+    builder.setLabel(bigLabel)
     builder.appendReturn()
 
     let code = builder.finalize()
@@ -494,12 +494,39 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
     XCTAssertNames(code, "Snow White", "Evil Queen")
     XCTAssertInstructions(
       code,
-      .jumpIfTrueOrPop(labelIndex: 0), // 0 - no space fro 'extendedArg'!
+      .jumpIfTrueOrPop(labelIndex: 0), // 0 - no space for 'extendedArg'!
       .loadName(nameIndex: 0), // 1
       .extendedArg(1), // 2
       .jumpIfTrueOrPop(labelIndex: 1), // 3
       .loadName(nameIndex: 1),  // 4
       .return // 5
+    )
+  }
+
+  func test_ifTrue_jumpIfTrueOrPop_tooMuchSpace_addNops() {
+    let builder = createBuilder()
+    let smallLabel = builder.createLabel()
+    add256Labels(builder: builder)
+    let bigLabel = builder.createLabel()
+    builder.appendJumpIfTrueOrPop(to: bigLabel)
+    builder.appendLoadName("Snow White")
+    builder.setLabel(bigLabel)
+    builder.appendJumpIfTrueOrPop(to: smallLabel)
+    builder.appendLoadName("Evil Queen")
+    builder.setLabel(smallLabel)
+    builder.appendReturn()
+
+    let code = builder.finalize()
+    // XCTAssertLabelTargets(code, 2, 4)
+    XCTAssertNoConstants(code)
+    XCTAssertNames(code, "Snow White", "Evil Queen")
+    XCTAssertInstructions(
+      code,
+      .jumpIfTrueOrPop(labelIndex: 0), // 0, label is 'smallLabel'
+      .loadName(nameIndex: 0), // 1
+      .jumpIfTrueOrPop(labelIndex: 0), // 2, label is 'smallLabel'
+      .loadName(nameIndex: 1),  // 3
+      .return // 4
     )
   }
 }

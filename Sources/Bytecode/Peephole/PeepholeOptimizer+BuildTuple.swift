@@ -24,9 +24,9 @@ extension PeepholeOptimizer {
       return
     }
 
-    self.buildTuple_thenUnpackSequence(result: &result,
-                                       buildTuple: buildTuple,
-                                       elementCount: elementCount)
+    self.nullifyFollowingUnpackSequence(result: &result,
+                                        buildTuple: buildTuple,
+                                        elementCount: elementCount)
   }
 
   // MARK: - Constant tuple
@@ -132,9 +132,9 @@ extension PeepholeOptimizer {
   // MARK: - Unpack sequence
 
   /// `buildTuple` and then `unpackSequence` -> why do we even build tuple?
-  private func buildTuple_thenUnpackSequence(result: inout OptimizationResult,
-                                             buildTuple: PeepholeInstruction,
-                                             elementCount: Int) {
+  private func nullifyFollowingUnpackSequence(result: inout OptimizationResult,
+                                              buildTuple: PeepholeInstruction,
+                                              elementCount: Int) {
     let nextIndex = buildTuple.nextInstructionIndex
     guard let unpackSequence = result.instructions.get(startIndex: nextIndex) else {
       return
