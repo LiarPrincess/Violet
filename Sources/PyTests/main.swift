@@ -3,7 +3,9 @@ import FileSystem
 import VioletCore
 import VioletObjects
 
+// swiftlint:disable force_unwrapping
 // swiftlint:disable let_var_whitespace
+// cspell:disable Verre
 
 let fileSystem = FileSystem.default
 
@@ -30,8 +32,7 @@ let rustTestDir = fileSystem.join(path: testDir, element: "RustPython")
 runner.runAllTests(
   from: rustTestDir,
   skipping: [
-    "code.py", // We do not support all properties
-    "extra_bool_eval.py" // Requires peephole optimizer
+    "code.py" // We do not support all properties
   ]
 )
 
@@ -43,7 +44,6 @@ let violetTestDir = fileSystem.join(path: testDir, element: "Violet")
 runner.runAllTests(
   from: violetTestDir,
   skipping: [
-    // cspell:disable-next Verre
     "Carlo_Verre_hack.py" // User can modify a builtin type if they try hard enough
   ]
 )
@@ -56,7 +56,6 @@ print("=== Summary ===")
 let result = runner.getResult()
 
 if result.failedTests.any {
-  // swiftlint:disable:next force_unwrapping
   let emoji = ["😬", "🤒", "😵", "😕", "😟", "☹️", "😭", "😞", "😓"].randomElement()!
   print("\(emoji) Failed tests:")
 
@@ -68,7 +67,6 @@ if result.failedTests.any {
     print("🦄 Ooo… Ooo?")
   }
 } else {
-  // swiftlint:disable:next force_unwrapping
   let emoji = ["😄", "😁", "😉", "😘", "🥰", "😍", "😇", "😋", "🥳"].randomElement()!
   print("\(emoji) All tests passed")
 }
