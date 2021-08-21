@@ -169,6 +169,7 @@ class CompileIfStmt: CompileTestCase {
 
   /// if True: big
   /// else: smol
+  ///
   /// But we don't have dead code elimination, so it will be different
   ///
   ///   3           0 LOAD_NAME                0 (big)
@@ -197,15 +198,13 @@ class CompileIfStmt: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(.true),
-        .popJumpIfFalse(target: 10),
-        .loadName(name: "big"),
-        .popTop,
-        .jumpAbsolute(target: 14),
-        .loadName(name: "smol"),
-        .popTop,
-        .loadConst(.none),
-        .return
+        .loadName(name: "big"), // 0
+        .popTop, // 2
+        .jumpAbsolute(target: 10), // 4
+        .loadName(name: "smol"), // 6
+        .popTop, // 8
+        .loadConst(.none), // 10
+        .return // 12
       ]
     )
   }

@@ -132,6 +132,10 @@ extension Instruction.Filled {
     return .loadConst(.code(codeObject))
   }
 
+  static func loadConst(tuple elements: CodeObject.Constant...) -> Instruction.Filled {
+    return .loadConst(.tuple(elements))
+  }
+
   static func loadConst(tuple elements: [String]) -> Instruction.Filled {
     let elements = elements.map { CodeObject.Constant.string($0) }
     return .loadConst(.tuple(elements))

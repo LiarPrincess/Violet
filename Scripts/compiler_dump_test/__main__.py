@@ -76,6 +76,8 @@ def print_expected(lines: List[str]):
             name = 'return'
         if name == 'jumpForward':
             name = 'jumpAbsolute'
+        if name == 'continueLoop':
+            name = 'continue'
 
         args = '' if arg_start_index == -1 else instruction[arg_start_index:]
         args = args.strip()
@@ -112,7 +114,7 @@ def print_expected(lines: List[str]):
             args = 'loopEndTarget: ' + args
         elif name == 'forIter':
             args = 'ifEmptyTarget: ' + args
-        elif name == '':
+        elif name == 'continue':
             args = 'loopStartTarget: ' + args
 
         elif name in ('buildTuple', 'buildList', 'buildSet', 'buildMap', 'buildConstKeyMap'):
@@ -217,7 +219,9 @@ def print_expected(lines: List[str]):
 
         if args:
             args = '(' + args + ')'
-        comma = '' if name == 'return' else ','
+
+        is_last = index == len(lines)
+        comma = '' if is_last else ','
         print(f'.{name}{args}{comma}')
 
 

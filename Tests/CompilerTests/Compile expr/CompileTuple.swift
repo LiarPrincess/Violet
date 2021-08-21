@@ -29,6 +29,9 @@ class CompileTuple: CompileTestCase {
   }
 
   /// ('ariel', True)
+  ///
+  ///  0 LOAD_CONST               0 (('ariel', True))
+  ///  2 RETURN_VALUE
   func test_constantsOnly() {
     let expr = self.tupleExpr(elements: [
       self.stringExpr(value: .literal("ariel")),
@@ -46,9 +49,7 @@ class CompileTuple: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(string: "ariel"),
-        .loadConst(.true),
-        .buildTuple(elementCount: 2),
+        .loadConst(tuple: .string("ariel"), .true),
         .return
       ]
     )

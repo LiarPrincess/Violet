@@ -312,8 +312,7 @@ class CompileFunctionDef: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(integer: 1),
-        .buildTuple(elementCount: 1), //  <-- we don't have constant propagation!
+        .loadConst(tuple: .integer(1)),
         .loadConst(codeObject: .any),
         .loadConst(string: "cook"),
         .makeFunction(flags: [.hasPositionalArgDefaults]),
@@ -442,8 +441,7 @@ class CompileFunctionDef: CompileTestCase {
       kind: .module,
       flags: [],
       instructions: [
-        .loadConst(integer: 1),
-        .buildTuple(elementCount: 1), //  <-- we don't have constant propagation!
+        .loadConst(tuple: .integer(1)),
         .loadConst(codeObject: .any),
         .loadConst(string: "cook"),
         .makeFunction(flags: [.hasPositionalArgDefaults]),

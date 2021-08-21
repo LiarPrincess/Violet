@@ -253,8 +253,7 @@ class CompileFor: CompileTestCase {
         .loadName(name: "spell"),
         .raiseVarargs(type: .exceptionOnly),
         .popBlock,
-        // will jump to: '.jumpAbsolute(target"6")'
-        .jumpAbsolute(target: 52),
+        .jumpAbsolute(target: 6),
         .dupTop,
         .loadName(name: "spell"),
         .compareOp(type: .exceptionMatch),
@@ -271,8 +270,7 @@ class CompileFor: CompileTestCase {
         .deleteName(name: "e"),
         .endFinally,
         .popExcept,
-        // will jump to: '.jumpAbsolute(target"6")'
-        .jumpAbsolute(target: 52),
+        .jumpAbsolute(target: 6),
         .endFinally,
         .jumpAbsolute(target: 6),
         .popBlock,

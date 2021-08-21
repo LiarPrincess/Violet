@@ -262,7 +262,7 @@ class CompileOperators: CompileTestCase {
       flags: [],
       instructions: [
         .loadName(name: "rapunzel"),
-        .jumpIfFalseOrPop(target: 6), // We don't have peephole optimizer
+        .popJumpIfFalse(target: 8),
         .loadName(name: "cassandra"),
         .jumpIfTrueOrPop(target: 10),
         .loadName(name: "eugene"),
@@ -324,7 +324,6 @@ class CompileOperators: CompileTestCase {
   }
 
   /// eugene < rapunzel < cassandra
-  /// additional_block <-- so that we don't get returns at the end
   ///
   ///  0 LOAD_NAME                0 (eugene)
   ///  2 LOAD_NAME                1 (rapunzel)
@@ -334,15 +333,10 @@ class CompileOperators: CompileTestCase {
   /// 10 JUMP_IF_FALSE_OR_POP    18
   /// 12 LOAD_NAME                2 (cassandra)
   /// 14 COMPARE_OP               0 (<)
-  /// 16 JUMP_FORWARD             4 (to 22)
+  /// 16 RETURN_VALUE
   /// 18 ROT_TWO
   /// 20 POP_TOP
-  /// 22 POP_TOP <-- unused result
-  ///
-  /// 24 LOAD_NAME                3 (additional_block)
-  /// 26 POP_TOP
-  /// 28 LOAD_CONST               0 (None)
-  /// 30 RETURN_VALUE
+  /// 22 RETURN_VALUE
   func test_compare_triple() {
     let left = self.identifierExpr(value: "eugene")
     let middle = self.identifierExpr(value: "rapunzel")
@@ -375,7 +369,7 @@ class CompileOperators: CompileTestCase {
         .jumpIfFalseOrPop(target: 18),
         .loadName(name: "cassandra"),
         .compareOp(type: .less),
-        .jumpAbsolute(target: 22),
+        .return,
         .rotTwo,
         .popTop,
         .return
@@ -384,9 +378,7 @@ class CompileOperators: CompileTestCase {
   }
 
   /// eugene < pascal < rapunzel < cassandra
-  /// additional_block
   ///
-
   ///  0 LOAD_NAME                0 (eugene)
   ///  2 LOAD_NAME                1 (pascal)
   ///  4 DUP_TOP
@@ -400,15 +392,10 @@ class CompileOperators: CompileTestCase {
   /// 20 JUMP_IF_FALSE_OR_POP    28
   /// 22 LOAD_NAME                3 (cassandra)
   /// 24 COMPARE_OP               0 (<)
-  /// 26 JUMP_FORWARD             4 (to 32)
+  /// 26 RETURN_VALUE
   /// 28 ROT_TWO
   /// 30 POP_TOP
-  /// 32 POP_TOP <-- unused result
-  ///
-  /// 34 LOAD_NAME                4 (additional_block)
-  /// 36 POP_TOP
-  /// 38 LOAD_CONST               0 (None)
-  /// 40 RETURN_VALUE
+  /// 32 RETURN_VALUE
   func test_compare_quad() {
     let element1 = self.identifierExpr(value: "eugene")
     let element2 = self.identifierExpr(value: "pascal")
@@ -448,7 +435,7 @@ class CompileOperators: CompileTestCase {
         .jumpIfFalseOrPop(target: 28),
         .loadName(name: "cassandra"),
         .compareOp(type: .less),
-        .jumpAbsolute(target: 32),
+        .return,
         .rotTwo,
         .popTop,
         .return
