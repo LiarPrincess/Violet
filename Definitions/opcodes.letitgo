@@ -14,6 +14,8 @@ and labels properties of 'CodeObject'.
 @alias NameIndex = UInt8
 @alias ConstantIndex = UInt8
 @alias VariableIndex = UInt8
+@alias CellIndex = UInt8
+@alias FreeIndex = UInt8
 @alias CellOrFreeIndex = UInt8
 @alias RelativeStackIndex = UInt8
 @alias Item = UInt8
@@ -369,17 +371,33 @@ and labels properties of 'CodeObject'.
   -- Deletes local `names[nameIndex]`.
   | DeleteFast(VariableIndex variableIndex)
 
-  -- Loads the `cell` contained in slot `index` of the `cell` and `free` variable storage.
+  -- Loads the `cell` contained in slot `index` of the `cell` variable storage.
   -- Pushes a reference to the object the `cell` contains on the stack.
-  | LoadCellOrFree(CellOrFreeIndex cellOrFreeIndex)
-  -- Stores `TOS` into the `cell` contained in slot `index` of the `cell` and `free` variable storage.
-  | StoreCellOrFree(CellOrFreeIndex cellOrFreeIndex)
-  -- Empties the `cell` contained in slot `index` of the `cell` and `free` variable storage.
+  | LoadCell(CellIndex cellIndex)
+  -- Stores `TOS` into the `cell` contained in slot `index` of the `cell` variable storage.
+  | StoreCell(CellIndex cellIndex)
+  -- Empties the `cell` contained in slot `index` of the `cell` variable storage.
   -- Used by the `del` statement.
-  | DeleteCellOrFree(CellOrFreeIndex cellOrFreeIndex)
+  | DeleteCell(CellIndex cellIndex)
   -- Much like `LoadCellOrFree` but first checks the locals dictionary before consulting the `cell`.
   -- This is used for loading free variables in `class` bodies.
-  | LoadClassCell(CellOrFreeIndex cellOrFreeIndex)
+  | LoadClassCell(CellIndex cellIndex)
+
+  -- Loads the `cell` contained in slot `index` of the `free` variable storage.
+  -- Pushes a reference to the object the `cell` contains on the stack.
+  | LoadFree(FreeIndex freeIndex)
+  -- Stores `TOS` into the `cell` contained in slot `index` of the `free` variable storage.
+  | StoreFree(FreeIndex freeIndex)
+  -- Empties the `cell` contained in slot `index` of the `free` variable storage.
+  -- Used by the `del` statement.
+  | DeleteFree(FreeIndex freeIndex)
+
+  -- Pushes a reference to the cell contained in slot `index`
+  -- of the `cell` or `free` variable storage.
+  --
+  -- If `index < cellVars.count`: name of the variable is `cellVars[index]`.
+  -- otherwise: name is `freeVars[index - cellVars.count]`.
+  | LoadClosure(CellOrFreeIndex cellOrFreeIndex)
 
 {- -------- -}
 {- Function -}
@@ -635,13 +653,6 @@ and labels properties of 'CodeObject'.
   -- Removes one block from the block stack.
   -- Per frame, there is a stack of blocks, denoting nested loops, `try` statements, and such.
   | PopBlock
-
-  -- Pushes a reference to the cell contained in slot `index`
-  -- of the `cell` or `free` variable storage.
-  --
-  -- If `index < cellVars.count`: name of the variable is `cellVars[index]`.
-  -- otherwise: name is `freeVars[index - cellVars.count]`.
-  | LoadClosure(CellOrFreeIndex cellOrFreeIndex)
 
   -- Pushes a slice object on the stack.
   | BuildSlice(SliceArg type)

@@ -114,6 +114,7 @@ class BytecodeFileVisitor: SourceFileVisitor {
     return result
   }
 
+  // swiftlint:disable:next function_body_length
   private func createFilledInstructionProperty(
     case: Enumeration.Case,
     property: Enumeration.CaseProperty,
@@ -146,6 +147,10 @@ class BytecodeFileVisitor: SourceFileVisitor {
     case "NameIndex":
       return create(label: self.removeIndexWord(label), type: "String")
     case "VariableIndex":
+      return create(label: self.removeIndexWord(label), type: "MangledName")
+    case "CellIndex":
+      return create(label: self.removeIndexWord(label), type: "MangledName")
+    case "FreeIndex":
       return create(label: self.removeIndexWord(label), type: "MangledName")
     case "CellOrFreeIndex":
       return create(label: self.removeIndexWord(label), type: "MangledName")
