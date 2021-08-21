@@ -6,10 +6,11 @@ import VioletCore
 // Python -> peephole.c
 
 // This is almost 1:1 rewrite of CPython code.
-// The thing is, that part of the Python semantic is implemented inside peephole
-// optimizer. So, we have to do exactly the same things as them.
+// The thing is, that part of the Python semantic is implemented inside of the
+// peephole optimizer (for example: avoid evaluating '__bool__' more times than needed).
+// So, we have to do exactly the same things as them.
 
-internal class PeepholeOptimizer {
+internal struct PeepholeOptimizer {
 
   /// `Instructions` before any optimizations were applied.
   internal let oldInstructions: [Instruction]
@@ -24,8 +25,7 @@ internal class PeepholeOptimizer {
   /// `self.oldLabels`.
   ///
   /// `old` means that those information were calculated before any optimizations
-  /// were applied. This should be OK, because none of our optimizations add new
-  /// jumps.
+  /// were applied.
   internal let oldJumpTable: PeepholeJumpTable
 
   internal init(instructions: [Instruction],
@@ -94,7 +94,7 @@ internal class PeepholeOptimizer {
 
   // MARK: - Apply optimizations
 
-// swiftlint:disable function_body_length
+  // swiftlint:disable function_body_length
 
   /// For-each on instructions and apply optimizations.
   private func applyOptimizations(result: inout OptimizationResult) {
@@ -133,7 +133,7 @@ internal class PeepholeOptimizer {
            let .setupExcept(firstExceptLabelIndex: arg),
            let .setupFinally(finallyStartLabelIndex: arg),
            let .setupWith(afterBodyLabelIndex: arg):
-           // let .setupAsyncWith:
+        // let .setupAsyncWith:
         self.optimizeJumps(result: &result,
                            instruction: instruction,
                            arg: arg)
@@ -196,9 +196,28 @@ internal class PeepholeOptimizer {
 
     instructions.removeLast(nopCount)
     instructionLines.removeLast(nopCount)
+
+    self.removeTrailingExtendedArgs(instructions: &instructions,
+                                    instructionLines: &instructionLines)
+
     assert(instructions.count == instructionLines.count)
 
     return newIndices
+  }
+
+  private func removeTrailingExtendedArgs(
+    instructions: inout [Instruction],
+    instructionLines: inout [SourceLine]
+  ) {
+    while let last = instructions.last {
+      switch last {
+      case .extendedArg:
+        instructions.removeLast()
+        instructionLines.removeLast()
+      default:
+        return
+      }
+    }
   }
 
   // MARK: - Retarget labels
