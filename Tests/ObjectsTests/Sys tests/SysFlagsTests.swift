@@ -15,7 +15,7 @@ class SysFlagsTests: XCTestCase {
     args.warnings = [.always, .default, .error]
     env.warnings = [.ignore, .module, .once]
 
-    let flags = SysFlags(arguments: args, environment: env)
+    let flags = Sys.Flags(arguments: args, environment: env)
 
     XCTAssertEqual(flags.warnings, [
       .ignore, .module, .once, .always, .default, .error
@@ -30,7 +30,7 @@ class SysFlagsTests: XCTestCase {
     args.warnings = [.always, .default, .error]
     env.warnings = [.ignore, .module, .once]
 
-    let flags = SysFlags(arguments: args, environment: env)
+    let flags = Sys.Flags(arguments: args, environment: env)
 
     XCTAssertEqual(flags.warnings, [
       .always, .default, .error
@@ -46,7 +46,7 @@ class SysFlagsTests: XCTestCase {
 
       args.bytesWarning = value
 
-      let flags = SysFlags(arguments: args, environment: env)
+      let flags = Sys.Flags(arguments: args, environment: env)
       XCTAssertEqual(flags.bytesWarning, value)
     }
   }
@@ -64,7 +64,7 @@ class SysFlagsTests: XCTestCase {
       args.optimize = .none
       env.optimize = value
 
-      let flags = SysFlags(arguments: args, environment: env)
+      let flags = Sys.Flags(arguments: args, environment: env)
       XCTAssertEqual(flags.optimize, value)
     }
   }
@@ -80,7 +80,7 @@ class SysFlagsTests: XCTestCase {
       args.optimize = .O
       env.optimize = value
 
-      let flags = SysFlags(arguments: args, environment: env)
+      let flags = Sys.Flags(arguments: args, environment: env)
       XCTAssertEqual(flags.optimize, .O)
     }
   }
@@ -93,7 +93,7 @@ class SysFlagsTests: XCTestCase {
     args.optimize = .O
     env.optimize = .OO
 
-    let flags = SysFlags(arguments: args, environment: env)
+    let flags = Sys.Flags(arguments: args, environment: env)
     XCTAssertEqual(flags.optimize, .OO)
   }
 
@@ -108,7 +108,7 @@ class SysFlagsTests: XCTestCase {
       args.optimize = .OO
       env.optimize = value
 
-      let flags = SysFlags(arguments: args, environment: env)
+      let flags = Sys.Flags(arguments: args, environment: env)
       XCTAssertEqual(flags.optimize, .OO)
     }
   }
@@ -123,7 +123,7 @@ class SysFlagsTests: XCTestCase {
       args.ignoreEnvironment = true
       args.optimize = value
 
-      let flags = SysFlags(arguments: args, environment: env)
+      let flags = Sys.Flags(arguments: args, environment: env)
       XCTAssertEqual(flags.optimize, value)
     }
   }
@@ -136,7 +136,7 @@ class SysFlagsTests: XCTestCase {
 
     args.inspectInteractively = true
 
-    let flags = SysFlags(arguments: args, environment: env)
+    let flags = Sys.Flags(arguments: args, environment: env)
     XCTAssertTrue(flags.inspect)
   }
 
@@ -145,7 +145,7 @@ class SysFlagsTests: XCTestCase {
     let env = Environment(from: [:])
 
     args.ignoreEnvironment = true
-    let flags = SysFlags(arguments: args, environment: env)
+    let flags = Sys.Flags(arguments: args, environment: env)
 
     XCTAssertTrue(flags.ignoreEnvironment)
   }
@@ -155,7 +155,7 @@ class SysFlagsTests: XCTestCase {
     let env = Environment(from: [:])
 
     args.isolated = true
-    let flags = SysFlags(arguments: args, environment: env)
+    let flags = Sys.Flags(arguments: args, environment: env)
 
     XCTAssertTrue(flags.isolated)
   }
