@@ -156,7 +156,8 @@ extension PeepholeOptimizer {
     let indexAfterUnpack = unpackSequence.nextInstructionIndex
 
     switch elementCount {
-    case 0, 1:
+    case 0,
+         1:
       // push item0
       //   [possible extended]
       // builtTuple 1

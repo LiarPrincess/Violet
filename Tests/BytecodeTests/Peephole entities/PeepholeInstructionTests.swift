@@ -211,7 +211,7 @@ class PeepholeInstructionTests: XCTestCase {
                          value: .loadConst(index: 0xf0))
     XCTAssertExtendedArg(instruction,
                          instructionArg: 0xf0,
-                         valueWithInstructionArg: 0xfafbf0,
+                         valueWithInstructionArg: 0xfa_fbf0,
                          count: 2)
     XCTAssertIndices(instruction,
                      previousIndex: 0,
@@ -239,7 +239,7 @@ class PeepholeInstructionTests: XCTestCase {
                          value: .loadConst(index: 0xf0))
     XCTAssertExtendedArg(instruction,
                          instructionArg: 0xf0,
-                         valueWithInstructionArg: 0xfafbfcf0,
+                         valueWithInstructionArg: 0xfafb_fcf0,
                          count: 3)
     XCTAssertIndices(instruction,
                      previousIndex: 0,
@@ -344,7 +344,7 @@ class PeepholeInstructionTests: XCTestCase {
                          value: .loadConst(index: 0xf0))
     XCTAssertExtendedArg(instruction,
                          instructionArg: 0xf0,
-                         valueWithInstructionArg: 0xfafbf0,
+                         valueWithInstructionArg: 0xfa_fbf0,
                          count: 2)
     XCTAssertIndices(instruction,
                      previousIndex: 0,
@@ -371,7 +371,7 @@ class PeepholeInstructionTests: XCTestCase {
                          value: .loadConst(index: 0xf0))
     XCTAssertExtendedArg(instruction,
                          instructionArg: 0xf0,
-                         valueWithInstructionArg: 0xfafbf0,
+                         valueWithInstructionArg: 0xfa_fbf0,
                          count: 2)
     XCTAssertIndices(instruction,
                      previousIndex: 0,
@@ -398,7 +398,7 @@ class PeepholeInstructionTests: XCTestCase {
                          value: .loadConst(index: 0xf0))
     XCTAssertExtendedArg(instruction,
                          instructionArg: 0xf0,
-                         valueWithInstructionArg: 0xfafbf0,
+                         valueWithInstructionArg: 0xfa_fbf0,
                          count: 2)
     XCTAssertIndices(instruction,
                      previousIndex: 0,

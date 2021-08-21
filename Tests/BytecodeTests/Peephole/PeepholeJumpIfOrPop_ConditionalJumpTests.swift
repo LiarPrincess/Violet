@@ -43,7 +43,7 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
       .jumpIfTrueOrPop(labelIndex: 1), // 0 (new label)
       .loadName(nameIndex: 0), // 1
       .jumpIfTrueOrPop(labelIndex: 1), // 2
-      .loadName(nameIndex: 1),  // 3
+      .loadName(nameIndex: 1), // 3
       .return // 4
     )
   }
@@ -69,7 +69,7 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
       .jumpIfFalseOrPop(labelIndex: 1), // 0 (new label)
       .loadName(nameIndex: 0), // 1
       .jumpIfFalseOrPop(labelIndex: 1), // 2
-      .loadName(nameIndex: 1),  // 3
+      .loadName(nameIndex: 1), // 3
       .return // 4
     )
   }
@@ -110,7 +110,7 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
       .popJumpIfTrue(labelIndex: 1), // 0
       .loadName(nameIndex: 0), // 1
       .popJumpIfTrue(labelIndex: 1), // 2
-      .loadName(nameIndex: 1),  // 3
+      .loadName(nameIndex: 1), // 3
       .return // 4
     )
   }
@@ -136,7 +136,7 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
       .popJumpIfFalse(labelIndex: 1), // 0
       .loadName(nameIndex: 0), // 1
       .popJumpIfFalse(labelIndex: 1), // 2
-      .loadName(nameIndex: 1),  // 3
+      .loadName(nameIndex: 1), // 3
       .return // 4
     )
   }
@@ -177,7 +177,7 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
       .popJumpIfTrue(labelIndex: 2), // 0 (new label)
       .loadName(nameIndex: 0), // 1
       .popJumpIfFalse(labelIndex: 1), // 2
-      .loadName(nameIndex: 1),  // 3
+      .loadName(nameIndex: 1), // 3
       .return // 4
     )
   }
@@ -203,7 +203,7 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
       .popJumpIfFalse(labelIndex: 2), // 0 (new label)
       .loadName(nameIndex: 0), // 1
       .popJumpIfTrue(labelIndex: 1), // 2
-      .loadName(nameIndex: 1),  // 3
+      .loadName(nameIndex: 1), // 3
       .return // 4
     )
   }
@@ -244,7 +244,7 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
       .popJumpIfTrue(labelIndex: 2), // 0 (new label)
       .loadName(nameIndex: 0), // 1
       .popJumpIfFalse(labelIndex: 1), // 2
-      .loadName(nameIndex: 1),  // 3
+      .loadName(nameIndex: 1), // 3
       .return // 4
     )
   }
@@ -270,7 +270,7 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
       .popJumpIfFalse(labelIndex: 2), // 0 (new label)
       .loadName(nameIndex: 0), // 1
       .popJumpIfTrue(labelIndex: 1), // 2
-      .loadName(nameIndex: 1),  // 3
+      .loadName(nameIndex: 1), // 3
       .return // 4
     )
   }
@@ -319,9 +319,9 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
       .jumpIfTrueOrPop(labelIndex: 2), // 0
       .loadName(nameIndex: 0), // 1
       .jumpIfTrueOrPop(labelIndex: 2), // 2
-      .loadName(nameIndex: 1),  // 3
+      .loadName(nameIndex: 1), // 3
       .jumpIfTrueOrPop(labelIndex: 2), // 4
-      .loadName(nameIndex: 2),  // 5
+      .loadName(nameIndex: 2), // 5
       .return // 6
     )
   }
@@ -368,9 +368,9 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
       .popJumpIfTrue(labelIndex: 3), // 0
       .loadName(nameIndex: 0), // 1
       .popJumpIfTrue(labelIndex: 4), // 2
-      .loadName(nameIndex: 1),  // 3
+      .loadName(nameIndex: 1), // 3
       .popJumpIfFalse(labelIndex: 2), // 4
-      .loadName(nameIndex: 2),  // 5
+      .loadName(nameIndex: 2), // 5
       .return // 6
     )
   }
@@ -417,9 +417,9 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
       .popJumpIfTrue(labelIndex: 3), // 0
       .loadName(nameIndex: 0), // 1
       .popJumpIfFalse(labelIndex: 4), // 2
-      .loadName(nameIndex: 1),  // 3
+      .loadName(nameIndex: 1), // 3
       .popJumpIfTrue(labelIndex: 2), // 4
-      .loadName(nameIndex: 2),  // 5
+      .loadName(nameIndex: 2), // 5
       .return // 6
     )
   }
@@ -466,9 +466,9 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
       .popJumpIfTrue(labelIndex: 3), // 0 (new label)
       .loadName(nameIndex: 0), // 1
       .popJumpIfFalse(labelIndex: 2), // 2
-      .loadName(nameIndex: 1),  // 3
+      .loadName(nameIndex: 1), // 3
       .popJumpIfFalse(labelIndex: 2), // 4
-      .loadName(nameIndex: 2),  // 5
+      .loadName(nameIndex: 2), // 5
       .return // 6
     )
   }
@@ -498,7 +498,7 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
       .loadName(nameIndex: 0), // 1
       .extendedArg(1), // 2
       .jumpIfTrueOrPop(labelIndex: 1), // 3
-      .loadName(nameIndex: 1),  // 4
+      .loadName(nameIndex: 1), // 4
       .return // 5
     )
   }
@@ -525,7 +525,7 @@ class PeepholeJumpIfOrPopConditionalJumpTests: XCTestCase {
       .jumpIfTrueOrPop(labelIndex: 0), // 0, label is 'smallLabel'
       .loadName(nameIndex: 0), // 1
       .jumpIfTrueOrPop(labelIndex: 0), // 2, label is 'smallLabel'
-      .loadName(nameIndex: 1),  // 3
+      .loadName(nameIndex: 1), // 3
       .return // 4
     )
   }

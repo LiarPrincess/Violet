@@ -76,7 +76,7 @@ extension PeepholeOptimizer {
 
     switch instruction.value {
     case .jumpAbsolute: newInstruction = .jumpAbsolute(labelIndex: arg)
-    // case .jumpforward:
+    // case .jumpForward:
     case .jumpIfTrueOrPop: newInstruction = .jumpIfTrueOrPop(labelIndex: arg)
     case .jumpIfFalseOrPop: newInstruction = .jumpIfFalseOrPop(labelIndex: arg)
     case .popJumpIfFalse: newInstruction = .popJumpIfFalse(labelIndex: arg)

@@ -67,7 +67,7 @@ extension PeepholeOptimizer {
 
   private func isTrue(constant: CodeObject.Constant) -> Bool {
     switch constant {
-    case .`true`,
+    case .true,
          .ellipsis:
       return true
 

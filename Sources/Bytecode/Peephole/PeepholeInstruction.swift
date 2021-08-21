@@ -10,7 +10,7 @@ internal struct PeepholeInstruction {
 
   /// We don't know the current instruction, so we don't have the full `arg` value.
   /// Use `getArg(instructionArg:)` to get proper argument.
-  fileprivate let argWithoutInstructionArg: Int
+  private let argWithoutInstructionArg: Int
 
   /// Number of `extendedArg` before `self.value`.
   internal let extendedArgCount: Int

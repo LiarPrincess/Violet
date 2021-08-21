@@ -167,7 +167,7 @@ extension PeepholeOptimizer {
                                                 kind: newKind,
                                                 argument: newInstructionArg)
 
-    // Write the instrucion at the end of the 'nop' space.
+    // Write the instruction at the end of the 'nop' space.
     // This is important because we may want to re-run the optimizations on it.
     let oldStartIndex = oldInstruction.startIndex
     let newStartIndex = oldStartIndex + oldInstructionCount - newInstructionCount

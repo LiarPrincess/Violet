@@ -112,7 +112,7 @@ internal struct OptimizationResult {
       return PeepholeInstruction(instructions: self.values, unalignedIndex: index)
     }
 
-    /// Set the whole space taken by instruciton to `nop.`
+    /// Set the whole space taken by instruction to `nop.`
     internal mutating func setToNop(instruction: PeepholeInstruction) {
       let startIndex = instruction.startIndex
       let endIndex = instruction.nextInstructionIndex ?? self.values.count

@@ -35,7 +35,7 @@ extension Instruction {
     return
       extendedArg <= 0xff ? 1 :
       extendedArg <= 0xffff ? 2 :
-      extendedArg <= 0xffffff ? 3 :
+      extendedArg <= 0xff_ffff ? 3 :
       4
   }
 
