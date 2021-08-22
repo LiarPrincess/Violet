@@ -98,8 +98,8 @@ class CodeObjectDescriptionTests: XCTestCase {
        1    0 nop
        2    2 loadName(name: Olaf)
        3    4 storeFast(variable: _Frozen__Elsa)
-       4    6 deleteCellOrFree(cellOrFree: _Frozen__Anna)
-       5    8 loadCellOrFree(cellOrFree: _Frozen__Kristoff)
+       4    6 deleteFree(free: _Frozen__Anna)
+       5    8 loadCell(cell: _Frozen__Kristoff)
        6   10 jumpAbsolute(label: Label(instructionIndex: 1, byteOffset: 2))
     """)
   }

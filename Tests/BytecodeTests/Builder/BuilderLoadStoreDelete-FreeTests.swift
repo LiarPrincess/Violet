@@ -23,7 +23,7 @@ class BuilderLoadStoreDeleteFreeTests: XCTestCase {
     builder.appendStoreFree(name)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .storeCellOrFree(cellOrFreeIndex: 0))
+    XCTAssertInstructions(code, .storeFree(freeIndex: 0))
   }
 
   func test_appendStoreCell_mangled_isReused() {
@@ -35,8 +35,8 @@ class BuilderLoadStoreDeleteFreeTests: XCTestCase {
 
     let code = builder.finalize()
     XCTAssertInstructions(code,
-                          .storeCellOrFree(cellOrFreeIndex: 0),
-                          .storeCellOrFree(cellOrFreeIndex: 0))
+                          .storeFree(freeIndex: 0),
+                          .storeFree(freeIndex: 0))
   }
 
   // MARK: - Load
@@ -48,7 +48,7 @@ class BuilderLoadStoreDeleteFreeTests: XCTestCase {
     builder.appendLoadFree(name)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .loadCellOrFree(cellOrFreeIndex: 0))
+    XCTAssertInstructions(code, .loadFree(freeIndex: 0))
   }
 
   func test_appendLoadCell_mangled_isReused() {
@@ -60,8 +60,8 @@ class BuilderLoadStoreDeleteFreeTests: XCTestCase {
 
     let code = builder.finalize()
     XCTAssertInstructions(code,
-                          .loadCellOrFree(cellOrFreeIndex: 0),
-                          .loadCellOrFree(cellOrFreeIndex: 0))
+                          .loadFree(freeIndex: 0),
+                          .loadFree(freeIndex: 0))
   }
 
   // MARK: - DeleteName
@@ -73,7 +73,7 @@ class BuilderLoadStoreDeleteFreeTests: XCTestCase {
     builder.appendDeleteFree(name)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .deleteCellOrFree(cellOrFreeIndex: 0))
+    XCTAssertInstructions(code, .deleteFree(freeIndex: 0))
   }
 
   func test_appendDeleteCell_mangled_isReused() {
@@ -85,7 +85,7 @@ class BuilderLoadStoreDeleteFreeTests: XCTestCase {
 
     let code = builder.finalize()
     XCTAssertInstructions(code,
-                          .deleteCellOrFree(cellOrFreeIndex: 0),
-                          .deleteCellOrFree(cellOrFreeIndex: 0))
+                          .deleteFree(freeIndex: 0),
+                          .deleteFree(freeIndex: 0))
   }
 }

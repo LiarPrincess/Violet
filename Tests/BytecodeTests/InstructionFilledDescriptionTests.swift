@@ -344,22 +344,37 @@ class InstructionFilledDescriptionTests: XCTestCase {
     )
   }
 
-  func test_storeLoadDelete_cellOrFree() {
+  func test_storeLoadDelete_cell() {
     XCTAssertDescription(
-      .loadCellOrFree(cellOrFree: _Frozen__Elsa),
-      "loadCellOrFree(cellOrFree: _Frozen__Elsa)"
+      .loadCell(cell: _Frozen__Elsa),
+      "loadCell(cell: _Frozen__Elsa)"
     )
     XCTAssertDescription(
-      .storeCellOrFree(cellOrFree: _Frozen__Elsa),
-      "storeCellOrFree(cellOrFree: _Frozen__Elsa)"
+      .storeCell(cell: _Frozen__Elsa),
+      "storeCell(cell: _Frozen__Elsa)"
     )
     XCTAssertDescription(
-      .deleteCellOrFree(cellOrFree: _Frozen__Elsa),
-      "deleteCellOrFree(cellOrFree: _Frozen__Elsa)"
+      .deleteCell(cell: _Frozen__Elsa),
+      "deleteCell(cell: _Frozen__Elsa)"
     )
     XCTAssertDescription(
-      .loadClassCell(cellOrFree: _Frozen__Elsa),
-      "loadClassCell(cellOrFree: _Frozen__Elsa)"
+      .loadClassCell(cell: _Frozen__Elsa),
+      "loadClassCell(cell: _Frozen__Elsa)"
+    )
+  }
+
+  func test_storeLoadDelete_free() {
+    XCTAssertDescription(
+      .loadFree(free: _Frozen__Elsa),
+      "loadFree(free: _Frozen__Elsa)"
+    )
+    XCTAssertDescription(
+      .storeFree(free: _Frozen__Elsa),
+      "storeFree(free: _Frozen__Elsa)"
+    )
+    XCTAssertDescription(
+      .deleteFree(free: _Frozen__Elsa),
+      "deleteFree(free: _Frozen__Elsa)"
     )
   }
 

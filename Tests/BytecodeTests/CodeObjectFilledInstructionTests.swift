@@ -362,9 +362,9 @@ class CodeObjectFilledInstructionTests: XCTestCase {
 
     let code = builder.finalize()
     XCTAssertFilledInstructions(code,
-                                .loadCellOrFree(cellOrFree: _Mermaid__Ariel),
-                                .storeCellOrFree(cellOrFree: _Mermaid__Ariel),
-                                .deleteCellOrFree(cellOrFree: _Mermaid__Ariel))
+                                .loadFree(free: _Mermaid__Ariel),
+                                .storeFree(free: _Mermaid__Ariel),
+                                .deleteFree(free: _Mermaid__Ariel))
   }
 
   func test_storeLoadDelete_cell() {
@@ -376,10 +376,10 @@ class CodeObjectFilledInstructionTests: XCTestCase {
 
     let code = builder.finalize()
     XCTAssertFilledInstructions(code,
-                                .loadCellOrFree(cellOrFree: _Mermaid__Ariel),
-                                .storeCellOrFree(cellOrFree: _Mermaid__Ariel),
-                                .deleteCellOrFree(cellOrFree: _Mermaid__Ariel),
-                                .loadClassCell(cellOrFree: _Mermaid__Ariel))
+                                .loadCell(cell: _Mermaid__Ariel),
+                                .storeCell(cell: _Mermaid__Ariel),
+                                .deleteCell(cell: _Mermaid__Ariel),
+                                .loadClassCell(cell: _Mermaid__Ariel))
   }
 
   // MARK: - Function

@@ -294,25 +294,39 @@ class InstructionDescriptionTests: XCTestCase {
     )
   }
 
-  func test_storeLoadDelete_cellOrFree() {
+  func test_storeLoadDelete_cell() {
     XCTAssertDescription(
-      .loadCellOrFree(cellOrFreeIndex: 42),
-      "loadCellOrFree(cellOrFreeIndex: 42)"
+      .loadCell(cellIndex: 42),
+      "loadCell(cellIndex: 42)"
     )
     XCTAssertDescription(
-      .storeCellOrFree(cellOrFreeIndex: 42),
-      "storeCellOrFree(cellOrFreeIndex: 42)"
+      .storeCell(cellIndex: 42),
+      "storeCell(cellIndex: 42)"
     )
     XCTAssertDescription(
-      .deleteCellOrFree(cellOrFreeIndex: 42),
-      "deleteCellOrFree(cellOrFreeIndex: 42)"
+      .deleteCell(cellIndex: 42),
+      "deleteCell(cellIndex: 42)"
     )
     XCTAssertDescription(
-      .loadClassCell(cellOrFreeIndex: 42),
-      "loadClassCell(cellOrFreeIndex: 42)"
+      .loadClassCell(cellIndex: 42),
+      "loadClassCell(cellIndex: 42)"
     )
   }
 
+  func test_storeLoadDelete_free() {
+    XCTAssertDescription(
+      .loadFree(freeIndex: 42),
+      "loadFree(freeIndex: 42)"
+    )
+    XCTAssertDescription(
+      .storeFree(freeIndex: 42),
+      "storeFree(freeIndex: 42)"
+    )
+    XCTAssertDescription(
+      .deleteFree(freeIndex: 42),
+      "deleteFree(freeIndex: 42)"
+    )
+  }
   // MARK: - Function
 
   func test_function() {

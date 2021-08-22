@@ -23,7 +23,7 @@ class BuilderLoadStoreDeleteCellTests: XCTestCase {
     builder.appendStoreCell(name)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .storeCellOrFree(cellOrFreeIndex: 0))
+    XCTAssertInstructions(code, .storeCell(cellIndex: 0))
   }
 
   func test_appendStoreCell_mangled_isReused() {
@@ -35,8 +35,8 @@ class BuilderLoadStoreDeleteCellTests: XCTestCase {
 
     let code = builder.finalize()
     XCTAssertInstructions(code,
-                          .storeCellOrFree(cellOrFreeIndex: 0),
-                          .storeCellOrFree(cellOrFreeIndex: 0))
+                          .storeCell(cellIndex: 0),
+                          .storeCell(cellIndex: 0))
   }
 
   // MARK: - Load
@@ -48,7 +48,7 @@ class BuilderLoadStoreDeleteCellTests: XCTestCase {
     builder.appendLoadCell(name)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .loadCellOrFree(cellOrFreeIndex: 0))
+    XCTAssertInstructions(code, .loadCell(cellIndex: 0))
   }
 
   func test_appendLoadCell_mangled_isReused() {
@@ -60,8 +60,8 @@ class BuilderLoadStoreDeleteCellTests: XCTestCase {
 
     let code = builder.finalize()
     XCTAssertInstructions(code,
-                          .loadCellOrFree(cellOrFreeIndex: 0),
-                          .loadCellOrFree(cellOrFreeIndex: 0))
+                          .loadCell(cellIndex: 0),
+                          .loadCell(cellIndex: 0))
   }
 
   // MARK: - Load - class cell
@@ -73,7 +73,7 @@ class BuilderLoadStoreDeleteCellTests: XCTestCase {
     builder.appendLoadClassCell(name)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .loadClassCell(cellOrFreeIndex: 0))
+    XCTAssertInstructions(code, .loadClassCell(cellIndex: 0))
   }
 
   func test_appendLoadClassCell_mangled_isReused() {
@@ -85,8 +85,8 @@ class BuilderLoadStoreDeleteCellTests: XCTestCase {
 
     let code = builder.finalize()
     XCTAssertInstructions(code,
-                          .loadClassCell(cellOrFreeIndex: 0),
-                          .loadClassCell(cellOrFreeIndex: 0))
+                          .loadClassCell(cellIndex: 0),
+                          .loadClassCell(cellIndex: 0))
   }
 
   // MARK: - DeleteName
@@ -98,7 +98,7 @@ class BuilderLoadStoreDeleteCellTests: XCTestCase {
     builder.appendDeleteCell(name)
 
     let code = builder.finalize()
-    XCTAssertInstructions(code, .deleteCellOrFree(cellOrFreeIndex: 0))
+    XCTAssertInstructions(code, .deleteCell(cellIndex: 0))
   }
 
   func test_appendDeleteCell_mangled_isReused() {
@@ -110,7 +110,7 @@ class BuilderLoadStoreDeleteCellTests: XCTestCase {
 
     let code = builder.finalize()
     XCTAssertInstructions(code,
-                          .deleteCellOrFree(cellOrFreeIndex: 0),
-                          .deleteCellOrFree(cellOrFreeIndex: 0))
+                          .deleteCell(cellIndex: 0),
+                          .deleteCell(cellIndex: 0))
   }
 }
