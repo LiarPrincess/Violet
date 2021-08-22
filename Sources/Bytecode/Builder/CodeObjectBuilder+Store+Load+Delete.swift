@@ -149,25 +149,25 @@ extension CodeObjectBuilder {
   /// Append a `loadCellOrFree` instruction to this code object.
   public func appendLoadCell(_ name: MangledName) {
     let arg = self.appendExtendedArgsForCellVariableNameIndex(name: name)
-    self.append(.loadCellOrFree(cellOrFreeIndex: arg))
+    self.append(.loadCell(cellIndex: arg))
   }
 
   /// Append a `loadClassCell` instruction to this code object.
   public func appendLoadClassCell(_ name: MangledName) {
     let arg = self.appendExtendedArgsForCellVariableNameIndex(name: name)
-    self.append(.loadClassCell(cellOrFreeIndex: arg))
+    self.append(.loadClassCell(cellIndex: arg))
   }
 
   /// Append a `storeCellOrFree` instruction to this code object.
   public func appendStoreCell(_ name: MangledName) {
     let arg = self.appendExtendedArgsForCellVariableNameIndex(name: name)
-    self.append(.storeCellOrFree(cellOrFreeIndex: arg))
+    self.append(.storeCell(cellIndex: arg))
   }
 
   /// Append a `deleteCellOrFree` instruction to this code object.
   public func appendDeleteCell(_ name: MangledName) {
     let arg = self.appendExtendedArgsForCellVariableNameIndex(name: name)
-    self.append(.deleteCellOrFree(cellOrFreeIndex: arg))
+    self.append(.deleteCell(cellIndex: arg))
   }
 
   // MARK: - Free
@@ -175,19 +175,19 @@ extension CodeObjectBuilder {
   /// Append a `loadCellOrFree` instruction to this code object.
   public func appendLoadFree(_ name: MangledName) {
     let arg = self.appendExtendedArgsForFreeVariableNameIndex(name: name)
-    self.append(.loadCellOrFree(cellOrFreeIndex: arg))
+    self.append(.loadFree(freeIndex: arg))
   }
 
   /// Append a `storeCellOrFree` instruction to this code object.
   public func appendStoreFree(_ name: MangledName) {
     let arg = self.appendExtendedArgsForFreeVariableNameIndex(name: name)
-    self.append(.storeCellOrFree(cellOrFreeIndex: arg))
+    self.append(.storeFree(freeIndex: arg))
   }
 
   /// Append a `deleteCellOrFree` instruction to this code object.
   public func appendDeleteFree(_ name: MangledName) {
     let arg = self.appendExtendedArgsForFreeVariableNameIndex(name: name)
-    self.append(.deleteCellOrFree(cellOrFreeIndex: arg))
+    self.append(.deleteFree(freeIndex: arg))
   }
 
   // MARK: - Load closure

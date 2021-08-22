@@ -235,14 +235,22 @@ extension Instruction: CustomStringConvertible {
       return "storeFast(variableIndex: \(value0))"
     case let .deleteFast(variableIndex: value0):
       return "deleteFast(variableIndex: \(value0))"
-    case let .loadCellOrFree(cellOrFreeIndex: value0):
-      return "loadCellOrFree(cellOrFreeIndex: \(value0))"
-    case let .storeCellOrFree(cellOrFreeIndex: value0):
-      return "storeCellOrFree(cellOrFreeIndex: \(value0))"
-    case let .deleteCellOrFree(cellOrFreeIndex: value0):
-      return "deleteCellOrFree(cellOrFreeIndex: \(value0))"
-    case let .loadClassCell(cellOrFreeIndex: value0):
-      return "loadClassCell(cellOrFreeIndex: \(value0))"
+    case let .loadCell(cellIndex: value0):
+      return "loadCell(cellIndex: \(value0))"
+    case let .storeCell(cellIndex: value0):
+      return "storeCell(cellIndex: \(value0))"
+    case let .deleteCell(cellIndex: value0):
+      return "deleteCell(cellIndex: \(value0))"
+    case let .loadClassCell(cellIndex: value0):
+      return "loadClassCell(cellIndex: \(value0))"
+    case let .loadFree(freeIndex: value0):
+      return "loadFree(freeIndex: \(value0))"
+    case let .storeFree(freeIndex: value0):
+      return "storeFree(freeIndex: \(value0))"
+    case let .deleteFree(freeIndex: value0):
+      return "deleteFree(freeIndex: \(value0))"
+    case let .loadClosure(cellOrFreeIndex: value0):
+      return "loadClosure(cellOrFreeIndex: \(value0))"
     case let .makeFunction(flags: value0):
       return "makeFunction(flags: \(value0))"
     case let .callFunction(argumentCount: value0):
@@ -305,8 +313,6 @@ extension Instruction: CustomStringConvertible {
       return "setupAnnotations"
     case .popBlock:
       return "popBlock"
-    case let .loadClosure(cellOrFreeIndex: value0):
-      return "loadClosure(cellOrFreeIndex: \(value0))"
     case let .buildSlice(type: value0):
       return "buildSlice(type: \(value0))"
     }

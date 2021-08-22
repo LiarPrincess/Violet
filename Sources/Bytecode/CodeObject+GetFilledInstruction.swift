@@ -245,18 +245,32 @@ extension CodeObject {
       let name = self.getVariable(extendedArg: extendedArg, arg: arg)
       return wrap(.deleteFast(variable: name))
 
-    case let .loadCellOrFree(cellOrFreeIndex: arg):
+    case let .loadCell(cellIndex: arg):
+      let name = self.getCell(extendedArg: extendedArg, arg: arg)
+      return wrap(.loadCell(cell: name))
+    case let .storeCell(cellIndex: arg):
+      let name = self.getCell(extendedArg: extendedArg, arg: arg)
+      return wrap(.storeCell(cell: name))
+    case let .deleteCell(cellIndex: arg):
+      let name = self.getCell(extendedArg: extendedArg, arg: arg)
+      return wrap(.deleteCell(cell: name))
+    case let .loadClassCell(cellIndex: arg):
+      let name = self.getCell(extendedArg: extendedArg, arg: arg)
+      return wrap(.loadClassCell(cell: name))
+
+    case let .loadFree(freeIndex: arg):
+      let name = self.getFree(extendedArg: extendedArg, arg: arg)
+      return wrap(.loadFree(free: name))
+    case let .storeFree(freeIndex: arg):
+      let name = self.getFree(extendedArg: extendedArg, arg: arg)
+      return wrap(.storeFree(free: name))
+    case let .deleteFree(freeIndex: arg):
+      let name = self.getFree(extendedArg: extendedArg, arg: arg)
+      return wrap(.deleteFree(free: name))
+
+    case let .loadClosure(cellOrFreeIndex: arg):
       let name = self.getCellOrFree(extendedArg: extendedArg, arg: arg)
-      return wrap(.loadCellOrFree(cellOrFree: name))
-    case let .storeCellOrFree(cellOrFreeIndex: arg):
-      let name = self.getCellOrFree(extendedArg: extendedArg, arg: arg)
-      return wrap(.storeCellOrFree(cellOrFree: name))
-    case let .deleteCellOrFree(cellOrFreeIndex: arg):
-      let name = self.getCellOrFree(extendedArg: extendedArg, arg: arg)
-      return wrap(.deleteCellOrFree(cellOrFree: name))
-    case let .loadClassCell(cellOrFreeIndex: arg):
-      let name = self.getCellOrFree(extendedArg: extendedArg, arg: arg)
-      return wrap(.loadClassCell(cellOrFree: name))
+      return wrap(.loadClosure(cellOrFree: name))
 
     case let .makeFunction(flags: flags):
       assert(extendedArg == 0)
@@ -353,9 +367,6 @@ extension CodeObject {
       return wrap(.setupAnnotations)
     case .popBlock:
       return wrap(.popBlock)
-    case let .loadClosure(cellOrFreeIndex: arg):
-      let name = self.getCellOrFree(extendedArg: extendedArg, arg: arg)
-      return wrap(.loadClosure(cellOrFree: name))
     case let .buildSlice(type: arg):
       assert(extendedArg == 0)
       return wrap(.buildSlice(type: arg))
@@ -382,6 +393,16 @@ extension CodeObject {
   private func getVariable(extendedArg: Int, arg: UInt8) -> MangledName {
     let index = self.extend(base: extendedArg, arg: arg)
     return self.variableNames[index]
+  }
+
+  private func getCell(extendedArg: Int, arg: UInt8) -> MangledName {
+    let index = self.extend(base: extendedArg, arg: arg)
+    return self.cellVariableNames[index]
+  }
+
+  private func getFree(extendedArg: Int, arg: UInt8) -> MangledName {
+    let index = self.extend(base: extendedArg, arg: arg)
+    return self.freeVariableNames[index]
   }
 
   private func getCellOrFree(extendedArg: Int, arg: UInt8) -> MangledName {

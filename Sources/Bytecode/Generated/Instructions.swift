@@ -282,17 +282,31 @@ public enum Instruction: Equatable {
   /// Used for local function variables.
   /// Deletes local `names[nameIndex]`.
   case deleteFast(variableIndex: UInt8)
-  /// Loads the `cell` contained in slot `index` of the `cell` and `free` variable storage.
+  /// Loads the `cell` contained in slot `index` of the `cell` variable storage.
   /// Pushes a reference to the object the `cell` contains on the stack.
-  case loadCellOrFree(cellOrFreeIndex: UInt8)
-  /// Stores `TOS` into the `cell` contained in slot `index` of the `cell` and `free` variable storage.
-  case storeCellOrFree(cellOrFreeIndex: UInt8)
-  /// Empties the `cell` contained in slot `index` of the `cell` and `free` variable storage.
+  case loadCell(cellIndex: UInt8)
+  /// Stores `TOS` into the `cell` contained in slot `index` of the `cell` variable storage.
+  case storeCell(cellIndex: UInt8)
+  /// Empties the `cell` contained in slot `index` of the `cell` variable storage.
   /// Used by the `del` statement.
-  case deleteCellOrFree(cellOrFreeIndex: UInt8)
+  case deleteCell(cellIndex: UInt8)
   /// Much like `LoadCellOrFree` but first checks the locals dictionary before consulting the `cell`.
   /// This is used for loading free variables in `class` bodies.
-  case loadClassCell(cellOrFreeIndex: UInt8)
+  case loadClassCell(cellIndex: UInt8)
+  /// Loads the `cell` contained in slot `index` of the `free` variable storage.
+  /// Pushes a reference to the object the `cell` contains on the stack.
+  case loadFree(freeIndex: UInt8)
+  /// Stores `TOS` into the `cell` contained in slot `index` of the `free` variable storage.
+  case storeFree(freeIndex: UInt8)
+  /// Empties the `cell` contained in slot `index` of the `free` variable storage.
+  /// Used by the `del` statement.
+  case deleteFree(freeIndex: UInt8)
+  /// Pushes a reference to the cell contained in slot `index`
+  /// of the `cell` or `free` variable storage.
+  ///
+  /// If `index < cellVars.count`: name of the variable is `cellVars[index]`.
+  /// otherwise: name is `freeVars[index - cellVars.count]`.
+  case loadClosure(cellOrFreeIndex: UInt8)
   /// Pushes a new function object on the stack.
   ///
   /// From bottom to top, the consumed stack must consist of values
@@ -480,12 +494,6 @@ public enum Instruction: Equatable {
   /// Removes one block from the block stack.
   /// Per frame, there is a stack of blocks, denoting nested loops, `try` statements, and such.
   case popBlock
-  /// Pushes a reference to the cell contained in slot `index`
-  /// of the `cell` or `free` variable storage.
-  ///
-  /// If `index < cellVars.count`: name of the variable is `cellVars[index]`.
-  /// otherwise: name is `freeVars[index - cellVars.count]`.
-  case loadClosure(cellOrFreeIndex: UInt8)
   /// Pushes a slice object on the stack.
   case buildSlice(type: SliceArg)
 }

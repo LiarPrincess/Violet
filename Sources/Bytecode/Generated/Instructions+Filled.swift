@@ -224,17 +224,31 @@ extension Instruction {
       /// Used for local function variables.
       /// Deletes local `names[nameIndex]`.
       case deleteFast(variable: MangledName)
-      /// Loads the `cell` contained in slot `index` of the `cell` and `free` variable storage.
+      /// Loads the `cell` contained in slot `index` of the `cell` variable storage.
       /// Pushes a reference to the object the `cell` contains on the stack.
-      case loadCellOrFree(cellOrFree: MangledName)
-      /// Stores `TOS` into the `cell` contained in slot `index` of the `cell` and `free` variable storage.
-      case storeCellOrFree(cellOrFree: MangledName)
-      /// Empties the `cell` contained in slot `index` of the `cell` and `free` variable storage.
+      case loadCell(cell: MangledName)
+      /// Stores `TOS` into the `cell` contained in slot `index` of the `cell` variable storage.
+      case storeCell(cell: MangledName)
+      /// Empties the `cell` contained in slot `index` of the `cell` variable storage.
       /// Used by the `del` statement.
-      case deleteCellOrFree(cellOrFree: MangledName)
+      case deleteCell(cell: MangledName)
       /// Much like `LoadCellOrFree` but first checks the locals dictionary before consulting the `cell`.
       /// This is used for loading free variables in `class` bodies.
-      case loadClassCell(cellOrFree: MangledName)
+      case loadClassCell(cell: MangledName)
+      /// Loads the `cell` contained in slot `index` of the `free` variable storage.
+      /// Pushes a reference to the object the `cell` contains on the stack.
+      case loadFree(free: MangledName)
+      /// Stores `TOS` into the `cell` contained in slot `index` of the `free` variable storage.
+      case storeFree(free: MangledName)
+      /// Empties the `cell` contained in slot `index` of the `free` variable storage.
+      /// Used by the `del` statement.
+      case deleteFree(free: MangledName)
+      /// Pushes a reference to the cell contained in slot `index`
+      /// of the `cell` or `free` variable storage.
+      ///
+      /// If `index < cellVars.count`: name of the variable is `cellVars[index]`.
+      /// otherwise: name is `freeVars[index - cellVars.count]`.
+      case loadClosure(cellOrFree: MangledName)
       /// Pushes a new function object on the stack.
       ///
       /// From bottom to top, the consumed stack must consist of values
@@ -416,12 +430,6 @@ extension Instruction {
       /// Removes one block from the block stack.
       /// Per frame, there is a stack of blocks, denoting nested loops, `try` statements, and such.
       case popBlock
-      /// Pushes a reference to the cell contained in slot `index`
-      /// of the `cell` or `free` variable storage.
-      ///
-      /// If `index < cellVars.count`: name of the variable is `cellVars[index]`.
-      /// otherwise: name is `freeVars[index - cellVars.count]`.
-      case loadClosure(cellOrFree: MangledName)
       /// Pushes a slice object on the stack.
       case buildSlice(type: SliceArg)
   }

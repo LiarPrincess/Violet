@@ -220,17 +220,10 @@ public final class CodeObjectBuilder {
     name: MangledName
   ) -> UInt8 {
     if let index = self.cache.freeVariableNames[name] {
-      let realIndex = self.offsetFreeVariable(index: index)
-      return self.appendExtendedArgIfNeeded(realIndex)
+      return self.appendExtendedArgIfNeeded(index)
     }
 
     self.trapMissingVariableName(name: name, type: .free)
-  }
-
-  /// In `VM.Frame.cellsAndFreeVariables` we store `cells` first and then `free`.
-  internal func offsetFreeVariable(index: Int) -> Int {
-    let offset = self.cellVariableNames.count
-    return offset + index
   }
 
   private enum VariableType: String {
