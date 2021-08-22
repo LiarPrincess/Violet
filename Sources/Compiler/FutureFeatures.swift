@@ -33,7 +33,7 @@ public struct FutureFeatures {
   public private(set) var flags: Flags = []
 
   /// Line number of last future statement
-  public private(set) var lastLine: SourceLine = 0
+  public private(set) var lastLine = SourceLocation.start.line
 
   // MARK: - Init
 
@@ -56,7 +56,7 @@ public struct FutureFeatures {
     let index = self.getIndexAfterDoc(statements)
 
     for stmt in statements[index...] {
-      // it is possible to have multiple imports in the same line
+      // It is possible to have multiple imports in the same line.
       if isDone && stmt.start.line > previousLine {
         return result
       }
@@ -103,6 +103,7 @@ public struct FutureFeatures {
     while index < statements.count && statements[index].isDocString {
       index += 1
     }
+
     return index
   }
 
@@ -110,8 +111,8 @@ public struct FutureFeatures {
   private static func appendFeatures(
     from imports: NonEmptyArray<Alias>,
     into features: inout FutureFeatures,
-    errorLocation: SourceLocation) throws {
-
+    errorLocation: SourceLocation
+  ) throws {
     for alias in imports {
       // Check 'name' not alias!
       // For example, this should throw:
