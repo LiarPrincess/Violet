@@ -145,6 +145,12 @@ extension CodeObjectBuilder {
   // MARK: - Add
 
   /// Simply add new constant, without emitting any instruction.
+  public func addNoneConstant() {
+    let constant = CodeObject.Constant.none
+    self.constants.append(constant)
+  }
+
+  /// Simply add new constant, without emitting any instruction.
   public func addConstant(string: String) {
     let constant = CodeObject.Constant.string(string)
     self.constants.append(constant)

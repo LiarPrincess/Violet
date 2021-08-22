@@ -329,7 +329,7 @@ class FutureFeaturesTests: XCTestCase, ASTCreator {
     ])
 
     XCTAssertEqual(features.lastLine, line)
-    XCTAssertFlags(features)
+    XCTAssertNoFlags(features)
   }
 
   // MARK: - Unrecognized future

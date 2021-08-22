@@ -29,7 +29,7 @@ extension CompilerImpl {
       assert(self.builder.kind == .lambda)
 
       // Make 'None' the first constant, so the lambda can't have a docstring.
-      self.builder.appendNone()
+      self.builder.addNoneConstant()
 
       try self.visit(node.body)
       if !self.currentScope.isGenerator {

@@ -6,14 +6,6 @@ extension CodeObjectBuilder {
 
   // MARK: - Variables
 
-  internal func appendName(name: String, context: ExpressionContext) {
-    switch context {
-    case .store: self.appendStoreName(name)
-    case .load: self.appendLoadName(name)
-    case .del: self.appendDeleteName(name)
-    }
-  }
-
   internal func appendName(name: MangledName, context: ExpressionContext) {
     switch context {
     case .store: self.appendStoreName(name)
