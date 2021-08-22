@@ -9,6 +9,8 @@ import VioletBytecode
 /// Use './Scripts/dump' for reference.
 class CompileAssign: CompileTestCase {
 
+  // MARK: - Trivial
+
   /// prince = beast
   ///
   ///  0 LOAD_NAME                0 (beast)
@@ -83,6 +85,8 @@ class CompileAssign: CompileTestCase {
     )
   }
 
+  // MARK: - Attribute
+
   /// pretty.prince = hairy.beast
   ///
   ///  0 LOAD_NAME                0 (hairy)
@@ -126,6 +130,8 @@ class CompileAssign: CompileTestCase {
       ]
     )
   }
+
+  // MARK: - Subscript
 
   /// castle[inhabitant] = items[random]
   ///
@@ -173,6 +179,107 @@ class CompileAssign: CompileTestCase {
         .loadName(name: "castle"),
         .loadName(name: "inhabitant"),
         .storeSubscript,
+        .loadConst(.none),
+        .return
+      ]
+    )
+  }
+
+  // MARK: - To tuple
+
+  /// (lumiere, mrsPotts, cogsworth) = items
+  ///
+  ///  0 LOAD_NAME                0 (items)
+  ///  2 UNPACK_SEQUENCE          3
+  ///  4 STORE_NAME               1 (lumiere)
+  ///  6 STORE_NAME               2 (mrsPotts)
+  ///  8 STORE_NAME               3 (cogsworth)
+  /// 10 LOAD_CONST               0 (None)
+  /// 12 RETURN_VALUE
+  func test_toTuple() {
+    let stmt = self.assignStmt(
+      targets: [
+        self.tupleExpr(
+          elements: [
+            self.identifierExpr(value: "lumiere", context: .store),
+            self.identifierExpr(value: "mrsPotts", context: .store),
+            self.identifierExpr(value: "cogsworth", context: .store)
+          ],
+          context: .store
+        )
+      ],
+      value: self.identifierExpr(value: "items")
+    )
+
+    guard let code = self.compile(stmt: stmt) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "items"),
+        .unpackSequence(elementCount: 3),
+        .storeName(name: "lumiere"),
+        .storeName(name: "mrsPotts"),
+        .storeName(name: "cogsworth"),
+        .loadConst(.none),
+        .return
+      ]
+    )
+  }
+
+  /// (lumiere, mrsPotts, *other_pots, cogsworth) = items
+  ///
+  ///  0 LOAD_NAME                0 (items)
+  ///  2 EXTENDED_ARG             1
+  ///  4 UNPACK_EX              258
+  ///  6 STORE_NAME               1 (lumiere)
+  ///  8 STORE_NAME               2 (mrsPotts)
+  /// 10 STORE_NAME               3 (other_pots)
+  /// 12 STORE_NAME               4 (cogsworth)
+  /// 14 LOAD_CONST               0 (None)
+  /// 16 RETURN_VALUE
+  func test_toTuple_withUnpack() {
+    let stmt = self.assignStmt(
+      targets: [
+        self.tupleExpr(
+          elements: [
+            self.identifierExpr(value: "lumiere", context: .store),
+            self.identifierExpr(value: "mrsPotts", context: .store),
+            self.starredExpr(
+              expression: self.identifierExpr(value: "other_pots", context: .store),
+              context: .store
+            ),
+            self.identifierExpr(value: "cogsworth", context: .store)
+          ],
+          context: .store
+        )
+      ],
+      value: self.identifierExpr(value: "items")
+    )
+
+    guard let code = self.compile(stmt: stmt) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .loadName(name: "items"),
+        .unpackEx(arg: Instruction.UnpackExArg(countBefore: 2, countAfter: 1)),
+        .storeName(name: "lumiere"),
+        .storeName(name: "mrsPotts"),
+        .storeName(name: "other_pots"),
+        .storeName(name: "cogsworth"),
         .loadConst(.none),
         .return
       ]

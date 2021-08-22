@@ -4,6 +4,7 @@ import VioletParser
 import VioletBytecode
 @testable import VioletCompiler
 
+// swiftlint:disable function_body_length
 // cSpell:ignore subscr
 
 /// Use './Scripts/dump' for reference.
@@ -91,6 +92,8 @@ class CompileAnnAssign: CompileTestCase {
     )
   }
 
+  // MARK: - Attribute
+
   /// sea.flounder:Animal = "Friend"
   ///
   ///  0 SETUP_ANNOTATIONS
@@ -136,7 +139,9 @@ class CompileAnnAssign: CompileTestCase {
     )
   }
 
-  /// sea[flounder]:Animal = "Friend"
+  // MARK: - Subscript
+
+  /// sea[whozits]:Items = "Owned by Ariel"
   ///
   ///  0 SETUP_ANNOTATIONS
   ///  2 LOAD_CONST               0 ('Friend')
@@ -147,17 +152,17 @@ class CompileAnnAssign: CompileTestCase {
   /// 12 POP_TOP
   /// 14 LOAD_CONST               1 (None)
   /// 16 RETURN_VALUE
-  func test_toSubscript() {
+  func test_toIndex() {
     let stmt = self.annAssignStmt(
       target: self.subscriptExpr(
         object: self.identifierExpr(value: "sea"),
         slice: self.slice(
-          kind: .index(self.identifierExpr(value: "flounder"))
+          kind: .index(self.identifierExpr(value: "whozits"))
         ),
         context: .store
       ),
-      annotation: self.identifierExpr(value: "Animal"),
-      value: self.stringExpr(value: .literal("Friend")),
+      annotation: self.identifierExpr(value: "Items"),
+      value: self.stringExpr(value: .literal("Owned by Ariel")),
       isSimple: false
     )
 
@@ -173,11 +178,123 @@ class CompileAnnAssign: CompileTestCase {
       flags: [],
       instructions: [
         .setupAnnotations,
-        .loadConst(string: "Friend"),
+        .loadConst(string: "Owned by Ariel"),
         .loadName(name: "sea"),
-        .loadName(name: "flounder"),
+        .loadName(name: "whozits"),
         .storeSubscript,
-        .loadName(name: "Animal"),
+        .loadName(name: "Items"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
+  }
+
+  /// sea[whozits]: Items
+  /// https://www.elyrics.net/read/l/little-mermaid-lyrics/part-of-that-world-lyrics.html
+  ///
+  ///  0 SETUP_ANNOTATIONS
+  ///  2 LOAD_NAME                0 (sea)
+  ///  4 POP_TOP
+  ///  6 LOAD_NAME                1 (whozits)
+  ///  8 POP_TOP
+  /// 10 LOAD_NAME                2 (Items)
+  /// 12 POP_TOP
+  /// 14 LOAD_CONST               0 (None)
+  /// 16 RETURN_VALUE
+  func test_toIndex_withoutValue() {
+    let stmt = self.annAssignStmt(
+      target: self.subscriptExpr(
+        object: self.identifierExpr(value: "sea"),
+        slice: self.slice(
+          kind: .index(self.identifierExpr(value: "whozits"))
+        ),
+        context: .store
+      ),
+      annotation: self.identifierExpr(value: "Items"),
+      value: nil,
+      isSimple: false
+    )
+
+    guard let code = self.compile(stmt: stmt) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupAnnotations,
+        .loadName(name: "sea"),
+        .popTop,
+        .loadName(name: "whozits"),
+        .popTop,
+        .loadName(name: "Items"),
+        .popTop,
+        .loadConst(.none),
+        .return
+      ]
+    )
+  }
+
+  /// sea[whozits:whatzits:thingamabobs]:Items
+  /// https://www.elyrics.net/read/l/little-mermaid-lyrics/part-of-that-world-lyrics.html
+  ///
+  ///  0 SETUP_ANNOTATIONS
+  ///  2 LOAD_NAME                0 (sea)
+  ///  4 POP_TOP
+  ///  6 LOAD_NAME                1 (whozits)
+  ///  8 POP_TOP
+  /// 10 LOAD_NAME                2 (whatzits)
+  /// 12 POP_TOP
+  /// 14 LOAD_NAME                3 (thingamabobs)
+  /// 16 POP_TOP
+  /// 18 LOAD_NAME                4 (Items)
+  /// 20 POP_TOP
+  /// 22 LOAD_CONST               0 (None)
+  /// 24 RETURN_VALUE
+  func test_toSlice_withoutValue() {
+    let stmt = self.annAssignStmt(
+      target: self.subscriptExpr(
+        object: self.identifierExpr(value: "sea"),
+        slice: self.slice(
+          kind: .slice(
+            lower: self.identifierExpr(value: "whozits"),
+            upper: self.identifierExpr(value: "whatzits"),
+            step: self.identifierExpr(value: "thingamabobs")
+          )
+        ),
+        context: .store
+      ),
+      annotation: self.identifierExpr(value: "Items"),
+      value: nil,
+      isSimple: false
+    )
+
+    guard let code = self.compile(stmt: stmt) else {
+      return
+    }
+
+    XCTAssertCodeObject(
+      code,
+      name: "<module>",
+      qualifiedName: "",
+      kind: .module,
+      flags: [],
+      instructions: [
+        .setupAnnotations,
+        .loadName(name: "sea"),
+        .popTop,
+        .loadName(name: "whozits"),
+        .popTop,
+        .loadName(name: "whatzits"),
+        .popTop,
+        .loadName(name: "thingamabobs"),
+        .popTop,
+        .loadName(name: "Items"),
         .popTop,
         .loadConst(.none),
         .return
