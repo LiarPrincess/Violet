@@ -274,9 +274,9 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     // If we already have 'return' and no jumps then we do not need
     // to add another 'return'.
     // We will not check all of the instructions for 'return' (because that
-    // would be slow), we will just take 10 last.
+    // would be slow), we will just take 30 last.
     let hasReturn = self.builder.instructions
-      .takeLast(10)
+      .takeLast(30)
       .contains(where: self.isReturn(instruction:))
     let hasNoJumps = self.builder.labels.isEmpty
 

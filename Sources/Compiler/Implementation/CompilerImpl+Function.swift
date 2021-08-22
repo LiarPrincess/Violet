@@ -217,9 +217,9 @@ extension CompilerImpl {
       for name in codeObject.freeVariableNames {
         // If a class contains a method with a *free variable* that has the same
         // name as a *method*, the name will be considered free and local.
-
-        // The local var is a method
-        // and the free var is a free var referenced within a method.
+        //
+        // The local var is a method and the free var is a free var referenced
+        // within a method.
 
         let refType = self.getRefType(name: name, qualifiedName: qualifiedName)
         switch refType.contains(.cell) {
@@ -242,6 +242,9 @@ extension CompilerImpl {
 
   private func getRefType(name: MangledName,
                           qualifiedName: String) -> SymbolInfo.Flags {
+    // class Princess:
+    //     def sing():
+    //         __class__
     let is__class__ = name.value == SpecialIdentifiers.__class__
     let isInsideClass = self.builder.kind == .class
     if is__class__ && isInsideClass {
