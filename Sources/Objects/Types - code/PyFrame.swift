@@ -69,28 +69,25 @@ public final class PyFrame: PyObject, CustomReflectable {
   /// We use array, which is like dictionary, but with lower constants.
   ///
   /// CPython: `f_localsplus`.
-  public lazy var fastLocals: [PyObject?] = [PyObject?](
-    //                        ^ we need this for Sourcery
-    repeating: nil,
-    count: self.code.variableCount
-  )
+  public var fastLocals: [PyObject?]
+
+  /// Cell variables (variables from upper scopes).
+  ///
+  /// Btw. `Cell` = source for `free` variable.
+  ///
+  /// And yes, just as `self.fastLocals` they could be placed at the bottom
+  /// of the stack. And no, we will not do this (see `self.fastLocals` comment).
+  /// \#hipsters
+  public var cellVariables: [PyCell]
 
   /// Free variables (variables from upper scopes).
   ///
-  /// First cells and then free (see `loadClosure` or `deref` instructions).
-  ///
-  /// Btw. `Cell` = source for `free` variable.
-  ///      `Free` = cell from upper scope.
+  /// Btw. `Free` = cell from upper scope.
   ///
   /// And yes, just as `self.fastLocals` they could be placed at the bottom
-  /// of the stack.
-  /// And no, we will not do this (see `self.fastLocals` comment).
+  /// of the stack. And no, we will not do this (see `self.fastLocals` comment).
   /// \#hipsters
-  public lazy var cellsAndFreeVariables: [PyCell] = [PyCell](
-    //                                   ^ we need this for Sourcery
-    repeating: Py.newCell(content: nil),
-    count: self.code.cellVariableCount + self.code.freeVariableCount
-  )
+  public var freeVariables: [PyCell]
 
   /// Index of last attempted instruction in bytecode
   /// (`nil` it we have not started).
@@ -150,7 +147,22 @@ public final class PyFrame: PyObject, CustomReflectable {
     self.locals = locals
     self.globals = globals
     self.builtins = Self.getBuiltins(globals: globals, parent: parent)
+    self.fastLocals = [PyObject?](repeating: nil, count: self.code.variableCount)
+    self.cellVariables = Self.createEmptyCells(count: self.code.cellVariableCount)
+    self.freeVariables = Self.createEmptyCells(count: self.code.freeVariableCount)
     super.init(type: Py.types.frame)
+  }
+
+  private static func createEmptyCells(count: Int) -> [PyCell] {
+    var result = [PyCell]()
+    result.reserveCapacity(count)
+
+    for _ in 0..<count {
+      let cell = PyMemory.newCell(content: nil)
+      result.append(cell)
+    }
+
+    return result
   }
 
   private static func getBuiltins(globals: PyDict,
@@ -276,21 +288,21 @@ public final class PyFrame: PyObject, CustomReflectable {
       }
     }
 
-    // Same for cells and free
     let cellNames = self.code.cellVariableNames
-    let freeNames = self.code.freeVariableNames
-    let cellsAndFrees = self.cellsAndFreeVariables
-    assert(cellNames.count + freeNames.count == cellsAndFrees.count)
+    let cellVariables = self.cellVariables
+    assert(cellNames.count == cellVariables.count)
 
-    for (name, cell) in zip(cellNames, cellsAndFrees) {
+    for (name, cell) in zip(cellNames, cellVariables) {
       if let e = self.updateLocals(name: name, value: cell.content) {
         return e
       }
     }
 
-    // Free variables are after cells in 'self.cellsAndFreeVariables'
-    let frees = cellsAndFrees.dropFirst(cellNames.count)
-    for (name, cell) in zip(freeNames, frees) {
+    let freeNames = self.code.freeVariableNames
+    let freeVariables = self.freeVariables
+    assert(freeNames.count == freeVariables.count)
+
+    for (name, cell) in zip(freeNames, freeVariables) {
       if let e = self.updateLocals(name: name, value: cell.content) {
         return e
       }
@@ -356,8 +368,6 @@ public final class PyFrame: PyObject, CustomReflectable {
     onLocalMissing: LocalMissingStrategy
   ) -> PyBaseException? {
     let variableNames = self.code.variableNames
-    assert(variableNames.count == self.fastLocals.count)
-
     for (index, name) in variableNames.enumerated() {
       if self.isCellOrFree(name: name) {
         continue
@@ -370,25 +380,20 @@ public final class PyFrame: PyObject, CustomReflectable {
       }
     }
 
-    // Same for cells and free
     let cellNames = self.code.cellVariableNames
-    let freeNames = self.code.freeVariableNames
-    assert(cellNames.count + freeNames.count == self.cellsAndFreeVariables.count)
-
     for (index, name) in cellNames.enumerated() {
-      if let e = self.updateCellOrFreeFromLocal(index: index,
-                                                name: name,
-                                                onMissing: onLocalMissing) {
+      if let e = self.updateCellFromLocal(index: index,
+                                          name: name,
+                                          onMissing: onLocalMissing) {
         return e
       }
     }
 
-    for (freeIndex, name) in freeNames.enumerated() {
-      // Free variables are after cells in 'self.cellsAndFreeVariables'
-      let cellOrFreeIndex = cellNames.count + freeIndex
-      if let e = self.updateCellOrFreeFromLocal(index: cellOrFreeIndex,
-                                                name: name,
-                                                onMissing: onLocalMissing) {
+    let freeNames = self.code.freeVariableNames
+    for (index, name) in freeNames.enumerated() {
+      if let e = self.updateFreeFromLocal(index: index,
+                                          name: name,
+                                          onMissing: onLocalMissing) {
         return e
       }
     }
@@ -403,18 +408,13 @@ public final class PyFrame: PyObject, CustomReflectable {
   ) -> PyBaseException? {
     assert(0 <= index && index < self.fastLocals.count)
 
-    switch self.getLocal(name: name) {
+    switch self.getLocal(name: name, onMissing: onMissing) {
     case .value(let value):
       self.fastLocals[index] = value
-
-    case .notFound:
-      switch onMissing {
-      case .ignore:
-        break
-      case .remove:
-        self.fastLocals[index] = nil
-      }
-
+    case .ignore:
+      break
+    case .removed:
+      self.fastLocals[index] = nil
     case .error(let e):
       return e
     }
@@ -422,27 +422,22 @@ public final class PyFrame: PyObject, CustomReflectable {
     return nil
   }
 
-  private func updateCellOrFreeFromLocal(
+  private func updateCellFromLocal(
     index: Int,
     name: MangledName,
     onMissing: LocalMissingStrategy
   ) -> PyBaseException? {
-    assert(0 <= index && index < self.cellsAndFreeVariables.count)
+    assert(0 <= index && index < self.cellVariables.count)
 
-    switch self.getLocal(name: name) {
+    switch self.getLocal(name: name, onMissing: onMissing) {
     case .value(let value):
-      let cell = self.cellsAndFreeVariables[index]
+      let cell = self.cellVariables[index]
       cell.content = value
-
-    case .notFound:
-      switch onMissing {
-      case .ignore:
-        break
-      case .remove:
-        let cell = self.cellsAndFreeVariables[index]
-        cell.content = nil
-      }
-
+    case .ignore:
+      break
+    case .removed:
+      let cell = self.cellVariables[index]
+      cell.content = nil
     case .error(let e):
       return e
     }
@@ -450,8 +445,53 @@ public final class PyFrame: PyObject, CustomReflectable {
     return nil
   }
 
-  private func getLocal(name: MangledName) -> PyDict.GetResult {
+  private func updateFreeFromLocal(
+    index: Int,
+    name: MangledName,
+    onMissing: LocalMissingStrategy
+  ) -> PyBaseException? {
+    assert(0 <= index && index < self.freeVariables.count)
+
+    switch self.getLocal(name: name, onMissing: onMissing) {
+    case .value(let value):
+      let cell = self.freeVariables[index]
+      cell.content = value
+    case .ignore:
+      break
+    case .removed:
+      let cell = self.freeVariables[index]
+      cell.content = nil
+    case .error(let e):
+      return e
+    }
+
+    return nil
+  }
+
+  private enum GetLocalResult {
+    case value(PyObject)
+    case ignore
+    case removed
+    case error(PyBaseException)
+  }
+
+  private func getLocal(name: MangledName,
+                        onMissing: LocalMissingStrategy) -> GetLocalResult {
     let key = self.createLocalsKey(name: name)
-    return self.locals.get(key: key)
+    switch self.locals.get(key: key) {
+    case .value(let object):
+      return .value(object)
+
+    case .notFound:
+      switch onMissing {
+      case .ignore:
+        return .ignore
+      case .remove:
+        return .removed
+      }
+
+    case .error(let e):
+      return .error(e)
+    }
   }
 }

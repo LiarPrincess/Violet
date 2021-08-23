@@ -89,7 +89,7 @@ extension PySuper {
     frame: PyFrame,
     code: PyCode
   ) -> PyResult<PyObject> {
-    // Note double optional below:
+    // Note the double optional below:
     // - 'frame.fastLocals' stores 'PyObject?'
     // - 'Collection.first' returns 'Element?'
     // 'guard' will handle optional from 'Collection.first'
@@ -115,11 +115,11 @@ extension PySuper {
       return nil
     }
 
-    // We will try to find cell with the same name as 'firstArgument'
-    for (i, cellName) in code.cellVariableNames.enumerated() {
+    // We will try to find the cell with the same name as 'firstArgument'.
+    for (index, cellName) in code.cellVariableNames.enumerated() {
       // swiftlint:disable:next for_where
       if cellName == firstArgument {
-        let cell = frame.cellsAndFreeVariables[i]
+        let cell = frame.cellVariables[index]
         return cell.content
       }
     }
@@ -137,15 +137,12 @@ extension PySuper {
 
   private static func getTypeFrom__class__(frame: PyFrame,
                                            code: PyCode) -> TypeFromClass {
-    for (i, name) in code.freeVariableNames.enumerated() {
+    for (index, name) in code.freeVariableNames.enumerated() {
       guard name.value == "__class__" else {
         continue
       }
 
-      // We store cells and free in the same array,
-      // cells are first so we have to offset 'free'.
-      let index = code.cellVariableNames.count + i
-      let cell = frame.cellsAndFreeVariables[index]
+      let cell = frame.freeVariables[index]
 
       guard let content = cell.content else {
         let msg = "super(): empty __class__ cell"
