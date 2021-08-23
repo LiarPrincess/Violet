@@ -232,9 +232,6 @@ extension Instruction {
       /// Empties the `cell` contained in slot `index` of the `cell` variable storage.
       /// Used by the `del` statement.
       case deleteCell(cell: MangledName)
-      /// Much like `LoadCellOrFree` but first checks the locals dictionary before consulting the `cell`.
-      /// This is used for loading free variables in `class` bodies.
-      case loadClassCell(cell: MangledName)
       /// Loads the `cell` contained in slot `index` of the `free` variable storage.
       /// Pushes a reference to the object the `cell` contains on the stack.
       case loadFree(free: MangledName)
@@ -243,6 +240,9 @@ extension Instruction {
       /// Empties the `cell` contained in slot `index` of the `free` variable storage.
       /// Used by the `del` statement.
       case deleteFree(free: MangledName)
+      /// Much like `LoadFree` but first checks the locals dictionary before consulting the `cell`.
+      /// This is used for loading free variables in `class` bodies.
+      case loadClassFree(free: MangledName)
       /// Pushes a reference to the cell contained in slot `index`
       /// of the `cell` or `free` variable storage.
       ///

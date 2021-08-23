@@ -241,14 +241,14 @@ extension Instruction: CustomStringConvertible {
       return "storeCell(cellIndex: \(value0))"
     case let .deleteCell(cellIndex: value0):
       return "deleteCell(cellIndex: \(value0))"
-    case let .loadClassCell(cellIndex: value0):
-      return "loadClassCell(cellIndex: \(value0))"
     case let .loadFree(freeIndex: value0):
       return "loadFree(freeIndex: \(value0))"
     case let .storeFree(freeIndex: value0):
       return "storeFree(freeIndex: \(value0))"
     case let .deleteFree(freeIndex: value0):
       return "deleteFree(freeIndex: \(value0))"
+    case let .loadClassFree(freeIndex: value0):
+      return "loadClassFree(freeIndex: \(value0))"
     case let .loadClosure(cellOrFreeIndex: value0):
       return "loadClosure(cellOrFreeIndex: \(value0))"
     case let .makeFunction(flags: value0):

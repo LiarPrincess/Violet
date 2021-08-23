@@ -176,14 +176,14 @@ extension Instruction.Filled: CustomStringConvertible {
       return "storeCell(cell: \(value0))"
     case let .deleteCell(cell: value0):
       return "deleteCell(cell: \(value0))"
-    case let .loadClassCell(cell: value0):
-      return "loadClassCell(cell: \(value0))"
     case let .loadFree(free: value0):
       return "loadFree(free: \(value0))"
     case let .storeFree(free: value0):
       return "storeFree(free: \(value0))"
     case let .deleteFree(free: value0):
       return "deleteFree(free: \(value0))"
+    case let .loadClassFree(free: value0):
+      return "loadClassFree(free: \(value0))"
     case let .loadClosure(cellOrFree: value0):
       return "loadClosure(cellOrFree: \(value0))"
     case let .makeFunction(flags: value0):

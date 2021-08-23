@@ -379,9 +379,6 @@ and labels properties of 'CodeObject'.
   -- Empties the `cell` contained in slot `index` of the `cell` variable storage.
   -- Used by the `del` statement.
   | DeleteCell(CellIndex cellIndex)
-  -- Much like `LoadCellOrFree` but first checks the locals dictionary before consulting the `cell`.
-  -- This is used for loading free variables in `class` bodies.
-  | LoadClassCell(CellIndex cellIndex)
 
   -- Loads the `cell` contained in slot `index` of the `free` variable storage.
   -- Pushes a reference to the object the `cell` contains on the stack.
@@ -391,6 +388,9 @@ and labels properties of 'CodeObject'.
   -- Empties the `cell` contained in slot `index` of the `free` variable storage.
   -- Used by the `del` statement.
   | DeleteFree(FreeIndex freeIndex)
+  -- Much like `LoadFree` but first checks the locals dictionary before consulting the `cell`.
+  -- This is used for loading free variables in `class` bodies.
+  | LoadClassFree(FreeIndex freeIndex)
 
   -- Pushes a reference to the cell contained in slot `index`
   -- of the `cell` or `free` variable storage.

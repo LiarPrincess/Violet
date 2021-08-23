@@ -146,25 +146,19 @@ extension CodeObjectBuilder {
 
   // MARK: - Cell
 
-  /// Append a `loadCellOrFree` instruction to this code object.
+  /// Append a `loadCell` instruction to this code object.
   public func appendLoadCell(_ name: MangledName) {
     let arg = self.appendExtendedArgsForCellVariableNameIndex(name: name)
     self.append(.loadCell(cellIndex: arg))
   }
 
-  /// Append a `loadClassCell` instruction to this code object.
-  public func appendLoadClassCell(_ name: MangledName) {
-    let arg = self.appendExtendedArgsForCellVariableNameIndex(name: name)
-    self.append(.loadClassCell(cellIndex: arg))
-  }
-
-  /// Append a `storeCellOrFree` instruction to this code object.
+  /// Append a `storeCell` instruction to this code object.
   public func appendStoreCell(_ name: MangledName) {
     let arg = self.appendExtendedArgsForCellVariableNameIndex(name: name)
     self.append(.storeCell(cellIndex: arg))
   }
 
-  /// Append a `deleteCellOrFree` instruction to this code object.
+  /// Append a `deleteCell` instruction to this code object.
   public func appendDeleteCell(_ name: MangledName) {
     let arg = self.appendExtendedArgsForCellVariableNameIndex(name: name)
     self.append(.deleteCell(cellIndex: arg))
@@ -172,19 +166,25 @@ extension CodeObjectBuilder {
 
   // MARK: - Free
 
-  /// Append a `loadCellOrFree` instruction to this code object.
+  /// Append a `loadFree` instruction to this code object.
   public func appendLoadFree(_ name: MangledName) {
     let arg = self.appendExtendedArgsForFreeVariableNameIndex(name: name)
     self.append(.loadFree(freeIndex: arg))
   }
 
-  /// Append a `storeCellOrFree` instruction to this code object.
+  /// Append a `loadClassFree` instruction to this code object.
+  public func appendLoadClassFree(_ name: MangledName) {
+    let arg = self.appendExtendedArgsForFreeVariableNameIndex(name: name)
+    self.append(.loadClassFree(freeIndex: arg))
+  }
+
+  /// Append a `storeFree` instruction to this code object.
   public func appendStoreFree(_ name: MangledName) {
     let arg = self.appendExtendedArgsForFreeVariableNameIndex(name: name)
     self.append(.storeFree(freeIndex: arg))
   }
 
-  /// Append a `deleteCellOrFree` instruction to this code object.
+  /// Append a `deleteFree` instruction to this code object.
   public func appendDeleteFree(_ name: MangledName) {
     let arg = self.appendExtendedArgsForFreeVariableNameIndex(name: name)
     self.append(.deleteFree(freeIndex: arg))

@@ -254,9 +254,6 @@ extension CodeObject {
     case let .deleteCell(cellIndex: arg):
       let name = self.getCell(extendedArg: extendedArg, arg: arg)
       return wrap(.deleteCell(cell: name))
-    case let .loadClassCell(cellIndex: arg):
-      let name = self.getCell(extendedArg: extendedArg, arg: arg)
-      return wrap(.loadClassCell(cell: name))
 
     case let .loadFree(freeIndex: arg):
       let name = self.getFree(extendedArg: extendedArg, arg: arg)
@@ -267,6 +264,9 @@ extension CodeObject {
     case let .deleteFree(freeIndex: arg):
       let name = self.getFree(extendedArg: extendedArg, arg: arg)
       return wrap(.deleteFree(free: name))
+    case let .loadClassFree(freeIndex: arg):
+      let name = self.getFree(extendedArg: extendedArg, arg: arg)
+      return wrap(.loadClassFree(free: name))
 
     case let .loadClosure(cellOrFreeIndex: arg):
       let name = self.getCellOrFree(extendedArg: extendedArg, arg: arg)

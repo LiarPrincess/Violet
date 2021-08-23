@@ -290,9 +290,6 @@ public enum Instruction: Equatable {
   /// Empties the `cell` contained in slot `index` of the `cell` variable storage.
   /// Used by the `del` statement.
   case deleteCell(cellIndex: UInt8)
-  /// Much like `LoadCellOrFree` but first checks the locals dictionary before consulting the `cell`.
-  /// This is used for loading free variables in `class` bodies.
-  case loadClassCell(cellIndex: UInt8)
   /// Loads the `cell` contained in slot `index` of the `free` variable storage.
   /// Pushes a reference to the object the `cell` contains on the stack.
   case loadFree(freeIndex: UInt8)
@@ -301,6 +298,9 @@ public enum Instruction: Equatable {
   /// Empties the `cell` contained in slot `index` of the `free` variable storage.
   /// Used by the `del` statement.
   case deleteFree(freeIndex: UInt8)
+  /// Much like `LoadFree` but first checks the locals dictionary before consulting the `cell`.
+  /// This is used for loading free variables in `class` bodies.
+  case loadClassFree(freeIndex: UInt8)
   /// Pushes a reference to the cell contained in slot `index`
   /// of the `cell` or `free` variable storage.
   ///
