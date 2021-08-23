@@ -86,14 +86,14 @@ extension CompilerImpl {
     }
 
     switch operation {
-    case .cell:
+    case .free:
       let isLoadInClass = context == .load && scope.kind.isClass
       if isLoadInClass {
-        self.builder.appendLoadClassCell(mangled)
+        self.builder.appendLoadClassFree(mangled)
       } else {
-        self.builder.appendCell(name: mangled, context: context)
+        self.builder.appendFree(name: mangled, context: context)
       }
-    case .free: self.builder.appendFree(name: mangled, context: context)
+    case .cell: self.builder.appendCell(name: mangled, context: context)
     case .fast: self.builder.appendFast(name: mangled, context: context)
     case .global: self.builder.appendGlobal(name: mangled, context: context)
     case .name: self.builder.appendName(name: mangled, context: context)
