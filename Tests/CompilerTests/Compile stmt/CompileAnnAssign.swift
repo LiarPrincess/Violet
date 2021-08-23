@@ -5,6 +5,7 @@ import VioletBytecode
 @testable import VioletCompiler
 
 // swiftlint:disable function_body_length
+// swiftlint:disable file_length
 // cSpell:ignore subscr
 
 /// Use './Scripts/dump' for reference.

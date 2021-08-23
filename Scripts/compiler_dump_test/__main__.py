@@ -167,11 +167,23 @@ def print_expected(lines: List[str]):
             args = f'name: "{args}"'
         elif name in ('loadFast', 'storeFast', 'deleteFast'):
             args = f'variable: MangledName(withoutClass: "{args}")'
-        # TODO: cell and free
-        # case loadCellOrFree(cellOrFree: MangledName)
-        # case storeCellOrFree(cellOrFree: MangledName)
-        # case deleteCellOrFree(cellOrFree: MangledName)
-        # case loadClassCell(cellOrFree: MangledName)
+
+        elif name in ('loadDeref', 'storeDeref', 'deleteDeref'):
+            args = f'cell: MangledName(withoutClass: "{args}")'
+
+            if name == 'loadDeref':
+                name = 'loadCellOrFree'
+            elif name == 'storeDeref':
+                name = 'storeCellOrFree'
+            elif name == 'deleteDeref':
+                name = 'deleteCellOrFree'
+
+        elif name == 'loadClosure':
+            args = f'cellOrFree: MangledName(withoutClass: "{args}")'
+
+        elif name == 'loadClassderef':
+            name = 'loadClassFree'
+            args = f'free: MangledName(withoutClass: "{args}")'
 
         elif name == 'makeFunction':
             if args == '0':

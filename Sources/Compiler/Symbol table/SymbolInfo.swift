@@ -113,16 +113,20 @@ public struct SymbolInfo: Equatable, CustomStringConvertible {
     // MARK: - Description
 
     public var description: String {
-      var result = ""
+      var result = "["
+      var isFirst = true
 
       func appendIfSet(_ flag: Flags, name: String) {
-        if self.contains(flag) {
-          if result.any {
-            result += ", "
-          }
-
-          result.append(name)
+        guard self.contains(flag) else {
+          return
         }
+
+        if !isFirst {
+          result += ", "
+        }
+
+        result.append(name)
+        isFirst = false
       }
 
       appendIfSet(.defLocal, name: "defLocal")
@@ -140,7 +144,7 @@ public struct SymbolInfo: Equatable, CustomStringConvertible {
       appendIfSet(.use, name: "use")
       appendIfSet(.annotated, name: "annotated")
 
-      return result
+      return result + "]"
     }
 
     // MARK: - Init

@@ -287,6 +287,7 @@ internal final class CompilerImpl: ASTVisitor, StatementVisitor, ExpressionVisit
     if addNone {
       self.builder.appendNone()
     }
+
     self.builder.appendReturn()
   }
 
