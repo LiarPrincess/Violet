@@ -307,10 +307,6 @@ class InstructionDescriptionTests: XCTestCase {
       .deleteCell(cellIndex: 42),
       "deleteCell(cellIndex: 42)"
     )
-    XCTAssertDescription(
-      .loadClassCell(cellIndex: 42),
-      "loadClassCell(cellIndex: 42)"
-    )
   }
 
   func test_storeLoadDelete_free() {
@@ -325,6 +321,10 @@ class InstructionDescriptionTests: XCTestCase {
     XCTAssertDescription(
       .deleteFree(freeIndex: 42),
       "deleteFree(freeIndex: 42)"
+    )
+    XCTAssertDescription(
+      .loadClassFree(freeIndex: 42),
+      "loadClassFree(freeIndex: 42)"
     )
   }
   // MARK: - Function
