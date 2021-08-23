@@ -16,12 +16,6 @@ extension CompilerImpl {
     try node.accept(self)
   }
 
-  private func visit(_ node: Expression?) throws {
-    if let n = node {
-      try self.visit(n)
-    }
-  }
-
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visit<S: Sequence>(_ nodes: S) throws where S.Element: Expression {
     for node in nodes {
@@ -533,6 +527,8 @@ extension CompilerImpl {
 
       try self.visit(ifExpr.orElse, andJumpTo: next, ifBooleanValueIs: cond)
       self.builder.setLabel(end)
+
+      return
     } else if let compare = expression as? CompareExpr, compare.elements.count > 1 {
       // If the count is 1 then fallback to general implementation!
       try self.visit(compare, andJumpTo: next, ifBooleanValueIs: cond)
@@ -562,7 +558,7 @@ extension CompilerImpl {
       self.builder.appendDupTop()
       self.builder.appendRotThree()
       self.builder.appendCompareOp(operator: element.op)
-      self.builder.appendJumpIfFalseOrPop(to: cleanup)
+      self.builder.appendPopJumpIfFalse(to: cleanup)
     }
 
     let last = compare.elements.last
