@@ -81,20 +81,28 @@ internal struct Eval {
 
   // MARK: - Cells and free
 
-  /// Free variables (variables from upper scopes).
-  ///
-  /// First cells and then free (see `loadClosure` or `deref` instructions).
+  /// Cell variables (variables from upper scopes).
   ///
   /// Btw. `Cell` = source for `free` variable.
   ///
   /// And yes, just as `self.fastLocals` they could be placed at the bottom
-  /// of the stack.
-  /// And no, we will not do this (see `self.fastLocals` comment).
+  /// of the stack. And no, we will not do this (see `self.fastLocals` comment).
   /// \#hipsters
   ///
   /// CPython: `f_lasti`.
-  internal var cellsAndFreeVariables: [PyCell] {
-    return self.frame.cellsAndFreeVariables
+  internal var cellVariables: [PyCell] {
+    return self.frame.cellVariables
+  }
+
+  /// Free variables (variables from upper scopes).
+  ///
+  /// Btw. `Free` = cell from upper scope.
+  ///
+  /// And yes, just as `self.fastLocals` they could be placed at the bottom
+  /// of the stack. And no, we will not do this (see `self.fastLocals` comment).
+  /// \#hipsters
+  internal var freeVariables: [PyCell] {
+    return self.frame.freeVariables
   }
 
   // MARK: - Currently handled exception
@@ -119,9 +127,14 @@ internal struct Eval {
     return self.code.names[index]
   }
 
-  internal func getCellOrFree(index: Int) -> PyCell {
-    assert(0 <= index && index < self.cellsAndFreeVariables.count)
-    return self.cellsAndFreeVariables[index]
+  internal func getCell(index: Int) -> PyCell {
+    assert(0 <= index && index < self.cellVariables.count)
+    return self.cellVariables[index]
+  }
+
+  internal func getFree(index: Int) -> PyCell {
+    assert(0 <= index && index < self.freeVariables.count)
+    return self.freeVariables[index]
   }
 
   internal func getLabel(index: Int) -> CodeObject.Label {
@@ -445,15 +458,26 @@ internal struct Eval {
       let index = Instruction.extend(base: extendedArg, arg: arg)
       return self.deleteFast(index: index)
 
-    case let .loadCellOrFree(cellOrFreeIndex: arg):
+    case let .loadCell(cellIndex: arg):
       let index = Instruction.extend(base: extendedArg, arg: arg)
-      return self.loadCellOrFree(cellOrFreeIndex: index)
-    case let .storeCellOrFree(cellOrFreeIndex: arg):
+      return self.loadCell(index: index)
+    case let .storeCell(cellIndex: arg):
       let index = Instruction.extend(base: extendedArg, arg: arg)
-      return self.storeCellOrFree(cellOrFreeIndex: index)
-    case let .deleteCellOrFree(cellOrFreeIndex: arg):
+      return self.storeCell(index: index)
+    case let .deleteCell(cellIndex: arg):
       let index = Instruction.extend(base: extendedArg, arg: arg)
-      return self.deleteCellOrFree(cellOrFreeIndex: index)
+      return self.deleteCell(index: index)
+
+    case let .loadFree(freeIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.loadFree(index: index)
+    case let .storeFree(freeIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.storeFree(index: index)
+    case let .deleteFree(freeIndex: arg):
+      let index = Instruction.extend(base: extendedArg, arg: arg)
+      return self.deleteFree(index: index)
+      let index = Instruction.extend(base: extendedArg, arg: arg)
     case let .loadClassCell(cellOrFreeIndex: arg):
       let index = Instruction.extend(base: extendedArg, arg: arg)
       return self.loadClassCell(cellOrFreeIndex: index)

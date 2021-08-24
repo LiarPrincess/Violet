@@ -120,7 +120,7 @@ extension VM {
       return
     }
 
-    for (i, cellName) in code.cellVariableNames.enumerated() {
+    for (index, cellName) in code.cellVariableNames.enumerated() {
       let cell: PyCell
 
       // Possibly account for the cell variable being an argument.
@@ -134,7 +134,7 @@ extension VM {
 
       // CPython stores everything in a single memory block
       // that's why they have to add 'co->co_nlocals'.
-      frame.cellsAndFreeVariables[i] = cell
+      frame.cellVariables[index] = cell
     }
   }
 
@@ -151,7 +151,6 @@ extension VM {
 
     assert(closure.elements.count == code.freeVariableCount)
 
-    let cellCount = code.cellVariableCount
     for (index, cellObject) in closure.elements.enumerated() {
       guard let cell = PyCast.asCell(cellObject) else {
         let t = cellObject.typeName
@@ -159,8 +158,7 @@ extension VM {
       }
 
       // Free are always after cells
-      let cellOrFreeIndex = cellCount + index
-      frame.cellsAndFreeVariables[cellOrFreeIndex] = cell
+      frame.freeVariables[index] = cell
     }
   }
 

@@ -188,25 +188,76 @@ extension Eval {
     return .exception(e)
   }
 
-  // MARK: - Deref
+  // MARK: - Cell
 
-  /// Loads the cell contained in slot i of the cell and free variable storage.
+  /// Loads the cell contained in slot i of the cell storage.
   /// Pushes a reference to the object the cell contains on the stack.
-  internal func loadCellOrFree(cellOrFreeIndex index: Int) -> InstructionResult {
-    let cell = self.getCellOrFree(index: index)
+  internal func loadCell(index: Int) -> InstructionResult {
+    let cell = self.getCell(index: index)
 
     if let content = cell.content {
       self.stack.push(content)
       return .ok
     }
 
-    return self.unboundDerefError(index: index)
+    return self.unboundCellError(index: index)
+  }
+
+  /// Stores TOS into the cell contained in slot i of the cell storage.
+  internal func storeCell(index: Int) -> InstructionResult {
+    let cell = self.getCell(index: index)
+    let value = self.stack.pop()
+    cell.content = value
+    return .ok
+  }
+
+  /// Empties the cell contained in slot i of the cell storage.
+  /// Used by the `del` statement.
+  internal func deleteCell(index: Int) -> InstructionResult {
+    let cell = self.getCell(index: index)
+
+    let isEmpty = cell.content == nil
+    if isEmpty {
+      return self.unboundCellError(index: index)
+    }
+
+    cell.content = nil
+    return .ok
+  }
+
+  private func unboundCellError(index: Int) -> InstructionResult {
+    assert(0 <= index && index < self.code.cellVariableCount)
+    let mangled = self.code.cellVariableNames[index]
+    return self.unboundCellOrFreeError(name: mangled)
+  }
+
+  private func unboundCellOrFreeError(name: MangledName) -> InstructionResult {
+    let msg = "cell/free variable '\(name)' referenced before assignment " +
+              "in enclosing scope"
+
+    let e = Py.newNameError(msg: msg)
+    return .exception(e)
+  }
+
+  // MARK: - Free
+
+  /// Loads the cell contained in slot i of the cell and free variable storage.
+  /// Pushes a reference to the object the cell contains on the stack.
+  internal func loadFree(index: Int) -> InstructionResult {
+    let cell = self.getFree(index: index)
+
+    if let content = cell.content {
+      self.stack.push(content)
+      return .ok
+    }
+
+    return self.unboundFreeError(index: index)
   }
 
   /// Stores TOS into the cell contained in slot i of the cell
   /// and free variable storage.
-  internal func storeCellOrFree(cellOrFreeIndex index: Int) -> InstructionResult {
-    let cell = self.getCellOrFree(index: index)
+  internal func storeFree(index: Int) -> InstructionResult {
+    let cell = self.getFree(index: index)
 
     let value = self.stack.pop()
     cell.content = value
@@ -215,19 +266,23 @@ extension Eval {
 
   /// Empties the cell contained in slot i of the cell and free variable storage.
   /// Used by the del statement.
-  internal func deleteCellOrFree(cellOrFreeIndex index: Int) -> InstructionResult {
-    let cell = self.getCellOrFree(index: index)
+  internal func deleteFree(index: Int) -> InstructionResult {
+    let cell = self.getFree(index: index)
 
     let isEmpty = cell.content == nil
     if isEmpty {
-      return self.unboundDerefError(index: index)
+      return self.unboundFreeError(index: index)
     }
 
     cell.content = nil
     return .ok
   }
 
-  /// Much like `LoadDeref` but first checks the locals dictionary before
+  private func unboundFreeError(index: Int) -> InstructionResult {
+    assert(0 <= index && index < self.code.freeVariableCount)
+    let mangled = self.code.freeVariableNames[index]
+    return self.unboundCellOrFreeError(name: mangled)
+  }
   /// consulting the cell.
   /// This is used for loading free variables in class bodies.
   internal func loadClassCell(cellOrFreeIndex: Int) -> InstructionResult {
@@ -258,24 +313,6 @@ extension Eval {
     return .ok
   }
 
-  private func unboundDerefError(index: Int) -> InstructionResult {
-    assert(0 <= index && index < self.code.cellVariableCount)
-
-    let mangled = self.getDerefName(index: index)
-    let msg = "cell/free variable '\(mangled)' referenced before assignment " +
-              "in enclosing scope"
-
-    let e = Py.newNameError(msg: msg)
-    return .exception(e)
-  }
-
-  private func getDerefName(index: Int) -> MangledName {
-    let cellCount = self.code.cellVariableCount
-    return index < cellCount ?
-      self.code.cellVariableNames[index] :
-      self.code.freeVariableNames[index - cellCount]
-  }
-
   // MARK: - Load closure
 
   /// Pushes a reference to the cell contained in slot 'i'
@@ -283,7 +320,16 @@ extension Eval {
   /// If 'i' < cellVars.count: name of the variable is cellVars[i].
   /// otherwise:               name is freeVars[i - cellVars.count].
   internal func loadClosure(cellOrFreeIndex: Int) -> InstructionResult {
-    let cell = self.cellsAndFreeVariables[cellOrFreeIndex]
+    let cellCount = self.cellVariables.count
+
+    let cell: PyCell
+    if cellOrFreeIndex < cellCount {
+      cell = self.getCell(index: cellOrFreeIndex)
+    } else {
+      let freeIndex = cellOrFreeIndex - cellCount
+      cell = self.getFree(index: freeIndex)
+    }
+
     self.stack.push(cell)
     return .ok
   }
