@@ -283,15 +283,12 @@ extension Eval {
     let mangled = self.code.freeVariableNames[index]
     return self.unboundCellOrFreeError(name: mangled)
   }
+
+  /// Much like `loadFree` but first checks the locals dictionary before
   /// consulting the cell.
   /// This is used for loading free variables in class bodies.
-  internal func loadClassCell(cellOrFreeIndex: Int) -> InstructionResult {
-    assert(cellOrFreeIndex >= self.code.cellVariableCount)
-
-    let freeIndex = cellOrFreeIndex - self.code.cellVariableCount
-    assert(0 <= freeIndex && freeIndex < self.code.freeVariableCount)
-
-    let mangled = self.code.freeVariableNames[freeIndex]
+  internal func loadClassFree(index: Int) -> InstructionResult {
+    let mangled = self.code.freeVariableNames[index]
     let name = Py.intern(string: mangled.value)
 
     let value: PyObject
@@ -299,9 +296,9 @@ extension Eval {
     case .value(let o):
       value = o
     case .notFound:
-      let cell = self.cellsAndFreeVariables[cellOrFreeIndex]
+      let cell = self.self.freeVariables[index]
       guard let content = cell.content else {
-        return self.unboundDerefError(index: cellOrFreeIndex)
+        return self.unboundFreeError(index: index)
       }
 
       value = content

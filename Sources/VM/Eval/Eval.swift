@@ -477,10 +477,13 @@ internal struct Eval {
     case let .deleteFree(freeIndex: arg):
       let index = Instruction.extend(base: extendedArg, arg: arg)
       return self.deleteFree(index: index)
+    case let .loadClassFree(freeIndex: arg):
       let index = Instruction.extend(base: extendedArg, arg: arg)
-    case let .loadClassCell(cellOrFreeIndex: arg):
+      return self.loadClassFree(index: index)
+
+    case let .loadClosure(cellOrFreeIndex: arg):
       let index = Instruction.extend(base: extendedArg, arg: arg)
-      return self.loadClassCell(cellOrFreeIndex: index)
+      return self.loadClosure(cellOrFreeIndex: index)
 
     case let .makeFunction(flags: flags):
       assert(extendedArg == 0)
@@ -577,9 +580,6 @@ internal struct Eval {
       return self.setupAnnotations()
     case .popBlock:
       return self.popBlockInstruction()
-    case let .loadClosure(cellOrFreeIndex: arg):
-      let index = Instruction.extend(base: extendedArg, arg: arg)
-      return self.loadClosure(cellOrFreeIndex: index)
     case let .buildSlice(type: arg):
       return self.buildSlice(arg: arg)
     }
