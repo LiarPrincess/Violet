@@ -327,6 +327,7 @@ class InstructionDescriptionTests: XCTestCase {
       "loadClassFree(freeIndex: 42)"
     )
   }
+
   // MARK: - Function
 
   func test_function() {

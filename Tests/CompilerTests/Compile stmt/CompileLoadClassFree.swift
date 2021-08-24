@@ -6,6 +6,7 @@ import VioletBytecode
 
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
+// cSpell:ignore CLASSDEREF
 
 // Very specific case, see 'LOAD_NAME and STORE_NAME (and LOAD_CLASSDEREF)' on:
 // https://tenthousandmeters.com/blog/python-behind-the-scenes-5-how-variables-are-implemented-in-cpython/

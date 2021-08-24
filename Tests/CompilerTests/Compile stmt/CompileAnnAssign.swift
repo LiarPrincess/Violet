@@ -6,7 +6,7 @@ import VioletBytecode
 
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
-// cSpell:ignore subscr
+// cSpell:ignore subscr whozits whatzits
 
 /// Use './Scripts/dump' for reference.
 class CompileAnnAssign: CompileTestCase {
