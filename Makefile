@@ -1,7 +1,5 @@
 # cSpell:ignore xcodeproj
 
-SWIFT_BUILD_FLAGS=--configuration debug
-
 .PHONY: all
 all: build
 
@@ -9,10 +7,10 @@ all: build
 # -- Usual things --
 # ------------------
 
-.PHONY: build run test pytest clean
+.PHONY: build run test pytest pytest-r clean
 
 build:
-	swift build $(SWIFT_BUILD_FLAGS)
+	swift build
 
 run:
 	swift run Violet
@@ -22,6 +20,14 @@ test:
 
 pytest:
 	swift run PyTests
+
+# Hmm…
+# '--configuration=release' does work on Ubuntu 21.4 (Swift 5.4.2),
+# but it does not work on macOS 10.15.6 (Swift 5.3 from Xcode) - somehow it will
+# still use 'debug'.
+# But you can just create new scheme in Xcode and it will work. Whatever…
+pytest-r:
+	swift run PyTests --configuration=release
 
 clean:
 	swift package clean

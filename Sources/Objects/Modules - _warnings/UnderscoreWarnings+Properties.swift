@@ -58,11 +58,11 @@ extension UnderscoreWarnings {
     // DEBUG builds show all warnings by default
     #else
     // Other builds ignore a number of warning categories by default
-    append(category: .deprecationWarning, action: "default", module: "__main__")
-    append(category: .deprecationWarning, action: "ignore", module: nil)
-    append(category: .pendingDeprecationWarning, action: "ignore", module: nil)
-    append(category: .importWarning, action: "ignore", module: nil)
-    append(category: .resourceWarning, action: "ignore", module: nil)
+    append(category: .deprecation, action: "default", module: "__main__")
+    append(category: .deprecation, action: "ignore", module: nil)
+    append(category: .pendingDeprecation, action: "ignore", module: nil)
+    append(category: .import, action: "ignore", module: nil)
+    append(category: .resource, action: "ignore", module: nil)
     #endif
 
     return Py.newList(elements: elements)
