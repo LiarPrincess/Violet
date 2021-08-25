@@ -3,6 +3,7 @@ import VioletCore
 internal class DirResult: PyFunctionResultConvertible {
 
   private var elements = [PyObject]()
+  /// Avoid sorting if we are already sorted.
   private var cachedResult: PyFunctionResult?
 
   // MARK: - Init
@@ -35,11 +36,10 @@ internal class DirResult: PyFunctionResultConvertible {
   // MARK: - Append keys/elements
 
   internal func append(keysFrom object: PyObject) -> PyBaseException? {
-    switch Py.callMethod(object: object, selector: .keys) {
+    switch Py.getKeys(object: object) {
     case let .value(keys):
       return self.append(elementsFrom: keys)
     case let .missingMethod(e),
-         let .notCallable(e),
          let .error(e):
       return e
     }
@@ -56,7 +56,7 @@ internal class DirResult: PyFunctionResultConvertible {
 
   // MARK: - PyFunctionResultConvertible
 
-  // 'DirResult' can be used as a return type in python functions.
+  // 'DirResult' can be used as a return type in python function.
   internal var asFunctionResult: PyFunctionResult {
     if let cached = self.cachedResult {
       return cached
@@ -67,9 +67,9 @@ internal class DirResult: PyFunctionResultConvertible {
 
     switch list.sort(key: nil, isReverse: false) {
     case .value:
-      result = PyFunctionResult.value(list)
+      result = .value(list)
     case .error(let e):
-      result = PyFunctionResult.error(e)
+      result = .error(e)
     }
 
     self.cachedResult = result
