@@ -6,21 +6,36 @@ class NameTests: FileSystemTest {
   // MARK: - Basename
 
   func test_basename() {
-    self.assertBasename(path: "/frozen/elsa.txt", expected: "elsa.txt")
-    self.assertBasename(path: "/frozen/.elsa", expected: ".elsa")
-    self.assertBasename(path: "/frozen/elsa/", expected: "elsa")
-    self.assertBasename(path: "/frozen/.", expected: ".")
-    self.assertBasename(path: "/frozen/..", expected: "..")
-    self.assertBasename(path: "/frozen", expected: "frozen")
-    self.assertBasename(path: "frozen", expected: "frozen")
-    self.assertBasename(path: ".", expected: ".")
-    self.assertBasename(path: "..", expected: "..")
-    self.assertBasename(path: "/", expected: "/")
-    self.assertBasename(path: "//frozen", expected: "frozen")
-    self.assertBasename(path: "", expected: "")
+    self.assertBasename("", expected: "")
+    self.assertBasename(".", expected: ".")
+    self.assertBasename("..", expected: "..")
+    self.assertBasename("/", expected: "/")
+    self.assertBasename("///", expected: "/")
+
+    self.assertBasename("frozen", expected: "frozen")
+    self.assertBasename("frozen/", expected: "frozen")
+    self.assertBasename("frozen//", expected: "frozen")
+    self.assertBasename("frozen/.", expected: ".")
+    self.assertBasename("frozen/..", expected: "..")
+    self.assertBasename("frozen/elsa", expected: "elsa")
+    self.assertBasename("frozen/elsa.txt", expected: "elsa.txt")
+    self.assertBasename("frozen/elsa/", expected: "elsa")
+    self.assertBasename("frozen/elsa//", expected: "elsa")
+
+    self.assertBasename("/frozen", expected: "frozen")
+    self.assertBasename("/frozen/", expected: "frozen")
+    self.assertBasename("/frozen//", expected: "frozen")
+    self.assertBasename("/frozen/.", expected: ".")
+    self.assertBasename("/frozen/..", expected: "..")
+    self.assertBasename("/frozen/elsa", expected: "elsa")
+    self.assertBasename("/frozen/elsa.txt", expected: "elsa.txt")
+    self.assertBasename("/frozen/elsa/", expected: "elsa")
+    self.assertBasename("/frozen/elsa//", expected: "elsa")
+
+    self.assertBasename("//frozen", expected: "frozen")
   }
 
-  private func assertBasename(path: String,
+  private func assertBasename(_ path: String,
                               expected: String,
                               file: StaticString = #file,
                               line: UInt = #line) {

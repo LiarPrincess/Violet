@@ -11,6 +11,8 @@ import Glibc
 internal typealias DIR = OpaquePointer
 #endif
 
+private let slash: Int32 = 0x2F
+
 /// Syscalls etc.
 ///
 /// Tiny wrapper to make them feel more 'Swift-like'.
@@ -32,9 +34,46 @@ internal enum LibC {
     // Both dirname() and basename() return pointers to null-terminated strings.
     // (Do not pass these pointers to free(3).)
 
+    // On Linux 'Foundation.basename' does not exist, so we have to write it.
+    // But if you really want to use it, then:
     // 'Foundation.basename' returns 'UnsafeMutablePointer<Int8>!',
     // so it is safe to unwrap.
-    return Foundation.basename(path)!
+    // return Foundation.basename(path)!
+
+    // Assuming null-termination.
+    var len = Foundation.strlen(path)
+    if len == 0 {
+      return path
+    }
+
+    // Remove trailing '/'.
+    var indexBeforeLen = len - 1
+    if indexBeforeLen >= 0 && path[indexBeforeLen] == slash {
+      while indexBeforeLen >= 0, path[indexBeforeLen] == slash {
+        indexBeforeLen -= 1
+        len -= 1
+      }
+
+      let everythingWasSlash = len == 0
+      if everythingWasSlash {
+        path[1] = 0
+        return path
+      }
+
+      path[len] = 0
+    }
+
+    // Go back to previous '/' and return string from there:
+    // char *p = strrchr (filename, '/');
+    // return p ? p + 1 : (char *) filename;
+
+    var lastSlashIndex = len - 1
+    while lastSlashIndex >= 0, path[lastSlashIndex] != slash {
+      lastSlashIndex -= 1
+    }
+
+    let noSlash = lastSlashIndex == -1
+    return noSlash ? path : path.advanced(by: lastSlashIndex + 1)
   }
 
   // MARK: - dirname
