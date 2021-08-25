@@ -182,13 +182,13 @@ class BigIntStorageTests: XCTestCase {
 
   func test_prepend_insideExistingBuffer() {
     let initialWords: [Word] = [.max, 1, .min, 7]
-    var storage = BigIntStorage(isNegative: false, words: initialWords)
+    var storage = BigIntStorage(minimumCapacity: 8)
+    for word in initialWords {
+      storage.append(word)
+    }
 
     let prependCount = storage.capacity - storage.count
-    XCTAssert(
-      prependCount != 0,
-      "Expected to have some space left (just modify 'initialWords' to fix)"
-    )
+    XCTAssert(prependCount != 0, "Expected to have some space left")
 
     storage.prepend(42, count: prependCount)
     XCTAssertEqual(storage.count, storage.capacity)
@@ -200,7 +200,10 @@ class BigIntStorageTests: XCTestCase {
 
   func test_prepend_inNewBuffer() {
     let initialWords: [Word] = [.max, 1, .min, 7]
-    var storage = BigIntStorage(isNegative: false, words: initialWords)
+    var storage = BigIntStorage(minimumCapacity: 8)
+    for word in initialWords {
+      storage.append(word)
+    }
 
     let prependCount = storage.capacity // This will force allocation
     storage.prepend(42, count: prependCount)
@@ -212,20 +215,23 @@ class BigIntStorageTests: XCTestCase {
 
   func test_prepend_cow() {
     let initialWords: [Word] = [.max, 1, .min, 7]
-    let original = BigIntStorage(isNegative: false, words: initialWords)
+    var original = BigIntStorage(minimumCapacity: 8)
+    for word in initialWords {
+      original.append(word)
+    }
 
     var copy = original
 
     let prependCount = copy.capacity - copy.count
-    XCTAssert(
-      prependCount != 0,
-      "Expected to have some space left (just modify 'initialWords' to fix)"
-    )
+    XCTAssert(prependCount != 0, "Expected to have some space left")
 
     // This should always copy the 'original' buffer
     copy.prepend(42, count: prependCount)
 
     XCTAssertEqual(original, BigIntStorage(isNegative: false, words: initialWords))
+
+    let copyWords = [Word](repeating: 42, count: prependCount) + initialWords
+    XCTAssertEqual(copy, BigIntStorage(isNegative: false, words: copyWords))
   }
 
   // MARK: - Drop first
