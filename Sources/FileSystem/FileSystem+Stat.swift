@@ -62,7 +62,12 @@ public struct Stat {
 
   public init(stat: Foundation.stat) {
     self.st_mode = stat.st_mode
+
+    #if os(Linux)
+    self.st_mtimespec = stat.st_mtim
+    #else
     self.st_mtimespec = stat.st_mtimespec
+    #endif
   }
 }
 

@@ -81,15 +81,23 @@ private func _NSErrorWithErrno(_ posixErrno: Int32,
 
 private func _CFReallocf(_ ptr: UnsafeMutableRawPointer,
                          _ size: Int) -> UnsafeMutableRawPointer {
-  //  #if TARGET_OS_WIN32 || TARGET_OS_LINUX
-  //      void *mem = realloc(ptr, size);
-  //      if (mem == NULL && ptr != NULL && size != 0) {
-  //          free(ptr);
-  //      }
-  //      return mem;
-  //  #else
+  #if os(Linux)
+  // Code in C:
+  // #if TARGET_OS_WIN32 || TARGET_OS_LINUX
+  //
+  // void *mem = realloc(ptr, size);
+  // if (mem == NULL && ptr != NULL && size != 0) {
+  //     free(ptr);
+  // }
 
-  reallocf(ptr, size)
+  guard let mem = Foundation.realloc(ptr, size) else {
+    trap("Unable to reallocate \(ptr)")
+  }
+
+  return mem
+  #else
+  return reallocf(ptr, size)
+  #endif
 }
 
 private func _CFOpenFile(_ path: UnsafePointer<CChar>,
