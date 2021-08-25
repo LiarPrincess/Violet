@@ -80,7 +80,7 @@ extension FileSystem {
     }
   }
 
-  private func readdirAndClose(dirp: UnsafeMutablePointer<DIR>) -> ReaddirResult {
+  private func readdirAndClose(dirp: DIR) -> ReaddirResult {
     var result = [Filename]()
 
     var entry = LibC.createDirent()
@@ -115,10 +115,13 @@ extension FileSystem {
   }
 
   private func getName(entry: inout dirent) -> String {
-    let length = Int(entry.d_namlen)
+    // From 'https://man7.org/linux/man-pages/man0/dirent.h.0p.html':
+    // The array d_name is of unspecified size, but shall contain a
+    // filename of at most {NAME_MAX} bytes followed by a terminating
+    // null byte.
     return withUnsafePointer(to: &entry.d_name) { ptr in
       let namePtr = UnsafeRawPointer(ptr).assumingMemoryBound(to: CChar.self)
-      return self.string(withFileSystemRepresentation: namePtr, length: length)
+      return self.string(nullTerminatedWithFileSystemRepresentation: namePtr)
     }
   }
 

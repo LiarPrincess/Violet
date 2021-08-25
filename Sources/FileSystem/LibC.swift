@@ -3,6 +3,14 @@ import Foundation
 // swiftlint:disable force_unwrapping
 // swiftlint:disable implicitly_unwrapped_optional
 
+#if canImport(Darwin)
+import Darwin
+internal typealias DIR = UnsafeMutablePointer<Foundation.DIR>
+#elseif canImport(Glibc)
+import Glibc
+internal typealias DIR = OpaquePointer
+#endif
+
 /// Syscalls etc.
 ///
 /// Tiny wrapper to make them feel more 'Swift-like'.
@@ -108,10 +116,10 @@ internal enum LibC {
   // MARK: - opendir
 
   internal enum OpendirResult {
-    case value(UnsafeMutablePointer<DIR>)
+    case value(DIR)
     case errno(Int32)
 
-    fileprivate init(returnValue: UnsafeMutablePointer<DIR>!) {
+    fileprivate init(returnValue: DIR?) {
       // The opendir() and fdopendir() functions return a pointer to the directory
       // stream. On error, NULL is returned, and errno is set appropriately.
 
@@ -175,7 +183,7 @@ internal enum LibC {
 
   /// https://linux.die.net/man/3/readdir_r
   internal static func readdir_r(
-    dirp: UnsafeMutablePointer<DIR>!,
+    dirp: DIR,
     entry: UnsafeMutablePointer<dirent>!,
     result: UnsafeMutablePointer<UnsafeMutablePointer<dirent>?>!
   ) -> ReaddirResult {
@@ -205,7 +213,7 @@ internal enum LibC {
   }
 
   /// https://linux.die.net/man/3/closedir
-  internal static func closedir(dirp: UnsafeMutablePointer<DIR>!) -> ClosedirResult {
+  internal static func closedir(dirp: DIR) -> ClosedirResult {
     // The closedir() function returns 0 on success. On error, -1 is returned,
     // and errno is set appropriately.
 
