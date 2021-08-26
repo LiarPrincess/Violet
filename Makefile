@@ -1,19 +1,31 @@
 # cSpell:ignore xcodeproj
 
+SWIFT_BUILD_FLAGS_RELEASE=--configuration release
+
 .PHONY: all
 all: build
 
-# ------------------
-# -- Usual things --
-# ------------------
+# ==================
+# == Usual things ==
+# ==================
 
-.PHONY: build run test pytest pytest-r clean
+.PHONY: build build-r
+.PHONY: run run-r
+.PHONY: test
+.PHONY: pytest pytest-r
+.PHONY: clean
 
 build:
 	swift build
 
+build-r:
+	swift build $(SWIFT_BUILD_FLAGS_RELEASE)
+
 run:
 	swift run Violet
+
+run-r:
+	swift run Violet $(SWIFT_BUILD_FLAGS_RELEASE)
 
 test:
 	swift test
@@ -25,16 +37,16 @@ pytest:
 # '--configuration=release' does work on Ubuntu 21.4 (Swift 5.4.2),
 # but it does not work on macOS 10.15.6 (Swift 5.3 from Xcode) - somehow it will
 # still use 'debug'.
-# But you can just create new scheme in Xcode and it will work. Whatever…
+# But you can create a new scheme in Xcode and it will work. Whatever…
 pytest-r:
-	swift run PyTests --configuration=release
+	swift run PyTests $(SWIFT_BUILD_FLAGS_RELEASE)
 
 clean:
 	swift package clean
 
-# ---------------------
-# -- Code generation --
-# ---------------------
+# =====================
+# == Code generation ==
+# =====================
 
 .PHONY: elsa ariel gen unicode
 
@@ -54,9 +66,9 @@ gen:
 unicode:
 	./Scripts/unicode/main.sh
 
-# -----------------
-# -- Lint/format --
-# -----------------
+# =================
+# == Lint/format ==
+# =================
 
 .PHONY: lint format spell
 
@@ -82,9 +94,9 @@ spell:
 		"./Package.swift" \
 		"./README.md"
 
-# -----------
-# -- Xcode --
-# -----------
+# ===========
+# == Xcode ==
+# ===========
 
 .PHONY: xcode
 
