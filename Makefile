@@ -1,4 +1,4 @@
-# cSpell:ignore xcodeproj
+# cSpell:ignore workdir xcodeproj
 
 SWIFT_BUILD_FLAGS_RELEASE=--configuration release
 
@@ -43,6 +43,28 @@ pytest-r:
 
 clean:
 	swift package clean
+
+# ============
+# == Docker ==
+# ============
+
+.PHONY: docker-test docker-pytest
+
+docker-test:
+	docker run \
+		--rm \
+		--volume "$(PWD):$(PWD)" \
+		--workdir "$(PWD)" \
+		swift:latest \
+		bash -c 'make test'
+
+docker-pytest:
+	docker run \
+		--rm \
+		--volume "$(PWD):$(PWD)" \
+		--workdir "$(PWD)" \
+		swift:latest \
+		bash -c 'make pytest-r'
 
 # =====================
 # == Code generation ==
