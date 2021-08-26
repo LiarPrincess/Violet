@@ -11,7 +11,7 @@ import Glibc
 internal typealias DIR = OpaquePointer
 #endif
 
-private let slash: Int32 = 0x2F
+private let slash: Int8 = 0x2F
 
 /// Syscalls etc.
 ///
@@ -31,9 +31,6 @@ internal enum LibC {
   internal static func basename(
     path: UnsafeMutablePointer<Int8>!
   ) -> UnsafeMutablePointer<Int8> {
-    // Both dirname() and basename() return pointers to null-terminated strings.
-    // (Do not pass these pointers to free(3).)
-
     // On Linux 'Foundation.basename' does not exist, so we have to write it.
     // But if you really want to use it, then:
     // 'Foundation.basename' returns 'UnsafeMutablePointer<Int8>!',
@@ -87,7 +84,42 @@ internal enum LibC {
 
     // 'Foundation.dirname' returns 'UnsafeMutablePointer<Int8>!',
     // so it is safe to unwrap.
+
+    #if os(Linux)
+
+    // On linux '//frozen' will return '//', but we want '/'.
+    let result = Foundation.dirname(path)!
+
+    var index = 0
+    while true {
+      let ch = result[index]
+
+      switch ch {
+      case 0:
+        switch index {
+        case 0:
+          // Empty string?
+          return result
+        case 1:
+          // Single '/'.
+          return result
+        default:
+          // Multiple '/' in a row.
+          result[1] = 0
+          return result
+        }
+
+      case slash:
+        index += 1
+
+      default:
+        // Non-slash -> not our special case.
+        return result
+      }
+    }
+    #else
     return Foundation.dirname(path)!
+    #endif
   }
 
   // MARK: - creat

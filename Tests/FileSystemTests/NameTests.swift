@@ -77,21 +77,36 @@ class NameTests: FileSystemTest {
   // MARK: - Dirname
 
   func test_dirname() {
-    self.assertDirname(path: "/frozen/elsa.txt", expected: "/frozen", isTop: false)
-    self.assertDirname(path: "/frozen/.elsa", expected: "/frozen", isTop: false)
-    self.assertDirname(path: "/frozen/elsa/", expected: "/frozen", isTop: false)
-    self.assertDirname(path: "/frozen/.", expected: "/frozen", isTop: false)
-    self.assertDirname(path: "/frozen/..", expected: "/frozen", isTop: false)
-    self.assertDirname(path: "/frozen", expected: "/", isTop: true)
-    self.assertDirname(path: "frozen", expected: ".", isTop: true)
-    self.assertDirname(path: ".", expected: ".", isTop: true)
-    self.assertDirname(path: "..", expected: ".", isTop: true)
-    self.assertDirname(path: "/", expected: "/", isTop: true)
-    self.assertDirname(path: "//frozen", expected: "/", isTop: true)
-    self.assertDirname(path: "", expected: ".", isTop: true)
+    self.assertDirname("", expected: ".", isTop: true)
+    self.assertDirname(".", expected: ".", isTop: true)
+    self.assertDirname("..", expected: ".", isTop: true)
+    self.assertDirname("/", expected: "/", isTop: true)
+    self.assertDirname("///", expected: "/", isTop: true)
+
+    self.assertDirname("frozen", expected: ".", isTop: true)
+    self.assertDirname("frozen/", expected: ".", isTop: true)
+    self.assertDirname("frozen//", expected: ".", isTop: true)
+    self.assertDirname("frozen/.", expected: "frozen", isTop: false)
+    self.assertDirname("frozen/..", expected: "frozen", isTop: false)
+    self.assertDirname("frozen/elsa", expected: "frozen", isTop: false)
+    self.assertDirname("frozen/elsa.txt", expected: "frozen", isTop: false)
+    self.assertDirname("frozen/elsa/", expected: "frozen", isTop: false)
+    self.assertDirname("frozen/elsa//", expected: "frozen", isTop: false)
+
+    self.assertDirname("/frozen", expected: "/", isTop: true)
+    self.assertDirname("/frozen/", expected: "/", isTop: true)
+    self.assertDirname("/frozen//", expected: "/", isTop: true)
+    self.assertDirname("/frozen/.", expected: "/frozen", isTop: false)
+    self.assertDirname("/frozen/..", expected: "/frozen", isTop: false)
+    self.assertDirname("/frozen/elsa", expected: "/frozen", isTop: false)
+    self.assertDirname("/frozen/elsa.txt", expected: "/frozen", isTop: false)
+    self.assertDirname("/frozen/elsa/", expected: "/frozen", isTop: false)
+    self.assertDirname("/frozen/elsa//", expected: "/frozen", isTop: false)
+
+    self.assertDirname("//frozen", expected: "/", isTop: true)
   }
 
-  private func assertDirname(path: String,
+  private func assertDirname(_ path: String,
                              expected: String,
                              isTop: Bool,
                              file: StaticString = #file,
