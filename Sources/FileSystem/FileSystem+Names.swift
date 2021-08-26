@@ -12,13 +12,11 @@ extension FileSystem {
       return Filename(string: "")
     }
 
-    let ptr = self.withMutableFileSystemRepresentation(
-      path: nonEmpty,
-      body: LibC.basename(path:)
-    )
-
-    let string = self.string(nullTerminatedWithFileSystemRepresentation: ptr)
-    return Filename(string: string)
+    return self.withMutableFileSystemRepresentation(path: nonEmpty) { ptr in 
+      let resultPtr = LibC.basename(path: ptr)
+      let string = self.string(nullTerminatedWithFileSystemRepresentation: resultPtr)
+      return Filename(string: string)
+    }
   }
 
   public func basenameWithoutExt(filename: Filename) -> Filename {
@@ -124,14 +122,12 @@ extension FileSystem {
       return DirnameResult(path: resultPath, isTop: true)
     }
 
-    let ptr = self.withMutableFileSystemRepresentation(
-      path: nonEmpty,
-      body: LibC.dirname(path:)
-    )
-
-    let string = self.string(nullTerminatedWithFileSystemRepresentation: ptr)
-    let isTop = string == "." || string == "/"
-    let resultPath = Path(string: string)
-    return DirnameResult(path: resultPath, isTop: isTop)
+    return self.withMutableFileSystemRepresentation(path: nonEmpty) { ptr in 
+      let resultPtr = LibC.dirname(path: ptr)
+      let string = self.string(nullTerminatedWithFileSystemRepresentation: resultPtr)
+      let isTop = string == "." || string == "/"
+      let resultPath = Path(string: string)
+      return DirnameResult(path: resultPath, isTop: isTop)
+    }
   }
 }
