@@ -21,7 +21,7 @@ extension FileSystem {
     return Filename(string: string)
   }
 
-  public func basenameWithoutExtension(filename: Filename) -> Filename {
+  public func basenameWithoutExt(filename: Filename) -> Filename {
     switch self.splitNameAndExt(filename: filename) {
     case .split(name: let name, ext: _):
       return Filename(string: name)
@@ -30,9 +30,9 @@ extension FileSystem {
     }
   }
 
-  public func basenameWithoutExtension(path: Path) -> Filename {
+  public func basenameWithoutExt(path: Path) -> Filename {
     let basename = self.basename(path: path)
-    return self.basenameWithoutExtension(filename: basename)
+    return self.basenameWithoutExt(filename: basename)
   }
 
   // MARK: - Extname

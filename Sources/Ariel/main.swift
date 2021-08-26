@@ -72,7 +72,7 @@ let output: Output = {
   }
 
   printVerbose("Output directory specified: \(outputPath)")
-  let inputName = fileSystem.basenameWithoutExtension(path: input.path)
+  let inputName = fileSystem.basenameWithoutExt(path: input.path)
   let outputName = fileSystem.addExt(filename: inputName, ext: ".swift")
   let path = fileSystem.join(path: outputPath, element: outputName)
   return FileOutput(path: path, encoding: outputEncoding)

@@ -48,25 +48,25 @@ class NameTests: FileSystemTest {
                    line: line)
   }
 
-  // MARK: - Basename without extension
+  // MARK: - Basename without ext
 
-  func test_basenameWithoutExtension() {
-    self.assertBasenameWithoutExtension(path: "elsa.txt", expected: "elsa")
-    self.assertBasenameWithoutExtension(path: "/frozen/elsa.txt", expected: "elsa")
-    self.assertBasenameWithoutExtension(path: "/frozen/elsa/", expected: "elsa")
-    self.assertBasenameWithoutExtension(path: "/frozen/.", expected: ".")
-    self.assertBasenameWithoutExtension(path: "/frozen/..", expected: "..")
-    self.assertBasenameWithoutExtension(path: ".", expected: ".")
-    self.assertBasenameWithoutExtension(path: "..", expected: "..")
-    self.assertBasenameWithoutExtension(path: "", expected: "")
+  func test_basenameWithoutExt() {
+    self.assertBasenameWithoutExt("elsa.txt", expected: "elsa")
+    self.assertBasenameWithoutExt("/frozen/elsa.txt", expected: "elsa")
+    self.assertBasenameWithoutExt("/frozen/elsa/", expected: "elsa")
+    self.assertBasenameWithoutExt("/frozen/.", expected: ".")
+    self.assertBasenameWithoutExt("/frozen/..", expected: "..")
+    self.assertBasenameWithoutExt(".", expected: ".")
+    self.assertBasenameWithoutExt("..", expected: "..")
+    self.assertBasenameWithoutExt("", expected: "")
   }
 
-  private func assertBasenameWithoutExtension(path: String,
+  private func assertBasenameWithoutExt(_ path: String,
                                               expected: String,
                                               file: StaticString = #file,
                                               line: UInt = #line) {
     let p = Path(string: path)
-    let result = self.fileSystem.basenameWithoutExtension(path: p)
+    let result = self.fileSystem.basenameWithoutExt(path: p)
 
     XCTAssertEqual(result,
                    Filename(string: expected),
@@ -115,15 +115,15 @@ class NameTests: FileSystemTest {
   // MARK: - Extname
 
   func test_extname() {
-    self.assertExtname(path: "elsa.letitgo", expected: ".letitgo")
-    self.assertExtname(path: "frozen/elsa.letitgo", expected: ".letitgo")
-    self.assertExtname(path: "frozen", expected: "")
-    self.assertExtname(path: ".", expected: "")
-    self.assertExtname(path: "..", expected: "")
-    self.assertExtname(path: "", expected: "")
+    self.assertExtname("elsa.letitgo", expected: ".letitgo")
+    self.assertExtname("frozen/elsa.letitgo", expected: ".letitgo")
+    self.assertExtname("frozen", expected: "")
+    self.assertExtname(".", expected: "")
+    self.assertExtname("..", expected: "")
+    self.assertExtname("", expected: "")
   }
 
-  private func assertExtname(path: String,
+  private func assertExtname(_ path: String,
                              expected: String,
                              file: StaticString = #file,
                              line: UInt = #line) {
@@ -152,18 +152,16 @@ class NameTests: FileSystemTest {
   // MARK: - Add ext
 
   func test_addExt() {
-    self.assertAddExt(filename: "elsa", ext: ".letitgo", expected: "elsa.letitgo")
-    self.assertAddExt(filename: "elsa", ext: "letitgo", expected: "elsa.letitgo")
-    self.assertAddExt(filename: "elsa.frozen",
-                      ext: "letitgo",
-                      expected: "elsa.frozen.letitgo")
-    self.assertAddExt(filename: ".", ext: ".txt", expected: "..txt")
-    self.assertAddExt(filename: "..", ext: ".txt", expected: "...txt")
-    self.assertAddExt(filename: "", ext: ".txt", expected: ".txt")
+    self.assertAddExt("elsa", ".letitgo", expected: "elsa.letitgo")
+    self.assertAddExt("elsa", "letitgo", expected: "elsa.letitgo")
+    self.assertAddExt("elsa.frozen", "letitgo", expected: "elsa.frozen.letitgo")
+    self.assertAddExt(".", ".txt", expected: "..txt")
+    self.assertAddExt("..", ".txt", expected: "...txt")
+    self.assertAddExt("", ".txt", expected: ".txt")
   }
 
-  private func assertAddExt(filename: String,
-                            ext: String,
+  private func assertAddExt(_ filename: String,
+                            _ ext: String,
                             expected: String,
                             file: StaticString = #file,
                             line: UInt = #line) {
