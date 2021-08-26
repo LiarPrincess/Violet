@@ -62,9 +62,9 @@ class NameTests: FileSystemTest {
   }
 
   private func assertBasenameWithoutExt(_ path: String,
-                                              expected: String,
-                                              file: StaticString = #file,
-                                              line: UInt = #line) {
+                                        expected: String,
+                                        file: StaticString = #file,
+                                        line: UInt = #line) {
     let p = Path(string: path)
     let result = self.fileSystem.basenameWithoutExt(path: p)
 

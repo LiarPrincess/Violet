@@ -2,6 +2,7 @@ import Foundation
 
 // swiftlint:disable force_unwrapping
 // swiftlint:disable implicitly_unwrapped_optional
+// swiftlint:disable file_length
 
 #if canImport(Darwin)
 import Darwin
@@ -11,7 +12,7 @@ import Glibc
 internal typealias DIR = OpaquePointer
 #endif
 
-private let slash: Int8 = 0x2F
+private let slash: Int8 = 0x2f
 
 /// Syscalls etc.
 ///

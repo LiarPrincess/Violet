@@ -461,7 +461,7 @@ public struct Formatter {
       let prefix = String(value.prefix(maxCount))
 
       // We have to close any unclosed " and """.
-      // Otherwise suntax highlighters would go crazy.
+      // Otherwise syntax highlighters would go crazy.
       // Btw. we do not support #""" syntax and if we end with " then it may fail.
       var braces = ""
       let unclosedBraces = self.hasUnclosedBraces(string: prefix)

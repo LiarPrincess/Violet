@@ -12,7 +12,7 @@ extension FileSystem {
       return Filename(string: "")
     }
 
-    return self.withMutableFileSystemRepresentation(path: nonEmpty) { ptr in 
+    return self.withMutableFileSystemRepresentation(path: nonEmpty) { ptr in
       let resultPtr = LibC.basename(path: ptr)
       let string = self.string(nullTerminatedWithFileSystemRepresentation: resultPtr)
       return Filename(string: string)
@@ -122,7 +122,7 @@ extension FileSystem {
       return DirnameResult(path: resultPath, isTop: true)
     }
 
-    return self.withMutableFileSystemRepresentation(path: nonEmpty) { ptr in 
+    return self.withMutableFileSystemRepresentation(path: nonEmpty) { ptr in
       let resultPtr = LibC.dirname(path: ptr)
       let string = self.string(nullTerminatedWithFileSystemRepresentation: resultPtr)
       let isTop = string == "." || string == "/"
