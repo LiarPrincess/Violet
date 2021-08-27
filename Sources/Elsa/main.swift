@@ -6,6 +6,7 @@ let elsaDir = URL(fileURLWithPath: #file).deletingLastPathComponent()
 let sourcesDir = elsaDir.deletingLastPathComponent()
 let rootDir = sourcesDir.deletingLastPathComponent()
 let testsDir = rootDir.appendingPathComponent("Tests")
+let documentationDir = rootDir.appendingPathComponent("Documentation")
 
 private func parse(file: URL) -> SourceFile {
   do {
@@ -88,8 +89,8 @@ private func generateBytecode() {
 
   EmitBytecodeDocumentationVisitor(
     sourceFile: sourceFile,
-    outputFile: bytecodeDir
-      .appendingPathComponent("README_Instructions.md")
+    outputFile: documentationDir
+      .appendingPathComponent("Bytecode - Instructions.md")
   ).walk()
 }
 
