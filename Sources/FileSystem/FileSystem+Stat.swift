@@ -63,10 +63,10 @@ public struct Stat {
   public init(stat: Foundation.stat) {
     self.st_mode = stat.st_mode
 
-    #if os(Linux)
-    self.st_mtimespec = stat.st_mtim
-    #else
+    #if canImport(Darwin)
     self.st_mtimespec = stat.st_mtimespec
+    #elseif canImport(Glibc)
+    self.st_mtimespec = stat.st_mtim
     #endif
   }
 }

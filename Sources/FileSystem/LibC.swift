@@ -83,12 +83,12 @@ internal enum LibC {
     // Both dirname() and basename() return pointers to null-terminated strings.
     // (Do not pass these pointers to free(3).)
 
+    #if canImport(Darwin)
     // 'Foundation.dirname' returns 'UnsafeMutablePointer<Int8>!',
     // so it is safe to unwrap.
-
-    #if os(Linux)
-
-    // On linux '//frozen' will return '//', but we want '/'.
+    return Foundation.dirname(path)!
+    #elseif canImport(Glibc)
+    // '//frozen' will return '//', but we want '/'.
     let result = Foundation.dirname(path)!
 
     var index = 0
@@ -118,8 +118,6 @@ internal enum LibC {
         return result
       }
     }
-    #else
-    return Foundation.dirname(path)!
     #endif
   }
 

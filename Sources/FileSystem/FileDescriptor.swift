@@ -81,7 +81,9 @@ private func _NSErrorWithErrno(_ posixErrno: Int32,
 
 private func _CFReallocf(_ ptr: UnsafeMutableRawPointer,
                          _ size: Int) -> UnsafeMutableRawPointer {
-  #if os(Linux)
+  #if canImport(Darwin)
+  return reallocf(ptr, size)
+  #elseif canImport(Glibc)
   // Code in C:
   // #if TARGET_OS_WIN32 || TARGET_OS_LINUX
   //
@@ -95,8 +97,6 @@ private func _CFReallocf(_ ptr: UnsafeMutableRawPointer,
   }
 
   return mem
-  #else
-  return reallocf(ptr, size)
   #endif
 }
 
