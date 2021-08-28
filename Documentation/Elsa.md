@@ -2,10 +2,13 @@
 
 Elsa is a tiny DSL for describing data. It uses  `.letitgo` files from `Definitions` directory.
 
-Why?
-- from a single Elsa `AST` definition we can generate both `AST` nodes and [visitor](https://en.wikipedia.org/wiki/Visitor_pattern) protocols. And if our AST ever changes, we just need to fix it in one place (`.letitgo` file).
-- Elsa allows us to avoid writing Swift boilerplate by just concentrating on data shape. For example: Swift automatically creates *memberwise initializer* for every `struct`. Unfortunately this `init` has an `internal` access level, so if we want to create instance from another module, we have manually add `public init`. Elsa does this automatically.
-- you can easily modify generated code. For example: to add method responsible for accepting [visitor](https://en.wikipedia.org/wiki/Visitor_pattern) you just modify Elsa code, that saves you from having to manually update every node definition.
+## Why?
+
+From a single Elsa definition we can generate both `AST` nodes and [visitor](https://en.wikipedia.org/wiki/Visitor_pattern) protocols. And if our AST ever changes, we just need to fix it in one place (`.letitgo` file).
+
+Elsa allows us to avoid writing Swift boilerplate by just concentrating on data shape. For example: Swift automatically creates *memberwise initializer* for every `struct`. Unfortunately this `init` has an `internal` access level, so if we want to create instance from an another module, we have manually add `public init`. Elsa does this automatically.
+
+You can easily modify generated code. For example: to add method responsible for accepting [visitor](https://en.wikipedia.org/wiki/Visitor_pattern) you just modify Elsa code, that saves you from having to manually update every node definition.
 
 ## Language description
 
@@ -13,6 +16,7 @@ Tip: Use Haskell syntax highlighting.
 
 ### Comments
 Use `{-` and `-}` for comment. Comments will not emit any Swift code.
+
 ```haskell
 {-
 This is a
@@ -24,6 +28,7 @@ multiline comment
 Use `--` to generate Swift documentation.
 
 For example:
+
 ```haskell
 -- Top (root) node in AST.
 @class AST: ASTNode = (
@@ -33,6 +38,7 @@ For example:
 ```
 
 will generate:
+
 ```Swift
 /// Top (root) node in AST.
 public class AST: ASTNode {
@@ -86,6 +92,7 @@ See generated Swift code below.
 ```
 
 Will generate:
+
 ```Swift
 
 /// A function definition.
@@ -116,6 +123,7 @@ extension CompareExpr {
 Use `@enum` to generate Swift `enum`.
 
 For example:
+
 ```haskell
 @enum Vararg =
   none
@@ -125,6 +133,7 @@ For example:
 ```
 
 Will generate:
+
 ```Swift
 public enum Vararg {
   case none
@@ -141,6 +150,7 @@ Btw. *teknikly* Swift enums are not *proper* union types, but who cares.
 You can use `@alias` to rename a type.
 
 For example:
+
 ```haskell
 @alias Identifier = String
 
@@ -152,6 +162,7 @@ For example:
 ```
 
 Will generate `String` instead of `Identifier`:
+
 ```Swift
 /// A class definition.
 public final class ClassDefStmt: Statement {
