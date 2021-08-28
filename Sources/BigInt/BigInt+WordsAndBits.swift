@@ -289,11 +289,11 @@ extension BigIntHeap {
       return 0
     }
 
-    public var endIndex: Int {
+    internal var endIndex: Int {
       return self._count
     }
 
-    public subscript(_ index: Int) -> UInt {
+    internal subscript(_ index: Int) -> UInt {
       precondition(0 <= index && index < self._count, "Index out or bounds")
 
       let isSignWord = index >= self._heap.storage.count
