@@ -4,13 +4,15 @@ import VioletCore
 
 /// Result of a `Python` operation.
 ///
+/// It is the truth universally acknowledged that EVERYTHING FAILS.
+///
 /// On a type-system level:
-/// given a type `Wrapped` it will add `error` possibility to it.
+/// given a type `Wrapped` it will add an `error` possibility to it.
 public enum PyResult<Wrapped> {
 
   /// Use this ctor for ordinary (non-error) values.
   ///
-  /// It can still hold `error` (meaning a subclass of `BaseException`),
+  /// It can still hold an `error` (meaning a subclass of `BaseException`),
   /// but in this case it is just a local variable, not an object to be raised.
   case value(Wrapped)
   /// Use this ctor to raise an error in VM.
