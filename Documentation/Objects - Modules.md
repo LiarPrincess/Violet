@@ -1,32 +1,35 @@
 # Modules
 
 Minimal Python implementation consists of following modules:
-- **[builtins](https://docs.python.org/3/library/builtins.html#module-builtins)** - global functions, exceptions and other objects, see [docs.python.org/Built-in Functions](https://docs.python.org/3/library/functions.html#built-in-funcs) and [docs.python.org/Built-in Constants](https://docs.python.org/3/library/constants.html#built-in-consts) for more information.
-- **[sys](https://docs.python.org/3/library/sys.html)** - system-specific parameters and functions. Provides access to some variables used or maintained by the interpreter and to functions that interact strongly with the interpreter.
-- **[importlib](https://docs.python.org/3/library/importlib.html)** - provides the implementation of the `import` statement.
-- **_imp** - (extremely) low-level import machinery used by `importlib`.
-- **_os** - low level `os` module that contains functions like: `getcwd`, `fspath`, `stat`, `listdir`. It is used by `importlib`, so that it can interact with filesystem.
-- **_warnings** - basic low-level warnings functionality. Similar to [warnings module](https://docs.python.org/3/library/warnings.html#module-warnings), but not as robust.
+- **[builtins](https://docs.python.org/3/library/builtins.html#module-builtins)** — global functions, exceptions and other objects, see [docs.python.org/Built-in Functions](https://docs.python.org/3/library/functions.html#built-in-funcs) and [docs.python.org/Built-in Constants](https://docs.python.org/3/library/constants.html#built-in-consts) for more information.
+- **[sys](https://docs.python.org/3/library/sys.html)** — system-specific parameters and functions. Provides access to some variables used or maintained by the interpreter and to functions that interact strongly with the interpreter.
+- **[importlib](https://docs.python.org/3/library/importlib.html)** — provides the implementation of the `import` statement.
+- **_imp** — (extremely) low-level import machinery used by `importlib`.
+- **_os** — low level `os` module that contains functions like: `getcwd`, `fspath`, `stat`, `listdir`. It is used by `importlib`, so that it can interact with filesystem.
+- **_warnings** — basic low-level warnings functionality. Similar to [warnings module](https://docs.python.org/3/library/warnings.html#module-warnings), but not as robust.
 
 From all of those modules only the `importlib` is implemented in Python, all of the others are pure Swift. This file deals with the representation of those “pure Swift” modules.
 
 ## Requirements
 
-- module must be representable as Python object available to users, for example:
-  ```py
-  >>> import sys
-  >>> sys
-  <module 'sys' (built-in)>
-  >>> type(sys)
-  <class 'module'>
-  ```
-- modules must be able to store state outside of their `__dict__` property - this is really useful because we will want to hide our implementation details from end-users.
+- Module must be representable as Python object available to users, for example:
+
+      ```py
+      >>> import sys
+      >>> sys
+      <module 'sys' (built-in)>
+      >>> type(sys)
+      <class 'module'>
+      ```
+     
+  
+- Module must be able to store state outside of their `__dict__` property — this is really useful because we will want to hide our implementation details from end-users.
 
 ## Implementation
 
-The obvious answer would be to create a subclass of `PyModule` class and add code responsible for this this specific module. Unfortunately this has a conceptual problem where a class contains methods from both `PyModule` and from specific implementation.
+The obvious answer would be to create a subclass of `PyModule` class for every implemented module. Unfortunately this has a conceptual problem where a class contains methods from both `PyModule` and from specific implementation.
 
-The better way is to create a separate class that will hold all of the module properties/functions and then create a `PyModule` instance that will refer to them. To do this we will pre-specialize function to module implementation object (by partial application) and then store it inside `PyModule.__dict__` as a Python object:
+The better way is to create a separate class to store all of the module properties/functions and then create a `PyModule` instance that refers to them. To do this we will pre-specialize function to module implementation object (by partial application) and then store it inside `PyModule.__dict__` as a Python object:
 
 ```Swift
 public final class Sys {
