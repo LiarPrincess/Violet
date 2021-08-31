@@ -5,7 +5,7 @@ Conceptually it is the owner of all of the Python objects.
 
 ## Initialization
 
-Before we can start using `Py` we have to call `Py.initialize` to set global parameters (this may seem complicated, but you can see real-life example inside the `VM` module):
+Before we can start using `Py` we have to call `Py.initialize` to set global parameters (this may seem complicated, but you can check the real-life example inside the `VM` module):
 
 ```Swift
 let arguments = try Arguments(from: CommandLine.arguments)
@@ -41,7 +41,7 @@ Py.initialize(
 )
 ```
 
-Please note that at any given time only a single `Py` instance can be alive. Calling `Py.initialize` again will fail/crash (hopefully). If you need to re-initialize `Py` during runtime you have to call `Py.destroy` and only then call `Py.initialize` again.
+Please note that at any given time only a single `Py` instance can be alive. Calling `Py.initialize` again will fail/crash (hopefully). If you need to re-initialize `Py` during runtime you have to call `Py.destroy` and only then you can call `Py.initialize` again.
 
 This also means that we do not support *V8-style isolates* (different `Py` instances living at the same time). This was done to simplify implementation (otherwise every call would need an additional `context` argument, and now we can just use global).
 
@@ -67,15 +67,14 @@ Using `Py` or any associated Python objects after calling `Py.destroy` may or ma
 
 ### Creating/reusing Python objects
 
-When creating Python object look for one of the following (in some cases it is possible to reuse existing instance):
+When creating a Python object look for one of the following:
 
-1. **property on `Py`** - this is most common for immutable types and some special values:
+1. **Property on `Py`** — sometimes you don’t need to create a new object at all, you can just re-use the existing instance. This is most common for immutable types and some special values:
 
     ```Swift
     // Booleans
     let s = Py.true
     let n = Py.false
-    /// 'None', 'NotImplemented' and '...'
     let o = Py.none
     let w = Py.notImplemented
     let w = Py.ellipsis
@@ -96,19 +95,19 @@ When creating Python object look for one of the following (in some cases it is p
     let e = Py._osModule
     ```
 
-2. **property on `Py.types` or `Py.errorTypes`** - if you are looking for `type` object:
+2. **Property on `Py.types` or `Py.errorTypes`** — if you are looking for `type` object:
 
     ```Swift
-    // 'object', 'int' and 'code' types:
+    // Standard types are stored inside 'Py.types':
     let a = Py.types.object
     let r = Py.types.int
     let i = Py.types.code
-    // Same goes for errors:
+    // Error types are in 'Py.errorTypes':
     let e = Py.errorTypes.baseException
     let l = Py.errorTypes.typeError
     ```
 
-3. **static `wrap` method on type** - this option is available only for `builtinFunction`, `staticmethod`, `classmethod` and `property` types. You can use it to “wrap” Swift function and expose it as a Python object:
+3. **Static `wrap` method on type** — this option is available only for `builtinFunction`, `staticmethod`, `classmethod` and `property` types. You can use it to “wrap” Swift function and expose it as a Python object:
 
     ```Swift
     // sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
@@ -123,7 +122,7 @@ When creating Python object look for one of the following (in some cases it is p
     let rapunzel = PyBuiltinFunction.wrap(name: "__add__", doc: nil, fn: PyInt.add(_:), castSelf: asInt)
     ```
 
-4. **`Py.new` method** - most common way of creating objects:
+4. **`Py.new` method** — most common way of creating objects. It will try to re-use existing instances if possible.
 
     ```Swift
     let e = Py.newInt(2) // 2 as int
@@ -132,11 +131,11 @@ When creating Python object look for one of the following (in some cases it is p
     let a = Py.newTypeError(msg: "Let it go!") // type error (it will create object, but not 'raise' it!)
     ```
 
-5. **Swift `init` method** - as a last resort if nothing else is available.
+5. **`PyMemory.new` method** — this will always allocate a new object. Use it as a last resort if nothing else is available.
 
-## Custom file description/handle type
+### Custom file descriptor/handle type
 
-Interesting thing about the Python language (without an additional modules) is that even though it allows for file manipulation (for example via `open` builtin function) it has no type to represent an actual file:
+Interesting thing about the Python language (without additional modules) is that even though it allows for file manipulation (for example via `open` builtin function) it has no type to represent an actual file:
 
 ```py
 >>> import sys
@@ -148,93 +147,9 @@ Interesting thing about the Python language (without an additional modules) is t
 <class '_io.TextIOWrapper'>
 ```
 
-In both cases `_io.TextIOWrapper` is used. While we could implement the `_io` module, it would be way to much work for our simple needs (it is not just the `TextIOWrapper` type that is needed, in fact, we would have to implement the whole class hierarchy).
+In both cases `_io.TextIOWrapper` is used. While we could implement the `_io` module, it would be way too much work for our simple needs (it is not just the `TextIOWrapper` type that is needed, in fact, we would have to implement the whole class hierarchy).
 
 Instead, we just created a simple `TextFile` type and placed it inside `builtins` module.
-
-### IdString
-
-`IdStrings` are predefined commonly used `__dict__` keys, similar to `_Py_IDENTIFIER` in `CPython`.
-
-For example:
-
-```Swift
-IdString.__abs__
-IdString.__add__
-IdString.__and__
-IdString.__class__
-IdString.__dict__
-```
-
-They can be used during `__dict__` lookup or method dispatch to avoid creating new `str` instances every time.
-
-Why?
-
-This is crucial for overall performance. Given how often those keys are used even a dictionary (with its `O(1) + massive constants` access) may be too slow.
-
-### Argument parser
-
-`ArgumentParser` is a structure responsible for binding runtime parameters (`args` and `kwargs`) to function signature.
-
-It is *heavily inspired* by CPython `typedef struct _PyArg_Parser`. For example, this is how `int.__new__` argument description looks in Violet:
-
-```Swift
-private static let newArguments = ArgumentParser.createOrTrap(
-  arguments: ["", "base"],
-  format: "|OO:int"
-)
-```
-
-And this is CPython:
-
-```C
-static const char * const _keywords[] = {"", "base", NULL};
-static _PyArg_Parser _parser = {"|OO:int", _keywords, 0};
-```
-
-Full syntax:
-- **arguments** - argument names. But only for keyword arguments. Positional arguments should use empty string.
-- **format** - argument format:
-  - `O` - Python object
-  - `|` - end of the required arguments (`minArgCount`)
-  - `$` - end of the positional arguments (`maxPositionalArgCount`)
-  - `:` - end of the argument format, what follows is a function name
-
-So `int.__new__` from previous example:
-- 1st argument is a positional argument without name (1st entry in `arguments`)
-- 2nd argument is a keyword argument called `base` (2nd entry in `arguments`)
-- both arguments are Python objects (`format` has `OO`)
-- none of the arguments is required (`format` starts with `|`)
-- function name is `int` (part of the `format` after `:`)
-
-This is how the call site looks like:
-```Swift
-// sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
-public class PyInt: PyObject {
-
-  private static let newArguments = ArgumentParser.createOrTrap(
-    arguments: ["", "base"],
-    format: "|OO:int"
-  )
-
-  // sourcery: pystaticmethod = __new__
-  internal static func pyIntNew(type: PyType,
-                                args: [PyObject],
-                                kwargs: PyDict?) -> PyResult<PyInt> {
-    switch self.newArguments.bind(args: args, kwargs: kwargs) {
-    case let .value(binding):
-      assert(binding.requiredCount == 0, "Invalid required argument count.")
-      assert(binding.optionalCount == 2, "Invalid optional argument count.")
-
-      let object = binding.optional(at: 0)
-      let base = binding.optional(at: 1)
-      // Things…
-    case let .error(e):
-      return .error(e)
-    }
-  }
-}
-```
 
 ### Traversing with `Py.reduce`
 
@@ -260,3 +175,25 @@ public func any(iterable: PyObject) -> PyResult<Bool> {
   }
 }
 ```
+
+`Py.forEach` is also available.
+
+### IdString
+
+`IdStrings` are predefined commonly used `__dict__` keys, similar to `_Py_IDENTIFIER` in `CPython`.
+
+For example:
+
+```Swift
+IdString.__abs__
+IdString.__add__
+IdString.__and__
+IdString.__class__
+IdString.__dict__
+```
+
+They can be used during `__dict__` lookup or method dispatch to avoid creating new `str` instances every time.
+
+Why?
+
+This is crucial for overall performance. Given how often those keys are used even a dictionary (with its `O(1) + massive constants` access) may be too slow.
