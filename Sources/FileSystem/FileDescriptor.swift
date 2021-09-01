@@ -2,54 +2,6 @@
 // swiftlint:disable file_length
 // cSpell:ignore corelibs nulldevice closeopt
 
-// So, we are going to write a custom file descriptor.
-// .
-// ..
-// ...
-// Wait. What?
-//
-// === Why? ===
-// Darwin version of 'Foundation' (macOS 10.14.6) has following problems:
-// 1) Read/write/etc. methods are not marked as throwing.
-//    This means that operating on closed/invalid files will always trap without
-//    giving us a chance to handle errors (well technically… but we are not going there).
-//    As of 10.15 those methods are deprecated:
-//    https://developer.apple.com/documentation/foundation/filehandle/1410936-write
-// 2) In 10.15 new methods were introduced, for example:
-//    'func __write(_ data: Data, error: ()) throws'.
-//    But they are not usable on 10.14.
-//
-// === Problems to solve ===
-// This is why the 'always trapping' file operations are no-go:
-// 1) Error handling - when can we crash?
-//  - It is acceptable for Violet to crash when some core invariant is not satisfied.
-//    Working with invalid state while having access to effects (for example IO)
-//    may end badly.
-//  - It is NOT acceptable for Violet to crash because of user error
-//    (for example writing to file after closing it).
-//
-// === Solutions ===
-// 1) Use 'macOS 10.15' version of 'Foundation'.
-//    But that forces everyone to upgrade, so NOPE.
-// 2) Link against 'https://github.com/apple/swift-corelibs-foundation'.
-//    But then we have to describe it in our README and that may seem like
-//    magic for most of the users (even if we automate this).
-//    And if that fails (even for a single user) then that would be a TERRIBLE
-//    user experience (literally the worst thing). NOPE.
-// 3) Use 'FileHandle' from 'swift-corelibs-foundation' as a base for our own wrapper.
-//    In README we can describe it as: 'works only on macOS and Linux,
-//    Windows not supported' (we could copy Windows part, but we won't).
-//    This is simple, transparent and SETS CLEAR BOUNDARIES.
-// 4) ?
-//    Placeholder for some other simple solution that I will feel dump about
-//    in the future.
-//
-// === Result ===
-// We went with option '3'.
-// We also simplified it a bit (because we are lazy):
-// - we are no longer NSObject
-// - no queues/barriers
-
 import Foundation
 import VioletCore
 
@@ -113,6 +65,12 @@ private func _CFOpenFileWithMode(_ path: UnsafePointer<CChar>,
 
 // MARK: - FileDescriptor
 
+/// Our own wrapper around file descriptor.
+/// Please see the module README for details.
+///
+/// Code mostly taken from 'swift-corelibs-foundation' with following changes:
+/// - we are no longer NSObject
+/// - no queues/barriers
 public class FileDescriptor: CustomStringConvertible {
 
   public enum ErrorType {

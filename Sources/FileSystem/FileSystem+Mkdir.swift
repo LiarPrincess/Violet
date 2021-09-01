@@ -29,6 +29,7 @@ extension FileSystem {
     return self.mkdir(string: path.string, mode: mode)
   }
 
+  /// Create a directory.
   public func mkdir<S: StringProtocol>(string: S, mode: mode_t?) -> MkdirResult {
     // We could make some fancy wrapper for 'mode',
     // but you are going to use '0o666' anyway.
