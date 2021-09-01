@@ -122,7 +122,9 @@ The difference between what Violet does and what Nintendo did is that in the Vio
 
 ### Relative jumps
 
-We do not support relative jumps, we always use absolute ones. In some cases relative jumps would require changes to already emitted code. For example: `if` condition failed, we have to jump over the `body`, but we have not yet emitted it. After we emit the `body` code we have to go back to our jump and fix its argument.
+We do not support relative jumps, we always use absolute ones. In some cases relative jumps would require changes to already emitted code.
+
+For example: `if` condition failed, we have to jump over the `body`, but we have not yet emitted it. After we emit the `body` code we have to go back to our jump and fix its argument.
 
 Since our instruction set is fixed at 2-bytes-per-instruction this would (sometimes) require  insertion of `ExtendedArg` opcode (for jumps above 255) which could break other jump targets. Well… it can be done, but it is rather complicated.
 
