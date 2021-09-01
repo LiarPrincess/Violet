@@ -129,13 +129,13 @@ So, what can we do with all of *dem bits*?
 - store `UInt32` + `Bool` for sign which gives us `Int33` (with 2 zero representations)
 - just store `Int32`
 
-We went with option 3: “store `Int32`”, because it is really simple to implement.
+We went with option 4: “store `Int32`”, because it is really simple to implement.
 
 **Heap**
 
 But what about this pointer-thingy? How do we allocate this object?
-- [Array](https://developer.apple.com/documentation/swift/array) - arrays do not allow us to use tagged pointers which basically invalidates everything we talked about. Also, they are bigger in size than pointer (tested on x64).
-- [UnsafeBufferPointer](https://developer.apple.com/documentation/swift/unsafebufferpointer) - the problem is that this is *unowned* memory and we can't trivially find the owner that would be responsible for deallocation. To solve this we would have to implement our own garbage collection or ARC.
+- [Array](https://developer.apple.com/documentation/swift/array) - arrays do not allow us to use tagged pointers which basically invalidates everything we talked about. Also, they are bigger in size than a pointer (tested on intel x64).
+- [UnsafeBufferPointer](https://developer.apple.com/documentation/swift/unsafebufferpointer) - the problem is that this is an *unowned* memory and we can't trivially find the owner that would be responsible for deallocation. To solve this we would have to implement our own garbage collection or ARC.
 - [ManagedBufferPointer](https://developer.apple.com/documentation/swift/managedbufferpointer) - this is basically a bunch of memory with *Header* and *Elements* controlled by ARC… which is exactly what we need
 
 **Two complement vs sign + magnitude**
@@ -147,7 +147,7 @@ Ok, but how do we represent our `int`? What do we store on the heap?
 
 “Option 3” is very interesting because it means that `x` and `-x` will point to exactly the same object in memory (since magnitude is the same), and the sign information would be stored inside the pointer. Given that `ManagedBufferPointer` uses ARC for memory management, this whole operation would just `retain` the buffer without any allocation. Unfortunately all of this it is quite difficult to implement, so we will pass.
 
-The remaining 2 options are “2 complement” and “sign + magnitude”. This choice boils down to: “how complicated do you want your `div`?” (`div` is the most complicated operation).
+The remaining 2 options are “2 complement” and “sign + magnitude”. This choice boils down to: “how complicated do you want your `div`?” (`div` is the most complicated operation to implement).
 
 We went with “sign + magnitude” which gives us simpler `div` at the cost of more complicated `and`, `or` and `xor`.
 
