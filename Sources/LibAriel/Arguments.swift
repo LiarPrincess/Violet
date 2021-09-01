@@ -54,7 +54,7 @@ public struct Arguments: ParsableCommand {
 
   @Argument(
     help: ArgumentHelp(
-      "Path to Swift file or directory that contains such files (recursive).",
+      "Path to a single Swift file or to a directory that contains such files (recursive).",
       shouldDisplay: true
     )
   )
