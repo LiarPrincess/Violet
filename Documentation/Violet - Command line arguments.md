@@ -2,12 +2,6 @@
 
 `Violet` is the main main executable inside Violet project (duh…).
 
-This module contains only a single `main.swift` file that will:
-1. read arguments from `CommandLine.arguments`
-2. read environment from `ProcessInfo.processInfo.environment`
-3. run `VM` with provided arguments and environment
-4. interpret results
-
 ## Usage
 
 ```
