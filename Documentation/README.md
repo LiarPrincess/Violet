@@ -1,6 +1,6 @@
 # Documentation
 
-## Most important files (recommended reads)
+## Most important files (recommended read)
 
 - **BigInt** — documentation for `BigInt` module (\<surprised Pikachu face\>), including:
     - Main goals — this is important since it impacts overall performance and influences expected usage patterns.
@@ -26,3 +26,8 @@
 
 Other files are… there if you need them, but they are not that important.
 
+## Bonus
+
+- **unimplemented_builtins** — for each basic Python type it will print:
+    - Missing - the method is not implemented
+    - This should not be here - this method should not be implemented on this type
