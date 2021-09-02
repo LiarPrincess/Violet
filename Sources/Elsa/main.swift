@@ -2,11 +2,12 @@ import Foundation
 
 // swiftlint:disable function_body_length
 
-let elsaDir = URL(fileURLWithPath: #file).deletingLastPathComponent()
-let sourcesDir = elsaDir.deletingLastPathComponent()
-let rootDir = sourcesDir.deletingLastPathComponent()
-let testsDir = rootDir.appendingPathComponent("Tests")
-let documentationDir = rootDir.appendingPathComponent("Documentation")
+private let elsaDir = URL(fileURLWithPath: #file).deletingLastPathComponent()
+private let sourcesDir = elsaDir.deletingLastPathComponent()
+private let rootDir = sourcesDir.deletingLastPathComponent()
+private let definitionsDir = rootDir.appendingPathComponent("Elsa definitions")
+private let testsDir = rootDir.appendingPathComponent("Tests")
+private let documentationDir = rootDir.appendingPathComponent("Documentation")
 
 private func parse(file: URL) -> SourceFile {
   do {
@@ -26,8 +27,7 @@ private func generateAST() {
     .appendingPathComponent("Parser", isDirectory: true)
     .appendingPathComponent("Generated", isDirectory: true)
 
-  let definitionFile = rootDir
-    .appendingPathComponent("Definitions", isDirectory: true)
+  let definitionFile = definitionsDir
     .appendingPathComponent("ast.letitgo", isDirectory: false)
 
   let sourceFile = parse(file: definitionFile)
@@ -51,14 +51,11 @@ private func generateAST() {
 // MARK: - Bytecode
 
 private func generateBytecode() {
-  let bytecodeDir = sourcesDir
+  let bytecodeGeneratedDir = sourcesDir
     .appendingPathComponent("Bytecode", isDirectory: true)
-
-  let bytecodeGeneratedDir = bytecodeDir
     .appendingPathComponent("Generated", isDirectory: true)
 
-  let definitionFile = rootDir
-    .appendingPathComponent("Definitions", isDirectory: true)
+  let definitionFile = definitionsDir
     .appendingPathComponent("opcodes.letitgo", isDirectory: false)
 
   let sourceFile = parse(file: definitionFile)
