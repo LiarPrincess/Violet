@@ -1,5 +1,10 @@
+This file contains example ASTs for function arguments.
+
 https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions
 
+# Definition
+
+```
 kwargs = '**' vfpdef [',']
 args = '*' [vfpdef]
 
@@ -24,8 +29,11 @@ varargslist =
   ]
 
 | (vararglist_no_posonly)
+```
 
---------------
+# Examples
+
+```
 def foo():
   pass
 
@@ -38,8 +46,11 @@ FunctionDef (node)
       kwarg: none
       kwonlyargs (list): empty
       vararg: none
+```
 
 --------------
+
+```
 def foo(a: int = 1):
   pass
 
@@ -57,8 +68,11 @@ FunctionDef (node)
       kwarg: none
       kwonlyargs (list): empty
       vararg: none
+```
 
 --------------
+
+```
 def foo(a, b = "def_b", c = "def_c"):
   pass
 
@@ -86,8 +100,11 @@ FunctionDef (node)
       kwarg: none
       kwonlyargs (list): empty
       vararg: none
+```
 
 --------------
+
+```
 def foo(a, b = "def_b", * abc):
   pass
 
@@ -111,8 +128,11 @@ FunctionDef (node)
         arg (node)
           annotation: none
           arg: abc
+```
 
 --------------
+
+```
 def name(*a, b=1, c):
   pass
 
@@ -137,8 +157,11 @@ FunctionDef (node)
         arg (node)
           annotation: none
           arg: a
+```
 
 --------------
+
+```
 def name(*a, b=1, c=2):
   pass
 
@@ -164,8 +187,11 @@ FunctionDef (node)
         arg (node)
           annotation: none
           arg: a
+```
 
 --------------
+
+```
 def foo(a, b = "def_b", ** abc):
   pass
 
@@ -189,8 +215,11 @@ FunctionDef (node)
           arg: abc
       kwonlyargs (list): empty
       vararg: none
+```
 
 --------------
+
+```
 def foo(a, b = "def_b", *abc, ** deg):
   pass
 
@@ -217,7 +246,11 @@ FunctionDef (node)
         arg (node)
           annotation: none
           arg: abc
+```
+
 --------------
+
+```
 def foo(a, b = "def_b", *abc, c, ** deg):
   pass
 
@@ -248,8 +281,11 @@ FunctionDef (node)
         arg (node)
           annotation: none
           arg: abc
+```
 
 --------------
+
+```
 def foo(a, b = "def_b", *abc, c = "def_c", **deg):
   pass
 
@@ -281,8 +317,11 @@ FunctionDef (node)
         arg (node)
           annotation: none
           arg: abc
+```
 
 --------------
+
+```
 def foo(a, b = "def_b", *, c):
   pass
 
@@ -307,9 +346,4 @@ FunctionDef (node)
           annotation: none
           arg: c
       vararg: none
-
---------------
-
-
---------------
-
+```
