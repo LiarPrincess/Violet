@@ -57,7 +57,7 @@ Violet
     - Contains modules required to bootstrap Python: `builtins`, `sys`, `importlib`, `_imp`, `_os` and `_warnings`.
     - Does not contain `importlib` and `importlib_external` modules because those are written in Python. They are a little bit different than CPython versions (we have 80% of the code, but only 20% of the functionality).
     - `PyResult<Wrapped> = Wrapped | PyBaseException` is used for error handling.
-- **VioletVM** — interprets bytecode from `Bytecode.CodeObjects` to manipulate Python objects, so that the output vaguely resembles what `CPython` does.
+- **VioletVM** — manipulates Python objects according to the instructions from `Bytecode.CodeObject`, so that the output vaguely resembles what `CPython` does.
     - Mainly a massive `switch` over each possible `Instruction` (branch prediction 💔).
 - **Violet** — main executable (duh…).
 - **PyTests** — runs tests written in Python from the `PyTests` directory.
