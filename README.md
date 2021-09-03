@@ -92,6 +92,10 @@ Contains tests written in Python:
 - Violet - tests written specially for “Violet”.
 - RustPython - tests taken from [github.com/RustPython](https://github.com/RustPython/RustPython).
 
+## Garbage collection and memory management
+
+We currently use Swift class instances to represent Python objects (for example: instance of `PyInt` represents `int` object in Python), which means that we use Swift ARC to manage object lifetime. This does not solve reference cycles, but we will ignore this… (how convenient!)
+
 ## Code style
 
 - 2-space indents and no tabs at all
@@ -106,7 +110,7 @@ Contains tests written in Python:
 - No whitespace at the end of the line
     - Some editors may remove it as a matter of routine and we don’t want weird git diffs.
 - (pet peeve) Try to introduce a named variable for every `if` condition.
-    - You can use a single logical operator - something like `if !isPrincess` or `if isDisneyCharacter && isPrincess` is allowed.
+    - You can use a single logical operator - something like `if !isPrincess` or `if isDisnepCharacter && isPrincess` is allowed.
     - Do not use `&&` and `||` in the same expression, create a variable for one of them.
     - If you need parens then it is already too complicated.
 
