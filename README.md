@@ -24,9 +24,95 @@ We are only interested in the language itself without additional modules. This m
 
 See `Documentation` directory for a list of known unimplemented features. There is no list of unknown unimplemented features though…
 
-## Sources
+## Future plans
 
-Start with `Package.swift` and `Makefile`.
+Our current goal was to ramp up the Python functionality coverage, which mostly meant passing as many Python tests (`PyTests`) as possible. This gives us us a safety net for any future regressions.
+
+Next we will try to improve code-base by solving any shortcuts we took.
+
+### 1. New object model (representation of a single Python object in a memory)
+
+Currently we are using Swift objects to represent Python instances. For example Swift `PyInt` object represents a Python `int` instance (`Sourcery` annotations are explained in documentation):
+
+```Swift
+// sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
+public class PyInt: PyObject {
+
+  // sourcery: pymethod = __add__
+  public func add(_ other: PyObject) -> PyResult<PyObject> {
+    // …
+  }
+}
+```
+
+This is nice because:
+
+- Is very easy to add new types/methods - which is important since we have more than 120 types and 780 methods to implement.
+- Free type compatibility - which means that we can cast `object` reference (represented as `PyObject` instance) from VM stack to a specific Python type, for example `int` (represented as `PyInt` instance).
+
+Not-so-nice things include:
+
+- Wasted cache/memory on Swift metadata - each Swift object holds a reference to its Swift type. We do not need this since we store a reference to Python type which serves a similar function.
+- Forced Swift memory management - ARC is “not the best” solution when working with circular references (which we have, for example: `object` type has `type` type and `type` type is a subclass of `object`, not to mention that `type` type has `type` as its type).
+- We have to perfectly reproduce Python type hierarchy inside Swift which can cause some problems if the 2 languages have different view on a certain behavior, for example:
+
+    ```Swift
+    class PyInt {
+      func and() { print("int.and") }
+    }
+
+    // `bool` is a subclass of `int` in Python.
+    class PyBool: PyInt {
+      override func and() { print("bool.and") }
+    }
+
+    let f = PyInt.and // This is stored inside `int.__dict__`
+    f(intInstance)(rhs) // 'int.and', as expected
+    f(boolInstance)(rhs) // 'bool.and'! 'int.and' was expected, since we took 'f' from 'PyInt'
+    ```
+
+There are better ways to represent a Python object, but this is a bit longer conversation in Swift. For details see [this issue](TODO: PUT ISSUE LINK HERE!).
+
+### 2. New method representation
+
+Currently we do something like:
+
+```Swift
+class PyInt {
+  func add() { print("int.add") }
+}
+
+// Extracted function with type signature:
+// (PyInt) -> (PyObject) -> PyResult<PyObject>
+let swiftFn = PyInt.add
+
+// If we wanted to call it we would have to:
+let arg = Py.newInt(1)
+let result = swiftFn(arg)(arg)
+print(result) // 2
+
+// To put it inside 'int.__dict__' we would:
+let fn = PyBuiltinFunction.wrap(
+  name: "__add__",
+  doc: nil,
+  fn: swiftFn,
+  castSelf: asInt // asInt :: (PyObject) -> PyResult<PyInt>
+)
+
+let key = Py.newString("__add__")
+let dict = intType.getDict()
+dict.set(key: key, to: fn)
+```
+
+This can be simplified a bit, but it also depends on the object model, so it has to wait.
+
+## 3. Garbage collection and memory management
+
+As we said: currently use Swift class instances to represent Python objects (for example: instance of `PyInt` represents `int` object in Python), which means that we use Swift ARC to manage object lifetime.
+
+Unfortunately this does not solve reference cycles, but for now we will ignore this… (how convenient!).
+
+## Sources
 
 Core modules
 - **VioletCore** — shared module imported by all of the other modules.
@@ -53,9 +139,9 @@ Violet
 - **VioletCompiler** — responsible for transforming `AST` (from `Parser`) into `CodeObjects` (from `Bytecode`).
 - **VioletObjects** — contains all of the Python objects and modules.
     - `Py` represents a Python context. Common usage: `Py.newInt(2)` or `Py.add(lhs, rhs)`.
-    - Contains `int`, `str`, `list` and 100+ other Python types. Python object is represented as a Swift `class` instance (read the docs in the `Documentation` directory about this!).
-    - Contains modules required to bootstrap Python: `builtins`, `sys`, `importlib`, `_imp`, `_os` and `_warnings`.
-    - Does not contain `importlib` and `importlib_external` modules because those are written in Python. They are a little bit different than CPython versions (we have 80% of the code, but only 20% of the functionality).
+    - Contains `int`, `str`, `list` and 100+ other Python types. Python object is represented as a Swift `class` instance (this will probably change in the future, but for now it is “ok”, since the whole subject is is a bit complicated in Swift). Read the docs in the `Documentation` directory!
+    - Contains modules required to bootstrap Python: `builtins`, `sys`, `_imp`, `_os` and `_warnings`.
+    - Does not contain `importlib` and `importlib_external` modules, because those are written in Python. They are a little bit different than CPython versions (we have 80% of the code, but only 20% of the functionality <great-success-meme.gif>).
     - `PyResult<Wrapped> = Wrapped | PyBaseException` is used for error handling.
 - **VioletVM** — manipulates Python objects according to the instructions from `Bytecode.CodeObject`, so that the output vaguely resembles what `CPython` does.
     - Mainly a massive `switch` over each possible `Instruction` (branch prediction 💔).
@@ -92,9 +178,7 @@ Contains tests written in Python:
 - Violet - tests written specially for “Violet”.
 - RustPython - tests taken from [github.com/RustPython](https://github.com/RustPython/RustPython).
 
-## Garbage collection and memory management
-
-We currently use Swift class instances to represent Python objects (for example: instance of `PyInt` represents `int` object in Python), which means that we use Swift ARC to manage object lifetime. This does not solve reference cycles, but we will ignore this… (how convenient!)
+Those tests are executed when you run `PyTests` module.
 
 ## Code style
 
@@ -103,7 +187,7 @@ We currently use Swift class instances to represent Python objects (for example:
     - You will get a [SwiftLint](https://github.com/realm/SwiftLint) warning if you go over 100.
     - Over 120 will result in a compilation error.
     - If 80 doesn't give you enough room to code, your code is too complicated - consider using subroutines (advice from [PEP-7](https://www.python.org/dev/peps/pep-0007/)).
-- Required `self`
+- Required `self` in methods and computed properties
     - All of the other method arguments are named, so we will require it for this one.
     - `Self`/`type name` for static methods is recommended, but not required.
     - I’m sure that they will depreciate the implicit `self` in the next major Swift version 🤞. All of that source breakage is completely justified.
