@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This file is used when you type 'make gen' in repository root.
+
 OBJECTS=./Sources/Objects
 GENERATED=./Sources/Objects/Generated
 
