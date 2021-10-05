@@ -1,5 +1,4 @@
 // swift-tools-version:5.0
-// cSpell:ignore keikaku
 
 import PackageDescription
 
@@ -36,11 +35,6 @@ let package = Package(
     // IMPORTANT:
     // Module names have 'Violet' prefix, but directories do not
     // (for example: 'VioletParser' module is inside 'Sources/Parser' directory)!
-    //
-    // Sooo… we wrote the whole VM without this prefix and now we can't add it
-    // because that would mess up merges (and git history).
-    // Let's just pretend that everything goes according to keikaku
-    // (translators note: keikaku means plan).
 
     // Shared module that all of the other modules depend on.
     .target(name: "VioletCore", dependencies: [], path: "Sources/Core"),
