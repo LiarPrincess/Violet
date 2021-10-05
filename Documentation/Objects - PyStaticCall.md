@@ -34,20 +34,20 @@ This is rather slow (and really annoying when you have to go through this in `ll
 ## Static dispatch in Violet
 
 1. Store references to Swift methods implementing most common Python methods on `type`.
-    
+
     Method container:
-    
+
     ```Swift
     internal struct StaticallyKnownNotOverriddenMethods {
-    
+
       // Other methods are also present.
       // But we do not need them in this example.
       internal var __len__: GetLengthWrapper?
-    
+
       internal struct GetLengthWrapper {
-    
+
         internal let fn: (PyObject) -> BigInt
-    
+
         internal init<T: PyObject>(_ fn: @escaping (T) -> () -> BigInt) {
           self.fn = { (arg0: PyObject) in
             let zelf = forceCast(object: arg0, as: T.self)
@@ -57,13 +57,13 @@ This is rather slow (and really annoying when you have to go through this in `ll
       }
     }
     ```
-    
+
     Stored on type:
-    
+
     ```Swift
     // sourcery: pytype = type
     public final class PyType: PyObject {
-    
+
       private var name: String
       private var qualname: String
       private var base: PyType?
@@ -73,21 +73,21 @@ This is rather slow (and really annoying when you have to go through this in `ll
       internal let staticMethods: StaticallyKnownNotOverriddenMethods
     }
     ```
-    
+
 2. When calling Python method try the static method first.
 
     `builtins.len` implementation:
 
     ```Swift
     extension PyInstance {
-    
+
       /// len(s)
       /// See [this](https://docs.python.org/3/library/functions.html#len)
       public func len(iterable: PyObject) -> PyResult<PyObject> {
         if let result = PyStaticCall.__len__(iterable) {
           return .value(self.newInt(result))
         }
-    
+
         switch self.callMethod(object: iterable, selector: .__len__) {
         case .value(let o):
           return .value(o)
@@ -100,7 +100,7 @@ This is rather slow (and really annoying when you have to go through this in `ll
       }
     }
     ```
-    
+
     Actual static call:
 
     ```Swift
@@ -109,7 +109,7 @@ This is rather slow (and really annoying when you have to go through this in `ll
         if let method = object.type.staticMethods.__len__?.fn {
           return method(object)
         }
-    
+
         return nil
       }
     }
@@ -122,7 +122,7 @@ Pros:
     3. Step over `self` cast (lldb: `n`)
     4. Go into the final method (lldb: `s`)
 - Allows us to call Python methods during `Py.initialize` — when not all of the types are yet fully initialized.
-    
+
     For example when we have not yet added `__hash__` to `str.__dict__` we can still call this method because we know (statically) that `str` does implement this operation. This has a side-effect of using `str.__hash__` (via static call) to insert `__hash__` inside `str.__dict__`.
 
 

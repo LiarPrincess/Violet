@@ -208,7 +208,7 @@ public enum PyCast {
 }
 ```
 
-Usage: 
+Usage:
 
 ```Swift
 if let int = PyCast.asInt(object) {
@@ -218,7 +218,7 @@ if let int = PyCast.asInt(object) {
 
 ### PyMemory.swift
 
-Helper type for allocating new object instances. 
+Helper type for allocating new object instances.
 
 This is basically the same thing as `init` method on Swift `class`. The thing is that at some point we may change our object representation, so that it no longer uses the Swift classes. When that happens we would have to fix every place that calls one of those `inits`. To solve this we introduce an indirection layer, so that we only have to fix the methods inside this layer and not in the whole code base.
 

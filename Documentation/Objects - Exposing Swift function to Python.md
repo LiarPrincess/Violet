@@ -48,7 +48,7 @@ internal struct FunctionWrapper {
   /// `() -> Void`
   case void_to_Void(Void_to_Void)
   }
-  
+
   internal let kind: Kind
 
     /// Call the stored function with provided arguments.
@@ -290,9 +290,9 @@ private func asInt(functionName: String, object: PyObject) -> PyResult<PyInt> {
 }
 
 let fn = PyBuiltinFunction.wrap(
-    name: "__add__", 
-    doc: nil, 
-    fn: PyInt.add(_:), 
+    name: "__add__",
+    doc: nil,
+    fn: PyInt.add(_:),
     castSelf: asInt
 )
 

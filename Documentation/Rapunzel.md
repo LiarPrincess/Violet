@@ -44,7 +44,7 @@ class ASTPrinter: ASTVisitor, StatementVisitor {
                   indent: ASTPrinter.indent,
                   lines: lines)
   }
-  
+
   private func text<S: CustomStringConvertible>(_ value: S) -> Doc {
     return .text(String(describing: value))
   }

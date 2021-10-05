@@ -9,7 +9,7 @@ It is recommended to read the “Sourcery annotations” documentation first.
 - Support for *some form* of garbage collection
 
 - Each object has to remember its type. This is sometimes referred as [`klass` pointer](http://openjdk.java.net/groups/hotspot/docs/HotSpotGlossary.html).
-    
+
       ```py
       >>> o = 'Elsa'
       >>> type(o)
@@ -20,7 +20,7 @@ It is recommended to read the “Sourcery annotations” documentation first.
 
 - `object` and `type` have an circular dependencies:
     - `object` type has `type` type and no base class
-    
+
         ```py
         >>> object
         <class 'object'>
@@ -29,9 +29,9 @@ It is recommended to read the “Sourcery annotations” documentation first.
         >>> object.__bases__
         ()
         ```
-        
+
     - `type` type has `type` type (self-reference) and `object` as a base class
-    
+
         ```py
         >>> type
         <class 'type'>
@@ -149,19 +149,19 @@ Pros:
 - It is extremely idiomatic — it is as if we were implementing Python objects using Swift. There is no “mental translation step” where programmer has to think about memory representation etc.
 
       For example this is how `int.__add__` method is implemented (`sourcery` annotations are used for code generation, `Py` represents python context):
-      
+
       ```Swift
       // sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
       public class PyInt: PyObject {
-    
+
         public let value: BigInt
-    
+
         // sourcery: pymethod = __add__
         public func add(_ other: PyObject) -> PyResult<PyObject> {
           guard let other = PyCast.asInt(other) else {
             return .value(Py.notImplemented)
           }
-    
+
           let result = self.value + other.value
           return .value(Py.newInt(result))
         }
@@ -215,7 +215,7 @@ How do we translate this into our object representation?
 
 #### Solutions
 
-- Dynamically allocate class instances: if the object has `__dict__` then allocate more space. 
+- Dynamically allocate class instances: if the object has `__dict__` then allocate more space.
 - For each class that does not have a `__dict__` create a subclass that hast it. Then when creating a new object (`__new__` method) use the `__dict__` version if we are allocating subclass.
 - Put `__dict__` in every object. Then, on every use, perform a runtime check to see if this object can access it. If the check fails we will pretend that the `__dict__` does not exists.
 
@@ -327,7 +327,7 @@ AttributeError: 'int' object has no attribute '__dict__'
 
 ### `pymethod` override
 
-`pymethod` is our [Sourcery](https://github.com/krzysztofzablocki/Sourcery) annotation for Swift method implementing Python method. The problem arises when we override such method in a subclass: 
+`pymethod` is our [Sourcery](https://github.com/krzysztofzablocki/Sourcery) annotation for Swift method implementing Python method. The problem arises when we override such method in a subclass:
 
 > When calling a base class method on a subclass instance Swift will call the subclass override.
 
@@ -398,7 +398,7 @@ It works like this:
       public class PyObject {
         internal let type: PyType
         internal var flags: PyObject.Flags = []
-    
+
         internal init(type: PyType) {
           self.type = type
         }
@@ -407,23 +407,23 @@ It works like this:
 
 - `PyObjectType.swift`
     - stores methods attached to Python `object` type (the ones used when filling `object` type `__dict__`)
-    
+
           ```Swift
           // sourcery: default, isBaseType
           /// Container for things attached to `object` type
           /// (root of `Python` type hierarchy).
           internal enum PyObjectType {
-        
+
             // sourcery: pymethod = __eq__
             internal static func isEqual(zelf: PyObject,
                                         other: PyObject) -> CompareResult {
               if zelf === other {
                 return .value(true)
               }
-        
+
               return .notImplemented
             }
-        
+
             // Other methods here…
           }
           ```
@@ -724,7 +724,7 @@ While this allows us to treat `list` and `tuple` in exactly the same way (see `A
 First lets look at the following facts:
 - `tuples` are immutable which means that the `tuple` size does not change during its lifetime. More importantly, this also means that we know the exact element count during the object allocation. This does not apply to `list` which elements can be added and that could result in overgrowing the initial allocation.
 - [flexible array member](https://en.wikipedia.org/wiki/Flexible_array_member) gives us a nice way of accessing space after the allocated `struct` (we are talking about `C`, not Swift). For example:
-    
+
       ```c
       struct vectord {
         short len;    // There must be at least one other data member
@@ -734,22 +734,22 @@ First lets look at the following facts:
       ```
 
       This is how one would create `vectord`:
-      
+
       ```c
       struct vectord*
       vectord_init(int len) {
         int malloc_size = sizeof(struct vectord) + len * sizeof(double);
-    
+
         // Skipping error handling
         struct vectord *result = malloc(malloc_size);
         result->len = len;
-    
+
         return result;
       }
       ```
 
       And then use:
-      
+
       ```c
       struct vectord* vec = vectord_init(5);
       vec->arr[0] = 1.0;

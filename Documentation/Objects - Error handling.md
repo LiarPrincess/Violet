@@ -41,9 +41,9 @@ Fundamental operations for errors are:
         }
       }
       ```
-      
+
       Note that `withErrorHandling` function no longer requires `throws` annotation (even though it calls `divThrowing` which has it). Error handling is not required in topmost file (`main.swift`), which means that you can just type `_ = try divThrowing(10, by: 0)` without the `do` block.
-    
+
 - **propagation** - after which we still have an error to handle:
 
       ```Swift
@@ -72,7 +72,7 @@ We will focus on following techniques:
 3. [Swift exceptions](##%20Approach%203:%20Swift%20exceptions)
 4. [`Result` type](##%20Approach%204:%20`Result`%20type) (spoiler: we went with this one, see [Final verdict](##%20Final%20verdict) for justification)
 
-Ofc. there are some other methods. Unfortunately, they are non-idiomatic (or downright impossible) in Swift. [M-thingies](https://en.wikipedia.org/wiki/Monad_(functional_programming)) and effect handlers are discussed later in [Side-notes](#Side-notes) (because some people are going to ask about them). 
+Ofc. there are some other methods. Unfortunately, they are non-idiomatic (or downright impossible) in Swift. [M-thingies](https://en.wikipedia.org/wiki/Monad_(functional_programming)) and effect handlers are discussed later in [Side-notes](#Side-notes) (because some people are going to ask about them).
 
 Please note that this document was not meant to be a review of all possible error handling solutions in different languages etc. (for this see something like [Error Handling Rationale and Proposal](https://github.com/apple/swift/blob/main/docs/ErrorHandlingRationale.rst) from Swift repository).
 

@@ -21,8 +21,8 @@ From all of those modules only the `importlib` is implemented in Python, all of 
       >>> type(sys)
       <class 'module'>
       ```
-     
-  
+
+
 - Module must be able to store state outside of their `__dict__` property — this is really useful because we will want to hide our implementation details from end-users.
 
 ## Implementation

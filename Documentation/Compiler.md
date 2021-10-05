@@ -33,13 +33,13 @@ internal func visit(_ node: IfExpr) throws {
   // by calling other 'visit' functions.
   // In this example we will call 'func visit(_ node: IntExpr)' to emit 'LOAD_CONST 1'.
   try self.visit(node.test, andJumpTo: orElseStart, ifBooleanValueIs: false)
-  
+
   try self.visit(node.body)
   self.builder.appendJumpAbsolute(to: end)
-  
+
   self.builder.setLabel(orElseStart)
   try self.visit(node.orElse)
-  
+
   self.builder.setLabel(end)
 }
 ```
