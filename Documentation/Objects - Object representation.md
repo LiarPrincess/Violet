@@ -172,9 +172,11 @@ Pros:
 
 Cons:
 
+- Wasted memory on Swift metadata - each Swift object holds an reference to its Swift type. We do not need this since we also store an reference to Python type which serves similar function.
+
 - Forced Swift memory management - ARC is “not the best” solution when working with circular references (which we have). For now we will just accept this, but this means that we could possibly waste a lot of memory.
 
-- We have to perfectly reproduce Python type hierarchy inside Swift which can cause some problems if the 2 languages have different view on certain behavior (spoiler: they have).
+- We have to perfectly reproduce Python type hierarchy inside Swift which can cause some problems if the 2 languages have different view on a certain behavior (spoiler: they have).
 
 If you think:
 
@@ -665,12 +667,12 @@ struct PyInt {
   var value: Int
 }
 
-func initInt(value: Int) -> Ref<PyInt> {
+func newInt(value: Int) -> Ref<PyInt> {
   // Basically malloc(sizeof(PyInt)) + filling properties
 }
 
 // 'int' is a Python object representing number '2'
-let int = initInt(value: 2)
+let int = newInt(value: 2)
 
 // Cast it to 'PyObject' — this is really important since
 // we will need to do this to store object on VM stack.
@@ -881,10 +883,30 @@ Anyway, going back to alternative Python object representations:
 
 ### Manual alignment
 
-We can just allocate a block of memory and manually assign where do each field start and end. This a bit complicated, so it will not be described here (also, there is a new episode of [Penthouse](https://www.imdb.com/title/tt13067118/) available, so…).
+We can just allocate a block of memory and manually assign where do each field start and end:
+
+```Swift
+struct PyInt {
+
+  private let ptr: UnsafePointer
+
+  // `PyObjectHeader` holds `type/flags` (and maybe `__dict__`).
+  internal var header: PyObjectHeader {
+    return PyObjectHeader(ptr: self.ptr)
+  }
+
+  // Without using [flexible array member](https://en.wikipedia.org/wiki/Flexible_array_member)
+  internal var value: BigInt {
+    let ptr = self.ptr + PyObjectHeader.size
+    return ptr.pointee
+  }
+}
+```
+
+This a bit complicated, so it will not be described here in detail (also, there is a new episode of [Penthouse](https://www.imdb.com/title/tt13067118/) available, so…).
 
 ### Using `C`
 
-If we declare our objects in C we will get the C-layout. Then we can import them into Swift. This is nice because C layout is predictable and well described (see: [cppreference.com: Compatible types](https://en.cppreference.com/w/c/language/type)). 
+If we declare our objects in C we will get the C-layout. Then we can import them into Swift. This is nice because C layout is predictable and well described (see: [cppreference.com: type](https://en.cppreference.com/w/c/language/type)).
 
 Unfortunately this has its own problems, most notably that some of the properties on our Swift types are not trivially representable in C.
