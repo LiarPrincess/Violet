@@ -257,7 +257,7 @@ extension BigIntHeap {
   // Some parts of this code were taken from:
   // https://github.com/attaswift/BigInt
   //
-  // Remember that for '0' we have return single '0' word,
+  // Remember that for '0' we have to return single '0' word,
   // even though 'BigIntHeap' is empty.
   internal struct Words: RandomAccessCollection {
 

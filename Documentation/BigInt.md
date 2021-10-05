@@ -2,6 +2,9 @@
 
 Unlimited integer type used as a storage of `int` type in Violet.
 
+**Important:**
+If you’re looking for a `BigInt` implementation then this module may not be it! (See the next section for details.)
+
 ## Unlimited integer vs BigInt
 
 While *technically* we do implement every operation expected from `BigInt` type, what we actually have is more of a *general-purpose unlimited integer*.
@@ -9,35 +12,38 @@ While *technically* we do implement every operation expected from `BigInt` type,
 BigInt:
 - Assumes that most of the code will use built-in Swift integer types. `BigInt` will be used, but only in places that can overflow.
 - Focuses on performance for big numbers, since small ones will be handled using Swift types.
-- Is more of a *auxiliary* type, than a thing on its own.
+- Is more of a auxiliary type, than a thing on its own.
 - It's *ok* to allocate for every instance (most of the `BigInt` implementations will do just that). Although this should be avoided if possible.
 
-Unlimited/general purpose integer:
+Unlimited/general purpose integer (we made-up this name, so don't Google it):
 - Assumes that this is the only integer type available in the system (`Python` has only a single `int` type).
 - Will probably optimise for small numbers (think: `0`, `1`, `256` etc.) rather than big ones (think: `123_123_123_123_123_123`).
 
-So, while both types look the same from the outside (in terms of supported operations), their internal implementation can differ quite dramatically.
+The same but in different words:
 
-**Important:**
-If you’re looking for an `BigInt` implementation then this module may not be it!
+“Standard” `BigInt` assumes uniform distribution of inputs, meaning that `1` is as likely as `123_123_123_123_123_123`. In our case this distribution is skewed towards small numbers, meaning that `1` is much more probable than `123_123_123_123_123_123`.
+
+This is kind of similar to how single letters (or in general: short texts) are way more common than other `Strings`. To accommodate this Swift standard library treats them in a special way and stores inline, instead of allocating on the heap.
+
+Tbh. at this point one could wonder if there is even something like “standard `BigInt`”, since both implementations expose the same interface, but their performance characteristics and expected usage patterns are quite different. Sometimes just saying “I need a `BigInt` library to handle X”, may not be enough, because the design of this `BigInt` may assume things that will not be true in your use case.
 
 ## Design
 
 In our current implementation we use [tagged pointer](https://en.wikipedia.org/wiki/Tagged_pointer) to store either:
 - Inline small integer (currently `Int32`) - we call this variant `Smi`, because this is how [V8](https://github.com/v8/v8) named similar type.
-- Pointer to heap allocated storage - for integers that are outside of `Smi` range. This allows us to store any possible value (as long as it can fit in memory).
+- Pointer to heap allocated storage - for integers that are outside of `Smi` range. This allows us to store any possible value as long as it fits in memory.
 
 The idea is as follows:
 - If we are dealing with small integer then we use `Smi` representation:
     - it saves us heap allocation on creation
-    - prevents cache miss since there is no memory to fetch (we already have the value, we just have to decode it)
-    - takes less space in cpu cache since there no need to store heap object (may seems trivial, but those objects can quickly add up)
+    - prevents cache miss since there is no memory to fetch - we already have the value, we just have to decode it
+    - takes less space in cpu cache since there no need to store heap object - may seems trivial, but those objects can quickly add up
     - can be promoted to heap allocated representation if the value no longer fits inside `Smi`
 - If the value does not fit inside `Smi`, then we will allocate space on the heap:
-    - allocated space can grow to accommodate bigger values (although it will change the value stored in pointer, but that's not a problem)
+    - allocated space can grow to accommodate bigger values -  it will change the value stored in pointer, but that's not a problem because any operation that requires this, should have `mutating` semantic anyway
     - can be demoted to `Smi` to release memory
 
-While this representation is a little bit more cpu-intensive (we need to check with which representation we are dealing with) we hope that memory savings will help us regain this loss of performance.
+While this representation is a little bit more cpu-intensive (we need to check with which representation we are dealing with before every operation) we hope that memory savings will help us regain this loss of performance.
 
 Btw. don't worry if this section is quite cryptic, we will explain all of the concepts in [Requirements](#Design%20requirements) and [Alternative designs](#Alternative%20designs) sections.
 
@@ -79,7 +85,7 @@ Since `int` is very popular we could move `Smi` forward:
 
 This method is very popular in JavaScript engines (both V8 and SpiderMonkey use it).
 
-As a side-note: it is also possible to store 64-bit IEEE 754 floating point (in addition to `Smi`) inside tagged pointer, so at some point in time we may look into this.
+As a side-note: it is also possible to store 64-bit IEEE 754 floating point (in addition to `Smi`) inside tagged pointer, so at some point we may look into this.
 
 ## Design requirements
 
