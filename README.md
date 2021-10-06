@@ -6,6 +6,15 @@ Violet is one of those Swift <-> Python interop thingies, except that this time 
 
 If something is not working, you have an interesting idea or maybe just a question, then you can start an issue or discussion. You can also contact us on twitter [@itBrokeAgain](https://twitter.com/itBrokeAgain) (optimism, yay!).
 
+- [Violet](#violet)
+  - [Requirements](#requirements)
+  - [Features](#features)
+  - [Future plans](#future-plans)
+  - [Sources](#sources)
+  - [Tests](#tests)
+  - [Code style](#code-style)
+  - [License](#license)
+
 ## Requirements
 
 - 64 bit - for `BigInt` and (probably, maybe, I think) hash

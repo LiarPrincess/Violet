@@ -1,5 +1,17 @@
 # Error handling
 
+- [Error handling](#error-handling)
+  - [Unrecoverable errors](#unrecoverable-errors)
+  - [Possible solutions](#possible-solutions)
+  - [Approach 1: Designated error value](#approach-1-designated-error-value)
+  - [Approach 2: Global `error` variable](#approach-2-global-error-variable)
+  - [Approach 3: Swift exceptions](#approach-3-swift-exceptions)
+  - [Approach 4: `Result` type](#approach-4-result-type)
+  - [Final verdict](#final-verdict)
+  - [Side-notes](#side-notes)
+    - [Monads) (aka. the scarry m-word)](#monads-aka-the-scarry-m-word)
+    - [Effect handlers](#effect-handlers)
+
 We have to decide on error handling approach.
 
 By “error handling” we mean:

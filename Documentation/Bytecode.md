@@ -4,6 +4,20 @@ Bytecode is an instruction set of our VM.
 
 See `Bytecode - Instructions.md` for documentation of each instruction. Here we will only deal with an instruction set as a whole.
 
+- [Bytecode](#bytecode)
+  - [Instruction size](#instruction-size)
+    - [Multiple bytes per instruction](#multiple-bytes-per-instruction)
+    - [2-bytes per instruction](#2-bytes-per-instruction)
+    - [Instruction set with `extendedArg`](#instruction-set-with-extendedarg)
+    - [Trivia: Gameboy instruction set](#trivia-gameboy-instruction-set)
+  - [Jumps and labels](#jumps-and-labels)
+    - [Relative jumps](#relative-jumps)
+    - [Absolute jumps](#absolute-jumps)
+  - [Cells and free](#cells-and-free)
+    - [Load nonlocal name](#load-nonlocal-name)
+    - [Cell and free](#cell-and-free)
+    - [Nomenclature](#nomenclature)
+
 ## Instruction size
 
 Each of our instructions is *exactly* 2-bytes. What does that mean and why is it important?

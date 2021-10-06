@@ -1,5 +1,12 @@
 # Exposing Swift function to Python
 
+- [Exposing Swift function to Python](#exposing-swift-function-to-python)
+  - [Functions](#functions)
+    - [Supported arities](#supported-arities)
+    - [`wrap` functions](#wrap-functions)
+  - [Methods](#methods)
+  - [Properties](#properties)
+
 After we implement all of the Python functions we have to expose them to the Python context (make them callable from Python code).
 
 So, how do we go from:

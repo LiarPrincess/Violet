@@ -2,6 +2,15 @@
 
 Elsa is a tiny DSL for describing data. It uses  `.letitgo` files from `Definitions` directory.
 
+- [Elsa](#elsa)
+  - [Why?](#why)
+  - [Language description](#language-description)
+    - [Comments](#comments)
+    - [Swift documentation](#swift-documentation)
+    - [Product types](#product-types)
+    - [Union types](#union-types)
+    - [Alias](#alias)
+
 ## Why?
 
 From a single Elsa definition we can generate both `AST` nodes and [visitor](https://en.wikipedia.org/wiki/Visitor_pattern) protocols. And if our AST ever changes, we just need to fix it in one place (`.letitgo` file).
@@ -118,7 +127,7 @@ extension CompareExpr {
 }
 ```
 
-## Union types
+### Union types
 
 Use `@enum` to generate Swift `enum`.
 
@@ -145,7 +154,7 @@ public enum Vararg {
 
 Btw. *teknikly* Swift enums are not *proper* union types, but who cares.
 
-## Alias
+### Alias
 
 You can use `@alias` to rename a type.
 

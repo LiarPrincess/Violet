@@ -3,6 +3,16 @@
 `Py` represents a Python context.
 Conceptually it is the owner of all of the Python objects.
 
+- [Py](#py)
+  - [Initialization](#initialization)
+  - [Usage](#usage)
+  - [Cleanup](#cleanup)
+  - [Tips, quirks and idioms](#tips-quirks-and-idioms)
+    - [Creating/reusing Python objects](#creatingreusing-python-objects)
+    - [Custom file descriptor/handle type](#custom-file-descriptorhandle-type)
+    - [Traversing with `Py.reduce`](#traversing-with-pyreduce)
+    - [IdString](#idstring)
+
 ## Initialization
 
 Before we can start using `Py` we have to call `Py.initialize` to set global parameters (this may seem complicated, but you can check the real-life example inside the `VM` module):

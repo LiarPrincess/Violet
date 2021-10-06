@@ -4,6 +4,12 @@ Compiler is responsible for transforming `AST` (from the “Parser” module) to
 
 (Please read the “Bytecode” module documentation before starting this one.)
 
+- [Compiler](#compiler)
+  - [How does it work?](#how-does-it-work)
+  - [Symbol table](#symbol-table)
+  - [Compiler and CompilerImpl](#compiler-and-compilerimpl)
+    - [Side note: Internal protocol implementation](#side-note-internal-protocol-implementation)
+
 ## How does it work?
 Compiler visits all of the `AST` nodes and calls appropriate methods on `CodeObjectBuilder` to emit VM instructions. The end result is a valid `CodeObject` with the semantics corresponding to the provided `AST`. For example:
 

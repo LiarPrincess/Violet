@@ -2,6 +2,19 @@
 
 We use [Sourcery](https://github.com/krzysztofzablocki/Sourcery) to annotate Swift code that is exposed in Python.
 
+- [Sourcery annotations](#sourcery-annotations)
+  - [Annotations](#annotations)
+    - [Types](#types)
+    - [Methods](#methods)
+    - [Properties](#properties)
+  - [Generated code](#generated-code)
+    - [BuiltinTypes.swift](#builtintypesswift)
+    - [BuiltinErrorTypes.swift](#builtinerrortypesswift)
+    - [PyCast.swift](#pycastswift)
+    - [PyMemory.swift](#pymemoryswift)
+    - [StaticMethodsForBuiltinTypes.swift](#staticmethodsforbuiltintypesswift)
+    - [PyType+MemoryLayout.swift](#pytypememorylayoutswift)
+
 ## Annotations
 
 ### Types

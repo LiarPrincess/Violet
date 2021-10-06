@@ -5,6 +5,13 @@ Unlimited integer type used as a storage of `int` type in Violet.
 **Important:**
 If you’re looking for a `BigInt` implementation then this module may not be it! (See the next section for details.)
 
+- [BigInt](#bigint)
+  - [Unlimited integer vs BigInt](#unlimited-integer-vs-bigint)
+  - [Design](#design)
+  - [Design requirements](#design-requirements)
+  - [Alternative designs](#alternative-designs)
+  - [Karatsuba multiplication & other performance tricks](#karatsuba-multiplication--other-performance-tricks)
+
 ## Unlimited integer vs BigInt
 
 While *technically* we do implement every operation expected from `BigInt` type, what we actually have is more of a *general-purpose unlimited integer*.
@@ -45,7 +52,7 @@ The idea is as follows:
 
 While this representation is a little bit more cpu-intensive (we need to check with which representation we are dealing with before every operation) we hope that memory savings will help us regain this loss of performance.
 
-Btw. don't worry if this section is quite cryptic, we will explain all of the concepts in [Requirements](#Design%20requirements) and [Alternative designs](#Alternative%20designs) sections.
+Btw. don't worry if this section is quite cryptic, we will explain all of the concepts in [requirements](#design-requirements) and [alternative designs](#alternative-designs) sections.
 
 **Code example**
 
@@ -157,7 +164,7 @@ The remaining 2 options are “2 complement” and “sign + magnitude”. This 
 
 We went with “sign + magnitude” which gives us simpler `div` at the cost of more complicated `and`, `or` and `xor`.
 
-Final design is available in [Design](#Design) section.
+Final design is available in [design](#design) section.
 
 ## Karatsuba multiplication & other performance tricks
 
@@ -169,7 +176,7 @@ For example in chapter “4.3.3. How Fast Can We Multiply?” Knuth describes �
 
 > The point of positive return depends on the computer platform and context. As a rule of thumb, Karatsuba method is usually faster when the multiplicands are longer than 320–640 bits.
 
-This is how it stacks against our [Requirements](#Design%20Requirements):
+This is how it stacks against our [requirements](#design-requirements):
 - `Smi` — will be performed directly on ALU
 - mid range integers — cache line size is around “the point of positive return”, but the cost of fetching those values from memory will probably outweigh the cost of multiplication
 - big integers — main target for “Karatsuba method”, but we do not care them (even `O(n^3)` is “ok”)

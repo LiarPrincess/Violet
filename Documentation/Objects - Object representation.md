@@ -4,6 +4,20 @@ This file describes a Violet representation of a single Python object.
 
 It is recommended to read the “Sourcery annotations” documentation first.
 
+- [Objects](#objects)
+  - [Requirements](#requirements)
+  - [CPython](#cpython)
+  - [Violet](#violet)
+  - [Problems (and solutions)](#problems-and-solutions)
+    - [`__dict__` presence](#__dict__-presence)
+    - [`pymethod` override](#pymethod-override)
+    - [`object` type is full of overridden `pymethods`](#object-type-is-full-of-overridden-pymethods)
+    - [Memory layout](#memory-layout)
+  - [Alternatives](#alternatives)
+    - [`struct` + type punning](#struct--type-punning)
+    - [Manual alignment](#manual-alignment)
+    - [Using `C`](#using-c)
+
 ## Requirements
 
 - Support for *some form* of garbage collection
