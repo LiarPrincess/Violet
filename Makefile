@@ -1,4 +1,4 @@
-# cSpell:ignore workdir xcodeproj
+# cSpell:ignore workdir xcodeproj xcodebuild Xfrontend
 
 SWIFT_BUILD_FLAGS_RELEASE=--configuration release
 
