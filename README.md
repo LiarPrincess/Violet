@@ -1,12 +1,10 @@
 # Violet
 
-Violet is one of those Swift <-> Python interop thingies. Except that this time we implement the whole language from scratch.
+Violet is one of those Swift <-> Python interop thingies, except that this time we implement the whole language from scratch. Name comes from [Violet Evergarden](https://www.netflix.com/pl-en/title/80182123).
 
-[Many](https://www.imdb.com/title/tt7923710) [unwatched](https://www.imdb.com/title/tt10220588) [k-drama](https://www.imdb.com/title/tt12451520) [hours](https://www.imdb.com/title/tt10850932) [were](https://www.imdb.com/title/tt14169770) [put](https://www.imdb.com/title/tt8242904) [into](https://www.imdb.com/title/tt13067118) [this](https://www.imdb.com/title/tt6263222), so any ⭐  would be appreciated.
+[Many](https://www.imdb.com/title/tt7923710) [unwatched](https://www.imdb.com/title/tt12451520) [k-drama](https://www.imdb.com/title/tt10220588) [hours](https://www.imdb.com/title/tt10850932) [were](https://www.imdb.com/title/tt8242904) [put](https://www.imdb.com/title/tt14169770) [into](https://www.imdb.com/title/tt13067118) [this](https://www.imdb.com/title/tt6263222), so any ⭐  would be appreciated.
 
-Why?
-
-Well… what else can you do during COVID-19 lockdown. Also… it is -16°C outside ❄️, so you don't want to leave your house anyway.
+If something is not working, you have an interesting idea or maybe just a question, then you can start an issue or discussion. You can also contact us on twitter [@itBrokeAgain](https://twitter.com/itBrokeAgain) (optimism, yay!).
 
 ## Requirements
 
@@ -32,7 +30,7 @@ Next we will try to improve code-base by solving any shortcuts we took.
 
 ### 1. New object model (representation of a single Python object in a memory)
 
-Currently we are using Swift objects to represent Python instances. For example Swift `PyInt` object represents a Python `int` instance (`Sourcery` annotations are explained in documentation):
+Currently we are using Swift objects to represent Python instances. For example Swift `PyInt` object represents a Python `int` instance ([Sourcery](https://github.com/krzysztofzablocki/Sourcery) annotations are explained in documentation):
 
 ```Swift
 // sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
