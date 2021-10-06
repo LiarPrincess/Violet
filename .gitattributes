@@ -1,0 +1,7 @@
+*.swift   text diff=swift
+*.py      text diff=python
+*.pyc     binary export-ignore
+*.md      text diff=markdown
+
+# Custom syntax highlighter for Elsa definitions
+*.letitgo linguist-language=Haskell
