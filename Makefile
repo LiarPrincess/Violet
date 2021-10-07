@@ -34,10 +34,10 @@ pytest:
 	swift run PyTests
 
 # Hmm…
-# '--configuration=release' does work on Ubuntu 21.4 (Swift 5.4.2),
-# but it does not work on macOS 10.15.6 (Swift 5.3 from Xcode) - somehow it will
-# still use 'debug'.
-# But you can create a new scheme in Xcode and it will work. Whatever…
+# '--configuration=release' does not work on macOS 10.15.6 (Swift 5.3 from Xcode),
+# somehow it will still use 'debug'. But you can create a new scheme in Xcode.
+#
+# There are no such problems on Ubuntu 21.4 (Swift 5.4.2),
 pytest-r:
 	swift run PyTests $(SWIFT_BUILD_FLAGS_RELEASE)
 
