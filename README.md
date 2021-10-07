@@ -35,89 +35,15 @@ See `Documentation` directory for a list of known unimplemented features. There 
 
 Our current goal was to ramp up the Python functionality coverage, which mostly meant passing as many Python tests (`PyTests`) as possible. This gives us us a safety net for any future regressions.
 
-Next we will try to improve code-base by solving any shortcuts we took.
+Next we will try to improve code-base by solving any shortcuts we took:
 
-### 1. New object model (representation of a single Python object in a memory)
+- New object model (representation of a single Python object in a memory) - currently we are using Swift objects to represent Python instances, for example Swift `PyInt` object represents a Python `int` instance. There are better ways to do this, but this is a bit longer conversation in Swift. For details see [this issue](https://github.com/LiarPrincess/Violet/issues/1).
 
-Currently we are using Swift objects to represent Python instances. For example Swift `PyInt` object represents a Python `int` instance ([Sourcery](https://github.com/krzysztofzablocki/Sourcery) annotations are explained in documentation):
+- New method representation - currently we just wrap a Swift method in a `PyBuiltinFunction` and put it inside type `__dict__`. For example: `int.add` (implemented in Swift as `PyInt.add(:_)` with following signature: `(PyInt) -> (PyObject) -> PyResult<PyObject>`) is put inside `int.__dict__`. This can be simplified a bit, but it depends on the object model, so it has to wait.
 
-```Swift
-// sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
-public class PyInt: PyObject {
+- Garbage collection and memory management - as we said: currently use Swift class instances to represent Python objects, which means that we are forced to use Swift ARC to manage object lifetime. Unfortunately this does not solve reference cycles (which we have, for example: `object` type has `type` type and `type` type is a subclass of `object`, not to mention that `type` type has `type` as its type), but for now we will ignore this… (how convenient!).
 
-  // sourcery: pymethod = __add__
-  public func add(_ other: PyObject) -> PyResult<PyObject> {
-    // …
-  }
-}
-```
-
-This is nice because:
-
-- Is very easy to add new types/methods - which is important since we have more than 120 types and 780 methods to implement.
-- Free type compatibility - which means that we can cast `object` reference (represented as `PyObject` instance) from VM stack to a specific Python type, for example `int` (represented as `PyInt` instance).
-
-Not-so-nice things include:
-
-- Wasted cache/memory on Swift metadata - each Swift object holds a reference to its Swift type. We do not need this since we store a reference to Python type which serves a similar function.
-- Forced Swift memory management - ARC is “not the best” solution when working with circular references (which we have, for example: `object` type has `type` type and `type` type is a subclass of `object`, not to mention that `type` type has `type` as its type).
-- We have to perfectly reproduce Python type hierarchy inside Swift which can cause some problems if the 2 languages have different view on a certain behavior, for example:
-
-    ```Swift
-    class PyInt {
-      func and() { print("int.and") }
-    }
-
-    // `bool` is a subclass of `int` in Python.
-    class PyBool: PyInt {
-      override func and() { print("bool.and") }
-    }
-
-    let f = PyInt.and // This is stored inside `int.__dict__`
-    f(intInstance)(rhs) // 'int.and', as expected
-    f(boolInstance)(rhs) // 'bool.and'! 'int.and' was expected, since we took 'f' from 'PyInt'
-    ```
-
-There are better ways to represent a Python object, but this is a bit longer conversation in Swift. For details see [this issue](TODO: PUT ISSUE LINK HERE!).
-
-### 2. New method representation
-
-Currently we do something like:
-
-```Swift
-class PyInt {
-  func add() { print("int.add") }
-}
-
-// Extracted function with type signature:
-// (PyInt) -> (PyObject) -> PyResult<PyObject>
-let swiftFn = PyInt.add
-
-// If we wanted to call it we would have to:
-let arg = Py.newInt(1)
-let result = swiftFn(arg)(arg)
-print(result) // 2
-
-// To put it inside 'int.__dict__' we would:
-let fn = PyBuiltinFunction.wrap(
-  name: "__add__",
-  doc: nil,
-  fn: swiftFn,
-  castSelf: asInt // asInt :: (PyObject) -> PyResult<PyInt>
-)
-
-let key = Py.newString("__add__")
-let dict = intType.getDict()
-dict.set(key: key, to: fn)
-```
-
-This can be simplified a bit, but it also depends on the object model, so it has to wait.
-
-## 3. Garbage collection and memory management
-
-As we said: currently use Swift class instances to represent Python objects (for example: instance of `PyInt` represents `int` object in Python), which means that we use Swift ARC to manage object lifetime.
-
-Unfortunately this does not solve reference cycles, but for now we will ignore this… (how convenient!).
+- V8-style isolates - currently the Python context is represented as a global static `Py` (something like: `Py.newInt(2)` or `Py.add(lhs, rhs)`). This prevents us from having multiple VM instances running on the same thread (without using [thread local storage](https://en.wikipedia.org/wiki/Thread-local_storage)), which in turn makes unit testing difficult.
 
 ## Sources
 
