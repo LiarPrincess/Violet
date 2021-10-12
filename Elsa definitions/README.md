@@ -1,6 +1,6 @@
 # What is this?
 
-This directory contains inputs for [Elsa](https://github.com/LiarPrincess/Violet/Sources/Elsa) (our code generation tool).
+This directory contains inputs for [Elsa](https://github.com/LiarPrincess/Violet/tree/main/Sources/Elsa) (our code generation tool).
 
 # Quick tips
 
