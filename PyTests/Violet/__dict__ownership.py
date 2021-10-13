@@ -1,3 +1,13 @@
+'''
+Instance of a standard Python type does not have a '__dict__'.
+Instance of the subclass of that type has '__dict__'.
+
+object().__dict__ # -> AttributeError
+
+class MyObject(object): pass
+MyObject().__dict__
+'''
+
 import builtins
 import sys
 
