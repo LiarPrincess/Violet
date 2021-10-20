@@ -6,6 +6,10 @@ Violet is one of those Swift <-> Python interop thingies, except that this time 
 
 If something is not working, you have an interesting idea or maybe just a question, then you can start an issue or discussion. You can also contact us on twitter [@itBrokeAgain](https://twitter.com/itBrokeAgain) (optimism, yay!).
 
+
+> Currently the most pressing issue is [designing a new object model](https://github.com/LiarPrincess/Violet/issues/1) (representation of a single Python object in the memory). This does not require any specific Python/Violet knowledge. Any contributions are welcome! (Yes, you do not need to write the code, just commenting in this thead would be a massive help.)
+
+
 - [Violet](#violet)
   - [Requirements](#requirements)
   - [Features](#features)
