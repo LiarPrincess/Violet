@@ -43,7 +43,9 @@ Next we will try to improve code-base by solving any shortcuts we took:
 
 - Garbage collection and memory management - as we said: currently use Swift class instances to represent Python objects, which means that we are forced to use Swift ARC to manage object lifetime. Unfortunately this does not solve reference cycles (which we have, for example: `object` type has `type` type and `type` type is a subclass of `object`, not to mention that `type` type has `type` as its type), but for now we will ignore this… (how convenient!).
 
-- V8-style isolates - currently the Python context is represented as a global static `Py` (something like: `Py.newInt(2)` or `Py.add(lhs, rhs)`). This prevents us from having multiple VM instances running on the same thread (without using [thread local storage](https://en.wikipedia.org/wiki/Thread-local_storage)), which in turn makes unit testing difficult.
+    Btw. please remember to use [with statement](https://www.python.org/dev/peps/pep-0343/) to manage resources, do not rely on object lifetime (especially for the file descriptors).
+
+- [V8-style isolates](https://chromium.googlesource.com/v8/v8.git/+/refs/heads/main/src/execution/isolate.h#502) - currently the Python context is represented as a global static `Py` (something like: `Py.newInt(2)` or `Py.add(lhs, rhs)`). This makes unit testing difficult and prevents us from having multiple VM instances running on the same thread (without using [thread local storage](https://en.wikipedia.org/wiki/Thread-local_storage)). Ideally we would create multiple `Py` instances and use them as a separate Python contexts.
 
 ## Sources
 
@@ -77,7 +79,7 @@ Violet
     - Does not contain `importlib` and `importlib_external` modules, because those are written in Python. They are a little bit different than CPython versions (we have 80% of the code, but only 20% of the functionality <great-success-meme.gif>).
     - `PyResult<Wrapped> = Wrapped | PyBaseException` is used for error handling.
 - **VioletVM** — manipulates Python objects according to the instructions from `Bytecode.CodeObject`, so that the output vaguely resembles what `CPython` does.
-    - Mainly a massive `switch` over each possible `Instruction` (branch prediction 💔).
+    - Mainly a massive `switch` over each possible `Instruction`.
 - **Violet** — main executable (duh…).
 - **PyTests** — runs tests written in Python from the `PyTests` directory.
 
