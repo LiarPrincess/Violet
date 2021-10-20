@@ -4,8 +4,6 @@ import VioletCore
 // cSpell:ignore finalise
 
 /// Helper for adding new instructions to `CodeObject`.
-/// It will store reference to `codeObject`,
-/// it is acceptable to have multiple builders to a single `CodeObject`.
 public final class CodeObjectBuilder {
 
   public let name: String
