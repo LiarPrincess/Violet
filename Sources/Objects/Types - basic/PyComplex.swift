@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import VioletCore
 
@@ -11,8 +10,7 @@ import VioletCore
 
 // sourcery: pytype = complex, isDefault, isBaseType
 // sourcery: subclassInstancesHave__dict__
-/// This subtype of PyObject represents a Python complex number object.
-public final class PyComplex: PyObject {
+public struct PyComplex: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -24,22 +22,51 @@ public final class PyComplex: PyObject {
     This is equivalent to (real + imag*1j) where imag defaults to 0.
     """
 
-  internal let real: Double
-  internal let imag: Double
+  internal enum Layout {
+    internal static let realOffset = SizeOf.objectHeader
+    internal static let realSize = SizeOf.double
 
-  // MARK: - Init
+    internal static let imagOffset = realOffset + realSize
+    internal static let imagSize = SizeOf.double
 
-  internal init(real: Double, imag: Double) {
-    self.real = real
-    self.imag = imag
-    super.init(type: Py.types.complex)
+    internal static let size = imagOffset + imagSize
   }
 
-  internal init(type: PyType, real: Double, imag: Double) {
-    self.real = real
-    self.imag = imag
-    super.init(type: type)
+  private var realPtr: Ptr<Double> { Ptr(self.ptr, offset: Layout.realOffset) }
+  private var imagPtr: Ptr<Double> { Ptr(self.ptr, offset: Layout.imagOffset) }
+  internal var real: Double { self.realPtr.pointee }
+  internal var imag: Double { self.imagPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
+
+  internal func initialize(type: PyType, real: Double, imag: Double) {
+    self.header.initialize(type: type)
+    self.realPtr.initialize(to: real)
+    self.imagPtr.initialize(to: imag)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyComplex(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.realPtr.deinitialize()
+    zelf.imagPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyComplex(ptr: ptr)
+    let typeName = zelf.typeName
+    let flags = zelf.flags
+    let real = zelf.real
+    let imag = zelf.imag
+    return "PyComplex(type: \(typeName), flags: \(flags), real: \(real), imag: \(imag))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Equatable
 

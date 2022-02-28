@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -15,8 +14,7 @@ internal let LONG_MIN = Int.min // -9223372036854775808
 
 // sourcery: pytype = int, isDefault, isBaseType, isLongSubclass
 // sourcery: subclassInstancesHave__dict__
-/// All integers are implemented as “long” integer objects.
-public class PyInt: PyObject {
+public struct PyInt: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -36,20 +34,41 @@ public class PyInt: PyObject {
     4
     """
 
-  // This has to be `let` because we cache most used ints!
-  public let value: BigInt
-
-  // MARK: - Init
-
-  internal convenience init(value: BigInt) {
-    let type = Py.types.int
-    self.init(type: type, value: value)
+  internal enum Layout {
+    internal static let valueOffset = SizeOf.objectHeader
+    internal static let valueSize = SizeOf.bigInt
+    internal static let size = valueOffset + valueSize
   }
 
-  internal init(type: PyType, value: BigInt) {
-    self.value = value
-    super.init(type: type)
+  // Do not add 'set' to 'self.value' - we cache most used ints!
+  private var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: Layout.valueOffset) }
+  internal var value: BigInt { self.valuePtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
+
+  internal func initialize(type: PyType, value: BigInt) {
+    self.header.initialize(type: type)
+    self.valuePtr.initialize(to: value)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyInt(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.valuePtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyInt(ptr: ptr)
+    let value = zelf.value
+    return "PyInt(type: \(zelf.typeName), flags: \(zelf.flags), value: \(value))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Equatable
 
