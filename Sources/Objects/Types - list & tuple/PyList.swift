@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -11,8 +10,7 @@ import VioletCore
 
 // sourcery: pytype = list, isDefault, hasGC, isBaseType, isListSubclass
 // sourcery: subclassInstancesHave__dict__
-/// This subtype of PyObject represents a Python list object.
-public final class PyList: PyObject, AbstractSequence {
+public struct PyList: PyObjectMixin, AbstractSequence {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -25,7 +23,15 @@ public final class PyList: PyObject, AbstractSequence {
     The argument must be an iterable if specified.
     """
 
-  internal var elements: [PyObject]
+  internal enum Layout {
+    internal static let elementsOffset = SizeOf.objectHeader
+    internal static let elementsSize = SizeOf.array
+
+    internal static let size = elementsOffset + elementsSize
+  }
+
+  private var elementsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Layout.elementsOffset) }
+  internal var elements: [PyObject] { self.elementsPtr.pointee }
 
   internal var isEmpty: Bool {
     return self.elements.isEmpty
@@ -35,17 +41,33 @@ public final class PyList: PyObject, AbstractSequence {
     return self.elements.count
   }
 
-  // MARK: - Init
+  public let ptr: RawPtr
 
-  internal convenience init(elements: [PyObject]) {
-    let type = Py.types.list
-    self.init(type: type, elements: elements)
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  internal init(type: PyType, elements: [PyObject]) {
-    self.elements = elements
-    super.init(type: type)
+  internal func initialize(type: PyType, elements: [PyObject]) {
+    self.header.initialize(type: type)
+    self.elementsPtr.initialize(to: elements)
   }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyList(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.elementsPtr.deinitialize()
+  }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyList(ptr: ptr)
+    let count = zelf.count
+    return "PyList(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count))"
+  }
+}
+
+/* MARKER
 
   // MARK: - AbstractSequence
 
