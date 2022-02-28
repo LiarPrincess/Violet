@@ -9,6 +9,8 @@ public typealias PyHash = Int
 
 public let Py = PyInstanceFake()
 
+public struct FunctionWrapper { }
+
 public struct PyInstanceFake {
 
   public var `true`: PyBool { fatalError() }

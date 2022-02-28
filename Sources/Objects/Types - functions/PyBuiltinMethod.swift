@@ -1,4 +1,3 @@
-/* MARKER
 // cSpell:ignore methodobject
 
 // In CPython:
@@ -7,29 +6,83 @@
 // sourcery: pytype = builtinMethod, isDefault, hasGC
 /// This is about the type `builtin_function_or_method`,
 /// not Python methods in user-defined classes.
-public final class PyBuiltinMethod: PyObject, AbstractBuiltinFunction {
+public struct PyBuiltinMethod: PyObjectMixin, AbstractBuiltinFunction {
+
+  // MARK: - Layout
+
+  internal enum Layout {
+    internal static let functionOffset = SizeOf.objectHeader
+    internal static let functionSize = SizeOf.functionWrapper
+
+    internal static let objectOffset = functionOffset + functionSize
+    internal static let objectSize = SizeOf.object
+
+    internal static let moduleOffset = objectOffset + objectSize
+    internal static let moduleSize = SizeOf.optionalObject
+
+    internal static let docOffset = moduleOffset + moduleSize
+    internal static let docSize = SizeOf.optionalString
+
+    internal static let size = docOffset + docSize
+  }
+
+  // MARK: - Properties
+
+  private var functionPtr: Ptr<FunctionWrapper> { self.ptr[Layout.functionOffset] }
+  private var objectPtr: Ptr<PyObject> { self.ptr[Layout.objectOffset] }
+  private var modulePtr: Ptr<PyObject?> { self.ptr[Layout.moduleOffset] }
+  private var docPtr: Ptr<String?> { self.ptr[Layout.docOffset] }
 
   /// The Swift function that will be called.
-  internal let function: FunctionWrapper
+  internal var function: FunctionWrapper { self.functionPtr.pointee }
   /// Instance bound to (`__self__`).
-  internal let object: PyObject
+  internal var object: PyObject { self.objectPtr.pointee }
   /// The `__module__` attribute, can be anything.
-  internal let module: PyObject?
+  internal var module: PyObject? { self.modulePtr.pointee }
   /// The `__doc__` attribute, or `nil`.
-  internal let doc: String?
+  internal var doc: String? { self.docPtr.pointee }
 
-  // MARK: - Init
+  // MARK: - Swift init
 
-  internal init(fn: FunctionWrapper,
-                object: PyObject,
-                module: PyObject? = nil,
-                doc: String? = nil) {
-    self.function = fn
-    self.object = object
-    self.module = module
-    self.doc = doc
-    super.init(type: Py.types.builtinMethod)
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
+
+  // MARK: - Initialize/deinitialize
+
+  // swiftlint:disable:next function_parameter_count
+  internal func initialize(type: PyType,
+                           function: FunctionWrapper,
+                           object: PyObject,
+                           module: PyObject?,
+                           doc: String?) {
+    self.header.initialize(type: type)
+    self.functionPtr.initialize(to: function)
+    self.objectPtr.initialize(to: object)
+    self.modulePtr.initialize(to: module)
+    self.docPtr.initialize(to: doc)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBuiltinMethod(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.functionPtr.deinitialize()
+    zelf.objectPtr.deinitialize()
+    zelf.modulePtr.deinitialize()
+    zelf.docPtr.deinitialize()
+  }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyBuiltinMethod(ptr: ptr)
+    return "PyBuiltinMethod(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Equatable
 

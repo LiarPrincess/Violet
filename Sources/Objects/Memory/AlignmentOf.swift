@@ -44,7 +44,7 @@ public enum AlignmentOf {
     Self.checkIfAlignmentIsLessEqualWord(SourceLine.self)
     Self.checkIfAlignmentIsLessEqualWord(PyFrame.ObjectStack.self)
     Self.checkIfAlignmentIsLessEqualWord(PyFrame.BlockStack.self)
-    // Self.checkIfAlignmentIsLessEqualWord(FunctionWrapper.self)
+    Self.checkIfAlignmentIsLessEqualWord(FunctionWrapper.self)
 
      Self.checkIfAlignmentIsLessEqualWord(FileDescriptorType.self)
      Self.checkIfAlignmentIsLessEqualWord(FileMode.self)

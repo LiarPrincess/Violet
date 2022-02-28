@@ -1,4 +1,3 @@
-/* MARKER
 // cSpell:ignore funcobject
 
 // In CPython:
@@ -6,7 +5,7 @@
 
 // sourcery: pytype = classmethod, isDefault, isBaseType, hasGC
 // sourcery: instancesHave__dict__
-public final class PyClassMethod: PyObject {
+public struct PyClassMethod: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -32,17 +31,43 @@ public final class PyClassMethod: PyObject {
     If you want those, see the staticmethod builtin.
     """
 
-  internal var callable: PyObject?
-
-  internal convenience init(callable: PyObject) {
-    let type = Py.types.classmethod
-    self.init(type: type, callable: callable)
+  internal enum Layout {
+    internal static let callableOffset = SizeOf.objectHeader
+    internal static let callableSize = SizeOf.optionalObject
+    internal static let size = callableOffset + callableSize
   }
 
-  internal init(type: PyType, callable: PyObject?) {
-    self.callable = callable
-    super.init(type: type)
+  private var callablePtr: Ptr<PyObject?> { self.ptr[Layout.callableOffset] }
+  internal var callable: PyObject? { self.callablePtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
+
+  // MARK: - Initialize/deinitialize
+
+  internal func initialize(type: PyType, callable: PyObject?) {
+    self.header.initialize(type: type)
+    self.callablePtr.initialize(to: callable)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyClassMethod(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.callablePtr.deinitialize()
+  }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyClassMethod(ptr: ptr)
+    return "PyClassMethod(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Class
 

@@ -1,4 +1,3 @@
-/* MARKER
 import VioletBytecode
 
 // swiftlint:disable file_length
@@ -9,7 +8,7 @@ import VioletBytecode
 
 // sourcery: pytype = function, isDefault, hasGC
 // sourcery: instancesHave__dict__
-public final class PyFunction: PyObject {
+public struct PyFunction: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -30,45 +29,130 @@ public final class PyFunction: PyObject {
     a tuple that supplies the bindings for free variables
     """
 
+  // MARK: - Layout
+
+  internal enum Layout {
+    internal static let nameOffset = SizeOf.objectHeader
+    internal static let nameSize = SizeOf.object
+
+    internal static let qualnameOffset = nameOffset + nameSize
+    internal static let qualnameSize = SizeOf.object
+
+    internal static let docOffset = qualnameOffset + qualnameSize
+    internal static let docSize = SizeOf.optionalObject
+
+    internal static let moduleOffset = docOffset + docSize
+    internal static let moduleSize = SizeOf.object
+
+    internal static let codeOffset = moduleOffset + moduleSize
+    internal static let codeSize = SizeOf.object
+
+    internal static let globalsOffset = codeOffset + codeSize
+    internal static let globalsSize = SizeOf.object
+
+    internal static let defaultsOffset = globalsOffset + globalsSize
+    internal static let defaultsSize = SizeOf.optionalObject
+
+    internal static let kwDefaultsOffset = defaultsOffset + defaultsSize
+    internal static let kwDefaultsSize = SizeOf.optionalObject
+
+    internal static let closureOffset = kwDefaultsOffset + kwDefaultsSize
+    internal static let closureSize = SizeOf.optionalObject
+
+    internal static let annotationsOffset = closureOffset + closureSize
+    internal static let annotationsSize = SizeOf.optionalObject
+
+    internal static let size = annotationsOffset + annotationsSize
+  }
+
+  // MARK: - Properties
+
+  private var namePtr: Ptr<PyString> { self.ptr[Layout.nameOffset] }
+  private var qualnamePtr: Ptr<PyString> { self.ptr[Layout.qualnameOffset] }
+  private var docPtr: Ptr<PyString?> { self.ptr[Layout.docOffset] }
+  private var modulePtr: Ptr<PyObject> { self.ptr[Layout.moduleOffset] }
+  private var codePtr: Ptr<PyCode> { self.ptr[Layout.codeOffset] }
+  private var globalsPtr: Ptr<PyDict> { self.ptr[Layout.globalsOffset] }
+  private var defaultsPtr: Ptr<PyTuple?> { self.ptr[Layout.defaultsOffset] }
+  private var kwDefaultsPtr: Ptr<PyDict?> { self.ptr[Layout.kwDefaultsOffset] }
+  private var closurePtr: Ptr<PyTuple?> { self.ptr[Layout.closureOffset] }
+  private var annotationsPtr: Ptr<PyDict?> { self.ptr[Layout.annotationsOffset] }
+
   /// The `__name__` attribute, a string object
-  internal private(set) var name: PyString
+  internal var name: PyString { self.namePtr.pointee }
   /// The qualified name
-  internal private(set) var qualname: PyString
+  internal var qualname: PyString { self.qualnamePtr.pointee }
   /// The `__doc__` attribute
-  internal private(set) var doc: PyString?
+  internal var doc: PyString? { self.docPtr.pointee }
   /// The `__module__` attribute, can be anything
-  internal private(set) var module: PyObject
+  internal var module: PyObject { self.modulePtr.pointee }
   /// A code object, the `__code__` attribute
-  internal private(set) var code: PyCode
+  internal var code: PyCode { self.codePtr.pointee }
 
-  internal private(set) var globals: PyDict
-  internal private(set) var defaults: PyTuple?
-  internal private(set) var kwDefaults: PyDict?
-  internal private(set) var closure: PyTuple?
-  internal private(set) var annotations: PyDict?
+  internal var globals: PyDict { self.globalsPtr.pointee }
+  internal var defaults: PyTuple? { self.defaultsPtr.pointee }
+  internal var kwDefaults: PyDict? { self.kwDefaultsPtr.pointee }
+  internal var closure: PyTuple? { self.closurePtr.pointee }
+  internal var annotations: PyDict? { self.annotationsPtr.pointee }
 
-  // MARK: - Init
+  // MARK: - Swift init
 
-  internal init(qualname: PyString?,
-                module: PyObject,
-                code: PyCode,
-                globals: PyDict) {
-    self.name = code.name
-    self.qualname = qualname ?? code.name
-    self.code = code
-    self.module = module
+  public let ptr: RawPtr
 
-    self.globals = globals
-    self.defaults = nil
-    self.kwDefaults = nil
-    self.closure = nil
-    self.annotations = nil
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  // MARK: - Initialize/deinitialize
+
+  // swiftlint:disable:next function_parameter_count
+  internal func initialize(type: PyType,
+                           qualname: PyString?,
+                           module: PyObject,
+                           code: PyCode,
+                           globals: PyDict) {
+    self.header.initialize(type: type)
+    self.namePtr.initialize(to: name)
+    self.qualnamePtr.initialize(to: qualname ?? name)
+    self.modulePtr.initialize(to: module)
+    self.codePtr.initialize(to: code)
+
+    self.globalsPtr.initialize(to: globals)
+
+    self.defaultsPtr.initialize(to: nil)
+    self.kwDefaultsPtr.initialize(to: nil)
+    self.closurePtr.initialize(to: nil)
+    self.annotationsPtr.initialize(to: nil)
 
     let firstConstant = code.constants.first
-    self.doc = firstConstant.flatMap(PyCast.asString(_:))
-
-    super.init(type: Py.types.function)
+    let doc = firstConstant.flatMap(PyCast.asString(_:))
+    self.docPtr.initialize(to: doc)
   }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFunction(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.namePtr.deinitialize()
+    zelf.qualnamePtr.deinitialize()
+    zelf.docPtr.deinitialize()
+    zelf.modulePtr.deinitialize()
+    zelf.codePtr.deinitialize()
+    zelf.globalsPtr.deinitialize()
+    zelf.defaultsPtr.deinitialize()
+    zelf.kwDefaultsPtr.deinitialize()
+    zelf.closurePtr.deinitialize()
+    zelf.annotationsPtr.deinitialize()
+  }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyFunction(ptr: ptr)
+    return "PyFunction(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - String
 
