@@ -17,3 +17,4 @@ public protocol AbstractSequence {}
 public protocol AbstractDictViewIterator {}
 public protocol AbstractDictView {}
 public protocol AbstractSet {}
+public protocol AbstractString {}

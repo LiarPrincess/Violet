@@ -20,6 +20,7 @@ public enum SizeOf {
   public static let int = 8
   public static let uint32 = 4
   public static let bigInt = 8
+  public static let hash = 8
   public static let double = 8
 
   public static let array = -1
@@ -50,6 +51,7 @@ public enum SizeOf {
     Self.checkSize(of: Int.self, expected: Self.int)
     Self.checkSize(of: UInt32.self, expected: Self.uint32)
     Self.checkSize(of: BigInt.self, expected: Self.bigInt)
+    Self.checkSize(of: PyHash.self, expected: Self.hash)
     Self.checkSize(of: Double.self, expected: Self.double)
 
     Self.checkSize(of: [PyObject].self, expected: Self.array)

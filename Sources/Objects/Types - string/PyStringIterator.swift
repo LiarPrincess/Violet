@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // cSpell:ignore unicodeobject
@@ -7,21 +6,53 @@ import VioletCore
 // Objects -> unicodeobject.c
 
 // sourcery: pytype = str_iterator, isDefault, hasGC
-public final class PyStringIterator: PyObject {
+public struct PyStringIterator: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal let string: PyString
-  internal private(set) var index: Int
+  internal enum Layout {
+    internal static let stringOffset = SizeOf.objectHeader
+    internal static let stringSize = SizeOf.object
 
-  // MARK: - Init
+    internal static let indexOffset = stringOffset + stringSize
+    internal static let indexSize = SizeOf.int
 
-  internal init(string: PyString) {
-    self.string = string
-    self.index = 0
-    super.init(type: Py.types.str_iterator)
+    internal static let size = indexOffset + indexSize
   }
+
+  private var stringPtr: Ptr<PyString> { Ptr(self.ptr, offset: Layout.stringOffset) }
+  private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
+
+  internal var string: PyString { self.stringPtr.pointee }
+  internal var index: Int { self.indexPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  internal func initialize(type: PyType, string: PyString) {
+    self.header.initialize(type: type)
+    self.stringPtr.initialize(to: string)
+    self.indexPtr.initialize(to: 0)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyStringIterator(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.stringPtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStringIterator(ptr: ptr)
+    return "PyStringIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Class
 

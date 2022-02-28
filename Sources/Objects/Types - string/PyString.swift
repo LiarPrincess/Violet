@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import UnicodeData
 import VioletCore
@@ -15,7 +14,7 @@ import VioletCore
 // sourcery: subclassInstancesHave__dict__
 /// Textual data in Python is handled with str objects, or strings.
 /// Strings are immutable sequences of Unicode code points.
-public final class PyString: PyObject, AbstractString {
+public struct PyString: PyObjectMixin, AbstractString {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -31,21 +30,47 @@ public final class PyString: PyObject, AbstractString {
     errors defaults to 'strict'.
     """
 
+  // MARK: - Layout
+
+  internal enum Layout {
+    internal static let valueOffset = SizeOf.objectHeader
+    internal static let valueSize = SizeOf.string
+
+    internal static let cachedCountOffset = valueOffset + valueSize
+    internal static let cachedCountSize = SizeOf.int
+
+    internal static let cachedHashOffset = cachedCountOffset + cachedCountSize
+    internal static let cachedHashSize = SizeOf.hash
+
+    internal static let size = cachedHashOffset + cachedHashSize
+  }
+
+  // MARK: - Properties
+
   private static let invalidCount = -1
   private static let invalidHash = PyHash.zero
 
-  public let value: String
+  private var valuePtr: Ptr<String> { Ptr(self.ptr, offset: Layout.valueOffset) }
+  private var cachedCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.cachedCountOffset) }
+  private var cachedHashPtr: Ptr<PyHash> { Ptr(self.ptr, offset: Layout.cachedHashOffset) }
+
+  internal var value: String { self.valuePtr.pointee }
+
   /// Cache 'count' because 'String.unicodeScalars.count' is O(n)!
   /// (yes, on EVERY call!)
   ///
   /// So never, ever, use 'self.elements.count', use 'self.count'!
   ///
   /// We can do this because `str` is immutable.
-  private var cachedCount = PyString.invalidCount
+  internal var cachedCount: Int {
+    get { self.cachedCountPtr.pointee }
+    nonmutating set { self.cachedCountPtr.pointee = newValue }
+  }
+
   /// Cache hash value because `str` is very often used as `__dict__` key.
   ///
   /// We can do this because `str` is immutable.
-  private var cachedHash = PyString.invalidHash
+  internal var cachedHash: PyHash { self.cachedHashPtr.pointee }
 
   /// We work on scalars (Unicode code points) instead of graphemes because:
   /// - len("Cafe\u0301") = 5 (Swift: "Cafe\u{0301}".unicodeScalars.count)
@@ -67,17 +92,40 @@ public final class PyString: PyObject, AbstractString {
     return self.cachedCount
   }
 
-  // MARK: - Init
+  // MARK: - Swift init
 
-  internal convenience init(value: String) {
-    let type = Py.types.str
-    self.init(type: type, value: value)
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  internal init(type: PyType, value: String) {
-    self.value = value
-    super.init(type: type)
+  // MARK: - Initialize/deinitialize
+
+  internal func initialize(type: PyType, value: String) {
+    self.header.initialize(type: type)
+    self.valuePtr.initialize(to: value)
+    self.cachedCountPtr.initialize(to: PyString.invalidCount)
+    self.cachedHashPtr.initialize(to: PyString.invalidHash)
   }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyString(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.valuePtr.deinitialize()
+    zelf.cachedCountPtr.deinitialize()
+    zelf.cachedHashPtr.deinitialize()
+  }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyString(ptr: ptr)
+    return "PyString(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Equatable
 
