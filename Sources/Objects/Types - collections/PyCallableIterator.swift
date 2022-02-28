@@ -21,8 +21,8 @@ public struct PyCallableIterator: PyObjectMixin {
     internal static let size = sentinelOffset + sentinelSize
   }
 
-  private var callablePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.callableOffset) }
-  private var sentinelPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.sentinelOffset) }
+  private var callablePtr: Ptr<PyObject> { self.ptr[Layout.callableOffset] }
+  private var sentinelPtr: Ptr<PyObject> { self.ptr[Layout.sentinelOffset] }
 
   internal var callable: PyObject { self.callablePtr.pointee }
   internal var sentinel: PyObject { self.sentinelPtr.pointee }

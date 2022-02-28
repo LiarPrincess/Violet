@@ -23,7 +23,7 @@ public struct PyZip: PyObjectMixin {
     internal static let size = iteratorsOffset + iteratorsSize
   }
 
-  private var iteratorsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Layout.iteratorsOffset) }
+  private var iteratorsPtr: Ptr<[PyObject]> { self.ptr[Layout.iteratorsOffset] }
   internal var iterators: [PyObject] { self.iteratorsPtr.pointee }
 
   public let ptr: RawPtr

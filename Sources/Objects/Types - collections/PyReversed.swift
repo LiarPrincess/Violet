@@ -30,8 +30,8 @@ public struct PyReversed: PyObjectMixin {
 
   private static let endIndex = -1
 
-  private var sequencePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.sequenceOffset) }
-  private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
+  private var sequencePtr: Ptr<PyObject> { self.ptr[Layout.sequenceOffset] }
+  private var indexPtr: Ptr<Int> { self.ptr[Layout.indexOffset] }
 
   internal var sequence: PyObject { self.sequencePtr.pointee }
   internal var index: Int { self.indexPtr.pointee }

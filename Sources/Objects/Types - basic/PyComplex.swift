@@ -32,8 +32,8 @@ public struct PyComplex: PyObjectMixin {
     internal static let size = imagOffset + imagSize
   }
 
-  private var realPtr: Ptr<Double> { Ptr(self.ptr, offset: Layout.realOffset) }
-  private var imagPtr: Ptr<Double> { Ptr(self.ptr, offset: Layout.imagOffset) }
+  private var realPtr: Ptr<Double> { self.ptr[Layout.realOffset] }
+  private var imagPtr: Ptr<Double> { self.ptr[Layout.imagOffset] }
   internal var real: Double { self.realPtr.pointee }
   internal var imag: Double { self.imagPtr.pointee }
 

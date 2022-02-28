@@ -18,9 +18,10 @@ public struct RawPtr {
 
   // MARK: - Subscript
 
-  public subscript(offset: Int) -> RawPtr {
-    let ptr = self.value.advanced(by: offset)
-    return RawPtr(ptr)
+  public subscript<Pointee>(offset: Int) -> Ptr<Pointee> {
+    let unsafeRawPtr = self.value.advanced(by: offset)
+    let rawPtr = RawPtr(unsafeRawPtr)
+    return rawPtr.bind(to: Pointee.self)
   }
 
   // MARK: - Bind

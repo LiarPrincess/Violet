@@ -46,10 +46,10 @@ public struct PyRange: PyObjectMixin {
 
   // MARK: - Properties
 
-  private var startPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Layout.startOffset) }
-  private var stopPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Layout.stopOffset) }
-  private var stepPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Layout.stepOffset) }
-  private var lengthPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Layout.lengthOffset) }
+  private var startPtr: Ptr<PyInt> { self.ptr[Layout.startOffset] }
+  private var stopPtr: Ptr<PyInt> { self.ptr[Layout.stopOffset] }
+  private var stepPtr: Ptr<PyInt> { self.ptr[Layout.stepOffset] }
+  private var lengthPtr: Ptr<PyInt> { self.ptr[Layout.lengthOffset] }
 
   internal var start: PyInt { self.startPtr.pointee }
   internal var stop: PyInt { self.stopPtr.pointee }

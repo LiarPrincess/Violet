@@ -34,7 +34,7 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
     internal static let size = elementsOffset + elementsSize
   }
 
-  private var elementsPtr: Ptr<Data> { Ptr(self.ptr, offset: Layout.elementsOffset) }
+  private var elementsPtr: Ptr<Data> { self.ptr[Layout.elementsOffset] }
   internal var elements: Data { self.elementsPtr.pointee }
 
   internal var isEmpty: Bool {

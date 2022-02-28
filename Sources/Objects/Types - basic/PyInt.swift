@@ -41,7 +41,7 @@ public struct PyInt: PyObjectMixin {
   }
 
   // Do not add 'set' to 'self.value' - we cache most used ints!
-  private var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: Layout.valueOffset) }
+  private var valuePtr: Ptr<BigInt> { self.ptr[Layout.valueOffset] }
   internal var value: BigInt { self.valuePtr.pointee }
 
   public let ptr: RawPtr

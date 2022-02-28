@@ -39,9 +39,9 @@ public struct PySlice: PyObjectMixin {
 
   // MARK: - Properties
 
-  private var startPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.startOffset) }
-  private var stopPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.stopOffset) }
-  private var stepPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.stepOffset) }
+  private var startPtr: Ptr<PyObject> { self.ptr[Layout.startOffset] }
+  private var stopPtr: Ptr<PyObject> { self.ptr[Layout.stopOffset] }
+  private var stepPtr: Ptr<PyObject> { self.ptr[Layout.stepOffset] }
 
   internal var start: PyObject { self.startPtr.pointee }
   internal var stop: PyObject { self.stopPtr.pointee }

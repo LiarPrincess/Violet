@@ -78,7 +78,7 @@ public struct PyDict: PyObjectMixin {
     internal static let size = elementsOffset + elementsSize
   }
 
-  private var elementsPtr: Ptr<OrderedDictionary> { Ptr(self.ptr, offset: Layout.elementsOffset) }
+  private var elementsPtr: Ptr<OrderedDictionary> { self.ptr[Layout.elementsOffset] }
   internal var elements: OrderedDictionary { self.elementsPtr.pointee }
 
   public let ptr: RawPtr

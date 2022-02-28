@@ -50,9 +50,9 @@ public struct PyString: PyObjectMixin, AbstractString {
   private static let invalidCount = -1
   private static let invalidHash = PyHash.zero
 
-  private var valuePtr: Ptr<String> { Ptr(self.ptr, offset: Layout.valueOffset) }
-  private var cachedCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.cachedCountOffset) }
-  private var cachedHashPtr: Ptr<PyHash> { Ptr(self.ptr, offset: Layout.cachedHashOffset) }
+  private var valuePtr: Ptr<String> { self.ptr[Layout.valueOffset] }
+  private var cachedCountPtr: Ptr<Int> { self.ptr[Layout.cachedCountOffset] }
+  private var cachedHashPtr: Ptr<PyHash> { self.ptr[Layout.cachedHashOffset] }
 
   internal var value: String { self.valuePtr.pointee }
 

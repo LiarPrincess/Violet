@@ -21,8 +21,8 @@ import VioletCore
      internal static let size = indexOffset + indexSize
    }
 
-   private var tuplePtr: Ptr<PyTuple> { Ptr(self.ptr, offset: Layout.tupleOffset) }
-   private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
+   private var tuplePtr: Ptr<PyTuple> { self.ptr[Layout.tupleOffset] }
+   private var indexPtr: Ptr<Int> { self.ptr[Layout.indexOffset] }
 
    internal var tuple: PyTuple { self.tuplePtr.pointee }
    internal var index: Int { self.indexPtr.pointee }

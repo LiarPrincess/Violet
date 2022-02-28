@@ -26,7 +26,7 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     internal static let size = elementsOffset + elementsSize
   }
 
-  private var elementsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Layout.elementsOffset) }
+  private var elementsPtr: Ptr<[PyObject]> { self.ptr[Layout.elementsOffset] }
   internal var elements: [PyObject] { self.elementsPtr.pointee }
 
   internal var isEmpty: Bool {

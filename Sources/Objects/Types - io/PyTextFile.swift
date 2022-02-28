@@ -57,11 +57,11 @@ public struct PyTextFile: PyObjectMixin {
 
   // MARK: - Properties
 
-  private var namePtr: Ptr<String?> { Ptr(self.ptr, offset: Layout.nameOffset) }
-  private var fdPtr: Ptr<FileDescriptorType> { Ptr(self.ptr, offset: Layout.fdOffset) }
-  private var modePtr: Ptr<FileMode> { Ptr(self.ptr, offset: Layout.modeOffset) }
-  private var encodingPtr: Ptr<PyString.Encoding> { Ptr(self.ptr, offset: Layout.encodingOffset) }
-  private var errorHandlingPtr: Ptr<PyString.ErrorHandling> { Ptr(self.ptr, offset: Layout.errorHandlingOffset) }
+  private var namePtr: Ptr<String?> { self.ptr[Layout.nameOffset] }
+  private var fdPtr: Ptr<FileDescriptorType> { self.ptr[Layout.fdOffset] }
+  private var modePtr: Ptr<FileMode> { self.ptr[Layout.modeOffset] }
+  private var encodingPtr: Ptr<PyString.Encoding> { self.ptr[Layout.encodingOffset] }
+  private var errorHandlingPtr: Ptr<PyString.ErrorHandling> { self.ptr[Layout.errorHandlingOffset] }
 
   internal var name: String? { self.namePtr.pointee }
   internal var fd: FileDescriptorType { self.fdPtr.pointee }

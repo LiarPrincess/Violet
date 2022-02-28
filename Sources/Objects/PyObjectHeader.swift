@@ -23,9 +23,9 @@ public struct PyObjectHeader {
 
   // MARK: - Properties
 
-  private var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: Layout.typeOffset) }
-  private var __dict__Ptr: Ptr<PyDict?> { Ptr(self.ptr, offset: Layout.__dict__Offset) }
-  private var flagsPtr: Ptr<Flags> { Ptr(self.ptr, offset: Layout.flagsOffset) }
+  private var typePtr: Ptr<PyType> { self.ptr[Layout.typeOffset] }
+  private var __dict__Ptr: Ptr<PyDict?> { self.ptr[Layout.__dict__Offset] }
+  private var flagsPtr: Ptr<Flags> { self.ptr[Layout.flagsOffset] }
 
   /// Also known as `klass`, but we are using CPython naming convention.
   public var type: PyType { self.typePtr.pointee }

@@ -31,7 +31,7 @@ public struct PyBool: PyObjectMixin {
 
   internal typealias Layout = PyInt.Layout
 
-  private var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: Layout.valueOffset) }
+  private var valuePtr: Ptr<BigInt> { self.ptr[Layout.valueOffset] }
   internal var value: BigInt { self.valuePtr.pointee }
 
   internal var isTrue: Bool {

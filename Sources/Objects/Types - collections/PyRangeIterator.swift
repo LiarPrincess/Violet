@@ -32,10 +32,10 @@ public struct PyRangeIterator: PyObjectMixin {
 
   // MARK: - Properties
 
-  private var startPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Layout.startOffset) }
-  private var stepPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Layout.stepOffset) }
-  private var lengthPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Layout.lengthOffset) }
-  private var indexPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Layout.indexOffset) }
+  private var startPtr: Ptr<BigInt> { self.ptr[Layout.startOffset] }
+  private var stepPtr: Ptr<BigInt> { self.ptr[Layout.stepOffset] }
+  private var lengthPtr: Ptr<BigInt> { self.ptr[Layout.lengthOffset] }
+  private var indexPtr: Ptr<BigInt> { self.ptr[Layout.indexOffset] }
 
   internal var start: BigInt { self.startPtr.pointee }
   internal var step: BigInt { self.stepPtr.pointee }

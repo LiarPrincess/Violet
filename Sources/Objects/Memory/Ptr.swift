@@ -26,11 +26,6 @@ public struct Ptr<Pointee> {
     self.value = value
   }
 
-  public init(_ baseRawPtr: RawPtr, offset: Int) {
-    let raw = baseRawPtr[offset]
-    self = raw.bind(to: Pointee.self)
-  }
-
   // MARK: - Initialize
 
   /// Initializes this pointer's memory with a single instance of the given value.

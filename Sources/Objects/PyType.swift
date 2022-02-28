@@ -60,16 +60,16 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   // MARK: - Properties
 
   // swiftlint:disable line_length
-  private var namePtr: Ptr<String> { Ptr(self.ptr, offset: Layout.nameOffset) }
-  private var qualnamePtr: Ptr<String> { Ptr(self.ptr, offset: Layout.qualnameOffset) }
-  private var basePtr: Ptr<PyType?> { Ptr(self.ptr, offset: Layout.baseOffset) }
-  private var basesPtr: Ptr<[PyType]> { Ptr(self.ptr, offset: Layout.basesOffset) }
-  private var mroPtr: Ptr<[PyType]> { Ptr(self.ptr, offset: Layout.mroOffset) }
-  private var subclassesPtr: Ptr<[PyType]> { Ptr(self.ptr, offset: Layout.subclassesOffset) }
-  private var layoutPtr: Ptr<MemoryLayout> { Ptr(self.ptr, offset: Layout.layoutOffset) }
-  private var staticMethodsPtr: Ptr<StaticallyKnownNotOverriddenMethods> { Ptr(self.ptr, offset: Layout.staticMethodsOffset) }
-  private var debugFnPtr: Ptr<DebugFn> { Ptr(self.ptr, offset: Layout.debugFnOffset) }
-  private var deinitializePtr: Ptr<DeinitializeFn> { Ptr(self.ptr, offset: Layout.deinitializeOffset) }
+  private var namePtr: Ptr<String> { self.ptr[Layout.nameOffset] }
+  private var qualnamePtr: Ptr<String> { self.ptr[Layout.qualnameOffset] }
+  private var basePtr: Ptr<PyType?> { self.ptr[Layout.baseOffset] }
+  private var basesPtr: Ptr<[PyType]> { self.ptr[Layout.basesOffset] }
+  private var mroPtr: Ptr<[PyType]> { self.ptr[Layout.mroOffset] }
+  private var subclassesPtr: Ptr<[PyType]> { self.ptr[Layout.subclassesOffset] }
+  private var layoutPtr: Ptr<MemoryLayout> { self.ptr[Layout.layoutOffset] }
+  private var staticMethodsPtr: Ptr<StaticallyKnownNotOverriddenMethods> { self.ptr[Layout.staticMethodsOffset] }
+  private var debugFnPtr: Ptr<DebugFn> { self.ptr[Layout.debugFnOffset] }
+  private var deinitializePtr: Ptr<DeinitializeFn> { self.ptr[Layout.deinitializeOffset] }
   // swiftlint:enable line_length
 
   //             | Type     | Base       | MRO

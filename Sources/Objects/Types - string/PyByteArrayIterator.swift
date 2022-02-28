@@ -21,8 +21,8 @@ public struct PyByteArrayIterator: PyObjectMixin {
     internal static let size = indexOffset + indexSize
   }
 
-  private var bytesPtr: Ptr<PyByteArray> { Ptr(self.ptr, offset: Layout.bytesOffset) }
-  private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
+  private var bytesPtr: Ptr<PyByteArray> { self.ptr[Layout.bytesOffset] }
+  private var indexPtr: Ptr<Int> { self.ptr[Layout.indexOffset] }
 
   internal var bytes: PyByteArray { self.bytesPtr.pointee }
   internal var index: Int { self.indexPtr.pointee }

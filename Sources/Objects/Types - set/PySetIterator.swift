@@ -24,9 +24,9 @@ public struct PySetIterator: PyObjectMixin {
     internal static let size = initialCountOffset + initialCountSize
   }
 
-  private var setPtr: Ptr<PyAnySet> { Ptr(self.ptr, offset: Layout.setOffset) }
-  private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
-  private var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.initialCountOffset) }
+  private var setPtr: Ptr<PyAnySet> { self.ptr[Layout.setOffset] }
+  private var indexPtr: Ptr<Int> { self.ptr[Layout.indexOffset] }
+  private var initialCountPtr: Ptr<Int> { self.ptr[Layout.initialCountOffset] }
 
   internal var set: PyAnySet { self.setPtr.pointee }
   internal var index: Int { self.indexPtr.pointee }

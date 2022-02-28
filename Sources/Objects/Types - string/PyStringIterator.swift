@@ -21,8 +21,8 @@ public struct PyStringIterator: PyObjectMixin {
     internal static let size = indexOffset + indexSize
   }
 
-  private var stringPtr: Ptr<PyString> { Ptr(self.ptr, offset: Layout.stringOffset) }
-  private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
+  private var stringPtr: Ptr<PyString> { self.ptr[Layout.stringOffset] }
+  private var indexPtr: Ptr<Int> { self.ptr[Layout.indexOffset] }
 
   internal var string: PyString { self.stringPtr.pointee }
   internal var index: Int { self.indexPtr.pointee }

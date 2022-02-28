@@ -25,8 +25,8 @@ public struct PyFilter: PyObjectMixin {
     internal static let size = iteratorOffset + iteratorSize
   }
 
-  private var fnPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.fnOffset) }
-  private var iteratorPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.iteratorOffset) }
+  private var fnPtr: Ptr<PyObject> { self.ptr[Layout.fnOffset] }
+  private var iteratorPtr: Ptr<PyObject> { self.ptr[Layout.iteratorOffset] }
 
   internal var fn: PyObject { self.fnPtr.pointee }
   internal var iterator: PyObject { self.iteratorPtr.pointee }
