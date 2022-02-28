@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -11,14 +10,10 @@ import VioletCore
 
 // sourcery: pytype = frozenset, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
-public final class PyFrozenSet: PyObject, AbstractSet {
-
-  // MARK: - Element, OrderedSet
+public struct PyFrozenSet: PyObjectMixin, AbstractSet {
 
   internal typealias Element = AbstractSet_Element
   internal typealias OrderedSet = VioletObjects.OrderedSet<Element>
-
-  // MARK: - Properties
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -28,19 +23,41 @@ public final class PyFrozenSet: PyObject, AbstractSet {
     Build an immutable unordered collection of unique elements.
     """
 
-  internal let elements: OrderedSet
+  internal enum Layout {
+    internal static let elementsOffset = SizeOf.objectHeader
+    internal static let elementsSize = SizeOf.orderedSet
 
-  // MARK: - Init
-
-  internal convenience init(elements: PyFrozenSet.OrderedSet) {
-    let type = Py.types.frozenset
-    self.init(type: type, elements: elements)
+    internal static let size = elementsOffset + elementsSize
   }
 
-  internal init(type: PyType, elements: PyFrozenSet.OrderedSet) {
-    self.elements = elements
-    super.init(type: type)
+  private var elementsPtr: Ptr<OrderedSet> { Ptr(self.ptr, offset: Layout.elementsOffset) }
+  internal var elements: OrderedSet { self.elementsPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
+
+  internal func initialize(type: PyType, elements: OrderedSet) {
+    self.header.initialize(type: type)
+    self.elementsPtr.initialize(to: elements)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFrozenSet(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.elementsPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyFrozenSet(ptr: ptr)
+    let count = zelf.elements.count
+    return "PyFrozenSet(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count))"
+  }
+}
+
+/* MARKER
 
   // MARK: - AbstractSet
 

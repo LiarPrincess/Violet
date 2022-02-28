@@ -1,4 +1,3 @@
-/* MARKER
 // MARK: - PyAnySet
 
 /// When you don't care whether the object is `set` or `frozenset`.
@@ -37,6 +36,8 @@ internal struct PyAnySet: CustomStringConvertible {
     self.storage = .frozenSet(frozenSet)
   }
 }
+
+/* MARKER
 
 // MARK: - PyCast
 
