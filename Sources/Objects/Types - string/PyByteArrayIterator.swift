@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // cSpell:ignore bytearrayobject
@@ -7,21 +6,53 @@ import VioletCore
 // Objects -> bytearrayobject.c
 
 // sourcery: pytype = bytearray_iterator, isDefault, hasGC
-public final class PyByteArrayIterator: PyObject {
+public struct PyByteArrayIterator: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal let bytes: PyByteArray
-  internal private(set) var index: Int
+  internal enum Layout {
+    internal static let bytesOffset = SizeOf.objectHeader
+    internal static let bytesSize = SizeOf.object
 
-  // MARK: - Init
+    internal static let indexOffset = bytesOffset + bytesSize
+    internal static let indexSize = SizeOf.int
 
-  internal init(bytes: PyByteArray) {
-    self.bytes = bytes
-    self.index = 0
-    super.init(type: Py.types.bytearray_iterator)
+    internal static let size = indexOffset + indexSize
   }
+
+  private var bytesPtr: Ptr<PyByteArray> { Ptr(self.ptr, offset: Layout.bytesOffset) }
+  private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
+
+  internal var bytes: PyByteArray { self.bytesPtr.pointee }
+  internal var index: Int { self.indexPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  internal func initialize(type: PyType, bytes: PyByteArray) {
+    self.header.initialize(type: type)
+    self.bytesPtr.initialize(to: bytes)
+    self.indexPtr.initialize(to: 0)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyByteArrayIterator(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.bytesPtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyByteArrayIterator(ptr: ptr)
+    return "PyByteArrayIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Class
 

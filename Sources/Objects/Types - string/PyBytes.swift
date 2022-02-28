@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -11,7 +10,7 @@ import VioletCore
 
 // sourcery: pytype = bytes, isDefault, isBaseType, isBytesSubclass
 // sourcery: subclassInstancesHave__dict__
-public final class PyBytes: PyObject, AbstractBytes {
+public struct PyBytes: PyObjectMixin, AbstractBytes {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -28,19 +27,39 @@ public final class PyBytes: PyObject, AbstractBytes {
       - an integer
     """
 
-  internal let elements: Data
-
-  // MARK: - Init
-
-  internal convenience init(elements: Data) {
-    let type = Py.types.bytes
-    self.init(type: type, elements: elements)
+  internal enum Layout {
+    internal static let elementsOffset = SizeOf.objectHeader
+    internal static let elementsSize = SizeOf.data
+    internal static let size = elementsOffset + elementsSize
   }
 
-  internal init(type: PyType, elements: Data) {
-    self.elements = elements
-    super.init(type: type)
+  private var elementsPtr: Ptr<Data> { Ptr(self.ptr, offset: Layout.elementsOffset) }
+  internal var elements: Data { self.elementsPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
+
+  internal func initialize(type: PyType, elements: Data) {
+    self.header.initialize(type: type)
+    self.elementsPtr.initialize(to: elements)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBytes(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.elementsPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyBytes(ptr: ptr)
+    return "PyBytes(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - AbstractBytes
 

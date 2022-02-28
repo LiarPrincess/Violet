@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -11,7 +10,7 @@ import VioletCore
 
 // sourcery: pytype = bytearray, isDefault, isBaseType
 // sourcery: subclassInstancesHave__dict__
-public final class PyByteArray: PyObject, AbstractBytes {
+public struct PyByteArray: PyObjectMixin, AbstractBytes {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -29,23 +28,43 @@ public final class PyByteArray: PyObject, AbstractBytes {
       - an integer
     """
 
-  internal var elements: Data
+  internal enum Layout {
+    internal static let elementsOffset = SizeOf.objectHeader
+    internal static let elementsSize = SizeOf.data
+    internal static let size = elementsOffset + elementsSize
+  }
+
+  private var elementsPtr: Ptr<Data> { Ptr(self.ptr, offset: Layout.elementsOffset) }
+  internal var elements: Data { self.elementsPtr.pointee }
 
   internal var isEmpty: Bool {
     return self.elements.isEmpty
   }
 
-  // MARK: - Init
+  public let ptr: RawPtr
 
-  internal convenience init(elements: Data) {
-    let type = Py.types.bytearray
-    self.init(type: type, elements: elements)
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  internal init(type: PyType, elements: Data) {
-    self.elements = elements
-    super.init(type: type)
+  internal func initialize(type: PyType, elements: Data) {
+    self.header.initialize(type: type)
+    self.elementsPtr.initialize(to: elements)
   }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyByteArray(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.elementsPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyByteArray(ptr: ptr)
+    return "PyByteArray(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - AbstractBytes
 
