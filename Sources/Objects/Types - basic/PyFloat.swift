@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -17,8 +16,7 @@ internal let DBL_MAX_EXP = Double.greatestFiniteMagnitude.exponent + 1 // 1024
 
 // sourcery: pytype = float, isDefault, isBaseType
 // sourcery: subclassInstancesHave__dict__
-/// This subtype of PyObject represents a Python floating point object.
-public final class PyFloat: PyObject {
+public struct PyFloat: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -27,19 +25,40 @@ public final class PyFloat: PyObject {
     Convert a string or number to a floating point number, if possible.
     """
 
-  internal let value: Double
-
-  // MARK: - Init
-
-  internal init(value: Double) {
-    self.value = value
-    super.init(type: Py.types.float)
+  internal enum Layout {
+    internal static let valueOffset = SizeOf.objectHeader
+    internal static let valueSize = SizeOf.double
+    internal static let size = valueOffset + valueSize
   }
 
-  internal init(type: PyType, value: Double) {
-    self.value = value
-    super.init(type: type)
+  private var valuePtr: Ptr<Double> { Ptr(self.ptr, offset: Layout.valueOffset) }
+  internal var value: Double { self.valuePtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
+
+  internal func initialize(type: PyType, value: Double) {
+    self.header.initialize(type: type)
+    self.valuePtr.initialize(to: value)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFloat(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.valuePtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyFloat(ptr: ptr)
+    let value = zelf.value
+    return "PyFloat(type: \(zelf.typeName), flags: \(zelf.flags), value: \(value))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Equatable
 

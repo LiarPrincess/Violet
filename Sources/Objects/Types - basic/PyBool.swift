@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -8,13 +7,6 @@ import VioletCore
 // Objects -> boolobject.c
 // https://docs.python.org/3.7/c-api/bool.html
 
-// !!! IMPORTANT !!!
-// 'PyBool' is a special (and unusual) place where we override 'pymethod' from 'PyInt'.
-// But we can't do that because Swift would always call the
-// overridden function (even if we did 'PyInt.fn(boolInstance)').
-// To solve this we will introduce separate selectors for each override.
-// This is why each method name will have 'Bool' suffix.
-
 extension BigInt {
   internal var isTrue: Bool {
     return !self.isZero
@@ -23,13 +15,13 @@ extension BigInt {
 
 // sourcery: pytype = bool, isDefault, isLongSubclass
 /// Booleans in Python are implemented as a subclass of integers.
-/// There are only two booleans, Py_False and Py_True.
-/// As such, the normal creation and deletion functions don’t apply to booleans.
-public final class PyBool: PyInt {
+///
+/// There are only two booleans, `False` and `True`.
+public struct PyBool: PyObjectMixin {
 
   // sourcery: pytypedoc
   // Why 'Bool' suffix? See comment at the top of this file.
-  internal static let docBool = """
+  internal static let doc = """
     bool(x) -> bool
 
     Returns True when the argument x is true, False otherwise.
@@ -37,19 +29,42 @@ public final class PyBool: PyInt {
     The class bool is a subclass of the class int, and cannot be subclassed
     """
 
+  internal typealias Layout = PyInt.Layout
+
+  private var valuePtr: Ptr<BigInt> { Ptr(self.ptr, offset: Layout.valueOffset) }
+  internal var value: BigInt { self.valuePtr.pointee }
+
   internal var isTrue: Bool {
     return self.value.isTrue
   }
 
-  // MARK: - Init
+  public let ptr: RawPtr
 
-  internal init(value: Bool) {
-    // 'bool' has only 2 instances and can't be subclassed,
-    // so we can just pass the correct type to 'super.init'.
-    let type = Py.types.bool
-    let valueInt = BigInt(value ? 1 : 0)
-    super.init(type: type, value: valueInt)
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
+
+  internal func initialize(type: PyType, value: Bool) {
+    self.header.initialize(type: type)
+    self.valuePtr.initialize(to: value ? 1 : 0)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBool(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.valuePtr.deinitialize()
+  }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyBool(ptr: ptr)
+    let value = zelf.value
+    return "PyBool(type: \(zelf.typeName), flags: \(zelf.flags), value: \(value))"
+  }
+}
+
+/* MARKER
 
   // MARK: - String
 
