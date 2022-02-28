@@ -11,6 +11,8 @@ internal let pathSeparators: [Character] = ["\\", "/"]
 internal let pathSeparators: [Character] = ["/"]
 #endif
 
+// TODO: Try again if interrupted (while true)
+
 /// Wrapper around 'FileManager' and other file-system related things.
 public struct FileSystem {
 

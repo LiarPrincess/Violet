@@ -74,5 +74,5 @@ if result.failedTests.any {
 let durationInSeconds = String(format: "%.2f", result.durationInSeconds)
 print("⏱️ Running time: \(durationInSeconds)s")
 
-let returnValue: Int32 = result.failedTests.isEmpty ? 0 : 1
+let returnValue: Int32 = result.failedTests.isEmpty ? EXIT_SUCCESS : EXIT_FAILURE
 exit(returnValue)
