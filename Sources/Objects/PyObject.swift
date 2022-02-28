@@ -18,21 +18,15 @@ public struct PyObject: PyObjectMixin {
     The most base type
     """
 
-  // MARK: - Layout
-
   internal enum Layout {
     internal static let size = SizeOf.objectHeader
   }
-
-  // MARK: - Swift init
 
   public let ptr: RawPtr
 
   public init(ptr: RawPtr) {
     self.ptr = ptr
   }
-
-  // MARK: - Initialize/deinitialize
 
   internal func initialize(type: PyType) {
     self.header.initialize(type: type)
@@ -42,8 +36,6 @@ public struct PyObject: PyObjectMixin {
     let zelf = PyObject(ptr: ptr)
     zelf.header.deinitialize()
   }
-
-  // MARK: - Debug
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyObject(ptr: ptr)

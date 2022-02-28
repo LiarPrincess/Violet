@@ -24,9 +24,9 @@ import VioletCore
      internal static let size = initialCountOffset + initialCountSize
    }
 
-   private var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Layout.dictOffset) }
-   private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
-   private var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.initialCountOffset) }
+   private var dictPtr: Ptr<PyDict> { self.ptr[Layout.dictOffset] }
+   private var indexPtr: Ptr<Int> { self.ptr[Layout.indexOffset] }
+   private var initialCountPtr: Ptr<Int> { self.ptr[Layout.initialCountOffset] }
 
    internal var dict: PyDict { self.dictPtr.pointee }
    internal var index: Int { self.indexPtr.pointee }

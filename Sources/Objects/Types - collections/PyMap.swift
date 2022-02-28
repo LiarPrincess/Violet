@@ -25,8 +25,8 @@ public struct PyMap: PyObjectMixin {
     internal static let size = iteratorsOffset + iteratorsSize
   }
 
-  private var fnPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.fnOffset) }
-  private var iteratorsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Layout.iteratorsOffset) }
+  private var fnPtr: Ptr<PyObject> { self.ptr[Layout.fnOffset] }
+  private var iteratorsPtr: Ptr<[PyObject]> { self.ptr[Layout.iteratorsOffset] }
 
   internal var fn: PyObject { self.fnPtr.pointee }
   internal var iterators: [PyObject] { self.iteratorsPtr.pointee }

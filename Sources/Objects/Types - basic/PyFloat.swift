@@ -31,7 +31,7 @@ public struct PyFloat: PyObjectMixin {
     internal static let size = valueOffset + valueSize
   }
 
-  private var valuePtr: Ptr<Double> { Ptr(self.ptr, offset: Layout.valueOffset) }
+  private var valuePtr: Ptr<Double> { self.ptr[Layout.valueOffset] }
   internal var value: Double { self.valuePtr.pointee }
 
   public let ptr: RawPtr

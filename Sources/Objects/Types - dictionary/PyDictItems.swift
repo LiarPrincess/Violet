@@ -21,7 +21,7 @@ public struct PyDictItems: PyObjectMixin, AbstractDictView {
     internal static let size = dictOffset + dictSize
   }
 
-  private var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Layout.dictOffset) }
+  private var dictPtr: Ptr<PyDict> { self.ptr[Layout.dictOffset] }
   internal var dict: PyDict { self.dictPtr.pointee }
 
   public let ptr: RawPtr

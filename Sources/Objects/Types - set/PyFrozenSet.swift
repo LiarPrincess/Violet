@@ -30,7 +30,7 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
     internal static let size = elementsOffset + elementsSize
   }
 
-  private var elementsPtr: Ptr<OrderedSet> { Ptr(self.ptr, offset: Layout.elementsOffset) }
+  private var elementsPtr: Ptr<OrderedSet> { self.ptr[Layout.elementsOffset] }
   internal var elements: OrderedSet { self.elementsPtr.pointee }
 
   public let ptr: RawPtr

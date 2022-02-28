@@ -21,8 +21,8 @@ public struct PyListIterator: PyObjectMixin {
     internal static let size = indexOffset + indexSize
   }
 
-  private var listPtr: Ptr<PyList> { Ptr(self.ptr, offset: Layout.listOffset) }
-  private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
+  private var listPtr: Ptr<PyList> { self.ptr[Layout.listOffset] }
+  private var indexPtr: Ptr<Int> { self.ptr[Layout.indexOffset] }
 
   internal var list: PyList { self.listPtr.pointee }
   internal var index: Int { self.indexPtr.pointee }

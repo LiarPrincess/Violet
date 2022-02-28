@@ -39,8 +39,8 @@ public struct PyEnumerate: PyObjectMixin {
     internal static let size = nextIndexOffset + nextIndexSize
   }
 
-  private var iteratorPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.iteratorOffset) }
-  private var nextIndexPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Layout.nextIndexOffset) }
+  private var iteratorPtr: Ptr<PyObject> { self.ptr[Layout.iteratorOffset] }
+  private var nextIndexPtr: Ptr<BigInt> { self.ptr[Layout.nextIndexOffset] }
 
   /// Secondary iterator of enumeration
   internal var iterator: PyObject { self.iteratorPtr.pointee }
