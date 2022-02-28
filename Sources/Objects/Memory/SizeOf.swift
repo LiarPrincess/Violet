@@ -1,6 +1,7 @@
 import Foundation
 import BigInt
 import VioletCore
+import VioletBytecode
 
 /// Sizes of a various things in a memory.
 public enum SizeOf {
@@ -18,6 +19,7 @@ public enum SizeOf {
   public static let objectHeader = PyObjectHeader.Layout.size
 
   public static let int = 8
+  public static let optionalInt = -1
   public static let uint32 = 4
   public static let bigInt = 8
   public static let hash = 8
@@ -37,11 +39,10 @@ public enum SizeOf {
   public static let orderedSet = -1
   public static let anySet = -1
 
-  // public static let BlockStack = -1
-  // public static let CodeObject = -1
+  public static let sourceLine = -1
+  public static let objectStack = -1
+  public static let blockStack = -1
   // public static let FunctionWrapper = -1
-  // public static let ObjectStack = -1
-  // public static let SourceLine = -1
 
    public static let fileDescriptorType = -1
    public static let fileMode = -1
@@ -53,6 +54,7 @@ public enum SizeOf {
     Self.checkSize(of: Ptr<PyObject>.self, expected: Self.object)
 
     Self.checkSize(of: Int.self, expected: Self.int)
+    Self.checkSize(of: Optional<Int>.self, expected: Self.optionalInt)
     Self.checkSize(of: UInt32.self, expected: Self.uint32)
     Self.checkSize(of: BigInt.self, expected: Self.bigInt)
     Self.checkSize(of: PyHash.self, expected: Self.hash)
@@ -75,11 +77,10 @@ public enum SizeOf {
     Self.checkSize(of: OrderedSet<AbstractSet_Element>.self, expected: Self.orderedSet)
     Self.checkSize(of: PyAnySet.self, expected: Self.anySet)
 
-    // Self.checkSize(of: BlockStack.self, expected: Self.BlockStack)
-    // Self.checkSize(of: CodeObject.self, expected: Self.CodeObject)
+    Self.checkSize(of: SourceLine.self, expected: Self.sourceLine)
+    Self.checkSize(of: PyFrame.ObjectStack.self, expected: Self.objectStack)
+    Self.checkSize(of: PyFrame.BlockStack.self, expected: Self.blockStack)
     // Self.checkSize(of: FunctionWrapper.self, expected: Self.FunctionWrapper)
-    // Self.checkSize(of: ObjectStack.self, expected: Self.ObjectStack)
-    // Self.checkSize(of: SourceLine.self, expected: Self.SourceLine)
 
     Self.checkSize(of: FileDescriptorType.self, expected: Self.fileDescriptorType)
     Self.checkSize(of: FileMode.self, expected: Self.fileMode)

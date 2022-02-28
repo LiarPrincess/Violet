@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 import VioletBytecode
 
@@ -12,16 +11,77 @@ import VioletBytecode
 // https://tech.blog.aknin.name/2010/07/03/pythons-innards-code-objects/
 
 // sourcery: pytype = code, isDefault
-public final class PyCode: PyObject, CustomReflectable {
-
-  // MARK: - Basic properties
+public struct PyCode: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = "Create a code object. Not for the faint of heart."
 
-  #if DEBUG
-  public let codeObject: CodeObject
-  #endif
+  // MARK: - Layout
+
+  internal enum Layout {
+    internal static let nameOffset = SizeOf.objectHeader
+    internal static let nameSize = SizeOf.object
+
+    internal static let qualifiedNameOffset = nameOffset + nameSize
+    internal static let qualifiedNameSize = SizeOf.object
+
+    internal static let filenameOffset = qualifiedNameOffset + qualifiedNameSize
+    internal static let filenameSize = SizeOf.object
+
+    internal static let instructionsOffset = filenameOffset + filenameSize
+    internal static let instructionsSize = SizeOf.array
+
+    internal static let firstLineOffset = instructionsOffset + instructionsSize
+    internal static let firstLineSize = SizeOf.sourceLine
+
+    internal static let instructionLinesOffset = firstLineOffset + firstLineSize
+    internal static let instructionLinesSize = SizeOf.array
+
+    internal static let constantsOffset = instructionLinesOffset + instructionLinesSize
+    internal static let constantsSize = SizeOf.array
+
+    internal static let labelsOffset = constantsOffset + constantsSize
+    internal static let labelsSize = SizeOf.array
+
+    internal static let namesOffset = labelsOffset + labelsSize
+    internal static let namesSize = SizeOf.array
+
+    internal static let variableNamesOffset = namesOffset + namesSize
+    internal static let variableNamesSize = SizeOf.array
+
+    internal static let cellVariableNamesOffset = variableNamesOffset + variableNamesSize
+    internal static let cellVariableNamesSize = SizeOf.array
+
+    internal static let freeVariableNamesOffset = cellVariableNamesOffset + cellVariableNamesSize
+    internal static let freeVariableNamesSize = SizeOf.array
+
+    internal static let argCountOffset = freeVariableNamesOffset + freeVariableNamesSize
+    internal static let argCountSize = SizeOf.int
+
+    internal static let kwOnlyArgCountOffset = argCountOffset + argCountSize
+    internal static let kwOnlyArgCountSize = SizeOf.int
+
+    internal static let size = kwOnlyArgCountOffset + kwOnlyArgCountSize
+  }
+
+  // MARK: - Properties
+
+  private var namePtr: Ptr<PyString> { self.ptr[Layout.nameOffset] }
+  private var qualifiedNamePtr: Ptr<PyString> { self.ptr[Layout.qualifiedNameOffset] }
+  private var filenamePtr: Ptr<PyString> { self.ptr[Layout.filenameOffset] }
+  private var instructionsPtr: Ptr<[Instruction]> { self.ptr[Layout.instructionsOffset] }
+  private var firstLinePtr: Ptr<SourceLine> { self.ptr[Layout.firstLineOffset] }
+  private var instructionLinesPtr: Ptr<[SourceLine]> { self.ptr[Layout.instructionLinesOffset] }
+  private var constantsPtr: Ptr<[PyObject]> { self.ptr[Layout.constantsOffset] }
+  private var labelsPtr: Ptr<[CodeObject.Label]> { self.ptr[Layout.labelsOffset] }
+  private var namesPtr: Ptr<[PyString]> { self.ptr[Layout.namesOffset] }
+  private var variableNamesPtr: Ptr<[MangledName]> { self.ptr[Layout.variableNamesOffset] }
+  private var cellVariableNamesPtr: Ptr<[MangledName]> { self.ptr[Layout.cellVariableNamesOffset] }
+  private var freeVariableNamesPtr: Ptr<[MangledName]> { self.ptr[Layout.freeVariableNamesOffset] }
+  private var argCountPtr: Ptr<Int> { self.ptr[Layout.argCountOffset] }
+  private var kwOnlyArgCountPtr: Ptr<Int> { self.ptr[Layout.kwOnlyArgCountOffset] }
+
+  // MARK: - Name
 
   /// Non-unique name of this code object.
   ///
@@ -34,7 +94,7 @@ public final class PyCode: PyObject, CustomReflectable {
   /// - list comprehension -> \<listcomp\>
   /// - set comprehension -> \<setcomp\>
   /// - dictionary comprehension -> \<dictcomp\>
-  public let name: PyString
+  public var name: PyString { self.namePtr.pointee }
 
   /// Unique dot-separated qualified name.
   ///
@@ -44,38 +104,26 @@ public final class PyCode: PyObject, CustomReflectable {
   ///   def elsa:   <- qualified name: frozen.elsa
   ///     pass
   /// ```
-  public let qualifiedName: PyString
+  public var qualifiedName: PyString { self.qualifiedNamePtr.pointee }
 
   /// The filename from which the code was compiled.
   /// Will be `<stdin>` for code entered in the interactive interpreter
   /// or whatever name is given as the second argument to `compile`
   /// for code objects created with `compile`.
-  public let filename: PyString
-
-  /// Various flags used during the compilation process.
-  public private(set) var codeFlags: CodeObject.Flags {
-    get {
-      let custom = self.flags.customUInt16
-      return CodeObject.Flags(rawValue: custom)
-    }
-    set {
-      let raw = newValue.rawValue
-      self.flags.customUInt16 = raw
-    }
-  }
+  public var filename: PyString { self.filenamePtr.pointee }
 
   // MARK: - Instructions
 
   /// Instruction opcodes.
   /// CPython: `co_code`.
-  public let instructions: [Instruction]
+  public var instructions: [Instruction] { self.instructionsPtr.pointee }
 
   // MARK: - Lines
 
   /// First line that contains a valid instruction.
-  public let firstLine: SourceLine
+  public var firstLine: SourceLine { self.firstLinePtr.pointee }
 
-  private let instructionLines: [SourceLine]
+  private var instructionLines: [SourceLine] { self.instructionLinesPtr.pointee }
 
   /// CPython: `co_lnotab` <- but not exactly the same.
   public func getLine(instructionIndex index: Int) -> SourceLine {
@@ -89,13 +137,13 @@ public final class PyCode: PyObject, CustomReflectable {
   /// Constants used.
   /// E.g. `LoadConst 5` loads `self.constants[5]` value.
   /// CPython: `co_consts`.
-  public let constants: [PyObject]
+  public var constants: [PyObject] { self.constantsPtr.pointee }
 
   // MARK: - Labels
 
   /// Absolute jump targets.
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
-  public let labels: [CodeObject.Label]
+  public var labels: [CodeObject.Label] { self.labelsPtr.pointee }
 
   // MARK: - Names
 
@@ -107,7 +155,7 @@ public final class PyCode: PyObject, CustomReflectable {
   ///
   /// E.g. `LoadName 5` loads `self.names[5]` value.
   /// CPython: `co_names`.
-  public let names: [PyString]
+  public var names: [PyString] { self.namesPtr.pointee }
 
   // MARK: - Variables
 
@@ -126,7 +174,7 @@ public final class PyCode: PyObject, CustomReflectable {
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
   /// CPython: `co_varnames`.
-  public let variableNames: [MangledName]
+  public var variableNames: [MangledName] { self.variableNamesPtr.pointee }
 
   public var variableCount: Int {
     return self.variableNames.count
@@ -142,13 +190,11 @@ public final class PyCode: PyObject, CustomReflectable {
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
   /// CPython: `co_cellvars`.
-  public let cellVariableNames: [MangledName]
+  public var cellVariableNames: [MangledName] { self.cellVariableNamesPtr.pointee }
 
   public var cellVariableCount: Int {
     return self.cellVariableNames.count
   }
-
-  // MARK: - Free variables
 
   /// List of free variable names.
   ///
@@ -160,7 +206,7 @@ public final class PyCode: PyObject, CustomReflectable {
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
   /// CPython: `co_freevars`.
-  public let freeVariableNames: [MangledName]
+  public var freeVariableNames: [MangledName] { self.freeVariableNamesPtr.pointee }
 
   public var freeVariableCount: Int {
     return self.freeVariableNames.count
@@ -171,64 +217,66 @@ public final class PyCode: PyObject, CustomReflectable {
   /// The number of positional arguments the code object expects to receive,
   /// including those with default values (but excluding `*args`).
   /// CPython: `co_argcount`.
-  public let argCount: Int
+  internal var argCount: Int { self.argCountPtr.pointee }
 
   /// The number of keyword arguments the code object can receive.
   /// CPython: `co_kwonlyargcount`.
-  public let kwOnlyArgCount: Int
+  internal var kwOnlyArgCount: Int { self.kwOnlyArgCountPtr.pointee }
 
-  // MARK: - Mirror
-
-  // We use mirrors to create description.
-  public var customMirror: Mirror {
-    let name = self.name.value
-    let qualifiedName = self.qualifiedName.value
-    let filename = self.filename.value
-
-    return Mirror(
-      self,
-      children: [
-        "name": name,
-        "qualifiedName": qualifiedName,
-        "codeFlags": self.codeFlags,
-        "instructionCount": self.instructions.count,
-        "filename": filename
-      ]
-    )
+  /// Various flags used during the compilation process.
+  public private(set) var codeFlags: CodeObject.Flags {
+    get {
+      let custom = self.flags.customUInt16
+      return CodeObject.Flags(rawValue: custom)
+    }
+    nonmutating set {
+      let raw = newValue.rawValue
+      self.flags.customUInt16 = raw
+    }
   }
 
-  // MARK: - Init
+  // MARK: - Swift init
 
-  internal init(code: CodeObject) {
-    #if DEBUG
-    self.codeObject = code
-    #endif
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  // MARK: - Initialize/deinitialize
+
+  internal func initialize(type: PyType, code: CodeObject) {
+    self.header.initialize(type: type)
 
     let totalArgs = PyCode.countArguments(code: code)
     assert(code.variableNames.count >= totalArgs)
 
-    self.name = Py.intern(string: code.name)
-    self.qualifiedName = Py.intern(string: code.qualifiedName)
-    self.filename = Py.intern(string: code.filename)
+    let name = Py.intern(string: code.name)
+    let qualifiedName = Py.intern(string: code.qualifiedName)
+    let filename = Py.intern(string: code.filename)
+    self.namePtr.initialize(to: name)
+    self.qualifiedNamePtr.initialize(to: qualifiedName)
+    self.filenamePtr.initialize(to: filename)
 
-    self.instructions = code.instructions
-    self.firstLine = code.firstLine
-    self.instructionLines = code.instructionLines
+    self.instructionsPtr.initialize(to: code.instructions)
+    self.firstLinePtr.initialize(to: code.firstLine)
+    self.instructionLinesPtr.initialize(to: code.instructionLines)
 
     // We will convert constants and names here.
     // Otherwise we would have to convert them on each use.
-    self.constants = code.constants.map(PyCode.toObject(constant:))
-    self.labels = code.labels
+    let constants = code.constants.map(PyCode.toObject(constant:))
+    self.constantsPtr.initialize(to: constants)
 
-    self.names = code.names.map(Py.intern)
-    self.variableNames = code.variableNames
-    self.cellVariableNames = code.cellVariableNames
-    self.freeVariableNames = code.freeVariableNames
+    self.labelsPtr.initialize(to: code.labels)
 
-    self.argCount = code.argCount
-    self.kwOnlyArgCount = code.kwOnlyArgCount
+    let names = code.names.map(Py.intern)
+    self.namesPtr.initialize(to: names)
+    self.variableNamesPtr.initialize(to: code.variableNames)
+    self.cellVariableNamesPtr.initialize(to: code.cellVariableNames)
+    self.freeVariableNamesPtr.initialize(to: code.freeVariableNames)
 
-    super.init(type: Py.types.code)
+    self.argCountPtr.initialize(to: code.argCount)
+    self.kwOnlyArgCountPtr.initialize(to: code.kwOnlyArgCount)
 
     self.codeFlags = code.flags
   }
@@ -249,31 +297,77 @@ public final class PyCode: PyObject, CustomReflectable {
 
   private static func toObject(constant: CodeObject.Constant) -> PyObject {
     switch constant {
-    case .true: return Py.true
-    case .false: return Py.false
-    case .none: return Py.none
-    case .ellipsis: return Py.ellipsis
+    case .true: return Py.true.asObject
+    case .false: return Py.false.asObject
+    case .none: return Py.none.asObject
+    case .ellipsis: return Py.ellipsis.asObject
 
     case let .integer(i):
-      return Py.newInt(i)
+      return Py.newInt(i).asObject
     case let .float(d):
-      return Py.newFloat(d)
+      return Py.newFloat(d).asObject
     case let .complex(real, imag):
-      return Py.newComplex(real: real, imag: imag)
+      return Py.newComplex(real: real, imag: imag).asObject
 
     case let .string(s):
-      return Py.newString(s)
+      return Py.newString(s).asObject
     case let .bytes(b):
-      return Py.newBytes(b)
+      return Py.newBytes(b).asObject
 
     case let .code(c):
-      return Py.newCode(code: c)
+      return Py.newCode(code: c).asObject
 
     case let .tuple(t):
       let elements = t.map(PyCode.toObject(constant:))
-      return Py.newTuple(elements: elements)
+      return Py.newTuple(elements: elements).asObject
     }
   }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyCode(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.namePtr.deinitialize()
+    zelf.qualifiedNamePtr.deinitialize()
+    zelf.filenamePtr.deinitialize()
+    zelf.instructionsPtr.deinitialize()
+    zelf.firstLinePtr.deinitialize()
+    zelf.instructionLinesPtr.deinitialize()
+    zelf.constantsPtr.deinitialize()
+    zelf.labelsPtr.deinitialize()
+    zelf.namesPtr.deinitialize()
+    zelf.variableNamesPtr.deinitialize()
+    zelf.cellVariableNamesPtr.deinitialize()
+    zelf.freeVariableNamesPtr.deinitialize()
+    zelf.argCountPtr.deinitialize()
+    zelf.kwOnlyArgCountPtr.deinitialize()
+  }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyCode(ptr: ptr)
+    return "PyCode(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
+//  public var customMirror: Mirror {
+//    let name = self.name.value
+//    let qualifiedName = self.qualifiedName.value
+//    let filename = self.filename.value
+//
+//    return Mirror(
+//      self,
+//      children: [
+//        "name": name,
+//        "qualifiedName": qualifiedName,
+//        "codeFlags": self.codeFlags,
+//        "instructionCount": self.instructions.count,
+//        "filename": filename
+//      ]
+//    )
+//  }
+}
+
+/* MARKER
 
   // MARK: - Equatable
 

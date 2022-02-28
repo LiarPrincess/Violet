@@ -1,9 +1,9 @@
-/* MARKER
 import VioletCore
 import VioletBytecode
 
 // swiftformat:disable redundantType
 // cSpell:ignore localsplus fastlocals valuestack tstate
+// swiftlint:disable file_length
 
 // In CPython:
 // Objects -> frameobject.c
@@ -23,40 +23,99 @@ import VioletBytecode
 /// We have separate `fastLocals`, `cell/free variables` and `stack`.
 /// Our cache usage will suck (3 arrays stored on heap), but… oh well….
 /// This allows us to have typed `cell` and `free` (`[PyCell]` instead of `[PyObject]`).
-public final class PyFrame: PyObject, CustomReflectable {
+public struct PyFrame: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
+  // MARK: - Layout
+
+  internal enum Layout {
+    internal static let codeOffset = SizeOf.objectHeader
+    internal static let codeSize = SizeOf.object
+
+    internal static let parentOffset = codeOffset + codeSize
+    internal static let parentSize = SizeOf.optionalObject
+
+    internal static let stackOffset = parentOffset + parentSize
+    internal static let stackSize = SizeOf.objectStack
+
+    internal static let blocksOffset = stackOffset + stackSize
+    internal static let blocksSize = SizeOf.blockStack
+
+    internal static let localsOffset = blocksOffset + blocksSize
+    internal static let localsSize = SizeOf.object
+
+    internal static let globalsOffset = localsOffset + localsSize
+    internal static let globalsSize = SizeOf.object
+
+    internal static let builtinsOffset = globalsOffset + globalsSize
+    internal static let builtinsSize = SizeOf.object
+
+    internal static let fastLocalsOffset = builtinsOffset + builtinsSize
+    internal static let fastLocalsSize = SizeOf.array
+
+    internal static let cellVariablesOffset = fastLocalsOffset + fastLocalsSize
+    internal static let cellsVariablesSize = SizeOf.array
+
+    internal static let freeVariablesOffset = cellVariablesOffset + cellsVariablesSize
+    internal static let freeVariablesSize = SizeOf.array
+
+    // swiftlint:disable:next line_length
+    internal static let currentInstructionIndexOffset = freeVariablesOffset + freeVariablesSize
+    internal static let currentInstructionIndexSize = SizeOf.optionalInt
+
+    // swiftlint:disable:next line_length
+    internal static let nextInstructionIndexOffset = currentInstructionIndexOffset + currentInstructionIndexSize
+    internal static let nextInstructionIndexSize = SizeOf.int
+
+    internal static let size = nextInstructionIndexOffset + nextInstructionIndexSize
+  }
+
   // MARK: - Properties
+
+  // swiftlint:disable line_length
+  private var codePtr: Ptr<PyCode> { self.ptr[Layout.codeOffset] }
+  private var parentPtr: Ptr<PyFrame?> { self.ptr[Layout.parentOffset] }
+  private var stackPtr: Ptr<ObjectStack> { self.ptr[Layout.stackOffset] }
+  private var blocksPtr: Ptr<BlockStack> { self.ptr[Layout.blocksOffset] }
+  private var localsPtr: Ptr<PyDict> { self.ptr[Layout.localsOffset] }
+  private var globalsPtr: Ptr<PyDict> { self.ptr[Layout.globalsOffset] }
+  private var builtinsPtr: Ptr<PyDict> { self.ptr[Layout.builtinsOffset] }
+  private var fastLocalsPtr: Ptr<[PyObject?]> { self.ptr[Layout.fastLocalsOffset] }
+  private var cellVariablesPtr: Ptr<[PyCell]> { self.ptr[Layout.cellVariablesOffset] }
+  private var freeVariablesPtr: Ptr<[PyCell]> { self.ptr[Layout.freeVariablesOffset] }
+  private var currentInstructionIndexPtr: Ptr<Int?> { self.ptr[Layout.currentInstructionIndexOffset] }
+  private var nextInstructionIndexPtr: Ptr<Int> { self.ptr[Layout.nextInstructionIndexOffset] }
+  // swiftlint:enable line_length
 
   /// Code object being executed in this frame.
   ///
   /// Cpython: `f_code`.
-  public let code: PyCode
+  public var code: PyCode { self.codePtr.pointee }
   /// Next outer frame object (this frame’s caller).
   ///
   /// Cpython: `f_back`.
-  public let parent: PyFrame?
+  public var parent: PyFrame? { self.parentPtr.pointee }
 
   /// Stack of `PyObjects`.
-  public var stack = ObjectStack()
+  public var stack: ObjectStack { self.stackPtr.pointee }
   /// Stack of blocks (for loops, exception handlers etc.).
-  public var blocks = BlockStack()
+  public var blocks: BlockStack { self.blocksPtr.pointee }
 
   /// Local namespace seen by this frame.
   ///
   /// CPython: `f_locals`.
-  public let locals: PyDict
+  public var locals: PyDict { self.localsPtr.pointee }
   /// Global namespace seen by this frame.
   ///
   /// CPython: `f_globals`.
-  public let globals: PyDict
+  public var globals: PyDict { self.globalsPtr.pointee }
   /// Builtins namespace seen by this frame
   /// (most of the time it would be `Py.builtinsModule.__dict__`).
   ///
   /// CPython: `f_builtins`.
-  public let builtins: PyDict
+  public var builtins: PyDict { self.builtinsPtr.pointee }
 
   /// Function args and local variables.
   ///
@@ -68,7 +127,7 @@ public final class PyFrame: PyObject, CustomReflectable {
   /// We use array, which is like dictionary, but with lower constants.
   ///
   /// CPython: `f_localsplus`.
-  public var fastLocals: [PyObject?]
+  public var fastLocals: [PyObject?] { self.fastLocalsPtr.pointee }
 
   /// Cell variables (variables from upper scopes).
   ///
@@ -77,8 +136,7 @@ public final class PyFrame: PyObject, CustomReflectable {
   /// And yes, just as `self.fastLocals` they could be placed at the bottom
   /// of the stack. And no, we will not do this (see `self.fastLocals` comment).
   /// \#hipsters
-  public var cellVariables: [PyCell]
-
+  public var cellVariables: [PyCell] { self.cellVariablesPtr.pointee }
   /// Free variables (variables from upper scopes).
   ///
   /// Btw. `Free` = cell from upper scope.
@@ -86,7 +144,7 @@ public final class PyFrame: PyObject, CustomReflectable {
   /// And yes, just as `self.fastLocals` they could be placed at the bottom
   /// of the stack. And no, we will not do this (see `self.fastLocals` comment).
   /// \#hipsters
-  public var freeVariables: [PyCell]
+  public var freeVariables: [PyCell] { self.freeVariablesPtr.pointee }
 
   /// Index of last attempted instruction in bytecode
   /// (`nil` it we have not started).
@@ -97,13 +155,13 @@ public final class PyFrame: PyObject, CustomReflectable {
   /// being true).
   ///
   /// CPython: `f_lasti`.
-  public var currentInstructionIndex: Int?
+  public var currentInstructionIndex: Int? { self.currentInstructionIndexPtr.pointee }
 
   /// `PC`
   ///
   /// Index of the next executed instruction.
   /// Change this if you need to jump somewhere.
-  public var nextInstructionIndex = 0
+  public var nextInstructionIndex: Int { self.nextInstructionIndexPtr.pointee }
 
   /// Current line number in Python source code.
   /// If we do not have started execution it will return first instruction line.
@@ -117,69 +175,117 @@ public final class PyFrame: PyObject, CustomReflectable {
     return self.code.getLine(instructionIndex: index)
   }
 
-  // MARK: - Mirror
+  // MARK: - Swift init
 
-  // We use mirrors to create description.
-  public var customMirror: Mirror {
-    return Mirror(
-      self,
-      children: [
-        "code": self.code,
-        "currentInstructionIndex": self.currentInstructionIndex as Any,
-        "nextInstructionIndex": self.nextInstructionIndex,
-        "currentInstructionLine": self.currentInstructionLine,
-        "parent": self.parent as Any
-      ]
-    )
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  // MARK: - Init
+  // MARK: - Initialize/deinitialize
 
   /// PyFrameObject* _Py_HOT_FUNCTION
   /// _PyFrame_New_NoTrack(PyThreadState *tstate, PyCodeObject *code,
-  internal init(code: PyCode,
-                locals: PyDict,
-                globals: PyDict,
-                parent: PyFrame?) {
-    self.code = code
-    self.parent = parent
-    self.locals = locals
-    self.globals = globals
-    self.builtins = Self.getBuiltins(globals: globals, parent: parent)
-    self.fastLocals = [PyObject?](repeating: nil, count: self.code.variableCount)
-    self.cellVariables = Self.createEmptyCells(count: self.code.cellVariableCount)
-    self.freeVariables = Self.createEmptyCells(count: self.code.freeVariableCount)
-    super.init(type: Py.types.frame)
+  internal func initialize(type: PyType,
+                           code: PyCode,
+                           locals: PyDict,
+                           globals: PyDict,
+                           parent: PyFrame?) {
+    self.header.initialize(type: type)
+    self.codePtr.initialize(to: code)
+    self.parentPtr.initialize(to: parent)
+    self.localsPtr.initialize(to: locals)
+    self.globalsPtr.initialize(to: globals)
+
+    self.stackPtr.initialize(to: ObjectStack())
+    self.blocksPtr.initialize(to: BlockStack())
+
+    let builtins = Self.getBuiltins(globals: globals, parent: parent)
+    self.builtinsPtr.initialize(to: builtins)
+
+    let fastLocals = [PyObject?](repeating: nil, count: self.code.variableCount)
+    self.fastLocalsPtr.initialize(to: fastLocals)
+
+    let cellVariables = Self.createEmptyCells(count: self.code.cellVariableCount)
+    self.cellVariablesPtr.initialize(to: cellVariables)
+
+    let freeVariables = Self.createEmptyCells(count: self.code.freeVariableCount)
+    self.freeVariablesPtr.initialize(to: freeVariables)
+
+    self.currentInstructionIndexPtr.initialize(to: nil)
+    self.nextInstructionIndexPtr.initialize(to: 0)
   }
 
   private static func createEmptyCells(count: Int) -> [PyCell] {
-    var result = [PyCell]()
-    result.reserveCapacity(count)
-
-    for _ in 0..<count {
-      let cell = PyMemory.newCell(content: nil)
-      result.append(cell)
-    }
-
-    return result
+//    var result = [PyCell]()
+//    result.reserveCapacity(count)
+//
+//    for _ in 0..<count {
+//      let cell = PyMemory.newCell(content: nil)
+//      result.append(cell)
+//    }
+//
+//    return result
+    fatalError()
   }
 
-  private static func getBuiltins(globals: PyDict,
-                                  parent: PyFrame?) -> PyDict {
+  private static func getBuiltins(globals: PyDict, parent: PyFrame?) -> PyDict {
     // If we share the globals, we share the builtins.
     // Saves a lookup and a call.
-    if let p = parent, p.globals === globals {
-      return p.builtins
-    }
-
-    let globalBuiltins = globals.get(id: .__builtins__)
-    let globalBuiltinsModule = globalBuiltins.flatMap(PyCast.asModule(_:))
-    if let module = globalBuiltinsModule {
-      return module.getDict()
-    }
-
-    return Py.builtinsModule.getDict()
+//    if let p = parent, p.globals === globals {
+//      return p.builtins
+//    }
+//
+//    let globalBuiltins = globals.get(id: .__builtins__)
+//    let globalBuiltinsModule = globalBuiltins.flatMap(PyCast.asModule(_:))
+//    if let module = globalBuiltinsModule {
+//      return module.getDict()
+//    }
+//
+//    return Py.builtinsModule.getDict()
+    fatalError()
   }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFrame(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.codePtr.deinitialize()
+    zelf.parentPtr.deinitialize()
+    zelf.stackPtr.deinitialize()
+    zelf.blocksPtr.deinitialize()
+    zelf.localsPtr.deinitialize()
+    zelf.globalsPtr.deinitialize()
+    zelf.builtinsPtr.deinitialize()
+    zelf.fastLocalsPtr.deinitialize()
+    zelf.cellVariablesPtr.deinitialize()
+    zelf.freeVariablesPtr.deinitialize()
+    zelf.currentInstructionIndexPtr.deinitialize()
+    zelf.nextInstructionIndexPtr.deinitialize()
+  }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyFrame(ptr: ptr)
+    return "PyFrame(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
+//  public var customMirror: Mirror {
+//    return Mirror(
+//      self,
+//      children: [
+//        "code": self.code,
+//        "currentInstructionIndex": self.currentInstructionIndex as Any,
+//        "nextInstructionIndex": self.nextInstructionIndex,
+//        "currentInstructionLine": self.currentInstructionLine,
+//        "parent": self.parent as Any
+//      ]
+//    )
+//  }
+}
+
+/* MARKER
 
   // MARK: - String
 

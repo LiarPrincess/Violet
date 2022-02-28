@@ -1,4 +1,3 @@
-/* MARKER
 // cSpell:ignore namespaceobject
 
 // In CPython:
@@ -9,15 +8,42 @@
 ///
 /// Cells will be shared between multiple frames, so that child frame
 /// can interact with value in parent frame.
-public final class PyCell: PyObject {
+public struct PyCell: PyObjectMixin {
+
+  internal enum Layout {
+    internal static let contentOffset = SizeOf.objectHeader
+    internal static let contentSize = SizeOf.optionalObject
+    internal static let size = contentOffset + contentSize
+  }
 
   // This has to be public for performance
-  public var content: PyObject?
+  private var contentPtr: Ptr<PyObject?> { self.ptr[Layout.contentOffset] }
+  internal var content: PyObject? { self.contentPtr.pointee }
 
-  internal init(content: PyObject?) {
-    self.content = content
-    super.init(type: Py.types.cell)
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
+
+  internal func initialize(type: PyType, content: PyObject?) {
+    self.header.initialize(type: type)
+    self.contentPtr.initialize(to: content)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyCell(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.contentPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyCell(ptr: ptr)
+    return "PyCell(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Equatable
 
