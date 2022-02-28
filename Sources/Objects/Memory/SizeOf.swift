@@ -42,7 +42,7 @@ public enum SizeOf {
   public static let sourceLine = -1
   public static let objectStack = -1
   public static let blockStack = -1
-  // public static let FunctionWrapper = -1
+  public static let functionWrapper = -1
 
    public static let fileDescriptorType = -1
    public static let fileMode = -1
@@ -80,7 +80,7 @@ public enum SizeOf {
     Self.checkSize(of: SourceLine.self, expected: Self.sourceLine)
     Self.checkSize(of: PyFrame.ObjectStack.self, expected: Self.objectStack)
     Self.checkSize(of: PyFrame.BlockStack.self, expected: Self.blockStack)
-    // Self.checkSize(of: FunctionWrapper.self, expected: Self.FunctionWrapper)
+    Self.checkSize(of: FunctionWrapper.self, expected: Self.functionWrapper)
 
     Self.checkSize(of: FileDescriptorType.self, expected: Self.fileDescriptorType)
     Self.checkSize(of: FileMode.self, expected: Self.fileMode)

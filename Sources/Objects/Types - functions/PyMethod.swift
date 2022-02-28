@@ -1,4 +1,3 @@
-/* MARKER
 import VioletBytecode
 
 // cSpell:ignore classobject getattro
@@ -8,7 +7,7 @@ import VioletBytecode
 
 // sourcery: pytype = method, isDefault, hasGC
 /// Function bound to an object.
-public final class PyMethod: PyObject {
+public struct PyMethod: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -17,18 +16,50 @@ public final class PyMethod: PyObject {
     Create a bound instance method object.
     """
 
-  /// The callable object implementing the method
-  internal let function: PyFunction
-  /// The instance it is bound to
-  internal let object: PyObject
+  internal enum Layout {
+    internal static let functionOffset = SizeOf.objectHeader
+    internal static let functionSize = SizeOf.object
 
-  // MARK: - Init
+    internal static let objectOffset = functionOffset + functionSize
+    internal static let objectSize = SizeOf.object
 
-  internal init(fn: PyFunction, object: PyObject) {
-    self.function = fn
-    self.object = object
-    super.init(type: Py.types.method)
+    internal static let size = objectOffset + objectSize
   }
+
+  private var functionPtr: Ptr<PyFunction> { self.ptr[Layout.functionOffset] }
+  private var objectPtr: Ptr<PyObject> { self.ptr[Layout.objectOffset] }
+
+  /// The callable object implementing the method
+  internal var function: PyFunction { self.functionPtr.pointee }
+  /// The instance it is bound to
+  internal var object: PyObject { self.objectPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  internal func initialize(type: PyType, function: PyFunction, object: PyObject) {
+    self.header.initialize(type: type)
+    self.functionPtr.initialize(to: function)
+    self.objectPtr.initialize(to: object)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyMethod(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.functionPtr.deinitialize()
+    zelf.objectPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyMethod(ptr: ptr)
+    return "PyMethod(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Equatable
 
