@@ -1,4 +1,3 @@
-/* MARKER
 import VioletBytecode
 
 // cSpell:ignore typeobject cmeth
@@ -9,7 +8,7 @@ import VioletBytecode
 
 // sourcery: pytype = super, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
-public final class PySuper: PyObject, HasCustomGetMethod {
+public struct PySuper: PyObjectMixin, HasCustomGetMethod {
 
   // MARK: - Doc
 
@@ -30,33 +29,72 @@ public final class PySuper: PyObject, HasCustomGetMethod {
             super().cmeth(arg)
     """
 
+  // MARK: - Layout
+
+  internal enum Layout {
+    internal static let thisClassOffset = SizeOf.objectHeader
+    internal static let thisClassSize = SizeOf.optionalObject
+
+    internal static let objectOffset = thisClassOffset + thisClassSize
+    internal static let objectSize = SizeOf.optionalObject
+
+    internal static let objectTypeOffset = objectOffset + objectSize
+    internal static let objectTypeSize = SizeOf.optionalObject
+
+    internal static let size = objectTypeOffset + objectTypeSize
+  }
+
+  // MARK: - Properties
+
+  private var thisClassPtr: Ptr<PyType?> { self.ptr[Layout.thisClassOffset] }
+  private var objectPtr: Ptr<PyObject?> { self.ptr[Layout.objectOffset] }
+  private var objectTypePtr: Ptr<PyType?> { self.ptr[Layout.objectTypeOffset] }
+
   /// Type that the user requested (`__thisclass__` in Python).
   ///
   /// For example:
   /// `super(int, True)` -> `requestedType` = `int` (even though value is `bool`).
-  internal var thisClass: PyType?
-  internal var object: PyObject?
-  internal var objectType: PyType?
+  internal var thisClass: PyType? { self.thisClassPtr.pointee }
+  internal var object: PyObject? { self.objectPtr.pointee }
+  internal var objectType: PyType? { self.objectTypePtr.pointee }
 
-  internal convenience init(requestedType: PyType?,
-                            object: PyObject?,
-                            objectType: PyType?) {
-    let type = Py.types.super
-    self.init(type: type,
-              requestedType: requestedType,
-              object: object,
-              objectType: objectType)
+  // MARK: - Swift init
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  internal init(type: PyType,
-                requestedType: PyType?,
-                object: PyObject?,
-                objectType: PyType?) {
-    self.thisClass = requestedType
-    self.object = object
-    self.objectType = objectType
-    super.init(type: type)
+  // MARK: - Initialize/deinitialize
+
+  internal func initialize(type: PyType,
+                           requestedType: PyType?,
+                           object: PyObject?,
+                           objectType: PyType?) {
+    self.header.initialize(type: type)
+    self.thisClassPtr.initialize(to: requestedType)
+    self.objectPtr.initialize(to: object)
+    self.objectTypePtr.initialize(to: objectType)
   }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PySuper(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.thisClassPtr.deinitialize()
+    zelf.objectPtr.deinitialize()
+    zelf.objectTypePtr.deinitialize()
+  }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PySuper(ptr: ptr)
+    return "PySuper(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - String
 

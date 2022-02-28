@@ -1,4 +1,3 @@
-/* MARKER
 // cSpell:ignore descrobject getx setx delx del'ing
 
 // In CPython:
@@ -7,7 +6,7 @@
 // sourcery: pytype = property, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
 /// Native property implemented in Swift.
-public final class PyProperty: PyObject {
+public struct PyProperty: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -48,38 +47,93 @@ public final class PyProperty: PyObject {
             del self._x
     """
 
-  private var _get: PyObject?
-  internal var get: PyObject? {
-    get { PyCast.isNilOrNone(self._get) ? nil : self._get }
-    set { self._get = newValue }
+  // MARK: - Layout
+
+  internal enum Layout {
+    internal static let _getOffset = SizeOf.objectHeader
+    internal static let _getSize = SizeOf.optionalObject
+
+    internal static let _setOffset = _getOffset + _getSize
+    internal static let _setSize = SizeOf.optionalObject
+
+    internal static let _delOffset = _setOffset + _setSize
+    internal static let _delSize = SizeOf.optionalObject
+
+    internal static let docOffset = _delOffset + _delSize
+    internal static let docSize = SizeOf.optionalObject
+
+    internal static let size = docOffset + docSize
   }
 
-  private var _set: PyObject?
-  internal var set: PyObject? {
-    get { PyCast.isNilOrNone(self._set) ? nil : self._set }
-    set { self._set = newValue }
+  // MARK: - Properties
+
+  private var _getPtr: Ptr<PyObject?> { self.ptr[Layout._getOffset] }
+  private var _setPtr: Ptr<PyObject?> { self.ptr[Layout._setOffset] }
+  private var _delPtr: Ptr<PyObject?> { self.ptr[Layout._delOffset] }
+  private var docPtr: Ptr<PyObject?> { self.ptr[Layout.docOffset] }
+
+  internal var _get: PyObject? {
+    get { Self.getFunction(self._getPtr.pointee) }
+    nonmutating set { self._getPtr.pointee = newValue }
   }
 
-  private var _del: PyObject?
-  internal var del: PyObject? {
-    get { PyCast.isNilOrNone(self._del) ? nil : self._del }
-    set { self._del = newValue }
+  internal var _set: PyObject? {
+    get { Self.getFunction(self._setPtr.pointee) }
+    nonmutating set { self._setPtr.pointee = newValue }
   }
 
-  internal private(set) var doc: PyObject?
-
-  internal convenience init(get: PyObject?, set: PyObject?, del: PyObject?) {
-    let type = Py.types.property
-    self.init(type: type, get: get, set: set, del: del)
+  internal var _del: PyObject? {
+    get { Self.getFunction(self._delPtr.pointee) }
+    nonmutating set { self._delPtr.pointee = newValue }
   }
 
-  internal init(type: PyType, get: PyObject?, set: PyObject?, del: PyObject?) {
-    self._get = get
-    self._set = set
-    self._del = del
-    self.doc = nil
-    super.init(type: type)
+  private static func getFunction(_ object: PyObject?) -> PyObject? {
+    return PyCast.isNilOrNone(object) ? nil : object
   }
+
+  internal var doc: PyObject? { self.docPtr.pointee }
+
+  // MARK: - Swift init
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  // MARK: - Initialize/deinitialize
+
+  // swiftlint:disable:next function_parameter_count
+  internal func initialize(type: PyType,
+                           get: PyObject?,
+                           set: PyObject?,
+                           del: PyObject?,
+                           doc: PyObject?) {
+    self.header.initialize(type: type)
+    self._getPtr.initialize(to: get)
+    self._setPtr.initialize(to: set)
+    self._delPtr.initialize(to: del)
+    self.docPtr.initialize(to: doc)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyProperty(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf._getPtr.deinitialize()
+    zelf._setPtr.deinitialize()
+    zelf._delPtr.deinitialize()
+    zelf.docPtr.deinitialize()
+  }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyProperty(ptr: ptr)
+    return "PyProperty(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Class
 

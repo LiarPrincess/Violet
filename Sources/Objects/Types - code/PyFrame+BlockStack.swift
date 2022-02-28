@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 extension PyFrame {
@@ -97,5 +96,3 @@ extension PyFrame {
     }
   }
 }
-
-*/

@@ -1,6 +1,7 @@
 import Foundation
 import BigInt
 import VioletCore
+import VioletBytecode
 
 /// Alignment of a various things in a memory.
 public enum AlignmentOf {
@@ -20,6 +21,7 @@ public enum AlignmentOf {
     Self.checkIfAlignmentIsLessEqualWord(Ptr<PyObject>.self)
 
     Self.checkIfAlignmentIsLessEqualWord(Int.self)
+    Self.checkIfAlignmentIsLessEqualWord(Optional<Int>.self)
     Self.checkIfAlignmentIsLessEqualWord(UInt32.self)
     Self.checkIfAlignmentIsLessEqualWord(BigInt.self)
     Self.checkIfAlignmentIsLessEqualWord(PyHash.self)
@@ -39,12 +41,10 @@ public enum AlignmentOf {
     Self.checkIfAlignmentIsLessEqualWord(OrderedSet<AbstractSet_Element>.self)
     Self.checkIfAlignmentIsLessEqualWord(PyAnySet.self)
 
-    // Self.checkIfAlignmentIsLessEqualWord(BlockStack.self)
-    // Self.checkIfAlignmentIsLessEqualWord(CodeObject.self)
-
+    Self.checkIfAlignmentIsLessEqualWord(SourceLine.self)
+    Self.checkIfAlignmentIsLessEqualWord(PyFrame.ObjectStack.self)
+    Self.checkIfAlignmentIsLessEqualWord(PyFrame.BlockStack.self)
     // Self.checkIfAlignmentIsLessEqualWord(FunctionWrapper.self)
-    // Self.checkIfAlignmentIsLessEqualWord(ObjectStack.self)
-    // Self.checkIfAlignmentIsLessEqualWord(SourceLine.self)
 
      Self.checkIfAlignmentIsLessEqualWord(FileDescriptorType.self)
      Self.checkIfAlignmentIsLessEqualWord(FileMode.self)

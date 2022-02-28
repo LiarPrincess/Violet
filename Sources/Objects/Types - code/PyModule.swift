@@ -1,4 +1,3 @@
-/* MARKER
 // cSpell:ignore moduleobject getattro
 
 // In CPython:
@@ -6,7 +5,7 @@
 
 // sourcery: pytype = module, isDefault, hasGC, isBaseType
 // sourcery: instancesHave__dict__
-public final class PyModule: PyObject, CustomReflectable {
+public struct PyModule: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -17,45 +16,21 @@ public final class PyModule: PyObject, CustomReflectable {
     The name must be a string; the optional doc argument can have any type.
     """
 
-  // MARK: - Mirror
-
-  // We use mirrors to create description.
-  public var customMirror: Mirror {
-    let name = self.__dict__.get(id: .__name__)
-    let doc = self.__dict__.get(id: .__doc__)
-    let package = self.__dict__.get(id: .__package__)
-    let loader = self.__dict__.get(id: .__loader__)
-    let spec = self.__dict__.get(id: .__spec__)
-
-    return Mirror(
-      self,
-      children: [
-        "name": name as Any,
-        "doc": doc as Any,
-        "package": package as Any,
-        "loader": loader as Any,
-        "spec": spec as Any
-      ]
-    )
+  internal enum Layout {
+    internal static let size = SizeOf.objectHeader
   }
 
-  // MARK: - Init
+  public let ptr: RawPtr
 
-  internal convenience init(name: PyObject, doc: PyObject?, dict: PyDict? = nil) {
-    let type = Py.types.module
-    self.init(type: type, name: name, doc: doc, dict: dict)
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  internal init(type: PyType,
-                name: PyObject?,
-                doc: PyObject?,
-                dict: PyDict? = nil) {
-    super.init(type: type)
-
-    if let dict = dict {
-      self.__dict__ = dict
-    }
-
+  internal func initialize(type: PyType,
+                           name: PyObject?,
+                           doc: PyObject?,
+                           __dict__: PyDict? = nil) {
+    self.header.initialize(type: type, __dict__: __dict__)
     self.initDictContent(name: name, doc: doc)
   }
 
@@ -65,12 +40,45 @@ public final class PyModule: PyObject, CustomReflectable {
     // >>> builtins.__dict__['__name__'] = 1
     // >>> repr(builtins)
     // "<module 1 (built-in)>"
-    self.__dict__.set(id: .__name__, to: name ?? Py.none)
-    self.__dict__.set(id: .__doc__, to: doc ?? Py.none)
-    self.__dict__.set(id: .__package__, to: Py.none)
-    self.__dict__.set(id: .__loader__, to: Py.none)
-    self.__dict__.set(id: .__spec__, to: Py.none)
+//    self.__dict__.set(id: .__name__, to: name ?? Py.none)
+//    self.__dict__.set(id: .__doc__, to: doc ?? Py.none)
+//    self.__dict__.set(id: .__package__, to: Py.none)
+//    self.__dict__.set(id: .__loader__, to: Py.none)
+//    self.__dict__.set(id: .__spec__, to: Py.none)
+    fatalError()
   }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyModule(ptr: ptr)
+    zelf.header.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyModule(ptr: ptr)
+    return "PyModule(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
+//  public var customMirror: Mirror {
+//    let name = self.__dict__.get(id: .__name__)
+//    let doc = self.__dict__.get(id: .__doc__)
+//    let package = self.__dict__.get(id: .__package__)
+//    let loader = self.__dict__.get(id: .__loader__)
+//    let spec = self.__dict__.get(id: .__spec__)
+//
+//    return Mirror(
+//      self,
+//      children: [
+//        "name": name as Any,
+//        "doc": doc as Any,
+//        "package": package as Any,
+//        "loader": loader as Any,
+//        "spec": spec as Any
+//      ]
+//    )
+//  }
+}
+
+ /* MARKER
 
   // MARK: - Dict
 
