@@ -17,10 +17,8 @@ public enum SizeOf {
   public static let optionalObject = 8
   public static let objectHeader = PyObjectHeader.Layout.size
 
-  public static let int32 = 4
-  public static let int64 = 8
+  public static let int = 8
   public static let uint32 = 4
-  public static let uint64 = 8
   public static let bigInt = 8
   public static let double = 8
 
@@ -49,10 +47,8 @@ public enum SizeOf {
     Self.checkSize(of: RawPtr.self, expected: Self.object)
     Self.checkSize(of: Ptr<PyObject>.self, expected: Self.object)
 
-    Self.checkSize(of: Int32.self, expected: Self.int32)
-    Self.checkSize(of: Int64.self, expected: Self.int64)
+    Self.checkSize(of: Int.self, expected: Self.int)
     Self.checkSize(of: UInt32.self, expected: Self.uint32)
-    Self.checkSize(of: UInt64.self, expected: Self.uint64)
     Self.checkSize(of: BigInt.self, expected: Self.bigInt)
     Self.checkSize(of: Double.self, expected: Self.double)
 

@@ -19,10 +19,8 @@ public enum AlignmentOf {
     Self.checkAlignment(of: RawPtr.self, isLessEqual: AlignmentOf.word)
     Self.checkAlignment(of: Ptr<PyObject>.self, isLessEqual: AlignmentOf.word)
 
-    Self.checkAlignment(of: Int32.self, isLessEqual: AlignmentOf.word)
-    Self.checkAlignment(of: Int64.self, isLessEqual: AlignmentOf.word)
+    Self.checkAlignment(of: Int.self, isLessEqual: AlignmentOf.word)
     Self.checkAlignment(of: UInt32.self, isLessEqual: AlignmentOf.word)
-    Self.checkAlignment(of: UInt64.self, isLessEqual: AlignmentOf.word)
     Self.checkAlignment(of: BigInt.self, isLessEqual: AlignmentOf.word)
     Self.checkAlignment(of: Double.self, isLessEqual: AlignmentOf.word)
 

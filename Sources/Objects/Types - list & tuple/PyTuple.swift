@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -11,9 +10,7 @@ import VioletCore
 
 // sourcery: pytype = tuple, isDefault, hasGC, isBaseType, isTupleSubclass
 // sourcery: subclassInstancesHave__dict__
-/// This instance of PyTypeObject represents the Python tuple type;
-/// it is the same object as tuple in the Python layer.
-public final class PyTuple: PyObject, AbstractSequence {
+public struct PyTuple: PyObjectMixin, AbstractSequence {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -23,7 +20,14 @@ public final class PyTuple: PyObject, AbstractSequence {
     If the argument is a tuple, the return value is the same object.
     """
 
-  public let elements: [PyObject]
+  internal enum Layout {
+    internal static let elementsOffset = SizeOf.objectHeader
+    internal static let elementsSize = SizeOf.array
+    internal static let size = elementsOffset + elementsSize
+  }
+
+  private var elementsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Layout.elementsOffset) }
+  internal var elements: [PyObject] { self.elementsPtr.pointee }
 
   internal var isEmpty: Bool {
     return self.elements.isEmpty
@@ -33,18 +37,31 @@ public final class PyTuple: PyObject, AbstractSequence {
     return self.elements.count
   }
 
-  // MARK: - Init
+  public let ptr: RawPtr
 
-  internal convenience init(elements: [PyObject]) {
-    let type = Py.types.tuple
-    self.init(type: type, elements: elements)
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  internal init(type: PyType, elements: [PyObject]) {
-    self.elements = elements
-    super.init(type: type)
+  internal func initialize(type: PyType, elements: [PyObject]) {
+    self.header.initialize(type: type)
+    self.elementsPtr.initialize(to: elements)
   }
 
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyTuple(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.elementsPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyTuple(ptr: ptr)
+    let count = zelf.count
+    return "PyTuple(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count))"
+  }
+}
+
+/* MARKER
   // MARK: - AbstractSequence
 
   internal static let _pythonTypeName = "tuple"

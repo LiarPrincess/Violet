@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // cSpell:ignore listobject
@@ -7,21 +6,54 @@ import VioletCore
 // Objects -> listobject.c
 
 // sourcery: pytype = list_reverseiterator, isDefault, hasGC
-public final class PyListReverseIterator: PyObject {
+public struct PyListReverseIterator: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal let list: PyList
-  internal private(set) var index: Int
+  internal enum Layout {
+    internal static let listOffset = SizeOf.objectHeader
+    internal static let listSize = SizeOf.object
 
-  // MARK: - Init
+    internal static let indexOffset = listOffset + listSize
+    internal static let indexSize = SizeOf.int
 
-  internal init(list: PyList) {
-    self.list = list
-    self.index = list.elements.count - 1
-    super.init(type: Py.types.list_reverseiterator)
+    internal static let size = indexOffset + indexSize
   }
+
+  private var listPtr: Ptr<PyList> { Ptr(self.ptr, offset: Layout.listOffset) }
+  private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
+
+  internal var list: PyList { self.listPtr.pointee }
+  internal var index: Int { self.indexPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  internal func initialize(type: PyType, list: PyList) {
+    let index = list.count - 1
+    self.header.initialize(type: type)
+    self.listPtr.initialize(to: list)
+    self.indexPtr.initialize(to: index)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyListReverseIterator(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.listPtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyListReverseIterator(ptr: ptr)
+    return "PyListReverseIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Class
 

@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // cSpell:ignore tupleobject
@@ -7,21 +6,53 @@ import VioletCore
 // Objects -> tupleobject.c
 
 // sourcery: pytype = tuple_iterator, isDefault, hasGC
-public final class PyTupleIterator: PyObject {
+ public struct PyTupleIterator: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal let tuple: PyTuple
-  internal private(set) var index: Int
+   internal enum Layout {
+     internal static let tupleOffset = SizeOf.objectHeader
+     internal static let tupleSize = SizeOf.object
 
-  // MARK: - Init
+     internal static let indexOffset = tupleOffset + tupleSize
+     internal static let indexSize = SizeOf.int
 
-  internal init(tuple: PyTuple) {
-    self.tuple = tuple
-    self.index = 0
-    super.init(type: Py.types.tuple_iterator)
-  }
+     internal static let size = indexOffset + indexSize
+   }
+
+   private var tuplePtr: Ptr<PyTuple> { Ptr(self.ptr, offset: Layout.tupleOffset) }
+   private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
+
+   internal var tuple: PyTuple { self.tuplePtr.pointee }
+   internal var index: Int { self.indexPtr.pointee }
+
+   public let ptr: RawPtr
+
+   public init(ptr: RawPtr) {
+     self.ptr = ptr
+   }
+
+   internal func initialize(type: PyType, tuple: PyTuple) {
+     self.header.initialize(type: type)
+     self.tuplePtr.initialize(to: tuple)
+     self.indexPtr.initialize(to: 0)
+   }
+
+   internal static func deinitialize(ptr: RawPtr) {
+     let zelf = PyTupleIterator(ptr: ptr)
+     zelf.header.deinitialize()
+     zelf.tuplePtr.deinitialize()
+     zelf.indexPtr.deinitialize()
+   }
+
+   internal static func createDebugString(ptr: RawPtr) -> String {
+     let zelf = PyTupleIterator(ptr: ptr)
+     return "PyTupleIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+   }
+ }
+
+ /* MARKER
 
   // MARK: - Class
 
