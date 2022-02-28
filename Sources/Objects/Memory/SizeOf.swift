@@ -25,24 +25,28 @@ public enum SizeOf {
 
   public static let array = -1
   public static let string = 16
+  public static let optionalString = 16
   public static let data = -1
 
   public static let function = 16
 
   public static let typeMemoryLayout = -1
   public static let typeStaticallyKnownNotOverriddenMethods = -1
-  // public static let BlockStack = -1
-  // public static let CodeObject = -1
-  // public static let FileDescriptorType = -1
-  // public static let FileMode = -1
-  // public static let FunctionWrapper = -1
-  // public static let ObjectStack = -1
+
   public static let orderedDictionary = -1
   public static let orderedSet = -1
   public static let anySet = -1
-  // public static let PyString.Encoding = -1
-  // public static let PyString.ErrorHandling = -1
+
+  // public static let BlockStack = -1
+  // public static let CodeObject = -1
+  // public static let FunctionWrapper = -1
+  // public static let ObjectStack = -1
   // public static let SourceLine = -1
+
+   public static let fileDescriptorType = -1
+   public static let fileMode = -1
+   public static let stringEncoding = -1
+   public static let stringErrorHandling = -1
 
   internal static func checkInvariants() {
     Self.checkSize(of: RawPtr.self, expected: Self.object)
@@ -56,25 +60,31 @@ public enum SizeOf {
 
     Self.checkSize(of: [PyObject].self, expected: Self.array)
     Self.checkSize(of: String.self, expected: Self.string)
+    Self.checkSize(of: Optional<String>.self, expected: Self.optionalString)
     Self.checkSize(of: Data.self, expected: Self.data)
 
     Self.checkSize(of: PyType.DeinitializeFn.self, expected: Self.function)
 
     Self.checkSize(of: PyType.MemoryLayout.self, expected: Self.typeMemoryLayout)
-    Self.checkSize(of: PyType.StaticallyKnownNotOverriddenMethods.self,
-                   expected: Self.typeStaticallyKnownNotOverriddenMethods)
-    // Self.checkSize(of: BlockStack.self, expected: Self.BlockStack)
-    // Self.checkSize(of: CodeObject.self, expected: Self.CodeObject)
-    // Self.checkSize(of: FileDescriptorType.self, expected: Self.FileDescriptorType)
-    // Self.checkSize(of: FileMode.self, expected: Self.FileMode)
-    // Self.checkSize(of: FunctionWrapper.self, expected: Self.FunctionWrapper)
-    // Self.checkSize(of: ObjectStack.self, expected: Self.ObjectStack)
+    Self.checkSize(
+      of: PyType.StaticallyKnownNotOverriddenMethods.self,
+      expected: Self.typeStaticallyKnownNotOverriddenMethods
+    )
+
     Self.checkSize(of: OrderedDictionary<PyDict.Key, Int>.self, expected: Self.orderedDictionary)
     Self.checkSize(of: OrderedSet<AbstractSet_Element>.self, expected: Self.orderedSet)
     Self.checkSize(of: PyAnySet.self, expected: Self.anySet)
-    // Self.checkSize(of: PyString.Encoding.self, expected: Self.PyString.Encoding)
-    // Self.checkSize(of: PyString.ErrorHandling.self, expected: Self.PyString.ErrorHandling)
+
+    // Self.checkSize(of: BlockStack.self, expected: Self.BlockStack)
+    // Self.checkSize(of: CodeObject.self, expected: Self.CodeObject)
+    // Self.checkSize(of: FunctionWrapper.self, expected: Self.FunctionWrapper)
+    // Self.checkSize(of: ObjectStack.self, expected: Self.ObjectStack)
     // Self.checkSize(of: SourceLine.self, expected: Self.SourceLine)
+
+    Self.checkSize(of: FileDescriptorType.self, expected: Self.fileDescriptorType)
+    Self.checkSize(of: FileMode.self, expected: Self.fileMode)
+    Self.checkSize(of: PyString.Encoding.self, expected: Self.stringEncoding)
+    Self.checkSize(of: PyString.ErrorHandling.self, expected: Self.stringErrorHandling)
   }
 
   private static func checkSize<T>(of type: T.Type, expected: Int) {
