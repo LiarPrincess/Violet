@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import FileSystem
 import VioletCore
@@ -339,3 +340,5 @@ public class PySyntaxError: PyException {
     return .value(result)
   }
 }
+
+*/

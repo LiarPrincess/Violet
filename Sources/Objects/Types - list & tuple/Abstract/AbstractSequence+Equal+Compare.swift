@@ -1,3 +1,4 @@
+/* MARKER
 extension AbstractSequence {
 
   // MARK: - Equal
@@ -145,3 +146,5 @@ extension AbstractSequence {
     return .allEqualUpToShorterCount
   }
 }
+
+*/

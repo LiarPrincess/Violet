@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 
 // In CPython:
@@ -140,3 +141,5 @@ extension PyInstance {
     return traceback.getFrame()
   }
 }
+
+*/

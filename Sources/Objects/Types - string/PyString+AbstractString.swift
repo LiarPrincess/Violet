@@ -1,3 +1,4 @@
+/* MARKER
 import UnicodeData
 
 extension PyString {
@@ -273,3 +274,5 @@ extension PyString {
     return value == 0x0a
   }
 }
+
+*/

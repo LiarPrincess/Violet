@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import FileSystem
 
@@ -240,3 +241,5 @@ public final class UnderscoreOS: PyModuleImplementation {
     }
   }
 }
+
+*/

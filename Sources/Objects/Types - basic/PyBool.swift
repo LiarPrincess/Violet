@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -158,3 +159,5 @@ public final class PyBool: PyInt {
     return Py.isTrue(object: args[0])
   }
 }
+
+*/

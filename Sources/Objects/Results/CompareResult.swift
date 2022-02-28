@@ -1,3 +1,4 @@
+/* MARKER
 internal enum CompareResult {
   case value(Bool)
   /// Shortcut for `Py.notImplemented`
@@ -50,3 +51,5 @@ extension CompareResult: PyFunctionResultConvertible {
     }
   }
 }
+
+*/

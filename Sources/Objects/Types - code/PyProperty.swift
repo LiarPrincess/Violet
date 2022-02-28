@@ -1,3 +1,4 @@
+/* MARKER
 // cSpell:ignore descrobject getx setx delx del'ing
 
 // In CPython:
@@ -267,3 +268,5 @@ public final class PyProperty: PyObject {
     }
   }
 }
+
+*/

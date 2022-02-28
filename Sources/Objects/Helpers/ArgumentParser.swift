@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // swiftlint:disable file_length
@@ -586,3 +587,5 @@ internal struct ArgumentParser {
     print("total argumentCount: \(self.argumentCount)")
   }
 }
+
+*/

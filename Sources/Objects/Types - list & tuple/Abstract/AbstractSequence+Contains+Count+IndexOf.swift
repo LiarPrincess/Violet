@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 
 extension AbstractSequence {
@@ -135,3 +136,5 @@ extension AbstractSequence {
     }
   }
 }
+
+*/

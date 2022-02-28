@@ -1,3 +1,4 @@
+/* MARKER
 // cSpell:ignore namespaceobject
 
 // In CPython:
@@ -121,3 +122,5 @@ public final class PyCell: PyObject {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 // We can't use the 'GetItemHelper' because 'String.UnicodeScalarView' does not
 // conform to 'RandomAccessCollection'.
 
@@ -123,3 +124,5 @@ extension PyString {
     return .value(builder)
   }
 }
+
+*/

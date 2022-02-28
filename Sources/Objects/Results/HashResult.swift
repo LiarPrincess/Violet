@@ -1,3 +1,4 @@
+/* MARKER
 internal enum HashResult {
   case value(PyHash)
   /// Basically a `type error` from `Py.hashNotAvailable()`,
@@ -19,3 +20,5 @@ extension HashResult: PyFunctionResultConvertible {
     }
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // cSpell:ignore setobject
@@ -101,3 +102,5 @@ public final class PySetIterator: PyObject {
     return .typeError("cannot create 'set_iterator' instances")
   }
 }
+
+*/

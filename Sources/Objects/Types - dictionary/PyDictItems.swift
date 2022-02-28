@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -155,3 +156,5 @@ public final class PyDictItems: PyObject, AbstractDictView {
     return .typeError("cannot create 'dict_items' instances")
   }
 }
+
+*/

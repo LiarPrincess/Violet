@@ -1,3 +1,4 @@
+/* MARKER
 extension AbstractString {
 
   // MARK: - Strip
@@ -84,3 +85,5 @@ extension AbstractString {
     return .error(Py.newTypeError(msg: msg))
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import FileSystem
 import VioletCore
@@ -185,3 +186,5 @@ extension PyFileSystem {
     return fd.readToEnd()
   }
 }
+
+*/

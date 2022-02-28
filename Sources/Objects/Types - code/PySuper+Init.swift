@@ -1,3 +1,4 @@
+/* MARKER
 extension PySuper {
 
   internal func pyInit(type typeArg: PyObject?,
@@ -198,3 +199,5 @@ extension PySuper {
     return .typeError(msg)
   }
 }
+
+*/

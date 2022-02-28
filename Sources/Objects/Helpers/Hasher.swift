@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -189,3 +190,5 @@ internal struct Hasher {
     return value.hashValue
   }
 }
+
+*/

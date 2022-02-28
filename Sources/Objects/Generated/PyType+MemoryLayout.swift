@@ -1,3 +1,4 @@
+/* MARKER
 // ================================================================================
 // Automatically generated from: ./Sources/Objects/Generated/PyType+MemoryLayout.py
 // Use 'make gen' in repository root to regenerate.
@@ -467,3 +468,5 @@ extension PyType {
     public static let PyZeroDivisionError = MemoryLayout.PyArithmeticError
   }
 }
+
+*/

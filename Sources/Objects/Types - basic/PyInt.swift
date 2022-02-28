@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -1083,3 +1084,5 @@ public class PyInt: PyObject {
     return PyFloat.asDouble(int: int)
   }
 }
+
+*/

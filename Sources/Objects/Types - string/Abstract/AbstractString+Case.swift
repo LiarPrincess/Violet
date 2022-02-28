@@ -1,3 +1,4 @@
+/* MARKER
 extension AbstractString {
 
   // MARK: - Lower case
@@ -104,3 +105,5 @@ extension AbstractString {
     return Self._toObject(result: result)
   }
 }
+
+*/

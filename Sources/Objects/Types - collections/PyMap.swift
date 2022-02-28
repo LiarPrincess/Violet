@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -105,3 +106,5 @@ public final class PyMap: PyObject {
     return .value(result)
   }
 }
+
+*/

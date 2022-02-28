@@ -1,3 +1,4 @@
+/* MARKER
 // ===================================================================
 // Automatically generated from: ./Sources/Objects/Generated/PyCast.py
 // Use 'make gen' in repository root to regenerate.
@@ -2419,3 +2420,5 @@ public enum PyCast {
     return PyCast.isExactlyZeroDivisionError(object) ? forceCast(object) : nil
   }
 }
+
+*/

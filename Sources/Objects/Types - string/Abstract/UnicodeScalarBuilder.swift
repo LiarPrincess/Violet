@@ -1,3 +1,4 @@
+/* MARKER
 import UnicodeData
 
 internal struct UnicodeScalarBuilder: StringBuilderType {
@@ -51,3 +52,5 @@ internal struct UnicodeScalarBuilder: StringBuilderType {
     return String(self.scalars)
   }
 }
+
+*/

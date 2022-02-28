@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 extension PyProperty {
@@ -94,3 +95,5 @@ extension PyProperty {
                                   castSelf: castSelf)
   }
 }
+
+*/

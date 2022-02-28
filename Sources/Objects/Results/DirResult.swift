@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 internal class DirResult: PyFunctionResultConvertible {
@@ -76,3 +77,5 @@ internal class DirResult: PyFunctionResultConvertible {
     return result
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 extension PyObject {
 
   /// Various flags that describe the current state of the `PyObject`.
@@ -255,3 +256,5 @@ extension PyObject {
     }
   }
 }
+
+*/

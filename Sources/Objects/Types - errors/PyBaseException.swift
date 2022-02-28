@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -502,3 +503,5 @@ public class PyBaseException: PyObject {
       zip(selfArgs, objects).allSatisfy { $0.0 === $0.1 }
   }
 }
+
+*/

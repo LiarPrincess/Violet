@@ -1,3 +1,4 @@
+/* MARKER
 internal enum AttributeHelper {
 
   // MARK: - Get
@@ -149,3 +150,5 @@ internal enum AttributeHelper {
     return .value(string)
   }
 }
+
+*/

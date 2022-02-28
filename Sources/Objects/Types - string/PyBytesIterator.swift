@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // cSpell:ignore bytesobject
@@ -75,3 +76,5 @@ public final class PyBytesIterator: PyObject {
     return .typeError("cannot create 'bytes_iterator' instances")
   }
 }
+
+*/

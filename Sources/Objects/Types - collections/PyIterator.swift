@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -83,3 +84,5 @@ public final class PyIterator: PyObject {
     return .value(Py.newInt(result))
   }
 }
+
+*/

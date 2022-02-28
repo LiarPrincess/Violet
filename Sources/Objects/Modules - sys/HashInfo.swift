@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 public final class HashInfo {
@@ -21,3 +22,5 @@ public final class HashInfo {
   /// Multiplier used for the imaginary part of a complex number
   public let imag = Hasher.imag
 }
+
+*/

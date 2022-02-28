@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // cSpell:ignore tupleobject
@@ -74,3 +75,5 @@ public final class PyTupleIterator: PyObject {
     return .typeError("cannot create 'tuple_iterator' instances")
   }
 }
+
+*/

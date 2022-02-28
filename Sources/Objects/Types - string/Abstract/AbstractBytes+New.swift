@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 
 // swiftlint:disable:next type_name
@@ -105,3 +106,5 @@ extension AbstractBytes {
     }
   }
 }
+
+*/

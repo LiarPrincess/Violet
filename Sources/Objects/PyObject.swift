@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 /// Top of the `Python` type hierarchy.
@@ -250,3 +251,5 @@ extension PyObject: PyFunctionResultConvertible {
     return .value(self)
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 // 'Additional' because most of the wrapper methods are inside
 // 'Generated/PyBuiltinFunction+Wrap.swift'.
 extension PyBuiltinFunction {
@@ -90,3 +91,5 @@ extension PyBuiltinFunction {
     return PyMemory.newBuiltinFunction(fn: wrapper, module: module, doc: doc)
   }
 }
+
+*/

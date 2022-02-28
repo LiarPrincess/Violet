@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCompiler
 
 // cSpell:ignore pystate
@@ -112,3 +113,5 @@ extension Sys {
     }
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 // =========================================================================================
 // Automatically generated from: ./Sources/Objects/Generated/StaticMethodsForBuiltinTypes.py
 // Use 'make gen' in repository root to regenerate.
@@ -1211,3 +1212,5 @@ internal enum StaticMethodsForBuiltinTypes {
   // 'PyZeroDivisionError' does not any interesting methods to 'PyArithmeticError'.
   internal static let zeroDivisionError = StaticMethodsForBuiltinTypes.arithmeticError.copy()
 }
+
+*/

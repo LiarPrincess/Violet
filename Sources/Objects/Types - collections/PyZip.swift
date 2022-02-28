@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -107,3 +108,5 @@ public final class PyZip: PyObject {
     return .value(result)
   }
 }
+
+*/

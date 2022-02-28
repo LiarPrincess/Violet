@@ -1,3 +1,4 @@
+/* MARKER
 // cSpell:ignore methodobject
 
 // In CPython:
@@ -187,3 +188,5 @@ public final class PyBuiltinMethod: PyObject, AbstractBuiltinFunction {
     return self.function.call(args: realArgs, kwargs: kwargs)
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -305,3 +306,5 @@ public final class PyTuple: PyObject, AbstractSequence {
     return .value(result)
   }
 }
+
+*/

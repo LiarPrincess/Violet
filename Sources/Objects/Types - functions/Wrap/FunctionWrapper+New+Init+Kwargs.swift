@@ -1,3 +1,4 @@
+/* MARKER
 // Most of this type body is inside '/Generated/FunctionWrapper.swift'.
 // Here we have only the hand-written cases.
 extension FunctionWrapper {
@@ -234,3 +235,5 @@ extension FunctionWrapper {
     self.kind = .argsKwargsAsStaticFunction(wrapper)
   }
 }
+
+*/

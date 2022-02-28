@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // swiftlint:disable line_length
@@ -203,3 +204,5 @@ extension Sys {
   internal var _xoptions: PyObject { }
 */
 }
+
+*/

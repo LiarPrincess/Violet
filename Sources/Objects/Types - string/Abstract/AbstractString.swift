@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 
 // swiftlint:disable type_name
@@ -194,3 +195,5 @@ extension AbstractString {
   /// are trivially scalar-aligned, which makes them a bit faster.
   internal func _wouldBeBetterWithRandomAccessCollection() {}
 }
+
+*/

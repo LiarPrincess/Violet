@@ -1,3 +1,4 @@
+/* MARKER
 private let splitLinesArguments = ArgumentParser.createOrTrap(
   arguments: ["keepends"],
   format: "|O:splitlines"
@@ -98,3 +99,5 @@ extension AbstractString {
     }
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 extension PyFrame {
 
   public struct ObjectStack {
@@ -127,3 +128,5 @@ extension PyFrame {
     }
   }
 }
+
+*/

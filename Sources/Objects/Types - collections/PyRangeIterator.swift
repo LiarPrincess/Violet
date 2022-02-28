@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -77,3 +78,5 @@ public final class PyRangeIterator: PyObject {
     return .typeError("cannot create 'range_iterator' instances")
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -143,3 +144,5 @@ public final class PyNone: PyObject, HasCustomGetMethod {
     return .value(Py.none)
   }
 }
+
+*/

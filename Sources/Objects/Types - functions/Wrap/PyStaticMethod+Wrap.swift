@@ -1,3 +1,4 @@
+/* MARKER
 // Basically the same as 'PyBuiltinFunction+Wrap' but for 'staticmethod'.
 // See 'PyBuiltinFunction+Wrap.swift' for details.
 
@@ -19,3 +20,5 @@ extension PyStaticMethod {
     return PyMemory.newStaticMethod(callable: builtinFunction)
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import BigInt
 
@@ -200,3 +201,5 @@ extension AbstractBytes {
     return .value(byte)
   }
 }
+
+*/

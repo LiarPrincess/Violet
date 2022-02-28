@@ -1,3 +1,4 @@
+/* MARKER
 import VioletBytecode
 
 // swiftlint:disable file_length
@@ -346,3 +347,5 @@ public final class PyFunction: PyObject {
     return result
   }
 }
+
+*/

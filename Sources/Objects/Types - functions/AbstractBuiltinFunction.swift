@@ -1,3 +1,4 @@
+/* MARKER
 /// Shared methods for `PyBuiltinFunction` and `PyBuiltinMethod`.
 ///
 /// Note that `CPython` uses the same implementation for `PyBuiltinFunction`
@@ -94,3 +95,5 @@ extension AbstractBuiltinFunction {
     return module.getName()
   }
 }
+
+*/

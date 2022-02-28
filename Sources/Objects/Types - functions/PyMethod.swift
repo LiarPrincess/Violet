@@ -1,3 +1,4 @@
+/* MARKER
 import VioletBytecode
 
 // cSpell:ignore classobject getattro
@@ -201,3 +202,5 @@ public final class PyMethod: PyObject {
     return self.function.call(args: realArgs, kwargs: kwargs)
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import VioletCore
 
@@ -730,3 +731,5 @@ public final class PyComplex: PyObject {
     }
   }
 }
+
+*/

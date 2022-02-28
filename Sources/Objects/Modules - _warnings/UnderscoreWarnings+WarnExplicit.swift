@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -281,3 +282,5 @@ extension UnderscoreWarnings {
     }
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -58,3 +59,5 @@ internal func checkInvariants() {
   checkMemorySize(of: Token.self, expectedSize: 36)
   checkMemorySize(of: Token.Kind.self, expectedSize: 17)
 }
+
+*/

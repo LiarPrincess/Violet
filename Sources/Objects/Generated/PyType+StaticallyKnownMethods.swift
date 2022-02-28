@@ -1,3 +1,4 @@
+/* MARKER
 // ==========================================================================================
 // Automatically generated from: ./Sources/Objects/Generated/PyType+StaticallyKnownMethods.py
 // Use 'make gen' in repository root to regenerate.
@@ -453,3 +454,5 @@ extension PyType {
     }
   }
 }
+
+*/

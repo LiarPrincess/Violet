@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // cSpell:ignore ceval pythonrun
@@ -103,3 +104,5 @@ extension Sys {
     }
   }
 }
+
+*/

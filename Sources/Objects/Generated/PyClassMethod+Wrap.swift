@@ -1,3 +1,4 @@
+/* MARKER
 // ===============================================================================
 // Automatically generated from: ./Sources/Objects/Generated/PyClassMethod+Wrap.py
 // Use 'make gen' in repository root to regenerate.
@@ -365,3 +366,5 @@ extension PyClassMethod {
   }
 
 }
+
+*/

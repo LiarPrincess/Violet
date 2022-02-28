@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import VioletCore
 
@@ -236,3 +237,5 @@ public struct MRO {
     return result
   }
 }
+
+*/

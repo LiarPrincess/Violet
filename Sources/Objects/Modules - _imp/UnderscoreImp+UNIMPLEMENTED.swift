@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -179,3 +180,5 @@ extension UnderscoreImp {
     trap("'\(fn)' is not implemented")
   }
 }
+
+*/

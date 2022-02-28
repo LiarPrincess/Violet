@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import VioletCore
 import VioletLexer
@@ -219,3 +220,5 @@ extension PyInstance {
     return PyMemory.newCell(content: content)
   }
 }
+
+*/

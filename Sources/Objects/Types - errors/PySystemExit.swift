@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -136,3 +137,5 @@ public final class PySystemExit: PyBaseException {
       && zip(codeElements, args).allSatisfy { $0.0 === $0.1 }
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 
 // MARK: - PyAnyBytes
@@ -95,3 +96,5 @@ extension PyCast {
     return nil
   }
 }
+
+*/

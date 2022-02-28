@@ -1,3 +1,4 @@
+/* MARKER
 // ================================================================================
 // Automatically generated from: ./Sources/Objects/Generated/ExceptionSubclasses.py
 // Use 'make gen' in repository root to regenerate.
@@ -2573,3 +2574,5 @@ public final class PyResourceWarning: PyWarning {
   }
 }
 
+
+*/

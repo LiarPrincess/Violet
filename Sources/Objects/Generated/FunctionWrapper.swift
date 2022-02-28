@@ -1,3 +1,4 @@
+/* MARKER
 // ============================================================================
 // Automatically generated from: ./Sources/Objects/Generated/FunctionWrapper.py
 // Use 'make gen' in repository root to regenerate.
@@ -4854,3 +4855,5 @@ internal struct FunctionWrapper: CustomStringConvertible {
   }
 
 }
+
+*/

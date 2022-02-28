@@ -1,3 +1,4 @@
+/* MARKER
 // cSpell:ignore TPFLAGS STACKLESS
 
 extension PyType {
@@ -247,3 +248,5 @@ extension PyType {
     }
   }
 }
+
+*/

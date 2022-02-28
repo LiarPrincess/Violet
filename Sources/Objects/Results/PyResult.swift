@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import FileSystem
 import VioletCore
@@ -161,3 +162,5 @@ extension PyResult {
     return PyResult.error(Py.newEOFError(msg: msg))
   }
 }
+
+*/

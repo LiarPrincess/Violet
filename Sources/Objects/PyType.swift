@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // swiftlint:disable file_length
@@ -828,3 +829,5 @@ public final class PyType: PyObject, CustomReflectable, HasCustomGetMethod {
     return .value(value)
   }
 }
+
+*/

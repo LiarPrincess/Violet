@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -965,3 +966,5 @@ public final class PyByteArray: PyObject, AbstractBytes {
     }
   }
 }
+
+*/

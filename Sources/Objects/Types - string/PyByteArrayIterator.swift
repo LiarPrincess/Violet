@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // cSpell:ignore bytearrayobject
@@ -75,3 +76,5 @@ public final class PyByteArrayIterator: PyObject {
     return .typeError("cannot create 'bytearray_iterator' instances")
   }
 }
+
+*/

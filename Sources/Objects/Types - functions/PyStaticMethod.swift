@@ -1,3 +1,4 @@
+/* MARKER
 // cSpell:ignore funcobject
 
 // In CPython:
@@ -114,3 +115,5 @@ public final class PyStaticMethod: PyObject {
     return .value(Py.none)
   }
 }
+
+*/

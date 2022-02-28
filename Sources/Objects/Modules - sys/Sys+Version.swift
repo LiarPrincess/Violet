@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -129,3 +130,5 @@ extension Sys {
     }
   }
 }
+
+*/
