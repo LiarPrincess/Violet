@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -7,18 +6,37 @@ import VioletCore
 // sourcery: pytype = NotImplementedType, isDefault
 /// `NotImplemented` is an object that can be used to signal that an
 /// operation is not implemented for the given type combination.
-public final class PyNotImplemented: PyObject {
+public struct PyNotImplemented: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // MARK: - Init
-
-  override internal init() {
-    // 'NotImplemented' has only 1 instance and can't be subclassed,
-    // so we can just pass the correct type to 'super.init'.
-    super.init(type: Py.types.notImplemented)
+  internal enum Layout {
+    internal static let size = SizeOf.objectHeader
   }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  internal func initialize(type: PyType) {
+    self.header.initialize(type: type)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyNotImplemented(ptr: ptr)
+    zelf.header.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyNotImplemented(ptr: ptr)
+    return "PyNotImplemented(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - String
 

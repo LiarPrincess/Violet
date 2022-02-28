@@ -1,4 +1,3 @@
-/* MARKER
 // cSpell:ignore namespaceobject
 
 // In CPython:
@@ -8,7 +7,7 @@
 // sourcery: instancesHave__dict__
 /// `types.SimpleNamespace` is not an part of `builtins`, but it is used in
 /// various `sys` properties, so we have to implement it anyway.
-public final class PyNamespace: PyObject {
+public struct PyNamespace: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -17,17 +16,32 @@ public final class PyNamespace: PyObject {
     SimpleNamespace(**kwargs)
     """
 
-  // MARK: - Init
-
-  internal convenience init(dict: PyDict) {
-    let type = Py.types.simpleNamespace
-    self.init(type: type, dict: dict)
+  internal enum Layout {
+    internal static let size = SizeOf.objectHeader
   }
 
-  internal init(type: PyType, dict: PyDict) {
-    super.init(type: type)
-    self.__dict__ = dict
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
+
+  internal func initialize(type: PyType, __dict__: PyDict?) {
+    self.header.initialize(type: type, __dict__: __dict__)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyNamespace(ptr: ptr)
+    zelf.header.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyNamespace(ptr: ptr)
+    return "PyNamespace(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Equatable
 

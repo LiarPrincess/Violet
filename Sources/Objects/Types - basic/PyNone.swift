@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -7,18 +6,37 @@ import VioletCore
 
 // sourcery: pytype = NoneType, isDefault
 /// The Python None object, denoting lack of value.
-public final class PyNone: PyObject, HasCustomGetMethod {
+public struct PyNone: PyObjectMixin, HasCustomGetMethod {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // MARK: - Init
-
-  override internal init() {
-    // 'none' has only 1 instance and can't be subclassed,
-    // so we can just pass the correct type to 'super.init'.
-    super.init(type: Py.types.none)
+  internal enum Layout {
+    internal static let size = SizeOf.objectHeader
   }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  internal func initialize(type: PyType) {
+    self.header.initialize(type: type)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyNone(ptr: ptr)
+    zelf.header.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyNone(ptr: ptr)
+    return "PyNone(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - String
 

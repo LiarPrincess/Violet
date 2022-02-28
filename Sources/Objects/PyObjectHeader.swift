@@ -95,10 +95,10 @@ public struct PyObjectHeader {
 
   // MARK: - Initialize
 
-  internal func initialize(type: PyType) {
+  internal func initialize(type: PyType, __dict__: PyDict? = nil) {
     let flags = PyObjectHeader.Flags()
     self.typePtr.initialize(to: type)
-    self.__dict__Ptr.initialize(to: nil)
+    self.__dict__Ptr.initialize(to: __dict__)
     self.flagsPtr.initialize(to: flags)
 
     // Copy the flag from type, for easier access.

@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // cSpell:ignore sliceobject
@@ -10,19 +9,37 @@ import VioletCore
 // sourcery: pytype = ellipsis, isDefault
 /// The Python Ellipsis object. This object has no methods.
 /// Like Py_None it is a singleton object.
-public final class PyEllipsis: PyObject {
+public struct PyEllipsis: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // MARK: - Init
-
-  override internal init() {
-    // 'ellipsis' has only 1 instance and can't be subclassed,
-    // so we can just pass the correct type to 'super.init'.
-    super.init(type: Py.types.ellipsis)
+  internal enum Layout {
+    internal static let size = SizeOf.objectHeader
   }
 
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  internal func initialize(type: PyType) {
+    self.header.initialize(type: type)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyEllipsis(ptr: ptr)
+    zelf.header.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyEllipsis(ptr: ptr)
+    return "PyEllipsis(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
   // MARK: - String
 
   // sourcery: pymethod = __repr__
