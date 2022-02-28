@@ -14,3 +14,5 @@ internal typealias PyFunctionResult = PyResult<PyObject>
 public protocol PyFunctionResultConvertible {}
 public protocol HasCustomGetMethod {}
 public protocol AbstractSequence {}
+public protocol AbstractDictViewIterator {}
+public protocol AbstractDictView {}

@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // cSpell:ignore dictobject
@@ -7,23 +6,61 @@ import VioletCore
 // Objects -> dictobject.c
 
 // sourcery: pytype = dict_keyiterator, isDefault, hasGC
-public final class PyDictKeyIterator: PyObject, AbstractDictViewIterator {
+ public struct PyDictKeyIterator: PyObjectMixin, AbstractDictViewIterator {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal let dict: PyDict
-  internal var index: Int
-  internal let initialCount: Int
+   internal enum Layout {
+     internal static let dictOffset = SizeOf.objectHeader
+     internal static let dictSize = SizeOf.object
 
-  // MARK: - Init
+     internal static let indexOffset = dictOffset + dictSize
+     internal static let indexSize = SizeOf.int
 
-  internal init(dict: PyDict) {
-    self.dict = dict
-    self.index = 0
-    self.initialCount = dict.elements.count
-    super.init(type: Py.types.dict_keyiterator)
-  }
+     internal static let initialCountOffset = indexOffset + indexSize
+     internal static let initialCountSize = SizeOf.int
+
+     internal static let size = initialCountOffset + initialCountSize
+   }
+
+   private var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Layout.dictOffset) }
+   private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
+   private var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.initialCountOffset) }
+
+   internal var dict: PyDict { self.dictPtr.pointee }
+   internal var index: Int { self.indexPtr.pointee }
+   internal var initialCount: Int { self.initialCountPtr.pointee }
+
+   public let ptr: RawPtr
+
+   public init(ptr: RawPtr) {
+     self.ptr = ptr
+   }
+
+   internal func initialize(type: PyType, dict: PyDict) {
+     let initialCount = dict.elements.count
+     self.header.initialize(type: type)
+     self.dictPtr.initialize(to: dict)
+     self.indexPtr.initialize(to: 0)
+     self.initialCountPtr.initialize(to: initialCount)
+   }
+
+   internal static func deinitialize(ptr: RawPtr) {
+     let zelf = PyDictKeyIterator(ptr: ptr)
+     zelf.header.deinitialize()
+     zelf.dictPtr.deinitialize()
+     zelf.indexPtr.deinitialize()
+     zelf.initialCountPtr.deinitialize()
+   }
+
+   internal static func createDebugString(ptr: RawPtr) -> String {
+     let zelf = PyDictKeyIterator(ptr: ptr)
+     return "PyDictKeyIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+   }
+ }
+
+/* MARKER
 
   // MARK: - Class
 
