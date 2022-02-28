@@ -1,5 +1,4 @@
-/* MARKER
-extension PyObject {
+extension PyObjectHeader {
 
   /// Various flags that describe the current state of the `PyObject`.
   ///
@@ -9,6 +8,8 @@ extension PyObject {
   ///
   /// Btw. it does not implement 'OptionSet', its interface is a bit awkward.
   public struct Flags: Equatable, CustomStringConvertible {
+
+    internal static let size = SizeOf.uint32
 
     // swiftlint:disable:next nesting
     private typealias Storage = UInt32
@@ -256,5 +257,3 @@ extension PyObject {
     }
   }
 }
-
-*/

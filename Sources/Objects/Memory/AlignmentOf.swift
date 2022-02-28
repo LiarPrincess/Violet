@@ -43,9 +43,11 @@ public enum AlignmentOf {
     // Self.checkAlignment(of: OrderedSet.self, isLessEqual: Self.OrderedSet)
     // Self.checkAlignment(of: PyAnySet.self, isLessEqual: Self.PyAnySet)
     // Self.checkAlignment(of: PyString.Encoding.self, isLessEqual: Self.PyString.Encoding)
-    // Self.checkAlignment(of: PyString.ErrorHandling.self, isLessEqual: Self.PyString.ErrorHandling)
+    // Self.checkAlignment(of: PyString.ErrorHandling.self,
+    //                     isLessEqual: Self.PyString.ErrorHandling)
     // Self.checkAlignment(of: SourceLine.self, isLessEqual: Self.SourceLine)
-    // Self.checkAlignment(of: StaticallyKnownNotOverriddenMethods.self, isLessEqual: Self.StaticallyKnownNotOverriddenMethods)
+    // Self.checkAlignment(of: StaticallyKnownNotOverriddenMethods.self,
+    //                     isLessEqual: Self.StaticallyKnownNotOverriddenMethods)
   }
 
   private static func checkAlignment<T>(of type: T.Type, isLessEqual: Int) {

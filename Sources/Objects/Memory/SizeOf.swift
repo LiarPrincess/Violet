@@ -74,7 +74,8 @@ public enum SizeOf {
     // Self.checkSize(of: PyString.Encoding.self, expected: Self.PyString.Encoding)
     // Self.checkSize(of: PyString.ErrorHandling.self, expected: Self.PyString.ErrorHandling)
     // Self.checkSize(of: SourceLine.self, expected: Self.SourceLine)
-    // Self.checkSize(of: StaticallyKnownNotOverriddenMethods.self, expected: Self.StaticallyKnownNotOverriddenMethods)
+    // Self.checkSize(of: StaticallyKnownNotOverriddenMethods.self,
+    //                expected: Self.StaticallyKnownNotOverriddenMethods)
   }
 
   private static func checkSize<T>(of type: T.Type, expected: Int) {
