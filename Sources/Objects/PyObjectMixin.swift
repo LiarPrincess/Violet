@@ -53,6 +53,27 @@ extension PyObjectMixin {
     return type.debugFn(self.ptr)
   }
 
+  // TODO: [Old] Description
+//  public var description: String {
+//    let swiftType = String(describing: Swift.type(of: self))
+//    var result = "\(swiftType)(type: \(self.typeName), flags: \(self.flags)"
+//
+//    let hasDescriptionLock = self.flags.isSet(.descriptionLock)
+//    if hasDescriptionLock {
+//      result.append(", RECURSIVE ENTRY)")
+//      return result
+//    }
+//
+//    self.flags.set(.descriptionLock)
+//    defer { self.flags.unset(.descriptionLock) }
+//
+//    let mirror = Mirror(reflecting: self)
+//    self.appendProperties(from: mirror, to: &result)
+//
+//    result.append(")")
+//    return result
+//  }
+
   // MARK: - Function result convertible
 
   // 'PyObject' can be returned from Python function!

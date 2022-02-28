@@ -1,254 +1,315 @@
-/* MARKER
+import Foundation
 import VioletCore
 
+// cSpell:ignore typeobject
+
+// In CPython:
+// Objects -> typeobject.c
+
+// sourcery: isDefault, isBaseType, subclassInstancesHave__dict__
 /// Top of the `Python` type hierarchy.
-///
-/// It should be subclassed for every more-specific type.
-///
-/// Having single super-class simplifies a few things:
-/// - we can store `PyObject` on the VM stack and it 'just works'.
-/// - it has nice mental model: to implement type just add a Swift class.
-/// - it makes reading Python docs more natural (meaning that you don't have
-/// to go through translation step: description in docs -> our implementation).
-public class PyObject: CustomStringConvertible {
+public struct PyObject: PyObjectMixin {
 
-  // MARK: - Type field
+  // sourcery: pytypedoc
+  internal static let doc = """
+    object()
+    --
 
-  // `self_type` has to be implicitly unwrapped optional because:
-  // - `objectType` has `typeType` type
-  // - `typeType` has `typeType` type and is subclass of `objectType`
-  // The only way to produce this result is to skip `self.type` during
-  // `init` and then fill it later.
-  // There is as special `init()` and `func setType(to type: PyType)`
-  // to do exactly this.
+    The most base type
+    """
 
-  // swiftlint:disable:next implicitly_unwrapped_optional
-  private var _type: PyType!
+  // MARK: - Layout
 
-  /// Also known as `klass`, but we are using CPython naming convention.
-  public final var type: PyType {
-    // Not really sure if this property wrapper is needed (we could just expose
-    // 'self._type' as implicitly unwrapped optional).
-    // Anyway, it is 'final' so it should not be a problem (also most of its
-    // users are inside this module, so it should optimize nicely).
-    return self._type
+  internal enum Layout {
+    internal static let size = SizeOf.objectHeader
   }
 
-  /// Name of the type (mostly for convenience when creating error messages).
-  public final var typeName: String {
-    return self.type.getNameString()
+  // MARK: - Swift init
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  // MARK: - __dict__ field
+  // MARK: - Initialize/deinitialize
 
-  // Note 3x '_' prefix!
-  internal var ___dict__: PyDict?
-
-  /// Internal dictionary of attributes for the specific instance.
-  ///
-  /// We will reserve space for `PyDict` reference on EVERY object, even though
-  /// not all of them can actually use it:
-  /// ``` py
-  /// >>> (1).__dict__
-  /// Traceback (most recent call last):
-  ///   File "<stdin>", line 1, in <module>
-  /// AttributeError: 'int' object has no attribute '__dict__'
-  /// ```
-  ///
-  /// Whether the object has access to `__dict__` or not is controlled by
-  /// `has__dict__` flag.
-  ///
-  /// Alternative approach:
-  /// For every type that can access `__dict__` create a Swift subclass that adds
-  /// this property (+ some runtime magic). We actually did that (at some point),
-  /// but it relied too much on Swift runtime, so we moved to current approach.
-  ///
-  /// - Important:
-  /// Accessing `__dict__` on object that does not have it will trap!
-  /// Use `Py.get__dict__` instead.
-  public internal(set) final var __dict__: PyDict {
-    get {
-      self.assertHas__dict__()
-
-      // Lazy property written by hand (without thread safety).
-      if let dict = self.___dict__ {
-        return dict
-      }
-
-      let dict = Py.newDict()
-      self.___dict__ = dict
-      return dict
-    }
-    set {
-      self.assertHas__dict__()
-      self.___dict__ = newValue
-    }
+  internal func initialize(type: PyType) {
+    self.header.initialize(type: type)
   }
 
-  internal final var has__dict__: Bool {
-    return self.flags.isSet(.has__dict__)
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyObject(ptr: ptr)
+    zelf.header.deinitialize()
   }
 
-  private final func assertHas__dict__() {
-    if !self.has__dict__ {
-      trap("\(self.typeName) does not even '__dict__'.")
-    }
-  }
+  // MARK: - Debug
 
-  // MARK: - Flags field
-
-  /// Various flags that describe the current state of the `PyObject`.
-  ///
-  /// It can also be used to store `Bool` properties (via `custom` flags).
-  public var flags = Flags()
-
-  // MARK: - Ptr
-
-  /// Object address.
-  ///
-  /// It should be used only for:
-  /// - `builtins.id` function
-  /// - error messages (for debugging).
-  internal final var ptr: UnsafeMutableRawPointer {
-    return Unmanaged.passUnretained(self).toOpaque()
-  }
-
-  // MARK: - Init
-
-  /// Create new Python object.
-  /// When in doubt use this `init`!
-  internal init(type: PyType) {
-    self._type = type
-    self.copyFlagsFromType()
-  }
-
-  /// NEVER EVER use this `init`! It will not set `self.type`!
-  ///
-  /// This is a reserved for `objectType` and `typeType` to create mutual recursion.
-  /// Use `init(type: PyType)` instead.
-  internal init() {
-    self._type = nil
-  }
-
-  /// NEVER EVER use this function!
-  ///
-  /// This is a reserved for `objectType` and `typeType` to create mutual recursion.
-  internal final func setType(to type: PyType) {
-    assert(self._type == nil, "Type is already assigned!")
-    self._type = type
-    self.copyFlagsFromType()
-  }
-
-  private final func copyFlagsFromType() {
-    let typeFlags = self.type.typeFlags
-
-    let has__dict__ = typeFlags.instancesHave__dict__
-    self.flags.set(.has__dict__, to: has__dict__)
-  }
-
-  // MARK: - Repr
-
-  /// This flag is used to control infinite recursion
-  /// in `repr`, `str`, `print` etc.
-  internal final var hasReprLock: Bool {
-    return self.flags.isSet(.reprLock)
-  }
-
-  /// Set, execute `body` and then unset `reprLock` flag
-  /// (the one that is used to control recursion in `repr`, `str`, `print` etc).
-  internal final func withReprLock<T>(body: () -> T) -> T {
-    // We do not need 'defer' because 'body' is not throwing
-    self.flags.set(.reprLock)
-    let result = body()
-    self.flags.unset(.reprLock)
-    return result
-  }
-
-  // MARK: - Description
-
-  public var description: String {
-    let swiftType = String(describing: Swift.type(of: self))
-    var result = "\(swiftType)(type: \(self.typeName), flags: \(self.flags)"
-
-    let hasDescriptionLock = self.flags.isSet(.descriptionLock)
-    if hasDescriptionLock {
-      result.append(", RECURSIVE ENTRY)")
-      return result
-    }
-
-    self.flags.set(.descriptionLock)
-    defer { self.flags.unset(.descriptionLock) }
-
-    let mirror = Mirror(reflecting: self)
-    self.appendProperties(from: mirror, to: &result)
-
-    result.append(")")
-    return result
-  }
-
-  private func appendProperties(from mirror: Mirror,
-                                to string: inout String,
-                                propertyIndex: Int = 0) {
-    var index = propertyIndex
-    for child in mirror.children {
-      let label = child.label ?? "property\(index)"
-
-      let value = child.value
-      var valueString = String(describing: value)
-
-      // If the value is 'Optional' then want to print as if it was not.
-      if valueString.starts(with: "Optional(") {
-        // Remove 'Optional(' prefix and ')' suffix.
-        let startIndex = valueString.index(valueString.startIndex, offsetBy: 9)
-        let endIndex = valueString.index(valueString.endIndex, offsetBy: -1)
-        let nonOptionalValue = valueString[startIndex..<endIndex]
-        valueString = String(nonOptionalValue)
-      }
-
-      // If value is 'String' then add quotes.
-      // This will not work on optional string, but whatever.
-      if let string = value as? String {
-        let shortCount = 50
-
-        var short = String(string.prefix(shortCount))
-        if string.count > shortCount {
-          short.append("...")
-        }
-
-        short = short.replacingOccurrences(of: "\n", with: "\\n")
-        valueString = "\"" + short + "\""
-      }
-
-      string.append(", \(label): \(valueString)")
-      index += 1
-    }
-
-    if let superclassMirror = mirror.superclassMirror {
-      // We already handled 'PyObject' by printing 'type: XXX'
-      let isObject = superclassMirror.subjectType == PyObject.self
-      if !isObject {
-        self.appendProperties(from: superclassMirror,
-                              to: &string,
-                              propertyIndex: index)
-      }
-    }
-  }
-
-  // MARK: - GC
-
-  /// Remove all of the references to other Python objects.
-  internal func gcClean() {
-    self._type = nil
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyObject(ptr: ptr)
+    return "PyObject(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
 }
 
-// MARK: - Function result convertible
+/* MARKER
+internal enum PyObjectType {
 
-// 'PyObject' can be returned from Python function!
-// Yeah… I know, kind of hard to believe.
-extension PyObject: PyFunctionResultConvertible {
-  internal var asFunctionResult: PyFunctionResult {
-    return .value(self)
+  // MARK: - Equatable
+
+  // sourcery: pymethod = __eq__
+  internal static func isEqual(zelf: PyObject,
+                               other: PyObject) -> CompareResult {
+    if zelf === other {
+      return .value(true)
+    }
+
+    return .notImplemented
+  }
+
+  // sourcery: pymethod = __ne__
+  internal static func isNotEqual(zelf: PyObject,
+                                  other: PyObject) -> CompareResult {
+    return PyObjectType.isEqual(zelf: zelf, other: other).not
+  }
+
+  // MARK: - Comparable
+
+  // sourcery: pymethod = __lt__
+  internal static func isLess(zelf: PyObject,
+                              other: PyObject) -> CompareResult {
+    return .notImplemented
+  }
+
+  // sourcery: pymethod = __le__
+  internal static func isLessEqual(zelf: PyObject,
+                                   other: PyObject) -> CompareResult {
+    return .notImplemented
+  }
+
+  // sourcery: pymethod = __gt__
+  internal static func isGreater(zelf: PyObject,
+                                 other: PyObject) -> CompareResult {
+    return .notImplemented
+  }
+
+  // sourcery: pymethod = __ge__
+  internal static func isGreaterEqual(zelf: PyObject,
+                                      other: PyObject) -> CompareResult {
+    return .notImplemented
+  }
+
+  // MARK: - Hashable
+
+  // sourcery: pymethod = __hash__
+  internal static func hash(zelf: PyObject) -> PyHash {
+    let id = ObjectIdentifier(zelf)
+    return Py.hasher.hash(id)
+  }
+
+  // MARK: - String
+
+  // sourcery: pymethod = __repr__
+  internal static func repr(zelf: PyObject) -> PyResult<String> {
+    switch zelf.type.getModuleString() {
+    case .builtins:
+      return .value("<\(zelf.typeName) object at \(zelf.ptr)>")
+    case .string(let module):
+      return .value("<\(module).\(zelf.typeName) object at \(zelf.ptr)>")
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  // sourcery: pymethod = __str__
+  internal static func str(zelf: PyObject) -> PyResult<String> {
+    // If '__str__' is not implemented then we will use '__repr__'.
+    return Py.reprString(object: zelf)
+  }
+
+  // sourcery: pymethod = __format__
+  internal static func format(zelf: PyObject, spec: PyObject) -> PyResult<String> {
+    if let spec = PyCast.asString(spec), spec.isEmpty {
+      return PyObjectType.str(zelf: zelf)
+    }
+
+    let msg = "unsupported format string passed to \(zelf.typeName).__format__"
+    return .typeError(msg)
+  }
+
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal static func getClass(zelf: PyObject) -> PyType {
+    return zelf.type
+  }
+
+  // MARK: - Dir
+
+  // sourcery: pymethod = __dir__
+  internal static func dir(zelf: PyObject) -> PyResult<DirResult> {
+    let result = DirResult()
+
+    // If we have dict then use it to fill 'dir'
+    var error: PyBaseException?
+    if let dict = Py.get__dict__(object: zelf) {
+      if let dirFn = dict.get(id: .__dir__) {
+        switch Py.call(callable: dirFn) {
+        case .value(let o):
+          error = result.append(elementsFrom: o)
+        case let .notCallable(e),
+             let .error(e):
+          error = e
+        }
+      } else {
+        // Otherwise just fill it with keys
+        error = result.append(keysFrom: dict)
+      }
+    }
+
+    if let e = error {
+      return .error(e)
+    }
+
+    // 'Dir' from our type
+    switch zelf.type.dir() {
+    case let .value(dir):
+      result.append(contentsOf: dir)
+    case let .error(e):
+      return .error(e)
+    }
+
+    return .value(result)
+  }
+
+  // MARK: - Attributes
+
+  // sourcery: pymethod = __getattribute__
+  internal static func getAttribute(zelf: PyObject,
+                                    name: PyObject) -> PyResult<PyObject> {
+    return AttributeHelper.getAttribute(from: zelf, name: name)
+  }
+
+  // sourcery: pymethod = __setattr__
+  internal static func setAttribute(zelf: PyObject,
+                                    name: PyObject,
+                                    value: PyObject?) -> PyResult<PyNone> {
+    return AttributeHelper.setAttribute(on: zelf, name: name, to: value)
+  }
+
+  // sourcery: pymethod = __delattr__
+  internal static func delAttribute(zelf: PyObject,
+                                    name: PyObject) -> PyResult<PyNone> {
+    return AttributeHelper.delAttribute(on: zelf, name: name)
+  }
+
+  // MARK: - Subclasshook
+
+  // sourcery: pyclassmethod = __subclasshook__
+  /// Abstract classes can override this to customize issubclass().
+  /// This is invoked early on by abc.ABCMeta.__subclasscheck__().
+  /// It should return True, False or NotImplemented.  If it returns
+  /// NotImplemented, the normal algorithm is used.  Otherwise, it
+  /// overrides the normal algorithm (and the outcome is cached).
+  internal static func subclasshook(args: [PyObject],
+                                    kwargs: PyDict?) -> PyResult<PyObject> {
+    // This can be called with any number of arguments:
+    // >>> type(object).__subclasshook__(1,2)
+    // NotImplemented
+    // >>> type(object).__subclasshook__(1,2,4,5,6,7)
+    // NotImplemented
+    //
+    // https://docs.python.org/3/library/abc.html#abc.ABCMeta.__subclasshook__
+    return .value(Py.notImplemented)
+  }
+
+  // MARK: - Init subclass
+
+  // sourcery: pymethod = __init_subclass__
+  /// This method is called when a class is subclassed.
+  /// The default implementation does nothing.
+  /// It may be overridden to extend subclasses.
+  internal static func initSubclass(zelf: PyObject) -> PyResult<PyObject> {
+    return .value(Py.none)
+  }
+
+  // MARK: - Python new
+
+  // There is a long comment in 'Objects -> typeobject.c' about '__new__'
+  // and '__init'.
+
+  // sourcery: pystaticmethod = __new__
+  internal static func pyNew(type: PyType,
+                             args: [PyObject],
+                             kwargs: PyDict?) -> PyResult<PyObject> {
+    if Self.hasExcessArgs(args: args, kwargs: kwargs) {
+      if Self.hasOverridden__new__(type: type) {
+        let msg = "object.__new__() takes exactly one argument " +
+                  "(the type to instantiate)"
+        return .typeError(msg)
+      }
+
+      if !Self.hasOverridden__init__(type: type) {
+        let typeName = type.getNameString()
+        return .typeError("\(typeName) takes no arguments")
+      }
+    }
+
+    let result = PyMemory.newObject(type: type)
+    return .value(result)
+  }
+
+  // MARK: - Python init
+
+  // sourcery: pymethod = __init__
+  internal static func pyInit(zelf: PyObject,
+                              args: [PyObject],
+                              kwargs: PyDict?) -> PyResult<PyNone> {
+    if Self.hasExcessArgs(args: args, kwargs: kwargs) {
+      if Self.hasOverridden__init__(type: zelf.type) {
+        let msg = "object.__init__() takes exactly one argument " +
+                  "(the instance to initialize)"
+        return .typeError(msg)
+      }
+
+      if !Self.hasOverridden__new__(type: zelf.type) {
+        let typeName = zelf.type.getNameString()
+        let msg = "\(typeName).__init__() takes exactly one argument " +
+                  "(the instance to initialize)"
+        return .typeError(msg)
+      }
+    }
+
+    return .value(Py.none)
+  }
+
+  /// static int
+  /// excess_args(PyObject *args, PyObject *kwds)
+  private static func hasExcessArgs(args: [PyObject], kwargs: PyDict?) -> Bool {
+    let noArgs = args.isEmpty && (kwargs?.elements.isEmpty ?? true)
+    return !noArgs
+  }
+
+  private static func hasOverridden__new__(type: PyType) -> Bool {
+    return self.hasOverridden(type: type, name: .__new__)
+  }
+
+  private static func hasOverridden__init__(type: PyType) -> Bool {
+    return self.hasOverridden(type: type, name: .__init__)
+  }
+
+  private static func hasOverridden(type: PyType, name: IdString) -> Bool {
+    guard let lookup = type.mroLookup(name: name) else {
+      let t = type.getNameString()
+      let fn = name.value.value
+      trap("Uh… oh… So '\(fn)' lookup on \(t) failed to find anything. " +
+           "It should not be possible since every type derives from 'object', " +
+           "(which has this method) but here we are..."
+      )
+    }
+
+    let owner = lookup.type
+    let isFromObject = owner === Py.types.object
+    return !isFromObject
   }
 }
 

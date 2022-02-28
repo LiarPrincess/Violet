@@ -1,4 +1,3 @@
-/* MARKER
 // cSpell:ignore TPFLAGS STACKLESS
 
 extension PyType {
@@ -24,15 +23,15 @@ extension PyType {
     internal static let instancesHave__dict__Flag = TypeFlags(objectFlags: .custom20)
     internal static let subclassInstancesHave__dict__Flag = TypeFlags(objectFlags: .custom21)
 
-    internal private(set) var objectFlags: PyObject.Flags
+    internal private(set) var objectFlags: PyObjectHeader.Flags
 
     // MARK: - Init
 
     internal init() {
-      self.objectFlags = PyObject.Flags()
+      self.objectFlags = PyObjectHeader.Flags()
     }
 
-    internal init(objectFlags: PyObject.Flags) {
+    internal init(objectFlags: PyObjectHeader.Flags) {
       self.objectFlags = objectFlags
     }
 
@@ -248,5 +247,3 @@ extension PyType {
     }
   }
 }
-
-*/
