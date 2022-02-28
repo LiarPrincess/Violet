@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -6,7 +5,7 @@ import VioletCore
 
 // sourcery: pytype = filter, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
-public final class PyFilter: PyObject {
+public struct PyFilter: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -16,22 +15,48 @@ public final class PyFilter: PyObject {
     is true. If function is None, return the items that are true.
     """
 
-  internal let fn: PyObject
-  internal let iterator: PyObject
+  internal enum Layout {
+    internal static let fnOffset = SizeOf.objectHeader
+    internal static let fnSize = SizeOf.object
 
-  // MARK: - Init
+    internal static let iteratorOffset = fnOffset + fnSize
+    internal static let iteratorSize = SizeOf.object
 
-  internal convenience init(fn: PyObject, iterator: PyObject) {
-    let type = Py.types.filter
-    self.init(type: type, fn: fn, iterator: iterator)
+    internal static let size = iteratorOffset + iteratorSize
   }
 
-  internal init(type: PyType, fn: PyObject, iterator: PyObject) {
-    self.fn = fn
-    self.iterator = iterator
-    super.init(type: type)
+  private var fnPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.fnOffset) }
+  private var iteratorPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.iteratorOffset) }
+
+  internal var fn: PyObject { self.fnPtr.pointee }
+  internal var iterator: PyObject { self.iteratorPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
+  internal func initialize(type: PyType, fn: PyObject, iterator: PyObject) {
+    self.header.initialize(type: type)
+    self.fnPtr.initialize(to: fn)
+    self.iteratorPtr.initialize(to: iterator)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFilter(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.fnPtr.deinitialize()
+    zelf.iteratorPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyFilter(ptr: ptr)
+    return "PyFilter(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
   // MARK: - Class
 
   // sourcery: pyproperty = __class__

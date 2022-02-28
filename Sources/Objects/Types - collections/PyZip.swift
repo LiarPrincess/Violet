@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -6,7 +5,7 @@ import VioletCore
 
 // sourcery: pytype = zip, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
-public final class PyZip: PyObject {
+public struct PyZip: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -18,19 +17,39 @@ public final class PyZip: PyObject {
     is exhausted and then it raises StopIteration.
     """
 
-  internal let iterators: [PyObject]
-
-  // MARK: - Init
-
-  internal convenience init(iterators: [PyObject]) {
-    let type = Py.types.zip
-    self.init(type: type, iterators: iterators)
+  internal enum Layout {
+    internal static let iteratorsOffset = SizeOf.objectHeader
+    internal static let iteratorsSize = SizeOf.array
+    internal static let size = iteratorsOffset + iteratorsSize
   }
 
-  internal init(type: PyType, iterators: [PyObject]) {
-    self.iterators = iterators
-    super.init(type: type)
+  private var iteratorsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Layout.iteratorsOffset) }
+  internal var iterators: [PyObject] { self.iteratorsPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
+
+  internal func initialize(type: PyType, iterators: [PyObject]) {
+    self.header.initialize(type: type)
+    self.iteratorsPtr.initialize(to: iterators)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyZip(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.iteratorsPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyZip(ptr: ptr)
+    return "PyZip(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Class
 

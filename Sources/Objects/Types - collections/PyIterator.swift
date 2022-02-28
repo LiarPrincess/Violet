@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -8,23 +7,53 @@ import VioletCore
 // Objects -> iterobject.c
 
 // sourcery: pytype = iterator, isDefault, hasGC
-public final class PyIterator: PyObject {
+public struct PyIterator: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal let sequence: PyObject
-  internal private(set) var index: Int
+  internal enum Layout {
+    internal static let sequenceOffset = SizeOf.objectHeader
+    internal static let sequenceSize = SizeOf.object
 
-  private static let endIndex = -1
+    internal static let indexOffset = sequenceOffset + sequenceSize
+    internal static let indexSize = SizeOf.int
 
-  // MARK: - Init
-
-  internal init(sequence: PyObject) {
-    self.sequence = sequence
-    self.index = 0
-    super.init(type: Py.types.iterator)
+    internal static let size = indexOffset + indexSize
   }
+
+  private var sequencePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.sequenceOffset) }
+  private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
+
+  internal var sequence: PyObject { self.sequencePtr.pointee }
+  internal var index: Int { self.indexPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  internal func initialize(type: PyType, sequence: PyObject) {
+    self.header.initialize(type: type)
+    self.sequencePtr.initialize(to: sequence)
+    self.indexPtr.initialize(to: 0)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyIterator(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.sequencePtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyIterator(ptr: ptr)
+    return "PyIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Class
 

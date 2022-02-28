@@ -1,11 +1,17 @@
 // swiftlint:disable fatal_error_message
 
+import BigInt
+
 public typealias PyHash = Int
 
 public let Py = PyInstanceFake()
 
 public struct PyInstanceFake {
   public func newDict() -> PyDict {
+    fatalError()
+  }
+
+  public func newInt(_ value: BigInt) -> PyInt {
     fatalError()
   }
 

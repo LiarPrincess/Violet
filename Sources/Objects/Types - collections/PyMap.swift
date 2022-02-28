@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -6,7 +5,7 @@ import VioletCore
 
 // sourcery: pytype = map, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
-public final class PyMap: PyObject {
+public struct PyMap: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -16,21 +15,48 @@ public final class PyMap: PyObject {
     each of the iterables.  Stops when the shortest iterable is exhausted.
     """
 
-  internal let fn: PyObject
-  internal let iterators: [PyObject]
+  internal enum Layout {
+    internal static let fnOffset = SizeOf.objectHeader
+    internal static let fnSize = SizeOf.object
 
-  // MARK: - Init
+    internal static let iteratorsOffset = fnOffset + fnSize
+    internal static let iteratorsSize = SizeOf.array
 
-  internal convenience init(fn: PyObject, iterators: [PyObject]) {
-    let type = Py.types.map
-    self.init(type: type, fn: fn, iterators: iterators)
+    internal static let size = iteratorsOffset + iteratorsSize
   }
 
-  internal init(type: PyType, fn: PyObject, iterators: [PyObject]) {
-    self.fn = fn
-    self.iterators = iterators
-    super.init(type: type)
+  private var fnPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.fnOffset) }
+  private var iteratorsPtr: Ptr<[PyObject]> { Ptr(self.ptr, offset: Layout.iteratorsOffset) }
+
+  internal var fn: PyObject { self.fnPtr.pointee }
+  internal var iterators: [PyObject] { self.iteratorsPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
+
+  internal func initialize(type: PyType, fn: PyObject, iterators: [PyObject]) {
+    self.header.initialize(type: type)
+    self.fnPtr.initialize(to: fn)
+    self.iteratorsPtr.initialize(to: iterators)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyMap(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.fnPtr.deinitialize()
+    zelf.iteratorsPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyMap(ptr: ptr)
+    return "PyMap(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Class
 
