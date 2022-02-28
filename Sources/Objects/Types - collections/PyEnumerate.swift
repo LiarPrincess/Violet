@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -11,7 +10,7 @@ import VioletCore
 // sourcery: subclassInstancesHave__dict__
 /// Return an enumerate object. iterable must be a sequence, an iterator,
 /// or some other object which supports iteration.
-public final class PyEnumerate: PyObject {
+public struct PyEnumerate: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -30,23 +29,50 @@ public final class PyEnumerate: PyObject {
     (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
     """
 
+  internal enum Layout {
+    internal static let iteratorOffset = SizeOf.objectHeader
+    internal static let iteratorSize = SizeOf.object
+
+    internal static let nextIndexOffset = iteratorOffset + iteratorSize
+    internal static let nextIndexSize = SizeOf.bigInt
+
+    internal static let size = nextIndexOffset + nextIndexSize
+  }
+
+  private var iteratorPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.iteratorOffset) }
+  private var nextIndexPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Layout.nextIndexOffset) }
+
   /// Secondary iterator of enumeration
-  internal let iterator: PyObject
+  internal var iterator: PyObject { self.iteratorPtr.pointee }
   /// Next used index of enumeration
-  internal private(set) var nextIndex: BigInt
+  internal var nextIndex: BigInt { self.nextIndexPtr.pointee }
 
-  // MARK: - Init
+  public let ptr: RawPtr
 
-  internal convenience init(iterator: PyObject, startFrom index: BigInt) {
-    let type = Py.types.enumerate
-    self.init(type: type, iterator: iterator, startFrom: index)
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  internal init(type: PyType, iterator: PyObject, startFrom index: BigInt) {
-    self.iterator = iterator
-    self.nextIndex = index
-    super.init(type: type)
+  internal func initialize(type: PyType, iterator: PyObject, initialIndex: BigInt) {
+    self.header.initialize(type: type)
+    self.iteratorPtr.initialize(to: iterator)
+    self.nextIndexPtr.initialize(to: initialIndex)
   }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyEnumerate(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.iteratorPtr.deinitialize()
+    zelf.nextIndexPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyEnumerate(ptr: ptr)
+    return "PyEnumerate(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Class
 

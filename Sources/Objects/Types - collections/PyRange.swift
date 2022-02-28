@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -13,7 +12,7 @@ import VioletCore
 // sourcery: pytype = range, isDefault
 /// The range type represents an immutable sequence of numbers
 /// and is commonly used for looping a specific number of times in for loops.
-public final class PyRange: PyObject {
+public struct PyRange: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -27,11 +26,36 @@ public final class PyRange: PyObject {
     When step is given, it specifies the increment (or decrement).
     """
 
-  internal let start: PyInt
-  internal let stop: PyInt
-  internal let step: PyInt
+  // MARK: - Layout
+
+  internal enum Layout {
+    internal static let startOffset = SizeOf.objectHeader
+    internal static let startSize = SizeOf.object
+
+    internal static let stopOffset = startOffset + startSize
+    internal static let stopSize = SizeOf.object
+
+    internal static let stepOffset = stopOffset + stopSize
+    internal static let stepSize = SizeOf.object
+
+    internal static let lengthOffset = stepOffset + stepSize
+    internal static let lengthSize = SizeOf.object
+
+    internal static let size = lengthOffset + lengthSize
+  }
+
+  // MARK: - Properties
+
+  private var startPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Layout.startOffset) }
+  private var stopPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Layout.stopOffset) }
+  private var stepPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Layout.stepOffset) }
+  private var lengthPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Layout.lengthOffset) }
+
+  internal var start: PyInt { self.startPtr.pointee }
+  internal var stop: PyInt { self.stopPtr.pointee }
+  internal var step: PyInt { self.stepPtr.pointee }
   /// Number of elements in range.
-  internal let length: PyInt
+  internal var length: PyInt { self.lengthPtr.pointee }
 
   private enum StepType {
     /// Step was provided in `init`.
@@ -40,7 +64,7 @@ public final class PyRange: PyObject {
     case implicit
   }
 
-  private static let isStepImplicitFlag = PyObject.Flags.custom0
+  private static let isStepImplicitFlag = PyObjectHeader.Flags.custom0
 
   /// Remember how user created this range (`repr` depends on it).
   private var stepType: StepType {
@@ -48,7 +72,7 @@ public final class PyRange: PyObject {
       let isImplicit = self.flags.isSet(PyRange.isStepImplicitFlag)
       return isImplicit ? .implicit : .explicit
     }
-    set {
+    nonmutating set {
       switch newValue {
       case .implicit: self.flags.set(PyRange.isStepImplicitFlag, to: true)
       case .explicit: self.flags.set(PyRange.isStepImplicitFlag, to: false)
@@ -60,9 +84,17 @@ public final class PyRange: PyObject {
     return self.start.value <= self.stop.value
   }
 
-  // MARK: - Init
+  // MARK: - Swift init
 
-  internal init(start: PyInt, stop: PyInt, step: PyInt?) {
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  // MARK: - Initialize/deinitialize
+
+  internal func initialize(type: PyType, start: PyInt, stop: PyInt, step: PyInt?) {
     assert(
       step?.value != 0,
       "PyRange.step cannot be 0. Use 'Py.newRange' to handle this case."
@@ -73,11 +105,11 @@ public final class PyRange: PyObject {
                                          stop: stop.value,
                                          step: unwrappedStep)
 
-    self.start = start
-    self.stop = stop
-    self.step = Py.newInt(unwrappedStep)
-    self.length = Py.newInt(length)
-    super.init(type: Py.types.range)
+    self.header.initialize(type: type)
+    self.startPtr.initialize(to: start)
+    self.stopPtr.initialize(to: stop)
+    self.stepPtr.initialize(to: Py.newInt(unwrappedStep))
+    self.lengthPtr.initialize(to: Py.newInt(length))
 
     self.stepType = step == nil ? .implicit : .explicit
   }
@@ -97,6 +129,25 @@ public final class PyRange: PyObject {
     let diff = high - low - 1
     return (diff / abs(step)) + 1
   }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyRange(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.startPtr.deinitialize()
+    zelf.stopPtr.deinitialize()
+    zelf.stepPtr.deinitialize()
+    zelf.lengthPtr.deinitialize()
+  }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyRange(ptr: ptr)
+    return "PyRange(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Equatable
 

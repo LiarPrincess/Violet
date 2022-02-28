@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -12,7 +11,7 @@ import VioletCore
 // sourcery: pytype = slice, isDefault, hasGC
 /// The type object for slice objects.
 /// This is the same as slice in the Python layer.
-public final class PySlice: PyObject {
+public struct PySlice: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -23,18 +22,65 @@ public final class PySlice: PyObject {
     This is used for extended slicing (e.g. a[0:10:2]).
     """
 
-  internal var start: PyObject
-  internal var stop: PyObject
-  internal var step: PyObject
+  // MARK: - Layout
 
-  // MARK: - Init
+  internal enum Layout {
+    internal static let startOffset = SizeOf.objectHeader
+    internal static let startSize = SizeOf.object
 
-  internal init(start: PyObject, stop: PyObject, step: PyObject) {
-    self.start = start
-    self.stop = stop
-    self.step = step
-    super.init(type: Py.types.slice)
+    internal static let stopOffset = startOffset + startSize
+    internal static let stopSize = SizeOf.object
+
+    internal static let stepOffset = stopOffset + stopSize
+    internal static let stepSize = SizeOf.object
+
+    internal static let size = stepOffset + stepSize
   }
+
+  // MARK: - Properties
+
+  private var startPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.startOffset) }
+  private var stopPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.stopOffset) }
+  private var stepPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.stepOffset) }
+
+  internal var start: PyObject { self.startPtr.pointee }
+  internal var stop: PyObject { self.stopPtr.pointee }
+  internal var step: PyObject { self.stepPtr.pointee }
+
+  // MARK: - Swift init
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  // MARK: - Initialize/deinitialize
+
+  internal func initialize(type: PyType, start: PyObject, stop: PyObject, step: PyObject) {
+    self.header.initialize(type: type)
+    self.startPtr.initialize(to: start)
+    self.stopPtr.initialize(to: stop)
+    self.stepPtr.initialize(to: step)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PySlice(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.startPtr.deinitialize()
+    zelf.stopPtr.deinitialize()
+    zelf.stepPtr.deinitialize()
+  }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PySlice(ptr: ptr)
+    return "PySlice(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Equatable
 

@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // cSpell:ignore enumobject
@@ -9,7 +8,7 @@ import VioletCore
 // sourcery: pytype = reversed, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
 /// Return a reverse iterator over the values of the given sequence.
-public final class PyReversed: PyObject {
+public struct PyReversed: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -19,23 +18,52 @@ public final class PyReversed: PyObject {
     Return a reverse iterator over the values of the given sequence.
     """
 
-  internal let sequence: PyObject
-  internal private(set) var index: Int
+  internal enum Layout {
+    internal static let sequenceOffset = SizeOf.objectHeader
+    internal static let sequenceSize = SizeOf.object
+
+    internal static let indexOffset = sequenceOffset + sequenceSize
+    internal static let indexSize = SizeOf.int
+
+    internal static let size = indexOffset + indexSize
+  }
 
   private static let endIndex = -1
 
-  // MARK: - Init
+  private var sequencePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.sequenceOffset) }
+  private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
 
-  internal convenience init(sequence: PyObject, count: Int) {
-    let type = Py.types.reversed
-    self.init(type: type, sequence: sequence, count: count)
+  internal var sequence: PyObject { self.sequencePtr.pointee }
+  internal var index: Int { self.indexPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  internal init(type: PyType, sequence: PyObject, count: Int) {
-    self.sequence = sequence
-    self.index = count - 1
-    super.init(type: type)
+  internal func initialize(type: PyType,
+                           sequence: PyObject,
+                           count: Int) {
+    self.header.initialize(type: type)
+    self.sequencePtr.initialize(to: sequence)
+    self.indexPtr.initialize(to: count - 1)
   }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyReversed(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.sequencePtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyReversed(ptr: ptr)
+    return "PyReversed(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Class
 

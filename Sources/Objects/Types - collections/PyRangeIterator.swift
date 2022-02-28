@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -8,24 +7,77 @@ import VioletCore
 // Objects -> rangeobject.c
 
 // sourcery: pytype = range_iterator, isDefault
-public final class PyRangeIterator: PyObject {
+public struct PyRangeIterator: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal let start: BigInt
-  internal let step: BigInt
-  internal let length: BigInt
-  internal var index: BigInt = 0
+  // MARK: - Layout
 
-  // MARK: - Init
+  internal enum Layout {
+    internal static let startOffset = SizeOf.objectHeader
+    internal static let startSize = SizeOf.bigInt
 
-  internal init(start: BigInt, step: BigInt, length: BigInt) {
-    self.start = start
-    self.step = step
-    self.length = length
-    super.init(type: Py.types.range_iterator)
+    internal static let stepOffset = startOffset + startSize
+    internal static let stepSize = SizeOf.bigInt
+
+    internal static let lengthOffset = stepOffset + stepSize
+    internal static let lengthSize = SizeOf.bigInt
+
+    internal static let indexOffset = lengthOffset + lengthSize
+    internal static let indexSize = SizeOf.bigInt
+
+    internal static let size = indexOffset + indexSize
   }
+
+  // MARK: - Properties
+
+  private var startPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Layout.startOffset) }
+  private var stepPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Layout.stepOffset) }
+  private var lengthPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Layout.lengthOffset) }
+  private var indexPtr: Ptr<BigInt> { Ptr(self.ptr, offset: Layout.indexOffset) }
+
+  internal var start: BigInt { self.startPtr.pointee }
+  internal var step: BigInt { self.stepPtr.pointee }
+  internal var length: BigInt { self.lengthPtr.pointee }
+  internal var index: BigInt { self.indexPtr.pointee }
+
+  // MARK: - Swift init
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  // MARK: - Initialize/deinitialize
+
+  internal func initialize(type: PyType, start: BigInt, step: BigInt, length: BigInt) {
+    self.header.initialize(type: type)
+    self.startPtr.initialize(to: start)
+    self.stepPtr.initialize(to: step)
+    self.lengthPtr.initialize(to: length)
+    self.indexPtr.initialize(to: 0)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyRangeIterator(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.startPtr.deinitialize()
+    zelf.stepPtr.deinitialize()
+    zelf.lengthPtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+  }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyRangeIterator(ptr: ptr)
+    return "PyRangeIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Class
 

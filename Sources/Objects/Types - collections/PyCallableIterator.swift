@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // cSpell:ignore iterobject
@@ -7,21 +6,53 @@ import VioletCore
 // Objects -> iterobject.c
 
 // sourcery: pytype = callable_iterator, isDefault, hasGC
-public final class PyCallableIterator: PyObject {
+public struct PyCallableIterator: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal let callable: PyObject
-  internal let sentinel: PyObject
+  internal enum Layout {
+    internal static let callableOffset = SizeOf.objectHeader
+    internal static let callableSize = SizeOf.object
 
-  // MARK: - Init
+    internal static let sentinelOffset = callableOffset + callableSize
+    internal static let sentinelSize = SizeOf.object
 
-  internal init(callable: PyObject, sentinel: PyObject) {
-    self.callable = callable
-    self.sentinel = sentinel
-    super.init(type: Py.types.callable_iterator)
+    internal static let size = sentinelOffset + sentinelSize
   }
+
+  private var callablePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.callableOffset) }
+  private var sentinelPtr: Ptr<PyObject> { Ptr(self.ptr, offset: Layout.sentinelOffset) }
+
+  internal var callable: PyObject { self.callablePtr.pointee }
+  internal var sentinel: PyObject { self.sentinelPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  internal func initialize(type: PyType, callable: PyObject, sentinel: PyObject) {
+    self.header.initialize(type: type)
+    self.callablePtr.initialize(to: callable)
+    self.sentinelPtr.initialize(to: sentinel)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyCallableIterator(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.callablePtr.deinitialize()
+    zelf.sentinelPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyCallableIterator(ptr: ptr)
+    return "PyCallableIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Class
 
