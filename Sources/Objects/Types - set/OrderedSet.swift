@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 /// A generic collection to store unique values in exactly the same order
@@ -127,5 +126,3 @@ extension OrderedSet: Sequence {
     return Iterator(self)
   }
 }
-
-*/

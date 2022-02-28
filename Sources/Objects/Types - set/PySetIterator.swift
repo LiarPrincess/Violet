@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // cSpell:ignore setobject
@@ -7,31 +6,61 @@ import VioletCore
 // Objects -> setobject.c
 
 // sourcery: pytype = set_iterator, isDefault, hasGC
-public final class PySetIterator: PyObject {
+public struct PySetIterator: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  private let set: PyAnySet
-  private var index: Int
-  private var initialCount: Int
+  internal enum Layout {
+    internal static let setOffset = SizeOf.objectHeader
+    internal static let setSize = SizeOf.anySet
 
-  // MARK: - Init
+    internal static let indexOffset = setOffset + setSize
+    internal static let indexSize = SizeOf.int
 
-  internal convenience init(set: PySet) {
-    self.init(set: PyAnySet(set: set))
+    internal static let initialCountOffset = indexOffset + indexSize
+    internal static let initialCountSize = SizeOf.int
+
+    internal static let size = initialCountOffset + initialCountSize
   }
 
-  internal convenience init(frozenSet: PyFrozenSet) {
-    self.init(set: PyAnySet(frozenSet: frozenSet))
+  private var setPtr: Ptr<PyAnySet> { Ptr(self.ptr, offset: Layout.setOffset) }
+  private var indexPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.indexOffset) }
+  private var initialCountPtr: Ptr<Int> { Ptr(self.ptr, offset: Layout.initialCountOffset) }
+
+  internal var set: PyAnySet { self.setPtr.pointee }
+  internal var index: Int { self.indexPtr.pointee }
+  internal var initialCount: Int { self.initialCountPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  private init(set: PyAnySet) {
-    self.set = set
-    self.index = 0
-    self.initialCount = set.elements.count
-    super.init(type: Py.types.set_iterator)
+  internal func initialize(type: PyType, set: PyAnySet) {
+    let initialCount = set.elements.count
+    self.header.initialize(type: type)
+    self.setPtr.initialize(to: set)
+    self.indexPtr.initialize(to: 0)
+    self.initialCountPtr.initialize(to: initialCount)
   }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PySetIterator(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.setPtr.deinitialize()
+    zelf.indexPtr.deinitialize()
+    zelf.initialCountPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PySetIterator(ptr: ptr)
+    return "PySetIterator(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Class
 

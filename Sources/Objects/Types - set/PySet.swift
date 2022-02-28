@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -11,14 +10,10 @@ import VioletCore
 
 // sourcery: pytype = set, isDefault, hasGC, isBaseType
 // sourcery: subclassInstancesHave__dict__
-public final class PySet: PyObject, AbstractSet {
-
-  // MARK: - Element, OrderedSet
+ public struct PySet: PyObjectMixin, AbstractSet {
 
   internal typealias Element = AbstractSet_Element
   internal typealias OrderedSet = VioletObjects.OrderedSet<Element>
-
-  // MARK: - Properties
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -28,19 +23,40 @@ public final class PySet: PyObject, AbstractSet {
     Build an unordered collection of unique elements.
     """
 
-  internal var elements: OrderedSet
+   internal enum Layout {
+     internal static let elementsOffset = SizeOf.objectHeader
+     internal static let elementsSize = SizeOf.orderedSet
+     internal static let size = elementsOffset + elementsSize
+   }
 
-  // MARK: - Init
+   private var elementsPtr: Ptr<OrderedSet> { Ptr(self.ptr, offset: Layout.elementsOffset) }
+   internal var elements: OrderedSet { self.elementsPtr.pointee }
 
-  internal convenience init(elements: PySet.OrderedSet) {
-    let type = Py.types.set
-    self.init(type: type, elements: elements)
-  }
+   public let ptr: RawPtr
 
-  internal init(type: PyType, elements: PySet.OrderedSet) {
-    self.elements = elements
-    super.init(type: type)
-  }
+   public init(ptr: RawPtr) {
+     self.ptr = ptr
+   }
+
+   internal func initialize(type: PyType, elements: OrderedSet) {
+     self.header.initialize(type: type)
+     self.elementsPtr.initialize(to: elements)
+   }
+
+   internal static func deinitialize(ptr: RawPtr) {
+     let zelf = PySet(ptr: ptr)
+     zelf.header.deinitialize()
+     zelf.elementsPtr.deinitialize()
+   }
+
+   internal static func createDebugString(ptr: RawPtr) -> String {
+     let zelf = PySet(ptr: ptr)
+     let count = zelf.elements.count
+     return "PySet(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count))"
+   }
+ }
+
+/* MARKER
 
   // MARK: - AbstractSet
 

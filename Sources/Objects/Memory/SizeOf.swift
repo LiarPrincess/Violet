@@ -37,8 +37,8 @@ public enum SizeOf {
   // public static let FunctionWrapper = -1
   // public static let ObjectStack = -1
   public static let orderedDictionary = -1
-  // public static let OrderedSet = -1
-  // public static let PyAnySet = -1
+  public static let orderedSet = -1
+  public static let anySet = -1
   // public static let PyString.Encoding = -1
   // public static let PyString.ErrorHandling = -1
   // public static let SourceLine = -1
@@ -68,8 +68,8 @@ public enum SizeOf {
     // Self.checkSize(of: FunctionWrapper.self, expected: Self.FunctionWrapper)
     // Self.checkSize(of: ObjectStack.self, expected: Self.ObjectStack)
     Self.checkSize(of: OrderedDictionary<PyDict.Key, Int>.self, expected: Self.orderedDictionary)
-    // Self.checkSize(of: OrderedSet.self, expected: Self.OrderedSet)
-    // Self.checkSize(of: PyAnySet.self, expected: Self.PyAnySet)
+    Self.checkSize(of: OrderedSet<AbstractSet_Element>.self, expected: Self.orderedSet)
+    Self.checkSize(of: PyAnySet.self, expected: Self.anySet)
     // Self.checkSize(of: PyString.Encoding.self, expected: Self.PyString.Encoding)
     // Self.checkSize(of: PyString.ErrorHandling.self, expected: Self.PyString.ErrorHandling)
     // Self.checkSize(of: SourceLine.self, expected: Self.SourceLine)
