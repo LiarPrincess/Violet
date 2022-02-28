@@ -12,3 +12,4 @@ public enum PyResult<Wrapped> {
 internal typealias PyFunctionResult = PyResult<PyObject>
 
 public protocol PyFunctionResultConvertible {}
+public protocol HasCustomGetMethod {}

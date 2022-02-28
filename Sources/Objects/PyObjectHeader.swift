@@ -5,15 +5,15 @@ import VioletCore
 /// Guaranteed to be word aligned.
 public struct PyObjectHeader {
 
-  public enum Layout {
-    public static let typeOffset = 0
-    public static let typeSize = SizeOf.object
+  internal enum Layout {
+    internal static let typeOffset = 0
+    internal static let typeSize = SizeOf.object
 
-    public static let __dict__Offset = typeOffset + typeSize
-    public static let __dict__Size = SizeOf.object
+    internal static let __dict__Offset = typeOffset + typeSize
+    internal static let __dict__Size = SizeOf.optionalObject
 
-    public static let flagsOffset = __dict__Offset + __dict__Size
-    public static let flagsSize = Flags.size
+    internal static let flagsOffset = __dict__Offset + __dict__Size
+    internal static let flagsSize = Flags.size
 
     internal static let size = AlignmentOf.roundUp(
       Layout.flagsOffset + Layout.flagsSize,
@@ -95,14 +95,18 @@ public struct PyObjectHeader {
 
   // MARK: - Initialize
 
-  public func initialize(type: PyType, __dict__: PyDict?) {
+  internal func initialize(type: PyType) {
     let flags = PyObjectHeader.Flags()
     self.typePtr.initialize(to: type)
-    self.__dict__Ptr.initialize(to: __dict__)
+    self.__dict__Ptr.initialize(to: nil)
     self.flagsPtr.initialize(to: flags)
+
+    // Copy the flag from type, for easier access.
+    let has__dict__ = type.typeFlags.instancesHave__dict__
+    self.flags.set(.has__dict__, to: has__dict__)
   }
 
-  public func deinitialize() {
+  internal func deinitialize() {
     self.typePtr.deinitialize()
     self.__dict__Ptr.deinitialize()
     self.flagsPtr.deinitialize() // Trivial

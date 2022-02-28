@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // swiftlint:disable file_length
@@ -10,23 +9,7 @@ import VioletCore
 
 // sourcery: pytype = type, isDefault, hasGC, isBaseType, isTypeSubclass
 // sourcery: instancesHave__dict__
-public final class PyType: PyObject, CustomReflectable, HasCustomGetMethod {
-
-  // MARK: - Weak ref
-
-  /// Box to store `weak` reference to `PyType`.
-  /// Used to store subclasses (to avoid cycle, since we also store reference
-  /// to base classes in `mro`).
-  internal struct WeakRef {
-
-    fileprivate weak var value: PyType?
-
-    fileprivate init(_ value: PyType) {
-      self.value = value
-    }
-  }
-
-  // MARK: - Properties & init
+public struct PyType: PyObjectMixin, HasCustomGetMethod {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -35,51 +18,169 @@ public final class PyType: PyObject, CustomReflectable, HasCustomGetMethod {
     type(name, bases, dict) -> a new type
     """
 
-  // object type - type: typeType, base: nil,        mro: [self]
-  // type type   - type: typeType, base: objectType, mro: [self, objectType]
-  // normal type - type: typeType, base: objectType, mro: [self, objectType]
-  private var name: String
-  private var qualname: String
-  private var base: PyType?
-  private var bases: [PyType]
-  private var mro: [PyType]
-  private var subclasses: [WeakRef] = []
+  public typealias DebugFn = (RawPtr) -> String
+  public typealias DeinitializeFn = (RawPtr) -> Void
+
+  // MARK: - Layout
+
+  internal enum Layout {
+    internal static let nameOffset = SizeOf.objectHeader
+    internal static let nameSize = SizeOf.string
+
+    internal static let qualnameOffset = nameOffset + nameSize
+    internal static let qualnameSize = SizeOf.string
+
+    internal static let baseOffset = qualnameOffset + qualnameSize
+    internal static let baseSize = SizeOf.optionalObject
+
+    internal static let basesOffset = baseOffset + baseSize
+    internal static let basesSize = SizeOf.array
+
+    internal static let mroOffset = basesOffset + basesSize
+    internal static let mroSize = SizeOf.array
+
+    internal static let subclassesOffset = mroOffset + mroSize
+    internal static let subclassesSize = SizeOf.array
+
+    internal static let layoutOffset = subclassesOffset + subclassesSize
+    internal static let layoutSize = SizeOf.typeMemoryLayout
+
+    internal static let staticMethodsOffset = layoutOffset + layoutSize
+    internal static let staticMethodsSize = SizeOf.typeStaticallyKnownNotOverriddenMethods
+
+    internal static let debugFnOffset = staticMethodsOffset + staticMethodsSize
+    internal static let debugFnSize = SizeOf.function
+
+    internal static let deinitializeOffset = debugFnOffset + debugFnSize
+    internal static let deinitializeSize = SizeOf.function
+
+    internal static let size = deinitializeOffset + deinitializeSize
+  }
+
+  // MARK: - Properties
+
+  // swiftlint:disable line_length
+  private var namePtr: Ptr<String> { Ptr(self.ptr, offset: Layout.nameOffset) }
+  private var qualnamePtr: Ptr<String> { Ptr(self.ptr, offset: Layout.qualnameOffset) }
+  private var basePtr: Ptr<PyType?> { Ptr(self.ptr, offset: Layout.baseOffset) }
+  private var basesPtr: Ptr<[PyType]> { Ptr(self.ptr, offset: Layout.basesOffset) }
+  private var mroPtr: Ptr<[PyType]> { Ptr(self.ptr, offset: Layout.mroOffset) }
+  private var subclassesPtr: Ptr<[PyType]> { Ptr(self.ptr, offset: Layout.subclassesOffset) }
+  private var layoutPtr: Ptr<MemoryLayout> { Ptr(self.ptr, offset: Layout.layoutOffset) }
+  private var staticMethodsPtr: Ptr<StaticallyKnownNotOverriddenMethods> { Ptr(self.ptr, offset: Layout.staticMethodsOffset) }
+  private var debugFnPtr: Ptr<DebugFn> { Ptr(self.ptr, offset: Layout.debugFnOffset) }
+  private var deinitializePtr: Ptr<DeinitializeFn> { Ptr(self.ptr, offset: Layout.deinitializeOffset) }
+  // swiftlint:enable line_length
+
+  //             | Type     | Base       | MRO
+  // object type | typeType | nil        | [self]
+  // type type   | typeType | objectType | [self, objectType]
+  // normal type | typeType | objectType | [self, (...), objectType]
+  internal var name: String { self.namePtr.pointee }
+  internal var qualname: String { self.qualnamePtr.pointee }
+  internal var base: PyType? { self.basePtr.pointee }
+  internal var bases: [PyType] { self.basesPtr.pointee }
+  internal var mro: [PyType] { self.mroPtr.pointee }
+  internal var subclasses: [PyType] { self.subclassesPtr.pointee }
 
   /// Swift storage (layout).
   /// See `PyType.MemoryLayout` documentation for details.
-  internal let layout: MemoryLayout
+  internal var layout: MemoryLayout { self.layoutPtr.pointee }
 
   /// Methods needed to make `PyStaticCall` work.
   ///
   /// See `PyStaticCall` documentation for more information.
-  internal let staticMethods: StaticallyKnownNotOverriddenMethods
+  internal var staticMethods: StaticallyKnownNotOverriddenMethods {
+    self.staticMethodsPtr.pointee
+  }
 
-  /// `Object.flags` that are only available on `type` instances.
+  internal var debugFn: DebugFn { self.debugFnPtr.pointee }
+  internal var deinitializer: DeinitializeFn { self.deinitializePtr.pointee }
+
+  /// `PyObjectHeader.flags` that are only available on `type` instances.
   internal var typeFlags: TypeFlags {
     get { return TypeFlags(objectFlags: self.flags) }
     set { self.flags.setCustomFlags(from: newValue.objectFlags) }
   }
 
-  // MARK: - Mirror
+  // MARK: - Swift init
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  // MARK: - Initialize/deinitialize
+
+  // swiftlint:disable:next function_parameter_count
+  internal func initialize(type: PyType,
+                           name: String,
+                           qualname: String,
+                           base: PyType?,
+                           bases: [PyType],
+                           mro: [PyType],
+                           subclasses: [PyType],
+                           layout: MemoryLayout,
+                           staticMethods: StaticallyKnownNotOverriddenMethods,
+                           debugFn: @escaping DebugFn,
+                           deinitialize: @escaping DeinitializeFn) {
+    self.header.initialize(type: type)
+    self.namePtr.initialize(to: name)
+    self.qualnamePtr.initialize(to: qualname)
+    self.basePtr.initialize(to: base)
+    self.basesPtr.initialize(to: bases)
+    self.mroPtr.initialize(to: mro)
+    self.subclassesPtr.initialize(to: subclasses)
+    self.layoutPtr.initialize(to: layout)
+    self.staticMethodsPtr.initialize(to: staticMethods)
+    self.debugFnPtr.initialize(to: debugFn)
+    self.deinitializePtr.initialize(to: deinitialize)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyType(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.namePtr.deinitialize()
+    zelf.qualnamePtr.deinitialize()
+    zelf.basePtr.deinitialize()
+    zelf.basesPtr.deinitialize()
+    zelf.mroPtr.deinitialize()
+    zelf.subclassesPtr.deinitialize()
+    zelf.layoutPtr.deinitialize()
+    zelf.staticMethodsPtr.deinitialize()
+    zelf.debugFnPtr.deinitialize()
+    zelf.deinitializePtr.deinitialize()
+  }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyType(ptr: ptr)
+    return "PyType(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
   // We use mirrors to create description.
-  public var customMirror: Mirror {
-    let base = self.base?.name ?? "nil"
-    let bases = self.bases.map { $0.name }
-    let mro = self.mro.map { $0.name }
+//  public var customMirror: Mirror {
+//    let base = self.base?.name ?? "nil"
+//    let bases = self.bases.map { $0.name }
+//    let mro = self.mro.map { $0.name }
+//
+//    return Mirror(
+//      self,
+//      children: [
+//        "name": self.name,
+//        "qualname": self.qualname,
+//        "typeFlags": self.typeFlags,
+//        "base": base,
+//        "bases": bases,
+//        "mro": mro
+//      ]
+//    )
+//  }
+}
 
-    return Mirror(
-      self,
-      children: [
-        "name": self.name,
-        "qualname": self.qualname,
-        "typeFlags": self.typeFlags,
-        "base": base,
-        "bases": bases,
-        "mro": mro
-      ]
-    )
-  }
+/* MARKER
 
   // MARK: - Init
 
