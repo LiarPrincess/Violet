@@ -41,7 +41,7 @@ public enum AlignmentOf {
     // Self.checkAlignment(of: FunctionWrapper.self, isLessEqual: Self.FunctionWrapper)
 
     // Self.checkAlignment(of: ObjectStack.self, isLessEqual: Self.ObjectStack)
-    // Self.checkAlignment(of: OrderedDictionary.self, isLessEqual: Self.OrderedDictionary)
+    Self.checkAlignment(of: OrderedDictionary<PyDict.Key, Int>.self, isLessEqual: AlignmentOf.word)
     // Self.checkAlignment(of: OrderedSet.self, isLessEqual: Self.OrderedSet)
     // Self.checkAlignment(of: PyAnySet.self, isLessEqual: Self.PyAnySet)
     // Self.checkAlignment(of: PyString.Encoding.self, isLessEqual: Self.PyString.Encoding)

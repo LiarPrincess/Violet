@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // swiftlint:disable file_length
@@ -656,5 +655,3 @@ private func getIndexMask(size: Int) -> Int {
   assert(size > 0)
   return size - 1
 }
-
-*/

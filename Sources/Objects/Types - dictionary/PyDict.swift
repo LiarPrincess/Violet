@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -12,7 +11,20 @@ import VioletCore
 // sourcery: pytype = dict, isDefault, hasGC, isBaseType, isDictSubclass
 // sourcery: subclassInstancesHave__dict__
 /// This subtype of PyObject represents a Python dictionary object.
-public final class PyDict: PyObject {
+public struct PyDict: PyObjectMixin {
+
+  // sourcery: pytypedoc
+  internal static let doc = """
+    dict() -> new empty dictionary
+    dict(mapping) -> new dictionary initialized from a mapping object's
+    (key, value) pairs
+    dict(iterable) -> new dictionary initialized as if via:
+    d = {}
+    for k, v in iterable:
+    d[k] = v
+    dict(**kwargs) -> new dictionary initialized with the name=value pairs
+    in the keyword argument list.  For example:  dict(one=1, two=2)
+    """
 
   // MARK: - OrderedDictionary
 
@@ -31,7 +43,7 @@ public final class PyDict: PyObject {
 
     internal init(id: IdString) {
       self.hash = id.hash
-      self.object = id.value
+      self.object = id.value.asObject
     }
 
     internal init(hash: PyHash, object: PyObject) {
@@ -58,34 +70,42 @@ public final class PyDict: PyObject {
     }
   }
 
-  // MARK: - Properties
+  // MARK: - Standard stuff...
 
-  // sourcery: pytypedoc
-  internal static let doc = """
-    dict() -> new empty dictionary
-    dict(mapping) -> new dictionary initialized from a mapping object's
-    (key, value) pairs
-    dict(iterable) -> new dictionary initialized as if via:
-    d = {}
-    for k, v in iterable:
-    d[k] = v
-    dict(**kwargs) -> new dictionary initialized with the name=value pairs
-    in the keyword argument list.  For example:  dict(one=1, two=2)
-    """
-
-  internal var elements: OrderedDictionary
-
-  // MARK: - Init
-
-  internal init(elements: PyDict.OrderedDictionary) {
-    self.elements = elements
-    super.init(type: Py.types.dict)
+  internal enum Layout {
+    internal static let elementsOffset = SizeOf.objectHeader
+    internal static let elementsSize = SizeOf.orderedDictionary
+    internal static let size = elementsOffset + elementsSize
   }
 
-  internal init(type: PyType, elements: PyDict.OrderedDictionary) {
-    self.elements = elements
-    super.init(type: type)
+  private var elementsPtr: Ptr<OrderedDictionary> { Ptr(self.ptr, offset: Layout.elementsOffset) }
+  internal var elements: OrderedDictionary { self.elementsPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
+
+  internal func initialize(type: PyType, elements: OrderedDictionary) {
+    self.header.initialize(type: type)
+    self.elementsPtr.initialize(to: elements)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyDict(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.elementsPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyDict(ptr: ptr)
+    let count = zelf.elements.count
+    return "PyDict(type: \(zelf.typeName), flags: \(zelf.flags), count: \(count)"
+  }
+}
+
+/* MARKER
 
   // MARK: - Equatable
 

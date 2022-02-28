@@ -1,6 +1,6 @@
-// swiftlint:disable fatal_error_message
-
-public struct PyDict {}
+public struct PyString {
+  public var asObject: PyObject { fatalError() }
+}
 public struct PyBaseException {}
 
 extension PyType {

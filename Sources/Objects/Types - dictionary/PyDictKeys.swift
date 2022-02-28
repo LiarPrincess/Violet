@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import VioletCore
 
@@ -8,7 +7,7 @@ import VioletCore
 // Objects -> dictobject.c
 
 // sourcery: pytype = dict_keys, isDefault, hasGC
-public final class PyDictKeys: PyObject, AbstractDictView {
+public struct PyDictKeys: PyObjectMixin, AbstractDictView {
 
   internal typealias OrderedDictionary = PyDict.OrderedDictionary
   internal typealias Element = OrderedDictionary.Element
@@ -16,14 +15,39 @@ public final class PyDictKeys: PyObject, AbstractDictView {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal let dict: PyDict
-
-  // MARK: - Init
-
-  internal init(dict: PyDict) {
-    self.dict = dict
-    super.init(type: Py.types.dict_keys)
+  internal enum Layout {
+    internal static let dictOffset = SizeOf.objectHeader
+    internal static let dictSize = SizeOf.object
+    internal static let size = dictOffset + dictSize
   }
+
+  private var dictPtr: Ptr<PyDict> { Ptr(self.ptr, offset: Layout.dictOffset) }
+  internal var dict: PyDict { self.dictPtr.pointee }
+
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
+  }
+
+  internal func initialize(type: PyType, dict: PyDict) {
+    self.header.initialize(type: type)
+    self.dictPtr.initialize(to: dict)
+  }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyDictKeys(ptr: ptr)
+    zelf.header.deinitialize()
+    zelf.dictPtr.deinitialize()
+  }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyDictKeys(ptr: ptr)
+    return "PyDictKeys(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Equatable
 
