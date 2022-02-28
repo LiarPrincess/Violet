@@ -16,46 +16,48 @@ public enum AlignmentOf {
   }
 
   internal static func checkInvariants() {
-    Self.checkAlignment(of: RawPtr.self, isLessEqual: AlignmentOf.word)
-    Self.checkAlignment(of: Ptr<PyObject>.self, isLessEqual: AlignmentOf.word)
+    Self.checkIfAlignmentIsLessEqualWord(RawPtr.self)
+    Self.checkIfAlignmentIsLessEqualWord(Ptr<PyObject>.self)
 
-    Self.checkAlignment(of: Int.self, isLessEqual: AlignmentOf.word)
-    Self.checkAlignment(of: UInt32.self, isLessEqual: AlignmentOf.word)
-    Self.checkAlignment(of: BigInt.self, isLessEqual: AlignmentOf.word)
-    Self.checkAlignment(of: PyHash.self, isLessEqual: AlignmentOf.word)
-    Self.checkAlignment(of: Double.self, isLessEqual: AlignmentOf.word)
+    Self.checkIfAlignmentIsLessEqualWord(Int.self)
+    Self.checkIfAlignmentIsLessEqualWord(UInt32.self)
+    Self.checkIfAlignmentIsLessEqualWord(BigInt.self)
+    Self.checkIfAlignmentIsLessEqualWord(PyHash.self)
+    Self.checkIfAlignmentIsLessEqualWord(Double.self)
 
-    Self.checkAlignment(of: [PyObject].self, isLessEqual: AlignmentOf.word)
-    Self.checkAlignment(of: String.self, isLessEqual: AlignmentOf.word)
-    Self.checkAlignment(of: Data.self, isLessEqual: AlignmentOf.word)
+    Self.checkIfAlignmentIsLessEqualWord([PyObject].self)
+    Self.checkIfAlignmentIsLessEqualWord(String.self)
+    Self.checkIfAlignmentIsLessEqualWord(Optional<String>.self)
+    Self.checkIfAlignmentIsLessEqualWord(Data.self)
 
-    Self.checkAlignment(of: PyType.DeinitializeFn.self, isLessEqual: AlignmentOf.word)
+    Self.checkIfAlignmentIsLessEqualWord(PyType.DeinitializeFn.self)
 
-    Self.checkAlignment(of: PyType.MemoryLayout.self, isLessEqual: AlignmentOf.word)
-    Self.checkAlignment(of: PyType.StaticallyKnownNotOverriddenMethods.self,
-                        isLessEqual: AlignmentOf.word)
+    Self.checkIfAlignmentIsLessEqualWord(PyType.MemoryLayout.self)
+    Self.checkIfAlignmentIsLessEqualWord(PyType.StaticallyKnownNotOverriddenMethods.self)
 
-    // Self.checkAlignment(of: BlockStack.self, isLessEqual: Self.BlockStack)
-    // Self.checkAlignment(of: CodeObject.self, isLessEqual: Self.CodeObject)
-    // Self.checkAlignment(of: FileDescriptorType.self, isLessEqual: Self.FileDescriptorType)
-    // Self.checkAlignment(of: FileMode.self, isLessEqual: Self.FileMode)
-    // Self.checkAlignment(of: FunctionWrapper.self, isLessEqual: Self.FunctionWrapper)
+    Self.checkIfAlignmentIsLessEqualWord(OrderedDictionary<PyDict.Key, Int>.self)
+    Self.checkIfAlignmentIsLessEqualWord(OrderedSet<AbstractSet_Element>.self)
+    Self.checkIfAlignmentIsLessEqualWord(PyAnySet.self)
 
-    // Self.checkAlignment(of: ObjectStack.self, isLessEqual: Self.ObjectStack)
-    Self.checkAlignment(of: OrderedDictionary<PyDict.Key, Int>.self, isLessEqual: AlignmentOf.word)
-    Self.checkAlignment(of: OrderedSet<AbstractSet_Element>.self, isLessEqual: AlignmentOf.word)
-    Self.checkAlignment(of: PyAnySet.self, isLessEqual: AlignmentOf.word)
-    // Self.checkAlignment(of: PyString.Encoding.self, isLessEqual: Self.PyString.Encoding)
-    // Self.checkAlignment(of: PyString.ErrorHandling.self,
-    //                     isLessEqual: Self.PyString.ErrorHandling)
-    // Self.checkAlignment(of: SourceLine.self, isLessEqual: Self.SourceLine)
+    // Self.checkIfAlignmentIsLessEqualWord(BlockStack.self)
+    // Self.checkIfAlignmentIsLessEqualWord(CodeObject.self)
+
+    // Self.checkIfAlignmentIsLessEqualWord(FunctionWrapper.self)
+    // Self.checkIfAlignmentIsLessEqualWord(ObjectStack.self)
+    // Self.checkIfAlignmentIsLessEqualWord(SourceLine.self)
+
+     Self.checkIfAlignmentIsLessEqualWord(FileDescriptorType.self)
+     Self.checkIfAlignmentIsLessEqualWord(FileMode.self)
+     Self.checkIfAlignmentIsLessEqualWord(PyString.Encoding.self)
+     Self.checkIfAlignmentIsLessEqualWord(PyString.ErrorHandling.self)
   }
 
-  private static func checkAlignment<T>(of type: T.Type, isLessEqual: Int) {
+  // I know, this is a very weird check...
+  private static func checkIfAlignmentIsLessEqualWord<T>(_ type: T.Type) {
     let alignment = MemoryLayout<T>.alignment
-    guard alignment <= isLessEqual else {
+    guard alignment <= AlignmentOf.word else {
       let typeName = String(describing: type)
-      trap("[Invariant] \(typeName) has alignment \(alignment) instead of expected \(isLessEqual)")
+      trap("[Invariant] \(typeName) has alignment \(alignment) instead of expected word")
     }
   }
 }

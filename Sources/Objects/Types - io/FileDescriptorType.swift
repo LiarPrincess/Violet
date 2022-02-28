@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 
 public protocol FileDescriptorType {
@@ -22,5 +21,3 @@ public protocol FileDescriptorType {
 
   func close() -> PyResult<PyNone>
 }
-
-*/

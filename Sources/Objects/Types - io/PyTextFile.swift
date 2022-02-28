@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 
 // cSpell:ignore textio
@@ -21,7 +20,7 @@ import Foundation
 /// - some methods are missing
 /// - it is in` builtins` module (because we are too lazy to introduce a new one)
 /// - class hierarchy is missing
-public final class PyTextFile: PyObject {
+public struct PyTextFile: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -35,61 +34,106 @@ public final class PyTextFile: PyObject {
     defaults to "strict".
     """
 
-  internal let name: String?
-  internal let fd: FileDescriptorType
-  internal let mode: FileMode
-  internal let encoding: PyString.Encoding
-  internal let errorHandling: PyString.ErrorHandling
+  // MARK: - Layout
 
-  private static let closeOnDeallocFlag = PyObject.Flags.custom0
+  internal enum Layout {
+    internal static let nameOffset = SizeOf.objectHeader
+    internal static let nameSize = SizeOf.optionalString
+
+    internal static let fdOffset = nameOffset + nameSize
+    internal static let fdSize = SizeOf.fileDescriptorType
+
+    internal static let modeOffset = fdOffset + fdSize
+    internal static let modeSize = SizeOf.fileMode
+
+    internal static let encodingOffset = modeOffset + modeSize
+    internal static let encodingSize = SizeOf.stringEncoding
+
+    internal static let errorHandlingOffset = encodingOffset + encodingSize
+    internal static let errorHandlingSize = SizeOf.stringErrorHandling
+
+    internal static let size = errorHandlingOffset + errorHandlingSize
+  }
+
+  // MARK: - Properties
+
+  private var namePtr: Ptr<String?> { Ptr(self.ptr, offset: Layout.nameOffset) }
+  private var fdPtr: Ptr<FileDescriptorType> { Ptr(self.ptr, offset: Layout.fdOffset) }
+  private var modePtr: Ptr<FileMode> { Ptr(self.ptr, offset: Layout.modeOffset) }
+  private var encodingPtr: Ptr<PyString.Encoding> { Ptr(self.ptr, offset: Layout.encodingOffset) }
+  private var errorHandlingPtr: Ptr<PyString.ErrorHandling> { Ptr(self.ptr, offset: Layout.errorHandlingOffset) }
+
+  internal var name: String? { self.namePtr.pointee }
+  internal var fd: FileDescriptorType { self.fdPtr.pointee }
+  internal var mode: FileMode { self.modePtr.pointee }
+  internal var encoding: PyString.Encoding { self.encodingPtr.pointee }
+  internal var errorHandling: PyString.ErrorHandling { self.errorHandlingPtr.pointee }
+
+  private static let closeOnDeallocFlag = PyObjectHeader.Flags.custom0
 
   /// Should we close the file when deallocating?
   internal var closeOnDealloc: Bool {
     get { self.flags.isSet(Self.closeOnDeallocFlag) }
-    set { self.flags.set(Self.closeOnDeallocFlag, to: newValue) }
+    nonmutating set { self.flags.set(Self.closeOnDeallocFlag, to: newValue) }
   }
 
-  // MARK: - Init
+  // MARK: - Swift init
 
-  internal convenience init(fd: FileDescriptorType,
-                            mode: FileMode,
-                            encoding: PyString.Encoding,
-                            errorHandling: PyString.ErrorHandling,
-                            closeOnDealloc: Bool) {
-    self.init(name: nil,
-              fd: fd,
-              mode: mode,
-              encoding: encoding,
-              errorHandling: errorHandling,
-              closeOnDealloc: closeOnDealloc)
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  internal init(name: String?,
-                fd: FileDescriptorType,
-                mode: FileMode,
-                encoding: PyString.Encoding,
-                errorHandling: PyString.ErrorHandling,
-                closeOnDealloc: Bool) {
-    self.name = name
-    self.fd = fd
-    self.encoding = encoding
-    self.errorHandling = errorHandling
-    self.mode = mode
-    super.init(type: Py.types.textFile)
+  // MARK: - Initialize/deinitialize
+
+  // swiftlint:disable:next function_parameter_count
+  internal func initialize(type: PyType,
+                           name: String?,
+                           fd: FileDescriptorType,
+                           mode: FileMode,
+                           encoding: PyString.Encoding,
+                           errorHandling: PyString.ErrorHandling,
+                           closeOnDealloc: Bool) {
+    self.header.initialize(type: type)
+    self.namePtr.initialize(to: name)
+    self.fdPtr.initialize(to: fd)
+    self.modePtr.initialize(to: mode)
+    self.encodingPtr.initialize(to: encoding)
+    self.errorHandlingPtr.initialize(to: errorHandling)
     self.closeOnDealloc = closeOnDealloc
   }
 
-  // MARK: - Deinit
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyTextFile(ptr: ptr)
 
-  deinit {
     // Remember that during 'deinit' we are not allowed to call any other
-    // 'Py' function as the whole 'Py' may be deinitializing.
+    // 'Python' function as the whole context may be deinitializing.
 
-    if self.closeOnDealloc {
+    if zelf.closeOnDealloc {
       // Regardless of whether it succeeded/failed we will ignore result.
-      _ = self.closeIfNotAlreadyClosed()
+      _ = zelf.closeIfNotAlreadyClosed()
     }
+
+    zelf.header.deinitialize()
+    zelf.namePtr.deinitialize()
+    zelf.fdPtr.deinitialize()
+    zelf.modePtr.deinitialize()
+    zelf.encodingPtr.deinitialize()
+    zelf.errorHandlingPtr.deinitialize()
   }
+
+  private func closeIfNotAlreadyClosed() -> Int { return 1 }
+
+  // MARK: - Debug
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyTextFile(ptr: ptr)
+    return "PyTextFile(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - String
 

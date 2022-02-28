@@ -1,4 +1,3 @@
-/* MARKER
 /// Some places refer to modules that we do not have implemented.
 /// We will put all of the assumed values here.
 internal enum Unimplemented {
@@ -30,5 +29,3 @@ internal enum Unimplemented {
     internal static let getpreferredencoding = PyString.Encoding.utf8
   }
 }
-
-*/

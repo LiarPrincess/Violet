@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 
 extension PyString {
@@ -164,5 +163,3 @@ extension PyString {
     }
   }
 }
-
-*/
