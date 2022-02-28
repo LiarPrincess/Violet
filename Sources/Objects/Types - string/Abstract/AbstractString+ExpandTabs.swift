@@ -1,3 +1,4 @@
+/* MARKER
 extension AbstractString {
 
   /// DO NOT USE! This is a part of `AbstractString` implementation.
@@ -57,3 +58,5 @@ extension AbstractString {
     return .value(int)
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -235,3 +236,5 @@ extension PyInstance {
     return nil
   }
 }
+
+*/

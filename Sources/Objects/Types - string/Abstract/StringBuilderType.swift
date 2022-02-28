@@ -1,3 +1,4 @@
+/* MARKER
 /// Sometimes we will slice `String` and then try to concat pieces together
 /// (for example in `replace`).
 /// We can use `Array` as an accumulator, but then we would have to convert
@@ -34,3 +35,5 @@ internal protocol StringBuilderType {
 
   func finalize() -> Result
 }
+
+*/

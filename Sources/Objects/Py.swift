@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import BigInt
 import FileSystem
@@ -413,3 +414,5 @@ public final class PyInstance {
     return str
   }
 }
+
+*/

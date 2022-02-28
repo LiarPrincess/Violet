@@ -1,3 +1,4 @@
+/* MARKER
 // In CPython:
 // Python -> _warnings.c
 // https://docs.python.org/3/library/warnings.html
@@ -171,3 +172,5 @@ extension UnderscoreWarnings {
     }
   }
 }
+
+*/

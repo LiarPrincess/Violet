@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // cSpell:ignore unicodeobject
@@ -81,3 +82,5 @@ public final class PyStringIterator: PyObject {
     return .typeError("cannot create 'str_iterator' instances")
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 extension AbstractString {
 
   // MARK: - Starts with
@@ -112,3 +113,5 @@ extension AbstractString {
     return .typeError(msg)
   }
 }
+
+*/

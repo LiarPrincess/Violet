@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -467,3 +468,5 @@ public final class PySet: PyObject, AbstractSet {
     return .value(Py.none)
   }
 }
+
+*/

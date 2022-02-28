@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -210,3 +211,5 @@ extension PyInstance {
     }
   }
 }
+
+*/

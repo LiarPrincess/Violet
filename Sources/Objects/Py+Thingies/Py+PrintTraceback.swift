@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import BigInt
 import FileSystem
@@ -358,3 +359,5 @@ extension PyInstance {
     }
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // cSpell:ignore ceval
@@ -288,3 +289,5 @@ public final class Sys: PyModuleImplementation {
     }
   }
 }
+
+*/

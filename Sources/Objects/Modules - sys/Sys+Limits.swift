@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -64,3 +65,5 @@ extension Sys {
     return self.getInt(.tracebacklimit)
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 extension AbstractString {
 
   // MARK: - Add
@@ -77,3 +78,5 @@ extension AbstractString {
     return self._mul(count: count)
   }
 }
+
+*/

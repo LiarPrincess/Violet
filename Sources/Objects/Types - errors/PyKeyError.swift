@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -77,3 +78,5 @@ public final class PyKeyError: PyLookupError {
     return self.pyLookupErrorInit(args: args, kwargs: kwargs)
   }
 }
+
+*/

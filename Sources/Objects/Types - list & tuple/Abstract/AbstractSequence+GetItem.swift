@@ -1,3 +1,4 @@
+/* MARKER
 private enum GetItemImpl: GetItemHelper {
   fileprivate typealias Source = [PyObject]
   fileprivate typealias SliceBuilder = GetItemSliceBuilder
@@ -47,3 +48,5 @@ extension AbstractSequence {
     return GetItemImpl.getItem(source: self.elements, index: index)
   }
 }
+
+*/

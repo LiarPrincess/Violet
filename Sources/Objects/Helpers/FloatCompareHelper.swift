@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -253,3 +254,5 @@ internal enum FloatCompareHelper {
     return GreaterEqualCompare.compare(left: left, right: right)
   }
 }
+
+*/

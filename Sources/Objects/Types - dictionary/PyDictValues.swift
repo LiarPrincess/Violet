@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -70,3 +71,5 @@ public final class PyDictValues: PyObject, AbstractDictView {
     return PyMemory.newDictValueIterator(dict: self.dict)
   }
 }
+
+*/

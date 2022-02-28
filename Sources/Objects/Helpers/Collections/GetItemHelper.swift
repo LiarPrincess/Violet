@@ -1,3 +1,4 @@
+/* MARKER
 // swiftlint:disable yoda_condition
 
 internal enum GetItemResult<Element, SliceBuilderResult> {
@@ -135,3 +136,5 @@ extension GetItemHelper {
     return .value(result)
   }
 }
+
+*/

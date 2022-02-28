@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 
 // swiftlint:disable type_name
@@ -159,3 +160,5 @@ extension AbstractString {
     }
   }
 }
+
+*/

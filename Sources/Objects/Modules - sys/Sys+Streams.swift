@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -169,3 +170,5 @@ extension Sys {
                                 closeOnDealloc: false)
   }
 }
+
+*/

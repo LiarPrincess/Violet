@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // cSpell:ignore dictobject
@@ -74,3 +75,5 @@ public final class PyDictValueIterator: PyObject, AbstractDictViewIterator {
     return .typeError("cannot create 'dict_valueiterator' instances")
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 // Docs:
 // https://docs.python.org/3/howto/descriptor.html
 
@@ -167,3 +168,5 @@ internal class SetDescriptor {
     }
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 // cSpell:ignore namespaceobject
 
 // In CPython:
@@ -171,3 +172,5 @@ public final class PyNamespace: PyObject {
     return .value(Py.none)
   }
 }
+
+*/

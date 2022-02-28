@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -92,3 +93,5 @@ extension Builtins {
     trap("'builtins.\(name)' is not implemented")
   }
 }
+
+*/

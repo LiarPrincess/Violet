@@ -1,3 +1,4 @@
+/* MARKER
 // In CPython:
 // Python -> import.c
 
@@ -148,3 +149,5 @@ public final class UnderscoreImp: PyModuleImplementation {
     }
   }
 }
+
+*/

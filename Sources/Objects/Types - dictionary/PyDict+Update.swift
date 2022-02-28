@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -192,3 +193,5 @@ extension PyDict {
     }
   }
 }
+
+*/

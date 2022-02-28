@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -118,3 +119,5 @@ extension PyList {
     return Py.newValueError(msg: "list modified during sort")
   }
 }
+
+*/

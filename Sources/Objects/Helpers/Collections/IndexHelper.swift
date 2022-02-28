@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -174,3 +175,5 @@ internal enum IndexHelper {
     }
   }
 }
+
+*/

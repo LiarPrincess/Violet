@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 
 /// `value == mantissa * 2 ** exponent`
@@ -37,3 +38,5 @@ internal struct Frexp {
     self.exponent = Int(e)
   }
 }
+
+*/

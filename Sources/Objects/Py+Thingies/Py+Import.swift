@@ -1,3 +1,4 @@
+/* MARKER
 // swiftlint:disable file_length
 // cSpell:ignore initimport sysmod
 
@@ -394,3 +395,5 @@ extension PyInstance {
     return String(topLevelAbs)
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // cSpell:ignore sliceobject
@@ -65,3 +66,5 @@ public final class PyEllipsis: PyObject {
     return .value(Py.ellipsis)
   }
 }
+
+*/

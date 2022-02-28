@@ -1,3 +1,4 @@
+/* MARKER
 // swiftlint:disable empty_count
 
 private enum FillChar<T> {
@@ -189,3 +190,5 @@ extension AbstractString {
     return builder
   }
 }
+
+*/

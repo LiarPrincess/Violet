@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // cSpell:ignore PyMODINIT
@@ -98,3 +99,5 @@ extension UnderscoreWarnings {
     return self.set(._onceregistry, to: value)
   }
 }
+
+*/

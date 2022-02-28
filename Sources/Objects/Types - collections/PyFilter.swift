@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -119,3 +120,5 @@ public final class PyFilter: PyObject {
     return .value(result)
   }
 }
+
+*/

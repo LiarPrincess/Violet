@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -157,3 +158,5 @@ public final class PyEnumerate: PyObject {
     return .value(result)
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -512,3 +513,5 @@ public final class PySlice: PyObject {
     return .value(result)
   }
 }
+
+*/

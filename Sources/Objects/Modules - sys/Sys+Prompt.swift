@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -34,3 +35,5 @@ extension Sys {
     return self.set(.ps2, to: value)
   }
 }
+
+*/

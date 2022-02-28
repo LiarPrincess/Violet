@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import UnicodeData
 import VioletCore
@@ -192,3 +193,5 @@ extension AbstractBytes {
     return element == 0x0a
   }
 }
+
+*/

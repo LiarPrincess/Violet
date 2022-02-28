@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 
 // cSpell:ignore textio
@@ -333,3 +334,5 @@ public final class PyTextFile: PyObject {
     return Py.newOSError(msg: msg)
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -48,3 +49,5 @@ public final class PyNotImplemented: PyObject {
     return .value(Py.notImplemented)
   }
 }
+
+*/

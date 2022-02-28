@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -334,3 +335,5 @@ public final class PyFrozenSet: PyObject, AbstractSet {
     return .value(result)
   }
 }
+
+*/

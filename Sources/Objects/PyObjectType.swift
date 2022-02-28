@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import VioletCore
 
@@ -277,3 +278,5 @@ internal enum PyObjectType {
     return !isFromObject
   }
 }
+
+*/

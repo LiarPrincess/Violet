@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -539,3 +540,5 @@ extension PyType.StaticallyKnownNotOverriddenMethods {
     }
   }
 }
+
+*/

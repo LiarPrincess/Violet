@@ -1,3 +1,4 @@
+/* MARKER
 import VioletBytecode
 
 // cSpell:ignore typeobject cmeth
@@ -264,3 +265,5 @@ public final class PySuper: PyObject, HasCustomGetMethod {
     }
   }
 }
+
+*/

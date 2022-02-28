@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -49,3 +50,5 @@ extension PyInstance {
     return .value(dict)
   }
 }
+
+*/

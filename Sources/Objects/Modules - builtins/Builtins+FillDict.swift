@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -172,3 +173,5 @@ extension Builtins {
 //    self.setOrTrap(.vars, doc: Self.varsDoc, fn: Self.vars)
   }
 }
+
+*/

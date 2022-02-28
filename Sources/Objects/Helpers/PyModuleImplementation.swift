@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // swiftlint:disable file_length
@@ -304,3 +305,5 @@ extension PyModuleImplementation {
     self.setOrTrap(name, to: object)
   }
 }
+
+*/

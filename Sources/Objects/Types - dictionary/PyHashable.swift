@@ -1,3 +1,4 @@
+/* MARKER
 public protocol PyHashable {
 
   /// The hash value.
@@ -9,3 +10,5 @@ public protocol PyHashable {
   /// Returns a boolean value indicating whether two values are equal.
   func isEqual(to other: Self) -> PyResult<Bool>
 }
+
+*/

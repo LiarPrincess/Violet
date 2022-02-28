@@ -1,3 +1,4 @@
+/* MARKER
 // cSpell:ignore subscriptable
 
 extension PyInstance {
@@ -70,3 +71,5 @@ extension PyInstance {
     }
   }
 }
+
+*/

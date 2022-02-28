@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 
 /// What are we going to do with file?
@@ -35,3 +36,5 @@ public enum FileMode: CustomStringConvertible {
     }
   }
 }
+
+*/

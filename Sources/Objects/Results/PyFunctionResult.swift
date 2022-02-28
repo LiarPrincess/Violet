@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -52,3 +53,5 @@ extension Optional: PyFunctionResultConvertible
     }
   }
 }
+
+*/

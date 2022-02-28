@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import UnicodeData
 import VioletCore
@@ -849,3 +850,5 @@ public final class PyString: PyObject, AbstractString {
       PyMemory.newString(type: type, value: value)
   }
 }
+
+*/

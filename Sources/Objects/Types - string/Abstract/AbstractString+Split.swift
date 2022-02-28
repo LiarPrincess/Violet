@@ -1,3 +1,4 @@
+/* MARKER
 // swiftlint:disable file_length
 
 // MARK: - Collection extensions
@@ -415,3 +416,5 @@ extension AbstractString {
     return .some(sep)
   }
 }
+
+*/

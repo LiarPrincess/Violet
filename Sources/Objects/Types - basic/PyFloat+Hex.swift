@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import VioletCore
 
@@ -506,3 +507,5 @@ private func overflowError() -> PyBaseException {
   let msg = "hexadecimal value too large to represent as a float"
   return Py.newOverflowError(msg: msg)
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -101,3 +102,5 @@ extension UnderscoreImp {
     self.unimplemented()
   }
 }
+
+*/

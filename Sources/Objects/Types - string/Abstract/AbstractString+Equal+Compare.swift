@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // swiftlint:disable:next type_name
@@ -119,3 +120,5 @@ extension AbstractString {
     }
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 // cSpell:ignore ilow ihigh
 
 /// Shared code for `__setitem__` method.
@@ -151,3 +152,5 @@ extension SetItemHelper {
     return .value(Py.none)
   }
 }
+
+*/

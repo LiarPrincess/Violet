@@ -1,3 +1,4 @@
+/* MARKER
 // swiftlint:disable yoda_condition
 
 /// Shared code for `__setitem__` method.
@@ -107,3 +108,5 @@ extension DelItemHelper {
     return .value(Py.none)
   }
 }
+
+*/

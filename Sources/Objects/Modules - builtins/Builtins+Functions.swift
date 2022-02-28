@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // swiftlint:disable file_length
@@ -1067,3 +1068,5 @@ extension Builtins {
     }
   }
 }
+
+*/

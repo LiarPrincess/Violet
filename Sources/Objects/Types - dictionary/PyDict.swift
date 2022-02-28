@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -825,3 +826,5 @@ public final class PyDict: PyObject {
     }
   }
 }
+
+*/

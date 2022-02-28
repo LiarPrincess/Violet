@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // cSpell:ignore iterobject
@@ -65,3 +66,5 @@ public final class PyCallableIterator: PyObject {
     }
   }
 }
+
+*/

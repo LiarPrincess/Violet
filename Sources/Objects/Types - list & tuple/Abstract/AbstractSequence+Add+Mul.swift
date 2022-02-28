@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 
 // swiftlint:disable empty_count
@@ -85,3 +86,5 @@ extension AbstractSequence {
     }
   }
 }
+
+*/

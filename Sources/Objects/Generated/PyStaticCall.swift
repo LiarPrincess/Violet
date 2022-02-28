@@ -1,3 +1,4 @@
+/* MARKER
 // =========================================================================
 // Automatically generated from: ./Sources/Objects/Generated/PyStaticCall.py
 // Use 'make gen' in repository root to regenerate.
@@ -893,3 +894,5 @@ internal enum PyStaticCall {
     return nil
   }
 }
+
+*/

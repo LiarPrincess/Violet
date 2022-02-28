@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import FileSystem
 import VioletCompiler
@@ -142,3 +143,5 @@ private func parseWarnings(_ value: String) -> [WarningOption] {
 private func asInt(_ value: String) -> Int? {
   return Int(value)
 }
+
+*/

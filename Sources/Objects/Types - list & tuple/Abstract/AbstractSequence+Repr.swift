@@ -1,3 +1,4 @@
+/* MARKER
 extension AbstractSequence {
 
   /// DO NOT USE! This is a part of `AbstractSequence` implementation.
@@ -17,3 +18,5 @@ extension AbstractSequence {
     return .value(result)
   }
 }
+
+*/

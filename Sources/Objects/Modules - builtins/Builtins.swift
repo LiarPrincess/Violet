@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // In CPython:
@@ -192,3 +193,5 @@ public final class Builtins: PyModuleImplementation {
     }
   }
 }
+
+*/

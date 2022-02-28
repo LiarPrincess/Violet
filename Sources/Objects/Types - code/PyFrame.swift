@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 import VioletBytecode
 
@@ -256,3 +257,5 @@ public final class PyFrame: PyObject, CustomReflectable {
     return Int(self.currentInstructionLine)
   }
 }
+
+*/

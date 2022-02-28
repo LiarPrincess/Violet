@@ -1,3 +1,4 @@
+/* MARKER
 // ======================================================================
 // Automatically generated from: ./Sources/Objects/Generated/IdStrings.py
 // Use 'make gen' in repository root to regenerate.
@@ -1239,3 +1240,5 @@ public struct IdString {
     return Self._origin!
   }
 }
+
+*/

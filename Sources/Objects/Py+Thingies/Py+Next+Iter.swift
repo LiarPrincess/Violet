@@ -1,3 +1,4 @@
+/* MARKER
 extension PyInstance {
 
   // MARK: - Next
@@ -93,3 +94,5 @@ extension PyInstance {
     }
   }
 }
+
+*/

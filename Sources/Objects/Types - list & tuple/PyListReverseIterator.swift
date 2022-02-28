@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // cSpell:ignore listobject
@@ -74,3 +75,5 @@ public final class PyListReverseIterator: PyObject {
     return .typeError("cannot create 'list_reverseiterator' instances")
   }
 }
+
+*/

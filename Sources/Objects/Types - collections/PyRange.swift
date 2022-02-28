@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -450,3 +451,5 @@ public final class PyRange: PyObject {
     return Py.newRange(start: start, stop: stop, step: step)
   }
 }
+
+*/

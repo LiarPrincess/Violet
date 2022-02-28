@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // cSpell:ignore enumobject
@@ -153,3 +154,5 @@ public final class PyReversed: PyObject {
     return Py.hasMethod(object: object, selector: .__getitem__)
   }
 }
+
+*/

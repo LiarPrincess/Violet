@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 
 // cSpell:ignore STRINGLIB
@@ -154,3 +155,5 @@ extension AbstractString {
     }
   }
 }
+
+*/

@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 import VioletBytecode
 
@@ -379,3 +380,5 @@ public final class PyCode: PyObject, CustomReflectable {
     return self.variableCount
   }
 }
+
+*/

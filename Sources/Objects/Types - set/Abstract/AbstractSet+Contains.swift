@@ -1,3 +1,4 @@
+/* MARKER
 extension AbstractSet {
 
   /// DO NOT USE! This is a part of `AbstractSet` implementation.
@@ -15,3 +16,5 @@ extension AbstractSet {
     return self.elements.contains(element: element)
   }
 }
+
+*/

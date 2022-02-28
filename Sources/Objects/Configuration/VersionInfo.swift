@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 /// Internal helper for `sys.version_info`.
@@ -77,3 +78,5 @@ public struct VersionInfo {
     self.hexVersion = majorHex | minorHex | microHex | releaseLevelHex | serialHex
   }
 }
+
+*/

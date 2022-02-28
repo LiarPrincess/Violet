@@ -1,3 +1,4 @@
+/* MARKER
 public enum WarningOption: Equatable, CustomStringConvertible {
   /// `-Wdefault` - Warn once per call location
   case `default`
@@ -37,3 +38,5 @@ public enum BytesWarningOption: Equatable {
   /// Command line: `-bb`.
   case error
 }
+
+*/

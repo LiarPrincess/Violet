@@ -1,3 +1,4 @@
+/* MARKER
 // cSpell:ignore moduleobject getattro
 
 // In CPython:
@@ -292,3 +293,5 @@ public final class PyModule: PyObject, CustomReflectable {
     }
   }
 }
+
+*/

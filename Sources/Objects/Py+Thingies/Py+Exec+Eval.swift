@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 import VioletCore
 import VioletLexer
@@ -247,3 +248,5 @@ extension PyInstance {
     return Eval.run(source: source, globals: globals, locals: locals)
   }
 }
+
+*/

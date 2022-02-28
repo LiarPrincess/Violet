@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 
 // swiftlint:disable function_body_length
@@ -632,3 +633,5 @@ extension PyType {
     return PyObjectType.pyInit(zelf: self, args: [], kwargs: nil)
   }
 }
+
+*/

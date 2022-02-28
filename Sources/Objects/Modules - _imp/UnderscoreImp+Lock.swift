@@ -1,3 +1,4 @@
+/* MARKER
 // In CPython:
 // Python -> import.c
 
@@ -68,3 +69,5 @@ extension UnderscoreImp {
     return Py.none
   }
 }
+
+*/

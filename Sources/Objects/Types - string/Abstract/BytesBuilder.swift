@@ -1,3 +1,4 @@
+/* MARKER
 import Foundation
 
 internal struct BytesBuilder: StringBuilderType, GetItemSliceBuilderType {
@@ -54,3 +55,5 @@ internal struct BytesBuilder: StringBuilderType, GetItemSliceBuilderType {
     return subsequence
   }
 }
+
+*/

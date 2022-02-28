@@ -1,3 +1,4 @@
+/* MARKER
 extension AbstractString {
 
   /// >>> '@'.join(['A', 'B', 'C'])
@@ -51,3 +52,5 @@ extension AbstractString {
     return iterableCount * (ourCount + iterableElementExpectedCount)
   }
 }
+
+*/

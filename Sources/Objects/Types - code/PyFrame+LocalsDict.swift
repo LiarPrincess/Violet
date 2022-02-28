@@ -1,3 +1,4 @@
+/* MARKER
 import VioletCore
 import VioletBytecode
 
@@ -242,3 +243,5 @@ extension PyFrame {
     }
   }
 }
+
+*/

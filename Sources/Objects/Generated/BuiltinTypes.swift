@@ -1,3 +1,4 @@
+/* MARKER
 // =========================================================================
 // Automatically generated from: ./Sources/Objects/Generated/BuiltinTypes.py
 // Use 'make gen' in repository root to regenerate.
@@ -3043,3 +3044,5 @@ public final class BuiltinTypes {
   }
 
 }
+
+*/

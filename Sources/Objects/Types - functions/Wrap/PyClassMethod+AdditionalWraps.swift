@@ -1,3 +1,4 @@
+/* MARKER
 // 'Additional' because most of the wrapper methods are inside
 // 'Generated/PyClassMethod+Wrap.swift'.
 extension PyClassMethod {
@@ -21,3 +22,5 @@ extension PyClassMethod {
     return PyMemory.newClassMethod(callable: builtinFunction)
   }
 }
+
+*/

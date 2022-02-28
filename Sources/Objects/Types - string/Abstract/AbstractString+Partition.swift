@@ -1,3 +1,4 @@
+/* MARKER
 // swiftlint:disable:next type_name
 internal enum AbstractString_PartitionResult<C: Collection> {
   /// Separator was found.
@@ -65,3 +66,5 @@ extension AbstractString {
     }
   }
 }
+
+*/

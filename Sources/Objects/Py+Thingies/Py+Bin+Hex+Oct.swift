@@ -1,3 +1,4 @@
+/* MARKER
 extension PyInstance {
 
   /// bin(x)
@@ -40,3 +41,5 @@ extension PyInstance {
     }
   }
 }
+
+*/

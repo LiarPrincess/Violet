@@ -1,3 +1,4 @@
+/* MARKER
 import BigInt
 import VioletCore
 
@@ -583,3 +584,5 @@ public final class PyList: PyObject, AbstractSequence {
     return .value(Py.none)
   }
 }
+
+*/
