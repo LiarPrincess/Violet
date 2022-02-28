@@ -1,6 +1,3 @@
-public struct PyString {
-  public var asObject: PyObject { fatalError() }
-}
 public struct PyBaseException {}
 
 extension PyType {

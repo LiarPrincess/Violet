@@ -22,6 +22,7 @@ public enum AlignmentOf {
     Self.checkAlignment(of: Int.self, isLessEqual: AlignmentOf.word)
     Self.checkAlignment(of: UInt32.self, isLessEqual: AlignmentOf.word)
     Self.checkAlignment(of: BigInt.self, isLessEqual: AlignmentOf.word)
+    Self.checkAlignment(of: PyHash.self, isLessEqual: AlignmentOf.word)
     Self.checkAlignment(of: Double.self, isLessEqual: AlignmentOf.word)
 
     Self.checkAlignment(of: [PyObject].self, isLessEqual: AlignmentOf.word)
