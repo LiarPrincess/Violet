@@ -1,5 +1,4 @@
-/* MARKER
-internal enum CompareResult {
+public enum CompareResult {
   case value(Bool)
   /// Shortcut for `Py.notImplemented`
   case notImplemented
@@ -40,16 +39,14 @@ internal enum CompareResult {
 }
 
 extension CompareResult: PyFunctionResultConvertible {
-  internal var asFunctionResult: PyFunctionResult {
+  public var asFunctionResult: PyFunctionResult {
     switch self {
     case .value(let bool):
       return bool.asFunctionResult
     case .notImplemented:
-      return .value(Py.notImplemented)
+      return .value(Py.notImplemented.asObject)
     case .error(let e):
       return .error(e)
     }
   }
 }
-
-*/

@@ -1,57 +1,54 @@
-/* MARKER
 import Foundation
 import BigInt
 import VioletCore
 
 /// Return type of a Python function.
-internal typealias PyFunctionResult = PyResult<PyObject>
+public typealias PyFunctionResult = PyResult<PyObject>
 
 /// Object that can be returned from a Python function.
-internal protocol PyFunctionResultConvertible {
+public protocol PyFunctionResultConvertible {
   var asFunctionResult: PyFunctionResult { get }
 }
 
 // MARK: - Basic types
 
 extension Bool: PyFunctionResultConvertible {
-  internal var asFunctionResult: PyFunctionResult {
-    return .value(Py.newBool(self))
+  public var asFunctionResult: PyFunctionResult {
+    return .value(Py.newBool(self).asObject)
   }
 }
 
 extension Int: PyFunctionResultConvertible {
-  internal var asFunctionResult: PyFunctionResult {
-    return .value(Py.newInt(self))
+  public var asFunctionResult: PyFunctionResult {
+    return .value(Py.newInt(self).asObject)
   }
 }
 
 extension UInt8: PyFunctionResultConvertible {
-  internal var asFunctionResult: PyFunctionResult {
-    return .value(Py.newInt(self))
+  public var asFunctionResult: PyFunctionResult {
+    return .value(Py.newInt(self).asObject)
   }
 }
 
 extension BigInt: PyFunctionResultConvertible {
-  internal var asFunctionResult: PyFunctionResult {
-    return .value(Py.newInt(self))
+  public var asFunctionResult: PyFunctionResult {
+    return .value(Py.newInt(self).asObject)
   }
 }
 
 extension String: PyFunctionResultConvertible {
-  internal var asFunctionResult: PyFunctionResult {
-    return .value(Py.newString(self))
+  public var asFunctionResult: PyFunctionResult {
+    return .value(Py.newString(self).asObject)
   }
 }
 
 extension Optional: PyFunctionResultConvertible
   where Wrapped: PyFunctionResultConvertible {
 
-  internal var asFunctionResult: PyFunctionResult {
+  public var asFunctionResult: PyFunctionResult {
     switch self {
     case .some(let v): return v.asFunctionResult
-    case .none: return .value(Py.none)
+    case .none: return .value(Py.none.asObject)
     }
   }
 }
-
-*/

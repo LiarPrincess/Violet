@@ -1,5 +1,4 @@
-/* MARKER
-internal enum HashResult {
+public enum HashResult {
   case value(PyHash)
   /// Basically a `type error` from `Py.hashNotAvailable()`,
   /// but without allocation.
@@ -8,7 +7,7 @@ internal enum HashResult {
 }
 
 extension HashResult: PyFunctionResultConvertible {
-  internal var asFunctionResult: PyFunctionResult {
+  public var asFunctionResult: PyFunctionResult {
     switch self {
     case let .value(hash):
       return hash.asFunctionResult
@@ -20,5 +19,3 @@ extension HashResult: PyFunctionResultConvertible {
     }
   }
 }
-
-*/
