@@ -3268,7 +3268,7 @@ extension PyMemory {
           FieldLayout(from: [PyType].self),
           FieldLayout(from: [PyType].self),
           FieldLayout(from: PyType.MemoryLayout.self),
-          FieldLayout(from: PyType.StaticallyKnownNotOverriddenMethods.self),
+          FieldLayout(from: PyStaticCall.KnownNotOverriddenMethods.self),
           FieldLayout(from: PyType.DebugFn.self),
           FieldLayout(from: PyType.DeinitializeFn.self)
         ]
@@ -3301,7 +3301,7 @@ extension PyMemory {
     mroWithoutSelf: [PyType],
     subclasses: [PyType],
     layout: PyType.MemoryLayout,
-    staticMethods: PyType.StaticallyKnownNotOverriddenMethods,
+    staticMethods: PyStaticCall.KnownNotOverriddenMethods,
     debugFn: @escaping PyType.DebugFn,
     deinitialize: @escaping PyType.DeinitializeFn
   ) -> PyType {

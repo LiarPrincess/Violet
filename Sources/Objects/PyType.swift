@@ -35,7 +35,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   internal var mroPtr: Ptr<[PyType]> { self.ptr[Self.layout.mroOffset] }
   internal var subclassesPtr: Ptr<[PyType]> { self.ptr[Self.layout.subclassesOffset] }
   internal var layoutPtr: Ptr<PyType.MemoryLayout> { self.ptr[Self.layout.layoutOffset] }
-  internal var staticMethodsPtr: Ptr<PyType.StaticallyKnownNotOverriddenMethods> { self.ptr[Self.layout.staticMethodsOffset] }
+  internal var staticMethodsPtr: Ptr<PyStaticCall.KnownNotOverriddenMethods> { self.ptr[Self.layout.staticMethodsOffset] }
   internal var debugFnPtr: Ptr<PyType.DebugFn> { self.ptr[Self.layout.debugFnOffset] }
   internal var deinitializePtr: Ptr<PyType.DeinitializeFn> { self.ptr[Self.layout.deinitializeOffset] }
   // swiftlint:enable line_length
@@ -58,7 +58,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   /// Methods needed to make `PyStaticCall` work.
   ///
   /// See `PyStaticCall` documentation for more information.
-  internal var staticMethods: StaticallyKnownNotOverriddenMethods {
+  internal var staticMethods: PyStaticCall.KnownNotOverriddenMethods {
     self.staticMethodsPtr.pointee
   }
 
@@ -91,7 +91,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
                            mroWithoutSelf: [PyType],
                            subclasses: [PyType],
                            layout: PyType.MemoryLayout,
-                           staticMethods: PyType.StaticallyKnownNotOverriddenMethods,
+                           staticMethods: PyStaticCall.KnownNotOverriddenMethods,
                            debugFn: @escaping PyType.DebugFn,
                            deinitialize: @escaping PyType.DeinitializeFn) {
     if let b = base {
