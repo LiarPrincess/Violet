@@ -22,18 +22,12 @@ public struct PyComplex: PyObjectMixin {
     This is equivalent to (real + imag*1j) where imag defaults to 0.
     """
 
-  internal enum Layout {
-    internal static let realOffset = SizeOf.objectHeader
-    internal static let realSize = SizeOf.double
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyComplexLayout()
 
-    internal static let imagOffset = realOffset + realSize
-    internal static let imagSize = SizeOf.double
-
-    internal static let size = imagOffset + imagSize
-  }
-
-  private var realPtr: Ptr<Double> { self.ptr[Layout.realOffset] }
-  private var imagPtr: Ptr<Double> { self.ptr[Layout.imagOffset] }
+  internal var realPtr: Ptr<Double> { self.ptr[Self.layout.realOffset] }
+  internal var imagPtr: Ptr<Double> { self.ptr[Self.layout.imagOffset] }
   internal var real: Double { self.realPtr.pointee }
   internal var imag: Double { self.imagPtr.pointee }
 
@@ -49,12 +43,8 @@ public struct PyComplex: PyObjectMixin {
     self.imagPtr.initialize(to: imag)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyComplex(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.realPtr.deinitialize()
-    zelf.imagPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyComplex(ptr: ptr)

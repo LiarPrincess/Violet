@@ -15,6 +15,414 @@ import VioletCompiler
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable file_length
 
+// MARK: - PyBool
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyBool` fields.
+  internal struct PyBoolLayout {
+    internal let valueOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: BigInt.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 1)
+      self.valueOffset = layout.offsets[0]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `bool` type.
+  public func newBool(
+    type: PyType,
+    value: Bool
+  ) -> PyBool {
+    let typeLayout = PyBool.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyBool(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      value: value
+    )
+
+    return result
+  }
+}
+
+extension PyBool {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBool(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.valuePtr.deinitialize()
+  }
+}
+
+// MARK: - PyComplex
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyComplex` fields.
+  internal struct PyComplexLayout {
+    internal let realOffset: Int
+    internal let imagOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: Double.self),
+          FieldLayout(from: Double.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 2)
+      self.realOffset = layout.offsets[0]
+      self.imagOffset = layout.offsets[1]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `complex` type.
+  public func newComplex(
+    type: PyType,
+    real: Double,
+    imag: Double
+  ) -> PyComplex {
+    let typeLayout = PyComplex.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyComplex(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      real: real,
+      imag: imag
+    )
+
+    return result
+  }
+}
+
+extension PyComplex {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyComplex(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.realPtr.deinitialize()
+    zelf.imagPtr.deinitialize()
+  }
+}
+
+// MARK: - PyEllipsis
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyEllipsis` fields.
+  internal struct PyEllipsisLayout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `ellipsis` type.
+  public func newEllipsis(
+    type: PyType
+  ) -> PyEllipsis {
+    let typeLayout = PyEllipsis.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyEllipsis(ptr: ptr)
+
+    result.initialize(
+      type: type
+    )
+
+    return result
+  }
+}
+
+extension PyEllipsis {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyEllipsis(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+// MARK: - PyFloat
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyFloat` fields.
+  internal struct PyFloatLayout {
+    internal let valueOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: Double.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 1)
+      self.valueOffset = layout.offsets[0]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `float` type.
+  public func newFloat(
+    type: PyType,
+    value: Double
+  ) -> PyFloat {
+    let typeLayout = PyFloat.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyFloat(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      value: value
+    )
+
+    return result
+  }
+}
+
+extension PyFloat {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFloat(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.valuePtr.deinitialize()
+  }
+}
+
+// MARK: - PyInt
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyInt` fields.
+  internal struct PyIntLayout {
+    internal let valueOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: BigInt.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 1)
+      self.valueOffset = layout.offsets[0]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `int` type.
+  public func newInt(
+    type: PyType,
+    value: BigInt
+  ) -> PyInt {
+    let typeLayout = PyInt.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyInt(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      value: value
+    )
+
+    return result
+  }
+}
+
+extension PyInt {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyInt(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.valuePtr.deinitialize()
+  }
+}
+
+// MARK: - PyNamespace
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyNamespace` fields.
+  internal struct PyNamespaceLayout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `SimpleNamespace` type.
+  public func newNamespace(
+    type: PyType,
+    __dict__: PyDict?
+  ) -> PyNamespace {
+    let typeLayout = PyNamespace.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyNamespace(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      __dict__: __dict__
+    )
+
+    return result
+  }
+}
+
+extension PyNamespace {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyNamespace(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+// MARK: - PyNone
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyNone` fields.
+  internal struct PyNoneLayout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `NoneType` type.
+  public func newNone(
+    type: PyType
+  ) -> PyNone {
+    let typeLayout = PyNone.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyNone(ptr: ptr)
+
+    result.initialize(
+      type: type
+    )
+
+    return result
+  }
+}
+
+extension PyNone {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyNone(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+// MARK: - PyNotImplemented
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyNotImplemented` fields.
+  internal struct PyNotImplementedLayout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `NotImplementedType` type.
+  public func newNotImplemented(
+    type: PyType
+  ) -> PyNotImplemented {
+    let typeLayout = PyNotImplemented.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyNotImplemented(ptr: ptr)
+
+    result.initialize(
+      type: type
+    )
+
+    return result
+  }
+}
+
+extension PyNotImplemented {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyNotImplemented(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
 // MARK: - PyObject
 
 extension PyMemory {
@@ -54,7 +462,7 @@ extension PyMemory {
 }
 
 extension PyObject {
-  public static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyObject(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.header.deinitialize()
@@ -151,7 +559,7 @@ extension PyMemory {
 }
 
 extension PyType {
-  public static func deinitialize(ptr: RawPtr) {
+  internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyType(ptr: ptr)
     zelf.beforeDeinitialize()
 

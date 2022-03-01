@@ -11,9 +11,9 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal enum Layout {
-    internal static let size = SizeOf.objectHeader
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyNoneLayout()
 
   public let ptr: RawPtr
 
@@ -25,10 +25,8 @@ public struct PyNone: PyObjectMixin, HasCustomGetMethod {
     self.header.initialize(type: type)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyNone(ptr: ptr)
-    zelf.header.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyNone(ptr: ptr)
