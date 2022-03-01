@@ -11,8 +11,62 @@ import VioletBytecode
 import VioletCompiler
 
 // swiftlint:disable empty_count
+// swiftlint:disable line_length
+// swiftlint:disable function_body_length
 // swiftlint:disable function_parameter_count
 // swiftlint:disable file_length
+
+// This file contains:
+// - PyMemory.newTypeAndObjectTypes - because they have recursive dependency
+// - then for each type:
+//   - PyMemory.[TYPE_NAME]Layout - mainly field offsets
+//   - PyMemory.new[TYPE_NAME] - to create new object of this type
+//   - [TYPE_NAME].deinitialize(ptr:) - to deinitialize this object before deletion
+
+// MARK: - Type/object types init
+
+extension PyMemory {
+
+  /// Those types require a special treatment because:
+  /// - `object` type has `type` type
+  /// - `type` type has `type` type (self reference) and `object` type as base
+  public func newTypeAndObjectTypes() -> (typeType: PyType, objectType: PyType) {
+    let layout = PyType.layout
+    let typeTypePtr = self.allocate(size: layout.size, alignment: layout.alignment)
+    let objectTypePtr = self.allocate(size: layout.size, alignment: layout.alignment)
+
+    let typeType = PyType(ptr: typeTypePtr)
+    let objectType = PyType(ptr: objectTypePtr)
+
+    objectType.initialize(type: typeType,
+                          name: "object",
+                          qualname: "object",
+                          flags: [.isBaseTypeFlag, .isDefaultFlag, .subclassInstancesHave__dict__Flag],
+                          base: nil,
+                          bases: [],
+                          mroWithoutSelf: [],
+                          subclasses: [],
+                          layout: PyContext.Types.objectMemoryLayout,
+                          staticMethods: PyContext.Types.objectStaticMethods,
+                          debugFn: PyObject.createDebugString(ptr:),
+                          deinitialize: PyObject.deinitialize(ptr:))
+
+    typeType.initialize(type: typeType,
+                        name: "type",
+                        qualname: "type",
+                        flags: [.hasGCFlag, .instancesHave__dict__Flag, .isBaseTypeFlag, .isDefaultFlag, .isTypeSubclassFlag],
+                        base: objectType,
+                        bases: [objectType],
+                        mroWithoutSelf: [objectType],
+                        subclasses: [],
+                        layout: PyContext.Types.typeMemoryLayout,
+                        staticMethods: PyContext.Types.typeStaticMethods,
+                        debugFn: PyType.createDebugString(ptr:),
+                        deinitialize: PyType.deinitialize(ptr:))
+
+   return (typeType, objectType)
+  }
+}
 
 // MARK: - PyBool
 
@@ -3241,9 +3295,10 @@ extension PyMemory {
     type: PyType,
     name: String,
     qualname: String,
+    flags: PyType.TypeFlags,
     base: PyType?,
     bases: [PyType],
-    mro: [PyType],
+    mroWithoutSelf: [PyType],
     subclasses: [PyType],
     layout: PyType.MemoryLayout,
     staticMethods: PyType.StaticallyKnownNotOverriddenMethods,
@@ -3258,9 +3313,10 @@ extension PyMemory {
       type: type,
       name: name,
       qualname: qualname,
+      flags: flags,
       base: base,
       bases: bases,
-      mro: mro,
+      mroWithoutSelf: mroWithoutSelf,
       subclasses: subclasses,
       layout: layout,
       staticMethods: staticMethods,
