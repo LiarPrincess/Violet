@@ -21,55 +21,23 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   public typealias DebugFn = (RawPtr) -> String
   public typealias DeinitializeFn = (RawPtr) -> Void
 
-  // MARK: - Layout
-
-  internal enum Layout {
-    internal static let nameOffset = SizeOf.objectHeader
-    internal static let nameSize = SizeOf.string
-
-    internal static let qualnameOffset = nameOffset + nameSize
-    internal static let qualnameSize = SizeOf.string
-
-    internal static let baseOffset = qualnameOffset + qualnameSize
-    internal static let baseSize = SizeOf.optionalObject
-
-    internal static let basesOffset = baseOffset + baseSize
-    internal static let basesSize = SizeOf.array
-
-    internal static let mroOffset = basesOffset + basesSize
-    internal static let mroSize = SizeOf.array
-
-    internal static let subclassesOffset = mroOffset + mroSize
-    internal static let subclassesSize = SizeOf.array
-
-    internal static let layoutOffset = subclassesOffset + subclassesSize
-    internal static let layoutSize = SizeOf.typeMemoryLayout
-
-    internal static let staticMethodsOffset = layoutOffset + layoutSize
-    internal static let staticMethodsSize = SizeOf.typeStaticallyKnownNotOverriddenMethods
-
-    internal static let debugFnOffset = staticMethodsOffset + staticMethodsSize
-    internal static let debugFnSize = SizeOf.function
-
-    internal static let deinitializeOffset = debugFnOffset + debugFnSize
-    internal static let deinitializeSize = SizeOf.function
-
-    internal static let size = deinitializeOffset + deinitializeSize
-  }
-
   // MARK: - Properties
 
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyTypeLayout()
+
   // swiftlint:disable line_length
-  private var namePtr: Ptr<String> { self.ptr[Layout.nameOffset] }
-  private var qualnamePtr: Ptr<String> { self.ptr[Layout.qualnameOffset] }
-  private var basePtr: Ptr<PyType?> { self.ptr[Layout.baseOffset] }
-  private var basesPtr: Ptr<[PyType]> { self.ptr[Layout.basesOffset] }
-  private var mroPtr: Ptr<[PyType]> { self.ptr[Layout.mroOffset] }
-  private var subclassesPtr: Ptr<[PyType]> { self.ptr[Layout.subclassesOffset] }
-  private var layoutPtr: Ptr<MemoryLayout> { self.ptr[Layout.layoutOffset] }
-  private var staticMethodsPtr: Ptr<StaticallyKnownNotOverriddenMethods> { self.ptr[Layout.staticMethodsOffset] }
-  private var debugFnPtr: Ptr<DebugFn> { self.ptr[Layout.debugFnOffset] }
-  private var deinitializePtr: Ptr<DeinitializeFn> { self.ptr[Layout.deinitializeOffset] }
+  internal var namePtr: Ptr<String> { self.ptr[Self.layout.nameOffset] }
+  internal var qualnamePtr: Ptr<String> { self.ptr[Self.layout.qualnameOffset] }
+  internal var basePtr: Ptr<PyType?> { self.ptr[Self.layout.baseOffset] }
+  internal var basesPtr: Ptr<[PyType]> { self.ptr[Self.layout.basesOffset] }
+  internal var mroPtr: Ptr<[PyType]> { self.ptr[Self.layout.mroOffset] }
+  internal var subclassesPtr: Ptr<[PyType]> { self.ptr[Self.layout.subclassesOffset] }
+  internal var layoutPtr: Ptr<PyType.MemoryLayout> { self.ptr[Self.layout.layoutOffset] }
+  internal var staticMethodsPtr: Ptr<PyType.StaticallyKnownNotOverriddenMethods> { self.ptr[Self.layout.staticMethodsOffset] }
+  internal var debugFnPtr: Ptr<PyType.DebugFn> { self.ptr[Self.layout.debugFnOffset] }
+  internal var deinitializePtr: Ptr<PyType.DeinitializeFn> { self.ptr[Self.layout.deinitializeOffset] }
   // swiftlint:enable line_length
 
   //             | Type     | Base       | MRO
@@ -121,10 +89,10 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
                            bases: [PyType],
                            mro: [PyType],
                            subclasses: [PyType],
-                           layout: MemoryLayout,
-                           staticMethods: StaticallyKnownNotOverriddenMethods,
-                           debugFn: @escaping DebugFn,
-                           deinitialize: @escaping DeinitializeFn) {
+                           layout: PyType.MemoryLayout,
+                           staticMethods: PyType.StaticallyKnownNotOverriddenMethods,
+                           debugFn: @escaping PyType.DebugFn,
+                           deinitialize: @escaping PyType.DeinitializeFn) {
     self.header.initialize(type: type)
     self.namePtr.initialize(to: name)
     self.qualnamePtr.initialize(to: qualname)
@@ -138,20 +106,8 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     self.deinitializePtr.initialize(to: deinitialize)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyType(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.namePtr.deinitialize()
-    zelf.qualnamePtr.deinitialize()
-    zelf.basePtr.deinitialize()
-    zelf.basesPtr.deinitialize()
-    zelf.mroPtr.deinitialize()
-    zelf.subclassesPtr.deinitialize()
-    zelf.layoutPtr.deinitialize()
-    zelf.staticMethodsPtr.deinitialize()
-    zelf.debugFnPtr.deinitialize()
-    zelf.deinitializePtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   // MARK: - Debug
 

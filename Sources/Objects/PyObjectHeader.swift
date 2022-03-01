@@ -19,6 +19,8 @@ public struct PyObjectHeader {
       Layout.flagsOffset + Layout.flagsSize,
       to: AlignmentOf.word
     )
+
+    internal static let alignment = AlignmentOf.word
   }
 
   // MARK: - Properties

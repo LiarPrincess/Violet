@@ -6,7 +6,8 @@ import VioletCore
 // In CPython:
 // Objects -> typeobject.c
 
-// sourcery: isDefault, isBaseType, subclassInstancesHave__dict__
+// sourcery: pytype = object, isDefault, isBaseType
+// sourcery: subclassInstancesHave__dict__
 /// Top of the `Python` type hierarchy.
 public struct PyObject: PyObjectMixin {
 
@@ -18,9 +19,9 @@ public struct PyObject: PyObjectMixin {
     The most base type
     """
 
-  internal enum Layout {
-    internal static let size = SizeOf.objectHeader
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyObjectLayout()
 
   public let ptr: RawPtr
 
@@ -32,10 +33,8 @@ public struct PyObject: PyObjectMixin {
     self.header.initialize(type: type)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyObject(ptr: ptr)
-    zelf.header.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyObject(ptr: ptr)
