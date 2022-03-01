@@ -25,13 +25,11 @@ public struct PyFloat: PyObjectMixin {
     Convert a string or number to a floating point number, if possible.
     """
 
-  internal enum Layout {
-    internal static let valueOffset = SizeOf.objectHeader
-    internal static let valueSize = SizeOf.double
-    internal static let size = valueOffset + valueSize
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyFloatLayout()
 
-  private var valuePtr: Ptr<Double> { self.ptr[Layout.valueOffset] }
+  internal var valuePtr: Ptr<Double> { self.ptr[Self.layout.valueOffset] }
   internal var value: Double { self.valuePtr.pointee }
 
   public let ptr: RawPtr
@@ -45,11 +43,8 @@ public struct PyFloat: PyObjectMixin {
     self.valuePtr.initialize(to: value)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyFloat(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.valuePtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyFloat(ptr: ptr)

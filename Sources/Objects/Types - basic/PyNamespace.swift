@@ -16,9 +16,9 @@ public struct PyNamespace: PyObjectMixin {
     SimpleNamespace(**kwargs)
     """
 
-  internal enum Layout {
-    internal static let size = SizeOf.objectHeader
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyNamespaceLayout()
 
   public let ptr: RawPtr
 
@@ -30,10 +30,8 @@ public struct PyNamespace: PyObjectMixin {
     self.header.initialize(type: type, __dict__: __dict__)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyNamespace(ptr: ptr)
-    zelf.header.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyNamespace(ptr: ptr)

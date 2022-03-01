@@ -13,7 +13,7 @@ extension BigInt {
   }
 }
 
-// sourcery: pytype = bool, isDefault, isLongSubclass
+// sourcery: pytype = bool, pybase = int, isDefault, isLongSubclass
 /// Booleans in Python are implemented as a subclass of integers.
 ///
 /// There are only two booleans, `False` and `True`.
@@ -29,9 +29,11 @@ public struct PyBool: PyObjectMixin {
     The class bool is a subclass of the class int, and cannot be subclassed
     """
 
-  internal typealias Layout = PyInt.Layout
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyBoolLayout()
 
-  private var valuePtr: Ptr<BigInt> { self.ptr[Layout.valueOffset] }
+  internal var valuePtr: Ptr<BigInt> { self.ptr[Self.layout.valueOffset] }
   internal var value: BigInt { self.valuePtr.pointee }
 
   internal var isTrue: Bool {
@@ -49,11 +51,8 @@ public struct PyBool: PyObjectMixin {
     self.valuePtr.initialize(to: value ? 1 : 0)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyBool(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.valuePtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   // MARK: - Debug
 

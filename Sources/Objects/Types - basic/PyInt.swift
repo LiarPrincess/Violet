@@ -34,14 +34,12 @@ public struct PyInt: PyObjectMixin {
     4
     """
 
-  internal enum Layout {
-    internal static let valueOffset = SizeOf.objectHeader
-    internal static let valueSize = SizeOf.bigInt
-    internal static let size = valueOffset + valueSize
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyIntLayout()
 
   // Do not add 'set' to 'self.value' - we cache most used ints!
-  private var valuePtr: Ptr<BigInt> { self.ptr[Layout.valueOffset] }
+  internal var valuePtr: Ptr<BigInt> { self.ptr[Self.layout.valueOffset] }
   internal var value: BigInt { self.valuePtr.pointee }
 
   public let ptr: RawPtr
@@ -55,11 +53,8 @@ public struct PyInt: PyObjectMixin {
     self.valuePtr.initialize(to: value)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyInt(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.valuePtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyInt(ptr: ptr)

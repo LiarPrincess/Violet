@@ -14,9 +14,9 @@ public struct PyEllipsis: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal enum Layout {
-    internal static let size = SizeOf.objectHeader
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyEllipsisLayout()
 
   public let ptr: RawPtr
 
@@ -28,10 +28,8 @@ public struct PyEllipsis: PyObjectMixin {
     self.header.initialize(type: type)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyEllipsis(ptr: ptr)
-    zelf.header.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyEllipsis(ptr: ptr)

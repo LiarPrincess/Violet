@@ -127,7 +127,7 @@ def print_type_things(t: TypeInfo):
 
     print(f'extension {swift_type} {{')
 
-    print(f'  public static func deinitialize(ptr: RawPtr) {{')
+    print(f'  internal static func deinitialize(ptr: RawPtr) {{')
     print(f'    let zelf = {swift_type}(ptr: ptr)')
     print(f'    zelf.beforeDeinitialize()')
 
@@ -166,6 +166,8 @@ import VioletCompiler
 
         is_printed = False
         is_printed = is_printed or swift_name in ('PyObject', 'PyType')
+        is_printed = is_printed or swift_name in ('PyNone', 'PyNotImplemented', 'PyEllipsis', 'PyNamespace')
+        is_printed = is_printed or swift_name in ('PyInt', 'PyBool', 'PyFloat', 'PyComplex')
 
         if is_printed:
             print_type_things(t)
