@@ -29,18 +29,12 @@ public struct PyEnumerate: PyObjectMixin {
     (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
     """
 
-  internal enum Layout {
-    internal static let iteratorOffset = SizeOf.objectHeader
-    internal static let iteratorSize = SizeOf.object
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyEnumerateLayout()
 
-    internal static let nextIndexOffset = iteratorOffset + iteratorSize
-    internal static let nextIndexSize = SizeOf.bigInt
-
-    internal static let size = nextIndexOffset + nextIndexSize
-  }
-
-  private var iteratorPtr: Ptr<PyObject> { self.ptr[Layout.iteratorOffset] }
-  private var nextIndexPtr: Ptr<BigInt> { self.ptr[Layout.nextIndexOffset] }
+  internal var iteratorPtr: Ptr<PyObject> { self.ptr[Self.layout.iteratorOffset] }
+  internal var nextIndexPtr: Ptr<BigInt> { self.ptr[Self.layout.nextIndexOffset] }
 
   /// Secondary iterator of enumeration
   internal var iterator: PyObject { self.iteratorPtr.pointee }
@@ -59,12 +53,8 @@ public struct PyEnumerate: PyObjectMixin {
     self.nextIndexPtr.initialize(to: initialIndex)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyEnumerate(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.iteratorPtr.deinitialize()
-    zelf.nextIndexPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyEnumerate(ptr: ptr)

@@ -12,7 +12,7 @@ def get_types() -> List[TypeInfo]:
 
     def commit_current_type():
         if current_type:
-            assert current_type.swift_initializer is not None
+            assert len(current_type.swift_initializers), 'No initializer?'
             current_type.sourcery_flags.sort()
             result.append(current_type)
 
@@ -72,9 +72,8 @@ def get_types() -> List[TypeInfo]:
 
                 selector_with_types = split[1]
 
-                assert current_type.swift_initializer is None
                 init = SwiftInitializerInfo(selector_with_types)
-                current_type.swift_initializer = init
+                current_type.swift_initializers.append(init)
 
             else:
                 assert False, f"Unknown line type: '{line_type}'"

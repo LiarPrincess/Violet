@@ -11,18 +11,12 @@ public struct PyCallableIterator: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal enum Layout {
-    internal static let callableOffset = SizeOf.objectHeader
-    internal static let callableSize = SizeOf.object
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyCallableIteratorLayout()
 
-    internal static let sentinelOffset = callableOffset + callableSize
-    internal static let sentinelSize = SizeOf.object
-
-    internal static let size = sentinelOffset + sentinelSize
-  }
-
-  private var callablePtr: Ptr<PyObject> { self.ptr[Layout.callableOffset] }
-  private var sentinelPtr: Ptr<PyObject> { self.ptr[Layout.sentinelOffset] }
+  internal var callablePtr: Ptr<PyObject> { self.ptr[Self.layout.callableOffset] }
+  internal var sentinelPtr: Ptr<PyObject> { self.ptr[Self.layout.sentinelOffset] }
 
   internal var callable: PyObject { self.callablePtr.pointee }
   internal var sentinel: PyObject { self.sentinelPtr.pointee }
@@ -39,12 +33,8 @@ public struct PyCallableIterator: PyObjectMixin {
     self.sentinelPtr.initialize(to: sentinel)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyCallableIterator(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.callablePtr.deinitialize()
-    zelf.sentinelPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyCallableIterator(ptr: ptr)

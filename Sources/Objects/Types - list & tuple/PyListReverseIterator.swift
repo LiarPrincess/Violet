@@ -11,18 +11,12 @@ public struct PyListReverseIterator: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal enum Layout {
-    internal static let listOffset = SizeOf.objectHeader
-    internal static let listSize = SizeOf.object
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyListReverseIteratorLayout()
 
-    internal static let indexOffset = listOffset + listSize
-    internal static let indexSize = SizeOf.int
-
-    internal static let size = indexOffset + indexSize
-  }
-
-  private var listPtr: Ptr<PyList> { self.ptr[Layout.listOffset] }
-  private var indexPtr: Ptr<Int> { self.ptr[Layout.indexOffset] }
+  internal var listPtr: Ptr<PyList> { self.ptr[Self.layout.listOffset] }
+  internal var indexPtr: Ptr<Int> { self.ptr[Self.layout.indexOffset] }
 
   internal var list: PyList { self.listPtr.pointee }
   internal var index: Int { self.indexPtr.pointee }
@@ -40,12 +34,8 @@ public struct PyListReverseIterator: PyObjectMixin {
     self.indexPtr.initialize(to: index)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyListReverseIterator(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.listPtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyListReverseIterator(ptr: ptr)

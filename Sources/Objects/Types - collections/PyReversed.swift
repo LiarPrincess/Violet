@@ -18,20 +18,14 @@ public struct PyReversed: PyObjectMixin {
     Return a reverse iterator over the values of the given sequence.
     """
 
-  internal enum Layout {
-    internal static let sequenceOffset = SizeOf.objectHeader
-    internal static let sequenceSize = SizeOf.object
-
-    internal static let indexOffset = sequenceOffset + sequenceSize
-    internal static let indexSize = SizeOf.int
-
-    internal static let size = indexOffset + indexSize
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyReversedLayout()
 
   private static let endIndex = -1
 
-  private var sequencePtr: Ptr<PyObject> { self.ptr[Layout.sequenceOffset] }
-  private var indexPtr: Ptr<Int> { self.ptr[Layout.indexOffset] }
+  internal var sequencePtr: Ptr<PyObject> { self.ptr[Self.layout.sequenceOffset] }
+  internal var indexPtr: Ptr<Int> { self.ptr[Self.layout.indexOffset] }
 
   internal var sequence: PyObject { self.sequencePtr.pointee }
   internal var index: Int { self.indexPtr.pointee }
@@ -50,12 +44,8 @@ public struct PyReversed: PyObjectMixin {
     self.indexPtr.initialize(to: count - 1)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyReversed(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.sequencePtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyReversed(ptr: ptr)

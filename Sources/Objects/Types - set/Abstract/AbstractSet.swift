@@ -4,12 +4,12 @@
 // MARK: - Element
 
 // swiftlint:disable:next type_name
-internal struct AbstractSet_Element: PyHashable, CustomStringConvertible {
+public struct AbstractSet_Element: PyHashable, CustomStringConvertible {
 
-  internal let hash: PyHash
-  internal let object: PyObject
+  public let hash: PyHash
+  public let object: PyObject
 
-  internal var description: String {
+  public var description: String {
     return "PySetElement(hash: \(self.hash), object: \(self.object))"
   }
 
@@ -18,7 +18,7 @@ internal struct AbstractSet_Element: PyHashable, CustomStringConvertible {
     self.object = object
   }
 
-  internal func isEqual(to other: AbstractSet_Element) -> PyResult<Bool> {
+  public func isEqual(to other: AbstractSet_Element) -> PyResult<Bool> {
     guard self.hash == other.hash else {
       return .value(false)
     }

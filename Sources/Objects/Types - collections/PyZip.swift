@@ -17,13 +17,11 @@ public struct PyZip: PyObjectMixin {
     is exhausted and then it raises StopIteration.
     """
 
-  internal enum Layout {
-    internal static let iteratorsOffset = SizeOf.objectHeader
-    internal static let iteratorsSize = SizeOf.array
-    internal static let size = iteratorsOffset + iteratorsSize
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyZipLayout()
 
-  private var iteratorsPtr: Ptr<[PyObject]> { self.ptr[Layout.iteratorsOffset] }
+  internal var iteratorsPtr: Ptr<[PyObject]> { self.ptr[Self.layout.iteratorsOffset] }
   internal var iterators: [PyObject] { self.iteratorsPtr.pointee }
 
   public let ptr: RawPtr
@@ -37,11 +35,8 @@ public struct PyZip: PyObjectMixin {
     self.iteratorsPtr.initialize(to: iterators)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyZip(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.iteratorsPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyZip(ptr: ptr)

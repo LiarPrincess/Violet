@@ -30,29 +30,18 @@ public struct PyString: PyObjectMixin, AbstractString {
     errors defaults to 'strict'.
     """
 
-  // MARK: - Layout
-
-  internal enum Layout {
-    internal static let valueOffset = SizeOf.objectHeader
-    internal static let valueSize = SizeOf.string
-
-    internal static let cachedCountOffset = valueOffset + valueSize
-    internal static let cachedCountSize = SizeOf.int
-
-    internal static let cachedHashOffset = cachedCountOffset + cachedCountSize
-    internal static let cachedHashSize = SizeOf.hash
-
-    internal static let size = cachedHashOffset + cachedHashSize
-  }
-
   // MARK: - Properties
+
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyStringLayout()
 
   private static let invalidCount = -1
   private static let invalidHash = PyHash.zero
 
-  private var valuePtr: Ptr<String> { self.ptr[Layout.valueOffset] }
-  private var cachedCountPtr: Ptr<Int> { self.ptr[Layout.cachedCountOffset] }
-  private var cachedHashPtr: Ptr<PyHash> { self.ptr[Layout.cachedHashOffset] }
+  internal var valuePtr: Ptr<String> { self.ptr[Self.layout.valueOffset] }
+  internal var cachedCountPtr: Ptr<Int> { self.ptr[Self.layout.cachedCountOffset] }
+  internal var cachedHashPtr: Ptr<PyHash> { self.ptr[Self.layout.cachedHashOffset] }
 
   internal var value: String { self.valuePtr.pointee }
 
@@ -109,13 +98,8 @@ public struct PyString: PyObjectMixin, AbstractString {
     self.cachedHashPtr.initialize(to: PyString.invalidHash)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyString(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.valuePtr.deinitialize()
-    zelf.cachedCountPtr.deinitialize()
-    zelf.cachedHashPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   // MARK: - Debug
 

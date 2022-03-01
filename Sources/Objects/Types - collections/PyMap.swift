@@ -15,18 +15,12 @@ public struct PyMap: PyObjectMixin {
     each of the iterables.  Stops when the shortest iterable is exhausted.
     """
 
-  internal enum Layout {
-    internal static let fnOffset = SizeOf.objectHeader
-    internal static let fnSize = SizeOf.object
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyMapLayout()
 
-    internal static let iteratorsOffset = fnOffset + fnSize
-    internal static let iteratorsSize = SizeOf.array
-
-    internal static let size = iteratorsOffset + iteratorsSize
-  }
-
-  private var fnPtr: Ptr<PyObject> { self.ptr[Layout.fnOffset] }
-  private var iteratorsPtr: Ptr<[PyObject]> { self.ptr[Layout.iteratorsOffset] }
+  internal var fnPtr: Ptr<PyObject> { self.ptr[Self.layout.fnOffset] }
+  internal var iteratorsPtr: Ptr<[PyObject]> { self.ptr[Self.layout.iteratorsOffset] }
 
   internal var fn: PyObject { self.fnPtr.pointee }
   internal var iterators: [PyObject] { self.iteratorsPtr.pointee }
@@ -43,12 +37,8 @@ public struct PyMap: PyObjectMixin {
     self.iteratorsPtr.initialize(to: iterators)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyMap(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.fnPtr.deinitialize()
-    zelf.iteratorsPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyMap(ptr: ptr)

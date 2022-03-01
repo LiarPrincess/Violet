@@ -15,18 +15,12 @@ public struct PyFilter: PyObjectMixin {
     is true. If function is None, return the items that are true.
     """
 
-  internal enum Layout {
-    internal static let fnOffset = SizeOf.objectHeader
-    internal static let fnSize = SizeOf.object
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyFilterLayout()
 
-    internal static let iteratorOffset = fnOffset + fnSize
-    internal static let iteratorSize = SizeOf.object
-
-    internal static let size = iteratorOffset + iteratorSize
-  }
-
-  private var fnPtr: Ptr<PyObject> { self.ptr[Layout.fnOffset] }
-  private var iteratorPtr: Ptr<PyObject> { self.ptr[Layout.iteratorOffset] }
+  internal var fnPtr: Ptr<PyObject> { self.ptr[Self.layout.fnOffset] }
+  internal var iteratorPtr: Ptr<PyObject> { self.ptr[Self.layout.iteratorOffset] }
 
   internal var fn: PyObject { self.fnPtr.pointee }
   internal var iterator: PyObject { self.iteratorPtr.pointee }
@@ -43,12 +37,8 @@ public struct PyFilter: PyObjectMixin {
     self.iteratorPtr.initialize(to: iterator)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyFilter(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.fnPtr.deinitialize()
-    zelf.iteratorPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyFilter(ptr: ptr)

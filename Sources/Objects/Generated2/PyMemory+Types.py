@@ -75,49 +75,52 @@ def print_type_things(t: TypeInfo):
     print('      self.alignment = layout.alignment')
     print('    }')
     print('  }')
-    print()
 
     # ===========
     # === New ===
     # ===========
 
-    init_arguments = t.swift_initializer.arguments
 
-    print(f'  /// Allocate a new instance of `{python_type}` type.')
-    print(f'  public func new{swift_type_without_py}(')
+    for init in t.swift_initializers:
+        init_arguments = init.arguments
 
-    for index, arg in enumerate(init_arguments):
-        is_last = index == len(init_arguments) - 1
-        comma = '' if is_last else ','
+        print()
+        print(f'  /// Allocate a new instance of `{python_type}` type.')
+        print(f'  public func new{swift_type_without_py}(')
 
-        label = ''
-        if arg.label:
-            label = arg.label + ' '
+        for index, arg in enumerate(init_arguments):
+            is_last = index == len(init_arguments) - 1
+            comma = '' if is_last else ','
 
-        default_value = ''
-        if arg.default_value:
-            default_value = ' = ' + arg.default_value
+            label = ''
+            if arg.label:
+                label = arg.label + ' '
 
-        print(f'    {label}{arg.name}: {arg.typ}{default_value}{comma}')
+            default_value = ''
+            if arg.default_value:
+                default_value = ' = ' + arg.default_value
 
-    print(f'  ) -> {swift_type} {{')
-    print(f'    let typeLayout = {swift_type}.layout')
-    print(f'    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)')
-    print(f'    let result = {swift_type}(ptr: ptr)')
-    print()
+            print(f'    {label}{arg.name}: {arg.typ}{default_value}{comma}')
 
-    print(f'    result.initialize(')
+        print(f'  ) -> {swift_type} {{')
+        print(f'    let typeLayout = {swift_type}.layout')
+        print(f'    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)')
+        print(f'    let result = {swift_type}(ptr: ptr)')
+        print()
 
-    for index, arg in enumerate(init_arguments):
-        is_last = index == len(init_arguments) - 1
-        comma = '' if is_last else ','
-        label = arg.label or arg.name
-        print(f'      {label}: {arg.name}{comma}')
+        print(f'    result.initialize(')
 
-    print('    )')
-    print()
-    print('    return result')
-    print('  }')
+        for index, arg in enumerate(init_arguments):
+            is_last = index == len(init_arguments) - 1
+            comma = '' if is_last else ','
+            label = arg.label or arg.name
+            print(f'      {label}: {arg.name}{comma}')
+
+        print('    )')
+        print()
+        print('    return result')
+        print('  }')
+
     print('}')
     print()
 
@@ -155,22 +158,32 @@ import VioletCompiler
 
 // swiftlint:disable empty_count
 // swiftlint:disable function_parameter_count
-// swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable file_length
 ''')
 
     all_types = get_types()
 
     for t in all_types:
-        swift_name = t.swift_type_name
+        name = t.swift_type_name
 
         is_printed = False
-        is_printed = is_printed or swift_name in ('PyObject', 'PyType')
-        is_printed = is_printed or swift_name in ('PyNone', 'PyNotImplemented', 'PyEllipsis', 'PyNamespace')
-        is_printed = is_printed or swift_name in ('PyInt', 'PyBool', 'PyFloat', 'PyComplex')
+        is_printed = is_printed or name in ('PyObject', 'PyType')
+        is_printed = is_printed or name in ('PyNone', 'PyNotImplemented', 'PyEllipsis', 'PyNamespace')
+        is_printed = is_printed or name in ('PyInt', 'PyBool', 'PyFloat', 'PyComplex')
+        is_printed = is_printed or name.startswith('PyList') or name.startswith('PyTuple')
+        is_printed = is_printed or name.startswith('PyDict')
+        is_printed = is_printed or name in ('PySet', 'PyFrozenSet', 'PySetIterator')
+        is_printed = is_printed or name in (
+            'PyEnumerate', 'PyFilter', 'PyMap', 'PyZip',
+            'PyRange', 'PyRangeIterator', 'PySlice',
+            'PyCallableIterator', 'PyIterator', 'PyReversed'
+        )
+        is_printed = is_printed or name.startswith('PyString') or name.startswith('PyByte')
 
         if is_printed:
             print_type_things(t)
 
 if __name__ == '__main__':
     main()
+
+

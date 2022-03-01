@@ -26,30 +26,16 @@ public struct PyRange: PyObjectMixin {
     When step is given, it specifies the increment (or decrement).
     """
 
-  // MARK: - Layout
-
-  internal enum Layout {
-    internal static let startOffset = SizeOf.objectHeader
-    internal static let startSize = SizeOf.object
-
-    internal static let stopOffset = startOffset + startSize
-    internal static let stopSize = SizeOf.object
-
-    internal static let stepOffset = stopOffset + stopSize
-    internal static let stepSize = SizeOf.object
-
-    internal static let lengthOffset = stepOffset + stepSize
-    internal static let lengthSize = SizeOf.object
-
-    internal static let size = lengthOffset + lengthSize
-  }
-
   // MARK: - Properties
 
-  private var startPtr: Ptr<PyInt> { self.ptr[Layout.startOffset] }
-  private var stopPtr: Ptr<PyInt> { self.ptr[Layout.stopOffset] }
-  private var stepPtr: Ptr<PyInt> { self.ptr[Layout.stepOffset] }
-  private var lengthPtr: Ptr<PyInt> { self.ptr[Layout.lengthOffset] }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyRangeLayout()
+
+  internal var startPtr: Ptr<PyInt> { self.ptr[Self.layout.startOffset] }
+  internal var stopPtr: Ptr<PyInt> { self.ptr[Self.layout.stopOffset] }
+  internal var stepPtr: Ptr<PyInt> { self.ptr[Self.layout.stepOffset] }
+  internal var lengthPtr: Ptr<PyInt> { self.ptr[Self.layout.lengthOffset] }
 
   internal var start: PyInt { self.startPtr.pointee }
   internal var stop: PyInt { self.stopPtr.pointee }
@@ -130,14 +116,8 @@ public struct PyRange: PyObjectMixin {
     return (diff / abs(step)) + 1
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyRange(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.startPtr.deinitialize()
-    zelf.stopPtr.deinitialize()
-    zelf.stepPtr.deinitialize()
-    zelf.lengthPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   // MARK: - Debug
 

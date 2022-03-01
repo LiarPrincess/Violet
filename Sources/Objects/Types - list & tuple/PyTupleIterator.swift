@@ -11,18 +11,12 @@ import VioletCore
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-   internal enum Layout {
-     internal static let tupleOffset = SizeOf.objectHeader
-     internal static let tupleSize = SizeOf.object
+   // Layout will be automatically generated, from `Ptr` fields.
+   // Just remember to initialize them in `initialize`!
+   internal static let layout = PyMemory.PyTupleIteratorLayout()
 
-     internal static let indexOffset = tupleOffset + tupleSize
-     internal static let indexSize = SizeOf.int
-
-     internal static let size = indexOffset + indexSize
-   }
-
-   private var tuplePtr: Ptr<PyTuple> { self.ptr[Layout.tupleOffset] }
-   private var indexPtr: Ptr<Int> { self.ptr[Layout.indexOffset] }
+   internal var tuplePtr: Ptr<PyTuple> { self.ptr[Self.layout.tupleOffset] }
+   internal var indexPtr: Ptr<Int> { self.ptr[Self.layout.indexOffset] }
 
    internal var tuple: PyTuple { self.tuplePtr.pointee }
    internal var index: Int { self.indexPtr.pointee }
@@ -39,12 +33,8 @@ import VioletCore
      self.indexPtr.initialize(to: 0)
    }
 
-   internal static func deinitialize(ptr: RawPtr) {
-     let zelf = PyTupleIterator(ptr: ptr)
-     zelf.header.deinitialize()
-     zelf.tuplePtr.deinitialize()
-     zelf.indexPtr.deinitialize()
-   }
+   // Nothing to do here.
+   internal func beforeDeinitialize() { }
 
    internal static func createDebugString(ptr: RawPtr) -> String {
      let zelf = PyTupleIterator(ptr: ptr)

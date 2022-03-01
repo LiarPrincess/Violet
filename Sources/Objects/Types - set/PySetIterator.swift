@@ -11,22 +11,13 @@ public struct PySetIterator: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal enum Layout {
-    internal static let setOffset = SizeOf.objectHeader
-    internal static let setSize = SizeOf.anySet
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PySetIteratorLayout()
 
-    internal static let indexOffset = setOffset + setSize
-    internal static let indexSize = SizeOf.int
-
-    internal static let initialCountOffset = indexOffset + indexSize
-    internal static let initialCountSize = SizeOf.int
-
-    internal static let size = initialCountOffset + initialCountSize
-  }
-
-  private var setPtr: Ptr<PyAnySet> { self.ptr[Layout.setOffset] }
-  private var indexPtr: Ptr<Int> { self.ptr[Layout.indexOffset] }
-  private var initialCountPtr: Ptr<Int> { self.ptr[Layout.initialCountOffset] }
+  internal var setPtr: Ptr<PyAnySet> { self.ptr[Self.layout.setOffset] }
+  internal var indexPtr: Ptr<Int> { self.ptr[Self.layout.indexOffset] }
+  internal var initialCountPtr: Ptr<Int> { self.ptr[Self.layout.initialCountOffset] }
 
   internal var set: PyAnySet { self.setPtr.pointee }
   internal var index: Int { self.indexPtr.pointee }
@@ -38,7 +29,15 @@ public struct PySetIterator: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, set: PyAnySet) {
+  internal func initialize(type: PyType, set: PySet) {
+    self.initializeCommon(type: type, set: .init(set: set))
+  }
+
+  internal func initialize(type: PyType, frozenSet: PyFrozenSet) {
+    self.initializeCommon(type: type, set: .init(frozenSet: frozenSet))
+  }
+
+  internal func initializeCommon(type: PyType, set: PyAnySet) {
     let initialCount = set.elements.count
     self.header.initialize(type: type)
     self.setPtr.initialize(to: set)
@@ -46,13 +45,8 @@ public struct PySetIterator: PyObjectMixin {
     self.initialCountPtr.initialize(to: initialCount)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PySetIterator(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.setPtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-    zelf.initialCountPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PySetIterator(ptr: ptr)
