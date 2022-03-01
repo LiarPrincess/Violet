@@ -35,7 +35,7 @@ public enum AlignmentOf {
     Self.checkIfAlignmentIsLessEqualWord(PyType.DeinitializeFn.self)
 
     Self.checkIfAlignmentIsLessEqualWord(PyType.MemoryLayout.self)
-    Self.checkIfAlignmentIsLessEqualWord(PyType.StaticallyKnownNotOverriddenMethods.self)
+    Self.checkIfAlignmentIsLessEqualWord(PyStaticCall.KnownNotOverriddenMethods.self)
 
     Self.checkIfAlignmentIsLessEqualWord(OrderedDictionary<PyDict.Key, Int>.self)
     Self.checkIfAlignmentIsLessEqualWord(OrderedSet<AbstractSet_Element>.self)

@@ -69,7 +69,7 @@ public enum SizeOf {
 
     Self.checkSize(of: PyType.MemoryLayout.self, expected: Self.typeMemoryLayout)
     Self.checkSize(
-      of: PyType.StaticallyKnownNotOverriddenMethods.self,
+      of: PyStaticCall.KnownNotOverriddenMethods.self,
       expected: Self.typeStaticallyKnownNotOverriddenMethods
     )
 

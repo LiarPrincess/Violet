@@ -17,3 +17,4 @@ sourcery \
 # echo
 
 python3 "$GENERATED/PyMemory+Types.py" > "$GENERATED/PyMemory+Types.swift"
+python3 "$GENERATED/PyStaticCall.py" > "$GENERATED/PyStaticCall.swift"
