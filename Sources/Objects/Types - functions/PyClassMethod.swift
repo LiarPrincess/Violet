@@ -31,13 +31,11 @@ public struct PyClassMethod: PyObjectMixin {
     If you want those, see the staticmethod builtin.
     """
 
-  internal enum Layout {
-    internal static let callableOffset = SizeOf.objectHeader
-    internal static let callableSize = SizeOf.optionalObject
-    internal static let size = callableOffset + callableSize
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyClassMethodLayout()
 
-  private var callablePtr: Ptr<PyObject?> { self.ptr[Layout.callableOffset] }
+  internal var callablePtr: Ptr<PyObject?> { self.ptr[Self.layout.callableOffset] }
   internal var callable: PyObject? { self.callablePtr.pointee }
 
   public let ptr: RawPtr
@@ -53,11 +51,8 @@ public struct PyClassMethod: PyObjectMixin {
     self.callablePtr.initialize(to: callable)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyClassMethod(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.callablePtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   // MARK: - Debug
 

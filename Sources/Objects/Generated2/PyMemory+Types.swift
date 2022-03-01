@@ -68,6 +68,144 @@ extension PyBool {
   }
 }
 
+// MARK: - PyBuiltinFunction
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyBuiltinFunction` fields.
+  internal struct PyBuiltinFunctionLayout {
+    internal let functionOffset: Int
+    internal let moduleOffset: Int
+    internal let docOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: FunctionWrapper.self),
+          FieldLayout(from: PyObject?.self),
+          FieldLayout(from: String?.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 3)
+      self.functionOffset = layout.offsets[0]
+      self.moduleOffset = layout.offsets[1]
+      self.docOffset = layout.offsets[2]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `builtinFunction` type.
+  public func newBuiltinFunction(
+    type: PyType,
+    function: FunctionWrapper,
+    module: PyObject?,
+    doc: String?
+  ) -> PyBuiltinFunction {
+    let typeLayout = PyBuiltinFunction.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyBuiltinFunction(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      function: function,
+      module: module,
+      doc: doc
+    )
+
+    return result
+  }
+}
+
+extension PyBuiltinFunction {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBuiltinFunction(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.functionPtr.deinitialize()
+    zelf.modulePtr.deinitialize()
+    zelf.docPtr.deinitialize()
+  }
+}
+
+// MARK: - PyBuiltinMethod
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyBuiltinMethod` fields.
+  internal struct PyBuiltinMethodLayout {
+    internal let functionOffset: Int
+    internal let objectOffset: Int
+    internal let moduleOffset: Int
+    internal let docOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: FunctionWrapper.self),
+          FieldLayout(from: PyObject.self),
+          FieldLayout(from: PyObject?.self),
+          FieldLayout(from: String?.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 4)
+      self.functionOffset = layout.offsets[0]
+      self.objectOffset = layout.offsets[1]
+      self.moduleOffset = layout.offsets[2]
+      self.docOffset = layout.offsets[3]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `builtinMethod` type.
+  public func newBuiltinMethod(
+    type: PyType,
+    function: FunctionWrapper,
+    object: PyObject,
+    module: PyObject?,
+    doc: String?
+  ) -> PyBuiltinMethod {
+    let typeLayout = PyBuiltinMethod.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyBuiltinMethod(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      function: function,
+      object: object,
+      module: module,
+      doc: doc
+    )
+
+    return result
+  }
+}
+
+extension PyBuiltinMethod {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBuiltinMethod(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.functionPtr.deinitialize()
+    zelf.objectPtr.deinitialize()
+    zelf.modulePtr.deinitialize()
+    zelf.docPtr.deinitialize()
+  }
+}
+
 // MARK: - PyByteArray
 
 extension PyMemory {
@@ -349,6 +487,220 @@ extension PyCallableIterator {
     zelf.header.deinitialize()
     zelf.callablePtr.deinitialize()
     zelf.sentinelPtr.deinitialize()
+  }
+}
+
+// MARK: - PyCell
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyCell` fields.
+  internal struct PyCellLayout {
+    internal let contentOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: PyObject?.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 1)
+      self.contentOffset = layout.offsets[0]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `cell` type.
+  public func newCell(
+    type: PyType,
+    content: PyObject?
+  ) -> PyCell {
+    let typeLayout = PyCell.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyCell(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      content: content
+    )
+
+    return result
+  }
+}
+
+extension PyCell {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyCell(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.contentPtr.deinitialize()
+  }
+}
+
+// MARK: - PyClassMethod
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyClassMethod` fields.
+  internal struct PyClassMethodLayout {
+    internal let callableOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: PyObject?.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 1)
+      self.callableOffset = layout.offsets[0]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `classmethod` type.
+  public func newClassMethod(
+    type: PyType,
+    callable: PyObject?
+  ) -> PyClassMethod {
+    let typeLayout = PyClassMethod.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyClassMethod(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      callable: callable
+    )
+
+    return result
+  }
+}
+
+extension PyClassMethod {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyClassMethod(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.callablePtr.deinitialize()
+  }
+}
+
+// MARK: - PyCode
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyCode` fields.
+  internal struct PyCodeLayout {
+    internal let nameOffset: Int
+    internal let qualifiedNameOffset: Int
+    internal let filenameOffset: Int
+    internal let instructionsOffset: Int
+    internal let firstLineOffset: Int
+    internal let instructionLinesOffset: Int
+    internal let constantsOffset: Int
+    internal let labelsOffset: Int
+    internal let namesOffset: Int
+    internal let variableNamesOffset: Int
+    internal let cellVariableNamesOffset: Int
+    internal let freeVariableNamesOffset: Int
+    internal let argCountOffset: Int
+    internal let kwOnlyArgCountOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: PyString.self),
+          FieldLayout(from: PyString.self),
+          FieldLayout(from: PyString.self),
+          FieldLayout(from: [Instruction].self),
+          FieldLayout(from: SourceLine.self),
+          FieldLayout(from: [SourceLine].self),
+          FieldLayout(from: [PyObject].self),
+          FieldLayout(from: [CodeObject.Label].self),
+          FieldLayout(from: [PyString].self),
+          FieldLayout(from: [MangledName].self),
+          FieldLayout(from: [MangledName].self),
+          FieldLayout(from: [MangledName].self),
+          FieldLayout(from: Int.self),
+          FieldLayout(from: Int.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 14)
+      self.nameOffset = layout.offsets[0]
+      self.qualifiedNameOffset = layout.offsets[1]
+      self.filenameOffset = layout.offsets[2]
+      self.instructionsOffset = layout.offsets[3]
+      self.firstLineOffset = layout.offsets[4]
+      self.instructionLinesOffset = layout.offsets[5]
+      self.constantsOffset = layout.offsets[6]
+      self.labelsOffset = layout.offsets[7]
+      self.namesOffset = layout.offsets[8]
+      self.variableNamesOffset = layout.offsets[9]
+      self.cellVariableNamesOffset = layout.offsets[10]
+      self.freeVariableNamesOffset = layout.offsets[11]
+      self.argCountOffset = layout.offsets[12]
+      self.kwOnlyArgCountOffset = layout.offsets[13]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `code` type.
+  public func newCode(
+    type: PyType,
+    code: CodeObject
+  ) -> PyCode {
+    let typeLayout = PyCode.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyCode(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      code: code
+    )
+
+    return result
+  }
+}
+
+extension PyCode {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyCode(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.namePtr.deinitialize()
+    zelf.qualifiedNamePtr.deinitialize()
+    zelf.filenamePtr.deinitialize()
+    zelf.instructionsPtr.deinitialize()
+    zelf.firstLinePtr.deinitialize()
+    zelf.instructionLinesPtr.deinitialize()
+    zelf.constantsPtr.deinitialize()
+    zelf.labelsPtr.deinitialize()
+    zelf.namesPtr.deinitialize()
+    zelf.variableNamesPtr.deinitialize()
+    zelf.cellVariableNamesPtr.deinitialize()
+    zelf.freeVariableNamesPtr.deinitialize()
+    zelf.argCountPtr.deinitialize()
+    zelf.kwOnlyArgCountPtr.deinitialize()
   }
 }
 
@@ -1034,6 +1386,110 @@ extension PyFloat {
   }
 }
 
+// MARK: - PyFrame
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyFrame` fields.
+  internal struct PyFrameLayout {
+    internal let codeOffset: Int
+    internal let parentOffset: Int
+    internal let stackOffset: Int
+    internal let blocksOffset: Int
+    internal let localsOffset: Int
+    internal let globalsOffset: Int
+    internal let builtinsOffset: Int
+    internal let fastLocalsOffset: Int
+    internal let cellVariablesOffset: Int
+    internal let freeVariablesOffset: Int
+    internal let currentInstructionIndexOffset: Int
+    internal let nextInstructionIndexOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: PyCode.self),
+          FieldLayout(from: PyFrame?.self),
+          FieldLayout(from: PyFrame.ObjectStack.self),
+          FieldLayout(from: PyFrame.BlockStack.self),
+          FieldLayout(from: PyDict.self),
+          FieldLayout(from: PyDict.self),
+          FieldLayout(from: PyDict.self),
+          FieldLayout(from: [PyObject?].self),
+          FieldLayout(from: [PyCell].self),
+          FieldLayout(from: [PyCell].self),
+          FieldLayout(from: Int?.self),
+          FieldLayout(from: Int.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 12)
+      self.codeOffset = layout.offsets[0]
+      self.parentOffset = layout.offsets[1]
+      self.stackOffset = layout.offsets[2]
+      self.blocksOffset = layout.offsets[3]
+      self.localsOffset = layout.offsets[4]
+      self.globalsOffset = layout.offsets[5]
+      self.builtinsOffset = layout.offsets[6]
+      self.fastLocalsOffset = layout.offsets[7]
+      self.cellVariablesOffset = layout.offsets[8]
+      self.freeVariablesOffset = layout.offsets[9]
+      self.currentInstructionIndexOffset = layout.offsets[10]
+      self.nextInstructionIndexOffset = layout.offsets[11]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `frame` type.
+  public func newFrame(
+    type: PyType,
+    code: PyCode,
+    locals: PyDict,
+    globals: PyDict,
+    parent: PyFrame?
+  ) -> PyFrame {
+    let typeLayout = PyFrame.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyFrame(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      code: code,
+      locals: locals,
+      globals: globals,
+      parent: parent
+    )
+
+    return result
+  }
+}
+
+extension PyFrame {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFrame(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.codePtr.deinitialize()
+    zelf.parentPtr.deinitialize()
+    zelf.stackPtr.deinitialize()
+    zelf.blocksPtr.deinitialize()
+    zelf.localsPtr.deinitialize()
+    zelf.globalsPtr.deinitialize()
+    zelf.builtinsPtr.deinitialize()
+    zelf.fastLocalsPtr.deinitialize()
+    zelf.cellVariablesPtr.deinitialize()
+    zelf.freeVariablesPtr.deinitialize()
+    zelf.currentInstructionIndexPtr.deinitialize()
+    zelf.nextInstructionIndexPtr.deinitialize()
+  }
+}
+
 // MARK: - PyFrozenSet
 
 extension PyMemory {
@@ -1085,6 +1541,102 @@ extension PyFrozenSet {
 
     zelf.header.deinitialize()
     zelf.elementsPtr.deinitialize()
+  }
+}
+
+// MARK: - PyFunction
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyFunction` fields.
+  internal struct PyFunctionLayout {
+    internal let nameOffset: Int
+    internal let qualnameOffset: Int
+    internal let docOffset: Int
+    internal let moduleOffset: Int
+    internal let codeOffset: Int
+    internal let globalsOffset: Int
+    internal let defaultsOffset: Int
+    internal let kwDefaultsOffset: Int
+    internal let closureOffset: Int
+    internal let annotationsOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: PyString.self),
+          FieldLayout(from: PyString.self),
+          FieldLayout(from: PyString?.self),
+          FieldLayout(from: PyObject.self),
+          FieldLayout(from: PyCode.self),
+          FieldLayout(from: PyDict.self),
+          FieldLayout(from: PyTuple?.self),
+          FieldLayout(from: PyDict?.self),
+          FieldLayout(from: PyTuple?.self),
+          FieldLayout(from: PyDict?.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 10)
+      self.nameOffset = layout.offsets[0]
+      self.qualnameOffset = layout.offsets[1]
+      self.docOffset = layout.offsets[2]
+      self.moduleOffset = layout.offsets[3]
+      self.codeOffset = layout.offsets[4]
+      self.globalsOffset = layout.offsets[5]
+      self.defaultsOffset = layout.offsets[6]
+      self.kwDefaultsOffset = layout.offsets[7]
+      self.closureOffset = layout.offsets[8]
+      self.annotationsOffset = layout.offsets[9]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `function` type.
+  public func newFunction(
+    type: PyType,
+    qualname: PyString?,
+    module: PyObject,
+    code: PyCode,
+    globals: PyDict
+  ) -> PyFunction {
+    let typeLayout = PyFunction.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyFunction(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      qualname: qualname,
+      module: module,
+      code: code,
+      globals: globals
+    )
+
+    return result
+  }
+}
+
+extension PyFunction {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyFunction(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.namePtr.deinitialize()
+    zelf.qualnamePtr.deinitialize()
+    zelf.docPtr.deinitialize()
+    zelf.modulePtr.deinitialize()
+    zelf.codePtr.deinitialize()
+    zelf.globalsPtr.deinitialize()
+    zelf.defaultsPtr.deinitialize()
+    zelf.kwDefaultsPtr.deinitialize()
+    zelf.closurePtr.deinitialize()
+    zelf.annotationsPtr.deinitialize()
   }
 }
 
@@ -1430,6 +1982,118 @@ extension PyMap {
   }
 }
 
+// MARK: - PyMethod
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyMethod` fields.
+  internal struct PyMethodLayout {
+    internal let functionOffset: Int
+    internal let objectOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: PyFunction.self),
+          FieldLayout(from: PyObject.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 2)
+      self.functionOffset = layout.offsets[0]
+      self.objectOffset = layout.offsets[1]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `method` type.
+  public func newMethod(
+    type: PyType,
+    function: PyFunction,
+    object: PyObject
+  ) -> PyMethod {
+    let typeLayout = PyMethod.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyMethod(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      function: function,
+      object: object
+    )
+
+    return result
+  }
+}
+
+extension PyMethod {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyMethod(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.functionPtr.deinitialize()
+    zelf.objectPtr.deinitialize()
+  }
+}
+
+// MARK: - PyModule
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyModule` fields.
+  internal struct PyModuleLayout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `module` type.
+  public func newModule(
+    type: PyType,
+    name: PyObject?,
+    doc: PyObject?,
+    __dict__: PyDict? = nil
+  ) -> PyModule {
+    let typeLayout = PyModule.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyModule(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      name: name,
+      doc: doc,
+      __dict__: __dict__
+    )
+
+    return result
+  }
+}
+
+extension PyModule {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyModule(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
 // MARK: - PyNamespace
 
 extension PyMemory {
@@ -1613,6 +2277,78 @@ extension PyObject {
     let zelf = PyObject(ptr: ptr)
     zelf.beforeDeinitialize()
     zelf.header.deinitialize()
+  }
+}
+
+// MARK: - PyProperty
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyProperty` fields.
+  internal struct PyPropertyLayout {
+    internal let _getOffset: Int
+    internal let _setOffset: Int
+    internal let _delOffset: Int
+    internal let docOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: PyObject?.self),
+          FieldLayout(from: PyObject?.self),
+          FieldLayout(from: PyObject?.self),
+          FieldLayout(from: PyObject?.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 4)
+      self._getOffset = layout.offsets[0]
+      self._setOffset = layout.offsets[1]
+      self._delOffset = layout.offsets[2]
+      self.docOffset = layout.offsets[3]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `property` type.
+  public func newProperty(
+    type: PyType,
+    get: PyObject?,
+    set: PyObject?,
+    del: PyObject?,
+    doc: PyObject?
+  ) -> PyProperty {
+    let typeLayout = PyProperty.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyProperty(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      get: get,
+      set: set,
+      del: del,
+      doc: doc
+    )
+
+    return result
+  }
+}
+
+extension PyProperty {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyProperty(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf._getPtr.deinitialize()
+    zelf._setPtr.deinitialize()
+    zelf._delPtr.deinitialize()
+    zelf.docPtr.deinitialize()
   }
 }
 
@@ -2015,6 +2751,60 @@ extension PySlice {
   }
 }
 
+// MARK: - PyStaticMethod
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyStaticMethod` fields.
+  internal struct PyStaticMethodLayout {
+    internal let callableOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: PyObject?.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 1)
+      self.callableOffset = layout.offsets[0]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `staticmethod` type.
+  public func newStaticMethod(
+    type: PyType,
+    callable: PyObject?
+  ) -> PyStaticMethod {
+    let typeLayout = PyStaticMethod.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyStaticMethod(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      callable: callable
+    )
+
+    return result
+  }
+}
+
+extension PyStaticMethod {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyStaticMethod(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.callablePtr.deinitialize()
+  }
+}
+
 // MARK: - PyString
 
 extension PyMemory {
@@ -2132,6 +2922,152 @@ extension PyStringIterator {
     zelf.header.deinitialize()
     zelf.stringPtr.deinitialize()
     zelf.indexPtr.deinitialize()
+  }
+}
+
+// MARK: - PySuper
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PySuper` fields.
+  internal struct PySuperLayout {
+    internal let thisClassOffset: Int
+    internal let objectOffset: Int
+    internal let objectTypeOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: PyType?.self),
+          FieldLayout(from: PyObject?.self),
+          FieldLayout(from: PyType?.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 3)
+      self.thisClassOffset = layout.offsets[0]
+      self.objectOffset = layout.offsets[1]
+      self.objectTypeOffset = layout.offsets[2]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `super` type.
+  public func newSuper(
+    type: PyType,
+    requestedType: PyType?,
+    object: PyObject?,
+    objectType: PyType?
+  ) -> PySuper {
+    let typeLayout = PySuper.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PySuper(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      requestedType: requestedType,
+      object: object,
+      objectType: objectType
+    )
+
+    return result
+  }
+}
+
+extension PySuper {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PySuper(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.thisClassPtr.deinitialize()
+    zelf.objectPtr.deinitialize()
+    zelf.objectTypePtr.deinitialize()
+  }
+}
+
+// MARK: - PyTextFile
+
+extension PyMemory {
+
+  /// This type was automatically generated based on `PyTextFile` fields.
+  internal struct PyTextFileLayout {
+    internal let nameOffset: Int
+    internal let fdOffset: Int
+    internal let modeOffset: Int
+    internal let encodingOffset: Int
+    internal let errorHandlingOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.Layout.size,
+        initialAlignment: PyObjectHeader.Layout.alignment,
+        fields: [
+          FieldLayout(from: String?.self),
+          FieldLayout(from: FileDescriptorType.self),
+          FieldLayout(from: FileMode.self),
+          FieldLayout(from: PyString.Encoding.self),
+          FieldLayout(from: PyString.ErrorHandling.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 5)
+      self.nameOffset = layout.offsets[0]
+      self.fdOffset = layout.offsets[1]
+      self.modeOffset = layout.offsets[2]
+      self.encodingOffset = layout.offsets[3]
+      self.errorHandlingOffset = layout.offsets[4]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  /// Allocate a new instance of `TextFile` type.
+  public func newTextFile(
+    type: PyType,
+    name: String?,
+    fd: FileDescriptorType,
+    mode: FileMode,
+    encoding: PyString.Encoding,
+    errorHandling: PyString.ErrorHandling,
+    closeOnDealloc: Bool
+  ) -> PyTextFile {
+    let typeLayout = PyTextFile.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyTextFile(ptr: ptr)
+
+    result.initialize(
+      type: type,
+      name: name,
+      fd: fd,
+      mode: mode,
+      encoding: encoding,
+      errorHandling: errorHandling,
+      closeOnDealloc: closeOnDealloc
+    )
+
+    return result
+  }
+}
+
+extension PyTextFile {
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyTextFile(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.namePtr.deinitialize()
+    zelf.fdPtr.deinitialize()
+    zelf.modePtr.deinitialize()
+    zelf.encodingPtr.deinitialize()
+    zelf.errorHandlingPtr.deinitialize()
   }
 }
 

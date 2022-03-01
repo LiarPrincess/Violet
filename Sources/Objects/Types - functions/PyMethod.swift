@@ -16,18 +16,12 @@ public struct PyMethod: PyObjectMixin {
     Create a bound instance method object.
     """
 
-  internal enum Layout {
-    internal static let functionOffset = SizeOf.objectHeader
-    internal static let functionSize = SizeOf.object
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyMethodLayout()
 
-    internal static let objectOffset = functionOffset + functionSize
-    internal static let objectSize = SizeOf.object
-
-    internal static let size = objectOffset + objectSize
-  }
-
-  private var functionPtr: Ptr<PyFunction> { self.ptr[Layout.functionOffset] }
-  private var objectPtr: Ptr<PyObject> { self.ptr[Layout.objectOffset] }
+  internal var functionPtr: Ptr<PyFunction> { self.ptr[Self.layout.functionOffset] }
+  internal var objectPtr: Ptr<PyObject> { self.ptr[Self.layout.objectOffset] }
 
   /// The callable object implementing the method
   internal var function: PyFunction { self.functionPtr.pointee }
@@ -46,12 +40,8 @@ public struct PyMethod: PyObjectMixin {
     self.objectPtr.initialize(to: object)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyMethod(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.functionPtr.deinitialize()
-    zelf.objectPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyMethod(ptr: ptr)

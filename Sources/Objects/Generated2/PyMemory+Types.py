@@ -164,26 +164,7 @@ import VioletCompiler
     all_types = get_types()
 
     for t in all_types:
-        name = t.swift_type_name
-
-        is_printed = False
-        is_printed = is_printed or name in ('PyObject', 'PyType')
-        is_printed = is_printed or name in ('PyNone', 'PyNotImplemented', 'PyEllipsis', 'PyNamespace')
-        is_printed = is_printed or name in ('PyInt', 'PyBool', 'PyFloat', 'PyComplex')
-        is_printed = is_printed or name.startswith('PyList') or name.startswith('PyTuple')
-        is_printed = is_printed or name.startswith('PyDict')
-        is_printed = is_printed or name in ('PySet', 'PyFrozenSet', 'PySetIterator')
-        is_printed = is_printed or name in (
-            'PyEnumerate', 'PyFilter', 'PyMap', 'PyZip',
-            'PyRange', 'PyRangeIterator', 'PySlice',
-            'PyCallableIterator', 'PyIterator', 'PyReversed'
-        )
-        is_printed = is_printed or name.startswith('PyString') or name.startswith('PyByte')
-
-        if is_printed:
-            print_type_things(t)
+        print_type_things(t)
 
 if __name__ == '__main__':
     main()
-
-

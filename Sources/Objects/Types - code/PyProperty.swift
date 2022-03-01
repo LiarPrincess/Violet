@@ -47,30 +47,16 @@ public struct PyProperty: PyObjectMixin {
             del self._x
     """
 
-  // MARK: - Layout
-
-  internal enum Layout {
-    internal static let _getOffset = SizeOf.objectHeader
-    internal static let _getSize = SizeOf.optionalObject
-
-    internal static let _setOffset = _getOffset + _getSize
-    internal static let _setSize = SizeOf.optionalObject
-
-    internal static let _delOffset = _setOffset + _setSize
-    internal static let _delSize = SizeOf.optionalObject
-
-    internal static let docOffset = _delOffset + _delSize
-    internal static let docSize = SizeOf.optionalObject
-
-    internal static let size = docOffset + docSize
-  }
-
   // MARK: - Properties
 
-  private var _getPtr: Ptr<PyObject?> { self.ptr[Layout._getOffset] }
-  private var _setPtr: Ptr<PyObject?> { self.ptr[Layout._setOffset] }
-  private var _delPtr: Ptr<PyObject?> { self.ptr[Layout._delOffset] }
-  private var docPtr: Ptr<PyObject?> { self.ptr[Layout.docOffset] }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyPropertyLayout()
+
+  internal var _getPtr: Ptr<PyObject?> { self.ptr[Self.layout._getOffset] }
+  internal var _setPtr: Ptr<PyObject?> { self.ptr[Self.layout._setOffset] }
+  internal var _delPtr: Ptr<PyObject?> { self.ptr[Self.layout._delOffset] }
+  internal var docPtr: Ptr<PyObject?> { self.ptr[Self.layout.docOffset] }
 
   internal var _get: PyObject? {
     get { Self.getFunction(self._getPtr.pointee) }
@@ -103,7 +89,6 @@ public struct PyProperty: PyObjectMixin {
 
   // MARK: - Initialize/deinitialize
 
-  // swiftlint:disable:next function_parameter_count
   internal func initialize(type: PyType,
                            get: PyObject?,
                            set: PyObject?,
@@ -116,14 +101,8 @@ public struct PyProperty: PyObjectMixin {
     self.docPtr.initialize(to: doc)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyProperty(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf._getPtr.deinitialize()
-    zelf._setPtr.deinitialize()
-    zelf._delPtr.deinitialize()
-    zelf.docPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   // MARK: - Debug
 

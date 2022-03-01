@@ -34,34 +34,17 @@ public struct PyTextFile: PyObjectMixin {
     defaults to "strict".
     """
 
-  // MARK: - Layout
-
-  internal enum Layout {
-    internal static let nameOffset = SizeOf.objectHeader
-    internal static let nameSize = SizeOf.optionalString
-
-    internal static let fdOffset = nameOffset + nameSize
-    internal static let fdSize = SizeOf.fileDescriptorType
-
-    internal static let modeOffset = fdOffset + fdSize
-    internal static let modeSize = SizeOf.fileMode
-
-    internal static let encodingOffset = modeOffset + modeSize
-    internal static let encodingSize = SizeOf.stringEncoding
-
-    internal static let errorHandlingOffset = encodingOffset + encodingSize
-    internal static let errorHandlingSize = SizeOf.stringErrorHandling
-
-    internal static let size = errorHandlingOffset + errorHandlingSize
-  }
-
   // MARK: - Properties
 
-  private var namePtr: Ptr<String?> { self.ptr[Layout.nameOffset] }
-  private var fdPtr: Ptr<FileDescriptorType> { self.ptr[Layout.fdOffset] }
-  private var modePtr: Ptr<FileMode> { self.ptr[Layout.modeOffset] }
-  private var encodingPtr: Ptr<PyString.Encoding> { self.ptr[Layout.encodingOffset] }
-  private var errorHandlingPtr: Ptr<PyString.ErrorHandling> { self.ptr[Layout.errorHandlingOffset] }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyTextFileLayout()
+
+  internal var namePtr: Ptr<String?> { self.ptr[Self.layout.nameOffset] }
+  internal var fdPtr: Ptr<FileDescriptorType> { self.ptr[Self.layout.fdOffset] }
+  internal var modePtr: Ptr<FileMode> { self.ptr[Self.layout.modeOffset] }
+  internal var encodingPtr: Ptr<PyString.Encoding> { self.ptr[Self.layout.encodingOffset] }
+  internal var errorHandlingPtr: Ptr<PyString.ErrorHandling> { self.ptr[Self.layout.errorHandlingOffset] }
 
   internal var name: String? { self.namePtr.pointee }
   internal var fd: FileDescriptorType { self.fdPtr.pointee }
@@ -104,23 +87,14 @@ public struct PyTextFile: PyObjectMixin {
     self.closeOnDealloc = closeOnDealloc
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyTextFile(ptr: ptr)
-
+  internal func beforeDeinitialize() {
     // Remember that during 'deinit' we are not allowed to call any other
     // 'Python' function as the whole context may be deinitializing.
 
-    if zelf.closeOnDealloc {
+    if self.closeOnDealloc {
       // Regardless of whether it succeeded/failed we will ignore result.
-      _ = zelf.closeIfNotAlreadyClosed()
+      _ = self.closeIfNotAlreadyClosed()
     }
-
-    zelf.header.deinitialize()
-    zelf.namePtr.deinitialize()
-    zelf.fdPtr.deinitialize()
-    zelf.modePtr.deinitialize()
-    zelf.encodingPtr.deinitialize()
-    zelf.errorHandlingPtr.deinitialize()
   }
 
   private func closeIfNotAlreadyClosed() -> Int { return 1 }

@@ -16,70 +16,26 @@ public struct PyCode: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc = "Create a code object. Not for the faint of heart."
 
-  // MARK: - Layout
-
-  internal enum Layout {
-    internal static let nameOffset = SizeOf.objectHeader
-    internal static let nameSize = SizeOf.object
-
-    internal static let qualifiedNameOffset = nameOffset + nameSize
-    internal static let qualifiedNameSize = SizeOf.object
-
-    internal static let filenameOffset = qualifiedNameOffset + qualifiedNameSize
-    internal static let filenameSize = SizeOf.object
-
-    internal static let instructionsOffset = filenameOffset + filenameSize
-    internal static let instructionsSize = SizeOf.array
-
-    internal static let firstLineOffset = instructionsOffset + instructionsSize
-    internal static let firstLineSize = SizeOf.sourceLine
-
-    internal static let instructionLinesOffset = firstLineOffset + firstLineSize
-    internal static let instructionLinesSize = SizeOf.array
-
-    internal static let constantsOffset = instructionLinesOffset + instructionLinesSize
-    internal static let constantsSize = SizeOf.array
-
-    internal static let labelsOffset = constantsOffset + constantsSize
-    internal static let labelsSize = SizeOf.array
-
-    internal static let namesOffset = labelsOffset + labelsSize
-    internal static let namesSize = SizeOf.array
-
-    internal static let variableNamesOffset = namesOffset + namesSize
-    internal static let variableNamesSize = SizeOf.array
-
-    internal static let cellVariableNamesOffset = variableNamesOffset + variableNamesSize
-    internal static let cellVariableNamesSize = SizeOf.array
-
-    internal static let freeVariableNamesOffset = cellVariableNamesOffset + cellVariableNamesSize
-    internal static let freeVariableNamesSize = SizeOf.array
-
-    internal static let argCountOffset = freeVariableNamesOffset + freeVariableNamesSize
-    internal static let argCountSize = SizeOf.int
-
-    internal static let kwOnlyArgCountOffset = argCountOffset + argCountSize
-    internal static let kwOnlyArgCountSize = SizeOf.int
-
-    internal static let size = kwOnlyArgCountOffset + kwOnlyArgCountSize
-  }
-
   // MARK: - Properties
 
-  private var namePtr: Ptr<PyString> { self.ptr[Layout.nameOffset] }
-  private var qualifiedNamePtr: Ptr<PyString> { self.ptr[Layout.qualifiedNameOffset] }
-  private var filenamePtr: Ptr<PyString> { self.ptr[Layout.filenameOffset] }
-  private var instructionsPtr: Ptr<[Instruction]> { self.ptr[Layout.instructionsOffset] }
-  private var firstLinePtr: Ptr<SourceLine> { self.ptr[Layout.firstLineOffset] }
-  private var instructionLinesPtr: Ptr<[SourceLine]> { self.ptr[Layout.instructionLinesOffset] }
-  private var constantsPtr: Ptr<[PyObject]> { self.ptr[Layout.constantsOffset] }
-  private var labelsPtr: Ptr<[CodeObject.Label]> { self.ptr[Layout.labelsOffset] }
-  private var namesPtr: Ptr<[PyString]> { self.ptr[Layout.namesOffset] }
-  private var variableNamesPtr: Ptr<[MangledName]> { self.ptr[Layout.variableNamesOffset] }
-  private var cellVariableNamesPtr: Ptr<[MangledName]> { self.ptr[Layout.cellVariableNamesOffset] }
-  private var freeVariableNamesPtr: Ptr<[MangledName]> { self.ptr[Layout.freeVariableNamesOffset] }
-  private var argCountPtr: Ptr<Int> { self.ptr[Layout.argCountOffset] }
-  private var kwOnlyArgCountPtr: Ptr<Int> { self.ptr[Layout.kwOnlyArgCountOffset] }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyCodeLayout()
+
+  internal var namePtr: Ptr<PyString> { self.ptr[Self.layout.nameOffset] }
+  internal var qualifiedNamePtr: Ptr<PyString> { self.ptr[Self.layout.qualifiedNameOffset] }
+  internal var filenamePtr: Ptr<PyString> { self.ptr[Self.layout.filenameOffset] }
+  internal var instructionsPtr: Ptr<[Instruction]> { self.ptr[Self.layout.instructionsOffset] }
+  internal var firstLinePtr: Ptr<SourceLine> { self.ptr[Self.layout.firstLineOffset] }
+  internal var instructionLinesPtr: Ptr<[SourceLine]> { self.ptr[Self.layout.instructionLinesOffset] }
+  internal var constantsPtr: Ptr<[PyObject]> { self.ptr[Self.layout.constantsOffset] }
+  internal var labelsPtr: Ptr<[CodeObject.Label]> { self.ptr[Self.layout.labelsOffset] }
+  internal var namesPtr: Ptr<[PyString]> { self.ptr[Self.layout.namesOffset] }
+  internal var variableNamesPtr: Ptr<[MangledName]> { self.ptr[Self.layout.variableNamesOffset] }
+  internal var cellVariableNamesPtr: Ptr<[MangledName]> { self.ptr[Self.layout.cellVariableNamesOffset] }
+  internal var freeVariableNamesPtr: Ptr<[MangledName]> { self.ptr[Self.layout.freeVariableNamesOffset] }
+  internal var argCountPtr: Ptr<Int> { self.ptr[Self.layout.argCountOffset] }
+  internal var kwOnlyArgCountPtr: Ptr<Int> { self.ptr[Self.layout.kwOnlyArgCountOffset] }
 
   // MARK: - Name
 
@@ -323,24 +279,8 @@ public struct PyCode: PyObjectMixin {
     }
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyCode(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.namePtr.deinitialize()
-    zelf.qualifiedNamePtr.deinitialize()
-    zelf.filenamePtr.deinitialize()
-    zelf.instructionsPtr.deinitialize()
-    zelf.firstLinePtr.deinitialize()
-    zelf.instructionLinesPtr.deinitialize()
-    zelf.constantsPtr.deinitialize()
-    zelf.labelsPtr.deinitialize()
-    zelf.namesPtr.deinitialize()
-    zelf.variableNamesPtr.deinitialize()
-    zelf.cellVariableNamesPtr.deinitialize()
-    zelf.freeVariableNamesPtr.deinitialize()
-    zelf.argCountPtr.deinitialize()
-    zelf.kwOnlyArgCountPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   // MARK: - Debug
 

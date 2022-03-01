@@ -8,30 +8,16 @@
 /// not Python methods in user-defined classes.
 public struct PyBuiltinMethod: PyObjectMixin, AbstractBuiltinFunction {
 
-  // MARK: - Layout
-
-  internal enum Layout {
-    internal static let functionOffset = SizeOf.objectHeader
-    internal static let functionSize = SizeOf.functionWrapper
-
-    internal static let objectOffset = functionOffset + functionSize
-    internal static let objectSize = SizeOf.object
-
-    internal static let moduleOffset = objectOffset + objectSize
-    internal static let moduleSize = SizeOf.optionalObject
-
-    internal static let docOffset = moduleOffset + moduleSize
-    internal static let docSize = SizeOf.optionalString
-
-    internal static let size = docOffset + docSize
-  }
-
   // MARK: - Properties
 
-  private var functionPtr: Ptr<FunctionWrapper> { self.ptr[Layout.functionOffset] }
-  private var objectPtr: Ptr<PyObject> { self.ptr[Layout.objectOffset] }
-  private var modulePtr: Ptr<PyObject?> { self.ptr[Layout.moduleOffset] }
-  private var docPtr: Ptr<String?> { self.ptr[Layout.docOffset] }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyBuiltinMethodLayout()
+
+  internal var functionPtr: Ptr<FunctionWrapper> { self.ptr[Self.layout.functionOffset] }
+  internal var objectPtr: Ptr<PyObject> { self.ptr[Self.layout.objectOffset] }
+  internal var modulePtr: Ptr<PyObject?> { self.ptr[Self.layout.moduleOffset] }
+  internal var docPtr: Ptr<String?> { self.ptr[Self.layout.docOffset] }
 
   /// The Swift function that will be called.
   internal var function: FunctionWrapper { self.functionPtr.pointee }
@@ -52,7 +38,6 @@ public struct PyBuiltinMethod: PyObjectMixin, AbstractBuiltinFunction {
 
   // MARK: - Initialize/deinitialize
 
-  // swiftlint:disable:next function_parameter_count
   internal func initialize(type: PyType,
                            function: FunctionWrapper,
                            object: PyObject,
@@ -65,14 +50,8 @@ public struct PyBuiltinMethod: PyObjectMixin, AbstractBuiltinFunction {
     self.docPtr.initialize(to: doc)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyBuiltinMethod(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.functionPtr.deinitialize()
-    zelf.objectPtr.deinitialize()
-    zelf.modulePtr.deinitialize()
-    zelf.docPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   // MARK: - Debug
 

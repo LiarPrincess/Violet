@@ -29,26 +29,15 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
             super().cmeth(arg)
     """
 
-  // MARK: - Layout
-
-  internal enum Layout {
-    internal static let thisClassOffset = SizeOf.objectHeader
-    internal static let thisClassSize = SizeOf.optionalObject
-
-    internal static let objectOffset = thisClassOffset + thisClassSize
-    internal static let objectSize = SizeOf.optionalObject
-
-    internal static let objectTypeOffset = objectOffset + objectSize
-    internal static let objectTypeSize = SizeOf.optionalObject
-
-    internal static let size = objectTypeOffset + objectTypeSize
-  }
-
   // MARK: - Properties
 
-  private var thisClassPtr: Ptr<PyType?> { self.ptr[Layout.thisClassOffset] }
-  private var objectPtr: Ptr<PyObject?> { self.ptr[Layout.objectOffset] }
-  private var objectTypePtr: Ptr<PyType?> { self.ptr[Layout.objectTypeOffset] }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PySuperLayout()
+
+  internal var thisClassPtr: Ptr<PyType?> { self.ptr[Self.layout.thisClassOffset] }
+  internal var objectPtr: Ptr<PyObject?> { self.ptr[Self.layout.objectOffset] }
+  internal var objectTypePtr: Ptr<PyType?> { self.ptr[Self.layout.objectTypeOffset] }
 
   /// Type that the user requested (`__thisclass__` in Python).
   ///
@@ -78,13 +67,8 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
     self.objectTypePtr.initialize(to: objectType)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PySuper(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.thisClassPtr.deinitialize()
-    zelf.objectPtr.deinitialize()
-    zelf.objectTypePtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   // MARK: - Debug
 

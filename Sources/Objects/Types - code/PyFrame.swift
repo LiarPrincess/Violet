@@ -28,65 +28,25 @@ public struct PyFrame: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // MARK: - Layout
-
-  internal enum Layout {
-    internal static let codeOffset = SizeOf.objectHeader
-    internal static let codeSize = SizeOf.object
-
-    internal static let parentOffset = codeOffset + codeSize
-    internal static let parentSize = SizeOf.optionalObject
-
-    internal static let stackOffset = parentOffset + parentSize
-    internal static let stackSize = SizeOf.objectStack
-
-    internal static let blocksOffset = stackOffset + stackSize
-    internal static let blocksSize = SizeOf.blockStack
-
-    internal static let localsOffset = blocksOffset + blocksSize
-    internal static let localsSize = SizeOf.object
-
-    internal static let globalsOffset = localsOffset + localsSize
-    internal static let globalsSize = SizeOf.object
-
-    internal static let builtinsOffset = globalsOffset + globalsSize
-    internal static let builtinsSize = SizeOf.object
-
-    internal static let fastLocalsOffset = builtinsOffset + builtinsSize
-    internal static let fastLocalsSize = SizeOf.array
-
-    internal static let cellVariablesOffset = fastLocalsOffset + fastLocalsSize
-    internal static let cellsVariablesSize = SizeOf.array
-
-    internal static let freeVariablesOffset = cellVariablesOffset + cellsVariablesSize
-    internal static let freeVariablesSize = SizeOf.array
-
-    // swiftlint:disable:next line_length
-    internal static let currentInstructionIndexOffset = freeVariablesOffset + freeVariablesSize
-    internal static let currentInstructionIndexSize = SizeOf.optionalInt
-
-    // swiftlint:disable:next line_length
-    internal static let nextInstructionIndexOffset = currentInstructionIndexOffset + currentInstructionIndexSize
-    internal static let nextInstructionIndexSize = SizeOf.int
-
-    internal static let size = nextInstructionIndexOffset + nextInstructionIndexSize
-  }
-
   // MARK: - Properties
 
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyFrameLayout()
+
   // swiftlint:disable line_length
-  private var codePtr: Ptr<PyCode> { self.ptr[Layout.codeOffset] }
-  private var parentPtr: Ptr<PyFrame?> { self.ptr[Layout.parentOffset] }
-  private var stackPtr: Ptr<ObjectStack> { self.ptr[Layout.stackOffset] }
-  private var blocksPtr: Ptr<BlockStack> { self.ptr[Layout.blocksOffset] }
-  private var localsPtr: Ptr<PyDict> { self.ptr[Layout.localsOffset] }
-  private var globalsPtr: Ptr<PyDict> { self.ptr[Layout.globalsOffset] }
-  private var builtinsPtr: Ptr<PyDict> { self.ptr[Layout.builtinsOffset] }
-  private var fastLocalsPtr: Ptr<[PyObject?]> { self.ptr[Layout.fastLocalsOffset] }
-  private var cellVariablesPtr: Ptr<[PyCell]> { self.ptr[Layout.cellVariablesOffset] }
-  private var freeVariablesPtr: Ptr<[PyCell]> { self.ptr[Layout.freeVariablesOffset] }
-  private var currentInstructionIndexPtr: Ptr<Int?> { self.ptr[Layout.currentInstructionIndexOffset] }
-  private var nextInstructionIndexPtr: Ptr<Int> { self.ptr[Layout.nextInstructionIndexOffset] }
+  internal var codePtr: Ptr<PyCode> { self.ptr[Self.layout.codeOffset] }
+  internal var parentPtr: Ptr<PyFrame?> { self.ptr[Self.layout.parentOffset] }
+  internal var stackPtr: Ptr<PyFrame.ObjectStack> { self.ptr[Self.layout.stackOffset] }
+  internal var blocksPtr: Ptr<PyFrame.BlockStack> { self.ptr[Self.layout.blocksOffset] }
+  internal var localsPtr: Ptr<PyDict> { self.ptr[Self.layout.localsOffset] }
+  internal var globalsPtr: Ptr<PyDict> { self.ptr[Self.layout.globalsOffset] }
+  internal var builtinsPtr: Ptr<PyDict> { self.ptr[Self.layout.builtinsOffset] }
+  internal var fastLocalsPtr: Ptr<[PyObject?]> { self.ptr[Self.layout.fastLocalsOffset] }
+  internal var cellVariablesPtr: Ptr<[PyCell]> { self.ptr[Self.layout.cellVariablesOffset] }
+  internal var freeVariablesPtr: Ptr<[PyCell]> { self.ptr[Self.layout.freeVariablesOffset] }
+  internal var currentInstructionIndexPtr: Ptr<Int?> { self.ptr[Self.layout.currentInstructionIndexOffset] }
+  internal var nextInstructionIndexPtr: Ptr<Int> { self.ptr[Self.layout.nextInstructionIndexOffset] }
   // swiftlint:enable line_length
 
   /// Code object being executed in this frame.
@@ -247,22 +207,8 @@ public struct PyFrame: PyObjectMixin {
     fatalError()
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyFrame(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.codePtr.deinitialize()
-    zelf.parentPtr.deinitialize()
-    zelf.stackPtr.deinitialize()
-    zelf.blocksPtr.deinitialize()
-    zelf.localsPtr.deinitialize()
-    zelf.globalsPtr.deinitialize()
-    zelf.builtinsPtr.deinitialize()
-    zelf.fastLocalsPtr.deinitialize()
-    zelf.cellVariablesPtr.deinitialize()
-    zelf.freeVariablesPtr.deinitialize()
-    zelf.currentInstructionIndexPtr.deinitialize()
-    zelf.nextInstructionIndexPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   // MARK: - Debug
 
