@@ -29,54 +29,22 @@ public struct PyFunction: PyObjectMixin {
     a tuple that supplies the bindings for free variables
     """
 
-  // MARK: - Layout
-
-  internal enum Layout {
-    internal static let nameOffset = SizeOf.objectHeader
-    internal static let nameSize = SizeOf.object
-
-    internal static let qualnameOffset = nameOffset + nameSize
-    internal static let qualnameSize = SizeOf.object
-
-    internal static let docOffset = qualnameOffset + qualnameSize
-    internal static let docSize = SizeOf.optionalObject
-
-    internal static let moduleOffset = docOffset + docSize
-    internal static let moduleSize = SizeOf.object
-
-    internal static let codeOffset = moduleOffset + moduleSize
-    internal static let codeSize = SizeOf.object
-
-    internal static let globalsOffset = codeOffset + codeSize
-    internal static let globalsSize = SizeOf.object
-
-    internal static let defaultsOffset = globalsOffset + globalsSize
-    internal static let defaultsSize = SizeOf.optionalObject
-
-    internal static let kwDefaultsOffset = defaultsOffset + defaultsSize
-    internal static let kwDefaultsSize = SizeOf.optionalObject
-
-    internal static let closureOffset = kwDefaultsOffset + kwDefaultsSize
-    internal static let closureSize = SizeOf.optionalObject
-
-    internal static let annotationsOffset = closureOffset + closureSize
-    internal static let annotationsSize = SizeOf.optionalObject
-
-    internal static let size = annotationsOffset + annotationsSize
-  }
-
   // MARK: - Properties
 
-  private var namePtr: Ptr<PyString> { self.ptr[Layout.nameOffset] }
-  private var qualnamePtr: Ptr<PyString> { self.ptr[Layout.qualnameOffset] }
-  private var docPtr: Ptr<PyString?> { self.ptr[Layout.docOffset] }
-  private var modulePtr: Ptr<PyObject> { self.ptr[Layout.moduleOffset] }
-  private var codePtr: Ptr<PyCode> { self.ptr[Layout.codeOffset] }
-  private var globalsPtr: Ptr<PyDict> { self.ptr[Layout.globalsOffset] }
-  private var defaultsPtr: Ptr<PyTuple?> { self.ptr[Layout.defaultsOffset] }
-  private var kwDefaultsPtr: Ptr<PyDict?> { self.ptr[Layout.kwDefaultsOffset] }
-  private var closurePtr: Ptr<PyTuple?> { self.ptr[Layout.closureOffset] }
-  private var annotationsPtr: Ptr<PyDict?> { self.ptr[Layout.annotationsOffset] }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyFunctionLayout()
+
+  internal var namePtr: Ptr<PyString> { self.ptr[Self.layout.nameOffset] }
+  internal var qualnamePtr: Ptr<PyString> { self.ptr[Self.layout.qualnameOffset] }
+  internal var docPtr: Ptr<PyString?> { self.ptr[Self.layout.docOffset] }
+  internal var modulePtr: Ptr<PyObject> { self.ptr[Self.layout.moduleOffset] }
+  internal var codePtr: Ptr<PyCode> { self.ptr[Self.layout.codeOffset] }
+  internal var globalsPtr: Ptr<PyDict> { self.ptr[Self.layout.globalsOffset] }
+  internal var defaultsPtr: Ptr<PyTuple?> { self.ptr[Self.layout.defaultsOffset] }
+  internal var kwDefaultsPtr: Ptr<PyDict?> { self.ptr[Self.layout.kwDefaultsOffset] }
+  internal var closurePtr: Ptr<PyTuple?> { self.ptr[Self.layout.closureOffset] }
+  internal var annotationsPtr: Ptr<PyDict?> { self.ptr[Self.layout.annotationsOffset] }
 
   /// The `__name__` attribute, a string object
   internal var name: PyString { self.namePtr.pointee }
@@ -105,7 +73,6 @@ public struct PyFunction: PyObjectMixin {
 
   // MARK: - Initialize/deinitialize
 
-  // swiftlint:disable:next function_parameter_count
   internal func initialize(type: PyType,
                            qualname: PyString?,
                            module: PyObject,
@@ -129,20 +96,8 @@ public struct PyFunction: PyObjectMixin {
     self.docPtr.initialize(to: doc)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyFunction(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.namePtr.deinitialize()
-    zelf.qualnamePtr.deinitialize()
-    zelf.docPtr.deinitialize()
-    zelf.modulePtr.deinitialize()
-    zelf.codePtr.deinitialize()
-    zelf.globalsPtr.deinitialize()
-    zelf.defaultsPtr.deinitialize()
-    zelf.kwDefaultsPtr.deinitialize()
-    zelf.closurePtr.deinitialize()
-    zelf.annotationsPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   // MARK: - Debug
 

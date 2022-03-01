@@ -28,14 +28,11 @@ public struct PyStaticMethod: PyObjectMixin {
     For a more advanced concept, see the classmethod builtin.
     """
 
-  internal enum Layout {
-    internal static let callableOffset = SizeOf.objectHeader
-    internal static let callableSize = SizeOf.optionalObject
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyStaticMethodLayout()
 
-    internal static let size = callableOffset + callableSize
-  }
-
-  private var callablePtr: Ptr<PyObject?> { self.ptr[Layout.callableOffset] }
+  internal var callablePtr: Ptr<PyObject?> { self.ptr[Self.layout.callableOffset] }
   internal var callable: PyObject? { self.callablePtr.pointee }
 
   public let ptr: RawPtr
@@ -49,11 +46,8 @@ public struct PyStaticMethod: PyObjectMixin {
     self.callablePtr.initialize(to: callable)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyStaticMethod(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.callablePtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyStaticMethod(ptr: ptr)

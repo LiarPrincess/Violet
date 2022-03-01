@@ -10,14 +10,12 @@
 /// can interact with value in parent frame.
 public struct PyCell: PyObjectMixin {
 
-  internal enum Layout {
-    internal static let contentOffset = SizeOf.objectHeader
-    internal static let contentSize = SizeOf.optionalObject
-    internal static let size = contentOffset + contentSize
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyCellLayout()
 
   // This has to be public for performance
-  private var contentPtr: Ptr<PyObject?> { self.ptr[Layout.contentOffset] }
+  internal var contentPtr: Ptr<PyObject?> { self.ptr[Self.layout.contentOffset] }
   internal var content: PyObject? { self.contentPtr.pointee }
 
   public let ptr: RawPtr
@@ -31,11 +29,8 @@ public struct PyCell: PyObjectMixin {
     self.contentPtr.initialize(to: content)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyCell(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.contentPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyCell(ptr: ptr)

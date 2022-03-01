@@ -16,9 +16,9 @@ public struct PyModule: PyObjectMixin {
     The name must be a string; the optional doc argument can have any type.
     """
 
-  internal enum Layout {
-    internal static let size = SizeOf.objectHeader
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyModuleLayout()
 
   public let ptr: RawPtr
 
@@ -48,10 +48,8 @@ public struct PyModule: PyObjectMixin {
     fatalError()
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyModule(ptr: ptr)
-    zelf.header.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyModule(ptr: ptr)
