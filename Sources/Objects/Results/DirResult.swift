@@ -1,7 +1,6 @@
-/* MARKER
 import VioletCore
 
-internal class DirResult: PyFunctionResultConvertible {
+public class DirResult: PyFunctionResultConvertible {
 
   private var elements = [PyObject]()
   /// Avoid sorting if we are already sorted.
@@ -58,7 +57,7 @@ internal class DirResult: PyFunctionResultConvertible {
   // MARK: - PyFunctionResultConvertible
 
   // 'DirResult' can be used as a return type in python function.
-  internal var asFunctionResult: PyFunctionResult {
+  public var asFunctionResult: PyFunctionResult {
     if let cached = self.cachedResult {
       return cached
     }
@@ -68,7 +67,7 @@ internal class DirResult: PyFunctionResultConvertible {
 
     switch list.sort(key: nil, isReverse: false) {
     case .value:
-      result = .value(list)
+      result = .value(list.asObject)
     case .error(let e):
       result = .error(e)
     }
@@ -77,5 +76,3 @@ internal class DirResult: PyFunctionResultConvertible {
     return result
   }
 }
-
-*/

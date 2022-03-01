@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import FileSystem
 import VioletCore
@@ -45,7 +44,7 @@ public enum PyResult<Wrapped> {
 extension PyResult: PyFunctionResultConvertible
   where Wrapped: PyFunctionResultConvertible {
 
-  internal var asFunctionResult: PyFunctionResult {
+  public var asFunctionResult: PyFunctionResult {
     return self.flatMap { $0.asFunctionResult }
   }
 }
@@ -58,6 +57,8 @@ extension PyResult where Wrapped == Void {
     return PyResult.value(())
   }
 }
+
+/* MARKER
 
 // MARK: - Errors
 
@@ -162,5 +163,4 @@ extension PyResult {
     return PyResult.error(Py.newEOFError(msg: msg))
   }
 }
-
 */

@@ -1,22 +1,17 @@
 import Foundation
 
-public enum PyResult<Wrapped> {
+// swiftlint:disable fatal_error_message
+// swiftlint:disable unavailable_function
 
-  /// Use this ctor for ordinary (non-error) values.
-  ///
-  /// It can still hold an `error` (meaning a subclass of `BaseException`),
-  /// but in this case it is just a local variable, not an object to be raised.
-  case value(Wrapped)
-  /// Use this ctor to raise an error in VM.
-  case error(PyBaseException)
+extension PyResult {
 
   static func unicodeDecodeError(encoding: PyString.Encoding,
-                          data: Data) -> PyResult<Wrapped> {
+                                 data: Data) -> PyResult<Wrapped> {
     fatalError()
   }
 
   static func unicodeEncodeError(encoding: PyString.Encoding,
-                          string: String) -> PyResult<Wrapped> {
+                                 string: String) -> PyResult<Wrapped> {
     fatalError()
   }
 
@@ -33,9 +28,7 @@ public enum PyResult<Wrapped> {
   }
 }
 
-internal typealias PyFunctionResult = PyResult<PyObject>
-
-public protocol PyFunctionResultConvertible {}
+public struct FunctionWrapper { }
 public protocol HasCustomGetMethod {}
 public protocol AbstractSequence {}
 public protocol AbstractDictViewIterator {}
@@ -44,5 +37,3 @@ public protocol AbstractSet {}
 public protocol AbstractString {}
 public protocol AbstractBytes {}
 public protocol AbstractBuiltinFunction {}
-
-public struct FunctionWrapper { }

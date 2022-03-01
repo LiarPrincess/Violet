@@ -78,7 +78,7 @@ extension PyObjectMixin {
 
   // 'PyObject' can be returned from Python function!
   // Yeah… I know, kind of hard to believe.
-  internal var asFunctionResult: PyFunctionResult {
+  public var asFunctionResult: PyFunctionResult {
     return .value(self.asObject)
   }
 }
