@@ -1,5 +1,68 @@
+from typing import List
 from Sourcery import get_types, TypeInfo
-from Common.strings import generated_warning
+from Helpers import generated_warning, NewTypeArguments
+
+def print_type_and_object_types_init(all_types: List[TypeInfo]):
+    object_type = None
+    type_type = None
+    for t in all_types:
+        if t.swift_type_name == 'PyObject':
+            object_type = t
+        elif t.swift_type_name == 'PyType':
+            type_type = t
+
+    object_args = NewTypeArguments(object_type, all_types)
+    type_args = NewTypeArguments(type_type, all_types)
+
+    object_flags = ', '.join(object_args.flags)
+    type_flags = ', '.join(type_args.flags)
+
+    print(f'''\
+// MARK: - Type/object types init
+
+extension PyMemory {{
+
+  /// Those types require a special treatment because:
+  /// - `object` type has `type` type
+  /// - `type` type has `type` type (self reference) and `object` type as base
+  public func newTypeAndObjectTypes() -> (typeType: PyType, objectType: PyType) {{
+    let layout = PyType.layout
+    let typeTypePtr = self.allocate(size: layout.size, alignment: layout.alignment)
+    let objectTypePtr = self.allocate(size: layout.size, alignment: layout.alignment)
+
+    let typeType = PyType(ptr: typeTypePtr)
+    let objectType = PyType(ptr: objectTypePtr)
+
+    objectType.initialize(type: typeType,
+                          name: "{object_args.name}",
+                          qualname: "{object_args.qualname}",
+                          flags: [{object_flags}],
+                          base: nil,
+                          bases: [],
+                          mroWithoutSelf: [],
+                          subclasses: [],
+                          layout: {object_args.layout_property},
+                          staticMethods: {object_args.static_methods_property},
+                          debugFn: {object_args.debugFn},
+                          deinitialize: {object_args.deinitialize})
+
+    typeType.initialize(type: typeType,
+                        name: "{type_args.name}",
+                        qualname: "{type_args.qualname}",
+                        flags: [{type_flags}],
+                        base: objectType,
+                        bases: [objectType],
+                        mroWithoutSelf: [objectType],
+                        subclasses: [],
+                        layout: {type_args.layout_property},
+                        staticMethods: {type_args.static_methods_property},
+                        debugFn: {type_args.debugFn},
+                        deinitialize: {type_args.deinitialize})
+
+   return (typeType, objectType)
+  }}
+}}
+''')
 
 class PointerProperty:
     def __init__(self, swift_name: str, swift_type: str):
@@ -157,11 +220,21 @@ import VioletBytecode
 import VioletCompiler
 
 // swiftlint:disable empty_count
+// swiftlint:disable line_length
+// swiftlint:disable function_body_length
 // swiftlint:disable function_parameter_count
 // swiftlint:disable file_length
+
+// This file contains:
+// - PyMemory.newTypeAndObjectTypes - because they have recursive dependency
+// - then for each type:
+//   - PyMemory.[TYPE_NAME]Layout - mainly field offsets
+//   - PyMemory.new[TYPE_NAME] - to create new object of this type
+//   - [TYPE_NAME].deinitialize(ptr:) - to deinitialize this object before deletion
 ''')
 
     all_types = get_types()
+    print_type_and_object_types_init(all_types)
 
     for t in all_types:
         print_type_things(t)

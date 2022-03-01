@@ -7,11 +7,9 @@ import VioletBytecode
 
 public typealias PyHash = Int
 
-public let Py = PyInstanceFake()
+public let Py = PyContext()
 
-public struct FunctionWrapper { }
-
-public struct PyInstanceFake {
+public struct PyContext {
 
   public var `true`: PyBool { fatalError() }
   public var `false`: PyBool { fatalError() }
@@ -32,18 +30,11 @@ public struct PyInstanceFake {
   public func isEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
     return .value(false)
   }
+
+  public enum Types {
+    public static let objectMemoryLayout = PyType.MemoryLayout()
+    public static let objectStaticMethods = PyType.StaticallyKnownNotOverriddenMethods()
+    public static let typeMemoryLayout = PyType.MemoryLayout()
+    public static let typeStaticMethods = PyType.StaticallyKnownNotOverriddenMethods()
+  }
 }
-
-public struct IdString {
-
-  internal let value: PyString
-  // 'hash' is cached on 'str', but by storing it on 'IdString' we can avoid
-  // memory fetch.
-  internal let hash: PyHash
-
-//  fileprivate init(value: String) {
-//    self.value = Py.newString(value)
-//    self.hash = self.value.hash()
-//  }
-}
-

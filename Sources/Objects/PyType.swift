@@ -85,14 +85,20 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   internal func initialize(type: PyType,
                            name: String,
                            qualname: String,
+                           flags: PyType.TypeFlags,
                            base: PyType?,
                            bases: [PyType],
-                           mro: [PyType],
+                           mroWithoutSelf: [PyType],
                            subclasses: [PyType],
                            layout: PyType.MemoryLayout,
                            staticMethods: PyType.StaticallyKnownNotOverriddenMethods,
                            debugFn: @escaping PyType.DebugFn,
                            deinitialize: @escaping PyType.DeinitializeFn) {
+    if let b = base {
+      assert(mro.contains { $0.ptr === b.ptr })
+    }
+
+    let mro = [self] + mroWithoutSelf
     self.header.initialize(type: type)
     self.namePtr.initialize(to: name)
     self.qualnamePtr.initialize(to: qualname)
@@ -104,6 +110,11 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     self.staticMethodsPtr.initialize(to: staticMethods)
     self.debugFnPtr.initialize(to: debugFn)
     self.deinitializePtr.initialize(to: deinitialize)
+    self.flags.setCustomFlags(from: typeFlags.objectFlags)
+
+    for base in bases {
+      base.subclassesPtr.pointee.append(self)
+    }
   }
 
   // Nothing to do here.
