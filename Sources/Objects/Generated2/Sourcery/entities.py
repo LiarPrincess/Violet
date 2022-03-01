@@ -24,7 +24,7 @@ class TypeInfo:
 
         # Properties, methods - to be filled later
         self.swift_properties: List[SwiftPropertyInfo] = []
-        self.swift_initializer: SwiftInitializerInfo = None
+        self.swift_initializers: List[SwiftInitializerInfo] = []
         # self.swift_methods: List[SwiftFunctionInfo] = []
         # self.swift_initializers: List[SwiftFunctionInfo] = []
         # self.python_properties: List[PyPropertyInfo] = []

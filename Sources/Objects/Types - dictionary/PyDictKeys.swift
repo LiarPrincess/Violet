@@ -15,13 +15,11 @@ public struct PyDictKeys: PyObjectMixin, AbstractDictView {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal enum Layout {
-    internal static let dictOffset = SizeOf.objectHeader
-    internal static let dictSize = SizeOf.object
-    internal static let size = dictOffset + dictSize
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyDictKeysLayout()
 
-  private var dictPtr: Ptr<PyDict> { self.ptr[Layout.dictOffset] }
+  internal var dictPtr: Ptr<PyDict> { self.ptr[Self.layout.dictOffset] }
   internal var dict: PyDict { self.dictPtr.pointee }
 
   public let ptr: RawPtr
@@ -35,11 +33,8 @@ public struct PyDictKeys: PyObjectMixin, AbstractDictView {
     self.dictPtr.initialize(to: dict)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyDictKeys(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.dictPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyDictKeys(ptr: ptr)

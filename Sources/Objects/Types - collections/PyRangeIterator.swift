@@ -12,30 +12,16 @@ public struct PyRangeIterator: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // MARK: - Layout
-
-  internal enum Layout {
-    internal static let startOffset = SizeOf.objectHeader
-    internal static let startSize = SizeOf.bigInt
-
-    internal static let stepOffset = startOffset + startSize
-    internal static let stepSize = SizeOf.bigInt
-
-    internal static let lengthOffset = stepOffset + stepSize
-    internal static let lengthSize = SizeOf.bigInt
-
-    internal static let indexOffset = lengthOffset + lengthSize
-    internal static let indexSize = SizeOf.bigInt
-
-    internal static let size = indexOffset + indexSize
-  }
-
   // MARK: - Properties
 
-  private var startPtr: Ptr<BigInt> { self.ptr[Layout.startOffset] }
-  private var stepPtr: Ptr<BigInt> { self.ptr[Layout.stepOffset] }
-  private var lengthPtr: Ptr<BigInt> { self.ptr[Layout.lengthOffset] }
-  private var indexPtr: Ptr<BigInt> { self.ptr[Layout.indexOffset] }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyRangeIteratorLayout()
+
+  internal var startPtr: Ptr<BigInt> { self.ptr[Self.layout.startOffset] }
+  internal var stepPtr: Ptr<BigInt> { self.ptr[Self.layout.stepOffset] }
+  internal var lengthPtr: Ptr<BigInt> { self.ptr[Self.layout.lengthOffset] }
+  internal var indexPtr: Ptr<BigInt> { self.ptr[Self.layout.indexOffset] }
 
   internal var start: BigInt { self.startPtr.pointee }
   internal var step: BigInt { self.stepPtr.pointee }
@@ -60,14 +46,8 @@ public struct PyRangeIterator: PyObjectMixin {
     self.indexPtr.initialize(to: 0)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyRangeIterator(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.startPtr.deinitialize()
-    zelf.stepPtr.deinitialize()
-    zelf.lengthPtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   // MARK: - Debug
 

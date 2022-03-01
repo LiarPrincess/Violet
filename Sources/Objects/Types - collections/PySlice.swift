@@ -22,26 +22,15 @@ public struct PySlice: PyObjectMixin {
     This is used for extended slicing (e.g. a[0:10:2]).
     """
 
-  // MARK: - Layout
-
-  internal enum Layout {
-    internal static let startOffset = SizeOf.objectHeader
-    internal static let startSize = SizeOf.object
-
-    internal static let stopOffset = startOffset + startSize
-    internal static let stopSize = SizeOf.object
-
-    internal static let stepOffset = stopOffset + stopSize
-    internal static let stepSize = SizeOf.object
-
-    internal static let size = stepOffset + stepSize
-  }
-
   // MARK: - Properties
 
-  private var startPtr: Ptr<PyObject> { self.ptr[Layout.startOffset] }
-  private var stopPtr: Ptr<PyObject> { self.ptr[Layout.stopOffset] }
-  private var stepPtr: Ptr<PyObject> { self.ptr[Layout.stepOffset] }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PySliceLayout()
+
+  internal var startPtr: Ptr<PyObject> { self.ptr[Self.layout.startOffset] }
+  internal var stopPtr: Ptr<PyObject> { self.ptr[Self.layout.stopOffset] }
+  internal var stepPtr: Ptr<PyObject> { self.ptr[Self.layout.stepOffset] }
 
   internal var start: PyObject { self.startPtr.pointee }
   internal var stop: PyObject { self.stopPtr.pointee }
@@ -64,13 +53,8 @@ public struct PySlice: PyObjectMixin {
     self.stepPtr.initialize(to: step)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PySlice(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.startPtr.deinitialize()
-    zelf.stopPtr.deinitialize()
-    zelf.stepPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   // MARK: - Debug
 

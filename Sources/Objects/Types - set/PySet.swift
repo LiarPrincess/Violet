@@ -12,8 +12,8 @@ import VioletCore
 // sourcery: subclassInstancesHave__dict__
  public struct PySet: PyObjectMixin, AbstractSet {
 
-  internal typealias Element = AbstractSet_Element
-  internal typealias OrderedSet = VioletObjects.OrderedSet<Element>
+  public typealias Element = AbstractSet_Element
+  public typealias OrderedSet = VioletObjects.OrderedSet<Element>
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -23,13 +23,11 @@ import VioletCore
     Build an unordered collection of unique elements.
     """
 
-   internal enum Layout {
-     internal static let elementsOffset = SizeOf.objectHeader
-     internal static let elementsSize = SizeOf.orderedSet
-     internal static let size = elementsOffset + elementsSize
-   }
+   // Layout will be automatically generated, from `Ptr` fields.
+   // Just remember to initialize them in `initialize`!
+   internal static let layout = PyMemory.PySetLayout()
 
-   private var elementsPtr: Ptr<OrderedSet> { self.ptr[Layout.elementsOffset] }
+   internal var elementsPtr: Ptr<PySet.OrderedSet> { self.ptr[Self.layout.elementsOffset] }
    internal var elements: OrderedSet { self.elementsPtr.pointee }
 
    public let ptr: RawPtr
@@ -38,16 +36,13 @@ import VioletCore
      self.ptr = ptr
    }
 
-   internal func initialize(type: PyType, elements: OrderedSet) {
+   internal func initialize(type: PyType, elements: PySet.OrderedSet) {
      self.header.initialize(type: type)
      self.elementsPtr.initialize(to: elements)
    }
 
-   internal static func deinitialize(ptr: RawPtr) {
-     let zelf = PySet(ptr: ptr)
-     zelf.header.deinitialize()
-     zelf.elementsPtr.deinitialize()
-   }
+   // Nothing to do here.
+   internal func beforeDeinitialize() { }
 
    internal static func createDebugString(ptr: RawPtr) -> String {
      let zelf = PySet(ptr: ptr)

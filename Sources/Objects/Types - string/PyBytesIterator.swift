@@ -11,18 +11,12 @@ public struct PyBytesIterator: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal enum Layout {
-    internal static let bytesOffset = SizeOf.objectHeader
-    internal static let bytesSize = SizeOf.object
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyBytesIteratorLayout()
 
-    internal static let indexOffset = bytesOffset + bytesSize
-    internal static let indexSize = SizeOf.int
-
-    internal static let size = indexOffset + indexSize
-  }
-
-  private var bytesPtr: Ptr<PyBytes> { self.ptr[Layout.bytesOffset] }
-  private var indexPtr: Ptr<Int> { self.ptr[Layout.indexOffset] }
+  internal var bytesPtr: Ptr<PyBytes> { self.ptr[Self.layout.bytesOffset] }
+  internal var indexPtr: Ptr<Int> { self.ptr[Self.layout.indexOffset] }
 
   internal var bytes: PyBytes { self.bytesPtr.pointee }
   internal var index: Int { self.indexPtr.pointee }
@@ -39,12 +33,8 @@ public struct PyBytesIterator: PyObjectMixin {
     self.indexPtr.initialize(to: 0)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyBytesIterator(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.bytesPtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyBytesIterator(ptr: ptr)

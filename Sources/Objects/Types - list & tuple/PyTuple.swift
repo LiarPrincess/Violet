@@ -20,13 +20,11 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     If the argument is a tuple, the return value is the same object.
     """
 
-  internal enum Layout {
-    internal static let elementsOffset = SizeOf.objectHeader
-    internal static let elementsSize = SizeOf.array
-    internal static let size = elementsOffset + elementsSize
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyTupleLayout()
 
-  private var elementsPtr: Ptr<[PyObject]> { self.ptr[Layout.elementsOffset] }
+  internal var elementsPtr: Ptr<[PyObject]> { self.ptr[Self.layout.elementsOffset] }
   internal var elements: [PyObject] { self.elementsPtr.pointee }
 
   internal var isEmpty: Bool {
@@ -48,11 +46,8 @@ public struct PyTuple: PyObjectMixin, AbstractSequence {
     self.elementsPtr.initialize(to: elements)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyTuple(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.elementsPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyTuple(ptr: ptr)

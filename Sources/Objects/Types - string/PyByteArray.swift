@@ -28,13 +28,11 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
       - an integer
     """
 
-  internal enum Layout {
-    internal static let elementsOffset = SizeOf.objectHeader
-    internal static let elementsSize = SizeOf.data
-    internal static let size = elementsOffset + elementsSize
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyByteArrayLayout()
 
-  private var elementsPtr: Ptr<Data> { self.ptr[Layout.elementsOffset] }
+  internal var elementsPtr: Ptr<Data> { self.ptr[Self.layout.elementsOffset] }
   internal var elements: Data { self.elementsPtr.pointee }
 
   internal var isEmpty: Bool {
@@ -52,11 +50,8 @@ public struct PyByteArray: PyObjectMixin, AbstractBytes {
     self.elementsPtr.initialize(to: elements)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyByteArray(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.elementsPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyByteArray(ptr: ptr)

@@ -11,22 +11,13 @@ public struct PyDictValueIterator: PyObjectMixin, AbstractDictViewIterator {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  internal enum Layout {
-    internal static let dictOffset = SizeOf.objectHeader
-    internal static let dictSize = SizeOf.object
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyDictValueIteratorLayout()
 
-    internal static let indexOffset = dictOffset + dictSize
-    internal static let indexSize = SizeOf.int
-
-    internal static let initialCountOffset = indexOffset + indexSize
-    internal static let initialCountSize = SizeOf.int
-
-    internal static let size = initialCountOffset + initialCountSize
-  }
-
-  private var dictPtr: Ptr<PyDict> { self.ptr[Layout.dictOffset] }
-  private var indexPtr: Ptr<Int> { self.ptr[Layout.indexOffset] }
-  private var initialCountPtr: Ptr<Int> { self.ptr[Layout.initialCountOffset] }
+  internal var dictPtr: Ptr<PyDict> { self.ptr[Self.layout.dictOffset] }
+  internal var indexPtr: Ptr<Int> { self.ptr[Self.layout.indexOffset] }
+  internal var initialCountPtr: Ptr<Int> { self.ptr[Self.layout.initialCountOffset] }
 
   internal var dict: PyDict { self.dictPtr.pointee }
   internal var index: Int { self.indexPtr.pointee }
@@ -46,13 +37,8 @@ public struct PyDictValueIterator: PyObjectMixin, AbstractDictViewIterator {
     self.initialCountPtr.initialize(to: initialCount)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyDictValueIterator(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.dictPtr.deinitialize()
-    zelf.indexPtr.deinitialize()
-    zelf.initialCountPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   // MARK: - Debug
 

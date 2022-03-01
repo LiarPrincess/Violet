@@ -28,16 +28,16 @@ public struct PyDict: PyObjectMixin {
 
   // MARK: - OrderedDictionary
 
-  internal typealias OrderedDictionary = VioletObjects.OrderedDictionary<Key, PyObject>
+  public typealias OrderedDictionary = VioletObjects.OrderedDictionary<Key, PyObject>
 
   // MARK: - Key
 
-  internal struct Key: PyHashable, CustomStringConvertible {
+  public struct Key: PyHashable, CustomStringConvertible {
 
-    internal var hash: PyHash
-    internal var object: PyObject
+    public var hash: PyHash
+    public var object: PyObject
 
-    internal var description: String {
+    public var description: String {
       return "PyDict.Key(hash: \(self.hash), object: \(self.object))"
     }
 
@@ -51,7 +51,7 @@ public struct PyDict: PyObjectMixin {
       self.object = object
     }
 
-    internal func isEqual(to other: Key) -> PyResult<Bool> {
+    public func isEqual(to other: Key) -> PyResult<Bool> {
       // >>> class HashCollisionWith1:
       // ...     def __hash__(self): return 1
       // ...     def __eq__(self, other): raise NotImplementedError('Ooo!')
@@ -72,13 +72,11 @@ public struct PyDict: PyObjectMixin {
 
   // MARK: - Standard stuff...
 
-  internal enum Layout {
-    internal static let elementsOffset = SizeOf.objectHeader
-    internal static let elementsSize = SizeOf.orderedDictionary
-    internal static let size = elementsOffset + elementsSize
-  }
+  // Layout will be automatically generated, from `Ptr` fields.
+  // Just remember to initialize them in `initialize`!
+  internal static let layout = PyMemory.PyDictLayout()
 
-  private var elementsPtr: Ptr<OrderedDictionary> { self.ptr[Layout.elementsOffset] }
+  internal var elementsPtr: Ptr<PyDict.OrderedDictionary> { self.ptr[Self.layout.elementsOffset] }
   internal var elements: OrderedDictionary { self.elementsPtr.pointee }
 
   public let ptr: RawPtr
@@ -87,16 +85,13 @@ public struct PyDict: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, elements: OrderedDictionary) {
+  internal func initialize(type: PyType, elements: PyDict.OrderedDictionary) {
     self.header.initialize(type: type)
     self.elementsPtr.initialize(to: elements)
   }
 
-  internal static func deinitialize(ptr: RawPtr) {
-    let zelf = PyDict(ptr: ptr)
-    zelf.header.deinitialize()
-    zelf.elementsPtr.deinitialize()
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyDict(ptr: ptr)
