@@ -10,8 +10,6 @@ import VioletBytecode
 // sourcery: subclassInstancesHave__dict__
 public struct PySuper: PyObjectMixin, HasCustomGetMethod {
 
-  // MARK: - Doc
-
   // sourcery: pytypedoc
   internal static let doc = """
     super() -> same as super(__class__, <first argument>)
@@ -29,33 +27,24 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
             super().cmeth(arg)
     """
 
-  // MARK: - Properties
-
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PySuperLayout()
-
-  internal var thisClassPtr: Ptr<PyType?> { self.ptr[Self.layout.thisClassOffset] }
-  internal var objectPtr: Ptr<PyObject?> { self.ptr[Self.layout.objectOffset] }
-  internal var objectTypePtr: Ptr<PyType?> { self.ptr[Self.layout.objectTypeOffset] }
-
+  // sourcery: includeInLayout
   /// Type that the user requested (`__thisclass__` in Python).
   ///
   /// For example:
   /// `super(int, True)` -> `requestedType` = `int` (even though value is `bool`).
   internal var thisClass: PyType? { self.thisClassPtr.pointee }
-  internal var object: PyObject? { self.objectPtr.pointee }
-  internal var objectType: PyType? { self.objectTypePtr.pointee }
 
-  // MARK: - Swift init
+  // sourcery: includeInLayout
+  internal var object: PyObject? { self.objectPtr.pointee }
+
+  // sourcery: includeInLayout
+  internal var objectType: PyType? { self.objectTypePtr.pointee }
 
   public let ptr: RawPtr
 
   public init(ptr: RawPtr) {
     self.ptr = ptr
   }
-
-  // MARK: - Initialize/deinitialize
 
   internal func initialize(_ py: Py,
                            type: PyType,
@@ -70,8 +59,6 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
-
-  // MARK: - Debug
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PySuper(ptr: ptr)

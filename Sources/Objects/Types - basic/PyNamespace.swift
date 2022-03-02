@@ -16,10 +16,6 @@ public struct PyNamespace: PyObjectMixin {
     SimpleNamespace(**kwargs)
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyNamespaceLayout()
-
   public let ptr: RawPtr
 
   public init(ptr: RawPtr) {

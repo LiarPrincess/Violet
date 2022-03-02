@@ -16,10 +16,6 @@ public struct PyModule: PyObjectMixin {
     The name must be a string; the optional doc argument can have any type.
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyModuleLayout()
-
   public let ptr: RawPtr
 
   public init(ptr: RawPtr) {

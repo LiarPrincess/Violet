@@ -74,11 +74,7 @@ public struct PyDict: PyObjectMixin {
 
   // MARK: - Standard stuff...
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyDictLayout()
-
-  internal var elementsPtr: Ptr<PyDict.OrderedDictionary> { self.ptr[Self.layout.elementsOffset] }
+  // sourcery: includeInLayout
   internal var elements: OrderedDictionary { self.elementsPtr.pointee }
 
   public let ptr: RawPtr

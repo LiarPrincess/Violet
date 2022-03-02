@@ -9,8 +9,6 @@ extension PyObjectHeader {
   /// Btw. it does not implement 'OptionSet', its interface is a bit awkward.
   public struct Flags: Equatable, CustomStringConvertible {
 
-    internal static let size = SizeOf.uint32
-
     // swiftlint:disable:next nesting
     private typealias Storage = UInt32
 

@@ -15,14 +15,9 @@ public struct PyMap: PyObjectMixin {
     each of the iterables.  Stops when the shortest iterable is exhausted.
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyMapLayout()
-
-  internal var fnPtr: Ptr<PyObject> { self.ptr[Self.layout.fnOffset] }
-  internal var iteratorsPtr: Ptr<[PyObject]> { self.ptr[Self.layout.iteratorsOffset] }
-
+  // sourcery: includeInLayout
   internal var fn: PyObject { self.fnPtr.pointee }
+  // sourcery: includeInLayout
   internal var iterators: [PyObject] { self.iteratorsPtr.pointee }
 
   public let ptr: RawPtr

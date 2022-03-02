@@ -17,11 +17,7 @@ public struct PyZip: PyObjectMixin {
     is exhausted and then it raises StopIteration.
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyZipLayout()
-
-  internal var iteratorsPtr: Ptr<[PyObject]> { self.ptr[Self.layout.iteratorsOffset] }
+  // sourcery: includeInLayout
   internal var iterators: [PyObject] { self.iteratorsPtr.pointee }
 
   public let ptr: RawPtr

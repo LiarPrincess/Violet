@@ -36,20 +36,15 @@ public struct PyTextFile: PyObjectMixin {
 
   // MARK: - Properties
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyTextFileLayout()
-
-  internal var namePtr: Ptr<String?> { self.ptr[Self.layout.nameOffset] }
-  internal var fdPtr: Ptr<FileDescriptorType> { self.ptr[Self.layout.fdOffset] }
-  internal var modePtr: Ptr<FileMode> { self.ptr[Self.layout.modeOffset] }
-  internal var encodingPtr: Ptr<PyString.Encoding> { self.ptr[Self.layout.encodingOffset] }
-  internal var errorHandlingPtr: Ptr<PyString.ErrorHandling> { self.ptr[Self.layout.errorHandlingOffset] }
-
+  // sourcery: includeInLayout
   internal var name: String? { self.namePtr.pointee }
+  // sourcery: includeInLayout
   internal var fd: FileDescriptorType { self.fdPtr.pointee }
+  // sourcery: includeInLayout
   internal var mode: FileMode { self.modePtr.pointee }
+  // sourcery: includeInLayout
   internal var encoding: PyString.Encoding { self.encodingPtr.pointee }
+  // sourcery: includeInLayout
   internal var errorHandling: PyString.ErrorHandling { self.errorHandlingPtr.pointee }
 
   private static let closeOnDeallocFlag = PyObjectHeader.Flags.custom0

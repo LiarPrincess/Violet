@@ -8,32 +8,23 @@
 /// not Python methods in user-defined classes.
 public struct PyBuiltinFunction: PyObjectMixin, AbstractBuiltinFunction {
 
-  // MARK: - Properties
-
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyBuiltinFunctionLayout()
-
-  internal var functionPtr: Ptr<FunctionWrapper> { self.ptr[Self.layout.functionOffset] }
-  internal var modulePtr: Ptr<PyObject?> { self.ptr[Self.layout.moduleOffset] }
-  internal var docPtr: Ptr<String?> { self.ptr[Self.layout.docOffset] }
-
+  // sourcery: includeInLayout
   /// The Swift function that will be called.
   internal var function: FunctionWrapper { self.functionPtr.pointee }
+
+  // sourcery: includeInLayout
   /// The `__module__` attribute, can be anything.
   internal var module: PyObject? { self.modulePtr.pointee }
+
+  // sourcery: includeInLayout
   /// The `__doc__` attribute, or `nil`.
   internal var doc: String? { self.docPtr.pointee }
-
-  // MARK: - Swift init
 
   public let ptr: RawPtr
 
   public init(ptr: RawPtr) {
     self.ptr = ptr
   }
-
-  // MARK: - Initialize/deinitialize
 
   internal func initialize(_ py: Py,
                            type: PyType,
@@ -48,8 +39,6 @@ public struct PyBuiltinFunction: PyObjectMixin, AbstractBuiltinFunction {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
-
-  // MARK: - Debug
 
   internal static func createDebugString(ptr: RawPtr) -> String {
     let zelf = PyBuiltinFunction(ptr: ptr)

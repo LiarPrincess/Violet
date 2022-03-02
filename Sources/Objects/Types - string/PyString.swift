@@ -32,19 +32,13 @@ public struct PyString: PyObjectMixin, AbstractString {
 
   // MARK: - Properties
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyStringLayout()
-
   private static let invalidCount = -1
   private static let invalidHash = PyHash.zero
 
-  internal var valuePtr: Ptr<String> { self.ptr[Self.layout.valueOffset] }
-  internal var cachedCountPtr: Ptr<Int> { self.ptr[Self.layout.cachedCountOffset] }
-  internal var cachedHashPtr: Ptr<PyHash> { self.ptr[Self.layout.cachedHashOffset] }
-
+  // sourcery: includeInLayout
   internal var value: String { self.valuePtr.pointee }
 
+  // sourcery: includeInLayout
   /// Cache 'count' because 'String.unicodeScalars.count' is O(n)!
   /// (yes, on EVERY call!)
   ///
@@ -56,6 +50,7 @@ public struct PyString: PyObjectMixin, AbstractString {
     nonmutating set { self.cachedCountPtr.pointee = newValue }
   }
 
+  // sourcery: includeInLayout
   /// Cache hash value because `str` is very often used as `__dict__` key.
   ///
   /// We can do this because `str` is immutable.

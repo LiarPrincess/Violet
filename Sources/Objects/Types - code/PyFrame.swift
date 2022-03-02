@@ -28,55 +28,46 @@ public struct PyFrame: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // MARK: - Properties
-
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyFrameLayout()
-
-  // swiftlint:disable line_length
-  internal var codePtr: Ptr<PyCode> { self.ptr[Self.layout.codeOffset] }
-  internal var parentPtr: Ptr<PyFrame?> { self.ptr[Self.layout.parentOffset] }
-  internal var stackPtr: Ptr<PyFrame.ObjectStack> { self.ptr[Self.layout.stackOffset] }
-  internal var blocksPtr: Ptr<PyFrame.BlockStack> { self.ptr[Self.layout.blocksOffset] }
-  internal var localsPtr: Ptr<PyDict> { self.ptr[Self.layout.localsOffset] }
-  internal var globalsPtr: Ptr<PyDict> { self.ptr[Self.layout.globalsOffset] }
-  internal var builtinsPtr: Ptr<PyDict> { self.ptr[Self.layout.builtinsOffset] }
-  internal var fastLocalsPtr: Ptr<[PyObject?]> { self.ptr[Self.layout.fastLocalsOffset] }
-  internal var cellVariablesPtr: Ptr<[PyCell]> { self.ptr[Self.layout.cellVariablesOffset] }
-  internal var freeVariablesPtr: Ptr<[PyCell]> { self.ptr[Self.layout.freeVariablesOffset] }
-  internal var currentInstructionIndexPtr: Ptr<Int?> { self.ptr[Self.layout.currentInstructionIndexOffset] }
-  internal var nextInstructionIndexPtr: Ptr<Int> { self.ptr[Self.layout.nextInstructionIndexOffset] }
-  // swiftlint:enable line_length
-
+  // sourcery: includeInLayout
   /// Code object being executed in this frame.
   ///
   /// Cpython: `f_code`.
   public var code: PyCode { self.codePtr.pointee }
+
+  // sourcery: includeInLayout
   /// Next outer frame object (this frame’s caller).
   ///
   /// Cpython: `f_back`.
   public var parent: PyFrame? { self.parentPtr.pointee }
 
+  // sourcery: includeInLayout
   /// Stack of `PyObjects`.
   public var stack: ObjectStack { self.stackPtr.pointee }
+
+  // sourcery: includeInLayout
   /// Stack of blocks (for loops, exception handlers etc.).
   public var blocks: BlockStack { self.blocksPtr.pointee }
 
+  // sourcery: includeInLayout
   /// Local namespace seen by this frame.
   ///
   /// CPython: `f_locals`.
   public var locals: PyDict { self.localsPtr.pointee }
+
+  // sourcery: includeInLayout
   /// Global namespace seen by this frame.
   ///
   /// CPython: `f_globals`.
   public var globals: PyDict { self.globalsPtr.pointee }
+
+  // sourcery: includeInLayout
   /// Builtins namespace seen by this frame
   /// (most of the time it would be `Py.builtinsModule.__dict__`).
   ///
   /// CPython: `f_builtins`.
   public var builtins: PyDict { self.builtinsPtr.pointee }
 
+  // sourcery: includeInLayout
   /// Function args and local variables.
   ///
   /// We could use `self.localSymbols` but that would be `O(1)` with
@@ -89,6 +80,7 @@ public struct PyFrame: PyObjectMixin {
   /// CPython: `f_localsplus`.
   public var fastLocals: [PyObject?] { self.fastLocalsPtr.pointee }
 
+  // sourcery: includeInLayout
   /// Cell variables (variables from upper scopes).
   ///
   /// Btw. `Cell` = source for `free` variable.
@@ -97,6 +89,8 @@ public struct PyFrame: PyObjectMixin {
   /// of the stack. And no, we will not do this (see `self.fastLocals` comment).
   /// \#hipsters
   public var cellVariables: [PyCell] { self.cellVariablesPtr.pointee }
+
+  // sourcery: includeInLayout
   /// Free variables (variables from upper scopes).
   ///
   /// Btw. `Free` = cell from upper scope.
@@ -106,6 +100,7 @@ public struct PyFrame: PyObjectMixin {
   /// \#hipsters
   public var freeVariables: [PyCell] { self.freeVariablesPtr.pointee }
 
+  // sourcery: includeInLayout
   /// Index of last attempted instruction in bytecode
   /// (`nil` it we have not started).
   ///
@@ -117,6 +112,7 @@ public struct PyFrame: PyObjectMixin {
   /// CPython: `f_lasti`.
   public var currentInstructionIndex: Int? { self.currentInstructionIndexPtr.pointee }
 
+  // sourcery: includeInLayout
   /// `PC`
   ///
   /// Index of the next executed instruction.

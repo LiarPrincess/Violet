@@ -16,29 +16,9 @@ public struct PyCode: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc = "Create a code object. Not for the faint of heart."
 
-  // MARK: - Properties
-
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyCodeLayout()
-
-  internal var namePtr: Ptr<PyString> { self.ptr[Self.layout.nameOffset] }
-  internal var qualifiedNamePtr: Ptr<PyString> { self.ptr[Self.layout.qualifiedNameOffset] }
-  internal var filenamePtr: Ptr<PyString> { self.ptr[Self.layout.filenameOffset] }
-  internal var instructionsPtr: Ptr<[Instruction]> { self.ptr[Self.layout.instructionsOffset] }
-  internal var firstLinePtr: Ptr<SourceLine> { self.ptr[Self.layout.firstLineOffset] }
-  internal var instructionLinesPtr: Ptr<[SourceLine]> { self.ptr[Self.layout.instructionLinesOffset] }
-  internal var constantsPtr: Ptr<[PyObject]> { self.ptr[Self.layout.constantsOffset] }
-  internal var labelsPtr: Ptr<[CodeObject.Label]> { self.ptr[Self.layout.labelsOffset] }
-  internal var namesPtr: Ptr<[PyString]> { self.ptr[Self.layout.namesOffset] }
-  internal var variableNamesPtr: Ptr<[MangledName]> { self.ptr[Self.layout.variableNamesOffset] }
-  internal var cellVariableNamesPtr: Ptr<[MangledName]> { self.ptr[Self.layout.cellVariableNamesOffset] }
-  internal var freeVariableNamesPtr: Ptr<[MangledName]> { self.ptr[Self.layout.freeVariableNamesOffset] }
-  internal var argCountPtr: Ptr<Int> { self.ptr[Self.layout.argCountOffset] }
-  internal var kwOnlyArgCountPtr: Ptr<Int> { self.ptr[Self.layout.kwOnlyArgCountOffset] }
-
   // MARK: - Name
 
+  // sourcery: includeInLayout
   /// Non-unique name of this code object.
   ///
   /// It will be:
@@ -52,6 +32,7 @@ public struct PyCode: PyObjectMixin {
   /// - dictionary comprehension -> \<dictcomp\>
   public var name: PyString { self.namePtr.pointee }
 
+  // sourcery: includeInLayout
   /// Unique dot-separated qualified name.
   ///
   /// For example:
@@ -62,6 +43,7 @@ public struct PyCode: PyObjectMixin {
   /// ```
   public var qualifiedName: PyString { self.qualifiedNamePtr.pointee }
 
+  // sourcery: includeInLayout
   /// The filename from which the code was compiled.
   /// Will be `<stdin>` for code entered in the interactive interpreter
   /// or whatever name is given as the second argument to `compile`
@@ -70,15 +52,18 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Instructions
 
+  // sourcery: includeInLayout
   /// Instruction opcodes.
   /// CPython: `co_code`.
   public var instructions: [Instruction] { self.instructionsPtr.pointee }
 
   // MARK: - Lines
 
+  // sourcery: includeInLayout
   /// First line that contains a valid instruction.
   public var firstLine: SourceLine { self.firstLinePtr.pointee }
 
+  // sourcery: includeInLayout
   private var instructionLines: [SourceLine] { self.instructionLinesPtr.pointee }
 
   /// CPython: `co_lnotab` <- but not exactly the same.
@@ -90,6 +75,7 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Constants
 
+  // sourcery: includeInLayout
   /// Constants used.
   /// E.g. `LoadConst 5` loads `self.constants[5]` value.
   /// CPython: `co_consts`.
@@ -97,12 +83,14 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Labels
 
+  // sourcery: includeInLayout
   /// Absolute jump targets.
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
   public var labels: [CodeObject.Label] { self.labelsPtr.pointee }
 
   // MARK: - Names
 
+  // sourcery: includeInLayout
   /// Names which aren’t covered by any of the other fields (they are not local
   /// variables, they are not free variables, etc) used by the bytecode.
   /// This includes names deemed to be in the global or builtin namespace
@@ -115,6 +103,7 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Variables
 
+  // sourcery: includeInLayout
   /// Names of the local variables (including arguments).
   ///
   /// In the ‘richest’ case, `variableNames` contains (in order):
@@ -138,6 +127,7 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Cell variables
 
+  // sourcery: includeInLayout
   /// List of cell variable names.
   /// Cell = source for 'free' variable.
   ///
@@ -152,6 +142,7 @@ public struct PyCode: PyObjectMixin {
     return self.cellVariableNames.count
   }
 
+  // sourcery: includeInLayout
   /// List of free variable names.
   ///
   /// 'Free variable' means a variable which is referenced by an expression
@@ -170,11 +161,13 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Count
 
+  // sourcery: includeInLayout
   /// The number of positional arguments the code object expects to receive,
   /// including those with default values (but excluding `*args`).
   /// CPython: `co_argcount`.
   internal var argCount: Int { self.argCountPtr.pointee }
 
+  // sourcery: includeInLayout
   /// The number of keyword arguments the code object can receive.
   /// CPython: `co_kwonlyargcount`.
   internal var kwOnlyArgCount: Int { self.kwOnlyArgCountPtr.pointee }

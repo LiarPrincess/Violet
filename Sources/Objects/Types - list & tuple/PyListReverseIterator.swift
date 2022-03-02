@@ -11,14 +11,9 @@ public struct PyListReverseIterator: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyListReverseIteratorLayout()
-
-  internal var listPtr: Ptr<PyList> { self.ptr[Self.layout.listOffset] }
-  internal var indexPtr: Ptr<Int> { self.ptr[Self.layout.indexOffset] }
-
+  // sourcery: includeInLayout
   internal var list: PyList { self.listPtr.pointee }
+  // sourcery: includeInLayout
   internal var index: Int { self.indexPtr.pointee }
 
   public let ptr: RawPtr

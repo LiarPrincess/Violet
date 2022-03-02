@@ -49,25 +49,19 @@ public struct PyProperty: PyObjectMixin {
 
   // MARK: - Properties
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyPropertyLayout()
-
-  internal var _getPtr: Ptr<PyObject?> { self.ptr[Self.layout._getOffset] }
-  internal var _setPtr: Ptr<PyObject?> { self.ptr[Self.layout._setOffset] }
-  internal var _delPtr: Ptr<PyObject?> { self.ptr[Self.layout._delOffset] }
-  internal var docPtr: Ptr<PyObject?> { self.ptr[Self.layout.docOffset] }
-
+  // sourcery: includeInLayout
   internal var _get: PyObject? {
     get { Self.getFunction(self._getPtr.pointee) }
     nonmutating set { self._getPtr.pointee = newValue }
   }
 
+  // sourcery: includeInLayout
   internal var _set: PyObject? {
     get { Self.getFunction(self._setPtr.pointee) }
     nonmutating set { self._setPtr.pointee = newValue }
   }
 
+  // sourcery: includeInLayout
   internal var _del: PyObject? {
     get { Self.getFunction(self._delPtr.pointee) }
     nonmutating set { self._delPtr.pointee = newValue }
@@ -77,6 +71,7 @@ public struct PyProperty: PyObjectMixin {
     return PyCast.isNilOrNone(object) ? nil : object
   }
 
+  // sourcery: includeInLayout
   internal var doc: PyObject? { self.docPtr.pointee }
 
   // MARK: - Swift init

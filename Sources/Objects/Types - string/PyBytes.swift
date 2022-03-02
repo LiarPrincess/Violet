@@ -27,11 +27,7 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
       - an integer
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyBytesLayout()
-
-  internal var elementsPtr: Ptr<Data> { self.ptr[Self.layout.elementsOffset] }
+  // sourcery: includeInLayout
   internal var elements: Data { self.elementsPtr.pointee }
 
   public let ptr: RawPtr

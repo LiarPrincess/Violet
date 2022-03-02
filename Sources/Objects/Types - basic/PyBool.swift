@@ -29,11 +29,7 @@ public struct PyBool: PyObjectMixin {
     The class bool is a subclass of the class int, and cannot be subclassed
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyBoolLayout()
-
-  internal var valuePtr: Ptr<BigInt> { self.ptr[Self.layout.valueOffset] }
+  // sourcery: includeInLayout
   internal var value: BigInt { self.valuePtr.pointee }
 
   internal var isTrue: Bool {

@@ -12,14 +12,9 @@ public struct PyIterator: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyIteratorLayout()
-
-  internal var sequencePtr: Ptr<PyObject> { self.ptr[Self.layout.sequenceOffset] }
-  internal var indexPtr: Ptr<Int> { self.ptr[Self.layout.indexOffset] }
-
+  // sourcery: includeInLayout
   internal var sequence: PyObject { self.sequencePtr.pointee }
+  // sourcery: includeInLayout
   internal var index: Int { self.indexPtr.pointee }
 
   public let ptr: RawPtr

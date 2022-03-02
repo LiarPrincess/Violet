@@ -11,16 +11,11 @@ public struct PySetIterator: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PySetIteratorLayout()
-
-  internal var setPtr: Ptr<PyAnySet> { self.ptr[Self.layout.setOffset] }
-  internal var indexPtr: Ptr<Int> { self.ptr[Self.layout.indexOffset] }
-  internal var initialCountPtr: Ptr<Int> { self.ptr[Self.layout.initialCountOffset] }
-
+  // sourcery: includeInLayout
   internal var set: PyAnySet { self.setPtr.pointee }
+  // sourcery: includeInLayout
   internal var index: Int { self.indexPtr.pointee }
+  // sourcery: includeInLayout
   internal var initialCount: Int { self.initialCountPtr.pointee }
 
   public let ptr: RawPtr

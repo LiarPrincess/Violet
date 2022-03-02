@@ -11,14 +11,9 @@ public struct PyCallableIterator: PyObjectMixin {
   // sourcery: pytypedoc
   internal static let doc: String? = nil
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyCallableIteratorLayout()
-
-  internal var callablePtr: Ptr<PyObject> { self.ptr[Self.layout.callableOffset] }
-  internal var sentinelPtr: Ptr<PyObject> { self.ptr[Self.layout.sentinelOffset] }
-
+  // sourcery: includeInLayout
   internal var callable: PyObject { self.callablePtr.pointee }
+  // sourcery: includeInLayout
   internal var sentinel: PyObject { self.sentinelPtr.pointee }
 
   public let ptr: RawPtr

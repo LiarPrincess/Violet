@@ -25,11 +25,7 @@ public struct PyFloat: PyObjectMixin {
     Convert a string or number to a floating point number, if possible.
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyFloatLayout()
-
-  internal var valuePtr: Ptr<Double> { self.ptr[Self.layout.valueOffset] }
+  // sourcery: includeInLayout
   internal var value: Double { self.valuePtr.pointee }
 
   public let ptr: RawPtr

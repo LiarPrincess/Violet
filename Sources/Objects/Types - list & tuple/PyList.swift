@@ -23,11 +23,7 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     The argument must be an iterable if specified.
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyListLayout()
-
-  internal var elementsPtr: Ptr<[PyObject]> { self.ptr[Self.layout.elementsOffset] }
+  // sourcery: includeInLayout
   internal var elements: [PyObject] { self.elementsPtr.pointee }
 
   internal var isEmpty: Bool {

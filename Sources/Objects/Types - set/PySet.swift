@@ -23,11 +23,7 @@ import VioletCore
     Build an unordered collection of unique elements.
     """
 
-   // Layout will be automatically generated, from `Ptr` fields.
-   // Just remember to initialize them in `initialize`!
-   internal static let layout = PyMemory.PySetLayout()
-
-   internal var elementsPtr: Ptr<PySet.OrderedSet> { self.ptr[Self.layout.elementsOffset] }
+   // sourcery: includeInLayout
    internal var elements: OrderedSet { self.elementsPtr.pointee }
 
    public let ptr: RawPtr

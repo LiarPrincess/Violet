@@ -15,14 +15,9 @@ public struct PyFilter: PyObjectMixin {
     is true. If function is None, return the items that are true.
     """
 
-  // Layout will be automatically generated, from `Ptr` fields.
-  // Just remember to initialize them in `initialize`!
-  internal static let layout = PyMemory.PyFilterLayout()
-
-  internal var fnPtr: Ptr<PyObject> { self.ptr[Self.layout.fnOffset] }
-  internal var iteratorPtr: Ptr<PyObject> { self.ptr[Self.layout.iteratorOffset] }
-
+  // sourcery: includeInLayout
   internal var fn: PyObject { self.fnPtr.pointee }
+  // sourcery: includeInLayout
   internal var iterator: PyObject { self.iteratorPtr.pointee }
 
   public let ptr: RawPtr
