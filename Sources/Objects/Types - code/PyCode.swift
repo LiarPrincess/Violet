@@ -201,15 +201,15 @@ public struct PyCode: PyObjectMixin {
 
   // MARK: - Initialize/deinitialize
 
-  internal func initialize(type: PyType, code: CodeObject) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, code: CodeObject) {
+    self.header.initialize(py, type: type)
 
     let totalArgs = PyCode.countArguments(code: code)
     assert(code.variableNames.count >= totalArgs)
 
-    let name = Py.intern(string: code.name)
-    let qualifiedName = Py.intern(string: code.qualifiedName)
-    let filename = Py.intern(string: code.filename)
+    let name = py.intern(string: code.name)
+    let qualifiedName = py.intern(string: code.qualifiedName)
+    let filename = py.intern(string: code.filename)
     self.namePtr.initialize(to: name)
     self.qualifiedNamePtr.initialize(to: qualifiedName)
     self.filenamePtr.initialize(to: filename)
@@ -220,12 +220,12 @@ public struct PyCode: PyObjectMixin {
 
     // We will convert constants and names here.
     // Otherwise we would have to convert them on each use.
-    let constants = code.constants.map(PyCode.toObject(constant:))
+    let constants = code.constants.map { PyCode.toObject(py, constant: $0) }
     self.constantsPtr.initialize(to: constants)
 
     self.labelsPtr.initialize(to: code.labels)
 
-    let names = code.names.map(Py.intern)
+    let names = code.names.map(py.intern)
     self.namesPtr.initialize(to: names)
     self.variableNamesPtr.initialize(to: code.variableNames)
     self.cellVariableNamesPtr.initialize(to: code.cellVariableNames)
@@ -251,31 +251,31 @@ public struct PyCode: PyObjectMixin {
     return variableCount + 1
   }
 
-  private static func toObject(constant: CodeObject.Constant) -> PyObject {
+  private static func toObject(_ py: Py, constant: CodeObject.Constant) -> PyObject {
     switch constant {
-    case .true: return Py.true.asObject
-    case .false: return Py.false.asObject
-    case .none: return Py.none.asObject
-    case .ellipsis: return Py.ellipsis.asObject
+    case .true: return py.true.asObject
+    case .false: return py.false.asObject
+    case .none: return py.none.asObject
+    case .ellipsis: return py.ellipsis.asObject
 
     case let .integer(i):
-      return Py.newInt(i).asObject
+      return py.newInt(i).asObject
     case let .float(d):
-      return Py.newFloat(d).asObject
+      return py.newFloat(d).asObject
     case let .complex(real, imag):
-      return Py.newComplex(real: real, imag: imag).asObject
+      return py.newComplex(real: real, imag: imag).asObject
 
     case let .string(s):
-      return Py.newString(s).asObject
+      return py.newString(s).asObject
     case let .bytes(b):
-      return Py.newBytes(b).asObject
+      return py.newBytes(b).asObject
 
     case let .code(c):
-      return Py.newCode(code: c).asObject
+      return py.newCode(code: c).asObject
 
     case let .tuple(t):
-      let elements = t.map(PyCode.toObject(constant:))
-      return Py.newTuple(elements: elements).asObject
+      let elements = t.map { PyCode.toObject(py, constant: $0) }
+      return py.newTuple(elements: elements).asObject
     }
   }
 

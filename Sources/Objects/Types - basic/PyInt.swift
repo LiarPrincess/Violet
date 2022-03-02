@@ -48,8 +48,8 @@ public struct PyInt: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, value: BigInt) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, value: BigInt) {
+    self.header.initialize(py, type: type)
     self.valuePtr.initialize(to: value)
   }
 

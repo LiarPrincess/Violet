@@ -36,8 +36,8 @@ public struct PyFrozenSet: PyObjectMixin, AbstractSet {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, elements: PyFrozenSet.OrderedSet) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, elements: PyFrozenSet.OrderedSet) {
+    self.header.initialize(py, type: type)
     self.elementsPtr.initialize(to: elements)
   }
 

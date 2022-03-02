@@ -36,10 +36,10 @@ public struct PyReversed: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType,
+  internal func initialize(_ py: Py, type: PyType,
                            sequence: PyObject,
                            count: Int) {
-    self.header.initialize(type: type)
+    self.header.initialize(py, type: type)
     self.sequencePtr.initialize(to: sequence)
     self.indexPtr.initialize(to: count - 1)
   }

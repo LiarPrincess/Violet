@@ -29,17 +29,17 @@ public struct PySetIterator: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, set: PySet) {
-    self.initializeCommon(type: type, set: .init(set: set))
+  internal func initialize(_ py: Py, type: PyType, set: PySet) {
+    self.initializeCommon(py, type: type, set: .init(set: set))
   }
 
-  internal func initialize(type: PyType, frozenSet: PyFrozenSet) {
-    self.initializeCommon(type: type, set: .init(frozenSet: frozenSet))
+  internal func initialize(_ py: Py, type: PyType, frozenSet: PyFrozenSet) {
+    self.initializeCommon(py, type: type, set: .init(frozenSet: frozenSet))
   }
 
-  internal func initializeCommon(type: PyType, set: PyAnySet) {
+  internal func initializeCommon(_ py: Py, type: PyType, set: PyAnySet) {
     let initialCount = set.elements.count
-    self.header.initialize(type: type)
+    self.header.initialize(py, type: type)
     self.setPtr.initialize(to: set)
     self.indexPtr.initialize(to: 0)
     self.initialCountPtr.initialize(to: initialCount)

@@ -147,12 +147,13 @@ public struct PyFrame: PyObjectMixin {
 
   /// PyFrameObject* _Py_HOT_FUNCTION
   /// _PyFrame_New_NoTrack(PyThreadState *tstate, PyCodeObject *code,
-  internal func initialize(type: PyType,
+  internal func initialize(_ py: Py,
+                           type: PyType,
                            code: PyCode,
                            locals: PyDict,
                            globals: PyDict,
                            parent: PyFrame?) {
-    self.header.initialize(type: type)
+    self.header.initialize(py, type: type)
     self.codePtr.initialize(to: code)
     self.parentPtr.initialize(to: parent)
     self.localsPtr.initialize(to: locals)

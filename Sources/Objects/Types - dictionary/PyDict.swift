@@ -61,12 +61,14 @@ public struct PyDict: PyObjectMixin {
       // >>> c = HashCollisionWith1()
       // >>> d[c] = 'b'
       // NotImplementedError: Ooo!
-
+/* MARKER
       guard self.hash == other.hash else {
         return .value(false)
       }
 
       return Py.isEqualBool(left: self.object, right: other.object)
+*/
+      fatalError()
     }
   }
 
@@ -85,8 +87,8 @@ public struct PyDict: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, elements: PyDict.OrderedDictionary) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, elements: PyDict.OrderedDictionary) {
+    self.header.initialize(py, type: type)
     self.elementsPtr.initialize(to: elements)
   }
 

@@ -27,8 +27,8 @@ import VioletCore
      self.ptr = ptr
    }
 
-   internal func initialize(type: PyType, tuple: PyTuple) {
-     self.header.initialize(type: type)
+   internal func initialize(_ py: Py, type: PyType, tuple: PyTuple) {
+     self.header.initialize(py, type: type)
      self.tuplePtr.initialize(to: tuple)
      self.indexPtr.initialize(to: 0)
    }

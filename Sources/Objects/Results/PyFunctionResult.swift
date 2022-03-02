@@ -12,6 +12,7 @@ public protocol PyFunctionResultConvertible {
 
 // MARK: - Basic types
 
+/* MARKER
 extension Bool: PyFunctionResultConvertible {
   public var asFunctionResult: PyFunctionResult {
     return .value(Py.newBool(self).asObject)
@@ -52,3 +53,4 @@ extension Optional: PyFunctionResultConvertible
     }
   }
 }
+*/

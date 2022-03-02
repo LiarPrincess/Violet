@@ -27,8 +27,8 @@ public struct PyStringIterator: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, string: PyString) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, string: PyString) {
+    self.header.initialize(py, type: type)
     self.stringPtr.initialize(to: string)
     self.indexPtr.initialize(to: 0)
   }

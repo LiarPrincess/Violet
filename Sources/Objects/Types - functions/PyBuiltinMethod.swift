@@ -38,12 +38,13 @@ public struct PyBuiltinMethod: PyObjectMixin, AbstractBuiltinFunction {
 
   // MARK: - Initialize/deinitialize
 
-  internal func initialize(type: PyType,
+  internal func initialize(_ py: Py,
+                           type: PyType,
                            function: FunctionWrapper,
                            object: PyObject,
                            module: PyObject?,
                            doc: String?) {
-    self.header.initialize(type: type)
+    self.header.initialize(py, type: type)
     self.functionPtr.initialize(to: function)
     self.objectPtr.initialize(to: object)
     self.modulePtr.initialize(to: module)

@@ -71,14 +71,15 @@ public struct PyTextFile: PyObjectMixin {
   // MARK: - Initialize/deinitialize
 
   // swiftlint:disable:next function_parameter_count
-  internal func initialize(type: PyType,
+  internal func initialize(_ py: Py,
+                           type: PyType,
                            name: String?,
                            fd: FileDescriptorType,
                            mode: FileMode,
                            encoding: PyString.Encoding,
                            errorHandling: PyString.ErrorHandling,
                            closeOnDealloc: Bool) {
-    self.header.initialize(type: type)
+    self.header.initialize(py, type: type)
     self.namePtr.initialize(to: name)
     self.fdPtr.initialize(to: fd)
     self.modePtr.initialize(to: mode)

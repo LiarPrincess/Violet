@@ -31,8 +31,8 @@ public struct PyMap: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, fn: PyObject, iterators: [PyObject]) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, fn: PyObject, iterators: [PyObject]) {
+    self.header.initialize(py, type: type)
     self.fnPtr.initialize(to: fn)
     self.iteratorsPtr.initialize(to: iterators)
   }

@@ -25,7 +25,7 @@ extension PyMemory {{
   /// Those types require a special treatment because:
   /// - `object` type has `type` type
   /// - `type` type has `type` type (self reference) and `object` type as base
-  public func newTypeAndObjectTypes() -> (objectType: PyType, typeType: PyType) {{
+  public func newTypeAndObjectTypes(_ py: Py) -> (objectType: PyType, typeType: PyType) {{
     let layout = PyType.layout
     let objectTypePtr = self.allocate(size: layout.size, alignment: layout.alignment)
     let typeTypePtr = self.allocate(size: layout.size, alignment: layout.alignment)
@@ -33,7 +33,8 @@ extension PyMemory {{
     let objectType = PyType(ptr: objectTypePtr)
     let typeType = PyType(ptr: typeTypePtr)
 
-    objectType.initialize(type: typeType,
+    objectType.initialize(py,
+                          type: typeType,
                           name: "{object_args.name}",
                           qualname: "{object_args.qualname}",
                           flags: [{object_flags}],
@@ -46,7 +47,8 @@ extension PyMemory {{
                           debugFn: {object_args.debugFn},
                           deinitialize: {object_args.deinitialize})
 
-    typeType.initialize(type: typeType,
+    typeType.initialize(py,
+                        type: typeType,
                         name: "{type_args.name}",
                         qualname: "{type_args.qualname}",
                         flags: [{type_flags}],

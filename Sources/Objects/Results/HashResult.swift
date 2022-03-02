@@ -6,6 +6,7 @@ public enum HashResult {
   case error(PyBaseException)
 }
 
+/* MARKER
 extension HashResult: PyFunctionResultConvertible {
   public var asFunctionResult: PyFunctionResult {
     switch self {
@@ -19,3 +20,4 @@ extension HashResult: PyFunctionResultConvertible {
     }
   }
 }
+*/

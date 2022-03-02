@@ -46,14 +46,9 @@ extension PyObjectHeader {
     /// It is used when container objects recursively contain themselves.
     public static let descriptionLock = Flags(rawValue: 1 << 1)
 
-    /// (VIOLET ONLY!)
-    /// Flag denoting that this object has access to `__dict__`.
-    ///
-    /// This flag is automatically copied from `self.type`.
-    public static let has__dict__ = Flags(rawValue: 1 << 2)
-
     // === Reserved for future use ===
     // Not assigned (for now), but we expect garbage collection to use some of them.
+    private static let reserved2 = Flags(rawValue: 1 << 2)
     private static let reserved3 = Flags(rawValue: 1 << 3)
     private static let reserved4 = Flags(rawValue: 1 << 4)
     private static let reserved5 = Flags(rawValue: 1 << 5)
@@ -183,7 +178,7 @@ extension PyObjectHeader {
       // flag (for example 'reserved3' -> 'XXX') we will get an compilation error.
       appendIfSet(.reprLock, name: "reprLock")
       appendIfSet(.descriptionLock, name: "descriptionLock")
-      appendIfSet(.has__dict__, name: "has__dict__")
+      appendIfSet(.reserved2, name: "reserved2")
       appendIfSet(.reserved3, name: "reserved3")
       appendIfSet(.reserved4, name: "reserved4")
       appendIfSet(.reserved5, name: "reserved5")

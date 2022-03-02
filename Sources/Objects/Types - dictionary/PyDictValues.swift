@@ -28,8 +28,8 @@ public struct PyDictValues: PyObjectMixin, AbstractDictView {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, dict: PyDict) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, dict: PyDict) {
+    self.header.initialize(py, type: type)
     self.dictPtr.initialize(to: dict)
   }
 

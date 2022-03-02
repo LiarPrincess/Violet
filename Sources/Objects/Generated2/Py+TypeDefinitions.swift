@@ -97,13 +97,14 @@ extension Py {
       // Requirements for 'self.object' and 'self.type':
       // 1. 'type' inherits from 'object'
       // 2. both 'type' and 'object' are instances of 'type'
-      let pair = memory.newTypeAndObjectTypes()
+      let pair = memory.newTypeAndObjectTypes(py)
       self.object = pair.objectType
       self.type = pair.typeType
 
       // Btw. 'self.bool' has to be last because it uses 'self.int' as base!
 
       self.builtinFunction = memory.newType(
+        py,
         type: self.type,
         name: "builtinFunction",
         qualname: "builtinFunction",
@@ -112,13 +113,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.builtinFunctionMemoryLayout,
-        staticMethods: PyContext.Types.builtinFunctionStaticMethods,
+        layout: Py.Types.builtinFunctionMemoryLayout,
+        staticMethods: Py.Types.builtinFunctionStaticMethods,
         debugFn: PyBuiltinFunction.createDebugString(ptr:),
         deinitialize: PyBuiltinFunction.deinitialize(ptr:)
       )
 
       self.builtinMethod = memory.newType(
+        py,
         type: self.type,
         name: "builtinMethod",
         qualname: "builtinMethod",
@@ -127,13 +129,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.builtinMethodMemoryLayout,
-        staticMethods: PyContext.Types.builtinMethodStaticMethods,
+        layout: Py.Types.builtinMethodMemoryLayout,
+        staticMethods: Py.Types.builtinMethodStaticMethods,
         debugFn: PyBuiltinMethod.createDebugString(ptr:),
         deinitialize: PyBuiltinMethod.deinitialize(ptr:)
       )
 
       self.bytearray = memory.newType(
+        py,
         type: self.type,
         name: "bytearray",
         qualname: "bytearray",
@@ -142,13 +145,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.byteArrayMemoryLayout,
-        staticMethods: PyContext.Types.byteArrayStaticMethods,
+        layout: Py.Types.byteArrayMemoryLayout,
+        staticMethods: Py.Types.byteArrayStaticMethods,
         debugFn: PyByteArray.createDebugString(ptr:),
         deinitialize: PyByteArray.deinitialize(ptr:)
       )
 
       self.bytearray_iterator = memory.newType(
+        py,
         type: self.type,
         name: "bytearray_iterator",
         qualname: "bytearray_iterator",
@@ -157,13 +161,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.byteArrayIteratorMemoryLayout,
-        staticMethods: PyContext.Types.byteArrayIteratorStaticMethods,
+        layout: Py.Types.byteArrayIteratorMemoryLayout,
+        staticMethods: Py.Types.byteArrayIteratorStaticMethods,
         debugFn: PyByteArrayIterator.createDebugString(ptr:),
         deinitialize: PyByteArrayIterator.deinitialize(ptr:)
       )
 
       self.bytes = memory.newType(
+        py,
         type: self.type,
         name: "bytes",
         qualname: "bytes",
@@ -172,13 +177,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.bytesMemoryLayout,
-        staticMethods: PyContext.Types.bytesStaticMethods,
+        layout: Py.Types.bytesMemoryLayout,
+        staticMethods: Py.Types.bytesStaticMethods,
         debugFn: PyBytes.createDebugString(ptr:),
         deinitialize: PyBytes.deinitialize(ptr:)
       )
 
       self.bytes_iterator = memory.newType(
+        py,
         type: self.type,
         name: "bytes_iterator",
         qualname: "bytes_iterator",
@@ -187,13 +193,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.bytesIteratorMemoryLayout,
-        staticMethods: PyContext.Types.bytesIteratorStaticMethods,
+        layout: Py.Types.bytesIteratorMemoryLayout,
+        staticMethods: Py.Types.bytesIteratorStaticMethods,
         debugFn: PyBytesIterator.createDebugString(ptr:),
         deinitialize: PyBytesIterator.deinitialize(ptr:)
       )
 
       self.callable_iterator = memory.newType(
+        py,
         type: self.type,
         name: "callable_iterator",
         qualname: "callable_iterator",
@@ -202,13 +209,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.callableIteratorMemoryLayout,
-        staticMethods: PyContext.Types.callableIteratorStaticMethods,
+        layout: Py.Types.callableIteratorMemoryLayout,
+        staticMethods: Py.Types.callableIteratorStaticMethods,
         debugFn: PyCallableIterator.createDebugString(ptr:),
         deinitialize: PyCallableIterator.deinitialize(ptr:)
       )
 
       self.cell = memory.newType(
+        py,
         type: self.type,
         name: "cell",
         qualname: "cell",
@@ -217,13 +225,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.cellMemoryLayout,
-        staticMethods: PyContext.Types.cellStaticMethods,
+        layout: Py.Types.cellMemoryLayout,
+        staticMethods: Py.Types.cellStaticMethods,
         debugFn: PyCell.createDebugString(ptr:),
         deinitialize: PyCell.deinitialize(ptr:)
       )
 
       self.classmethod = memory.newType(
+        py,
         type: self.type,
         name: "classmethod",
         qualname: "classmethod",
@@ -232,13 +241,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.classMethodMemoryLayout,
-        staticMethods: PyContext.Types.classMethodStaticMethods,
+        layout: Py.Types.classMethodMemoryLayout,
+        staticMethods: Py.Types.classMethodStaticMethods,
         debugFn: PyClassMethod.createDebugString(ptr:),
         deinitialize: PyClassMethod.deinitialize(ptr:)
       )
 
       self.code = memory.newType(
+        py,
         type: self.type,
         name: "code",
         qualname: "code",
@@ -247,13 +257,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.codeMemoryLayout,
-        staticMethods: PyContext.Types.codeStaticMethods,
+        layout: Py.Types.codeMemoryLayout,
+        staticMethods: Py.Types.codeStaticMethods,
         debugFn: PyCode.createDebugString(ptr:),
         deinitialize: PyCode.deinitialize(ptr:)
       )
 
       self.complex = memory.newType(
+        py,
         type: self.type,
         name: "complex",
         qualname: "complex",
@@ -262,13 +273,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.complexMemoryLayout,
-        staticMethods: PyContext.Types.complexStaticMethods,
+        layout: Py.Types.complexMemoryLayout,
+        staticMethods: Py.Types.complexStaticMethods,
         debugFn: PyComplex.createDebugString(ptr:),
         deinitialize: PyComplex.deinitialize(ptr:)
       )
 
       self.dict = memory.newType(
+        py,
         type: self.type,
         name: "dict",
         qualname: "dict",
@@ -277,13 +289,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.dictMemoryLayout,
-        staticMethods: PyContext.Types.dictStaticMethods,
+        layout: Py.Types.dictMemoryLayout,
+        staticMethods: Py.Types.dictStaticMethods,
         debugFn: PyDict.createDebugString(ptr:),
         deinitialize: PyDict.deinitialize(ptr:)
       )
 
       self.dict_itemiterator = memory.newType(
+        py,
         type: self.type,
         name: "dict_itemiterator",
         qualname: "dict_itemiterator",
@@ -292,13 +305,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.dictItemIteratorMemoryLayout,
-        staticMethods: PyContext.Types.dictItemIteratorStaticMethods,
+        layout: Py.Types.dictItemIteratorMemoryLayout,
+        staticMethods: Py.Types.dictItemIteratorStaticMethods,
         debugFn: PyDictItemIterator.createDebugString(ptr:),
         deinitialize: PyDictItemIterator.deinitialize(ptr:)
       )
 
       self.dict_items = memory.newType(
+        py,
         type: self.type,
         name: "dict_items",
         qualname: "dict_items",
@@ -307,13 +321,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.dictItemsMemoryLayout,
-        staticMethods: PyContext.Types.dictItemsStaticMethods,
+        layout: Py.Types.dictItemsMemoryLayout,
+        staticMethods: Py.Types.dictItemsStaticMethods,
         debugFn: PyDictItems.createDebugString(ptr:),
         deinitialize: PyDictItems.deinitialize(ptr:)
       )
 
       self.dict_keyiterator = memory.newType(
+        py,
         type: self.type,
         name: "dict_keyiterator",
         qualname: "dict_keyiterator",
@@ -322,13 +337,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.dictKeyIteratorMemoryLayout,
-        staticMethods: PyContext.Types.dictKeyIteratorStaticMethods,
+        layout: Py.Types.dictKeyIteratorMemoryLayout,
+        staticMethods: Py.Types.dictKeyIteratorStaticMethods,
         debugFn: PyDictKeyIterator.createDebugString(ptr:),
         deinitialize: PyDictKeyIterator.deinitialize(ptr:)
       )
 
       self.dict_keys = memory.newType(
+        py,
         type: self.type,
         name: "dict_keys",
         qualname: "dict_keys",
@@ -337,13 +353,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.dictKeysMemoryLayout,
-        staticMethods: PyContext.Types.dictKeysStaticMethods,
+        layout: Py.Types.dictKeysMemoryLayout,
+        staticMethods: Py.Types.dictKeysStaticMethods,
         debugFn: PyDictKeys.createDebugString(ptr:),
         deinitialize: PyDictKeys.deinitialize(ptr:)
       )
 
       self.dict_valueiterator = memory.newType(
+        py,
         type: self.type,
         name: "dict_valueiterator",
         qualname: "dict_valueiterator",
@@ -352,13 +369,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.dictValueIteratorMemoryLayout,
-        staticMethods: PyContext.Types.dictValueIteratorStaticMethods,
+        layout: Py.Types.dictValueIteratorMemoryLayout,
+        staticMethods: Py.Types.dictValueIteratorStaticMethods,
         debugFn: PyDictValueIterator.createDebugString(ptr:),
         deinitialize: PyDictValueIterator.deinitialize(ptr:)
       )
 
       self.dict_values = memory.newType(
+        py,
         type: self.type,
         name: "dict_values",
         qualname: "dict_values",
@@ -367,13 +385,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.dictValuesMemoryLayout,
-        staticMethods: PyContext.Types.dictValuesStaticMethods,
+        layout: Py.Types.dictValuesMemoryLayout,
+        staticMethods: Py.Types.dictValuesStaticMethods,
         debugFn: PyDictValues.createDebugString(ptr:),
         deinitialize: PyDictValues.deinitialize(ptr:)
       )
 
       self.ellipsis = memory.newType(
+        py,
         type: self.type,
         name: "ellipsis",
         qualname: "ellipsis",
@@ -382,13 +401,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.ellipsisMemoryLayout,
-        staticMethods: PyContext.Types.ellipsisStaticMethods,
+        layout: Py.Types.ellipsisMemoryLayout,
+        staticMethods: Py.Types.ellipsisStaticMethods,
         debugFn: PyEllipsis.createDebugString(ptr:),
         deinitialize: PyEllipsis.deinitialize(ptr:)
       )
 
       self.enumerate = memory.newType(
+        py,
         type: self.type,
         name: "enumerate",
         qualname: "enumerate",
@@ -397,13 +417,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.enumerateMemoryLayout,
-        staticMethods: PyContext.Types.enumerateStaticMethods,
+        layout: Py.Types.enumerateMemoryLayout,
+        staticMethods: Py.Types.enumerateStaticMethods,
         debugFn: PyEnumerate.createDebugString(ptr:),
         deinitialize: PyEnumerate.deinitialize(ptr:)
       )
 
       self.filter = memory.newType(
+        py,
         type: self.type,
         name: "filter",
         qualname: "filter",
@@ -412,13 +433,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.filterMemoryLayout,
-        staticMethods: PyContext.Types.filterStaticMethods,
+        layout: Py.Types.filterMemoryLayout,
+        staticMethods: Py.Types.filterStaticMethods,
         debugFn: PyFilter.createDebugString(ptr:),
         deinitialize: PyFilter.deinitialize(ptr:)
       )
 
       self.float = memory.newType(
+        py,
         type: self.type,
         name: "float",
         qualname: "float",
@@ -427,13 +449,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.floatMemoryLayout,
-        staticMethods: PyContext.Types.floatStaticMethods,
+        layout: Py.Types.floatMemoryLayout,
+        staticMethods: Py.Types.floatStaticMethods,
         debugFn: PyFloat.createDebugString(ptr:),
         deinitialize: PyFloat.deinitialize(ptr:)
       )
 
       self.frame = memory.newType(
+        py,
         type: self.type,
         name: "frame",
         qualname: "frame",
@@ -442,13 +465,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.frameMemoryLayout,
-        staticMethods: PyContext.Types.frameStaticMethods,
+        layout: Py.Types.frameMemoryLayout,
+        staticMethods: Py.Types.frameStaticMethods,
         debugFn: PyFrame.createDebugString(ptr:),
         deinitialize: PyFrame.deinitialize(ptr:)
       )
 
       self.frozenset = memory.newType(
+        py,
         type: self.type,
         name: "frozenset",
         qualname: "frozenset",
@@ -457,13 +481,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.frozenSetMemoryLayout,
-        staticMethods: PyContext.Types.frozenSetStaticMethods,
+        layout: Py.Types.frozenSetMemoryLayout,
+        staticMethods: Py.Types.frozenSetStaticMethods,
         debugFn: PyFrozenSet.createDebugString(ptr:),
         deinitialize: PyFrozenSet.deinitialize(ptr:)
       )
 
       self.function = memory.newType(
+        py,
         type: self.type,
         name: "function",
         qualname: "function",
@@ -472,13 +497,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.functionMemoryLayout,
-        staticMethods: PyContext.Types.functionStaticMethods,
+        layout: Py.Types.functionMemoryLayout,
+        staticMethods: Py.Types.functionStaticMethods,
         debugFn: PyFunction.createDebugString(ptr:),
         deinitialize: PyFunction.deinitialize(ptr:)
       )
 
       self.int = memory.newType(
+        py,
         type: self.type,
         name: "int",
         qualname: "int",
@@ -487,13 +513,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.intMemoryLayout,
-        staticMethods: PyContext.Types.intStaticMethods,
+        layout: Py.Types.intMemoryLayout,
+        staticMethods: Py.Types.intStaticMethods,
         debugFn: PyInt.createDebugString(ptr:),
         deinitialize: PyInt.deinitialize(ptr:)
       )
 
       self.iterator = memory.newType(
+        py,
         type: self.type,
         name: "iterator",
         qualname: "iterator",
@@ -502,13 +529,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.iteratorMemoryLayout,
-        staticMethods: PyContext.Types.iteratorStaticMethods,
+        layout: Py.Types.iteratorMemoryLayout,
+        staticMethods: Py.Types.iteratorStaticMethods,
         debugFn: PyIterator.createDebugString(ptr:),
         deinitialize: PyIterator.deinitialize(ptr:)
       )
 
       self.list = memory.newType(
+        py,
         type: self.type,
         name: "list",
         qualname: "list",
@@ -517,13 +545,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.listMemoryLayout,
-        staticMethods: PyContext.Types.listStaticMethods,
+        layout: Py.Types.listMemoryLayout,
+        staticMethods: Py.Types.listStaticMethods,
         debugFn: PyList.createDebugString(ptr:),
         deinitialize: PyList.deinitialize(ptr:)
       )
 
       self.list_iterator = memory.newType(
+        py,
         type: self.type,
         name: "list_iterator",
         qualname: "list_iterator",
@@ -532,13 +561,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.listIteratorMemoryLayout,
-        staticMethods: PyContext.Types.listIteratorStaticMethods,
+        layout: Py.Types.listIteratorMemoryLayout,
+        staticMethods: Py.Types.listIteratorStaticMethods,
         debugFn: PyListIterator.createDebugString(ptr:),
         deinitialize: PyListIterator.deinitialize(ptr:)
       )
 
       self.list_reverseiterator = memory.newType(
+        py,
         type: self.type,
         name: "list_reverseiterator",
         qualname: "list_reverseiterator",
@@ -547,13 +577,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.listReverseIteratorMemoryLayout,
-        staticMethods: PyContext.Types.listReverseIteratorStaticMethods,
+        layout: Py.Types.listReverseIteratorMemoryLayout,
+        staticMethods: Py.Types.listReverseIteratorStaticMethods,
         debugFn: PyListReverseIterator.createDebugString(ptr:),
         deinitialize: PyListReverseIterator.deinitialize(ptr:)
       )
 
       self.map = memory.newType(
+        py,
         type: self.type,
         name: "map",
         qualname: "map",
@@ -562,13 +593,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.mapMemoryLayout,
-        staticMethods: PyContext.Types.mapStaticMethods,
+        layout: Py.Types.mapMemoryLayout,
+        staticMethods: Py.Types.mapStaticMethods,
         debugFn: PyMap.createDebugString(ptr:),
         deinitialize: PyMap.deinitialize(ptr:)
       )
 
       self.method = memory.newType(
+        py,
         type: self.type,
         name: "method",
         qualname: "method",
@@ -577,13 +609,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.methodMemoryLayout,
-        staticMethods: PyContext.Types.methodStaticMethods,
+        layout: Py.Types.methodMemoryLayout,
+        staticMethods: Py.Types.methodStaticMethods,
         debugFn: PyMethod.createDebugString(ptr:),
         deinitialize: PyMethod.deinitialize(ptr:)
       )
 
       self.module = memory.newType(
+        py,
         type: self.type,
         name: "module",
         qualname: "module",
@@ -592,13 +625,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.moduleMemoryLayout,
-        staticMethods: PyContext.Types.moduleStaticMethods,
+        layout: Py.Types.moduleMemoryLayout,
+        staticMethods: Py.Types.moduleStaticMethods,
         debugFn: PyModule.createDebugString(ptr:),
         deinitialize: PyModule.deinitialize(ptr:)
       )
 
       self.simpleNamespace = memory.newType(
+        py,
         type: self.type,
         name: "SimpleNamespace",
         qualname: "SimpleNamespace",
@@ -607,13 +641,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.namespaceMemoryLayout,
-        staticMethods: PyContext.Types.namespaceStaticMethods,
+        layout: Py.Types.namespaceMemoryLayout,
+        staticMethods: Py.Types.namespaceStaticMethods,
         debugFn: PyNamespace.createDebugString(ptr:),
         deinitialize: PyNamespace.deinitialize(ptr:)
       )
 
       self.none = memory.newType(
+        py,
         type: self.type,
         name: "NoneType",
         qualname: "NoneType",
@@ -622,13 +657,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.noneMemoryLayout,
-        staticMethods: PyContext.Types.noneStaticMethods,
+        layout: Py.Types.noneMemoryLayout,
+        staticMethods: Py.Types.noneStaticMethods,
         debugFn: PyNone.createDebugString(ptr:),
         deinitialize: PyNone.deinitialize(ptr:)
       )
 
       self.notImplemented = memory.newType(
+        py,
         type: self.type,
         name: "NotImplementedType",
         qualname: "NotImplementedType",
@@ -637,13 +673,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.notImplementedMemoryLayout,
-        staticMethods: PyContext.Types.notImplementedStaticMethods,
+        layout: Py.Types.notImplementedMemoryLayout,
+        staticMethods: Py.Types.notImplementedStaticMethods,
         debugFn: PyNotImplemented.createDebugString(ptr:),
         deinitialize: PyNotImplemented.deinitialize(ptr:)
       )
 
       self.property = memory.newType(
+        py,
         type: self.type,
         name: "property",
         qualname: "property",
@@ -652,13 +689,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.propertyMemoryLayout,
-        staticMethods: PyContext.Types.propertyStaticMethods,
+        layout: Py.Types.propertyMemoryLayout,
+        staticMethods: Py.Types.propertyStaticMethods,
         debugFn: PyProperty.createDebugString(ptr:),
         deinitialize: PyProperty.deinitialize(ptr:)
       )
 
       self.range = memory.newType(
+        py,
         type: self.type,
         name: "range",
         qualname: "range",
@@ -667,13 +705,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.rangeMemoryLayout,
-        staticMethods: PyContext.Types.rangeStaticMethods,
+        layout: Py.Types.rangeMemoryLayout,
+        staticMethods: Py.Types.rangeStaticMethods,
         debugFn: PyRange.createDebugString(ptr:),
         deinitialize: PyRange.deinitialize(ptr:)
       )
 
       self.range_iterator = memory.newType(
+        py,
         type: self.type,
         name: "range_iterator",
         qualname: "range_iterator",
@@ -682,13 +721,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.rangeIteratorMemoryLayout,
-        staticMethods: PyContext.Types.rangeIteratorStaticMethods,
+        layout: Py.Types.rangeIteratorMemoryLayout,
+        staticMethods: Py.Types.rangeIteratorStaticMethods,
         debugFn: PyRangeIterator.createDebugString(ptr:),
         deinitialize: PyRangeIterator.deinitialize(ptr:)
       )
 
       self.reversed = memory.newType(
+        py,
         type: self.type,
         name: "reversed",
         qualname: "reversed",
@@ -697,13 +737,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.reversedMemoryLayout,
-        staticMethods: PyContext.Types.reversedStaticMethods,
+        layout: Py.Types.reversedMemoryLayout,
+        staticMethods: Py.Types.reversedStaticMethods,
         debugFn: PyReversed.createDebugString(ptr:),
         deinitialize: PyReversed.deinitialize(ptr:)
       )
 
       self.set = memory.newType(
+        py,
         type: self.type,
         name: "set",
         qualname: "set",
@@ -712,13 +753,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.setMemoryLayout,
-        staticMethods: PyContext.Types.setStaticMethods,
+        layout: Py.Types.setMemoryLayout,
+        staticMethods: Py.Types.setStaticMethods,
         debugFn: PySet.createDebugString(ptr:),
         deinitialize: PySet.deinitialize(ptr:)
       )
 
       self.set_iterator = memory.newType(
+        py,
         type: self.type,
         name: "set_iterator",
         qualname: "set_iterator",
@@ -727,13 +769,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.setIteratorMemoryLayout,
-        staticMethods: PyContext.Types.setIteratorStaticMethods,
+        layout: Py.Types.setIteratorMemoryLayout,
+        staticMethods: Py.Types.setIteratorStaticMethods,
         debugFn: PySetIterator.createDebugString(ptr:),
         deinitialize: PySetIterator.deinitialize(ptr:)
       )
 
       self.slice = memory.newType(
+        py,
         type: self.type,
         name: "slice",
         qualname: "slice",
@@ -742,13 +785,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.sliceMemoryLayout,
-        staticMethods: PyContext.Types.sliceStaticMethods,
+        layout: Py.Types.sliceMemoryLayout,
+        staticMethods: Py.Types.sliceStaticMethods,
         debugFn: PySlice.createDebugString(ptr:),
         deinitialize: PySlice.deinitialize(ptr:)
       )
 
       self.staticmethod = memory.newType(
+        py,
         type: self.type,
         name: "staticmethod",
         qualname: "staticmethod",
@@ -757,13 +801,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.staticMethodMemoryLayout,
-        staticMethods: PyContext.Types.staticMethodStaticMethods,
+        layout: Py.Types.staticMethodMemoryLayout,
+        staticMethods: Py.Types.staticMethodStaticMethods,
         debugFn: PyStaticMethod.createDebugString(ptr:),
         deinitialize: PyStaticMethod.deinitialize(ptr:)
       )
 
       self.str = memory.newType(
+        py,
         type: self.type,
         name: "str",
         qualname: "str",
@@ -772,13 +817,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.stringMemoryLayout,
-        staticMethods: PyContext.Types.stringStaticMethods,
+        layout: Py.Types.stringMemoryLayout,
+        staticMethods: Py.Types.stringStaticMethods,
         debugFn: PyString.createDebugString(ptr:),
         deinitialize: PyString.deinitialize(ptr:)
       )
 
       self.str_iterator = memory.newType(
+        py,
         type: self.type,
         name: "str_iterator",
         qualname: "str_iterator",
@@ -787,13 +833,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.stringIteratorMemoryLayout,
-        staticMethods: PyContext.Types.stringIteratorStaticMethods,
+        layout: Py.Types.stringIteratorMemoryLayout,
+        staticMethods: Py.Types.stringIteratorStaticMethods,
         debugFn: PyStringIterator.createDebugString(ptr:),
         deinitialize: PyStringIterator.deinitialize(ptr:)
       )
 
       self.`super` = memory.newType(
+        py,
         type: self.type,
         name: "super",
         qualname: "super",
@@ -802,13 +849,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.superMemoryLayout,
-        staticMethods: PyContext.Types.superStaticMethods,
+        layout: Py.Types.superMemoryLayout,
+        staticMethods: Py.Types.superStaticMethods,
         debugFn: PySuper.createDebugString(ptr:),
         deinitialize: PySuper.deinitialize(ptr:)
       )
 
       self.textFile = memory.newType(
+        py,
         type: self.type,
         name: "TextFile",
         qualname: "TextFile",
@@ -817,13 +865,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.textFileMemoryLayout,
-        staticMethods: PyContext.Types.textFileStaticMethods,
+        layout: Py.Types.textFileMemoryLayout,
+        staticMethods: Py.Types.textFileStaticMethods,
         debugFn: PyTextFile.createDebugString(ptr:),
         deinitialize: PyTextFile.deinitialize(ptr:)
       )
 
       self.tuple = memory.newType(
+        py,
         type: self.type,
         name: "tuple",
         qualname: "tuple",
@@ -832,13 +881,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.tupleMemoryLayout,
-        staticMethods: PyContext.Types.tupleStaticMethods,
+        layout: Py.Types.tupleMemoryLayout,
+        staticMethods: Py.Types.tupleStaticMethods,
         debugFn: PyTuple.createDebugString(ptr:),
         deinitialize: PyTuple.deinitialize(ptr:)
       )
 
       self.tuple_iterator = memory.newType(
+        py,
         type: self.type,
         name: "tuple_iterator",
         qualname: "tuple_iterator",
@@ -847,13 +897,14 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.tupleIteratorMemoryLayout,
-        staticMethods: PyContext.Types.tupleIteratorStaticMethods,
+        layout: Py.Types.tupleIteratorMemoryLayout,
+        staticMethods: Py.Types.tupleIteratorStaticMethods,
         debugFn: PyTupleIterator.createDebugString(ptr:),
         deinitialize: PyTupleIterator.deinitialize(ptr:)
       )
 
       self.zip = memory.newType(
+        py,
         type: self.type,
         name: "zip",
         qualname: "zip",
@@ -862,14 +913,15 @@ extension Py {
         bases: [self.object],
         mroWithoutSelf: [self.object],
         subclasses: [],
-        layout: PyContext.Types.zipMemoryLayout,
-        staticMethods: PyContext.Types.zipStaticMethods,
+        layout: Py.Types.zipMemoryLayout,
+        staticMethods: Py.Types.zipStaticMethods,
         debugFn: PyZip.createDebugString(ptr:),
         deinitialize: PyZip.deinitialize(ptr:)
       )
 
       // And now we can set 'bool' (because we have 'self.int').
       self.bool = memory.newType(
+        py,
         type: self.type,
         name: "bool",
         qualname: "bool",
@@ -878,8 +930,8 @@ extension Py {
         bases: [self.int, self.object],
         mroWithoutSelf: [self.int, self.object],
         subclasses: [],
-        layout: PyContext.Types.boolMemoryLayout,
-        staticMethods: PyContext.Types.boolStaticMethods,
+        layout: Py.Types.boolMemoryLayout,
+        staticMethods: Py.Types.boolStaticMethods,
         debugFn: PyBool.createDebugString(ptr:),
         deinitialize: PyBool.deinitialize(ptr:)
       )

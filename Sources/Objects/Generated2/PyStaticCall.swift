@@ -90,37 +90,37 @@ public enum PyStaticCall {
 
     // MARK: - Aliases
 
-    public typealias StringConversion = (PyContext, PyObject) -> PyResult<String>
-    public typealias Hash = (PyContext, PyObject) -> HashResult
-    public typealias Dir = (PyContext, PyObject) -> PyResult<DirResult>
-    public typealias Comparison = (PyContext, PyObject, PyObject) -> CompareResult
-    public typealias AsBool = (PyContext, PyObject) -> Bool
-    public typealias AsInt = (PyContext, PyObject) -> PyResult<PyInt>
-    public typealias AsFloat = (PyContext, PyObject) -> PyResult<PyFloat>
-    public typealias AsComplex = (PyContext, PyObject) -> PyObject
-    public typealias AsIndex = (PyContext, PyObject) -> BigInt
-    public typealias GetAttribute = (PyContext, PyObject, PyObject) -> PyResult<PyObject>
-    public typealias SetAttribute = (PyContext, PyObject, PyObject, PyObject?) -> PyResult<PyNone>
-    public typealias DelAttribute = (PyContext, PyObject, PyObject) -> PyResult<PyNone>
-    public typealias GetItem = (PyContext, PyObject, PyObject) -> PyResult<PyObject>
-    public typealias SetItem = (PyContext, PyObject, PyObject, PyObject) -> PyResult<PyNone>
-    public typealias DelItem = (PyContext, PyObject, PyObject) -> PyResult<PyNone>
-    public typealias Iter = (PyContext, PyObject) -> PyObject
-    public typealias Next = (PyContext, PyObject) -> PyResult<PyObject>
-    public typealias GetLength = (PyContext, PyObject) -> BigInt
-    public typealias Contains = (PyContext, PyObject, PyObject) -> PyResult<Bool>
-    public typealias Reversed = (PyContext, PyObject) -> PyObject
-    public typealias Keys = (PyContext, PyObject) -> PyObject
-    public typealias Del = (PyContext, PyObject) -> PyResult<PyNone>
-    public typealias Call = (PyContext, PyObject, [PyObject], PyDict?) -> PyResult<PyObject>
-    public typealias InstanceCheck = (PyContext, PyObject, PyObject) -> Bool
-    public typealias SubclassCheck = (PyContext, PyObject, PyObject) -> PyResult<Bool>
-    public typealias IsAbstractMethod = (PyContext, PyObject) -> PyResult<Bool>
-    public typealias NumericUnary = (PyContext, PyObject) -> PyObject
-    public typealias NumericTrunc = (PyContext, PyObject) -> PyResult<PyInt>
-    public typealias NumericRound = (PyContext, PyObject, PyObject?) -> PyResult<PyObject>
-    public typealias NumericBinary = (PyContext, PyObject, PyObject) -> PyResult<PyObject>
-    public typealias NumericPow = (PyContext, PyObject, PyObject, PyObject) -> PyResult<PyObject>
+    public typealias StringConversion = (Py, PyObject) -> PyResult<String>
+    public typealias Hash = (Py, PyObject) -> HashResult
+    public typealias Dir = (Py, PyObject) -> PyResult<DirResult>
+    public typealias Comparison = (Py, PyObject, PyObject) -> CompareResult
+    public typealias AsBool = (Py, PyObject) -> Bool
+    public typealias AsInt = (Py, PyObject) -> PyResult<PyInt>
+    public typealias AsFloat = (Py, PyObject) -> PyResult<PyFloat>
+    public typealias AsComplex = (Py, PyObject) -> PyObject
+    public typealias AsIndex = (Py, PyObject) -> BigInt
+    public typealias GetAttribute = (Py, PyObject, PyObject) -> PyResult<PyObject>
+    public typealias SetAttribute = (Py, PyObject, PyObject, PyObject?) -> PyResult<PyNone>
+    public typealias DelAttribute = (Py, PyObject, PyObject) -> PyResult<PyNone>
+    public typealias GetItem = (Py, PyObject, PyObject) -> PyResult<PyObject>
+    public typealias SetItem = (Py, PyObject, PyObject, PyObject) -> PyResult<PyNone>
+    public typealias DelItem = (Py, PyObject, PyObject) -> PyResult<PyNone>
+    public typealias Iter = (Py, PyObject) -> PyObject
+    public typealias Next = (Py, PyObject) -> PyResult<PyObject>
+    public typealias GetLength = (Py, PyObject) -> BigInt
+    public typealias Contains = (Py, PyObject, PyObject) -> PyResult<Bool>
+    public typealias Reversed = (Py, PyObject) -> PyObject
+    public typealias Keys = (Py, PyObject) -> PyObject
+    public typealias Del = (Py, PyObject) -> PyResult<PyNone>
+    public typealias Call = (Py, PyObject, [PyObject], PyDict?) -> PyResult<PyObject>
+    public typealias InstanceCheck = (Py, PyObject, PyObject) -> Bool
+    public typealias SubclassCheck = (Py, PyObject, PyObject) -> PyResult<Bool>
+    public typealias IsAbstractMethod = (Py, PyObject) -> PyResult<Bool>
+    public typealias NumericUnary = (Py, PyObject) -> PyObject
+    public typealias NumericTrunc = (Py, PyObject) -> PyResult<PyInt>
+    public typealias NumericRound = (Py, PyObject, PyObject?) -> PyResult<PyObject>
+    public typealias NumericBinary = (Py, PyObject, PyObject) -> PyResult<PyObject>
+    public typealias NumericPow = (Py, PyObject, PyObject, PyObject) -> PyResult<PyObject>
 
     // MARK: - Properties
 
@@ -563,9 +563,9 @@ public enum PyStaticCall {
 
   // MARK: - __repr__
 
-  internal static func __repr__(context: PyContext, object: PyObject) -> PyResult<String>? {
+  internal static func __repr__(_ py: Py, object: PyObject) -> PyResult<String>? {
     if let method = object.type.staticMethods.__repr__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -573,9 +573,9 @@ public enum PyStaticCall {
 
   // MARK: - __str__
 
-  internal static func __str__(context: PyContext, object: PyObject) -> PyResult<String>? {
+  internal static func __str__(_ py: Py, object: PyObject) -> PyResult<String>? {
     if let method = object.type.staticMethods.__str__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -583,9 +583,9 @@ public enum PyStaticCall {
 
   // MARK: - __hash__
 
-  internal static func __hash__(context: PyContext, object: PyObject) -> HashResult? {
+  internal static func __hash__(_ py: Py, object: PyObject) -> HashResult? {
     if let method = object.type.staticMethods.__hash__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -593,9 +593,9 @@ public enum PyStaticCall {
 
   // MARK: - __dir__
 
-  internal static func __dir__(context: PyContext, object: PyObject) -> PyResult<DirResult>? {
+  internal static func __dir__(_ py: Py, object: PyObject) -> PyResult<DirResult>? {
     if let method = object.type.staticMethods.__dir__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -603,9 +603,9 @@ public enum PyStaticCall {
 
   // MARK: - __eq__
 
-  internal static func __eq__(context: PyContext, left: PyObject, right: PyObject) -> CompareResult? {
+  internal static func __eq__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
     if let method = left.type.staticMethods.__eq__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -613,9 +613,9 @@ public enum PyStaticCall {
 
   // MARK: - __ne__
 
-  internal static func __ne__(context: PyContext, left: PyObject, right: PyObject) -> CompareResult? {
+  internal static func __ne__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
     if let method = left.type.staticMethods.__ne__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -623,9 +623,9 @@ public enum PyStaticCall {
 
   // MARK: - __lt__
 
-  internal static func __lt__(context: PyContext, left: PyObject, right: PyObject) -> CompareResult? {
+  internal static func __lt__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
     if let method = left.type.staticMethods.__lt__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -633,9 +633,9 @@ public enum PyStaticCall {
 
   // MARK: - __le__
 
-  internal static func __le__(context: PyContext, left: PyObject, right: PyObject) -> CompareResult? {
+  internal static func __le__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
     if let method = left.type.staticMethods.__le__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -643,9 +643,9 @@ public enum PyStaticCall {
 
   // MARK: - __gt__
 
-  internal static func __gt__(context: PyContext, left: PyObject, right: PyObject) -> CompareResult? {
+  internal static func __gt__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
     if let method = left.type.staticMethods.__gt__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -653,9 +653,9 @@ public enum PyStaticCall {
 
   // MARK: - __ge__
 
-  internal static func __ge__(context: PyContext, left: PyObject, right: PyObject) -> CompareResult? {
+  internal static func __ge__(_ py: Py, left: PyObject, right: PyObject) -> CompareResult? {
     if let method = left.type.staticMethods.__ge__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -663,9 +663,9 @@ public enum PyStaticCall {
 
   // MARK: - __bool__
 
-  internal static func __bool__(context: PyContext, object: PyObject) -> Bool? {
+  internal static func __bool__(_ py: Py, object: PyObject) -> Bool? {
     if let method = object.type.staticMethods.__bool__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -673,9 +673,9 @@ public enum PyStaticCall {
 
   // MARK: - __int__
 
-  internal static func __int__(context: PyContext, object: PyObject) -> PyResult<PyInt>? {
+  internal static func __int__(_ py: Py, object: PyObject) -> PyResult<PyInt>? {
     if let method = object.type.staticMethods.__int__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -683,9 +683,9 @@ public enum PyStaticCall {
 
   // MARK: - __float__
 
-  internal static func __float__(context: PyContext, object: PyObject) -> PyResult<PyFloat>? {
+  internal static func __float__(_ py: Py, object: PyObject) -> PyResult<PyFloat>? {
     if let method = object.type.staticMethods.__float__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -693,9 +693,9 @@ public enum PyStaticCall {
 
   // MARK: - __complex__
 
-  internal static func __complex__(context: PyContext, object: PyObject) -> PyObject? {
+  internal static func __complex__(_ py: Py, object: PyObject) -> PyObject? {
     if let method = object.type.staticMethods.__complex__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -703,9 +703,9 @@ public enum PyStaticCall {
 
   // MARK: - __index__
 
-  internal static func __index__(context: PyContext, object: PyObject) -> BigInt? {
+  internal static func __index__(_ py: Py, object: PyObject) -> BigInt? {
     if let method = object.type.staticMethods.__index__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -713,9 +713,9 @@ public enum PyStaticCall {
 
   // MARK: - __getattr__
 
-  internal static func __getattr__(context: PyContext, object: PyObject, name: PyObject) -> PyResult<PyObject>? {
+  internal static func __getattr__(_ py: Py, object: PyObject, name: PyObject) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__getattr__ {
-      return method(context, object, name)
+      return method(py, object, name)
     }
 
     return nil
@@ -723,9 +723,9 @@ public enum PyStaticCall {
 
   // MARK: - __getattribute__
 
-  internal static func __getattribute__(context: PyContext, object: PyObject, name: PyObject) -> PyResult<PyObject>? {
+  internal static func __getattribute__(_ py: Py, object: PyObject, name: PyObject) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__getattribute__ {
-      return method(context, object, name)
+      return method(py, object, name)
     }
 
     return nil
@@ -733,9 +733,9 @@ public enum PyStaticCall {
 
   // MARK: - __setattr__
 
-  internal static func __setattr__(context: PyContext, object: PyObject, name: PyObject, value: PyObject?) -> PyResult<PyNone>? {
+  internal static func __setattr__(_ py: Py, object: PyObject, name: PyObject, value: PyObject?) -> PyResult<PyNone>? {
     if let method = object.type.staticMethods.__setattr__ {
-      return method(context, object, name, value)
+      return method(py, object, name, value)
     }
 
     return nil
@@ -743,9 +743,9 @@ public enum PyStaticCall {
 
   // MARK: - __delattr__
 
-  internal static func __delattr__(context: PyContext, object: PyObject, name: PyObject) -> PyResult<PyNone>? {
+  internal static func __delattr__(_ py: Py, object: PyObject, name: PyObject) -> PyResult<PyNone>? {
     if let method = object.type.staticMethods.__delattr__ {
-      return method(context, object, name)
+      return method(py, object, name)
     }
 
     return nil
@@ -753,9 +753,9 @@ public enum PyStaticCall {
 
   // MARK: - __getitem__
 
-  internal static func __getitem__(context: PyContext, object: PyObject, index: PyObject) -> PyResult<PyObject>? {
+  internal static func __getitem__(_ py: Py, object: PyObject, index: PyObject) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__getitem__ {
-      return method(context, object, index)
+      return method(py, object, index)
     }
 
     return nil
@@ -763,9 +763,9 @@ public enum PyStaticCall {
 
   // MARK: - __setitem__
 
-  internal static func __setitem__(context: PyContext, object: PyObject, index: PyObject, value: PyObject) -> PyResult<PyNone>? {
+  internal static func __setitem__(_ py: Py, object: PyObject, index: PyObject, value: PyObject) -> PyResult<PyNone>? {
     if let method = object.type.staticMethods.__setitem__ {
-      return method(context, object, index, value)
+      return method(py, object, index, value)
     }
 
     return nil
@@ -773,9 +773,9 @@ public enum PyStaticCall {
 
   // MARK: - __delitem__
 
-  internal static func __delitem__(context: PyContext, object: PyObject, index: PyObject) -> PyResult<PyNone>? {
+  internal static func __delitem__(_ py: Py, object: PyObject, index: PyObject) -> PyResult<PyNone>? {
     if let method = object.type.staticMethods.__delitem__ {
-      return method(context, object, index)
+      return method(py, object, index)
     }
 
     return nil
@@ -783,9 +783,9 @@ public enum PyStaticCall {
 
   // MARK: - __iter__
 
-  internal static func __iter__(context: PyContext, object: PyObject) -> PyObject? {
+  internal static func __iter__(_ py: Py, object: PyObject) -> PyObject? {
     if let method = object.type.staticMethods.__iter__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -793,9 +793,9 @@ public enum PyStaticCall {
 
   // MARK: - __next__
 
-  internal static func __next__(context: PyContext, object: PyObject) -> PyResult<PyObject>? {
+  internal static func __next__(_ py: Py, object: PyObject) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__next__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -803,9 +803,9 @@ public enum PyStaticCall {
 
   // MARK: - __len__
 
-  internal static func __len__(context: PyContext, object: PyObject) -> BigInt? {
+  internal static func __len__(_ py: Py, object: PyObject) -> BigInt? {
     if let method = object.type.staticMethods.__len__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -813,9 +813,9 @@ public enum PyStaticCall {
 
   // MARK: - __contains__
 
-  internal static func __contains__(context: PyContext, object: PyObject, element: PyObject) -> PyResult<Bool>? {
+  internal static func __contains__(_ py: Py, object: PyObject, element: PyObject) -> PyResult<Bool>? {
     if let method = object.type.staticMethods.__contains__ {
-      return method(context, object, element)
+      return method(py, object, element)
     }
 
     return nil
@@ -823,9 +823,9 @@ public enum PyStaticCall {
 
   // MARK: - __reversed__
 
-  internal static func __reversed__(context: PyContext, object: PyObject) -> PyObject? {
+  internal static func __reversed__(_ py: Py, object: PyObject) -> PyObject? {
     if let method = object.type.staticMethods.__reversed__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -833,9 +833,9 @@ public enum PyStaticCall {
 
   // MARK: - keys
 
-  internal static func keys(context: PyContext, object: PyObject) -> PyObject? {
+  internal static func keys(_ py: Py, object: PyObject) -> PyObject? {
     if let method = object.type.staticMethods.keys {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -843,9 +843,9 @@ public enum PyStaticCall {
 
   // MARK: - __del__
 
-  internal static func __del__(context: PyContext, object: PyObject) -> PyResult<PyNone>? {
+  internal static func __del__(_ py: Py, object: PyObject) -> PyResult<PyNone>? {
     if let method = object.type.staticMethods.__del__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -853,9 +853,9 @@ public enum PyStaticCall {
 
   // MARK: - __call__
 
-  internal static func __call__(context: PyContext, object: PyObject, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>? {
+  internal static func __call__(_ py: Py, object: PyObject, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__call__ {
-      return method(context, object, args, kwargs)
+      return method(py, object, args, kwargs)
     }
 
     return nil
@@ -863,9 +863,9 @@ public enum PyStaticCall {
 
   // MARK: - __instancecheck__
 
-  internal static func __instancecheck__(context: PyContext, type: PyObject, object: PyObject) -> Bool? {
+  internal static func __instancecheck__(_ py: Py, type: PyObject, object: PyObject) -> Bool? {
     if let method = type.type.staticMethods.__instancecheck__ {
-      return method(context, type, object)
+      return method(py, type, object)
     }
 
     return nil
@@ -873,9 +873,9 @@ public enum PyStaticCall {
 
   // MARK: - __subclasscheck__
 
-  internal static func __subclasscheck__(context: PyContext, type: PyObject, base: PyObject) -> PyResult<Bool>? {
+  internal static func __subclasscheck__(_ py: Py, type: PyObject, base: PyObject) -> PyResult<Bool>? {
     if let method = type.type.staticMethods.__subclasscheck__ {
-      return method(context, type, base)
+      return method(py, type, base)
     }
 
     return nil
@@ -883,9 +883,9 @@ public enum PyStaticCall {
 
   // MARK: - __isabstractmethod__
 
-  internal static func __isabstractmethod__(context: PyContext, object: PyObject) -> PyResult<Bool>? {
+  internal static func __isabstractmethod__(_ py: Py, object: PyObject) -> PyResult<Bool>? {
     if let method = object.type.staticMethods.__isabstractmethod__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -893,9 +893,9 @@ public enum PyStaticCall {
 
   // MARK: - __pos__
 
-  internal static func __pos__(context: PyContext, object: PyObject) -> PyObject? {
+  internal static func __pos__(_ py: Py, object: PyObject) -> PyObject? {
     if let method = object.type.staticMethods.__pos__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -903,9 +903,9 @@ public enum PyStaticCall {
 
   // MARK: - __neg__
 
-  internal static func __neg__(context: PyContext, object: PyObject) -> PyObject? {
+  internal static func __neg__(_ py: Py, object: PyObject) -> PyObject? {
     if let method = object.type.staticMethods.__neg__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -913,9 +913,9 @@ public enum PyStaticCall {
 
   // MARK: - __invert__
 
-  internal static func __invert__(context: PyContext, object: PyObject) -> PyObject? {
+  internal static func __invert__(_ py: Py, object: PyObject) -> PyObject? {
     if let method = object.type.staticMethods.__invert__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -923,9 +923,9 @@ public enum PyStaticCall {
 
   // MARK: - __abs__
 
-  internal static func __abs__(context: PyContext, object: PyObject) -> PyObject? {
+  internal static func __abs__(_ py: Py, object: PyObject) -> PyObject? {
     if let method = object.type.staticMethods.__abs__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -933,9 +933,9 @@ public enum PyStaticCall {
 
   // MARK: - __trunc__
 
-  internal static func __trunc__(context: PyContext, object: PyObject) -> PyResult<PyInt>? {
+  internal static func __trunc__(_ py: Py, object: PyObject) -> PyResult<PyInt>? {
     if let method = object.type.staticMethods.__trunc__ {
-      return method(context, object)
+      return method(py, object)
     }
 
     return nil
@@ -943,9 +943,9 @@ public enum PyStaticCall {
 
   // MARK: - __round__
 
-  internal static func __round__(context: PyContext, object: PyObject, nDigits: PyObject?) -> PyResult<PyObject>? {
+  internal static func __round__(_ py: Py, object: PyObject, nDigits: PyObject?) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__round__ {
-      return method(context, object, nDigits)
+      return method(py, object, nDigits)
     }
 
     return nil
@@ -953,9 +953,9 @@ public enum PyStaticCall {
 
   // MARK: - __add__
 
-  internal static func __add__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __add__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__add__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -963,9 +963,9 @@ public enum PyStaticCall {
 
   // MARK: - __and__
 
-  internal static func __and__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __and__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__and__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -973,9 +973,9 @@ public enum PyStaticCall {
 
   // MARK: - __divmod__
 
-  internal static func __divmod__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __divmod__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__divmod__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -983,9 +983,9 @@ public enum PyStaticCall {
 
   // MARK: - __floordiv__
 
-  internal static func __floordiv__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __floordiv__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__floordiv__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -993,9 +993,9 @@ public enum PyStaticCall {
 
   // MARK: - __lshift__
 
-  internal static func __lshift__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __lshift__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__lshift__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1003,9 +1003,9 @@ public enum PyStaticCall {
 
   // MARK: - __matmul__
 
-  internal static func __matmul__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __matmul__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__matmul__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1013,9 +1013,9 @@ public enum PyStaticCall {
 
   // MARK: - __mod__
 
-  internal static func __mod__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __mod__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__mod__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1023,9 +1023,9 @@ public enum PyStaticCall {
 
   // MARK: - __mul__
 
-  internal static func __mul__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __mul__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__mul__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1033,9 +1033,9 @@ public enum PyStaticCall {
 
   // MARK: - __or__
 
-  internal static func __or__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __or__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__or__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1043,9 +1043,9 @@ public enum PyStaticCall {
 
   // MARK: - __rshift__
 
-  internal static func __rshift__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __rshift__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__rshift__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1053,9 +1053,9 @@ public enum PyStaticCall {
 
   // MARK: - __sub__
 
-  internal static func __sub__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __sub__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__sub__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1063,9 +1063,9 @@ public enum PyStaticCall {
 
   // MARK: - __truediv__
 
-  internal static func __truediv__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __truediv__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__truediv__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1073,9 +1073,9 @@ public enum PyStaticCall {
 
   // MARK: - __xor__
 
-  internal static func __xor__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __xor__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__xor__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1083,9 +1083,9 @@ public enum PyStaticCall {
 
   // MARK: - __radd__
 
-  internal static func __radd__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __radd__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__radd__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1093,9 +1093,9 @@ public enum PyStaticCall {
 
   // MARK: - __rand__
 
-  internal static func __rand__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __rand__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__rand__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1103,9 +1103,9 @@ public enum PyStaticCall {
 
   // MARK: - __rdivmod__
 
-  internal static func __rdivmod__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __rdivmod__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__rdivmod__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1113,9 +1113,9 @@ public enum PyStaticCall {
 
   // MARK: - __rfloordiv__
 
-  internal static func __rfloordiv__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __rfloordiv__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__rfloordiv__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1123,9 +1123,9 @@ public enum PyStaticCall {
 
   // MARK: - __rlshift__
 
-  internal static func __rlshift__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __rlshift__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__rlshift__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1133,9 +1133,9 @@ public enum PyStaticCall {
 
   // MARK: - __rmatmul__
 
-  internal static func __rmatmul__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __rmatmul__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__rmatmul__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1143,9 +1143,9 @@ public enum PyStaticCall {
 
   // MARK: - __rmod__
 
-  internal static func __rmod__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __rmod__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__rmod__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1153,9 +1153,9 @@ public enum PyStaticCall {
 
   // MARK: - __rmul__
 
-  internal static func __rmul__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __rmul__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__rmul__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1163,9 +1163,9 @@ public enum PyStaticCall {
 
   // MARK: - __ror__
 
-  internal static func __ror__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __ror__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__ror__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1173,9 +1173,9 @@ public enum PyStaticCall {
 
   // MARK: - __rrshift__
 
-  internal static func __rrshift__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __rrshift__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__rrshift__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1183,9 +1183,9 @@ public enum PyStaticCall {
 
   // MARK: - __rsub__
 
-  internal static func __rsub__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __rsub__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__rsub__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1193,9 +1193,9 @@ public enum PyStaticCall {
 
   // MARK: - __rtruediv__
 
-  internal static func __rtruediv__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __rtruediv__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__rtruediv__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1203,9 +1203,9 @@ public enum PyStaticCall {
 
   // MARK: - __rxor__
 
-  internal static func __rxor__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __rxor__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__rxor__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1213,9 +1213,9 @@ public enum PyStaticCall {
 
   // MARK: - __iadd__
 
-  internal static func __iadd__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __iadd__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__iadd__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1223,9 +1223,9 @@ public enum PyStaticCall {
 
   // MARK: - __iand__
 
-  internal static func __iand__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __iand__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__iand__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1233,9 +1233,9 @@ public enum PyStaticCall {
 
   // MARK: - __idivmod__
 
-  internal static func __idivmod__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __idivmod__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__idivmod__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1243,9 +1243,9 @@ public enum PyStaticCall {
 
   // MARK: - __ifloordiv__
 
-  internal static func __ifloordiv__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __ifloordiv__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__ifloordiv__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1253,9 +1253,9 @@ public enum PyStaticCall {
 
   // MARK: - __ilshift__
 
-  internal static func __ilshift__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __ilshift__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__ilshift__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1263,9 +1263,9 @@ public enum PyStaticCall {
 
   // MARK: - __imatmul__
 
-  internal static func __imatmul__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __imatmul__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__imatmul__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1273,9 +1273,9 @@ public enum PyStaticCall {
 
   // MARK: - __imod__
 
-  internal static func __imod__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __imod__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__imod__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1283,9 +1283,9 @@ public enum PyStaticCall {
 
   // MARK: - __imul__
 
-  internal static func __imul__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __imul__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__imul__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1293,9 +1293,9 @@ public enum PyStaticCall {
 
   // MARK: - __ior__
 
-  internal static func __ior__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __ior__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__ior__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1303,9 +1303,9 @@ public enum PyStaticCall {
 
   // MARK: - __irshift__
 
-  internal static func __irshift__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __irshift__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__irshift__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1313,9 +1313,9 @@ public enum PyStaticCall {
 
   // MARK: - __isub__
 
-  internal static func __isub__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __isub__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__isub__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1323,9 +1323,9 @@ public enum PyStaticCall {
 
   // MARK: - __itruediv__
 
-  internal static func __itruediv__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __itruediv__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__itruediv__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1333,9 +1333,9 @@ public enum PyStaticCall {
 
   // MARK: - __ixor__
 
-  internal static func __ixor__(context: PyContext, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
+  internal static func __ixor__(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>? {
     if let method = left.type.staticMethods.__ixor__ {
-      return method(context, left, right)
+      return method(py, left, right)
     }
 
     return nil
@@ -1343,9 +1343,9 @@ public enum PyStaticCall {
 
   // MARK: - __pow__
 
-  internal static func __pow__(context: PyContext, base: PyObject, exp: PyObject, mod: PyObject) -> PyResult<PyObject>? {
+  internal static func __pow__(_ py: Py, base: PyObject, exp: PyObject, mod: PyObject) -> PyResult<PyObject>? {
     if let method = base.type.staticMethods.__pow__ {
-      return method(context, base, exp, mod)
+      return method(py, base, exp, mod)
     }
 
     return nil
@@ -1353,9 +1353,9 @@ public enum PyStaticCall {
 
   // MARK: - __rpow__
 
-  internal static func __rpow__(context: PyContext, base: PyObject, exp: PyObject, mod: PyObject) -> PyResult<PyObject>? {
+  internal static func __rpow__(_ py: Py, base: PyObject, exp: PyObject, mod: PyObject) -> PyResult<PyObject>? {
     if let method = base.type.staticMethods.__rpow__ {
-      return method(context, base, exp, mod)
+      return method(py, base, exp, mod)
     }
 
     return nil
@@ -1363,9 +1363,9 @@ public enum PyStaticCall {
 
   // MARK: - __ipow__
 
-  internal static func __ipow__(context: PyContext, base: PyObject, exp: PyObject, mod: PyObject) -> PyResult<PyObject>? {
+  internal static func __ipow__(_ py: Py, base: PyObject, exp: PyObject, mod: PyObject) -> PyResult<PyObject>? {
     if let method = base.type.staticMethods.__ipow__ {
-      return method(context, base, exp, mod)
+      return method(py, base, exp, mod)
     }
 
     return nil

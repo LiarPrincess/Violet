@@ -27,9 +27,9 @@ public struct PyListReverseIterator: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, list: PyList) {
+  internal func initialize(_ py: Py, type: PyType, list: PyList) {
     let index = list.count - 1
-    self.header.initialize(type: type)
+    self.header.initialize(py, type: type)
     self.listPtr.initialize(to: list)
     self.indexPtr.initialize(to: index)
   }

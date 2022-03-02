@@ -46,8 +46,8 @@ public struct PyClassMethod: PyObjectMixin {
 
   // MARK: - Initialize/deinitialize
 
-  internal func initialize(type: PyType, callable: PyObject?) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, callable: PyObject?) {
+    self.header.initialize(py, type: type)
     self.callablePtr.initialize(to: callable)
   }
 

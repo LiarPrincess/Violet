@@ -51,6 +51,7 @@ class PyTypeDefinition:
 
         print(f'''\
       self.{self.property_name_escaped} = memory.newType(
+        py,
         type: self.type,
         name: "{args.name}",
         qualname: "{args.qualname}",

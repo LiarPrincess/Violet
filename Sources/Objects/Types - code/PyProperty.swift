@@ -89,12 +89,13 @@ public struct PyProperty: PyObjectMixin {
 
   // MARK: - Initialize/deinitialize
 
-  internal func initialize(type: PyType,
+  internal func initialize(_ py: Py,
+                           type: PyType,
                            get: PyObject?,
                            set: PyObject?,
                            del: PyObject?,
                            doc: PyObject?) {
-    self.header.initialize(type: type)
+    self.header.initialize(py, type: type)
     self._getPtr.initialize(to: get)
     self._setPtr.initialize(to: set)
     self._delPtr.initialize(to: del)

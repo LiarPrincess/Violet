@@ -28,8 +28,8 @@ public struct PyIterator: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, sequence: PyObject) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, sequence: PyObject) {
+    self.header.initialize(py, type: type)
     self.sequencePtr.initialize(to: sequence)
     self.indexPtr.initialize(to: 0)
   }

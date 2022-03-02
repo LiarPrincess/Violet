@@ -35,18 +35,18 @@ public class DirResult: PyFunctionResultConvertible {
 
   // MARK: - Append keys/elements
 
-  internal func append(keysFrom object: PyObject) -> PyBaseException? {
-    switch Py.getKeys(object: object) {
+  internal func append(_ py: Py, keysFrom object: PyObject) -> PyBaseException? {
+    switch py.getKeys(object: object) {
     case let .value(keys):
-      return self.append(elementsFrom: keys)
+      return self.append(py, elementsFrom: keys)
     case let .missingMethod(e),
          let .error(e):
       return e
     }
   }
 
-  internal func append(elementsFrom iterable: PyObject) -> PyBaseException? {
-    let e = Py.forEach(iterable: iterable) { object in
+  internal func append(_ py: Py, elementsFrom iterable: PyObject) -> PyBaseException? {
+    let e = py.forEach(iterable: iterable) { object in
       self.append(object)
       return .goToNextElement
     }
@@ -58,6 +58,8 @@ public class DirResult: PyFunctionResultConvertible {
 
   // 'DirResult' can be used as a return type in python function.
   public var asFunctionResult: PyFunctionResult {
+/* MARKER
+
     if let cached = self.cachedResult {
       return cached
     }
@@ -74,5 +76,7 @@ public class DirResult: PyFunctionResultConvertible {
 
     self.cachedResult = result
     return result
+*/
+    fatalError()
   }
 }

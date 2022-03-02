@@ -40,8 +40,8 @@ public struct PyBytes: PyObjectMixin, AbstractBytes {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, elements: Data) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, elements: Data) {
+    self.header.initialize(py, type: type)
     self.elementsPtr.initialize(to: elements)
   }
 
