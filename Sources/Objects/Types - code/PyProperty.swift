@@ -51,25 +51,28 @@ public struct PyProperty: PyObjectMixin {
 
   // sourcery: includeInLayout
   internal var _get: PyObject? {
-    get { Self.getFunction(self._getPtr.pointee) }
-    nonmutating set { self._getPtr.pointee = newValue }
+//    get { Self.getFunction(self._getPtr.pointee) }
+//    nonmutating set { self._getPtr.pointee = newValue }
+    fatalError()
   }
 
   // sourcery: includeInLayout
   internal var _set: PyObject? {
-    get { Self.getFunction(self._setPtr.pointee) }
-    nonmutating set { self._setPtr.pointee = newValue }
+//    get { Self.getFunction(self._setPtr.pointee) }
+//    nonmutating set { self._setPtr.pointee = newValue }
+    fatalError()
   }
 
   // sourcery: includeInLayout
   internal var _del: PyObject? {
-    get { Self.getFunction(self._delPtr.pointee) }
-    nonmutating set { self._delPtr.pointee = newValue }
+//    get { Self.getFunction(self._delPtr.pointee) }
+//    nonmutating set { self._delPtr.pointee = newValue }
+    fatalError()
   }
 
-  private static func getFunction(_ object: PyObject?) -> PyObject? {
-    return PyCast.isNilOrNone(object) ? nil : object
-  }
+//  private static func getFunction(_ object: PyObject?) -> PyObject? {
+//    return PyCast.isNilOrNone(object) ? nil : object
+//  }
 
   // sourcery: includeInLayout
   internal var doc: PyObject? { self.docPtr.pointee }

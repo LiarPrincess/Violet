@@ -331,6 +331,7 @@ public enum PyStaticCall {
     /// We can't just use 'base' type, because each type has a different method
     /// resolution order (MRO) and we have to respect this.
     public init(
+      _ py: Py,
       mroWithoutCurrentlyCreatedType mro: [PyType],
       dictForCurrentlyCreatedType dict: PyDict
     ) {
@@ -338,11 +339,11 @@ public enum PyStaticCall {
 
       // We need to start from the back (the most base type, probably 'object').
       for type in mro.reversed() {
-        self.removeOverriddenMethods(from: type.header.__dict__)
+        self.removeOverriddenMethods(py, dict: type.header.__dict__)
         self.copyMethods(from: type.staticMethods)
       }
 
-      self.removeOverriddenMethods(from: dict)
+      self.removeOverriddenMethods(py, dict: dict)
     }
 
     private mutating func copyMethods(from other: KnownNotOverriddenMethods) {
@@ -442,10 +443,10 @@ public enum PyStaticCall {
       self.__ipow__ = other.__ipow__ ?? self.__ipow__
     }
 
-    private mutating func removeOverriddenMethods(from dict: PyDict) {
+    private mutating func removeOverriddenMethods(_ py: Py, dict: PyDict) {
       for entry in dict.elements {
         let key = entry.key.object
-        guard let string = PyCast.asString(key) else {
+        guard let string = py.cast.asString(key) else {
           continue
         }
 

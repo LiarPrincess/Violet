@@ -92,7 +92,7 @@ public struct PyFunction: PyObjectMixin {
     self.annotationsPtr.initialize(to: nil)
 
     let firstConstant = code.constants.first
-    let doc = firstConstant.flatMap(PyCast.asString(_:))
+    let doc = firstConstant.flatMap { py.cast.asString($0) }
     self.docPtr.initialize(to: doc)
   }
 

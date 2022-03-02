@@ -102,13 +102,13 @@ extension PyString {
 
     // MARK: - From
 
-    internal static func from(object: PyObject?) -> PyResult<Encoding> {
+    internal static func from(_ py: Py, object: PyObject?) -> PyResult<Encoding> {
       guard let object = object else {
         let encoding = Unimplemented.locale.getpreferredencoding
         return .value(encoding)
       }
 
-      guard let string = PyCast.asString(object) else {
+      guard let string = py.cast.asString(object) else {
         return .typeError("encoding must be str, not \(object.typeName)")
       }
 

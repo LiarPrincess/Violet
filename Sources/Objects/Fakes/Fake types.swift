@@ -3,6 +3,7 @@ extension PyType {
 
   public func getNameString() -> String { return "" }
   public func setBuiltinTypeDoc(_ s: String?) {}
+  public func isSubtype(of: PyType) -> Bool { return false }
 }
 
 extension PyDict {
