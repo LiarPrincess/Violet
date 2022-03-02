@@ -46,7 +46,7 @@ def get_types() -> List[TypeInfo]:
                 assert len(split) == 2
 
                 annotation = split[1]
-                if annotation == 'pytype' or annotation == 'pyerrortype':
+                if annotation in ('pytype', 'pyerrortype', 'pybase'):
                     continue
 
                 current_type.sourcery_flags.append(annotation)

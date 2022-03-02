@@ -17,6 +17,9 @@ public struct PyContext {
   public var ellipsis: PyEllipsis { fatalError() }
   public var notImplemented: PyNotImplemented { fatalError() }
 
+  public let memory = PyMemory()
+  public let types: Py.Types { fatalError() }
+
   public func newBool(_ value: Bool) -> PyBool { fatalError() }
   public func newInt(_ value: Int) -> PyInt { fatalError() }
   public func newInt(_ value: UInt8) -> PyInt { fatalError() }
@@ -58,12 +61,5 @@ public struct PyContext {
 
   public func isEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
     return .value(false)
-  }
-
-  public enum Types {
-    public static let objectMemoryLayout = PyType.MemoryLayout()
-    public static let objectStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
-    public static let typeMemoryLayout = PyType.MemoryLayout()
-    public static let typeStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
   }
 }
