@@ -91,7 +91,7 @@ public enum PyStaticCall {
     // MARK: - Aliases
 
     public typealias StringConversion = (Py, PyObject) -> PyResult<String>
-    public typealias Hash = (Py, PyObject) -> HashResult
+    public typealias Hash = (Py, PyObject) -> PyResult<PyObject>
     public typealias Dir = (Py, PyObject) -> PyResult<PyObject>
     public typealias Comparison = (Py, PyObject, PyObject) -> PyResult<PyObject>
     public typealias AsBool = (Py, PyObject) -> Bool
@@ -584,7 +584,7 @@ public enum PyStaticCall {
 
   // MARK: - __hash__
 
-  internal static func __hash__(_ py: Py, object: PyObject) -> HashResult? {
+  internal static func __hash__(_ py: Py, object: PyObject) -> PyResult<PyObject>? {
     if let method = object.type.staticMethods.__hash__ {
       return method(py, object)
     }

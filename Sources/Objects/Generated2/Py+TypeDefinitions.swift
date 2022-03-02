@@ -1040,7 +1040,7 @@ extension Py {
 
     private func fillBool(_ py: Py) {
       let type = self.bool
-      type.setBuiltinTypeDoc(PyBool.doc)
+      type.setBuiltinTypeDoc(py, value: PyBool.doc)
     }
 
     internal static let boolStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1050,7 +1050,7 @@ extension Py {
 
     private func fillBuiltinFunction(_ py: Py) {
       let type = self.builtinFunction
-      type.setBuiltinTypeDoc(nil)
+      type.setBuiltinTypeDoc(py, value: nil)
     }
 
     internal static let builtinFunctionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1060,7 +1060,7 @@ extension Py {
 
     private func fillBuiltinMethod(_ py: Py) {
       let type = self.builtinMethod
-      type.setBuiltinTypeDoc(nil)
+      type.setBuiltinTypeDoc(py, value: nil)
     }
 
     internal static let builtinMethodStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1070,7 +1070,7 @@ extension Py {
 
     private func fillByteArray(_ py: Py) {
       let type = self.bytearray
-      type.setBuiltinTypeDoc(PyByteArray.doc)
+      type.setBuiltinTypeDoc(py, value: PyByteArray.doc)
     }
 
     internal static let byteArrayStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1080,7 +1080,7 @@ extension Py {
 
     private func fillByteArrayIterator(_ py: Py) {
       let type = self.bytearray_iterator
-      type.setBuiltinTypeDoc(PyByteArrayIterator.doc)
+      type.setBuiltinTypeDoc(py, value: PyByteArrayIterator.doc)
     }
 
     internal static let byteArrayIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1090,7 +1090,7 @@ extension Py {
 
     private func fillBytes(_ py: Py) {
       let type = self.bytes
-      type.setBuiltinTypeDoc(PyBytes.doc)
+      type.setBuiltinTypeDoc(py, value: PyBytes.doc)
     }
 
     internal static let bytesStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1100,7 +1100,7 @@ extension Py {
 
     private func fillBytesIterator(_ py: Py) {
       let type = self.bytes_iterator
-      type.setBuiltinTypeDoc(PyBytesIterator.doc)
+      type.setBuiltinTypeDoc(py, value: PyBytesIterator.doc)
     }
 
     internal static let bytesIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1110,7 +1110,7 @@ extension Py {
 
     private func fillCallableIterator(_ py: Py) {
       let type = self.callable_iterator
-      type.setBuiltinTypeDoc(PyCallableIterator.doc)
+      type.setBuiltinTypeDoc(py, value: PyCallableIterator.doc)
     }
 
     internal static let callableIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1120,7 +1120,7 @@ extension Py {
 
     private func fillCell(_ py: Py) {
       let type = self.cell
-      type.setBuiltinTypeDoc(nil)
+      type.setBuiltinTypeDoc(py, value: nil)
     }
 
     internal static let cellStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1130,7 +1130,7 @@ extension Py {
 
     private func fillClassMethod(_ py: Py) {
       let type = self.classmethod
-      type.setBuiltinTypeDoc(PyClassMethod.doc)
+      type.setBuiltinTypeDoc(py, value: PyClassMethod.doc)
     }
 
     internal static let classMethodStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1140,7 +1140,7 @@ extension Py {
 
     private func fillCode(_ py: Py) {
       let type = self.code
-      type.setBuiltinTypeDoc(PyCode.doc)
+      type.setBuiltinTypeDoc(py, value: PyCode.doc)
     }
 
     internal static let codeStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1150,7 +1150,7 @@ extension Py {
 
     private func fillComplex(_ py: Py) {
       let type = self.complex
-      type.setBuiltinTypeDoc(PyComplex.doc)
+      type.setBuiltinTypeDoc(py, value: PyComplex.doc)
     }
 
     internal static let complexStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1160,7 +1160,7 @@ extension Py {
 
     private func fillDict(_ py: Py) {
       let type = self.dict
-      type.setBuiltinTypeDoc(PyDict.doc)
+      type.setBuiltinTypeDoc(py, value: PyDict.doc)
     }
 
     internal static let dictStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1170,7 +1170,7 @@ extension Py {
 
     private func fillDictItemIterator(_ py: Py) {
       let type = self.dict_itemiterator
-      type.setBuiltinTypeDoc(PyDictItemIterator.doc)
+      type.setBuiltinTypeDoc(py, value: PyDictItemIterator.doc)
     }
 
     internal static let dictItemIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1180,7 +1180,7 @@ extension Py {
 
     private func fillDictItems(_ py: Py) {
       let type = self.dict_items
-      type.setBuiltinTypeDoc(PyDictItems.doc)
+      type.setBuiltinTypeDoc(py, value: PyDictItems.doc)
     }
 
     internal static let dictItemsStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1190,7 +1190,7 @@ extension Py {
 
     private func fillDictKeyIterator(_ py: Py) {
       let type = self.dict_keyiterator
-      type.setBuiltinTypeDoc(PyDictKeyIterator.doc)
+      type.setBuiltinTypeDoc(py, value: PyDictKeyIterator.doc)
     }
 
     internal static let dictKeyIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1200,7 +1200,7 @@ extension Py {
 
     private func fillDictKeys(_ py: Py) {
       let type = self.dict_keys
-      type.setBuiltinTypeDoc(PyDictKeys.doc)
+      type.setBuiltinTypeDoc(py, value: PyDictKeys.doc)
     }
 
     internal static let dictKeysStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1210,7 +1210,7 @@ extension Py {
 
     private func fillDictValueIterator(_ py: Py) {
       let type = self.dict_valueiterator
-      type.setBuiltinTypeDoc(PyDictValueIterator.doc)
+      type.setBuiltinTypeDoc(py, value: PyDictValueIterator.doc)
     }
 
     internal static let dictValueIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1220,7 +1220,7 @@ extension Py {
 
     private func fillDictValues(_ py: Py) {
       let type = self.dict_values
-      type.setBuiltinTypeDoc(PyDictValues.doc)
+      type.setBuiltinTypeDoc(py, value: PyDictValues.doc)
     }
 
     internal static let dictValuesStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1230,7 +1230,7 @@ extension Py {
 
     private func fillEllipsis(_ py: Py) {
       let type = self.ellipsis
-      type.setBuiltinTypeDoc(PyEllipsis.doc)
+      type.setBuiltinTypeDoc(py, value: PyEllipsis.doc)
     }
 
     internal static let ellipsisStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1240,7 +1240,7 @@ extension Py {
 
     private func fillEnumerate(_ py: Py) {
       let type = self.enumerate
-      type.setBuiltinTypeDoc(PyEnumerate.doc)
+      type.setBuiltinTypeDoc(py, value: PyEnumerate.doc)
     }
 
     internal static let enumerateStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1250,7 +1250,7 @@ extension Py {
 
     private func fillFilter(_ py: Py) {
       let type = self.filter
-      type.setBuiltinTypeDoc(PyFilter.doc)
+      type.setBuiltinTypeDoc(py, value: PyFilter.doc)
     }
 
     internal static let filterStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1260,7 +1260,7 @@ extension Py {
 
     private func fillFloat(_ py: Py) {
       let type = self.float
-      type.setBuiltinTypeDoc(PyFloat.doc)
+      type.setBuiltinTypeDoc(py, value: PyFloat.doc)
     }
 
     internal static let floatStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1270,7 +1270,7 @@ extension Py {
 
     private func fillFrame(_ py: Py) {
       let type = self.frame
-      type.setBuiltinTypeDoc(PyFrame.doc)
+      type.setBuiltinTypeDoc(py, value: PyFrame.doc)
     }
 
     internal static let frameStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1280,7 +1280,7 @@ extension Py {
 
     private func fillFrozenSet(_ py: Py) {
       let type = self.frozenset
-      type.setBuiltinTypeDoc(PyFrozenSet.doc)
+      type.setBuiltinTypeDoc(py, value: PyFrozenSet.doc)
     }
 
     internal static let frozenSetStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1290,7 +1290,7 @@ extension Py {
 
     private func fillFunction(_ py: Py) {
       let type = self.function
-      type.setBuiltinTypeDoc(PyFunction.doc)
+      type.setBuiltinTypeDoc(py, value: PyFunction.doc)
     }
 
     internal static let functionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1300,7 +1300,7 @@ extension Py {
 
     private func fillInt(_ py: Py) {
       let type = self.int
-      type.setBuiltinTypeDoc(PyInt.doc)
+      type.setBuiltinTypeDoc(py, value: PyInt.doc)
     }
 
     internal static let intStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1310,7 +1310,7 @@ extension Py {
 
     private func fillIterator(_ py: Py) {
       let type = self.iterator
-      type.setBuiltinTypeDoc(PyIterator.doc)
+      type.setBuiltinTypeDoc(py, value: PyIterator.doc)
     }
 
     internal static let iteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1320,7 +1320,7 @@ extension Py {
 
     private func fillList(_ py: Py) {
       let type = self.list
-      type.setBuiltinTypeDoc(PyList.doc)
+      type.setBuiltinTypeDoc(py, value: PyList.doc)
     }
 
     internal static let listStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1330,7 +1330,7 @@ extension Py {
 
     private func fillListIterator(_ py: Py) {
       let type = self.list_iterator
-      type.setBuiltinTypeDoc(PyListIterator.doc)
+      type.setBuiltinTypeDoc(py, value: PyListIterator.doc)
     }
 
     internal static let listIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1340,7 +1340,7 @@ extension Py {
 
     private func fillListReverseIterator(_ py: Py) {
       let type = self.list_reverseiterator
-      type.setBuiltinTypeDoc(PyListReverseIterator.doc)
+      type.setBuiltinTypeDoc(py, value: PyListReverseIterator.doc)
     }
 
     internal static let listReverseIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1350,7 +1350,7 @@ extension Py {
 
     private func fillMap(_ py: Py) {
       let type = self.map
-      type.setBuiltinTypeDoc(PyMap.doc)
+      type.setBuiltinTypeDoc(py, value: PyMap.doc)
     }
 
     internal static let mapStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1360,7 +1360,7 @@ extension Py {
 
     private func fillMethod(_ py: Py) {
       let type = self.method
-      type.setBuiltinTypeDoc(PyMethod.doc)
+      type.setBuiltinTypeDoc(py, value: PyMethod.doc)
     }
 
     internal static let methodStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1370,7 +1370,7 @@ extension Py {
 
     private func fillModule(_ py: Py) {
       let type = self.module
-      type.setBuiltinTypeDoc(PyModule.doc)
+      type.setBuiltinTypeDoc(py, value: PyModule.doc)
     }
 
     internal static let moduleStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1380,7 +1380,7 @@ extension Py {
 
     private func fillNamespace(_ py: Py) {
       let type = self.simpleNamespace
-      type.setBuiltinTypeDoc(PyNamespace.doc)
+      type.setBuiltinTypeDoc(py, value: PyNamespace.doc)
     }
 
     internal static let namespaceStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1390,7 +1390,7 @@ extension Py {
 
     private func fillNone(_ py: Py) {
       let type = self.none
-      type.setBuiltinTypeDoc(PyNone.doc)
+      type.setBuiltinTypeDoc(py, value: PyNone.doc)
     }
 
     internal static let noneStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1400,7 +1400,7 @@ extension Py {
 
     private func fillNotImplemented(_ py: Py) {
       let type = self.notImplemented
-      type.setBuiltinTypeDoc(PyNotImplemented.doc)
+      type.setBuiltinTypeDoc(py, value: PyNotImplemented.doc)
     }
 
     internal static let notImplementedStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1410,7 +1410,7 @@ extension Py {
 
     private func fillObject(_ py: Py) {
       let type = self.object
-      type.setBuiltinTypeDoc(PyObject.doc)
+      type.setBuiltinTypeDoc(py, value: PyObject.doc)
     }
 
     internal static let objectStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1420,7 +1420,7 @@ extension Py {
 
     private func fillProperty(_ py: Py) {
       let type = self.property
-      type.setBuiltinTypeDoc(PyProperty.doc)
+      type.setBuiltinTypeDoc(py, value: PyProperty.doc)
     }
 
     internal static let propertyStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1430,7 +1430,7 @@ extension Py {
 
     private func fillRange(_ py: Py) {
       let type = self.range
-      type.setBuiltinTypeDoc(PyRange.doc)
+      type.setBuiltinTypeDoc(py, value: PyRange.doc)
     }
 
     internal static let rangeStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1440,7 +1440,7 @@ extension Py {
 
     private func fillRangeIterator(_ py: Py) {
       let type = self.range_iterator
-      type.setBuiltinTypeDoc(PyRangeIterator.doc)
+      type.setBuiltinTypeDoc(py, value: PyRangeIterator.doc)
     }
 
     internal static let rangeIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1450,7 +1450,7 @@ extension Py {
 
     private func fillReversed(_ py: Py) {
       let type = self.reversed
-      type.setBuiltinTypeDoc(PyReversed.doc)
+      type.setBuiltinTypeDoc(py, value: PyReversed.doc)
     }
 
     internal static let reversedStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1460,7 +1460,7 @@ extension Py {
 
     private func fillSet(_ py: Py) {
       let type = self.set
-      type.setBuiltinTypeDoc(PySet.doc)
+      type.setBuiltinTypeDoc(py, value: PySet.doc)
     }
 
     internal static let setStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1470,7 +1470,7 @@ extension Py {
 
     private func fillSetIterator(_ py: Py) {
       let type = self.set_iterator
-      type.setBuiltinTypeDoc(PySetIterator.doc)
+      type.setBuiltinTypeDoc(py, value: PySetIterator.doc)
     }
 
     internal static let setIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1480,7 +1480,7 @@ extension Py {
 
     private func fillSlice(_ py: Py) {
       let type = self.slice
-      type.setBuiltinTypeDoc(PySlice.doc)
+      type.setBuiltinTypeDoc(py, value: PySlice.doc)
     }
 
     internal static let sliceStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1490,7 +1490,7 @@ extension Py {
 
     private func fillStaticMethod(_ py: Py) {
       let type = self.staticmethod
-      type.setBuiltinTypeDoc(PyStaticMethod.doc)
+      type.setBuiltinTypeDoc(py, value: PyStaticMethod.doc)
     }
 
     internal static let staticMethodStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1500,7 +1500,7 @@ extension Py {
 
     private func fillString(_ py: Py) {
       let type = self.str
-      type.setBuiltinTypeDoc(PyString.doc)
+      type.setBuiltinTypeDoc(py, value: PyString.doc)
     }
 
     internal static let stringStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1510,7 +1510,7 @@ extension Py {
 
     private func fillStringIterator(_ py: Py) {
       let type = self.str_iterator
-      type.setBuiltinTypeDoc(PyStringIterator.doc)
+      type.setBuiltinTypeDoc(py, value: PyStringIterator.doc)
     }
 
     internal static let stringIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1520,7 +1520,7 @@ extension Py {
 
     private func fillSuper(_ py: Py) {
       let type = self.super
-      type.setBuiltinTypeDoc(PySuper.doc)
+      type.setBuiltinTypeDoc(py, value: PySuper.doc)
     }
 
     internal static let superStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1530,7 +1530,7 @@ extension Py {
 
     private func fillTextFile(_ py: Py) {
       let type = self.textFile
-      type.setBuiltinTypeDoc(PyTextFile.doc)
+      type.setBuiltinTypeDoc(py, value: PyTextFile.doc)
     }
 
     internal static let textFileStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1540,7 +1540,7 @@ extension Py {
 
     private func fillTraceback(_ py: Py) {
       let type = self.traceback
-      type.setBuiltinTypeDoc(PyTraceback.doc)
+      type.setBuiltinTypeDoc(py, value: PyTraceback.doc)
     }
 
     internal static let tracebackStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1550,7 +1550,7 @@ extension Py {
 
     private func fillTuple(_ py: Py) {
       let type = self.tuple
-      type.setBuiltinTypeDoc(PyTuple.doc)
+      type.setBuiltinTypeDoc(py, value: PyTuple.doc)
     }
 
     internal static let tupleStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1560,7 +1560,7 @@ extension Py {
 
     private func fillTupleIterator(_ py: Py) {
       let type = self.tuple_iterator
-      type.setBuiltinTypeDoc(PyTupleIterator.doc)
+      type.setBuiltinTypeDoc(py, value: PyTupleIterator.doc)
     }
 
     internal static let tupleIteratorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1570,7 +1570,7 @@ extension Py {
 
     private func fillType(_ py: Py) {
       let type = self.type
-      type.setBuiltinTypeDoc(PyType.doc)
+      type.setBuiltinTypeDoc(py, value: PyType.doc)
     }
 
     internal static let typeStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1580,7 +1580,7 @@ extension Py {
 
     private func fillZip(_ py: Py) {
       let type = self.zip
-      type.setBuiltinTypeDoc(PyZip.doc)
+      type.setBuiltinTypeDoc(py, value: PyZip.doc)
     }
 
     internal static let zipStaticMethods = PyStaticCall.KnownNotOverriddenMethods()

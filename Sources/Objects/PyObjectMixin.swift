@@ -1,5 +1,5 @@
 /// Common things for all of the Python objects.
-public protocol PyObjectMixin: PyFunctionResultConvertible, CustomStringConvertible {
+public protocol PyObjectMixin: CustomStringConvertible {
   var ptr: RawPtr { get }
 }
 
@@ -16,6 +16,12 @@ extension PyObjectMixin {
   public var type: PyType { self.header.type }
   /// [Convenience] Name of the type of this Python object.
   public var typeName: String { self.type.name }
+
+  /// Read the docs in `PyObjectHeader` first!
+  ///
+  /// Accessing `__dict__` on object that does not have it will trap!
+  /// Use `Py.get__dict__` instead.
+  internal var __dict__: PyDict { self.header.__dict__ }
 
   /// Various flags that describe the current state of the `PyObject`.
   ///
@@ -73,12 +79,4 @@ extension PyObjectMixin {
 //    result.append(")")
 //    return result
 //  }
-
-  // MARK: - Function result convertible
-
-  // 'PyObject' can be returned from Python function!
-  // Yeah… I know, kind of hard to believe.
-  public var asFunctionResult: PyFunctionResult {
-    return .value(self.asObject)
-  }
 }

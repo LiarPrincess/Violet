@@ -41,7 +41,7 @@ class StaticMethodKind:
 
 
 _stringConversion = StaticMethodKind('StringConversion', '(_ py: Py, object: PyObject) -> PyResult<String>')
-_hash = StaticMethodKind('Hash', '(_ py: Py, object: PyObject) -> HashResult')
+_hash = StaticMethodKind('Hash', '(_ py: Py, object: PyObject) -> PyResult<PyObject>')
 _dir = StaticMethodKind('Dir', '(_ py: Py, object: PyObject) -> PyResult<PyObject>')
 _comparison = StaticMethodKind('Comparison', '(_ py: Py, left: PyObject, right: PyObject) -> PyResult<PyObject>')
 _asBool = StaticMethodKind('AsBool', '(_ py: Py, object: PyObject) -> Bool')

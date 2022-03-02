@@ -4,35 +4,7 @@
 extension PyType {
   public struct MemoryLayout {}
 
-  public func getNameString() -> String { return "" }
-  public func setBuiltinTypeDoc(_ s: String?) {}
-  public func isSubtype(of: PyType) -> Bool { return false }
-
-  internal func dir() -> PyResult<DirResult> { fatalError() }
-
-  internal enum ModuleAsString {
-    case builtins
-    case string(String)
-    case error(PyBaseException)
-  }
-
-  internal func getModuleString() -> ModuleAsString { fatalError() }
-
-  internal struct MroLookupResult {
-    internal let object: PyObject
-    /// Type on which `self.object` was found.
-    internal let type: PyType
-  }
-
-  internal func mroLookup(name: IdString) -> MroLookupResult? { fatalError() }
-
-  internal enum MroLookupByStringResult {
-    case value(MroLookupResult)
-    case notFound
-    case error(PyBaseException)
-  }
-
-  internal func mroLookup(name: PyString) -> MroLookupByStringResult { fatalError() }
+  public static func pyNew(type: PyType, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> { fatalError() }
 }
 
 extension PyDict {
@@ -51,6 +23,7 @@ extension PyDict {
     case error(PyBaseException)
   }
 
+  public func set(id: IdString, to value: PyObject) { fatalError() }
   public func set(key: PyString, to value: PyObject) -> SetResult { fatalError() }
 
   public enum DelResult {
@@ -64,4 +37,12 @@ extension PyDict {
 
 extension PyList {
   public func sort(key: Int?, isReverse: Bool?) -> PyResult<PyObject> { fatalError() }
+}
+
+extension PyModule {
+  func getName() -> PyResult<PyObject> { fatalError() }
+}
+
+extension PyString {
+  public func repr() -> String { fatalError() }
 }

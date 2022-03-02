@@ -134,9 +134,9 @@ class PyTypeDefinition:
 
         doc_property = self.t.swift_static_doc_property
         if doc_property:
-            print(f'      type.setBuiltinTypeDoc({swift_type_name}.{doc_property})')
+            print(f'      type.setBuiltinTypeDoc(py, value: {swift_type_name}.{doc_property})')
         else:
-            print(f'      type.setBuiltinTypeDoc(nil)')
+            print(f'      type.setBuiltinTypeDoc(py, value: nil)')
 
         print('    }')
         print()

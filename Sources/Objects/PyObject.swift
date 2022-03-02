@@ -70,32 +70,28 @@ public struct PyObject: PyObjectMixin {
   internal static func isLess(_ py: Py,
                               zelf: PyObject,
                               other: PyObject) -> PyResult<PyObject> {
-    let result = py.notImplemented
-    return .value(result.asObject)
+    return .notImplemented(py)
   }
 
   // sourcery: pymethod = __le__
   internal static func isLessEqual(_ py: Py,
                                    zelf: PyObject,
                                    other: PyObject) -> PyResult<PyObject> {
-    let result = py.notImplemented
-    return .value(result.asObject)
+    return .notImplemented(py)
   }
 
   // sourcery: pymethod = __gt__
   internal static func isGreater(_ py: Py,
                                  zelf: PyObject,
                                  other: PyObject) -> PyResult<PyObject> {
-    let result = py.notImplemented
-    return .value(result.asObject)
+    return .notImplemented(py)
   }
 
   // sourcery: pymethod = __ge__
   internal static func isGreaterEqual(_ py: Py,
                                       zelf: PyObject,
                                       other: PyObject) -> PyResult<PyObject> {
-    let result = py.notImplemented
-    return .value(result.asObject)
+    return .notImplemented(py)
   }
 
   // MARK: - Hashable
@@ -110,7 +106,7 @@ public struct PyObject: PyObjectMixin {
 
   // sourcery: pymethod = __repr__
   internal static func repr(_ py: Py, zelf: PyObject) -> PyResult<String> {
-    switch zelf.type.getModuleString() {
+    switch zelf.type.getModuleName(py) {
     case .builtins:
       return .value("<\(zelf.typeName) object at \(zelf.ptr)>")
     case .string(let module):
@@ -173,7 +169,7 @@ public struct PyObject: PyObjectMixin {
     }
 
     // 'Dir' from our type
-    switch zelf.type.dir() {
+    switch zelf.type.dir(py) {
     case let .value(typeDir):
       dir.append(contentsOf: typeDir)
     case let .error(e):
@@ -197,14 +193,14 @@ public struct PyObject: PyObjectMixin {
   internal static func setAttribute(_ py: Py,
                                     zelf: PyObject,
                                     name: PyObject,
-                                    value: PyObject?) -> PyResult<PyNone> {
+                                    value: PyObject?) -> PyResult<PyObject> {
     return AttributeHelper.setAttribute(py, object: zelf, name: name, value: value)
   }
 
   // sourcery: pymethod = __delattr__
   internal static func delAttribute(_ py: Py,
                                     zelf: PyObject,
-                                    name: PyObject) -> PyResult<PyNone> {
+                                    name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.delAttribute(py, object: zelf, name: name)
   }
 
@@ -226,8 +222,7 @@ public struct PyObject: PyObjectMixin {
     // NotImplemented
     //
     // https://docs.python.org/3/library/abc.html#abc.ABCMeta.__subclasshook__
-    let result = py.notImplemented
-    return .value(result.asObject)
+    return .notImplemented(py)
   }
 
   // MARK: - Init subclass
@@ -238,8 +233,7 @@ public struct PyObject: PyObjectMixin {
   /// It may be overridden to extend subclasses.
   internal static func initSubclass(_ py: Py,
                                     zelf: PyObject) -> PyResult<PyObject> {
-    let result = py.none
-    return .value(result.asObject)
+    return .none(py)
   }
 
   // MARK: - Python new
