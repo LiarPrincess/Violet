@@ -16,6 +16,6 @@ sourcery \
   --quiet
 # echo
 
-python3 "$GENERATED/PyMemory+Types.py" > "$GENERATED/PyMemory+Types.swift"
+python3 "$GENERATED/Types+Memory.py" > "$GENERATED/Types+Memory.swift"
 python3 "$GENERATED/PyStaticCall.py" > "$GENERATED/PyStaticCall.swift"
 python3 "$GENERATED/Py+TypeDefinitions.py" > "$GENERATED/Py+TypeDefinitions.swift"

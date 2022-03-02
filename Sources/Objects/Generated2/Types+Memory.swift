@@ -1,8 +1,8 @@
-// ============================================================================
-// Automatically generated from: ./Sources/Objects/Generated2/PyMemory+Types.py
+// ==========================================================================
+// Automatically generated from: ./Sources/Objects/Generated2/Types+Memory.py
 // Use 'make gen' in repository root to regenerate.
 // DO NOT EDIT!
-// ============================================================================
+// ==========================================================================
 
 import Foundation
 import BigInt
