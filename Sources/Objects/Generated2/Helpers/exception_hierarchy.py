@@ -1,10 +1,12 @@
 from typing import List
 
+# Based on:
+# > CPython->Lib->test->exception_hierarchy.txt
 
 class ErrorInfo:
-    def __init__(self, class_name: str, base_class: str, doc: str):
-        self.class_name = class_name
-        self.base_class = base_class
+    def __init__(self, type_name: str, base_type_name: str, doc: str):
+        self.type_name = type_name
+        self.base_type_name = base_type_name
         self.doc = doc
 
 
