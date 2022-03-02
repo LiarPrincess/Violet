@@ -82,6 +82,7 @@ extension Py {
     public let str_iterator: PyType
     public let `super`: PyType
     public let textFile: PyType
+    public let traceback: PyType
     public let tuple: PyType
     public let tuple_iterator: PyType
     public let type: PyType
@@ -871,6 +872,22 @@ extension Py {
         deinitialize: PyTextFile.deinitialize(ptr:)
       )
 
+      self.traceback = memory.newType(
+        py,
+        type: self.type,
+        name: "traceback",
+        qualname: "traceback",
+        flags: [.hasGCFlag, .isDefaultFlag],
+        base: self.object,
+        bases: [self.object],
+        mroWithoutSelf: [self.object],
+        subclasses: [],
+        layout: Py.Types.tracebackMemoryLayout,
+        staticMethods: Py.Types.tracebackStaticMethods,
+        debugFn: PyTraceback.createDebugString(ptr:),
+        deinitialize: PyTraceback.deinitialize(ptr:)
+      )
+
       self.tuple = memory.newType(
         py,
         type: self.type,
@@ -996,6 +1013,7 @@ extension Py {
       self.fillStringIterator(py)
       self.fillSuper(py)
       self.fillTextFile(py)
+      self.fillTraceback(py)
       self.fillTuple(py)
       self.fillTupleIterator(py)
       self.fillType(py)
@@ -1517,6 +1535,16 @@ extension Py {
 
     internal static let textFileStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
     internal static let textFileMemoryLayout = PyType.MemoryLayout()
+
+    // MARK: - Traceback
+
+    private func fillTraceback(_ py: Py) {
+      let type = self.traceback
+      type.setBuiltinTypeDoc(PyTraceback.doc)
+    }
+
+    internal static let tracebackStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
+    internal static let tracebackMemoryLayout = PyType.MemoryLayout()
 
     // MARK: - Tuple
 

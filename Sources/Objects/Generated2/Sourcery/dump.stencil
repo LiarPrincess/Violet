@@ -42,6 +42,12 @@ ObjectHeaderField|{{field.name}}|{{field.typeName}}
 {% endfor %}
 {% endfor %}
 
+{% for type in types.structs where type.name == "PyErrorHeader" %}
+{% for field in type.allVariables|annotated:"includeInLayout" %}
+ErrorHeaderField|{{field.name}}|{{field.typeName}}
+{% endfor %}
+{% endfor %}
+
 {% for type in types.structs|annotated:"pytype" %}
 {% call print_type "Type" type %}
 {% endfor %}

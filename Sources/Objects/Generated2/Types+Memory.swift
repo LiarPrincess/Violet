@@ -20,6 +20,9 @@ import VioletCompiler
 // - For 'PyObjectHeader':
 //   - PyObjectHeader.Layout - mainly field offsets
 //   - PyObjectHeader.xxxPtr - pointer properties to fields
+// - For 'PyErrorHeader':
+//   - PyErrorHeader.Layout - mainly field offsets
+//   - PyErrorHeader.xxxPtr - pointer properties to fields
 // - PyMemory.newTypeAndObjectTypes - because they have recursive dependency
 // - Then for each type:
 //   - [TYPE_NAME].Layout - mainly field offsets
@@ -64,6 +67,50 @@ extension PyObjectHeader {
   internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: Self.layout.typeOffset) }
   internal var lazy__dict__Ptr: Ptr<PyObjectHeader.LazyDict> { Ptr(self.ptr, offset: Self.layout.lazy__dict__Offset) }
   internal var flagsPtr: Ptr<Flags> { Ptr(self.ptr, offset: Self.layout.flagsOffset) }
+}
+
+// MARK: - PyErrorHeader
+
+extension PyErrorHeader {
+
+  /// This type was automatically generated based on `PyErrorHeader` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let argsOffset: Int
+    internal let tracebackOffset: Int
+    internal let causeOffset: Int
+    internal let contextOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
+        fields: [
+          PyMemory.FieldLayout(from: PyTuple.self), // args
+          PyMemory.FieldLayout(from: PyTraceback?.self), // traceback
+          PyMemory.FieldLayout(from: PyBaseException?.self), // cause
+          PyMemory.FieldLayout(from: PyBaseException?.self) // context
+        ]
+      )
+
+      assert(layout.offsets.count == 4)
+      self.argsOffset = layout.offsets[0]
+      self.tracebackOffset = layout.offsets[1]
+      self.causeOffset = layout.offsets[2]
+      self.contextOffset = layout.offsets[3]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal var argsPtr: Ptr<PyTuple> { Ptr(self.ptr, offset: Self.layout.argsOffset) }
+  internal var tracebackPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: Self.layout.tracebackOffset) }
+  internal var causePtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: Self.layout.causeOffset) }
+  internal var contextPtr: Ptr<PyBaseException?> { Ptr(self.ptr, offset: Self.layout.contextOffset) }
 }
 
 // MARK: - Type/object types init
@@ -3638,6 +3685,87 @@ extension PyMemory {
       encoding: encoding,
       errorHandling: errorHandling,
       closeOnDealloc: closeOnDealloc
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyTraceback
+
+extension PyTraceback {
+
+  /// This type was automatically generated based on `PyTraceback` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let nextOffset: Int
+    internal let frameOffset: Int
+    internal let lastInstructionOffset: Int
+    internal let lineNoOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
+        fields: [
+          PyMemory.FieldLayout(from: PyTraceback?.self), // next
+          PyMemory.FieldLayout(from: PyFrame.self), // frame
+          PyMemory.FieldLayout(from: PyInt.self), // lastInstruction
+          PyMemory.FieldLayout(from: PyInt.self) // lineNo
+        ]
+      )
+
+      assert(layout.offsets.count == 4)
+      self.nextOffset = layout.offsets[0]
+      self.frameOffset = layout.offsets[1]
+      self.lastInstructionOffset = layout.offsets[2]
+      self.lineNoOffset = layout.offsets[3]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal var nextPtr: Ptr<PyTraceback?> { Ptr(self.ptr, offset: Self.layout.nextOffset) }
+  internal var framePtr: Ptr<PyFrame> { Ptr(self.ptr, offset: Self.layout.frameOffset) }
+  internal var lastInstructionPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.lastInstructionOffset) }
+  internal var lineNoPtr: Ptr<PyInt> { Ptr(self.ptr, offset: Self.layout.lineNoOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyTraceback(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.header.deinitialize()
+    zelf.nextPtr.deinitialize()
+    zelf.framePtr.deinitialize()
+    zelf.lastInstructionPtr.deinitialize()
+    zelf.lineNoPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `traceback` type.
+  public func newTraceback(
+    _ py: Py,
+    next: PyTraceback?,
+    frame: PyFrame,
+    lastInstruction: PyInt,
+    lineNo: PyInt
+  ) -> PyTraceback {
+    let typeLayout = PyTraceback.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyTraceback(ptr: ptr)
+
+    result.initialize(
+      py,
+      next: next,
+      frame: frame,
+      lastInstruction: lastInstruction,
+      lineNo: lineNo
     )
 
     return result
