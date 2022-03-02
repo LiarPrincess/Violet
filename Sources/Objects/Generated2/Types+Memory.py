@@ -1,6 +1,9 @@
 from typing import List
-from Sourcery import ObjectHeader, get_object_header, TypeInfo, get_types
+from Sourcery import ObjectHeader, get_object_header, ErrorHeader, get_error_header, TypeInfo, get_types
 from Helpers import NewTypeArguments, generated_warning
+
+HEADER_OFFSET = 'PyObjectHeader.layout.size'
+HEADER_ALIGNMENT = 'PyObjectHeader.layout.alignment'
 
 # =====================
 # === Object header ===
@@ -88,6 +91,25 @@ def print_pointer_properties(fields: List[PointerField]):
     for f in fields:
         print(f'  internal var {f.pointer_name}: Ptr<{f.swift_type}> {{ Ptr(self.ptr, offset: Self.layout.{f.offset_property_name}) }}')
 
+# ====================
+# === Error header ===
+# ====================
+
+def print_error_header_things(h: ErrorHeader):
+    pointer_fields: List[PointerField] = []
+    for f in h.fields:
+        pointer_fields.append(PointerField(f.swift_name, f.swift_type))
+
+    print('// MARK: - PyErrorHeader')
+    print()
+    print('extension PyErrorHeader {')
+    print()
+    print_layout('PyErrorHeader', HEADER_OFFSET, HEADER_ALIGNMENT, pointer_fields)
+    print()
+    print_pointer_properties(pointer_fields)
+    print('}')
+    print()
+
 # =========================================
 # === PyMemory + type/object types init ===
 # =========================================
@@ -173,9 +195,7 @@ def print_type_things(t: TypeInfo):
     print(f'extension {swift_type_name} {{')
     print()
 
-    initial_offset = 'PyObjectHeader.layout.size'
-    initial_alignment = 'PyObjectHeader.layout.alignment'
-    print_layout(swift_type_name, initial_offset, initial_alignment, pointer_fields)
+    print_layout(swift_type_name, HEADER_OFFSET, HEADER_ALIGNMENT, pointer_fields)
     print()
     print_pointer_properties(pointer_fields)
     print()
@@ -283,6 +303,9 @@ import VioletCompiler
 // - For 'PyObjectHeader':
 //   - PyObjectHeader.Layout - mainly field offsets
 //   - PyObjectHeader.xxxPtr - pointer properties to fields
+// - For 'PyErrorHeader':
+//   - PyErrorHeader.Layout - mainly field offsets
+//   - PyErrorHeader.xxxPtr - pointer properties to fields
 // - PyMemory.newTypeAndObjectTypes - because they have recursive dependency
 // - Then for each type:
 //   - [TYPE_NAME].Layout - mainly field offsets
@@ -292,6 +315,9 @@ import VioletCompiler
 
     header = get_object_header()
     print_object_header_things(header)
+
+    error_header = get_error_header()
+    print_error_header_things(error_header)
 
     all_types = get_types()
     print_type_and_object_types_init(all_types)

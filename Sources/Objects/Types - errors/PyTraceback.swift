@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -6,7 +5,7 @@ import VioletCore
 // https://docs.python.org/3/library/traceback.html
 
 // sourcery: pytype = traceback, isDefault, hasGC
-public final class PyTraceback: PyObject {
+public struct PyTraceback: PyObjectMixin {
 
   // sourcery: pytypedoc
   internal static let doc = """
@@ -16,37 +15,58 @@ public final class PyTraceback: PyObject {
     Create a new traceback object.
     """
 
-  // MARK: - Properties
-
+  // sourcery: includeInLayout
   /// Next inner traceback object (called by this level)
   ///
   /// CPython: `tb_next`.
-  private var next: PyTraceback?
+  private var next: PyTraceback? { self.nextPtr.pointee }
+
+  // sourcery: includeInLayout
   /// Frame object at this level
   ///
   /// CPython: `tb_frame`.
-  private let frame: PyFrame
+  private var frame: PyFrame { self.framePtr.pointee }
+
+  // sourcery: includeInLayout
   /// Index of last attempted instruction in bytecode
   ///
   /// CPython: `tb_lasti`.
-  private let lastInstruction: PyInt
+  private var lastInstruction: PyInt { self.lastInstructionPtr.pointee }
+
+  // sourcery: includeInLayout
   /// Current line number in Python source code
   ///
   /// CPython: `tb_lineno`.
-  private let lineNo: PyInt
+  private var lineNo: PyInt { self.lineNoPtr.pointee }
 
-  // MARK: - Init
+  public let ptr: RawPtr
 
-  internal init(next: PyTraceback?,
-                frame: PyFrame,
-                lastInstruction: PyInt,
-                lineNo: PyInt) {
-    self.next = next
-    self.frame = frame
-    self.lastInstruction = lastInstruction
-    self.lineNo = lineNo
-    super.init(type: Py.types.traceback)
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
+
+  internal func initialize(_ py: Py,
+                           next: PyTraceback?,
+                           frame: PyFrame,
+                           lastInstruction: PyInt,
+                           lineNo: PyInt) {
+    self.header.initialize(py, type: type)
+    self.nextPtr.initialize(to: next)
+    self.framePtr.initialize(to: frame)
+    self.lastInstructionPtr.initialize(to: lastInstruction)
+    self.lineNoPtr.initialize(to: lineNo)
+  }
+
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyType(ptr: ptr)
+    return "PyTraceback(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+}
+
+/* MARKER
 
   // MARK: - Class
 

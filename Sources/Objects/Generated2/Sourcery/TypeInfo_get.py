@@ -27,8 +27,8 @@ def get_types() -> List[TypeInfo]:
             assert len(split) >= 1
 
             line_type = split[0]
-            if line_type == 'ObjectHeaderField':
-                # We are not interested in object header
+            if line_type in ('ObjectHeaderField', 'ErrorHeaderField'):
+                # We are not interested in headers.
                 pass
             elif line_type == 'Type' or line_type == 'ErrorType':
                 commit_current_type()  # We are starting new type
