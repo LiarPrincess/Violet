@@ -22,12 +22,13 @@ class NewTypeArguments:
             self.base = self.mro_without_self[0]
 
         swift_name = t.swift_type_name
+        container_type = 'Py.ErrorTypes' if t.is_error else 'Py.Types'
 
         layout_property = get_layout_property_name(swift_name)
-        self.layout_property: str = f'Py.Types.{layout_property}'
+        self.layout_property: str = f'{container_type}.{layout_property}'
 
         static_methods_property = get_static_methods_property_name(swift_name)
-        self.static_methods_property: str = f'Py.Types.{static_methods_property}'
+        self.static_methods_property: str = f'{container_type}.{static_methods_property}'
 
         self.debugFn: str = f'{swift_name}.createDebugString(ptr:)'
         self.deinitialize: str = f'{swift_name}.deinitialize(ptr:)'

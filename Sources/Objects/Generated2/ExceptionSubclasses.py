@@ -68,6 +68,11 @@ public struct {swift_type_name}: PyErrorMixin {{
   // Nothing to do here.
   internal func beforeDeinitialize() {{ }}
 
+  internal static func createDebugString(ptr: RawPtr) -> String {{
+    let zelf = PyStopIteration(ptr: ptr)
+    return "{swift_type_name}(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }}
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {{

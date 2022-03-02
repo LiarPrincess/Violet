@@ -39,25 +39,41 @@ class PyTypeDefinition:
         args = self.new_type_args
         flags = ', '.join(args.flags)
 
-        base_name = args.base.python_type_name
-        base_property_name = get_property_name(base_name)
+        type = 'self.type'
+        base = 'self.' + get_property_name(args.base.python_type_name)
 
         mro_names: List[str] = []
         for t in args.mro_without_self:
             property_name = get_property_name(t.python_type_name)
             mro_names.append(f'self.{property_name}')
 
+        # When we are 'error' we get 'typeType' and 'objectType' in args
+        if self.t.is_error:
+            type = 'typeType'
+
+            if base == 'self.object':
+                base = 'objectType'
+
+            for index, name in enumerate(mro_names):
+                if name == 'self.object':
+                    mro_names[index] = 'objectType'
+
         mro = '[' + ', '.join(mro_names) + ']'
+
+        # For builtin types there is always max 1 base class:
+        # >>> InterruptedError.__bases__
+        # (<class 'OSError'>,)
+        bases = '[' + base + ']'
 
         print(f'''\
       self.{self.property_name_escaped} = memory.newType(
         py,
-        type: self.type,
+        type: {type},
         name: "{args.name}",
         qualname: "{args.qualname}",
         flags: [{flags}],
-        base: self.{base_property_name},
-        bases: {mro},
+        base: {base},
+        bases: {bases},
         mroWithoutSelf: {mro},
         subclasses: [],
         layout: {args.layout_property},

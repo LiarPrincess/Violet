@@ -944,7 +944,7 @@ extension Py {
         qualname: "bool",
         flags: [.isDefaultFlag, .isLongSubclassFlag],
         base: self.int,
-        bases: [self.int, self.object],
+        bases: [self.int],
         mroWithoutSelf: [self.int, self.object],
         subclasses: [],
         layout: Py.Types.boolMemoryLayout,

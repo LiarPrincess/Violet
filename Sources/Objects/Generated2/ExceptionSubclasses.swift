@@ -49,6 +49,11 @@ public struct PyKeyboardInterrupt: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyKeyboardInterrupt(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -113,6 +118,11 @@ public struct PyGeneratorExit: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyGeneratorExit(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -179,6 +189,11 @@ public struct PyException: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyException(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -243,6 +258,11 @@ public struct PyStopAsyncIteration: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyStopAsyncIteration(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -309,6 +329,11 @@ public struct PyArithmeticError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyArithmeticError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -373,6 +398,11 @@ public struct PyFloatingPointError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyFloatingPointError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -439,6 +469,11 @@ public struct PyOverflowError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyOverflowError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -503,6 +538,11 @@ public struct PyZeroDivisionError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyZeroDivisionError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -569,6 +609,11 @@ public struct PyAssertionError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyAssertionError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -633,6 +678,11 @@ public struct PyAttributeError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyAttributeError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -699,6 +749,11 @@ public struct PyBufferError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyBufferError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -763,6 +818,11 @@ public struct PyEOFError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyEOFError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -829,6 +889,11 @@ public struct PyModuleNotFoundError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyModuleNotFoundError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -893,6 +958,11 @@ public struct PyLookupError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyLookupError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -959,6 +1029,11 @@ public struct PyIndexError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyIndexError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -1023,6 +1098,11 @@ public struct PyMemoryError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyMemoryError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -1089,6 +1169,11 @@ public struct PyNameError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyNameError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -1153,6 +1238,11 @@ public struct PyUnboundLocalError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyUnboundLocalError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -1219,6 +1309,11 @@ public struct PyOSError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyOSError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -1283,6 +1378,11 @@ public struct PyBlockingIOError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyBlockingIOError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -1349,6 +1449,11 @@ public struct PyChildProcessError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyChildProcessError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -1413,6 +1518,11 @@ public struct PyConnectionError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyConnectionError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -1479,6 +1589,11 @@ public struct PyBrokenPipeError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyBrokenPipeError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -1543,6 +1658,11 @@ public struct PyConnectionAbortedError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyConnectionAbortedError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -1609,6 +1729,11 @@ public struct PyConnectionRefusedError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyConnectionRefusedError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -1673,6 +1798,11 @@ public struct PyConnectionResetError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyConnectionResetError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -1739,6 +1869,11 @@ public struct PyFileExistsError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyFileExistsError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -1803,6 +1938,11 @@ public struct PyFileNotFoundError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyFileNotFoundError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -1869,6 +2009,11 @@ public struct PyInterruptedError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyInterruptedError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -1933,6 +2078,11 @@ public struct PyIsADirectoryError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyIsADirectoryError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -1999,6 +2149,11 @@ public struct PyNotADirectoryError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyNotADirectoryError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -2063,6 +2218,11 @@ public struct PyPermissionError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyPermissionError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -2129,6 +2289,11 @@ public struct PyProcessLookupError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyProcessLookupError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -2193,6 +2358,11 @@ public struct PyTimeoutError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyTimeoutError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -2259,6 +2429,11 @@ public struct PyReferenceError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyReferenceError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -2323,6 +2498,11 @@ public struct PyRuntimeError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyRuntimeError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -2389,6 +2569,11 @@ public struct PyNotImplementedError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyNotImplementedError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -2453,6 +2638,11 @@ public struct PyRecursionError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyRecursionError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -2519,6 +2709,11 @@ public struct PyIndentationError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyIndentationError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -2583,6 +2778,11 @@ public struct PyTabError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyTabError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -2652,6 +2852,11 @@ public struct PySystemError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PySystemError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -2716,6 +2921,11 @@ public struct PyTypeError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyTypeError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -2782,6 +2992,11 @@ public struct PyValueError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyValueError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -2846,6 +3061,11 @@ public struct PyUnicodeError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyUnicodeError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -2912,6 +3132,11 @@ public struct PyUnicodeDecodeError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyUnicodeDecodeError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -2976,6 +3201,11 @@ public struct PyUnicodeEncodeError: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyUnicodeEncodeError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -3042,6 +3272,11 @@ public struct PyUnicodeTranslateError: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyUnicodeTranslateError(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -3107,6 +3342,11 @@ public struct PyWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -3171,6 +3411,11 @@ public struct PyDeprecationWarning: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyDeprecationWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -3238,6 +3483,11 @@ public struct PyPendingDeprecationWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyPendingDeprecationWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -3302,6 +3552,11 @@ public struct PyRuntimeWarning: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyRuntimeWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -3368,6 +3623,11 @@ public struct PySyntaxWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PySyntaxWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -3432,6 +3692,11 @@ public struct PyUserWarning: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyUserWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -3499,6 +3764,11 @@ public struct PyFutureWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyFutureWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -3563,6 +3833,11 @@ public struct PyImportWarning: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyImportWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
@@ -3630,6 +3905,11 @@ public struct PyUnicodeWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyUnicodeWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -3696,6 +3976,11 @@ public struct PyBytesWarning: PyErrorMixin {
   // Nothing to do here.
   internal func beforeDeinitialize() { }
 
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyBytesWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
+
 /* MARKER
   // sourcery: pyproperty = __class__
   internal static func getClass(_ py: Py, object: PyObject) -> PyType {
@@ -3760,6 +4045,11 @@ public struct PyResourceWarning: PyErrorMixin {
 
   // Nothing to do here.
   internal func beforeDeinitialize() { }
+
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyResourceWarning(type: \(zelf.typeName), flags: \(zelf.flags))"
+  }
 
 /* MARKER
   // sourcery: pyproperty = __class__
