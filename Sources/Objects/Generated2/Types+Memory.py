@@ -217,7 +217,8 @@ def print_type_things(t: TypeInfo):
     if len(pointer_fields):
         print()
 
-    print('    zelf.header.deinitialize()')
+    header = 'errorHeader' if t.is_error else 'header'
+    print(f'    zelf.{header}.deinitialize()')
 
     for p in pointer_fields:
         print(f'    zelf.{p.pointer_name}.deinitialize()')

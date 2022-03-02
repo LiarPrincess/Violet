@@ -4112,7 +4112,7 @@ extension PyArithmeticError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyArithmeticError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -4174,7 +4174,7 @@ extension PyAssertionError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyAssertionError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -4236,7 +4236,7 @@ extension PyAttributeError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyAttributeError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -4298,7 +4298,7 @@ extension PyBaseException {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBaseException(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -4360,7 +4360,7 @@ extension PyBlockingIOError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBlockingIOError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -4422,7 +4422,7 @@ extension PyBrokenPipeError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBrokenPipeError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -4484,7 +4484,7 @@ extension PyBufferError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBufferError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -4546,7 +4546,7 @@ extension PyBytesWarning {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyBytesWarning(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -4608,7 +4608,7 @@ extension PyChildProcessError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyChildProcessError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -4670,7 +4670,7 @@ extension PyConnectionAbortedError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionAbortedError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -4732,7 +4732,7 @@ extension PyConnectionError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -4794,7 +4794,7 @@ extension PyConnectionRefusedError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionRefusedError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -4856,7 +4856,7 @@ extension PyConnectionResetError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyConnectionResetError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -4918,7 +4918,7 @@ extension PyDeprecationWarning {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyDeprecationWarning(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -4980,7 +4980,7 @@ extension PyEOFError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyEOFError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5042,7 +5042,7 @@ extension PyException {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyException(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5104,7 +5104,7 @@ extension PyFileExistsError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFileExistsError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5166,7 +5166,7 @@ extension PyFileNotFoundError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFileNotFoundError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5228,7 +5228,7 @@ extension PyFloatingPointError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFloatingPointError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5290,7 +5290,7 @@ extension PyFutureWarning {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyFutureWarning(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5352,7 +5352,7 @@ extension PyGeneratorExit {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyGeneratorExit(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5375,6 +5375,92 @@ extension PyMemory {
     result.initialize(
       py,
       type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyImportError
+
+extension PyImportError {
+
+  /// This type was automatically generated based on `PyImportError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let msgOffset: Int
+    internal let moduleNameOffset: Int
+    internal let modulePathOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: [
+          PyMemory.FieldLayout(from: PyObject?.self), // msg
+          PyMemory.FieldLayout(from: PyObject?.self), // moduleName
+          PyMemory.FieldLayout(from: PyObject?.self) // modulePath
+        ]
+      )
+
+      assert(layout.offsets.count == 3)
+      self.msgOffset = layout.offsets[0]
+      self.moduleNameOffset = layout.offsets[1]
+      self.modulePathOffset = layout.offsets[2]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.msgOffset) }
+  internal var moduleNamePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.moduleNameOffset) }
+  internal var modulePathPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.modulePathOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyImportError(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.errorHeader.deinitialize()
+    zelf.msgPtr.deinitialize()
+    zelf.moduleNamePtr.deinitialize()
+    zelf.modulePathPtr.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `ImportError` type.
+  public func newImportError(
+    _ py: Py,
+    type: PyType,
+    msg: PyObject?,
+    moduleName: PyObject?,
+    modulePath: PyObject?,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyImportError {
+    let typeLayout = PyImportError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyImportError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      msg: msg,
+      moduleName: moduleName,
+      modulePath: modulePath,
       args: args,
       traceback: traceback,
       cause: cause,
@@ -5414,7 +5500,7 @@ extension PyImportWarning {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyImportWarning(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5476,7 +5562,7 @@ extension PyIndentationError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyIndentationError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5538,7 +5624,7 @@ extension PyIndexError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyIndexError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5600,7 +5686,7 @@ extension PyInterruptedError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyInterruptedError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5662,7 +5748,7 @@ extension PyIsADirectoryError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyIsADirectoryError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5681,6 +5767,68 @@ extension PyMemory {
     let typeLayout = PyIsADirectoryError.layout
     let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
     let result = PyIsADirectoryError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyKeyError
+
+extension PyKeyError {
+
+  /// This type was automatically generated based on `PyKeyError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyKeyError(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.errorHeader.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `KeyError` type.
+  public func newKeyError(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyKeyError {
+    let typeLayout = PyKeyError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyKeyError(ptr: ptr)
 
     result.initialize(
       py,
@@ -5724,7 +5872,7 @@ extension PyKeyboardInterrupt {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyKeyboardInterrupt(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5786,7 +5934,7 @@ extension PyLookupError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyLookupError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5848,7 +5996,7 @@ extension PyMemoryError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyMemoryError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5910,7 +6058,7 @@ extension PyModuleNotFoundError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyModuleNotFoundError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -5972,7 +6120,7 @@ extension PyNameError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNameError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6034,7 +6182,7 @@ extension PyNotADirectoryError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNotADirectoryError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6096,7 +6244,7 @@ extension PyNotImplementedError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyNotImplementedError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6158,7 +6306,7 @@ extension PyOSError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyOSError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6220,7 +6368,7 @@ extension PyOverflowError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyOverflowError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6282,7 +6430,7 @@ extension PyPendingDeprecationWarning {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyPendingDeprecationWarning(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6344,7 +6492,7 @@ extension PyPermissionError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyPermissionError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6406,7 +6554,7 @@ extension PyProcessLookupError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyProcessLookupError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6468,7 +6616,7 @@ extension PyRecursionError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyRecursionError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6530,7 +6678,7 @@ extension PyReferenceError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyReferenceError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6592,7 +6740,7 @@ extension PyResourceWarning {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyResourceWarning(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6654,7 +6802,7 @@ extension PyRuntimeError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyRuntimeError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6716,7 +6864,7 @@ extension PyRuntimeWarning {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyRuntimeWarning(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6778,7 +6926,7 @@ extension PyStopAsyncIteration {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyStopAsyncIteration(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6801,6 +6949,185 @@ extension PyMemory {
     result.initialize(
       py,
       type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PyStopIteration
+
+extension PyStopIteration {
+
+  /// This type was automatically generated based on `PyStopIteration` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let valueOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: [
+          PyMemory.FieldLayout(from: PyObject.self) // value
+        ]
+      )
+
+      assert(layout.offsets.count == 1)
+      self.valueOffset = layout.offsets[0]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal var valuePtr: Ptr<PyObject> { Ptr(self.ptr, offset: Self.layout.valueOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyStopIteration(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.errorHeader.deinitialize()
+    zelf.valuePtr.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `StopIteration` type.
+  public func newStopIteration(
+    _ py: Py,
+    type: PyType,
+    value: PyObject,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyStopIteration {
+    let typeLayout = PyStopIteration.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyStopIteration(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      value: value,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PySyntaxError
+
+extension PySyntaxError {
+
+  /// This type was automatically generated based on `PySyntaxError` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let msgOffset: Int
+    internal let filenameOffset: Int
+    internal let linenoOffset: Int
+    internal let offsetOffset: Int
+    internal let textOffset: Int
+    internal let printFileAndLineOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: [
+          PyMemory.FieldLayout(from: PyObject?.self), // msg
+          PyMemory.FieldLayout(from: PyObject?.self), // filename
+          PyMemory.FieldLayout(from: PyObject?.self), // lineno
+          PyMemory.FieldLayout(from: PyObject?.self), // offset
+          PyMemory.FieldLayout(from: PyObject?.self), // text
+          PyMemory.FieldLayout(from: PyObject?.self) // printFileAndLine
+        ]
+      )
+
+      assert(layout.offsets.count == 6)
+      self.msgOffset = layout.offsets[0]
+      self.filenameOffset = layout.offsets[1]
+      self.linenoOffset = layout.offsets[2]
+      self.offsetOffset = layout.offsets[3]
+      self.textOffset = layout.offsets[4]
+      self.printFileAndLineOffset = layout.offsets[5]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal var msgPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.msgOffset) }
+  internal var filenamePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.filenameOffset) }
+  internal var linenoPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.linenoOffset) }
+  internal var offsetPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.offsetOffset) }
+  internal var textPtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.textOffset) }
+  internal var printFileAndLinePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.printFileAndLineOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PySyntaxError(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.errorHeader.deinitialize()
+    zelf.msgPtr.deinitialize()
+    zelf.filenamePtr.deinitialize()
+    zelf.linenoPtr.deinitialize()
+    zelf.offsetPtr.deinitialize()
+    zelf.textPtr.deinitialize()
+    zelf.printFileAndLinePtr.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `SyntaxError` type.
+  public func newSyntaxError(
+    _ py: Py,
+    type: PyType,
+    msg: PyObject?,
+    filename: PyObject?,
+    lineno: PyObject?,
+    offset: PyObject?,
+    text: PyObject?,
+    printFileAndLine: PyObject?,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PySyntaxError {
+    let typeLayout = PySyntaxError.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PySyntaxError(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      msg: msg,
+      filename: filename,
+      lineno: lineno,
+      offset: offset,
+      text: text,
+      printFileAndLine: printFileAndLine,
       args: args,
       traceback: traceback,
       cause: cause,
@@ -6840,7 +7167,7 @@ extension PySyntaxWarning {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySyntaxWarning(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6902,7 +7229,7 @@ extension PySystemError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PySystemError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -6925,6 +7252,78 @@ extension PyMemory {
     result.initialize(
       py,
       type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+
+// MARK: - PySystemExit
+
+extension PySystemExit {
+
+  /// This type was automatically generated based on `PySystemExit` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let codeOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: [
+          PyMemory.FieldLayout(from: PyObject?.self) // code
+        ]
+      )
+
+      assert(layout.offsets.count == 1)
+      self.codeOffset = layout.offsets[0]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal var codePtr: Ptr<PyObject?> { Ptr(self.ptr, offset: Self.layout.codeOffset) }
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PySystemExit(ptr: ptr)
+    zelf.beforeDeinitialize()
+
+    zelf.errorHeader.deinitialize()
+    zelf.codePtr.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `SystemExit` type.
+  public func newSystemExit(
+    _ py: Py,
+    type: PyType,
+    code: PyObject?,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PySystemExit {
+    let typeLayout = PySystemExit.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PySystemExit(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      code: code,
       args: args,
       traceback: traceback,
       cause: cause,
@@ -6964,7 +7363,7 @@ extension PyTabError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTabError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -7026,7 +7425,7 @@ extension PyTimeoutError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTimeoutError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -7088,7 +7487,7 @@ extension PyTypeError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyTypeError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -7150,7 +7549,7 @@ extension PyUnboundLocalError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnboundLocalError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -7212,7 +7611,7 @@ extension PyUnicodeDecodeError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeDecodeError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -7274,7 +7673,7 @@ extension PyUnicodeEncodeError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeEncodeError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -7336,7 +7735,7 @@ extension PyUnicodeError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -7398,7 +7797,7 @@ extension PyUnicodeTranslateError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeTranslateError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -7460,7 +7859,7 @@ extension PyUnicodeWarning {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUnicodeWarning(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -7522,7 +7921,7 @@ extension PyUserWarning {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyUserWarning(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -7584,7 +7983,7 @@ extension PyValueError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyValueError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -7646,7 +8045,7 @@ extension PyWarning {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyWarning(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 
@@ -7708,7 +8107,7 @@ extension PyZeroDivisionError {
   internal static func deinitialize(ptr: RawPtr) {
     let zelf = PyZeroDivisionError(ptr: ptr)
     zelf.beforeDeinitialize()
-    zelf.header.deinitialize()
+    zelf.errorHeader.deinitialize()
   }
 }
 

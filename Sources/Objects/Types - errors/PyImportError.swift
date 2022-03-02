@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -7,80 +6,60 @@ import VioletCore
 // https://docs.python.org/3.7/c-api/exceptions.html
 // https://www.python.org/dev/peps/pep-0415/#proposal
 
-// sourcery: pyerrortype = ImportError, isDefault, isBaseType, hasGC
+// sourcery: pyerrortype = ImportError, pybase = Exception, isDefault, isBaseType, hasGC
 // sourcery: isBaseExceptionSubclass, instancesHave__dict__
-public class PyImportError: PyException {
+public struct PyImportError: PyErrorMixin {
 
   // sourcery: pytypedoc
   internal static let importErrorDoc =
     "Import can't find module, or can't find name in module."
 
-  // MARK: - Properties
+  // sourcery: includeInLayout
+  internal var msg: PyObject? { self.msgPtr.pointee }
+  // sourcery: includeInLayout
+  internal var moduleName: PyObject? { self.moduleNamePtr.pointee }
+  // sourcery: includeInLayout
+  internal var modulePath: PyObject? { self.modulePathPtr.pointee }
 
-  private var msg: PyObject?
-  private var moduleName: PyObject?
-  private var modulePath: PyObject?
+  public let ptr: RawPtr
 
-  // MARK: - Init
-
-  /// Type to set in `init`.
-  override internal class var pythonTypeToSetInInit: PyType {
-    return Py.errorTypes.importError
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  internal convenience init(msg: String?,
-                            moduleName: String?,
-                            modulePath: String?,
-                            traceback: PyTraceback? = nil,
-                            cause: PyBaseException? = nil,
-                            context: PyBaseException? = nil,
-                            suppressContext: Bool = false) {
-    // Only 'msg' goes to args
-    var argsElements = [PyObject]()
-    if let m = msg {
-      argsElements.append(Py.newString(m))
-    }
-
-    let args = Py.newTuple(elements: argsElements)
-    let type = Self.pythonTypeToSetInInit
-    self.init(type: type,
-              args: args,
-              traceback: traceback,
-              cause: cause,
-              context: context,
-              suppressContext: suppressContext)
-
-    // 'self.msg' should be filled from args
-    if msg != nil {
-      assert(self.msg != nil)
-    }
-
-    self.moduleName = moduleName.map(Py.newString(_:))
-    self.modulePath = modulePath.map(Py.newString(_:))
+  // swiftlint:disable:next function_parameter_count
+  internal func initialize(_ py: Py,
+                           type: PyType,
+                           msg: PyObject?,
+                           moduleName: PyObject?,
+                           modulePath: PyObject?,
+                           args: PyTuple,
+                           traceback: PyTraceback?,
+                           cause: PyBaseException?,
+                           context: PyBaseException?,
+                           suppressContext: Bool) {
+    self.errorHeader.initialize(py,
+                                type: type,
+                                args: args,
+                                traceback: traceback,
+                                cause: cause,
+                                context: context,
+                                suppressContext: suppressContext)
+    self.msgPtr.initialize(to: msg)
+    self.moduleNamePtr.initialize(to: moduleName)
+    self.modulePathPtr.initialize(to: modulePath)
   }
 
-  /// Important: You have to manually fill `moduleName` and `modulePath` later!
-  override internal init(type: PyType,
-                         args: PyTuple,
-                         traceback: PyTraceback? = nil,
-                         cause: PyBaseException? = nil,
-                         context: PyBaseException? = nil,
-                         suppressContext: Bool = false) {
-    super.init(type: type,
-               args: args,
-               traceback: traceback,
-               cause: cause,
-               context: context,
-               suppressContext: suppressContext)
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
-    self.fillMsgFromArgs(args: args.elements)
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyImportError(ptr: ptr)
+    return "PyImportError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
+}
 
-  private func fillMsgFromArgs(args: [PyObject]) {
-    if args.count == 1 {
-      self.msg = args[0]
-    }
-  }
+/* MARKER
 
   // MARK: - Class
 
