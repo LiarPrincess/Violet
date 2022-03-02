@@ -10,12 +10,12 @@ extension PyString {
     /// Ignore the malformed data and continue without further notice.
     case ignore
 
-    internal static func from(object: PyObject?) -> PyResult<ErrorHandling> {
+    internal static func from(_ py: Py, object: PyObject?) -> PyResult<ErrorHandling> {
       guard let object = object else {
         return .value(.strict)
       }
 
-      guard let string = PyCast.asString(object) else {
+      guard let string = py.cast.asString(object) else {
         return .typeError("errors have to be str, not \(object.typeName)")
       }
 
