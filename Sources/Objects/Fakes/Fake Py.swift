@@ -17,6 +17,7 @@ public struct Py {
 
   public let memory = PyMemory()
   public var types: Py.Types { fatalError() }
+  public var errorTypes: Py.ErrorTypes { fatalError() }
 
   public func newBool(_ value: Bool) -> PyBool { fatalError() }
   public func newInt(_ value: Int) -> PyInt { fatalError() }

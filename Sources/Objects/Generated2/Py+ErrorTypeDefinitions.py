@@ -1,45 +1,50 @@
 from typing import List
 from Sourcery import get_types
-from Helpers import generated_warning, PyTypeDefinition
+from Helpers import (
+    generated_warning,
+    where_to_find_errors_in_cpython,
+    PyTypeDefinition,
+    exception_hierarchy
+)
 
 if __name__ == '__main__':
     print(f'''\
 {generated_warning(__file__)}
 
-import BigInt
 import VioletCore
 
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
 // swiftlint:disable trailing_comma
-// swiftlint:disable discouraged_optional_boolean
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable file_length
 
-// Type initialization order:
-//
-// Stage 1: Create all type objects ('init()' function)
-// Just instantiate all of the 'PyType' properties.
-// At this point we can't fill '__dict__', because for this we would need other
-// types to be already initialized (which would be circular).
-// For example we can't insert '__doc__' because for this we would need 'str' type,
-// which may not yet exist.
-//
-// Stage 2: Fill type objects ('fill__dict__()' method)
-// When all of the types are initalized we can finally fill dictionaries.
+{where_to_find_errors_in_cpython}
+
+// Just like 'Py.Types' this will be a 2 phase init.
+// See 'Py.Types' for reasoning.\
 ''')
 
     print('extension Py {')
     print()
-    print('  public final class Types {')
+    print('  public final class ErrorTypes {')
     print()
 
     all_types = get_types()
 
+    # Errors in 'data' are in the correct order (parent is before its subclasses).
     types: List[PyTypeDefinition] = []
-    for t in all_types:
-        if not t.is_error:
-            types.append(PyTypeDefinition(t, all_types))
+    for e in exception_hierarchy:
+        python_type = e.type_name
+
+        p = None
+        for t in all_types:
+            if t.python_type_name == python_type:
+                assert p is None
+                p = PyTypeDefinition(t, all_types)
+
+        assert p is not None, f"Type not found: '{python_type}'"
+        types.append(p)
 
     # ==================
     # === Properties ===
@@ -60,35 +65,11 @@ import VioletCore
     print('    // MARK: - Stage 1 - init')
     print()
 
-    # We have to do some work to init types in the correct order.
-    # 'object' and 'type' first, 'bool' last (because it depends on 'int')
-    object_type: PyTypeDefinition = None
-    type_type: PyTypeDefinition = None
-    bool_type: PyTypeDefinition = None
-    for t in types:
-        if t.python_type_name == 'object':
-            object_type = t
-        if t.python_type_name == 'type':
-            type_type = t
-        if t.python_type_name == 'bool':
-            bool_type = t
-
     print(f'''\
     /// Init that will only initialize properties.
-    /// (see comment at the top of this file)
-    internal init(_ py: Py) {{
+    internal init(_ py: Py, typeType: PyType, objectType: PyType) {{
       let memory = py.memory
-
-      // Requirements for 'self.object' and 'self.type':
-      // 1. 'type' inherits from 'object'
-      // 2. both 'type' and 'object' are instances of 'type'
-      let pair = memory.newTypeAndObjectTypes(py)
-      self.{object_type.property_name} = pair.objectType
-      self.{type_type.property_name} = pair.typeType
 ''')
-
-    print("      // Btw. 'self.bool' has to be last because it uses 'self.int' as base!")
-    print()
 
     for t in types:
         python_type_name = t.python_type_name
@@ -96,8 +77,6 @@ import VioletCore
             t.print_set_property()
             print()
 
-    print("      // And now we can set 'bool' (because we have 'self.int').")
-    bool_type.print_set_property()
     print('    }')
     print()
 
@@ -110,7 +89,6 @@ import VioletCore
 
     print('''\
     /// This function finalizes init of all of the stored types.
-    /// (see comment at the top of this file)
     ///
     /// For example it will:
     /// - add `__doc__`
