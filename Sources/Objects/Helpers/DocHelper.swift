@@ -1,4 +1,3 @@
-/* MARKER
 private let signatureMarker = ")\n--\n\n"
 
 internal enum DocHelper {
@@ -45,5 +44,3 @@ internal enum DocHelper {
     return doc.range(of: signatureMarker)
   }
 }
-
-*/

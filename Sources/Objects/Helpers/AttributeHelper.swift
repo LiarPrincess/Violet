@@ -76,7 +76,7 @@ internal enum AttributeHelper {
   internal static func setAttribute(_ py: Py,
                                     object: PyObject,
                                     name: PyObject,
-                                    value: PyObject?) -> PyResult<PyNone> {
+                                    value: PyObject?) -> PyResult<PyObject> {
     switch AttributeHelper.extractName(py, name: name) {
     case let .value(n):
       return AttributeHelper.setAttribute(py, object: object, name: n, value: value)
@@ -88,23 +88,23 @@ internal enum AttributeHelper {
   internal static func setAttribute(_ py: Py,
                                     object: PyObject,
                                     name: PyString,
-                                    value: PyObject?) -> PyResult<PyNone> {
+                                    value: PyObject?) -> PyResult<PyObject> {
     let descriptor = SetDescriptor(py, object: object, attributeName: name)
 
     if let desc = descriptor {
       let result = desc.call(value: value)
-      return result.map { _ in py.none }
+      return result
     }
 
     if let dict = py.get__dict__(object: object) {
       if let value = value {
         switch dict.set(key: name, to: value) {
-        case .ok: return .value(py.none)
+        case .ok: return .none(py)
         case .error(let e): return .error(e)
         }
       } else {
         switch dict.del(key: name.asObject) {
-        case .value: return .value(py.none)
+        case .value: return .none(py)
         case .notFound: break // try other
         case .error(let e): return .error(e)
         }
@@ -123,7 +123,7 @@ internal enum AttributeHelper {
   /// Basically: `AttributeHelper.setAttribute` with `None` as value
   internal static func delAttribute(_ py: Py,
                                     object: PyObject,
-                                    name: PyObject) -> PyResult<PyNone> {
+                                    name: PyObject) -> PyResult<PyObject> {
     switch AttributeHelper.extractName(py, name: name) {
     case let .value(n):
       return AttributeHelper.delAttribute(py, object: object, name: n)
@@ -134,7 +134,7 @@ internal enum AttributeHelper {
 
   internal static func delAttribute(_ py: Py,
                                     object: PyObject,
-                                    name: PyString) -> PyResult<PyNone> {
+                                    name: PyString) -> PyResult<PyObject> {
     return AttributeHelper.setAttribute(py, object: object, name: name, value: nil)
   }
 

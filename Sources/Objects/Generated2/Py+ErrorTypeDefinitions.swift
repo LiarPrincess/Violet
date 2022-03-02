@@ -1217,7 +1217,7 @@ extension Py {
 
     private func fillBaseException(_ py: Py) {
       let type = self.baseException
-      type.setBuiltinTypeDoc(PyBaseException.doc)
+      type.setBuiltinTypeDoc(py, value: PyBaseException.doc)
     }
 
     internal static let baseExceptionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1227,7 +1227,7 @@ extension Py {
 
     private func fillSystemExit(_ py: Py) {
       let type = self.systemExit
-      type.setBuiltinTypeDoc(PySystemExit.systemExitDoc)
+      type.setBuiltinTypeDoc(py, value: PySystemExit.systemExitDoc)
     }
 
     internal static let systemExitStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1237,7 +1237,7 @@ extension Py {
 
     private func fillKeyboardInterrupt(_ py: Py) {
       let type = self.keyboardInterrupt
-      type.setBuiltinTypeDoc(PyKeyboardInterrupt.doc)
+      type.setBuiltinTypeDoc(py, value: PyKeyboardInterrupt.doc)
     }
 
     internal static let keyboardInterruptStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1247,7 +1247,7 @@ extension Py {
 
     private func fillGeneratorExit(_ py: Py) {
       let type = self.generatorExit
-      type.setBuiltinTypeDoc(PyGeneratorExit.doc)
+      type.setBuiltinTypeDoc(py, value: PyGeneratorExit.doc)
     }
 
     internal static let generatorExitStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1257,7 +1257,7 @@ extension Py {
 
     private func fillException(_ py: Py) {
       let type = self.exception
-      type.setBuiltinTypeDoc(PyException.doc)
+      type.setBuiltinTypeDoc(py, value: PyException.doc)
     }
 
     internal static let exceptionStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1267,7 +1267,7 @@ extension Py {
 
     private func fillStopIteration(_ py: Py) {
       let type = self.stopIteration
-      type.setBuiltinTypeDoc(PyStopIteration.stopIterationDoc)
+      type.setBuiltinTypeDoc(py, value: PyStopIteration.stopIterationDoc)
     }
 
     internal static let stopIterationStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1277,7 +1277,7 @@ extension Py {
 
     private func fillStopAsyncIteration(_ py: Py) {
       let type = self.stopAsyncIteration
-      type.setBuiltinTypeDoc(PyStopAsyncIteration.doc)
+      type.setBuiltinTypeDoc(py, value: PyStopAsyncIteration.doc)
     }
 
     internal static let stopAsyncIterationStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1287,7 +1287,7 @@ extension Py {
 
     private func fillArithmeticError(_ py: Py) {
       let type = self.arithmeticError
-      type.setBuiltinTypeDoc(PyArithmeticError.doc)
+      type.setBuiltinTypeDoc(py, value: PyArithmeticError.doc)
     }
 
     internal static let arithmeticErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1297,7 +1297,7 @@ extension Py {
 
     private func fillFloatingPointError(_ py: Py) {
       let type = self.floatingPointError
-      type.setBuiltinTypeDoc(PyFloatingPointError.doc)
+      type.setBuiltinTypeDoc(py, value: PyFloatingPointError.doc)
     }
 
     internal static let floatingPointErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1307,7 +1307,7 @@ extension Py {
 
     private func fillOverflowError(_ py: Py) {
       let type = self.overflowError
-      type.setBuiltinTypeDoc(PyOverflowError.doc)
+      type.setBuiltinTypeDoc(py, value: PyOverflowError.doc)
     }
 
     internal static let overflowErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1317,7 +1317,7 @@ extension Py {
 
     private func fillZeroDivisionError(_ py: Py) {
       let type = self.zeroDivisionError
-      type.setBuiltinTypeDoc(PyZeroDivisionError.doc)
+      type.setBuiltinTypeDoc(py, value: PyZeroDivisionError.doc)
     }
 
     internal static let zeroDivisionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1327,7 +1327,7 @@ extension Py {
 
     private func fillAssertionError(_ py: Py) {
       let type = self.assertionError
-      type.setBuiltinTypeDoc(PyAssertionError.doc)
+      type.setBuiltinTypeDoc(py, value: PyAssertionError.doc)
     }
 
     internal static let assertionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1337,7 +1337,7 @@ extension Py {
 
     private func fillAttributeError(_ py: Py) {
       let type = self.attributeError
-      type.setBuiltinTypeDoc(PyAttributeError.doc)
+      type.setBuiltinTypeDoc(py, value: PyAttributeError.doc)
     }
 
     internal static let attributeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1347,7 +1347,7 @@ extension Py {
 
     private func fillBufferError(_ py: Py) {
       let type = self.bufferError
-      type.setBuiltinTypeDoc(PyBufferError.doc)
+      type.setBuiltinTypeDoc(py, value: PyBufferError.doc)
     }
 
     internal static let bufferErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1357,7 +1357,7 @@ extension Py {
 
     private func fillEOFError(_ py: Py) {
       let type = self.eofError
-      type.setBuiltinTypeDoc(PyEOFError.doc)
+      type.setBuiltinTypeDoc(py, value: PyEOFError.doc)
     }
 
     internal static let eOFErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1367,7 +1367,7 @@ extension Py {
 
     private func fillImportError(_ py: Py) {
       let type = self.importError
-      type.setBuiltinTypeDoc(PyImportError.importErrorDoc)
+      type.setBuiltinTypeDoc(py, value: PyImportError.importErrorDoc)
     }
 
     internal static let importErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1377,7 +1377,7 @@ extension Py {
 
     private func fillModuleNotFoundError(_ py: Py) {
       let type = self.moduleNotFoundError
-      type.setBuiltinTypeDoc(PyModuleNotFoundError.doc)
+      type.setBuiltinTypeDoc(py, value: PyModuleNotFoundError.doc)
     }
 
     internal static let moduleNotFoundErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1387,7 +1387,7 @@ extension Py {
 
     private func fillLookupError(_ py: Py) {
       let type = self.lookupError
-      type.setBuiltinTypeDoc(PyLookupError.doc)
+      type.setBuiltinTypeDoc(py, value: PyLookupError.doc)
     }
 
     internal static let lookupErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1397,7 +1397,7 @@ extension Py {
 
     private func fillIndexError(_ py: Py) {
       let type = self.indexError
-      type.setBuiltinTypeDoc(PyIndexError.doc)
+      type.setBuiltinTypeDoc(py, value: PyIndexError.doc)
     }
 
     internal static let indexErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1407,7 +1407,7 @@ extension Py {
 
     private func fillKeyError(_ py: Py) {
       let type = self.keyError
-      type.setBuiltinTypeDoc(PyKeyError.keyErrorDoc)
+      type.setBuiltinTypeDoc(py, value: PyKeyError.keyErrorDoc)
     }
 
     internal static let keyErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1417,7 +1417,7 @@ extension Py {
 
     private func fillMemoryError(_ py: Py) {
       let type = self.memoryError
-      type.setBuiltinTypeDoc(PyMemoryError.doc)
+      type.setBuiltinTypeDoc(py, value: PyMemoryError.doc)
     }
 
     internal static let memoryErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1427,7 +1427,7 @@ extension Py {
 
     private func fillNameError(_ py: Py) {
       let type = self.nameError
-      type.setBuiltinTypeDoc(PyNameError.doc)
+      type.setBuiltinTypeDoc(py, value: PyNameError.doc)
     }
 
     internal static let nameErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1437,7 +1437,7 @@ extension Py {
 
     private func fillUnboundLocalError(_ py: Py) {
       let type = self.unboundLocalError
-      type.setBuiltinTypeDoc(PyUnboundLocalError.doc)
+      type.setBuiltinTypeDoc(py, value: PyUnboundLocalError.doc)
     }
 
     internal static let unboundLocalErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1447,7 +1447,7 @@ extension Py {
 
     private func fillOSError(_ py: Py) {
       let type = self.osError
-      type.setBuiltinTypeDoc(PyOSError.doc)
+      type.setBuiltinTypeDoc(py, value: PyOSError.doc)
     }
 
     internal static let oSErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1457,7 +1457,7 @@ extension Py {
 
     private func fillBlockingIOError(_ py: Py) {
       let type = self.blockingIOError
-      type.setBuiltinTypeDoc(PyBlockingIOError.doc)
+      type.setBuiltinTypeDoc(py, value: PyBlockingIOError.doc)
     }
 
     internal static let blockingIOErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1467,7 +1467,7 @@ extension Py {
 
     private func fillChildProcessError(_ py: Py) {
       let type = self.childProcessError
-      type.setBuiltinTypeDoc(PyChildProcessError.doc)
+      type.setBuiltinTypeDoc(py, value: PyChildProcessError.doc)
     }
 
     internal static let childProcessErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1477,7 +1477,7 @@ extension Py {
 
     private func fillConnectionError(_ py: Py) {
       let type = self.connectionError
-      type.setBuiltinTypeDoc(PyConnectionError.doc)
+      type.setBuiltinTypeDoc(py, value: PyConnectionError.doc)
     }
 
     internal static let connectionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1487,7 +1487,7 @@ extension Py {
 
     private func fillBrokenPipeError(_ py: Py) {
       let type = self.brokenPipeError
-      type.setBuiltinTypeDoc(PyBrokenPipeError.doc)
+      type.setBuiltinTypeDoc(py, value: PyBrokenPipeError.doc)
     }
 
     internal static let brokenPipeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1497,7 +1497,7 @@ extension Py {
 
     private func fillConnectionAbortedError(_ py: Py) {
       let type = self.connectionAbortedError
-      type.setBuiltinTypeDoc(PyConnectionAbortedError.doc)
+      type.setBuiltinTypeDoc(py, value: PyConnectionAbortedError.doc)
     }
 
     internal static let connectionAbortedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1507,7 +1507,7 @@ extension Py {
 
     private func fillConnectionRefusedError(_ py: Py) {
       let type = self.connectionRefusedError
-      type.setBuiltinTypeDoc(PyConnectionRefusedError.doc)
+      type.setBuiltinTypeDoc(py, value: PyConnectionRefusedError.doc)
     }
 
     internal static let connectionRefusedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1517,7 +1517,7 @@ extension Py {
 
     private func fillConnectionResetError(_ py: Py) {
       let type = self.connectionResetError
-      type.setBuiltinTypeDoc(PyConnectionResetError.doc)
+      type.setBuiltinTypeDoc(py, value: PyConnectionResetError.doc)
     }
 
     internal static let connectionResetErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1527,7 +1527,7 @@ extension Py {
 
     private func fillFileExistsError(_ py: Py) {
       let type = self.fileExistsError
-      type.setBuiltinTypeDoc(PyFileExistsError.doc)
+      type.setBuiltinTypeDoc(py, value: PyFileExistsError.doc)
     }
 
     internal static let fileExistsErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1537,7 +1537,7 @@ extension Py {
 
     private func fillFileNotFoundError(_ py: Py) {
       let type = self.fileNotFoundError
-      type.setBuiltinTypeDoc(PyFileNotFoundError.doc)
+      type.setBuiltinTypeDoc(py, value: PyFileNotFoundError.doc)
     }
 
     internal static let fileNotFoundErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1547,7 +1547,7 @@ extension Py {
 
     private func fillInterruptedError(_ py: Py) {
       let type = self.interruptedError
-      type.setBuiltinTypeDoc(PyInterruptedError.doc)
+      type.setBuiltinTypeDoc(py, value: PyInterruptedError.doc)
     }
 
     internal static let interruptedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1557,7 +1557,7 @@ extension Py {
 
     private func fillIsADirectoryError(_ py: Py) {
       let type = self.isADirectoryError
-      type.setBuiltinTypeDoc(PyIsADirectoryError.doc)
+      type.setBuiltinTypeDoc(py, value: PyIsADirectoryError.doc)
     }
 
     internal static let isADirectoryErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1567,7 +1567,7 @@ extension Py {
 
     private func fillNotADirectoryError(_ py: Py) {
       let type = self.notADirectoryError
-      type.setBuiltinTypeDoc(PyNotADirectoryError.doc)
+      type.setBuiltinTypeDoc(py, value: PyNotADirectoryError.doc)
     }
 
     internal static let notADirectoryErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1577,7 +1577,7 @@ extension Py {
 
     private func fillPermissionError(_ py: Py) {
       let type = self.permissionError
-      type.setBuiltinTypeDoc(PyPermissionError.doc)
+      type.setBuiltinTypeDoc(py, value: PyPermissionError.doc)
     }
 
     internal static let permissionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1587,7 +1587,7 @@ extension Py {
 
     private func fillProcessLookupError(_ py: Py) {
       let type = self.processLookupError
-      type.setBuiltinTypeDoc(PyProcessLookupError.doc)
+      type.setBuiltinTypeDoc(py, value: PyProcessLookupError.doc)
     }
 
     internal static let processLookupErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1597,7 +1597,7 @@ extension Py {
 
     private func fillTimeoutError(_ py: Py) {
       let type = self.timeoutError
-      type.setBuiltinTypeDoc(PyTimeoutError.doc)
+      type.setBuiltinTypeDoc(py, value: PyTimeoutError.doc)
     }
 
     internal static let timeoutErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1607,7 +1607,7 @@ extension Py {
 
     private func fillReferenceError(_ py: Py) {
       let type = self.referenceError
-      type.setBuiltinTypeDoc(PyReferenceError.doc)
+      type.setBuiltinTypeDoc(py, value: PyReferenceError.doc)
     }
 
     internal static let referenceErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1617,7 +1617,7 @@ extension Py {
 
     private func fillRuntimeError(_ py: Py) {
       let type = self.runtimeError
-      type.setBuiltinTypeDoc(PyRuntimeError.doc)
+      type.setBuiltinTypeDoc(py, value: PyRuntimeError.doc)
     }
 
     internal static let runtimeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1627,7 +1627,7 @@ extension Py {
 
     private func fillNotImplementedError(_ py: Py) {
       let type = self.notImplementedError
-      type.setBuiltinTypeDoc(PyNotImplementedError.doc)
+      type.setBuiltinTypeDoc(py, value: PyNotImplementedError.doc)
     }
 
     internal static let notImplementedErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1637,7 +1637,7 @@ extension Py {
 
     private func fillRecursionError(_ py: Py) {
       let type = self.recursionError
-      type.setBuiltinTypeDoc(PyRecursionError.doc)
+      type.setBuiltinTypeDoc(py, value: PyRecursionError.doc)
     }
 
     internal static let recursionErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1647,7 +1647,7 @@ extension Py {
 
     private func fillSyntaxError(_ py: Py) {
       let type = self.syntaxError
-      type.setBuiltinTypeDoc(PySyntaxError.syntaxErrorDoc)
+      type.setBuiltinTypeDoc(py, value: PySyntaxError.syntaxErrorDoc)
     }
 
     internal static let syntaxErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1657,7 +1657,7 @@ extension Py {
 
     private func fillIndentationError(_ py: Py) {
       let type = self.indentationError
-      type.setBuiltinTypeDoc(PyIndentationError.doc)
+      type.setBuiltinTypeDoc(py, value: PyIndentationError.doc)
     }
 
     internal static let indentationErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1667,7 +1667,7 @@ extension Py {
 
     private func fillTabError(_ py: Py) {
       let type = self.tabError
-      type.setBuiltinTypeDoc(PyTabError.doc)
+      type.setBuiltinTypeDoc(py, value: PyTabError.doc)
     }
 
     internal static let tabErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1677,7 +1677,7 @@ extension Py {
 
     private func fillSystemError(_ py: Py) {
       let type = self.systemError
-      type.setBuiltinTypeDoc(PySystemError.doc)
+      type.setBuiltinTypeDoc(py, value: PySystemError.doc)
     }
 
     internal static let systemErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1687,7 +1687,7 @@ extension Py {
 
     private func fillTypeError(_ py: Py) {
       let type = self.typeError
-      type.setBuiltinTypeDoc(PyTypeError.doc)
+      type.setBuiltinTypeDoc(py, value: PyTypeError.doc)
     }
 
     internal static let typeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1697,7 +1697,7 @@ extension Py {
 
     private func fillValueError(_ py: Py) {
       let type = self.valueError
-      type.setBuiltinTypeDoc(PyValueError.doc)
+      type.setBuiltinTypeDoc(py, value: PyValueError.doc)
     }
 
     internal static let valueErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1707,7 +1707,7 @@ extension Py {
 
     private func fillUnicodeError(_ py: Py) {
       let type = self.unicodeError
-      type.setBuiltinTypeDoc(PyUnicodeError.doc)
+      type.setBuiltinTypeDoc(py, value: PyUnicodeError.doc)
     }
 
     internal static let unicodeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1717,7 +1717,7 @@ extension Py {
 
     private func fillUnicodeDecodeError(_ py: Py) {
       let type = self.unicodeDecodeError
-      type.setBuiltinTypeDoc(PyUnicodeDecodeError.doc)
+      type.setBuiltinTypeDoc(py, value: PyUnicodeDecodeError.doc)
     }
 
     internal static let unicodeDecodeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1727,7 +1727,7 @@ extension Py {
 
     private func fillUnicodeEncodeError(_ py: Py) {
       let type = self.unicodeEncodeError
-      type.setBuiltinTypeDoc(PyUnicodeEncodeError.doc)
+      type.setBuiltinTypeDoc(py, value: PyUnicodeEncodeError.doc)
     }
 
     internal static let unicodeEncodeErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1737,7 +1737,7 @@ extension Py {
 
     private func fillUnicodeTranslateError(_ py: Py) {
       let type = self.unicodeTranslateError
-      type.setBuiltinTypeDoc(PyUnicodeTranslateError.doc)
+      type.setBuiltinTypeDoc(py, value: PyUnicodeTranslateError.doc)
     }
 
     internal static let unicodeTranslateErrorStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1747,7 +1747,7 @@ extension Py {
 
     private func fillWarning(_ py: Py) {
       let type = self.warning
-      type.setBuiltinTypeDoc(PyWarning.doc)
+      type.setBuiltinTypeDoc(py, value: PyWarning.doc)
     }
 
     internal static let warningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1757,7 +1757,7 @@ extension Py {
 
     private func fillDeprecationWarning(_ py: Py) {
       let type = self.deprecationWarning
-      type.setBuiltinTypeDoc(PyDeprecationWarning.doc)
+      type.setBuiltinTypeDoc(py, value: PyDeprecationWarning.doc)
     }
 
     internal static let deprecationWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1767,7 +1767,7 @@ extension Py {
 
     private func fillPendingDeprecationWarning(_ py: Py) {
       let type = self.pendingDeprecationWarning
-      type.setBuiltinTypeDoc(PyPendingDeprecationWarning.doc)
+      type.setBuiltinTypeDoc(py, value: PyPendingDeprecationWarning.doc)
     }
 
     internal static let pendingDeprecationWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1777,7 +1777,7 @@ extension Py {
 
     private func fillRuntimeWarning(_ py: Py) {
       let type = self.runtimeWarning
-      type.setBuiltinTypeDoc(PyRuntimeWarning.doc)
+      type.setBuiltinTypeDoc(py, value: PyRuntimeWarning.doc)
     }
 
     internal static let runtimeWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1787,7 +1787,7 @@ extension Py {
 
     private func fillSyntaxWarning(_ py: Py) {
       let type = self.syntaxWarning
-      type.setBuiltinTypeDoc(PySyntaxWarning.doc)
+      type.setBuiltinTypeDoc(py, value: PySyntaxWarning.doc)
     }
 
     internal static let syntaxWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1797,7 +1797,7 @@ extension Py {
 
     private func fillUserWarning(_ py: Py) {
       let type = self.userWarning
-      type.setBuiltinTypeDoc(PyUserWarning.doc)
+      type.setBuiltinTypeDoc(py, value: PyUserWarning.doc)
     }
 
     internal static let userWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1807,7 +1807,7 @@ extension Py {
 
     private func fillFutureWarning(_ py: Py) {
       let type = self.futureWarning
-      type.setBuiltinTypeDoc(PyFutureWarning.doc)
+      type.setBuiltinTypeDoc(py, value: PyFutureWarning.doc)
     }
 
     internal static let futureWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1817,7 +1817,7 @@ extension Py {
 
     private func fillImportWarning(_ py: Py) {
       let type = self.importWarning
-      type.setBuiltinTypeDoc(PyImportWarning.doc)
+      type.setBuiltinTypeDoc(py, value: PyImportWarning.doc)
     }
 
     internal static let importWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1827,7 +1827,7 @@ extension Py {
 
     private func fillUnicodeWarning(_ py: Py) {
       let type = self.unicodeWarning
-      type.setBuiltinTypeDoc(PyUnicodeWarning.doc)
+      type.setBuiltinTypeDoc(py, value: PyUnicodeWarning.doc)
     }
 
     internal static let unicodeWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1837,7 +1837,7 @@ extension Py {
 
     private func fillBytesWarning(_ py: Py) {
       let type = self.bytesWarning
-      type.setBuiltinTypeDoc(PyBytesWarning.doc)
+      type.setBuiltinTypeDoc(py, value: PyBytesWarning.doc)
     }
 
     internal static let bytesWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
@@ -1847,7 +1847,7 @@ extension Py {
 
     private func fillResourceWarning(_ py: Py) {
       let type = self.resourceWarning
-      type.setBuiltinTypeDoc(PyResourceWarning.doc)
+      type.setBuiltinTypeDoc(py, value: PyResourceWarning.doc)
     }
 
     internal static let resourceWarningStaticMethods = PyStaticCall.KnownNotOverriddenMethods()
