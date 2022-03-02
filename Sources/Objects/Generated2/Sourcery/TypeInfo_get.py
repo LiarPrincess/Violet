@@ -1,7 +1,7 @@
 import os.path
 from typing import List, Union
 
-from Sourcery.entities import TypeInfo, SwiftPropertyInfo, SwiftInitializerInfo #, SwiftFunctionInfo, PyPropertyInfo, PyFunctionInfo
+from Sourcery.TypeInfo import TypeInfo, SwiftPropertyInfo, SwiftInitializerInfo, PyPropertyInfo, PyFunctionInfo
 
 def get_types() -> List[TypeInfo]:
     dir_path = os.path.dirname(__file__)
@@ -27,7 +27,10 @@ def get_types() -> List[TypeInfo]:
             assert len(split) >= 1
 
             line_type = split[0]
-            if line_type == 'Type' or line_type == 'ErrorType':
+            if line_type == 'ObjectHeaderField':
+                # We are not interested in object header
+                pass
+            elif line_type == 'Type' or line_type == 'ErrorType':
                 commit_current_type()  # We are starting new type
 
                 assert len(split) == 4

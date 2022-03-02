@@ -5,32 +5,30 @@ import VioletCore
 /// Guaranteed to be word aligned.
 public struct PyObjectHeader {
 
-  internal enum Layout {
-    internal static let typeOffset = 0
-    internal static let typeSize = SizeOf.object
+  // MARK: - Type
 
-    internal static let __dict__Offset = typeOffset + typeSize
-    internal static let __dict__Size = SizeOf.optionalObject
-
-    internal static let flagsOffset = __dict__Offset + __dict__Size
-    internal static let flagsSize = Flags.size
-
-    internal static let size = AlignmentOf.roundUp(
-      Layout.flagsOffset + Layout.flagsSize,
-      to: AlignmentOf.word
-    )
-
-    internal static let alignment = AlignmentOf.word
+  // sourcery: storeInMemory
+  /// Also known as `klass`, but we are using CPython naming convention.
+  public var type: PyType {
+    return self.typePtr.pointee
   }
 
-  // MARK: - Properties
+  // MARK: - __dict__
 
-  private var typePtr: Ptr<PyType> { self.ptr[Layout.typeOffset] }
-  private var __dict__Ptr: Ptr<PyObjectHeader.LazyDict> { self.ptr[Layout.__dict__Offset] }
-  private var flagsPtr: Ptr<Flags> { self.ptr[Layout.flagsOffset] }
+  /// Lazy property written by hand.
+  internal enum LazyDict {
+    /// There is no spoon... (aka. `self.type` does not allow `__dict__`)
+    case thereIsNoDict
+    /// `__dict__` is available, but not yet created
+    case lazyNotCreated(Py)
+    case created(PyDict)
+  }
 
-  /// Also known as `klass`, but we are using CPython naming convention.
-  public var type: PyType { self.typePtr.pointee }
+  // sourcery: storeInMemory
+  private var lazy__dict__: PyObjectHeader.LazyDict {
+    get { return self.lazy__dict__Ptr.pointee }
+    nonmutating set { self.lazy__dict__Ptr.pointee = newValue }
+  }
 
   /// Internal dictionary of attributes for the specific instance.
   ///
@@ -51,15 +49,13 @@ public struct PyObjectHeader {
   /// Use `Py.get__dict__` instead.
   public internal(set) var __dict__: PyDict {
     get {
-      // Lazy property written by hand.
-      let pointee = self.__dict__Ptr.pointee
-      switch pointee {
+      switch self.lazy__dict__ {
       case .thereIsNoDict:
         let typeName = self.type.name
         trap("\(typeName) does not even '__dict__'.")
       case .lazyNotCreated(let py):
         let value = py.newDict()
-        self.__dict__Ptr.pointee = LazyDict.created(value)
+        self.lazy__dict__ = LazyDict.created(value)
         return value
       case .created(let value):
         return value
@@ -67,18 +63,13 @@ public struct PyObjectHeader {
     }
     nonmutating set {
       assert(self.type.typeFlags.instancesHave__dict__)
-      self.__dict__Ptr.pointee = LazyDict.created(newValue)
+      self.lazy__dict__ = LazyDict.created(newValue)
     }
   }
 
-  private enum LazyDict {
-    /// There is no spoon... (aka. `self.type` does not allow `__dict__`)
-    case thereIsNoDict
-    /// `__dict__` is available, but not yet created
-    case lazyNotCreated(Py)
-    case created(PyDict)
-  }
+  // MARK: - Flags
 
+  // sourcery: storeInMemory
   /// Various flags that describe the current state of the `PyObject`.
   ///
   /// It can also be used to store `Bool` properties (via `custom` flags).
@@ -95,7 +86,7 @@ public struct PyObjectHeader {
     self.ptr = ptr
   }
 
-  // MARK: - Initialize
+  // MARK: - Initialize/deinitialize
 
   internal func initialize(_ py: Py, type: PyType, __dict__: PyDict? = nil) {
     self.typePtr.initialize(to: type)
@@ -112,12 +103,12 @@ public struct PyObjectHeader {
       lazy__dict__ = .thereIsNoDict
     }
 
-    self.__dict__Ptr.initialize(to: lazy__dict__)
+    self.lazy__dict__Ptr.initialize(to: lazy__dict__)
   }
 
   internal func deinitialize() {
     self.typePtr.deinitialize()
-    self.__dict__Ptr.deinitialize()
+    self.lazy__dict__Ptr.deinitialize()
     self.flagsPtr.deinitialize() // Trivial
   }
 }

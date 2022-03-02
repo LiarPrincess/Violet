@@ -2,7 +2,6 @@ from typing import List, Union
 
 from Sourcery.signature import SignatureInfo
 
-
 class TypeInfo:
     '''
     Swift type implementing Python type.

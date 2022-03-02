@@ -17,11 +17,54 @@ import VioletCompiler
 // swiftlint:disable file_length
 
 // This file contains:
+// - For 'PyObjectHeader':
+//   - PyObjectHeader.Layout
+//   - PyObjectHeader.xxxPtr - pointer properties to fields
 // - PyMemory.newTypeAndObjectTypes - because they have recursive dependency
 // - then for each type:
 //   - PyMemory.[TYPE_NAME]Layout - mainly field offsets
 //   - PyMemory.new[TYPE_NAME] - to create new object of this type
 //   - [TYPE_NAME].deinitialize(ptr:) - to deinitialize this object before deletion
+
+// MARK: - PyObjectHeader
+
+extension PyObjectHeader {
+
+  /// This type was automatically generated based on `PyObjectHeader` fields
+  /// with `sourcery: storeInMemory` annotation.
+  internal struct Layout {
+    internal let typeOffset: Int
+    internal let lazy__dict__Offset: Int
+    internal let flagsOffset: Int
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: 0,
+        initialAlignment: 0,
+        fields: [
+          PyMemory.FieldLayout(from: PyType.self),
+          PyMemory.FieldLayout(from: PyObjectHeader.LazyDict.self),
+          PyMemory.FieldLayout(from: Flags.self)
+        ]
+      )
+
+      assert(layout.offsets.count == 3)
+      self.typeOffset = layout.offsets[0]
+      self.lazy__dict__Offset = layout.offsets[1]
+      self.flagsOffset = layout.offsets[2]
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+  internal var typePtr: Ptr<PyType> { Ptr(self.ptr, offset: Self.layout.typeOffset) }
+  internal var lazy__dict__Ptr: Ptr<PyObjectHeader.LazyDict> { Ptr(self.ptr, offset: Self.layout.lazy__dict__Offset) }
+  internal var flagsPtr: Ptr<Flags> { Ptr(self.ptr, offset: Self.layout.flagsOffset) }
+}
 
 // MARK: - Type/object types init
 
@@ -82,8 +125,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: BigInt.self)
         ]
@@ -140,8 +183,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: FunctionWrapper.self),
           FieldLayout(from: PyObject?.self),
@@ -209,8 +252,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: FunctionWrapper.self),
           FieldLayout(from: PyObject.self),
@@ -280,8 +323,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: Data.self)
         ]
@@ -337,8 +380,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyByteArray.self),
           FieldLayout(from: Int.self)
@@ -396,8 +439,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: Data.self)
         ]
@@ -453,8 +496,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyBytes.self),
           FieldLayout(from: Int.self)
@@ -513,8 +556,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyObject.self),
           FieldLayout(from: PyObject.self)
@@ -574,8 +617,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyObject?.self)
         ]
@@ -630,8 +673,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyObject?.self)
         ]
@@ -699,8 +742,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyString.self),
           FieldLayout(from: PyString.self),
@@ -795,8 +838,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: Double.self),
           FieldLayout(from: Double.self)
@@ -856,8 +899,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyDict.OrderedDictionary.self)
         ]
@@ -914,8 +957,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyDict.self),
           FieldLayout(from: Int.self),
@@ -976,8 +1019,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyDict.self)
         ]
@@ -1034,8 +1077,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyDict.self),
           FieldLayout(from: Int.self),
@@ -1096,8 +1139,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyDict.self)
         ]
@@ -1154,8 +1197,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyDict.self),
           FieldLayout(from: Int.self),
@@ -1216,8 +1259,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyDict.self)
         ]
@@ -1271,8 +1314,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: []
       )
 
@@ -1321,8 +1364,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyObject.self),
           FieldLayout(from: BigInt.self)
@@ -1383,8 +1426,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyObject.self),
           FieldLayout(from: PyObject.self)
@@ -1444,8 +1487,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: Double.self)
         ]
@@ -1511,8 +1554,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyCode.self),
           FieldLayout(from: PyFrame?.self),
@@ -1606,8 +1649,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyFrozenSet.OrderedSet.self)
         ]
@@ -1671,8 +1714,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyString.self),
           FieldLayout(from: PyString.self),
@@ -1760,8 +1803,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: BigInt.self)
         ]
@@ -1817,8 +1860,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyObject.self),
           FieldLayout(from: Int.self)
@@ -1876,8 +1919,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: [PyObject].self)
         ]
@@ -1933,8 +1976,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyList.self),
           FieldLayout(from: Int.self)
@@ -1993,8 +2036,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyList.self),
           FieldLayout(from: Int.self)
@@ -2053,8 +2096,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyObject.self),
           FieldLayout(from: [PyObject].self)
@@ -2115,8 +2158,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyFunction.self),
           FieldLayout(from: PyObject.self)
@@ -2175,8 +2218,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: []
       )
 
@@ -2229,8 +2272,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: []
       )
 
@@ -2279,8 +2322,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: []
       )
 
@@ -2327,8 +2370,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: []
       )
 
@@ -2375,8 +2418,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: []
       )
 
@@ -2427,8 +2470,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyObject?.self),
           FieldLayout(from: PyObject?.self),
@@ -2501,8 +2544,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyInt.self),
           FieldLayout(from: PyInt.self),
@@ -2573,8 +2616,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: BigInt.self),
           FieldLayout(from: BigInt.self),
@@ -2643,8 +2686,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyObject.self),
           FieldLayout(from: Int.self)
@@ -2704,8 +2747,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PySet.OrderedSet.self)
         ]
@@ -2762,8 +2805,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyAnySet.self),
           FieldLayout(from: Int.self),
@@ -2845,8 +2888,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyObject.self),
           FieldLayout(from: PyObject.self),
@@ -2911,8 +2954,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyObject?.self)
         ]
@@ -2969,8 +3012,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: String.self),
           FieldLayout(from: Int.self),
@@ -3032,8 +3075,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyString.self),
           FieldLayout(from: Int.self)
@@ -3093,8 +3136,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyType?.self),
           FieldLayout(from: PyObject?.self),
@@ -3163,8 +3206,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: String?.self),
           FieldLayout(from: FileDescriptorType.self),
@@ -3241,8 +3284,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: [PyObject].self)
         ]
@@ -3298,8 +3341,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: PyTuple.self),
           FieldLayout(from: Int.self)
@@ -3366,8 +3409,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: String.self),
           FieldLayout(from: String.self),
@@ -3469,8 +3512,8 @@ extension PyMemory {
 
     internal init() {
       let layout = PyMemory.GenericLayout(
-        initialOffset: PyObjectHeader.Layout.size,
-        initialAlignment: PyObjectHeader.Layout.alignment,
+        initialOffset: PyObjectHeader.layout.size,
+        initialAlignment: PyObjectHeader.layout.alignment,
         fields: [
           FieldLayout(from: [PyObject].self)
         ]

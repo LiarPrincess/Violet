@@ -47,6 +47,14 @@ public struct RawPtr {
     return Ptr(unsafePtr)
   }
 
+  // MARK: - Advanced by
+
+  /// Returns a `ptr` that is offset the specified distance from this `ptr`.
+  public func advanced(by n: Int) -> RawPtr {
+    let raw = self.value.advanced(by: n)
+    return RawPtr(raw)
+  }
+
   // MARK: - Allocate
 
   /// Allocates uninitialized memory with the specified size and alignment.
