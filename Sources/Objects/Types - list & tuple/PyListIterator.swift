@@ -27,8 +27,8 @@ public struct PyListIterator: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, list: PyList) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, list: PyList) {
+    self.header.initialize(py, type: type)
     self.listPtr.initialize(to: list)
     self.indexPtr.initialize(to: 0)
   }

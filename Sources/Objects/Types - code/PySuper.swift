@@ -57,11 +57,12 @@ public struct PySuper: PyObjectMixin, HasCustomGetMethod {
 
   // MARK: - Initialize/deinitialize
 
-  internal func initialize(type: PyType,
+  internal func initialize(_ py: Py,
+                           type: PyType,
                            requestedType: PyType?,
                            object: PyObject?,
                            objectType: PyType?) {
-    self.header.initialize(type: type)
+    self.header.initialize(py, type: type)
     self.thisClassPtr.initialize(to: requestedType)
     self.objectPtr.initialize(to: object)
     self.objectTypePtr.initialize(to: objectType)

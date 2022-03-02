@@ -29,9 +29,9 @@ public struct PyDictItemIterator: PyObjectMixin, AbstractDictViewIterator {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, dict: PyDict) {
+  internal func initialize(_ py: Py, type: PyType, dict: PyDict) {
     let initialCount = dict.elements.count
-    self.header.initialize(type: type)
+    self.header.initialize(py, type: type)
     self.dictPtr.initialize(to: dict)
     self.indexPtr.initialize(to: 0)
     self.initialCountPtr.initialize(to: initialCount)

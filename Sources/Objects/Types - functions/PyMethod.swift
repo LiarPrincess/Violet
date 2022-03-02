@@ -34,8 +34,11 @@ public struct PyMethod: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, function: PyFunction, object: PyObject) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py,
+                           type: PyType,
+                           function: PyFunction,
+                           object: PyObject) {
+    self.header.initialize(py, type: type)
     self.functionPtr.initialize(to: function)
     self.objectPtr.initialize(to: object)
   }

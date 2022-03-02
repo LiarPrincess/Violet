@@ -27,8 +27,8 @@ public struct PyCallableIterator: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, callable: PyObject, sentinel: PyObject) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, callable: PyObject, sentinel: PyObject) {
+    self.header.initialize(py, type: type)
     self.callablePtr.initialize(to: callable)
     self.sentinelPtr.initialize(to: sentinel)
   }

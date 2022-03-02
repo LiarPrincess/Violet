@@ -80,7 +80,11 @@ public struct PyRange: PyObjectMixin {
 
   // MARK: - Initialize/deinitialize
 
-  internal func initialize(type: PyType, start: PyInt, stop: PyInt, step: PyInt?) {
+  internal func initialize(_ py: Py,
+                           type: PyType,
+                           start: PyInt,
+                           stop: PyInt,
+                           step: PyInt?) {
     assert(
       step?.value != 0,
       "PyRange.step cannot be 0. Use 'Py.newRange' to handle this case."
@@ -91,11 +95,11 @@ public struct PyRange: PyObjectMixin {
                                          stop: stop.value,
                                          step: unwrappedStep)
 
-    self.header.initialize(type: type)
+    self.header.initialize(py, type: type)
     self.startPtr.initialize(to: start)
     self.stopPtr.initialize(to: stop)
-    self.stepPtr.initialize(to: Py.newInt(unwrappedStep))
-    self.lengthPtr.initialize(to: Py.newInt(length))
+    self.stepPtr.initialize(to: py.newInt(unwrappedStep))
+    self.lengthPtr.initialize(to: py.newInt(length))
 
     self.stepType = step == nil ? .implicit : .explicit
   }

@@ -82,7 +82,7 @@ import VioletCore
       // Requirements for 'self.object' and 'self.type':
       // 1. 'type' inherits from 'object'
       // 2. both 'type' and 'object' are instances of 'type'
-      let pair = memory.newTypeAndObjectTypes()
+      let pair = memory.newTypeAndObjectTypes(py)
       self.{object_type.property_name} = pair.objectType
       self.{type_type.property_name} = pair.typeType
 ''')

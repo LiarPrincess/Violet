@@ -26,11 +26,12 @@ public struct PyModule: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType,
+  internal func initialize(_ py: Py,
+                           type: PyType,
                            name: PyObject?,
                            doc: PyObject?,
                            __dict__: PyDict? = nil) {
-    self.header.initialize(type: type, __dict__: __dict__)
+    self.header.initialize(py, type: type, __dict__: __dict__)
     self.initDictContent(name: name, doc: doc)
   }
 

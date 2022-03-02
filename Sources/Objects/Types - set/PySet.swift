@@ -36,8 +36,8 @@ import VioletCore
      self.ptr = ptr
    }
 
-   internal func initialize(type: PyType, elements: PySet.OrderedSet) {
-     self.header.initialize(type: type)
+   internal func initialize(_ py: Py, type: PyType, elements: PySet.OrderedSet) {
+     self.header.initialize(py, type: type)
      self.elementsPtr.initialize(to: elements)
    }
 

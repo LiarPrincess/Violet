@@ -44,8 +44,8 @@ public struct PyList: PyObjectMixin, AbstractSequence {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, elements: [PyObject]) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, elements: [PyObject]) {
+    self.header.initialize(py, type: type)
     self.elementsPtr.initialize(to: elements)
   }
 

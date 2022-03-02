@@ -24,8 +24,8 @@ public struct PyEllipsis: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType) {
+    self.header.initialize(py, type: type)
   }
 
   // Nothing to do here.

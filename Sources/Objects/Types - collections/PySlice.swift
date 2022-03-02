@@ -46,8 +46,8 @@ public struct PySlice: PyObjectMixin {
 
   // MARK: - Initialize/deinitialize
 
-  internal func initialize(type: PyType, start: PyObject, stop: PyObject, step: PyObject) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, start: PyObject, stop: PyObject, step: PyObject) {
+    self.header.initialize(py, type: type)
     self.startPtr.initialize(to: start)
     self.stopPtr.initialize(to: stop)
     self.stepPtr.initialize(to: step)

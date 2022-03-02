@@ -30,7 +30,7 @@ extension PyMemory {
   /// Those types require a special treatment because:
   /// - `object` type has `type` type
   /// - `type` type has `type` type (self reference) and `object` type as base
-  public func newTypeAndObjectTypes() -> (objectType: PyType, typeType: PyType) {
+  public func newTypeAndObjectTypes(_ py: Py) -> (objectType: PyType, typeType: PyType) {
     let layout = PyType.layout
     let objectTypePtr = self.allocate(size: layout.size, alignment: layout.alignment)
     let typeTypePtr = self.allocate(size: layout.size, alignment: layout.alignment)
@@ -38,7 +38,8 @@ extension PyMemory {
     let objectType = PyType(ptr: objectTypePtr)
     let typeType = PyType(ptr: typeTypePtr)
 
-    objectType.initialize(type: typeType,
+    objectType.initialize(py,
+                          type: typeType,
                           name: "object",
                           qualname: "object",
                           flags: [.isBaseTypeFlag, .isDefaultFlag, .subclassInstancesHave__dict__Flag],
@@ -46,12 +47,13 @@ extension PyMemory {
                           bases: [],
                           mroWithoutSelf: [],
                           subclasses: [],
-                          layout: PyContext.Types.objectMemoryLayout,
-                          staticMethods: PyContext.Types.objectStaticMethods,
+                          layout: Py.Types.objectMemoryLayout,
+                          staticMethods: Py.Types.objectStaticMethods,
                           debugFn: PyObject.createDebugString(ptr:),
                           deinitialize: PyObject.deinitialize(ptr:))
 
-    typeType.initialize(type: typeType,
+    typeType.initialize(py,
+                        type: typeType,
                         name: "type",
                         qualname: "type",
                         flags: [.hasGCFlag, .instancesHave__dict__Flag, .isBaseTypeFlag, .isDefaultFlag, .isTypeSubclassFlag],
@@ -59,8 +61,8 @@ extension PyMemory {
                         bases: [objectType],
                         mroWithoutSelf: [objectType],
                         subclasses: [],
-                        layout: PyContext.Types.typeMemoryLayout,
-                        staticMethods: PyContext.Types.typeStaticMethods,
+                        layout: Py.Types.typeMemoryLayout,
+                        staticMethods: Py.Types.typeStaticMethods,
                         debugFn: PyType.createDebugString(ptr:),
                         deinitialize: PyType.deinitialize(ptr:))
 
@@ -96,6 +98,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `bool` type.
   public func newBool(
+    _ py: Py,
     type: PyType,
     value: Bool
   ) -> PyBool {
@@ -104,6 +107,7 @@ extension PyMemory {
     let result = PyBool(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       value: value
     )
@@ -156,6 +160,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `builtinFunction` type.
   public func newBuiltinFunction(
+    _ py: Py,
     type: PyType,
     function: FunctionWrapper,
     module: PyObject?,
@@ -166,6 +171,7 @@ extension PyMemory {
     let result = PyBuiltinFunction(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       function: function,
       module: module,
@@ -225,6 +231,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `builtinMethod` type.
   public func newBuiltinMethod(
+    _ py: Py,
     type: PyType,
     function: FunctionWrapper,
     object: PyObject,
@@ -236,6 +243,7 @@ extension PyMemory {
     let result = PyBuiltinMethod(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       function: function,
       object: object,
@@ -288,6 +296,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `bytearray` type.
   public func newByteArray(
+    _ py: Py,
     type: PyType,
     elements: Data
   ) -> PyByteArray {
@@ -296,6 +305,7 @@ extension PyMemory {
     let result = PyByteArray(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       elements: elements
     )
@@ -345,6 +355,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `bytearray_iterator` type.
   public func newByteArrayIterator(
+    _ py: Py,
     type: PyType,
     bytes: PyByteArray
   ) -> PyByteArrayIterator {
@@ -353,6 +364,7 @@ extension PyMemory {
     let result = PyByteArrayIterator(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       bytes: bytes
     )
@@ -400,6 +412,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `bytes` type.
   public func newBytes(
+    _ py: Py,
     type: PyType,
     elements: Data
   ) -> PyBytes {
@@ -408,6 +421,7 @@ extension PyMemory {
     let result = PyBytes(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       elements: elements
     )
@@ -457,6 +471,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `bytes_iterator` type.
   public func newBytesIterator(
+    _ py: Py,
     type: PyType,
     bytes: PyBytes
   ) -> PyBytesIterator {
@@ -465,6 +480,7 @@ extension PyMemory {
     let result = PyBytesIterator(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       bytes: bytes
     )
@@ -515,6 +531,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `callable_iterator` type.
   public func newCallableIterator(
+    _ py: Py,
     type: PyType,
     callable: PyObject,
     sentinel: PyObject
@@ -524,6 +541,7 @@ extension PyMemory {
     let result = PyCallableIterator(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       callable: callable,
       sentinel: sentinel
@@ -572,6 +590,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `cell` type.
   public func newCell(
+    _ py: Py,
     type: PyType,
     content: PyObject?
   ) -> PyCell {
@@ -580,6 +599,7 @@ extension PyMemory {
     let result = PyCell(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       content: content
     )
@@ -626,6 +646,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `classmethod` type.
   public func newClassMethod(
+    _ py: Py,
     type: PyType,
     callable: PyObject?
   ) -> PyClassMethod {
@@ -634,6 +655,7 @@ extension PyMemory {
     let result = PyClassMethod(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       callable: callable
     )
@@ -719,6 +741,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `code` type.
   public func newCode(
+    _ py: Py,
     type: PyType,
     code: CodeObject
   ) -> PyCode {
@@ -727,6 +750,7 @@ extension PyMemory {
     let result = PyCode(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       code: code
     )
@@ -789,6 +813,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `complex` type.
   public func newComplex(
+    _ py: Py,
     type: PyType,
     real: Double,
     imag: Double
@@ -798,6 +823,7 @@ extension PyMemory {
     let result = PyComplex(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       real: real,
       imag: imag
@@ -846,6 +872,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `dict` type.
   public func newDict(
+    _ py: Py,
     type: PyType,
     elements: PyDict.OrderedDictionary
   ) -> PyDict {
@@ -854,6 +881,7 @@ extension PyMemory {
     let result = PyDict(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       elements: elements
     )
@@ -906,6 +934,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `dict_itemiterator` type.
   public func newDictItemIterator(
+    _ py: Py,
     type: PyType,
     dict: PyDict
   ) -> PyDictItemIterator {
@@ -914,6 +943,7 @@ extension PyMemory {
     let result = PyDictItemIterator(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       dict: dict
     )
@@ -962,6 +992,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `dict_items` type.
   public func newDictItems(
+    _ py: Py,
     type: PyType,
     dict: PyDict
   ) -> PyDictItems {
@@ -970,6 +1001,7 @@ extension PyMemory {
     let result = PyDictItems(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       dict: dict
     )
@@ -1022,6 +1054,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `dict_keyiterator` type.
   public func newDictKeyIterator(
+    _ py: Py,
     type: PyType,
     dict: PyDict
   ) -> PyDictKeyIterator {
@@ -1030,6 +1063,7 @@ extension PyMemory {
     let result = PyDictKeyIterator(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       dict: dict
     )
@@ -1078,6 +1112,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `dict_keys` type.
   public func newDictKeys(
+    _ py: Py,
     type: PyType,
     dict: PyDict
   ) -> PyDictKeys {
@@ -1086,6 +1121,7 @@ extension PyMemory {
     let result = PyDictKeys(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       dict: dict
     )
@@ -1138,6 +1174,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `dict_valueiterator` type.
   public func newDictValueIterator(
+    _ py: Py,
     type: PyType,
     dict: PyDict
   ) -> PyDictValueIterator {
@@ -1146,6 +1183,7 @@ extension PyMemory {
     let result = PyDictValueIterator(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       dict: dict
     )
@@ -1194,6 +1232,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `dict_values` type.
   public func newDictValues(
+    _ py: Py,
     type: PyType,
     dict: PyDict
   ) -> PyDictValues {
@@ -1202,6 +1241,7 @@ extension PyMemory {
     let result = PyDictValues(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       dict: dict
     )
@@ -1244,6 +1284,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `ellipsis` type.
   public func newEllipsis(
+    _ py: Py,
     type: PyType
   ) -> PyEllipsis {
     let typeLayout = PyEllipsis.layout
@@ -1251,6 +1292,7 @@ extension PyMemory {
     let result = PyEllipsis(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type
     )
 
@@ -1297,6 +1339,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `enumerate` type.
   public func newEnumerate(
+    _ py: Py,
     type: PyType,
     iterator: PyObject,
     initialIndex: BigInt
@@ -1306,6 +1349,7 @@ extension PyMemory {
     let result = PyEnumerate(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       iterator: iterator,
       initialIndex: initialIndex
@@ -1357,6 +1401,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `filter` type.
   public func newFilter(
+    _ py: Py,
     type: PyType,
     fn: PyObject,
     iterator: PyObject
@@ -1366,6 +1411,7 @@ extension PyMemory {
     let result = PyFilter(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       fn: fn,
       iterator: iterator
@@ -1414,6 +1460,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `float` type.
   public func newFloat(
+    _ py: Py,
     type: PyType,
     value: Double
   ) -> PyFloat {
@@ -1422,6 +1469,7 @@ extension PyMemory {
     let result = PyFloat(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       value: value
     )
@@ -1501,6 +1549,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `frame` type.
   public func newFrame(
+    _ py: Py,
     type: PyType,
     code: PyCode,
     locals: PyDict,
@@ -1512,6 +1561,7 @@ extension PyMemory {
     let result = PyFrame(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       code: code,
       locals: locals,
@@ -1572,6 +1622,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `frozenset` type.
   public func newFrozenSet(
+    _ py: Py,
     type: PyType,
     elements: PyFrozenSet.OrderedSet
   ) -> PyFrozenSet {
@@ -1580,6 +1631,7 @@ extension PyMemory {
     let result = PyFrozenSet(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       elements: elements
     )
@@ -1653,6 +1705,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `function` type.
   public func newFunction(
+    _ py: Py,
     type: PyType,
     qualname: PyString?,
     module: PyObject,
@@ -1664,6 +1717,7 @@ extension PyMemory {
     let result = PyFunction(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       qualname: qualname,
       module: module,
@@ -1722,6 +1776,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `int` type.
   public func newInt(
+    _ py: Py,
     type: PyType,
     value: BigInt
   ) -> PyInt {
@@ -1730,6 +1785,7 @@ extension PyMemory {
     let result = PyInt(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       value: value
     )
@@ -1779,6 +1835,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `iterator` type.
   public func newIterator(
+    _ py: Py,
     type: PyType,
     sequence: PyObject
   ) -> PyIterator {
@@ -1787,6 +1844,7 @@ extension PyMemory {
     let result = PyIterator(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       sequence: sequence
     )
@@ -1834,6 +1892,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `list` type.
   public func newList(
+    _ py: Py,
     type: PyType,
     elements: [PyObject]
   ) -> PyList {
@@ -1842,6 +1901,7 @@ extension PyMemory {
     let result = PyList(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       elements: elements
     )
@@ -1891,6 +1951,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `list_iterator` type.
   public func newListIterator(
+    _ py: Py,
     type: PyType,
     list: PyList
   ) -> PyListIterator {
@@ -1899,6 +1960,7 @@ extension PyMemory {
     let result = PyListIterator(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       list: list
     )
@@ -1949,6 +2011,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `list_reverseiterator` type.
   public func newListReverseIterator(
+    _ py: Py,
     type: PyType,
     list: PyList
   ) -> PyListReverseIterator {
@@ -1957,6 +2020,7 @@ extension PyMemory {
     let result = PyListReverseIterator(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       list: list
     )
@@ -2007,6 +2071,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `map` type.
   public func newMap(
+    _ py: Py,
     type: PyType,
     fn: PyObject,
     iterators: [PyObject]
@@ -2016,6 +2081,7 @@ extension PyMemory {
     let result = PyMap(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       fn: fn,
       iterators: iterators
@@ -2067,6 +2133,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `method` type.
   public func newMethod(
+    _ py: Py,
     type: PyType,
     function: PyFunction,
     object: PyObject
@@ -2076,6 +2143,7 @@ extension PyMemory {
     let result = PyMethod(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       function: function,
       object: object
@@ -2120,6 +2188,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `module` type.
   public func newModule(
+    _ py: Py,
     type: PyType,
     name: PyObject?,
     doc: PyObject?,
@@ -2130,6 +2199,7 @@ extension PyMemory {
     let result = PyModule(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       name: name,
       doc: doc,
@@ -2172,6 +2242,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `SimpleNamespace` type.
   public func newNamespace(
+    _ py: Py,
     type: PyType,
     __dict__: PyDict?
   ) -> PyNamespace {
@@ -2180,6 +2251,7 @@ extension PyMemory {
     let result = PyNamespace(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       __dict__: __dict__
     )
@@ -2220,6 +2292,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `NoneType` type.
   public func newNone(
+    _ py: Py,
     type: PyType
   ) -> PyNone {
     let typeLayout = PyNone.layout
@@ -2227,6 +2300,7 @@ extension PyMemory {
     let result = PyNone(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type
     )
 
@@ -2266,6 +2340,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `NotImplementedType` type.
   public func newNotImplemented(
+    _ py: Py,
     type: PyType
   ) -> PyNotImplemented {
     let typeLayout = PyNotImplemented.layout
@@ -2273,6 +2348,7 @@ extension PyMemory {
     let result = PyNotImplemented(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type
     )
 
@@ -2312,6 +2388,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `object` type.
   public func newObject(
+    _ py: Py,
     type: PyType
   ) -> PyObject {
     let typeLayout = PyObject.layout
@@ -2319,6 +2396,7 @@ extension PyMemory {
     let result = PyObject(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type
     )
 
@@ -2371,6 +2449,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `property` type.
   public func newProperty(
+    _ py: Py,
     type: PyType,
     get: PyObject?,
     set: PyObject?,
@@ -2382,6 +2461,7 @@ extension PyMemory {
     let result = PyProperty(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       get: get,
       set: set,
@@ -2443,6 +2523,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `range` type.
   public func newRange(
+    _ py: Py,
     type: PyType,
     start: PyInt,
     stop: PyInt,
@@ -2453,6 +2534,7 @@ extension PyMemory {
     let result = PyRange(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       start: start,
       stop: stop,
@@ -2513,6 +2595,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `range_iterator` type.
   public func newRangeIterator(
+    _ py: Py,
     type: PyType,
     start: BigInt,
     step: BigInt,
@@ -2523,6 +2606,7 @@ extension PyMemory {
     let result = PyRangeIterator(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       start: start,
       step: step,
@@ -2577,6 +2661,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `reversed` type.
   public func newReversed(
+    _ py: Py,
     type: PyType,
     sequence: PyObject,
     count: Int
@@ -2586,6 +2671,7 @@ extension PyMemory {
     let result = PyReversed(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       sequence: sequence,
       count: count
@@ -2634,6 +2720,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `set` type.
   public func newSet(
+    _ py: Py,
     type: PyType,
     elements: PySet.OrderedSet
   ) -> PySet {
@@ -2642,6 +2729,7 @@ extension PyMemory {
     let result = PySet(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       elements: elements
     )
@@ -2694,6 +2782,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `set_iterator` type.
   public func newSetIterator(
+    _ py: Py,
     type: PyType,
     set: PySet
   ) -> PySetIterator {
@@ -2702,6 +2791,7 @@ extension PyMemory {
     let result = PySetIterator(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       set: set
     )
@@ -2711,6 +2801,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `set_iterator` type.
   public func newSetIterator(
+    _ py: Py,
     type: PyType,
     frozenSet: PyFrozenSet
   ) -> PySetIterator {
@@ -2719,6 +2810,7 @@ extension PyMemory {
     let result = PySetIterator(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       frozenSet: frozenSet
     )
@@ -2773,6 +2865,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `slice` type.
   public func newSlice(
+    _ py: Py,
     type: PyType,
     start: PyObject,
     stop: PyObject,
@@ -2783,6 +2876,7 @@ extension PyMemory {
     let result = PySlice(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       start: start,
       stop: stop,
@@ -2833,6 +2927,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `staticmethod` type.
   public func newStaticMethod(
+    _ py: Py,
     type: PyType,
     callable: PyObject?
   ) -> PyStaticMethod {
@@ -2841,6 +2936,7 @@ extension PyMemory {
     let result = PyStaticMethod(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       callable: callable
     )
@@ -2893,6 +2989,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `str` type.
   public func newString(
+    _ py: Py,
     type: PyType,
     value: String
   ) -> PyString {
@@ -2901,6 +2998,7 @@ extension PyMemory {
     let result = PyString(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       value: value
     )
@@ -2952,6 +3050,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `str_iterator` type.
   public func newStringIterator(
+    _ py: Py,
     type: PyType,
     string: PyString
   ) -> PyStringIterator {
@@ -2960,6 +3059,7 @@ extension PyMemory {
     let result = PyStringIterator(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       string: string
     )
@@ -3013,6 +3113,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `super` type.
   public func newSuper(
+    _ py: Py,
     type: PyType,
     requestedType: PyType?,
     object: PyObject?,
@@ -3023,6 +3124,7 @@ extension PyMemory {
     let result = PySuper(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       requestedType: requestedType,
       object: object,
@@ -3085,6 +3187,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `TextFile` type.
   public func newTextFile(
+    _ py: Py,
     type: PyType,
     name: String?,
     fd: FileDescriptorType,
@@ -3098,6 +3201,7 @@ extension PyMemory {
     let result = PyTextFile(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       name: name,
       fd: fd,
@@ -3153,6 +3257,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `tuple` type.
   public func newTuple(
+    _ py: Py,
     type: PyType,
     elements: [PyObject]
   ) -> PyTuple {
@@ -3161,6 +3266,7 @@ extension PyMemory {
     let result = PyTuple(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       elements: elements
     )
@@ -3210,6 +3316,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `tuple_iterator` type.
   public func newTupleIterator(
+    _ py: Py,
     type: PyType,
     tuple: PyTuple
   ) -> PyTupleIterator {
@@ -3218,6 +3325,7 @@ extension PyMemory {
     let result = PyTupleIterator(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       tuple: tuple
     )
@@ -3292,6 +3400,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `type` type.
   public func newType(
+    _ py: Py,
     type: PyType,
     name: String,
     qualname: String,
@@ -3310,6 +3419,7 @@ extension PyMemory {
     let result = PyType(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       name: name,
       qualname: qualname,
@@ -3375,6 +3485,7 @@ extension PyMemory {
 
   /// Allocate a new instance of `zip` type.
   public func newZip(
+    _ py: Py,
     type: PyType,
     iterators: [PyObject]
   ) -> PyZip {
@@ -3383,6 +3494,7 @@ extension PyMemory {
     let result = PyZip(ptr: ptr)
 
     result.initialize(
+      _: py,
       type: type,
       iterators: iterators
     )

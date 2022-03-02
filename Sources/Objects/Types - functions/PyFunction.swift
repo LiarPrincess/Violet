@@ -73,12 +73,13 @@ public struct PyFunction: PyObjectMixin {
 
   // MARK: - Initialize/deinitialize
 
-  internal func initialize(type: PyType,
+  internal func initialize(_ py: Py,
+                           type: PyType,
                            qualname: PyString?,
                            module: PyObject,
                            code: PyCode,
                            globals: PyDict) {
-    self.header.initialize(type: type)
+    self.header.initialize(py, type: type)
     self.namePtr.initialize(to: name)
     self.qualnamePtr.initialize(to: qualname ?? name)
     self.modulePtr.initialize(to: module)

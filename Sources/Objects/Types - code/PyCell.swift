@@ -24,8 +24,8 @@ public struct PyCell: PyObjectMixin {
     self.ptr = ptr
   }
 
-  internal func initialize(type: PyType, content: PyObject?) {
-    self.header.initialize(type: type)
+  internal func initialize(_ py: Py, type: PyType, content: PyObject?) {
+    self.header.initialize(py, type: type)
     self.contentPtr.initialize(to: content)
   }
 

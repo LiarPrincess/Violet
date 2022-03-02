@@ -82,7 +82,8 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
   // MARK: - Initialize/deinitialize
 
   // swiftlint:disable:next function_parameter_count
-  internal func initialize(type: PyType,
+  internal func initialize(_ py: Py,
+                           type: PyType,
                            name: String,
                            qualname: String,
                            flags: PyType.TypeFlags,
@@ -99,7 +100,7 @@ public struct PyType: PyObjectMixin, HasCustomGetMethod {
     }
 
     let mro = [self] + mroWithoutSelf
-    self.header.initialize(type: type)
+    self.header.initialize(py, type: type)
     self.namePtr.initialize(to: name)
     self.qualnamePtr.initialize(to: qualname)
     self.basePtr.initialize(to: base)

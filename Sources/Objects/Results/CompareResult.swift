@@ -38,6 +38,7 @@ public enum CompareResult {
   }
 }
 
+/* MARKER
 extension CompareResult: PyFunctionResultConvertible {
   public var asFunctionResult: PyFunctionResult {
     switch self {
@@ -50,3 +51,4 @@ extension CompareResult: PyFunctionResultConvertible {
     }
   }
 }
+*/

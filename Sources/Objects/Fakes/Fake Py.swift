@@ -7,9 +7,7 @@ import VioletBytecode
 
 public typealias PyHash = Int
 
-public let Py = PyContext()
-
-public struct PyContext {
+public struct Py {
 
   public var `true`: PyBool { fatalError() }
   public var `false`: PyBool { fatalError() }
@@ -18,7 +16,7 @@ public struct PyContext {
   public var notImplemented: PyNotImplemented { fatalError() }
 
   public let memory = PyMemory()
-  public let types: Py.Types { fatalError() }
+  public var types: Py.Types { fatalError() }
 
   public func newBool(_ value: Bool) -> PyBool { fatalError() }
   public func newInt(_ value: Int) -> PyInt { fatalError() }

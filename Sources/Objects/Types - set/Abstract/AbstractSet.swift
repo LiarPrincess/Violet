@@ -19,11 +19,15 @@ public struct AbstractSet_Element: PyHashable, CustomStringConvertible {
   }
 
   public func isEqual(to other: AbstractSet_Element) -> PyResult<Bool> {
+/* MARKER
+
     guard self.hash == other.hash else {
       return .value(false)
     }
 
     return Py.isEqualBool(left: self.object, right: other.object)
+*/
+    fatalError()
   }
 }
 
