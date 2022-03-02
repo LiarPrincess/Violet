@@ -1,10 +1,9 @@
 import VioletCore
 
-public class DirResult: PyFunctionResultConvertible {
+/// Helper type used when implementing `__dir__` methods.
+internal struct DirResult {
 
   private var elements = [PyObject]()
-  /// Avoid sorting if we are already sorted.
-  private var cachedResult: PyFunctionResult?
 
   // MARK: - Init
 
@@ -16,12 +15,11 @@ public class DirResult: PyFunctionResultConvertible {
 
   // MARK: - Append
 
-  internal func append(_ element: PyObject) {
-    self.cachedResult = nil // invalidate cache
+  internal mutating func append(_ element: PyObject) {
     self.elements.append(element)
   }
 
-  internal func append<S: Sequence>(contentsOf newElements: S)
+  internal mutating func append<S: Sequence>(contentsOf newElements: S)
     where S.Element == PyObject {
 
     for element in newElements {
@@ -29,13 +27,19 @@ public class DirResult: PyFunctionResultConvertible {
     }
   }
 
-  internal func append(contentsOf newElements: DirResult) {
+  internal mutating func append(contentsOf newElements: DirResult) {
     self.append(contentsOf: newElements.elements)
   }
 
   // MARK: - Append keys/elements
 
-  internal func append(_ py: Py, keysFrom object: PyObject) -> PyBaseException? {
+  internal mutating func append(_ py: Py,
+                                keysFrom dict: PyDict) -> PyBaseException? {
+    self.append(py, keysFrom: dict.asObject)
+  }
+
+  internal mutating func append(_ py: Py,
+                                keysFrom object: PyObject) -> PyBaseException? {
     switch py.getKeys(object: object) {
     case let .value(keys):
       return self.append(py, elementsFrom: keys)
@@ -45,7 +49,8 @@ public class DirResult: PyFunctionResultConvertible {
     }
   }
 
-  internal func append(_ py: Py, elementsFrom iterable: PyObject) -> PyBaseException? {
+  internal mutating func append(_ py: Py,
+                                elementsFrom iterable: PyObject) -> PyBaseException? {
     let e = py.forEach(iterable: iterable) { object in
       self.append(object)
       return .goToNextElement
@@ -54,29 +59,15 @@ public class DirResult: PyFunctionResultConvertible {
     return e
   }
 
-  // MARK: - PyFunctionResultConvertible
+  // MARK: - Result
 
-  // 'DirResult' can be used as a return type in python function.
-  public var asFunctionResult: PyFunctionResult {
-/* MARKER
-
-    if let cached = self.cachedResult {
-      return cached
-    }
-
-    let result: PyFunctionResult
-    let list = Py.newList(elements: self.elements)
-
+  internal func toResult(_ py: Py) -> PyResult<PyObject> {
+    let list = py.newList(elements: self.elements)
     switch list.sort(key: nil, isReverse: false) {
     case .value:
-      result = .value(list.asObject)
+      return .value(list.asObject)
     case .error(let e):
-      result = .error(e)
+      return .error(e)
     }
-
-    self.cachedResult = result
-    return result
-*/
-    fatalError()
   }
 }

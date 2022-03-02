@@ -1,4 +1,3 @@
-/* MARKER
 // Docs:
 // https://docs.python.org/3/howto/descriptor.html
 
@@ -28,20 +27,18 @@
 
 // MARK: - Marker
 
-/// If descriptor is called on a class/type then this value will be used
-/// as a `object/instance` parameter.
-internal var descriptorStaticMarker: PyObject {
-  return Py.none
-}
-
-extension PyObject {
+extension Py {
 
   /// If descriptor is called on a class/type then this value will be used
   /// as a `object/instance` parameter.
-  internal var isDescriptorStaticMarker: Bool {
-    // This should be faster than doing Swift runtime check 'is PyNone'.
-    // Also 'Py' is already in cache anyway…
-    return self === Py.none
+  internal var descriptorStaticMarker: PyObject {
+    return self.none.asObject
+  }
+
+  /// If descriptor is called on a class/type then this value will be used
+  /// as a `object/instance` parameter.
+  internal func isDescriptorStaticMarker(_ object: PyObject) -> Bool {
+    return self.cast.isNone(object)
   }
 }
 
@@ -54,6 +51,7 @@ extension PyObject {
 // and then we would have to declare descriptor as `var` which is ugly.
 internal class GetDescriptor {
 
+  private let py: Py
   /// Object on which this descriptor should be called.
   private let object: PyObject
   /// Type to use when calling descriptor
@@ -75,34 +73,32 @@ internal class GetDescriptor {
   ///
   /// Most of the time this is not what you want to use!
   /// You probably want `init?(object:attribute:)`.
-  internal convenience init?(type: PyType, attribute: PyObject) {
+  internal convenience init?(_ py: Py, type: PyType, attribute: PyObject) {
     // - 'object: None' - to provide static binding
     //   ('__get__' will be called with 'None' as 2nd arg)
     // - 'type: type' - so we know the actual desired type
     //   (because we can't get it from object - it is 'None')
-    self.init(
-      object: descriptorStaticMarker,
-      type: type,
-      attribute: attribute
-    )
+    let object = py.descriptorStaticMarker
+    self.init(py, object: object, type: type, attribute: attribute)
   }
 
   /// Create a (potential) descriptor for instance property.
-  internal convenience init?(object: PyObject, attribute: PyObject) {
-    self.init(object: object, type: object.type, attribute: attribute)
+  internal convenience init?(_ py: Py, object: PyObject, attribute: PyObject) {
+    self.init(py, object: object, type: object.type, attribute: attribute)
   }
 
   /// Create a (potential) descriptor.
   ///
   /// Most of the time this is not what you want to use!
   /// You probably want `init?(object:attribute:)`.
-  internal init?(object: PyObject, type: PyType, attribute: PyObject) {
+  internal init?(_ py: Py, object: PyObject, type: PyType, attribute: PyObject) {
     // No getter -> no descriptor
     guard let getLookup = attribute.type.mroLookup(name: .__get__) else {
       return nil
     }
 
     // We found ourselves a fully functioning descriptor!
+    self.py = py
     self.object = object
     self.type = type
     self.descriptor = attribute
@@ -110,8 +106,8 @@ internal class GetDescriptor {
   }
 
   internal func call() -> PyResult<PyObject> {
-    let args = [self.descriptor, self.object, self.type]
-    switch Py.call(callable: self.get, args: args) {
+    let args = [self.descriptor, self.object, self.type.asObject]
+    switch self.py.call(callable: self.get, args: args) {
     case .value(let r):
       return .value(r)
     case .error(let e),
@@ -128,6 +124,7 @@ internal class GetDescriptor {
 // It is a class because 'GetDescriptor' also is (and we like symmetry).
 internal class SetDescriptor {
 
+  private let py: Py
   /// Object on which this descriptor should be called.
   private let object: PyObject
   /// Descriptor object (the one with get/set/del methods).
@@ -135,7 +132,7 @@ internal class SetDescriptor {
   /// `__set__` method on `self.descriptor`.
   private var set: PyObject
 
-  internal init?(object: PyObject, attributeName: PyString) {
+  internal init?(_ py: Py, object: PyObject, attributeName: PyString) {
     // Do we even have such attribute?
     let attribute: PyObject
     switch object.type.mroLookup(name: attributeName) {
@@ -151,15 +148,17 @@ internal class SetDescriptor {
       return nil
     }
 
+    self.py = py
     self.object = object
     self.descriptor = attribute
     self.set = setLookup.object
   }
 
   internal func call(value: PyObject?) -> PyResult<PyObject> {
-    let args = [self.descriptor, self.object, value ?? Py.none]
+    let none = self.py.none.asObject
+    let args = [self.descriptor, self.object, value ?? none]
 
-    switch Py.call(callable: self.set, args: args) {
+    switch self.py.call(callable: self.set, args: args) {
     case .value(let r):
       return .value(r)
     case .error(let e),
@@ -168,5 +167,3 @@ internal class SetDescriptor {
     }
   }
 }
-
-*/
