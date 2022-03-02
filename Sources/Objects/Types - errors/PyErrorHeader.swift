@@ -46,10 +46,10 @@ public struct PyErrorHeader {
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,
-                           traceback: PyTraceback? = nil,
-                           cause: PyBaseException? = nil,
-                           context: PyBaseException? = nil,
-                           suppressContext: Bool = false) {
+                           traceback: PyTraceback?,
+                           cause: PyBaseException?,
+                           context: PyBaseException?,
+                           suppressContext: Bool) {
     self.objectHeader.initialize(py, type: type)
     self.argsPtr.initialize(to: args)
     self.tracebackPtr.initialize(to: traceback)
