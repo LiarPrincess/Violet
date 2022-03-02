@@ -1,4 +1,3 @@
-/* MARKER
 import BigInt
 import FileSystem
 import VioletCore
@@ -11,121 +10,75 @@ import VioletCore
 // https://docs.python.org/3.7/c-api/exceptions.html
 // https://www.python.org/dev/peps/pep-0415/#proposal
 
-// sourcery: pyerrortype = SyntaxError, isDefault, isBaseType, hasGC
+// sourcery: pyerrortype = SyntaxError, pybase = Exception, isDefault, isBaseType, hasGC
 // sourcery: isBaseExceptionSubclass, instancesHave__dict__
-public class PySyntaxError: PyException {
+public struct PySyntaxError: PyErrorMixin {
 
   // sourcery: pytypedoc
   internal static let syntaxErrorDoc = "Invalid syntax."
 
-  // MARK: - Properties
+  // sourcery: includeInLayout
+  internal var msg: PyObject? { self.msgPtr.pointee }
+  // sourcery: includeInLayout
+  internal var filename: PyObject? { self.filenamePtr.pointee }
+  // sourcery: includeInLayout
+  internal var lineno: PyObject? { self.linenoPtr.pointee }
+  // sourcery: includeInLayout
+  internal var offset: PyObject? { self.offsetPtr.pointee }
+  // sourcery: includeInLayout
+  internal var text: PyObject? { self.textPtr.pointee }
+  // sourcery: includeInLayout
+  internal var printFileAndLine: PyObject? { self.printFileAndLinePtr.pointee }
 
-  private var msg: PyObject?
-  private var filename: PyObject?
-  private var lineno: PyObject?
-  private var offset: PyObject?
-  private var text: PyObject?
-  private var printFileAndLine: PyObject?
+  public let ptr: RawPtr
 
-  // MARK: - Init
-
-  /// Type to set in `init`.
-  override internal class var pythonTypeToSetInInit: PyType {
-    return Py.errorTypes.syntaxError
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
   // Wow, this is a lot of arguments!
   // But who cares?
   // Not me!
 
-  internal convenience init(msg: String?,
-                            filename: String?,
-                            lineno: BigInt?,
-                            offset: BigInt?,
-                            text: String?,
-                            printFileAndLine: PyObject?,
-                            traceback: PyTraceback? = nil,
-                            cause: PyBaseException? = nil,
-                            context: PyBaseException? = nil,
-                            suppressContext: Bool = false) {
-    let msg = msg.map(Py.newString(_:))
-    let filename = filename.map(Py.newString(_:))
-    let lineno = lineno.map(Py.newInt(_:))
-    let offset = offset.map(Py.newInt(_:))
-    let text = text.map(Py.newString(_:))
-
-    self.init(msg: msg,
-              filename: filename,
-              lineno: lineno,
-              offset: offset,
-              text: text,
-              printFileAndLine: printFileAndLine,
-              traceback: traceback,
-              cause: cause,
-              context: context,
-              suppressContext: suppressContext)
+  // swiftlint:disable:next function_parameter_count
+  internal func initialize(_ py: Py,
+                           type: PyType,
+                           msg: PyObject?,
+                           filename: PyObject?,
+                           lineno: PyObject?,
+                           offset: PyObject?,
+                           text: PyObject?,
+                           printFileAndLine: PyObject?,
+                           args: PyTuple,
+                           traceback: PyTraceback?,
+                           cause: PyBaseException?,
+                           context: PyBaseException?,
+                           suppressContext: Bool) {
+    self.errorHeader.initialize(py,
+                                type: type,
+                                args: args,
+                                traceback: traceback,
+                                cause: cause,
+                                context: context,
+                                suppressContext: suppressContext)
+    self.msgPtr.initialize(to: msg)
+    self.filenamePtr.initialize(to: filename)
+    self.linenoPtr.initialize(to: lineno)
+    self.offsetPtr.initialize(to: offset)
+    self.textPtr.initialize(to: text)
+    self.printFileAndLinePtr.initialize(to: printFileAndLine)
   }
 
-  internal convenience init(msg: PyString?,
-                            filename: PyString?,
-                            lineno: PyInt?,
-                            offset: PyInt?,
-                            text: PyString?,
-                            printFileAndLine: PyObject?,
-                            traceback: PyTraceback? = nil,
-                            cause: PyBaseException? = nil,
-                            context: PyBaseException? = nil,
-                            suppressContext: Bool = false) {
-    // Only 'msg' goes to args
-    var argsElements = [PyObject]()
-    if let m = msg {
-      argsElements.append(m)
-    }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
-    let args = Py.newTuple(elements: argsElements)
-    let type = Self.pythonTypeToSetInInit
-    self.init(type: type,
-              args: args,
-              traceback: traceback,
-              cause: cause,
-              context: context,
-              suppressContext: suppressContext)
-
-    // 'self.msg' should be filled from args
-    if msg != nil {
-      assert(self.msg != nil)
-    }
-
-    self.filename = filename
-    self.lineno = lineno
-    self.offset = offset
-    self.text = text
-    self.printFileAndLine = printFileAndLine
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PySyntaxError(ptr: ptr)
+    return "PySyntaxError(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
+}
 
-  /// Important: You have to manually fill `filename`, `lineno`, `offset`,
-  /// `text` and `print_file_and_line` later!
-  override internal init(type: PyType,
-                         args: PyTuple,
-                         traceback: PyTraceback? = nil,
-                         cause: PyBaseException? = nil,
-                         context: PyBaseException? = nil,
-                         suppressContext: Bool = false) {
-    super.init(type: type,
-               args: args,
-               traceback: traceback,
-               cause: cause,
-               context: context,
-               suppressContext: suppressContext)
-
-    self.fillMsgFromArgs(args: args.elements)
-  }
-
-  private func fillMsgFromArgs(args: [PyObject]) {
-    if args.count >= 1 {
-      self.msg = args[0]
-    }
-  }
+/* MARKER
 
   // MARK: - Class
 

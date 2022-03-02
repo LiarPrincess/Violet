@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -7,67 +6,51 @@ import VioletCore
 // https://docs.python.org/3.7/c-api/exceptions.html
 // https://www.python.org/dev/peps/pep-0415/#proposal
 
-// sourcery: pyerrortype = SystemExit, isDefault, isBaseType, hasGC
+// sourcery: pyerrortype = SystemExit, pybase = BaseException, isDefault, isBaseType, hasGC
 // sourcery: isBaseExceptionSubclass, instancesHave__dict__
-public final class PySystemExit: PyBaseException {
+public struct PySystemExit: PyErrorMixin {
 
   // sourcery: pytypedoc
   internal static let systemExitDoc = "Request to exit from the interpreter."
 
-  // MARK: - Properties
+  // sourcery: includeInLayout
+  internal var code: PyObject? { self.codePtr.pointee } //
 
-  private var code: PyObject?
+  public let ptr: RawPtr
 
-  // MARK: - Init
-
-  /// Type to set in `init`.
-  override internal class var pythonTypeToSetInInit: PyType {
-    return Py.errorTypes.systemExit
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  internal convenience init(code: PyObject?,
-                            traceback: PyTraceback? = nil,
-                            cause: PyBaseException? = nil,
-                            context: PyBaseException? = nil,
-                            suppressContext: Bool = false,
-                            type: PyType? = nil) {
-    var argsElements = [PyObject]()
-    if let c = code {
-      argsElements.append(c)
-    }
-
-    let args = Py.newTuple(elements: argsElements)
-    let type = Self.pythonTypeToSetInInit
-    self.init(type: type,
-              args: args,
-              traceback: traceback,
-              cause: cause,
-              context: context,
-              suppressContext: suppressContext)
+  // swiftlint:disable:next function_parameter_count
+  internal func initialize(_ py: Py,
+                           type: PyType,
+                           code: PyObject?,
+                           args: PyTuple,
+                           traceback: PyTraceback?,
+                           cause: PyBaseException?,
+                           context: PyBaseException?,
+                           suppressContext: Bool) {
+    self.errorHeader.initialize(py,
+                                type: type,
+                                args: args,
+                                traceback: traceback,
+                                cause: cause,
+                                context: context,
+                                suppressContext: suppressContext)
+    self.codePtr.initialize(to: code)
   }
 
-  override internal init(type: PyType,
-                         args: PyTuple,
-                         traceback: PyTraceback? = nil,
-                         cause: PyBaseException? = nil,
-                         context: PyBaseException? = nil,
-                         suppressContext: Bool = false) {
-    switch args.count {
-    case 0:
-      self.code = nil
-    case 1:
-      self.code = args.elements[0]
-    default:
-      self.code = args
-    }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
-    super.init(type: type,
-               args: args,
-               traceback: traceback,
-               cause: cause,
-               context: context,
-               suppressContext: suppressContext)
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PySystemExit(ptr: ptr)
+    return "PySystemExit(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
+}
+
+/* MARKER
 
   // MARK: - Class
 

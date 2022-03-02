@@ -43,6 +43,7 @@ public struct PyErrorHeader {
 
   // MARK: - Initialize/deinitialize
 
+  // swiftlint:disable:next function_parameter_count
   internal func initialize(_ py: Py,
                            type: PyType,
                            args: PyTuple,

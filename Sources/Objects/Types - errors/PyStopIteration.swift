@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -7,58 +6,51 @@ import VioletCore
 // https://docs.python.org/3.7/c-api/exceptions.html
 // https://www.python.org/dev/peps/pep-0415/#proposal
 
-// sourcery: pyerrortype = StopIteration, isDefault, isBaseType, hasGC
+// sourcery: pyerrortype = StopIteration, pybase = Exception, isDefault, isBaseType, hasGC
 // sourcery: isBaseExceptionSubclass, instancesHave__dict__
-public final class PyStopIteration: PyException {
+public struct PyStopIteration: PyErrorMixin {
 
   // sourcery: pytypedoc
   internal static let stopIterationDoc = "Signal the end from iterator.__next__()."
 
-  // MARK: - Properties
+  // sourcery: includeInLayout
+  internal var value: PyObject { self.valuePtr.pointee }
 
-  private var value: PyObject
+  public let ptr: RawPtr
 
-  // MARK: - Init
-
-  /// Type to set in `init`.
-  override internal class var pythonTypeToSetInInit: PyType {
-    return Py.errorTypes.stopIteration
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  internal convenience init(value: PyObject?,
-                            traceback: PyTraceback? = nil,
-                            cause: PyBaseException? = nil,
-                            context: PyBaseException? = nil,
-                            suppressContext: Bool = false,
-                            type: PyType? = nil) {
-    let args = Py.newTuple(value ?? Py.none)
-    let type = Self.pythonTypeToSetInInit
-    self.init(type: type,
-              args: args,
-              traceback: traceback,
-              cause: cause,
-              context: context,
-              suppressContext: suppressContext)
+  // swiftlint:disable:next function_parameter_count
+  internal func initialize(_ py: Py,
+                           type: PyType,
+                           value: PyObject,
+                           args: PyTuple,
+                           traceback: PyTraceback?,
+                           cause: PyBaseException?,
+                           context: PyBaseException?,
+                           suppressContext: Bool) {
+    self.errorHeader.initialize(py,
+                                type: type,
+                                args: args,
+                                traceback: traceback,
+                                cause: cause,
+                                context: context,
+                                suppressContext: suppressContext)
+    self.valuePtr.initialize(to: value)
   }
 
-  override internal init(type: PyType,
-                         args: PyTuple,
-                         traceback: PyTraceback? = nil,
-                         cause: PyBaseException? = nil,
-                         context: PyBaseException? = nil,
-                         suppressContext: Bool = false) {
-    self.value = Self.extractValue(args: args.elements)
-    super.init(type: type,
-               args: args,
-               traceback: traceback,
-               cause: cause,
-               context: context,
-               suppressContext: suppressContext)
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
-  private static func extractValue(args: [PyObject]) -> PyObject {
-    return args.first ?? Py.none
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyStopIteration(ptr: ptr)
+    return "PyStopIteration(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
+}
+
+/* MARKER
 
   // MARK: - Class
 
