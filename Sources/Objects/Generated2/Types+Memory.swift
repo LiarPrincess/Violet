@@ -4090,3 +4090,66 @@ extension PyMemory {
   }
 }
 
+// MARK: - PyBaseException
+
+extension PyBaseException {
+
+  /// This type was automatically generated based on `PyBaseException` fields
+  /// with `sourcery: includeInLayout` annotation.
+  internal struct Layout {
+    internal let size: Int
+    internal let alignment: Int
+
+    internal init() {
+      let layout = PyMemory.GenericLayout(
+        initialOffset: PyErrorHeader.layout.size,
+        initialAlignment: PyErrorHeader.layout.alignment,
+        fields: []
+      )
+
+      assert(layout.offsets.count == 0)
+      self.size = layout.size
+      self.alignment = layout.alignment
+    }
+  }
+
+  internal static let layout = Layout()
+
+
+  internal static func deinitialize(ptr: RawPtr) {
+    let zelf = PyBaseException(ptr: ptr)
+    zelf.beforeDeinitialize()
+    zelf.header.deinitialize()
+  }
+}
+
+extension PyMemory {
+
+  /// Allocate a new instance of `BaseException` type.
+  public func newBaseException(
+    _ py: Py,
+    type: PyType,
+    args: PyTuple,
+    traceback: PyTraceback?,
+    cause: PyBaseException?,
+    context: PyBaseException?,
+    suppressContext: Bool
+  ) -> PyBaseException {
+    let typeLayout = PyBaseException.layout
+    let ptr = self.allocate(size: typeLayout.size, alignment: typeLayout.alignment)
+    let result = PyBaseException(ptr: ptr)
+
+    result.initialize(
+      py,
+      type: type,
+      args: args,
+      traceback: traceback,
+      cause: cause,
+      context: context,
+      suppressContext: suppressContext
+    )
+
+    return result
+  }
+}
+

@@ -2,10 +2,9 @@
 {# === Macros === #}
 {# ============== #}
 
-{% macro print_type marker type %}
+{% macro print_type marker python_name type %}
 
 {% set swift_name %}{{ type.name }}{% endset %}
-{% set python_name %}{{ type.annotations.pytype }}{% endset %}
 {% set python_base_name %}{{ type.annotations.pybase }}{% endset %}
 
 ############
@@ -49,9 +48,11 @@ ErrorHeaderField|{{field.name}}|{{field.typeName}}
 {% endfor %}
 
 {% for type in types.structs|annotated:"pytype" %}
-{% call print_type "Type" type %}
+{% set python_name %}{{ type.annotations.pytype }}{% endset %}
+{% call print_type "Type" python_name type %}
 {% endfor %}
 
 {% for type in types.structs|annotated:"pyerrortype" %}
-{% call print_type "ErrorType" type %}
+{% set python_name %}{{ type.annotations.pyerrortype }}{% endset %}
+{% call print_type "ErrorType" python_name type %}
 {% endfor %}

@@ -1,4 +1,3 @@
-/* MARKER
 import VioletCore
 
 // In CPython:
@@ -11,92 +10,43 @@ import VioletCore
 
 // sourcery: pyerrortype = BaseException, isDefault, isBaseType, hasGC
 // sourcery: isBaseExceptionSubclass, instancesHave__dict__
-public class PyBaseException: PyObject {
-
-  private static let suppressContextFlag = PyObject.Flags.custom0
+public struct PyBaseException: PyErrorMixin {
 
   // sourcery: pytypedoc
-  internal static let baseExceptionDoc = "Common base class for all exceptions"
+  internal static let doc = "Common base class for all exceptions"
 
-  private var args: PyTuple
-  private var traceback: PyTraceback?
-  /// `raise from xxx`.
-  private var cause: PyBaseException?
-  /// Another exception during whose handling this exception was raised.
-  private var context: PyBaseException?
-  /// Should we use `self.cause` or `self.context`?
-  ///
-  /// If we have `cause` then probably `cause`, otherwise `context`.
-  internal var suppressContext: Bool {
-    get { self.flags.isSet(Self.suppressContextFlag) }
-    set { self.flags.set(Self.suppressContextFlag, to: newValue) }
+  public let ptr: RawPtr
+
+  public init(ptr: RawPtr) {
+    self.ptr = ptr
   }
 
-  // MARK: - Init
-
-  /// Type to set in `init`.
-  /// Override this property in every exception class!
-  ///
-  /// This is a terrible HACK!.
-  /// Our goal is to set proper `type` in each PyObject and to do this we can:
-  /// 1. Have 2 inits in EACH exception:
-  ///    - convenience, so it can be used in 'normal' code
-  ///    - with `type: PyType` arg, so it can be used in derived classes to set type
-  ///    But this is a lot of boilerplate.
-  /// 2. Have `type` as a computed property.
-  ///    This simplifies some stuff, but complicates other, for example
-  ///    it is totally different than other types.
-  ///    It also forces us to drop 'final' in 'PyObject.type'.
-  /// 3. Use the same `init` in every exception and inject proper type to assign.
-  ///
-  /// We went with 3 using `class` property.
-  internal class var pythonTypeToSetInInit: PyType {
-    return Py.errorTypes.baseException
+  internal func initialize(_ py: Py,
+                           type: PyType,
+                           args: PyTuple,
+                           traceback: PyTraceback?,
+                           cause: PyBaseException?,
+                           context: PyBaseException?,
+                           suppressContext: Bool) {
+    self.errorHeader.initialize(py,
+                                type: type,
+                                args: args,
+                                traceback: traceback,
+                                cause: cause,
+                                context: context,
+                                suppressContext: suppressContext)
   }
 
-  internal convenience init(msg: String,
-                            traceback: PyTraceback? = nil,
-                            cause: PyBaseException? = nil,
-                            context: PyBaseException? = nil,
-                            suppressContext: Bool = false) {
-    let args = Py.newTuple(Py.newString(msg))
-    self.init(args: args,
-              traceback: traceback,
-              cause: cause,
-              context: context,
-              suppressContext: suppressContext)
-  }
+  // Nothing to do here.
+  internal func beforeDeinitialize() { }
 
-  internal convenience init(args: PyTuple,
-                            traceback: PyTraceback? = nil,
-                            cause: PyBaseException? = nil,
-                            context: PyBaseException? = nil,
-                            suppressContext: Bool = false) {
-    let type = Self.pythonTypeToSetInInit
-    self.init(type: type,
-              args: args,
-              traceback: traceback,
-              cause: cause,
-              context: context,
-              suppressContext: suppressContext)
+  internal static func createDebugString(ptr: RawPtr) -> String {
+    let zelf = PyObject(ptr: ptr)
+    return "PyBaseException(type: \(zelf.typeName), flags: \(zelf.flags))"
   }
+}
 
-  /// Main `init` used to set all of the fields.
-  ///
-  /// Eventually it should be called by every subtype.
-  internal init(type: PyType,
-                args: PyTuple,
-                traceback: PyTraceback? = nil,
-                cause: PyBaseException? = nil,
-                context: PyBaseException? = nil,
-                suppressContext: Bool = false) {
-    self.args = args
-    self.traceback = traceback
-    self.cause = cause
-    self.context = context
-    super.init(type: type)
-    self.suppressContext = suppressContext
-  }
+/* MARKER
 
   // MARK: - Msg
 

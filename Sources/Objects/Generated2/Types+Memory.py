@@ -4,6 +4,8 @@ from Helpers import NewTypeArguments, generated_warning
 
 HEADER_OFFSET = 'PyObjectHeader.layout.size'
 HEADER_ALIGNMENT = 'PyObjectHeader.layout.alignment'
+ERROR_HEADER_OFFSET = 'PyErrorHeader.layout.size'
+ERROR_HEADER_ALIGNMENT = 'PyErrorHeader.layout.alignment'
 
 # =====================
 # === Object header ===
@@ -195,7 +197,10 @@ def print_type_things(t: TypeInfo):
     print(f'extension {swift_type_name} {{')
     print()
 
-    print_layout(swift_type_name, HEADER_OFFSET, HEADER_ALIGNMENT, pointer_fields)
+    (initial_offset, initial_alignment) = (ERROR_HEADER_OFFSET, ERROR_HEADER_ALIGNMENT) \
+        if t.is_error else (HEADER_OFFSET, HEADER_ALIGNMENT)
+
+    print_layout(swift_type_name, initial_offset, initial_alignment, pointer_fields)
     print()
     print_pointer_properties(pointer_fields)
     print()
