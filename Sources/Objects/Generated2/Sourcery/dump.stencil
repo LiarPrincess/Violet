@@ -1,6 +1,6 @@
-{# ========================= #}
-{# === Macro: print_type === #}
-{# ========================= #}
+{# ============== #}
+{# === Macros === #}
+{# ============== #}
 
 {% macro print_type marker type %}
 
@@ -32,9 +32,15 @@ SwiftInit|{{swift_selector_with_types}}
 {% endfor %}
 {% endmacro %}
 
-{# ============= #}
-{# === Calls === #}
-{# ============= #}
+{# ============ #}
+{# === Main === #}
+{# ============ #}
+
+{% for type in types.structs where type.name == "PyObjectHeader" %}
+{% for property in type.allVariables|annotated:"storeInMemory" %}
+ObjectHeaderField|{{property.name}}|{{property.typeName}}
+{% endfor %}
+{% endfor %}
 
 {% for type in types.structs|annotated:"pytype" %}
 {% call print_type "Type" type %}

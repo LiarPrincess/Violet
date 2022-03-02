@@ -1,6 +1,95 @@
 from typing import List
-from Sourcery import get_types, TypeInfo
-from Helpers import generated_warning, NewTypeArguments
+from Sourcery import ObjectHeader, get_object_header, TypeInfo, get_types
+from Helpers import NewTypeArguments, generated_warning
+
+# =====================
+# === Object header ===
+# =====================
+
+class PointerField:
+    def __init__(self, swift_name: str, swift_type: str):
+        self.swift_name = swift_name
+        self.swift_type = swift_type
+
+        self.swift_pointed_type = swift_type
+        if self.swift_pointed_type.startswith('Ptr<'):
+            self.swift_pointed_type = self.swift_pointed_type[4:-1]
+
+        offset_name_base = swift_name
+        if offset_name_base.endswith('Ptr'):
+            offset_name_base = offset_name_base[:-3]
+
+        self.offset_property_name = offset_name_base + 'Offset'
+
+def print_object_header_things(h: ObjectHeader):
+    pointer_fields: List[PointerField] = []
+    for f in h.fields:
+        pointer_fields.append(PointerField(f.swift_name, f.swift_type))
+
+    print('// MARK: - PyObjectHeader')
+    print()
+    print('extension PyObjectHeader {')
+    print()
+    print_layout('PyObjectHeader', '0', '0', pointer_fields)
+    print()
+    print('  internal static let layout = Layout()')
+    print()
+    print_pointer_properties(pointer_fields)
+    print('}')
+    print()
+
+def print_layout(swift_type_name: str,
+                 initial_offset: str,
+                 initial_alignment: str,
+                 fields: List[PointerField]):
+
+    print(f'  /// This type was automatically generated based on `{swift_type_name}` fields')
+    print(f'  /// with `sourcery: storeInMemory` annotation.')
+    print(f'  internal struct Layout {{')
+
+    for p in fields:
+        print(f'    internal let {p.offset_property_name}: Int')
+
+    print(f'    internal let size: Int')
+    print(f'    internal let alignment: Int')
+    print()
+    print(f'    internal init() {{')
+    print(f'      let layout = PyMemory.GenericLayout(')
+    print(f'        initialOffset: {initial_offset},')
+    print(f'        initialAlignment: {initial_alignment},')
+
+    if len(fields) == 0:
+        print('        fields: []')
+    else:
+        print('        fields: [')
+
+        for index, p in enumerate(fields):
+            is_last = index == len(fields) - 1
+            comma = '' if is_last else ','
+            print(f'          PyMemory.FieldLayout(from: {p.swift_pointed_type}.self){comma}')
+
+        print('        ]')
+
+    print('      )')
+    print()
+
+    print(f'      assert(layout.offsets.count == {len(fields)})')
+
+    for index, p in enumerate(fields):
+        print(f'      self.{p.offset_property_name} = layout.offsets[{index}]')
+
+    print('      self.size = layout.size')
+    print('      self.alignment = layout.alignment')
+    print('    }')
+    print('  }')
+
+def print_pointer_properties(fields: List[PointerField]):
+    for f in fields:
+        print(f'  internal var {f.swift_name}Ptr: Ptr<{f.swift_type}> {{ Ptr(self.ptr, offset: Self.layout.{f.offset_property_name}) }}')
+
+# =========================================
+# === PyMemory + type/object types init ===
+# =========================================
 
 def print_type_and_object_types_init(all_types: List[TypeInfo]):
     object_type = None
@@ -66,17 +155,9 @@ extension PyMemory {{
 }}
 ''')
 
-class PointerProperty:
-    def __init__(self, swift_name: str, swift_type: str):
-        self.swift_name = swift_name
-        self.swift_type = swift_type
-        self.swift_pointed_type = swift_type[4:-1] # Without 'Ptr' and '<>'
-
-        offset_name_base = swift_name
-        if offset_name_base.endswith('Ptr'):
-            offset_name_base = offset_name_base[:-3]
-
-        self.offset_property_name = offset_name_base + 'Offset'
+# ===================
+# === Single type ===
+# ===================
 
 def print_type_things(t: TypeInfo):
     swift_type = t.swift_type_name
@@ -95,7 +176,7 @@ def print_type_things(t: TypeInfo):
         p_type = p.swift_type
 
         if p_type.startswith('Ptr<'):
-            p = PointerProperty(p_name, p_type)
+            p = PointerField(p_name, p_type)
             pointer_properties.append(p)
 
     # ==============
@@ -113,8 +194,8 @@ def print_type_things(t: TypeInfo):
     print()
     print('    internal init() {')
     print('      let layout = PyMemory.GenericLayout(')
-    print('        initialOffset: PyObjectHeader.Layout.size,')
-    print('        initialAlignment: PyObjectHeader.Layout.alignment,')
+    print('        initialOffset: PyObjectHeader.layout.size,')
+    print('        initialAlignment: PyObjectHeader.layout.alignment,')
 
     if len(pointer_properties) == 0:
         print('        fields: []')
@@ -211,6 +292,10 @@ def print_type_things(t: TypeInfo):
     print('}')
     print()
 
+# ============
+# === Main ===
+# ============
+
 def main():
     print(f'''\
 {generated_warning(__file__)}
@@ -228,12 +313,18 @@ import VioletCompiler
 // swiftlint:disable file_length
 
 // This file contains:
+// - For 'PyObjectHeader':
+//   - PyObjectHeader.Layout
+//   - PyObjectHeader.xxxPtr - pointer properties to fields
 // - PyMemory.newTypeAndObjectTypes - because they have recursive dependency
 // - then for each type:
 //   - PyMemory.[TYPE_NAME]Layout - mainly field offsets
 //   - PyMemory.new[TYPE_NAME] - to create new object of this type
 //   - [TYPE_NAME].deinitialize(ptr:) - to deinitialize this object before deletion
 ''')
+
+    header = get_object_header()
+    print_object_header_things(header)
 
     all_types = get_types()
     print_type_and_object_types_init(all_types)
