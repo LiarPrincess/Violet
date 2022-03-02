@@ -1,5 +1,6 @@
 from typing import Dict, List, Optional
 from Sourcery import TypeInfo
+from Helpers.PyTypeDefinition_helpers import get_layout_property_name, get_static_methods_property_name
 
 class NewTypeArguments:
     'Arguments to PyMemory.newType'
@@ -59,20 +60,3 @@ def get_mro_without_self(type: TypeInfo, all_types: List[TypeInfo]) -> List[Type
         result.append(object_type)
 
     return result
-
-def get_layout_property_name(swift_name: str) -> str:
-    "Camel cased 'swift_type_name' without 'Py'."
-
-    assert swift_name.startswith('Py'), swift_name
-    type_prefix = swift_name[2:]
-    type_prefix = type_prefix[0].lower() + type_prefix[1:]
-    return type_prefix + 'MemoryLayout'
-
-
-def get_static_methods_property_name(swift_name: str) -> str:
-    "Camel cased 'swift_type_name' without 'Py'."
-
-    assert swift_name.startswith('Py'), swift_name
-    type_prefix = swift_name[2:]
-    type_prefix = type_prefix[0].lower() + type_prefix[1:]
-    return type_prefix + 'StaticMethods'
