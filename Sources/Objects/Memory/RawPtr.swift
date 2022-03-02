@@ -2,11 +2,15 @@
 ///
 /// If you need to manipulate memory inside of a Python object, for example a single
 /// property like `type`, then use the typed `Ptr`.
-public struct RawPtr {
+public struct RawPtr: CustomStringConvertible {
 
   // Do not change it to 'UnsafeMutableRawPointer'!
   // Any mutation should go through 'Ptr'.
-  private let value: UnsafeRawPointer
+  fileprivate let value: UnsafeRawPointer
+
+  public var description: String {
+    return String(describing: self.value)
+  }
 
   public init(_ value: UnsafeRawPointer) {
     self.value = value
@@ -82,5 +86,18 @@ public struct RawPtr {
   /// to the same object.
   public static func === (lhs: RawPtr, rhs: RawPtr) -> Bool {
     return lhs.value == rhs.value
+  }
+}
+
+// MARK: - Int + init(bitPattern:)
+
+extension Int {
+
+  /// Creates a new value with the bit pattern of the given pointer.
+  ///
+  /// The new value represents the address of the pointer passed as `pointer`.
+  /// If `pointer` is `nil`, the result is `0`.
+  public init(bitPattern pointer: RawPtr) {
+    self = Int(bitPattern: pointer.value)
   }
 }

@@ -1,4 +1,3 @@
-/* MARKER
 import Foundation
 import BigInt
 import VioletCore
@@ -74,11 +73,19 @@ internal struct Hasher {
 
   /// static Py_hash_t
   /// long_hash(PyLongObject *v)
-  internal func hash(_ value: BigInt) -> PyHash {
+  internal func hash(_ value: Int) -> PyHash {
     // CPython returns '-2' when the hash is equal to '-1',
     // as '-1' is reserved for errors.
     // We don't have to do it.
 
+    let modulus = Hasher.modulus
+    // swiftlint:disable:next force_unwrapping
+    return PyHash(exactly: value % modulus)!
+  }
+
+  /// static Py_hash_t
+  /// long_hash(PyLongObject *v)
+  internal func hash(_ value: BigInt) -> PyHash {
     let modulus = BigInt(Hasher.modulus)
     // swiftlint:disable:next force_unwrapping
     return PyHash(exactly: value % modulus)!
@@ -179,16 +186,4 @@ internal struct Hasher {
     //  Int64(bitPattern: sipHash)
     return PyHash(truncatingIfNeeded: value)
   }
-
-  // MARK: - Pointer
-
-  internal func hash(_ value: ObjectIdentifier) -> PyHash {
-    // In Swift we don't really have access to pointers
-    // (we could if we really had to but the language does not guarantee that
-    // it will work in all cases).
-    // So we will use Swift hash.
-    return value.hashValue
-  }
 }
-
-*/

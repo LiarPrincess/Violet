@@ -1,4 +1,5 @@
-public enum CompareResult {
+/// Helper type used when implementing compare methods.
+internal enum CompareResult {
   case value(Bool)
   /// Shortcut for `Py.notImplemented`
   case notImplemented
@@ -30,25 +31,23 @@ public enum CompareResult {
     switch self {
     case .value(let bool):
       return .value(!bool)
-    case .error(let e):
-      return .error(e)
     case .notImplemented:
       return .notImplemented
+    case .error(let e):
+      return .error(e)
     }
   }
-}
 
-/* MARKER
-extension CompareResult: PyFunctionResultConvertible {
-  public var asFunctionResult: PyFunctionResult {
+  internal func toResult(_ py: Py) -> PyResult<PyObject> {
     switch self {
-    case .value(let bool):
-      return bool.asFunctionResult
+    case .value(let value):
+      let bool = value ? py.true : py.false
+      return .value(bool.asObject)
     case .notImplemented:
-      return .value(Py.notImplemented.asObject)
+      let value = py.notImplemented
+      return .value(value.asObject)
     case .error(let e):
       return .error(e)
     }
   }
 }
-*/

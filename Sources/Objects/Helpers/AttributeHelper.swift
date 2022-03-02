@@ -1,4 +1,3 @@
-/* MARKER
 internal enum AttributeHelper {
 
   // MARK: - Get
@@ -10,17 +9,19 @@ internal enum AttributeHelper {
   ///                                  PyObject *name,
   ///                                  PyObject *dict,
   ///                                  int suppress)
-  internal static func getAttribute(from object: PyObject,
+  internal static func getAttribute(_ py: Py,
+                                    object: PyObject,
                                     name: PyObject) -> PyResult<PyObject> {
-    switch AttributeHelper.extractName(from: name) {
+    switch AttributeHelper.extractName(py, name: name) {
     case let .value(n):
-      return AttributeHelper.getAttribute(from: object, name: n)
+      return AttributeHelper.getAttribute(py, object: object, name: n)
     case let .error(e):
       return .error(e)
     }
   }
 
-  internal static func getAttribute(from object: PyObject,
+  internal static func getAttribute(_ py: Py,
+                                    object: PyObject,
                                     name: PyString) -> PyResult<PyObject> {
     let staticProperty: PyObject?
     let descriptor: GetDescriptor?
@@ -28,7 +29,7 @@ internal enum AttributeHelper {
     switch object.type.mroLookup(name: name) {
     case .value(let l):
       staticProperty = l.object
-      descriptor = GetDescriptor(object: object, attribute: l.object)
+      descriptor = GetDescriptor(py, object: object, attribute: l.object)
     case .notFound:
       staticProperty = nil
       descriptor = nil
@@ -40,8 +41,8 @@ internal enum AttributeHelper {
       return descr.call()
     }
 
-    if let dict = Py.get__dict__(object: object) {
-      switch dict.get(key: name) {
+    if let dict = py.get__dict__(object: object) {
+      switch dict.get(key: name.asObject) {
       case .value(let o):
         return .value(o)
       case .notFound:
@@ -59,14 +60,8 @@ internal enum AttributeHelper {
       return .value(p)
     }
 
-    let e = Py.newAttributeError(object: object, hasNoAttribute: name)
-    return .error(e)
-  }
-
-  private enum GetFromDictResult {
-    case value(PyObject)
-    case notInDict
-    case error(PyBaseException)
+    let error = py.newAttributeError(object: object, hasNoAttribute: name)
+    return .error(error.asBaseException)
   }
 
   // MARK: - Set
@@ -78,77 +73,80 @@ internal enum AttributeHelper {
   ///                                  PyObject *name,
   ///                                  PyObject *value,
   ///                                  PyObject *dict)
-  internal static func setAttribute(on object: PyObject,
+  internal static func setAttribute(_ py: Py,
+                                    object: PyObject,
                                     name: PyObject,
-                                    to value: PyObject?) -> PyResult<PyNone> {
-    switch AttributeHelper.extractName(from: name) {
+                                    value: PyObject?) -> PyResult<PyNone> {
+    switch AttributeHelper.extractName(py, name: name) {
     case let .value(n):
-      return AttributeHelper.setAttribute(on: object, name: n, to: value)
+      return AttributeHelper.setAttribute(py, object: object, name: n, value: value)
     case let .error(e):
       return .error(e)
     }
   }
 
-  internal static func setAttribute(on object: PyObject,
+  internal static func setAttribute(_ py: Py,
+                                    object: PyObject,
                                     name: PyString,
-                                    to value: PyObject?) -> PyResult<PyNone> {
-    let descriptor = SetDescriptor(object: object, attributeName: name)
+                                    value: PyObject?) -> PyResult<PyNone> {
+    let descriptor = SetDescriptor(py, object: object, attributeName: name)
 
     if let desc = descriptor {
       let result = desc.call(value: value)
-      return result.map { _ in Py.none }
+      return result.map { _ in py.none }
     }
 
-    if let dict = Py.get__dict__(object: object) {
+    if let dict = py.get__dict__(object: object) {
       if let value = value {
         switch dict.set(key: name, to: value) {
-        case .ok: return .value(Py.none)
+        case .ok: return .value(py.none)
         case .error(let e): return .error(e)
         }
       } else {
-        switch dict.del(key: name) {
-        case .value: return .value(Py.none)
+        switch dict.del(key: name.asObject) {
+        case .value: return .value(py.none)
         case .notFound: break // try other
         case .error(let e): return .error(e)
         }
       }
     }
 
-    let e = descriptor == nil ?
-      Py.newAttributeError(object: object, hasNoAttribute: name) :
-      Py.newAttributeError(object: object, attributeIsReadOnly: name)
+    let error = descriptor == nil ?
+      py.newAttributeError(object: object, hasNoAttribute: name) :
+      py.newAttributeError(object: object, attributeIsReadOnly: name)
 
-    return .error(e)
+    return .error(error.asBaseException)
   }
 
   // MARK: - Del
 
   /// Basically: `AttributeHelper.setAttribute` with `None` as value
-  internal static func delAttribute(on object: PyObject,
+  internal static func delAttribute(_ py: Py,
+                                    object: PyObject,
                                     name: PyObject) -> PyResult<PyNone> {
-    switch AttributeHelper.extractName(from: name) {
+    switch AttributeHelper.extractName(py, name: name) {
     case let .value(n):
-      return AttributeHelper.delAttribute(on: object, name: n)
+      return AttributeHelper.delAttribute(py, object: object, name: n)
     case let .error(e):
       return .error(e)
     }
   }
 
-  internal static func delAttribute(on object: PyObject,
+  internal static func delAttribute(_ py: Py,
+                                    object: PyObject,
                                     name: PyString) -> PyResult<PyNone> {
-    return AttributeHelper.setAttribute(on: object, name: name, to: nil)
+    return AttributeHelper.setAttribute(py, object: object, name: name, value: nil)
   }
 
   // MARK: - Extract name
 
-  internal static func extractName(from object: PyObject) -> PyResult<PyString> {
-    guard let string = PyCast.asString(object) else {
-      let msg = "attribute name must be string, not '\(object.typeName)'"
+  internal static func extractName(_ py: Py,
+                                   name: PyObject) -> PyResult<PyString> {
+    guard let string = py.cast.asString(name) else {
+      let msg = "attribute name must be string, not '\(name.typeName)'"
       return .typeError(msg)
     }
 
     return .value(string)
   }
 }
-
-*/
